@@ -28,147 +28,213 @@ namespace DS4Windows
         public string ControllerConfigsPath { get; set; } =
             Path.Combine(Global.RuntimeAppDataPath, "ControllerConfigs.xml");
 
-        protected XmlDocument m_Xdoc = new XmlDocument();
+        protected XmlDocument m_Xdoc = new();
+
         // ninth (fifth in old builds) value used for options, not last controller
         public ButtonMouseInfo[] buttonMouseInfos = new ButtonMouseInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new ButtonMouseInfo(), new ButtonMouseInfo(), new ButtonMouseInfo(),
-            new ButtonMouseInfo(), new ButtonMouseInfo(), new ButtonMouseInfo(),
-            new ButtonMouseInfo(), new ButtonMouseInfo(), new ButtonMouseInfo(),
+            new(), new(), new(),
+            new(), new(), new(),
+            new(), new(), new()
         };
 
-        public bool[] enableTouchToggle = new bool[Global.TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
-        public int[] idleDisconnectTimeout = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        public bool[] enableOutputDataToDS4 = new bool[Global.TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
-        public bool[] touchpadJitterCompensation = new bool[Global.TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
-        public bool[] lowerRCOn = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public bool[] touchClickPassthru = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public string[] profilePath = new string[Global.TEST_PROFILE_ITEM_COUNT] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
-        public string[] olderProfilePath = new string[Global.TEST_PROFILE_ITEM_COUNT] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
-        public Dictionary<string, string> linkedProfiles = new Dictionary<string, string>();
+        public bool[] enableTouchToggle = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
+        public int[] idleDisconnectTimeout = new int[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        public bool[] enableOutputDataToDS4 = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
+        public bool[] touchpadJitterCompensation = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
+        public bool[] lowerRCOn = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public bool[] touchClickPassthru = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public string[] profilePath = new string[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+            string.Empty, string.Empty
+        };
+
+        public string[] olderProfilePath = new string[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+            string.Empty, string.Empty
+        };
+
+        public Dictionary<string, string> linkedProfiles = new();
+
         // Cache properties instead of performing a string comparison every frame
-        public bool[] distanceProfiles = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public Byte[] rumble = new Byte[Global.TEST_PROFILE_ITEM_COUNT] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-        public int[] rumbleAutostopTime = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
-        public Byte[] touchSensitivity = new Byte[Global.TEST_PROFILE_ITEM_COUNT] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+        public bool[] distanceProfiles = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public byte[] rumble = new byte[Global.TEST_PROFILE_ITEM_COUNT] {100, 100, 100, 100, 100, 100, 100, 100, 100};
+
+        public int[]
+            rumbleAutostopTime = new int[Global.TEST_PROFILE_ITEM_COUNT]
+                {0, 0, 0, 0, 0, 0, 0, 0, 0}; // Value in milliseconds (0=autustop timer disabled)
+
+        public byte[] touchSensitivity = new byte[Global.TEST_PROFILE_ITEM_COUNT]
+            {100, 100, 100, 100, 100, 100, 100, 100, 100};
+
         public StickDeadZoneInfo[] lsModInfo = new StickDeadZoneInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(),
-        };
-        public StickDeadZoneInfo[] rsModInfo = new StickDeadZoneInfo[Global.TEST_PROFILE_ITEM_COUNT]
-        {
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(), new StickDeadZoneInfo(),
-            new StickDeadZoneInfo(),
-        };
-        public TriggerDeadZoneZInfo[] l2ModInfo = new TriggerDeadZoneZInfo[Global.TEST_PROFILE_ITEM_COUNT]
-        {
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(),
-        };
-        public TriggerDeadZoneZInfo[] r2ModInfo = new TriggerDeadZoneZInfo[Global.TEST_PROFILE_ITEM_COUNT]
-        {
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(), new TriggerDeadZoneZInfo(),
-            new TriggerDeadZoneZInfo(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
 
-        public double[] LSRotation = new double[Global.TEST_PROFILE_ITEM_COUNT] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, RSRotation = new double[Global.TEST_PROFILE_ITEM_COUNT] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-        public double[] SXDeadzone = new double[Global.TEST_PROFILE_ITEM_COUNT] { 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25 }, SZDeadzone = new double[Global.TEST_PROFILE_ITEM_COUNT] { 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25 };
-        public double[] SXMaxzone = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 },
-            SZMaxzone = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-        public double[] SXAntiDeadzone = new double[Global.TEST_PROFILE_ITEM_COUNT] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-            SZAntiDeadzone = new double[Global.TEST_PROFILE_ITEM_COUNT] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-        public double[] l2Sens = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 }, r2Sens = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-        public double[] LSSens = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 }, RSSens = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-        public double[] SXSens = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 }, SZSens = new double[Global.TEST_PROFILE_ITEM_COUNT] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-        public Byte[] tapSensitivity = new Byte[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        public bool[] doubleTap = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public int[] scrollSensitivity = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        public int[] touchpadInvert = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        public int[] btPollRate = new int[Global.TEST_PROFILE_ITEM_COUNT] { 4, 4, 4, 4, 4, 4, 4, 4, 4 };
-        public int[] gyroMouseDZ = new int[Global.TEST_PROFILE_ITEM_COUNT] { MouseCursor.GYRO_MOUSE_DEADZONE, MouseCursor.GYRO_MOUSE_DEADZONE,
+        public StickDeadZoneInfo[] rsModInfo = new StickDeadZoneInfo[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
+        };
+
+        public TriggerDeadZoneZInfo[] l2ModInfo = new TriggerDeadZoneZInfo[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
+        };
+
+        public TriggerDeadZoneZInfo[] r2ModInfo = new TriggerDeadZoneZInfo[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
+        };
+
+        public double[] LSRotation =
+                new double[Global.TEST_PROFILE_ITEM_COUNT] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            RSRotation = new double[Global.TEST_PROFILE_ITEM_COUNT] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+        public double[] SXDeadzone =
+                new double[Global.TEST_PROFILE_ITEM_COUNT] {0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25},
+            SZDeadzone = new double[Global.TEST_PROFILE_ITEM_COUNT]
+                {0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25};
+
+        public double[] SXMaxzone = new double[Global.TEST_PROFILE_ITEM_COUNT]
+                {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
+            SZMaxzone = new double[Global.TEST_PROFILE_ITEM_COUNT] {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+        public double[] SXAntiDeadzone = new double[Global.TEST_PROFILE_ITEM_COUNT]
+                {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+            SZAntiDeadzone = new double[Global.TEST_PROFILE_ITEM_COUNT] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+        public double[] l2Sens =
+                new double[Global.TEST_PROFILE_ITEM_COUNT] {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
+            r2Sens = new double[Global.TEST_PROFILE_ITEM_COUNT] {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+        public double[] LSSens =
+                new double[Global.TEST_PROFILE_ITEM_COUNT] {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
+            RSSens = new double[Global.TEST_PROFILE_ITEM_COUNT] {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+        public double[] SXSens =
+                new double[Global.TEST_PROFILE_ITEM_COUNT] {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
+            SZSens = new double[Global.TEST_PROFILE_ITEM_COUNT] {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+        public byte[] tapSensitivity = new byte[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        public bool[] doubleTap = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public int[] scrollSensitivity = new int[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        public int[] touchpadInvert = new int[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        public int[] btPollRate = new int[Global.TEST_PROFILE_ITEM_COUNT] {4, 4, 4, 4, 4, 4, 4, 4, 4};
+
+        public int[] gyroMouseDZ = new int[Global.TEST_PROFILE_ITEM_COUNT]
+        {
             MouseCursor.GYRO_MOUSE_DEADZONE, MouseCursor.GYRO_MOUSE_DEADZONE,
             MouseCursor.GYRO_MOUSE_DEADZONE, MouseCursor.GYRO_MOUSE_DEADZONE,
-            MouseCursor.GYRO_MOUSE_DEADZONE,MouseCursor.GYRO_MOUSE_DEADZONE,
-            MouseCursor.GYRO_MOUSE_DEADZONE,};
-        public bool[] gyroMouseToggle = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false,
-            false, false, false, false, false, false };
+            MouseCursor.GYRO_MOUSE_DEADZONE, MouseCursor.GYRO_MOUSE_DEADZONE,
+            MouseCursor.GYRO_MOUSE_DEADZONE, MouseCursor.GYRO_MOUSE_DEADZONE,
+            MouseCursor.GYRO_MOUSE_DEADZONE
+        };
+
+        public bool[] gyroMouseToggle = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            false, false, false,
+            false, false, false, false, false, false
+        };
 
         public SquareStickInfo[] squStickInfo = new SquareStickInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new SquareStickInfo(), new SquareStickInfo(),
-            new SquareStickInfo(), new SquareStickInfo(),
-            new SquareStickInfo(), new SquareStickInfo(),
-            new SquareStickInfo(), new SquareStickInfo(),
-            new SquareStickInfo(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
 
         public StickAntiSnapbackInfo[] lsAntiSnapbackInfo = new StickAntiSnapbackInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
 
         public StickAntiSnapbackInfo[] rsAntiSnapbackInfo = new StickAntiSnapbackInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(), new StickAntiSnapbackInfo(),
-            new StickAntiSnapbackInfo(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
 
         public StickOutputSetting[] lsOutputSettings = new StickOutputSetting[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new StickOutputSetting(), new StickOutputSetting(), new StickOutputSetting(),
-            new StickOutputSetting(), new StickOutputSetting(), new StickOutputSetting(),
-            new StickOutputSetting(), new StickOutputSetting(), new StickOutputSetting(),
+            new(), new(), new(),
+            new(), new(), new(),
+            new(), new(), new()
         };
 
         public StickOutputSetting[] rsOutputSettings = new StickOutputSetting[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new StickOutputSetting(), new StickOutputSetting(), new StickOutputSetting(),
-            new StickOutputSetting(), new StickOutputSetting(), new StickOutputSetting(),
-            new StickOutputSetting(), new StickOutputSetting(), new StickOutputSetting(),
+            new(), new(), new(),
+            new(), new(), new(),
+            new(), new(), new()
         };
 
         public TriggerOutputSettings[] l2OutputSettings = new TriggerOutputSettings[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new TriggerOutputSettings(), new TriggerOutputSettings(), new TriggerOutputSettings(),
-            new TriggerOutputSettings(), new TriggerOutputSettings(), new TriggerOutputSettings(),
-            new TriggerOutputSettings(), new TriggerOutputSettings(), new TriggerOutputSettings(),
+            new(), new(), new(),
+            new(), new(), new(),
+            new(), new(), new()
         };
 
         public TriggerOutputSettings[] r2OutputSettings = new TriggerOutputSettings[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new TriggerOutputSettings(), new TriggerOutputSettings(), new TriggerOutputSettings(),
-            new TriggerOutputSettings(), new TriggerOutputSettings(), new TriggerOutputSettings(),
-            new TriggerOutputSettings(), new TriggerOutputSettings(), new TriggerOutputSettings(),
+            new(), new(), new(),
+            new(), new(), new(),
+            new(), new(), new()
         };
 
-        public SteeringWheelSmoothingInfo[] wheelSmoothInfo = new SteeringWheelSmoothingInfo[Global.TEST_PROFILE_ITEM_COUNT]
-        {
-            new SteeringWheelSmoothingInfo(), new SteeringWheelSmoothingInfo(),
-            new SteeringWheelSmoothingInfo(), new SteeringWheelSmoothingInfo(),
-            new SteeringWheelSmoothingInfo(), new SteeringWheelSmoothingInfo(),
-            new SteeringWheelSmoothingInfo(), new SteeringWheelSmoothingInfo(),
-            new SteeringWheelSmoothingInfo(),
-        };
+        public SteeringWheelSmoothingInfo[] wheelSmoothInfo =
+            new SteeringWheelSmoothingInfo[Global.TEST_PROFILE_ITEM_COUNT]
+            {
+                new(), new(),
+                new(), new(),
+                new(), new(),
+                new(), new(),
+                new()
+            };
 
         public int[] saWheelFuzzValues = new int[Global.TEST_PROFILE_ITEM_COUNT];
 
@@ -188,12 +254,23 @@ namespace DS4Windows
             }
         }
 
-        public BezierCurve[] lsOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT] { new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve() };
-        public BezierCurve[] rsOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT] { new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve() };
-        public BezierCurve[] l2OutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT] { new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve() };
-        public BezierCurve[] r2OutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT] { new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve() };
-        public BezierCurve[] sxOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT] { new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve() };
-        public BezierCurve[] szOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT] { new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve(), new BezierCurve() };
+        public BezierCurve[] lsOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT]
+            {new(), new(), new(), new(), new(), new(), new(), new(), new()};
+
+        public BezierCurve[] rsOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT]
+            {new(), new(), new(), new(), new(), new(), new(), new(), new()};
+
+        public BezierCurve[] l2OutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT]
+            {new(), new(), new(), new(), new(), new(), new(), new(), new()};
+
+        public BezierCurve[] r2OutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT]
+            {new(), new(), new(), new(), new(), new(), new(), new(), new()};
+
+        public BezierCurve[] sxOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT]
+            {new(), new(), new(), new(), new(), new(), new(), new(), new()};
+
+        public BezierCurve[] szOutBezierCurveObj = new BezierCurve[Global.TEST_PROFILE_ITEM_COUNT]
+            {new(), new(), new(), new(), new(), new(), new(), new(), new()};
 
         private int[] _lsOutCurveMode = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         public int getLsOutCurveMode(int index) { return _lsOutCurveMode[index]; }
