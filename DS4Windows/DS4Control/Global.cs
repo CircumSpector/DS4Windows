@@ -1824,27 +1824,27 @@ namespace DS4Windows
         
         public static void UpdateDS4CSetting (int deviceNum, string buttonName, bool shift, object action, string exts, DS4KeyType kt, int trigger = 0)
         {
-            m_Config.UpdateDS4CSetting(deviceNum, buttonName, shift, action, exts, kt, trigger);
+            m_Config.UpdateDs4ControllerSetting(deviceNum, buttonName, shift, action, exts, kt, trigger);
             m_Config.containsCustomAction[deviceNum] = m_Config.HasCustomActions(deviceNum);
             m_Config.containsCustomExtras[deviceNum] = m_Config.HasCustomExtras(deviceNum);
         }
 
         public static void UpdateDS4Extra(int deviceNum, string buttonName, bool shift, string exts)
         {
-            m_Config.UpdateDS4CExtra(deviceNum, buttonName, shift, exts);
+            m_Config.UpdateDs4ControllerExtra(deviceNum, buttonName, shift, exts);
             m_Config.containsCustomAction[deviceNum] = m_Config.HasCustomActions(deviceNum);
             m_Config.containsCustomExtras[deviceNum] = m_Config.HasCustomExtras(deviceNum);
         }
 
-        public static ControlActionData GetDS4Action(int deviceNum, string buttonName, bool shift) => m_Config.GetDS4Action(deviceNum, buttonName, shift);
-        public static ControlActionData GetDS4Action(int deviceNum, DS4Controls control, bool shift) => m_Config.GetDS4Action(deviceNum, control, shift);
-        public static DS4KeyType GetDS4KeyType(int deviceNum, string buttonName, bool shift) => m_Config.GetDS4KeyType(deviceNum, buttonName, shift);
-        public static string GetDS4Extra(int deviceNum, string buttonName, bool shift) => m_Config.GetDS4Extra(deviceNum, buttonName, shift);
-        public static int GetDS4STrigger(int deviceNum, string buttonName) => m_Config.GetDS4STrigger(deviceNum, buttonName);
-        public static int GetDS4STrigger(int deviceNum, DS4Controls control) => m_Config.GetDS4STrigger(deviceNum, control);
+        public static ControlActionData GetDS4Action(int deviceNum, string buttonName, bool shift) => m_Config.GetDs4Action(deviceNum, buttonName, shift);
+        public static ControlActionData GetDS4Action(int deviceNum, DS4Controls control, bool shift) => m_Config.GetDs4Action(deviceNum, control, shift);
+        public static DS4KeyType GetDS4KeyType(int deviceNum, string buttonName, bool shift) => m_Config.GetDs4KeyType(deviceNum, buttonName, shift);
+        public static string GetDS4Extra(int deviceNum, string buttonName, bool shift) => m_Config.GetDs4Extra(deviceNum, buttonName, shift);
+        public static int GetDS4STrigger(int deviceNum, string buttonName) => m_Config.GetDs4STrigger(deviceNum, buttonName);
+        public static int GetDS4STrigger(int deviceNum, DS4Controls control) => m_Config.GetDs4STrigger(deviceNum, control);
         public static List<DS4ControlSettings> getDS4CSettings(int device) => m_Config.ds4settings[device];
-        public static DS4ControlSettings GetDS4CSetting(int deviceNum, string control) => m_Config.GetDS4CSetting(deviceNum, control);
-        public static DS4ControlSettings GetDS4CSetting(int deviceNum, DS4Controls control) => m_Config.GetDS4CSetting(deviceNum, control);
+        public static DS4ControlSettings GetDS4CSetting(int deviceNum, string control) => m_Config.GetDs4ControllerSetting(deviceNum, control);
+        public static DS4ControlSettings GetDS4CSetting(int deviceNum, DS4Controls control) => m_Config.GetDs4ControllerSetting(deviceNum, control);
         public static ControlSettingsGroup GetControlSettingsGroup(int deviceNum) => m_Config.ds4controlSettings[deviceNum];
         public static bool HasCustomActions(int deviceNum) => m_Config.HasCustomActions(deviceNum);
         public static bool HasCustomExtras(int deviceNum) => m_Config.HasCustomExtras(deviceNum);
@@ -1916,17 +1916,17 @@ namespace DS4Windows
 
         public static X360Controls getX360ControlsByName(string key)
         {
-            return m_Config.getX360ControlsByName(key);
+            return m_Config.GetX360ControlsByName(key);
         }
 
         public static string GetX360ControlString(X360Controls key)
         {
-            return m_Config.getX360ControlString(key);
+            return m_Config.GetX360ControlString(key);
         }
 
         public static DS4Controls getDS4ControlsByName(string key)
         {
-            return m_Config.getDS4ControlsByName(key);
+            return m_Config.GetDs4ControlsByName(key);
         }
 
         public static X360Controls getDefaultX360ControlBinding(DS4Controls dc)
@@ -2006,7 +2006,7 @@ namespace DS4Windows
         public static void LoadBlankDS4Profile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
-            m_Config.LoadBlankDS4Profile(device, launchprogram, control, "", xinputChange, postLoad);
+            m_Config.LoadBlankDs4Profile(device, launchprogram, control, "", xinputChange, postLoad);
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
@@ -2078,7 +2078,7 @@ namespace DS4Windows
         public static void LoadDefaultDS4MixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
-            m_Config.LoadDefaultDS4MixedGyroMouseProfile(device, launchprogram, control, "", xinputChange, postLoad);
+            m_Config.LoadDefaultDs4MixedGyroMouseProfile(device, launchprogram, control, "", xinputChange, postLoad);
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 

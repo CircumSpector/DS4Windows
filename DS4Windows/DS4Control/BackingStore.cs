@@ -1257,7 +1257,7 @@ namespace DS4Windows
                         }
                         else if (dcs.actionType == DS4ControlSettings.ActionType.Button)
                         {
-                            buttonNode.InnerText = getX360ControlString((X360Controls)dcs.action.actionBtn);
+                            buttonNode.InnerText = GetX360ControlString((X360Controls)dcs.action.actionBtn);
                             Button.AppendChild(buttonNode);
                         }
                     }
@@ -1384,7 +1384,7 @@ namespace DS4Windows
             return Saved;
         }
 
-        public DS4Controls getDS4ControlsByName(string key)
+        public DS4Controls GetDs4ControlsByName(string key)
         {
             if (!key.StartsWith("bn"))
                 return (DS4Controls)Enum.Parse(typeof(DS4Controls), key, true);
@@ -1521,7 +1521,7 @@ namespace DS4Windows
             return 0;
         }
 
-        public X360Controls getX360ControlsByName(string key)
+        public X360Controls GetX360ControlsByName(string key)
         {
             X360Controls x3c;
             if (Enum.TryParse(key, true, out x3c))
@@ -1576,7 +1576,7 @@ namespace DS4Windows
             return X360Controls.Unbound;
         }
 
-        public string getX360ControlString(X360Controls key)
+        public string GetX360ControlString(X360Controls key)
         {
             switch (key)
             {
@@ -3153,7 +3153,7 @@ namespace DS4Windows
                 // performing this upon program startup before loading devices.
                 if (xinputChange && device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
                 {
-                    CheckOldDevicestatus(device, control, oldContType,
+                    CheckOldDeviceStatus(device, control, oldContType,
                         out xinputPlug, out xinputStatus);
                 }
 
@@ -3201,8 +3201,8 @@ namespace DS4Windows
                         {
                             if (Enum.TryParse(item.Name, out DS4Controls currentControl))
                             {
-                                UpdateDS4CSetting(device, item.Name, false, getX360ControlsByName(item.InnerText), "", DS4KeyType.None, 0);
-                                customMapButtons.Add(getDS4ControlsByName(item.Name), getX360ControlsByName(item.InnerText));
+                                UpdateDs4ControllerSetting(device, item.Name, false, GetX360ControlsByName(item.InnerText), "", DS4KeyType.None, 0);
+                                customMapButtons.Add(GetDs4ControlsByName(item.Name), GetX360ControlsByName(item.InnerText));
                             }
                         }
                     }
@@ -3212,7 +3212,7 @@ namespace DS4Windows
                     {
                         foreach (XmlNode item in ParentItem.ChildNodes)
                         {
-                            customMapMacros.Add(getDS4ControlsByName(item.Name), item.InnerText);
+                            customMapMacros.Add(GetDs4ControlsByName(item.Name), item.InnerText);
                             string[] skeys;
                             int[] keys;
                             if (!string.IsNullOrEmpty(item.InnerText))
@@ -3231,7 +3231,7 @@ namespace DS4Windows
 
                             if (Enum.TryParse(item.Name, out DS4Controls currentControl))
                             {
-                                UpdateDS4CSetting(device, item.Name, false, keys, "", DS4KeyType.None, 0);
+                                UpdateDs4ControllerSetting(device, item.Name, false, keys, "", DS4KeyType.None, 0);
                             }
                         }
                     }
@@ -3243,8 +3243,8 @@ namespace DS4Windows
                         {
                             if (ushort.TryParse(item.InnerText, out wvk) && Enum.TryParse(item.Name, out DS4Controls currentControl))
                             {
-                                UpdateDS4CSetting(device, item.Name, false, wvk, "", DS4KeyType.None, 0);
-                                customMapKeys.Add(getDS4ControlsByName(item.Name), wvk);
+                                UpdateDs4ControllerSetting(device, item.Name, false, wvk, "", DS4KeyType.None, 0);
+                                customMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
                             }
                         }
                     }
@@ -3256,8 +3256,8 @@ namespace DS4Windows
                         {
                             if (item.InnerText != string.Empty && Enum.TryParse(item.Name, out DS4Controls currentControl))
                             {
-                                UpdateDS4CExtra(device, item.Name, false, item.InnerText);
-                                customMapExtras.Add(getDS4ControlsByName(item.Name), item.InnerText);
+                                UpdateDs4ControllerExtra(device, item.Name, false, item.InnerText);
+                                customMapExtras.Add(GetDs4ControlsByName(item.Name), item.InnerText);
                             }
                             else
                                 ParentItem.RemoveChild(item);
@@ -3285,8 +3285,8 @@ namespace DS4Windows
 
                                 if (keyType != DS4KeyType.None && Enum.TryParse(item.Name, out DS4Controls currentControl))
                                 {
-                                    UpdateDS4CKeyType(device, item.Name, false, keyType);
-                                    customMapKeyTypes.Add(getDS4ControlsByName(item.Name), keyType);
+                                    UpdateDs4ControllerKeyType(device, item.Name, false, keyType);
+                                    customMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
                                 }
                             }
                         }
@@ -3303,8 +3303,8 @@ namespace DS4Windows
 
                             if (Enum.TryParse(item.Name, out DS4Controls currentControl))
                             {
-                                UpdateDS4CSetting(device, item.Name, true, getX360ControlsByName(item.InnerText), "", DS4KeyType.None, shiftT);
-                                shiftCustomMapButtons.Add(getDS4ControlsByName(item.Name), getX360ControlsByName(item.InnerText));
+                                UpdateDs4ControllerSetting(device, item.Name, true, GetX360ControlsByName(item.InnerText), "", DS4KeyType.None, shiftT);
+                                shiftCustomMapButtons.Add(GetDs4ControlsByName(item.Name), GetX360ControlsByName(item.InnerText));
                             }
                         }
                     }
@@ -3314,7 +3314,7 @@ namespace DS4Windows
                     {
                         foreach (XmlElement item in ParentItem.ChildNodes)
                         {
-                            shiftCustomMapMacros.Add(getDS4ControlsByName(item.Name), item.InnerText);
+                            shiftCustomMapMacros.Add(GetDs4ControlsByName(item.Name), item.InnerText);
                             string[] skeys;
                             int[] keys;
                             if (!string.IsNullOrEmpty(item.InnerText))
@@ -3337,7 +3337,7 @@ namespace DS4Windows
 
                             if (Enum.TryParse(item.Name, out DS4Controls currentControl))
                             {
-                                UpdateDS4CSetting(device, item.Name, true, keys, "", DS4KeyType.None, shiftT);
+                                UpdateDs4ControllerSetting(device, item.Name, true, keys, "", DS4KeyType.None, shiftT);
                             }
                         }
                     }
@@ -3355,8 +3355,8 @@ namespace DS4Windows
 
                                 if (Enum.TryParse(item.Name, out DS4Controls currentControl))
                                 {
-                                    UpdateDS4CSetting(device, item.Name, true, wvk, "", DS4KeyType.None, shiftT);
-                                    shiftCustomMapKeys.Add(getDS4ControlsByName(item.Name), wvk);
+                                    UpdateDs4ControllerSetting(device, item.Name, true, wvk, "", DS4KeyType.None, shiftT);
+                                    shiftCustomMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
                                 }
                             }
                         }
@@ -3371,8 +3371,8 @@ namespace DS4Windows
                             {
                                 if (Enum.TryParse(item.Name, out DS4Controls currentControl))
                                 {
-                                    UpdateDS4CExtra(device, item.Name, true, item.InnerText);
-                                    shiftCustomMapExtras.Add(getDS4ControlsByName(item.Name), item.InnerText);
+                                    UpdateDs4ControllerExtra(device, item.Name, true, item.InnerText);
+                                    shiftCustomMapExtras.Add(GetDs4ControlsByName(item.Name), item.InnerText);
                                 }
                             }
                             else
@@ -3401,8 +3401,8 @@ namespace DS4Windows
 
                                 if (keyType != DS4KeyType.None && Enum.TryParse(item.Name, out DS4Controls currentControl))
                                 {
-                                    UpdateDS4CKeyType(device, item.Name, true, keyType);
-                                    shiftCustomMapKeyTypes.Add(getDS4ControlsByName(item.Name), keyType);
+                                    UpdateDs4ControllerKeyType(device, item.Name, true, keyType);
+                                    shiftCustomMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
                                 }
                             }
                         }
@@ -4136,7 +4136,7 @@ namespace DS4Windows
             return saved;
         }
 
-        public bool createLinkedProfiles()
+        public bool CreateLinkedProfiles()
         {
             bool saved = true;
             XmlDocument m_Xdoc = new XmlDocument();
@@ -4230,14 +4230,14 @@ namespace DS4Windows
             }
             else
             {
-                saved = createLinkedProfiles();
+                saved = CreateLinkedProfiles();
                 saved = saved && SaveLinkedProfiles();
             }
 
             return saved;
         }
 
-        public bool createControllerConfigs()
+        public bool CreateControllerConfigs()
         {
             bool saved = true;
             XmlDocument configXdoc = new XmlDocument();
@@ -4266,7 +4266,7 @@ namespace DS4Windows
             bool loaded = false;
 
             if (device == null) return false;
-            if (!File.Exists(ControllerConfigsPath)) createControllerConfigs();
+            if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
 
             try
             {
@@ -4303,7 +4303,7 @@ namespace DS4Windows
             bool saved = true;
 
             if (device == null) return false;
-            if (!File.Exists(ControllerConfigsPath)) createControllerConfigs();
+            if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
 
             try
             {
@@ -4376,29 +4376,30 @@ namespace DS4Windows
             return saved;
         }
 
-        public void UpdateDS4CSetting(int deviceNum, string buttonName, bool shift, object action, string exts, DS4KeyType kt, int trigger = 0)
+        public void UpdateDs4ControllerSetting(int deviceNum, string buttonName, bool shift, object action, string exts,
+            DS4KeyType kt, int trigger = 0)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
-                dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                dc = (DS4Controls) Enum.Parse(typeof(DS4Controls), buttonName, true);
 
-            int temp = (int)dc;
+            var temp = (int) dc;
             if (temp > 0)
             {
-                int index = temp - 1;
-                DS4ControlSettings dcs = ds4settings[deviceNum][index];
+                var index = temp - 1;
+                var dcs = ds4settings[deviceNum][index];
                 dcs.UpdateSettings(shift, action, exts, kt, trigger);
                 Global.RefreshActionAlias(dcs, shift);
             }
         }
 
-        public void UpdateDS4CExtra(int deviceNum, string buttonName, bool shift, string exts)
+        public void UpdateDs4ControllerExtra(int deviceNum, string buttonName, bool shift, string exts)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
                 dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
 
@@ -4414,19 +4415,19 @@ namespace DS4Windows
             }
         }
 
-        private void UpdateDS4CKeyType(int deviceNum, string buttonName, bool shift, DS4KeyType keyType)
+        private void UpdateDs4ControllerKeyType(int deviceNum, string buttonName, bool shift, DS4KeyType keyType)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
-                dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                dc = (DS4Controls) Enum.Parse(typeof(DS4Controls), buttonName, true);
 
-            int temp = (int)dc;
+            var temp = (int) dc;
             if (temp > 0)
             {
-                int index = temp - 1;
-                DS4ControlSettings dcs = ds4settings[deviceNum][index];
+                var index = temp - 1;
+                var dcs = ds4settings[deviceNum][index];
                 if (shift)
                     dcs.shiftKeyType = keyType;
                 else
@@ -4434,14 +4435,29 @@ namespace DS4Windows
             }
         }
 
-        public ControlActionData GetDS4Action(int deviceNum, string buttonName, bool shift)
+        public ControlActionData GetDs4Action(int deviceNum, string buttonName, bool shift)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
-                dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                dc = (DS4Controls) Enum.Parse(typeof(DS4Controls), buttonName, true);
 
+            var temp = (int) dc;
+            if (temp > 0)
+            {
+                var index = temp - 1;
+                var dcs = ds4settings[deviceNum][index];
+                if (shift)
+                    return dcs.shiftAction;
+                return dcs.action;
+            }
+
+            return null;
+        }
+
+        public ControlActionData GetDs4Action(int deviceNum, DS4Controls dc, bool shift)
+        {
             int temp = (int)dc;
             if (temp > 0)
             {
@@ -4460,90 +4476,68 @@ namespace DS4Windows
             return null;
         }
 
-        public ControlActionData GetDS4Action(int deviceNum, DS4Controls dc, bool shift)
-        {
-            int temp = (int)dc;
-            if (temp > 0)
-            {
-                int index = temp - 1;
-                DS4ControlSettings dcs = ds4settings[deviceNum][index];
-                if (shift)
-                {
-                    return dcs.shiftAction;
-                }
-                else
-                {
-                    return dcs.action;
-                }
-            }
-
-            return null;
-        }
-
-        public string GetDS4Extra(int deviceNum, string buttonName, bool shift)
+        public string GetDs4Extra(int deviceNum, string buttonName, bool shift)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
-                dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                dc = (DS4Controls) Enum.Parse(typeof(DS4Controls), buttonName, true);
 
-            int temp = (int)dc;
+            var temp = (int) dc;
             if (temp > 0)
             {
-                int index = temp - 1;
-                DS4ControlSettings dcs = ds4settings[deviceNum][index];
+                var index = temp - 1;
+                var dcs = ds4settings[deviceNum][index];
                 if (shift)
                     return dcs.shiftExtras;
-                else
-                    return dcs.extras;
+                return dcs.extras;
             }
 
             return null;
         }
 
-        public DS4KeyType GetDS4KeyType(int deviceNum, string buttonName, bool shift)
+        public DS4KeyType GetDs4KeyType(int deviceNum, string buttonName, bool shift)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
-                dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                dc = (DS4Controls) Enum.Parse(typeof(DS4Controls), buttonName, true);
 
-            int temp = (int)dc;
+            var temp = (int) dc;
             if (temp > 0)
             {
-                int index = temp - 1;
-                DS4ControlSettings dcs = ds4settings[deviceNum][index];
+                var index = temp - 1;
+                var dcs = ds4settings[deviceNum][index];
                 if (shift)
                     return dcs.shiftKeyType;
-                else
-                    return dcs.keyType;
+                return dcs.keyType;
             }
 
             return DS4KeyType.None;
         }
 
-        public int GetDS4STrigger(int deviceNum, string buttonName)
+        public int GetDs4STrigger(int deviceNum, string buttonName)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
-                dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                dc = (DS4Controls) Enum.Parse(typeof(DS4Controls), buttonName, true);
 
-            int temp = (int)dc;
+            var temp = (int) dc;
             if (temp > 0)
             {
-                int index = temp - 1;
-                DS4ControlSettings dcs = ds4settings[deviceNum][index];
+                var index = temp - 1;
+                var dcs = ds4settings[deviceNum][index];
                 return dcs.shiftTrigger;
             }
 
             return 0;
         }
 
-        public int GetDS4STrigger(int deviceNum, DS4Controls dc)
+        public int GetDs4STrigger(int deviceNum, DS4Controls dc)
         {
             int temp = (int)dc;
             if (temp > 0)
@@ -4556,11 +4550,11 @@ namespace DS4Windows
             return 0;
         }
 
-        public DS4ControlSettings GetDS4CSetting(int deviceNum, string buttonName)
+        public DS4ControlSettings GetDs4ControllerSetting(int deviceNum, string buttonName)
         {
             DS4Controls dc;
             if (buttonName.StartsWith("bn"))
-                dc = getDS4ControlsByName(buttonName);
+                dc = GetDs4ControlsByName(buttonName);
             else
                 dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
 
@@ -4575,7 +4569,7 @@ namespace DS4Windows
             return null;
         }
 
-        public DS4ControlSettings GetDS4CSetting(int deviceNum, DS4Controls dc)
+        public DS4ControlSettings GetDs4ControllerSetting(int deviceNum, DS4Controls dc)
         {
             int temp = (int)dc;
             if (temp > 0)
@@ -4768,7 +4762,7 @@ namespace DS4Windows
             // performing this upon program startup before loading devices.
             if (xinputChange)
             {
-                CheckOldDevicestatus(device, control, oldContType,
+                CheckOldDeviceStatus(device, control, oldContType,
                     out xinputPlug, out xinputStatus);
             }
 
@@ -4780,7 +4774,7 @@ namespace DS4Windows
             containsCustomExtras[device] = false;
         }
 
-        public void LoadBlankDS4Profile(int device, bool launchprogram, ControlService control,
+        public void LoadBlankDs4Profile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
@@ -4827,7 +4821,7 @@ namespace DS4Windows
             // performing this upon program startup before loading devices.
             if (xinputChange)
             {
-                CheckOldDevicestatus(device, control, oldContType,
+                CheckOldDeviceStatus(device, control, oldContType,
                     out xinputPlug, out xinputStatus);
             }
 
@@ -4862,7 +4856,7 @@ namespace DS4Windows
             // performing this upon program startup before loading devices.
             if (xinputChange)
             {
-                CheckOldDevicestatus(device, control, oldContType,
+                CheckOldDeviceStatus(device, control, oldContType,
                     out xinputPlug, out xinputStatus);
             }
 
@@ -4887,8 +4881,7 @@ namespace DS4Windows
                 PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
         }
-
-
+        
         public void LoadDefaultDS4GamepadGyroProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
@@ -4943,7 +4936,7 @@ namespace DS4Windows
             // performing this upon program startup before loading devices.
             if (xinputChange)
             {
-                CheckOldDevicestatus(device, control, oldContType,
+                CheckOldDeviceStatus(device, control, oldContType,
                     out xinputPlug, out xinputStatus);
             }
 
@@ -4974,8 +4967,7 @@ namespace DS4Windows
             }
         }
 
-
-        public void LoadDefaultDS4MixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
+        public void LoadDefaultDs4MixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
@@ -5018,13 +5010,13 @@ namespace DS4Windows
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
-            DS4ControlSettings setting = GetDS4CSetting(device, DS4Controls.RYNeg);
+            DS4ControlSettings setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
             setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RYPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
             setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
             setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
             setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
             StickDeadZoneInfo rsInfo = rsModInfo[device];
@@ -5058,7 +5050,7 @@ namespace DS4Windows
             // performing this upon program startup before loading devices.
             if (xinputChange)
             {
-                CheckOldDevicestatus(device, control, oldContType,
+                CheckOldDeviceStatus(device, control, oldContType,
                     out xinputPlug, out xinputStatus);
             }
 
@@ -5069,13 +5061,13 @@ namespace DS4Windows
             containsCustomAction[device] = false;
             containsCustomExtras[device] = false;
 
-            DS4ControlSettings setting = GetDS4CSetting(device, DS4Controls.RYNeg);
+            DS4ControlSettings setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
             setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RYPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
             setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
             setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
             setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
             StickDeadZoneInfo rsInfo = rsModInfo[device];
@@ -5107,7 +5099,7 @@ namespace DS4Windows
             // performing this upon program startup before loading devices.
             if (xinputChange)
             {
-                CheckOldDevicestatus(device, control, oldContType,
+                CheckOldDeviceStatus(device, control, oldContType,
                     out xinputPlug, out xinputStatus);
             }
 
@@ -5135,58 +5127,58 @@ namespace DS4Windows
             // Flag to unplug virtual controller
             dinputOnly[device] = true;
 
-            DS4ControlSettings setting = GetDS4CSetting(device, DS4Controls.LYNeg);
+            DS4ControlSettings setting = GetDs4ControllerSetting(device, DS4Controls.LYNeg);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.W), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.LXNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.LXNeg);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.A), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.LYPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.LYPos);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.S), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.LXPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.LXPos);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.D), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.L3);
+            setting = GetDs4ControllerSetting(device, DS4Controls.L3);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftShift), "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.RYNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
             setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RYPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
             setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
             setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
             setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.R3);
+            setting = GetDs4ControllerSetting(device, DS4Controls.R3);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftCtrl), "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.DpadUp);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadUp);
             setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.DpadRight);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadRight);
             setting.UpdateSettings(false, X360Controls.WDOWN, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.DpadDown);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadDown);
             setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.DpadLeft);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadLeft);
             setting.UpdateSettings(false, X360Controls.WUP, "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.Cross);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Cross);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Space), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Square);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Square);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.F), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Triangle);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Triangle);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.E), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Circle);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Circle);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.C), "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.L1);
+            setting = GetDs4ControllerSetting(device, DS4Controls.L1);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Q), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.L2);
+            setting = GetDs4ControllerSetting(device, DS4Controls.L2);
             setting.UpdateSettings(false, X360Controls.RightMouse, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.R1);
+            setting = GetDs4ControllerSetting(device, DS4Controls.R1);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.R), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.R2);
+            setting = GetDs4ControllerSetting(device, DS4Controls.R2);
             setting.UpdateSettings(false, X360Controls.LeftMouse, "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.Share);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Share);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Tab), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Options);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Options);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Escape), "", DS4KeyType.None);
 
             // If a device exists, make sure to transfer relevant profile device
@@ -5213,7 +5205,7 @@ namespace DS4Windows
             // performing this upon program startup before loading devices.
             if (xinputChange)
             {
-                CheckOldDevicestatus(device, control, oldContType,
+                CheckOldDeviceStatus(device, control, oldContType,
                     out xinputPlug, out xinputStatus);
             }
 
@@ -5248,59 +5240,59 @@ namespace DS4Windows
             // Flag to unplug virtual controller
             dinputOnly[device] = true;
 
-            DS4ControlSettings setting = GetDS4CSetting(device, DS4Controls.LYNeg);
+            DS4ControlSettings setting = GetDs4ControllerSetting(device, DS4Controls.LYNeg);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.W), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.LXNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.LXNeg);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.A), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.LYPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.LYPos);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.S), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.LXPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.LXPos);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.D), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.L3);
+            setting = GetDs4ControllerSetting(device, DS4Controls.L3);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftShift), "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.RYNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
             setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RYPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
             setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXNeg);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
             setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.RXPos);
+            setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
             setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.R3);
+            setting = GetDs4ControllerSetting(device, DS4Controls.R3);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftCtrl), "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.DpadUp);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadUp);
             setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.DpadRight);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadRight);
             setting.UpdateSettings(false, X360Controls.WDOWN, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.DpadDown);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadDown);
             setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.DpadLeft);
+            setting = GetDs4ControllerSetting(device, DS4Controls.DpadLeft);
             setting.UpdateSettings(false, X360Controls.WUP, "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.Cross);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Cross);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Space), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Square);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Square);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.F), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Triangle);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Triangle);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.E), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Circle);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Circle);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.C), "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.L1);
+            setting = GetDs4ControllerSetting(device, DS4Controls.L1);
             //setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Q), "", DS4KeyType.None);
             setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.L2);
+            setting = GetDs4ControllerSetting(device, DS4Controls.L2);
             setting.UpdateSettings(false, X360Controls.RightMouse, "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.R1);
+            setting = GetDs4ControllerSetting(device, DS4Controls.R1);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.R), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.R2);
+            setting = GetDs4ControllerSetting(device, DS4Controls.R2);
             setting.UpdateSettings(false, X360Controls.LeftMouse, "", DS4KeyType.None);
 
-            setting = GetDS4CSetting(device, DS4Controls.Share);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Share);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Tab), "", DS4KeyType.None);
-            setting = GetDS4CSetting(device, DS4Controls.Options);
+            setting = GetDs4ControllerSetting(device, DS4Controls.Options);
             setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Escape), "", DS4KeyType.None);
 
             // If a device exists, make sure to transfer relevant profile device
@@ -5311,7 +5303,7 @@ namespace DS4Windows
             }
         }
 
-        private void CheckOldDevicestatus(int device, ControlService control,
+        private void CheckOldDeviceStatus(int device, ControlService control,
             OutContType oldContType, out bool xinputPlug, out bool xinputStatus)
         {
             xinputPlug = false;
