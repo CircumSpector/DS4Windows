@@ -16,7 +16,7 @@ namespace DS4WinWPF.DS4Control
         public static bool ReadConfig(OutputSlotManager slotManager)
         {
             bool result = false;
-            string output_path = Path.Combine(Global.appdatapath, CONFIG_FILENAME);
+            string output_path = Path.Combine(Global.RuntimeAppDataPath, CONFIG_FILENAME);
             if (File.Exists(output_path))
             {
                 XmlDocument m_Xdoc = new XmlDocument();
@@ -91,7 +91,7 @@ namespace DS4WinWPF.DS4Control
 
             m_Xdoc.AppendChild(baseElement);
 
-            string output_path = Path.Combine(Global.appdatapath, CONFIG_FILENAME);
+            string output_path = Path.Combine(Global.RuntimeAppDataPath, CONFIG_FILENAME);
             try { m_Xdoc.Save(output_path); result = true; }
             catch (UnauthorizedAccessException) { result = false; }
 

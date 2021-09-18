@@ -25,7 +25,7 @@ namespace DS4WinWPF.DS4Forms
     /// </summary>
     public partial class AutoProfiles : UserControl
     {
-        protected String m_Profile = DS4Windows.Global.appdatapath + "\\Auto Profiles.xml";
+        protected String m_Profile = DS4Windows.Global.RuntimeAppDataPath + "\\Auto Profiles.xml";
         public const string steamCommx86Loc = @"C:\Program Files (x86)\Steam\steamapps\common";
         public const string steamCommLoc = @"C:\Program Files\Steam\steamapps\common";
         private string steamgamesdir;
@@ -44,7 +44,7 @@ namespace DS4WinWPF.DS4Forms
         {
             InitializeComponent();
 
-            if (!File.Exists(DS4Windows.Global.appdatapath + @"\Auto Profiles.xml"))
+            if (!File.Exists(DS4Windows.Global.RuntimeAppDataPath + @"\Auto Profiles.xml"))
                 DS4Windows.Global.CreateAutoProfiles(m_Profile);
 
             //LoadP();
@@ -312,7 +312,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 editControlsPanel.DataContext = null;
                 autoProfVM.RemoveAutoProfileEntry(autoProfVM.SelectedItem);
-                autoProfVM.AutoProfileHolder.Save(DS4Windows.Global.appdatapath + @"\Auto Profiles.xml");
+                autoProfVM.AutoProfileHolder.Save(DS4Windows.Global.RuntimeAppDataPath + @"\Auto Profiles.xml");
                 autoProfVM.SelectedItem = null;
             }
         }
@@ -330,7 +330,7 @@ namespace DS4WinWPF.DS4Forms
                     autoProfVM.PersistAutoProfileEntry(autoProfVM.SelectedItem);
                 }
 
-                autoProfVM.AutoProfileHolder.Save(DS4Windows.Global.appdatapath + @"\Auto Profiles.xml");
+                autoProfVM.AutoProfileHolder.Save(DS4Windows.Global.RuntimeAppDataPath + @"\Auto Profiles.xml");
             }
         }
 
@@ -362,7 +362,7 @@ namespace DS4WinWPF.DS4Forms
             if (autoProfVM.SelectedItem != null && sender != null)
             {
                 if(autoProfVM.MoveItemUpDown(autoProfVM.SelectedItem, ((sender as MenuItem).Name == "MoveUp") ? -1 : 1))
-                    autoProfVM.AutoProfileHolder.Save(DS4Windows.Global.appdatapath + @"\Auto Profiles.xml");
+                    autoProfVM.AutoProfileHolder.Save(DS4Windows.Global.RuntimeAppDataPath + @"\Auto Profiles.xml");
             }
         }
     }

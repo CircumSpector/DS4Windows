@@ -62,9 +62,11 @@ namespace DS4Windows
 
         public static bool IsWin10OrGreater => Environment.OSVersion.Version.Major >= 10;
 
-        public static string appdatapath;
-        public static bool firstRun = false;
-        public static bool multisavespots = false;
+        public static string RuntimeAppDataPath { get; set; }
+
+        public static bool IsFirstRun { get; set; } = false;
+
+        public static bool HasMultipleSaveSpots { get; set; } = false;
 
         public static string RoamingAppDataPath =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DS4Windows");
@@ -395,11 +397,11 @@ namespace DS4Windows
 
         public static void SaveWhere(string path)
         {
-            appdatapath = path;
-            m_Config.m_Profile = appdatapath + "\\Profiles.xml";
-            m_Config.m_Actions = appdatapath + "\\Actions.xml";
-            m_Config.m_linkedProfiles = Global.appdatapath + "\\LinkedProfiles.xml";
-            m_Config.m_controllerConfigs = Global.appdatapath + "\\ControllerConfigs.xml";
+            RuntimeAppDataPath = path;
+            m_Config.m_Profile = RuntimeAppDataPath + "\\Profiles.xml";
+            m_Config.m_Actions = RuntimeAppDataPath + "\\Actions.xml";
+            m_Config.m_linkedProfiles = Global.RuntimeAppDataPath + "\\LinkedProfiles.xml";
+            m_Config.m_controllerConfigs = Global.RuntimeAppDataPath + "\\ControllerConfigs.xml";
         }
 
         public static bool SaveDefault(string path)
@@ -769,8 +771,8 @@ namespace DS4Windows
             if (programFolderAutoProfilesExists && appDataAutoProfilesExists &&
                 !isSameFolder)
             {
-                Global.firstRun = true;
-                Global.multisavespots = true;
+                Global.IsFirstRun = true;
+                Global.HasMultipleSaveSpots = true;
             }
             else if (programFolderAutoProfilesExists)
             {
@@ -786,8 +788,8 @@ namespace DS4Windows
             }
             else if (!programFolderAutoProfilesExists && !appDataAutoProfilesExists)
             {
-                Global.firstRun = true;
-                Global.multisavespots = false;
+                Global.IsFirstRun = true;
+                Global.HasMultipleSaveSpots = false;
             }
         }
 
@@ -806,7 +808,7 @@ namespace DS4Windows
             XmlDocument xDoc = new XmlDocument();
             try
             {
-                string[] profiles = Directory.GetFiles(appdatapath + @"\Profiles\");
+                string[] profiles = Directory.GetFiles(RuntimeAppDataPath + @"\Profiles\");
                 string s = string.Empty;
                 //foreach (string s in profiles)
                 for (int i = 0, proflen = profiles.Length; i < proflen; i++)
@@ -1989,7 +1991,7 @@ namespace DS4Windows
         public static bool LoadTempProfile(int device, string name, bool launchprogram,
             ControlService control, bool xinputChange = true)
         {
-            bool result = m_Config.LoadProfile(device, launchprogram, control, appdatapath + @"\Profiles\" + name + ".xml");
+            bool result = m_Config.LoadProfile(device, launchprogram, control, RuntimeAppDataPath + @"\Profiles\" + name + ".xml");
             TempProfileNames[device] = name;
             UseTempProfiles[device] = true;
             TempProfileDistance[device] = name.ToLower().Contains("distance");

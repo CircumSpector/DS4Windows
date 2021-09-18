@@ -441,9 +441,9 @@ namespace DS4Windows
         public const int DEFAULT_ENABLE_IDLE_DISCONN_MINS = 15;
 
         public String m_Profile = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName + "\\Profiles.xml";
-        public String m_Actions = Global.appdatapath + "\\Actions.xml";
-        public string m_linkedProfiles = Global.appdatapath + "\\LinkedProfiles.xml";
-        public string m_controllerConfigs = Global.appdatapath + "\\ControllerConfigs.xml";
+        public String m_Actions = Global.RuntimeAppDataPath + "\\Actions.xml";
+        public string m_linkedProfiles = Global.RuntimeAppDataPath + "\\LinkedProfiles.xml";
+        public string m_controllerConfigs = Global.RuntimeAppDataPath + "\\ControllerConfigs.xml";
 
         protected XmlDocument m_Xdoc = new XmlDocument();
         // ninth (fifth in old builds) value used for options, not last controller
@@ -1146,13 +1146,13 @@ namespace DS4Windows
         public bool SaveProfile(int device, string proName)
         {
             bool Saved = true;
-            //string path = Global.appdatapath + @"\Profiles\" + Path.GetFileNameWithoutExtension(proName) + ".xml";
+            //string path = Global.RuntimeAppDataPath + @"\Profiles\" + Path.GetFileNameWithoutExtension(proName) + ".xml";
             if (proName.EndsWith(Global.XML_EXTENSION))
             {
                 proName = proName.Remove(proName.LastIndexOf(Global.XML_EXTENSION));
             }
 
-            string path = $@"{Global.appdatapath}\Profiles\{proName}{Global.XML_EXTENSION}";
+            string path = $@"{Global.RuntimeAppDataPath}\Profiles\{proName}{Global.XML_EXTENSION}";
             try
             {
                 XmlNode tmpNode;
@@ -1897,7 +1897,7 @@ namespace DS4Windows
             bool migratePerformed = false;
             string profilepath;
             if (propath == "")
-                profilepath = Global.appdatapath + @"\Profiles\" + profilePath[device] + ".xml";
+                profilepath = Global.RuntimeAppDataPath + @"\Profiles\" + profilePath[device] + ".xml";
             else
                 profilepath = propath;
 
@@ -4286,7 +4286,7 @@ namespace DS4Windows
         public bool LoadActions()
         {
             bool saved = true;
-            if (!File.Exists(Global.appdatapath + "\\Actions.xml"))
+            if (!File.Exists(Global.RuntimeAppDataPath + "\\Actions.xml"))
             {
                 SaveAction("Disconnect Controller", "PS/Options", 5, "0", false);
                 saved = false;
@@ -4296,7 +4296,7 @@ namespace DS4Windows
             {
                 actions.Clear();
                 XmlDocument doc = new XmlDocument();
-                doc.Load(Global.appdatapath + "\\Actions.xml");
+                doc.Load(Global.RuntimeAppDataPath + "\\Actions.xml");
                 XmlNodeList actionslist = doc.SelectNodes("Actions/Action");
                 string name, controls, type, details, extras, extras2;
                 Mapping.actionDone.Clear();

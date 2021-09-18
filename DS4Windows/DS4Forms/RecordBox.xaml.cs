@@ -299,7 +299,7 @@ namespace DS4WinWPF.DS4Forms
             dialog.DefaultExt = ".txt";
             dialog.Filter = "Text Documents (*.txt)|*.txt";
             dialog.Title = "Select Export File";
-            dialog.InitialDirectory = $"{DS4Windows.Global.appdatapath}\\Macros";
+            dialog.InitialDirectory = $"{DS4Windows.Global.RuntimeAppDataPath}\\Macros";
             if (dialog.ShowDialog() == true)
             {
                 //recordBoxVM.MacroSteps.Clear();
@@ -476,7 +476,7 @@ namespace DS4WinWPF.DS4Forms
             dialog.DefaultExt = ".txt";
             dialog.Filter = "Text Documents (*.txt)|*.txt";
             dialog.Title = "Select Preset File";
-            dialog.InitialDirectory = $"{DS4Windows.Global.appdatapath}\\Macros";
+            dialog.InitialDirectory = $"{DS4Windows.Global.RuntimeAppDataPath}\\Macros";
             if (dialog.ShowDialog() == true)
             {
                 recordBoxVM.MacroSteps.Clear();

@@ -146,17 +146,17 @@ namespace DS4WinWPF
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
             DS4Windows.Global.FindConfigLocation();
-            bool firstRun = DS4Windows.Global.firstRun;
+            bool firstRun = DS4Windows.Global.IsFirstRun;
             if (firstRun)
             {
                 DS4Forms.SaveWhere savewh =
-                    new DS4Forms.SaveWhere(DS4Windows.Global.multisavespots);
+                    new DS4Forms.SaveWhere(DS4Windows.Global.HasMultipleSaveSpots);
                 savewh.ShowDialog();
             }
 
             if (firstRun && !CreateConfDirSkeleton())
             {
-                MessageBox.Show($"Cannot create config folder structure in {DS4Windows.Global.appdatapath}. Exiting",
+                MessageBox.Show($"Cannot create config folder structure in {DS4Windows.Global.RuntimeAppDataPath}. Exiting",
                     "DS4Windows", MessageBoxButton.OK, MessageBoxImage.Error);
                 Current.Shutdown(1);
             }
@@ -178,7 +178,7 @@ namespace DS4WinWPF
             bool readAppConfig = DS4Windows.Global.Load();
             if (!firstRun && !readAppConfig)
             {
-                logger.Info($@"Profiles.xml not read at location ${DS4Windows.Global.appdatapath}\Profiles.xml. Using default app settings");
+                logger.Info($@"Profiles.xml not read at location ${DS4Windows.Global.RuntimeAppDataPath}\Profiles.xml. Using default app settings");
             }
 
             if (firstRun)
@@ -278,10 +278,10 @@ namespace DS4WinWPF
             bool result = true;
             try
             {
-                Directory.CreateDirectory(DS4Windows.Global.appdatapath);
-                Directory.CreateDirectory(DS4Windows.Global.appdatapath + @"\Profiles\");
-                Directory.CreateDirectory(DS4Windows.Global.appdatapath + @"\Logs\");
-                //Directory.CreateDirectory(DS4Windows.Global.appdatapath + @"\Macros\");
+                Directory.CreateDirectory(DS4Windows.Global.RuntimeAppDataPath);
+                Directory.CreateDirectory(DS4Windows.Global.RuntimeAppDataPath + @"\Profiles\");
+                Directory.CreateDirectory(DS4Windows.Global.RuntimeAppDataPath + @"\Logs\");
+                //Directory.CreateDirectory(DS4Windows.Global.RuntimeAppDataPath + @"\Macros\");
             }
             catch (UnauthorizedAccessException)
             {
@@ -322,7 +322,7 @@ namespace DS4WinWPF
                         "DS4Windows");
                 }
 
-                DS4Windows.Global.appdatapath = null;
+                DS4Windows.Global.RuntimeAppDataPath = null;
                 skipSave = true;
                 Current.Shutdown();
                 return;

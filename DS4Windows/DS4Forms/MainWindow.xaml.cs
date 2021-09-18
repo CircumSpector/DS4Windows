@@ -173,7 +173,7 @@ namespace DS4WinWPF.DS4Forms
         {
             // Sorry other devs, gonna have to find your own server
             Uri url = new Uri("https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/newest.txt");
-            string filename = Global.appdatapath + "\\version.txt";
+            string filename = Global.RuntimeAppDataPath + "\\version.txt";
             bool success = false;
             using (var downloadStream = new FileStream(filename, FileMode.Create))
             {
@@ -220,7 +220,7 @@ namespace DS4WinWPF.DS4Forms
         {
             string version = Global.ExecutableProductVersion;
             string newversion = string.Empty;
-            string versionFilePath = Global.appdatapath + "\\version.txt";
+            string versionFilePath = Global.RuntimeAppDataPath + "\\version.txt";
             ulong lastVersionNum = Global.LastVersionCheckedNum;
             //ulong lastVersion = Global.CompileVersionNumberFromString("2.1.1");
 
@@ -297,13 +297,13 @@ namespace DS4WinWPF.DS4Forms
                 else
                 {
                     if (versionFileExists)
-                        File.Delete(Global.appdatapath + "\\version.txt");
+                        File.Delete(Global.RuntimeAppDataPath + "\\version.txt");
                 }
             }
             else
             {
                 if (versionFileExists)
-                    File.Delete(Global.appdatapath + "\\version.txt");
+                    File.Delete(Global.RuntimeAppDataPath + "\\version.txt");
 
                 if (showstatus)
                 {
@@ -895,7 +895,7 @@ Suspend support not enabled.", true);
             dialog.Filter = "Text Documents (*.txt)|*.txt";
             dialog.Title = "Select Export File";
             // TODO: Expose config dir
-            dialog.InitialDirectory = Global.appdatapath;
+            dialog.InitialDirectory = Global.RuntimeAppDataPath;
             if (dialog.ShowDialog() == true)
             {
                 LogWriter logWriter = new LogWriter(dialog.FileName, logvm.LogItems.ToList());
@@ -1133,7 +1133,7 @@ Suspend support not enabled.", true);
                                     if (int.TryParse(strData[1], out tdevice)) tdevice--;
 
                                     if (tdevice >= 0 && tdevice < ControlService.MAX_DS4_CONTROLLER_COUNT &&
-                                            File.Exists(Global.appdatapath + "\\Profiles\\" + strData[2] + ".xml"))
+                                            File.Exists(Global.RuntimeAppDataPath + "\\Profiles\\" + strData[2] + ".xml"))
                                     {
                                         if (strData[0] == "loadprofile")
                                         {
@@ -1363,7 +1363,7 @@ Suspend support not enabled.", true);
 
         private void ProfFolderBtn_Click(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo(Global.appdatapath + "\\Profiles");
+            ProcessStartInfo startInfo = new ProcessStartInfo(Global.RuntimeAppDataPath + "\\Profiles");
             startInfo.UseShellExecute = true;
             try
             {
@@ -1445,7 +1445,7 @@ Suspend support not enabled.", true);
             dialog.DefaultExt = ".xml";
             dialog.Filter = "DS4Windows Profile (*.xml)|*.xml";
             dialog.Title = "Select Profile to Import File";
-            if (Global.appdatapath != Global.ExecutableDirectory)
+            if (Global.RuntimeAppDataPath != Global.ExecutableDirectory)
                 dialog.InitialDirectory = Path.Combine(Global.RoamingAppDataPath, "Profiles");
             else
                 dialog.InitialDirectory = Global.ExecutableDirectory + @"\Profiles\";
@@ -1457,7 +1457,7 @@ Suspend support not enabled.", true);
                 {
                     string profilename = System.IO.Path.GetFileName(files[i]);
                     string basename = System.IO.Path.GetFileNameWithoutExtension(files[i]);
-                    File.Copy(dialog.FileNames[i], Global.appdatapath + "\\Profiles\\" + profilename, true);
+                    File.Copy(dialog.FileNames[i], Global.RuntimeAppDataPath + "\\Profiles\\" + profilename, true);
                     profileListHolder.AddProfileSort(basename);
                 }
             }
@@ -1474,7 +1474,7 @@ Suspend support not enabled.", true);
                 dialog.Title = "Select Profile to Export File";
                 Stream stream;
                 int idx = profilesListBox.SelectedIndex;
-                Stream profile = new StreamReader(Global.appdatapath + "\\Profiles\\" + profileListHolder.ProfileListCol[idx].Name + ".xml").BaseStream;
+                Stream profile = new StreamReader(Global.RuntimeAppDataPath + "\\Profiles\\" + profileListHolder.ProfileListCol[idx].Name + ".xml").BaseStream;
                 if (dialog.ShowDialog() == true)
                 {
                     if ((stream = dialog.OpenFile()) != null)
@@ -1748,7 +1748,7 @@ Suspend support not enabled.", true);
             {
                 int idx = profilesListBox.SelectedIndex;
                 ProfileEntity entity = profileListHolder.ProfileListCol[idx];
-                string filename = Path.Combine(Global.appdatapath,
+                string filename = Path.Combine(Global.RuntimeAppDataPath,
                     "Profiles", $"{entity.Name}.xml");
 
                 // Disallow renaming Default profile

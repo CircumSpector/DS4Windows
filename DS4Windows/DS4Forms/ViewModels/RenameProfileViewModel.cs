@@ -24,7 +24,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool ProfileFileExists()
         {
-            string filePath = Path.Combine(Global.appdatapath,
+            string filePath = Path.Combine(Global.RuntimeAppDataPath,
                 "Profiles", $"{profileName}.xml");
             return File.Exists(filePath);
         }

@@ -790,7 +790,7 @@ namespace DS4WinWPF.DS4Forms
                 {
                     if (temp != currentProfile.Name)
                     {
-                        //File.Delete(DS4Windows.Global.appdatapath + @"\Profiles\" + currentProfile.Name + ".xml");
+                        //File.Delete(DS4Windows.Global.RuntimeAppDataPath + @"\Profiles\" + currentProfile.Name + ".xml");
                         currentProfile.DeleteFile();
                         currentProfile.Name = temp;
                     }
@@ -804,7 +804,7 @@ namespace DS4WinWPF.DS4Forms
                 }
                 else
                 {
-                    string tempprof = Global.appdatapath + @"\Profiles\" + temp + ".xml";
+                    string tempprof = Global.RuntimeAppDataPath + @"\Profiles\" + temp + ".xml";
                     if (!File.Exists(tempprof))
                     {
                         Global.SaveProfile(deviceNum, temp);

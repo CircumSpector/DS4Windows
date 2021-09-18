@@ -29,7 +29,7 @@ namespace DS4WinWPF
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                string filepath = DS4Windows.Global.appdatapath + @"\Profiles\" + name + ".xml";
+                string filepath = DS4Windows.Global.RuntimeAppDataPath + @"\Profiles\" + name + ".xml";
                 if (File.Exists(filepath))
                 {
                     File.Delete(filepath);
@@ -54,10 +54,10 @@ namespace DS4WinWPF
 
         public void RenameProfile(string newProfileName)
         {
-            string oldFilePath = Path.Combine(DS4Windows.Global.appdatapath,
+            string oldFilePath = Path.Combine(DS4Windows.Global.RuntimeAppDataPath,
                 "Profiles", $"{name}.xml");
 
-            string newFilePath = Path.Combine(DS4Windows.Global.appdatapath,
+            string newFilePath = Path.Combine(DS4Windows.Global.RuntimeAppDataPath,
                 "Profiles", $"{newProfileName}.xml");
 
             if (File.Exists(oldFilePath) && !File.Exists(newFilePath))
