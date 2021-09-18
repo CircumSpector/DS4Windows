@@ -1,0 +1,44 @@
+version: 4.0.{build}
+image: Visual Studio 2019
+configuration:
+- Release
+platform:
+- x86
+- x64
+branches:
+  only:
+    - master
+    - devel
+  except:
+    - gh-pages
+install:
+- cmd: git submodule -q update --init
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+before_build:
+- nuget restore
+skip_commits:
+  files:
+    - doc/*
+    - .github/*
+    - extras/*
+    - '**/*.md'
+build:
+  project: $(APPVEYOR_BUILD_FOLDER)\DS4WindowsWPF.sln
+after_build:
+- cmd: 7z a DS4Windows-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%\bin\*
+test: off
+artifacts:
+  - path: DS4Windows-*.zip
+    name: DS4Windows
+deploy:
+- provider: Environment
+  name: BUILDBOT
+  on:
+    appveyor_repo_tag: true
