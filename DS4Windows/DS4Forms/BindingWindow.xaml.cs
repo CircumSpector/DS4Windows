@@ -156,7 +156,7 @@ namespace DS4WinWPF.DS4Forms
         private void OutputButtonBtn_Click(object sender, RoutedEventArgs e)
         {
             OutBinding binding = bindingVM.ActionBinding;
-            DS4Windows.X360Controls defaultControl = DS4Windows.Global.defaultButtonMapping[(int)binding.input];
+            DS4Windows.X360Controls defaultControl = DS4Windows.Global.DefaultButtonMapping[(int)binding.input];
             Button button = sender as Button;
             if (associatedBindings.TryGetValue(button, out BindAssociation bind))
             {
@@ -200,7 +200,7 @@ namespace DS4WinWPF.DS4Forms
             OutBinding binding = bindingVM.ActionBinding;
             if (binding.outputType == OutBinding.OutType.Default)
             {
-                DS4Windows.X360Controls defaultBind = DS4Windows.Global.defaultButtonMapping[(int)binding.input];
+                DS4Windows.X360Controls defaultBind = DS4Windows.Global.DefaultButtonMapping[(int)binding.input];
                 if (!OutBinding.IsMouseRange(defaultBind))
                 {
                     if (conBtnMap.TryGetValue(defaultBind, out Button tempBtn))
@@ -861,7 +861,7 @@ namespace DS4WinWPF.DS4Forms
             if (!actBind.shiftBind)
             {
                 actBind.outputType = OutBinding.OutType.Default;
-                actBind.control = DS4Windows.Global.defaultButtonMapping[(int)actBind.input];
+                actBind.control = DS4Windows.Global.DefaultButtonMapping[(int)actBind.input];
             }
             else
             {

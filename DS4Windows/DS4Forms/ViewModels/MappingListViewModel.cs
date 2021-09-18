@@ -274,12 +274,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
                 else
                 {
-                    temp = Global.getX360ControlString(Global.defaultButtonMapping[(int)control], devType);
+                    temp = Global.getX360ControlString(Global.DefaultButtonMapping[(int)control], devType);
                 }
             }
             else if (!extra && !shift)
             {
-                X360Controls tempOutControl = Global.defaultButtonMapping[(int)control];
+                X360Controls tempOutControl = Global.DefaultButtonMapping[(int)control];
                 if (tempOutControl != X360Controls.None)
                 {
                     temp = Global.getX360ControlString(tempOutControl, devType);

@@ -3513,7 +3513,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (idx < actionBtns.Count && actionBtns[idx] != null)
                 {
                     object outAct = actionBtns[idx];
-                    X360Controls defaultControl = Global.defaultButtonMapping[(int)dsControl];
+                    X360Controls defaultControl = Global.DefaultButtonMapping[(int)dsControl];
                     if (!(outAct is X360Controls) || defaultControl != (X360Controls)outAct)
                     {
                         setting.UpdateSettings(false, outAct, null, DS4KeyType.None);

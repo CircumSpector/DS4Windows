@@ -115,7 +115,7 @@ namespace DS4Windows
         public const string CUSTOM_EXE_CONFIG_FILENAME = "custom_exe_name.txt";
         public const string XML_EXTENSION = ".xml";
 
-        public static X360Controls[] defaultButtonMapping = {
+        public static X360Controls[] DefaultButtonMapping = {
             X360Controls.None, // DS4Controls.None
             X360Controls.LXNeg, // DS4Controls.LXNeg
             X360Controls.LXPos, // DS4Controls.LXPos
@@ -171,10 +171,10 @@ namespace DS4Windows
         // Create mapping array at runtime
         public static DS4Controls[] reverseX360ButtonMapping = new Func<DS4Controls[]>(() =>
         {
-            DS4Controls[] temp = new DS4Controls[defaultButtonMapping.Length];
-            for (int i = 0, arlen = defaultButtonMapping.Length; i < arlen; i++)
+            DS4Controls[] temp = new DS4Controls[DefaultButtonMapping.Length];
+            for (int i = 0, arlen = DefaultButtonMapping.Length; i < arlen; i++)
             {
-                X360Controls mapping = defaultButtonMapping[i];
+                X360Controls mapping = DefaultButtonMapping[i];
                 if (mapping != X360Controls.None)
                 {
                     temp[(int)mapping] = (DS4Controls)i;
@@ -1901,7 +1901,7 @@ namespace DS4Windows
 
         public static X360Controls getDefaultX360ControlBinding(DS4Controls dc)
         {
-            return defaultButtonMapping[(int)dc];
+            return DefaultButtonMapping[(int)dc];
         }
 
         public static bool containsLinkedProfile(string serial)
