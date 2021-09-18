@@ -269,12 +269,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 else if (actionType == DS4ControlSettings.ActionType.Button)
                 {
                     string tag;
-                    tag = Global.getX360ControlString((X360Controls)action.actionBtn, devType);
+                    tag = Global.GetX360ControlString((X360Controls)action.actionBtn, devType);
                     temp = tag;
                 }
                 else
                 {
-                    temp = Global.getX360ControlString(Global.DefaultButtonMapping[(int)control], devType);
+                    temp = Global.GetX360ControlString(Global.DefaultButtonMapping[(int)control], devType);
                 }
             }
             else if (!extra && !shift)
@@ -282,7 +282,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 X360Controls tempOutControl = Global.DefaultButtonMapping[(int)control];
                 if (tempOutControl != X360Controls.None)
                 {
-                    temp = Global.getX360ControlString(tempOutControl, devType);
+                    temp = Global.GetX360ControlString(tempOutControl, devType);
                 }
             }
             else if (shift)

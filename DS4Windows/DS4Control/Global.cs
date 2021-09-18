@@ -299,16 +299,18 @@ namespace DS4Windows
             [X360Controls.Unbound] = "Unbound"
         };
 
-        public static string getX360ControlString(X360Controls key, OutContType conType)
+        public static string GetX360ControlString(X360Controls key, OutContType conType)
         {
-            string result = string.Empty;
-            if (conType == DS4Windows.OutContType.X360)
+            var result = string.Empty;
+
+            switch (conType)
             {
-                XboxDefaultNames.TryGetValue(key, out result);
-            }
-            else if (conType == DS4Windows.OutContType.DS4)
-            {
-                Ds4DefaultNames.TryGetValue(key, out result);
+                case DS4Windows.OutContType.X360:
+                    XboxDefaultNames.TryGetValue(key, out result);
+                    break;
+                case DS4Windows.OutContType.DS4:
+                    Ds4DefaultNames.TryGetValue(key, out result);
+                    break;
             }
 
             return result;
@@ -1927,7 +1929,7 @@ namespace DS4Windows
             return m_Config.getX360ControlsByName(key);
         }
 
-        public static string getX360ControlString(X360Controls key)
+        public static string GetX360ControlString(X360Controls key)
         {
             return m_Config.getX360ControlString(key);
         }
