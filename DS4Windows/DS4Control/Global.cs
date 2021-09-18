@@ -442,11 +442,20 @@ namespace DS4Windows
             {
                 try
                 {
-                    File.WriteAllText(ExecutableDirectory + "\\test.txt", "test");
-                    File.Delete(ExecutableDirectory + "\\test.txt");
+                    using (var fs = File.Create(
+                        Path.Combine(
+                            ExecutableDirectory,
+                            Path.GetRandomFileName()
+                        ),
+                        1,
+                        FileOptions.DeleteOnClose)
+                    )
+                    {
+                    }
+
                     return false;
                 }
-                catch (UnauthorizedAccessException)
+                catch
                 {
                     return true;
                 }
