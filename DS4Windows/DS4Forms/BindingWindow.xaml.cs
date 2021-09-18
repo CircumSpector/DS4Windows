@@ -47,7 +47,7 @@ namespace DS4WinWPF.DS4Forms
 
             if (settings.control != DS4Windows.DS4Controls.None)
             {
-                Title = $"Select action for {DS4Windows.Global.Ds4inputNames[settings.control]}";
+                Title = $"Select action for {DS4Windows.Global.Ds4InputNames[settings.control]}";
             }
             else
             {

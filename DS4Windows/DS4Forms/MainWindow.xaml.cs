@@ -447,7 +447,7 @@ Suspend support not enabled.", true);
 
         private void SettingsWrapVM_IconChoiceIndexChanged(object sender, EventArgs e)
         {
-            trayIconVM.IconSource = Global.iconChoiceResources[Global.UseIconChoice];
+            trayIconVM.IconSource = Global.IconChoiceResources[Global.UseIconChoice];
         }
 
         private void MainWinVM_FullTabsEnabledChanged(object sender, EventArgs e)

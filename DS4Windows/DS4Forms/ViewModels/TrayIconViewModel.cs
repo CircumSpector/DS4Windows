@@ -67,7 +67,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             this.profileListHolder = profileListHolder;
             this.controlService = service;
             contextMenu = new ContextMenu();
-            iconSource = Global.iconChoiceResources[Global.UseIconChoice];
+            iconSource = Global.IconChoiceResources[Global.UseIconChoice];
             changeServiceItem = new MenuItem() { Header = "Start" };
             changeServiceItem.Click += ChangeControlServiceItem_Click;
             changeServiceItem.IsEnabled = false;

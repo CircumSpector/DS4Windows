@@ -281,7 +281,7 @@ namespace DS4Windows
             return result;
         }
 
-        public static Dictionary<DS4Controls, string> Ds4inputNames => new()
+        public static Dictionary<DS4Controls, string> Ds4InputNames => new()
         {
             [DS4Controls.LXNeg] = "Left X-Axis-",
             [DS4Controls.LXPos] = "Left X-Axis+",
@@ -354,12 +354,12 @@ namespace DS4Windows
             [DS4Controls.TouchUpper] = 286, [DS4Controls.TouchMulti] = 286
         };
 
-        public static Dictionary<TrayIconChoice, string> iconChoiceResources = new Dictionary<TrayIconChoice, string>
+        public static Dictionary<TrayIconChoice, string> IconChoiceResources = new()
         {
             [TrayIconChoice.Default] = "/DS4Windows;component/Resources/DS4W.ico",
             [TrayIconChoice.Colored] = "/DS4Windows;component/Resources/DS4W.ico",
             [TrayIconChoice.White] = "/DS4Windows;component/Resources/DS4W - White.ico",
-            [TrayIconChoice.Black] = "/DS4Windows;component/Resources/DS4W - Black.ico",
+            [TrayIconChoice.Black] = "/DS4Windows;component/Resources/DS4W - Black.ico"
         };
 
         public static void SaveWhere(string path)
@@ -402,7 +402,7 @@ namespace DS4Windows
         }
 
         /// <summary>
-        /// Check if Admin Rights are needed to write in Appliplation Directory
+        /// Check if Admin Rights are needed to write in Application Directory
         /// </summary>
         /// <value></value>
         public static bool IsAdminNeeded
