@@ -61,14 +61,14 @@ namespace DS4WinWPF.DS4Control
             rootNode = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
             m_Xdoc.AppendChild(rootNode);
 
-            rootNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ", Global.exeversion));
+            rootNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ", Global.ExecutableProductVersion));
             m_Xdoc.AppendChild(rootNode);
 
             rootNode = m_Xdoc.CreateWhitespace("\r\n");
             m_Xdoc.AppendChild(rootNode);
 
             XmlElement baseElement = m_Xdoc.CreateElement("OutputSlots", null);
-            baseElement.SetAttribute("app_version", Global.exeversion);
+            baseElement.SetAttribute("app_version", Global.ExecutableProductVersion);
 
             int idx = 0;
             foreach (OutSlotDevice dev in slotManager.OutputSlots)

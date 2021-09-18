@@ -1166,14 +1166,14 @@ namespace DS4Windows
                 tmpNode = m_Xdoc.CreateComment(string.Format(" DS4Windows Configuration Data. {0} ", DateTime.Now));
                 m_Xdoc.AppendChild(tmpNode);
 
-                tmpNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ", Global.exeversion));
+                tmpNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ", Global.ExecutableProductVersion));
                 m_Xdoc.AppendChild(tmpNode);
 
                 tmpNode = m_Xdoc.CreateWhitespace("\r\n");
                 m_Xdoc.AppendChild(tmpNode);
 
                 XmlElement rootElement = m_Xdoc.CreateElement("DS4Windows", null);
-                rootElement.SetAttribute("app_version", Global.exeversion);
+                rootElement.SetAttribute("app_version", Global.ExecutableProductVersion);
                 rootElement.SetAttribute("config_version", Global.CONFIG_VERSION.ToString());
 
                 LightbarSettingInfo lightbarSettings = lightbarSettingInfo[device];
@@ -3999,7 +3999,7 @@ namespace DS4Windows
 
             if (Loaded)
             {
-                string custom_exe_name_path = Path.Combine(Global.exedirpath, Global.CUSTOM_EXE_CONFIG_FILENAME);
+                string custom_exe_name_path = Path.Combine(Global.ExecutableDirectory, Global.CUSTOM_EXE_CONFIG_FILENAME);
                 bool fakeExeFileExists = File.Exists(custom_exe_name_path);
                 if (fakeExeFileExists)
                 {
@@ -4029,14 +4029,14 @@ namespace DS4Windows
             Node = m_Xdoc.CreateComment(String.Format(" Profile Configuration Data. {0} ", DateTime.Now));
             m_Xdoc.AppendChild(Node);
 
-            Node = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ", Global.exeversion));
+            Node = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ", Global.ExecutableProductVersion));
             m_Xdoc.AppendChild(Node);
 
             Node = m_Xdoc.CreateWhitespace("\r\n");
             m_Xdoc.AppendChild(Node);
 
             XmlElement rootElement = m_Xdoc.CreateElement("Profile", null);
-            rootElement.SetAttribute("app_version", Global.exeversion);
+            rootElement.SetAttribute("app_version", Global.ExecutableProductVersion);
             rootElement.SetAttribute("config_version", Global.APP_CONFIG_VERSION.ToString());
 
             // Ex Mode (+1 line)
@@ -4146,7 +4146,7 @@ namespace DS4Windows
             if (Saved &&
                 (!adminNeeded || (adminNeeded && Global.IsAdministrator())))
             {
-                string custom_exe_name_path = Path.Combine(Global.exedirpath, Global.CUSTOM_EXE_CONFIG_FILENAME);
+                string custom_exe_name_path = Path.Combine(Global.ExecutableDirectory, Global.CUSTOM_EXE_CONFIG_FILENAME);
                 bool fakeExeFileExists = File.Exists(custom_exe_name_path);
                 if (!string.IsNullOrEmpty(fakeExeFileName) || fakeExeFileExists)
                 {

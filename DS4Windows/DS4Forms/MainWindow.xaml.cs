@@ -218,7 +218,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void Check_Version(bool showstatus = false)
         {
-            string version = Global.exeversion;
+            string version = Global.ExecutableProductVersion;
             string newversion = string.Empty;
             string versionFilePath = Global.appdatapath + "\\version.txt";
             ulong lastVersionNum = Global.LastVersionCheckedNum;
@@ -254,7 +254,7 @@ namespace DS4WinWPF.DS4Forms
                     {
                         using (Process p = new Process())
                         {
-                            p.StartInfo.FileName = System.IO.Path.Combine(Global.exedirpath, "DS4Updater.exe");
+                            p.StartInfo.FileName = System.IO.Path.Combine(Global.ExecutableDirectory, "DS4Updater.exe");
                             bool isAdmin = Global.IsAdministrator();
                             List<string> argList = new List<string>();
                             argList.Add("-autolaunch");
@@ -265,7 +265,7 @@ namespace DS4WinWPF.DS4Forms
 
                             // Specify current exe to have DS4Updater launch
                             argList.Add("--launchExe");
-                            argList.Add(Global.exeFileName);
+                            argList.Add(Global.ExecutableFileName);
 
                             p.StartInfo.Arguments = string.Join(" ", argList);
                             if (Global.AdminNeeded())
@@ -314,7 +314,7 @@ namespace DS4WinWPF.DS4Forms
 
         private bool RunUpdaterCheck(bool launch)
         {
-            string destPath = Global.exedirpath + "\\DS4Updater.exe";
+            string destPath = Global.ExecutableDirectory + "\\DS4Updater.exe";
             bool updaterExists = File.Exists(destPath);
             string version = DownloadUpstreamUpdaterVersion();
             if (!updaterExists ||
@@ -1390,7 +1390,7 @@ Suspend support not enabled.", true);
 
             StartStopBtn.IsEnabled = true;
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Global.exelocation;
+            startInfo.FileName = Global.ExecutableLocation;
             startInfo.Arguments = "-driverinstall";
             startInfo.Verb = "runas";
             startInfo.UseShellExecute = true;
@@ -1424,7 +1424,7 @@ Suspend support not enabled.", true);
             if (!deriverinstalled || !Global.IsRunningSupportedViGEmBus())
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = $"{Global.exelocation}";
+                startInfo.FileName = $"{Global.ExecutableLocation}";
                 startInfo.Arguments = "-driverinstall";
                 startInfo.Verb = "runas";
                 startInfo.UseShellExecute = true;
@@ -1445,10 +1445,10 @@ Suspend support not enabled.", true);
             dialog.DefaultExt = ".xml";
             dialog.Filter = "DS4Windows Profile (*.xml)|*.xml";
             dialog.Title = "Select Profile to Import File";
-            if (Global.appdatapath != Global.exedirpath)
+            if (Global.appdatapath != Global.ExecutableDirectory)
                 dialog.InitialDirectory = Path.Combine(Global.appDataPpath, "Profiles");
             else
-                dialog.InitialDirectory = Global.exedirpath + @"\Profiles\";
+                dialog.InitialDirectory = Global.ExecutableDirectory + @"\Profiles\";
 
             if (dialog.ShowDialog() == true)
             {
@@ -1689,7 +1689,7 @@ Suspend support not enabled.", true);
 
         private void HidHideBtn_Click(object sender, RoutedEventArgs e)
         {
-            string driveLetter = System.IO.Path.GetPathRoot(Global.exedirpath);
+            string driveLetter = System.IO.Path.GetPathRoot(Global.ExecutableDirectory);
             string path = System.IO.Path.Combine(driveLetter, "Program Files",
                 "Nefarius Software Solutions e.U", "HidHideClient", "HidHideClient.exe");
 
@@ -1714,7 +1714,7 @@ Suspend support not enabled.", true);
 
         private void XinputCheckerBtn_Click(object sender, RoutedEventArgs e)
         {
-            string path = System.IO.Path.Combine(Global.exedirpath, "Tools",
+            string path = System.IO.Path.Combine(Global.ExecutableDirectory, "Tools",
                 "XInputChecker", "XInputChecker.exe");
 
             if (File.Exists(path))

@@ -213,10 +213,10 @@ namespace DS4Windows
                 w.WriteLine("@echo off"); // Turn off echo
                 w.WriteLine("@echo Attempting to replace updater, please wait...");
                 // Move temp downloaded file to destination
-                w.WriteLine($"@mov /Y \"{tmpUpdaterPath}\" \"{Global.exedirpath}\\DS4Updater.exe\"");
+                w.WriteLine($"@mov /Y \"{tmpUpdaterPath}\" \"{Global.ExecutableDirectory}\\DS4Updater.exe\"");
                 if (deleteUpdatesDir)
                 {
-                    w.WriteLine($"@del /S \"{Global.exedirpath}\\Update Files\\DS4Windows\"");
+                    w.WriteLine($"@del /S \"{Global.ExecutableDirectory}\\Update Files\\DS4Windows\"");
                 }
 
                 w.Close();

@@ -14,7 +14,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private string tooltipText = "DS4Windows";
         private string iconSource;
         public const string ballonTitle = "DS4Windows";
-        public static string trayTitle = $"DS4Windows v{Global.exeversion}";
+        public static string trayTitle = $"DS4Windows v{Global.ExecutableProductVersion}";
         private ContextMenu contextMenu;
         private MenuItem changeServiceItem;
         private MenuItem openItem;
@@ -223,7 +223,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void OpenProgramFolderItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo(Global.exedirpath);
+            ProcessStartInfo startInfo = new ProcessStartInfo(Global.ExecutableDirectory);
             startInfo.UseShellExecute = true;
             using (Process temp = Process.Start(startInfo))
             {

@@ -165,9 +165,9 @@ namespace DS4WinWPF
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Logger logger = logHolder.Logger;
-            string version = DS4Windows.Global.exeversion;
+            string version = DS4Windows.Global.ExecutableProductVersion;
             logger.Info($"DS4Windows version {version}");
-            logger.Info($"DS4Windows exe file: {DS4Windows.Global.exeFileName}");
+            logger.Info($"DS4Windows exe file: {DS4Windows.Global.ExecutableFileName}");
             logger.Info($"DS4Windows Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
             logger.Info($"OS Version: {Environment.OSVersion}");
             logger.Info($"OS Product Name: {DS4Windows.Util.GetOSProductName()}");
@@ -302,12 +302,12 @@ namespace DS4WinWPF
                     try
                     {
                         Directory.CreateDirectory(DS4Windows.Global.appDataPpath);
-                        File.Copy(DS4Windows.Global.exedirpath + "\\Profiles.xml",
+                        File.Copy(DS4Windows.Global.ExecutableDirectory + "\\Profiles.xml",
                             DS4Windows.Global.appDataPpath + "\\Profiles.xml");
-                        File.Copy(DS4Windows.Global.exedirpath + "\\Auto Profiles.xml",
+                        File.Copy(DS4Windows.Global.ExecutableDirectory + "\\Auto Profiles.xml",
                             DS4Windows.Global.appDataPpath + "\\Auto Profiles.xml");
                         Directory.CreateDirectory(DS4Windows.Global.appDataPpath + "\\Profiles");
-                        foreach (string s in Directory.GetFiles(DS4Windows.Global.exedirpath + "\\Profiles"))
+                        foreach (string s in Directory.GetFiles(DS4Windows.Global.ExecutableDirectory + "\\Profiles"))
                         {
                             File.Copy(s, DS4Windows.Global.appDataPpath + "\\Profiles\\" + Path.GetFileName(s));
                         }
@@ -446,7 +446,7 @@ namespace DS4WinWPF
         {
             controlThread = new Thread(() => {
 
-                if (!DS4Windows.Global.IsWin8OrGreater())
+                if (!DS4Windows.Global.IsWin8OrGreater)
                 {
                     ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
                 }
@@ -468,7 +468,7 @@ namespace DS4WinWPF
         private void CreateBaseThread()
         {
             controlThread = new Thread(() => {
-                if (!DS4Windows.Global.IsWin8OrGreater())
+                if (!DS4Windows.Global.IsWin8OrGreater)
                 {
                     ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
                 }

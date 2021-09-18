@@ -410,9 +410,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void SettingsViewModel_FakeExeNameChangeCompare(SettingsViewModel sender,
             string oldvalue, string newvalue)
         {
-            string old_exefile = Path.Combine(DS4Windows.Global.exedirpath, $"{oldvalue}.exe");
-            string old_conf_file = Path.Combine(DS4Windows.Global.exedirpath, $"{oldvalue}.runtimeconfig.json");
-            string old_deps_file = Path.Combine(DS4Windows.Global.exedirpath, $"{oldvalue}.deps.json");
+            string old_exefile = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{oldvalue}.exe");
+            string old_conf_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{oldvalue}.runtimeconfig.json");
+            string old_deps_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{oldvalue}.deps.json");
 
             if (!string.IsNullOrEmpty(oldvalue))
             {
@@ -516,14 +516,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void CreateFakeExe(string filename)
         {
-            string exefile = Path.Combine(DS4Windows.Global.exedirpath, $"{filename}.exe");
-            string current_conf_file_path = $"{DS4Windows.Global.exelocation}.runtimeconfig.json";
-            string current_deps_file_path = $"{DS4Windows.Global.exelocation}.deps.json";
+            string exefile = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{filename}.exe");
+            string current_conf_file_path = $"{DS4Windows.Global.ExecutableLocation}.runtimeconfig.json";
+            string current_deps_file_path = $"{DS4Windows.Global.ExecutableLocation}.deps.json";
 
-            string fake_conf_file = Path.Combine(DS4Windows.Global.exedirpath, $"{filename}.runtimeconfig.json");
-            string fake_deps_file = Path.Combine(DS4Windows.Global.exedirpath, $"{filename}.deps.json");
+            string fake_conf_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{filename}.runtimeconfig.json");
+            string fake_deps_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{filename}.deps.json");
 
-            File.Copy(DS4Windows.Global.exelocation, exefile); // Copy exe
+            File.Copy(DS4Windows.Global.ExecutableLocation, exefile); // Copy exe
 
             // Copy needed app config and deps files
             File.Copy(current_conf_file_path, fake_conf_file);

@@ -31,7 +31,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void ProgFolderBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.Global.SaveWhere(DS4Windows.Global.exedirpath);
+            DS4Windows.Global.SaveWhere(DS4Windows.Global.ExecutableDirectory);
             if (multisaves && dontDeleteCk.IsChecked == false)
             {
                 try
@@ -45,7 +45,7 @@ namespace DS4WinWPF.DS4Forms
             }
             else if (!multisaves)
             {
-                DS4Windows.Global.SaveDefault(DS4Windows.Global.exedirpath + "\\Profiles.xml");
+                DS4Windows.Global.SaveDefault(DS4Windows.Global.ExecutableDirectory + "\\Profiles.xml");
             }
 
             choiceMade = true;
@@ -58,9 +58,9 @@ namespace DS4WinWPF.DS4Forms
             {
                 try
                 {
-                    Directory.Delete(DS4Windows.Global.exedirpath + "\\Profiles", true);
-                    File.Delete(DS4Windows.Global.exedirpath + "\\Profiles.xml");
-                    File.Delete(DS4Windows.Global.exedirpath + "\\Auto Profiles.xml");
+                    Directory.Delete(DS4Windows.Global.ExecutableDirectory + "\\Profiles", true);
+                    File.Delete(DS4Windows.Global.ExecutableDirectory + "\\Profiles.xml");
+                    File.Delete(DS4Windows.Global.ExecutableDirectory + "\\Auto Profiles.xml");
                 }
                 catch (UnauthorizedAccessException)
                 {

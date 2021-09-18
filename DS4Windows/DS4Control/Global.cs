@@ -25,40 +25,38 @@ namespace DS4Windows
         protected static BackingStore m_Config = new BackingStore();
         protected static Int32 m_IdleTimeout = 600000;
 
-        public static string exelocation = Process.GetCurrentProcess().MainModule.FileName;
-        public static string exedirpath = Directory.GetParent(exelocation).FullName;
-        public static string exeFileName = Path.GetFileName(exelocation);
-        public static FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(exelocation);
-        public static string exeversion = fileVersion.ProductVersion;
-        public static ulong exeversionLong = (ulong)fileVersion.ProductMajorPart << 48 |
-            (ulong)fileVersion.ProductMinorPart << 32 | (ulong)fileVersion.ProductBuildPart << 16;
-        public static ulong fullExeVersionLong = exeversionLong | (ushort)fileVersion.ProductPrivatePart;
-        public static bool IsWin8OrGreater()
-        {
-            bool result = false;
-            if (Environment.OSVersion.Version.Major > 6)
-            {
-                result = true;
-            }
-            else if (Environment.OSVersion.Version.Major == 6 &&
-                Environment.OSVersion.Version.Minor >= 2)
-            {
-                result = true;
-            }
+        public static string ExecutableLocation => Process.GetCurrentProcess().MainModule.FileName;
 
-            return result;
+        public static string ExecutableDirectory => Directory.GetParent(ExecutableLocation).FullName;
+
+        public static string ExecutableFileName => Path.GetFileName(ExecutableLocation);
+
+        public static FileVersionInfo ExecutableFileVersion => FileVersionInfo.GetVersionInfo(ExecutableLocation);
+
+        public static string ExecutableProductVersion = ExecutableFileVersion.ProductVersion;
+
+        public static ulong ExecutableVersionLong => (ulong)ExecutableFileVersion.ProductMajorPart << 48 |
+            (ulong)ExecutableFileVersion.ProductMinorPart << 32 | (ulong)ExecutableFileVersion.ProductBuildPart << 16;
+
+        public static bool IsWin8OrGreater
+        {
+            get
+            {
+                var result = false;
+
+                switch (Environment.OSVersion.Version.Major)
+                {
+                    case > 6:
+                    case 6 when Environment.OSVersion.Version.Minor >= 2:
+                        result = true;
+                        break;
+                }
+
+                return result;
+            }
         }
 
-        public static bool IsWin10OrGreater()
-        {
-            bool result = false;
-            if (Environment.OSVersion.Version.Major >= 10)
-            {
-                result = true;
-            }
-
-            return result;
-        }
+        public static bool IsWin10OrGreater => Environment.OSVersion.Version.Major >= 10;
 
         public static string appdatapath;
         public static bool firstRun = false;
@@ -408,8 +406,8 @@ namespace DS4Windows
         {
             try
             {
-                File.WriteAllText(exedirpath + "\\test.txt", "test");
-                File.Delete(exedirpath + "\\test.txt");
+                File.WriteAllText(ExecutableDirectory + "\\test.txt", "test");
+                File.Delete(ExecutableDirectory + "\\test.txt");
                 return false;
             }
             catch (UnauthorizedAccessException)
@@ -718,12 +716,12 @@ namespace DS4Windows
 
         public static void FindConfigLocation()
         {
-            bool programFolderAutoProfilesExists = File.Exists(Path.Combine(exedirpath, "Auto Profiles.xml"));
+            bool programFolderAutoProfilesExists = File.Exists(Path.Combine(ExecutableDirectory, "Auto Profiles.xml"));
             bool appDataAutoProfilesExists = File.Exists(Path.Combine(appDataPpath, "Auto Profiles.xml"));
             //bool localAppDataAutoProfilesExists = File.Exists(Path.Combine(localAppDataPpath, "Auto Profiles.xml"));
             //bool systemAppConfigExists = appDataAutoProfilesExists || localAppDataAutoProfilesExists;
             bool systemAppConfigExists = appDataAutoProfilesExists;
-            bool isSameFolder = appDataAutoProfilesExists && exedirpath == appDataPpath;
+            bool isSameFolder = appDataAutoProfilesExists && ExecutableDirectory == appDataPpath;
 
             if (programFolderAutoProfilesExists && appDataAutoProfilesExists &&
                 !isSameFolder)
@@ -733,7 +731,7 @@ namespace DS4Windows
             }
             else if (programFolderAutoProfilesExists)
             {
-                SaveWhere(exedirpath);
+                SaveWhere(ExecutableDirectory);
             }
             //else if (localAppDataAutoProfilesExists)
             //{

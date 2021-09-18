@@ -14,7 +14,7 @@ namespace DS4WinWPF
     public static class StartupMethods
     {
         public static string lnkpath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DS4Windows.lnk";
-        private static string taskBatPath = Path.Combine(DS4Windows.Global.exedirpath, "task.bat");
+        private static string taskBatPath = Path.Combine(DS4Windows.Global.ExecutableDirectory, "task.bat");
         private const string net5SubKey = @"SOFTWARE\dotnet\Setup\InstalledVersions";
 
         public static bool HasStartProgEntry()
@@ -40,8 +40,8 @@ namespace DS4WinWPF
                 var lnk = shell.CreateShortcut(lnkpath);
                 try
                 {
-                    string app = DS4Windows.Global.exelocation;
-                    lnk.TargetPath = DS4Windows.Global.exelocation;
+                    string app = DS4Windows.Global.ExecutableLocation;
+                    lnk.TargetPath = DS4Windows.Global.ExecutableLocation;
                     lnk.Arguments = "-m";
 
                     //lnk.TargetPath = Assembly.GetExecutingAssembly().Location;
@@ -111,7 +111,7 @@ namespace DS4WinWPF
             TaskService ts = new TaskService();
             TaskDefinition td = ts.NewTask();
             td.Triggers.Add(new LogonTrigger());
-            string dir = DS4Windows.Global.exedirpath;
+            string dir = DS4Windows.Global.ExecutableDirectory;
             td.Actions.Add(new ExecAction($@"{dir}\task.bat",
                 "",
                 dir));
@@ -135,7 +135,7 @@ namespace DS4WinWPF
         public static bool CheckStartupExeLocation()
         {
             string lnkprogpath = ResolveShortcut(lnkpath);
-            return lnkprogpath != DS4Windows.Global.exelocation;
+            return lnkprogpath != DS4Windows.Global.ExecutableLocation;
         }
 
         public static Version NetVersionInstalled()
@@ -194,7 +194,7 @@ namespace DS4WinWPF
 
         private static void RefreshTaskBat()
         {
-            string dir = DS4Windows.Global.exedirpath;
+            string dir = DS4Windows.Global.ExecutableDirectory;
             string path = $@"{dir}\task.bat";
             FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
             using (StreamWriter w = new StreamWriter(fileStream))
@@ -202,7 +202,7 @@ namespace DS4WinWPF
                 string temp = string.Empty;
                 w.WriteLine("@echo off"); // Turn off echo
                 w.WriteLine("SET mypath=\"%~dp0\"");
-                temp = $"cmd.exe /c start \"RunDS4Windows\" %mypath%\\{DS4Windows.Global.exeFileName} -m";
+                temp = $"cmd.exe /c start \"RunDS4Windows\" %mypath%\\{DS4Windows.Global.ExecutableFileName} -m";
                 w.WriteLine(temp);
                 w.WriteLine("exit");
             }

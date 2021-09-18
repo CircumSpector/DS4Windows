@@ -25,7 +25,7 @@ namespace DS4Windows
 #if FORCE_4_INPUT
         public static int CURRENT_DS4_CONTROLLER_LIMIT = Global.OLD_XINPUT_CONTROLLER_COUNT;
 #else
-        public static int CURRENT_DS4_CONTROLLER_LIMIT = Global.IsWin8OrGreater() ? MAX_DS4_CONTROLLER_COUNT : Global.OLD_XINPUT_CONTROLLER_COUNT;
+        public static int CURRENT_DS4_CONTROLLER_LIMIT = Global.IsWin8OrGreater ? MAX_DS4_CONTROLLER_COUNT : Global.OLD_XINPUT_CONTROLLER_COUNT;
 #endif
         public static bool USING_MAX_CONTROLLERS = CURRENT_DS4_CONTROLLER_LIMIT == EXPANDED_CONTROLLER_COUNT;
         public DS4Device[] DS4Controllers = new DS4Device[MAX_DS4_CONTROLLER_COUNT];
@@ -375,7 +375,7 @@ namespace DS4Windows
 
         public void PrepareDS4DeviceInit(DS4Device device)
         {
-            if (!Global.IsWin8OrGreater())
+            if (!Global.IsWin8OrGreater)
             {
                 device.BTOutputMethod = DS4Device.BTOutputReportMethod.HidD_SetOutputReport;
             }
@@ -413,7 +413,7 @@ namespace DS4Windows
         {
             // Launches an elevated child process to re-enable device
             ProcessStartInfo startInfo =
-                new ProcessStartInfo(Global.exelocation);
+                new ProcessStartInfo(Global.ExecutableLocation);
             startInfo.Verb = "runas";
             startInfo.Arguments = "re-enabledevice " + args.InstanceId;
             startInfo.UseShellExecute = true;
@@ -450,7 +450,7 @@ namespace DS4Windows
 
                     int maxPathCheckLength = 512;
                     StringBuilder sb = new StringBuilder(maxPathCheckLength);
-                    string driveLetter = Path.GetPathRoot(Global.exelocation).Replace("\\", "");
+                    string driveLetter = Path.GetPathRoot(Global.ExecutableLocation).Replace("\\", "");
                     uint _ = NativeMethods.QueryDosDevice(driveLetter, sb, maxPathCheckLength);
                     //int error = Marshal.GetLastWin32Error();
 
@@ -461,7 +461,7 @@ namespace DS4Windows
                         dosDrivePath = dosDrivePath.Remove(0, 4);
                     }
 
-                    string partial = Global.exelocation.Replace(driveLetter, "");
+                    string partial = Global.ExecutableLocation.Replace(driveLetter, "");
                     // Need to trim starting '\\' from path2 or Path.Combine will
                     // treat it as an absolute path and only return path2
                     string realPath = Path.Combine(dosDrivePath, partial.TrimStart('\\'));

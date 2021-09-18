@@ -92,7 +92,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             foreach (ChangeVersionInfo versionInfo in tempInfo.Changelog.Versions)
             {
                 ulong versionNumber = versionInfo.VersionNumberInfo.GetVersionNumber();
-                if (versionNumber > DS4Windows.Global.exeversionLong)
+                if (versionNumber > DS4Windows.Global.ExecutableVersionLong)
                 {
                     VersionLogLocale tmpLog = versionInfo.ApplicableInfo(DS4Windows.Global.UseLang);
                     if (tmpLog != null)
