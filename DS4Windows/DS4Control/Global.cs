@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
-using System.Threading;
 using System.Xml;
 using DS4Windows.DS4Control;
 
@@ -27,6 +26,7 @@ namespace DS4Windows
         public static CultureInfo ConfigFileDecimalCulture => new("en-US");
 
         protected static BackingStore m_Config = new BackingStore();
+
         protected static Int32 m_IdleTimeout = 600000;
 
         public static string ExecutableLocation => Process.GetCurrentProcess().MainModule.FileName;
