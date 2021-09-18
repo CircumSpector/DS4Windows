@@ -2621,7 +2621,7 @@ namespace DS4Windows
                 }
                 catch { dinputOnly[device] = false; missingSetting = true; }
 
-                bool oldUseDInputOnly = Global.useDInputOnly[device];
+                bool oldUseDInputOnly = Global.UseDirectInputOnly[device];
 
                 try
                 {
@@ -4051,7 +4051,7 @@ namespace DS4Windows
             for (int i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
             {
                 string contTagName = $"Controller{i + 1}";
-                XmlNode xmlControllerNode = m_Xdoc.CreateNode(XmlNodeType.Element, contTagName, null); xmlControllerNode.InnerText = !Global.linkedProfileCheck[i] ? profilePath[i] : olderProfilePath[i];
+                XmlNode xmlControllerNode = m_Xdoc.CreateNode(XmlNodeType.Element, contTagName, null); xmlControllerNode.InnerText = !Global.LinkedProfileCheck[i] ? profilePath[i] : olderProfilePath[i];
                 if (!string.IsNullOrEmpty(xmlControllerNode.InnerText))
                 {
                     rootElement.AppendChild(xmlControllerNode);
@@ -5570,7 +5570,7 @@ namespace DS4Windows
 
             if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                bool oldUseDInputOnly = Global.useDInputOnly[device];
+                bool oldUseDInputOnly = Global.UseDirectInputOnly[device];
                 DS4Device tempDevice = control.DS4Controllers[device];
                 bool exists = tempBool = (tempDevice != null);
                 bool synced = tempBool = exists ? tempDevice.isSynced() : false;
@@ -5620,7 +5620,7 @@ namespace DS4Windows
 
                             OutContType tempContType = outputDevType[device];
                             control.PluginOutDev(device, tempDev);
-                            //Global.useDInputOnly[device] = false;
+                            //Global.UseDirectInputOnly[device] = false;
                         }
                         else
                         {

@@ -954,7 +954,7 @@ namespace DS4Windows
                 slotDevice = outputslotMan.FindExistUnboundSlotType(contType);
             }
 
-            if (useDInputOnly[index])
+            if (UseDirectInputOnly[index])
             {
                 bool success = false;
                 if (contType == OutContType.X360)
@@ -1107,14 +1107,14 @@ namespace DS4Windows
 
                 if (success)
                 {
-                    useDInputOnly[index] = false;
+                    UseDirectInputOnly[index] = false;
                 }
             }
         }
 
         public void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false)
         {
-            if (!useDInputOnly[index])
+            if (!UseDirectInputOnly[index])
             {
                 //OutContType contType = Global.OutContType[index];
                 OutputDevice dev = outputDevices[index];
@@ -1145,7 +1145,7 @@ namespace DS4Windows
                     //LogDebug(tempType + " Controller # " + (index + 1) + " unplugged");
                 }
 
-                useDInputOnly[index] = true;
+                UseDirectInputOnly[index] = true;
             }
         }
 
@@ -1263,18 +1263,18 @@ namespace DS4Windows
 
                         touchPad[i] = new Mouse(i, device);
                         bool profileLoaded = false;
-                        bool useAutoProfile = useTempProfile[i];
+                        bool useAutoProfile = UseTempProfiles[i];
                         if (!useAutoProfile)
                         {
                             if (device.isValidSerial() && containsLinkedProfile(device.getMacAddress()))
                             {
                                 ProfilePath[i] = getLinkedProfile(device.getMacAddress());
-                                Global.linkedProfileCheck[i] = true;
+                                Global.LinkedProfileCheck[i] = true;
                             }
                             else
                             {
                                 ProfilePath[i] = OlderProfilePath[i];
-                                Global.linkedProfileCheck[i] = false;
+                                Global.LinkedProfileCheck[i] = false;
                             }
 
                             profileLoaded = LoadProfile(i, false, this, false, false);
@@ -1305,7 +1305,7 @@ namespace DS4Windows
                             }
                             else
                             {
-                                useDInputOnly[i] = true;
+                                UseDirectInputOnly[i] = true;
                                 Global.ActiveOutDevType[i] = OutContType.None;
                             }
 
@@ -1525,9 +1525,9 @@ namespace DS4Windows
                         }
 
                         //outputDevices[i] = null;
-                        //useDInputOnly[i] = true;
+                        //UseDirectInputOnly[i] = true;
                         //Global.ActiveOutDevType[i] = OutContType.None;
-                        useDInputOnly[i] = true;
+                        UseDirectInputOnly[i] = true;
                         DS4Controllers[i] = null;
                         touchPad[i] = null;
                         lag[i] = false;
@@ -1702,18 +1702,18 @@ namespace DS4Windows
 
                             touchPad[Index] = new Mouse(Index, device);
                             bool profileLoaded = false;
-                            bool useAutoProfile = useTempProfile[Index];
+                            bool useAutoProfile = UseTempProfiles[Index];
                             if (!useAutoProfile)
                             {
                                 if (device.isValidSerial() && containsLinkedProfile(device.getMacAddress()))
                                 {
                                     ProfilePath[Index] = getLinkedProfile(device.getMacAddress());
-                                    Global.linkedProfileCheck[Index] = true;
+                                    Global.LinkedProfileCheck[Index] = true;
                                 }
                                 else
                                 {
                                     ProfilePath[Index] = OlderProfilePath[Index];
-                                    Global.linkedProfileCheck[Index] = false;
+                                    Global.LinkedProfileCheck[Index] = false;
                                 }
 
                                 profileLoaded = LoadProfile(Index, false, this, false, false);
@@ -1744,7 +1744,7 @@ namespace DS4Windows
                                 }
                                 else
                                 {
-                                    useDInputOnly[Index] = true;
+                                    UseDirectInputOnly[Index] = true;
                                     Global.ActiveOutDevType[Index] = OutContType.None;
                                 }
 
@@ -2059,7 +2059,7 @@ namespace DS4Windows
 
                 if (!synced)
                 {
-                    if (!useDInputOnly[ind])
+                    if (!UseDirectInputOnly[ind])
                     {
                         Global.ActiveOutDevType[ind] = OutContType.None;
                         UnplugOutDev(ind, device);
@@ -2106,7 +2106,7 @@ namespace DS4Windows
                 if (removingStatus)
                 {
                     CurrentState[ind].Battery = PreviousState[ind].Battery = 0; // Reset for the next connection's initial status change.
-                    if (!useDInputOnly[ind])
+                    if (!UseDirectInputOnly[ind])
                     {
                         UnplugOutDev(ind, device);
                     }
@@ -2157,12 +2157,12 @@ namespace DS4Windows
                     touchPad[ind] = null;
                     lag[ind] = false;
                     inWarnMonitor[ind] = false;
-                    useDInputOnly[ind] = true;
+                    UseDirectInputOnly[ind] = true;
                     Global.ActiveOutDevType[ind] = OutContType.None;
                     /* Leave up to Auto Profile system to change the following flags? */
-                    //Global.useTempProfile[ind] = false;
-                    //Global.tempprofilename[ind] = string.Empty;
-                    //Global.tempprofileDistance[ind] = false;
+                    //Global.UseTempProfiles[ind] = false;
+                    //Global.TempProfileNames[ind] = string.Empty;
+                    //Global.TempProfileDistance[ind] = false;
 
                     //Thread.Sleep(XINPUT_UNPLUG_SETTLE_TIME);
                 }
@@ -2261,7 +2261,7 @@ namespace DS4Windows
 
                 cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 
-                if (!recordingMacro && (useTempProfile[ind] ||
+                if (!recordingMacro && (UseTempProfiles[ind] ||
                     containsCustomAction(ind) || containsCustomExtras(ind) ||
                     getProfileActionCount(ind) > 0))
                 {
@@ -2279,7 +2279,7 @@ namespace DS4Windows
                     cState = tempMapState;
                 }
 
-                if (!useDInputOnly[ind])
+                if (!UseDirectInputOnly[ind])
                 {
                     outputDevices[ind]?.ConvertandSendReport(cState, ind);
                     //testNewReport(ref x360reports[ind], cState, ind);

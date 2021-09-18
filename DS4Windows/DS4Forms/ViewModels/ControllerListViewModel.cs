@@ -179,7 +179,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     Global.Save();
                 });
-                Global.linkedProfileCheck[found.DevIndex] = false;
+                Global.LinkedProfileCheck[found.DevIndex] = false;
                 _colListLocker.ExitWriteLock();
             }
         }
@@ -289,13 +289,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                return Global.linkedProfileCheck[devIndex];
+                return Global.LinkedProfileCheck[devIndex];
             }
             set
             {
-                bool temp = Global.linkedProfileCheck[devIndex];
+                bool temp = Global.LinkedProfileCheck[devIndex];
                 if (temp == value) return;
-                Global.linkedProfileCheck[devIndex] = value;
+                Global.LinkedProfileCheck[devIndex] = value;
                 SaveLinked(value);
             }
         }

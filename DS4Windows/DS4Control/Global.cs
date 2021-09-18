@@ -70,24 +70,51 @@ namespace DS4Windows
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DS4Windows");
         
         public static bool runHotPlug = false;
-        public static string[] tempprofilename = new string[TEST_PROFILE_ITEM_COUNT] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
-        public static bool[] useTempProfile = new bool[TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public static bool[] tempprofileDistance = new bool[TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public static bool[] useDInputOnly = new bool[TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
-        public static bool[] linkedProfileCheck = new bool[MAX_DS4_CONTROLLER_COUNT] { false, false, false, false, false, false, false, false };
-        public static bool[] touchpadActive = new bool[TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
-        // Used to hold device type desired from Profile Editor
-        public static OutContType[] OutDevTypeTemp = new OutContType[TEST_PROFILE_ITEM_COUNT] { DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
+
+        public static string[] TempProfileNames = new string[TEST_PROFILE_ITEM_COUNT]
+        {
+            string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+            string.Empty, string.Empty
+        };
+
+        public static bool[] UseTempProfiles = new bool[TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public static bool[] TempProfileDistance = new bool[TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public static bool[] UseDirectInputOnly = new bool[TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
+        public static bool[] LinkedProfileCheck = new bool[MAX_DS4_CONTROLLER_COUNT]
+            {false, false, false, false, false, false, false, false};
+
+        public static bool[] TouchpadActive = new bool[TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
+        /// <summary>
+        ///     Used to hold device type desired from Profile Editor
+        /// </summary>
+        public static OutContType[] OutDevTypeTemp = new OutContType[TEST_PROFILE_ITEM_COUNT]
+        {
             DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
             DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
             DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
-            DS4Windows.OutContType.X360};
-        // Used to hold the currently active controller output type in use for a slot
-        public static OutContType[] ActiveOutDevType = new OutContType[TEST_PROFILE_ITEM_COUNT] { DS4Windows.OutContType.None, DS4Windows.OutContType.None,
+            DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
+            DS4Windows.OutContType.X360
+        };
+
+        /// <summary>
+        ///     Used to hold the currently active controller output type in use for a slot.
+        /// </summary>
+        public static OutContType[] ActiveOutDevType = new OutContType[TEST_PROFILE_ITEM_COUNT]
+        {
             DS4Windows.OutContType.None, DS4Windows.OutContType.None,
             DS4Windows.OutContType.None, DS4Windows.OutContType.None,
             DS4Windows.OutContType.None, DS4Windows.OutContType.None,
-            DS4Windows.OutContType.None};
+            DS4Windows.OutContType.None, DS4Windows.OutContType.None,
+            DS4Windows.OutContType.None
+        };
 
         public const string BLANK_VIGEMBUS_VERSION = "0.0.0.0";
         public const string MIN_SUPPORTED_VIGEMBUS_VERSION = "1.16.112.0";
@@ -1216,10 +1243,10 @@ namespace DS4Windows
             return m_Config.touchSensitivity[index];
         }
 
-        public static bool[] TouchActive => touchpadActive;
+        public static bool[] TouchActive => TouchpadActive;
         public static bool GetTouchActive(int index)
         {
-            return touchpadActive[index];
+            return TouchpadActive[index];
         }
 
         public static LightbarSettingInfo[] LightbarSettingsInfo => m_Config.lightbarSettingInfo;
@@ -1943,9 +1970,9 @@ namespace DS4Windows
             bool xinputChange = true, bool postLoad = true)
         {
             bool result = m_Config.LoadProfile(device, launchprogram, control, "", xinputChange, postLoad);
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
 
             return result;
         }
@@ -1954,9 +1981,9 @@ namespace DS4Windows
             ControlService control, bool xinputChange = true)
         {
             bool result = m_Config.LoadProfile(device, launchprogram, control, appdatapath + @"\Profiles\" + name + ".xml");
-            tempprofilename[device] = name;
-            useTempProfile[device] = true;
-            tempprofileDistance[device] = name.ToLower().Contains("distance");
+            TempProfileNames[device] = name;
+            UseTempProfiles[device] = true;
+            TempProfileDistance[device] = name.ToLower().Contains("distance");
 
             return result;
         }
@@ -1968,9 +1995,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadBlankDS4Profile(int device, bool launchprogram, ControlService control,
@@ -1980,9 +2007,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultGamepadGyroProfile(int device, bool launchprogram, ControlService control,
@@ -1992,9 +2019,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultDS4GamepadGyroProfile(int device, bool launchprogram, ControlService control,
@@ -2004,9 +2031,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultMixedControlsProfile(int device, bool launchprogram, ControlService control,
@@ -2016,9 +2043,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultDS4MixedControlsProfile(int device, bool launchprogram, ControlService control,
@@ -2028,9 +2055,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultMixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
@@ -2040,9 +2067,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultDS4MixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
@@ -2052,9 +2079,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultKBMProfile(int device, bool launchprogram, ControlService control,
@@ -2064,9 +2091,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static void LoadDefaultKBMGyroMouseProfile(int device, bool launchprogram, ControlService control,
@@ -2076,9 +2103,9 @@ namespace DS4Windows
             m_Config.EstablishDefaultSpecialActions(device);
             m_Config.CacheExtraProfileInfo(device);
 
-            tempprofilename[device] = string.Empty;
-            useTempProfile[device] = false;
-            tempprofileDistance[device] = false;
+            TempProfileNames[device] = string.Empty;
+            UseTempProfiles[device] = false;
+            TempProfileDistance[device] = false;
         }
 
         public static bool Save()

@@ -2042,7 +2042,7 @@ namespace DS4Windows
             //DS4StateFieldMapping outputfieldMapping = new DS4StateFieldMapping(cState, eState, tp);
 
             SyntheticState deviceState = Mapping.deviceState[device];
-            if (getProfileActionCount(device) > 0 || useTempProfile[device])
+            if (getProfileActionCount(device) > 0 || UseTempProfiles[device])
                 MapCustomAction(device, cState, MappedState, eState, tp, ctrl, fieldMapping, outputfieldMapping);
             //if (ctrl.DS4Controllers[device] == null) return;
 
@@ -3419,7 +3419,7 @@ namespace DS4Windows
                             {
                                 actionFound = true;
 
-                                if (!actionDone[index].dev[device] && (!useTempProfile[device] || untriggeraction[device] == null || untriggeraction[device].typeID != SpecialAction.ActionTypeId.Profile) )
+                                if (!actionDone[index].dev[device] && (!UseTempProfiles[device] || untriggeraction[device] == null || untriggeraction[device].typeID != SpecialAction.ActionTypeId.Profile) )
                                 {
                                     actionDone[index].dev[device] = true;
                                     // If Loadprofile special action doesn't have untrigger keys or automatic untrigger option is not set then don't set untrigger status. This way the new loaded profile allows yet another loadProfile action key event.
@@ -3429,7 +3429,7 @@ namespace DS4Windows
                                         untriggerindex[device] = index;
 
                                         // If the existing profile is a temp profile then store its name, because automaticUntrigger needs to know where to go back (empty name goes back to default regular profile)
-                                        untriggeraction[device].prevProfileName = (useTempProfile[device] ? tempprofilename[device] : string.Empty);
+                                        untriggeraction[device].prevProfileName = (UseTempProfiles[device] ? TempProfileNames[device] : string.Empty);
                                     }
                                     //foreach (DS4Controls dc in action.trigger)
                                     for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
@@ -3897,7 +3897,7 @@ namespace DS4Windows
                     if ((action.controls == action.ucontrols && !actionDone[index].dev[device]) || //if trigger and end trigger are the same
                     action.controls != action.ucontrols)
                     {
-                        if (useTempProfile[device])
+                        if (UseTempProfiles[device])
                         {
                             //foreach (DS4Controls dc in action.uTrigger)
                             for (int i = 0, arlen = action.uTrigger.Count; i < arlen; i++)

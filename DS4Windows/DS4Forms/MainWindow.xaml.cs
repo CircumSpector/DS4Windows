@@ -1201,8 +1201,8 @@ Suspend support not enabled.", true);
 
                                             if (propName == "profilename")
                                             {
-                                                if (Global.useTempProfile[tdevice])
-                                                    propValue = Global.tempprofilename[tdevice];
+                                                if (Global.UseTempProfiles[tdevice])
+                                                    propValue = Global.TempProfileNames[tdevice];
                                                 else
                                                     propValue = Global.ProfilePath[tdevice];
                                             }
@@ -1211,7 +1211,7 @@ Suspend support not enabled.", true);
                                             else if (propName == "activeoutdevtype")
                                                 propValue = Global.ActiveOutDevType[tdevice].ToString();
                                             else if (propName == "usedinputonly")
-                                                propValue = Global.useDInputOnly[tdevice].ToString();
+                                                propValue = Global.UseDirectInputOnly[tdevice].ToString();
 
                                             else if (propName == "devicevidpid" && App.rootHub.DS4Controllers[tdevice] != null)
                                                 propValue = $"VID={App.rootHub.DS4Controllers[tdevice].HidDevice.Attributes.VendorHexId}, PID={App.rootHub.DS4Controllers[tdevice].HidDevice.Attributes.ProductHexId}";

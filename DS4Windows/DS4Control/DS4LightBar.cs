@@ -281,8 +281,8 @@ namespace DS4Windows
 
             if (useLightRoutine)
             {
-                bool distanceprofile = DistanceProfiles[deviceNum] || tempprofileDistance[deviceNum];
-                //distanceprofile = (ProfilePath[deviceNum].ToLower().Contains("distance") || tempprofilename[deviceNum].ToLower().Contains("distance"));
+                bool distanceprofile = DistanceProfiles[deviceNum] || TempProfileDistance[deviceNum];
+                //distanceprofile = (ProfilePath[deviceNum].ToLower().Contains("distance") || TempProfileNames[deviceNum].ToLower().Contains("distance"));
                 if (distanceprofile && !defaultLight)
                 {
                     // Thing I did for Distance
