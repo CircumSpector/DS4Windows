@@ -71,7 +71,7 @@ namespace DS4Windows
         public static string RoamingAppDataPath =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DS4Windows");
         
-        public static bool runHotPlug = false;
+        public static bool RunHotPlug { get; set; } = false;
 
         public static string[] TempProfileNames = new string[TEST_PROFILE_ITEM_COUNT]
         {

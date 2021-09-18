@@ -1023,7 +1023,7 @@ Suspend support not enabled.", true);
             {
                 case Util.WM_DEVICECHANGE:
                 {
-                    if (Global.runHotPlug)
+                    if (Global.RunHotPlug)
                     {
                         Int32 Type = wParam.ToInt32();
                         if (Type == DBT_DEVICEARRIVAL ||

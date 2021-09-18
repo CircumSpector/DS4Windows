@@ -1400,7 +1400,7 @@ namespace DS4Windows
             }
 
             inServiceTask = false;
-            runHotPlug = true;
+            RunHotPlug = true;
             ServiceStarted?.Invoke(this, EventArgs.Empty);
             RunningChanged?.Invoke(this, EventArgs.Empty);
             return true;
@@ -1472,7 +1472,7 @@ namespace DS4Windows
             if (running)
             {
                 running = false;
-                runHotPlug = false;
+                RunHotPlug = false;
                 inServiceTask = true;
                 PreServiceStop?.Invoke(this, EventArgs.Empty);
 
@@ -1565,7 +1565,7 @@ namespace DS4Windows
                 activeControllers = 0;
             }
 
-            runHotPlug = false;
+            RunHotPlug = false;
             ServiceStopped?.Invoke(this, EventArgs.Empty);
             RunningChanged?.Invoke(this, EventArgs.Empty);
             return true;
