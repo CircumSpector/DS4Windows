@@ -37,7 +37,7 @@ namespace DS4Windows
 
         public static FileVersionInfo ExecutableFileVersion => FileVersionInfo.GetVersionInfo(ExecutableLocation);
 
-        public static string ExecutableProductVersion = ExecutableFileVersion.ProductVersion;
+        public static string ExecutableProductVersion => ExecutableFileVersion.ProductVersion;
 
         public static ulong ExecutableVersionLong => (ulong)ExecutableFileVersion.ProductMajorPart << 48 |
             (ulong)ExecutableFileVersion.ProductMinorPart << 32 | (ulong)ExecutableFileVersion.ProductBuildPart << 16;
