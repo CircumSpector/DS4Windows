@@ -17,10 +17,16 @@ namespace DS4Windows
         // Use 15 minutes for default Idle Disconnect when initially enabling the option
         public const int DEFAULT_ENABLE_IDLE_DISCONN_MINS = 15;
 
-        public String m_Profile = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName + "\\Profiles.xml";
-        public String m_Actions = Global.RuntimeAppDataPath + "\\Actions.xml";
-        public string m_linkedProfiles = Global.RuntimeAppDataPath + "\\LinkedProfiles.xml";
-        public string m_controllerConfigs = Global.RuntimeAppDataPath + "\\ControllerConfigs.xml";
+        public string ProfilesPath { get; set; } =
+            Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, "Profiles.xml");
+
+        public string ActionsPath { get; set; } = Path.Combine(Global.RuntimeAppDataPath, "Actions.xml");
+
+        public string LinkedProfilesPath { get; set; } =
+            Path.Combine(Global.RuntimeAppDataPath, "LinkedProfiles.xml");
+
+        public string ControllerConfigsPath { get; set; } =
+            Path.Combine(Global.RuntimeAppDataPath, "ControllerConfigs.xml");
 
         protected XmlDocument m_Xdoc = new XmlDocument();
         // ninth (fifth in old builds) value used for options, not last controller
@@ -3308,11 +3314,11 @@ namespace DS4Windows
 
             try
             {
-                if (File.Exists(m_Profile))
+                if (File.Exists(ProfilesPath))
                 {
                     XmlNode Item;
 
-                    m_Xdoc.Load(m_Profile);
+                    m_Xdoc.Load(ProfilesPath);
 
                     try { Item = m_Xdoc.SelectSingleNode("/Profile/useExclusiveMode"); Boolean.TryParse(Item.InnerText, out useExclusiveMode); } // Ex Mode
                     catch { missingSetting = true; } // Ex Mode
@@ -3715,7 +3721,7 @@ namespace DS4Windows
 
             try
             {
-                m_Xdoc.Save(m_Profile);
+                m_Xdoc.Save(ProfilesPath);
             }
             catch (UnauthorizedAccessException) { Saved = false; }
 
@@ -3738,7 +3744,7 @@ namespace DS4Windows
         {
             XmlDocument m_Xdoc = new XmlDocument();
             PrepareActionsXml(m_Xdoc);
-            m_Xdoc.Save(m_Actions);
+            m_Xdoc.Save(ActionsPath);
         }
 
         private void PrepareActionsXml(XmlDocument xmlDoc)
@@ -3761,12 +3767,12 @@ namespace DS4Windows
         public bool SaveAction(string name, string controls, int mode, string details, bool edit, string extras = "")
         {
             bool saved = true;
-            if (!File.Exists(m_Actions))
+            if (!File.Exists(ActionsPath))
                 CreateAction();
 
             try
             {
-                m_Xdoc.Load(m_Actions);
+                m_Xdoc.Load(ActionsPath);
             }
             catch (XmlException)
             {
@@ -3841,7 +3847,7 @@ namespace DS4Windows
             else { Node.AppendChild(el); }
 
             m_Xdoc.AppendChild(Node);
-            try { m_Xdoc.Save(m_Actions); }
+            try { m_Xdoc.Save(ActionsPath); }
             catch { saved = false; }
             LoadActions();
             return saved;
@@ -3849,14 +3855,14 @@ namespace DS4Windows
 
         public void RemoveAction(string name)
         {
-            m_Xdoc.Load(m_Actions);
+            m_Xdoc.Load(ActionsPath);
             XmlNode Node = m_Xdoc.SelectSingleNode("Actions");
             XmlNode Item = m_Xdoc.SelectSingleNode("/Actions/Action[@Name=\"" + name + "\"]");
             if (Item != null)
                 Node.RemoveChild(Item);
 
             m_Xdoc.AppendChild(Node);
-            m_Xdoc.Save(m_Actions);
+            m_Xdoc.Save(ActionsPath);
             LoadActions();
         }
 
@@ -3982,8 +3988,8 @@ namespace DS4Windows
             Node = m_Xdoc.CreateNode(XmlNodeType.Element, "LinkedControllers", "");
             m_Xdoc.AppendChild(Node);
 
-            try { m_Xdoc.Save(m_linkedProfiles); }
-            catch (UnauthorizedAccessException) { AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + m_linkedProfiles, false); saved = false; }
+            try { m_Xdoc.Save(LinkedProfilesPath); }
+            catch (UnauthorizedAccessException) { AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false); saved = false; }
 
             return saved;
         }
@@ -3991,11 +3997,11 @@ namespace DS4Windows
         public bool LoadLinkedProfiles()
         {
             bool loaded = true;
-            if (File.Exists(m_linkedProfiles))
+            if (File.Exists(LinkedProfilesPath))
             {
                 XmlDocument linkedXdoc = new XmlDocument();
                 XmlNode Node;
-                linkedXdoc.Load(m_linkedProfiles);
+                linkedXdoc.Load(LinkedProfilesPath);
                 linkedProfiles.Clear();
 
                 try
@@ -4024,7 +4030,7 @@ namespace DS4Windows
         public bool SaveLinkedProfiles()
         {
             bool saved = true;
-            if (File.Exists(m_linkedProfiles))
+            if (File.Exists(LinkedProfilesPath))
             {
                 XmlDocument linkedXdoc = new XmlDocument();
                 XmlNode Node;
@@ -4053,8 +4059,8 @@ namespace DS4Windows
                     Node.AppendChild(link);
                 }
 
-                try { linkedXdoc.Save(m_linkedProfiles); }
-                catch (UnauthorizedAccessException) { AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + m_linkedProfiles, false); saved = false; }
+                try { linkedXdoc.Save(LinkedProfilesPath); }
+                catch (UnauthorizedAccessException) { AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false); saved = false; }
             }
             else
             {
@@ -4083,8 +4089,8 @@ namespace DS4Windows
             Node = configXdoc.CreateNode(XmlNodeType.Element, "Controllers", "");
             configXdoc.AppendChild(Node);
 
-            try { configXdoc.Save(m_controllerConfigs); }
-            catch (UnauthorizedAccessException) { AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + m_controllerConfigs, false); saved = false; }
+            try { configXdoc.Save(ControllerConfigsPath); }
+            catch (UnauthorizedAccessException) { AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false); saved = false; }
 
             return saved;
         }
@@ -4094,12 +4100,12 @@ namespace DS4Windows
             bool loaded = false;
 
             if (device == null) return false;
-            if (!File.Exists(m_controllerConfigs)) createControllerConfigs();
+            if (!File.Exists(ControllerConfigsPath)) createControllerConfigs();
 
             try
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(m_controllerConfigs);
+                xmlDoc.Load(ControllerConfigsPath);
 
                 XmlNode node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() + "\"]");
                 if (node != null)
@@ -4131,13 +4137,13 @@ namespace DS4Windows
             bool saved = true;
 
             if (device == null) return false;
-            if (!File.Exists(m_controllerConfigs)) createControllerConfigs();
+            if (!File.Exists(ControllerConfigsPath)) createControllerConfigs();
 
             try
             {
                 //XmlNode node = null;
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(m_controllerConfigs);
+                xmlDoc.Load(ControllerConfigsPath);
 
                 XmlNode node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() + "\"]");
                 XmlNode xmlControllersNode = xmlDoc.SelectSingleNode("/Controllers");
@@ -4193,11 +4199,11 @@ namespace DS4Windows
                 xmlDoc.AppendChild(xmlControllersNode);
 
                 // Save XML to file
-                xmlDoc.Save(m_controllerConfigs);
+                xmlDoc.Save(ControllerConfigsPath);
             }
             catch (UnauthorizedAccessException)
             {
-                AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + m_controllerConfigs, false);
+                AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
                 saved = false;
             }
 
