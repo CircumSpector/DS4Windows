@@ -638,7 +638,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => tempControllerIndex; set
             {
                 tempControllerIndex = value;
-                Global.outDevTypeTemp[device] = TempConType;
+                Global.OutDevTypeTemp[device] = TempConType;
             }
         }
 
@@ -2404,7 +2404,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             this.device = device;
             funcDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
-            Global.outDevTypeTemp[device] = OutContType.X360;
+            Global.OutDevTypeTemp[device] = OutContType.X360;
             tempBtPollRate = Global.BTPollRate[device];
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
@@ -3051,7 +3051,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public void UpdateLateProperties()
         {
             tempControllerIndex = ControllerTypeIndex;
-            Global.outDevTypeTemp[device] = Global.OutContType[device];
+            Global.OutDevTypeTemp[device] = Global.OutContType[device];
             tempBtPollRate = Global.BTPollRate[device];
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;

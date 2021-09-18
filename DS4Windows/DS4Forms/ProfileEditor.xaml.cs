@@ -664,7 +664,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 App.rootHub.setRumble(0, 0, profileSettingsVM.FuncDevNum);
             }
-            Global.outDevTypeTemp[deviceNum] = OutContType.X360;
+            Global.OutDevTypeTemp[deviceNum] = OutContType.X360;
             Global.LoadProfile(deviceNum, false, App.rootHub);
             Closed?.Invoke(this, EventArgs.Empty);
         }
@@ -757,7 +757,7 @@ namespace DS4WinWPF.DS4Forms
             Global.OutContType[deviceNum] = profileSettingsVM.TempConType;
             if (fullSave)
             {
-                Global.outDevTypeTemp[deviceNum] = OutContType.X360;
+                Global.OutDevTypeTemp[deviceNum] = OutContType.X360;
             }
         }
 

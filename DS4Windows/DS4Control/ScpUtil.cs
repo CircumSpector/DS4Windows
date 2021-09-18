@@ -1937,7 +1937,7 @@ namespace DS4Windows
                     DS4LightBar.forcedFlash[device] = 0;
                 }
 
-                OutContType oldContType = Global.activeOutDevType[device];
+                OutContType oldContType = Global.ActiveOutDevType[device];
                 LightbarSettingInfo lightbarSettings = lightbarSettingInfo[device];
                 LightbarDS4WinInfo lightInfo = lightbarSettings.ds4winSettings;
 
@@ -3672,7 +3672,7 @@ namespace DS4Windows
                 if (tempOutDev != null)
                 {
                     tempOutDev = null;
-                    //Global.activeOutDevType[device] = OutContType.None;
+                    //Global.ActiveOutDevType[device] = OutContType.None;
                     DS4Device tempDev = control.DS4Controllers[device];
                     if (tempDev != null)
                     {
@@ -4338,7 +4338,7 @@ namespace DS4Windows
                     else if (type == "DisconnectBT")
                     {
                         double doub;
-                        if (double.TryParse(details, System.Globalization.NumberStyles.Float, Global.configFileDecimalCulture, out doub))
+                        if (double.TryParse(details, System.Globalization.NumberStyles.Float, Global.ConfigFileDecimalCulture, out doub))
                             actions.Add(new SpecialAction(name, controls, type, "", doub));
                         else
                             actions.Add(new SpecialAction(name, controls, type, ""));
@@ -4346,9 +4346,9 @@ namespace DS4Windows
                     else if (type == "BatteryCheck")
                     {
                         double doub;
-                        if (double.TryParse(details.Split('|')[0], System.Globalization.NumberStyles.Float, Global.configFileDecimalCulture, out doub))
+                        if (double.TryParse(details.Split('|')[0], System.Globalization.NumberStyles.Float, Global.ConfigFileDecimalCulture, out doub))
                             actions.Add(new SpecialAction(name, controls, type, details, doub));
-                        else if (double.TryParse(details.Split(',')[0], System.Globalization.NumberStyles.Float, Global.configFileDecimalCulture, out doub))
+                        else if (double.TryParse(details.Split(',')[0], System.Globalization.NumberStyles.Float, Global.ConfigFileDecimalCulture, out doub))
                             actions.Add(new SpecialAction(name, controls, type, details, doub));
                         else
                             actions.Add(new SpecialAction(name, controls, type, details));
@@ -4359,7 +4359,7 @@ namespace DS4Windows
                         if (x.ChildNodes[3] != null)
                         {
                             extras = x.ChildNodes[3].InnerText;
-                            if (double.TryParse(x.ChildNodes[4].InnerText, System.Globalization.NumberStyles.Float, Global.configFileDecimalCulture, out doub))
+                            if (double.TryParse(x.ChildNodes[4].InnerText, System.Globalization.NumberStyles.Float, Global.ConfigFileDecimalCulture, out doub))
                                 actions.Add(new SpecialAction(name, controls, type, details, doub, extras));
                             else
                                 actions.Add(new SpecialAction(name, controls, type, details, 0, extras));
@@ -4376,7 +4376,7 @@ namespace DS4Windows
                     else if (type == "SASteeringWheelEmulationCalibrate")
                     {
                         double doub;
-                        if (double.TryParse(details, System.Globalization.NumberStyles.Float, Global.configFileDecimalCulture, out doub))
+                        if (double.TryParse(details, System.Globalization.NumberStyles.Float, Global.ConfigFileDecimalCulture, out doub))
                             actions.Add(new SpecialAction(name, controls, type, "", doub));
                         else
                             actions.Add(new SpecialAction(name, controls, type, ""));
@@ -5009,7 +5009,7 @@ namespace DS4Windows
             xinputPlug = false;
             xinputStatus = false;
 
-            OutContType oldContType = Global.activeOutDevType[device];
+            OutContType oldContType = Global.ActiveOutDevType[device];
 
             // Make sure to reset currently set profile values before parsing
             ResetProfile(device);
@@ -5068,7 +5068,7 @@ namespace DS4Windows
             bool xinputPlug = false;
             bool xinputStatus = false;
 
-            OutContType oldContType = Global.activeOutDevType[device];
+            OutContType oldContType = Global.ActiveOutDevType[device];
 
             // Make sure to reset currently set profile values before parsing
             ResetProfile(device);
@@ -5103,7 +5103,7 @@ namespace DS4Windows
             bool xinputPlug = false;
             bool xinputStatus = false;
 
-            OutContType oldContType = Global.activeOutDevType[device];
+            OutContType oldContType = Global.ActiveOutDevType[device];
 
             // Make sure to reset currently set profile values before parsing
             ResetProfile(device);
@@ -5184,7 +5184,7 @@ namespace DS4Windows
             bool xinputPlug = false;
             bool xinputStatus = false;
 
-            OutContType oldContType = Global.activeOutDevType[device];
+            OutContType oldContType = Global.ActiveOutDevType[device];
 
             // Make sure to reset currently set profile values before parsing
             ResetProfile(device);
@@ -5299,7 +5299,7 @@ namespace DS4Windows
             bool xinputPlug = false;
             bool xinputStatus = false;
 
-            OutContType oldContType = Global.activeOutDevType[device];
+            OutContType oldContType = Global.ActiveOutDevType[device];
 
             // Make sure to reset currently set profile values before parsing
             ResetProfile(device);
@@ -5348,7 +5348,7 @@ namespace DS4Windows
             bool xinputPlug = false;
             bool xinputStatus = false;
 
-            OutContType oldContType = Global.activeOutDevType[device];
+            OutContType oldContType = Global.ActiveOutDevType[device];
 
             // Make sure to reset currently set profile values before parsing
             ResetProfile(device);
@@ -5454,7 +5454,7 @@ namespace DS4Windows
             bool xinputPlug = false;
             bool xinputStatus = false;
 
-            OutContType oldContType = Global.activeOutDevType[device];
+            OutContType oldContType = Global.ActiveOutDevType[device];
 
             // Make sure to reset currently set profile values before parsing
             ResetProfile(device);
@@ -5614,7 +5614,7 @@ namespace DS4Windows
                             if (tempOutDev != null)
                             {
                                 tempOutDev = null;
-                                //Global.activeOutDevType[device] = OutContType.None;
+                                //Global.ActiveOutDevType[device] = OutContType.None;
                                 control.UnplugOutDev(device, tempDev);
                             }
 
@@ -5624,7 +5624,7 @@ namespace DS4Windows
                         }
                         else
                         {
-                            //Global.activeOutDevType[device] = OutContType.None;
+                            //Global.ActiveOutDevType[device] = OutContType.None;
                             control.UnplugOutDev(device, tempDev);
                         }
                     }

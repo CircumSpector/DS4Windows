@@ -959,7 +959,7 @@ namespace DS4Windows
                 bool success = false;
                 if (contType == OutContType.X360)
                 {
-                    activeOutDevType[index] = OutContType.X360;
+                    ActiveOutDevType[index] = OutContType.X360;
 
                     if (slotDevice == null)
                     {
@@ -1031,7 +1031,7 @@ namespace DS4Windows
                 }
                 else if (contType == OutContType.DS4)
                 {
-                    activeOutDevType[index] = OutContType.DS4;
+                    ActiveOutDevType[index] = OutContType.DS4;
                     if (slotDevice == null)
                     {
                         slotDevice = outputslotMan.FindOpenSlot();
@@ -1124,9 +1124,9 @@ namespace DS4Windows
                     string tempType = dev.GetDeviceType();
                     LogDebug($"Disassociate {tempType} Controller from{(slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent ? " permanent" : "")} slot #{slotDevice.Index+1} for input {device.DisplayName} controller #{index + 1}", false);
 
-                    OutContType currentType = activeOutDevType[index];
+                    OutContType currentType = ActiveOutDevType[index];
                     outputDevices[index] = null;
-                    activeOutDevType[index] = OutContType.None;
+                    ActiveOutDevType[index] = OutContType.None;
                     if ((slotDevice.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached &&
                         slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Dynamic) || force)
                     {
@@ -1296,17 +1296,17 @@ namespace DS4Windows
                                     OutputDevice tempOutDev = outputDevices[otherIdx];
                                     if (tempOutDev != null)
                                     {
-                                        OutContType tempConType = activeOutDevType[otherIdx];
+                                        OutContType tempConType = ActiveOutDevType[otherIdx];
                                         EstablishOutFeedback(i, tempConType, tempOutDev, device);
                                         outputDevices[i] = tempOutDev;
-                                        Global.activeOutDevType[i] = tempConType;
+                                        Global.ActiveOutDevType[i] = tempConType;
                                     }
                                 }
                             }
                             else
                             {
                                 useDInputOnly[i] = true;
-                                Global.activeOutDevType[i] = OutContType.None;
+                                Global.ActiveOutDevType[i] = OutContType.None;
                             }
 
                             if (device.PrimaryDevice && device.OutputMapGyro)
@@ -1526,7 +1526,7 @@ namespace DS4Windows
 
                         //outputDevices[i] = null;
                         //useDInputOnly[i] = true;
-                        //Global.activeOutDevType[i] = OutContType.None;
+                        //Global.ActiveOutDevType[i] = OutContType.None;
                         useDInputOnly[i] = true;
                         DS4Controllers[i] = null;
                         touchPad[i] = null;
@@ -1735,17 +1735,17 @@ namespace DS4Windows
                                         OutputDevice tempOutDev = outputDevices[otherIdx];
                                         if (tempOutDev != null)
                                         {
-                                            OutContType tempConType = activeOutDevType[otherIdx];
+                                            OutContType tempConType = ActiveOutDevType[otherIdx];
                                             EstablishOutFeedback(Index, tempConType, tempOutDev, device);
                                             outputDevices[Index] = tempOutDev;
-                                            Global.activeOutDevType[Index] = tempConType;
+                                            Global.ActiveOutDevType[Index] = tempConType;
                                         }
                                     }
                                 }
                                 else
                                 {
                                     useDInputOnly[Index] = true;
-                                    Global.activeOutDevType[Index] = OutContType.None;
+                                    Global.ActiveOutDevType[Index] = OutContType.None;
                                 }
 
                                 if (device.PrimaryDevice && device.OutputMapGyro)
@@ -2061,7 +2061,7 @@ namespace DS4Windows
                 {
                     if (!useDInputOnly[ind])
                     {
-                        Global.activeOutDevType[ind] = OutContType.None;
+                        Global.ActiveOutDevType[ind] = OutContType.None;
                         UnplugOutDev(ind, device);
                     }
                 }
@@ -2158,7 +2158,7 @@ namespace DS4Windows
                     lag[ind] = false;
                     inWarnMonitor[ind] = false;
                     useDInputOnly[ind] = true;
-                    Global.activeOutDevType[ind] = OutContType.None;
+                    Global.ActiveOutDevType[ind] = OutContType.None;
                     /* Leave up to Auto Profile system to change the following flags? */
                     //Global.useTempProfile[ind] = false;
                     //Global.tempprofilename[ind] = string.Empty;

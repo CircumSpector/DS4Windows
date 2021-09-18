@@ -43,7 +43,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public BindingWindowViewModel(int deviceNum, DS4ControlSettings settings)
         {
             this.deviceNum = deviceNum;
-            use360Mode = Global.outDevTypeTemp[deviceNum] == OutContType.X360;
+            use360Mode = Global.OutDevTypeTemp[deviceNum] == OutContType.X360;
             this.settings = settings;
             currentOutBind = new OutBinding();
             shiftOutBind = new OutBinding();

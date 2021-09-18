@@ -1209,7 +1209,7 @@ Suspend support not enabled.", true);
                                             else if (propName == "outconttype")
                                                 propValue = Global.OutContType[tdevice].ToString();
                                             else if (propName == "activeoutdevtype")
-                                                propValue = Global.activeOutDevType[tdevice].ToString();
+                                                propValue = Global.ActiveOutDevType[tdevice].ToString();
                                             else if (propName == "usedinputonly")
                                                 propValue = Global.useDInputOnly[tdevice].ToString();
 
