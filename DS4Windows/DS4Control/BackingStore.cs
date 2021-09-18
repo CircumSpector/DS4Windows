@@ -322,97 +322,163 @@ namespace DS4Windows
 
         public LightbarSettingInfo[] lightbarSettingInfo = new LightbarSettingInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new LightbarSettingInfo(), new LightbarSettingInfo(),
-            new LightbarSettingInfo(), new LightbarSettingInfo(),
-            new LightbarSettingInfo(), new LightbarSettingInfo(),
-            new LightbarSettingInfo(), new LightbarSettingInfo(),
-            new LightbarSettingInfo(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
 
-        public string[] launchProgram = new string[Global.TEST_PROFILE_ITEM_COUNT] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
-        public bool[] dinputOnly = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public bool[] startTouchpadOff = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public TouchpadOutMode[] touchOutMode = new TouchpadOutMode[Global.TEST_PROFILE_ITEM_COUNT] { TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
-            TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse };
-        public GyroOutMode[] gyroOutMode = new GyroOutMode[Global.TEST_PROFILE_ITEM_COUNT] { GyroOutMode.Controls, GyroOutMode.Controls,
-            GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls };
+        public string[] launchProgram = new string[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+            string.Empty, string.Empty
+        };
+
+        public bool[] dinputOnly = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public bool[] startTouchpadOff = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public TouchpadOutMode[] touchOutMode = new TouchpadOutMode[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
+            TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
+            TouchpadOutMode.Mouse
+        };
+
+        public GyroOutMode[] gyroOutMode = new GyroOutMode[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            GyroOutMode.Controls, GyroOutMode.Controls,
+            GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls,
+            GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls
+        };
+
         public GyroControlsInfo[] gyroControlsInf = new GyroControlsInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new GyroControlsInfo(), new GyroControlsInfo(), new GyroControlsInfo(),
-            new GyroControlsInfo(), new GyroControlsInfo(), new GyroControlsInfo(),
-            new GyroControlsInfo(), new GyroControlsInfo(), new GyroControlsInfo(),
+            new(), new(), new(),
+            new(), new(), new(),
+            new(), new(), new()
         };
-        public string[] sATriggers = new string[Global.TEST_PROFILE_ITEM_COUNT] { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
-        public string[] sAMouseStickTriggers = new string[Global.TEST_PROFILE_ITEM_COUNT] { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
-        public bool[] sATriggerCond = new bool[Global.TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
-        public bool[] sAMouseStickTriggerCond = new bool[Global.TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
-        public bool[] gyroMouseStickTriggerTurns = new bool[Global.TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
+
+        public string[] sATriggers = new string[Global.TEST_PROFILE_ITEM_COUNT]
+            {"-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1"};
+
+        public string[] sAMouseStickTriggers = new string[Global.TEST_PROFILE_ITEM_COUNT]
+            {"-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1"};
+
+        public bool[] sATriggerCond = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
+        public bool[] sAMouseStickTriggerCond = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
+        public bool[] gyroMouseStickTriggerTurns = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
+
         public GyroMouseStickInfo[] gyroMStickInfo = new GyroMouseStickInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new GyroMouseStickInfo(),
-            new GyroMouseStickInfo(),
-            new GyroMouseStickInfo(), new GyroMouseStickInfo(),
-            new GyroMouseStickInfo(), new GyroMouseStickInfo(),
-            new GyroMouseStickInfo(), new GyroMouseStickInfo(),
-            new GyroMouseStickInfo(),
+            new(),
+            new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
+
         public GyroDirectionalSwipeInfo[] gyroSwipeInfo = new GyroDirectionalSwipeInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new GyroDirectionalSwipeInfo(), new GyroDirectionalSwipeInfo(),
-            new GyroDirectionalSwipeInfo(), new GyroDirectionalSwipeInfo(),
-            new GyroDirectionalSwipeInfo(), new GyroDirectionalSwipeInfo(),
-            new GyroDirectionalSwipeInfo(), new GyroDirectionalSwipeInfo(),
-            new GyroDirectionalSwipeInfo(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
 
-        public bool[] gyroMouseStickToggle = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false,
-            false, false, false, false, false, false };
+        public bool[] gyroMouseStickToggle = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            false, false, false,
+            false, false, false, false, false, false
+        };
 
-        public SASteeringWheelEmulationAxisType[] sASteeringWheelEmulationAxis = new SASteeringWheelEmulationAxisType[Global.TEST_PROFILE_ITEM_COUNT] { SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None };
-        public int[] sASteeringWheelEmulationRange = new int[Global.TEST_PROFILE_ITEM_COUNT] { 360, 360, 360, 360, 360, 360, 360, 360, 360 };
-        public int[][] touchDisInvertTriggers = new int[Global.TEST_PROFILE_ITEM_COUNT][] { new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 },
-            new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 } };
-        public Boolean useExclusiveMode = false; // Re-enable Ex Mode
-        public Int32 formWidth = 782;
-        public Int32 formHeight = 550;
-        public int formLocationX = 0;
-        public int formLocationY = 0;
-        public Boolean startMinimized = false;
-        public Boolean minToTaskbar = false;
+        public SASteeringWheelEmulationAxisType[] sASteeringWheelEmulationAxis =
+            new SASteeringWheelEmulationAxisType[Global.TEST_PROFILE_ITEM_COUNT]
+            {
+                SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                SASteeringWheelEmulationAxisType.None
+            };
+
+        public int[] sASteeringWheelEmulationRange = new int[Global.TEST_PROFILE_ITEM_COUNT]
+            {360, 360, 360, 360, 360, 360, 360, 360, 360};
+
+        public int[][] touchDisInvertTriggers = new int[Global.TEST_PROFILE_ITEM_COUNT][]
+        {
+            new int[1] {-1}, new int[1] {-1}, new int[1] {-1},
+            new int[1] {-1}, new int[1] {-1}, new int[1] {-1}, new int[1] {-1}, new int[1] {-1}, new int[1] {-1}
+        };
+
+        public bool useExclusiveMode; // Re-enable Ex Mode
+        public int formWidth = 782;
+        public int formHeight = 550;
+        public int formLocationX;
+        public int formLocationY;
+        public bool startMinimized;
+        public bool minToTaskbar;
         public DateTime lastChecked;
         public string lastVersionChecked = string.Empty;
         public ulong lastVersionCheckedNum;
         public int CheckWhen = 24;
         public int notifications = 2;
-        public bool disconnectBTAtStop = false;
+        public bool disconnectBTAtStop;
         public bool swipeProfiles = true;
-        public bool ds4Mapping = false;
-        public bool quickCharge = false;
-        public bool closeMini = false;
-        public List<SpecialAction> actions = new List<SpecialAction>();
+        public bool ds4Mapping;
+        public bool quickCharge;
+        public bool closeMini;
+        public List<SpecialAction> actions = new();
+
         public List<DS4ControlSettings>[] ds4settings = new List<DS4ControlSettings>[Global.TEST_PROFILE_ITEM_COUNT]
-            { new List<DS4ControlSettings>(), new List<DS4ControlSettings>(), new List<DS4ControlSettings>(),
-              new List<DS4ControlSettings>(), new List<DS4ControlSettings>(), new List<DS4ControlSettings>(), new List<DS4ControlSettings>(), new List<DS4ControlSettings>(), new List<DS4ControlSettings>() };
+        {
+            new(), new(), new(),
+            new(), new(), new(), new(), new(), new()
+        };
+
         public ControlSettingsGroup[] ds4controlSettings;
 
-        public List<string>[] profileActions = new List<string>[Global.TEST_PROFILE_ITEM_COUNT] { null, null, null, null, null, null, null, null, null };
-        public int[] profileActionCount = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        public Dictionary<string, SpecialAction>[] profileActionDict = new Dictionary<string, SpecialAction>[Global.TEST_PROFILE_ITEM_COUNT]
-            { new Dictionary<string, SpecialAction>(), new Dictionary<string, SpecialAction>(), new Dictionary<string, SpecialAction>(),
-              new Dictionary<string, SpecialAction>(), new Dictionary<string, SpecialAction>(), new Dictionary<string, SpecialAction>(), new Dictionary<string, SpecialAction>(), new Dictionary<string, SpecialAction>(), new Dictionary<string, SpecialAction>() };
+        public List<string>[] profileActions = new List<string>[Global.TEST_PROFILE_ITEM_COUNT]
+            {null, null, null, null, null, null, null, null, null};
 
-        public Dictionary<string, int>[] profileActionIndexDict = new Dictionary<string, int>[Global.TEST_PROFILE_ITEM_COUNT]
-            { new Dictionary<string, int>(), new Dictionary<string, int>(), new Dictionary<string, int>(),
-              new Dictionary<string, int>(), new Dictionary<string, int>(), new Dictionary<string, int>(), new Dictionary<string, int>(), new Dictionary<string, int>(), new Dictionary<string, int>() };
+        public int[] profileActionCount = new int[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        public Dictionary<string, SpecialAction>[] profileActionDict =
+            new Dictionary<string, SpecialAction>[Global.TEST_PROFILE_ITEM_COUNT]
+            {
+                new(), new(), new(),
+                new(), new(), new(), new(), new(), new()
+            };
+
+        public Dictionary<string, int>[] profileActionIndexDict =
+            new Dictionary<string, int>[Global.TEST_PROFILE_ITEM_COUNT]
+            {
+                new(), new(), new(),
+                new(), new(), new(), new(), new(), new()
+            };
 
         public string useLang = "";
         public bool downloadLang = true;
         public TrayIconChoice useIconChoice;
         public bool flashWhenLate = true;
         public int flashWhenLateAt = 50;
-        public bool useUDPServ = false;
+        public bool useUDPServ;
         public int udpServPort = 26760;
-        public string udpServListenAddress = "127.0.0.1"; // 127.0.0.1=IPAddress.Loopback (default), 0.0.0.0=IPAddress.Any as all interfaces, x.x.x.x = Specific ipv4 interface address or hostname
+
+        public string
+            udpServListenAddress =
+                "127.0.0.1"; // 127.0.0.1=IPAddress.Loopback (default), 0.0.0.0=IPAddress.Any as all interfaces, x.x.x.x = Specific ipv4 interface address or hostname
+
         public bool useUdpSmoothing;
         public double udpSmoothingMincutoff = DEFAULT_UDP_SMOOTH_MINCUTOFF;
         public double udpSmoothingBeta = DEFAULT_UDP_SMOOTH_BETA;
@@ -422,51 +488,74 @@ namespace DS4Windows
         public string fakeExeFileName = string.Empty;
 
         public ControlServiceDeviceOptions deviceOptions =
-            new ControlServiceDeviceOptions();
+            new();
 
         // Cache whether profile has custom action
-        public bool[] containsCustomAction = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
+        public bool[] containsCustomAction = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
 
         // Cache whether profile has custom extras
-        public bool[] containsCustomExtras = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
+        public bool[] containsCustomExtras = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
 
-        public int[] gyroSensitivity = new int[Global.TEST_PROFILE_ITEM_COUNT] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-        public int[] gyroSensVerticalScale = new int[Global.TEST_PROFILE_ITEM_COUNT] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-        public int[] gyroInvert = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        public bool[] gyroTriggerTurns = new bool[Global.TEST_PROFILE_ITEM_COUNT] { true, true, true, true, true, true, true, true, true };
+        public int[] gyroSensitivity = new int[Global.TEST_PROFILE_ITEM_COUNT]
+            {100, 100, 100, 100, 100, 100, 100, 100, 100};
+
+        public int[] gyroSensVerticalScale = new int[Global.TEST_PROFILE_ITEM_COUNT]
+            {100, 100, 100, 100, 100, 100, 100, 100, 100};
+
+        public int[] gyroInvert = new int[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        public bool[] gyroTriggerTurns = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {true, true, true, true, true, true, true, true, true};
 
         public GyroMouseInfo[] gyroMouseInfo = new GyroMouseInfo[Global.TEST_PROFILE_ITEM_COUNT]
         {
-            new GyroMouseInfo(), new GyroMouseInfo(),
-            new GyroMouseInfo(), new GyroMouseInfo(),
-            new GyroMouseInfo(), new GyroMouseInfo(),
-            new GyroMouseInfo(), new GyroMouseInfo(),
-            new GyroMouseInfo(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new(), new(),
+            new()
         };
 
-        public int[] gyroMouseHorizontalAxis = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        public int[] gyroMouseHorizontalAxis = new int[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-        public int[] gyroMouseStickHorizontalAxis = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        public int[] gyroMouseStickHorizontalAxis = new int[Global.TEST_PROFILE_ITEM_COUNT] {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-        public bool[] trackballMode = new bool[Global.TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
-        public double[] trackballFriction = new double[Global.TEST_PROFILE_ITEM_COUNT] { 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 };
+        public bool[] trackballMode = new bool[Global.TEST_PROFILE_ITEM_COUNT]
+            {false, false, false, false, false, false, false, false, false};
+
+        public double[] trackballFriction = new double[Global.TEST_PROFILE_ITEM_COUNT]
+            {10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0};
 
 
-        public TouchpadAbsMouseSettings[] touchpadAbsMouse = new TouchpadAbsMouseSettings[Global.TEST_PROFILE_ITEM_COUNT] { new TouchpadAbsMouseSettings(), new TouchpadAbsMouseSettings(), new TouchpadAbsMouseSettings(),
-            new TouchpadAbsMouseSettings(),new TouchpadAbsMouseSettings(),new TouchpadAbsMouseSettings(),new TouchpadAbsMouseSettings(),new TouchpadAbsMouseSettings(),new TouchpadAbsMouseSettings() };
-        public TouchpadRelMouseSettings[] touchpadRelMouse = new TouchpadRelMouseSettings[Global.TEST_PROFILE_ITEM_COUNT] { new TouchpadRelMouseSettings(), new TouchpadRelMouseSettings(), new TouchpadRelMouseSettings(), new TouchpadRelMouseSettings(),
-            new TouchpadRelMouseSettings(), new TouchpadRelMouseSettings(), new TouchpadRelMouseSettings(), new TouchpadRelMouseSettings(), new TouchpadRelMouseSettings() };
+        public TouchpadAbsMouseSettings[] touchpadAbsMouse =
+            new TouchpadAbsMouseSettings[Global.TEST_PROFILE_ITEM_COUNT]
+            {
+                new(), new(), new(),
+                new(), new(), new(), new(), new(), new()
+            };
+
+        public TouchpadRelMouseSettings[] touchpadRelMouse =
+            new TouchpadRelMouseSettings[Global.TEST_PROFILE_ITEM_COUNT]
+            {
+                new(), new(), new(), new(),
+                new(), new(), new(), new(), new()
+            };
 
         // Used to hold the controller type desired in a profile
-        public OutContType[] outputDevType = new OutContType[Global.TEST_PROFILE_ITEM_COUNT] { OutContType.X360,
+        public OutContType[] outputDevType = new OutContType[Global.TEST_PROFILE_ITEM_COUNT]
+        {
+            OutContType.X360,
             OutContType.X360, OutContType.X360,
             OutContType.X360, OutContType.X360, OutContType.X360,
-            OutContType.X360, OutContType.X360, OutContType.X360};
+            OutContType.X360, OutContType.X360, OutContType.X360
+        };
 
         // TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile active when a foreground proces is unknown (ie. no matching auto-profile rule)
         public bool autoProfileRevertDefaultProfile = true;
 
-        bool tempBool = false;
+        private bool tempBool;
 
         public BackingStore()
         {
