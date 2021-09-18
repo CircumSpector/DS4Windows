@@ -340,7 +340,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
 
             runAtStartup = runStartProg || runStartTask;
-            canWriteTask = DS4Windows.Global.IsAdministrator();
+            canWriteTask = DS4Windows.Global.IsAdministrator;
 
             if (!runAtStartup)
             {

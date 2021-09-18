@@ -95,7 +95,7 @@ namespace DS4WinWPF.DS4Forms
                 WindowState = WindowState.Minimized;
             }
 
-            bool isElevated = Global.IsAdministrator();
+            bool isElevated = Global.IsAdministrator;
             if (isElevated)
             {
                 uacImg.Visibility = Visibility.Collapsed;
@@ -255,7 +255,7 @@ namespace DS4WinWPF.DS4Forms
                         using (Process p = new Process())
                         {
                             p.StartInfo.FileName = System.IO.Path.Combine(Global.ExecutableDirectory, "DS4Updater.exe");
-                            bool isAdmin = Global.IsAdministrator();
+                            bool isAdmin = Global.IsAdministrator;
                             List<string> argList = new List<string>();
                             argList.Add("-autolaunch");
                             if (!isAdmin)
@@ -268,7 +268,7 @@ namespace DS4WinWPF.DS4Forms
                             argList.Add(Global.ExecutableFileName);
 
                             p.StartInfo.Arguments = string.Join(" ", argList);
-                            if (Global.AdminNeeded())
+                            if (Global.IsAdminNeeded)
                                 p.StartInfo.Verb = "runas";
 
                             try { launch = p.Start(); }
@@ -333,7 +333,7 @@ namespace DS4WinWPF.DS4Forms
 
                 if (launch)
                 {
-                    if (Global.AdminNeeded())
+                    if (Global.IsAdminNeeded)
                     {
                         int copyStatus = Util.ElevatedCopyUpdater(filename);
                         if (copyStatus != 0) launch = false;

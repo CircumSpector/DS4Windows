@@ -4142,9 +4142,9 @@ namespace DS4Windows
             }
             catch (UnauthorizedAccessException) { Saved = false; }
 
-            bool adminNeeded = Global.AdminNeeded();
+            bool adminNeeded = Global.IsAdminNeeded;
             if (Saved &&
-                (!adminNeeded || (adminNeeded && Global.IsAdministrator())))
+                (!adminNeeded || (adminNeeded && Global.IsAdministrator)))
             {
                 string custom_exe_name_path = Path.Combine(Global.ExecutableDirectory, Global.CUSTOM_EXE_CONFIG_FILENAME);
                 bool fakeExeFileExists = File.Exists(custom_exe_name_path);

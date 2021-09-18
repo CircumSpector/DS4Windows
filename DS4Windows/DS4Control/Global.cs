@@ -94,8 +94,8 @@ namespace DS4Windows
             new Version(!string.IsNullOrEmpty(vigembusVersion) ? vigembusVersion :
                 BLANK_VIGEMBUS_VERSION);
         public static Version minSupportedViGEmBusVersionInfo = new Version(MIN_SUPPORTED_VIGEMBUS_VERSION);
-        public static bool hidHideInstalled = IsHidHideInstalled();
-        public static bool fakerInputInstalled = IsFakerInputInstalled();
+        public static bool hidHideInstalled = IsHidHideInstalled;
+        public static bool fakerInputInstalled = IsFakerInputInstalled;
         public const string BLANK_FAKERINPUT_VERSION = "0.0.0.0";
         public static string fakerInputVersion = FakerInputVersion();
 
@@ -178,50 +178,51 @@ namespace DS4Windows
             return temp;
         })();
 
-        public static Dictionary<X360Controls, string> xboxDefaultNames = new Dictionary<X360Controls, string>()
-        {
-            [X360Controls.LXNeg] = "Left X-Axis-",
-            [X360Controls.LXPos] = "Left X-Axis+",
-            [X360Controls.LYNeg] = "Left Y-Axis-",
-            [X360Controls.LYPos] = "Left Y-Axis+",
-            [X360Controls.RXNeg] = "Right X-Axis-",
-            [X360Controls.RXPos] = "Right X-Axis+",
-            [X360Controls.RYNeg] = "Right Y-Axis-",
-            [X360Controls.RYPos] = "Right Y-Axis+",
-            [X360Controls.LB] = "Left Bumper",
-            [X360Controls.LT] = "Left Trigger",
-            [X360Controls.LS] = "Left Stick",
-            [X360Controls.RB] = "Right Bumper",
-            [X360Controls.RT] = "Right Trigger",
-            [X360Controls.RS] = "Right Stick",
-            [X360Controls.X] = "X Button",
-            [X360Controls.Y] = "Y Button",
-            [X360Controls.B] = "B Button",
-            [X360Controls.A] = "A Button",
-            [X360Controls.DpadUp] = "Up Button",
-            [X360Controls.DpadRight] = "Right Button",
-            [X360Controls.DpadDown] = "Down Button",
-            [X360Controls.DpadLeft] = "Left Button",
-            [X360Controls.Guide] = "Guide",
-            [X360Controls.Back] = "Back",
-            [X360Controls.Start] = "Start",
-            [X360Controls.TouchpadClick] = "Touchpad Click",
-            [X360Controls.LeftMouse] = "Left Mouse Button",
-            [X360Controls.RightMouse] = "Right Mouse Button",
-            [X360Controls.MiddleMouse] = "Middle Mouse Button",
-            [X360Controls.FourthMouse] = "4th Mouse Button",
-            [X360Controls.FifthMouse] = "5th Mouse Button",
-            [X360Controls.WUP] = "Mouse Wheel Up",
-            [X360Controls.WDOWN] = "Mouse Wheel Down",
-            [X360Controls.MouseUp] = "Mouse Up",
-            [X360Controls.MouseDown] = "Mouse Down",
-            [X360Controls.MouseLeft] = "Mouse Left",
-            [X360Controls.MouseRight] = "Mouse Right",
-            [X360Controls.Unbound] = "Unbound",
-            [X360Controls.None] = "Unassigned",
-        };
+        public static Dictionary<X360Controls, string> XboxDefaultNames =>
+            new()
+            {
+                [X360Controls.LXNeg] = "Left X-Axis-",
+                [X360Controls.LXPos] = "Left X-Axis+",
+                [X360Controls.LYNeg] = "Left Y-Axis-",
+                [X360Controls.LYPos] = "Left Y-Axis+",
+                [X360Controls.RXNeg] = "Right X-Axis-",
+                [X360Controls.RXPos] = "Right X-Axis+",
+                [X360Controls.RYNeg] = "Right Y-Axis-",
+                [X360Controls.RYPos] = "Right Y-Axis+",
+                [X360Controls.LB] = "Left Bumper",
+                [X360Controls.LT] = "Left Trigger",
+                [X360Controls.LS] = "Left Stick",
+                [X360Controls.RB] = "Right Bumper",
+                [X360Controls.RT] = "Right Trigger",
+                [X360Controls.RS] = "Right Stick",
+                [X360Controls.X] = "X Button",
+                [X360Controls.Y] = "Y Button",
+                [X360Controls.B] = "B Button",
+                [X360Controls.A] = "A Button",
+                [X360Controls.DpadUp] = "Up Button",
+                [X360Controls.DpadRight] = "Right Button",
+                [X360Controls.DpadDown] = "Down Button",
+                [X360Controls.DpadLeft] = "Left Button",
+                [X360Controls.Guide] = "Guide",
+                [X360Controls.Back] = "Back",
+                [X360Controls.Start] = "Start",
+                [X360Controls.TouchpadClick] = "Touchpad Click",
+                [X360Controls.LeftMouse] = "Left Mouse Button",
+                [X360Controls.RightMouse] = "Right Mouse Button",
+                [X360Controls.MiddleMouse] = "Middle Mouse Button",
+                [X360Controls.FourthMouse] = "4th Mouse Button",
+                [X360Controls.FifthMouse] = "5th Mouse Button",
+                [X360Controls.WUP] = "Mouse Wheel Up",
+                [X360Controls.WDOWN] = "Mouse Wheel Down",
+                [X360Controls.MouseUp] = "Mouse Up",
+                [X360Controls.MouseDown] = "Mouse Down",
+                [X360Controls.MouseLeft] = "Mouse Left",
+                [X360Controls.MouseRight] = "Mouse Right",
+                [X360Controls.Unbound] = "Unbound",
+                [X360Controls.None] = "Unassigned"
+            };
 
-        public static Dictionary<X360Controls, string> ds4DefaultNames = new Dictionary<X360Controls, string>()
+        public static Dictionary<X360Controls, string> Ds4DefaultNames => new()
         {
             [X360Controls.LXNeg] = "Left X-Axis-",
             [X360Controls.LXPos] = "Left X-Axis+",
@@ -260,7 +261,7 @@ namespace DS4Windows
             [X360Controls.MouseDown] = "Mouse Down",
             [X360Controls.MouseLeft] = "Mouse Left",
             [X360Controls.MouseRight] = "Mouse Right",
-            [X360Controls.Unbound] = "Unbound",
+            [X360Controls.Unbound] = "Unbound"
         };
 
         public static string getX360ControlString(X360Controls key, OutContType conType)
@@ -268,17 +269,17 @@ namespace DS4Windows
             string result = string.Empty;
             if (conType == DS4Windows.OutContType.X360)
             {
-                xboxDefaultNames.TryGetValue(key, out result);
+                XboxDefaultNames.TryGetValue(key, out result);
             }
             else if (conType == DS4Windows.OutContType.DS4)
             {
-                ds4DefaultNames.TryGetValue(key, out result);
+                Ds4DefaultNames.TryGetValue(key, out result);
             }
 
             return result;
         }
 
-        public static Dictionary<DS4Controls, string> ds4inputNames = new Dictionary<DS4Controls, string>()
+        public static Dictionary<DS4Controls, string> Ds4inputNames => new()
         {
             [DS4Controls.LXNeg] = "Left X-Axis-",
             [DS4Controls.LXPos] = "Left X-Axis+",
@@ -329,10 +330,10 @@ namespace DS4Windows
             [DS4Controls.GyroSwipeLeft] = "Gyro Swipe Left",
             [DS4Controls.GyroSwipeRight] = "Gyro Swipe Right",
             [DS4Controls.GyroSwipeUp] = "Gyro Swipe Up",
-            [DS4Controls.GyroSwipeDown] = "Gyro Swipe Down",
+            [DS4Controls.GyroSwipeDown] = "Gyro Swipe Down"
         };
 
-        public static Dictionary<DS4Controls, int> macroDS4Values = new Dictionary<DS4Controls, int>()
+        public static Dictionary<DS4Controls, int> MacroDs4Values => new()
         {
             [DS4Controls.Cross] = 261, [DS4Controls.Circle] = 262,
             [DS4Controls.Square] = 263, [DS4Controls.Triangle] = 264,
@@ -348,7 +349,7 @@ namespace DS4Windows
             [DS4Controls.RXNeg] = 283, [DS4Controls.RYPos] = 284,
             [DS4Controls.RYNeg] = 285,
             [DS4Controls.TouchLeft] = 286, [DS4Controls.TouchRight] = 286,
-            [DS4Controls.TouchUpper] = 286, [DS4Controls.TouchMulti] = 286,
+            [DS4Controls.TouchUpper] = 286, [DS4Controls.TouchMulti] = 286
         };
 
         public static Dictionary<TrayIconChoice, string> iconChoiceResources = new Dictionary<TrayIconChoice, string>
@@ -401,26 +402,32 @@ namespace DS4Windows
         /// <summary>
         /// Check if Admin Rights are needed to write in Appliplation Directory
         /// </summary>
-        /// <returns></returns>
-        public static bool AdminNeeded()
+        /// <value></value>
+        public static bool IsAdminNeeded
         {
-            try
+            get
             {
-                File.WriteAllText(ExecutableDirectory + "\\test.txt", "test");
-                File.Delete(ExecutableDirectory + "\\test.txt");
-                return false;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return true;
+                try
+                {
+                    File.WriteAllText(ExecutableDirectory + "\\test.txt", "test");
+                    File.Delete(ExecutableDirectory + "\\test.txt");
+                    return false;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return true;
+                }
             }
         }
 
-        public static bool IsAdministrator()
+        public static bool IsAdministrator
         {
-            var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            get
+            {
+                var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
         }
 
         public static bool CheckForDevice(string guid)
@@ -628,15 +635,9 @@ namespace DS4Windows
             return result;
         }
 
-        public static bool IsHidHideInstalled()
-        {
-            return CheckForSysDevice(@"root\HidHide");
-        }
+        public static bool IsHidHideInstalled => CheckForSysDevice(@"root\HidHide");
 
-        public static bool IsFakerInputInstalled()
-        {
-            return CheckForSysDevice(@"root\FakerInput");
-        }
+        public static bool IsFakerInputInstalled => CheckForSysDevice(@"root\FakerInput");
 
         const string VIGEMBUS_GUID = "{96E42B22-F5E9-42F8-B043-ED0F932F014F}";
         public static bool IsViGEmBusInstalled()
@@ -658,7 +659,7 @@ namespace DS4Windows
 
         public static void RefreshHidHideInfo()
         {
-            hidHideInstalled = IsHidHideInstalled();
+            hidHideInstalled = IsHidHideInstalled;
         }
 
         private static void PopulateFromViGEmBusInfo(ViGEmBusInfo busInfo)
@@ -1146,7 +1147,7 @@ namespace DS4Windows
         /// </summary>
         public static string FakeExeName
         {
-            get { return m_Config.fakeExeFileName; }
+            get => m_Config.fakeExeFileName;
             set
             {
                 bool valid = !(value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0);
@@ -2229,7 +2230,7 @@ namespace DS4Windows
 
         public static void RefreshFakerInputInfo()
         {
-            fakerInputInstalled = IsFakerInputInstalled();
+            fakerInputInstalled = IsFakerInputInstalled;
             fakerInputVersion = FakerInputVersion();
         }
 

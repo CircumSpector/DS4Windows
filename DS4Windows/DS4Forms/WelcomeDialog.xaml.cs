@@ -321,7 +321,7 @@ namespace DS4WinWPF.DS4Forms
             bool finished = false;
             if (monitorProc != null && monitorProc.HasExited)
             {
-                if (DS4Windows.Global.IsHidHideInstalled())
+                if (DS4Windows.Global.IsHidHideInstalled)
                 {
                     Dispatcher.BeginInvoke((Action)(() =>
                     {
@@ -424,7 +424,7 @@ namespace DS4WinWPF.DS4Forms
             bool finished = false;
             if (monitorProc != null && monitorProc.HasExited)
             {
-                if (DS4Windows.Global.IsFakerInputInstalled())
+                if (DS4Windows.Global.IsFakerInputInstalled)
                 {
                     Dispatcher.BeginInvoke((Action)(() =>
                     {

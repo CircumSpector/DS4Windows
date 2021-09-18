@@ -151,7 +151,7 @@ namespace DS4Windows
 
         public static void StartProcessHelper(string path)
         {
-            if (!Global.IsAdministrator())
+            if (!Global.IsAdministrator)
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(path);
                 startInfo.UseShellExecute = true;

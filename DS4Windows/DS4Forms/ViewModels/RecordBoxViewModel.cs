@@ -350,7 +350,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 DS4Windows.Mouse tp = Program.rootHub.touchPad[0];
                 for (DS4Controls dc = DS4Controls.LXNeg; dc < DS4Controls.Mute; dc++)
                 {
-                    int macroValue = Global.macroDS4Values[dc];
+                    int macroValue = Global.MacroDs4Values[dc];
                     ds4InputMap.TryGetValue((int)dc, out bool isdown);
                     keysdownMap.TryGetValue(macroValue, out bool outputExists);
                     if (!isdown && Mapping.getBoolMapping(0, dc, cState, null, tp))

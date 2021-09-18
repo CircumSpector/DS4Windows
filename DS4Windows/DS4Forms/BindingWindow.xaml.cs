@@ -47,7 +47,7 @@ namespace DS4WinWPF.DS4Forms
 
             if (settings.control != DS4Windows.DS4Controls.None)
             {
-                Title = $"Select action for {DS4Windows.Global.ds4inputNames[settings.control]}";
+                Title = $"Select action for {DS4Windows.Global.Ds4inputNames[settings.control]}";
             }
             else
             {
@@ -122,12 +122,12 @@ namespace DS4WinWPF.DS4Forms
             if (bindingVM.Using360Mode)
             {
                 DS4Windows.X360Controls xboxcontrol = associatedBindings[button].control;
-                result = DS4Windows.Global.xboxDefaultNames[xboxcontrol];
+                result = DS4Windows.Global.XboxDefaultNames[xboxcontrol];
             }
             else
             {
                 DS4Windows.X360Controls xboxcontrol = associatedBindings[button].control;
-                result = DS4Windows.Global.ds4DefaultNames[xboxcontrol];
+                result = DS4Windows.Global.Ds4DefaultNames[xboxcontrol];
             }
 
             return result;

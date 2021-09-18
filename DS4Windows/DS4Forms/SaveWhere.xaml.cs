@@ -23,7 +23,7 @@ namespace DS4WinWPF.DS4Forms
                 pickWhereTxt.Text += Properties.Resources.OtherFileLocation;
             }
 
-            if (DS4Windows.Global.AdminNeeded())
+            if (DS4Windows.Global.IsAdminNeeded)
             {
                 progFolderPanel.IsEnabled = false;
             }
