@@ -301,15 +301,15 @@ namespace DS4WinWPF
                 {
                     try
                     {
-                        Directory.CreateDirectory(DS4Windows.Global.appDataPpath);
+                        Directory.CreateDirectory(DS4Windows.Global.RoamingAppDataPath);
                         File.Copy(DS4Windows.Global.ExecutableDirectory + "\\Profiles.xml",
-                            DS4Windows.Global.appDataPpath + "\\Profiles.xml");
+                            DS4Windows.Global.RoamingAppDataPath + "\\Profiles.xml");
                         File.Copy(DS4Windows.Global.ExecutableDirectory + "\\Auto Profiles.xml",
-                            DS4Windows.Global.appDataPpath + "\\Auto Profiles.xml");
-                        Directory.CreateDirectory(DS4Windows.Global.appDataPpath + "\\Profiles");
+                            DS4Windows.Global.RoamingAppDataPath + "\\Auto Profiles.xml");
+                        Directory.CreateDirectory(DS4Windows.Global.RoamingAppDataPath + "\\Profiles");
                         foreach (string s in Directory.GetFiles(DS4Windows.Global.ExecutableDirectory + "\\Profiles"))
                         {
-                            File.Copy(s, DS4Windows.Global.appDataPpath + "\\Profiles\\" + Path.GetFileName(s));
+                            File.Copy(s, DS4Windows.Global.RoamingAppDataPath + "\\Profiles\\" + Path.GetFileName(s));
                         }
                     }
                     catch { }

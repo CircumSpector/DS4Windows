@@ -61,8 +61,10 @@ namespace DS4Windows
         public static string appdatapath;
         public static bool firstRun = false;
         public static bool multisavespots = false;
-        public static string appDataPpath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DS4Windows";
-        public static string localAppDataPpath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DS4Windows");
+
+        public static string RoamingAppDataPath =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DS4Windows");
+        
         public static bool runHotPlug = false;
         public static string[] tempprofilename = new string[TEST_PROFILE_ITEM_COUNT] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
         public static bool[] useTempProfile = new bool[TEST_PROFILE_ITEM_COUNT] { false, false, false, false, false, false, false, false, false };
@@ -718,11 +720,11 @@ namespace DS4Windows
         public static void FindConfigLocation()
         {
             bool programFolderAutoProfilesExists = File.Exists(Path.Combine(ExecutableDirectory, "Auto Profiles.xml"));
-            bool appDataAutoProfilesExists = File.Exists(Path.Combine(appDataPpath, "Auto Profiles.xml"));
+            bool appDataAutoProfilesExists = File.Exists(Path.Combine(RoamingAppDataPath, "Auto Profiles.xml"));
             //bool localAppDataAutoProfilesExists = File.Exists(Path.Combine(localAppDataPpath, "Auto Profiles.xml"));
             //bool systemAppConfigExists = appDataAutoProfilesExists || localAppDataAutoProfilesExists;
             bool systemAppConfigExists = appDataAutoProfilesExists;
-            bool isSameFolder = appDataAutoProfilesExists && ExecutableDirectory == appDataPpath;
+            bool isSameFolder = appDataAutoProfilesExists && ExecutableDirectory == RoamingAppDataPath;
 
             if (programFolderAutoProfilesExists && appDataAutoProfilesExists &&
                 !isSameFolder)
@@ -740,7 +742,7 @@ namespace DS4Windows
             //}
             else if (appDataAutoProfilesExists)
             {
-                SaveWhere(appDataPpath);
+                SaveWhere(RoamingAppDataPath);
             }
             else if (!programFolderAutoProfilesExists && !appDataAutoProfilesExists)
             {

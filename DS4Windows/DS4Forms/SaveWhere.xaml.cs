@@ -36,9 +36,9 @@ namespace DS4WinWPF.DS4Forms
             {
                 try
                 {
-                    if (Directory.Exists(DS4Windows.Global.appDataPpath))
+                    if (Directory.Exists(DS4Windows.Global.RoamingAppDataPath))
                     {
-                        Directory.Delete(DS4Windows.Global.appDataPpath, true);
+                        Directory.Delete(DS4Windows.Global.RoamingAppDataPath, true);
                     }
                 }
                 catch { }
@@ -69,10 +69,10 @@ namespace DS4WinWPF.DS4Forms
             }
             else if (!multisaves)
             {
-                DS4Windows.Global.SaveDefault(Path.Combine(DS4Windows.Global.appDataPpath, "Profiles.xml"));
+                DS4Windows.Global.SaveDefault(Path.Combine(DS4Windows.Global.RoamingAppDataPath, "Profiles.xml"));
             }
 
-            DS4Windows.Global.SaveWhere(DS4Windows.Global.appDataPpath);
+            DS4Windows.Global.SaveWhere(DS4Windows.Global.RoamingAppDataPath);
             choiceMade = true;
             Close();
         }
