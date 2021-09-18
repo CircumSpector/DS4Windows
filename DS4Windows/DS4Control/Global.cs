@@ -795,16 +795,6 @@ namespace DS4Windows
             }
         }
 
-        public static void SetCulture(string culture)
-        {
-            try
-            {
-                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
-                CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(culture);
-            }
-            catch { /* Skip setting culture that we cannot set */ }
-        }
-
         public static void CreateStdActions()
         {
             XmlDocument xDoc = new XmlDocument();
