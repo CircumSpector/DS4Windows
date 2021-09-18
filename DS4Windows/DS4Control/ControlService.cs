@@ -722,7 +722,7 @@ namespace DS4Windows
         {
             // Refresh internal ViGEmBus info
             Global.RefreshViGEmBusInfo();
-            if (Global.IsRunningSupportedViGEmBus())
+            if (Global.IsRunningSupportedViGEmBus)
             {
                 tempThread = new Thread(() =>
                 {
@@ -1160,7 +1160,7 @@ namespace DS4Windows
                     LogDebug(DS4WinWPF.Properties.Resources.Starting);
 
                 LogDebug($"Using output KB+M handler: {DS4Windows.Global.outputKBMHandler.GetFullDisplayName()}");
-                LogDebug($"Connection to ViGEmBus {Global.vigembusVersion} established");
+                LogDebug($"Connection to ViGEmBus {Global.ViGEmBusVersion} established");
 
                 DS4Devices.isExclusiveMode = getUseExclusiveMode(); //Re-enable Exclusive Mode
 
@@ -1382,13 +1382,13 @@ namespace DS4Windows
             else
             {
                 string logMessage = string.Empty;
-                if (!vigemInstalled)
+                if (!IsViGEmInstalled)
                 {
                     logMessage = "ViGEmBus is not installed";
                 }
-                else if (!Global.IsRunningSupportedViGEmBus())
+                else if (!Global.IsRunningSupportedViGEmBus)
                 {
-                    logMessage = string.Format("Unsupported ViGEmBus found ({0}). Please install at least ViGEmBus 1.17.333.0", Global.vigembusVersion);
+                    logMessage = string.Format("Unsupported ViGEmBus found ({0}). Please install at least ViGEmBus 1.17.333.0", Global.ViGEmBusVersion);
                 }
                 else
                 {

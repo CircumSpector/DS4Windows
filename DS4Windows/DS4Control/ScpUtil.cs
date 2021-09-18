@@ -193,81 +193,7 @@ namespace DS4Windows
             }
         }
     }
-
-    public class ControlSettingsGroup
-    {
-        public List<DS4ControlSettings> LS = new List<DS4ControlSettings>();
-        public List<DS4ControlSettings> RS = new List<DS4ControlSettings>();
-        public DS4ControlSettings L2;
-        public DS4ControlSettings L2FullPull;
-        public DS4ControlSettings R2;
-        public DS4ControlSettings R2FullPull;
-
-        public DS4ControlSettings GyroSwipeLeft;
-        public DS4ControlSettings GyroSwipeRight;
-        public DS4ControlSettings GyroSwipeUp;
-        public DS4ControlSettings GyroSwipeDown;
-
-        public List<DS4ControlSettings> ControlButtons =
-            new List<DS4ControlSettings>();
-
-        public List<DS4ControlSettings> ExtraDeviceButtons =
-            new List<DS4ControlSettings>();
-
-        private List<DS4ControlSettings> settingsList;
-
-        public ControlSettingsGroup(List<DS4ControlSettings> settingsList)
-        {
-            LS.Add(settingsList[(int)DS4Controls.LSOuter - 1]);
-            for (int i = (int)DS4Controls.LXNeg; i <= (int)DS4Controls.LYPos; i++)
-            {
-                LS.Add(settingsList[i-1]);
-            }
-
-            LS.Add(settingsList[(int)DS4Controls.RSOuter - 1]);
-            for (int i = (int)DS4Controls.RXNeg; i <= (int)DS4Controls.RYPos; i++)
-            {
-                RS.Add(settingsList[i-1]);
-            }
-
-            L2 = settingsList[(int)DS4Controls.L2-1];
-            R2 = settingsList[(int)DS4Controls.R2-1];
-
-            L2FullPull = settingsList[(int)DS4Controls.L2FullPull - 1];
-            R2FullPull = settingsList[(int)DS4Controls.R2FullPull - 1];
-
-            GyroSwipeLeft = settingsList[(int)DS4Controls.GyroSwipeLeft - 1];
-            GyroSwipeRight = settingsList[(int)DS4Controls.GyroSwipeRight - 1];
-            GyroSwipeUp = settingsList[(int)DS4Controls.GyroSwipeUp - 1];
-            GyroSwipeDown = settingsList[(int)DS4Controls.GyroSwipeDown - 1];
-
-            ControlButtons.Add(settingsList[(int)DS4Controls.L1-1]);
-            ControlButtons.Add(settingsList[(int)DS4Controls.L3-1]);
-            ControlButtons.Add(settingsList[(int)DS4Controls.R1-1]);
-            ControlButtons.Add(settingsList[(int)DS4Controls.R3-1]);
-
-            for (int i = (int)DS4Controls.Square; i <= (int)DS4Controls.SwipeDown; i++)
-            {
-                ControlButtons.Add(settingsList[i-1]);
-            }
-
-            this.settingsList = settingsList;
-        }
-
-        public void EstablishExtraButtons(List<DS4Controls> buttonList)
-        {
-            foreach(DS4Controls control in buttonList)
-            {
-                ExtraDeviceButtons.Add(settingsList[(int)control - 1]);
-            }
-        }
-
-        public void ResetExtraButtons()
-        {
-            ExtraDeviceButtons.Clear();
-        }
-    }
-
+    
     public class DebugEventArgs : EventArgs
     {
         protected DateTime m_Time = DateTime.Now;
@@ -431,8 +357,6 @@ namespace DS4Windows
         }
     }
     
-    
-
     public class SpecialAction
     {
         public enum ActionTypeId { None, Key, Program, Profile, Macro, DisconnectBT, BatteryCheck, MultiAction, XboxGameDVR, SASteeringWheelEmulationCalibrate }

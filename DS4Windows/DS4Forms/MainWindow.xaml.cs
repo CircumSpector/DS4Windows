@@ -1421,7 +1421,7 @@ Suspend support not enabled.", true);
         private void CheckDrivers()
         {
             bool deriverinstalled = Global.IsViGEmBusInstalled();
-            if (!deriverinstalled || !Global.IsRunningSupportedViGEmBus())
+            if (!deriverinstalled || !Global.IsRunningSupportedViGEmBus)
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = $"{Global.ExecutableLocation}";

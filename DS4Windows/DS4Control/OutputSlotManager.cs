@@ -98,7 +98,7 @@ namespace DS4Windows
                     outputDevice = new Xbox360OutDevice(client);
                     break;
                 case OutContType.DS4:
-                    outputDevice = DS4OutDeviceFactory.CreateDS4Device(client, Global.vigemBusVersionInfo);
+                    outputDevice = DS4OutDeviceFactory.CreateDS4Device(client, Global.ViGEmBusVersionInfo);
                     break;
                 case OutContType.None:
                 default:

@@ -118,17 +118,17 @@ namespace DS4Windows
             DS4Windows.OutContType.None
         };
 
-        public const string BLANK_VIGEMBUS_VERSION = "0.0.0.0";
-        public const string MIN_SUPPORTED_VIGEMBUS_VERSION = "1.16.112.0";
+        private const string BLANK_VIGEMBUS_VERSION = "0.0.0.0";
+        private const string MIN_SUPPORTED_VIGEMBUS_VERSION = "1.16.112.0";
 
-        //public static bool vigemInstalled = IsViGEmBusInstalled();
-        public static bool vigemInstalled = false;
-        //public static string vigembusVersion = ViGEmBusVersion();
-        public static string vigembusVersion = BLANK_VIGEMBUS_VERSION;
-        public static Version vigemBusVersionInfo =
-            new Version(!string.IsNullOrEmpty(vigembusVersion) ? vigembusVersion :
-                BLANK_VIGEMBUS_VERSION);
-        public static Version minSupportedViGEmBusVersionInfo = new Version(MIN_SUPPORTED_VIGEMBUS_VERSION);
+        public static bool IsViGEmInstalled { get; private set; } = false;
+
+        public static string ViGEmBusVersion { get; private set; } = BLANK_VIGEMBUS_VERSION;
+
+        public static Version ViGEmBusVersionInfo => new(ViGEmBusVersion);
+
+        private static Version MinimumSupportedViGEmBusVersionInfo => new(MIN_SUPPORTED_VIGEMBUS_VERSION);
+
         public static bool hidHideInstalled = IsHidHideInstalled;
         public static bool fakerInputInstalled = IsFakerInputInstalled;
         public const string BLANK_FAKERINPUT_VERSION = "0.0.0.0";
@@ -592,7 +592,7 @@ namespace DS4Windows
             }
 
             // Iterate over list and find most recent version number
-            //IEnumerable<ViGEmBusInfo> tempResults = tempViGEmBusInfoList.Where(item => minSupportedViGEmBusVersionInfo.CompareTo(item.deviceVersion) <= 0);
+            //IEnumerable<ViGEmBusInfo> tempResults = tempViGEmBusInfoList.Where(item => MinimumSupportedViGEmBusVersionInfo.CompareTo(item.deviceVersion) <= 0);
             Version latestKnown = new Version(BLANK_VIGEMBUS_VERSION);
             string deviceInstanceId = string.Empty;
             foreach (ViGEmBusInfo item in tempViGEmBusInfoList)
@@ -688,15 +688,12 @@ namespace DS4Windows
         const string VIGEMBUS_GUID = "{96E42B22-F5E9-42F8-B043-ED0F932F014F}";
         public static bool IsViGEmBusInstalled()
         {
-            return vigemInstalled;
+            return IsViGEmInstalled;
         }
 
-        public static bool IsRunningSupportedViGEmBus()
-        {
-            //return vigemInstalled;
-            return vigemInstalled &&
-                minSupportedViGEmBusVersionInfo.CompareTo(vigemBusVersionInfo) <= 0;
-        }
+        public static bool IsRunningSupportedViGEmBus => IsViGEmInstalled &&
+                                                         MinimumSupportedViGEmBusVersionInfo.CompareTo(
+                                                             ViGEmBusVersionInfo) <= 0;
 
         public static void RefreshViGEmBusInfo()
         {
@@ -712,15 +709,13 @@ namespace DS4Windows
         {
             if (busInfo != null)
             {
-                vigemInstalled = true;
-                vigembusVersion = busInfo.deviceVersionStr;
-                vigemBusVersionInfo = busInfo.deviceVersion;
+                IsViGEmInstalled = true;
+                ViGEmBusVersion = busInfo.deviceVersionStr;
             }
             else
             {
-                vigemInstalled = false;
-                vigembusVersion = BLANK_VIGEMBUS_VERSION;
-                vigemBusVersionInfo = new Version(BLANK_VIGEMBUS_VERSION);
+                IsViGEmInstalled = false;
+                ViGEmBusVersion = BLANK_VIGEMBUS_VERSION;
             }
         }
 
