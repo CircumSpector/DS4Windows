@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DS4Windows;
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using Task = Microsoft.Win32.TaskScheduler.Task;
@@ -33,7 +34,7 @@ namespace DS4WinWPF
 
         public static void WriteStartProgEntry()
         {
-            Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); // Windows Script Host Shell Object
+            Type t = Type.GetTypeFromCLSID(Constants.WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
             dynamic shell = Activator.CreateInstance(t);
             try
             {
@@ -169,7 +170,7 @@ namespace DS4WinWPF
 
         private static string ResolveShortcut(string filePath)
         {
-            Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); // Windows Script Host Shell Object
+            Type t = Type.GetTypeFromCLSID(Constants.WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
             dynamic shell = Activator.CreateInstance(t);
             string result;
 
@@ -194,18 +195,16 @@ namespace DS4WinWPF
 
         private static void RefreshTaskBat()
         {
-            string dir = DS4Windows.Global.ExecutableDirectory;
-            string path = $@"{dir}\task.bat";
-            FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-            using (StreamWriter w = new StreamWriter(fileStream))
-            {
-                string temp = string.Empty;
-                w.WriteLine("@echo off"); // Turn off echo
-                w.WriteLine("SET mypath=\"%~dp0\"");
-                temp = $"cmd.exe /c start \"RunDS4Windows\" %mypath%\\{DS4Windows.Global.ExecutableFileName} -m";
-                w.WriteLine(temp);
-                w.WriteLine("exit");
-            }
+            var dir = Global.ExecutableDirectory;
+            var path = $@"{dir}\task.bat";
+            var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+            using var w = new StreamWriter(fileStream);
+            var temp = string.Empty;
+            w.WriteLine("@echo off"); // Turn off echo
+            w.WriteLine("SET mypath=\"%~dp0\"");
+            temp = $"cmd.exe /c start \"RunDS4Windows\" %mypath%\\{Global.ExecutableFileName} -m";
+            w.WriteLine(temp);
+            w.WriteLine("exit");
         }
     }
 }

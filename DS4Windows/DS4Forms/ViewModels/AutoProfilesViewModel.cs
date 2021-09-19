@@ -315,7 +315,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string ResolveShortcutAndArgument(string filePath)
         {
-            Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); // Windows Script Host Shell Object
+            Type t = Type.GetTypeFromCLSID(Constants.WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
             dynamic shell = Activator.CreateInstance(t);
             string result;
 
@@ -362,7 +362,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string ResolveShortcut(string filePath)
         {
-            Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); // Windows Script Host Shell Object
+            Type t = Type.GetTypeFromCLSID(Constants.WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
             dynamic shell = Activator.CreateInstance(t);
             string result;
 
