@@ -18,13 +18,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         // Re-Enable Ex Mode
         public bool HideDS4Controller
         {
-            get => DS4Windows.Global.UseExclusiveMode;
-            set => DS4Windows.Global.UseExclusiveMode = value;
+            get => DS4Windows.Global.Instance.UseExclusiveMode;
+            set => DS4Windows.Global.Instance.UseExclusiveMode = value;
         }
 
 
-        public bool SwipeTouchSwitchProfile { get => DS4Windows.Global.SwipeProfiles;
-            set => DS4Windows.Global.SwipeProfiles = value; }
+        public bool SwipeTouchSwitchProfile { get => DS4Windows.Global.Instance.SwipeProfiles;
+            set => DS4Windows.Global.Instance.SwipeProfiles = value; }
 
         private bool runAtStartup;
         public bool RunAtStartup
@@ -84,23 +84,23 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public event EventHandler ShowRunStartPanelChanged;
 
-        public int ShowNotificationsIndex { get => DS4Windows.Global.Notifications; set => DS4Windows.Global.Notifications = value; }
-        public bool DisconnectBTStop { get => DS4Windows.Global.DCBTatStop; set => DS4Windows.Global.DCBTatStop = value; }
-        public bool FlashHighLatency { get => DS4Windows.Global.FlashWhenLate; set => DS4Windows.Global.FlashWhenLate = value; }
-        public int FlashHighLatencyAt { get => DS4Windows.Global.FlashWhenLateAt; set => DS4Windows.Global.FlashWhenLateAt = value; }
-        public bool StartMinimize { get => DS4Windows.Global.StartMinimized; set => DS4Windows.Global.StartMinimized = value; }
-        public bool MinimizeToTaskbar { get => DS4Windows.Global.MinToTaskbar; set => DS4Windows.Global.MinToTaskbar = value; }
-        public bool CloseMinimizes { get => DS4Windows.Global.CloseMini; set => DS4Windows.Global.CloseMini = value; }
-        public bool QuickCharge { get => DS4Windows.Global.QuickCharge; set => DS4Windows.Global.QuickCharge = value; }
+        public int ShowNotificationsIndex { get => DS4Windows.Global.Instance.Notifications; set => DS4Windows.Global.Instance.Notifications = value; }
+        public bool DisconnectBTStop { get => DS4Windows.Global.Instance.DCBTatStop; set => DS4Windows.Global.Instance.DCBTatStop = value; }
+        public bool FlashHighLatency { get => DS4Windows.Global.Instance.FlashWhenLate; set => DS4Windows.Global.Instance.FlashWhenLate = value; }
+        public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.FlashWhenLateAt; set => DS4Windows.Global.Instance.FlashWhenLateAt = value; }
+        public bool StartMinimize { get => DS4Windows.Global.Instance.StartMinimized; set => DS4Windows.Global.Instance.StartMinimized = value; }
+        public bool MinimizeToTaskbar { get => DS4Windows.Global.Instance.MinToTaskbar; set => DS4Windows.Global.Instance.MinToTaskbar = value; }
+        public bool CloseMinimizes { get => DS4Windows.Global.Instance.CloseMini; set => DS4Windows.Global.Instance.CloseMini = value; }
+        public bool QuickCharge { get => DS4Windows.Global.Instance.QuickCharge; set => DS4Windows.Global.Instance.QuickCharge = value; }
 
         public int IconChoiceIndex
         {
-            get => (int)DS4Windows.Global.UseIconChoice;
+            get => (int)DS4Windows.Global.Instance.UseIconChoice;
             set
             {
-                int temp = (int)DS4Windows.Global.UseIconChoice;
+                int temp = (int)DS4Windows.Global.Instance.UseIconChoice;
                 if (temp == value) return;
-                DS4Windows.Global.UseIconChoice = (DS4Windows.TrayIconChoice)value;
+                DS4Windows.Global.Instance.UseIconChoice = (DS4Windows.TrayIconChoice)value;
                 IconChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -108,12 +108,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int AppChoiceIndex
         {
-            get => (int)DS4Windows.Global.UseCurrentTheme;
+            get => (int)DS4Windows.Global.Instance.UseCurrentTheme;
             set
             {
-                int temp = (int)DS4Windows.Global.UseCurrentTheme;
+                int temp = (int)DS4Windows.Global.Instance.UseCurrentTheme;
                 if (temp == value) return;
-                DS4Windows.Global.UseCurrentTheme = (DS4Windows.AppThemeChoice)value;
+                DS4Windows.Global.Instance.UseCurrentTheme = (DS4Windows.AppThemeChoice)value;
                 AppChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -121,10 +121,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool CheckForUpdates
         {
-            get => DS4Windows.Global.CheckWhen > 0;
+            get => DS4Windows.Global.Instance.CheckWhen > 0;
             set
             {
-                DS4Windows.Global.CheckWhen = value ? 24 : 0;
+                DS4Windows.Global.Instance.CheckWhen = value ? 24 : 0;
                 CheckForNoUpdatesWhen();
             }
         }
@@ -134,7 +134,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int temp = DS4Windows.Global.CheckWhen;
+                int temp = DS4Windows.Global.Instance.CheckWhen;
                 if (temp > 23)
                 {
                     temp = temp / 24;
@@ -146,19 +146,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 int temp;
                 if (checkEveryUnitIdx == 0 && value < 24)
                 {
-                    temp = DS4Windows.Global.CheckWhen;
+                    temp = DS4Windows.Global.Instance.CheckWhen;
                     if (temp != value)
                     {
-                        DS4Windows.Global.CheckWhen = value;
+                        DS4Windows.Global.Instance.CheckWhen = value;
                         CheckForNoUpdatesWhen();
                     }
                 }
                 else if (checkEveryUnitIdx == 1)
                 {
-                    temp = DS4Windows.Global.CheckWhen / 24;
+                    temp = DS4Windows.Global.Instance.CheckWhen / 24;
                     if (temp != value)
                     {
-                        DS4Windows.Global.CheckWhen = value * 24;
+                        DS4Windows.Global.Instance.CheckWhen = value * 24;
                         CheckForNoUpdatesWhen();
                     }
                 }
@@ -183,28 +183,28 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public event EventHandler CheckEveryUnitChanged;
         public bool UseUDPServer
         {
-            get => DS4Windows.Global.isUsingUDPServer();
+            get => DS4Windows.Global.Instance.isUsingUDPServer();
             set
             {
-                if (DS4Windows.Global.isUsingUDPServer() == value) return;
-                DS4Windows.Global.setUsingUDPServer(value);
+                if (DS4Windows.Global.Instance.isUsingUDPServer() == value) return;
+                DS4Windows.Global.Instance.setUsingUDPServer(value);
                 UseUDPServerChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         public event EventHandler UseUDPServerChanged;
 
-        public string UdpIpAddress { get => DS4Windows.Global.getUDPServerListenAddress();
-            set => DS4Windows.Global.setUDPServerListenAddress(value); }
-        public int UdpPort { get => DS4Windows.Global.getUDPServerPortNum(); set => DS4Windows.Global.setUDPServerPort(value); }
+        public string UdpIpAddress { get => DS4Windows.Global.Instance.getUDPServerListenAddress();
+            set => DS4Windows.Global.Instance.setUDPServerListenAddress(value); }
+        public int UdpPort { get => DS4Windows.Global.Instance.getUDPServerPortNum(); set => DS4Windows.Global.Instance.setUDPServerPort(value); }
 
         public bool UseUdpSmoothing
         {
-            get => DS4Windows.Global.UseUDPSeverSmoothing;
+            get => DS4Windows.Global.Instance.UseUDPSeverSmoothing;
             set
             {
-                bool temp = DS4Windows.Global.UseUDPSeverSmoothing;
+                bool temp = DS4Windows.Global.Instance.UseUDPSeverSmoothing;
                 if (temp == value) return;
-                DS4Windows.Global.UseUDPSeverSmoothing = value;
+                DS4Windows.Global.Instance.UseUDPSeverSmoothing = value;
                 UseUdpSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -212,18 +212,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Visibility UdpServerOneEuroPanelVisibility
         {
-            get => DS4Windows.Global.isUsingUDPServer() && DS4Windows.Global.UseUDPSeverSmoothing ? Visibility.Visible : Visibility.Collapsed;
+            get => DS4Windows.Global.Instance.isUsingUDPServer() && DS4Windows.Global.Instance.UseUDPSeverSmoothing ? Visibility.Visible : Visibility.Collapsed;
         }
         public event EventHandler UdpServerOneEuroPanelVisibilityChanged;
 
         public double UdpSmoothMinCutoff
         {
-            get => DS4Windows.Global.UDPServerSmoothingMincutoff;
+            get => DS4Windows.Global.Instance.UDPServerSmoothingMincutoff;
             set
             {
-                double temp = DS4Windows.Global.UDPServerSmoothingMincutoff;
+                double temp = DS4Windows.Global.Instance.UDPServerSmoothingMincutoff;
                 if (temp == value) return;
-                DS4Windows.Global.UDPServerSmoothingMincutoff = value;
+                DS4Windows.Global.Instance.UDPServerSmoothingMincutoff = value;
                 UdpSmoothMinCutoffChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -231,12 +231,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double UdpSmoothBeta
         {
-            get => DS4Windows.Global.UDPServerSmoothingBeta;
+            get => DS4Windows.Global.Instance.UDPServerSmoothingBeta;
             set
             {
-                double temp = DS4Windows.Global.UDPServerSmoothingBeta;
+                double temp = DS4Windows.Global.Instance.UDPServerSmoothingBeta;
                 if (temp == value) return;
-                DS4Windows.Global.UDPServerSmoothingBeta = value;
+                DS4Windows.Global.Instance.UDPServerSmoothingBeta = value;
                 UdpSmoothBetaChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -244,10 +244,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool UseCustomSteamFolder
         {
-            get => DS4Windows.Global.UseCustomSteamFolder;
+            get => DS4Windows.Global.Instance.UseCustomSteamFolder;
             set
             {
-                DS4Windows.Global.UseCustomSteamFolder = value;
+                DS4Windows.Global.Instance.UseCustomSteamFolder = value;
                 UseCustomSteamFolderChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -255,14 +255,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string CustomSteamFolder
         {
-            get => DS4Windows.Global.CustomSteamFolder;
+            get => DS4Windows.Global.Instance.CustomSteamFolder;
             set
             {
-                string temp = DS4Windows.Global.CustomSteamFolder;
+                string temp = DS4Windows.Global.Instance.CustomSteamFolder;
                 if (temp == value) return;
                 if (Directory.Exists(value) || value == string.Empty)
                 {
-                    DS4Windows.Global.CustomSteamFolder = value;
+                    DS4Windows.Global.Instance.CustomSteamFolder = value;
                 }
             }
         }
@@ -281,12 +281,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string FakeExeName
         {
-            get => DS4Windows.Global.FakeExeName;
+            get => DS4Windows.Global.Instance.FakeExeName;
             set
             {
-                string temp = DS4Windows.Global.FakeExeName;
+                string temp = DS4Windows.Global.Instance.FakeExeName;
                 if (temp == value) return;
-                DS4Windows.Global.FakeExeName = value;
+                DS4Windows.Global.Instance.FakeExeName = value;
                 FakeExeNameChanged?.Invoke(this, EventArgs.Empty);
                 FakeExeNameChangeCompare?.Invoke(this, temp, value);
             }
@@ -304,7 +304,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             checkEveryUnitIdx = 1;
 
-            int checklapse = DS4Windows.Global.CheckWhen;
+            int checklapse = DS4Windows.Global.Instance.CheckWhen;
             if (checklapse < 24 && checklapse > 0)
             {
                 checkEveryUnitIdx = 0;
@@ -504,7 +504,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void CheckForNoUpdatesWhen()
         {
-            if (DS4Windows.Global.CheckWhen == 0)
+            if (DS4Windows.Global.Instance.CheckWhen == 0)
             {
                 checkEveryUnitIdx = 1;
             }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Diagnostics;
 using System.Windows.Threading;
-using Microsoft.Win32;
 using System.Linq;
 using System.Text;
 using Sensorit.Base;
@@ -218,19 +217,19 @@ namespace DS4Windows
                 ExposedState[i] = new DS4StateExposed(CurrentState[i]);
 
                 int tempDev = i;
-                Global.L2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
+                Global.Instance.L2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
                 {
                     Mapping.l2TwoStageMappingData[tempDev].Reset();
                 };
 
-                Global.R2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
+                Global.Instance.R2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
                 {
                     Mapping.r2TwoStageMappingData[tempDev].Reset();
                 };
             }
 
             outputslotMan = new OutputSlotManager();
-            deviceOptions = Global.DeviceOptions;
+            deviceOptions = Global.Instance.DeviceOptions;
 
             DS4Devices.RequestElevation += DS4Devices_RequestElevation;
             DS4Devices.checkVirtualFunc = CheckForVirtualDevice;
@@ -584,8 +583,8 @@ namespace DS4Windows
                         // Change thread affinity of object to have normal priority
                         Task.Run(() =>
                         {
-                            var UDP_SERVER_PORT = Global.getUDPServerPortNum();
-                            var UDP_SERVER_LISTEN_ADDRESS = Global.getUDPServerListenAddress();
+                            var UDP_SERVER_PORT = Global.Instance.getUDPServerPortNum();
+                            var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
 
                             try
                             {
@@ -678,8 +677,8 @@ namespace DS4Windows
 
             await Task.Delay(100);
 
-            var UDP_SERVER_PORT = Global.getUDPServerPortNum();
-            var UDP_SERVER_LISTEN_ADDRESS = Global.getUDPServerListenAddress();
+            var UDP_SERVER_PORT = Global.Instance.getUDPServerPortNum();
+            var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
 
             try
             {
@@ -946,10 +945,10 @@ namespace DS4Windows
 
         public void PluginOutDev(int index, DS4Device device)
         {
-            OutContType contType = Global.OutContType[index];
+            OutContType contType = Global.Instance.OutContType[index];
 
             OutSlotDevice slotDevice = null;
-            if (!getDInputOnly(index))
+            if (!Global.Instance.getDInputOnly(index))
             {
                 slotDevice = outputslotMan.FindExistUnboundSlotType(contType);
             }
@@ -971,7 +970,7 @@ namespace DS4Windows
                             //outputDevices[index] = tempXbox;
                             
                             // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                            if (Global.EnableOutputDataToDS4[index])
+                            if (Global.Instance.EnableOutputDataToDS4[index])
                             {
                                 EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
 
@@ -1002,7 +1001,7 @@ namespace DS4Windows
                         Xbox360OutDevice tempXbox = slotDevice.OutputDevice as Xbox360OutDevice;
 
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                        if (Global.EnableOutputDataToDS4[index])
+                        if (Global.Instance.EnableOutputDataToDS4[index])
                         {
                             EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
 
@@ -1041,7 +1040,7 @@ namespace DS4Windows
                             as DS4OutDevice;
 
                             // Enable ViGem feedback callback handler only if DS4 lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                            if (Global.EnableOutputDataToDS4[index])
+                            if (Global.Instance.EnableOutputDataToDS4[index])
                             {
                                 EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
 
@@ -1072,7 +1071,7 @@ namespace DS4Windows
                         DS4OutDevice tempDS4 = slotDevice.OutputDevice as DS4OutDevice;
 
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                        if (Global.EnableOutputDataToDS4[index])
+                        if (Global.Instance.EnableOutputDataToDS4[index])
                         {
                             EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
 
@@ -1162,7 +1161,7 @@ namespace DS4Windows
                 LogDebug($"Using output KB+M handler: {DS4Windows.Global.outputKBMHandler.GetFullDisplayName()}");
                 LogDebug($"Connection to ViGEmBus {Global.ViGEmBusVersion} established");
 
-                DS4Devices.isExclusiveMode = getUseExclusiveMode(); //Re-enable Exclusive Mode
+                DS4Devices.isExclusiveMode = Global.Instance.getUseExclusiveMode(); //Re-enable Exclusive Mode
 
                 UpdateHidHiddenAttributes();
 
@@ -1173,7 +1172,7 @@ namespace DS4Windows
                     LogDebug(DS4Devices.isExclusiveMode ? DS4WinWPF.Properties.Resources.UsingExclusive : DS4WinWPF.Properties.Resources.UsingShared);
                 }
 
-                if (isUsingUDPServer() && _udpServer == null)
+                if (Global.Instance.isUsingUDPServer() && _udpServer == null)
                 {
                     ChangeUDPStatus(true, false);
                     while (udpChangeStatus == true)
@@ -1248,8 +1247,8 @@ namespace DS4Windows
                         DS4Controllers[i] = device;
                         device.DeviceSlotNumber = i;
 
-                        Global.RefreshExtrasButtons(i, GetKnownExtraButtons(device));
-                        Global.LoadControllerConfigs(device);
+                        Global.Instance.RefreshExtrasButtons(i, GetKnownExtraButtons(device));
+                        Global.Instance.LoadControllerConfigs(device);
                         device.LoadStoreSettings();
                         device.CheckControllerNumDeviceSettings(numControllers);
 
@@ -1266,25 +1265,25 @@ namespace DS4Windows
                         bool useAutoProfile = UseTempProfiles[i];
                         if (!useAutoProfile)
                         {
-                            if (device.isValidSerial() && containsLinkedProfile(device.getMacAddress()))
+                            if (device.isValidSerial() && Global.Instance.containsLinkedProfile(device.getMacAddress()))
                             {
-                                ProfilePath[i] = getLinkedProfile(device.getMacAddress());
+                                Global.Instance.ProfilePath[i] = Global.Instance.getLinkedProfile(device.getMacAddress());
                                 Global.LinkedProfileCheck[i] = true;
                             }
                             else
                             {
-                                ProfilePath[i] = OlderProfilePath[i];
+                                Global.Instance.ProfilePath[i] = Global.Instance.OlderProfilePath[i];
                                 Global.LinkedProfileCheck[i] = false;
                             }
 
-                            profileLoaded = LoadProfile(i, false, this, false, false);
+                            profileLoaded = Global.Instance.LoadProfile(i, false, this, false, false);
                         }
 
                         if (profileLoaded || useAutoProfile)
                         {
-                            device.LightBarColor = getMainColor(i);
+                            device.LightBarColor = Global.Instance.getMainColor(i);
 
-                            if (!getDInputOnly(i) && device.isSynced())
+                            if (!Global.Instance.getDInputOnly(i) && device.isSynced())
                             {
                                 if (device.PrimaryDevice)
                                 {
@@ -1362,8 +1361,8 @@ namespace DS4Windows
                 if (_udpServer != null)
                 {
                     //var UDP_SERVER_PORT = 26760;
-                    var UDP_SERVER_PORT = Global.getUDPServerPortNum();
-                    var UDP_SERVER_LISTEN_ADDRESS = Global.getUDPServerListenAddress();
+                    var UDP_SERVER_PORT = Global.Instance.getUDPServerPortNum();
+                    var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
 
                     try
                     {
@@ -1416,7 +1415,7 @@ namespace DS4Windows
                 DS4State stateForUdp = TempState[tempIdx];
 
                 CurrentState[tempIdx].CopyTo(stateForUdp);
-                if (Global.IsUsingUDPServerSmoothing())
+                if (Global.Instance.IsUsingUDPServerSmoothing())
                 {
                     if (stateForUdp.elapsedTime == 0)
                     {
@@ -1446,7 +1445,7 @@ namespace DS4Windows
         private void CheckQuickCharge(object sender, EventArgs e)
         {
             DS4Device device = sender as DS4Device;
-            if (device.ConnectionType == ConnectionType.BT && getQuickCharge() &&
+            if (device.ConnectionType == ConnectionType.BT && Global.Instance.getQuickCharge() &&
                 device.Charging)
             {
                 // Set disconnect flag here. Later Hotplug event will check
@@ -1487,7 +1486,7 @@ namespace DS4Windows
                     DS4Device tempDevice = DS4Controllers[i];
                     if (tempDevice != null)
                     {
-                        if ((DCBTatStop && !tempDevice.isCharging()) || suspending)
+                        if ((Global.Instance.DCBTatStop && !tempDevice.isCharging()) || suspending)
                         {
                             if (tempDevice.getConnectionType() == ConnectionType.BT)
                             {
@@ -1687,8 +1686,8 @@ namespace DS4Windows
                             DS4Controllers[Index] = device;
                             device.DeviceSlotNumber = Index;
 
-                            Global.RefreshExtrasButtons(Index, GetKnownExtraButtons(device));
-                            Global.LoadControllerConfigs(device);
+                            Global.Instance.RefreshExtrasButtons(Index, GetKnownExtraButtons(device));
+                            Global.Instance.LoadControllerConfigs(device);
                             device.LoadStoreSettings();
                             device.CheckControllerNumDeviceSettings(numControllers);
 
@@ -1705,25 +1704,25 @@ namespace DS4Windows
                             bool useAutoProfile = UseTempProfiles[Index];
                             if (!useAutoProfile)
                             {
-                                if (device.isValidSerial() && containsLinkedProfile(device.getMacAddress()))
+                                if (device.isValidSerial() && Global.Instance.containsLinkedProfile(device.getMacAddress()))
                                 {
-                                    ProfilePath[Index] = getLinkedProfile(device.getMacAddress());
+                                    Global.Instance.ProfilePath[Index] = Global.Instance.getLinkedProfile(device.getMacAddress());
                                     Global.LinkedProfileCheck[Index] = true;
                                 }
                                 else
                                 {
-                                    ProfilePath[Index] = OlderProfilePath[Index];
+                                    Global.Instance.ProfilePath[Index] = Global.Instance.OlderProfilePath[Index];
                                     Global.LinkedProfileCheck[Index] = false;
                                 }
 
-                                profileLoaded = LoadProfile(Index, false, this, false, false);
+                                profileLoaded = Global.Instance.LoadProfile(Index, false, this, false, false);
                             }
 
                             if (profileLoaded || useAutoProfile)
                             {
-                                device.LightBarColor = getMainColor(Index);
+                                device.LightBarColor = Global.Instance.getMainColor(Index);
 
-                                if (!getDInputOnly(Index) && device.isSynced())
+                                if (!Global.Instance.getDInputOnly(Index) && device.isSynced())
                                 {
                                     if (device.PrimaryDevice)
                                     {
@@ -1800,10 +1799,10 @@ namespace DS4Windows
             if (idx < UdpServer.NUMBER_SLOTS)
             {
                 OneEuroFilter3D temp = udpEuroPairAccel[idx] = new OneEuroFilter3D();
-                temp.SetFilterAttrs(Global.UDPServerSmoothingMincutoff, Global.UDPServerSmoothingBeta);
+                temp.SetFilterAttrs(Global.Instance.UDPServerSmoothingMincutoff, Global.Instance.UDPServerSmoothingBeta);
 
                 temp = udpEuroPairGyro[idx] = new OneEuroFilter3D();
-                temp.SetFilterAttrs(Global.UDPServerSmoothingMincutoff, Global.UDPServerSmoothingBeta);
+                temp.SetFilterAttrs(Global.Instance.UDPServerSmoothingMincutoff, Global.Instance.UDPServerSmoothingBeta);
             }
         }
 
@@ -1812,41 +1811,41 @@ namespace DS4Windows
             for (int i = 0; i < udpEuroPairAccel.Length; i++)
             {
                 OneEuroFilter3D temp = udpEuroPairAccel[i];
-                temp.SetFilterAttrs(Global.UDPServerSmoothingMincutoff, Global.UDPServerSmoothingBeta);
+                temp.SetFilterAttrs(Global.Instance.UDPServerSmoothingMincutoff, Global.Instance.UDPServerSmoothingBeta);
             }
 
             for (int i = 0; i < udpEuroPairGyro.Length; i++)
             {
                 OneEuroFilter3D temp = udpEuroPairGyro[i];
-                temp.SetFilterAttrs(Global.UDPServerSmoothingMincutoff, Global.UDPServerSmoothingBeta);
+                temp.SetFilterAttrs(Global.Instance.UDPServerSmoothingMincutoff, Global.Instance.UDPServerSmoothingBeta);
             }
         }
 
         public void CheckProfileOptions(int ind, DS4Device device, bool startUp=false)
         {
-            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !getEnableOutputDataToDS4(ind));
-            if (!getEnableOutputDataToDS4(ind))
+            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.getEnableOutputDataToDS4(ind));
+            if (!Instance.getEnableOutputDataToDS4(ind))
                 LogDebug("Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 
-            device.setIdleTimeout(getIdleDisconnectTimeout(ind));
-            device.setBTPollRate(getBTPollRate(ind));
-            touchPad[ind].ResetTrackAccel(getTrackballFriction(ind));
+            device.setIdleTimeout(Instance.getIdleDisconnectTimeout(ind));
+            device.setBTPollRate(Instance.getBTPollRate(ind));
+            touchPad[ind].ResetTrackAccel(Instance.getTrackballFriction(ind));
             touchPad[ind].ResetToggleGyroModes();
 
             // Reset current flick stick progress from previous profile
             Mapping.flickMappingData[ind].Reset();
 
-            Global.L2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Global.L2ModInfo[ind].maxOutput, Global.L2ModInfo[ind].maxZone) / 100.0 * 255);
-            Global.R2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Global.R2ModInfo[ind].maxOutput, Global.R2ModInfo[ind].maxZone) / 100.0 * 255);
+            Instance.L2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Instance.L2ModInfo[ind].maxOutput, Instance.L2ModInfo[ind].maxZone) / 100.0 * 255);
+            Instance.R2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Instance.R2ModInfo[ind].maxOutput, Instance.R2ModInfo[ind].maxZone) / 100.0 * 255);
 
-            device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Global.L2OutputSettings[ind].TriggerEffect,
-                Global.L2OutputSettings[ind].TrigEffectSettings);
-            device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Global.R2OutputSettings[ind].TriggerEffect,
-                Global.R2OutputSettings[ind].TrigEffectSettings);
+            device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[ind].TriggerEffect,
+                Instance.L2OutputSettings[ind].TrigEffectSettings);
+            device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[ind].TriggerEffect,
+                Instance.R2OutputSettings[ind].TrigEffectSettings);
 
-            device.RumbleAutostopTime = getRumbleAutostopTime(ind);
+            device.RumbleAutostopTime = Instance.getRumbleAutostopTime(ind);
             device.setRumble(0, 0);
-            device.LightBarColor = Global.getMainColor(ind);
+            device.LightBarColor = Instance.getMainColor(ind);
 
             if (!startUp)
             {
@@ -1856,7 +1855,7 @@ namespace DS4Windows
 
         private void CheckLauchProfileOption(int ind, DS4Device device)
         {
-            string programPath = LaunchProgram[ind];
+            string programPath = Instance.LaunchProgram[ind];
             if (programPath != string.Empty)
             {
                 System.Diagnostics.Process[] localAll = System.Diagnostics.Process.GetProcesses();
@@ -1905,68 +1904,68 @@ namespace DS4Windows
 
             // Carry over initial profile wheel smoothing values to filter instances.
             // Set up event hooks to keep values in sync
-            SteeringWheelSmoothingInfo wheelSmoothInfo = WheelSmoothInfo[ind];
+            SteeringWheelSmoothingInfo wheelSmoothInfo = Instance.WheelSmoothInfo[ind];
             wheelSmoothInfo.SetFilterAttrs(tempFilter);
             wheelSmoothInfo.SetRefreshEvents(tempFilter);
 
-            FlickStickSettings flickStickSettings = Global.LSOutputSettings[ind].outputSettings.flickSettings;
+            FlickStickSettings flickStickSettings = Instance.LSOutputSettings[ind].outputSettings.flickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
-            flickStickSettings = Global.RSOutputSettings[ind].outputSettings.flickSettings;
+            flickStickSettings = Instance.RSOutputSettings[ind].outputSettings.flickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
             int tempIdx = ind;
-            Global.L2OutputSettings[ind].ResetEvents();
-            Global.L2ModInfo[ind].ResetEvents();
-            Global.L2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
+            Instance.L2OutputSettings[ind].ResetEvents();
+            Instance.L2ModInfo[ind].ResetEvents();
+            Instance.L2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
             {
-                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Global.L2OutputSettings[tempIdx].TriggerEffect,
-                    Global.L2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.L2OutputSettings[tempIdx].TrigEffectSettings);
             };
-            Global.L2ModInfo[ind].MaxOutputChanged += (sender, e) =>
+            Instance.L2ModInfo[ind].MaxOutputChanged += (sender, e) =>
             {
                 TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
+                Instance.L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
 
                 // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Global.L2OutputSettings[tempIdx].TriggerEffect,
-                    Global.L2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.L2OutputSettings[tempIdx].TrigEffectSettings);
             };
-            Global.L2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            Instance.L2ModInfo[ind].MaxZoneChanged += (sender, e) =>
             {
                 TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
+                Instance.L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
 
                 // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Global.L2OutputSettings[tempIdx].TriggerEffect,
-                    Global.L2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.L2OutputSettings[tempIdx].TrigEffectSettings);
             };
 
-            Global.R2OutputSettings[ind].ResetEvents();
-            Global.R2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
+            Instance.R2OutputSettings[ind].ResetEvents();
+            Instance.R2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
             {
-                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Global.R2OutputSettings[tempIdx].TriggerEffect,
-                    Global.R2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.R2OutputSettings[tempIdx].TrigEffectSettings);
             };
-            Global.R2ModInfo[ind].MaxOutputChanged += (sender, e) =>
-            {
-                TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
-
-                // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Global.R2OutputSettings[tempIdx].TriggerEffect,
-                    Global.R2OutputSettings[tempIdx].TrigEffectSettings);
-            };
-            Global.R2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            Instance.R2ModInfo[ind].MaxOutputChanged += (sender, e) =>
             {
                 TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
+                Instance.R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
 
                 // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Global.R2OutputSettings[tempIdx].TriggerEffect,
-                    Global.R2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.R2OutputSettings[tempIdx].TrigEffectSettings);
+            };
+            Instance.R2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            {
+                TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
+                Instance.R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
+
+                // Refresh trigger effect
+                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.R2OutputSettings[tempIdx].TrigEffectSettings);
             };
         }
 
@@ -2067,7 +2066,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (!getDInputOnly(ind))
+                    if (!Instance.getDInputOnly(ind))
                     {
                         touchPad[ind].ReplaceOneEuroFilterPair();
                         touchPad[ind].ReplaceOneEuroFilterPair();
@@ -2188,7 +2187,7 @@ namespace DS4Windows
 
                 if (inWarnMonitor[ind])
                 {
-                    int flashWhenLateAt = getFlashWhenLateAt();
+                    int flashWhenLateAt = Instance.getFlashWhenLateAt();
                     if (!lag[ind] && device.Latency >= flashWhenLateAt)
                     {
                         lag[ind] = true;
@@ -2232,9 +2231,9 @@ namespace DS4Windows
                     if (device.PrimaryDevice)
                     {
                         if (File.Exists(Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                            ProfilePath[ind] + ".xml")))
+                            Instance.ProfilePath[ind] + ".xml")))
                         {
-                            string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile, (ind + 1).ToString(), ProfilePath[ind], $"{device.Battery}");
+                            string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile, (ind + 1).ToString(), Instance.ProfilePath[ind], $"{device.Battery}");
                             LogDebug(prolog);
                             AppLogger.LogToTray(prolog);
                         }
@@ -2255,7 +2254,7 @@ namespace DS4Windows
                     return;
                 }
 
-                if (getEnableTouchToggle(ind))
+                if (Instance.getEnableTouchToggle(ind))
                 {
                     CheckForTouchToggle(ind, cState, pState);
                 }
@@ -2263,8 +2262,8 @@ namespace DS4Windows
                 cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 
                 if (!recordingMacro && (UseTempProfiles[ind] ||
-                    containsCustomAction(ind) || containsCustomExtras(ind) ||
-                    getProfileActionCount(ind) > 0))
+                                        Instance.containsCustomAction(ind) || Instance.containsCustomExtras(ind) ||
+                                        Instance.getProfileActionCount(ind) > 0))
                 {
                     DS4State tempMapState = MappedState[ind];
                     Mapping.MapCustom(ind, cState, tempMapState, ExposedState[ind], touchPad[ind], this);
@@ -2305,7 +2304,7 @@ namespace DS4Windows
                 {
                     // UseDInputOnly profile may re-map sixaxis gyro sensor values as a VJoy joystick axis (steering wheel emulation mode using VJoy output device). Handle this option because VJoy output works even in USeDInputOnly mode.
                     // If steering wheel emulation uses LS/RS/R2/L2 output axies then the profile should NOT use UseDInputOnly option at all because those require a virtual output device.
-                    SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Global.GetSASteeringWheelEmulationAxis(ind);
+                    SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Instance.GetSASteeringWheelEmulationAxis(ind);
                     switch (steeringWheelMappedAxis)
                     {
                         case SASteeringWheelEmulationAxisType.None: break;
@@ -2346,7 +2345,7 @@ namespace DS4Windows
             {
                 lag[ind] = true;
                 LogDebug(string.Format(DS4WinWPF.Properties.Resources.LatencyOverTen, (ind + 1), device.Latency), true);
-                if (getFlashWhenLate())
+                if (Instance.getFlashWhenLate())
                 {
                     DS4Color color = new DS4Color { red = 50, green = 0, blue = 0 };
                     DS4LightBar.forcedColor[ind] = color;
@@ -2360,7 +2359,7 @@ namespace DS4Windows
                 LogDebug(DS4WinWPF.Properties.Resources.LatencyNotOverTen.Replace("*number*", (ind + 1).ToString()));
                 DS4LightBar.forcelight[ind] = false;
                 DS4LightBar.forcedFlash[ind] = 0;
-                device.LightBarColor = getMainColor(ind);
+                device.LightBarColor = Instance.getMainColor(ind);
             }
         }
 
@@ -2444,18 +2443,18 @@ namespace DS4Windows
 
         protected virtual void CheckForTouchToggle(int deviceID, DS4State cState, DS4State pState)
         {
-            if (!IsUsingTouchpadForControls(deviceID) && cState.Touch1 && pState.PS)
+            if (!Instance.IsUsingTouchpadForControls(deviceID) && cState.Touch1 && pState.PS)
             {
-                if (GetTouchActive(deviceID) && touchreleased[deviceID])
+                if (Instance.GetTouchActive(deviceID) && touchreleased[deviceID])
                 {
-                    TouchActive[deviceID] = false;
+                    Instance.TouchActive[deviceID] = false;
                     LogDebug(DS4WinWPF.Properties.Resources.TouchpadMovementOff);
                     AppLogger.LogToTray(DS4WinWPF.Properties.Resources.TouchpadMovementOff);
                     touchreleased[deviceID] = false;
                 }
                 else if (touchreleased[deviceID])
                 {
-                    TouchActive[deviceID] = true;
+                    Instance.TouchActive[deviceID] = true;
                     LogDebug(DS4WinWPF.Properties.Resources.TouchpadMovementOn);
                     AppLogger.LogToTray(DS4WinWPF.Properties.Resources.TouchpadMovementOn);
                     touchreleased[deviceID] = false;
@@ -2469,7 +2468,7 @@ namespace DS4Windows
         {
             if (deviceID < CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                TouchActive[deviceID] = false;
+                Instance.TouchActive[deviceID] = false;
             }
         }
 
@@ -2533,7 +2532,7 @@ namespace DS4Windows
         public void SetDevRumble(DS4Device device,
             byte heavyMotor, byte lightMotor, int deviceNum)
         {
-            byte boost = getRumbleBoost(deviceNum);
+            byte boost = Instance.getRumbleBoost(deviceNum);
             uint lightBoosted = ((uint)lightMotor * (uint)boost) / 100;
             if (lightBoosted > 255)
                 lightBoosted = 255;

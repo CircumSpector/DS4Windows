@@ -3213,8 +3213,8 @@ namespace DS4Windows
                     profileActionIndexDict[device].Clear();
                     foreach (string actionname in profileActions[device])
                     {
-                        profileActionDict[device][actionname] = Global.GetAction(actionname);
-                        profileActionIndexDict[device][actionname] = Global.GetActionIndexOf(actionname);
+                        profileActionDict[device][actionname] = Global.Instance.GetAction(actionname);
+                        profileActionIndexDict[device][actionname] = Global.Instance.GetActionIndexOf(actionname);
                     }
 
                     DS4KeyType keyType;

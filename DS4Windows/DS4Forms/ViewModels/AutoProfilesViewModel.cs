@@ -53,8 +53,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool RevertDefaultProfileOnUnknown
         {
-            get => DS4Windows.Global.AutoProfileRevertDefaultProfile;
-            set => DS4Windows.Global.AutoProfileRevertDefaultProfile = value;
+            get => Global.Instance.AutoProfileRevertDefaultProfile;
+            set => Global.Instance.AutoProfileRevertDefaultProfile = value;
         }
 
         public bool UsingExpandedControllers

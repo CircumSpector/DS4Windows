@@ -146,7 +146,7 @@ namespace DS4WinWPF
             CreateControlService(parser);
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
-            DS4Windows.Global.FindConfigLocation();
+            DS4Windows.Global.Instance.FindConfigLocation();
             bool firstRun = DS4Windows.Global.IsFirstRun;
             if (firstRun)
             {
@@ -176,7 +176,7 @@ namespace DS4WinWPF
             logger.Info($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
             logger.Info("Logger created");
 
-            bool readAppConfig = DS4Windows.Global.Load();
+            bool readAppConfig = DS4Windows.Global.Instance.Load();
             if (!firstRun && !readAppConfig)
             {
                 logger.Info($@"{Constants.ProfilesFileName} not read at location ${DS4Windows.Global.RuntimeAppDataPath}\{Constants.ProfilesFileName}. Using default app settings");
@@ -187,10 +187,10 @@ namespace DS4WinWPF
                 logger.Info("No config found. Creating default config");
                 AttemptSave();
 
-                DS4Windows.Global.SaveAsNewProfile(0, "Default");
+                DS4Windows.Global.Instance.SaveAsNewProfile(0, "Default");
                 for (int i = 0; i < DS4Windows.ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
                 {
-                    DS4Windows.Global.ProfilePath[i] = DS4Windows.Global.OlderProfilePath[i] = "Default";
+                    DS4Windows.Global.Instance.ProfilePath[i] = DS4Windows.Global.Instance.OlderProfilePath[i] = "Default";
                 }
 
                 logger.Info("Default config created");
@@ -198,19 +198,19 @@ namespace DS4WinWPF
 
             skipSave = false;
 
-            if (!DS4Windows.Global.LoadActions())
+            if (!DS4Windows.Global.Instance.LoadActions())
             {
-                DS4Windows.Global.CreateStdActions();
+                DS4Windows.Global.Instance.CreateStdActions();
             }
 
-            SetUICulture(DS4Windows.Global.UseLang);
-            DS4Windows.AppThemeChoice themeChoice = DS4Windows.Global.UseCurrentTheme;
+            SetUICulture(DS4Windows.Global.Instance.UseLang);
+            DS4Windows.AppThemeChoice themeChoice = DS4Windows.Global.Instance.UseCurrentTheme;
             if (themeChoice != DS4Windows.AppThemeChoice.Default)
             {
-                ChangeTheme(DS4Windows.Global.UseCurrentTheme, false);
+                ChangeTheme(DS4Windows.Global.Instance.UseCurrentTheme, false);
             }
 
-            DS4Windows.Global.LoadLinkedProfiles();
+            DS4Windows.Global.Instance.LoadLinkedProfiles();
             DS4Forms.MainWindow window = new DS4Forms.MainWindow(parser);
             MainWindow = window;
             window.Show();
@@ -295,7 +295,7 @@ namespace DS4WinWPF
 
         private void AttemptSave()
         {
-            if (!DS4Windows.Global.Save()) //if can't write to file
+            if (!DS4Windows.Global.Instance.Save()) //if can't write to file
             {
                 if (MessageBox.Show("Cannot write at current location\nCopy Settings to appdata?", "DS4Windows",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -714,7 +714,7 @@ namespace DS4WinWPF
 
                 if (!skipSave)
                 {
-                    DS4Windows.Global.Save();
+                    DS4Windows.Global.Instance.Save();
                 }
 
                 exitComThread = true;

@@ -737,16 +737,16 @@ namespace DS4Windows
 
         public static DS4State SetCurveAndDeadzone(int device, DS4State cState, DS4State dState)
         {
-            double rotation = /*tempDoubleArray[device] =*/  getLSRotation(device);
+            double rotation = /*tempDoubleArray[device] =*/  Global.Instance.getLSRotation(device);
             if (rotation > 0.0 || rotation < 0.0)
                 cState.rotateLSCoordinates(rotation);
 
-            double rotationRS = /*tempDoubleArray[device] =*/ getRSRotation(device);
+            double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.getRSRotation(device);
             if (rotationRS > 0.0 || rotationRS < 0.0)
                 cState.rotateRSCoordinates(rotationRS);
 
-            StickAntiSnapbackInfo lsAntiSnapback = GetLSAntiSnapbackInfo(device);
-            StickAntiSnapbackInfo rsAntiSnapback = GetRSAntiSnapbackInfo(device);
+            StickAntiSnapbackInfo lsAntiSnapback = Global.Instance.GetLSAntiSnapbackInfo(device);
+            StickAntiSnapbackInfo rsAntiSnapback = Global.Instance.GetRSAntiSnapbackInfo(device);
 
             if (lsAntiSnapback.enabled)
             {
@@ -758,8 +758,8 @@ namespace DS4Windows
                 CalcAntiSnapbackStick(device, 1, rsAntiSnapback.delta, rsAntiSnapback.timeout, cState.RX, cState.RY, out cState.RX, out cState.RY);
             }
 
-            StickDeadZoneInfo lsMod = GetLSDeadInfo(device);
-            StickDeadZoneInfo rsMod = GetRSDeadInfo(device);
+            StickDeadZoneInfo lsMod = Global.Instance.GetLSDeadInfo(device);
+            StickDeadZoneInfo rsMod = Global.Instance.GetRSDeadInfo(device);
 
             if (lsMod.fuzz > 0)
             {
@@ -1246,7 +1246,7 @@ namespace DS4Windows
             int l2Maxzone = getL2Maxzone(device);
             */
 
-            TriggerDeadZoneZInfo l2ModInfo = GetL2ModInfo(device);
+            TriggerDeadZoneZInfo l2ModInfo = Global.Instance.GetL2ModInfo(device);
             byte l2Deadzone = l2ModInfo.deadZone;
             int l2AntiDeadzone = l2ModInfo.antiDeadZone;
             int l2Maxzone = l2ModInfo.maxZone;
@@ -1301,7 +1301,7 @@ namespace DS4Windows
             int r2AntiDeadzone = getR2AntiDeadzone(device);
             int r2Maxzone = getR2Maxzone(device);
             */
-            TriggerDeadZoneZInfo r2ModInfo = GetR2ModInfo(device);
+            TriggerDeadZoneZInfo r2ModInfo = Global.Instance.GetR2ModInfo(device);
             byte r2Deadzone = r2ModInfo.deadZone;
             int r2AntiDeadzone = r2ModInfo.antiDeadZone;
             int r2Maxzone = r2ModInfo.maxZone;
@@ -1355,7 +1355,7 @@ namespace DS4Windows
             // Only apply deprecated Sensitivity modifier for Radial DZ
             if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
-                double lsSens = getLSSens(device);
+                double lsSens = Global.Instance.getLSSens(device);
                 if (lsSens != 1.0)
                 {
                     dState.LX = (byte)Global.Clamp(0, lsSens * (dState.LX - 128.0) + 128.0, 255);
@@ -1366,7 +1366,7 @@ namespace DS4Windows
             // Only apply deprecated Sensitivity modifier for Radial DZ
             if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
-                double rsSens = getRSSens(device);
+                double rsSens = Global.Instance.getRSSens(device);
                 if (rsSens != 1.0)
                 {
                     dState.RX = (byte)Global.Clamp(0, rsSens * (dState.RX - 128.0) + 128.0, 255);
@@ -1374,15 +1374,15 @@ namespace DS4Windows
                 }
             }
 
-            double l2Sens = getL2Sens(device);
+            double l2Sens = Global.Instance.getL2Sens(device);
             if (l2Sens != 1.0)
                 dState.L2 = (byte)Global.Clamp(0, l2Sens * dState.L2, 255);
 
-            double r2Sens = getR2Sens(device);
+            double r2Sens = Global.Instance.getR2Sens(device);
             if (r2Sens != 1.0)
                 dState.R2 = (byte)Global.Clamp(0, r2Sens * dState.R2, 255);
 
-            SquareStickInfo squStk = GetSquareStickInfo(device);
+            SquareStickInfo squStk = Global.Instance.GetSquareStickInfo(device);
             if (squStk.lsMode && (dState.LX != 128 || dState.LY != 128))
             {
                 double capX = dState.LX >= 128 ? 127.0 : 128.0;
@@ -1401,7 +1401,7 @@ namespace DS4Windows
                 dState.LY = (byte)(tempY * capY + 128.0);
             }
 
-            int lsOutCurveMode = getLsOutCurveMode(device);
+            int lsOutCurveMode = Global.Instance.getLsOutCurveMode(device);
             if (lsOutCurveMode > 0 && (dState.LX != 128 || dState.LY != 128))
             {
                 double tempRatioX = 0.0, tempRatioY = 0.0;
@@ -1510,8 +1510,8 @@ namespace DS4Windows
                         byte tempOutY = (byte)(tempRatioY * maxY + 128.0);
 
                         // Perform curve based on byte values from vector
-                        byte tempX = lsOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
-                        byte tempY = lsOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
+                        byte tempX = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
+                        byte tempY = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
 
                         // Calculate new ratio
                         double tempRatioOutX = (tempX - 128.0) / maxX;
@@ -1524,8 +1524,8 @@ namespace DS4Windows
                     }
                     else if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Axial)
                     {
-                        dState.LX = lsOutBezierCurveObj[device].arrayBezierLUT[dState.LX];
-                        dState.LY = lsOutBezierCurveObj[device].arrayBezierLUT[dState.LY];
+                        dState.LX = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[dState.LX];
+                        dState.LY = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[dState.LY];
                     }
                 }
             }
@@ -1548,7 +1548,7 @@ namespace DS4Windows
                 dState.RY = (byte)(tempY * capY + 128.0);
             }
 
-            int rsOutCurveMode = getRsOutCurveMode(device);
+            int rsOutCurveMode = Global.Instance.getRsOutCurveMode(device);
             if (rsOutCurveMode > 0 && (dState.RX != 128 || dState.RY != 128))
             {
                 double tempRatioX = 0.0, tempRatioY = 0.0;
@@ -1657,8 +1657,8 @@ namespace DS4Windows
                         byte tempOutY = (byte)(tempRatioY * maxY + 128.0);
 
                         // Perform curve based on byte values from vector
-                        byte tempX = rsOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
-                        byte tempY = rsOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
+                        byte tempX = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
+                        byte tempY = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
 
                         // Calculate new ratio
                         double tempRatioOutX = (tempX - 128.0) / maxX;
@@ -1670,13 +1670,13 @@ namespace DS4Windows
                     }
                     else if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Axial)
                     {
-                        dState.RX = rsOutBezierCurveObj[device].arrayBezierLUT[dState.RX];
-                        dState.RY = rsOutBezierCurveObj[device].arrayBezierLUT[dState.RY];
+                        dState.RX = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[dState.RX];
+                        dState.RY = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[dState.RY];
                     }
                 }
             }
 
-            int l2OutCurveMode = getL2OutCurveMode(device);
+            int l2OutCurveMode = Global.Instance.getL2OutCurveMode(device);
             if (l2OutCurveMode > 0 && dState.L2 != 0)
             {
                 double temp = dState.L2 / 255.0;
@@ -1715,11 +1715,11 @@ namespace DS4Windows
                 }
                 else if (l2OutCurveMode == 6)
                 {
-                    dState.L2 = l2OutBezierCurveObj[device].arrayBezierLUT[dState.L2];
+                    dState.L2 = Global.Instance.l2OutBezierCurveObj[device].arrayBezierLUT[dState.L2];
                 }
             }
 
-            int r2OutCurveMode = getR2OutCurveMode(device);
+            int r2OutCurveMode = Global.Instance.getR2OutCurveMode(device);
             if (r2OutCurveMode > 0 && dState.R2 != 0)
             {
                 double temp = dState.R2 / 255.0;
@@ -1758,22 +1758,22 @@ namespace DS4Windows
                 }
                 else if (r2OutCurveMode == 6)
                 {
-                    dState.R2 = r2OutBezierCurveObj[device].arrayBezierLUT[dState.R2];
+                    dState.R2 = Global.Instance.r2OutBezierCurveObj[device].arrayBezierLUT[dState.R2];
                 }
             }
                 
 
-            bool saControls = IsUsingSAForControls(device);
+            bool saControls = Global.Instance.IsUsingSAForControls(device);
             if (saControls && dState.Motion.outputGyroControls)
             {
-                int SXD = (int)(128d * getSXDeadzone(device));
-                int SZD = (int)(128d * getSZDeadzone(device));
-                double SXMax = getSXMaxzone(device);
-                double SZMax = getSZMaxzone(device);
-                double sxAntiDead = getSXAntiDeadzone(device);
-                double szAntiDead = getSZAntiDeadzone(device);
-                double sxsens = getSXSens(device);
-                double szsens = getSZSens(device);
+                int SXD = (int)(128d * Global.Instance.getSXDeadzone(device));
+                int SZD = (int)(128d * Global.Instance.getSZDeadzone(device));
+                double SXMax = Global.Instance.getSXMaxzone(device);
+                double SZMax = Global.Instance.getSZMaxzone(device);
+                double sxAntiDead = Global.Instance.getSXAntiDeadzone(device);
+                double szAntiDead = Global.Instance.getSZAntiDeadzone(device);
+                double sxsens = Global.Instance.getSXSens(device);
+                double szsens = Global.Instance.getSZSens(device);
                 int result = 0;
 
                 int gyroX = cState.Motion.accelX, gyroZ = cState.Motion.accelZ;
@@ -1819,7 +1819,7 @@ namespace DS4Windows
                         (int)Math.Min(128d, szsens * 128d * (absz / 128d));
                 }
 
-                int sxOutCurveMode = getSXOutCurveMode(device);
+                int sxOutCurveMode = Global.Instance.getSXOutCurveMode(device);
                 if (sxOutCurveMode > 0)
                 {
                     double temp = dState.Motion.outputAccelX / 128.0;
@@ -1866,11 +1866,11 @@ namespace DS4Windows
                     else if (sxOutCurveMode == 6)
                     {
                         int signSA = Math.Sign(dState.Motion.outputAccelX);
-                        dState.Motion.outputAccelX = sxOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
+                        dState.Motion.outputAccelX = Global.Instance.sxOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
                     }
                 }
 
-                int szOutCurveMode = getSZOutCurveMode(device);
+                int szOutCurveMode = Global.Instance.getSZOutCurveMode(device);
                 if (szOutCurveMode > 0 && dState.Motion.outputAccelZ != 0)
                 {
                     double temp = dState.Motion.outputAccelZ / 128.0;
@@ -1917,7 +1917,7 @@ namespace DS4Windows
                     else if (szOutCurveMode == 6)
                     {
                         int signSA = Math.Sign(dState.Motion.outputAccelZ);
-                        dState.Motion.outputAccelZ = szOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
+                        dState.Motion.outputAccelZ = Global.Instance.szOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
                     }
                 }
             }
@@ -2042,7 +2042,7 @@ namespace DS4Windows
             //DS4StateFieldMapping outputfieldMapping = new DS4StateFieldMapping(cState, eState, tp);
 
             SyntheticState deviceState = Mapping.deviceState[device];
-            if (getProfileActionCount(device) > 0 || UseTempProfiles[device])
+            if (Global.Instance.getProfileActionCount(device) > 0 || UseTempProfiles[device])
                 MapCustomAction(device, cState, MappedState, eState, tp, ctrl, fieldMapping, outputfieldMapping);
             //if (ctrl.DS4Controllers[device] == null) return;
 
@@ -2056,8 +2056,8 @@ namespace DS4Windows
             //for (int settingIndex = 0, arlen = tempSettingsList.Count; settingIndex < arlen; settingIndex++)
 
             // Process LS
-            ControlSettingsGroup controlSetGroup = GetControlSettingsGroup(device);
-            StickOutputSetting stickSettings = Global.LSOutputSettings[device];
+            ControlSettingsGroup controlSetGroup = Global.Instance.GetControlSettingsGroup(device);
+            StickOutputSetting stickSettings = Global.Instance.LSOutputSettings[device];
             if (stickSettings.mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.LS.GetEnumerator(); settingEnum.MoveNext();)
@@ -2093,7 +2093,7 @@ namespace DS4Windows
             }
 
             // Process RS
-            stickSettings = Global.RSOutputSettings[device];
+            stickSettings = Global.Instance.RSOutputSettings[device];
             if (stickSettings.mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.RS.GetEnumerator(); settingEnum.MoveNext();)
@@ -2129,7 +2129,7 @@ namespace DS4Windows
             }
 
             // Process L2
-            TriggerOutputSettings l2TriggerSettings = Global.L2OutputSettings[device];
+            TriggerOutputSettings l2TriggerSettings = Global.Instance.L2OutputSettings[device];
             DS4ControlSettings dcsTemp = controlSetGroup.L2;
             if (l2TriggerSettings.twoStageMode == TwoStageTriggerMode.Disabled)
             {
@@ -2196,7 +2196,7 @@ namespace DS4Windows
             }
 
             // Process R2
-            TriggerOutputSettings r2TriggerSettings = Global.R2OutputSettings[device];
+            TriggerOutputSettings r2TriggerSettings = Global.Instance.R2OutputSettings[device];
             dcsTemp = controlSetGroup.R2;
             if (r2TriggerSettings.twoStageMode == TwoStageTriggerMode.Disabled)
             {
@@ -2280,7 +2280,7 @@ namespace DS4Windows
                     ref tempMouseDeltaY, ctrl);
             }
 
-            GyroOutMode imuOutMode = Global.GetGyroOutMode(device);
+            GyroOutMode imuOutMode = Global.Instance.GetGyroOutMode(device);
             if (imuOutMode == GyroOutMode.DirectionalSwipe)
             {
                 DS4ControlSettings gyroSwipeXDcs = null;
@@ -2428,14 +2428,14 @@ namespace DS4Windows
                 if (macroControl[25]) MappedState.OutputTouchButton = true;
             }
 
-            if (GetSASteeringWheelEmulationAxis(device) != SASteeringWheelEmulationAxisType.None)
+            if (Global.Instance.GetSASteeringWheelEmulationAxis(device) != SASteeringWheelEmulationAxisType.None)
             {
                 MappedState.SASteeringWheelEmulationUnit = Mapping.Scale360degreeGyroAxis(device, eState, ctrl);
             }
 
             if (imuOutMode == GyroOutMode.MouseJoystick)
             {
-                GyroMouseStickInfo msinfo = Global.GetGyroMouseStickInfo(device);
+                GyroMouseStickInfo msinfo = Global.Instance.GetGyroMouseStickInfo(device);
                 if (msinfo.outputStick != GyroMouseStickInfo.OutputStick.None)
                 {
                     ref byte gyroTempX = ref gyroStickX[device];
@@ -2903,7 +2903,7 @@ namespace DS4Windows
 
                         if (extras[7] == 1)
                         {
-                            ButtonMouseInfo tempMouseInfo = ButtonMouseInfos[device];
+                            ButtonMouseInfo tempMouseInfo = Global.Instance.ButtonMouseInfos[device];
                             if (tempMouseInfo.tempButtonSensitivity == -1)
                             {
                                 tempMouseInfo.tempButtonSensitivity = extras[8];
@@ -2917,7 +2917,7 @@ namespace DS4Windows
                 {
                     DS4LightBar.forcelight[device] = false;
                     DS4LightBar.forcedFlash[device] = 0;
-                    ButtonMouseInfo tempMouseInfo = ButtonMouseInfos[device];
+                    ButtonMouseInfo tempMouseInfo = Global.Instance.ButtonMouseInfos[device];
                     if (tempMouseInfo.tempButtonSensitivity != -1)
                     {
                         tempMouseInfo.SetActiveButtonSensitivity(tempMouseInfo.buttonSensitivity);
@@ -3195,7 +3195,7 @@ namespace DS4Windows
 
         private static bool IfAxisIsNotModified(int device, bool shift, DS4Controls dc)
         {
-            return shift ? false : GetDS4CSetting(device, dc).ControlActionType == DS4ControlSettings.ActionType.Default;
+            return shift ? false : Global.Instance.GetDS4CSetting(device, dc).ControlActionType == DS4ControlSettings.ActionType.Default;
         }
 
         private static async void MapCustomAction(int device, DS4State cState, DS4State MappedState,
@@ -3205,9 +3205,9 @@ namespace DS4Windows
             try
             {
                 int actionDoneCount = actionDone.Count;
-                int totalActionCount = GetActions().Count;
+                int totalActionCount = Global.Instance.GetActions().Count;
                 DS4StateFieldMapping previousFieldMapping = null;
-                List<string> profileActions = getProfileActions(device);
+                List<string> profileActions = Global.Instance.getProfileActions(device);
                 //foreach (string actionname in profileActions)
                 for (int actionIndex = 0, profileListLen = profileActions.Count;
                      actionIndex < profileListLen; actionIndex++)
@@ -3216,8 +3216,8 @@ namespace DS4Windows
                     //SpecialAction action = GetAction(actionname);
                     //int index = GetActionIndexOf(actionname);
                     string actionname = profileActions[actionIndex];
-                    SpecialAction action = GetProfileAction(device, actionname);
-                    int index = GetProfileActionIndexOf(device, actionname);
+                    SpecialAction action = Global.Instance.GetProfileAction(device, actionname);
+                    int index = Global.Instance.GetProfileActionIndexOf(device, actionname);
 
                     if (actionDoneCount < index + 1)
                     {
@@ -3239,7 +3239,7 @@ namespace DS4Windows
                     //If a key or button is assigned to the trigger, a key special action is used like
                     //a quick tap to use and hold to use the regular custom button/key
                     bool triggerToBeTapped = action.TypeId == SpecialAction.ActionTypeId.None && action.Trigger.Count == 1 &&
-                            (GetDS4CSetting(device, action.Trigger[0])?.IsDefault ?? false);
+                            (Global.Instance.GetDS4CSetting(device, action.Trigger[0])?.IsDefault ?? false);
                     if (!(action.TypeId == SpecialAction.ActionTypeId.None || index < 0))
                     {
                         bool triggeractivated = true;
@@ -3435,7 +3435,7 @@ namespace DS4Windows
                                     for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                                     {
                                         DS4Controls dc = action.Trigger[i];
-                                        DS4ControlSettings dcs = GetDS4CSetting(device, dc);
+                                        DS4ControlSettings dcs = Global.Instance.GetDS4CSetting(device, dc);
                                         if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
                                         {
                                             if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
@@ -3460,18 +3460,18 @@ namespace DS4Windows
                                         (device + 1).ToString(), action.Details, $"{d.Battery}");
 
                                     AppLogger.LogToGui(prolog, false);
-                                    LoadTempProfile(device, action.Details, true, ctrl);
+                                    Global.Instance.LoadTempProfile(device, action.Details, true, ctrl);
                                     //LoadProfile(device, false, ctrl);
 
                                     if (action.UTrigger.Count == 0 && !action.AutomaticUnTrigger)
                                     {
                                         // If the new profile has any actions with the same action key (controls) than this action (which doesn't have untrigger keys) then set status of those actions to wait for the release of the existing action key. 
-                                        List<string> profileActionsNext = getProfileActions(device);
+                                        List<string> profileActionsNext = Global.Instance.getProfileActions(device);
                                         for (int actionIndexNext = 0, profileListLenNext = profileActionsNext.Count; actionIndexNext < profileListLenNext; actionIndexNext++)
                                         {
                                             string actionnameNext = profileActionsNext[actionIndexNext];
-                                            SpecialAction actionNext = GetProfileAction(device, actionnameNext);
-                                            int indexNext = GetProfileActionIndexOf(device, actionnameNext);
+                                            SpecialAction actionNext = Global.Instance.GetProfileAction(device, actionnameNext);
+                                            int indexNext = Global.Instance.GetProfileActionIndexOf(device, actionnameNext);
 
                                             if (actionNext.Controls == action.Controls)
                                                 actionDone[indexNext].dev[device] = true;
@@ -3904,7 +3904,7 @@ namespace DS4Windows
                             {
                                 DS4Controls dc = action.UTrigger[i];
                                 actionDone[index].dev[device] = true;
-                                DS4ControlSettings dcs = GetDS4CSetting(device, dc);
+                                DS4ControlSettings dcs = Global.Instance.GetDS4CSetting(device, dc);
                                 if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
                                 {
                                     if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
@@ -3921,16 +3921,16 @@ namespace DS4Windows
                             string profileName = untriggeraction[device].PreviousProfileName;
                             DS4Device d = ctrl.DS4Controllers[device];
                             string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile,
-                                (device + 1).ToString(), (profileName == string.Empty ? ProfilePath[device] : profileName), $"{d.Battery}");
+                                (device + 1).ToString(), (profileName == string.Empty ? Global.Instance.ProfilePath[device] : profileName), $"{d.Battery}");
 
                             AppLogger.LogToGui(prolog, false);
 
                             untriggeraction[device] = null;
 
                             if (profileName == string.Empty)
-                                LoadProfile(device, false, ctrl); // Previous profile was a regular default profile of a controller
+                                Global.Instance.LoadProfile(device, false, ctrl); // Previous profile was a regular default profile of a controller
                             else
-                                LoadTempProfile(device, profileName, true, ctrl); // Previous profile was a temporary profile, so re-load it as a temp profile
+                                Global.Instance.LoadTempProfile(device, profileName, true, ctrl); // Previous profile was a temporary profile, so re-load it as a temp profile
                         }
                     }
                 }
@@ -3947,7 +3947,7 @@ namespace DS4Windows
             for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
             {
                 DS4Controls dc = action.Trigger[i];
-                DS4ControlSettings dcs = GetDS4CSetting(device, dc);
+                DS4ControlSettings dcs = Global.Instance.GetDS4CSetting(device, dc);
                 if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
                 {
                     if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
@@ -4274,13 +4274,13 @@ namespace DS4Windows
         {
             int deadzoneL = 0;
             int deadzoneR = 0;
-            if (getLSDeadzone(device) == 0)
+            if (Global.Instance.getLSDeadzone(device) == 0)
                 deadzoneL = 3;
-            if (getRSDeadzone(device) == 0)
+            if (Global.Instance.getRSDeadzone(device) == 0)
                 deadzoneR = 3;
 
             double value = 0.0;
-            ButtonMouseInfo buttonMouseInfo = ButtonMouseInfos[device];
+            ButtonMouseInfo buttonMouseInfo = Global.Instance.ButtonMouseInfos[device];
             int speed = buttonMouseInfo.activeButtonSensitivity;
             const double root = 1.002;
             const double divide = 10000d;
@@ -4615,7 +4615,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = IsUsingSAForControls(device);
+                bool saControls = Global.Instance.IsUsingSAForControls(device);
 
                 switch (control)
                 {
@@ -4729,14 +4729,14 @@ namespace DS4Windows
             }
             else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
             {
-                bool saControls = IsUsingSAForControls(device);
+                bool saControls = Global.Instance.IsUsingSAForControls(device);
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos: result = saControls ? SXSens[device] * -eState.AccelX > 67 : false; break;
-                    case DS4Controls.GyroXNeg: result = saControls ? SXSens[device] * -eState.AccelX < -67 : false; break;
-                    case DS4Controls.GyroZPos: result = saControls ? SZSens[device] * eState.AccelZ > 67 : false; break;
-                    case DS4Controls.GyroZNeg: result = saControls ? SZSens[device] * eState.AccelZ < -67 : false; break;
+                    case DS4Controls.GyroXPos: result = saControls ? Global.Instance.SXSens[device] * -eState.AccelX > 67 : false; break;
+                    case DS4Controls.GyroXNeg: result = saControls ? Global.Instance.SXSens[device] * -eState.AccelX < -67 : false; break;
+                    case DS4Controls.GyroZPos: result = saControls ? Global.Instance.SZSens[device] * eState.AccelZ > 67 : false; break;
+                    case DS4Controls.GyroZNeg: result = saControls ? Global.Instance.SZSens[device] * eState.AccelZ < -67 : false; break;
                     default: break;
                 }
             }
@@ -4792,7 +4792,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = IsUsingSAForControls(device);
+                bool saControls = Global.Instance.IsUsingSAForControls(device);
                 bool safeTest = false;
 
                 switch (control)
@@ -4848,7 +4848,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = IsUsingSAForControls(device);
+                bool saControls = Global.Instance.IsUsingSAForControls(device);
                 bool safeTest = false;
 
                 switch (control)
@@ -4946,7 +4946,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = IsUsingSAForControls(device);
+                bool saControls = Global.Instance.IsUsingSAForControls(device);
                 bool safeTest = false;
 
                 switch (control)
@@ -5053,7 +5053,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = IsUsingSAForControls(device);
+                bool saControls = Global.Instance.IsUsingSAForControls(device);
 
                 switch (control)
                 {
@@ -5184,9 +5184,9 @@ namespace DS4Windows
             }
             else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
             {
-                double SXD = getSXDeadzone(device);
-                double SZD = getSZDeadzone(device);
-                bool saControls = IsUsingSAForControls(device);
+                double SXD = Global.Instance.getSXDeadzone(device);
+                double SZD = Global.Instance.getSZDeadzone(device);
+                bool saControls = Global.Instance.IsUsingSAForControls(device);
 
                 switch (control)
                 {
@@ -5194,7 +5194,7 @@ namespace DS4Windows
                     {
                         if (saControls && -eState.AccelX > SXD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + SXSens[device] * -eState.AccelX); else result = (byte)Math.Max(0, 127 - SXSens[device] * -eState.AccelX);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SXSens[device] * -eState.AccelX); else result = (byte)Math.Max(0, 127 - Global.Instance.SXSens[device] * -eState.AccelX);
                         }
                         else result = falseVal;
                         break;
@@ -5203,7 +5203,7 @@ namespace DS4Windows
                     {
                         if (saControls && -eState.AccelX < -SXD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + SXSens[device] * eState.AccelX); else result = (byte)Math.Max(0, 127 - SXSens[device] * eState.AccelX);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SXSens[device] * eState.AccelX); else result = (byte)Math.Max(0, 127 - Global.Instance.SXSens[device] * eState.AccelX);
                         }
                         else result = falseVal;
                         break;
@@ -5212,7 +5212,7 @@ namespace DS4Windows
                     {
                         if (saControls && eState.AccelZ > SZD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + SZSens[device] * eState.AccelZ); else result = (byte)Math.Max(0, 127 - SZSens[device] * eState.AccelZ);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SZSens[device] * eState.AccelZ); else result = (byte)Math.Max(0, 127 - Global.Instance.SZSens[device] * eState.AccelZ);
                         }
                         else return falseVal;
                         break;
@@ -5221,7 +5221,7 @@ namespace DS4Windows
                     {
                         if (saControls && eState.AccelZ < -SZD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + SZSens[device] * -eState.AccelZ); else result = (byte)Math.Max(0, 127 - SZSens[device] * -eState.AccelZ);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SZSens[device] * -eState.AccelZ); else result = (byte)Math.Max(0, 127 - Global.Instance.SZSens[device] * -eState.AccelZ);
                         }
                         else result = falseVal;
                         break;
@@ -5402,7 +5402,7 @@ namespace DS4Windows
 
                 // If any of the calibration points (center, left 90deg, right 90deg) are missing then reset back to default calibration values
                 if (((controller.wheelCalibratedAxisBitmask & DS4Device.WheelCalibrationPoint.All) == DS4Device.WheelCalibrationPoint.All))
-                    Global.SaveControllerConfigs(controller);
+                    Global.Instance.SaveControllerConfigs(controller);
                 else
                     controller.wheelCenterPoint.X = controller.wheelCenterPoint.Y = 0;
 
@@ -5482,7 +5482,7 @@ namespace DS4Windows
             {
                 // Re-calibration completed or cancelled. Set lightbar color back to normal color
                 DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcedColor[device] = Global.getMainColor(device);
+                DS4LightBar.forcedColor[device] = Global.Instance.getMainColor(device);
                 DS4LightBar.forcelight[device] = false;
                 DS4LightBar.updateLightBar(controller, device);
             }
@@ -5576,7 +5576,7 @@ namespace DS4Windows
                 if (controller.wheelCenterPoint.IsEmpty)
                 {
                     // Run if no controller config exists or if an empty wheelCenterPoint is still being used
-                    if (!Global.LoadControllerConfigs(controller) || controller.wheelCenterPoint.IsEmpty)
+                    if (!Global.Instance.LoadControllerConfigs(controller) || controller.wheelCenterPoint.IsEmpty)
                     {
                         AppLogger.LogToGui($"Controller {1 + device} sixaxis steering wheel calibration data missing. It is recommended to run steering wheel calibration process by pressing SASteeringWheelEmulationCalibration special action key. Using estimated values until the controller is calibrated at least once.", false);
 
@@ -5596,12 +5596,12 @@ namespace DS4Windows
                     controller.wheelCircleCenterPointLeft.X = controller.wheelCenterPoint.X;
                     controller.wheelCircleCenterPointLeft.Y = controller.wheel90DegPointLeft.Y;
 
-                    AppLogger.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.GetSASteeringWheelEmulationRange(device)}", false);
+                    AppLogger.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.GetSASteeringWheelEmulationRange(device)}", false);
                     controller.wheelPrevRecalibrateTime = DateTime.Now;
                 }
 
 
-                int maxRangeRight = Global.GetSASteeringWheelEmulationRange(device) / 2 * C_WHEEL_ANGLE_PRECISION;
+                int maxRangeRight = Global.Instance.GetSASteeringWheelEmulationRange(device) / 2 * C_WHEEL_ANGLE_PRECISION;
                 int maxRangeLeft = -maxRangeRight;
 
                 //Console.WriteLine("Values {0} {1}", gyroAccelX, gyroAccelZ);
@@ -5609,7 +5609,7 @@ namespace DS4Windows
                 //gyroAccelX = (int)(wheel360FilterX.Filter(gyroAccelX, currentRate));
                 //gyroAccelZ = (int)(wheel360FilterZ.Filter(gyroAccelZ, currentRate));
 
-                int wheelFuzz = SAWheelFuzzValues[device];
+                int wheelFuzz = Global.Instance.SAWheelFuzzValues[device];
                 if (wheelFuzz != 0)
                 {
                     //int currentValueX = gyroAccelX;
@@ -5624,7 +5624,7 @@ namespace DS4Windows
 
                 // Apply deadzone (SA X-deadzone value). This code assumes that 20deg is the max deadzone anyone ever might wanna use (in practice effective deadzone 
                 // is probably just few degrees by using SXDeadZone values 0.01...0.05)
-                double sxDead = getSXDeadzone(device);
+                double sxDead = Global.Instance.getSXDeadzone(device);
                 if (sxDead > 0)
                 {
                     int sxDeadInt = Convert.ToInt32(20.0 * C_WHEEL_ANGLE_PRECISION * sxDead);
@@ -5683,7 +5683,7 @@ namespace DS4Windows
                 }
 
                 result = Mapping.ClampInt(maxRangeLeft, result, maxRangeRight);
-                if (WheelSmoothInfo[device].enabled)
+                if (Global.Instance.WheelSmoothInfo[device].enabled)
                 {
                     double currentRate = 1.0 / currentDeviceState.elapsedTime; // Need to express poll time in Hz
                     OneEuroFilter wheelFilter = wheelFilters[device];
@@ -5694,10 +5694,10 @@ namespace DS4Windows
                 //LogToGuiSACalibrationDebugMsg($"DBG gyro=({gyroAccelX}, {gyroAccelZ})  output=({exposedState.OutputAccelX}, {exposedState.OutputAccelZ})  PitRolYaw=({currentDeviceState.Motion.gyroPitch}, {currentDeviceState.Motion.gyroRoll}, {currentDeviceState.Motion.gyroYaw})  VelPitRolYaw=({currentDeviceState.Motion.angVelPitch}, {currentDeviceState.Motion.angVelRoll}, {currentDeviceState.Motion.angVelYaw})  angle={result / (1.0 * C_WHEEL_ANGLE_PRECISION)}  fullTurns={controller.wheelFullTurnCount}", false);
 
                 // Apply anti-deadzone (SA X-antideadzone value)
-                double sxAntiDead = getSXAntiDeadzone(device);
+                double sxAntiDead = Global.Instance.getSXAntiDeadzone(device);
 
                 int outputAxisMax, outputAxisMin, outputAxisZero;
-                if ( Global.OutContType[device] == OutContType.DS4 )
+                if ( Global.Instance.OutContType[device] == OutContType.DS4 )
                 {
                     // DS4 analog stick axis supports only 0...255 output value range (not the best one for steering wheel usage)
                     outputAxisMax = 255;
@@ -5712,7 +5712,7 @@ namespace DS4Windows
                     outputAxisZero = 0;
                 }
 
-                switch (Global.GetSASteeringWheelEmulationAxis(device))
+                switch (Global.Instance.GetSASteeringWheelEmulationAxis(device))
                 {
                     case SASteeringWheelEmulationAxisType.LX:
                     case SASteeringWheelEmulationAxisType.LY:

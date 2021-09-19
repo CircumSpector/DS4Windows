@@ -81,13 +81,13 @@ namespace DS4WinWPF
                         if (tempname != string.Empty && tempname != "(none)")
                         {
                             if ((Global.UseTempProfiles[j] && tempname != Global.TempProfileNames[j]) ||
-                                (!Global.UseTempProfiles[j] && tempname != Global.ProfilePath[j]) ||
+                                (!Global.UseTempProfiles[j] && tempname != Global.Instance.ProfilePath[j]) ||
                                 forceLoadProfile)
                             {
                                 if (autoProfileDebugLogLevel > 0)
                                     DS4Windows.AppLogger.LogToGui($"DEBUG: Auto-Profile. LoadProfile Controller {j + 1}={tempname}", false, true);
 
-                                Global.LoadTempProfile(j, tempname, true, Program.rootHub); // j is controller index, i is filename
+                                Global.Instance.LoadTempProfile(j, tempname, true, Program.rootHub); // j is controller index, i is filename
                                                                                               //if (LaunchProgram[j] != string.Empty) Process.Start(LaunchProgram[j]);
                             }
                             else
@@ -114,7 +114,7 @@ namespace DS4WinWPF
                 }
                 else if (tempAutoProfile != null)
                 {
-                    if (turnOffTemp && DS4Windows.Global.AutoProfileRevertDefaultProfile)
+                    if (turnOffTemp && DS4Windows.Global.Instance.AutoProfileRevertDefaultProfile)
                     {
                         turnOffTemp = false;
                         if (!App.rootHub.running)
@@ -131,12 +131,12 @@ namespace DS4WinWPF
                     {
                         if (Global.UseTempProfiles[j])
                         {
-                            if (DS4Windows.Global.AutoProfileRevertDefaultProfile)
+                            if (DS4Windows.Global.Instance.AutoProfileRevertDefaultProfile)
                             {
                                 if (autoProfileDebugLogLevel > 0)
-                                    DS4Windows.AppLogger.LogToGui($"DEBUG: Auto-Profile. Unknown process. Reverting to default profile. Controller {j + 1}={Global.ProfilePath[j]} (default)", false, true);
+                                    DS4Windows.AppLogger.LogToGui($"DEBUG: Auto-Profile. Unknown process. Reverting to default profile. Controller {j + 1}={Global.Instance.ProfilePath[j]} (default)", false, true);
 
-                                Global.LoadProfile(j, false, Program.rootHub);
+                                Global.Instance.LoadProfile(j, false, Program.rootHub);
                             }
                             else
                             {

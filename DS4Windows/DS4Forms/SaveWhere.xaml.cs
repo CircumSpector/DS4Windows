@@ -32,7 +32,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void ProgFolderBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.Global.SaveWhere(DS4Windows.Global.ExecutableDirectory);
+            Global.Instance.SaveWhere(DS4Windows.Global.ExecutableDirectory);
             if (multisaves && dontDeleteCk.IsChecked == false)
             {
                 try
@@ -69,7 +69,7 @@ namespace DS4WinWPF.DS4Forms
             else if (!multisaves)
                 Global.SaveDefault(Path.Combine(Global.RoamingAppDataPath, Constants.ProfilesFileName));
 
-            Global.SaveWhere(Global.RoamingAppDataPath);
+            Global.Instance.SaveWhere(Global.RoamingAppDataPath);
             choiceMade = true;
             Close();
         }

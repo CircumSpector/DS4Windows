@@ -35,7 +35,7 @@ namespace DS4Windows
         /// </summary>
         public static CultureInfo ConfigFileDecimalCulture => new("en-US");
 
-        private static BackingStore _config = new();
+        private readonly BackingStore _config = new();
 
         protected static Int32 m_IdleTimeout = 600000;
 
@@ -96,7 +96,7 @@ namespace DS4Windows
         /// </summary>
         public static bool IsWin10OrGreater => Environment.OSVersion.Version.Major >= 10;
 
-        public static string RuntimeAppDataPath { get; set; }
+        public static string RuntimeAppDataPath { get; set; } = RoamingAppDataPath;
 
         public static bool IsFirstRun { get; set; } = false;
 
@@ -428,7 +428,7 @@ namespace DS4Windows
             [TrayIconChoice.Black] = "/DS4Windows;component/Resources/DS4W - Black.ico"
         };
 
-        public static void SaveWhere(string path)
+        public void SaveWhere(string path)
         {
             RuntimeAppDataPath = path;
             _config.ProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.ProfilesFileName);
@@ -787,7 +787,7 @@ namespace DS4Windows
             return result;
         }
 
-        public static void FindConfigLocation()
+        public void FindConfigLocation()
         {
             bool programFolderAutoProfilesExists = File.Exists(Path.Combine(ExecutableDirectory, Constants.AutoProfilesFileName));
             bool appDataAutoProfilesExists = File.Exists(Path.Combine(RoamingAppDataPath, Constants.AutoProfilesFileName));
@@ -821,7 +821,7 @@ namespace DS4Windows
             }
         }
 
-        public static void CreateStdActions()
+        public  void CreateStdActions()
         {
             XmlDocument xDoc = new XmlDocument();
             try
@@ -957,29 +957,29 @@ namespace DS4Windows
 
         // general values
         // -- Re-Enable Exclusive Mode Starts Here --
-        public static bool UseExclusiveMode
+        public bool UseExclusiveMode
         {
             set { _config.useExclusiveMode = value; }
             get { return _config.useExclusiveMode; }
         } // -- Re-Enable Ex Mode Ends here
 
-        public static bool getUseExclusiveMode()
+        public bool getUseExclusiveMode()
         {
             return _config.useExclusiveMode;
         }
-        public static DateTime LastChecked
+        public DateTime LastChecked
         {
             set { _config.lastChecked = value; }
             get { return _config.lastChecked; }
         }
 
-        public static int CheckWhen
+        public int CheckWhen
         {
             set { _config.CheckWhen = value; }
             get { return _config.CheckWhen; }
         }
 
-        public static string LastVersionChecked
+        public string LastVersionChecked
         {
             get { return _config.lastVersionChecked; }
             set
@@ -989,166 +989,166 @@ namespace DS4Windows
             }
         }
 
-        public static ulong LastVersionCheckedNum
+        public ulong LastVersionCheckedNum
         {
             get { return _config.lastVersionCheckedNum; }
         }
 
-        public static int Notifications
+        public int Notifications
         {
             set { _config.notifications = value; }
             get { return _config.notifications; }
         }
 
-        public static bool DCBTatStop
+        public bool DCBTatStop
         {
             set { _config.disconnectBTAtStop = value; }
             get { return _config.disconnectBTAtStop; }
         }
 
-        public static bool SwipeProfiles
+        public  bool SwipeProfiles
         {
             set { _config.swipeProfiles = value; }
             get { return _config.swipeProfiles; }
         }
 
-        public static bool DS4Mapping
+        public  bool DS4Mapping
         {
             set { _config.ds4Mapping = value; }
             get { return _config.ds4Mapping; }
         }
 
-        public static bool QuickCharge
+        public  bool QuickCharge
         {
             set { _config.quickCharge = value; }
             get { return _config.quickCharge; }
         }
 
-        public static bool getQuickCharge()
+        public  bool getQuickCharge()
         {
             return _config.quickCharge;
         }
 
-        public static bool CloseMini
+        public  bool CloseMini
         {
             set { _config.closeMini = value; }
             get { return _config.closeMini; }
         }
 
-        public static bool StartMinimized
+        public  bool StartMinimized
         {
             set { _config.startMinimized = value; }
             get { return _config.startMinimized; }
         }
 
-        public static bool MinToTaskbar
+        public  bool MinToTaskbar
         {
             set { _config.minToTaskbar = value; }
             get { return _config.minToTaskbar; }
         }
 
-        public static bool GetMinToTaskbar()
+        public  bool GetMinToTaskbar()
         {
             return _config.minToTaskbar;
         }
 
-        public static int FormWidth
+        public  int FormWidth
         {
             set { _config.formWidth = value; }
             get { return _config.formWidth; }
         }
 
-        public static int FormHeight
+        public  int FormHeight
         {
             set { _config.formHeight = value; }
             get { return _config.formHeight; }
         }
 
-        public static int FormLocationX
+        public  int FormLocationX
         {
             set { _config.formLocationX = value; }
             get { return _config.formLocationX; }
         }
 
-        public static int FormLocationY
+        public  int FormLocationY
         {
             set { _config.formLocationY = value; }
             get { return _config.formLocationY; }
         }
 
-        public static string UseLang
+        public  string UseLang
         {
             set { _config.useLang = value; }
             get { return _config.useLang; }
         }
 
-        public static bool DownloadLang
+        public  bool DownloadLang
         {
             set { _config.downloadLang = value; }
             get { return _config.downloadLang; }
         }
 
-        public static bool FlashWhenLate
+        public  bool FlashWhenLate
         {
             set { _config.FlashWhenLate = value; }
             get { return _config.FlashWhenLate; }
         }
 
-        public static bool getFlashWhenLate()
+        public  bool getFlashWhenLate()
         {
             return _config.FlashWhenLate;
         }
 
-        public static int FlashWhenLateAt
+        public  int FlashWhenLateAt
         {
             set { _config.flashWhenLateAt = value; }
             get { return _config.flashWhenLateAt; }
         }
 
-        public static int getFlashWhenLateAt()
+        public  int getFlashWhenLateAt()
         {
             return _config.flashWhenLateAt;
         }
 
-        public static bool isUsingUDPServer()
+        public  bool isUsingUDPServer()
         {
             return _config.UseUdpServer;
         }
-        public static void setUsingUDPServer(bool state)
+        public  void setUsingUDPServer(bool state)
         {
             _config.UseUdpServer = state;
         }
 
-        public static int getUDPServerPortNum()
+        public  int getUDPServerPortNum()
         {
             return _config.UdpServerPort;
         }
-        public static void setUDPServerPort(int value)
+        public  void setUDPServerPort(int value)
         {
             _config.UdpServerPort = value;
         }
 
-        public static string getUDPServerListenAddress()
+        public  string getUDPServerListenAddress()
         {
             return _config.UdpServerListenAddress;
         }
-        public static void setUDPServerListenAddress(string value)
+        public  void setUDPServerListenAddress(string value)
         {
             _config.UdpServerListenAddress = value.Trim();
         }
 
-        public static bool UseUDPSeverSmoothing
+        public  bool UseUDPSeverSmoothing
         {
             get => _config.UseUdpSmoothing;
             set => _config.UseUdpSmoothing = value;
         }
 
-        public static bool IsUsingUDPServerSmoothing()
+        public  bool IsUsingUDPServerSmoothing()
         {
             return _config.UseUdpSmoothing;
         }
 
-        public static double UDPServerSmoothingMincutoff
+        public  double UDPServerSmoothingMincutoff
         {
             get => _config.udpSmoothingMincutoff;
             set
@@ -1161,7 +1161,7 @@ namespace DS4Windows
         }
         public static event EventHandler UDPServerSmoothingMincutoffChanged;
 
-        public static double UDPServerSmoothingBeta
+        public  double UDPServerSmoothingBeta
         {
             get => _config.udpSmoothingBeta;
             set
@@ -1174,31 +1174,31 @@ namespace DS4Windows
         }
         public static event EventHandler UDPServerSmoothingBetaChanged;
 
-        public static TrayIconChoice UseIconChoice
+        public  TrayIconChoice UseIconChoice
         {
             get => _config.UseIconChoice;
             set => _config.UseIconChoice = value;
         }
 
-        public static AppThemeChoice UseCurrentTheme
+        public  AppThemeChoice UseCurrentTheme
         {
             get => _config.ThemeChoice;
             set => _config.ThemeChoice = value;
         }
 
-        public static bool UseCustomSteamFolder
+        public  bool UseCustomSteamFolder
         {
             set { _config.UseCustomSteamFolder = value; }
             get { return _config.UseCustomSteamFolder; }
         }
 
-        public static string CustomSteamFolder
+        public  string CustomSteamFolder
         {
             set { _config.CustomSteamFolder = value; }
             get { return _config.CustomSteamFolder; }
         }
 
-        public static bool AutoProfileRevertDefaultProfile
+        public  bool AutoProfileRevertDefaultProfile
         {
             set { _config.AutoProfileRevertDefaultProfile = value; }
             get { return _config.AutoProfileRevertDefaultProfile; }
@@ -1207,7 +1207,7 @@ namespace DS4Windows
         /// <summary>
         /// Fake name used for user copy of DS4Windows.exe
         /// </summary>
-        public static string FakeExeName
+        public  string FakeExeName
         {
             get => _config.fakeExeFileName;
             set
@@ -1221,15 +1221,15 @@ namespace DS4Windows
         }
 
         // controller/profile specfic values
-        public static ButtonMouseInfo[] ButtonMouseInfos => _config.buttonMouseInfos;
+        public  ButtonMouseInfo[] ButtonMouseInfos => _config.buttonMouseInfos;
 
-        public static byte[] RumbleBoost => _config.rumble;
-        public static byte getRumbleBoost(int index)
+        public  byte[] RumbleBoost => _config.rumble;
+        public  byte getRumbleBoost(int index)
         {
             return _config.rumble[index];
         }
 
-        public static void setRumbleAutostopTime(int index, int value)
+        public  void setRumbleAutostopTime(int index, int value)
         {
             _config.rumbleAutostopTime[index] = value;
             
@@ -1238,735 +1238,735 @@ namespace DS4Windows
                 tempDev.RumbleAutostopTime = value;
         }
 
-        public static int getRumbleAutostopTime(int index)
+        public  int getRumbleAutostopTime(int index)
         {
             return _config.rumbleAutostopTime[index];
         }
 
-        public static bool[] EnableTouchToggle => _config.enableTouchToggle;
-        public static bool getEnableTouchToggle(int index)
+        public  bool[] EnableTouchToggle => _config.enableTouchToggle;
+        public  bool getEnableTouchToggle(int index)
         {
             return _config.enableTouchToggle[index];
         }
 
-        public static int[] IdleDisconnectTimeout => _config.idleDisconnectTimeout;
-        public static int getIdleDisconnectTimeout(int index)
+        public  int[] IdleDisconnectTimeout => _config.idleDisconnectTimeout;
+        public  int getIdleDisconnectTimeout(int index)
         {
             return _config.idleDisconnectTimeout[index];
         }
 
-        public static bool[] EnableOutputDataToDS4 => _config.enableOutputDataToDS4;
-        public static bool getEnableOutputDataToDS4(int index)
+        public  bool[] EnableOutputDataToDS4 => _config.enableOutputDataToDS4;
+        public  bool getEnableOutputDataToDS4(int index)
         {
             return _config.enableOutputDataToDS4[index];
         }
 
-        public static byte[] TouchSensitivity => _config.touchSensitivity;
-        public static byte[] getTouchSensitivity()
+        public  byte[] TouchSensitivity => _config.touchSensitivity;
+        public  byte[] getTouchSensitivity()
         {
             return _config.touchSensitivity;
         }
 
-        public static byte getTouchSensitivity(int index)
+        public  byte getTouchSensitivity(int index)
         {
             return _config.touchSensitivity[index];
         }
 
-        public static bool[] TouchActive => TouchpadActive;
-        public static bool GetTouchActive(int index)
+        public  bool[] TouchActive => TouchpadActive;
+        public  bool GetTouchActive(int index)
         {
             return TouchpadActive[index];
         }
 
-        public static LightbarSettingInfo[] LightbarSettingsInfo => _config.lightbarSettingInfo;
-        public static LightbarSettingInfo getLightbarSettingsInfo(int index)
+        public  LightbarSettingInfo[] LightbarSettingsInfo => _config.lightbarSettingInfo;
+        public  LightbarSettingInfo getLightbarSettingsInfo(int index)
         {
             return _config.lightbarSettingInfo[index];
         }
 
-        public static bool[] DinputOnly => _config.dinputOnly;
-        public static bool getDInputOnly(int index)
+        public  bool[] DinputOnly => _config.dinputOnly;
+        public  bool getDInputOnly(int index)
         {
             return _config.dinputOnly[index];
         }
 
-        public static bool[] StartTouchpadOff => _config.startTouchpadOff;
+        public  bool[] StartTouchpadOff => _config.startTouchpadOff;
 
-        public static bool IsUsingTouchpadForControls(int index)
+        public  bool IsUsingTouchpadForControls(int index)
         {
             return _config.touchOutMode[index] == TouchpadOutMode.Controls;
         }
 
-        public static TouchpadOutMode[] TouchOutMode = _config.touchOutMode;
+        public TouchpadOutMode[] TouchOutMode => _config.touchOutMode;
 
-        public static bool IsUsingSAForControls(int index)
+        public  bool IsUsingSAForControls(int index)
         {
             return _config.gyroOutMode[index] == GyroOutMode.Controls;
         }
 
-        public static string[] SATriggers => _config.sATriggers;
-        public static string getSATriggers(int index)
+        public  string[] SATriggers => _config.sATriggers;
+        public  string getSATriggers(int index)
         {
             return _config.sATriggers[index];
         }
 
-        public static bool[] SATriggerCond => _config.sATriggerCond;
-        public static bool getSATriggerCond(int index)
+        public  bool[] SATriggerCond => _config.sATriggerCond;
+        public  bool getSATriggerCond(int index)
         {
             return _config.sATriggerCond[index];
         }
-        public static void SetSaTriggerCond(int index, string text)
+        public  void SetSaTriggerCond(int index, string text)
         {
             _config.SetSaTriggerCond(index, text);
         }
 
 
-        public static GyroOutMode[] GyroOutputMode => _config.gyroOutMode;
-        public static GyroOutMode GetGyroOutMode(int device)
+        public  GyroOutMode[] GyroOutputMode => _config.gyroOutMode;
+        public  GyroOutMode GetGyroOutMode(int device)
         {
             return _config.gyroOutMode[device];
         }
 
-        public static string[] SAMousestickTriggers => _config.sAMouseStickTriggers;
-        public static string GetSAMouseStickTriggers(int device)
+        public  string[] SAMousestickTriggers => _config.sAMouseStickTriggers;
+        public  string GetSAMouseStickTriggers(int device)
         {
             return _config.sAMouseStickTriggers[device];
         }
 
-        public static bool[] SAMouseStickTriggerCond => _config.sAMouseStickTriggerCond;
-        public static bool GetSAMouseStickTriggerCond(int device)
+        public  bool[] SAMouseStickTriggerCond => _config.sAMouseStickTriggerCond;
+        public  bool GetSAMouseStickTriggerCond(int device)
         {
             return _config.sAMouseStickTriggerCond[device];
         }
-        public static void SetSaMouseStickTriggerCond(int index, string text)
+        public  void SetSaMouseStickTriggerCond(int index, string text)
         {
             _config.SetSaMouseStickTriggerCond(index, text);
         }
 
-        public static bool[] GyroMouseStickTriggerTurns = _config.gyroMouseStickTriggerTurns;
-        public static bool GetGyroMouseStickTriggerTurns(int device)
+        public  bool[] GyroMouseStickTriggerTurns => _config.gyroMouseStickTriggerTurns;
+        public  bool GetGyroMouseStickTriggerTurns(int device)
         {
             return _config.gyroMouseStickTriggerTurns[device];
         }
 
-        public static int[] GyroMouseStickHorizontalAxis =>
+        public  int[] GyroMouseStickHorizontalAxis =>
             _config.gyroMouseStickHorizontalAxis;
-        public static int getGyroMouseStickHorizontalAxis(int index)
+        public  int getGyroMouseStickHorizontalAxis(int index)
         {
             return _config.gyroMouseStickHorizontalAxis[index];
         }
 
-        public static GyroMouseStickInfo[] GyroMouseStickInf => _config.gyroMStickInfo;
-        public static GyroMouseStickInfo GetGyroMouseStickInfo(int device)
+        public  GyroMouseStickInfo[] GyroMouseStickInf => _config.gyroMStickInfo;
+        public  GyroMouseStickInfo GetGyroMouseStickInfo(int device)
         {
             return _config.gyroMStickInfo[device];
         }
 
-        public static GyroDirectionalSwipeInfo[] GyroSwipeInf => _config.gyroSwipeInfo;
-        public static GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)
+        public  GyroDirectionalSwipeInfo[] GyroSwipeInf => _config.gyroSwipeInfo;
+        public  GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)
         {
             return _config.gyroSwipeInfo[device];
         }
 
-        public static bool[] GyroMouseStickToggle => _config.gyroMouseStickToggle;
-        public static void SetGyroMouseStickToggle(int index, bool value, ControlService control)
+        public  bool[] GyroMouseStickToggle => _config.gyroMouseStickToggle;
+        public  void SetGyroMouseStickToggle(int index, bool value, ControlService control)
             => _config.SetGyroMouseStickToggle(index, value, control);
 
-        public static SASteeringWheelEmulationAxisType[] SASteeringWheelEmulationAxis => _config.sASteeringWheelEmulationAxis;
-        public static SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index)
+        public  SASteeringWheelEmulationAxisType[] SASteeringWheelEmulationAxis => _config.sASteeringWheelEmulationAxis;
+        public  SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index)
         {
             return _config.sASteeringWheelEmulationAxis[index];
         }
 
-        public static int[] SASteeringWheelEmulationRange => _config.sASteeringWheelEmulationRange;
-        public static int GetSASteeringWheelEmulationRange(int index)
+        public  int[] SASteeringWheelEmulationRange => _config.sASteeringWheelEmulationRange;
+        public  int GetSASteeringWheelEmulationRange(int index)
         {
             return _config.sASteeringWheelEmulationRange[index];
         }
 
-        public static int[][] TouchDisInvertTriggers => _config.touchDisInvertTriggers;
-        public static int[] getTouchDisInvertTriggers(int index)
+        public  int[][] TouchDisInvertTriggers => _config.touchDisInvertTriggers;
+        public  int[] getTouchDisInvertTriggers(int index)
         {
             return _config.touchDisInvertTriggers[index];
         }
 
-        public static int[] GyroSensitivity => _config.gyroSensitivity;
-        public static int getGyroSensitivity(int index)
+        public  int[] GyroSensitivity => _config.gyroSensitivity;
+        public  int getGyroSensitivity(int index)
         {
             return _config.gyroSensitivity[index];
         }
 
-        public static int[] GyroSensVerticalScale => _config.gyroSensVerticalScale;
-        public static int getGyroSensVerticalScale(int index)
+        public  int[] GyroSensVerticalScale => _config.gyroSensVerticalScale;
+        public  int getGyroSensVerticalScale(int index)
         {
             return _config.gyroSensVerticalScale[index];
         }
 
-        public static int[] GyroInvert => _config.gyroInvert;
-        public static int getGyroInvert(int index)
+        public  int[] GyroInvert => _config.gyroInvert;
+        public  int getGyroInvert(int index)
         {
             return _config.gyroInvert[index];
         }
 
-        public static bool[] GyroTriggerTurns => _config.gyroTriggerTurns;
-        public static bool getGyroTriggerTurns(int index)
+        public  bool[] GyroTriggerTurns => _config.gyroTriggerTurns;
+        public  bool getGyroTriggerTurns(int index)
         {
             return _config.gyroTriggerTurns[index];
         }
 
-        public static int[] GyroMouseHorizontalAxis => _config.gyroMouseHorizontalAxis;
-        public static int getGyroMouseHorizontalAxis(int index)
+        public  int[] GyroMouseHorizontalAxis => _config.gyroMouseHorizontalAxis;
+        public  int getGyroMouseHorizontalAxis(int index)
         {
             return _config.gyroMouseHorizontalAxis[index];
         }
 
-        public static int[] GyroMouseDeadZone => _config.gyroMouseDZ;
-        public static int GetGyroMouseDeadZone(int index)
+        public  int[] GyroMouseDeadZone => _config.gyroMouseDZ;
+        public  int GetGyroMouseDeadZone(int index)
         {
             return _config.gyroMouseDZ[index];
         }
 
-        public static void SetGyroMouseDeadZone(int index, int value, ControlService control)
+        public  void SetGyroMouseDeadZone(int index, int value, ControlService control)
         {
             _config.SetGyroMouseDZ(index, value, control);
         }
 
-        public static bool[] GyroMouseToggle => _config.gyroMouseToggle;
-        public static void SetGyroMouseToggle(int index, bool value, ControlService control) 
+        public  bool[] GyroMouseToggle => _config.gyroMouseToggle;
+        public  void SetGyroMouseToggle(int index, bool value, ControlService control) 
             => _config.SetGyroMouseToggle(index, value, control);
 
-        public static void SetGyroControlsToggle(int index, bool value, ControlService control)
+        public  void SetGyroControlsToggle(int index, bool value, ControlService control)
             => _config.SetGyroControlsToggle(index, value, control);
 
-        public static GyroMouseInfo[] GyroMouseInfo => _config.gyroMouseInfo;
+        public  GyroMouseInfo[] GyroMouseInfo => _config.gyroMouseInfo;
 
-        public static GyroControlsInfo[] GyroControlsInf => _config.gyroControlsInf;
-        public static GyroControlsInfo GetGyroControlsInfo(int index)
+        public  GyroControlsInfo[] GyroControlsInf => _config.gyroControlsInf;
+        public  GyroControlsInfo GetGyroControlsInfo(int index)
         {
             return _config.gyroControlsInf[index];
         }
 
-        public static SteeringWheelSmoothingInfo[] WheelSmoothInfo => _config.wheelSmoothInfo;
-        public static int[] SAWheelFuzzValues => _config.saWheelFuzzValues;
+        public  SteeringWheelSmoothingInfo[] WheelSmoothInfo => _config.wheelSmoothInfo;
+        public  int[] SAWheelFuzzValues => _config.saWheelFuzzValues;
 
         //public static DS4Color[] MainColor => m_Config.m_Leds;
-        public static ref DS4Color getMainColor(int index)
+        public  ref DS4Color getMainColor(int index)
         {
             return ref _config.lightbarSettingInfo[index].ds4winSettings.m_Led;
             //return ref m_Config.m_Leds[index];
         }
 
         //public static DS4Color[] LowColor => m_Config.m_LowLeds;
-        public static ref DS4Color getLowColor(int index)
+        public  ref DS4Color getLowColor(int index)
         {
             return ref _config.lightbarSettingInfo[index].ds4winSettings.m_LowLed;
             //return ref m_Config.m_LowLeds[index];
         }
 
         //public static DS4Color[] ChargingColor => m_Config.m_ChargingLeds;
-        public static ref DS4Color getChargingColor(int index)
+        public  ref DS4Color getChargingColor(int index)
         {
             return ref _config.lightbarSettingInfo[index].ds4winSettings.m_ChargingLed;
             //return ref m_Config.m_ChargingLeds[index];
         }
 
         //public static DS4Color[] CustomColor => m_Config.m_CustomLeds;
-        public static ref DS4Color getCustomColor(int index)
+        public  ref DS4Color getCustomColor(int index)
         {
             return ref _config.lightbarSettingInfo[index].ds4winSettings.m_CustomLed;
             //return ref m_Config.m_CustomLeds[index];
         }
 
         //public static bool[] UseCustomLed => m_Config.useCustomLeds;
-        public static bool getUseCustomLed(int index)
+        public  bool getUseCustomLed(int index)
         {
             return _config.lightbarSettingInfo[index].ds4winSettings.useCustomLed;
             //return m_Config.useCustomLeds[index];
         }
 
         //public static DS4Color[] FlashColor => m_Config.m_FlashLeds;
-        public static ref DS4Color getFlashColor(int index)
+        public  ref DS4Color getFlashColor(int index)
         {
             return ref _config.lightbarSettingInfo[index].ds4winSettings.m_FlashLed;
             //return ref m_Config.m_FlashLeds[index];
         }
 
-        public static byte[] TapSensitivity => _config.tapSensitivity;
-        public static byte getTapSensitivity(int index)
+        public  byte[] TapSensitivity => _config.tapSensitivity;
+        public  byte getTapSensitivity(int index)
         {
             return _config.tapSensitivity[index];
         }
 
-        public static bool[] DoubleTap => _config.doubleTap;
-        public static bool getDoubleTap(int index)
+        public  bool[] DoubleTap => _config.doubleTap;
+        public  bool getDoubleTap(int index)
         {
             return _config.doubleTap[index];
         }
 
-        public static int[] ScrollSensitivity => _config.scrollSensitivity;
-        public static int[] getScrollSensitivity()
+        public  int[] ScrollSensitivity => _config.scrollSensitivity;
+        public  int[] getScrollSensitivity()
         {
             return _config.scrollSensitivity;
         }
-        public static int getScrollSensitivity(int index)
+        public  int getScrollSensitivity(int index)
         {
             return _config.scrollSensitivity[index];
         }
 
-        public static bool[] LowerRCOn => _config.lowerRCOn;
-        public static bool[] TouchClickPassthru => _config.touchClickPassthru;
-        public static bool[] TouchpadJitterCompensation => _config.touchpadJitterCompensation;
-        public static bool getTouchpadJitterCompensation(int index)
+        public  bool[] LowerRCOn => _config.lowerRCOn;
+        public  bool[] TouchClickPassthru => _config.touchClickPassthru;
+        public  bool[] TouchpadJitterCompensation => _config.touchpadJitterCompensation;
+        public  bool getTouchpadJitterCompensation(int index)
         {
             return _config.touchpadJitterCompensation[index];
         }
 
-        public static int[] TouchpadInvert => _config.touchpadInvert;
-        public static int getTouchpadInvert(int index)
+        public  int[] TouchpadInvert => _config.touchpadInvert;
+        public  int getTouchpadInvert(int index)
         {
             return _config.touchpadInvert[index];
         }
 
-        public static TriggerDeadZoneZInfo[] L2ModInfo => _config.l2ModInfo;
-        public static TriggerDeadZoneZInfo GetL2ModInfo(int index)
+        public  TriggerDeadZoneZInfo[] L2ModInfo => _config.l2ModInfo;
+        public  TriggerDeadZoneZInfo GetL2ModInfo(int index)
         {
             return _config.l2ModInfo[index];
         }
 
         //public static byte[] L2Deadzone => m_Config.l2Deadzone;
-        public static byte getL2Deadzone(int index)
+        public  byte getL2Deadzone(int index)
         {
             return _config.l2ModInfo[index].deadZone;
             //return m_Config.l2Deadzone[index];
         }
 
-        public static TriggerDeadZoneZInfo[] R2ModInfo => _config.r2ModInfo;
-        public static TriggerDeadZoneZInfo GetR2ModInfo(int index)
+        public  TriggerDeadZoneZInfo[] R2ModInfo => _config.r2ModInfo;
+        public  TriggerDeadZoneZInfo GetR2ModInfo(int index)
         {
             return _config.r2ModInfo[index];
         }
 
         //public static byte[] R2Deadzone => m_Config.r2Deadzone;
-        public static byte getR2Deadzone(int index)
+        public  byte getR2Deadzone(int index)
         {
             return _config.r2ModInfo[index].deadZone;
             //return m_Config.r2Deadzone[index];
         }
 
-        public static double[] SXDeadzone => _config.SXDeadzone;
-        public static double getSXDeadzone(int index)
+        public  double[] SXDeadzone => _config.SXDeadzone;
+        public  double getSXDeadzone(int index)
         {
             return _config.SXDeadzone[index];
         }
 
-        public static double[] SZDeadzone => _config.SZDeadzone;
-        public static double getSZDeadzone(int index)
+        public  double[] SZDeadzone => _config.SZDeadzone;
+        public  double getSZDeadzone(int index)
         {
             return _config.SZDeadzone[index];
         }
 
         //public static int[] LSDeadzone => m_Config.LSDeadzone;
-        public static int getLSDeadzone(int index)
+        public  int getLSDeadzone(int index)
         {
             return _config.lsModInfo[index].deadZone;
             //return m_Config.LSDeadzone[index];
         }
 
         //public static int[] RSDeadzone => m_Config.RSDeadzone;
-        public static int getRSDeadzone(int index)
+        public  int getRSDeadzone(int index)
         {
             return _config.rsModInfo[index].deadZone;
             //return m_Config.RSDeadzone[index];
         }
 
         //public static int[] LSAntiDeadzone => m_Config.LSAntiDeadzone;
-        public static int getLSAntiDeadzone(int index)
+        public  int getLSAntiDeadzone(int index)
         {
             return _config.lsModInfo[index].antiDeadZone;
             //return m_Config.LSAntiDeadzone[index];
         }
 
         //public static int[] RSAntiDeadzone => m_Config.RSAntiDeadzone;
-        public static int getRSAntiDeadzone(int index)
+        public  int getRSAntiDeadzone(int index)
         {
             return _config.rsModInfo[index].antiDeadZone;
             //return m_Config.RSAntiDeadzone[index];
         }
 
-        public static StickDeadZoneInfo[] LSModInfo => _config.lsModInfo;
-        public static StickDeadZoneInfo GetLSDeadInfo(int index)
+        public  StickDeadZoneInfo[] LSModInfo => _config.lsModInfo;
+        public  StickDeadZoneInfo GetLSDeadInfo(int index)
         {
             return _config.lsModInfo[index];
         }
 
-        public static StickDeadZoneInfo[] RSModInfo => _config.rsModInfo;
-        public static StickDeadZoneInfo GetRSDeadInfo(int index)
+        public  StickDeadZoneInfo[] RSModInfo => _config.rsModInfo;
+        public  StickDeadZoneInfo GetRSDeadInfo(int index)
         {
             return _config.rsModInfo[index];
         }
 
-        public static double[] SXAntiDeadzone => _config.SXAntiDeadzone;
-        public static double getSXAntiDeadzone(int index)
+        public  double[] SXAntiDeadzone => _config.SXAntiDeadzone;
+        public  double getSXAntiDeadzone(int index)
         {
             return _config.SXAntiDeadzone[index];
         }
 
-        public static double[] SZAntiDeadzone => _config.SZAntiDeadzone;
-        public static double getSZAntiDeadzone(int index)
+        public  double[] SZAntiDeadzone => _config.SZAntiDeadzone;
+        public  double getSZAntiDeadzone(int index)
         {
             return _config.SZAntiDeadzone[index];
         }
 
         //public static int[] LSMaxzone => m_Config.LSMaxzone;
-        public static int getLSMaxzone(int index)
+        public  int getLSMaxzone(int index)
         {
             return _config.lsModInfo[index].maxZone;
             //return m_Config.LSMaxzone[index];
         }
 
         //public static int[] RSMaxzone => m_Config.RSMaxzone;
-        public static int getRSMaxzone(int index)
+        public  int getRSMaxzone(int index)
         {
             return _config.rsModInfo[index].maxZone;
             //return m_Config.RSMaxzone[index];
         }
 
-        public static double[] SXMaxzone => _config.SXMaxzone;
-        public static double getSXMaxzone(int index)
+        public  double[] SXMaxzone => _config.SXMaxzone;
+        public  double getSXMaxzone(int index)
         {
             return _config.SXMaxzone[index];
         }
 
-        public static double[] SZMaxzone => _config.SZMaxzone;
-        public static double getSZMaxzone(int index)
+        public  double[] SZMaxzone => _config.SZMaxzone;
+        public  double getSZMaxzone(int index)
         {
             return _config.SZMaxzone[index];
         }
 
         //public static int[] L2AntiDeadzone => m_Config.l2AntiDeadzone;
-        public static int getL2AntiDeadzone(int index)
+        public  int getL2AntiDeadzone(int index)
         {
             return _config.l2ModInfo[index].antiDeadZone;
             //return m_Config.l2AntiDeadzone[index];
         }
 
         //public static int[] R2AntiDeadzone => m_Config.r2AntiDeadzone;
-        public static int getR2AntiDeadzone(int index)
+        public  int getR2AntiDeadzone(int index)
         {
             return _config.r2ModInfo[index].antiDeadZone;
             //return m_Config.r2AntiDeadzone[index];
         }
 
         //public static int[] L2Maxzone => m_Config.l2Maxzone;
-        public static int getL2Maxzone(int index)
+        public  int getL2Maxzone(int index)
         {
             return _config.l2ModInfo[index].maxZone;
             //return m_Config.l2Maxzone[index];
         }
 
         //public static int[] R2Maxzone => m_Config.r2Maxzone;
-        public static int getR2Maxzone(int index)
+        public  int getR2Maxzone(int index)
         {
             return _config.r2ModInfo[index].maxZone;
             //return m_Config.r2Maxzone[index];
         }
 
-        public static double[] LSRotation => _config.LSRotation;
-        public static double getLSRotation(int index)
+        public  double[] LSRotation => _config.LSRotation;
+        public  double getLSRotation(int index)
         {
             return _config.LSRotation[index];
         }
 
-        public static double[] RSRotation => _config.RSRotation;
-        public static double getRSRotation(int index)
+        public  double[] RSRotation => _config.RSRotation;
+        public  double getRSRotation(int index)
         {
             return _config.RSRotation[index];
         }
 
-        public static double[] L2Sens => _config.l2Sens;
-        public static double getL2Sens(int index)
+        public  double[] L2Sens => _config.l2Sens;
+        public  double getL2Sens(int index)
         {
             return _config.l2Sens[index];
         }
 
-        public static double[] R2Sens => _config.r2Sens;
-        public static double getR2Sens(int index)
+        public  double[] R2Sens => _config.r2Sens;
+        public  double getR2Sens(int index)
         {
             return _config.r2Sens[index];
         }
 
-        public static double[] SXSens => _config.SXSens;
-        public static double getSXSens(int index)
+        public  double[] SXSens => _config.SXSens;
+        public  double getSXSens(int index)
         {
             return _config.SXSens[index];
         }
 
-        public static double[] SZSens => _config.SZSens;
-        public static double getSZSens(int index)
+        public  double[] SZSens => _config.SZSens;
+        public  double getSZSens(int index)
         {
             return _config.SZSens[index];
         }
 
-        public static double[] LSSens => _config.LSSens;
-        public static double getLSSens(int index)
+        public  double[] LSSens => _config.LSSens;
+        public  double getLSSens(int index)
         {
             return _config.LSSens[index];
         }
 
-        public static double[] RSSens => _config.RSSens;
-        public static double getRSSens(int index)
+        public  double[] RSSens => _config.RSSens;
+        public  double getRSSens(int index)
         {
             return _config.RSSens[index];
         }
 
-        public static int[] BTPollRate => _config.btPollRate;
-        public static int getBTPollRate(int index)
+        public  int[] BTPollRate => _config.btPollRate;
+        public  int getBTPollRate(int index)
         {
             return _config.btPollRate[index];
         }
 
-        public static SquareStickInfo[] SquStickInfo => _config.squStickInfo;
-        public static SquareStickInfo GetSquareStickInfo(int device)
+        public  SquareStickInfo[] SquStickInfo => _config.squStickInfo;
+        public  SquareStickInfo GetSquareStickInfo(int device)
         {
             return _config.squStickInfo[device];
         }
 
-        public static StickAntiSnapbackInfo[] LSAntiSnapbackInfo => _config.lsAntiSnapbackInfo;
-        public static StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device)
+        public  StickAntiSnapbackInfo[] LSAntiSnapbackInfo => _config.lsAntiSnapbackInfo;
+        public  StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device)
         {
             return _config.lsAntiSnapbackInfo[device];
         }
 
-        public static StickAntiSnapbackInfo[] RSAntiSnapbackInfo => _config.rsAntiSnapbackInfo;
-        public static StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device)
+        public  StickAntiSnapbackInfo[] RSAntiSnapbackInfo => _config.rsAntiSnapbackInfo;
+        public  StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device)
         {
             return _config.rsAntiSnapbackInfo[device];
         }
 
-        public static StickOutputSetting[] LSOutputSettings => _config.lsOutputSettings;
-        public static StickOutputSetting[] RSOutputSettings => _config.rsOutputSettings;
+        public  StickOutputSetting[] LSOutputSettings => _config.lsOutputSettings;
+        public  StickOutputSetting[] RSOutputSettings => _config.rsOutputSettings;
 
-        public static TriggerOutputSettings[] L2OutputSettings => _config.l2OutputSettings;
-        public static TriggerOutputSettings[] R2OutputSettings => _config.r2OutputSettings;
+        public  TriggerOutputSettings[] L2OutputSettings => _config.l2OutputSettings;
+        public  TriggerOutputSettings[] R2OutputSettings => _config.r2OutputSettings;
 
-        public static void setLsOutCurveMode(int index, int value)
+        public  void setLsOutCurveMode(int index, int value)
         {
             _config.setLsOutCurveMode(index, value);
         }
-        public static int getLsOutCurveMode(int index)
+        public  int getLsOutCurveMode(int index)
         {
             return _config.getLsOutCurveMode(index);
         }
-        public static BezierCurve[] lsOutBezierCurveObj => _config.lsOutBezierCurveObj;
+        public  BezierCurve[] lsOutBezierCurveObj => _config.lsOutBezierCurveObj;
 
-        public static void setRsOutCurveMode(int index, int value)
+        public  void setRsOutCurveMode(int index, int value)
         {
             _config.setRsOutCurveMode(index, value);
         }
-        public static int getRsOutCurveMode(int index)
+        public  int getRsOutCurveMode(int index)
         {
             return _config.getRsOutCurveMode(index);
         }
-        public static BezierCurve[] rsOutBezierCurveObj => _config.rsOutBezierCurveObj;
+        public  BezierCurve[] rsOutBezierCurveObj => _config.rsOutBezierCurveObj;
 
-        public static void setL2OutCurveMode(int index, int value)
+        public  void setL2OutCurveMode(int index, int value)
         {
             _config.setL2OutCurveMode(index, value);
         }
-        public static int getL2OutCurveMode(int index)
+        public  int getL2OutCurveMode(int index)
         {
             return _config.getL2OutCurveMode(index);
         }
-        public static BezierCurve[] l2OutBezierCurveObj => _config.l2OutBezierCurveObj;
+        public  BezierCurve[] l2OutBezierCurveObj => _config.l2OutBezierCurveObj;
 
-        public static void setR2OutCurveMode(int index, int value)
+        public  void setR2OutCurveMode(int index, int value)
         {
             _config.setR2OutCurveMode(index, value);
         }
-        public static int getR2OutCurveMode(int index)
+        public  int getR2OutCurveMode(int index)
         {
             return _config.getR2OutCurveMode(index);
         }
-        public static BezierCurve[] r2OutBezierCurveObj => _config.r2OutBezierCurveObj;
+        public  BezierCurve[] r2OutBezierCurveObj => _config.r2OutBezierCurveObj;
 
-        public static void setSXOutCurveMode(int index, int value)
+        public  void setSXOutCurveMode(int index, int value)
         {
             _config.setSXOutCurveMode(index, value);
         }
-        public static int getSXOutCurveMode(int index)
+        public  int getSXOutCurveMode(int index)
         {
             return _config.getSXOutCurveMode(index);
         }
-        public static BezierCurve[] sxOutBezierCurveObj => _config.sxOutBezierCurveObj;
+        public  BezierCurve[] sxOutBezierCurveObj => _config.sxOutBezierCurveObj;
 
-        public static void setSZOutCurveMode(int index, int value)
+        public  void setSZOutCurveMode(int index, int value)
         {
             _config.setSZOutCurveMode(index, value);
         }
-        public static int getSZOutCurveMode(int index)
+        public  int getSZOutCurveMode(int index)
         {
             return _config.getSZOutCurveMode(index);
         }
-        public static BezierCurve[] szOutBezierCurveObj => _config.szOutBezierCurveObj;
+        public  BezierCurve[] szOutBezierCurveObj => _config.szOutBezierCurveObj;
 
-        public static bool[] TrackballMode => _config.trackballMode;
-        public static bool getTrackballMode(int index)
+        public  bool[] TrackballMode => _config.trackballMode;
+        public  bool getTrackballMode(int index)
         {
             return _config.trackballMode[index];
         }
 
-        public static double[] TrackballFriction => _config.trackballFriction;
-        public static double getTrackballFriction(int index)
+        public  double[] TrackballFriction => _config.trackballFriction;
+        public  double getTrackballFriction(int index)
         {
             return _config.trackballFriction[index];
         }
 
-        public static TouchpadAbsMouseSettings[] TouchAbsMouse => _config.touchpadAbsMouse;
-        public static TouchpadRelMouseSettings[] TouchRelMouse => _config.touchpadRelMouse;
+        public  TouchpadAbsMouseSettings[] TouchAbsMouse => _config.touchpadAbsMouse;
+        public  TouchpadRelMouseSettings[] TouchRelMouse => _config.touchpadRelMouse;
 
-        public static ControlServiceDeviceOptions DeviceOptions => _config.DeviceOptions;
+        public  ControlServiceDeviceOptions DeviceOptions => _config.DeviceOptions;
 
-        public static OutContType[] OutContType => _config.OutputDeviceType;
-        public static string[] LaunchProgram => _config.launchProgram;
-        public static string[] ProfilePath => _config.profilePath;
-        public static string[] OlderProfilePath => _config.olderProfilePath;
-        public static bool[] DistanceProfiles = _config.distanceProfiles;
+        public  OutContType[] OutContType => _config.OutputDeviceType;
+        public  string[] LaunchProgram => _config.launchProgram;
+        public  string[] ProfilePath => _config.profilePath;
+        public  string[] OlderProfilePath => _config.olderProfilePath;
+        public  bool[] DistanceProfiles => _config.distanceProfiles;
 
-        public static List<string>[] ProfileActions => _config.profileActions;
-        public static int getProfileActionCount(int index)
+        public  List<string>[] ProfileActions => _config.profileActions;
+        public  int getProfileActionCount(int index)
         {
             return _config.profileActionCount[index];
         }
 
-        public static void CalculateProfileActionCount(int index)
+        public  void CalculateProfileActionCount(int index)
         {
             _config.CalculateProfileActionCount(index);
         }
 
-        public static List<string> getProfileActions(int index)
+        public  List<string> getProfileActions(int index)
         {
             return _config.profileActions[index];
         }
         
-        public static void UpdateDS4CSetting (int deviceNum, string buttonName, bool shift, object action, string exts, DS4KeyType kt, int trigger = 0)
+        public  void UpdateDS4CSetting (int deviceNum, string buttonName, bool shift, object action, string exts, DS4KeyType kt, int trigger = 0)
         {
             _config.UpdateDs4ControllerSetting(deviceNum, buttonName, shift, action, exts, kt, trigger);
             _config.containsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
             _config.containsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
         }
 
-        public static void UpdateDS4Extra(int deviceNum, string buttonName, bool shift, string exts)
+        public  void UpdateDS4Extra(int deviceNum, string buttonName, bool shift, string exts)
         {
             _config.UpdateDs4ControllerExtra(deviceNum, buttonName, shift, exts);
             _config.containsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
             _config.containsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
         }
 
-        public static ControlActionData GetDS4Action(int deviceNum, string buttonName, bool shift) => _config.GetDs4Action(deviceNum, buttonName, shift);
-        public static ControlActionData GetDS4Action(int deviceNum, DS4Controls control, bool shift) => _config.GetDs4Action(deviceNum, control, shift);
-        public static DS4KeyType GetDS4KeyType(int deviceNum, string buttonName, bool shift) => _config.GetDs4KeyType(deviceNum, buttonName, shift);
-        public static string GetDS4Extra(int deviceNum, string buttonName, bool shift) => _config.GetDs4Extra(deviceNum, buttonName, shift);
-        public static int GetDS4STrigger(int deviceNum, string buttonName) => _config.GetDs4STrigger(deviceNum, buttonName);
-        public static int GetDS4STrigger(int deviceNum, DS4Controls control) => _config.GetDs4STrigger(deviceNum, control);
-        public static List<DS4ControlSettings> getDS4CSettings(int device) => _config.ds4settings[device];
-        public static DS4ControlSettings GetDS4CSetting(int deviceNum, string control) => _config.GetDs4ControllerSetting(deviceNum, control);
-        public static DS4ControlSettings GetDS4CSetting(int deviceNum, DS4Controls control) => _config.GetDs4ControllerSetting(deviceNum, control);
-        public static ControlSettingsGroup GetControlSettingsGroup(int deviceNum) => _config.ds4controlSettings[deviceNum];
-        public static bool HasCustomActions(int deviceNum) => _config.HasCustomActions(deviceNum);
-        public static bool HasCustomExtras(int deviceNum) => _config.HasCustomExtras(deviceNum);
+        public  ControlActionData GetDS4Action(int deviceNum, string buttonName, bool shift) => _config.GetDs4Action(deviceNum, buttonName, shift);
+        public  ControlActionData GetDS4Action(int deviceNum, DS4Controls control, bool shift) => _config.GetDs4Action(deviceNum, control, shift);
+        public  DS4KeyType GetDS4KeyType(int deviceNum, string buttonName, bool shift) => _config.GetDs4KeyType(deviceNum, buttonName, shift);
+        public  string GetDS4Extra(int deviceNum, string buttonName, bool shift) => _config.GetDs4Extra(deviceNum, buttonName, shift);
+        public  int GetDS4STrigger(int deviceNum, string buttonName) => _config.GetDs4STrigger(deviceNum, buttonName);
+        public  int GetDS4STrigger(int deviceNum, DS4Controls control) => _config.GetDs4STrigger(deviceNum, control);
+        public  List<DS4ControlSettings> getDS4CSettings(int device) => _config.ds4settings[device];
+        public  DS4ControlSettings GetDS4CSetting(int deviceNum, string control) => _config.GetDs4ControllerSetting(deviceNum, control);
+        public  DS4ControlSettings GetDS4CSetting(int deviceNum, DS4Controls control) => _config.GetDs4ControllerSetting(deviceNum, control);
+        public  ControlSettingsGroup GetControlSettingsGroup(int deviceNum) => _config.ds4controlSettings[deviceNum];
+        public  bool HasCustomActions(int deviceNum) => _config.HasCustomActions(deviceNum);
+        public  bool HasCustomExtras(int deviceNum) => _config.HasCustomExtras(deviceNum);
 
-        public static bool containsCustomAction(int deviceNum)
+        public  bool containsCustomAction(int deviceNum)
         {
             return _config.containsCustomAction[deviceNum];
         }
 
-        public static bool containsCustomExtras(int deviceNum)
+        public  bool containsCustomExtras(int deviceNum)
         {
             return _config.containsCustomExtras[deviceNum];
         }
 
-        public static void SaveAction(string name, string controls, int mode,
+        public  void SaveAction(string name, string controls, int mode,
             string details, bool edit, string extras = "")
         {
             _config.SaveAction(name, controls, mode, details, edit, extras);
             Mapping.actionDone.Add(new Mapping.ActionState());
         }
 
-        public static void RemoveAction(string name)
+        public  void RemoveAction(string name)
         {
             _config.RemoveAction(name);
         }
 
-        public static bool LoadActions() => _config.LoadActions();
+        public  bool LoadActions() => _config.LoadActions();
 
-        public static List<SpecialAction> GetActions() => _config.actions;
+        public  List<SpecialAction> GetActions() => _config.actions;
 
-        public static int GetActionIndexOf(string name)
+        public  int GetActionIndexOf(string name)
         {
             return _config.GetActionIndexOf(name);
         }
 
-        public static int GetProfileActionIndexOf(int device, string name)
+        public  int GetProfileActionIndexOf(int device, string name)
         {
             int index = -1;
             _config.profileActionIndexDict[device].TryGetValue(name, out index);
             return index;
         }
 
-        public static SpecialAction GetAction(string name)
+        public  SpecialAction GetAction(string name)
         {
             return _config.GetAction(name);
         }
 
-        public static SpecialAction GetProfileAction(int device, string name)
+        public  SpecialAction GetProfileAction(int device, string name)
         {
             SpecialAction sA = null;
             _config.profileActionDict[device].TryGetValue(name, out sA);
             return sA;
         }
 
-        public static void CalculateProfileActionDicts(int device)
+        public  void CalculateProfileActionDicts(int device)
         {
             _config.CalculateProfileActionDicts(device);
         }
 
-        public static void CacheProfileCustomsFlags(int device)
+        public  void CacheProfileCustomsFlags(int device)
         {
             _config.CacheProfileCustomsFlags(device);
         }
 
-        public static void CacheExtraProfileInfo(int device)
+        public  void CacheExtraProfileInfo(int device)
         {
             _config.CacheExtraProfileInfo(device);
         }
 
-        public static X360Controls getX360ControlsByName(string key)
+        public  X360Controls getX360ControlsByName(string key)
         {
             return _config.GetX360ControlsByName(key);
         }
 
-        public static string GetX360ControlString(X360Controls key)
+        public  string GetX360ControlString(X360Controls key)
         {
             return _config.GetX360ControlString(key);
         }
 
-        public static DS4Controls getDS4ControlsByName(string key)
+        public  DS4Controls getDS4ControlsByName(string key)
         {
             return _config.GetDs4ControlsByName(key);
         }
 
-        public static X360Controls getDefaultX360ControlBinding(DS4Controls dc)
+        public  X360Controls getDefaultX360ControlBinding(DS4Controls dc)
         {
             return DefaultButtonMapping[(int)dc];
         }
 
-        public static bool containsLinkedProfile(string serial)
+        public  bool containsLinkedProfile(string serial)
         {
             string tempSerial = serial.Replace(":", string.Empty);
             return _config.linkedProfiles.ContainsKey(tempSerial);
         }
 
-        public static string getLinkedProfile(string serial)
+        public  string getLinkedProfile(string serial)
         {
             string temp = string.Empty;
             string tempSerial = serial.Replace(":", string.Empty);
@@ -1978,13 +1978,13 @@ namespace DS4Windows
             return temp;
         }
 
-        public static void changeLinkedProfile(string serial, string profile)
+        public  void changeLinkedProfile(string serial, string profile)
         {
             string tempSerial = serial.Replace(":", string.Empty);
             _config.linkedProfiles[tempSerial] = profile;
         }
 
-        public static void removeLinkedProfile(string serial)
+        public  void removeLinkedProfile(string serial)
         {
             string tempSerial = serial.Replace(":", string.Empty);
             if (_config.linkedProfiles.ContainsKey(tempSerial))
@@ -1993,9 +1993,9 @@ namespace DS4Windows
             }
         }
 
-        public static bool Load() => _config.Load();
+        public  bool Load() => _config.Load();
         
-        public static bool LoadProfile(int device, bool launchprogram, ControlService control,
+        public  bool LoadProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             bool result = _config.LoadProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2006,7 +2006,7 @@ namespace DS4Windows
             return result;
         }
 
-        public static bool LoadTempProfile(int device, string name, bool launchprogram,
+        public  bool LoadTempProfile(int device, string name, bool launchprogram,
             ControlService control, bool xinputChange = true)
         {
             bool result = _config.LoadProfile(device, launchprogram, control, RuntimeAppDataPath + @"\Profiles\" + name + ".xml");
@@ -2017,7 +2017,7 @@ namespace DS4Windows
             return result;
         }
 
-        public static void LoadBlankDevProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadBlankDevProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadBlankProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2029,7 +2029,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadBlankDS4Profile(int device, bool launchprogram, ControlService control,
+        public  void LoadBlankDS4Profile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadBlankDs4Profile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2041,7 +2041,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultGamepadGyroProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultGamepadGyroProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultGamepadGyroProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2053,7 +2053,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultDS4GamepadGyroProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultDS4GamepadGyroProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultDS4GamepadGyroProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2065,7 +2065,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultMixedControlsProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultMixedControlsProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultMixedControlsProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2077,7 +2077,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultDS4MixedControlsProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultDS4MixedControlsProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultMixedControlsProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2089,7 +2089,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultMixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultMixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultMixedGyroMouseProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2101,7 +2101,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultDS4MixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultDS4MixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultDs4MixedGyroMouseProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2113,7 +2113,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultKBMProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultKBMProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultKBMProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2125,7 +2125,7 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static void LoadDefaultKBMGyroMouseProfile(int device, bool launchprogram, ControlService control,
+        public  void LoadDefaultKBMGyroMouseProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultKBMGyroMouseProfile(device, launchprogram, control, "", xinputChange, postLoad);
@@ -2137,32 +2137,32 @@ namespace DS4Windows
             TempProfileDistance[device] = false;
         }
 
-        public static bool Save()
+        public  bool Save()
         {
             return _config.Save();
         }
 
-        public static void SaveProfile(int device, string proName)
+        public  void SaveProfile(int device, string proName)
         {
             _config.SaveProfile(device, proName);
         }
 
-        public static void SaveAsNewProfile(int device, string propath)
+        public  void SaveAsNewProfile(int device, string propath)
         {
             _config.SaveAsNewProfile(device, propath);
         }
 
-        public static bool SaveLinkedProfiles()
+        public  bool SaveLinkedProfiles()
         {
             return _config.SaveLinkedProfiles();
         }
 
-        public static bool LoadLinkedProfiles()
+        public  bool LoadLinkedProfiles()
         {
             return _config.LoadLinkedProfiles();
         }
 
-        public static bool SaveControllerConfigs(DS4Device device = null)
+        public  bool SaveControllerConfigs(DS4Device device = null)
         {
             if (device != null)
                 return _config.SaveControllerConfigsForDevice(device);
@@ -2174,7 +2174,7 @@ namespace DS4Windows
             return true;
         }
 
-        public static bool LoadControllerConfigs(DS4Device device = null)
+        public  bool LoadControllerConfigs(DS4Device device = null)
         {
             if (device != null)
                 return _config.LoadControllerConfigsForDevice(device);
@@ -2321,7 +2321,7 @@ namespace DS4Windows
             }
         }
 
-        public static void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
+        public  void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
         {
             _config.ds4controlSettings[deviceNum].ResetExtraButtons();
             if (devButtons != null)

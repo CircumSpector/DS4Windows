@@ -67,7 +67,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             this.profileListHolder = profileListHolder;
             this.controlService = service;
             contextMenu = new ContextMenu();
-            iconSource = Global.IconChoiceResources[Global.UseIconChoice];
+            iconSource = Global.IconChoiceResources[Global.Instance.UseIconChoice];
             changeServiceItem = new MenuItem() { Header = "Start" };
             changeServiceItem.Click += ChangeControlServiceItem_Click;
             changeServiceItem.IsEnabled = false;
@@ -167,7 +167,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     item.Tag = idx;
                     //item.ContextMenu = new ContextMenu();
                     ItemCollection subitems = item.Items;
-                    string currentProfile = Global.ProfilePath[idx];
+                    string currentProfile = Global.Instance.ProfilePath[idx];
                     foreach (ProfileEntity entry in profileListHolder.ProfileListCol)
                     {
                         // Need to escape profile name to disable Access Keys for control

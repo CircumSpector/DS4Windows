@@ -90,7 +90,7 @@ namespace DS4WinWPF.DS4Forms
             trayIconVM = new TrayIconViewModel(App.rootHub, profileListHolder);
             notifyIcon.DataContext = trayIconVM;
 
-            if (Global.StartMinimized || parser.Mini)
+            if (Global.Instance.StartMinimized || parser.Mini)
             {
                 WindowState = WindowState.Minimized;
             }
@@ -101,11 +101,11 @@ namespace DS4WinWPF.DS4Forms
                 uacImg.Visibility = Visibility.Collapsed;
             }
 
-            this.Width = Global.FormWidth;
-            this.Height = Global.FormHeight;
+            this.Width = Global.Instance.FormWidth;
+            this.Height = Global.Instance.FormHeight;
             WindowStartupLocation = WindowStartupLocation.Manual;
-            Left = Global.FormLocationX;
-            Top = Global.FormLocationY;
+            Left = Global.Instance.FormLocationX;
+            Top = Global.Instance.FormLocationY;
             noContLb.Content = string.Format(Strings.NoControllersConnected,
                 ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
 
@@ -157,13 +157,13 @@ namespace DS4WinWPF.DS4Forms
 
             tempTask = Task.Delay(100).ContinueWith((t) =>
             {
-                int checkwhen = Global.CheckWhen;
-                if (checkwhen > 0 && DateTime.Now >= Global.LastChecked + TimeSpan.FromHours(checkwhen))
+                int checkwhen = Global.Instance.CheckWhen;
+                if (checkwhen > 0 && DateTime.Now >= Global.Instance.LastChecked + TimeSpan.FromHours(checkwhen))
                 {
                     DownloadUpstreamVersionInfo();
                     Check_Version();
 
-                    Global.LastChecked = DateTime.Now;
+                    Global.Instance.LastChecked = DateTime.Now;
                 }
             });
             Util.LogAssistBackgroundTask(tempTask);
@@ -221,7 +221,7 @@ namespace DS4WinWPF.DS4Forms
             string version = Global.ExecutableProductVersion;
             string newversion = string.Empty;
             string versionFilePath = Global.RuntimeAppDataPath + "\\version.txt";
-            ulong lastVersionNum = Global.LastVersionCheckedNum;
+            ulong lastVersionNum = Global.Instance.LastVersionCheckedNum;
             //ulong lastVersion = Global.CompileVersionNumberFromString("2.1.1");
 
             bool versionFileExists = File.Exists(versionFilePath);
@@ -370,8 +370,8 @@ namespace DS4WinWPF.DS4Forms
             Dispatcher.BeginInvoke((Action)(() =>
             {
 
-                if (!IsActive && (Global.Notifications == 2 ||
-                    (Global.Notifications == 1 && e.Warning)))
+                if (!IsActive && (Global.Instance.Notifications == 2 ||
+                                  (Global.Instance.Notifications == 1 && e.Warning)))
                 {
                     notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
                     e.Data, !e.Warning ? Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info :
@@ -439,7 +439,7 @@ Suspend support not enabled.", true);
 
         private void SettingsWrapVM_AppChoiceIndexChanged(object sender, EventArgs e)
         {
-            AppThemeChoice choice = Global.UseCurrentTheme;
+            AppThemeChoice choice = Global.Instance.UseCurrentTheme;
             App current = App.Current as App;
             current.ChangeTheme(choice);
             trayIconVM.PopulateContextMenu();
@@ -447,7 +447,7 @@ Suspend support not enabled.", true);
 
         private void SettingsWrapVM_IconChoiceIndexChanged(object sender, EventArgs e)
         {
-            trayIconVM.IconSource = Global.IconChoiceResources[Global.UseIconChoice];
+            trayIconVM.IconSource = Global.IconChoiceResources[Global.Instance.UseIconChoice];
         }
 
         private void MainWinVM_FullTabsEnabledChanged(object sender, EventArgs e)
@@ -478,7 +478,7 @@ Suspend support not enabled.", true);
 
         private void ControlServiceStarted(object sender, EventArgs e)
         {
-            if (Global.SwipeProfiles)
+            if (Global.Instance.SwipeProfiles)
             {
                 ChangeHotkeysStatus(true);
             }
@@ -582,7 +582,7 @@ Suspend support not enabled.", true);
         {
             hotkeysTimer.Stop();
 
-            if (Global.SwipeProfiles)
+            if (Global.Instance.SwipeProfiles)
             {
                 foreach (CompositeDeviceModel item in conLvViewModel.ControllerCol)
                 //for (int i = 0; i < 4; i++)
@@ -636,7 +636,7 @@ Suspend support not enabled.", true);
 
         private void ShowHotkeyNotification(string message)
         {
-            if (!IsActive && (Global.Notifications == 2))
+            if (!IsActive && (Global.Instance.Notifications == 2))
             {
                 notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
                 message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
@@ -968,7 +968,7 @@ Suspend support not enabled.", true);
             {
                 return;
             }
-            else if (Global.CloseMini)
+            else if (Global.Instance.CloseMini)
             {
                 WindowState = WindowState.Minimized;
                 e.Cancel = true;
@@ -1148,13 +1148,13 @@ Suspend support not enabled.", true);
                                             else
                                             {
                                                 // Preset profile name for later loading
-                                                Global.ProfilePath[tdevice] = strData[2];
+                                                Global.Instance.ProfilePath[tdevice] = strData[2];
                                                 //Global.LoadProfile(tdevice, true, Program.rootHub);
                                             }
                                         }
                                         else
                                         {
-                                            Global.LoadTempProfile(tdevice, strData[2], true, Program.rootHub);
+                                            Global.Instance.LoadTempProfile(tdevice, strData[2], true, Program.rootHub);
                                         }
 
                                         DS4Device device = conLvViewModel.ControllerCol[tdevice].Device;
@@ -1205,10 +1205,10 @@ Suspend support not enabled.", true);
                                                 if (Global.UseTempProfiles[tdevice])
                                                     propValue = Global.TempProfileNames[tdevice];
                                                 else
-                                                    propValue = Global.ProfilePath[tdevice];
+                                                    propValue = Global.Instance.ProfilePath[tdevice];
                                             }
                                             else if (propName == "outconttype")
-                                                propValue = Global.OutContType[tdevice].ToString();
+                                                propValue = Global.Instance.OutContType[tdevice].ToString();
                                             else if (propName == "activeoutdevtype")
                                                 propValue = Global.ActiveOutDevType[tdevice].ToString();
                                             else if (propName == "usedinputonly")
@@ -1557,7 +1557,7 @@ Suspend support not enabled.", true);
 
         public void CheckMinStatus()
         {
-            bool minToTask = Global.MinToTaskbar;
+            bool minToTask = Global.Instance.MinToTaskbar;
             if (WindowState == WindowState.Minimized && !minToTask)
             {
                 Hide();
@@ -1574,8 +1574,8 @@ Suspend support not enabled.", true);
         {
             if (WindowState != WindowState.Minimized && preserveSize)
             {
-                Global.FormWidth = Convert.ToInt32(Width);
-                Global.FormHeight = Convert.ToInt32(Height);
+                Global.Instance.FormWidth = Convert.ToInt32(Width);
+                Global.Instance.FormHeight = Convert.ToInt32(Height);
             }
         }
 
@@ -1584,8 +1584,8 @@ Suspend support not enabled.", true);
             int left = Convert.ToInt32(Left), top = Convert.ToInt32(Top);
             if (left >= 0 && top >= 0)
             {
-                Global.FormLocationX = left;
-                Global.FormLocationY = top;
+                Global.Instance.FormLocationX = left;
+                Global.Instance.FormLocationY = top;
             }
         }
 

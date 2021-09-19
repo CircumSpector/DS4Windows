@@ -71,7 +71,7 @@ namespace DS4Windows
                     }
                 }
 
-                if (Global.DeviceOptions.VerboseLogMessages)
+                if (Global.Instance.DeviceOptions.VerboseLogMessages)
                 {
                     if (found)
                     {
@@ -84,7 +84,7 @@ namespace DS4Windows
                 }
             }
 
-            if (Global.DeviceOptions.VerboseLogMessages && iEnumeratedDevCount > 0)
+            if (Global.Instance.DeviceOptions.VerboseLogMessages && iEnumeratedDevCount > 0)
             {
                 // This EnumerateDS4 method is called 3-4 times when a gamepad is connected. Print out "separator" log msg line between different enumeration loops to make the logfile easier to read
                 AppLogger.LogToGui($"-------------------------", false);

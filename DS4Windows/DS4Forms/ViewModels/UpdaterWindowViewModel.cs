@@ -94,7 +94,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 ulong versionNumber = versionInfo.VersionNumberInfo.GetVersionNumber();
                 if (versionNumber > DS4Windows.Global.ExecutableVersionLong)
                 {
-                    VersionLogLocale tmpLog = versionInfo.ApplicableInfo(DS4Windows.Global.UseLang);
+                    VersionLogLocale tmpLog = versionInfo.ApplicableInfo(DS4Windows.Global.Instance.UseLang);
                     if (tmpLog != null)
                     {
                         Paragraph tmpPar = new Paragraph();
@@ -130,13 +130,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             if (!string.IsNullOrEmpty(newversion))
             {
-                DS4Windows.Global.LastVersionChecked = newversion;
+                DS4Windows.Global.Instance.LastVersionChecked = newversion;
             }
         }
 
         public void BlankSkippedVersion()
         {
-            DS4Windows.Global.LastVersionChecked = string.Empty;
+            DS4Windows.Global.Instance.LastVersionChecked = string.Empty;
         }
     }
 

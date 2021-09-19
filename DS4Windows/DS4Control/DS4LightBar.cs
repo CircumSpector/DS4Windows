@@ -49,7 +49,7 @@ namespace DS4Windows
         {
             DS4Color color = new DS4Color();
             bool useForceLight = forcelight[deviceNum];
-            LightbarSettingInfo lightbarSettingInfo = getLightbarSettingsInfo(deviceNum);
+            LightbarSettingInfo lightbarSettingInfo = Instance.getLightbarSettingsInfo(deviceNum);
             LightbarDS4WinInfo lightModeInfo = lightbarSettingInfo.ds4winSettings;
             bool useLightRoutine = lightbarSettingInfo.mode == LightbarMode.DS4Win;
             //bool useLightRoutine = false;
@@ -108,7 +108,7 @@ namespace DS4Windows
                     }
                     else
                     {
-                        color = getMainColor(deviceNum);
+                        color = Instance.getMainColor(deviceNum);
                     }
                 }
 
@@ -168,7 +168,7 @@ namespace DS4Windows
                     }
                 }
 
-                int idleDisconnectTimeout = getIdleDisconnectTimeout(deviceNum);
+                int idleDisconnectTimeout = Instance.getIdleDisconnectTimeout(deviceNum);
                 if (idleDisconnectTimeout > 0 && lightModeInfo.ledAsBattery &&
                     (!device.isCharging() || device.getBattery() >= 100))
                 {
@@ -281,7 +281,7 @@ namespace DS4Windows
 
             if (useLightRoutine)
             {
-                bool distanceprofile = DistanceProfiles[deviceNum] || TempProfileDistance[deviceNum];
+                bool distanceprofile = Instance.DistanceProfiles[deviceNum] || TempProfileDistance[deviceNum];
                 //distanceprofile = (ProfilePath[deviceNum].ToLower().Contains("distance") || TempProfileNames[deviceNum].ToLower().Contains("distance"));
                 if (distanceprofile && !defaultLight)
                 {

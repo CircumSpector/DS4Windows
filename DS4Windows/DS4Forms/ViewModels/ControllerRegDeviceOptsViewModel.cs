@@ -162,7 +162,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             foreach (DeviceListItem item in currentInputDevices)
             {
-                Global.SaveControllerConfigs(item.Device);
+                Global.Instance.SaveControllerConfigs(item.Device);
             }
         }
     }

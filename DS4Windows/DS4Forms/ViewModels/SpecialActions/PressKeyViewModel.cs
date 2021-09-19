@@ -113,7 +113,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                 }
             }
 
-            Global.SaveAction(action.Name, action.Controls, 4,
+            Global.Instance.SaveAction(action.Name, action.Controls, 4,
                 $"{value}{(keyType.HasFlag(DS4KeyType.ScanCode) ? " Scan Code" : "")}", edit,
                 !string.IsNullOrEmpty(uaction) ? $"{uaction}\n{action.UControls}" : "");
         }

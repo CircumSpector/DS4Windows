@@ -68,7 +68,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                     action.UControls = string.Empty;
                 }
 
-                Global.SaveAction(action.Name, action.Controls, 3, profilename, edit,
+                Global.Instance.SaveAction(action.Name, action.Controls, 3, profilename, edit,
                     action.UControls +
                     (autoUntrigger ? (action.UControls.Length > 0 ? "/" : "") + "AutomaticUntrigger" : ""));
             }

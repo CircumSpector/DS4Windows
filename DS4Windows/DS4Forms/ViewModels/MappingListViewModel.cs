@@ -213,7 +213,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             this.devType = devType;
             this.control = control;
             this.controlName = controlName;
-            setting = Global.GetDS4CSetting(devIndex, control);
+            setting = Global.Instance.GetDS4CSetting(devIndex, control);
             //mappingName = "?";
             if (initMap)
             {

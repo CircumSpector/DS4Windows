@@ -70,7 +70,7 @@ namespace DS4Windows
             outDS4Report.bTriggerL = state.L2;
             outDS4Report.bTriggerR = state.R2;
 
-            SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Global.GetSASteeringWheelEmulationAxis(device);
+            SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Global.Instance.GetSASteeringWheelEmulationAxis(device);
             switch (steeringWheelMappedAxis)
             {
                 case SASteeringWheelEmulationAxisType.None:

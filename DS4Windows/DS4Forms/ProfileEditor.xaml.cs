@@ -529,10 +529,10 @@ namespace DS4WinWPF.DS4Forms
                 currentProfile = profile;
                 if (device == Global.TEST_PROFILE_INDEX)
                 {
-                    Global.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
+                    Global.Instance.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
                 }
 
-                Global.LoadProfile(device, false, App.rootHub, false);
+                Global.Instance.LoadProfile(device, false, App.rootHub, false);
                 profileNameTxt.Text = profile.Name;
                 profileNameTxt.IsEnabled = false;
                 applyBtn.IsEnabled = true;
@@ -545,7 +545,7 @@ namespace DS4WinWPF.DS4Forms
                 presetWin.ShowDialog();
                 if (presetWin.Result == MessageBoxResult.Cancel)
                 {
-                    Global.LoadBlankDevProfile(device, false, App.rootHub, false);
+                    Global.Instance.LoadBlankDevProfile(device, false, App.rootHub, false);
                 }
             }
 
@@ -565,8 +565,8 @@ namespace DS4WinWPF.DS4Forms
             }
 
             conReadingsUserCon.EnableControl(false);
-            axialLSStickControl.UseDevice(Global.LSModInfo[device]);
-            axialRSStickControl.UseDevice(Global.RSModInfo[device]);
+            axialLSStickControl.UseDevice(Global.Instance.LSModInfo[device]);
+            axialRSStickControl.UseDevice(Global.Instance.RSModInfo[device]);
 
             specialActionsVM.LoadActions(currentProfile == null);
             mappingListVM.UpdateMappings();
@@ -581,7 +581,7 @@ namespace DS4WinWPF.DS4Forms
             specialActionsTab.DataContext = specialActionsVM;
             lightbarRect.DataContext = profileSettingsVM;
 
-            StickDeadZoneInfo lsMod = Global.LSModInfo[device];
+            StickDeadZoneInfo lsMod = Global.Instance.LSModInfo[device];
             if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.LsDeadX = profileSettingsVM.LSDeadZone;
@@ -593,7 +593,7 @@ namespace DS4WinWPF.DS4Forms
                 conReadingsUserCon.LsDeadY = axialLSStickControl.AxialVM.DeadZoneY;
             }
 
-            StickDeadZoneInfo rsMod = Global.RSModInfo[device];
+            StickDeadZoneInfo rsMod = Global.Instance.RSModInfo[device];
             if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.RsDeadX = profileSettingsVM.RSDeadZone;
@@ -665,7 +665,7 @@ namespace DS4WinWPF.DS4Forms
                 App.rootHub.setRumble(0, 0, profileSettingsVM.FuncDevNum);
             }
             Global.OutDevTypeTemp[deviceNum] = OutContType.X360;
-            Global.LoadProfile(deviceNum, false, App.rootHub);
+            Global.Instance.LoadProfile(deviceNum, false, App.rootHub);
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
@@ -677,7 +677,7 @@ namespace DS4WinWPF.DS4Forms
             window.ShowDialog();
             mpControl.UpdateMappingName();
             UpdateHighlightLabel(mpControl);
-            Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+            Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
         }
 
         private void InputControlHighlight(Button control)
@@ -753,8 +753,8 @@ namespace DS4WinWPF.DS4Forms
 
         private void SetLateProperties(bool fullSave = true)
         {
-            Global.BTPollRate[deviceNum] = profileSettingsVM.TempBTPollRateIndex;
-            Global.OutContType[deviceNum] = profileSettingsVM.TempConType;
+            Global.Instance.BTPollRate[deviceNum] = profileSettingsVM.TempBTPollRateIndex;
+            Global.Instance.OutContType[deviceNum] = profileSettingsVM.TempConType;
             if (fullSave)
             {
                 Global.OutDevTypeTemp[deviceNum] = OutContType.X360;
@@ -783,8 +783,8 @@ namespace DS4WinWPF.DS4Forms
                 temp.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) == -1)
             {
                 SetLateProperties(false);
-                DS4Windows.Global.ProfilePath[deviceNum] =
-                    DS4Windows.Global.OlderProfilePath[deviceNum] = temp;
+                Global.Instance.ProfilePath[deviceNum] =
+                    Global.Instance.OlderProfilePath[deviceNum] = temp;
 
                 if (currentProfile != null)
                 {
@@ -807,7 +807,7 @@ namespace DS4WinWPF.DS4Forms
                     string tempprof = Global.RuntimeAppDataPath + @"\Profiles\" + temp + ".xml";
                     if (!File.Exists(tempprof))
                     {
-                        Global.SaveProfile(deviceNum, temp);
+                        Global.Instance.SaveProfile(deviceNum, temp);
                         CreatedProfile?.Invoke(this, temp);
                         result = true;
                     }
@@ -1128,7 +1128,7 @@ namespace DS4WinWPF.DS4Forms
             };
             actEditor.Saved += (sender2, actionName) =>
             {
-                SpecialAction action = Global.GetAction(actionName);
+                SpecialAction action = Global.Instance.GetAction(actionName);
                 SpecialActionItem newitem = specialActionsVM.CreateActionItem(action);
                 newitem.Active = true;
                 int lastIdx = specialActionsVM.ActionCol.Count;
@@ -1138,7 +1138,7 @@ namespace DS4WinWPF.DS4Forms
                 baseSpeActPanel.Visibility = Visibility.Visible;
 
                 specialActionsVM.ExportEnabledActions();
-                Global.CacheExtraProfileInfo(profileSettingsVM.Device);
+                Global.Instance.CacheExtraProfileInfo(profileSettingsVM.Device);
             };
         }
 
@@ -1163,7 +1163,7 @@ namespace DS4WinWPF.DS4Forms
                 };
                 actEditor.Saved += (sender2, actionName) =>
                 {
-                    DS4Windows.SpecialAction action = DS4Windows.Global.GetAction(actionName);
+                    DS4Windows.SpecialAction action = Global.Instance.GetAction(actionName);
                     SpecialActionItem newitem = specialActionsVM.CreateActionItem(action);
                     newitem.Active = item.Active;
                     newitem.Index = currentIndex;
@@ -1171,7 +1171,7 @@ namespace DS4WinWPF.DS4Forms
                     specialActionsVM.ActionCol.Insert(currentIndex, newitem);
                     specialActionDockPanel.Children.Remove(actEditor);
                     baseSpeActPanel.Visibility = Visibility.Visible;
-                    Global.CacheExtraProfileInfo(profileSettingsVM.Device);
+                    Global.Instance.CacheExtraProfileInfo(profileSettingsVM.Device);
                 };
             }
         }
@@ -1184,7 +1184,7 @@ namespace DS4WinWPF.DS4Forms
                 //int currentIndex = specialActionsVM.ActionCol[specialActionsVM.SpecialActionIndex].Index;
                 //SpecialActionItem item = specialActionsVM.ActionCol[currentIndex];
                 specialActionsVM.RemoveAction(item);
-                Global.CacheExtraProfileInfo(profileSettingsVM.Device);
+                Global.Instance.CacheExtraProfileInfo(profileSettingsVM.Device);
             }
         }
 
@@ -1290,7 +1290,7 @@ namespace DS4WinWPF.DS4Forms
             profileSettingsVM.UseControllerReadout = false;
             inputTimer.Stop();
             conReadingsUserCon.EnableControl(false);
-            Global.CacheExtraProfileInfo(profileSettingsVM.Device);
+            Global.Instance.CacheExtraProfileInfo(profileSettingsVM.Device);
         }
 
         private void UseControllerReadoutCk_Click(object sender, RoutedEventArgs e)
@@ -1313,7 +1313,7 @@ namespace DS4WinWPF.DS4Forms
             window.ShowDialog();
             mpControl.UpdateMappingName();
             UpdateHighlightLabel(mpControl);
-            Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+            Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
         }
 
         private void MappingListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -1348,7 +1348,7 @@ namespace DS4WinWPF.DS4Forms
             window.ShowDialog();
             mpControl.UpdateMappingName();
             UpdateHighlightLabel(mpControl);
-            Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+            Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
         }
 
         private void SwipeControlsButton_Click(object sender, RoutedEventArgs e)
@@ -1361,7 +1361,7 @@ namespace DS4WinWPF.DS4Forms
             window.ShowDialog();
             mpControl.UpdateMappingName();
             UpdateHighlightLabel(mpControl);
-            Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+            Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
         }
 
         private void ConBtn_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -1391,7 +1391,7 @@ namespace DS4WinWPF.DS4Forms
                     mpControl.UpdateMappingName();
                 }
 
-                Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+                Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
                 highlightControlDisplayLb.Content = "";
             }
         }
@@ -1435,7 +1435,7 @@ namespace DS4WinWPF.DS4Forms
             window.Owner = App.Current.MainWindow;
             window.ShowDialog();
             mpControl.UpdateMappingName();
-            Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+            Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
 		}
 
         private void GyroCalibration_Click(object sender, RoutedEventArgs e)
@@ -1476,7 +1476,7 @@ namespace DS4WinWPF.DS4Forms
             window.Owner = App.Current.MainWindow;
             window.ShowDialog();
             mpControl.UpdateMappingName();
-            Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+            Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
         }
 
         private void GyroControlsTrigBtn_Click(object sender, RoutedEventArgs e)
@@ -1509,7 +1509,7 @@ namespace DS4WinWPF.DS4Forms
             window.Owner = App.Current.MainWindow;
             window.ShowDialog();
             mpControl.UpdateMappingName();
-            Global.CacheProfileCustomsFlags(profileSettingsVM.Device);
+            Global.Instance.CacheProfileCustomsFlags(profileSettingsVM.Device);
         }
     }
 

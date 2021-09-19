@@ -74,8 +74,8 @@ namespace DS4Windows
 
             filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
             filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = GyroMouseStickInfo.DEFAULT_BETA;
-            Global.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
+            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
         }
 
         public void ResetTrackAccel(double friction)
@@ -138,12 +138,12 @@ namespace DS4Windows
 
         public virtual void sixaxisMoved(DS4SixAxis sender, SixAxisEventArgs arg)
         {
-            GyroOutMode outMode = Global.GetGyroOutMode(deviceNum);
+            GyroOutMode outMode = Global.Instance.GetGyroOutMode(deviceNum);
             if (outMode == GyroOutMode.Controls)
             {
                 s = dev.getCurrentStateRef();
 
-                GyroControlsInfo controlsMapInfo = Global.GetGyroControlsInfo(deviceNum);
+                GyroControlsInfo controlsMapInfo = Global.Instance.GetGyroControlsInfo(deviceNum);
                 useReverseRatchet = controlsMapInfo.triggerTurns;
                 int i = 0;
                 string[] ss = controlsMapInfo.triggers.Split(',');
@@ -196,14 +196,14 @@ namespace DS4Windows
                     s.Motion.outputGyroControls = false;
                 }
             }
-            else if (outMode == GyroOutMode.Mouse && Global.getGyroSensitivity(deviceNum) > 0)
+            else if (outMode == GyroOutMode.Mouse && Global.Instance.getGyroSensitivity(deviceNum) > 0)
             {
                 s = dev.getCurrentStateRef();
 
-                useReverseRatchet = Global.getGyroTriggerTurns(deviceNum);
+                useReverseRatchet = Global.Instance.getGyroTriggerTurns(deviceNum);
                 int i = 0;
-                string[] ss = Global.getSATriggers(deviceNum).Split(',');
-                bool andCond = Global.getSATriggerCond(deviceNum);
+                string[] ss = Global.Instance.getSATriggers(deviceNum).Split(',');
+                bool andCond = Global.Instance.getSATriggerCond(deviceNum);
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {
@@ -251,10 +251,10 @@ namespace DS4Windows
             {
                 s = dev.getCurrentStateRef();
 
-                useReverseRatchet = Global.GetGyroMouseStickTriggerTurns(deviceNum);
+                useReverseRatchet = Global.Instance.GetGyroMouseStickTriggerTurns(deviceNum);
                 int i = 0;
-                string[] ss = Global.GetSAMouseStickTriggers(deviceNum).Split(',');
-                bool andCond = Global.GetSAMouseStickTriggerCond(deviceNum);
+                string[] ss = Global.Instance.GetSAMouseStickTriggers(deviceNum).Split(',');
+                bool andCond = Global.Instance.GetSAMouseStickTriggerCond(deviceNum);
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {
@@ -301,7 +301,7 @@ namespace DS4Windows
             {
                 s = dev.getCurrentStateRef();
 
-                GyroDirectionalSwipeInfo swipeMapInfo = Global.GetGyroSwipeInfo(deviceNum);
+                GyroDirectionalSwipeInfo swipeMapInfo = Global.Instance.GetGyroSwipeInfo(deviceNum);
                 useReverseRatchet = swipeMapInfo.triggerTurns;
                 int i = 0;
                 string[] ss = swipeMapInfo.triggers.Split(',');
@@ -351,16 +351,16 @@ namespace DS4Windows
 
         public void ReplaceOneEuroFilterPair()
         {
-            Global.GyroMouseStickInf[deviceNum].RemoveRefreshEvents();
+            Global.Instance.GyroMouseStickInf[deviceNum].RemoveRefreshEvents();
             filterPair = new OneEuroFilterPair();
         }
 
         public void SetupLateOneEuroFilters()
         {
-            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.GyroMouseStickInf[deviceNum].MinCutoff;
-            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.GyroMouseStickInf[deviceNum].Beta;
-            Global.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.Instance.GyroMouseStickInf[deviceNum].MinCutoff;
+            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.Instance.GyroMouseStickInf[deviceNum].Beta;
+            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
+            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
         }
 
         private const int SMOOTH_BUFFER_LEN = 3;
@@ -375,7 +375,7 @@ namespace DS4Windows
             ySmoothBuffer[iIndex] = 0;
             smoothBufferTail = iIndex + 1;
 
-            GyroMouseStickInfo msinfo = Global.GetGyroMouseStickInfo(deviceNum);
+            GyroMouseStickInfo msinfo = Global.Instance.GetGyroMouseStickInfo(deviceNum);
             if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.OneEuro)
             {
                 double currentRate = 1.0 / args.sixAxis.elapsed;
@@ -387,14 +387,14 @@ namespace DS4Windows
         private void SixMouseStick(SixAxisEventArgs arg)
         {
             int deltaX = 0, deltaY = 0;
-            deltaX = Global.getGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
+            deltaX = Global.Instance.getGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
                 arg.sixAxis.gyroRollFull;
             deltaY = -arg.sixAxis.gyroPitchFull;
             //int inputX = deltaX, inputY = deltaY;
             int maxDirX = deltaX >= 0 ? 127 : -128;
             int maxDirY = deltaY >= 0 ? 127 : -128;
 
-            GyroMouseStickInfo msinfo = Global.GetGyroMouseStickInfo(deviceNum);
+            GyroMouseStickInfo msinfo = Global.Instance.GetGyroMouseStickInfo(deviceNum);
 
             double tempDouble = arg.sixAxis.elapsed * 250.0; // Base default speed on 4 ms
             double tempAngle = Math.Atan2(-deltaY, deltaX);
@@ -666,12 +666,12 @@ namespace DS4Windows
         {
             s = dev.getCurrentStateRef();
 
-            TouchpadOutMode tempMode = Global.TouchOutMode[deviceNum];
+            TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
             if (tempMode == TouchpadOutMode.Mouse)
             {
-                if (Global.GetTouchActive(deviceNum))
+                if (Global.Instance.GetTouchActive(deviceNum))
                 {
-                    int[] disArray = Global.getTouchDisInvertTriggers(deviceNum);
+                    int[] disArray = Global.Instance.getTouchDisInvertTriggers(deviceNum);
                     tempBool = true;
                     for (int i = 0, arlen = disArray.Length; tempBool && i < arlen; i++)
                     {
@@ -679,7 +679,7 @@ namespace DS4Windows
                             tempBool = false;
                     }
 
-                    if (Global.getTrackballMode(deviceNum))
+                    if (Global.Instance.getTrackballMode(deviceNum))
                     {
                         int iIndex = trackballBufferTail;
                         // Establish 4 ms as the base
@@ -695,7 +695,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (Global.getTrackballMode(deviceNum))
+                    if (Global.Instance.getTrackballMode(deviceNum))
                     {
                         int iIndex = trackballBufferTail;
                         trackballXBuffer[iIndex] = 0;
@@ -723,7 +723,7 @@ namespace DS4Windows
             }
             else if (tempMode == TouchpadOutMode.AbsoluteMouse)
             {
-                if (Global.GetTouchActive(deviceNum))
+                if (Global.Instance.GetTouchActive(deviceNum))
                 {
                     cursor.TouchesMovedAbsolute(arg);
                 }
@@ -743,7 +743,7 @@ namespace DS4Windows
 
         public virtual void touchesBegan(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            TouchpadOutMode tempMode = Global.TouchOutMode[deviceNum];
+            TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
             bool mouseMode = tempMode == TouchpadOutMode.Mouse;
             if (mouseMode)
             {
@@ -765,10 +765,10 @@ namespace DS4Windows
             firstTouch.populate(arg.touches[0].hwX, arg.touches[0].hwY, arg.touches[0].touchID,
                 arg.touches[0].previousTouch);
 
-            if (mouseMode && Global.getDoubleTap(deviceNum))
+            if (mouseMode && Global.Instance.getDoubleTap(deviceNum))
             {
                 DateTime test = arg.timeStamp;
-                if (test <= (firstTap + TimeSpan.FromMilliseconds((double)Global.TapSensitivity[deviceNum] * 1.5)) && !arg.touchButtonPressed)
+                if (test <= (firstTap + TimeSpan.FromMilliseconds((double)Global.Instance.TapSensitivity[deviceNum] * 1.5)) && !arg.touchButtonPressed)
                     secondtouchbegin = true;
             }
 
@@ -782,8 +782,8 @@ namespace DS4Windows
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
-            byte tapSensitivity = Global.getTapSensitivity(deviceNum);
-            if (tapSensitivity != 0 && Global.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+            byte tapSensitivity = Global.Instance.getTapSensitivity(deviceNum);
+            if (tapSensitivity != 0 && Global.Instance.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
                 {
@@ -796,7 +796,7 @@ namespace DS4Windows
                 {
                     if (Math.Abs(firstTouch.hwX - arg.touches[0].hwX) < 10 && Math.Abs(firstTouch.hwY - arg.touches[0].hwY) < 10)
                     {
-                        if (Global.getDoubleTap(deviceNum))
+                        if (Global.Instance.getDoubleTap(deviceNum))
                         {
                             tappedOnce = true;
                             firstTap = arg.timeStamp;
@@ -809,10 +809,10 @@ namespace DS4Windows
             }
             else
             {
-                TouchpadOutMode tempMode = Global.TouchOutMode[deviceNum];
+                TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
                 if (tempMode == TouchpadOutMode.Mouse)
                 {
-                    int[] disArray = Global.getTouchDisInvertTriggers(deviceNum);
+                    int[] disArray = Global.Instance.getTouchDisInvertTriggers(deviceNum);
                     tempBool = true;
                     for (int i = 0, arlen = disArray.Length; tempBool && i < arlen; i++)
                     {
@@ -820,7 +820,7 @@ namespace DS4Windows
                             tempBool = false;
                     }
 
-                    if (Global.getTrackballMode(deviceNum))
+                    if (Global.Instance.getTrackballMode(deviceNum))
                     {
                         if (!trackballActive)
                         {
@@ -896,8 +896,8 @@ namespace DS4Windows
                 }
                 else if (tempMode == TouchpadOutMode.AbsoluteMouse)
                 {
-                    TouchpadAbsMouseSettings absMouseSettings = Global.TouchAbsMouse[deviceNum];
-                    if (Global.GetTouchActive(deviceNum) && absMouseSettings.snapToCenter)
+                    TouchpadAbsMouseSettings absMouseSettings = Global.Instance.TouchAbsMouse[deviceNum];
+                    if (Global.Instance.GetTouchActive(deviceNum) && absMouseSettings.snapToCenter)
                     {
                         cursor.TouchCenterAbsolute();
                     }
@@ -923,9 +923,9 @@ namespace DS4Windows
 
             if (trackballActive)
             {
-                if (Global.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+                if (Global.Instance.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
                 {
-                    int[] disArray = Global.getTouchDisInvertTriggers(deviceNum);
+                    int[] disArray = Global.Instance.getTouchDisInvertTriggers(deviceNum);
                     tempBool = true;
                     for (int i = 0, arlen = disArray.Length; tempBool && i < arlen; i++)
                     {
@@ -990,10 +990,10 @@ namespace DS4Windows
 
         private void synthesizeMouseButtons()
         {
-            TouchpadOutMode tempMode = Global.TouchOutMode[deviceNum];
+            TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
             if (tempMode != TouchpadOutMode.Passthru)
             {
-                bool touchClickPass = Global.TouchClickPassthru[deviceNum];
+                bool touchClickPass = Global.Instance.TouchClickPassthru[deviceNum];
                 if (!touchClickPass)
                 {
                     // Reset output Touchpad click button
@@ -1006,7 +1006,7 @@ namespace DS4Windows
                 return;
             }
 
-            if (Global.GetDS4CSetting(deviceNum, DS4Controls.TouchLeft).IsDefault &&
+            if (Global.Instance.GetDS4CSetting(deviceNum, DS4Controls.TouchLeft).IsDefault &&
                 leftDown)
             {
                 Mapping.MapClick(deviceNum, Mapping.Click.Left);
@@ -1017,30 +1017,30 @@ namespace DS4Windows
                 dragging2 = false;
             }
 
-            if (Global.GetDS4CSetting(deviceNum, DS4Controls.TouchUpper).IsDefault &&
+            if (Global.Instance.GetDS4CSetting(deviceNum, DS4Controls.TouchUpper).IsDefault &&
                 upperDown)
             {
                 Mapping.MapClick(deviceNum, Mapping.Click.Middle);
             }
 
-            if (Global.GetDS4CSetting(deviceNum, DS4Controls.TouchRight).IsDefault &&
+            if (Global.Instance.GetDS4CSetting(deviceNum, DS4Controls.TouchRight).IsDefault &&
                 rightDown)
             {
                 Mapping.MapClick(deviceNum, Mapping.Click.Left);
             }
 
-            if (Global.GetDS4CSetting(deviceNum, DS4Controls.TouchMulti).IsDefault &&
+            if (Global.Instance.GetDS4CSetting(deviceNum, DS4Controls.TouchMulti).IsDefault &&
                 multiDown)
             {
                 Mapping.MapClick(deviceNum, Mapping.Click.Right);
             }
 
-            if (Global.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+            if (Global.Instance.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (tappedOnce)
                 {
                     DateTime tester = DateTime.Now;
-                    if (tester > (TimeofEnd + TimeSpan.FromMilliseconds((double)(Global.TapSensitivity[deviceNum]) * 1.5)))
+                    if (tester > (TimeofEnd + TimeSpan.FromMilliseconds((double)(Global.Instance.TapSensitivity[deviceNum]) * 1.5)))
                     {
                         Mapping.MapClick(deviceNum, Mapping.Click.Left);
                         tappedOnce = false;
@@ -1076,7 +1076,7 @@ namespace DS4Windows
                 multiDown = true;
             else
             {
-                if ((Global.LowerRCOn[deviceNum] && arg.touches[0].hwX > (1920 * 3) / 4 && arg.touches[0].hwY > (960 * 3) / 4))
+                if ((Global.Instance.LowerRCOn[deviceNum] && arg.touches[0].hwX > (1920 * 3) / 4 && arg.touches[0].hwY > (960 * 3) / 4))
                     Mapping.MapClick(deviceNum, Mapping.Click.Right);
 
                 if (isLeft(arg.touches[0]))

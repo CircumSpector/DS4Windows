@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using HttpProgress;
 using System.Text.Json;
+using DS4Windows;
 using MarkdownEngine = MdXaml.Markdown;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
@@ -88,7 +89,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             FlowDocument flow = new FlowDocument();
             foreach (ChangeVersionInfo versionInfo in tempInfo.Changelog.Versions)
             {
-                VersionLogLocale tmpLog = versionInfo.ApplicableInfo(DS4Windows.Global.UseLang);
+                VersionLogLocale tmpLog = versionInfo.ApplicableInfo(Global.Instance.UseLang);
                 if (tmpLog != null)
                 {
                     Paragraph tmpPar = new Paragraph();

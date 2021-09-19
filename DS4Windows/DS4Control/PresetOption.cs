@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DS4Windows;
 
 namespace DS4WinWPF.DS4Control
 {
@@ -46,11 +47,11 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-                DS4Windows.Global.LoadBlankDevProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadBlankDevProfile(idx, false, App.rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-                DS4Windows.Global.LoadBlankDS4Profile(idx, false, App.rootHub, false);
+                Global.Instance.LoadBlankDS4Profile(idx, false, App.rootHub, false);
             }
         }
     }
@@ -69,11 +70,11 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-                DS4Windows.Global.LoadDefaultGamepadGyroProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadDefaultGamepadGyroProfile(idx, false, App.rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-                DS4Windows.Global.LoadDefaultDS4GamepadGyroProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadDefaultDS4GamepadGyroProfile(idx, false, App.rootHub, false);
             }
         }
     }
@@ -92,11 +93,11 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-                DS4Windows.Global.LoadDefaultMixedControlsProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadDefaultMixedControlsProfile(idx, false, App.rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-                DS4Windows.Global.LoadDefaultMixedControlsProfile(idx, false, App.rootHub, false);
+               Global.Instance.LoadDefaultMixedControlsProfile(idx, false, App.rootHub, false);
             }
         }
     }
@@ -115,11 +116,11 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-                DS4Windows.Global.LoadDefaultMixedGyroMouseProfile(idx, false, App.rootHub, false);
+               Global.Instance.LoadDefaultMixedGyroMouseProfile(idx, false, App.rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-                DS4Windows.Global.LoadDefaultDS4MixedGyroMouseProfile(idx, false, App.rootHub, false);
+               Global.Instance.LoadDefaultDS4MixedGyroMouseProfile(idx, false, App.rootHub, false);
             }
         }
     }
@@ -134,7 +135,7 @@ namespace DS4WinWPF.DS4Control
 
         public override void ApplyPreset(int idx)
         {
-            DS4Windows.Global.LoadDefaultKBMProfile(idx, false, App.rootHub, false);
+           Global.Instance.LoadDefaultKBMProfile(idx, false, App.rootHub, false);
         }
     }
 
@@ -148,7 +149,7 @@ namespace DS4WinWPF.DS4Control
 
         public override void ApplyPreset(int idx)
         {
-            DS4Windows.Global.LoadDefaultKBMGyroMouseProfile(idx, false, App.rootHub, false);
+           Global.Instance.LoadDefaultKBMGyroMouseProfile(idx, false, App.rootHub, false);
         }
     }
 }

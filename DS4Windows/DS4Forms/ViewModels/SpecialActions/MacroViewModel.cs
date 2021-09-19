@@ -75,7 +75,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             extrasList.Add(syncRun ? "Sync" : null);
             extrasList.Add(keepKeyState ? "KeepKeyState" : null);
             extrasList.Add(repeatHeld ? "Repeat" : null);
-            Global.SaveAction(action.Name, action.Controls, 1, string.Join("/", macro), edit,
+            Global.Instance.SaveAction(action.Name, action.Controls, 1, string.Join("/", macro), edit,
                 string.Join("/", extrasList.Where(s => !string.IsNullOrEmpty(s))));
         }
 

@@ -92,7 +92,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             string details = $"{delay.ToString("#.##", Global.ConfigFileDecimalCulture)}|{notification}|{lightbar}|{emptyColor.R}|{emptyColor.G}|{emptyColor.B}|" +
                 $"{fullColor.R}|{fullColor.G}|{fullColor.B}";
 
-            Global.SaveAction(action.Name, action.Controls, 6, details, edit);
+            Global.Instance.SaveAction(action.Name, action.Controls, 6, details, edit);
         }
 
         public override bool IsValid(SpecialAction action)

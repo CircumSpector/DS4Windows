@@ -53,7 +53,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             foreach (DS4Device currentDev in controlService.slotManager.ControllerColl)
             {
                 CompositeDeviceModel temp = new CompositeDeviceModel(currentDev,
-                    idx, Global.ProfilePath[idx], profileListHolder);
+                    idx, Global.Instance.ProfilePath[idx], profileListHolder);
                 controllerCol.Add(temp);
                 controllerDict.Add(idx, temp);
                 currentDev.Removal += Controller_Removal;
@@ -94,7 +94,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (!controllerDict.ContainsKey(index) && !device.IsRemoving)
                 {
                     CompositeDeviceModel temp = new CompositeDeviceModel(device,
-                        index, Global.ProfilePath[index], profileListHolder);
+                        index, Global.Instance.ProfilePath[index], profileListHolder);
                     controllerCol.Add(temp);
                     controllerDict.Add(index, temp);
 
@@ -144,7 +144,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         _colListLocker.EnterWriteLock();
                         int idx = controlService.slotManager.ReverseControllerDict[currentDev];
                         CompositeDeviceModel temp = new CompositeDeviceModel(currentDev,
-                            idx, Global.ProfilePath[idx], profileListHolder);
+                            idx, Global.Instance.ProfilePath[idx], profileListHolder);
                         controllerCol.Add(temp);
                         controllerDict.Add(idx, temp);
                         _colListLocker.ExitWriteLock();
@@ -177,7 +177,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 controllerDict.Remove(found.DevIndex);
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Global.Save();
+                    Global.Instance.Save();
                 });
                 Global.LinkedProfileCheck[found.DevIndex] = false;
                 _colListLocker.ExitWriteLock();
@@ -204,15 +204,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 DS4Color color;
-                if (Global.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed)
+                if (Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed)
                 {
-                    color = Global.LightbarSettingsInfo[devIndex].ds4winSettings.m_CustomLed; //Global.CustomColor[devIndex];
+                    color = Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.m_CustomLed; //Global.CustomColor[devIndex];
                 }
                 else
                 {
-                    color = Global.LightbarSettingsInfo[devIndex].ds4winSettings.m_Led;
+                    color = Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.m_Led;
                 }
-                return $"#FF{color.red.ToString("X2")}{color.green.ToString("X2")}{color.blue.ToString("X2")}";
+                return $"#FF{color.red:X2}{color.green:X2}{color.blue:X2}";
             }
         }
 
@@ -223,7 +223,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 DS4Color color;
-                color = Global.LightbarSettingsInfo[devIndex].ds4winSettings.m_CustomLed;
+                color = Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.m_CustomLed;
                 return new Color() { R = color.red, G = color.green, B = color.blue, A = 255 };
             }
         }
@@ -379,7 +379,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 HookEvents(true);
             }
 
-            useCustomColor = Global.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed;
+            useCustomColor = Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed;
         }
 
         public void ChangeSelectedProfile()
@@ -389,19 +389,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 HookEvents(false);
             }
 
-            string prof = Global.ProfilePath[devIndex] = ProfileListCol[selectedIndex].Name;
+            string prof = Global.Instance.ProfilePath[devIndex] = ProfileListCol[selectedIndex].Name;
             if (LinkedProfile)
             {
-                Global.changeLinkedProfile(device.getMacAddress(), Global.ProfilePath[devIndex]);
-                Global.SaveLinkedProfiles();
+                Global.Instance.changeLinkedProfile(device.getMacAddress(), Global.Instance.ProfilePath[devIndex]);
+                Global.Instance.SaveLinkedProfiles();
             }
             else
             {
-                Global.OlderProfilePath[devIndex] = Global.ProfilePath[devIndex];
+                Global.Instance.OlderProfilePath[devIndex] = Global.Instance.ProfilePath[devIndex];
             }
 
             //Global.Save();
-            Global.LoadProfile(devIndex, true, App.rootHub);
+            Global.Instance.LoadProfile(devIndex, true, App.rootHub);
             string prolog = string.Format(Properties.Resources.UsingProfile, (devIndex + 1).ToString(), prof, $"{device.Battery}");
             DS4Windows.AppLogger.LogToGui(prolog, false);
 
@@ -442,7 +442,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void SelectedEntity_ProfileSaved(object sender, EventArgs e)
         {
-            Global.LoadProfile(devIndex, false, App.rootHub);
+            Global.Instance.LoadProfile(devIndex, false, App.rootHub);
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -459,16 +459,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     if (device.isValidSerial())
                     {
-                        Global.changeLinkedProfile(device.getMacAddress(), Global.ProfilePath[devIndex]);
+                        Global.Instance.changeLinkedProfile(device.getMacAddress(), Global.Instance.ProfilePath[devIndex]);
                     }
                 }
                 else
                 {
-                    Global.removeLinkedProfile(device.getMacAddress());
-                    Global.ProfilePath[devIndex] = Global.OlderProfilePath[devIndex];
+                    Global.Instance.removeLinkedProfile(device.getMacAddress());
+                    Global.Instance.ProfilePath[devIndex] = Global.Instance.OlderProfilePath[devIndex];
                 }
 
-                Global.SaveLinkedProfiles();
+                Global.Instance.SaveLinkedProfiles();
             }
         }
 
@@ -486,7 +486,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             useCustomColor = false;
             RefreshLightContext();
-            Global.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed = false;
+            Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed = false;
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -494,7 +494,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             useCustomColor = true;
             RefreshLightContext();
-            Global.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed = true;
+            Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.useCustomLed = true;
             LightColorChanged?.Invoke(this, EventArgs.Empty);
             RequestColorPicker?.Invoke(this);
         }
@@ -507,7 +507,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateCustomLightColor(Color color)
         {
-            Global.LightbarSettingsInfo[devIndex].ds4winSettings.m_CustomLed = new DS4Color() { red = color.R, green = color.G, blue = color.B };
+            Global.Instance.LightbarSettingsInfo[devIndex].ds4winSettings.m_CustomLed = new DS4Color() { red = color.R, green = color.G, blue = color.B };
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
