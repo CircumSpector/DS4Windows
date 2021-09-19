@@ -14,7 +14,7 @@ branches:
 install:
 - cmd: git submodule -q update --init
 cache:
-  - packages -> **\*.csproj
+  - C:\Users\appveyor\.nuget\packages -> **\*.csproj
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
