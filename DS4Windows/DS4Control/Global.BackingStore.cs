@@ -898,14 +898,16 @@ namespace DS4Windows
 
             public bool SaveProfile(int device, string proName)
             {
-                bool Saved = true;
+                var Saved = true;
                 //string path = Global.RuntimeAppDataPath + @"\Profiles\" + Path.GetFileNameWithoutExtension(proName) + ".xml";
-                if (proName.EndsWith(Global.XML_EXTENSION))
-                {
-                    proName = proName.Remove(proName.LastIndexOf(Global.XML_EXTENSION));
-                }
+                if (proName.EndsWith(XML_EXTENSION)) proName = proName.Remove(proName.LastIndexOf(XML_EXTENSION));
 
-                string path = $@"{Global.RuntimeAppDataPath}\Profiles\{proName}{Global.XML_EXTENSION}";
+                var path = Path.Combine(
+                    RuntimeAppDataPath,
+                    Constants.ProfilesSubDirectory,
+                    $"{proName}{XML_EXTENSION}"
+                );
+
                 try
                 {
                     XmlNode tmpNode;
@@ -1649,8 +1651,9 @@ namespace DS4Windows
                 bool missingSetting = false;
                 bool migratePerformed = false;
                 string profilepath;
-                if (propath == "")
-                    profilepath = Global.RuntimeAppDataPath + @"\Profiles\" + profilePath[device] + ".xml";
+                if (string.IsNullOrEmpty(propath))
+                    profilepath = Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
+                        $"{profilePath[device]}{XML_EXTENSION}");
                 else
                     profilepath = propath;
 
