@@ -72,9 +72,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 LangPackItem item = langPackList[selectedIndex];
                 string newValue = item.Name;
-                if (newValue != Global.Instance.UseLang)
+                if (newValue != Global.Instance.Config.UseLang)
                 {
-                    Global.Instance.UseLang = newValue;
+                    Global.Instance.Config.UseLang = newValue;
                     //Global.Save();
                     result = true;
                 }

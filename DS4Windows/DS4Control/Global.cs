@@ -28,6 +28,11 @@ namespace DS4Windows
         
         private readonly BackingStore _config = new();
 
+        /// <summary>
+        ///     Configuration data which gets persisted to disk.
+        /// </summary>
+        public IBackingStore Config => _config;
+
         protected static Int32 m_IdleTimeout = 600000;
         
         public bool IsFirstRun { get; set; } = false;
@@ -858,131 +863,36 @@ namespace DS4Windows
         {
             return _config.useExclusiveMode;
         }
-        public DateTime LastChecked
-        {
-            set { _config.lastChecked = value; }
-            get { return _config.lastChecked; }
-        }
-
-        public int CheckWhen
-        {
-            set { _config.CheckWhen = value; }
-            get { return _config.CheckWhen; }
-        }
-
+        
         public string LastVersionChecked
         {
             get { return _config.lastVersionChecked; }
             set
             {
                 _config.lastVersionChecked = value;
-                _config.lastVersionCheckedNum = CompileVersionNumberFromString(value);
+                _config.LastVersionCheckedNumber = CompileVersionNumberFromString(value);
             }
         }
 
-        public ulong LastVersionCheckedNum
+        public ulong LastVersionCheckedNumber
         {
-            get { return _config.lastVersionCheckedNum; }
+            get { return _config.LastVersionCheckedNumber; }
         }
-
-        public int Notifications
-        {
-            set { _config.notifications = value; }
-            get { return _config.notifications; }
-        }
-
-        public bool DCBTatStop
-        {
-            set { _config.disconnectBTAtStop = value; }
-            get { return _config.disconnectBTAtStop; }
-        }
-
+        
         public  bool SwipeProfiles
         {
             set { _config.swipeProfiles = value; }
             get { return _config.swipeProfiles; }
         }
 
-        public  bool DS4Mapping
-        {
-            set { _config.ds4Mapping = value; }
-            get { return _config.ds4Mapping; }
-        }
-
-        public  bool QuickCharge
-        {
-            set { _config.quickCharge = value; }
-            get { return _config.quickCharge; }
-        }
-
         public  bool getQuickCharge()
         {
-            return _config.quickCharge;
+            return _config.QuickCharge;
         }
-
-        public  bool CloseMini
-        {
-            set { _config.closeMini = value; }
-            get { return _config.closeMini; }
-        }
-
-        public  bool StartMinimized
-        {
-            set { _config.startMinimized = value; }
-            get { return _config.startMinimized; }
-        }
-
-        public  bool MinToTaskbar
-        {
-            set { _config.minToTaskbar = value; }
-            get { return _config.minToTaskbar; }
-        }
-
+        
         public  bool GetMinToTaskbar()
         {
-            return _config.minToTaskbar;
-        }
-
-        public  int FormWidth
-        {
-            set { _config.formWidth = value; }
-            get { return _config.formWidth; }
-        }
-
-        public  int FormHeight
-        {
-            set { _config.formHeight = value; }
-            get { return _config.formHeight; }
-        }
-
-        public  int FormLocationX
-        {
-            set { _config.formLocationX = value; }
-            get { return _config.formLocationX; }
-        }
-
-        public  int FormLocationY
-        {
-            set { _config.formLocationY = value; }
-            get { return _config.formLocationY; }
-        }
-
-        public  string UseLang
-        {
-            set { _config.useLang = value; }
-            get { return _config.useLang; }
-        }
-
-        public  bool DownloadLang
-        {
-            set { _config.downloadLang = value; }
-            get { return _config.downloadLang; }
-        }
-
-        public  bool FlashWhenLate
-        {
-            set { _config.FlashWhenLate = value; }
-            get { return _config.FlashWhenLate; }
+            return _config.MinToTaskBar;
         }
 
         public  bool getFlashWhenLate()
@@ -1008,15 +918,6 @@ namespace DS4Windows
         public  void setUsingUDPServer(bool state)
         {
             _config.UseUdpServer = state;
-        }
-
-        public  int getUDPServerPortNum()
-        {
-            return _config.UdpServerPort;
-        }
-        public  void setUDPServerPort(int value)
-        {
-            _config.UdpServerPort = value;
         }
 
         public  string getUDPServerListenAddress()
@@ -1064,30 +965,6 @@ namespace DS4Windows
             }
         }
         public static event EventHandler UDPServerSmoothingBetaChanged;
-
-        public  TrayIconChoice UseIconChoice
-        {
-            get => _config.UseIconChoice;
-            set => _config.UseIconChoice = value;
-        }
-
-        public  AppThemeChoice UseCurrentTheme
-        {
-            get => _config.ThemeChoice;
-            set => _config.ThemeChoice = value;
-        }
-
-        public  bool UseCustomSteamFolder
-        {
-            set { _config.UseCustomSteamFolder = value; }
-            get { return _config.UseCustomSteamFolder; }
-        }
-
-        public  string CustomSteamFolder
-        {
-            set { _config.CustomSteamFolder = value; }
-            get { return _config.CustomSteamFolder; }
-        }
 
         public  bool AutoProfileRevertDefaultProfile
         {
@@ -1716,12 +1593,6 @@ namespace DS4Windows
         public  TouchpadRelMouseSettings[] TouchRelMouse => _config.touchpadRelMouse;
 
         public  ControlServiceDeviceOptions DeviceOptions => _config.DeviceOptions;
-
-        public List<OutContType> OutContType
-        {
-            get { return _config.OutputDeviceType; }
-            set { _config.OutputDeviceType = value; }
-        }
 
         public  string[] LaunchProgram => _config.launchProgram;
         public  string[] ProfilePath => _config.profilePath;

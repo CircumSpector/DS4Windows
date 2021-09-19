@@ -12,7 +12,7 @@ namespace DS4Windows
 {
     public partial class Global
     {
-        private class BackingStore
+        private class BackingStore : IBackingStore
         {
             public const double DEFAULT_UDP_SMOOTH_MINCUTOFF = 0.4;
             public const double DEFAULT_UDP_SMOOTH_BETA = 0.2;
@@ -422,22 +422,22 @@ namespace DS4Windows
             };
 
             public bool useExclusiveMode; // Re-enable Ex Mode
-            public int formWidth = 782;
-            public int formHeight = 550;
-            public int formLocationX;
-            public int formLocationY;
-            public bool startMinimized;
-            public bool minToTaskbar;
-            public DateTime lastChecked;
+            public int FormWidth { get; set; } = 782;
+            public int FormHeight { get; set; } = 550;
+            public int FormLocationX { get; set; }
+            public int FormLocationY { get; set; }
+            public bool StartMinimized { get; set; }
+            public bool MinToTaskBar { get; set; }
+            public DateTime LastChecked { get; set; }
             public string lastVersionChecked = string.Empty;
-            public ulong lastVersionCheckedNum;
-            public int CheckWhen = 24;
-            public int notifications = 2;
-            public bool disconnectBTAtStop;
+            public ulong LastVersionCheckedNumber;
+            public int CheckWhen { get; set; } = 24;
+            public int Notifications { get; set; } = 2;
+            public bool DisconnectBluetoothAtStop { get; set; }
             public bool swipeProfiles = true;
-            public bool ds4Mapping;
-            public bool quickCharge;
-            public bool closeMini;
+            public bool Ds4Mapping { get; set; }
+            public bool QuickCharge { get; set; }
+            public bool CloseMini { get; set; }
             public List<SpecialAction> actions = new();
 
             public List<DS4ControlSettings>[] ds4settings = new List<DS4ControlSettings>[Global.TEST_PROFILE_ITEM_COUNT]
@@ -467,10 +467,11 @@ namespace DS4Windows
                 new(), new(), new(), new(), new(), new()
                 };
 
-            public string useLang = "";
-            public bool downloadLang = true;
-            public TrayIconChoice UseIconChoice;
-            public bool FlashWhenLate = true;
+            public string UseLang { get; set; } = string.Empty;
+
+            public bool DownloadLang { get; set; } = true;
+            public TrayIconChoice UseIconChoice { get; set; }
+            public bool FlashWhenLate { get; set; } = true;
             public int flashWhenLateAt = 50;
             public bool UseUdpServer;
             public int UdpServerPort { get; set; } = 26760;
@@ -484,8 +485,11 @@ namespace DS4Windows
             public bool UseUdpSmoothing { get; set; }
             public double udpSmoothingMincutoff = DEFAULT_UDP_SMOOTH_MINCUTOFF;
             public double udpSmoothingBeta = DEFAULT_UDP_SMOOTH_BETA;
-            public bool UseCustomSteamFolder;
+            
+            public bool UseCustomSteamFolder { get; set; }
+            
             public string CustomSteamFolder { get; set; }
+
             public AppThemeChoice ThemeChoice { get; set; }
             public string fakeExeFileName = string.Empty;
 
@@ -548,9 +552,14 @@ namespace DS4Windows
             public List<OutContType> OutputDeviceType { get; set; } = new()
             {
                 DS4Windows.OutContType.X360,
-                DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
-                DS4Windows.OutContType.X360, DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
-                DS4Windows.OutContType.X360, DS4Windows.OutContType.X360, DS4Windows.OutContType.X360
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360
             };
 
             /// <summary>
@@ -2374,8 +2383,8 @@ namespace DS4Windows
                                 System.Diagnostics.Process tempProcess = new System.Diagnostics.Process();
                                 tempProcess.StartInfo.FileName = programPath;
                                 tempProcess.StartInfo.WorkingDirectory = new FileInfo(programPath).Directory.ToString();
-                            //tempProcess.StartInfo.UseShellExecute = false;
-                            try { tempProcess.Start(); }
+                                //tempProcess.StartInfo.UseShellExecute = false;
+                                try { tempProcess.Start(); }
                                 catch { }
                             });
 
@@ -3517,19 +3526,39 @@ namespace DS4Windows
 
                         try { Item = m_Xdoc.SelectSingleNode("/Profile/useExclusiveMode"); Boolean.TryParse(Item.InnerText, out useExclusiveMode); } // Ex Mode
                         catch { missingSetting = true; } // Ex Mode
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/startMinimized"); Boolean.TryParse(Item.InnerText, out startMinimized); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/startMinimized"); Boolean.TryParse(Item.InnerText, out var value);
+                            StartMinimized = value;
+                        }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/minimizeToTaskbar"); Boolean.TryParse(Item.InnerText, out minToTaskbar); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/minimizeToTaskbar"); Boolean.TryParse(Item.InnerText, out var value);
+                            MinToTaskBar = value;
+                        }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/formWidth"); Int32.TryParse(Item.InnerText, out formWidth); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/formWidth"); Int32.TryParse(Item.InnerText, out var value);
+                            FormWidth = value;
+                        }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/formHeight"); Int32.TryParse(Item.InnerText, out formHeight); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/formHeight"); Int32.TryParse(Item.InnerText, out var value);
+                            FormHeight = value;
+                        }
                         catch { missingSetting = true; }
                         try
                         {
                             int temp = 0;
                             Item = m_Xdoc.SelectSingleNode("/Profile/formLocationX"); Int32.TryParse(Item.InnerText, out temp);
-                            formLocationX = Math.Max(temp, 0);
+                            FormLocationX = Math.Max(temp, 0);
                         }
                         catch { missingSetting = true; }
 
@@ -3537,7 +3566,7 @@ namespace DS4Windows
                         {
                             int temp = 0;
                             Item = m_Xdoc.SelectSingleNode("/Profile/formLocationY"); Int32.TryParse(Item.InnerText, out temp);
-                            formLocationY = Math.Max(temp, 0);
+                            FormLocationY = Math.Max(temp, 0);
                         }
                         catch { missingSetting = true; }
 
@@ -3557,9 +3586,18 @@ namespace DS4Windows
                             catch { profilePath[i] = olderProfilePath[i] = string.Empty; distanceProfiles[i] = false; }
                         }
 
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/LastChecked"); DateTime.TryParse(Item.InnerText, out lastChecked); }
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/LastChecked"); DateTime.TryParse(Item.InnerText, out var lc);
+                            LastChecked = lc;
+                        }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/CheckWhen"); Int32.TryParse(Item.InnerText, out CheckWhen); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/CheckWhen"); Int32.TryParse(Item.InnerText, out var cw);
+                            CheckWhen = cw;
+                        }
                         catch { missingSetting = true; }
                         try
                         {
@@ -3567,8 +3605,8 @@ namespace DS4Windows
                             string tempVer = Item?.InnerText ?? string.Empty;
                             if (!string.IsNullOrEmpty(tempVer))
                             {
-                                lastVersionCheckedNum = Global.CompileVersionNumberFromString(tempVer);
-                                if (lastVersionCheckedNum > 0) lastVersionChecked = tempVer;
+                                LastVersionCheckedNumber = Global.CompileVersionNumberFromString(tempVer);
+                                if (LastVersionCheckedNumber > 0) lastVersionChecked = tempVer;
                             }
                         }
                         catch { missingSetting = true; }
@@ -3576,26 +3614,51 @@ namespace DS4Windows
                         try
                         {
                             Item = m_Xdoc.SelectSingleNode("/Profile/Notifications");
-                            if (!int.TryParse(Item.InnerText, out notifications))
-                                notifications = (Boolean.Parse(Item.InnerText) ? 2 : 0);
+                            if (!int.TryParse(Item.InnerText, out var not))
+                            { Notifications = (Boolean.Parse(Item.InnerText) ? 2 : 0); }
+
+                            Notifications = not;
                         }
                         catch { missingSetting = true; }
 
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/DisconnectBTAtStop"); Boolean.TryParse(Item.InnerText, out disconnectBTAtStop); }
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/DisconnectBTAtStop"); Boolean.TryParse(Item.InnerText, out var dc);
+                            DisconnectBluetoothAtStop = dc;
+                        }
                         catch { missingSetting = true; }
                         try { Item = m_Xdoc.SelectSingleNode("/Profile/SwipeProfiles"); Boolean.TryParse(Item.InnerText, out swipeProfiles); }
                         catch { missingSetting = true; }
                         //try { Item = m_Xdoc.SelectSingleNode("/Profile/UseDS4ForMapping"); Boolean.TryParse(Item.InnerText, out ds4Mapping); }
                         //catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/QuickCharge"); Boolean.TryParse(Item.InnerText, out quickCharge); }
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/QuickCharge"); Boolean.TryParse(Item.InnerText, out var value);
+                            QuickCharge = value;
+                        }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/CloseMinimizes"); Boolean.TryParse(Item.InnerText, out closeMini); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/CloseMinimizes"); Boolean.TryParse(Item.InnerText, out var value);
+                            CloseMini = value;
+                        }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/UseLang"); useLang = Item.InnerText; }
+                        try { Item = m_Xdoc.SelectSingleNode("/Profile/UseLang"); UseLang = Item.InnerText; }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/DownloadLang"); Boolean.TryParse(Item.InnerText, out downloadLang); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/DownloadLang"); Boolean.TryParse(Item.InnerText, out var value);
+                            DownloadLang = value;
+                        }
                         catch { missingSetting = true; }
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLate"); Boolean.TryParse(Item.InnerText, out FlashWhenLate); }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLate"); Boolean.TryParse(Item.InnerText, out var value);
+                            FlashWhenLate = value;
+                        }
                         catch { missingSetting = true; }
                         try { Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLateAt"); int.TryParse(Item.InnerText, out flashWhenLateAt); }
                         catch { missingSetting = true; }
@@ -3604,7 +3667,8 @@ namespace DS4Windows
                         bool hasIconChoice = Item != null;
                         if (hasIconChoice)
                         {
-                            hasIconChoice = Enum.TryParse(Item.InnerText ?? "", out UseIconChoice);
+                            hasIconChoice = Enum.TryParse(Item.InnerText ?? "", out TrayIconChoice ch);
+                            UseIconChoice = ch;
                         }
 
                         if (!hasIconChoice)
@@ -3671,7 +3735,11 @@ namespace DS4Windows
                             catch { missingSetting = true; }
                         }
 
-                        try { Item = m_Xdoc.SelectSingleNode("/Profile/UseCustomSteamFolder"); Boolean.TryParse(Item.InnerText, out UseCustomSteamFolder); }
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/UseCustomSteamFolder"); Boolean.TryParse(Item.InnerText, out var value);
+                            UseCustomSteamFolder = value;
+                        }
                         catch { missingSetting = true; }
                         try { Item = m_Xdoc.SelectSingleNode("/Profile/CustomSteamFolder"); CustomSteamFolder = Item.InnerText; }
                         catch { missingSetting = true; }
@@ -3821,12 +3889,12 @@ namespace DS4Windows
 
                 // Ex Mode (+1 line)
                 XmlNode xmlUseExclNode = m_Xdoc.CreateNode(XmlNodeType.Element, "useExclusiveMode", null); xmlUseExclNode.InnerText = useExclusiveMode.ToString(); rootElement.AppendChild(xmlUseExclNode);
-                XmlNode xmlStartMinimized = m_Xdoc.CreateNode(XmlNodeType.Element, "startMinimized", null); xmlStartMinimized.InnerText = startMinimized.ToString(); rootElement.AppendChild(xmlStartMinimized);
-                XmlNode xmlminToTaskbar = m_Xdoc.CreateNode(XmlNodeType.Element, "minimizeToTaskbar", null); xmlminToTaskbar.InnerText = minToTaskbar.ToString(); rootElement.AppendChild(xmlminToTaskbar);
-                XmlNode xmlFormWidth = m_Xdoc.CreateNode(XmlNodeType.Element, "formWidth", null); xmlFormWidth.InnerText = formWidth.ToString(); rootElement.AppendChild(xmlFormWidth);
-                XmlNode xmlFormHeight = m_Xdoc.CreateNode(XmlNodeType.Element, "formHeight", null); xmlFormHeight.InnerText = formHeight.ToString(); rootElement.AppendChild(xmlFormHeight);
-                XmlNode xmlFormLocationX = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationX", null); xmlFormLocationX.InnerText = formLocationX.ToString(); rootElement.AppendChild(xmlFormLocationX);
-                XmlNode xmlFormLocationY = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationY", null); xmlFormLocationY.InnerText = formLocationY.ToString(); rootElement.AppendChild(xmlFormLocationY);
+                XmlNode xmlStartMinimized = m_Xdoc.CreateNode(XmlNodeType.Element, "startMinimized", null); xmlStartMinimized.InnerText = StartMinimized.ToString(); rootElement.AppendChild(xmlStartMinimized);
+                XmlNode xmlminToTaskbar = m_Xdoc.CreateNode(XmlNodeType.Element, "minimizeToTaskbar", null); xmlminToTaskbar.InnerText = MinToTaskBar.ToString(); rootElement.AppendChild(xmlminToTaskbar);
+                XmlNode xmlFormWidth = m_Xdoc.CreateNode(XmlNodeType.Element, "formWidth", null); xmlFormWidth.InnerText = FormWidth.ToString(); rootElement.AppendChild(xmlFormWidth);
+                XmlNode xmlFormHeight = m_Xdoc.CreateNode(XmlNodeType.Element, "formHeight", null); xmlFormHeight.InnerText = FormHeight.ToString(); rootElement.AppendChild(xmlFormHeight);
+                XmlNode xmlFormLocationX = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationX", null); xmlFormLocationX.InnerText = FormLocationX.ToString(); rootElement.AppendChild(xmlFormLocationX);
+                XmlNode xmlFormLocationY = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationY", null); xmlFormLocationY.InnerText = FormLocationY.ToString(); rootElement.AppendChild(xmlFormLocationY);
 
                 for (int i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
                 {
@@ -3838,21 +3906,21 @@ namespace DS4Windows
                     }
                 }
 
-                XmlNode xmlLastChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastChecked", null); xmlLastChecked.InnerText = lastChecked.ToString(); rootElement.AppendChild(xmlLastChecked);
+                XmlNode xmlLastChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastChecked", null); xmlLastChecked.InnerText = LastChecked.ToString(); rootElement.AppendChild(xmlLastChecked);
                 XmlNode xmlCheckWhen = m_Xdoc.CreateNode(XmlNodeType.Element, "CheckWhen", null); xmlCheckWhen.InnerText = CheckWhen.ToString(); rootElement.AppendChild(xmlCheckWhen);
                 if (!string.IsNullOrEmpty(lastVersionChecked))
                 {
                     XmlNode xmlLastVersionChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastVersionChecked", null); xmlLastVersionChecked.InnerText = lastVersionChecked.ToString(); rootElement.AppendChild(xmlLastVersionChecked);
                 }
 
-                XmlNode xmlNotifications = m_Xdoc.CreateNode(XmlNodeType.Element, "Notifications", null); xmlNotifications.InnerText = notifications.ToString(); rootElement.AppendChild(xmlNotifications);
-                XmlNode xmlDisconnectBT = m_Xdoc.CreateNode(XmlNodeType.Element, "DisconnectBTAtStop", null); xmlDisconnectBT.InnerText = disconnectBTAtStop.ToString(); rootElement.AppendChild(xmlDisconnectBT);
+                XmlNode xmlNotifications = m_Xdoc.CreateNode(XmlNodeType.Element, "Notifications", null); xmlNotifications.InnerText = Notifications.ToString(); rootElement.AppendChild(xmlNotifications);
+                XmlNode xmlDisconnectBT = m_Xdoc.CreateNode(XmlNodeType.Element, "DisconnectBTAtStop", null); xmlDisconnectBT.InnerText = DisconnectBluetoothAtStop.ToString(); rootElement.AppendChild(xmlDisconnectBT);
                 XmlNode xmlSwipeProfiles = m_Xdoc.CreateNode(XmlNodeType.Element, "SwipeProfiles", null); xmlSwipeProfiles.InnerText = swipeProfiles.ToString(); rootElement.AppendChild(xmlSwipeProfiles);
                 //XmlNode xmlDS4Mapping = m_Xdoc.CreateNode(XmlNodeType.Element, "UseDS4ForMapping", null); xmlDS4Mapping.InnerText = ds4Mapping.ToString(); rootElement.AppendChild(xmlDS4Mapping);
-                XmlNode xmlQuickCharge = m_Xdoc.CreateNode(XmlNodeType.Element, "QuickCharge", null); xmlQuickCharge.InnerText = quickCharge.ToString(); rootElement.AppendChild(xmlQuickCharge);
-                XmlNode xmlCloseMini = m_Xdoc.CreateNode(XmlNodeType.Element, "CloseMinimizes", null); xmlCloseMini.InnerText = closeMini.ToString(); rootElement.AppendChild(xmlCloseMini);
-                XmlNode xmlUseLang = m_Xdoc.CreateNode(XmlNodeType.Element, "UseLang", null); xmlUseLang.InnerText = useLang.ToString(); rootElement.AppendChild(xmlUseLang);
-                XmlNode xmlDownloadLang = m_Xdoc.CreateNode(XmlNodeType.Element, "DownloadLang", null); xmlDownloadLang.InnerText = downloadLang.ToString(); rootElement.AppendChild(xmlDownloadLang);
+                XmlNode xmlQuickCharge = m_Xdoc.CreateNode(XmlNodeType.Element, "QuickCharge", null); xmlQuickCharge.InnerText = QuickCharge.ToString(); rootElement.AppendChild(xmlQuickCharge);
+                XmlNode xmlCloseMini = m_Xdoc.CreateNode(XmlNodeType.Element, "CloseMinimizes", null); xmlCloseMini.InnerText = CloseMini.ToString(); rootElement.AppendChild(xmlCloseMini);
+                XmlNode xmlUseLang = m_Xdoc.CreateNode(XmlNodeType.Element, "UseLang", null); xmlUseLang.InnerText = UseLang.ToString(); rootElement.AppendChild(xmlUseLang);
+                XmlNode xmlDownloadLang = m_Xdoc.CreateNode(XmlNodeType.Element, "DownloadLang", null); xmlDownloadLang.InnerText = DownloadLang.ToString(); rootElement.AppendChild(xmlDownloadLang);
                 XmlNode xmlFlashWhenLate = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLate", null); xmlFlashWhenLate.InnerText = FlashWhenLate.ToString(); rootElement.AppendChild(xmlFlashWhenLate);
                 XmlNode xmlFlashWhenLateAt = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLateAt", null); xmlFlashWhenLateAt.InnerText = flashWhenLateAt.ToString(); rootElement.AppendChild(xmlFlashWhenLateAt);
                 XmlNode xmlAppIconChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppIcon", null); xmlAppIconChoice.InnerText = UseIconChoice.ToString(); rootElement.AppendChild(xmlAppIconChoice);
@@ -4775,7 +4843,7 @@ namespace DS4Windows
                 touchpadAbsMouse[device].Reset();
                 touchpadRelMouse[device].Reset();
                 OutputDeviceType[device] = DS4Windows.OutContType.X360;
-                ds4Mapping = false;
+                Ds4Mapping = false;
             }
 
             private void PrepareBlankingProfile(int device, ControlService control, out bool xinputPlug, out bool xinputStatus, bool xinputChange = true)
@@ -5376,9 +5444,9 @@ namespace DS4Windows
                 {
                     tempDev.queueEvent(() =>
                     {
-                    //tempDev.setIdleTimeout(idleDisconnectTimeout[device]);
-                    //tempDev.setBTPollRate(btPollRate[device]);
-                    if (xinputStatus && tempDev.PrimaryDevice)
+                        //tempDev.setIdleTimeout(idleDisconnectTimeout[device]);
+                        //tempDev.setBTPollRate(btPollRate[device]);
+                        if (xinputStatus && tempDev.PrimaryDevice)
                         {
                             if (xinputPlug)
                             {
@@ -5386,25 +5454,25 @@ namespace DS4Windows
                                 if (tempOutDev != null)
                                 {
                                     tempOutDev = null;
-                                //Global.ActiveOutDevType[device] = OutContType.None;
-                                control.UnplugOutDev(device, tempDev);
+                                    //Global.ActiveOutDevType[device] = OutContType.None;
+                                    control.UnplugOutDev(device, tempDev);
                                 }
 
                                 OutContType tempContType = OutputDeviceType[device];
                                 control.PluginOutDev(device, tempDev);
-                            //Global.UseDirectInputOnly[device] = false;
-                        }
+                                //Global.UseDirectInputOnly[device] = false;
+                            }
                             else
                             {
-                            //Global.ActiveOutDevType[device] = OutContType.None;
-                            control.UnplugOutDev(device, tempDev);
+                                //Global.ActiveOutDevType[device] = OutContType.None;
+                                control.UnplugOutDev(device, tempDev);
                             }
                         }
 
-                    //tempDev.RumbleAutostopTime = rumbleAutostopTime[device];
-                    //tempDev.setRumble(0, 0);
-                    //tempDev.LightBarColor = Global.getMainColor(device);
-                    control.CheckProfileOptions(device, tempDev, true);
+                        //tempDev.RumbleAutostopTime = rumbleAutostopTime[device];
+                        //tempDev.setRumble(0, 0);
+                        //tempDev.LightBarColor = Global.getMainColor(device);
+                        control.CheckProfileOptions(device, tempDev, true);
                     });
 
                     //Program.rootHub.touchPad[device]?.ResetTrackAccel(trackballFriction[device]);

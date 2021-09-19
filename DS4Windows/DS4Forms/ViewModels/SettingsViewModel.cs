@@ -84,23 +84,23 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public event EventHandler ShowRunStartPanelChanged;
 
-        public int ShowNotificationsIndex { get => DS4Windows.Global.Instance.Notifications; set => DS4Windows.Global.Instance.Notifications = value; }
-        public bool DisconnectBTStop { get => DS4Windows.Global.Instance.DCBTatStop; set => DS4Windows.Global.Instance.DCBTatStop = value; }
-        public bool FlashHighLatency { get => DS4Windows.Global.Instance.FlashWhenLate; set => DS4Windows.Global.Instance.FlashWhenLate = value; }
+        public int ShowNotificationsIndex { get => DS4Windows.Global.Instance.Config.Notifications; set => DS4Windows.Global.Instance.Config.Notifications = value; }
+        public bool DisconnectBTStop { get => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop; set => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop = value; }
+        public bool FlashHighLatency { get => DS4Windows.Global.Instance.Config.FlashWhenLate; set => DS4Windows.Global.Instance.Config.FlashWhenLate = value; }
         public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.FlashWhenLateAt; set => DS4Windows.Global.Instance.FlashWhenLateAt = value; }
-        public bool StartMinimize { get => DS4Windows.Global.Instance.StartMinimized; set => DS4Windows.Global.Instance.StartMinimized = value; }
-        public bool MinimizeToTaskbar { get => DS4Windows.Global.Instance.MinToTaskbar; set => DS4Windows.Global.Instance.MinToTaskbar = value; }
-        public bool CloseMinimizes { get => DS4Windows.Global.Instance.CloseMini; set => DS4Windows.Global.Instance.CloseMini = value; }
-        public bool QuickCharge { get => DS4Windows.Global.Instance.QuickCharge; set => DS4Windows.Global.Instance.QuickCharge = value; }
+        public bool StartMinimize { get => DS4Windows.Global.Instance.Config.StartMinimized; set => DS4Windows.Global.Instance.Config.StartMinimized = value; }
+        public bool MinimizeToTaskbar { get => DS4Windows.Global.Instance.Config.MinToTaskBar; set => DS4Windows.Global.Instance.Config.MinToTaskBar = value; }
+        public bool CloseMinimizes { get => DS4Windows.Global.Instance.Config.CloseMini; set => DS4Windows.Global.Instance.Config.CloseMini = value; }
+        public bool QuickCharge { get => DS4Windows.Global.Instance.Config.QuickCharge; set => DS4Windows.Global.Instance.Config.QuickCharge = value; }
 
         public int IconChoiceIndex
         {
-            get => (int)DS4Windows.Global.Instance.UseIconChoice;
+            get => (int)DS4Windows.Global.Instance.Config.UseIconChoice;
             set
             {
-                int temp = (int)DS4Windows.Global.Instance.UseIconChoice;
+                int temp = (int)DS4Windows.Global.Instance.Config.UseIconChoice;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.UseIconChoice = (DS4Windows.TrayIconChoice)value;
+                DS4Windows.Global.Instance.Config.UseIconChoice = (DS4Windows.TrayIconChoice)value;
                 IconChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -108,12 +108,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int AppChoiceIndex
         {
-            get => (int)DS4Windows.Global.Instance.UseCurrentTheme;
+            get => (int)DS4Windows.Global.Instance.Config.ThemeChoice;
             set
             {
-                int temp = (int)DS4Windows.Global.Instance.UseCurrentTheme;
+                int temp = (int)DS4Windows.Global.Instance.Config.ThemeChoice;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.UseCurrentTheme = (DS4Windows.AppThemeChoice)value;
+                DS4Windows.Global.Instance.Config.ThemeChoice = (DS4Windows.AppThemeChoice)value;
                 AppChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -121,10 +121,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool CheckForUpdates
         {
-            get => DS4Windows.Global.Instance.CheckWhen > 0;
+            get => DS4Windows.Global.Instance.Config.CheckWhen > 0;
             set
             {
-                DS4Windows.Global.Instance.CheckWhen = value ? 24 : 0;
+                DS4Windows.Global.Instance.Config.CheckWhen = value ? 24 : 0;
                 CheckForNoUpdatesWhen();
             }
         }
@@ -134,7 +134,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int temp = DS4Windows.Global.Instance.CheckWhen;
+                int temp = DS4Windows.Global.Instance.Config.CheckWhen;
                 if (temp > 23)
                 {
                     temp = temp / 24;
@@ -146,19 +146,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 int temp;
                 if (checkEveryUnitIdx == 0 && value < 24)
                 {
-                    temp = DS4Windows.Global.Instance.CheckWhen;
+                    temp = DS4Windows.Global.Instance.Config.CheckWhen;
                     if (temp != value)
                     {
-                        DS4Windows.Global.Instance.CheckWhen = value;
+                        DS4Windows.Global.Instance.Config.CheckWhen = value;
                         CheckForNoUpdatesWhen();
                     }
                 }
                 else if (checkEveryUnitIdx == 1)
                 {
-                    temp = DS4Windows.Global.Instance.CheckWhen / 24;
+                    temp = DS4Windows.Global.Instance.Config.CheckWhen / 24;
                     if (temp != value)
                     {
-                        DS4Windows.Global.Instance.CheckWhen = value * 24;
+                        DS4Windows.Global.Instance.Config.CheckWhen = value * 24;
                         CheckForNoUpdatesWhen();
                     }
                 }
@@ -195,7 +195,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string UdpIpAddress { get => DS4Windows.Global.Instance.getUDPServerListenAddress();
             set => DS4Windows.Global.Instance.setUDPServerListenAddress(value); }
-        public int UdpPort { get => DS4Windows.Global.Instance.getUDPServerPortNum(); set => DS4Windows.Global.Instance.setUDPServerPort(value); }
+        public int UdpPort { get => DS4Windows.Global.Instance.Config.UdpServerPort; set => DS4Windows.Global.Instance.Config.UdpServerPort = value; }
 
         public bool UseUdpSmoothing
         {
@@ -244,10 +244,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool UseCustomSteamFolder
         {
-            get => DS4Windows.Global.Instance.UseCustomSteamFolder;
+            get => DS4Windows.Global.Instance.Config.UseCustomSteamFolder;
             set
             {
-                DS4Windows.Global.Instance.UseCustomSteamFolder = value;
+                DS4Windows.Global.Instance.Config.UseCustomSteamFolder = value;
                 UseCustomSteamFolderChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -255,14 +255,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string CustomSteamFolder
         {
-            get => DS4Windows.Global.Instance.CustomSteamFolder;
+            get => DS4Windows.Global.Instance.Config.CustomSteamFolder;
             set
             {
-                string temp = DS4Windows.Global.Instance.CustomSteamFolder;
+                string temp = DS4Windows.Global.Instance.Config.CustomSteamFolder;
                 if (temp == value) return;
                 if (Directory.Exists(value) || value == string.Empty)
                 {
-                    DS4Windows.Global.Instance.CustomSteamFolder = value;
+                    DS4Windows.Global.Instance.Config.CustomSteamFolder = value;
                 }
             }
         }
@@ -304,7 +304,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             checkEveryUnitIdx = 1;
 
-            int checklapse = DS4Windows.Global.Instance.CheckWhen;
+            int checklapse = DS4Windows.Global.Instance.Config.CheckWhen;
             if (checklapse < 24 && checklapse > 0)
             {
                 checkEveryUnitIdx = 0;
@@ -504,7 +504,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void CheckForNoUpdatesWhen()
         {
-            if (DS4Windows.Global.Instance.CheckWhen == 0)
+            if (DS4Windows.Global.Instance.Config.CheckWhen == 0)
             {
                 checkEveryUnitIdx = 1;
             }

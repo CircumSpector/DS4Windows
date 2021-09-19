@@ -89,7 +89,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             FlowDocument flow = new FlowDocument();
             foreach (ChangeVersionInfo versionInfo in tempInfo.Changelog.Versions)
             {
-                VersionLogLocale tmpLog = versionInfo.ApplicableInfo(Global.Instance.UseLang);
+                VersionLogLocale tmpLog = versionInfo.ApplicableInfo(Global.Instance.Config.UseLang);
                 if (tmpLog != null)
                 {
                     Paragraph tmpPar = new Paragraph();

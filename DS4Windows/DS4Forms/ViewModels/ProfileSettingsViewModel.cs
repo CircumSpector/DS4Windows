@@ -410,8 +410,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool UseControllerReadout
         {
-            get => Global.Instance.DS4Mapping;
-            set => Global.Instance.DS4Mapping = value;
+            get => Global.Instance.Config.Ds4Mapping;
+            set => Global.Instance.Config.Ds4Mapping = value;
         }
 
         public int ButtonMouseSensitivity
@@ -615,7 +615,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int type = 0;
-                switch (Global.Instance.OutContType[device])
+                switch (Global.Instance.Config.OutputDeviceType[device])
                 {
                     case OutContType.X360:
                         type = 0;
@@ -708,7 +708,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public OutContType ContType
         {
-            get => Global.Instance.OutContType[device];
+            get => Global.Instance.Config.OutputDeviceType[device];
         }
 
         public int SASteeringWheelEmulationAxisIndex
@@ -3051,7 +3051,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public void UpdateLateProperties()
         {
             tempControllerIndex = ControllerTypeIndex;
-            Global.OutDevTypeTemp[device] = Global.Instance.OutContType[device];
+            Global.OutDevTypeTemp[device] = Global.Instance.Config.OutputDeviceType[device];
             tempBtPollRate = Global.Instance.BTPollRate[device];
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;

@@ -583,7 +583,7 @@ namespace DS4Windows
                         // Change thread affinity of object to have normal priority
                         Task.Run(() =>
                         {
-                            var UDP_SERVER_PORT = Global.Instance.getUDPServerPortNum();
+                            var UDP_SERVER_PORT = Global.Instance.Config.UdpServerPort;
                             var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
 
                             try
@@ -677,7 +677,7 @@ namespace DS4Windows
 
             await Task.Delay(100);
 
-            var UDP_SERVER_PORT = Global.Instance.getUDPServerPortNum();
+            var UDP_SERVER_PORT = Global.Instance.Config.UdpServerPort;
             var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
 
             try
@@ -945,7 +945,7 @@ namespace DS4Windows
 
         public void PluginOutDev(int index, DS4Device device)
         {
-            OutContType contType = Global.Instance.OutContType[index];
+            OutContType contType = Global.Instance.Config.OutputDeviceType[index];
 
             OutSlotDevice slotDevice = null;
             if (!Global.Instance.getDInputOnly(index))
@@ -1361,7 +1361,7 @@ namespace DS4Windows
                 if (_udpServer != null)
                 {
                     //var UDP_SERVER_PORT = 26760;
-                    var UDP_SERVER_PORT = Global.Instance.getUDPServerPortNum();
+                    var UDP_SERVER_PORT = Global.Instance.Config.UdpServerPort;
                     var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
 
                     try
@@ -1486,7 +1486,7 @@ namespace DS4Windows
                     DS4Device tempDevice = DS4Controllers[i];
                     if (tempDevice != null)
                     {
-                        if ((Global.Instance.DCBTatStop && !tempDevice.isCharging()) || suspending)
+                        if ((Global.Instance.Config.DisconnectBluetoothAtStop && !tempDevice.isCharging()) || suspending)
                         {
                             if (tempDevice.getConnectionType() == ConnectionType.BT)
                             {

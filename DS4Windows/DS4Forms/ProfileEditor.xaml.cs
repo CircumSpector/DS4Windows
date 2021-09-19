@@ -754,7 +754,7 @@ namespace DS4WinWPF.DS4Forms
         private void SetLateProperties(bool fullSave = true)
         {
             Global.Instance.BTPollRate[deviceNum] = profileSettingsVM.TempBTPollRateIndex;
-            Global.Instance.OutContType[deviceNum] = profileSettingsVM.TempConType;
+            Global.Instance.Config.OutputDeviceType[deviceNum] = profileSettingsVM.TempConType;
             if (fullSave)
             {
                 Global.OutDevTypeTemp[deviceNum] = OutContType.X360;

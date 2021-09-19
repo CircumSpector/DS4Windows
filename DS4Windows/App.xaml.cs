@@ -203,11 +203,11 @@ namespace DS4WinWPF
                 DS4Windows.Global.Instance.CreateStdActions();
             }
 
-            SetUICulture(DS4Windows.Global.Instance.UseLang);
-            DS4Windows.AppThemeChoice themeChoice = DS4Windows.Global.Instance.UseCurrentTheme;
+            SetUICulture(DS4Windows.Global.Instance.Config.UseLang);
+            DS4Windows.AppThemeChoice themeChoice = DS4Windows.Global.Instance.Config.ThemeChoice;
             if (themeChoice != DS4Windows.AppThemeChoice.Default)
             {
-                ChangeTheme(DS4Windows.Global.Instance.UseCurrentTheme, false);
+                ChangeTheme(DS4Windows.Global.Instance.Config.ThemeChoice, false);
             }
 
             DS4Windows.Global.Instance.LoadLinkedProfiles();

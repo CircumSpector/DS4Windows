@@ -94,7 +94,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 ulong versionNumber = versionInfo.VersionNumberInfo.GetVersionNumber();
                 if (versionNumber > DS4Windows.Global.ExecutableVersionLong)
                 {
-                    VersionLogLocale tmpLog = versionInfo.ApplicableInfo(DS4Windows.Global.Instance.UseLang);
+                    VersionLogLocale tmpLog = versionInfo.ApplicableInfo(DS4Windows.Global.Instance.Config.UseLang);
                     if (tmpLog != null)
                     {
                         Paragraph tmpPar = new Paragraph();
