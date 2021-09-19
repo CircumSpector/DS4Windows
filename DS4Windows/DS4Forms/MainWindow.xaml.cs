@@ -1133,7 +1133,8 @@ Suspend support not enabled.", true);
                                     if (int.TryParse(strData[1], out tdevice)) tdevice--;
 
                                     if (tdevice >= 0 && tdevice < ControlService.MAX_DS4_CONTROLLER_COUNT &&
-                                            File.Exists(Global.RuntimeAppDataPath + "\\Profiles\\" + strData[2] + ".xml"))
+                                        File.Exists(Path.Combine(Global.RuntimeAppDataPath,
+                                            Constants.ProfilesSubDirectory, strData[2] + ".xml")))
                                     {
                                         if (strData[0] == "loadprofile")
                                         {
@@ -1363,8 +1364,11 @@ Suspend support not enabled.", true);
 
         private void ProfFolderBtn_Click(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo(Global.RuntimeAppDataPath + "\\Profiles");
-            startInfo.UseShellExecute = true;
+            var startInfo =
+                new ProcessStartInfo(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory))
+                    {
+                        UseShellExecute = true
+                    };
             try
             {
                 using (Process temp = Process.Start(startInfo))
@@ -1420,35 +1424,41 @@ Suspend support not enabled.", true);
 
         private void CheckDrivers()
         {
-            bool deriverinstalled = Global.IsViGEmBusInstalled();
+            var deriverinstalled = Global.IsViGEmBusInstalled();
             if (!deriverinstalled || !Global.IsRunningSupportedViGEmBus)
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = $"{Global.ExecutableLocation}";
-                startInfo.Arguments = "-driverinstall";
-                startInfo.Verb = "runas";
-                startInfo.UseShellExecute = true;
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = $"{Global.ExecutableLocation}",
+                    Arguments = "-driverinstall",
+                    Verb = "runas",
+                    UseShellExecute = true
+                };
                 try
                 {
-                    using (Process temp = Process.Start(startInfo))
+                    using (var temp = Process.Start(startInfo))
                     {
                     }
                 }
-                catch { }
+                catch
+                {
+                }
             }
         }
 
         private void ImportProfBtn_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.AddExtension = true;
-            dialog.DefaultExt = ".xml";
-            dialog.Filter = "DS4Windows Profile (*.xml)|*.xml";
-            dialog.Title = "Select Profile to Import File";
-            if (Global.RuntimeAppDataPath != Global.ExecutableDirectory)
-                dialog.InitialDirectory = Path.Combine(Global.RoamingAppDataPath, "Profiles");
-            else
-                dialog.InitialDirectory = Global.ExecutableDirectory + @"\Profiles\";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = ".xml",
+                Filter = "DS4Windows Profile (*.xml)|*.xml",
+                Title = "Select Profile to Import File",
+                InitialDirectory = Path.Combine(
+                    Global.RuntimeAppDataPath != Global.ExecutableDirectory
+                        ? Global.RoamingAppDataPath
+                        : Global.ExecutableDirectory, Constants.ProfilesSubDirectory)
+            };
 
             if (dialog.ShowDialog() == true)
             {
@@ -1457,7 +1467,8 @@ Suspend support not enabled.", true);
                 {
                     string profilename = System.IO.Path.GetFileName(files[i]);
                     string basename = System.IO.Path.GetFileNameWithoutExtension(files[i]);
-                    File.Copy(dialog.FileNames[i], Global.RuntimeAppDataPath + "\\Profiles\\" + profilename, true);
+                    File.Copy(dialog.FileNames[i],
+                        Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory, profilename), true);
                     profileListHolder.AddProfileSort(basename);
                 }
             }
@@ -1467,14 +1478,17 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.AddExtension = true;
-                dialog.DefaultExt = ".xml";
-                dialog.Filter = "DS4Windows Profile (*.xml)|*.xml";
-                dialog.Title = "Select Profile to Export File";
+                SaveFileDialog dialog = new SaveFileDialog
+                {
+                    AddExtension = true,
+                    DefaultExt = ".xml",
+                    Filter = "DS4Windows Profile (*.xml)|*.xml",
+                    Title = "Select Profile to Export File"
+                };
                 Stream stream;
                 int idx = profilesListBox.SelectedIndex;
-                Stream profile = new StreamReader(Global.RuntimeAppDataPath + "\\Profiles\\" + profileListHolder.ProfileListCol[idx].Name + ".xml").BaseStream;
+                var profile = new StreamReader(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory,
+                    profileListHolder.ProfileListCol[idx].Name + ".xml")).BaseStream;
                 if (dialog.ShowDialog() == true)
                 {
                     if ((stream = dialog.OpenFile()) != null)

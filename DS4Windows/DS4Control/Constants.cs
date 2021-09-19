@@ -22,5 +22,7 @@ namespace DS4Windows
         public static Guid SystemDeviceClassGuid = new("{4d36e97d-e325-11ce-bfc1-08002be10318}");
 
         public static Guid WindowsScriptHostShellObjectGuild = new("{72C24DD5-D70A-438B-8A42-98424B88AFB8}");
+
+        public const string ProfilesSubDirectory = "Profiles";
     }
 }

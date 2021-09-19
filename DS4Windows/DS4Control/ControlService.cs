@@ -2231,7 +2231,8 @@ namespace DS4Windows
                     // Only send Log message when device is considered a primary device
                     if (device.PrimaryDevice)
                     {
-                        if (File.Exists(RuntimeAppDataPath + "\\Profiles\\" + ProfilePath[ind] + ".xml"))
+                        if (File.Exists(Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
+                            ProfilePath[ind] + ".xml")))
                         {
                             string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile, (ind + 1).ToString(), ProfilePath[ind], $"{device.Battery}");
                             LogDebug(prolog);

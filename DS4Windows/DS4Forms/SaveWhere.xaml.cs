@@ -58,7 +58,7 @@ namespace DS4WinWPF.DS4Forms
             if (multisaves && dontDeleteCk.IsChecked == false)
                 try
                 {
-                    Directory.Delete(Path.Combine(Global.ExecutableDirectory, "\\Profiles"), true);
+                    Directory.Delete(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesSubDirectory), true);
                     File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesFileName));
                     File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.AutoProfilesFileName));
                 }

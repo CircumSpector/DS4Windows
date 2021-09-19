@@ -307,11 +307,13 @@ namespace DS4WinWPF
                             Global.RoamingAppDataPath + Constants.ProfilesFileName);
                         File.Copy(Global.ExecutableDirectory + Constants.AutoProfilesFileName,
                             Global.RoamingAppDataPath + Constants.AutoProfilesFileName);
-                        Directory.CreateDirectory(DS4Windows.Global.RoamingAppDataPath + "\\Profiles");
-                        foreach (string s in Directory.GetFiles(DS4Windows.Global.ExecutableDirectory + "\\Profiles"))
-                        {
-                            File.Copy(s, DS4Windows.Global.RoamingAppDataPath + "\\Profiles\\" + Path.GetFileName(s));
-                        }
+                        Directory.CreateDirectory(Path.Combine(Global.RoamingAppDataPath,
+                            Constants.ProfilesSubDirectory));
+                        foreach (var s in Directory.GetFiles(Path.Combine(Global.ExecutableDirectory,
+                            Constants.ProfilesSubDirectory)))
+                            File.Copy(s,
+                                Path.Combine(Global.RoamingAppDataPath, Constants.ProfilesSubDirectory,
+                                    Path.GetFileName(s)));
                     }
                     catch { }
                     MessageBox.Show("Copy complete, please relaunch DS4Windows and remove settings from Program Directory",
