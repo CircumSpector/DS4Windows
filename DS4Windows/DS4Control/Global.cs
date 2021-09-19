@@ -11,8 +11,10 @@ using DS4Windows.DS4Control;
 
 namespace DS4Windows
 {
-    public class Global
+    public partial class Global
     {
+        // Use 15 minutes for default Idle Disconnect when initially enabling the option
+        public const int DEFAULT_ENABLE_IDLE_DISCONN_MINS = 15;
         public const int MAX_DS4_CONTROLLER_COUNT = 8;
         public const int TEST_PROFILE_ITEM_COUNT = MAX_DS4_CONTROLLER_COUNT + 1;
         public const int TEST_PROFILE_INDEX = TEST_PROFILE_ITEM_COUNT - 1;
@@ -25,7 +27,7 @@ namespace DS4Windows
         /// </summary>
         public static CultureInfo ConfigFileDecimalCulture => new("en-US");
 
-        protected static BackingStore m_Config = new BackingStore();
+        private static BackingStore m_Config = new();
 
         protected static Int32 m_IdleTimeout = 600000;
 
