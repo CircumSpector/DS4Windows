@@ -3008,7 +3008,7 @@ namespace DS4Windows
                     xboxControl = (X360Controls)action.actionBtn;
                     if (xboxControl >= X360Controls.LXNeg && xboxControl <= X360Controls.Start)
                     {
-                        DS4Controls tempDS4Control = reverseX360ButtonMapping[(int)xboxControl];
+                        DS4Controls tempDS4Control = ReverseX360ButtonMapping[(int)xboxControl];
                         customMapQueue[device].Enqueue(new ControlToXInput(dcs.control, tempDS4Control));
                         //tempControlDict.Add(dcs.control, tempDS4Control);
                     }

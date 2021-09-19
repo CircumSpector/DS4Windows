@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Security.Principal;
 using System.Xml;
 using DS4Windows.DS4Control;
@@ -199,16 +198,13 @@ namespace DS4Windows
         };
 
         // Create mapping array at runtime
-        public static DS4Controls[] reverseX360ButtonMapping = new Func<DS4Controls[]>(() =>
+        public static DS4Controls[] ReverseX360ButtonMapping = new Func<DS4Controls[]>(() =>
         {
-            DS4Controls[] temp = new DS4Controls[DefaultButtonMapping.Length];
+            var temp = new DS4Controls[DefaultButtonMapping.Length];
             for (int i = 0, arlen = DefaultButtonMapping.Length; i < arlen; i++)
             {
-                X360Controls mapping = DefaultButtonMapping[i];
-                if (mapping != X360Controls.None)
-                {
-                    temp[(int)mapping] = (DS4Controls)i;
-                }
+                var mapping = DefaultButtonMapping[i];
+                if (mapping != X360Controls.None) temp[(int) mapping] = (DS4Controls) i;
             }
 
             return temp;
@@ -512,7 +508,7 @@ namespace DS4Windows
         private static void FindViGEmDeviceInfo()
         {
             bool result = false;
-            Guid deviceGuid = Guid.Parse(VIGEMBUS_GUID);
+            Guid deviceGuid = Constants.ViGemBusInterfaceGuid;
             NativeMethods.SP_DEVINFO_DATA deviceInfoData =
                 new NativeMethods.SP_DEVINFO_DATA();
             deviceInfoData.cbSize =
@@ -614,7 +610,7 @@ namespace DS4Windows
         private static bool CheckForSysDevice(string searchHardwareId)
         {
             bool result = false;
-            Guid sysGuid = Guid.Parse("{4d36e97d-e325-11ce-bfc1-08002be10318}");
+            Guid sysGuid = Constants.SystemDeviceClassGuid;
             NativeMethods.SP_DEVINFO_DATA deviceInfoData =
                 new NativeMethods.SP_DEVINFO_DATA();
             deviceInfoData.cbSize =
@@ -686,7 +682,7 @@ namespace DS4Windows
 
         public static bool IsFakerInputInstalled => CheckForSysDevice(@"root\FakerInput");
 
-        const string VIGEMBUS_GUID = "{96E42B22-F5E9-42F8-B043-ED0F932F014F}";
+        
         public static bool IsViGEmBusInstalled()
         {
             return IsViGEmInstalled;
