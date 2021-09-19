@@ -1717,7 +1717,12 @@ namespace DS4Windows
 
         public  ControlServiceDeviceOptions DeviceOptions => _config.DeviceOptions;
 
-        public  OutContType[] OutContType => _config.OutputDeviceType;
+        public List<OutContType> OutContType
+        {
+            get { return _config.OutputDeviceType; }
+            set { _config.OutputDeviceType = value; }
+        }
+
         public  string[] LaunchProgram => _config.launchProgram;
         public  string[] ProfilePath => _config.profilePath;
         public  string[] OlderProfilePath => _config.olderProfilePath;

@@ -545,12 +545,12 @@ namespace DS4Windows
                 };
 
             // Used to hold the controller type desired in a profile
-            public OutContType[] OutputDeviceType => new OutContType[Global.TEST_PROFILE_ITEM_COUNT]
+            public List<OutContType> OutputDeviceType { get; set; } = new()
             {
-            DS4Windows.OutContType.X360,
-            DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
-            DS4Windows.OutContType.X360, DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
-            DS4Windows.OutContType.X360, DS4Windows.OutContType.X360, DS4Windows.OutContType.X360
+                DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360, DS4Windows.OutContType.X360, DS4Windows.OutContType.X360,
+                DS4Windows.OutContType.X360, DS4Windows.OutContType.X360, DS4Windows.OutContType.X360
             };
 
             /// <summary>
@@ -584,8 +584,7 @@ namespace DS4Windows
 
             public void EstablishDefaultSpecialActions(int idx)
             {
-                profileActions[idx] = new List<string>();
-                profileActions[idx].Add("Disconnect Controller");
+                profileActions[idx] = new List<string> { "Disconnect Controller" };
                 profileActionCount[idx] = profileActions[idx].Count;
             }
 
