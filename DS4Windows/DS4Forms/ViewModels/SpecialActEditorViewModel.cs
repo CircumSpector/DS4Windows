@@ -60,14 +60,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void LoadAction(SpecialAction action)
         {
-            foreach (string s in action.controls.Split('/'))
+            foreach (string s in action.Controls.Split('/'))
             {
                 controlTriggerList.Add(s);
             }
 
-            if (action.ucontrols != null)
+            if (action.UControls != null)
             {
-                foreach (string s in action.ucontrols.Split('/'))
+                foreach (string s in action.UControls.Split('/'))
                 {
                     if (s != "AutomaticUntrigger")
                     {
@@ -76,11 +76,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
             }
 
-            actionName = action.name;
+            actionName = action.Name;
             for(int i = 0; i < typeAssoc.Length; i++)
             {
                 SpecialAction.ActionTypeId type = typeAssoc[i];
-                if (type == action.typeID)
+                if (type == action.TypeId)
                 {
                     actionTypeIndex = i;
                     break;
@@ -90,13 +90,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void SetAction(SpecialAction action)
         {
-            action.name = actionName;
-            action.controls = string.Join("/", controlTriggerList.ToArray());
+            action.Name = actionName;
+            action.Controls = string.Join("/", controlTriggerList.ToArray());
             if (controlUnloadTriggerList.Count > 0)
             {
-                action.ucontrols = string.Join("/", controlUnloadTriggerList.ToArray());
+                action.UControls = string.Join("/", controlUnloadTriggerList.ToArray());
             }
-            action.typeID = typeAssoc[actionTypeIndex];
+            action.TypeId = typeAssoc[actionTypeIndex];
         }
 
         public override bool IsValid(SpecialAction action)
@@ -113,13 +113,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 valid = false;
                 actionNameErrors.Add("No name provided");
             }
-            else if (!editMode || savedaction.name != actionName)
+            else if (!editMode || savedaction.Name != actionName)
             {
                 // Perform existing name check when creating a new action
                 // or if the action name has changed
                 foreach (SpecialAction sA in Global.GetActions())
                 {
-                    if (sA.name == actionName)
+                    if (sA.Name == actionName)
                     {
                         valid = false;
                         actionNameErrors.Add("Existing action with name already exists");

@@ -67,11 +67,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 string displayName = GetActionDisplayName(action);
                 SpecialActionItem item = new SpecialActionItem(action, displayName, idx);
 
-                if (pactions.Contains(action.name))
+                if (pactions.Contains(action.Name))
                 {
                     item.Active = true;
                 }
-                else if (newProfile && action.typeID == SpecialAction.ActionTypeId.DisconnectBT)
+                else if (newProfile && action.TypeId == SpecialAction.ActionTypeId.DisconnectBT)
                 {
                     item.Active = true;
                 }
@@ -91,22 +91,22 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public string GetActionDisplayName(SpecialAction action)
         {
             string displayName = string.Empty;
-            switch (action.typeID)
+            switch (action.TypeId)
             {
                 case SpecialAction.ActionTypeId.DisconnectBT:
                     displayName = Properties.Resources.DisconnectBT; break;
                 case SpecialAction.ActionTypeId.Macro:
-                    displayName = Properties.Resources.Macro + (action.keyType.HasFlag(DS4KeyType.ScanCode) ? " (" + Properties.Resources.ScanCode + ")" : "");
+                    displayName = Properties.Resources.Macro + (action.KeyType.HasFlag(DS4KeyType.ScanCode) ? " (" + Properties.Resources.ScanCode + ")" : "");
                     break;
                 case SpecialAction.ActionTypeId.Program:
-                    displayName = Properties.Resources.LaunchProgram.Replace("*program*", Path.GetFileNameWithoutExtension(action.details));
+                    displayName = Properties.Resources.LaunchProgram.Replace("*program*", Path.GetFileNameWithoutExtension(action.Details));
                     break;
                 case SpecialAction.ActionTypeId.Profile:
-                    displayName = Properties.Resources.LoadProfile.Replace("*profile*", action.details);
+                    displayName = Properties.Resources.LoadProfile.Replace("*profile*", action.Details);
                     break;
                 case SpecialAction.ActionTypeId.Key:
-                    displayName = KeyInterop.KeyFromVirtualKey(int.Parse(action.details)).ToString() +
-                         (action.uTrigger.Count > 0 ? " (Toggle)" : "");
+                    displayName = KeyInterop.KeyFromVirtualKey(int.Parse(action.Details)).ToString() +
+                         (action.UTrigger.Count > 0 ? " (Toggle)" : "");
                     break;
                 case SpecialAction.ActionTypeId.BatteryCheck:
                     displayName = Properties.Resources.CheckBattery;
@@ -143,9 +143,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void RemoveAction(SpecialActionItem item)
         {
-            Global.RemoveAction(item.SpecialAction.name);
+            Global.RemoveAction(item.SpecialAction.Name);
             actionCol.RemoveAt(specialActionIndex);
-            Global.ProfileActions[deviceNum].Remove(item.SpecialAction.name);
+            Global.ProfileActions[deviceNum].Remove(item.SpecialAction.Name);
             Global.CacheExtraProfileInfo(deviceNum);
         }
     }
@@ -179,10 +179,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// </summary>
         public string ActionName
         {
-            get => specialAction.name;
+            get => specialAction.Name;
             set
             {
-                specialAction.name = value;
+                specialAction.Name = value;
             }
         }
         public event EventHandler ActionNameChanged;
@@ -205,7 +205,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// <summary>
         /// Display string with the trigger controls that launch a Special Action
         /// </summary>
-        public string Controls { get => specialAction.controls.Replace("/", ", "); }
+        public string Controls { get => specialAction.Controls.Replace("/", ", "); }
 
         public event EventHandler ControlsChanged;
 

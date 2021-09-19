@@ -3238,19 +3238,19 @@ namespace DS4Windows
                     double time = 0.0;
                     //If a key or button is assigned to the trigger, a key special action is used like
                     //a quick tap to use and hold to use the regular custom button/key
-                    bool triggerToBeTapped = action.typeID == SpecialAction.ActionTypeId.None && action.trigger.Count == 1 &&
-                            (GetDS4CSetting(device, action.trigger[0])?.IsDefault ?? false);
-                    if (!(action.typeID == SpecialAction.ActionTypeId.None || index < 0))
+                    bool triggerToBeTapped = action.TypeId == SpecialAction.ActionTypeId.None && action.Trigger.Count == 1 &&
+                            (GetDS4CSetting(device, action.Trigger[0])?.IsDefault ?? false);
+                    if (!(action.TypeId == SpecialAction.ActionTypeId.None || index < 0))
                     {
                         bool triggeractivated = true;
-                        if (action.delayTime > 0.0)
+                        if (action.DelayTime > 0.0)
                         {
                             triggeractivated = false;
                             bool subtriggeractivated = true;
                             //foreach (DS4Controls dc in action.trigger)
-                            for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                             {
-                                DS4Controls dc = action.trigger[i];
+                                DS4Controls dc = action.Trigger[i];
                                 if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
                                     subtriggeractivated = false;
@@ -3259,7 +3259,7 @@ namespace DS4Windows
                             }
                             if (subtriggeractivated)
                             {
-                                time = action.delayTime;
+                                time = action.DelayTime;
                                 nowAction[device] = DateTime.UtcNow;
                                 if (nowAction[device] >= oldnowAction[device] + TimeSpan.FromSeconds(time))
                                     triggeractivated = true;
@@ -3272,9 +3272,9 @@ namespace DS4Windows
                             triggeractivated = false;
                             bool subtriggeractivated = true;
                             //foreach (DS4Controls dc in action.trigger)
-                            for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                             {
-                                DS4Controls dc = action.trigger[i];
+                                DS4Controls dc = action.Trigger[i];
                                 if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
                                     subtriggeractivated = false;
@@ -3291,9 +3291,9 @@ namespace DS4Windows
                             triggeractivated = false;
                             bool subtriggeractivated = true;
                             //foreach (DS4Controls dc in action.trigger)
-                            for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                             {
-                                DS4Controls dc = action.trigger[i];
+                                DS4Controls dc = action.Trigger[i];
                                 if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
                                     subtriggeractivated = false;
@@ -3313,9 +3313,9 @@ namespace DS4Windows
                         else
                         {
                             //foreach (DS4Controls dc in action.trigger)
-                            for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                             {
-                                DS4Controls dc = action.trigger[i];
+                                DS4Controls dc = action.Trigger[i];
                                 if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
                                     triggeractivated = false;
@@ -3324,65 +3324,65 @@ namespace DS4Windows
                             }
 
                             // If special action macro is set to run on key release then activate the trigger status only when the trigger key is released
-                            if (action.typeID == SpecialAction.ActionTypeId.Macro && action.pressRelease && action.firstTouch)
+                            if (action.TypeId == SpecialAction.ActionTypeId.Macro && action.PressRelease && action.FirstTouch)
                                 triggeractivated = !triggeractivated;
                         }
 
                         bool utriggeractivated = true;
-                        int uTriggerCount = action.uTrigger.Count;
-                        if (action.typeID == SpecialAction.ActionTypeId.Key && uTriggerCount > 0)
+                        int uTriggerCount = action.UTrigger.Count;
+                        if (action.TypeId == SpecialAction.ActionTypeId.Key && uTriggerCount > 0)
                         {
                             //foreach (DS4Controls dc in action.uTrigger)
-                            for (int i = 0, arlen = action.uTrigger.Count; i < arlen; i++)
+                            for (int i = 0, arlen = action.UTrigger.Count; i < arlen; i++)
                             {
-                                DS4Controls dc = action.uTrigger[i];
+                                DS4Controls dc = action.UTrigger[i];
                                 if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
                                     utriggeractivated = false;
                                     break;
                                 }
                             }
-                            if (action.pressRelease) utriggeractivated = !utriggeractivated;
+                            if (action.PressRelease) utriggeractivated = !utriggeractivated;
                         }
 
                         bool actionFound = false;
                         if (triggeractivated)
                         {
-                            for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                             {
-                                DS4Controls dc = action.trigger[i];
+                                DS4Controls dc = action.Trigger[i];
                                 resetToDefaultValue2(dc, MappedState, outputfieldMapping);
                             }
 
-                            if (action.typeID == SpecialAction.ActionTypeId.Program)
+                            if (action.TypeId == SpecialAction.ActionTypeId.Program)
                             {
                                 actionFound = true;
 
                                 if (!actionDone[index].dev[device])
                                 {
                                     actionDone[index].dev[device] = true;
-                                    if (!string.IsNullOrEmpty(action.extra))
+                                    if (!string.IsNullOrEmpty(action.Extra))
                                     {
-                                        int pos = action.extra.IndexOf("$hidden", StringComparison.OrdinalIgnoreCase);
+                                        int pos = action.Extra.IndexOf("$hidden", StringComparison.OrdinalIgnoreCase);
                                         if (pos >= 0)
                                         {
                                             System.Diagnostics.Process specActionLaunchProc = new System.Diagnostics.Process();
 
                                             // LaunchProgram specAction has $hidden argument to indicate that the child process window should be hidden (especially useful when launching .bat/.cmd batch files).
                                             // Removes the first occurence of $hidden substring from extra argument because it was a special action modifier keyword
-                                            string cmdArgs = specActionLaunchProc.StartInfo.Arguments = action.extra.Remove(pos, 7);
-                                            string cmdExt = Path.GetExtension(action.details).ToLower();
+                                            string cmdArgs = specActionLaunchProc.StartInfo.Arguments = action.Extra.Remove(pos, 7);
+                                            string cmdExt = Path.GetExtension(action.Details).ToLower();
 
                                             if (cmdExt == ".bat" || cmdExt == ".cmd")
                                             {
                                                 // Launch batch script using the default command shell cmd (COMSPEC env variable)
                                                 specActionLaunchProc.StartInfo.FileName = System.Environment.GetEnvironmentVariable("COMSPEC");
-                                                specActionLaunchProc.StartInfo.Arguments = "/C \"" + action.details + "\" " + cmdArgs;
+                                                specActionLaunchProc.StartInfo.Arguments = "/C \"" + action.Details + "\" " + cmdArgs;
                                             }
                                             else
                                             {
                                                 // Normal EXE executable app (action.details) with optional cmdline arguments (action.extra)
-                                                specActionLaunchProc.StartInfo.FileName = action.details;
+                                                specActionLaunchProc.StartInfo.FileName = action.Details;
                                                 specActionLaunchProc.StartInfo.Arguments = cmdArgs;
                                             }
 
@@ -3397,8 +3397,8 @@ namespace DS4Windows
                                             // No special process modifiers (ie. $hidden wnd keyword). Launch the child process using the default WinOS settings
                                             using (Process temp = new Process())
                                             {
-                                                temp.StartInfo.FileName = action.details;
-                                                temp.StartInfo.Arguments = action.extra;
+                                                temp.StartInfo.FileName = action.Details;
+                                                temp.StartInfo.Arguments = action.Extra;
                                                 temp.StartInfo.UseShellExecute = true;
                                                 temp.Start();
                                             }
@@ -3408,33 +3408,33 @@ namespace DS4Windows
                                     {
                                         using (Process temp = new Process())
                                         {
-                                            temp.StartInfo.FileName = action.details;
+                                            temp.StartInfo.FileName = action.Details;
                                             temp.StartInfo.UseShellExecute = true;
                                             temp.Start();
                                         }
                                     }
                                 }
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.Profile)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.Profile)
                             {
                                 actionFound = true;
 
-                                if (!actionDone[index].dev[device] && (!UseTempProfiles[device] || untriggeraction[device] == null || untriggeraction[device].typeID != SpecialAction.ActionTypeId.Profile) )
+                                if (!actionDone[index].dev[device] && (!UseTempProfiles[device] || untriggeraction[device] == null || untriggeraction[device].TypeId != SpecialAction.ActionTypeId.Profile) )
                                 {
                                     actionDone[index].dev[device] = true;
                                     // If Loadprofile special action doesn't have untrigger keys or automatic untrigger option is not set then don't set untrigger status. This way the new loaded profile allows yet another loadProfile action key event.
-                                    if (action.uTrigger.Count > 0 || action.automaticUntrigger)
+                                    if (action.UTrigger.Count > 0 || action.AutomaticUnTrigger)
                                     {
                                         untriggeraction[device] = action;
                                         untriggerindex[device] = index;
 
                                         // If the existing profile is a temp profile then store its name, because automaticUntrigger needs to know where to go back (empty name goes back to default regular profile)
-                                        untriggeraction[device].prevProfileName = (UseTempProfiles[device] ? TempProfileNames[device] : string.Empty);
+                                        untriggeraction[device].PreviousProfileName = (UseTempProfiles[device] ? TempProfileNames[device] : string.Empty);
                                     }
                                     //foreach (DS4Controls dc in action.trigger)
-                                    for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+                                    for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                                     {
-                                        DS4Controls dc = action.trigger[i];
+                                        DS4Controls dc = action.Trigger[i];
                                         DS4ControlSettings dcs = GetDS4CSetting(device, dc);
                                         if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
                                         {
@@ -3457,13 +3457,13 @@ namespace DS4Windows
 
                                     DS4Device d = ctrl.DS4Controllers[device];
                                     string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile,
-                                        (device + 1).ToString(), action.details, $"{d.Battery}");
+                                        (device + 1).ToString(), action.Details, $"{d.Battery}");
 
                                     AppLogger.LogToGui(prolog, false);
-                                    LoadTempProfile(device, action.details, true, ctrl);
+                                    LoadTempProfile(device, action.Details, true, ctrl);
                                     //LoadProfile(device, false, ctrl);
 
-                                    if (action.uTrigger.Count == 0 && !action.automaticUntrigger)
+                                    if (action.UTrigger.Count == 0 && !action.AutomaticUnTrigger)
                                     {
                                         // If the new profile has any actions with the same action key (controls) than this action (which doesn't have untrigger keys) then set status of those actions to wait for the release of the existing action key. 
                                         List<string> profileActionsNext = getProfileActions(device);
@@ -3473,7 +3473,7 @@ namespace DS4Windows
                                             SpecialAction actionNext = GetProfileAction(device, actionnameNext);
                                             int indexNext = GetProfileActionIndexOf(device, actionnameNext);
 
-                                            if (actionNext.controls == action.controls)
+                                            if (actionNext.Controls == action.Controls)
                                                 actionDone[indexNext].dev[device] = true;
                                         }
                                     }
@@ -3481,15 +3481,15 @@ namespace DS4Windows
                                     return;
                                 }
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.Macro)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.Macro)
                             {
                                 actionFound = true;
-                                if (!action.pressRelease)
+                                if (!action.PressRelease)
                                 {
                                     // Macro run when trigger keys are pressed down (the default behaviour)
                                     if (!actionDone[index].dev[device])
                                     {
-                                        DS4KeyType keyType = action.keyType;
+                                        DS4KeyType keyType = action.KeyType;
                                         actionDone[index].dev[device] = true;
                                         /*for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
                                         {
@@ -3498,23 +3498,23 @@ namespace DS4Windows
                                         }
                                         */
 
-                                        PlayMacro(device, macroControl, String.Empty, action.macro, null, DS4Controls.None, keyType, action, actionDone[index]);
+                                        PlayMacro(device, macroControl, String.Empty, action.Macro, null, DS4Controls.None, keyType, action, actionDone[index]);
                                     }
                                     else
                                     {
-                                        if (!action.keyType.HasFlag(DS4KeyType.RepeatMacro))
-                                            EndMacro(device, macroControl, action.macro, DS4Controls.None);
+                                        if (!action.KeyType.HasFlag(DS4KeyType.RepeatMacro))
+                                            EndMacro(device, macroControl, action.Macro, DS4Controls.None);
                                     }
                                 }
                                 else 
                                 {
                                     // Macro is run when trigger keys are released (optional behaviour of macro special action))
-                                    if (action.firstTouch)
+                                    if (action.FirstTouch)
                                     {
-                                        action.firstTouch = false;
+                                        action.FirstTouch = false;
                                         if (!actionDone[index].dev[device])
                                         {
-                                            DS4KeyType keyType = action.keyType;
+                                            DS4KeyType keyType = action.KeyType;
                                             actionDone[index].dev[device] = true;
                                             /*for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
                                             {
@@ -3523,14 +3523,14 @@ namespace DS4Windows
                                             }
                                             */
 
-                                            PlayMacro(device, macroControl, String.Empty, action.macro, null, DS4Controls.None, keyType, action, null);
+                                            PlayMacro(device, macroControl, String.Empty, action.Macro, null, DS4Controls.None, keyType, action, null);
                                         }
                                     }
                                     else
-                                        action.firstTouch = true;
+                                        action.FirstTouch = true;
                                 }
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.Key)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.Key)
                             {
                                 actionFound = true;
 
@@ -3539,7 +3539,7 @@ namespace DS4Windows
                                     actionDone[index].dev[device] = true;
                                     untriggerindex[device] = index;
                                     ushort key;
-                                    ushort.TryParse(action.details, out key);
+                                    ushort.TryParse(action.Details, out key);
                                     if (uTriggerCount == 0)
                                     {
                                         SyntheticState.KeyPresses kp;
@@ -3549,20 +3549,20 @@ namespace DS4Windows
                                             deviceState[device].nativeKeyAlias[key] = (ushort)Global.outputKBMMapping.GetRealEventKey(key);
                                         }
 
-                                        if (action.keyType.HasFlag(DS4KeyType.ScanCode))
+                                        if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
                                             kp.current.scanCodeCount++;
                                         else
                                             kp.current.vkCount++;
 
                                         kp.current.repeatCount++;
                                     }
-                                    else if (action.keyType.HasFlag(DS4KeyType.ScanCode))
+                                    else if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
                                         outputKBMHandler.PerformKeyPressAlt(key);
                                     else
                                         outputKBMHandler.PerformKeyPress(key);
                                 }
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.DisconnectBT)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.DisconnectBT)
                             {
                                 actionFound = true;
 
@@ -3580,17 +3580,17 @@ namespace DS4Windows
                                     }
                                     else if (deviceConn == ConnectionType.SONYWA)
                                     {
-                                        action.pressRelease = true;
+                                        action.PressRelease = true;
                                     }
                                 }
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.BatteryCheck)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.BatteryCheck)
                             {
                                 actionFound = true;
 
-                                string[] dets = action.details.Split('|');
+                                string[] dets = action.Details.Split('|');
                                 if (dets.Length == 1)
-                                    dets = action.details.Split(',');
+                                    dets = action.Details.Split(',');
                                 if (bool.Parse(dets[1]) && !actionDone[index].dev[device])
                                 {
                                     AppLogger.LogToTray("Controller " + (device + 1) + ": " +
@@ -3612,20 +3612,20 @@ namespace DS4Windows
                                 }
                                 actionDone[index].dev[device] = true;
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate)
                             {
                                 actionFound = true;
 
                                 DS4Device d = ctrl.DS4Controllers[device];
                                 // If controller is not already in SASteeringWheelCalibration state then enable it now. If calibration is active then complete it (commit calibration values)
-                                if (d.WheelRecalibrateActiveState == 0 && DateTime.UtcNow > (action.firstTap + TimeSpan.FromMilliseconds(3000)))
+                                if (d.WheelRecalibrateActiveState == 0 && DateTime.UtcNow > (action.FirstTap + TimeSpan.FromMilliseconds(3000)))
                                 {
-                                    action.firstTap = DateTime.UtcNow;
+                                    action.FirstTap = DateTime.UtcNow;
                                     d.WheelRecalibrateActiveState = 1;  // Start calibration process
                                 }
-                                else if (d.WheelRecalibrateActiveState == 2 && DateTime.UtcNow > (action.firstTap + TimeSpan.FromMilliseconds(3000)))
+                                else if (d.WheelRecalibrateActiveState == 2 && DateTime.UtcNow > (action.FirstTap + TimeSpan.FromMilliseconds(3000)))
                                 {
-                                    action.firstTap = DateTime.UtcNow;
+                                    action.FirstTap = DateTime.UtcNow;
                                     d.WheelRecalibrateActiveState = 3;  // Complete calibration process
                                 }
 
@@ -3634,7 +3634,7 @@ namespace DS4Windows
                         }
                         else
                         {
-                            if (action.typeID == SpecialAction.ActionTypeId.BatteryCheck)
+                            if (action.TypeId == SpecialAction.ActionTypeId.BatteryCheck)
                             {
                                 actionFound = true;
                                 if (actionDone[index].dev[device])
@@ -3651,7 +3651,7 @@ namespace DS4Windows
                                     actionDone[index].dev[device] = false;
                                 }
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.DisconnectBT && action.pressRelease)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.DisconnectBT && action.PressRelease)
                             {
                                 actionFound = true;
                                 DS4Device d = ctrl.DS4Controllers[device];
@@ -3663,13 +3663,13 @@ namespace DS4Windows
                                         d.DisconnectDongle();
                                         ReleaseActionKeys(action, device);
                                         actionDone[index].dev[device] = false;
-                                        action.pressRelease = false;
+                                        action.PressRelease = false;
                                     }
                                 }
                             }
-                            else if (action.typeID != SpecialAction.ActionTypeId.Key &&
-                                     action.typeID != SpecialAction.ActionTypeId.XboxGameDVR &&
-                                     action.typeID != SpecialAction.ActionTypeId.MultiAction)
+                            else if (action.TypeId != SpecialAction.ActionTypeId.Key &&
+                                     action.TypeId != SpecialAction.ActionTypeId.XboxGameDVR &&
+                                     action.TypeId != SpecialAction.ActionTypeId.MultiAction)
                             {
                                 // Ignore
                                 actionFound = true;
@@ -3679,7 +3679,7 @@ namespace DS4Windows
 
                         if (!actionFound)
                         {
-                            if (uTriggerCount > 0 && utriggeractivated && action.typeID == SpecialAction.ActionTypeId.Key)
+                            if (uTriggerCount > 0 && utriggeractivated && action.TypeId == SpecialAction.ActionTypeId.Key)
                             {
                                 actionFound = true;
 
@@ -3688,19 +3688,19 @@ namespace DS4Windows
                                     actionDone[index].dev[device] = true;
                                     untriggerindex[device] = -1;
                                     ushort key;
-                                    ushort.TryParse(action.details, out key);
-                                    if (action.keyType.HasFlag(DS4KeyType.ScanCode))
+                                    ushort.TryParse(action.Details, out key);
+                                    if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
                                         outputKBMHandler.PerformKeyReleaseAlt(key);
                                     else
                                         outputKBMHandler.PerformKeyRelease(key);
                                 }
                             }
-                            else if (action.typeID == SpecialAction.ActionTypeId.XboxGameDVR || action.typeID == SpecialAction.ActionTypeId.MultiAction)
+                            else if (action.TypeId == SpecialAction.ActionTypeId.XboxGameDVR || action.TypeId == SpecialAction.ActionTypeId.MultiAction)
                             {
                                 actionFound = true;
 
-                                bool tappedOnce = action.tappedOnce, firstTouch = action.firstTouch,
-                                    secondtouchbegin = action.secondtouchbegin;
+                                bool tappedOnce = action.TappedOnce, firstTouch = action.FirstTouch,
+                                    secondtouchbegin = action.SecondTouchBegin;
                                 //DateTime pastTime = action.pastTime, firstTap = action.firstTap,
                                 //    TimeofEnd = action.TimeofEnd;
 
@@ -3710,7 +3710,7 @@ namespace DS4Windows
                                     getCustomMacros(device).Remove(action.trigger[0]);
                                 if (getCustomKey(device, action.trigger[0]) != 0)
                                     getCustomMacros(device).Remove(action.trigger[0]);*/
-                                string[] dets = action.details.Split(',');
+                                string[] dets = action.Details.Split(',');
                                 DS4Device d = ctrl.DS4Controllers[device];
                                 //cus
 
@@ -3724,21 +3724,21 @@ namespace DS4Windows
                                     //previousFieldMapping = new DS4StateFieldMapping(tempPrevState, eState, tp, true);
                                 }
 
-                                bool activeCur = getBoolSpecialActionMapping(device, action.trigger[0], cState, eState, tp, fieldMapping);
-                                bool activePrev = getBoolSpecialActionMapping(device, action.trigger[0], tempPrevState, eState, tp, previousFieldMapping);
+                                bool activeCur = getBoolSpecialActionMapping(device, action.Trigger[0], cState, eState, tp, fieldMapping);
+                                bool activePrev = getBoolSpecialActionMapping(device, action.Trigger[0], tempPrevState, eState, tp, previousFieldMapping);
                                 if (activeCur && !activePrev)
                                 {
                                     // pressed down
-                                    action.pastTime = DateTime.UtcNow;
-                                    if (action.pastTime <= (action.firstTap + TimeSpan.FromMilliseconds(150)))
+                                    action.PastTime = DateTime.UtcNow;
+                                    if (action.PastTime <= (action.FirstTap + TimeSpan.FromMilliseconds(150)))
                                     {
-                                        action.tappedOnce = tappedOnce = false;
-                                        action.secondtouchbegin = secondtouchbegin = true;
+                                        action.TappedOnce = tappedOnce = false;
+                                        action.SecondTouchBegin = secondtouchbegin = true;
                                         //tappedOnce = false;
                                         //secondtouchbegin = true;
                                     }
                                     else
-                                        action.firstTouch = firstTouch = true;
+                                        action.FirstTouch = firstTouch = true;
                                         //firstTouch = true;
                                 }
                                 else if (!activeCur && activePrev)
@@ -3746,21 +3746,21 @@ namespace DS4Windows
                                     // released
                                     if (secondtouchbegin)
                                     {
-                                        action.firstTouch = firstTouch = false;
-                                        action.secondtouchbegin = secondtouchbegin = false;
+                                        action.FirstTouch = firstTouch = false;
+                                        action.SecondTouchBegin = secondtouchbegin = false;
                                         //firstTouch = false;
                                         //secondtouchbegin = false;
                                     }
                                     else if (firstTouch)
                                     {
-                                        action.firstTouch = firstTouch = false;
+                                        action.FirstTouch = firstTouch = false;
                                         //firstTouch = false;
-                                        if (DateTime.UtcNow <= (action.pastTime + TimeSpan.FromMilliseconds(150)) && !tappedOnce)
+                                        if (DateTime.UtcNow <= (action.PastTime + TimeSpan.FromMilliseconds(150)) && !tappedOnce)
                                         {
-                                            action.tappedOnce = tappedOnce = true;
+                                            action.TappedOnce = tappedOnce = true;
                                             //tappedOnce = true;
-                                            action.firstTap = DateTime.UtcNow;
-                                            action.TimeofEnd = DateTime.UtcNow;
+                                            action.FirstTap = DateTime.UtcNow;
+                                            action.TimeOfEnd = DateTime.UtcNow;
                                         }
                                     }
                                 }
@@ -3769,7 +3769,7 @@ namespace DS4Windows
                                 string macro = "";
                                 if (tappedOnce) //single tap
                                 {
-                                    if (action.typeID == SpecialAction.ActionTypeId.MultiAction)
+                                    if (action.TypeId == SpecialAction.ActionTypeId.MultiAction)
                                     {
                                         macro = dets[0];
                                     }
@@ -3785,19 +3785,19 @@ namespace DS4Windows
                                         }
                                     }
 
-                                    if ((DateTime.UtcNow - action.TimeofEnd) > TimeSpan.FromMilliseconds(150))
+                                    if ((DateTime.UtcNow - action.TimeOfEnd) > TimeSpan.FromMilliseconds(150))
                                     {
                                         if (macro != "")
                                             PlayMacro(device, macroControl, macro, null, null, DS4Controls.None, DS4KeyType.None);
 
                                         tappedOnce = false;
-                                        action.tappedOnce = false;
+                                        action.TappedOnce = false;
                                     }
                                     //if it fails the method resets, and tries again with a new tester value (gives tap a delay so tap and hold can work)
                                 }
-                                else if (firstTouch && (DateTime.UtcNow - action.pastTime) > TimeSpan.FromMilliseconds(500)) //helddown
+                                else if (firstTouch && (DateTime.UtcNow - action.PastTime) > TimeSpan.FromMilliseconds(500)) //helddown
                                 {
-                                    if (action.typeID == SpecialAction.ActionTypeId.MultiAction)
+                                    if (action.TypeId == SpecialAction.ActionTypeId.MultiAction)
                                     {
                                         macro = dets[1];
                                     }
@@ -3817,11 +3817,11 @@ namespace DS4Windows
                                         PlayMacro(device, macroControl, macro, null, null, DS4Controls.None, DS4KeyType.None);
 
                                     firstTouch = false;
-                                    action.firstTouch = false;
+                                    action.FirstTouch = false;
                                 }
                                 else if (secondtouchbegin) //if double tap
                                 {
-                                    if (action.typeID == SpecialAction.ActionTypeId.MultiAction)
+                                    if (action.TypeId == SpecialAction.ActionTypeId.MultiAction)
                                     {
                                         macro = dets[2];
                                     }
@@ -3841,7 +3841,7 @@ namespace DS4Windows
                                         PlayMacro(device, macroControl, macro, null, null, DS4Controls.None, DS4KeyType.None);
 
                                     secondtouchbegin = false;
-                                    action.secondtouchbegin = false;
+                                    action.SecondTouchBegin = false;
                                 }
                             }
                             else
@@ -3860,15 +3860,15 @@ namespace DS4Windows
                 int index = untriggerindex[device];
                 bool utriggeractivated;
 
-                if (!action.automaticUntrigger)
+                if (!action.AutomaticUnTrigger)
                 {
                     // Untrigger keys defined and auto-untrigger (=unload) profile option is NOT set. Unload a temporary profile only when specified untrigger keys have been triggered.
                     utriggeractivated = true;
 
                     //foreach (DS4Controls dc in action.uTrigger)
-                    for (int i = 0, uTrigLen = action.uTrigger.Count; i < uTrigLen; i++)
+                    for (int i = 0, uTrigLen = action.UTrigger.Count; i < uTrigLen; i++)
                     {
-                        DS4Controls dc = action.uTrigger[i];
+                        DS4Controls dc = action.UTrigger[i];
                         if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                         {
                             utriggeractivated = false;
@@ -3881,9 +3881,9 @@ namespace DS4Windows
                     // Untrigger as soon any of the defined regular trigger keys have been released. 
                     utriggeractivated = false;
 
-                    for (int i = 0, trigLen = action.trigger.Count; i < trigLen; i++)
+                    for (int i = 0, trigLen = action.Trigger.Count; i < trigLen; i++)
                     {
-                        DS4Controls dc = action.trigger[i];
+                        DS4Controls dc = action.Trigger[i];
                         if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                         {
                             utriggeractivated = true;
@@ -3892,17 +3892,17 @@ namespace DS4Windows
                     }
                 }
 
-                if (utriggeractivated && action.typeID == SpecialAction.ActionTypeId.Profile)
+                if (utriggeractivated && action.TypeId == SpecialAction.ActionTypeId.Profile)
                 {
-                    if ((action.controls == action.ucontrols && !actionDone[index].dev[device]) || //if trigger and end trigger are the same
-                    action.controls != action.ucontrols)
+                    if ((action.Controls == action.UControls && !actionDone[index].dev[device]) || //if trigger and end trigger are the same
+                    action.Controls != action.UControls)
                     {
                         if (UseTempProfiles[device])
                         {
                             //foreach (DS4Controls dc in action.uTrigger)
-                            for (int i = 0, arlen = action.uTrigger.Count; i < arlen; i++)
+                            for (int i = 0, arlen = action.UTrigger.Count; i < arlen; i++)
                             {
-                                DS4Controls dc = action.uTrigger[i];
+                                DS4Controls dc = action.UTrigger[i];
                                 actionDone[index].dev[device] = true;
                                 DS4ControlSettings dcs = GetDS4CSetting(device, dc);
                                 if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
@@ -3918,7 +3918,7 @@ namespace DS4Windows
                                 }
                             }
 
-                            string profileName = untriggeraction[device].prevProfileName;
+                            string profileName = untriggeraction[device].PreviousProfileName;
                             DS4Device d = ctrl.DS4Controllers[device];
                             string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile,
                                 (device + 1).ToString(), (profileName == string.Empty ? ProfilePath[device] : profileName), $"{d.Battery}");
@@ -3944,9 +3944,9 @@ namespace DS4Windows
         private static void ReleaseActionKeys(SpecialAction action, int device)
         {
             //foreach (DS4Controls dc in action.trigger)
-            for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
             {
-                DS4Controls dc = action.trigger[i];
+                DS4Controls dc = action.Trigger[i];
                 DS4ControlSettings dcs = GetDS4CSetting(device, dc);
                 if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
                 {
@@ -3973,13 +3973,13 @@ namespace DS4Windows
         // If the macro definition is a macroStr string value then it will be converted as integer array on the fl. If steps are already defined as list or array of integers then there is no need to do type cast conversion.
         private static void PlayMacro(int device, bool[] macrocontrol, string macroStr, List<int> macroLst, int[] macroArr, DS4Controls control, DS4KeyType keyType, SpecialAction action = null, ActionState actionDoneState = null)
         {
-            if (action != null && action.synchronized)
+            if (action != null && action.Synchronized)
             {
                 // Run special action macros in synchronized order (ie. FirstIn-FirstOut). The trigger control name string is the execution queue identifier (ie. each unique trigger combination has an own synchronization queue).
-                if (!macroTaskQueue[device].TryGetValue(action.controls, out Task prevTask))
-                    macroTaskQueue[device].Add(action.controls, (Task.Factory.StartNew(() => PlayMacroTask(device, macroControl, macroStr, macroLst, macroArr, control, keyType, action, actionDoneState))) );
+                if (!macroTaskQueue[device].TryGetValue(action.Controls, out Task prevTask))
+                    macroTaskQueue[device].Add(action.Controls, (Task.Factory.StartNew(() => PlayMacroTask(device, macroControl, macroStr, macroLst, macroArr, control, keyType, action, actionDoneState))) );
                 else
-                    macroTaskQueue[device][action.controls] = prevTask.ContinueWith((x) => PlayMacroTask(device, macroControl, macroStr, macroLst, macroArr, control, keyType, action, actionDoneState));                       
+                    macroTaskQueue[device][action.Controls] = prevTask.ContinueWith((x) => PlayMacroTask(device, macroControl, macroStr, macroLst, macroArr, control, keyType, action, actionDoneState));                       
             }
             else
                 // Run macro as "fire and forget" background task. No need to wait for completion of any of the other macros. 
@@ -4050,7 +4050,7 @@ namespace DS4Windows
                 }
 
                 // The macro is finished. If any of the keys is still in down state then release a key state (ie. simulate key up event) unless special action specified to keep the last state as it is left in a macro
-                if (action == null || !action.keepKeyState)
+                if (action == null || !action.KeepKeyState)
                 {
                     for (int i = 0, arlength = keydown.Length; i < arlength; i++)
                     {

@@ -38,19 +38,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void LoadAction(SpecialAction action)
         {
-            macro = action.macro;
-            if (action.macro.Count > 0)
+            macro = action.Macro;
+            if (action.Macro.Count > 0)
             {
-                MacroParser macroParser = new MacroParser(action.macro.ToArray());
+                MacroParser macroParser = new MacroParser(action.Macro.ToArray());
                 macroParser.LoadMacro();
                 macrostring = string.Join(", ", macroParser.GetMacroStrings());
             }
 
-            useScanCode = action.keyType.HasFlag(DS4KeyType.ScanCode);
-            runTriggerRelease = action.pressRelease;
-            syncRun = action.synchronized;
-            keepKeyState = action.keepKeyState;
-            repeatHeld = action.keyType.HasFlag(DS4KeyType.RepeatMacro);
+            useScanCode = action.KeyType.HasFlag(DS4KeyType.ScanCode);
+            runTriggerRelease = action.PressRelease;
+            syncRun = action.Synchronized;
+            keepKeyState = action.KeepKeyState;
+            repeatHeld = action.KeyType.HasFlag(DS4KeyType.RepeatMacro);
         }
 
         public DS4ControlSettings PrepareSettings()
@@ -75,7 +75,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             extrasList.Add(syncRun ? "Sync" : null);
             extrasList.Add(keepKeyState ? "KeepKeyState" : null);
             extrasList.Add(repeatHeld ? "Repeat" : null);
-            Global.SaveAction(action.name, action.controls, 1, string.Join("/", macro), edit,
+            Global.SaveAction(action.Name, action.Controls, 1, string.Join("/", macro), edit,
                 string.Join("/", extrasList.Where(s => !string.IsNullOrEmpty(s))));
         }
 

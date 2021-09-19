@@ -164,7 +164,7 @@ namespace DS4WinWPF.DS4Forms
                 }
             }
 
-            switch (specialAction.typeID)
+            switch (specialAction.TypeId)
             {
                 case DS4Windows.SpecialAction.ActionTypeId.Macro:
                     macroActVM.LoadAction(specialAction);
@@ -231,9 +231,9 @@ namespace DS4WinWPF.DS4Forms
             if (valid)
             {
                 bool editMode = specialActVM.EditMode;
-                if (editMode && specialActVM.SavedAction.name != specialActVM.ActionName)
+                if (editMode && specialActVM.SavedAction.Name != specialActVM.ActionName)
                 {
-                    DS4Windows.Global.RemoveAction(specialActVM.SavedAction.name);
+                    DS4Windows.Global.RemoveAction(specialActVM.SavedAction.Name);
                     editMode = false;
                 }
 
@@ -265,7 +265,7 @@ namespace DS4WinWPF.DS4Forms
                         break;
                 }
 
-                Saved?.Invoke(this, tempAct.name);
+                Saved?.Invoke(this, tempAct.Name);
             }
         }
 

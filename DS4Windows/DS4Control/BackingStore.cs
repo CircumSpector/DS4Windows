@@ -644,7 +644,7 @@ namespace DS4Windows
             for (int i = 0, actionCount = actions.Count; i < actionCount; i++)
             {
                 SpecialAction sA = actions[i];
-                if (sA.name == name)
+                if (sA.Name == name)
                     return sA;
             }
 
@@ -655,7 +655,7 @@ namespace DS4Windows
         {
             for (int i = 0, actionCount = actions.Count; i < actionCount; i++)
             {
-                if (actions[i].name == name)
+                if (actions[i].Name == name)
                     return i;
             }
 

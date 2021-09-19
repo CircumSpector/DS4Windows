@@ -54,15 +54,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void LoadAction(SpecialAction action)
         {
-            keyType = action.keyType;
-            if (!string.IsNullOrEmpty(action.ucontrols))
+            keyType = action.KeyType;
+            if (!string.IsNullOrEmpty(action.UControls))
             {
                 keyType |= DS4KeyType.Toggle;
             }
 
-            int.TryParse(action.details, out value);
+            int.TryParse(action.Details, out value);
 
-            if (action.pressRelease)
+            if (action.PressRelease)
             {
                 pressReleaseIndex = 1;
             }
@@ -113,9 +113,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                 }
             }
 
-            Global.SaveAction(action.name, action.controls, 4,
+            Global.SaveAction(action.Name, action.Controls, 4,
                 $"{value}{(keyType.HasFlag(DS4KeyType.ScanCode) ? " Scan Code" : "")}", edit,
-                !string.IsNullOrEmpty(uaction) ? $"{uaction}\n{action.ucontrols}" : "");
+                !string.IsNullOrEmpty(uaction) ? $"{uaction}\n{action.UControls}" : "");
         }
 
         public override bool IsValid(SpecialAction action)
@@ -132,7 +132,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                 errors["Value"] = valueErrors;
                 RaiseErrorsChanged("Value");
             }
-            if (keyType.HasFlag(DS4KeyType.Toggle) && string.IsNullOrEmpty(action.ucontrols))
+            if (keyType.HasFlag(DS4KeyType.Toggle) && string.IsNullOrEmpty(action.UControls))
             {
                 toggleErrors.Add("No unload triggers specified");
                 errors["UnloadError"] = toggleErrors;

@@ -15,12 +15,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void LoadAction(SpecialAction action)
         {
-            holdInterval = action.delayTime;
+            holdInterval = action.DelayTime;
         }
 
         public void SaveAction(SpecialAction action, bool edit = false)
         {
-            Global.SaveAction(action.name, action.controls, 5, $"{holdInterval.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit);
+            Global.SaveAction(action.Name, action.Controls, 5, $"{holdInterval.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit);
         }
 
         public override bool IsValid(SpecialAction action)

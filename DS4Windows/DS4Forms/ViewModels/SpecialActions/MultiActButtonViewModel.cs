@@ -71,7 +71,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void LoadAction(SpecialAction action)
         {
-            string[] dets = action.details.Split(',');
+            string[] dets = action.Details.Split(',');
             for (int i = 0; i < 3; i++)
             {
                 string[] macs = dets[i].Split('/');
@@ -130,7 +130,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             string details = string.Join("/", tapMacro) + "," +
                 string.Join("/", holdMacro) + "," +
                 string.Join("/", doubleTapMacro);
-            Global.SaveAction(action.name, action.controls, 7, details, edit);
+            Global.SaveAction(action.Name, action.Controls, 7, details, edit);
         }
 
         public override bool IsValid(SpecialAction action)

@@ -44,8 +44,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void LoadAction(SpecialAction action)
         {
-            autoUntrigger = action.automaticUntrigger;
-            string profilename = action.details;
+            autoUntrigger = action.AutomaticUnTrigger;
+            string profilename = action.Details;
             ProfileEntity item = profileList.ProfileListCol.SingleOrDefault(x => x.Name == profilename);
             if (item != null)
             {
@@ -63,14 +63,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             if (profileIndex > 0)
             {
                 string profilename = profileList.ProfileListCol[profileIndex - 1].Name;
-                if (action.ucontrols == null)
+                if (action.UControls == null)
                 {
-                    action.ucontrols = string.Empty;
+                    action.UControls = string.Empty;
                 }
 
-                Global.SaveAction(action.name, action.controls, 3, profilename, edit,
-                    action.ucontrols +
-                    (autoUntrigger ? (action.ucontrols.Length > 0 ? "/" : "") + "AutomaticUntrigger" : ""));
+                Global.SaveAction(action.Name, action.Controls, 3, profilename, edit,
+                    action.UControls +
+                    (autoUntrigger ? (action.UControls.Length > 0 ? "/" : "") + "AutomaticUntrigger" : ""));
             }
         }
 

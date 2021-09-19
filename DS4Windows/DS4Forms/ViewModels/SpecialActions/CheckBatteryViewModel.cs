@@ -79,8 +79,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void LoadAction(SpecialAction action)
         {
-            string[] details = action.details.Split(',');
-            delay = action.delayTime;
+            string[] details = action.Details.Split(',');
+            delay = action.DelayTime;
             bool.TryParse(details[1], out notification);
             bool.TryParse(details[2], out lightbar);
             emptyColor = Color.FromArgb(255, byte.Parse(details[3]), byte.Parse(details[4]), byte.Parse(details[5]));
@@ -92,7 +92,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             string details = $"{delay.ToString("#.##", Global.ConfigFileDecimalCulture)}|{notification}|{lightbar}|{emptyColor.R}|{emptyColor.G}|{emptyColor.B}|" +
                 $"{fullColor.R}|{fullColor.G}|{fullColor.B}";
 
-            Global.SaveAction(action.name, action.controls, 6, details, edit);
+            Global.SaveAction(action.Name, action.Controls, 6, details, edit);
         }
 
         public override bool IsValid(SpecialAction action)
