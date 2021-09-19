@@ -89,7 +89,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         public DS4ControlSettings PrepareSettings()
         {
             DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.ActionData.actionKey = value;
+            settings.ActionData.ActionKey = value;
             settings.KeyType = keyType;
             settings.ControlActionType = DS4ControlSettings.ActionType.Key;
             return settings;
@@ -97,7 +97,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void ReadSettings(DS4ControlSettings settings)
         {
-            value = (int)settings.ActionData.actionKey;
+            value = (int)settings.ActionData.ActionKey;
             keyType = settings.KeyType;
         }
 

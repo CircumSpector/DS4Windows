@@ -260,7 +260,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (actionType == DS4ControlSettings.ActionType.Key)
                 {
                     //return (Keys)int.Parse(action.ToString()) + (sc ? " (" + Properties.Resources.ScanCode + ")" : "");
-                    temp = KeyInterop.KeyFromVirtualKey(action.actionKey) + (sc ? " (" + Properties.Resources.ScanCode + ")" : "");
+                    temp = KeyInterop.KeyFromVirtualKey(action.ActionKey) + (sc ? " (" + Properties.Resources.ScanCode + ")" : "");
                 }
                 else if (actionType == DS4ControlSettings.ActionType.Macro)
                 {
@@ -269,7 +269,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 else if (actionType == DS4ControlSettings.ActionType.Button)
                 {
                     string tag;
-                    tag = Global.GetX360ControlString((X360Controls)action.actionBtn, devType);
+                    tag = Global.GetX360ControlString((X360Controls)action.ActionButton, devType);
                     temp = tag;
                 }
                 else

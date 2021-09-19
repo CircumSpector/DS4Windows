@@ -2271,18 +2271,18 @@ namespace DS4Windows
         {
             if (!shift)
             {
-                setting.ActionData.actionAlias = 0;
+                setting.ActionData.ActionAlias = 0;
                 if (setting.ControlActionType == DS4ControlSettings.ActionType.Key)
                 {
-                    setting.ActionData.actionAlias = outputKBMMapping.GetRealEventKey(Convert.ToUInt32(setting.ActionData.actionKey));
+                    setting.ActionData.ActionAlias = outputKBMMapping.GetRealEventKey(Convert.ToUInt32(setting.ActionData.ActionKey));
                 }
             }
             else
             {
-                setting.ShiftAction.actionAlias = 0;
+                setting.ShiftAction.ActionAlias = 0;
                 if (setting.ShiftActionType == DS4ControlSettings.ActionType.Key)
                 {
-                    setting.ShiftAction.actionAlias = outputKBMMapping.GetRealEventKey(Convert.ToUInt32(setting.ShiftAction.actionKey));
+                    setting.ShiftAction.ActionAlias = outputKBMMapping.GetRealEventKey(Convert.ToUInt32(setting.ShiftAction.ActionKey));
                 }
             }
         }

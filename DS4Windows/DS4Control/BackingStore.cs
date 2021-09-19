@@ -1221,7 +1221,7 @@ namespace DS4Windows
                         string keyType = string.Empty;
 
                         if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button &&
-                            dcs.ActionData.actionBtn == X360Controls.Unbound)
+                            dcs.ActionData.ActionButton == X360Controls.Unbound)
                         {
                             keyType += DS4KeyType.Unbound;
                         }
@@ -1246,18 +1246,18 @@ namespace DS4Windows
                         buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
                         if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                         {
-                            int[] ii = dcs.ActionData.actionMacro;
+                            int[] ii = dcs.ActionData.ActionMacro;
                             buttonNode.InnerText = string.Join("/", ii);
                             Macro.AppendChild(buttonNode);
                         }
                         else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
                         {
-                            buttonNode.InnerText = dcs.ActionData.actionKey.ToString();
+                            buttonNode.InnerText = dcs.ActionData.ActionKey.ToString();
                             Key.AppendChild(buttonNode);
                         }
                         else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
                         {
-                            buttonNode.InnerText = GetX360ControlString((X360Controls)dcs.ActionData.actionBtn);
+                            buttonNode.InnerText = GetX360ControlString((X360Controls)dcs.ActionData.ActionButton);
                             Button.AppendChild(buttonNode);
                         }
                     }
@@ -1288,7 +1288,7 @@ namespace DS4Windows
                         string keyType = string.Empty;
 
                         if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button &&
-                            dcs.ShiftAction.actionBtn == X360Controls.Unbound)
+                            dcs.ShiftAction.ActionButton == X360Controls.Unbound)
                         {
                             keyType += DS4KeyType.Unbound;
                         }
@@ -1313,18 +1313,18 @@ namespace DS4Windows
                         buttonNode.SetAttribute("Trigger", dcs.ShiftTrigger.ToString());
                         if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
                         {
-                            int[] ii = dcs.ShiftAction.actionMacro;
+                            int[] ii = dcs.ShiftAction.ActionMacro;
                             buttonNode.InnerText = string.Join("/", ii);
                             ShiftMacro.AppendChild(buttonNode);
                         }
                         else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
                         {
-                            buttonNode.InnerText = dcs.ShiftAction.actionKey.ToString();
+                            buttonNode.InnerText = dcs.ShiftAction.ActionKey.ToString();
                             ShiftKey.AppendChild(buttonNode);
                         }
                         else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
                         {
-                            buttonNode.InnerText = dcs.ShiftAction.actionBtn.ToString();
+                            buttonNode.InnerText = dcs.ShiftAction.ActionButton.ToString();
                             ShiftButton.AppendChild(buttonNode);
                         }
                     }

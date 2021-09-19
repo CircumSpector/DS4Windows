@@ -64,20 +64,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     case DS4ControlSettings.ActionType.Button:
                         currentOutBind.outputType = OutBinding.OutType.Button;
-                        currentOutBind.control = (X360Controls)setting.ActionData.actionBtn;
+                        currentOutBind.control = (X360Controls)setting.ActionData.ActionButton;
                         break;
                     case DS4ControlSettings.ActionType.Default:
                         currentOutBind.outputType = OutBinding.OutType.Default;
                         break;
                     case DS4ControlSettings.ActionType.Key:
                         currentOutBind.outputType = OutBinding.OutType.Key;
-                        currentOutBind.outkey = setting.ActionData.actionKey;
+                        currentOutBind.outkey = setting.ActionData.ActionKey;
                         currentOutBind.hasScanCode = sc;
                         currentOutBind.toggle = toggle;
                         break;
                     case DS4ControlSettings.ActionType.Macro:
                         currentOutBind.outputType = OutBinding.OutType.Macro;
-                        currentOutBind.macro = (int[])setting.ActionData.actionMacro;
+                        currentOutBind.macro = (int[])setting.ActionData.ActionMacro;
                         currentOutBind.macroType = settings.KeyType;
                         currentOutBind.hasScanCode = sc;
                         break;
@@ -102,20 +102,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     case DS4ControlSettings.ActionType.Button:
                         shiftOutBind.outputType = OutBinding.OutType.Button;
-                        shiftOutBind.control = (X360Controls)setting.ShiftAction.actionBtn;
+                        shiftOutBind.control = (X360Controls)setting.ShiftAction.ActionButton;
                         break;
                     case DS4ControlSettings.ActionType.Default:
                         shiftOutBind.outputType = OutBinding.OutType.Default;
                         break;
                     case DS4ControlSettings.ActionType.Key:
                         shiftOutBind.outputType = OutBinding.OutType.Key;
-                        shiftOutBind.outkey = setting.ShiftAction.actionKey;
+                        shiftOutBind.outkey = setting.ShiftAction.ActionKey;
                         shiftOutBind.hasScanCode = sc;
                         shiftOutBind.toggle = toggle;
                         break;
                     case DS4ControlSettings.ActionType.Macro:
                         shiftOutBind.outputType = OutBinding.OutType.Macro;
-                        shiftOutBind.macro = (int[])setting.ShiftAction.actionMacro;
+                        shiftOutBind.macro = (int[])setting.ShiftAction.ActionMacro;
                         shiftOutBind.macroType = setting.ShiftKeyType;
                         shiftOutBind.hasScanCode = sc;
                         break;
@@ -555,12 +555,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
                 if (outputType == OutType.Default)
                 {
-                    settings.ActionData.actionKey = 0;
+                    settings.ActionData.ActionKey = 0;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Default;
                 }
                 else if (outputType == OutType.Button)
                 {
-                    settings.ActionData.actionBtn = control;
+                    settings.ActionData.ActionButton = control;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Button;
                     if (control == X360Controls.Unbound)
                     {
@@ -569,7 +569,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
                 else if (outputType == OutType.Key)
                 {
-                    settings.ActionData.actionKey = outkey;
+                    settings.ActionData.ActionKey = outkey;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Key;
                     if (hasScanCode)
                     {
@@ -583,7 +583,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
                 else if (outputType == OutType.Macro)
                 {
-                    settings.ActionData.actionMacro = macro;
+                    settings.ActionData.ActionMacro = macro;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
                     if (macroType.HasFlag(DS4KeyType.HoldMacro))
                     {
@@ -618,12 +618,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
                 if (outputType == OutType.Default || shiftTrigger == 0)
                 {
-                    settings.ShiftAction.actionKey = 0;
+                    settings.ShiftAction.ActionKey = 0;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Default;
                 }
                 else if (outputType == OutType.Button)
                 {
-                    settings.ShiftAction.actionBtn = control;
+                    settings.ShiftAction.ActionButton = control;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Button;
                     if (control == X360Controls.Unbound)
                     {
@@ -632,7 +632,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
                 else if (outputType == OutType.Key)
                 {
-                    settings.ShiftAction.actionKey = outkey;
+                    settings.ShiftAction.ActionKey = outkey;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Key;
                     if (hasScanCode)
                     {
@@ -646,7 +646,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
                 else if (outputType == OutType.Macro)
                 {
-                    settings.ShiftAction.actionMacro = macro;
+                    settings.ShiftAction.ActionMacro = macro;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Macro;
 
                     if (macroType.HasFlag(DS4KeyType.HoldMacro))

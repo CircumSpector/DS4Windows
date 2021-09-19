@@ -2850,14 +2850,14 @@ namespace DS4Windows
             {
                 action = dcs.ShiftAction;
                 actionType = dcs.ShiftActionType;
-                actionAlias = dcs.ShiftAction.actionAlias;
+                actionAlias = dcs.ShiftAction.ActionAlias;
                 keyType = dcs.ShiftKeyType;
             }
             else if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
             {
                 action = dcs.ActionData;
                 actionType = dcs.ControlActionType;
-                actionAlias = dcs.ActionData.actionAlias;
+                actionAlias = dcs.ActionData.ActionAlias;
                 keyType = dcs.KeyType;
             }
 
@@ -2942,11 +2942,11 @@ namespace DS4Windows
                     bool active = getBoolMapping2(device, dcs.Control, cState, eState, tp, fieldMapping);
                     if (active)
                     {
-                        PlayMacro(device, macroControl, string.Empty, null, action.actionMacro, dcs.Control, keyType);
+                        PlayMacro(device, macroControl, string.Empty, null, action.ActionMacro, dcs.Control, keyType);
                     }
                     else
                     {
-                        EndMacro(device, macroControl, action.actionMacro, dcs.Control);
+                        EndMacro(device, macroControl, action.ActionMacro, dcs.Control);
                     }
 
                     // erase default mappings for things that are remapped
@@ -2954,7 +2954,7 @@ namespace DS4Windows
                 }
                 else if (actionType == DS4ControlSettings.ActionType.Key)
                 {
-                    ushort value = Convert.ToUInt16(action.actionKey);
+                    ushort value = Convert.ToUInt16(action.ActionKey);
                     if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                     {
                         SyntheticState.KeyPresses kp;
@@ -3005,7 +3005,7 @@ namespace DS4Windows
                     }
 
                     X360Controls xboxControl = X360Controls.None;
-                    xboxControl = (X360Controls)action.actionBtn;
+                    xboxControl = (X360Controls)action.ActionButton;
                     if (xboxControl >= X360Controls.LXNeg && xboxControl <= X360Controls.Start)
                     {
                         DS4Controls tempDS4Control = ReverseX360ButtonMapping[(int)xboxControl];
@@ -3440,12 +3440,12 @@ namespace DS4Windows
                                         {
                                             if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
                                             {
-                                                uint tempKey = outputKBMMapping.GetRealEventKey((uint)dcs.ActionData.actionKey);
+                                                uint tempKey = outputKBMMapping.GetRealEventKey((uint)dcs.ActionData.ActionKey);
                                                 outputKBMHandler.PerformKeyRelease(tempKey);
                                             }
                                             else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                                             {
-                                                int[] keys = (int[])dcs.ActionData.actionMacro;
+                                                int[] keys = (int[])dcs.ActionData.ActionMacro;
                                                 for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
                                                 {
                                                     uint tempKey = outputKBMMapping.GetRealEventKey((uint)keys[j]);
@@ -3908,10 +3908,10 @@ namespace DS4Windows
                                 if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
                                 {
                                     if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
-                                        outputKBMHandler.PerformKeyRelease((ushort)dcs.ActionData.actionKey);
+                                        outputKBMHandler.PerformKeyRelease((ushort)dcs.ActionData.ActionKey);
                                     else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                                     {
-                                        int[] keys = dcs.ActionData.actionMacro;
+                                        int[] keys = dcs.ActionData.ActionMacro;
                                         for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
                                             outputKBMHandler.PerformKeyRelease((ushort)keys[j]);
                                     }
@@ -3952,12 +3952,12 @@ namespace DS4Windows
                 {
                     if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
                     {
-                        uint tempKey = outputKBMMapping.GetRealEventKey((uint)dcs.ActionData.actionKey);
+                        uint tempKey = outputKBMMapping.GetRealEventKey((uint)dcs.ActionData.ActionKey);
                         outputKBMHandler.PerformKeyRelease(tempKey);
                     }
                     else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                     {
-                        int[] keys = dcs.ActionData.actionMacro;
+                        int[] keys = dcs.ActionData.ActionMacro;
                         for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
                         {
                             uint tempKey = outputKBMMapping.GetRealEventKey((uint)keys[j]);

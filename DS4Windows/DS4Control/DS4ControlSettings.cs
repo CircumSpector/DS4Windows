@@ -48,9 +48,9 @@ namespace DS4Windows
             Extras = null;
             KeyType = DS4KeyType.None;
             ControlActionType = ActionType.Default;
-            ActionData = new ControlActionData {actionAlias = 0};
+            ActionData = new ControlActionData {ActionAlias = 0};
             ShiftActionType = ActionType.Default;
-            ShiftAction = new ControlActionData {actionAlias = 0};
+            ShiftAction = new ControlActionData {ActionAlias = 0};
             ShiftTrigger = 0;
             ShiftExtras = null;
             ShiftKeyType = DS4KeyType.None;
@@ -68,25 +68,25 @@ namespace DS4Windows
                 if (act is int || act is ushort)
                 {
                     ControlActionType = ActionType.Key;
-                    ActionData.actionKey = Convert.ToInt32(act);
+                    ActionData.ActionKey = Convert.ToInt32(act);
                 }
                 else if (act is string || act is X360Controls)
                 {
                     ControlActionType = ActionType.Button;
                     if (act is X360Controls)
-                        ActionData.actionBtn = (X360Controls) act;
+                        ActionData.ActionButton = (X360Controls) act;
                     else
-                        Enum.TryParse(act.ToString(), out ActionData.actionBtn);
+                        Enum.TryParse(act.ToString(), out ActionData.ActionButton);
                 }
                 else if (act is int[])
                 {
                     ControlActionType = ActionType.Macro;
-                    ActionData.actionMacro = (int[]) act;
+                    ActionData.ActionMacro = (int[]) act;
                 }
                 else
                 {
                     ControlActionType = ActionType.Default;
-                    ActionData.actionKey = 0;
+                    ActionData.ActionKey = 0;
                 }
 
                 Extras = exts;
@@ -97,25 +97,25 @@ namespace DS4Windows
                 if (act is int || act is ushort)
                 {
                     ShiftActionType = ActionType.Key;
-                    ShiftAction.actionKey = Convert.ToInt32(act);
+                    ShiftAction.ActionKey = Convert.ToInt32(act);
                 }
                 else if (act is string || act is X360Controls)
                 {
                     ShiftActionType = ActionType.Button;
                     if (act is X360Controls)
-                        ShiftAction.actionBtn = (X360Controls) act;
+                        ShiftAction.ActionButton = (X360Controls) act;
                     else
-                        Enum.TryParse(act.ToString(), out ShiftAction.actionBtn);
+                        Enum.TryParse(act.ToString(), out ShiftAction.ActionButton);
                 }
                 else if (act is int[])
                 {
                     ShiftActionType = ActionType.Macro;
-                    ShiftAction.actionMacro = (int[]) act;
+                    ShiftAction.ActionMacro = (int[]) act;
                 }
                 else
                 {
                     ShiftActionType = ActionType.Default;
-                    ShiftAction.actionKey = 0;
+                    ShiftAction.ActionKey = 0;
                 }
 
                 ShiftExtras = exts;

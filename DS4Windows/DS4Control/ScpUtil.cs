@@ -60,20 +60,7 @@ namespace DS4Windows
         Default,
         Dark,
     }
-
-    public class ControlActionData
-    {
-        // Store base mapping value. Uses Windows virtual key values as the base
-        // https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-        public int actionKey;
-
-        // Alias to real value for current output KB+M event system.
-        // Allows skipping a translation call every frame
-        public uint actionAlias = 0;
-        public X360Controls actionBtn;
-        public int[] actionMacro = new int[1];
-    }
-   
+    
     public class DebugEventArgs : EventArgs
     {
         protected DateTime m_Time = DateTime.Now;
