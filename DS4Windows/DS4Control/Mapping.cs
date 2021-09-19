@@ -4083,7 +4083,7 @@ namespace DS4Windows
         private static bool PlayMacroCodeValue(int device, bool[] macrocontrol, DS4KeyType keyType, int macroCodeValue, bool[] keydown)
         {
             bool doDelayOnCaller = false;
-            if (macroCodeValue >= 261 && macroCodeValue <= DS4ControlSettings.MAX_MACRO_VALUE)
+            if (macroCodeValue >= 261 && macroCodeValue <= DS4ControlSettings.MaxMacroValue)
             {
                 // Gamepad button up or down macro event. macroCodeValue index value is the button identifier (codeValue-261 = idx in 0..24 range)
                 if (!keydown[macroCodeValue])
