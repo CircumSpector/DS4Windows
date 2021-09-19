@@ -29,19 +29,40 @@ namespace DS4Windows
 
         protected static Int32 m_IdleTimeout = 600000;
 
+        /// <summary>
+        ///     Full path to main executable.
+        /// </summary>
         public static string ExecutableLocation => Process.GetCurrentProcess().MainModule.FileName;
 
+        /// <summary>
+        ///     Directory containing the <see cref="ExecutableFileName"/>.
+        /// </summary>
         public static string ExecutableDirectory => Directory.GetParent(ExecutableLocation).FullName;
 
+        /// <summary>
+        ///     File name of main executable.
+        /// </summary>
         public static string ExecutableFileName => Path.GetFileName(ExecutableLocation);
 
+        /// <summary>
+        ///     <see cref="FileVersionInfo"/> of <see cref="ExecutableLocation"/>.
+        /// </summary>
         public static FileVersionInfo ExecutableFileVersion => FileVersionInfo.GetVersionInfo(ExecutableLocation);
 
+        /// <summary>
+        ///     Product version of <see cref="ExecutableFileVersion"/>.
+        /// </summary>
         public static string ExecutableProductVersion => ExecutableFileVersion.ProductVersion;
 
+        /// <summary>
+        ///     Numeric representation of <see cref="ExecutableFileVersion"/>.
+        /// </summary>
         public static ulong ExecutableVersionLong => (ulong)ExecutableFileVersion.ProductMajorPart << 48 |
             (ulong)ExecutableFileVersion.ProductMinorPart << 32 | (ulong)ExecutableFileVersion.ProductBuildPart << 16;
 
+        /// <summary>
+        ///     Is the underlying OS Windows 8 (or newer).
+        /// </summary>
         public static bool IsWin8OrGreater
         {
             get
@@ -60,6 +81,9 @@ namespace DS4Windows
             }
         }
 
+        /// <summary>
+        ///     Is the underlying OS Windows 10 (or newer).
+        /// </summary>
         public static bool IsWin10OrGreater => Environment.OSVersion.Version.Major >= 10;
 
         public static string RuntimeAppDataPath { get; set; }
