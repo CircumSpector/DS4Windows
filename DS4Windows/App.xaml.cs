@@ -147,11 +147,11 @@ namespace DS4WinWPF
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
             DS4Windows.Global.Instance.FindConfigLocation();
-            bool firstRun = DS4Windows.Global.IsFirstRun;
+            bool firstRun = DS4Windows.Global.Instance.IsFirstRun;
             if (firstRun)
             {
                 DS4Forms.SaveWhere savewh =
-                    new DS4Forms.SaveWhere(DS4Windows.Global.HasMultipleSaveSpots);
+                    new DS4Forms.SaveWhere(DS4Windows.Global.Instance.HasMultipleSaveSpots);
                 savewh.ShowDialog();
             }
 

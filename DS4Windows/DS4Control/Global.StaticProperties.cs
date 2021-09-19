@@ -47,6 +47,12 @@ namespace DS4Windows
                                                      ((ulong)ExecutableFileVersion.ProductBuildPart << 16);
 
         /// <summary>
+        ///     Absolute path to roaming application directory in current user profile.
+        /// </summary>
+        public static string RoamingAppDataPath =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DS4Windows");
+        
+        /// <summary>
         ///     Is the underlying OS Windows 8 (or newer).
         /// </summary>
         public static bool IsWin8OrGreater
@@ -104,6 +110,9 @@ namespace DS4Windows
             }
         }
 
+        /// <summary>
+        ///     Check if the current user has elevated privileges.
+        /// </summary>
         public static bool IsAdministrator
         {
             get

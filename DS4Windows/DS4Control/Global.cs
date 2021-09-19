@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
 using System.Xml;
 using DS4Windows.DS4Control;
 
@@ -28,21 +25,16 @@ namespace DS4Windows
         public const int TEST_PROFILE_INDEX = TEST_PROFILE_ITEM_COUNT - 1;
         public const int OLD_XINPUT_CONTROLLER_COUNT = 4;
         public const byte DS4_STICK_AXIS_MIDPOINT = 128;
-
         
         private readonly BackingStore _config = new();
 
         protected static Int32 m_IdleTimeout = 600000;
-
         
-        public static bool IsFirstRun { get; set; } = false;
+        public bool IsFirstRun { get; set; } = false;
 
-        public static bool HasMultipleSaveSpots { get; set; } = false;
-
-        public static string RoamingAppDataPath =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DS4Windows");
+        public bool HasMultipleSaveSpots { get; set; } = false;
         
-        public static bool RunHotPlug { get; set; } = false;
+        public bool RunHotPlug { get; set; } = false;
 
         public static string[] TempProfileNames = new string[TEST_PROFILE_ITEM_COUNT]
         {
@@ -404,8 +396,6 @@ namespace DS4Windows
             return Saved;
         }
 
-        
-
         public static bool CheckForDevice(string guid)
         {
             bool result = false;
@@ -688,18 +678,20 @@ namespace DS4Windows
 
         public void FindConfigLocation()
         {
-            bool programFolderAutoProfilesExists = File.Exists(Path.Combine(ExecutableDirectory, Constants.AutoProfilesFileName));
-            bool appDataAutoProfilesExists = File.Exists(Path.Combine(RoamingAppDataPath, Constants.AutoProfilesFileName));
+            var programFolderAutoProfilesExists =
+                File.Exists(Path.Combine(ExecutableDirectory, Constants.AutoProfilesFileName));
+            var appDataAutoProfilesExists =
+                File.Exists(Path.Combine(RoamingAppDataPath, Constants.AutoProfilesFileName));
             //bool localAppDataAutoProfilesExists = File.Exists(Path.Combine(localAppDataPpath, "Auto Profiles.xml"));
             //bool systemAppConfigExists = appDataAutoProfilesExists || localAppDataAutoProfilesExists;
-            bool systemAppConfigExists = appDataAutoProfilesExists;
-            bool isSameFolder = appDataAutoProfilesExists && ExecutableDirectory == RoamingAppDataPath;
+            var systemAppConfigExists = appDataAutoProfilesExists;
+            var isSameFolder = appDataAutoProfilesExists && ExecutableDirectory == RoamingAppDataPath;
 
             if (programFolderAutoProfilesExists && appDataAutoProfilesExists &&
                 !isSameFolder)
             {
-                Global.IsFirstRun = true;
-                Global.HasMultipleSaveSpots = true;
+                Instance.IsFirstRun = true;
+                Instance.HasMultipleSaveSpots = true;
             }
             else if (programFolderAutoProfilesExists)
             {
@@ -715,8 +707,8 @@ namespace DS4Windows
             }
             else if (!programFolderAutoProfilesExists && !appDataAutoProfilesExists)
             {
-                Global.IsFirstRun = true;
-                Global.HasMultipleSaveSpots = false;
+                Instance.IsFirstRun = true;
+                Instance.HasMultipleSaveSpots = false;
             }
         }
 
