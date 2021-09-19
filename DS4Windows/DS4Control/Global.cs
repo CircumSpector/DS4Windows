@@ -1080,13 +1080,13 @@ namespace DS4Windows
 
         public static bool FlashWhenLate
         {
-            set { m_Config.flashWhenLate = value; }
-            get { return m_Config.flashWhenLate; }
+            set { m_Config.FlashWhenLate = value; }
+            get { return m_Config.FlashWhenLate; }
         }
 
         public static bool getFlashWhenLate()
         {
-            return m_Config.flashWhenLate;
+            return m_Config.FlashWhenLate;
         }
 
         public static int FlashWhenLateAt
@@ -1102,40 +1102,40 @@ namespace DS4Windows
 
         public static bool isUsingUDPServer()
         {
-            return m_Config.useUDPServ;
+            return m_Config.UseUdpServer;
         }
         public static void setUsingUDPServer(bool state)
         {
-            m_Config.useUDPServ = state;
+            m_Config.UseUdpServer = state;
         }
 
         public static int getUDPServerPortNum()
         {
-            return m_Config.udpServPort;
+            return m_Config.UdpServerPort;
         }
         public static void setUDPServerPort(int value)
         {
-            m_Config.udpServPort = value;
+            m_Config.UdpServerPort = value;
         }
 
         public static string getUDPServerListenAddress()
         {
-            return m_Config.udpServListenAddress;
+            return m_Config.UdpServerListenAddress;
         }
         public static void setUDPServerListenAddress(string value)
         {
-            m_Config.udpServListenAddress = value.Trim();
+            m_Config.UdpServerListenAddress = value.Trim();
         }
 
         public static bool UseUDPSeverSmoothing
         {
-            get => m_Config.useUdpSmoothing;
-            set => m_Config.useUdpSmoothing = value;
+            get => m_Config.UseUdpSmoothing;
+            set => m_Config.UseUdpSmoothing = value;
         }
 
         public static bool IsUsingUDPServerSmoothing()
         {
-            return m_Config.useUdpSmoothing;
+            return m_Config.UseUdpSmoothing;
         }
 
         public static double UDPServerSmoothingMincutoff
@@ -1166,32 +1166,32 @@ namespace DS4Windows
 
         public static TrayIconChoice UseIconChoice
         {
-            get => m_Config.useIconChoice;
-            set => m_Config.useIconChoice = value;
+            get => m_Config.UseIconChoice;
+            set => m_Config.UseIconChoice = value;
         }
 
         public static AppThemeChoice UseCurrentTheme
         {
-            get => m_Config.useCurrentTheme;
-            set => m_Config.useCurrentTheme = value;
+            get => m_Config.ThemeChoice;
+            set => m_Config.ThemeChoice = value;
         }
 
         public static bool UseCustomSteamFolder
         {
-            set { m_Config.useCustomSteamFolder = value; }
-            get { return m_Config.useCustomSteamFolder; }
+            set { m_Config.UseCustomSteamFolder = value; }
+            get { return m_Config.UseCustomSteamFolder; }
         }
 
         public static string CustomSteamFolder
         {
-            set { m_Config.customSteamFolder = value; }
-            get { return m_Config.customSteamFolder; }
+            set { m_Config.CustomSteamFolder = value; }
+            get { return m_Config.CustomSteamFolder; }
         }
 
         public static bool AutoProfileRevertDefaultProfile
         {
-            set { m_Config.autoProfileRevertDefaultProfile = value; }
-            get { return m_Config.autoProfileRevertDefaultProfile; }
+            set { m_Config.AutoProfileRevertDefaultProfile = value; }
+            get { return m_Config.AutoProfileRevertDefaultProfile; }
         }
 
         /// <summary>
@@ -1814,9 +1814,9 @@ namespace DS4Windows
         public static TouchpadAbsMouseSettings[] TouchAbsMouse => m_Config.touchpadAbsMouse;
         public static TouchpadRelMouseSettings[] TouchRelMouse => m_Config.touchpadRelMouse;
 
-        public static ControlServiceDeviceOptions DeviceOptions => m_Config.deviceOptions;
+        public static ControlServiceDeviceOptions DeviceOptions => m_Config.DeviceOptions;
 
-        public static OutContType[] OutContType => m_Config.outputDevType;
+        public static OutContType[] OutContType => m_Config.OutputDeviceType;
         public static string[] LaunchProgram => m_Config.launchProgram;
         public static string[] ProfilePath => m_Config.profilePath;
         public static string[] OlderProfilePath => m_Config.olderProfilePath;

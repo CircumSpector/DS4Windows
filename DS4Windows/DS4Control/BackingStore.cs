@@ -469,26 +469,27 @@ namespace DS4Windows
 
         public string useLang = "";
         public bool downloadLang = true;
-        public TrayIconChoice useIconChoice;
-        public bool flashWhenLate = true;
+        public TrayIconChoice UseIconChoice;
+        public bool FlashWhenLate = true;
         public int flashWhenLateAt = 50;
-        public bool useUDPServ;
-        public int udpServPort = 26760;
+        public bool UseUdpServer;
+        public int UdpServerPort { get; set; }= 26760;
 
-        public string
-            udpServListenAddress =
-                "127.0.0.1"; // 127.0.0.1=IPAddress.Loopback (default), 0.0.0.0=IPAddress.Any as all interfaces, x.x.x.x = Specific ipv4 interface address or hostname
+        /// <summary>
+        ///     127.0.0.1=IPAddress.Loopback (default), 0.0.0.0=IPAddress.Any as all interfaces, x.x.x.x = Specific ipv4 interface
+        ///     address or hostname
+        /// </summary>
+        public string UdpServerListenAddress { get; set; } = "127.0.0.1"; 
 
-        public bool useUdpSmoothing;
+        public bool UseUdpSmoothing { get; set; }
         public double udpSmoothingMincutoff = DEFAULT_UDP_SMOOTH_MINCUTOFF;
         public double udpSmoothingBeta = DEFAULT_UDP_SMOOTH_BETA;
-        public bool useCustomSteamFolder;
-        public string customSteamFolder;
-        public AppThemeChoice useCurrentTheme;
+        public bool UseCustomSteamFolder;
+        public string CustomSteamFolder { get; set; }
+        public AppThemeChoice ThemeChoice { get; set; }
         public string fakeExeFileName = string.Empty;
 
-        public ControlServiceDeviceOptions deviceOptions =
-            new();
+        public ControlServiceDeviceOptions DeviceOptions => new();
 
         // Cache whether profile has custom action
         public bool[] containsCustomAction = new bool[Global.TEST_PROFILE_ITEM_COUNT]
@@ -544,7 +545,7 @@ namespace DS4Windows
             };
 
         // Used to hold the controller type desired in a profile
-        public OutContType[] outputDevType = new OutContType[Global.TEST_PROFILE_ITEM_COUNT]
+        public OutContType[] OutputDeviceType => new OutContType[Global.TEST_PROFILE_ITEM_COUNT]
         {
             OutContType.X360,
             OutContType.X360, OutContType.X360,
@@ -552,8 +553,11 @@ namespace DS4Windows
             OutContType.X360, OutContType.X360, OutContType.X360
         };
 
-        // TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile active when a foreground proces is unknown (ie. no matching auto-profile rule)
-        public bool autoProfileRevertDefaultProfile = true;
+        /// <summary>
+        ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
+        ///     active when a foreground process is unknown (ie. no matching auto-profile rule)
+        /// </summary>
+        public bool AutoProfileRevertDefaultProfile = true;
 
         private bool tempBool;
 
@@ -1196,7 +1200,7 @@ namespace DS4Windows
                 XmlElement xmlTouchAbsMouseSnapCenter = m_Xdoc.CreateElement("SnapToCenter"); xmlTouchAbsMouseSnapCenter.InnerText = touchpadAbsMouse[device].snapToCenter.ToString(); xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseSnapCenter);
                 rootElement.AppendChild(xmlTouchAbsMouseGroupEl);
 
-                XmlNode xmlOutContDevice = m_Xdoc.CreateNode(XmlNodeType.Element, "OutputContDevice", null); xmlOutContDevice.InnerText = OutContDeviceString(outputDevType[device]); rootElement.AppendChild(xmlOutContDevice);
+                XmlNode xmlOutContDevice = m_Xdoc.CreateNode(XmlNodeType.Element, "OutputContDevice", null); xmlOutContDevice.InnerText = OutContDeviceString(OutputDeviceType[device]); rootElement.AppendChild(xmlOutContDevice);
 
                 XmlNode NodeControl = m_Xdoc.CreateNode(XmlNodeType.Element, "Control", null);
                 XmlNode Key = m_Xdoc.CreateNode(XmlNodeType.Element, "Key", null);
@@ -3146,8 +3150,8 @@ namespace DS4Windows
                     missingSetting = true;
                 }
 
-                try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/OutputContDevice"); outputDevType[device] = OutContDeviceId(Item.InnerText); }
-                catch { outputDevType[device] = OutContType.X360; missingSetting = true; }
+                try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/OutputContDevice"); OutputDeviceType[device] = OutContDeviceId(Item.InnerText); }
+                catch { OutputDeviceType[device] = OutContType.X360; missingSetting = true; }
 
                 // Only change xinput devices under certain conditions. Avoid
                 // performing this upon program startup before loading devices.
@@ -3564,7 +3568,7 @@ namespace DS4Windows
                     catch { missingSetting = true; }
                     try { Item = m_Xdoc.SelectSingleNode("/Profile/DownloadLang"); Boolean.TryParse(Item.InnerText, out downloadLang); }
                     catch { missingSetting = true; }
-                    try { Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLate"); Boolean.TryParse(Item.InnerText, out flashWhenLate); }
+                    try { Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLate"); Boolean.TryParse(Item.InnerText, out FlashWhenLate); }
                     catch { missingSetting = true; }
                     try { Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLateAt"); int.TryParse(Item.InnerText, out flashWhenLateAt); }
                     catch { missingSetting = true; }
@@ -3573,7 +3577,7 @@ namespace DS4Windows
                     bool hasIconChoice = Item != null;
                     if (hasIconChoice)
                     {
-                        hasIconChoice = Enum.TryParse(Item.InnerText ?? "", out useIconChoice);
+                        hasIconChoice = Enum.TryParse(Item.InnerText ?? "", out UseIconChoice);
                     }
 
                     if (!hasIconChoice)
@@ -3585,7 +3589,7 @@ namespace DS4Windows
                             Item = m_Xdoc.SelectSingleNode("/Profile/WhiteIcon");
                             if (bool.TryParse(Item?.InnerText ?? "", out bool temp))
                             {
-                                useIconChoice = temp ? TrayIconChoice.White : TrayIconChoice.Default;
+                                UseIconChoice = temp ? TrayIconChoice.White : TrayIconChoice.Default;
                             }
                         }
                         catch { missingSetting = true; }
@@ -3596,15 +3600,15 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/Profile/AppTheme");
                         string temp = Item.InnerText;
                         Enum.TryParse(temp, out AppThemeChoice choice);
-                        useCurrentTheme = choice;
+                        ThemeChoice = choice;
                     }
-                    catch { missingSetting = true; useCurrentTheme = AppThemeChoice.Default; }
+                    catch { missingSetting = true; ThemeChoice = AppThemeChoice.Default; }
 
-                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UseUDPServer"); Boolean.TryParse(Item.InnerText, out useUDPServ); }
+                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UseUDPServer"); Boolean.TryParse(Item.InnerText, out UseUdpServer); }
                     catch { missingSetting = true; }
-                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerPort"); int temp; int.TryParse(Item.InnerText, out temp); udpServPort = Math.Min(Math.Max(temp, 1024), 65535); }
+                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerPort"); int temp; int.TryParse(Item.InnerText, out temp); UdpServerPort = Math.Min(Math.Max(temp, 1024), 65535); }
                     catch { missingSetting = true; }
-                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerListenAddress"); udpServListenAddress = Item.InnerText; }
+                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerListenAddress"); UdpServerListenAddress = Item.InnerText; }
                     catch { missingSetting = true; }
 
                     bool udpServerSmoothingGroup = false;
@@ -3617,7 +3621,7 @@ namespace DS4Windows
                         {
                             Item = xmlUdpServerSmoothElement.SelectSingleNode("UseSmoothing");
                             bool.TryParse(Item.InnerText, out bool temp);
-                            useUdpSmoothing = temp;
+                            UseUdpSmoothing = temp;
                         }
                         catch { missingSetting = true; }
 
@@ -3640,11 +3644,11 @@ namespace DS4Windows
                         catch { missingSetting = true; }
                     }
 
-                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UseCustomSteamFolder"); Boolean.TryParse(Item.InnerText, out useCustomSteamFolder); }
+                    try { Item = m_Xdoc.SelectSingleNode("/Profile/UseCustomSteamFolder"); Boolean.TryParse(Item.InnerText, out UseCustomSteamFolder); }
                     catch { missingSetting = true; }
-                    try { Item = m_Xdoc.SelectSingleNode("/Profile/CustomSteamFolder"); customSteamFolder = Item.InnerText; }
+                    try { Item = m_Xdoc.SelectSingleNode("/Profile/CustomSteamFolder"); CustomSteamFolder = Item.InnerText; }
                     catch { missingSetting = true; }
-                    try { Item = m_Xdoc.SelectSingleNode("/Profile/AutoProfileRevertDefaultProfile"); Boolean.TryParse(Item.InnerText, out autoProfileRevertDefaultProfile); }
+                    try { Item = m_Xdoc.SelectSingleNode("/Profile/AutoProfileRevertDefaultProfile"); Boolean.TryParse(Item.InnerText, out AutoProfileRevertDefaultProfile); }
                     catch { missingSetting = true; }
 
 
@@ -3659,7 +3663,7 @@ namespace DS4Windows
                                 XmlNode item = xmlDS4Support.SelectSingleNode("Enabled");
                                 if (bool.TryParse(item?.InnerText ?? "", out bool temp))
                                 {
-                                    deviceOptions.DS4DeviceOpts.Enabled = temp;
+                                    DeviceOptions.DS4DeviceOpts.Enabled = temp;
                                 }
                             }
                             catch { }
@@ -3673,7 +3677,7 @@ namespace DS4Windows
                                 XmlNode item = xmlDualSenseSupport.SelectSingleNode("Enabled");
                                 if (bool.TryParse(item?.InnerText ?? "", out bool temp))
                                 {
-                                    deviceOptions.DualSenseOpts.Enabled = temp;
+                                    DeviceOptions.DualSenseOpts.Enabled = temp;
                                 }
                             }
                             catch { }
@@ -3687,7 +3691,7 @@ namespace DS4Windows
                                 XmlNode item = xmlSwitchProSupport.SelectSingleNode("Enabled");
                                 if (bool.TryParse(item?.InnerText ?? "", out bool temp))
                                 {
-                                    deviceOptions.SwitchProDeviceOpts.Enabled = temp;
+                                    DeviceOptions.SwitchProDeviceOpts.Enabled = temp;
                                 }
                             }
                             catch { }
@@ -3701,7 +3705,7 @@ namespace DS4Windows
                                 XmlNode item = xmlJoyConSupport.SelectSingleNode("Enabled");
                                 if (bool.TryParse(item?.InnerText ?? "", out bool temp))
                                 {
-                                    deviceOptions.JoyConDeviceOpts.Enabled = temp;
+                                    DeviceOptions.JoyConDeviceOpts.Enabled = temp;
                                 }
                             }
                             catch { }
@@ -3711,7 +3715,7 @@ namespace DS4Windows
                                 XmlNode item = xmlJoyConSupport.SelectSingleNode("LinkMode");
                                 if (Enum.TryParse(item?.InnerText ?? "", out JoyConDeviceOptions.LinkMode temp))
                                 {
-                                    deviceOptions.JoyConDeviceOpts.LinkedMode = temp;
+                                    DeviceOptions.JoyConDeviceOpts.LinkedMode = temp;
                                 }
                             }
                             catch { }
@@ -3721,7 +3725,7 @@ namespace DS4Windows
                                 XmlNode item = xmlJoyConSupport.SelectSingleNode("JoinedGyroProvider");
                                 if (Enum.TryParse(item?.InnerText ?? "", out JoyConDeviceOptions.JoinedGyroProvider temp))
                                 {
-                                    deviceOptions.JoyConDeviceOpts.JoinGyroProv = temp;
+                                    DeviceOptions.JoyConDeviceOpts.JoinGyroProv = temp;
                                 }
                             }
                             catch { }
@@ -3822,54 +3826,54 @@ namespace DS4Windows
             XmlNode xmlCloseMini = m_Xdoc.CreateNode(XmlNodeType.Element, "CloseMinimizes", null); xmlCloseMini.InnerText = closeMini.ToString(); rootElement.AppendChild(xmlCloseMini);
             XmlNode xmlUseLang = m_Xdoc.CreateNode(XmlNodeType.Element, "UseLang", null); xmlUseLang.InnerText = useLang.ToString(); rootElement.AppendChild(xmlUseLang);
             XmlNode xmlDownloadLang = m_Xdoc.CreateNode(XmlNodeType.Element, "DownloadLang", null); xmlDownloadLang.InnerText = downloadLang.ToString(); rootElement.AppendChild(xmlDownloadLang);
-            XmlNode xmlFlashWhenLate = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLate", null); xmlFlashWhenLate.InnerText = flashWhenLate.ToString(); rootElement.AppendChild(xmlFlashWhenLate);
+            XmlNode xmlFlashWhenLate = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLate", null); xmlFlashWhenLate.InnerText = FlashWhenLate.ToString(); rootElement.AppendChild(xmlFlashWhenLate);
             XmlNode xmlFlashWhenLateAt = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLateAt", null); xmlFlashWhenLateAt.InnerText = flashWhenLateAt.ToString(); rootElement.AppendChild(xmlFlashWhenLateAt);
-            XmlNode xmlAppIconChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppIcon", null); xmlAppIconChoice.InnerText = useIconChoice.ToString(); rootElement.AppendChild(xmlAppIconChoice);
-            XmlNode xmlAppThemeChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppTheme", null); xmlAppThemeChoice.InnerText = useCurrentTheme.ToString(); rootElement.AppendChild(xmlAppThemeChoice);
-            XmlNode xmlUseUDPServ = m_Xdoc.CreateNode(XmlNodeType.Element, "UseUDPServer", null); xmlUseUDPServ.InnerText = useUDPServ.ToString(); rootElement.AppendChild(xmlUseUDPServ);
-            XmlNode xmlUDPServPort = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerPort", null); xmlUDPServPort.InnerText = udpServPort.ToString(); rootElement.AppendChild(xmlUDPServPort);
-            XmlNode xmlUDPServListenAddress = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerListenAddress", null); xmlUDPServListenAddress.InnerText = udpServListenAddress; rootElement.AppendChild(xmlUDPServListenAddress);
+            XmlNode xmlAppIconChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppIcon", null); xmlAppIconChoice.InnerText = UseIconChoice.ToString(); rootElement.AppendChild(xmlAppIconChoice);
+            XmlNode xmlAppThemeChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppTheme", null); xmlAppThemeChoice.InnerText = ThemeChoice.ToString(); rootElement.AppendChild(xmlAppThemeChoice);
+            XmlNode xmlUseUDPServ = m_Xdoc.CreateNode(XmlNodeType.Element, "UseUDPServer", null); xmlUseUDPServ.InnerText = UseUdpServer.ToString(); rootElement.AppendChild(xmlUseUDPServ);
+            XmlNode xmlUDPServPort = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerPort", null); xmlUDPServPort.InnerText = UdpServerPort.ToString(); rootElement.AppendChild(xmlUDPServPort);
+            XmlNode xmlUDPServListenAddress = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerListenAddress", null); xmlUDPServListenAddress.InnerText = UdpServerListenAddress; rootElement.AppendChild(xmlUDPServListenAddress);
 
             XmlElement xmlUdpServerSmoothElement = m_Xdoc.CreateElement("UDPServerSmoothingOptions");
-            XmlElement xmlUDPUseSmoothing = m_Xdoc.CreateElement("UseSmoothing"); xmlUDPUseSmoothing.InnerText = useUdpSmoothing.ToString(); xmlUdpServerSmoothElement.AppendChild(xmlUDPUseSmoothing);
+            XmlElement xmlUDPUseSmoothing = m_Xdoc.CreateElement("UseSmoothing"); xmlUDPUseSmoothing.InnerText = UseUdpSmoothing.ToString(); xmlUdpServerSmoothElement.AppendChild(xmlUDPUseSmoothing);
             XmlElement xmlUDPSmoothMinCutoff = m_Xdoc.CreateElement("UdpSmoothMinCutoff"); xmlUDPSmoothMinCutoff.InnerText = udpSmoothingMincutoff.ToString(); xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothMinCutoff);
             XmlElement xmlUDPSmoothBeta = m_Xdoc.CreateElement("UdpSmoothBeta"); xmlUDPSmoothBeta.InnerText = udpSmoothingBeta.ToString(); xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothBeta);
             rootElement.AppendChild(xmlUdpServerSmoothElement);
 
-            XmlNode xmlUseCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "UseCustomSteamFolder", null); xmlUseCustomSteamFolder.InnerText = useCustomSteamFolder.ToString(); rootElement.AppendChild(xmlUseCustomSteamFolder);
-            XmlNode xmlCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomSteamFolder", null); xmlCustomSteamFolder.InnerText = customSteamFolder; rootElement.AppendChild(xmlCustomSteamFolder);
-            XmlNode xmlAutoProfileRevertDefaultProfile = m_Xdoc.CreateNode(XmlNodeType.Element, "AutoProfileRevertDefaultProfile", null); xmlAutoProfileRevertDefaultProfile.InnerText = autoProfileRevertDefaultProfile.ToString(); rootElement.AppendChild(xmlAutoProfileRevertDefaultProfile);
+            XmlNode xmlUseCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "UseCustomSteamFolder", null); xmlUseCustomSteamFolder.InnerText = UseCustomSteamFolder.ToString(); rootElement.AppendChild(xmlUseCustomSteamFolder);
+            XmlNode xmlCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomSteamFolder", null); xmlCustomSteamFolder.InnerText = CustomSteamFolder; rootElement.AppendChild(xmlCustomSteamFolder);
+            XmlNode xmlAutoProfileRevertDefaultProfile = m_Xdoc.CreateNode(XmlNodeType.Element, "AutoProfileRevertDefaultProfile", null); xmlAutoProfileRevertDefaultProfile.InnerText = AutoProfileRevertDefaultProfile.ToString(); rootElement.AppendChild(xmlAutoProfileRevertDefaultProfile);
 
             XmlElement xmlDeviceOptions = m_Xdoc.CreateElement("DeviceOptions", null);
             XmlElement xmlDS4Support = m_Xdoc.CreateElement("DS4SupportSettings", null);
             XmlElement xmlDS4Enabled = m_Xdoc.CreateElement("Enabled", null);
-            xmlDS4Enabled.InnerText = deviceOptions.DS4DeviceOpts.Enabled.ToString();
+            xmlDS4Enabled.InnerText = DeviceOptions.DS4DeviceOpts.Enabled.ToString();
             xmlDS4Support.AppendChild(xmlDS4Enabled);
             xmlDeviceOptions.AppendChild(xmlDS4Support);
 
             XmlElement xmlDualSenseSupport = m_Xdoc.CreateElement("DualSenseSupportSettings", null);
             XmlElement xmlDualSenseEnabled = m_Xdoc.CreateElement("Enabled", null);
-            xmlDualSenseEnabled.InnerText = deviceOptions.DualSenseOpts.Enabled.ToString();
+            xmlDualSenseEnabled.InnerText = DeviceOptions.DualSenseOpts.Enabled.ToString();
             xmlDualSenseSupport.AppendChild(xmlDualSenseEnabled);
 
             xmlDeviceOptions.AppendChild(xmlDualSenseSupport);
 
             XmlElement xmlSwitchProSupport = m_Xdoc.CreateElement("SwitchProSupportSettings", null);
             XmlElement xmlSwitchProEnabled = m_Xdoc.CreateElement("Enabled", null);
-            xmlSwitchProEnabled.InnerText = deviceOptions.SwitchProDeviceOpts.Enabled.ToString();
+            xmlSwitchProEnabled.InnerText = DeviceOptions.SwitchProDeviceOpts.Enabled.ToString();
             xmlSwitchProSupport.AppendChild(xmlSwitchProEnabled);
 
             xmlDeviceOptions.AppendChild(xmlSwitchProSupport);
 
             XmlElement xmlJoyConSupport = m_Xdoc.CreateElement("JoyConSupportSettings", null);
             XmlElement xmlJoyconEnabled = m_Xdoc.CreateElement("Enabled", null);
-            xmlJoyconEnabled.InnerText = deviceOptions.JoyConDeviceOpts.Enabled.ToString();
+            xmlJoyconEnabled.InnerText = DeviceOptions.JoyConDeviceOpts.Enabled.ToString();
             xmlJoyConSupport.AppendChild(xmlJoyconEnabled);
             XmlElement xmlJoyconLinkMode = m_Xdoc.CreateElement("LinkMode", null);
-            xmlJoyconLinkMode.InnerText = deviceOptions.JoyConDeviceOpts.LinkedMode.ToString();
+            xmlJoyconLinkMode.InnerText = DeviceOptions.JoyConDeviceOpts.LinkedMode.ToString();
             xmlJoyConSupport.AppendChild(xmlJoyconLinkMode);
             XmlElement xmlJoyconUnionGyro = m_Xdoc.CreateElement("JoinedGyroProvider", null);
-            xmlJoyconUnionGyro.InnerText = deviceOptions.JoyConDeviceOpts.JoinGyroProv.ToString();
+            xmlJoyconUnionGyro.InnerText = DeviceOptions.JoyConDeviceOpts.JoinGyroProv.ToString();
             xmlJoyConSupport.AppendChild(xmlJoyconUnionGyro);
 
             xmlDeviceOptions.AppendChild(xmlJoyConSupport);
@@ -4743,7 +4747,7 @@ namespace DS4Windows
             trackballFriction[device] = 10.0;
             touchpadAbsMouse[device].Reset();
             touchpadRelMouse[device].Reset();
-            outputDevType[device] = OutContType.X360;
+            OutputDeviceType[device] = OutContType.X360;
             ds4Mapping = false;
         }
 
@@ -4795,7 +4799,7 @@ namespace DS4Windows
             TriggerDeadZoneZInfo r2Info = r2ModInfo[device];
             r2Info.deadZone = (byte)(0.00 * 255);
 
-            outputDevType[device] = OutContType.DS4;
+            OutputDeviceType[device] = OutContType.DS4;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
@@ -4910,7 +4914,7 @@ namespace DS4Windows
             gyroMStickInfo[device].useSmoothing = true;
             gyroMStickInfo[device].smoothingMethod = GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
-            outputDevType[device] = OutContType.DS4;
+            OutputDeviceType[device] = OutContType.DS4;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
@@ -4995,7 +4999,7 @@ namespace DS4Windows
             gyroMouseInfo[device].enableSmoothing = true;
             gyroMouseInfo[device].smoothingMethod = GyroMouseInfo.SmoothingMethod.OneEuro;
 
-            outputDevType[device] = OutContType.DS4;
+            OutputDeviceType[device] = OutContType.DS4;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
@@ -5024,7 +5028,7 @@ namespace DS4Windows
             rsInfo.antiDeadZone = 0;
             rsInfo.maxZone = 90;
 
-            outputDevType[device] = OutContType.DS4;
+            OutputDeviceType[device] = OutContType.DS4;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
@@ -5330,7 +5334,7 @@ namespace DS4Windows
                     }
                 }
                 else if (!dinputOnly[device] &&
-                    oldContType != outputDevType[device])
+                    oldContType != OutputDeviceType[device])
                 {
                     xinputPlug = true;
                     xinputStatus = true;
@@ -5359,7 +5363,7 @@ namespace DS4Windows
                                 control.UnplugOutDev(device, tempDev);
                             }
 
-                            OutContType tempContType = outputDevType[device];
+                            OutContType tempContType = OutputDeviceType[device];
                             control.PluginOutDev(device, tempDev);
                             //Global.UseDirectInputOnly[device] = false;
                         }
