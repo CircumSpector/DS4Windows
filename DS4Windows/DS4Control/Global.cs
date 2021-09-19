@@ -13,6 +13,14 @@ namespace DS4Windows
 {
     public partial class Global
     {
+        private static readonly Lazy<Global> LazyInstance = new(() => new Global());
+
+        public static Global Instance => LazyInstance.Value;
+
+        private Global()
+        {
+        }
+
         // Use 15 minutes for default Idle Disconnect when initially enabling the option
         public const int DEFAULT_ENABLE_IDLE_DISCONN_MINS = 15;
         public const int MAX_DS4_CONTROLLER_COUNT = 8;
