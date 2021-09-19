@@ -18,6 +18,7 @@ using WPFLocalizeExtension.Engine;
 using NLog;
 using System.Windows.Media;
 using System.Net;
+using DS4Windows;
 using Microsoft.Win32.SafeHandles;
 
 namespace DS4WinWPF
@@ -178,7 +179,7 @@ namespace DS4WinWPF
             bool readAppConfig = DS4Windows.Global.Load();
             if (!firstRun && !readAppConfig)
             {
-                logger.Info($@"Profiles.xml not read at location ${DS4Windows.Global.RuntimeAppDataPath}\Profiles.xml. Using default app settings");
+                logger.Info($@"{Constants.ProfilesFileName} not read at location ${DS4Windows.Global.RuntimeAppDataPath}\{Constants.ProfilesFileName}. Using default app settings");
             }
 
             if (firstRun)
@@ -301,11 +302,11 @@ namespace DS4WinWPF
                 {
                     try
                     {
-                        Directory.CreateDirectory(DS4Windows.Global.RoamingAppDataPath);
-                        File.Copy(DS4Windows.Global.ExecutableDirectory + "\\Profiles.xml",
-                            DS4Windows.Global.RoamingAppDataPath + "\\Profiles.xml");
-                        File.Copy(DS4Windows.Global.ExecutableDirectory + "\\Auto Profiles.xml",
-                            DS4Windows.Global.RoamingAppDataPath + "\\Auto Profiles.xml");
+                        Directory.CreateDirectory(Global.RoamingAppDataPath);
+                        File.Copy(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesFileName),
+                            Global.RoamingAppDataPath + Constants.ProfilesFileName);
+                        File.Copy(Global.ExecutableDirectory + Constants.AutoProfilesFileName,
+                            Global.RoamingAppDataPath + Constants.AutoProfilesFileName);
                         Directory.CreateDirectory(DS4Windows.Global.RoamingAppDataPath + "\\Profiles");
                         foreach (string s in Directory.GetFiles(DS4Windows.Global.ExecutableDirectory + "\\Profiles"))
                         {

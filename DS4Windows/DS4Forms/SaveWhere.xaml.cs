@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using DS4Windows;
 
 
 namespace DS4WinWPF.DS4Forms
@@ -45,7 +46,7 @@ namespace DS4WinWPF.DS4Forms
             }
             else if (!multisaves)
             {
-                DS4Windows.Global.SaveDefault(DS4Windows.Global.ExecutableDirectory + "\\Profiles.xml");
+                Global.SaveDefault(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesFileName));
             }
 
             choiceMade = true;
@@ -55,24 +56,20 @@ namespace DS4WinWPF.DS4Forms
         private void AppdataBtn_Click(object sender, RoutedEventArgs e)
         {
             if (multisaves && dontDeleteCk.IsChecked == false)
-            {
                 try
                 {
-                    Directory.Delete(DS4Windows.Global.ExecutableDirectory + "\\Profiles", true);
-                    File.Delete(DS4Windows.Global.ExecutableDirectory + "\\Profiles.xml");
-                    File.Delete(DS4Windows.Global.ExecutableDirectory + "\\Auto Profiles.xml");
+                    Directory.Delete(Path.Combine(Global.ExecutableDirectory, "\\Profiles"), true);
+                    File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesFileName));
+                    File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.AutoProfilesFileName));
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    MessageBox.Show("Cannot Delete old settings, please manaully delete", "DS4Windows");
+                    MessageBox.Show("Cannot Delete old settings, please manually delete", "DS4Windows");
                 }
-            }
             else if (!multisaves)
-            {
-                DS4Windows.Global.SaveDefault(Path.Combine(DS4Windows.Global.RoamingAppDataPath, "Profiles.xml"));
-            }
+                Global.SaveDefault(Path.Combine(Global.RoamingAppDataPath, Constants.ProfilesFileName));
 
-            DS4Windows.Global.SaveWhere(DS4Windows.Global.RoamingAppDataPath);
+            Global.SaveWhere(Global.RoamingAppDataPath);
             choiceMade = true;
             Close();
         }

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Security.Principal;
 using System.Xml;
 using DS4Windows.DS4Control;
@@ -400,10 +401,10 @@ namespace DS4Windows
         public static void SaveWhere(string path)
         {
             RuntimeAppDataPath = path;
-            m_Config.ProfilesPath = Path.Combine(RuntimeAppDataPath, "Profiles.xml");
-            m_Config.ActionsPath = Path.Combine(RuntimeAppDataPath, "Actions.xml");
-            m_Config.LinkedProfilesPath = Path.Combine(RuntimeAppDataPath, "LinkedProfiles.xml");
-            m_Config.ControllerConfigsPath = Path.Combine(RuntimeAppDataPath, "ControllerConfigs.xml");
+            m_Config.ProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.ProfilesFileName);
+            m_Config.ActionsPath = Path.Combine(RuntimeAppDataPath, Constants.ActionsFileName);
+            m_Config.LinkedProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.LinkedProfilesFileName);
+            m_Config.ControllerConfigsPath = Path.Combine(RuntimeAppDataPath, Constants.ControllerConfigsFileName);
         }
 
         public static bool SaveDefault(string path)
@@ -758,8 +759,8 @@ namespace DS4Windows
 
         public static void FindConfigLocation()
         {
-            bool programFolderAutoProfilesExists = File.Exists(Path.Combine(ExecutableDirectory, "Auto Profiles.xml"));
-            bool appDataAutoProfilesExists = File.Exists(Path.Combine(RoamingAppDataPath, "Auto Profiles.xml"));
+            bool programFolderAutoProfilesExists = File.Exists(Path.Combine(ExecutableDirectory, Constants.AutoProfilesFileName));
+            bool appDataAutoProfilesExists = File.Exists(Path.Combine(RoamingAppDataPath, Constants.AutoProfilesFileName));
             //bool localAppDataAutoProfilesExists = File.Exists(Path.Combine(localAppDataPpath, "Auto Profiles.xml"));
             //bool systemAppConfigExists = appDataAutoProfilesExists || localAppDataAutoProfilesExists;
             bool systemAppConfigExists = appDataAutoProfilesExists;

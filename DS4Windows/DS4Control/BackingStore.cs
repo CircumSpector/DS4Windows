@@ -18,15 +18,15 @@ namespace DS4Windows
         public const int DEFAULT_ENABLE_IDLE_DISCONN_MINS = 15;
 
         public string ProfilesPath { get; set; } =
-            Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, "Profiles.xml");
+            Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, Constants.ProfilesFileName);
 
-        public string ActionsPath { get; set; } = Path.Combine(Global.RuntimeAppDataPath, "Actions.xml");
+        public string ActionsPath { get; set; } = Path.Combine(Global.RuntimeAppDataPath, Constants.ActionsFileName);
 
         public string LinkedProfilesPath { get; set; } =
-            Path.Combine(Global.RuntimeAppDataPath, "LinkedProfiles.xml");
+            Path.Combine(Global.RuntimeAppDataPath, Constants.LinkedProfilesFileName);
 
         public string ControllerConfigsPath { get; set; } =
-            Path.Combine(Global.RuntimeAppDataPath, "ControllerConfigs.xml");
+            Path.Combine(Global.RuntimeAppDataPath, Constants.ControllerConfigsFileName);
 
         protected XmlDocument m_Xdoc = new();
 
@@ -4035,7 +4035,7 @@ namespace DS4Windows
         public bool LoadActions()
         {
             bool saved = true;
-            if (!File.Exists(Global.RuntimeAppDataPath + "\\Actions.xml"))
+            if (!File.Exists(Path.Combine(Global.RuntimeAppDataPath, Constants.ActionsFileName)))
             {
                 SaveAction("Disconnect Controller", "PS/Options", 5, "0", false);
                 saved = false;
@@ -4045,7 +4045,7 @@ namespace DS4Windows
             {
                 actions.Clear();
                 XmlDocument doc = new XmlDocument();
-                doc.Load(Global.RuntimeAppDataPath + "\\Actions.xml");
+                doc.Load(Path.Combine(Global.RuntimeAppDataPath, Constants.ActionsFileName));
                 XmlNodeList actionslist = doc.SelectNodes("Actions/Action");
                 string name, controls, type, details, extras, extras2;
                 Mapping.actionDone.Clear();

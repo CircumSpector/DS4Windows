@@ -35,10 +35,10 @@ namespace DS4WinWPF
             {
                 XmlDocument doc = new XmlDocument();
 
-                if (!File.Exists(DS4Windows.Global.RuntimeAppDataPath + "\\Auto Profiles.xml"))
+                if (!File.Exists(Path.Combine(Global.RuntimeAppDataPath, Constants.AutoProfilesFileName)))
                     return;
 
-                doc.Load(DS4Windows.Global.RuntimeAppDataPath + "\\Auto Profiles.xml");
+                doc.Load(Global.RuntimeAppDataPath + Constants.AutoProfilesFileName);
                 XmlNodeList programslist = doc.SelectNodes("Programs/Program");
                 foreach (XmlNode x in programslist)
                 {
