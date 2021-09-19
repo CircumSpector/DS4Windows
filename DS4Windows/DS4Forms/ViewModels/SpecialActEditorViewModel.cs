@@ -117,7 +117,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 // Perform existing name check when creating a new action
                 // or if the action name has changed
-                foreach (SpecialAction sA in Global.Instance.GetActions())
+                foreach (SpecialAction sA in Global.Instance.Config.Actions)
                 {
                     if (sA.Name == actionName)
                     {

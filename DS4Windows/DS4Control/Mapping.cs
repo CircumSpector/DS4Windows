@@ -2057,7 +2057,7 @@ namespace DS4Windows
 
             // Process LS
             ControlSettingsGroup controlSetGroup = Global.Instance.GetControlSettingsGroup(device);
-            StickOutputSetting stickSettings = Global.Instance.LSOutputSettings[device];
+            StickOutputSetting stickSettings = Global.Instance.Config.LSOutputSettings[device];
             if (stickSettings.mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.LS.GetEnumerator(); settingEnum.MoveNext();)
@@ -2093,7 +2093,7 @@ namespace DS4Windows
             }
 
             // Process RS
-            stickSettings = Global.Instance.RSOutputSettings[device];
+            stickSettings = Global.Instance.Config.RSOutputSettings[device];
             if (stickSettings.mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.RS.GetEnumerator(); settingEnum.MoveNext();)
@@ -2129,7 +2129,7 @@ namespace DS4Windows
             }
 
             // Process L2
-            TriggerOutputSettings l2TriggerSettings = Global.Instance.L2OutputSettings[device];
+            TriggerOutputSettings l2TriggerSettings = Global.Instance.Config.L2OutputSettings[device];
             DS4ControlSettings dcsTemp = controlSetGroup.L2;
             if (l2TriggerSettings.twoStageMode == TwoStageTriggerMode.Disabled)
             {
@@ -2196,7 +2196,7 @@ namespace DS4Windows
             }
 
             // Process R2
-            TriggerOutputSettings r2TriggerSettings = Global.Instance.R2OutputSettings[device];
+            TriggerOutputSettings r2TriggerSettings = Global.Instance.Config.R2OutputSettings[device];
             dcsTemp = controlSetGroup.R2;
             if (r2TriggerSettings.twoStageMode == TwoStageTriggerMode.Disabled)
             {
@@ -2903,7 +2903,7 @@ namespace DS4Windows
 
                         if (extras[7] == 1)
                         {
-                            ButtonMouseInfo tempMouseInfo = Global.Instance.ButtonMouseInfos[device];
+                            ButtonMouseInfo tempMouseInfo = Global.Instance.Config.ButtonMouseInfos[device];
                             if (tempMouseInfo.tempButtonSensitivity == -1)
                             {
                                 tempMouseInfo.tempButtonSensitivity = extras[8];
@@ -2917,7 +2917,7 @@ namespace DS4Windows
                 {
                     DS4LightBar.forcelight[device] = false;
                     DS4LightBar.forcedFlash[device] = 0;
-                    ButtonMouseInfo tempMouseInfo = Global.Instance.ButtonMouseInfos[device];
+                    ButtonMouseInfo tempMouseInfo = Global.Instance.Config.ButtonMouseInfos[device];
                     if (tempMouseInfo.tempButtonSensitivity != -1)
                     {
                         tempMouseInfo.SetActiveButtonSensitivity(tempMouseInfo.buttonSensitivity);
@@ -3205,7 +3205,7 @@ namespace DS4Windows
             try
             {
                 int actionDoneCount = actionDone.Count;
-                int totalActionCount = Global.Instance.GetActions().Count;
+                int totalActionCount = Global.Instance.Config.Actions.Count;
                 DS4StateFieldMapping previousFieldMapping = null;
                 var profileActions = Global.Instance.Config.ProfileActions[device];
                 //foreach (string actionname in profileActions)
@@ -3606,9 +3606,9 @@ namespace DS4Windows
                                     }
                                     DS4Color empty = new DS4Color(byte.Parse(dets[3]), byte.Parse(dets[4]), byte.Parse(dets[5]));
                                     DS4Color full = new DS4Color(byte.Parse(dets[6]), byte.Parse(dets[7]), byte.Parse(dets[8]));
-                                    DS4Color trans = getTransitionedColor(ref empty, ref full, d.Battery);
+                                    DS4Color trans = GetTransitionedColor(ref empty, ref full, d.Battery);
                                     if (fadetimer[device] < 100)
-                                        DS4LightBar.forcedColor[device] = getTransitionedColor(ref lastColor[device], ref trans, fadetimer[device] += 2);
+                                        DS4LightBar.forcedColor[device] = GetTransitionedColor(ref lastColor[device], ref trans, fadetimer[device] += 2);
                                 }
                                 actionDone[index].dev[device] = true;
                             }
@@ -4280,7 +4280,7 @@ namespace DS4Windows
                 deadzoneR = 3;
 
             double value = 0.0;
-            ButtonMouseInfo buttonMouseInfo = Global.Instance.ButtonMouseInfos[device];
+            ButtonMouseInfo buttonMouseInfo = Global.Instance.Config.ButtonMouseInfos[device];
             int speed = buttonMouseInfo.activeButtonSensitivity;
             const double root = 1.002;
             const double divide = 10000d;
@@ -4733,10 +4733,10 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos: result = saControls ? Global.Instance.SXSens[device] * -eState.AccelX > 67 : false; break;
-                    case DS4Controls.GyroXNeg: result = saControls ? Global.Instance.SXSens[device] * -eState.AccelX < -67 : false; break;
-                    case DS4Controls.GyroZPos: result = saControls ? Global.Instance.SZSens[device] * eState.AccelZ > 67 : false; break;
-                    case DS4Controls.GyroZNeg: result = saControls ? Global.Instance.SZSens[device] * eState.AccelZ < -67 : false; break;
+                    case DS4Controls.GyroXPos: result = saControls ? Global.Instance.Config.SXSens[device] * -eState.AccelX > 67 : false; break;
+                    case DS4Controls.GyroXNeg: result = saControls ? Global.Instance.Config.SXSens[device] * -eState.AccelX < -67 : false; break;
+                    case DS4Controls.GyroZPos: result = saControls ? Global.Instance.Config.SZSens[device] * eState.AccelZ > 67 : false; break;
+                    case DS4Controls.GyroZNeg: result = saControls ? Global.Instance.Config.SZSens[device] * eState.AccelZ < -67 : false; break;
                     default: break;
                 }
             }
@@ -5194,7 +5194,7 @@ namespace DS4Windows
                     {
                         if (saControls && -eState.AccelX > SXD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SXSens[device] * -eState.AccelX); else result = (byte)Math.Max(0, 127 - Global.Instance.SXSens[device] * -eState.AccelX);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.Config.SXSens[device] * -eState.AccelX); else result = (byte)Math.Max(0, 127 - Global.Instance.Config.SXSens[device] * -eState.AccelX);
                         }
                         else result = falseVal;
                         break;
@@ -5203,7 +5203,7 @@ namespace DS4Windows
                     {
                         if (saControls && -eState.AccelX < -SXD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SXSens[device] * eState.AccelX); else result = (byte)Math.Max(0, 127 - Global.Instance.SXSens[device] * eState.AccelX);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.Config.SXSens[device] * eState.AccelX); else result = (byte)Math.Max(0, 127 - Global.Instance.Config.SXSens[device] * eState.AccelX);
                         }
                         else result = falseVal;
                         break;
@@ -5212,7 +5212,7 @@ namespace DS4Windows
                     {
                         if (saControls && eState.AccelZ > SZD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SZSens[device] * eState.AccelZ); else result = (byte)Math.Max(0, 127 - Global.Instance.SZSens[device] * eState.AccelZ);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.Config.SZSens[device] * eState.AccelZ); else result = (byte)Math.Max(0, 127 - Global.Instance.Config.SZSens[device] * eState.AccelZ);
                         }
                         else return falseVal;
                         break;
@@ -5221,7 +5221,7 @@ namespace DS4Windows
                     {
                         if (saControls && eState.AccelZ < -SZD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.SZSens[device] * -eState.AccelZ); else result = (byte)Math.Max(0, 127 - Global.Instance.SZSens[device] * -eState.AccelZ);
+                            if (alt) result = (byte)Math.Min(255, 127 + Global.Instance.Config.SZSens[device] * -eState.AccelZ); else result = (byte)Math.Max(0, 127 - Global.Instance.Config.SZSens[device] * -eState.AccelZ);
                         }
                         else result = falseVal;
                         break;
@@ -5683,7 +5683,7 @@ namespace DS4Windows
                 }
 
                 result = Mapping.ClampInt(maxRangeLeft, result, maxRangeRight);
-                if (Global.Instance.WheelSmoothInfo[device].enabled)
+                if (Global.Instance.Config.WheelSmoothInfo[device].enabled)
                 {
                     double currentRate = 1.0 / currentDeviceState.elapsedTime; // Need to express poll time in Hz
                     OneEuroFilter wheelFilter = wheelFilters[device];

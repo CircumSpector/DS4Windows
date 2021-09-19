@@ -4,9 +4,9 @@ namespace DS4Windows
 {
     public class ControlSettingsGroup
     {
-        private readonly List<DS4ControlSettings> _settingsList;
+        private readonly IList<DS4ControlSettings> _settingsList;
 
-        public ControlSettingsGroup(List<DS4ControlSettings> settingsList)
+        public ControlSettingsGroup(IList<DS4ControlSettings> settingsList)
         {
             LS.Add(settingsList[(int)DS4Controls.LSOuter - 1]);
             for (var i = (int)DS4Controls.LXNeg; i <= (int)DS4Controls.LYPos; i++) LS.Add(settingsList[i - 1]);

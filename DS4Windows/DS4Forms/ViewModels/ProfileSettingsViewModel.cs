@@ -373,8 +373,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int RumbleBoost
         {
-            get => Global.Instance.RumbleBoost[device];
-            set => Global.Instance.RumbleBoost[device] = (byte)value;
+            get => Global.Instance.Config.RumbleBoost[device];
+            set => Global.Instance.Config.RumbleBoost[device] = (byte)value;
         }
 
         public int RumbleAutostopTime
@@ -416,12 +416,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseSensitivity
         {
-            get => Global.Instance.ButtonMouseInfos[device].buttonSensitivity;
+            get => Global.Instance.Config.ButtonMouseInfos[device].buttonSensitivity;
             set
             {
-                int temp = Global.Instance.ButtonMouseInfos[device].buttonSensitivity;
+                int temp = Global.Instance.Config.ButtonMouseInfos[device].buttonSensitivity;
                 if (temp == value) return;
-                Global.Instance.ButtonMouseInfos[device].ButtonSensitivity = value;
+                Global.Instance.Config.ButtonMouseInfos[device].ButtonSensitivity = value;
                 ButtonMouseSensitivityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -429,13 +429,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseVerticalScale
         {
-            get => Convert.ToInt32(Global.Instance.ButtonMouseInfos[device].buttonVerticalScale * 100.0);
+            get => Convert.ToInt32(Global.Instance.Config.ButtonMouseInfos[device].buttonVerticalScale * 100.0);
             set
             {
-                double temp = Global.Instance.ButtonMouseInfos[device].buttonVerticalScale;
+                double temp = Global.Instance.Config.ButtonMouseInfos[device].buttonVerticalScale;
                 double attemptValue = value * 0.01;
                 if (temp == attemptValue) return;
-                Global.Instance.ButtonMouseInfos[device].buttonVerticalScale = attemptValue;
+                Global.Instance.Config.ButtonMouseInfos[device].buttonVerticalScale = attemptValue;
                 ButtonMouseVerticalScaleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -443,17 +443,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private double RawButtonMouseOffset
         {
-            get => Global.Instance.ButtonMouseInfos[device].mouseVelocityOffset;
+            get => Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset;
         }
 
         public double ButtonMouseOffset
         {
-            get => Global.Instance.ButtonMouseInfos[device].mouseVelocityOffset * 100.0;
+            get => Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset * 100.0;
             set
             {
-                double temp = Global.Instance.ButtonMouseInfos[device].mouseVelocityOffset * 100.0;
+                double temp = Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset * 100.0;
                 if (temp == value) return;
-                Global.Instance.ButtonMouseInfos[device].mouseVelocityOffset = value * 0.01;
+                Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset = value * 0.01;
                 ButtonMouseOffsetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -487,8 +487,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool MouseAcceleration
         {
-            get => Global.Instance.ButtonMouseInfos[device].mouseAccel;
-            set => Global.Instance.ButtonMouseInfos[device].mouseAccel = value;
+            get => Global.Instance.Config.ButtonMouseInfos[device].mouseAccel;
+            set => Global.Instance.Config.ButtonMouseInfos[device].mouseAccel = value;
         }
 
         public bool EnableTouchpadToggle
@@ -778,12 +778,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool SASteeringWheelUseSmoothing
         {
-            get => Global.Instance.WheelSmoothInfo[device].Enabled;
+            get => Global.Instance.Config.WheelSmoothInfo[device].Enabled;
             set
             {
-                bool temp = Global.Instance.WheelSmoothInfo[device].Enabled;
+                bool temp = Global.Instance.Config.WheelSmoothInfo[device].Enabled;
                 if (temp == value) return;
-                Global.Instance.WheelSmoothInfo[device].Enabled = value;
+                Global.Instance.Config.WheelSmoothInfo[device].Enabled = value;
                 SASteeringWheelUseSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -791,24 +791,24 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SASteeringWheelSmoothMinCutoff
         {
-            get => Global.Instance.WheelSmoothInfo[device].MinCutoff;
-            set => Global.Instance.WheelSmoothInfo[device].MinCutoff = value;
+            get => Global.Instance.Config.WheelSmoothInfo[device].MinCutoff;
+            set => Global.Instance.Config.WheelSmoothInfo[device].MinCutoff = value;
         }
 
         public double SASteeringWheelSmoothBeta
         {
-            get => Global.Instance.WheelSmoothInfo[device].Beta;
-            set => Global.Instance.WheelSmoothInfo[device].Beta = value;
+            get => Global.Instance.Config.WheelSmoothInfo[device].Beta;
+            set => Global.Instance.Config.WheelSmoothInfo[device].Beta = value;
         }
 
         public double LSDeadZone
         {
-            get => Math.Round(Global.Instance.LSModInfo[device].deadZone / 127d, 2);
+            get => Math.Round(Global.Instance.Config.LSModInfo[device].deadZone / 127d, 2);
             set
             {
-                double temp = Math.Round(Global.Instance.LSModInfo[device].deadZone / 127d, 2);
+                double temp = Math.Round(Global.Instance.Config.LSModInfo[device].deadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.LSModInfo[device].deadZone = (int)Math.Round(value * 127d);
+                Global.Instance.Config.LSModInfo[device].deadZone = (int)Math.Round(value * 127d);
                 LSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -816,12 +816,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double RSDeadZone
         {
-            get => Math.Round(Global.Instance.RSModInfo[device].deadZone / 127d, 2);
+            get => Math.Round(Global.Instance.Config.RSModInfo[device].deadZone / 127d, 2);
             set
             {
-                double temp = Math.Round(Global.Instance.RSModInfo[device].deadZone / 127d, 2);
+                double temp = Math.Round(Global.Instance.Config.RSModInfo[device].deadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.RSModInfo[device].deadZone = (int)Math.Round(value * 127d);
+                Global.Instance.Config.RSModInfo[device].deadZone = (int)Math.Round(value * 127d);
                 RSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -829,62 +829,62 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSMaxZone
         {
-            get => Global.Instance.LSModInfo[device].maxZone / 100.0;
-            set => Global.Instance.LSModInfo[device].maxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.LSModInfo[device].maxZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].maxZone = (int)(value * 100.0);
         }
 
         public double RSMaxZone
         {
-            get => Global.Instance.RSModInfo[device].maxZone / 100.0;
-            set => Global.Instance.RSModInfo[device].maxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.RSModInfo[device].maxZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].maxZone = (int)(value * 100.0);
         }
 
         public double LSAntiDeadZone
         {
-            get => Global.Instance.LSModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.LSModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.LSModInfo[device].antiDeadZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].antiDeadZone = (int)(value * 100.0);
         }
 
         public double RSAntiDeadZone
         {
-            get => Global.Instance.RSModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.RSModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.RSModInfo[device].antiDeadZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].antiDeadZone = (int)(value * 100.0);
         }
 
         public double LSVerticalScale
         {
-            get => Global.Instance.LSModInfo[device].verticalScale / 100.0;
-            set => Global.Instance.LSModInfo[device].verticalScale = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[device].verticalScale / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].verticalScale = value * 100.0;
         }
 
         public double LSMaxOutput
         {
-            get => Global.Instance.LSModInfo[device].maxOutput / 100.0;
-            set => Global.Instance.LSModInfo[device].maxOutput = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[device].maxOutput / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].maxOutput = value * 100.0;
         }
 
         public bool LSMaxOutputForce
         {
-            get => Global.Instance.LSModInfo[device].maxOutputForce;
-            set => Global.Instance.LSModInfo[device].maxOutputForce = value;
+            get => Global.Instance.Config.LSModInfo[device].maxOutputForce;
+            set => Global.Instance.Config.LSModInfo[device].maxOutputForce = value;
         }
 
         public double RSVerticalScale
         {
-            get => Global.Instance.RSModInfo[device].verticalScale / 100.0;
-            set => Global.Instance.RSModInfo[device].verticalScale = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[device].verticalScale / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].verticalScale = value * 100.0;
         }
 
         public double RSMaxOutput
         {
-            get => Global.Instance.RSModInfo[device].maxOutput / 100.0;
-            set => Global.Instance.RSModInfo[device].maxOutput = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[device].maxOutput / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].maxOutput = value * 100.0;
         }
 
         public bool RSMaxOutputForce
         {
-            get => Global.Instance.RSModInfo[device].maxOutputForce;
-            set => Global.Instance.RSModInfo[device].maxOutputForce = value;
+            get => Global.Instance.Config.RSModInfo[device].maxOutputForce;
+            set => Global.Instance.Config.RSModInfo[device].maxOutputForce = value;
         }
 
         public int LSDeadTypeIndex
@@ -892,7 +892,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch(Global.Instance.LSModInfo[device].deadzoneType)
+                switch(Global.Instance.Config.LSModInfo[device].deadzoneType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -915,9 +915,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                StickDeadZoneInfo.DeadZoneType current = Global.Instance.LSModInfo[device].deadzoneType;
+                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.LSModInfo[device].deadzoneType;
                 if (temp == current) return;
-                Global.Instance.LSModInfo[device].deadzoneType = temp;
+                Global.Instance.Config.LSModInfo[device].deadzoneType = temp;
             }
         }
 
@@ -926,7 +926,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.RSModInfo[device].deadzoneType)
+                switch (Global.Instance.Config.RSModInfo[device].deadzoneType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -949,22 +949,22 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                StickDeadZoneInfo.DeadZoneType current = Global.Instance.RSModInfo[device].deadzoneType;
+                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.RSModInfo[device].deadzoneType;
                 if (temp == current) return;
-                Global.Instance.RSModInfo[device].deadzoneType = temp;
+                Global.Instance.Config.RSModInfo[device].deadzoneType = temp;
             }
         }
 
         public double LSSens
         {
-            get => Global.Instance.LSSens[device];
-            set => Global.Instance.LSSens[device] = value;
+            get => Global.Instance.Config.LSSens[device];
+            set => Global.Instance.Config.LSSens[device] = value;
         }
 
         public double RSSens
         {
-            get => Global.Instance.RSSens[device];
-            set => Global.Instance.RSSens[device] = value;
+            get => Global.Instance.Config.RSSens[device];
+            set => Global.Instance.Config.RSSens[device] = value;
         }
 
         public bool LSSquareStick
@@ -1013,14 +1013,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSRotation
         {
-            get => Global.Instance.LSRotation[device] * 180.0 / Math.PI;
-            set => Global.Instance.LSRotation[device] = value * Math.PI / 180.0;
+            get => Global.Instance.Config.LSRotation[device] * 180.0 / Math.PI;
+            set => Global.Instance.Config.LSRotation[device] = value * Math.PI / 180.0;
         }
 
         public double RSRotation
         {
-            get => Global.Instance.RSRotation[device] * 180.0 / Math.PI;
-            set => Global.Instance.RSRotation[device] = value * Math.PI / 180.0;
+            get => Global.Instance.Config.RSRotation[device] * 180.0 / Math.PI;
+            set => Global.Instance.Config.RSRotation[device] = value * Math.PI / 180.0;
         }
 
         public bool LSCustomCurveSelected
@@ -1049,73 +1049,73 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LSFuzz
         {
-            get => Global.Instance.LSModInfo[device].fuzz;
-            set => Global.Instance.LSModInfo[device].fuzz = value;
+            get => Global.Instance.Config.LSModInfo[device].fuzz;
+            set => Global.Instance.Config.LSModInfo[device].fuzz = value;
         }
 
         public int RSFuzz
         {
-            get => Global.Instance.RSModInfo[device].fuzz;
-            set => Global.Instance.RSModInfo[device].fuzz = value;
+            get => Global.Instance.Config.RSModInfo[device].fuzz;
+            set => Global.Instance.Config.RSModInfo[device].fuzz = value;
         }
 
         public bool LSAntiSnapback
         {
-            get => Global.Instance.LSAntiSnapbackInfo[device].enabled;
-            set => Global.Instance.LSAntiSnapbackInfo[device].enabled = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[device].enabled;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[device].enabled = value;
         }
 
         public bool RSAntiSnapback
         {
-            get => Global.Instance.RSAntiSnapbackInfo[device].enabled;
-            set => Global.Instance.RSAntiSnapbackInfo[device].enabled = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[device].enabled;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[device].enabled = value;
         }
 
         public double LSAntiSnapbackDelta
         {
-            get => Global.Instance.LSAntiSnapbackInfo[device].delta;
-            set => Global.Instance.LSAntiSnapbackInfo[device].delta = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[device].delta;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[device].delta = value;
         }
 
         public double RSAntiSnapbackDelta
         {
-            get => Global.Instance.RSAntiSnapbackInfo[device].delta;
-            set => Global.Instance.RSAntiSnapbackInfo[device].delta = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[device].delta;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[device].delta = value;
         }
         public int LSAntiSnapbackTimeout
         {
-            get => Global.Instance.LSAntiSnapbackInfo[device].timeout;
-            set => Global.Instance.LSAntiSnapbackInfo[device].timeout = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[device].timeout;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[device].timeout = value;
         }
 
         public int RSAntiSnapbackTimeout
         {
-            get => Global.Instance.RSAntiSnapbackInfo[device].timeout;
-            set => Global.Instance.RSAntiSnapbackInfo[device].timeout = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[device].timeout;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[device].timeout = value;
         }
 
         public bool LSOuterBindInvert
         {
-            get => Global.Instance.LSModInfo[device].outerBindInvert;
-            set => Global.Instance.LSModInfo[device].outerBindInvert = value;
+            get => Global.Instance.Config.LSModInfo[device].outerBindInvert;
+            set => Global.Instance.Config.LSModInfo[device].outerBindInvert = value;
         }
 
         public bool RSOuterBindInvert
         {
-            get => Global.Instance.RSModInfo[device].outerBindInvert;
-            set => Global.Instance.RSModInfo[device].outerBindInvert = value;
+            get => Global.Instance.Config.RSModInfo[device].outerBindInvert;
+            set => Global.Instance.Config.RSModInfo[device].outerBindInvert = value;
         }
 
         public double LSOuterBindDead
         {
-            get => Global.Instance.LSModInfo[device].outerBindDeadZone / 100.0;
-            set => Global.Instance.LSModInfo[device].outerBindDeadZone = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[device].outerBindDeadZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].outerBindDeadZone = value * 100.0;
         }
 
         public double RSOuterBindDead
         {
-            get => Global.Instance.RSModInfo[device].outerBindDeadZone / 100.0;
-            set => Global.Instance.RSModInfo[device].outerBindDeadZone = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[device].outerBindDeadZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].outerBindDeadZone = value * 100.0;
         }
 
         public int LSOutputIndex
@@ -1123,7 +1123,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.LSOutputSettings[device].mode)
+                switch (Global.Instance.Config.LSOutputSettings[device].mode)
                 {
                     case StickMode.None:
                         index = 0; break;
@@ -1153,9 +1153,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                StickMode current = Global.Instance.LSOutputSettings[device].mode;
+                StickMode current = Global.Instance.Config.LSOutputSettings[device].mode;
                 if (temp == current) return;
-                Global.Instance.LSOutputSettings[device].mode = temp;
+                Global.Instance.Config.LSOutputSettings[device].mode = temp;
                 LSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1163,37 +1163,37 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSFlickRWC
         {
-            get => Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration;
+            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration;
             set
             {
-                Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration = value;
+                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration = value;
             }
         }
 
         public double LSFlickThreshold
         {
-            get => Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.flickThreshold;
+            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickThreshold;
             set
             {
-                Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.flickThreshold = value;
+                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickThreshold = value;
             }
         }
 
         public double LSFlickTime
         {
-            get => Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.flickTime;
+            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickTime;
             set
             {
-                Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.flickTime = value;
+                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickTime = value;
             }
         }
 
         public double LSMinAngleThreshold
         {
-            get => Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold;
+            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold;
             set
             {
-                Global.Instance.LSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold = value;
+                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold = value;
             }
         }
 
@@ -1202,7 +1202,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.RSOutputSettings[device].mode)
+                switch (Global.Instance.Config.RSOutputSettings[device].mode)
                 {
                     case StickMode.None:
                         break;
@@ -1232,9 +1232,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                StickMode current = Global.Instance.RSOutputSettings[device].mode;
+                StickMode current = Global.Instance.Config.RSOutputSettings[device].mode;
                 if (temp == current) return;
-                Global.Instance.RSOutputSettings[device].mode = temp;
+                Global.Instance.Config.RSOutputSettings[device].mode = temp;
                 RSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1242,48 +1242,48 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double RSFlickRWC
         {
-            get => Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration;
+            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration;
             set
             {
-                Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration = value;
+                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration = value;
             }
         }
 
         public double RSFlickThreshold
         {
-            get => Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.flickThreshold;
+            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickThreshold;
             set
             {
-                Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.flickThreshold = value;
+                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickThreshold = value;
             }
         }
 
         public double RSFlickTime
         {
-            get => Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.flickTime;
+            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickTime;
             set
             {
-                Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.flickTime = value;
+                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickTime = value;
             }
         }
 
         public double RSMinAngleThreshold
         {
-            get => Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold;
+            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold;
             set
             {
-                Global.Instance.RSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold = value;
+                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold = value;
             }
         }
 
         public double L2DeadZone
         {
-            get => Global.Instance.L2ModInfo[device].deadZone / 255.0;
+            get => Global.Instance.Config.L2ModInfo[device].deadZone / 255.0;
             set
             {
-                double temp = Global.Instance.L2ModInfo[device].deadZone / 255.0;
+                double temp = Global.Instance.Config.L2ModInfo[device].deadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.L2ModInfo[device].deadZone = (byte)(value * 255.0);
+                Global.Instance.Config.L2ModInfo[device].deadZone = (byte)(value * 255.0);
                 L2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1291,12 +1291,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double R2DeadZone
         {
-            get => Global.Instance.R2ModInfo[device].deadZone / 255.0;
+            get => Global.Instance.Config.R2ModInfo[device].deadZone / 255.0;
             set
             {
-                double temp = Global.Instance.R2ModInfo[device].deadZone / 255.0;
+                double temp = Global.Instance.Config.R2ModInfo[device].deadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.R2ModInfo[device].deadZone = (byte)(value * 255.0);
+                Global.Instance.Config.R2ModInfo[device].deadZone = (byte)(value * 255.0);
                 R2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1304,50 +1304,50 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double L2MaxZone
         {
-            get => Global.Instance.L2ModInfo[device].MaxZone / 100.0;
-            set => Global.Instance.L2ModInfo[device].MaxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.L2ModInfo[device].MaxZone / 100.0;
+            set => Global.Instance.Config.L2ModInfo[device].MaxZone = (int)(value * 100.0);
         }
 
         public double R2MaxZone
         {
-            get => Global.Instance.R2ModInfo[device].MaxZone / 100.0;
-            set => Global.Instance.R2ModInfo[device].MaxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.R2ModInfo[device].MaxZone / 100.0;
+            set => Global.Instance.Config.R2ModInfo[device].MaxZone = (int)(value * 100.0);
         }
 
         public double L2AntiDeadZone
         {
-            get => Global.Instance.L2ModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.L2ModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.L2ModInfo[device].antiDeadZone / 100.0;
+            set => Global.Instance.Config.L2ModInfo[device].antiDeadZone = (int)(value * 100.0);
         }
 
         public double R2AntiDeadZone
         {
-            get => Global.Instance.R2ModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.R2ModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.R2ModInfo[device].antiDeadZone / 100.0;
+            set => Global.Instance.Config.R2ModInfo[device].antiDeadZone = (int)(value * 100.0);
         }
 
         public double L2MaxOutput
         {
-            get => Global.Instance.L2ModInfo[device].MaxOutput / 100.0;
-            set => Global.Instance.L2ModInfo[device].MaxOutput = value * 100.0;
+            get => Global.Instance.Config.L2ModInfo[device].MaxOutput / 100.0;
+            set => Global.Instance.Config.L2ModInfo[device].MaxOutput = value * 100.0;
         }
 
         public double R2MaxOutput
         {
-            get => Global.Instance.R2ModInfo[device].MaxOutput / 100.0;
-            set => Global.Instance.R2ModInfo[device].MaxOutput = value * 100.0;
+            get => Global.Instance.Config.R2ModInfo[device].MaxOutput / 100.0;
+            set => Global.Instance.Config.R2ModInfo[device].MaxOutput = value * 100.0;
         }
 
         public double L2Sens
         {
-            get => Global.Instance.L2Sens[device];
-            set => Global.Instance.L2Sens[device] = value;
+            get => Global.Instance.Config.L2Sens[device];
+            set => Global.Instance.Config.L2Sens[device] = value;
         }
 
         public double R2Sens
         {
-            get => Global.Instance.R2Sens[device];
-            set => Global.Instance.R2Sens[device] = value;
+            get => Global.Instance.Config.R2Sens[device];
+            set => Global.Instance.Config.R2Sens[device] = value;
         }
 
         public int L2OutputCurveIndex
@@ -1412,13 +1412,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TwoStageTriggerMode L2TriggerMode
         {
-            get => Global.Instance.L2OutputSettings[device].twoStageMode;
+            get => Global.Instance.Config.L2OutputSettings[device].twoStageMode;
             set
             {
-                TwoStageTriggerMode temp = Global.Instance.L2OutputSettings[device].TwoStageMode;
+                TwoStageTriggerMode temp = Global.Instance.Config.L2OutputSettings[device].TwoStageMode;
                 if (temp == value) return;
 
-                Global.Instance.L2OutputSettings[device].TwoStageMode = value;
+                Global.Instance.Config.L2OutputSettings[device].TwoStageMode = value;
                 L2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1426,13 +1426,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TwoStageTriggerMode R2TriggerMode
         {
-            get => Global.Instance.R2OutputSettings[device].TwoStageMode;
+            get => Global.Instance.Config.R2OutputSettings[device].TwoStageMode;
             set
             {
-                TwoStageTriggerMode temp = Global.Instance.R2OutputSettings[device].TwoStageMode;
+                TwoStageTriggerMode temp = Global.Instance.Config.R2OutputSettings[device].TwoStageMode;
                 if (temp == value) return;
 
-                Global.Instance.R2OutputSettings[device].twoStageMode = value;
+                Global.Instance.Config.R2OutputSettings[device].twoStageMode = value;
                 R2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1440,14 +1440,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int L2HipFireTime
         {
-            get => Global.Instance.L2OutputSettings[device].hipFireMS;
-            set => Global.Instance.L2OutputSettings[device].hipFireMS = value;
+            get => Global.Instance.Config.L2OutputSettings[device].hipFireMS;
+            set => Global.Instance.Config.L2OutputSettings[device].hipFireMS = value;
         }
 
         public int R2HipFireTime
         {
-            get => Global.Instance.R2OutputSettings[device].hipFireMS;
-            set => Global.Instance.R2OutputSettings[device].hipFireMS = value;
+            get => Global.Instance.Config.R2OutputSettings[device].hipFireMS;
+            set => Global.Instance.Config.R2OutputSettings[device].hipFireMS = value;
         }
 
         private List<TriggerEffectChoice> triggerEffectChoices = new List<TriggerEffectChoice>()
@@ -1461,36 +1461,36 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public DS4Windows.InputDevices.TriggerEffects L2TriggerEffect
         {
-            get => Global.Instance.L2OutputSettings[device].triggerEffect;
+            get => Global.Instance.Config.L2OutputSettings[device].triggerEffect;
             set
             {
-                DS4Windows.InputDevices.TriggerEffects temp = Global.Instance.L2OutputSettings[device].TriggerEffect;
+                DS4Windows.InputDevices.TriggerEffects temp = Global.Instance.Config.L2OutputSettings[device].TriggerEffect;
                 if (temp == value) return;
 
-                Global.Instance.L2OutputSettings[device].TriggerEffect = value;
+                Global.Instance.Config.L2OutputSettings[device].TriggerEffect = value;
             }
         }
 
         public DS4Windows.InputDevices.TriggerEffects R2TriggerEffect
         {
-            get => Global.Instance.R2OutputSettings[device].triggerEffect;
+            get => Global.Instance.Config.R2OutputSettings[device].triggerEffect;
             set
             {
-                DS4Windows.InputDevices.TriggerEffects temp = Global.Instance.R2OutputSettings[device].TriggerEffect;
+                DS4Windows.InputDevices.TriggerEffects temp = Global.Instance.Config.R2OutputSettings[device].TriggerEffect;
                 if (temp == value) return;
 
-                Global.Instance.R2OutputSettings[device].TriggerEffect = value;
+                Global.Instance.Config.R2OutputSettings[device].TriggerEffect = value;
             }
         }
 
         public double SXDeadZone
         {
-            get => Global.Instance.SXDeadzone[device];
+            get => Global.Instance.Config.SXDeadzone[device];
             set
             {
-                double temp = Global.Instance.SXDeadzone[device];
+                double temp = Global.Instance.Config.SXDeadzone[device];
                 if (temp == value) return;
-                Global.Instance.SXDeadzone[device] = value;
+                Global.Instance.Config.SXDeadzone[device] = value;
                 SXDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1498,12 +1498,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SZDeadZone
         {
-            get => Global.Instance.SZDeadzone[device];
+            get => Global.Instance.Config.SZDeadzone[device];
             set
             {
-                double temp = Global.Instance.SZDeadzone[device];
+                double temp = Global.Instance.Config.SZDeadzone[device];
                 if (temp == value) return;
-                Global.Instance.SZDeadzone[device] = value;
+                Global.Instance.Config.SZDeadzone[device] = value;
                 SZDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1511,38 +1511,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SXMaxZone
         {
-            get => Global.Instance.SXMaxzone[device];
-            set => Global.Instance.SXMaxzone[device] = value;
+            get => Global.Instance.Config.SXMaxzone[device];
+            set => Global.Instance.Config.SXMaxzone[device] = value;
         }
 
         public double SZMaxZone
         {
-            get => Global.Instance.SZMaxzone[device];
-            set => Global.Instance.SZMaxzone[device] = value;
+            get => Global.Instance.Config.SZMaxzone[device];
+            set => Global.Instance.Config.SZMaxzone[device] = value;
         }
 
         public double SXAntiDeadZone
         {
-            get => Global.Instance.SXAntiDeadzone[device];
-            set => Global.Instance.SXAntiDeadzone[device] = value;
+            get => Global.Instance.Config.SXAntiDeadzone[device];
+            set => Global.Instance.Config.SXAntiDeadzone[device] = value;
         }
 
         public double SZAntiDeadZone
         {
-            get => Global.Instance.SZAntiDeadzone[device];
-            set => Global.Instance.SZAntiDeadzone[device] = value;
+            get => Global.Instance.Config.SZAntiDeadzone[device];
+            set => Global.Instance.Config.SZAntiDeadzone[device] = value;
         }
 
         public double SXSens
         {
-            get => Global.Instance.SXSens[device];
-            set => Global.Instance.SXSens[device] = value;
+            get => Global.Instance.Config.SXSens[device];
+            set => Global.Instance.Config.SXSens[device] = value;
         }
 
         public double SZSens
         {
-            get => Global.Instance.SZSens[device];
-            set => Global.Instance.SZSens[device] = value;
+            get => Global.Instance.Config.SZSens[device];
+            set => Global.Instance.Config.SZSens[device] = value;
         }
 
         public int SXOutputCurveIndex
@@ -1633,10 +1633,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchSenExists
         {
-            get => Global.Instance.TouchSensitivity[device] != 0;
+            get => Global.Instance.Config.TouchSensitivity[device] != 0;
             set
             {
-                Global.Instance.TouchSensitivity[device] = value ? (byte)100 : (byte)0;
+                Global.Instance.Config.TouchSensitivity[device] = value ? (byte)100 : (byte)0;
                 TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1645,12 +1645,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchSens
         {
-            get => Global.Instance.TouchSensitivity[device];
+            get => Global.Instance.Config.TouchSensitivity[device];
             set
             {
-                int temp = Global.Instance.TouchSensitivity[device];
+                int temp = Global.Instance.Config.TouchSensitivity[device];
                 if (temp == value) return;
-                Global.Instance.TouchSensitivity[device] = (byte)value;
+                Global.Instance.Config.TouchSensitivity[device] = (byte)value;
                 if (value == 0) TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1742,10 +1742,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LowerRightTouchRMB
         {
-            get => Global.Instance.LowerRCOn[device];
+            get => Global.Instance.Config.LowerRCOn[device];
             set
             {
-                Global.Instance.LowerRCOn[device] = value;
+                Global.Instance.Config.LowerRCOn[device] = value;
             }
         }
 

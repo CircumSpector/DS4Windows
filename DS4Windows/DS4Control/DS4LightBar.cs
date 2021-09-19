@@ -61,7 +61,7 @@ namespace DS4Windows
                     {
                         ref DS4Color fullColor = ref lightModeInfo.m_CustomLed; // ref getCustomColor(deviceNum);
                         ref DS4Color lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
-                        color = getTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
+                        color = GetTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
                     }
                     else
                         color = lightModeInfo.m_CustomLed; //getCustomColor(deviceNum);
@@ -104,7 +104,7 @@ namespace DS4Windows
                     {
                         ref DS4Color fullColor = ref lightModeInfo.m_Led; //ref getMainColor(deviceNum);
                         ref DS4Color lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
-                        color = getTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
+                        color = GetTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
                     }
                     else
                     {
@@ -164,7 +164,7 @@ namespace DS4Windows
                         }
 
                         DS4Color tempCol = new DS4Color(0, 0, 0);
-                        color = getTransitionedColor(ref color, ref tempCol, ratio);
+                        color = GetTransitionedColor(ref color, ref tempCol, ratio);
                     }
                 }
 
@@ -180,13 +180,13 @@ namespace DS4Windows
                     if (ratio >= 50.0 && ratio < 100.0)
                     {
                         DS4Color emptyCol = new DS4Color(0, 0, 0);
-                        color = getTransitionedColor(ref color, ref emptyCol,
+                        color = GetTransitionedColor(ref color, ref emptyCol,
                             (uint)(-100.0 * (elapsed = 0.02 * (ratio - 50.0)) * (elapsed - 2.0)));
                     }
                     else if (ratio >= 100.0)
                     {
                         DS4Color emptyCol = new DS4Color(0, 0, 0);
-                        color = getTransitionedColor(ref color, ref emptyCol, 100.0);
+                        color = GetTransitionedColor(ref color, ref emptyCol, 100.0);
                     }
                         
                 }
@@ -243,7 +243,7 @@ namespace DS4Windows
                             }
 
                             DS4Color emptyCol = new DS4Color(0, 0, 0);
-                            color = getTransitionedColor(ref color, ref emptyCol, ratio);
+                            color = GetTransitionedColor(ref color, ref emptyCol, ratio);
                             break;
                         }
                         case 2:
@@ -281,7 +281,7 @@ namespace DS4Windows
 
             if (useLightRoutine)
             {
-                bool distanceprofile = Instance.DistanceProfiles[deviceNum] || TempProfileDistance[deviceNum];
+                bool distanceprofile = Instance.Config.DistanceProfiles[deviceNum] || TempProfileDistance[deviceNum];
                 //distanceprofile = (ProfilePath[deviceNum].ToLower().Contains("distance") || TempProfileNames[deviceNum].ToLower().Contains("distance"));
                 if (distanceprofile && !defaultLight)
                 {
@@ -292,15 +292,15 @@ namespace DS4Windows
                     {
                         DS4Color maxCol = new DS4Color(max, max, 0);
                         DS4Color redCol = new DS4Color(255, 0, 0);
-                        color = getTransitionedColor(ref maxCol, ref redCol, rumble);
+                        color = GetTransitionedColor(ref maxCol, ref redCol, rumble);
                     }
                     else
                     {
                         DS4Color maxCol = new DS4Color(max, max, 0);
                         DS4Color redCol = new DS4Color(255, 0, 0);
-                        DS4Color tempCol = getTransitionedColor(ref maxCol,
+                        DS4Color tempCol = GetTransitionedColor(ref maxCol,
                             ref redCol, 39.6078f);
-                        color = getTransitionedColor(ref color, ref tempCol,
+                        color = GetTransitionedColor(ref color, ref tempCol,
                             device.getLeftHeavySlowRumble());
                     }
                 }

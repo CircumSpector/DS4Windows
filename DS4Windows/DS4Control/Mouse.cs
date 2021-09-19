@@ -1076,7 +1076,7 @@ namespace DS4Windows
                 multiDown = true;
             else
             {
-                if ((Global.Instance.LowerRCOn[deviceNum] && arg.touches[0].hwX > (1920 * 3) / 4 && arg.touches[0].hwY > (960 * 3) / 4))
+                if ((Global.Instance.Config.LowerRCOn[deviceNum] && arg.touches[0].hwX > (1920 * 3) / 4 && arg.touches[0].hwY > (960 * 3) / 4))
                     Mapping.MapClick(deviceNum, Mapping.Click.Right);
 
                 if (isLeft(arg.touches[0]))

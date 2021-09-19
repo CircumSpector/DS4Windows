@@ -397,7 +397,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
             else
             {
-                Global.Instance.OlderProfilePath[devIndex] = Global.Instance.Config.ProfilePath[devIndex];
+                Global.Instance.Config.OlderProfilePath[devIndex] = Global.Instance.Config.ProfilePath[devIndex];
             }
 
             //Global.Save();
@@ -465,7 +465,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 else
                 {
                     Global.Instance.removeLinkedProfile(device.getMacAddress());
-                    Global.Instance.Config.ProfilePath[devIndex] = Global.Instance.OlderProfilePath[devIndex];
+                    Global.Instance.Config.ProfilePath[devIndex] = Global.Instance.Config.OlderProfilePath[devIndex];
                 }
 
                 Global.Instance.SaveLinkedProfiles();

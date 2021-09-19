@@ -62,7 +62,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             var pactions = Global.Instance.Config.ProfileActions[deviceNum];
             int idx = 0;
-            foreach (SpecialAction action in Global.Instance.GetActions())
+            foreach (SpecialAction action in Global.Instance.Config.Actions)
             {
                 string displayName = GetActionDisplayName(action);
                 SpecialActionItem item = new SpecialActionItem(action, displayName, idx);

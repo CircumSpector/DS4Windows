@@ -565,8 +565,8 @@ namespace DS4WinWPF.DS4Forms
             }
 
             conReadingsUserCon.EnableControl(false);
-            axialLSStickControl.UseDevice(Global.Instance.LSModInfo[device]);
-            axialRSStickControl.UseDevice(Global.Instance.RSModInfo[device]);
+            axialLSStickControl.UseDevice(Global.Instance.Config.LSModInfo[device]);
+            axialRSStickControl.UseDevice(Global.Instance.Config.RSModInfo[device]);
 
             specialActionsVM.LoadActions(currentProfile == null);
             mappingListVM.UpdateMappings();
@@ -581,7 +581,7 @@ namespace DS4WinWPF.DS4Forms
             specialActionsTab.DataContext = specialActionsVM;
             lightbarRect.DataContext = profileSettingsVM;
 
-            StickDeadZoneInfo lsMod = Global.Instance.LSModInfo[device];
+            StickDeadZoneInfo lsMod = Global.Instance.Config.LSModInfo[device];
             if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.LsDeadX = profileSettingsVM.LSDeadZone;
@@ -593,7 +593,7 @@ namespace DS4WinWPF.DS4Forms
                 conReadingsUserCon.LsDeadY = axialLSStickControl.AxialVM.DeadZoneY;
             }
 
-            StickDeadZoneInfo rsMod = Global.Instance.RSModInfo[device];
+            StickDeadZoneInfo rsMod = Global.Instance.Config.RSModInfo[device];
             if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.RsDeadX = profileSettingsVM.RSDeadZone;
@@ -784,7 +784,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 SetLateProperties(false);
                 Global.Instance.Config.ProfilePath[deviceNum] =
-                    Global.Instance.OlderProfilePath[deviceNum] = temp;
+                    Global.Instance.Config.OlderProfilePath[deviceNum] = temp;
 
                 if (currentProfile != null)
                 {

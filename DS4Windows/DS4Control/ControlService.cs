@@ -217,12 +217,12 @@ namespace DS4Windows
                 ExposedState[i] = new DS4StateExposed(CurrentState[i]);
 
                 int tempDev = i;
-                Global.Instance.L2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
+                Global.Instance.Config.L2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
                 {
                     Mapping.l2TwoStageMappingData[tempDev].Reset();
                 };
 
-                Global.Instance.R2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
+                Global.Instance.Config.R2OutputSettings[i].TwoStageModeChanged += (sender, e) =>
                 {
                     Mapping.r2TwoStageMappingData[tempDev].Reset();
                 };
@@ -1272,7 +1272,7 @@ namespace DS4Windows
                             }
                             else
                             {
-                                Global.Instance.Config.ProfilePath[i] = Global.Instance.OlderProfilePath[i];
+                                Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i];
                                 Global.LinkedProfileCheck[i] = false;
                             }
 
@@ -1445,7 +1445,7 @@ namespace DS4Windows
         private void CheckQuickCharge(object sender, EventArgs e)
         {
             DS4Device device = sender as DS4Device;
-            if (device.ConnectionType == ConnectionType.BT && Global.Instance.getQuickCharge() &&
+            if (device.ConnectionType == ConnectionType.BT && Global.Instance.Config.QuickCharge &&
                 device.Charging)
             {
                 // Set disconnect flag here. Later Hotplug event will check
@@ -1711,7 +1711,7 @@ namespace DS4Windows
                                 }
                                 else
                                 {
-                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.OlderProfilePath[Index];
+                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.Config.OlderProfilePath[Index];
                                     Global.LinkedProfileCheck[Index] = false;
                                 }
 
@@ -1835,13 +1835,13 @@ namespace DS4Windows
             // Reset current flick stick progress from previous profile
             Mapping.flickMappingData[ind].Reset();
 
-            Instance.L2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Instance.L2ModInfo[ind].maxOutput, Instance.L2ModInfo[ind].maxZone) / 100.0 * 255);
-            Instance.R2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Instance.R2ModInfo[ind].maxOutput, Instance.R2ModInfo[ind].maxZone) / 100.0 * 255);
+            Instance.Config.L2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Instance.Config.L2ModInfo[ind].maxOutput, Instance.Config.L2ModInfo[ind].maxZone) / 100.0 * 255);
+            Instance.Config.R2OutputSettings[ind].TrigEffectSettings.maxValue = (byte)(Math.Max(Instance.Config.R2ModInfo[ind].maxOutput, Instance.Config.R2ModInfo[ind].maxZone) / 100.0 * 255);
 
-            device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[ind].TriggerEffect,
-                Instance.L2OutputSettings[ind].TrigEffectSettings);
-            device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[ind].TriggerEffect,
-                Instance.R2OutputSettings[ind].TrigEffectSettings);
+            device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.Config.L2OutputSettings[ind].TriggerEffect,
+                Instance.Config.L2OutputSettings[ind].TrigEffectSettings);
+            device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.Config.R2OutputSettings[ind].TriggerEffect,
+                Instance.Config.R2OutputSettings[ind].TrigEffectSettings);
 
             device.RumbleAutostopTime = Instance.getRumbleAutostopTime(ind);
             device.setRumble(0, 0);
@@ -1904,68 +1904,68 @@ namespace DS4Windows
 
             // Carry over initial profile wheel smoothing values to filter instances.
             // Set up event hooks to keep values in sync
-            SteeringWheelSmoothingInfo wheelSmoothInfo = Instance.WheelSmoothInfo[ind];
+            SteeringWheelSmoothingInfo wheelSmoothInfo = Instance.Config.WheelSmoothInfo[ind];
             wheelSmoothInfo.SetFilterAttrs(tempFilter);
             wheelSmoothInfo.SetRefreshEvents(tempFilter);
 
-            FlickStickSettings flickStickSettings = Instance.LSOutputSettings[ind].outputSettings.flickSettings;
+            FlickStickSettings flickStickSettings = Instance.Config.LSOutputSettings[ind].outputSettings.flickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
-            flickStickSettings = Instance.RSOutputSettings[ind].outputSettings.flickSettings;
+            flickStickSettings = Instance.Config.RSOutputSettings[ind].outputSettings.flickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
             int tempIdx = ind;
-            Instance.L2OutputSettings[ind].ResetEvents();
-            Instance.L2ModInfo[ind].ResetEvents();
-            Instance.L2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
+            Instance.Config.L2OutputSettings[ind].ResetEvents();
+            Instance.Config.L2ModInfo[ind].ResetEvents();
+            Instance.Config.L2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
             {
-                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[tempIdx].TriggerEffect,
-                    Instance.L2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.Config.L2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.Config.L2OutputSettings[tempIdx].TrigEffectSettings);
             };
-            Instance.L2ModInfo[ind].MaxOutputChanged += (sender, e) =>
+            Instance.Config.L2ModInfo[ind].MaxOutputChanged += (sender, e) =>
             {
                 TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                Instance.L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
+                Instance.Config.L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
 
                 // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[tempIdx].TriggerEffect,
-                    Instance.L2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.Config.L2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.Config.L2OutputSettings[tempIdx].TrigEffectSettings);
             };
-            Instance.L2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            Instance.Config.L2ModInfo[ind].MaxZoneChanged += (sender, e) =>
             {
                 TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                Instance.L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
+                Instance.Config.L2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(Math.Max(tempInfo.maxOutput, tempInfo.maxZone) / 100.0 * 255.0);
 
                 // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.L2OutputSettings[tempIdx].TriggerEffect,
-                    Instance.L2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.LeftTrigger, Instance.Config.L2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.Config.L2OutputSettings[tempIdx].TrigEffectSettings);
             };
 
-            Instance.R2OutputSettings[ind].ResetEvents();
-            Instance.R2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
+            Instance.Config.R2OutputSettings[ind].ResetEvents();
+            Instance.Config.R2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
             {
-                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[tempIdx].TriggerEffect,
-                    Instance.R2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.Config.R2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.Config.R2OutputSettings[tempIdx].TrigEffectSettings);
             };
-            Instance.R2ModInfo[ind].MaxOutputChanged += (sender, e) =>
-            {
-                TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                Instance.R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
-
-                // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[tempIdx].TriggerEffect,
-                    Instance.R2OutputSettings[tempIdx].TrigEffectSettings);
-            };
-            Instance.R2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            Instance.Config.R2ModInfo[ind].MaxOutputChanged += (sender, e) =>
             {
                 TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
-                Instance.R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
+                Instance.Config.R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
 
                 // Refresh trigger effect
-                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.R2OutputSettings[tempIdx].TriggerEffect,
-                    Instance.R2OutputSettings[tempIdx].TrigEffectSettings);
+                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.Config.R2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.Config.R2OutputSettings[tempIdx].TrigEffectSettings);
+            };
+            Instance.Config.R2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            {
+                TriggerDeadZoneZInfo tempInfo = sender as TriggerDeadZoneZInfo;
+                Instance.Config.R2OutputSettings[tempIdx].TrigEffectSettings.maxValue = (byte)(tempInfo.maxOutput / 100.0 * 255.0);
+
+                // Refresh trigger effect
+                device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.Config.R2OutputSettings[tempIdx].TriggerEffect,
+                    Instance.Config.R2OutputSettings[tempIdx].TrigEffectSettings);
             };
         }
 

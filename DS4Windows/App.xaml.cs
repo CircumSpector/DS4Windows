@@ -190,7 +190,7 @@ namespace DS4WinWPF
                 DS4Windows.Global.Instance.SaveAsNewProfile(0, "Default");
                 for (int i = 0; i < DS4Windows.ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
                 {
-                    DS4Windows.Global.Instance.Config.ProfilePath[i] = DS4Windows.Global.Instance.OlderProfilePath[i] = "Default";
+                    DS4Windows.Global.Instance.Config.ProfilePath[i] = DS4Windows.Global.Instance.Config.OlderProfilePath[i] = "Default";
                 }
 
                 logger.Info("Default config created");

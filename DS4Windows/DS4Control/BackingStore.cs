@@ -70,10 +70,80 @@ namespace DS4Windows
         public IList<string> LaunchProgram { get; set; }
 
         public IList<string> ProfilePath { get; set; }
-        
+
         public IList<string>[] ProfileActions { get; set; }
 
         public IList<SquareStickInfo> SquStickInfo { get; set; }
+
+        public IList<SpecialAction> Actions { get; set; }
+
+        public IList<DS4ControlSettings>[] Ds4Settings { get; set; }
+
+        public IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; }
+
+        public IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; }
+
+        public IList<StickOutputSetting> LSOutputSettings { get; set; }
+
+        public IList<StickOutputSetting> RSOutputSettings { get; set; }
+
+        public IList<TriggerOutputSettings> L2OutputSettings { get; set; }
+
+        public IList<TriggerOutputSettings> R2OutputSettings { get; set; }
+
+        public IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; }
+
+        public IList<ButtonMouseInfo> ButtonMouseInfos { get; set; }
+
+        public IList<string> OlderProfilePath { get; set; }
+
+        public IList<bool> DistanceProfiles { get; set; }
+
+        public IList<byte> RumbleBoost { get; set; }
+
+        public IList<byte> TouchSensitivity { get; set; }
+
+        public IList<StickDeadZoneInfo> LSModInfo { get; set; }
+
+        public IList<StickDeadZoneInfo> RSModInfo { get; set; }
+
+        public IList<TriggerDeadZoneZInfo> L2ModInfo { get; set; }
+
+        public IList<TriggerDeadZoneZInfo> R2ModInfo { get; set; }
+
+        public IList<double> L2Sens { get; set; }
+
+        public IList<double> R2Sens { get; set; }
+
+        public IList<double> SXSens { get; set; }
+
+        public IList<double> SZSens { get; set; }
+
+        public IList<double> SXDeadzone { get; set; }
+
+        public IList<double> SXMaxzone { get; set; }
+
+        public IList<double> SXAntiDeadzone { get; set; }
+
+        public IList<double>   SZDeadzone{ get; set; }
+
+        public IList<double> SZAntiDeadzone { get; set; }
+
+        public IList<double> SZMaxzone { get; set; }
+
+        public IList<double> LSSens { get; set; }
+
+        public IList<double> RSSens { get; set; }
+
+        
+
+        public IList<bool> LowerRCOn { get; set; }
+
+        public IList<double> LSRotation { get; set; }
+
+        public IList<double> RSRotation { get; set; }
+
+
 
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
