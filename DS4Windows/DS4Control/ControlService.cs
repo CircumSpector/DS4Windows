@@ -1267,12 +1267,12 @@ namespace DS4Windows
                         {
                             if (device.isValidSerial() && Global.Instance.containsLinkedProfile(device.getMacAddress()))
                             {
-                                Global.Instance.ProfilePath[i] = Global.Instance.getLinkedProfile(device.getMacAddress());
+                                Global.Instance.Config.ProfilePath[i] = Global.Instance.getLinkedProfile(device.getMacAddress());
                                 Global.LinkedProfileCheck[i] = true;
                             }
                             else
                             {
-                                Global.Instance.ProfilePath[i] = Global.Instance.OlderProfilePath[i];
+                                Global.Instance.Config.ProfilePath[i] = Global.Instance.OlderProfilePath[i];
                                 Global.LinkedProfileCheck[i] = false;
                             }
 
@@ -1706,12 +1706,12 @@ namespace DS4Windows
                             {
                                 if (device.isValidSerial() && Global.Instance.containsLinkedProfile(device.getMacAddress()))
                                 {
-                                    Global.Instance.ProfilePath[Index] = Global.Instance.getLinkedProfile(device.getMacAddress());
+                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.getLinkedProfile(device.getMacAddress());
                                     Global.LinkedProfileCheck[Index] = true;
                                 }
                                 else
                                 {
-                                    Global.Instance.ProfilePath[Index] = Global.Instance.OlderProfilePath[Index];
+                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.OlderProfilePath[Index];
                                     Global.LinkedProfileCheck[Index] = false;
                                 }
 
@@ -1855,7 +1855,7 @@ namespace DS4Windows
 
         private void CheckLauchProfileOption(int ind, DS4Device device)
         {
-            string programPath = Instance.LaunchProgram[ind];
+            string programPath = Instance.Config.LaunchProgram[ind];
             if (programPath != string.Empty)
             {
                 System.Diagnostics.Process[] localAll = System.Diagnostics.Process.GetProcesses();
@@ -2231,9 +2231,9 @@ namespace DS4Windows
                     if (device.PrimaryDevice)
                     {
                         if (File.Exists(Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                            Instance.ProfilePath[ind] + ".xml")))
+                            Instance.Config.ProfilePath[ind] + ".xml")))
                         {
-                            string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile, (ind + 1).ToString(), Instance.ProfilePath[ind], $"{device.Battery}");
+                            string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile, (ind + 1).ToString(), Instance.Config.ProfilePath[ind], $"{device.Battery}");
                             LogDebug(prolog);
                             AppLogger.LogToTray(prolog);
                         }

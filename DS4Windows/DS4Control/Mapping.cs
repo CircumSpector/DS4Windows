@@ -3207,7 +3207,7 @@ namespace DS4Windows
                 int actionDoneCount = actionDone.Count;
                 int totalActionCount = Global.Instance.GetActions().Count;
                 DS4StateFieldMapping previousFieldMapping = null;
-                List<string> profileActions = Global.Instance.getProfileActions(device);
+                var profileActions = Global.Instance.Config.ProfileActions[device];
                 //foreach (string actionname in profileActions)
                 for (int actionIndex = 0, profileListLen = profileActions.Count;
                      actionIndex < profileListLen; actionIndex++)
@@ -3466,7 +3466,7 @@ namespace DS4Windows
                                     if (action.UTrigger.Count == 0 && !action.AutomaticUnTrigger)
                                     {
                                         // If the new profile has any actions with the same action key (controls) than this action (which doesn't have untrigger keys) then set status of those actions to wait for the release of the existing action key. 
-                                        List<string> profileActionsNext = Global.Instance.getProfileActions(device);
+                                        var profileActionsNext = Global.Instance.Config.ProfileActions[device];
                                         for (int actionIndexNext = 0, profileListLenNext = profileActionsNext.Count; actionIndexNext < profileListLenNext; actionIndexNext++)
                                         {
                                             string actionnameNext = profileActionsNext[actionIndexNext];
@@ -3921,7 +3921,7 @@ namespace DS4Windows
                             string profileName = untriggeraction[device].PreviousProfileName;
                             DS4Device d = ctrl.DS4Controllers[device];
                             string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile,
-                                (device + 1).ToString(), (profileName == string.Empty ? Global.Instance.ProfilePath[device] : profileName), $"{d.Battery}");
+                                (device + 1).ToString(), (profileName == string.Empty ? Global.Instance.Config.ProfilePath[device] : profileName), $"{d.Battery}");
 
                             AppLogger.LogToGui(prolog, false);
 

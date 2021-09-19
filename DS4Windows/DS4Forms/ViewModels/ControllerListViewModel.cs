@@ -53,7 +53,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             foreach (DS4Device currentDev in controlService.slotManager.ControllerColl)
             {
                 CompositeDeviceModel temp = new CompositeDeviceModel(currentDev,
-                    idx, Global.Instance.ProfilePath[idx], profileListHolder);
+                    idx, Global.Instance.Config.ProfilePath[idx], profileListHolder);
                 controllerCol.Add(temp);
                 controllerDict.Add(idx, temp);
                 currentDev.Removal += Controller_Removal;
@@ -94,7 +94,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (!controllerDict.ContainsKey(index) && !device.IsRemoving)
                 {
                     CompositeDeviceModel temp = new CompositeDeviceModel(device,
-                        index, Global.Instance.ProfilePath[index], profileListHolder);
+                        index, Global.Instance.Config.ProfilePath[index], profileListHolder);
                     controllerCol.Add(temp);
                     controllerDict.Add(index, temp);
 
@@ -144,7 +144,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         _colListLocker.EnterWriteLock();
                         int idx = controlService.slotManager.ReverseControllerDict[currentDev];
                         CompositeDeviceModel temp = new CompositeDeviceModel(currentDev,
-                            idx, Global.Instance.ProfilePath[idx], profileListHolder);
+                            idx, Global.Instance.Config.ProfilePath[idx], profileListHolder);
                         controllerCol.Add(temp);
                         controllerDict.Add(idx, temp);
                         _colListLocker.ExitWriteLock();
@@ -389,15 +389,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 HookEvents(false);
             }
 
-            string prof = Global.Instance.ProfilePath[devIndex] = ProfileListCol[selectedIndex].Name;
+            string prof = Global.Instance.Config.ProfilePath[devIndex] = ProfileListCol[selectedIndex].Name;
             if (LinkedProfile)
             {
-                Global.Instance.changeLinkedProfile(device.getMacAddress(), Global.Instance.ProfilePath[devIndex]);
+                Global.Instance.changeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
                 Global.Instance.SaveLinkedProfiles();
             }
             else
             {
-                Global.Instance.OlderProfilePath[devIndex] = Global.Instance.ProfilePath[devIndex];
+                Global.Instance.OlderProfilePath[devIndex] = Global.Instance.Config.ProfilePath[devIndex];
             }
 
             //Global.Save();
@@ -459,13 +459,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     if (device.isValidSerial())
                     {
-                        Global.Instance.changeLinkedProfile(device.getMacAddress(), Global.Instance.ProfilePath[devIndex]);
+                        Global.Instance.changeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
                     }
                 }
                 else
                 {
                     Global.Instance.removeLinkedProfile(device.getMacAddress());
-                    Global.Instance.ProfilePath[devIndex] = Global.Instance.OlderProfilePath[devIndex];
+                    Global.Instance.Config.ProfilePath[devIndex] = Global.Instance.OlderProfilePath[devIndex];
                 }
 
                 Global.Instance.SaveLinkedProfiles();

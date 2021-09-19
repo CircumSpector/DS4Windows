@@ -81,7 +81,7 @@ namespace DS4WinWPF
                         if (tempname != string.Empty && tempname != "(none)")
                         {
                             if ((Global.UseTempProfiles[j] && tempname != Global.TempProfileNames[j]) ||
-                                (!Global.UseTempProfiles[j] && tempname != Global.Instance.ProfilePath[j]) ||
+                                (!Global.UseTempProfiles[j] && tempname != Global.Instance.Config.ProfilePath[j]) ||
                                 forceLoadProfile)
                             {
                                 if (autoProfileDebugLogLevel > 0)
@@ -134,7 +134,7 @@ namespace DS4WinWPF
                             if (DS4Windows.Global.Instance.AutoProfileRevertDefaultProfile)
                             {
                                 if (autoProfileDebugLogLevel > 0)
-                                    DS4Windows.AppLogger.LogToGui($"DEBUG: Auto-Profile. Unknown process. Reverting to default profile. Controller {j + 1}={Global.Instance.ProfilePath[j]} (default)", false, true);
+                                    DS4Windows.AppLogger.LogToGui($"DEBUG: Auto-Profile. Unknown process. Reverting to default profile. Controller {j + 1}={Global.Instance.Config.ProfilePath[j]} (default)", false, true);
 
                                 Global.Instance.LoadProfile(j, false, Program.rootHub);
                             }

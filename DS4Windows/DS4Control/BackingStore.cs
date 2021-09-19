@@ -66,7 +66,15 @@ namespace DS4Windows
         public bool FlashWhenLate { get; set; }
 
         public bool UseCustomSteamFolder { get; set; }
+
+        public IList<string> LaunchProgram { get; set; }
+
+        public IList<string> ProfilePath { get; set; }
         
+        public IList<string>[] ProfileActions { get; set; }
+
+        public IList<SquareStickInfo> SquStickInfo { get; set; }
+
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);

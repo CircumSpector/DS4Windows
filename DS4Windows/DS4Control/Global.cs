@@ -1493,10 +1493,9 @@ namespace DS4Windows
             return _config.btPollRate[index];
         }
 
-        public  SquareStickInfo[] SquStickInfo => _config.squStickInfo;
         public  SquareStickInfo GetSquareStickInfo(int device)
         {
-            return _config.squStickInfo[device];
+            return _config.SquStickInfo[device];
         }
 
         public  StickAntiSnapbackInfo[] LSAntiSnapbackInfo => _config.lsAntiSnapbackInfo;
@@ -1594,12 +1593,9 @@ namespace DS4Windows
 
         public  ControlServiceDeviceOptions DeviceOptions => _config.DeviceOptions;
 
-        public  string[] LaunchProgram => _config.launchProgram;
-        public  string[] ProfilePath => _config.profilePath;
         public  string[] OlderProfilePath => _config.olderProfilePath;
         public  bool[] DistanceProfiles => _config.distanceProfiles;
 
-        public  List<string>[] ProfileActions => _config.profileActions;
         public  int getProfileActionCount(int index)
         {
             return _config.profileActionCount[index];
@@ -1610,11 +1606,6 @@ namespace DS4Windows
             _config.CalculateProfileActionCount(index);
         }
 
-        public  List<string> getProfileActions(int index)
-        {
-            return _config.profileActions[index];
-        }
-        
         public  void UpdateDS4CSetting (int deviceNum, string buttonName, bool shift, object action, string exts, DS4KeyType kt, int trigger = 0)
         {
             _config.UpdateDs4ControllerSetting(deviceNum, buttonName, shift, action, exts, kt, trigger);

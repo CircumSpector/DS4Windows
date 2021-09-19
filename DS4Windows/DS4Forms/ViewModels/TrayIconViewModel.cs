@@ -167,7 +167,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     item.Tag = idx;
                     //item.ContextMenu = new ContextMenu();
                     ItemCollection subitems = item.Items;
-                    string currentProfile = Global.Instance.ProfilePath[idx];
+                    string currentProfile = Global.Instance.Config.ProfilePath[idx];
                     foreach (ProfileEntity entry in profileListHolder.ProfileListCol)
                     {
                         // Need to escape profile name to disable Access Keys for control

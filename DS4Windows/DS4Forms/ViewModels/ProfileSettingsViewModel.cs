@@ -505,7 +505,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LaunchProgramExists
         {
-            get => !string.IsNullOrEmpty(Global.Instance.LaunchProgram[device]);
+            get => !string.IsNullOrEmpty(Global.Instance.Config.LaunchProgram[device]);
             set
             {
                 if (!value) ResetLauchProgram();
@@ -515,7 +515,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LaunchProgram
         {
-            get => Global.Instance.LaunchProgram[device];
+            get => Global.Instance.Config.LaunchProgram[device];
         }
         public event EventHandler LaunchProgramChanged;
 
@@ -523,7 +523,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                string temp = Global.Instance.LaunchProgram[device];
+                string temp = Global.Instance.Config.LaunchProgram[device];
                 if (!string.IsNullOrEmpty(temp))
                 {
                     temp = Path.GetFileNameWithoutExtension(temp);
@@ -543,7 +543,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 ImageSource exeicon = null;
-                string path = Global.Instance.LaunchProgram[device];
+                string path = Global.Instance.Config.LaunchProgram[device];
                 if (File.Exists(path) && Path.GetExtension(path).ToLower() == ".exe")
                 {
                     using (Icon ico = Icon.ExtractAssociatedIcon(path))
@@ -969,26 +969,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSSquareStick
         {
-            get => Global.Instance.SquStickInfo[device].lsMode;
-            set => Global.Instance.SquStickInfo[device].lsMode = value;
+            get => Global.Instance.Config.SquStickInfo[device].lsMode;
+            set => Global.Instance.Config.SquStickInfo[device].lsMode = value;
         }
 
         public bool RSSquareStick
         {
-            get => Global.Instance.SquStickInfo[device].rsMode;
-            set => Global.Instance.SquStickInfo[device].rsMode = value;
+            get => Global.Instance.Config.SquStickInfo[device].rsMode;
+            set => Global.Instance.Config.SquStickInfo[device].rsMode = value;
         }
 
         public double LSSquareRoundness
         {
-            get => Global.Instance.SquStickInfo[device].lsRoundness;
-            set => Global.Instance.SquStickInfo[device].lsRoundness = value;
+            get => Global.Instance.Config.SquStickInfo[device].lsRoundness;
+            set => Global.Instance.Config.SquStickInfo[device].lsRoundness = value;
         }
 
         public double RSSquareRoundness
         {
-            get => Global.Instance.SquStickInfo[device].rsRoundness;
-            set => Global.Instance.SquStickInfo[device].rsRoundness = value;
+            get => Global.Instance.Config.SquStickInfo[device].rsRoundness;
+            set => Global.Instance.Config.SquStickInfo[device].rsRoundness = value;
         }
 
         public int LSOutputCurveIndex
@@ -2613,7 +2613,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateLaunchProgram(string path)
         {
-            Global.Instance.LaunchProgram[device] = path;
+            Global.Instance.Config.LaunchProgram[device] = path;
             LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);
@@ -2622,7 +2622,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ResetLauchProgram()
         {
-            Global.Instance.LaunchProgram[device] = string.Empty;
+            Global.Instance.Config.LaunchProgram[device] = string.Empty;
             LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);

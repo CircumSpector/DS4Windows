@@ -529,7 +529,7 @@ namespace DS4WinWPF.DS4Forms
                 currentProfile = profile;
                 if (device == Global.TEST_PROFILE_INDEX)
                 {
-                    Global.Instance.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
+                    Global.Instance.Config.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
                 }
 
                 Global.Instance.LoadProfile(device, false, App.rootHub, false);
@@ -783,7 +783,7 @@ namespace DS4WinWPF.DS4Forms
                 temp.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) == -1)
             {
                 SetLateProperties(false);
-                Global.Instance.ProfilePath[deviceNum] =
+                Global.Instance.Config.ProfilePath[deviceNum] =
                     Global.Instance.OlderProfilePath[deviceNum] = temp;
 
                 if (currentProfile != null)

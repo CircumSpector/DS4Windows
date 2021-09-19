@@ -55,10 +55,10 @@ namespace DS4Windows
             public bool[] touchClickPassthru = new bool[Global.TEST_PROFILE_ITEM_COUNT]
                 {false, false, false, false, false, false, false, false, false};
 
-            public string[] profilePath = new string[Global.TEST_PROFILE_ITEM_COUNT]
+            public IList<string> ProfilePath { get; set; } = new List<string>()
             {
-            string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
-            string.Empty, string.Empty
+                string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+                string.Empty, string.Empty
             };
 
             public string[] olderProfilePath = new string[Global.TEST_PROFILE_ITEM_COUNT]
@@ -171,13 +171,13 @@ namespace DS4Windows
             false, false, false, false, false, false
             };
 
-            public SquareStickInfo[] squStickInfo = new SquareStickInfo[Global.TEST_PROFILE_ITEM_COUNT]
+            public IList<SquareStickInfo> SquStickInfo { get; set; } = new List<SquareStickInfo>()
             {
-            new(), new(),
-            new(), new(),
-            new(), new(),
-            new(), new(),
-            new()
+                new SquareStickInfo(), new SquareStickInfo(),
+                new SquareStickInfo(), new SquareStickInfo(),
+                new SquareStickInfo(), new SquareStickInfo(),
+                new SquareStickInfo(), new SquareStickInfo(),
+                new SquareStickInfo()
             };
 
             public StickAntiSnapbackInfo[] lsAntiSnapbackInfo = new StickAntiSnapbackInfo[Global.TEST_PROFILE_ITEM_COUNT]
@@ -329,10 +329,10 @@ namespace DS4Windows
             new()
             };
 
-            public string[] launchProgram = new string[Global.TEST_PROFILE_ITEM_COUNT]
+            public IList<string> LaunchProgram { get; set; } = new List<string>()
             {
-            string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
-            string.Empty, string.Empty
+                string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+                string.Empty, string.Empty
             };
 
             public bool[] dinputOnly = new bool[Global.TEST_PROFILE_ITEM_COUNT]
@@ -448,8 +448,7 @@ namespace DS4Windows
 
             public ControlSettingsGroup[] ds4controlSettings;
 
-            public List<string>[] profileActions = new List<string>[Global.TEST_PROFILE_ITEM_COUNT]
-                {null, null, null, null, null, null, null, null, null};
+            public IList<string>[] ProfileActions { get; set; } = { null, null, null, null, null, null, null, null, null };
 
             public int[] profileActionCount = new int[Global.TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -593,8 +592,8 @@ namespace DS4Windows
 
             public void EstablishDefaultSpecialActions(int idx)
             {
-                profileActions[idx] = new List<string> { "Disconnect Controller" };
-                profileActionCount[idx] = profileActions[idx].Count;
+                ProfileActions[idx] = new List<string> { "Disconnect Controller" };
+                profileActionCount[idx] = ProfileActions[idx].Count;
             }
 
             public void CacheProfileCustomsFlags(int device)
@@ -635,7 +634,7 @@ namespace DS4Windows
 
             public void CalculateProfileActionCount(int index)
             {
-                profileActionCount[index] = profileActions[index].Count;
+                profileActionCount[index] = ProfileActions[index].Count;
             }
 
             public void CalculateProfileActionDicts(int device)
@@ -643,7 +642,7 @@ namespace DS4Windows
                 profileActionDict[device].Clear();
                 profileActionIndexDict[device].Clear();
 
-                foreach (string actionname in profileActions[device])
+                foreach (string actionname in ProfileActions[device])
                 {
                     profileActionDict[device][actionname] = GetAction(actionname);
                     profileActionIndexDict[device][actionname] = GetActionIndexOf(actionname);
@@ -1047,7 +1046,7 @@ namespace DS4Windows
                     XmlNode xmlMouseAccel = m_Xdoc.CreateNode(XmlNodeType.Element, "MouseAcceleration", null); xmlMouseAccel.InnerText = buttonMouseInfos[device].mouseAccel.ToString(); rootElement.AppendChild(xmlMouseAccel);
                     XmlNode xmlMouseVerticalScale = m_Xdoc.CreateNode(XmlNodeType.Element, "ButtonMouseVerticalScale", null); xmlMouseVerticalScale.InnerText = Convert.ToInt32(buttonMouseInfos[device].buttonVerticalScale * 100).ToString(); rootElement.AppendChild(xmlMouseVerticalScale);
                     //XmlNode xmlShiftMod = m_Xdoc.CreateNode(XmlNodeType.Element, "ShiftModifier", null); xmlShiftMod.InnerText = shiftModifier[device].ToString(); rootElement.AppendChild(xmlShiftMod);
-                    XmlNode xmlLaunchProgram = m_Xdoc.CreateNode(XmlNodeType.Element, "LaunchProgram", null); xmlLaunchProgram.InnerText = launchProgram[device].ToString(); rootElement.AppendChild(xmlLaunchProgram);
+                    XmlNode xmlLaunchProgram = m_Xdoc.CreateNode(XmlNodeType.Element, "LaunchProgram", null); xmlLaunchProgram.InnerText = LaunchProgram[device].ToString(); rootElement.AppendChild(xmlLaunchProgram);
                     XmlNode xmlDinput = m_Xdoc.CreateNode(XmlNodeType.Element, "DinputOnly", null); xmlDinput.InnerText = dinputOnly[device].ToString(); rootElement.AppendChild(xmlDinput);
                     XmlNode xmlStartTouchpadOff = m_Xdoc.CreateNode(XmlNodeType.Element, "StartTouchpadOff", null); xmlStartTouchpadOff.InnerText = startTouchpadOff[device].ToString(); rootElement.AppendChild(xmlStartTouchpadOff);
                     XmlNode xmlTouchOutMode = m_Xdoc.CreateNode(XmlNodeType.Element, "TouchpadOutputMode", null); xmlTouchOutMode.InnerText = touchOutMode[device].ToString(); rootElement.AppendChild(xmlTouchOutMode);
@@ -1139,7 +1138,7 @@ namespace DS4Windows
                     XmlNode xmlGyroSwipeDelayTime = m_Xdoc.CreateNode(XmlNodeType.Element, "DelayTime", null); xmlGyroSwipeDelayTime.InnerText = gyroSwipeInfo[device].delayTime.ToString(); xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeDelayTime);
                     rootElement.AppendChild(xmlGyroSwipeSettingsElement);
 
-                    XmlNode xmlProfileActions = m_Xdoc.CreateNode(XmlNodeType.Element, "ProfileActions", null); xmlProfileActions.InnerText = string.Join("/", profileActions[device]); rootElement.AppendChild(xmlProfileActions);
+                    XmlNode xmlProfileActions = m_Xdoc.CreateNode(XmlNodeType.Element, "ProfileActions", null); xmlProfileActions.InnerText = string.Join("/", ProfileActions[device]); rootElement.AppendChild(xmlProfileActions);
                     XmlNode xmlBTPollRate = m_Xdoc.CreateNode(XmlNodeType.Element, "BTPollRate", null); xmlBTPollRate.InnerText = btPollRate[device].ToString(); rootElement.AppendChild(xmlBTPollRate);
 
                     XmlNode xmlLsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveMode", null); xmlLsOutputCurveMode.InnerText = stickOutputCurveString(getLsOutCurveMode(device)); rootElement.AppendChild(xmlLsOutputCurveMode);
@@ -1148,11 +1147,11 @@ namespace DS4Windows
                     XmlNode xmlRsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveMode", null); xmlRsOutputCurveMode.InnerText = stickOutputCurveString(getRsOutCurveMode(device)); rootElement.AppendChild(xmlRsOutputCurveMode);
                     XmlNode xmlRsOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveCustom", null); xmlRsOutputCurveCustom.InnerText = rsOutBezierCurveObj[device].ToString(); rootElement.AppendChild(xmlRsOutputCurveCustom);
 
-                    XmlNode xmlLsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSSquareStick", null); xmlLsSquareStickMode.InnerText = squStickInfo[device].lsMode.ToString(); rootElement.AppendChild(xmlLsSquareStickMode);
-                    XmlNode xmlRsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSSquareStick", null); xmlRsSquareStickMode.InnerText = squStickInfo[device].rsMode.ToString(); rootElement.AppendChild(xmlRsSquareStickMode);
+                    XmlNode xmlLsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSSquareStick", null); xmlLsSquareStickMode.InnerText = SquStickInfo[device].lsMode.ToString(); rootElement.AppendChild(xmlLsSquareStickMode);
+                    XmlNode xmlRsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSSquareStick", null); xmlRsSquareStickMode.InnerText = SquStickInfo[device].rsMode.ToString(); rootElement.AppendChild(xmlRsSquareStickMode);
 
-                    XmlNode xmlSquareStickRoundness = m_Xdoc.CreateNode(XmlNodeType.Element, "SquareStickRoundness", null); xmlSquareStickRoundness.InnerText = squStickInfo[device].lsRoundness.ToString(); rootElement.AppendChild(xmlSquareStickRoundness);
-                    XmlNode xmlSquareRStickRoundness = m_Xdoc.CreateNode(XmlNodeType.Element, "SquareRStickRoundness", null); xmlSquareRStickRoundness.InnerText = squStickInfo[device].rsRoundness.ToString(); rootElement.AppendChild(xmlSquareRStickRoundness);
+                    XmlNode xmlSquareStickRoundness = m_Xdoc.CreateNode(XmlNodeType.Element, "SquareStickRoundness", null); xmlSquareStickRoundness.InnerText = SquStickInfo[device].lsRoundness.ToString(); rootElement.AppendChild(xmlSquareStickRoundness);
+                    XmlNode xmlSquareRStickRoundness = m_Xdoc.CreateNode(XmlNodeType.Element, "SquareRStickRoundness", null); xmlSquareRStickRoundness.InnerText = SquStickInfo[device].rsRoundness.ToString(); rootElement.AppendChild(xmlSquareRStickRoundness);
 
                     XmlNode xmlLsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapback", null); xmlLsAntiSnapbackEnabled.InnerText = lsAntiSnapbackInfo[device].enabled.ToString(); rootElement.AppendChild(xmlLsAntiSnapbackEnabled);
                     XmlNode xmlRsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapback", null); xmlRsAntiSnapbackEnabled.InnerText = rsAntiSnapbackInfo[device].enabled.ToString(); rootElement.AppendChild(xmlRsAntiSnapbackEnabled);
@@ -1661,7 +1660,7 @@ namespace DS4Windows
                 string profilepath;
                 if (string.IsNullOrEmpty(propath))
                     profilepath = Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                        $"{profilePath[device]}{XML_EXTENSION}");
+                        $"{ProfilePath[device]}{XML_EXTENSION}");
                 else
                     profilepath = propath;
 
@@ -2351,13 +2350,13 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LaunchProgram");
-                        launchProgram[device] = Item.InnerText;
+                        LaunchProgram[device] = Item.InnerText;
                     }
-                    catch { launchProgram[device] = string.Empty; missingSetting = true; }
+                    catch { LaunchProgram[device] = string.Empty; missingSetting = true; }
 
-                    if (launchprogram == true && launchProgram[device] != string.Empty)
+                    if (launchprogram == true && LaunchProgram[device] != string.Empty)
                     {
-                        string programPath = launchProgram[device];
+                        string programPath = LaunchProgram[device];
                         System.Diagnostics.Process[] localAll = System.Diagnostics.Process.GetProcesses();
                         bool procFound = false;
                         for (int procInd = 0, procsLen = localAll.Length; !procFound && procInd < procsLen; procInd++)
@@ -2918,16 +2917,16 @@ namespace DS4Windows
                     try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSOutputCurveMode"); setRsOutCurveMode(device, stickOutputCurveId(Item.InnerText)); }
                     catch { setRsOutCurveMode(device, 0); missingSetting = true; }
 
-                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSSquareStick"); bool.TryParse(Item.InnerText, out squStickInfo[device].lsMode); }
-                    catch { squStickInfo[device].lsMode = false; missingSetting = true; }
+                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSSquareStick"); bool.TryParse(Item.InnerText, out SquStickInfo[device].lsMode); }
+                    catch { SquStickInfo[device].lsMode = false; missingSetting = true; }
 
-                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SquareStickRoundness"); double.TryParse(Item.InnerText, out squStickInfo[device].lsRoundness); }
-                    catch { squStickInfo[device].lsRoundness = 5.0; missingSetting = true; }
-                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SquareRStickRoundness"); double.TryParse(Item.InnerText, out squStickInfo[device].rsRoundness); }
-                    catch { squStickInfo[device].rsRoundness = 5.0; missingSetting = true; }
+                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SquareStickRoundness"); double.TryParse(Item.InnerText, out SquStickInfo[device].lsRoundness); }
+                    catch { SquStickInfo[device].lsRoundness = 5.0; missingSetting = true; }
+                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SquareRStickRoundness"); double.TryParse(Item.InnerText, out SquStickInfo[device].rsRoundness); }
+                    catch { SquStickInfo[device].rsRoundness = 5.0; missingSetting = true; }
 
-                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSSquareStick"); bool.TryParse(Item.InnerText, out squStickInfo[device].rsMode); }
-                    catch { squStickInfo[device].rsMode = false; missingSetting = true; }
+                    try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSSquareStick"); bool.TryParse(Item.InnerText, out SquStickInfo[device].rsMode); }
+                    catch { SquStickInfo[device].rsMode = false; missingSetting = true; }
 
 
                     try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSAntiSnapback"); bool.TryParse(Item.InnerText, out lsAntiSnapbackInfo[device].enabled); }
@@ -3198,31 +3197,31 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/ProfileActions");
-                        profileActions[device].Clear();
+                        ProfileActions[device].Clear();
                         if (!string.IsNullOrEmpty(Item.InnerText))
                         {
                             string[] actionNames = Item.InnerText.Split('/');
                             for (int actIndex = 0, actLen = actionNames.Length; actIndex < actLen; actIndex++)
                             {
                                 string tempActionName = actionNames[actIndex];
-                                if (!profileActions[device].Contains(tempActionName))
+                                if (!ProfileActions[device].Contains(tempActionName))
                                 {
-                                    profileActions[device].Add(tempActionName);
+                                    ProfileActions[device].Add(tempActionName);
                                 }
                             }
                         }
                     }
-                    catch { profileActions[device].Clear(); missingSetting = true; }
+                    catch { ProfileActions[device].Clear(); missingSetting = true; }
 
                     foreach (DS4ControlSettings dcs in ds4settings[device])
                         dcs.Reset();
 
                     containsCustomAction[device] = false;
                     containsCustomExtras[device] = false;
-                    profileActionCount[device] = profileActions[device].Count;
+                    profileActionCount[device] = ProfileActions[device].Count;
                     profileActionDict[device].Clear();
                     profileActionIndexDict[device].Clear();
-                    foreach (string actionname in profileActions[device])
+                    foreach (string actionname in ProfileActions[device])
                     {
                         profileActionDict[device][actionname] = Global.Instance.GetAction(actionname);
                         profileActionIndexDict[device][actionname] = Global.Instance.GetActionIndexOf(actionname);
@@ -3575,15 +3574,15 @@ namespace DS4Windows
                             string contTag = $"/Profile/Controller{i + 1}";
                             try
                             {
-                                Item = m_Xdoc.SelectSingleNode(contTag); profilePath[i] = Item?.InnerText ?? string.Empty;
-                                if (profilePath[i].ToLower().Contains("distance"))
+                                Item = m_Xdoc.SelectSingleNode(contTag); ProfilePath[i] = Item?.InnerText ?? string.Empty;
+                                if (ProfilePath[i].ToLower().Contains("distance"))
                                 {
                                     distanceProfiles[i] = true;
                                 }
 
-                                olderProfilePath[i] = profilePath[i];
+                                olderProfilePath[i] = ProfilePath[i];
                             }
-                            catch { profilePath[i] = olderProfilePath[i] = string.Empty; distanceProfiles[i] = false; }
+                            catch { ProfilePath[i] = olderProfilePath[i] = string.Empty; distanceProfiles[i] = false; }
                         }
 
                         try
@@ -3899,7 +3898,7 @@ namespace DS4Windows
                 for (int i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
                 {
                     string contTagName = $"Controller{i + 1}";
-                    XmlNode xmlControllerNode = m_Xdoc.CreateNode(XmlNodeType.Element, contTagName, null); xmlControllerNode.InnerText = !Global.LinkedProfileCheck[i] ? profilePath[i] : olderProfilePath[i];
+                    XmlNode xmlControllerNode = m_Xdoc.CreateNode(XmlNodeType.Element, contTagName, null); xmlControllerNode.InnerText = !Global.LinkedProfileCheck[i] ? ProfilePath[i] : olderProfilePath[i];
                     if (!string.IsNullOrEmpty(xmlControllerNode.InnerText))
                     {
                         rootElement.AppendChild(xmlControllerNode);
@@ -4797,7 +4796,7 @@ namespace DS4Windows
                 lightInfo.maxRainbowSat = 1.0;
                 lightInfo.ledAsBattery = false;
 
-                launchProgram[device] = string.Empty;
+                LaunchProgram[device] = string.Empty;
                 dinputOnly[device] = false;
                 startTouchpadOff[device] = false;
                 touchOutMode[device] = TouchpadOutMode.Mouse;
@@ -4825,10 +4824,10 @@ namespace DS4Windows
 
                 gyroMouseHorizontalAxis[device] = 0;
                 gyroMouseToggle[device] = false;
-                squStickInfo[device].lsMode = false;
-                squStickInfo[device].rsMode = false;
-                squStickInfo[device].lsRoundness = 5.0;
-                squStickInfo[device].rsRoundness = 5.0;
+                SquStickInfo[device].lsMode = false;
+                SquStickInfo[device].rsMode = false;
+                SquStickInfo[device].lsRoundness = 5.0;
+                SquStickInfo[device].rsRoundness = 5.0;
                 lsAntiSnapbackInfo[device].timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
                 lsAntiSnapbackInfo[device].delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
                 lsAntiSnapbackInfo[device].enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
@@ -4868,7 +4867,7 @@ namespace DS4Windows
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                     dcs.Reset();
 
-                profileActions[device].Clear();
+                ProfileActions[device].Clear();
                 containsCustomAction[device] = false;
                 containsCustomExtras[device] = false;
             }
@@ -4927,7 +4926,7 @@ namespace DS4Windows
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                     dcs.Reset();
 
-                profileActions[device].Clear();
+                ProfileActions[device].Clear();
                 containsCustomAction[device] = false;
                 containsCustomExtras[device] = false;
 
@@ -4962,7 +4961,7 @@ namespace DS4Windows
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                     dcs.Reset();
 
-                profileActions[device].Clear();
+                ProfileActions[device].Clear();
                 containsCustomAction[device] = false;
                 containsCustomExtras[device] = false;
 
@@ -5042,7 +5041,7 @@ namespace DS4Windows
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                     dcs.Reset();
 
-                profileActions[device].Clear();
+                ProfileActions[device].Clear();
                 containsCustomAction[device] = false;
                 containsCustomExtras[device] = false;
 
@@ -5156,7 +5155,7 @@ namespace DS4Windows
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                     dcs.Reset();
 
-                profileActions[device].Clear();
+                ProfileActions[device].Clear();
                 containsCustomAction[device] = false;
                 containsCustomExtras[device] = false;
 
@@ -5205,7 +5204,7 @@ namespace DS4Windows
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                     dcs.Reset();
 
-                profileActions[device].Clear();
+                ProfileActions[device].Clear();
                 containsCustomAction[device] = false;
                 containsCustomExtras[device] = false;
 
@@ -5311,7 +5310,7 @@ namespace DS4Windows
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                     dcs.Reset();
 
-                profileActions[device].Clear();
+                ProfileActions[device].Clear();
                 containsCustomAction[device] = false;
                 containsCustomExtras[device] = false;
 

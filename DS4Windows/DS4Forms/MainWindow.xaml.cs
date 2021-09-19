@@ -1148,7 +1148,7 @@ Suspend support not enabled.", true);
                                             else
                                             {
                                                 // Preset profile name for later loading
-                                                Global.Instance.ProfilePath[tdevice] = strData[2];
+                                                Global.Instance.Config.ProfilePath[tdevice] = strData[2];
                                                 //Global.LoadProfile(tdevice, true, Program.rootHub);
                                             }
                                         }
@@ -1205,7 +1205,7 @@ Suspend support not enabled.", true);
                                                 if (Global.UseTempProfiles[tdevice])
                                                     propValue = Global.TempProfileNames[tdevice];
                                                 else
-                                                    propValue = Global.Instance.ProfilePath[tdevice];
+                                                    propValue = Global.Instance.Config.ProfilePath[tdevice];
                                             }
                                             else if (propName == "outconttype")
                                                 propValue = Global.Instance.Config.OutputDeviceType[tdevice].ToString();

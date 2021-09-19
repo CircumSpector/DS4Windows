@@ -60,7 +60,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             actionCol.Clear();
 
-            List<string> pactions = Global.Instance.ProfileActions[deviceNum];
+            var pactions = Global.Instance.Config.ProfileActions[deviceNum];
             int idx = 0;
             foreach (SpecialAction action in Global.Instance.GetActions())
             {
@@ -137,7 +137,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
             }
 
-            Global.Instance.ProfileActions[deviceNum] = pactions;
+            Global.Instance.Config.ProfileActions[deviceNum] = pactions;
             Global.Instance.CacheExtraProfileInfo(deviceNum);
         }
 
@@ -145,7 +145,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             Global.Instance.RemoveAction(item.SpecialAction.Name);
             actionCol.RemoveAt(specialActionIndex);
-            Global.Instance.ProfileActions[deviceNum].Remove(item.SpecialAction.Name);
+            Global.Instance.Config.ProfileActions[deviceNum].Remove(item.SpecialAction.Name);
             Global.Instance.CacheExtraProfileInfo(deviceNum);
         }
     }
