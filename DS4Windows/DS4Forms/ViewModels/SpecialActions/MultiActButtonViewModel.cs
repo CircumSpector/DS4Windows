@@ -101,27 +101,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         public DS4ControlSettings PrepareTapSettings()
         {
             DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.action.actionMacro = tapMacro.ToArray();
-            settings.actionType = DS4ControlSettings.ActionType.Macro;
-            settings.keyType = DS4KeyType.Macro;
+            settings.ActionData.actionMacro = tapMacro.ToArray();
+            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.KeyType = DS4KeyType.Macro;
             return settings;
         }
 
         public DS4ControlSettings PrepareHoldSettings()
         {
             DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.action.actionMacro = holdMacro.ToArray();
-            settings.actionType = DS4ControlSettings.ActionType.Macro;
-            settings.keyType = DS4KeyType.Macro;
+            settings.ActionData.actionMacro = holdMacro.ToArray();
+            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.KeyType = DS4KeyType.Macro;
             return settings;
         }
 
         public DS4ControlSettings PrepareDoubleTapSettings()
         {
             DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.action.actionMacro = doubleTapMacro.ToArray();
-            settings.actionType = DS4ControlSettings.ActionType.Macro;
-            settings.keyType = DS4KeyType.Macro;
+            settings.ActionData.actionMacro = doubleTapMacro.ToArray();
+            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.KeyType = DS4KeyType.Macro;
             return settings;
         }
 

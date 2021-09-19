@@ -1215,57 +1215,57 @@ namespace DS4Windows
 
                 foreach (DS4ControlSettings dcs in ds4settings[device])
                 {
-                    if (dcs.actionType != DS4ControlSettings.ActionType.Default)
+                    if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
                     {
                         XmlNode buttonNode;
                         string keyType = string.Empty;
 
-                        if (dcs.actionType == DS4ControlSettings.ActionType.Button &&
-                            dcs.action.actionBtn == X360Controls.Unbound)
+                        if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button &&
+                            dcs.ActionData.actionBtn == X360Controls.Unbound)
                         {
                             keyType += DS4KeyType.Unbound;
                         }
 
-                        if (dcs.keyType.HasFlag(DS4KeyType.HoldMacro))
+                        if (dcs.KeyType.HasFlag(DS4KeyType.HoldMacro))
                             keyType += DS4KeyType.HoldMacro;
-                        else if (dcs.keyType.HasFlag(DS4KeyType.Macro))
+                        else if (dcs.KeyType.HasFlag(DS4KeyType.Macro))
                             keyType += DS4KeyType.Macro;
 
-                        if (dcs.keyType.HasFlag(DS4KeyType.Toggle))
+                        if (dcs.KeyType.HasFlag(DS4KeyType.Toggle))
                             keyType += DS4KeyType.Toggle;
-                        if (dcs.keyType.HasFlag(DS4KeyType.ScanCode))
+                        if (dcs.KeyType.HasFlag(DS4KeyType.ScanCode))
                             keyType += DS4KeyType.ScanCode;
 
                         if (keyType != string.Empty)
                         {
-                            buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.control.ToString(), null);
+                            buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
                             buttonNode.InnerText = keyType;
                             KeyType.AppendChild(buttonNode);
                         }
 
-                        buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.control.ToString(), null);
-                        if (dcs.actionType == DS4ControlSettings.ActionType.Macro)
+                        buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+                        if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                         {
-                            int[] ii = dcs.action.actionMacro;
+                            int[] ii = dcs.ActionData.actionMacro;
                             buttonNode.InnerText = string.Join("/", ii);
                             Macro.AppendChild(buttonNode);
                         }
-                        else if (dcs.actionType == DS4ControlSettings.ActionType.Key)
+                        else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
                         {
-                            buttonNode.InnerText = dcs.action.actionKey.ToString();
+                            buttonNode.InnerText = dcs.ActionData.actionKey.ToString();
                             Key.AppendChild(buttonNode);
                         }
-                        else if (dcs.actionType == DS4ControlSettings.ActionType.Button)
+                        else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
                         {
-                            buttonNode.InnerText = GetX360ControlString((X360Controls)dcs.action.actionBtn);
+                            buttonNode.InnerText = GetX360ControlString((X360Controls)dcs.ActionData.actionBtn);
                             Button.AppendChild(buttonNode);
                         }
                     }
 
                     bool hasvalue = false;
-                    if (!string.IsNullOrEmpty(dcs.extras))
+                    if (!string.IsNullOrEmpty(dcs.Extras))
                     {
-                        foreach (string s in dcs.extras.Split(','))
+                        foreach (string s in dcs.Extras.Split(','))
                         {
                             if (s != "0")
                             {
@@ -1277,62 +1277,62 @@ namespace DS4Windows
 
                     if (hasvalue)
                     {
-                        XmlNode extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.control.ToString(), null);
-                        extraNode.InnerText = dcs.extras;
+                        XmlNode extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+                        extraNode.InnerText = dcs.Extras;
                         Extras.AppendChild(extraNode);
                     }
 
-                    if (dcs.shiftActionType != DS4ControlSettings.ActionType.Default && dcs.shiftTrigger > 0)
+                    if (dcs.ShiftActionType != DS4ControlSettings.ActionType.Default && dcs.ShiftTrigger > 0)
                     {
                         XmlElement buttonNode;
                         string keyType = string.Empty;
 
-                        if (dcs.shiftActionType == DS4ControlSettings.ActionType.Button &&
-                            dcs.shiftAction.actionBtn == X360Controls.Unbound)
+                        if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button &&
+                            dcs.ShiftAction.actionBtn == X360Controls.Unbound)
                         {
                             keyType += DS4KeyType.Unbound;
                         }
 
-                        if (dcs.shiftKeyType.HasFlag(DS4KeyType.HoldMacro))
+                        if (dcs.ShiftKeyType.HasFlag(DS4KeyType.HoldMacro))
                             keyType += DS4KeyType.HoldMacro;
-                        if (dcs.shiftKeyType.HasFlag(DS4KeyType.Macro))
+                        if (dcs.ShiftKeyType.HasFlag(DS4KeyType.Macro))
                             keyType += DS4KeyType.Macro;
-                        if (dcs.shiftKeyType.HasFlag(DS4KeyType.Toggle))
+                        if (dcs.ShiftKeyType.HasFlag(DS4KeyType.Toggle))
                             keyType += DS4KeyType.Toggle;
-                        if (dcs.shiftKeyType.HasFlag(DS4KeyType.ScanCode))
+                        if (dcs.ShiftKeyType.HasFlag(DS4KeyType.ScanCode))
                             keyType += DS4KeyType.ScanCode;
 
                         if (keyType != string.Empty)
                         {
-                            buttonNode = m_Xdoc.CreateElement(dcs.control.ToString());
+                            buttonNode = m_Xdoc.CreateElement(dcs.Control.ToString());
                             buttonNode.InnerText = keyType;
                             ShiftKeyType.AppendChild(buttonNode);
                         }
 
-                        buttonNode = m_Xdoc.CreateElement(dcs.control.ToString());
-                        buttonNode.SetAttribute("Trigger", dcs.shiftTrigger.ToString());
-                        if (dcs.shiftActionType == DS4ControlSettings.ActionType.Macro)
+                        buttonNode = m_Xdoc.CreateElement(dcs.Control.ToString());
+                        buttonNode.SetAttribute("Trigger", dcs.ShiftTrigger.ToString());
+                        if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
                         {
-                            int[] ii = dcs.shiftAction.actionMacro;
+                            int[] ii = dcs.ShiftAction.actionMacro;
                             buttonNode.InnerText = string.Join("/", ii);
                             ShiftMacro.AppendChild(buttonNode);
                         }
-                        else if (dcs.shiftActionType == DS4ControlSettings.ActionType.Key)
+                        else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
                         {
-                            buttonNode.InnerText = dcs.shiftAction.actionKey.ToString();
+                            buttonNode.InnerText = dcs.ShiftAction.actionKey.ToString();
                             ShiftKey.AppendChild(buttonNode);
                         }
-                        else if (dcs.shiftActionType == DS4ControlSettings.ActionType.Button)
+                        else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
                         {
-                            buttonNode.InnerText = dcs.shiftAction.actionBtn.ToString();
+                            buttonNode.InnerText = dcs.ShiftAction.actionBtn.ToString();
                             ShiftButton.AppendChild(buttonNode);
                         }
                     }
 
                     hasvalue = false;
-                    if (!string.IsNullOrEmpty(dcs.shiftExtras))
+                    if (!string.IsNullOrEmpty(dcs.ShiftExtras))
                     {
-                        foreach (string s in dcs.shiftExtras.Split(','))
+                        foreach (string s in dcs.ShiftExtras.Split(','))
                         {
                             if (s != "0")
                             {
@@ -1344,8 +1344,8 @@ namespace DS4Windows
 
                     if (hasvalue)
                     {
-                        XmlNode extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.control.ToString(), null);
-                        extraNode.InnerText = dcs.shiftExtras;
+                        XmlNode extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+                        extraNode.InnerText = dcs.ShiftExtras;
                         ShiftExtras.AppendChild(extraNode);
                     }
                 }
@@ -4409,9 +4409,9 @@ namespace DS4Windows
                 int index = temp - 1;
                 DS4ControlSettings dcs = ds4settings[deviceNum][index];
                 if (shift)
-                    dcs.shiftExtras = exts;
+                    dcs.ShiftExtras = exts;
                 else
-                    dcs.extras = exts;
+                    dcs.Extras = exts;
             }
         }
 
@@ -4429,9 +4429,9 @@ namespace DS4Windows
                 var index = temp - 1;
                 var dcs = ds4settings[deviceNum][index];
                 if (shift)
-                    dcs.shiftKeyType = keyType;
+                    dcs.ShiftKeyType = keyType;
                 else
-                    dcs.keyType = keyType;
+                    dcs.KeyType = keyType;
             }
         }
 
@@ -4449,8 +4449,8 @@ namespace DS4Windows
                 var index = temp - 1;
                 var dcs = ds4settings[deviceNum][index];
                 if (shift)
-                    return dcs.shiftAction;
-                return dcs.action;
+                    return dcs.ShiftAction;
+                return dcs.ActionData;
             }
 
             return null;
@@ -4465,11 +4465,11 @@ namespace DS4Windows
                 DS4ControlSettings dcs = ds4settings[deviceNum][index];
                 if (shift)
                 {
-                    return dcs.shiftAction;
+                    return dcs.ShiftAction;
                 }
                 else
                 {
-                    return dcs.action;
+                    return dcs.ActionData;
                 }
             }
 
@@ -4490,8 +4490,8 @@ namespace DS4Windows
                 var index = temp - 1;
                 var dcs = ds4settings[deviceNum][index];
                 if (shift)
-                    return dcs.shiftExtras;
-                return dcs.extras;
+                    return dcs.ShiftExtras;
+                return dcs.Extras;
             }
 
             return null;
@@ -4511,8 +4511,8 @@ namespace DS4Windows
                 var index = temp - 1;
                 var dcs = ds4settings[deviceNum][index];
                 if (shift)
-                    return dcs.shiftKeyType;
-                return dcs.keyType;
+                    return dcs.ShiftKeyType;
+                return dcs.KeyType;
             }
 
             return DS4KeyType.None;
@@ -4531,7 +4531,7 @@ namespace DS4Windows
             {
                 var index = temp - 1;
                 var dcs = ds4settings[deviceNum][index];
-                return dcs.shiftTrigger;
+                return dcs.ShiftTrigger;
             }
 
             return 0;
@@ -4544,7 +4544,7 @@ namespace DS4Windows
             {
                 int index = temp - 1;
                 DS4ControlSettings dcs = ds4settings[deviceNum][index];
-                return dcs.shiftTrigger;
+                return dcs.ShiftTrigger;
             }
 
             return 0;
@@ -4588,7 +4588,7 @@ namespace DS4Windows
             for (int i = 0, settingsLen = ds4settingsList.Count; i < settingsLen; i++)
             {
                 DS4ControlSettings dcs = ds4settingsList[i];
-                if (dcs.actionType != DS4ControlSettings.ActionType.Default || dcs.shiftActionType != DS4ControlSettings.ActionType.Default)
+                if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default || dcs.ShiftActionType != DS4ControlSettings.ActionType.Default)
                     return true;
             }
 
@@ -4601,7 +4601,7 @@ namespace DS4Windows
             for (int i = 0, settingsLen = ds4settingsList.Count; i < settingsLen; i++)
             {
                 DS4ControlSettings dcs = ds4settingsList[i];
-                if (dcs.extras != null || dcs.shiftExtras != null)
+                if (dcs.Extras != null || dcs.ShiftExtras != null)
                     return true;
             }
 

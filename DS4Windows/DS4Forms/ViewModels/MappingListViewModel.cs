@@ -220,7 +220,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 mappingName = GetMappingString();
                 if (HasShiftAction())
                 {
-                    shiftMappingName = ShiftTrigger(setting.shiftTrigger) + " -> " + GetMappingString(true);
+                    shiftMappingName = ShiftTrigger(setting.ShiftTrigger) + " -> " + GetMappingString(true);
                 }
             }
             
@@ -237,7 +237,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             mappingName = GetMappingString();
             if (HasShiftAction())
             {
-                shiftMappingName = ShiftTrigger(setting.shiftTrigger) + " -> " + GetMappingString(true);
+                shiftMappingName = ShiftTrigger(setting.ShiftTrigger) + " -> " + GetMappingString(true);
             }
             else
             {
@@ -250,11 +250,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public string GetMappingString(bool shift = false)
         {
             string temp = Properties.Resources.Unassigned;
-            ControlActionData action = !shift ? setting.action : setting.shiftAction;
-            bool sc = !shift ? setting.keyType.HasFlag(DS4KeyType.ScanCode) :
-                setting.shiftKeyType.HasFlag(DS4KeyType.ScanCode);
+            ControlActionData action = !shift ? setting.ActionData : setting.ShiftAction;
+            bool sc = !shift ? setting.KeyType.HasFlag(DS4KeyType.ScanCode) :
+                setting.ShiftKeyType.HasFlag(DS4KeyType.ScanCode);
             bool extra = control >= DS4Controls.GyroXPos && control <= DS4Controls.SwipeDown;
-            DS4ControlSettings.ActionType actionType = !shift ? setting.actionType : setting.shiftActionType;
+            DS4ControlSettings.ActionType actionType = !shift ? setting.ControlActionType : setting.ShiftActionType;
             if (actionType != DS4ControlSettings.ActionType.Default)
             {
                 if (actionType == DS4ControlSettings.ActionType.Key)
@@ -293,7 +293,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool HasShiftAction()
         {
-            return setting.shiftActionType != DS4ControlSettings.ActionType.Default;
+            return setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
         }
 
         private static string ShiftTrigger(int trigger)

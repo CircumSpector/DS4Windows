@@ -13,43 +13,47 @@ namespace DS4Windows
         }
 
         public const int MAX_MACRO_VALUE = 286;
-        public ControlActionData action = new();
-        public ActionType actionType = ActionType.Default;
 
-        public DS4Controls control;
-        public string extras;
-        public DS4KeyType keyType = DS4KeyType.None;
-        public ControlActionData shiftAction = new();
+        public ControlActionData ActionData { get; private set; } = new();
 
-        public ActionType shiftActionType = ActionType.Default;
-        public string shiftExtras;
-        public DS4KeyType shiftKeyType = DS4KeyType.None;
-        public int shiftTrigger;
+        public ActionType ControlActionType { get; set; } = ActionType.Default;
+
+        public DS4Controls Control { get; set; }
+
+        public string Extras { get; set; }
+
+        public DS4KeyType KeyType { get; set; } = DS4KeyType.None;
+
+        public ControlActionData ShiftAction { get; private set; } = new();
+
+        public ActionType ShiftActionType { get; set; } = ActionType.Default;
+
+        public string ShiftExtras { get; set; }
+
+        public DS4KeyType ShiftKeyType { get; set; } = DS4KeyType.None;
+
+        public int ShiftTrigger { get; set; }
 
         public DS4ControlSettings(DS4Controls ctrl)
         {
-            control = ctrl;
+            Control = ctrl;
         }
 
-        public bool IsDefault => actionType == ActionType.Default;
-        public bool IsShiftDefault => shiftActionType == ActionType.Default;
+        public bool IsDefault => ControlActionType == ActionType.Default;
+
+        public bool IsShiftDefault => ShiftActionType == ActionType.Default;
 
         public void Reset()
         {
-            extras = null;
-            keyType = DS4KeyType.None;
-            actionType = ActionType.Default;
-            action = new ControlActionData();
-            action.actionAlias = 0;
-            //actionAlias = 0;
-
-            shiftActionType = ActionType.Default;
-            shiftAction = new ControlActionData();
-            shiftAction.actionAlias = 0;
-            //shiftActionAlias = 0;
-            shiftTrigger = 0;
-            shiftExtras = null;
-            shiftKeyType = DS4KeyType.None;
+            Extras = null;
+            KeyType = DS4KeyType.None;
+            ControlActionType = ActionType.Default;
+            ActionData = new ControlActionData {actionAlias = 0};
+            ShiftActionType = ActionType.Default;
+            ShiftAction = new ControlActionData {actionAlias = 0};
+            ShiftTrigger = 0;
+            ShiftExtras = null;
+            ShiftKeyType = DS4KeyType.None;
         }
 
         public bool IsExtrasEmpty(string extraStr)
@@ -63,60 +67,60 @@ namespace DS4Windows
             {
                 if (act is int || act is ushort)
                 {
-                    actionType = ActionType.Key;
-                    action.actionKey = Convert.ToInt32(act);
+                    ControlActionType = ActionType.Key;
+                    ActionData.actionKey = Convert.ToInt32(act);
                 }
                 else if (act is string || act is X360Controls)
                 {
-                    actionType = ActionType.Button;
+                    ControlActionType = ActionType.Button;
                     if (act is X360Controls)
-                        action.actionBtn = (X360Controls) act;
+                        ActionData.actionBtn = (X360Controls) act;
                     else
-                        Enum.TryParse(act.ToString(), out action.actionBtn);
+                        Enum.TryParse(act.ToString(), out ActionData.actionBtn);
                 }
                 else if (act is int[])
                 {
-                    actionType = ActionType.Macro;
-                    action.actionMacro = (int[]) act;
+                    ControlActionType = ActionType.Macro;
+                    ActionData.actionMacro = (int[]) act;
                 }
                 else
                 {
-                    actionType = ActionType.Default;
-                    action.actionKey = 0;
+                    ControlActionType = ActionType.Default;
+                    ActionData.actionKey = 0;
                 }
 
-                extras = exts;
-                keyType = kt;
+                Extras = exts;
+                KeyType = kt;
             }
             else
             {
                 if (act is int || act is ushort)
                 {
-                    shiftActionType = ActionType.Key;
-                    shiftAction.actionKey = Convert.ToInt32(act);
+                    ShiftActionType = ActionType.Key;
+                    ShiftAction.actionKey = Convert.ToInt32(act);
                 }
                 else if (act is string || act is X360Controls)
                 {
-                    shiftActionType = ActionType.Button;
+                    ShiftActionType = ActionType.Button;
                     if (act is X360Controls)
-                        shiftAction.actionBtn = (X360Controls) act;
+                        ShiftAction.actionBtn = (X360Controls) act;
                     else
-                        Enum.TryParse(act.ToString(), out shiftAction.actionBtn);
+                        Enum.TryParse(act.ToString(), out ShiftAction.actionBtn);
                 }
                 else if (act is int[])
                 {
-                    shiftActionType = ActionType.Macro;
-                    shiftAction.actionMacro = (int[]) act;
+                    ShiftActionType = ActionType.Macro;
+                    ShiftAction.actionMacro = (int[]) act;
                 }
                 else
                 {
-                    shiftActionType = ActionType.Default;
-                    shiftAction.actionKey = 0;
+                    ShiftActionType = ActionType.Default;
+                    ShiftAction.actionKey = 0;
                 }
 
-                shiftExtras = exts;
-                shiftKeyType = kt;
-                shiftTrigger = trigger;
+                ShiftExtras = exts;
+                ShiftKeyType = kt;
+                ShiftTrigger = trigger;
             }
         }
     }

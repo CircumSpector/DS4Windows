@@ -56,12 +56,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         public DS4ControlSettings PrepareSettings()
         {
             DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.action.actionMacro = macro.ToArray();
-            settings.actionType = DS4ControlSettings.ActionType.Macro;
-            settings.keyType = DS4KeyType.Macro;
+            settings.ActionData.actionMacro = macro.ToArray();
+            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.KeyType = DS4KeyType.Macro;
             if (repeatHeld)
             {
-                settings.keyType |= DS4KeyType.RepeatMacro;
+                settings.KeyType |= DS4KeyType.RepeatMacro;
             }
 
             return settings;

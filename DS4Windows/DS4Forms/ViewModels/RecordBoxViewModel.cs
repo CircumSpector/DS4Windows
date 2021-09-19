@@ -101,29 +101,29 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             this.deviceNum = deviceNum;
             settings = controlSettings;
             this.shift = shift;
-            if (!shift && settings.keyType.HasFlag(DS4KeyType.HoldMacro))
+            if (!shift && settings.KeyType.HasFlag(DS4KeyType.HoldMacro))
             {
                 macroModeIndex = 1;
             }
-            else if (shift && settings.shiftKeyType.HasFlag(DS4KeyType.HoldMacro))
+            else if (shift && settings.ShiftKeyType.HasFlag(DS4KeyType.HoldMacro))
             {
                 macroModeIndex = 1;
             }
 
-            if (!shift && settings.keyType.HasFlag(DS4KeyType.ScanCode))
+            if (!shift && settings.KeyType.HasFlag(DS4KeyType.ScanCode))
             {
                 useScanCode = true;
             }
-            else if (shift && settings.shiftKeyType.HasFlag(DS4KeyType.ScanCode))
+            else if (shift && settings.ShiftKeyType.HasFlag(DS4KeyType.ScanCode))
             {
                 useScanCode = true;
             }
 
-            if (!shift && settings.actionType == DS4ControlSettings.ActionType.Macro)
+            if (!shift && settings.ControlActionType == DS4ControlSettings.ActionType.Macro)
             {
                 LoadMacro();
             }
-            else if (shift && settings.shiftActionType == DS4ControlSettings.ActionType.Macro)
+            else if (shift && settings.ShiftActionType == DS4ControlSettings.ActionType.Macro)
             {
                 LoadMacro();
             }
@@ -156,11 +156,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             int[] macro;
             if (!shift)
             {
-                macro = (int[])settings.action.actionMacro;
+                macro = (int[])settings.ActionData.actionMacro;
             }
             else
             {
-                macro = (int[])settings.shiftAction.actionMacro;
+                macro = (int[])settings.ShiftAction.actionMacro;
             }
 
             MacroParser macroParser = new MacroParser(macro);
@@ -184,30 +184,30 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             if (!shift)
             {
-                settings.action.actionMacro = outmac;
-                settings.actionType = DS4ControlSettings.ActionType.Macro;
-                settings.keyType = DS4KeyType.Macro;
+                settings.ActionData.actionMacro = outmac;
+                settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+                settings.KeyType = DS4KeyType.Macro;
                 if (macroModeIndex == 1)
                 {
-                    settings.keyType |= DS4KeyType.HoldMacro;
+                    settings.KeyType |= DS4KeyType.HoldMacro;
                 }
                 if (useScanCode)
                 {
-                    settings.keyType |= DS4KeyType.ScanCode;
+                    settings.KeyType |= DS4KeyType.ScanCode;
                 }
             }
             else
             {
-                settings.shiftAction.actionMacro = outmac;
-                settings.shiftActionType = DS4ControlSettings.ActionType.Macro;
-                settings.shiftKeyType = DS4KeyType.Macro;
+                settings.ShiftAction.actionMacro = outmac;
+                settings.ShiftActionType = DS4ControlSettings.ActionType.Macro;
+                settings.ShiftKeyType = DS4KeyType.Macro;
                 if (macroModeIndex == 1)
                 {
-                    settings.shiftKeyType |= DS4KeyType.HoldMacro;
+                    settings.ShiftKeyType |= DS4KeyType.HoldMacro;
                 }
                 if (useScanCode)
                 {
-                    settings.shiftKeyType |= DS4KeyType.ScanCode;
+                    settings.ShiftKeyType |= DS4KeyType.ScanCode;
                 }
             }
         }
