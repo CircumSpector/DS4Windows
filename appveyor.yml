@@ -13,8 +13,6 @@ branches:
     - gh-pages
 install:
 - cmd: git submodule -q update --init
-cache:
-  - C:\Users\appveyor\.nuget\packages -> **\*.csproj
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
