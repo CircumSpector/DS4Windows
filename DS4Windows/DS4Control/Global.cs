@@ -400,10 +400,10 @@ namespace DS4Windows
         public static void SaveWhere(string path)
         {
             RuntimeAppDataPath = path;
-            m_Config.ProfilesPath = RuntimeAppDataPath + "\\Profiles.xml";
-            m_Config.ActionsPath = RuntimeAppDataPath + "\\Actions.xml";
-            m_Config.LinkedProfilesPath = Global.RuntimeAppDataPath + "\\LinkedProfiles.xml";
-            m_Config.ControllerConfigsPath = Global.RuntimeAppDataPath + "\\ControllerConfigs.xml";
+            m_Config.ProfilesPath = Path.Combine(RuntimeAppDataPath, "Profiles.xml");
+            m_Config.ActionsPath = Path.Combine(RuntimeAppDataPath, "Actions.xml");
+            m_Config.LinkedProfilesPath = Path.Combine(RuntimeAppDataPath, "LinkedProfiles.xml");
+            m_Config.ControllerConfigsPath = Path.Combine(RuntimeAppDataPath, "ControllerConfigs.xml");
         }
 
         public static bool SaveDefault(string path)
