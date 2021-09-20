@@ -5143,7 +5143,7 @@ namespace DS4Windows
                                 {
                                     var item = xmlDS4Support.SelectSingleNode("Enabled");
                                     if (bool.TryParse(item?.InnerText ?? "", out var temp))
-                                        DeviceOptions.DS4DeviceOpts.Enabled = temp;
+                                        DeviceOptions.Ds4DeviceOpts.Enabled = temp;
                                 }
                                 catch
                                 {
@@ -5394,7 +5394,7 @@ namespace DS4Windows
                 var xmlDeviceOptions = m_Xdoc.CreateElement("DeviceOptions", null);
                 var xmlDS4Support = m_Xdoc.CreateElement("DS4SupportSettings", null);
                 var xmlDS4Enabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlDS4Enabled.InnerText = DeviceOptions.DS4DeviceOpts.Enabled.ToString();
+                xmlDS4Enabled.InnerText = DeviceOptions.Ds4DeviceOpts.Enabled.ToString();
                 xmlDS4Support.AppendChild(xmlDS4Enabled);
                 xmlDeviceOptions.AppendChild(xmlDS4Support);
 

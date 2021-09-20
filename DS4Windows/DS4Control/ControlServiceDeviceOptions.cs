@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using DS4Windows.InputDevices;
 
@@ -10,38 +6,33 @@ namespace DS4Windows
 {
     public class ControlServiceDeviceOptions
     {
-        private DS4DeviceOptions dS4DeviceOpts = new DS4DeviceOptions();
-        public DS4DeviceOptions DS4DeviceOpts { get => dS4DeviceOpts; }
+        public DS4DeviceOptions Ds4DeviceOpts { get; } = new();
 
-        private DualSenseDeviceOptions dualSenseOpts = new DualSenseDeviceOptions();
-        public DualSenseDeviceOptions DualSenseOpts { get => dualSenseOpts; }
+        public DualSenseDeviceOptions DualSenseOpts { get; } = new();
 
-        private SwitchProDeviceOptions switchProDeviceOpts = new SwitchProDeviceOptions();
-        public SwitchProDeviceOptions SwitchProDeviceOpts { get => switchProDeviceOpts; }
+        public SwitchProDeviceOptions SwitchProDeviceOpts { get; } = new();
 
-        private JoyConDeviceOptions joyConDeviceOpts = new JoyConDeviceOptions();
-        public JoyConDeviceOptions JoyConDeviceOpts { get => joyConDeviceOpts; }
+        public JoyConDeviceOptions JoyConDeviceOpts { get; } = new();
 
-        private bool verboseLogMessages;
-        public bool VerboseLogMessages { get => verboseLogMessages; set => verboseLogMessages = value; }
-
-        public ControlServiceDeviceOptions()
-        {
-            // If enabled then DS4Windows shows additional log messages when a gamepad is connected (may be useful to diagnose connection problems).
-            // This option is not persistent (ie. not saved into config files), so if enabled then it is reset back to FALSE when DS4Windows is restarted.
-            verboseLogMessages = false;
-        }
+        /// <summary>
+        ///     If enabled then DS4Windows shows additional log messages when a gamepad is connected (may be useful to diagnose
+        ///     connection problems).
+        ///     This option is not persistent (ie. not saved into config files), so if enabled then it is reset back to FALSE when
+        ///     DS4Windows is restarted.
+        /// </summary>
+        public bool VerboseLogMessages { get; set; }
     }
 
     public abstract class ControllerOptionsStore
     {
         protected InputDeviceType deviceType;
-        public InputDeviceType DeviceType { get => deviceType; }
 
         public ControllerOptionsStore(InputDeviceType deviceType)
         {
             this.deviceType = deviceType;
         }
+
+        public InputDeviceType DeviceType => deviceType;
 
         public virtual void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
@@ -55,6 +46,7 @@ namespace DS4Windows
     public class DS4DeviceOptions
     {
         private bool enabled = true;
+
         public bool Enabled
         {
             get => enabled;
@@ -65,12 +57,18 @@ namespace DS4Windows
                 EnabledChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
         public event EventHandler EnabledChanged;
     }
 
     public class DS4ControllerOptions : ControllerOptionsStore
     {
         private bool copyCatController;
+
+        public DS4ControllerOptions(InputDeviceType deviceType) : base(deviceType)
+        {
+        }
+
         public bool IsCopyCat
         {
             get => copyCatController;
@@ -81,23 +79,16 @@ namespace DS4Windows
                 IsCopyCatChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler IsCopyCatChanged;
 
-        public DS4ControllerOptions(InputDeviceType deviceType) : base(deviceType)
-        {
-        }
+        public event EventHandler IsCopyCatChanged;
 
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode tempOptsNode = node.SelectSingleNode("DS4SupportSettings");
+            var tempOptsNode = node.SelectSingleNode("DS4SupportSettings");
             if (tempOptsNode == null)
-            {
                 tempOptsNode = xmlDoc.CreateElement("DS4SupportSettings");
-            }
             else
-            {
                 tempOptsNode.RemoveAll();
-            }
 
             XmlNode tempRumbleNode = xmlDoc.CreateElement("Copycat");
             tempRumbleNode.InnerText = copyCatController.ToString();
@@ -108,14 +99,11 @@ namespace DS4Windows
 
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode baseNode = node.SelectSingleNode("DS4SupportSettings");
+            var baseNode = node.SelectSingleNode("DS4SupportSettings");
             if (baseNode != null)
             {
-                XmlNode item = baseNode.SelectSingleNode("Copycat");
-                if (bool.TryParse(item?.InnerText ?? "", out bool temp))
-                {
-                    copyCatController = temp;
-                }
+                var item = baseNode.SelectSingleNode("Copycat");
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) copyCatController = temp;
             }
         }
     }
@@ -123,6 +111,7 @@ namespace DS4Windows
     public class DualSenseDeviceOptions
     {
         private bool enabled = true;
+
         public bool Enabled
         {
             get => enabled;
@@ -133,6 +122,7 @@ namespace DS4Windows
                 EnabledChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
         public event EventHandler EnabledChanged;
     }
 
@@ -143,7 +133,7 @@ namespace DS4Windows
             Off,
             MultipleControllers,
             BatteryPercentage,
-            On,
+            On
         }
 
         public enum MuteLEDMode : ushort
@@ -154,6 +144,18 @@ namespace DS4Windows
         }
 
         private bool enableRumble = true;
+
+        private DualSenseDevice.HapticIntensity hapticIntensity = DualSenseDevice.HapticIntensity.Medium;
+
+        private LEDBarMode ledMode = LEDBarMode.MultipleControllers;
+
+        private MuteLEDMode muteLedMode = MuteLEDMode.Off;
+
+        public DualSenseControllerOptions(InputDeviceType deviceType) :
+            base(deviceType)
+        {
+        }
+
         public bool EnableRumble
         {
             get => enableRumble;
@@ -164,9 +166,7 @@ namespace DS4Windows
                 EnableRumbleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler EnableRumbleChanged;
 
-        private DualSenseDevice.HapticIntensity hapticIntensity = DualSenseDevice.HapticIntensity.Medium;
         public DualSenseDevice.HapticIntensity HapticIntensity
         {
             get => hapticIntensity;
@@ -177,9 +177,7 @@ namespace DS4Windows
                 HapticIntensityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler HapticIntensityChanged;
 
-        private LEDBarMode ledMode = LEDBarMode.MultipleControllers;
         public LEDBarMode LedMode
         {
             get => ledMode;
@@ -190,9 +188,7 @@ namespace DS4Windows
                 LedModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LedModeChanged;
 
-        private MuteLEDMode muteLedMode = MuteLEDMode.Off;
         public MuteLEDMode MuteLedMode
         {
             get => muteLedMode;
@@ -203,24 +199,19 @@ namespace DS4Windows
                 MuteLedModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler MuteLedModeChanged;
 
-        public DualSenseControllerOptions(InputDeviceType deviceType) :
-            base(deviceType)
-        {
-        }
+        public event EventHandler EnableRumbleChanged;
+        public event EventHandler HapticIntensityChanged;
+        public event EventHandler LedModeChanged;
+        public event EventHandler MuteLedModeChanged;
 
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode tempOptsNode = node.SelectSingleNode("DualSenseSupportSettings");
+            var tempOptsNode = node.SelectSingleNode("DualSenseSupportSettings");
             if (tempOptsNode == null)
-            {
                 tempOptsNode = xmlDoc.CreateElement("DualSenseSupportSettings");
-            }
             else
-            {
                 tempOptsNode.RemoveAll();
-            }
 
             XmlNode tempRumbleNode = xmlDoc.CreateElement("EnableRumble");
             tempRumbleNode.InnerText = enableRumble.ToString();
@@ -243,35 +234,26 @@ namespace DS4Windows
 
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode baseNode = node.SelectSingleNode("DualSenseSupportSettings");
+            var baseNode = node.SelectSingleNode("DualSenseSupportSettings");
             if (baseNode != null)
             {
-                XmlNode item = baseNode.SelectSingleNode("EnableRumble");
-                if (bool.TryParse(item?.InnerText ?? "", out bool temp))
-                {
-                    enableRumble = temp;
-                }
+                var item = baseNode.SelectSingleNode("EnableRumble");
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableRumble = temp;
 
-                XmlNode itemStrength = baseNode.SelectSingleNode("RumbleStrength");
+                var itemStrength = baseNode.SelectSingleNode("RumbleStrength");
                 if (Enum.TryParse(itemStrength?.InnerText ?? "",
                     out DualSenseDevice.HapticIntensity tempHap))
-                {
                     hapticIntensity = tempHap;
-                }
 
-                XmlNode itemLedMode = baseNode.SelectSingleNode("LEDBarMode");
+                var itemLedMode = baseNode.SelectSingleNode("LEDBarMode");
                 if (Enum.TryParse(itemLedMode?.InnerText ?? "",
                     out LEDBarMode tempLED))
-                {
                     ledMode = tempLED;
-                }
 
-                XmlNode itemMuteLedMode = baseNode.SelectSingleNode("MuteLEDMode");
+                var itemMuteLedMode = baseNode.SelectSingleNode("MuteLEDMode");
                 if (Enum.TryParse(itemMuteLedMode?.InnerText ?? "",
                     out MuteLEDMode tempMuteLED))
-                {
                     muteLedMode = tempMuteLED;
-                }
             }
         }
     }
@@ -279,6 +261,7 @@ namespace DS4Windows
     public class SwitchProDeviceOptions
     {
         private bool enabled = true;
+
         public bool Enabled
         {
             get => enabled;
@@ -289,12 +272,18 @@ namespace DS4Windows
                 EnabledChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
         public event EventHandler EnabledChanged;
     }
 
     public class SwitchProControllerOptions : ControllerOptionsStore
     {
         private bool enableHomeLED = true;
+
+        public SwitchProControllerOptions(InputDeviceType deviceType) : base(deviceType)
+        {
+        }
+
         public bool EnableHomeLED
         {
             get => enableHomeLED;
@@ -305,23 +294,16 @@ namespace DS4Windows
                 EnableHomeLEDChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler EnableHomeLEDChanged;
 
-        public SwitchProControllerOptions(InputDeviceType deviceType) : base(deviceType)
-        {
-        }
+        public event EventHandler EnableHomeLEDChanged;
 
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode tempOptsNode = node.SelectSingleNode("SwitchProSupportSettings");
+            var tempOptsNode = node.SelectSingleNode("SwitchProSupportSettings");
             if (tempOptsNode == null)
-            {
                 tempOptsNode = xmlDoc.CreateElement("SwitchProSupportSettings");
-            }
             else
-            {
                 tempOptsNode.RemoveAll();
-            }
 
             XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
             tempElement.InnerText = enableHomeLED.ToString();
@@ -332,21 +314,35 @@ namespace DS4Windows
 
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode baseNode = node.SelectSingleNode("SwitchProSupportSettings");
+            var baseNode = node.SelectSingleNode("SwitchProSupportSettings");
             if (baseNode != null)
             {
-                XmlNode item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out bool temp))
-                {
-                    enableHomeLED = temp;
-                }
+                var item = baseNode.SelectSingleNode("EnableHomeLED");
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableHomeLED = temp;
             }
         }
     }
 
     public class JoyConDeviceOptions
     {
+        public enum JoinedGyroProvider : ushort
+        {
+            JoyConL,
+            JoyConR
+        }
+
+        public enum LinkMode : ushort
+        {
+            Split,
+            Joined
+        }
+
         private bool enabled = true;
+
+        private JoinedGyroProvider joinGyroProv = JoinedGyroProvider.JoyConR;
+
+        private LinkMode linkedMode = LinkMode.Joined;
+
         public bool Enabled
         {
             get => enabled;
@@ -357,15 +353,7 @@ namespace DS4Windows
                 EnabledChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler EnabledChanged;
 
-        public enum LinkMode : ushort
-        {
-            Split,
-            Joined,
-        }
-
-        private LinkMode linkedMode = LinkMode.Joined;
         public LinkMode LinkedMode
         {
             get => linkedMode;
@@ -376,13 +364,6 @@ namespace DS4Windows
             }
         }
 
-        public enum JoinedGyroProvider : ushort
-        {
-            JoyConL,
-            JoyConR,
-        }
-
-        private JoinedGyroProvider joinGyroProv = JoinedGyroProvider.JoyConR;
         public JoinedGyroProvider JoinGyroProv
         {
             get => joinGyroProv;
@@ -392,11 +373,19 @@ namespace DS4Windows
                 joinGyroProv = value;
             }
         }
+
+        public event EventHandler EnabledChanged;
     }
 
     public class JoyConControllerOptions : ControllerOptionsStore
     {
         private bool enableHomeLED = true;
+
+        public JoyConControllerOptions(InputDeviceType deviceType) :
+            base(deviceType)
+        {
+        }
+
         public bool EnableHomeLED
         {
             get => enableHomeLED;
@@ -407,24 +396,16 @@ namespace DS4Windows
                 EnableHomeLEDChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler EnableHomeLEDChanged;
 
-        public JoyConControllerOptions(InputDeviceType deviceType) :
-            base(deviceType)
-        {
-        }
+        public event EventHandler EnableHomeLEDChanged;
 
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode tempOptsNode = node.SelectSingleNode("JoyConSupportSettings");
+            var tempOptsNode = node.SelectSingleNode("JoyConSupportSettings");
             if (tempOptsNode == null)
-            {
                 tempOptsNode = xmlDoc.CreateElement("JoyConSupportSettings");
-            }
             else
-            {
                 tempOptsNode.RemoveAll();
-            }
 
             XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
             tempElement.InnerText = enableHomeLED.ToString();
@@ -435,14 +416,11 @@ namespace DS4Windows
 
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
-            XmlNode baseNode = node.SelectSingleNode("JoyConSupportSettings");
+            var baseNode = node.SelectSingleNode("JoyConSupportSettings");
             if (baseNode != null)
             {
-                XmlNode item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out bool temp))
-                {
-                    enableHomeLED = temp;
-                }
+                var item = baseNode.SelectSingleNode("EnableHomeLED");
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableHomeLED = temp;
             }
         }
     }

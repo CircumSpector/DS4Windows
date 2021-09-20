@@ -16,7 +16,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     {
         private ControlServiceDeviceOptions serviceDeviceOpts;
 
-        public bool EnableDS4 { get => serviceDeviceOpts.DS4DeviceOpts.Enabled; }
+        public bool EnableDS4 { get => serviceDeviceOpts.Ds4DeviceOpts.Enabled; }
 
         public bool EnableDualSense { get => serviceDeviceOpts.DualSenseOpts.Enabled; }
 
@@ -24,7 +24,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool EnableJoyCon { get => serviceDeviceOpts.JoyConDeviceOpts.Enabled; }
 
-        public DS4DeviceOptions DS4DeviceOpts { get => serviceDeviceOpts.DS4DeviceOpts; }
+        public DS4DeviceOptions DS4DeviceOpts { get => serviceDeviceOpts.Ds4DeviceOpts; }
         public DualSenseDeviceOptions DSDeviceOpts { get => serviceDeviceOpts.DualSenseOpts; }
         public SwitchProDeviceOptions SwitchProDeviceOpts { get => serviceDeviceOpts.SwitchProDeviceOpts; }
         public JoyConDeviceOptions JoyConDeviceOpts { get => serviceDeviceOpts.JoyConDeviceOpts; }
@@ -141,7 +141,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             switch (currentStore.DeviceType)
             {
                 case DS4Windows.InputDevices.InputDeviceType.DS4:
-                    dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, serviceDeviceOpts.DS4DeviceOpts);
+                    dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, serviceDeviceOpts.Ds4DeviceOpts);
                     break;
                 case DS4Windows.InputDevices.InputDeviceType.DualSense:
                     dataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions, serviceDeviceOpts.DualSenseOpts);

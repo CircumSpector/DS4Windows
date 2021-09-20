@@ -353,7 +353,7 @@ namespace DS4Windows
             switch (metaInfo.inputDevType)
             {
                 case InputDevices.InputDeviceType.DS4:
-                    result = deviceOptions.DS4DeviceOpts.Enabled;
+                    result = deviceOptions.Ds4DeviceOpts.Enabled;
                     break;
                 case InputDevices.InputDeviceType.DualSense:
                     result = deviceOptions.DualSenseOpts.Enabled;
