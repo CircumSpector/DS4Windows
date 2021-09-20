@@ -276,15 +276,10 @@ namespace DS4Windows
             return _config.GyroControlsInfo[index];
         }
 
-
-
-        //public static bool[] UseCustomLed => m_Config.useCustomLeds;
-        public bool getUseCustomLed(int index)
+        public bool GetUseCustomLed(int index)
         {
             return _config.LightbarSettingInfo[index].Ds4WinSettings.UseCustomLed;
-            //return m_Config.useCustomLeds[index];
         }
-
 
         public byte GetTapSensitivity(int index)
         {
@@ -301,7 +296,7 @@ namespace DS4Windows
             return _config.ScrollSensitivity[index];
         }
 
-        public bool GetTouchpadJitterCompensation(int index)
+        public bool GetTouchPadJitterCompensation(int index)
         {
             return _config.TouchpadJitterCompensation[index];
         }
@@ -316,11 +311,9 @@ namespace DS4Windows
             return _config.L2ModInfo[index];
         }
 
-        //public static byte[] L2Deadzone => m_Config.l2Deadzone;
-        public byte getL2Deadzone(int index)
+        public byte GetL2DeadZone(int index)
         {
             return _config.L2ModInfo[index].deadZone;
-            //return m_Config.l2Deadzone[index];
         }
 
         public TriggerDeadZoneZInfo GetR2ModInfo(int index)
@@ -328,11 +321,9 @@ namespace DS4Windows
             return _config.R2ModInfo[index];
         }
 
-        //public static byte[] R2Deadzone => m_Config.r2Deadzone;
-        public byte getR2Deadzone(int index)
+        public byte GetR2DeadZone(int index)
         {
             return _config.R2ModInfo[index].deadZone;
-            //return m_Config.r2Deadzone[index];
         }
 
         public double GetSXDeadZone(int index)
@@ -345,32 +336,24 @@ namespace DS4Windows
             return _config.SZDeadzone[index];
         }
 
-        //public static int[] LSDeadzone => m_Config.LSDeadzone;
         public int GetLSDeadZone(int index)
         {
             return _config.LSModInfo[index].deadZone;
-            //return m_Config.LSDeadzone[index];
         }
 
-        //public static int[] RSDeadzone => m_Config.RSDeadzone;
         public int GetRSDeadZone(int index)
         {
             return _config.RSModInfo[index].deadZone;
-            //return m_Config.RSDeadzone[index];
         }
 
-        //public static int[] LSAntiDeadzone => m_Config.LSAntiDeadzone;
-        public int getLSAntiDeadzone(int index)
+        public int GetLSAntiDeadZone(int index)
         {
             return _config.LSModInfo[index].antiDeadZone;
-            //return m_Config.LSAntiDeadzone[index];
         }
 
-        //public static int[] RSAntiDeadzone => m_Config.RSAntiDeadzone;
-        public int getRSAntiDeadzone(int index)
+        public int GetRSAntiDeadZone(int index)
         {
             return _config.RSModInfo[index].antiDeadZone;
-            //return m_Config.RSAntiDeadzone[index];
         }
 
         public StickDeadZoneInfo GetLSDeadInfo(int index)
@@ -383,66 +366,54 @@ namespace DS4Windows
             return _config.RSModInfo[index];
         }
 
-        public double GetSXAntiDeadzone(int index)
+        public double GetSXAntiDeadZone(int index)
         {
             return _config.SXAntiDeadzone[index];
         }
 
-        public double GetSZAntiDeadzone(int index)
+        public double GetSZAntiDeadZone(int index)
         {
             return _config.SZAntiDeadzone[index];
         }
 
-        //public static int[] LSMaxzone => m_Config.LSMaxzone;
-        public int getLSMaxzone(int index)
+        public int GetLSMaxZone(int index)
         {
             return _config.LSModInfo[index].maxZone;
-            //return m_Config.LSMaxzone[index];
         }
 
-        //public static int[] RSMaxzone => m_Config.RSMaxzone;
-        public int getRSMaxzone(int index)
+        public int GetRSMaxZone(int index)
         {
             return _config.RSModInfo[index].maxZone;
-            //return m_Config.RSMaxzone[index];
         }
 
-        public double GetSXMaxzone(int index)
+        public double GetSXMaxZone(int index)
         {
             return _config.SXMaxzone[index];
         }
 
-        public double GetSZMaxzone(int index)
+        public double GetSZMaxZone(int index)
         {
             return _config.SZMaxzone[index];
         }
 
-        //public static int[] L2AntiDeadzone => m_Config.l2AntiDeadzone;
-        public int getL2AntiDeadzone(int index)
+        public int GetL2AntiDeadZone(int index)
         {
             return _config.L2ModInfo[index].antiDeadZone;
-            //return m_Config.l2AntiDeadzone[index];
         }
 
-        //public static int[] R2AntiDeadzone => m_Config.r2AntiDeadzone;
-        public int getR2AntiDeadzone(int index)
+        public int GetR2AntiDeadZone(int index)
         {
             return _config.R2ModInfo[index].antiDeadZone;
-            //return m_Config.r2AntiDeadzone[index];
         }
 
-        //public static int[] L2Maxzone => m_Config.l2Maxzone;
-        public int getL2Maxzone(int index)
+        public int GetL2MaxZone(int index)
         {
             return _config.L2ModInfo[index].maxZone;
-            //return m_Config.l2Maxzone[index];
         }
 
-        //public static int[] R2Maxzone => m_Config.r2Maxzone;
-        public int getR2Maxzone(int index)
+        public int GetR2MaxZone(int index)
         {
             return _config.R2ModInfo[index].maxZone;
-            //return m_Config.r2Maxzone[index];
         }
 
         public double GetLSRotation(int index)
@@ -460,32 +431,32 @@ namespace DS4Windows
             return _config.L2Sens[index];
         }
 
-        public double getR2Sens(int index)
+        public double GetR2Sens(int index)
         {
             return _config.R2Sens[index];
         }
 
-        public double getSXSens(int index)
+        public double GetSXSens(int index)
         {
             return _config.SXSens[index];
         }
 
-        public double getSZSens(int index)
+        public double GetSZSens(int index)
         {
             return _config.SZSens[index];
         }
 
-        public double getLSSens(int index)
+        public double GetLSSens(int index)
         {
             return _config.LSSens[index];
         }
 
-        public double getRSSens(int index)
+        public double GetRSSens(int index)
         {
             return _config.RSSens[index];
         }
 
-        public int getBTPollRate(int index)
+        public int GetBluetoothPollRate(int index)
         {
             return _config.BluetoothPollRate[index];
         }
@@ -505,77 +476,77 @@ namespace DS4Windows
             return _config.RSAntiSnapbackInfo[device];
         }
 
-        public void setLsOutCurveMode(int index, int value)
+        public void GetLsOutCurveMode(int index, int value)
         {
             _config.setLsOutCurveMode(index, value);
         }
 
-        public int getLsOutCurveMode(int index)
+        public int GetLsOutCurveMode(int index)
         {
             return _config.getLsOutCurveMode(index);
         }
 
-        public void setRsOutCurveMode(int index, int value)
+        public void SetRsOutCurveMode(int index, int value)
         {
             _config.setRsOutCurveMode(index, value);
         }
 
-        public int getRsOutCurveMode(int index)
+        public int GetRsOutCurveMode(int index)
         {
             return _config.getRsOutCurveMode(index);
         }
 
-        public void setL2OutCurveMode(int index, int value)
+        public void SetL2OutCurveMode(int index, int value)
         {
             _config.setL2OutCurveMode(index, value);
         }
 
-        public int getL2OutCurveMode(int index)
+        public int GetL2OutCurveMode(int index)
         {
             return _config.getL2OutCurveMode(index);
         }
 
-        public void setR2OutCurveMode(int index, int value)
+        public void SetR2OutCurveMode(int index, int value)
         {
             _config.setR2OutCurveMode(index, value);
         }
 
-        public int getR2OutCurveMode(int index)
+        public int GetR2OutCurveMode(int index)
         {
             return _config.getR2OutCurveMode(index);
         }
 
-        public void setSXOutCurveMode(int index, int value)
+        public void SetSXOutCurveMode(int index, int value)
         {
             _config.setSXOutCurveMode(index, value);
         }
 
-        public int getSXOutCurveMode(int index)
+        public int GetSXOutCurveMode(int index)
         {
             return _config.getSXOutCurveMode(index);
         }
 
-        public void setSZOutCurveMode(int index, int value)
+        public void SetSZOutCurveMode(int index, int value)
         {
             _config.setSZOutCurveMode(index, value);
         }
 
-        public int getSZOutCurveMode(int index)
+        public int GetSZOutCurveMode(int index)
         {
             return _config.getSZOutCurveMode(index);
         }
 
-        public bool getTrackballMode(int index)
+        public bool GetTrackballMode(int index)
         {
             return _config.TrackballMode[index];
         }
 
-        public double getTrackballFriction(int index)
+        public double GetTrackballFriction(int index)
         {
             return _config.TrackballFriction[index];
         }
 
-        public int getProfileActionCount(int index)
+        public int GetProfileActionCount(int index)
         {
             return _config.profileActionCount[index];
         }

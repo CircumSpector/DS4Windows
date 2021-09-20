@@ -1355,7 +1355,7 @@ namespace DS4Windows
             // Only apply deprecated Sensitivity modifier for Radial DZ
             if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
-                double lsSens = Global.Instance.getLSSens(device);
+                double lsSens = Global.Instance.GetLSSens(device);
                 if (lsSens != 1.0)
                 {
                     dState.LX = (byte)Global.Clamp(0, lsSens * (dState.LX - 128.0) + 128.0, 255);
@@ -1366,7 +1366,7 @@ namespace DS4Windows
             // Only apply deprecated Sensitivity modifier for Radial DZ
             if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
-                double rsSens = Global.Instance.getRSSens(device);
+                double rsSens = Global.Instance.GetRSSens(device);
                 if (rsSens != 1.0)
                 {
                     dState.RX = (byte)Global.Clamp(0, rsSens * (dState.RX - 128.0) + 128.0, 255);
@@ -1378,7 +1378,7 @@ namespace DS4Windows
             if (l2Sens != 1.0)
                 dState.L2 = (byte)Global.Clamp(0, l2Sens * dState.L2, 255);
 
-            double r2Sens = Global.Instance.getR2Sens(device);
+            double r2Sens = Global.Instance.GetR2Sens(device);
             if (r2Sens != 1.0)
                 dState.R2 = (byte)Global.Clamp(0, r2Sens * dState.R2, 255);
 
@@ -1401,7 +1401,7 @@ namespace DS4Windows
                 dState.LY = (byte)(tempY * capY + 128.0);
             }
 
-            int lsOutCurveMode = Global.Instance.getLsOutCurveMode(device);
+            int lsOutCurveMode = Global.Instance.GetLsOutCurveMode(device);
             if (lsOutCurveMode > 0 && (dState.LX != 128 || dState.LY != 128))
             {
                 double tempRatioX = 0.0, tempRatioY = 0.0;
@@ -1548,7 +1548,7 @@ namespace DS4Windows
                 dState.RY = (byte)(tempY * capY + 128.0);
             }
 
-            int rsOutCurveMode = Global.Instance.getRsOutCurveMode(device);
+            int rsOutCurveMode = Global.Instance.GetRsOutCurveMode(device);
             if (rsOutCurveMode > 0 && (dState.RX != 128 || dState.RY != 128))
             {
                 double tempRatioX = 0.0, tempRatioY = 0.0;
@@ -1676,7 +1676,7 @@ namespace DS4Windows
                 }
             }
 
-            int l2OutCurveMode = Global.Instance.getL2OutCurveMode(device);
+            int l2OutCurveMode = Global.Instance.GetL2OutCurveMode(device);
             if (l2OutCurveMode > 0 && dState.L2 != 0)
             {
                 double temp = dState.L2 / 255.0;
@@ -1719,7 +1719,7 @@ namespace DS4Windows
                 }
             }
 
-            int r2OutCurveMode = Global.Instance.getR2OutCurveMode(device);
+            int r2OutCurveMode = Global.Instance.GetR2OutCurveMode(device);
             if (r2OutCurveMode > 0 && dState.R2 != 0)
             {
                 double temp = dState.R2 / 255.0;
@@ -1768,12 +1768,12 @@ namespace DS4Windows
             {
                 int SXD = (int)(128d * Global.Instance.GetSXDeadZone(device));
                 int SZD = (int)(128d * Global.Instance.GetSZDeadZone(device));
-                double SXMax = Global.Instance.GetSXMaxzone(device);
-                double SZMax = Global.Instance.GetSZMaxzone(device);
-                double sxAntiDead = Global.Instance.GetSXAntiDeadzone(device);
-                double szAntiDead = Global.Instance.GetSZAntiDeadzone(device);
-                double sxsens = Global.Instance.getSXSens(device);
-                double szsens = Global.Instance.getSZSens(device);
+                double SXMax = Global.Instance.GetSXMaxZone(device);
+                double SZMax = Global.Instance.GetSZMaxZone(device);
+                double sxAntiDead = Global.Instance.GetSXAntiDeadZone(device);
+                double szAntiDead = Global.Instance.GetSZAntiDeadZone(device);
+                double sxsens = Global.Instance.GetSXSens(device);
+                double szsens = Global.Instance.GetSZSens(device);
                 int result = 0;
 
                 int gyroX = cState.Motion.accelX, gyroZ = cState.Motion.accelZ;
@@ -1819,7 +1819,7 @@ namespace DS4Windows
                         (int)Math.Min(128d, szsens * 128d * (absz / 128d));
                 }
 
-                int sxOutCurveMode = Global.Instance.getSXOutCurveMode(device);
+                int sxOutCurveMode = Global.Instance.GetSXOutCurveMode(device);
                 if (sxOutCurveMode > 0)
                 {
                     double temp = dState.Motion.outputAccelX / 128.0;
@@ -1870,7 +1870,7 @@ namespace DS4Windows
                     }
                 }
 
-                int szOutCurveMode = Global.Instance.getSZOutCurveMode(device);
+                int szOutCurveMode = Global.Instance.GetSZOutCurveMode(device);
                 if (szOutCurveMode > 0 && dState.Motion.outputAccelZ != 0)
                 {
                     double temp = dState.Motion.outputAccelZ / 128.0;
@@ -2042,7 +2042,7 @@ namespace DS4Windows
             //DS4StateFieldMapping outputfieldMapping = new DS4StateFieldMapping(cState, eState, tp);
 
             SyntheticState deviceState = Mapping.deviceState[device];
-            if (Global.Instance.getProfileActionCount(device) > 0 || UseTempProfiles[device])
+            if (Global.Instance.GetProfileActionCount(device) > 0 || UseTempProfiles[device])
                 MapCustomAction(device, cState, MappedState, eState, tp, ctrl, fieldMapping, outputfieldMapping);
             //if (ctrl.DS4Controllers[device] == null) return;
 
@@ -5694,7 +5694,7 @@ namespace DS4Windows
                 //LogToGuiSACalibrationDebugMsg($"DBG gyro=({gyroAccelX}, {gyroAccelZ})  output=({exposedState.OutputAccelX}, {exposedState.OutputAccelZ})  PitRolYaw=({currentDeviceState.Motion.gyroPitch}, {currentDeviceState.Motion.gyroRoll}, {currentDeviceState.Motion.gyroYaw})  VelPitRolYaw=({currentDeviceState.Motion.angVelPitch}, {currentDeviceState.Motion.angVelRoll}, {currentDeviceState.Motion.angVelYaw})  angle={result / (1.0 * C_WHEEL_ANGLE_PRECISION)}  fullTurns={controller.wheelFullTurnCount}", false);
 
                 // Apply anti-deadzone (SA X-antideadzone value)
-                double sxAntiDead = Global.Instance.GetSXAntiDeadzone(device);
+                double sxAntiDead = Global.Instance.GetSXAntiDeadZone(device);
 
                 int outputAxisMax, outputAxisMin, outputAxisZero;
                 if ( Global.Instance.Config.OutputDeviceType[device] == OutContType.DS4 )

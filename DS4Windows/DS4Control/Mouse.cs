@@ -679,7 +679,7 @@ namespace DS4Windows
                             tempBool = false;
                     }
 
-                    if (Global.Instance.getTrackballMode(deviceNum))
+                    if (Global.Instance.GetTrackballMode(deviceNum))
                     {
                         int iIndex = trackballBufferTail;
                         // Establish 4 ms as the base
@@ -695,7 +695,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (Global.Instance.getTrackballMode(deviceNum))
+                    if (Global.Instance.GetTrackballMode(deviceNum))
                     {
                         int iIndex = trackballBufferTail;
                         trackballXBuffer[iIndex] = 0;
@@ -820,7 +820,7 @@ namespace DS4Windows
                             tempBool = false;
                     }
 
-                    if (Global.Instance.getTrackballMode(deviceNum))
+                    if (Global.Instance.GetTrackballMode(deviceNum))
                     {
                         if (!trackballActive)
                         {
