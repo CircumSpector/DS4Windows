@@ -229,7 +229,7 @@ namespace DS4Windows
             }
 
             outputslotMan = new OutputSlotManager();
-            deviceOptions = Global.Instance.DeviceOptions;
+            deviceOptions = Global.Instance.Config.DeviceOptions;
 
             DS4Devices.RequestElevation += DS4Devices_RequestElevation;
             DS4Devices.checkVirtualFunc = CheckForVirtualDevice;
@@ -970,7 +970,7 @@ namespace DS4Windows
                             //outputDevices[index] = tempXbox;
                             
                             // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                            if (Global.Instance.EnableOutputDataToDS4[index])
+                            if (Global.Instance.Config.EnableOutputDataToDS4[index])
                             {
                                 EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
 
@@ -1001,7 +1001,7 @@ namespace DS4Windows
                         Xbox360OutDevice tempXbox = slotDevice.OutputDevice as Xbox360OutDevice;
 
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                        if (Global.Instance.EnableOutputDataToDS4[index])
+                        if (Global.Instance.Config.EnableOutputDataToDS4[index])
                         {
                             EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
 
@@ -1040,7 +1040,7 @@ namespace DS4Windows
                             as DS4OutDevice;
 
                             // Enable ViGem feedback callback handler only if DS4 lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                            if (Global.Instance.EnableOutputDataToDS4[index])
+                            if (Global.Instance.Config.EnableOutputDataToDS4[index])
                             {
                                 EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
 
@@ -1071,7 +1071,7 @@ namespace DS4Windows
                         DS4OutDevice tempDS4 = slotDevice.OutputDevice as DS4OutDevice;
 
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                        if (Global.Instance.EnableOutputDataToDS4[index])
+                        if (Global.Instance.Config.EnableOutputDataToDS4[index])
                         {
                             EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
 

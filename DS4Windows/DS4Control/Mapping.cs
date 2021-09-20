@@ -1510,8 +1510,8 @@ namespace DS4Windows
                         byte tempOutY = (byte)(tempRatioY * maxY + 128.0);
 
                         // Perform curve based on byte values from vector
-                        byte tempX = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
-                        byte tempY = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
+                        byte tempX = Global.Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
+                        byte tempY = Global.Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
 
                         // Calculate new ratio
                         double tempRatioOutX = (tempX - 128.0) / maxX;
@@ -1524,8 +1524,8 @@ namespace DS4Windows
                     }
                     else if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Axial)
                     {
-                        dState.LX = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[dState.LX];
-                        dState.LY = Global.Instance.lsOutBezierCurveObj[device].arrayBezierLUT[dState.LY];
+                        dState.LX = Global.Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[dState.LX];
+                        dState.LY = Global.Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[dState.LY];
                     }
                 }
             }
@@ -1657,8 +1657,8 @@ namespace DS4Windows
                         byte tempOutY = (byte)(tempRatioY * maxY + 128.0);
 
                         // Perform curve based on byte values from vector
-                        byte tempX = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
-                        byte tempY = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
+                        byte tempX = Global.Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
+                        byte tempY = Global.Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
 
                         // Calculate new ratio
                         double tempRatioOutX = (tempX - 128.0) / maxX;
@@ -1670,8 +1670,8 @@ namespace DS4Windows
                     }
                     else if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Axial)
                     {
-                        dState.RX = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[dState.RX];
-                        dState.RY = Global.Instance.rsOutBezierCurveObj[device].arrayBezierLUT[dState.RY];
+                        dState.RX = Global.Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[dState.RX];
+                        dState.RY = Global.Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[dState.RY];
                     }
                 }
             }
@@ -1715,7 +1715,7 @@ namespace DS4Windows
                 }
                 else if (l2OutCurveMode == 6)
                 {
-                    dState.L2 = Global.Instance.l2OutBezierCurveObj[device].arrayBezierLUT[dState.L2];
+                    dState.L2 = Global.Instance.Config.L2OutBezierCurveObj[device].arrayBezierLUT[dState.L2];
                 }
             }
 
@@ -1758,7 +1758,7 @@ namespace DS4Windows
                 }
                 else if (r2OutCurveMode == 6)
                 {
-                    dState.R2 = Global.Instance.r2OutBezierCurveObj[device].arrayBezierLUT[dState.R2];
+                    dState.R2 = Global.Instance.Config.R2OutBezierCurveObj[device].arrayBezierLUT[dState.R2];
                 }
             }
                 
@@ -1866,7 +1866,7 @@ namespace DS4Windows
                     else if (sxOutCurveMode == 6)
                     {
                         int signSA = Math.Sign(dState.Motion.outputAccelX);
-                        dState.Motion.outputAccelX = Global.Instance.sxOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
+                        dState.Motion.outputAccelX = Global.Instance.Config.SXOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
                     }
                 }
 
@@ -1917,7 +1917,7 @@ namespace DS4Windows
                     else if (szOutCurveMode == 6)
                     {
                         int signSA = Math.Sign(dState.Motion.outputAccelZ);
-                        dState.Motion.outputAccelZ = Global.Instance.szOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
+                        dState.Motion.outputAccelZ = Global.Instance.Config.SZOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
                     }
                 }
             }

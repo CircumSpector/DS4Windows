@@ -768,7 +768,7 @@ namespace DS4Windows
             if (mouseMode && Global.Instance.getDoubleTap(deviceNum))
             {
                 DateTime test = arg.timeStamp;
-                if (test <= (firstTap + TimeSpan.FromMilliseconds((double)Global.Instance.TapSensitivity[deviceNum] * 1.5)) && !arg.touchButtonPressed)
+                if (test <= (firstTap + TimeSpan.FromMilliseconds((double)Global.Instance.Config.TapSensitivity[deviceNum] * 1.5)) && !arg.touchButtonPressed)
                     secondtouchbegin = true;
             }
 
@@ -896,7 +896,7 @@ namespace DS4Windows
                 }
                 else if (tempMode == TouchpadOutMode.AbsoluteMouse)
                 {
-                    TouchpadAbsMouseSettings absMouseSettings = Global.Instance.TouchAbsMouse[deviceNum];
+                    TouchpadAbsMouseSettings absMouseSettings = Global.Instance.Config.TouchPadAbsMouse[deviceNum];
                     if (Global.Instance.GetTouchActive(deviceNum) && absMouseSettings.snapToCenter)
                     {
                         cursor.TouchCenterAbsolute();
@@ -993,7 +993,7 @@ namespace DS4Windows
             TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
             if (tempMode != TouchpadOutMode.Passthru)
             {
-                bool touchClickPass = Global.Instance.TouchClickPassthru[deviceNum];
+                bool touchClickPass = Global.Instance.Config.TouchClickPassthru[deviceNum];
                 if (!touchClickPass)
                 {
                     // Reset output Touchpad click button
@@ -1040,7 +1040,7 @@ namespace DS4Windows
                 if (tappedOnce)
                 {
                     DateTime tester = DateTime.Now;
-                    if (tester > (TimeofEnd + TimeSpan.FromMilliseconds((double)(Global.Instance.TapSensitivity[deviceNum]) * 1.5)))
+                    if (tester > (TimeofEnd + TimeSpan.FromMilliseconds((double)(Global.Instance.Config.TapSensitivity[deviceNum]) * 1.5)))
                     {
                         Mapping.MapClick(deviceNum, Mapping.Click.Left);
                         tappedOnce = false;

@@ -12,22 +12,22 @@ namespace DS4Windows
             gyroMouseSensSettings = gyroMouseSens;
             filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = GyroMouseInfo.DEFAULT_MINCUTOFF;
             filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = GyroMouseInfo.DEFAULT_BETA;
-            Global.Instance.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
+            Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
         }
 
         public void ReplaceOneEuroFilterPair()
         {
-            Global.Instance.GyroMouseInfo[deviceNumber].RemoveRefreshEvents();
+            Global.Instance.Config.GyroMouseInfo[deviceNumber].RemoveRefreshEvents();
             filterPair = new OneEuroFilterPair();
         }
 
         public void SetupLateOneEuroFilters()
         {
-            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.Instance.GyroMouseInfo[deviceNumber].MinCutoff;
-            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.Instance.GyroMouseInfo[deviceNumber].Beta;
-            Global.Instance.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.axis2Filter);
+            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.Instance.Config.GyroMouseInfo[deviceNumber].MinCutoff;
+            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.Instance.Config.GyroMouseInfo[deviceNumber].Beta;
+            Global.Instance.Config.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.axis1Filter);
+            Global.Instance.Config.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.axis2Filter);
         }
 
         // Keep track of remainders when performing moves or we lose fractional parts.
@@ -70,7 +70,7 @@ namespace DS4Windows
             //tempDouble = arg.sixAxis.elapsed * 0.001 * 200.0; // Base default speed on 5 ms
             tempDouble = arg.sixAxis.elapsed * 200.0; // Base default speed on 5 ms
 
-            GyroMouseInfo tempInfo = Global.Instance.GyroMouseInfo[deviceNumber];
+            GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[deviceNumber];
             gyroSmooth = tempInfo.enableSmoothing;
             double gyroSmoothWeight = 0.0;
 
@@ -230,7 +230,7 @@ namespace DS4Windows
             ySmoothBuffer[iIndex] = 0.0;
             smoothBufferTail = iIndex + 1;
 
-            GyroMouseInfo tempInfo = Global.Instance.GyroMouseInfo[deviceNumber];
+            GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[deviceNumber];
             if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro)
             {
                 double currentRate = 1.0 / arg.sixAxis.elapsed;
@@ -299,7 +299,7 @@ namespace DS4Windows
                 currentY = arg.touches[0].hwY;
             }
 
-            TouchpadAbsMouseSettings absSettings = Global.Instance.TouchAbsMouse[deviceNumber];
+            TouchpadAbsMouseSettings absSettings = Global.Instance.Config.TouchPadAbsMouse[deviceNumber];
 
             int minX = (int)(DS4Touchpad.RES_HALFED_X - (absSettings.maxZoneX * 0.01 * DS4Touchpad.RES_HALFED_X));
             int minY = (int)(DS4Touchpad.RES_HALFED_Y - (absSettings.maxZoneY * 0.01 * DS4Touchpad.RES_HALFED_Y));
@@ -328,7 +328,7 @@ namespace DS4Windows
 
         public void TouchMoveCursor(int dx, int dy, bool disableInvert = false)
         {
-            TouchpadRelMouseSettings relMouseSettings = Global.Instance.TouchRelMouse[deviceNumber];
+            TouchpadRelMouseSettings relMouseSettings = Global.Instance.Config.TouchPadRelMouse[deviceNumber];
             if (relMouseSettings.rotation != 0.0)
             {
                 //double rotation = 5.0 * Math.PI / 180.0;

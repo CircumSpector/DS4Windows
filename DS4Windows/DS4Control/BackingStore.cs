@@ -29,7 +29,7 @@ namespace DS4Windows
 
         ControlServiceDeviceOptions DeviceOptions { get; }
 
-        List<OutContType> OutputDeviceType { get; set; }
+        public IList<OutContType> OutputDeviceType { get; set; }
 
         public int CheckWhen { get; set; }
 
@@ -125,7 +125,7 @@ namespace DS4Windows
 
         public IList<double> SXAntiDeadzone { get; set; }
 
-        public IList<double>   SZDeadzone{ get; set; }
+        public IList<double> SZDeadzone { get; set; }
 
         public IList<double> SZAntiDeadzone { get; set; }
 
@@ -135,14 +135,65 @@ namespace DS4Windows
 
         public IList<double> RSSens { get; set; }
 
-        
-
         public IList<bool> LowerRCOn { get; set; }
 
         public IList<double> LSRotation { get; set; }
 
         public IList<double> RSRotation { get; set; }
 
+        public IList<BezierCurve> LSOutBezierCurveObj { get; set; }
+
+        public IList<BezierCurve> RSOutBezierCurveObj { get; set; }
+
+        public IList<BezierCurve> L2OutBezierCurveObj { get; set; }
+
+        public IList<BezierCurve> R2OutBezierCurveObj { get; set; }
+
+        public IList<BezierCurve> SXOutBezierCurveObj { get; set; }
+
+        public IList<BezierCurve> SZOutBezierCurveObj { get; set; }
+
+        public IList< int> GyroInvert { get; set; }
+
+        public IList<bool> GyroTriggerTurns{ get; set; }
+
+        public IList<GyroMouseInfo> GyroMouseInfo{ get; set; }
+
+        public IList<int> GyroMouseHorizontalAxis { get; set; }
+
+        public IList<int> GyroMouseStickHorizontalAxis { get; set; }
+        
+        public IList <bool> TrackballMode{ get; set; }
+
+        public IList<double> TrackballFriction { get; set; }
+
+        public IList<TouchpadAbsMouseSettings> TouchPadAbsMouse { get; set; }
+        
+        public IList<TouchpadRelMouseSettings> TouchPadRelMouse{ get; set; }
+
+        public IList<byte> TapSensitivity { get; set; }
+
+        public IList<bool> DoubleTap { get; set; }
+
+        public IList<int> ScrollSensitivity { get; set; }
+
+        public IList<int> TouchPadInvert { get; set; }
+
+        public IList<int> BluetoothPollRate { get; set; }
+
+        public IList<int> GyroMouseDeadZone { get; set; }
+
+        public IList<bool> GyroMouseToggle { get; set; }
+
+        public IList<bool> EnableTouchToggle { get; set; }
+
+        public IList<int> IdleDisconnectTimeout { get; set; }
+
+        public IList<bool> EnableOutputDataToDS4 { get; set; }
+
+        public IList<bool> TouchpadJitterCompensation { get; set; }
+
+        public IList<bool> TouchClickPassthru { get; set; }
 
 
         int getLsOutCurveMode(int index);

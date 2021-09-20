@@ -1004,19 +1004,16 @@ namespace DS4Windows
             return _config.RumbleAutostopTime[index];
         }
 
-        public  bool[] EnableTouchToggle => _config.EnableTouchToggle;
         public  bool getEnableTouchToggle(int index)
         {
             return _config.EnableTouchToggle[index];
         }
 
-        public  int[] IdleDisconnectTimeout => _config.IdleDisconnectTimeout;
         public  int getIdleDisconnectTimeout(int index)
         {
             return _config.IdleDisconnectTimeout[index];
         }
 
-        public  bool[] EnableOutputDataToDS4 => _config.EnableOutputDataToDS4;
         public  bool getEnableOutputDataToDS4(int index)
         {
             return _config.EnableOutputDataToDS4[index];
@@ -1104,11 +1101,9 @@ namespace DS4Windows
             return _config.gyroMouseStickTriggerTurns[device];
         }
 
-        public  int[] GyroMouseStickHorizontalAxis =>
-            _config.gyroMouseStickHorizontalAxis;
         public  int getGyroMouseStickHorizontalAxis(int index)
         {
-            return _config.gyroMouseStickHorizontalAxis[index];
+            return _config.GyroMouseStickHorizontalAxis[index];
         }
 
         public  GyroMouseStickInfo[] GyroMouseStickInf => _config.gyroMStickInfo;
@@ -1157,28 +1152,24 @@ namespace DS4Windows
             return _config.gyroSensVerticalScale[index];
         }
 
-        public  int[] GyroInvert => _config.gyroInvert;
         public  int getGyroInvert(int index)
         {
-            return _config.gyroInvert[index];
+            return _config.GyroInvert[index];
         }
 
-        public  bool[] GyroTriggerTurns => _config.gyroTriggerTurns;
         public  bool getGyroTriggerTurns(int index)
         {
-            return _config.gyroTriggerTurns[index];
+            return _config.GyroTriggerTurns[index];
         }
 
-        public  int[] GyroMouseHorizontalAxis => _config.gyroMouseHorizontalAxis;
         public  int getGyroMouseHorizontalAxis(int index)
         {
-            return _config.gyroMouseHorizontalAxis[index];
+            return _config.GyroMouseHorizontalAxis[index];
         }
 
-        public  int[] GyroMouseDeadZone => _config.gyroMouseDZ;
         public  int GetGyroMouseDeadZone(int index)
         {
-            return _config.gyroMouseDZ[index];
+            return _config.GyroMouseDeadZone[index];
         }
 
         public  void SetGyroMouseDeadZone(int index, int value, ControlService control)
@@ -1186,14 +1177,11 @@ namespace DS4Windows
             _config.SetGyroMouseDZ(index, value, control);
         }
 
-        public  bool[] GyroMouseToggle => _config.gyroMouseToggle;
         public  void SetGyroMouseToggle(int index, bool value, ControlService control) 
             => _config.SetGyroMouseToggle(index, value, control);
 
         public  void SetGyroControlsToggle(int index, bool value, ControlService control)
             => _config.SetGyroControlsToggle(index, value, control);
-
-        public  GyroMouseInfo[] GyroMouseInfo => _config.gyroMouseInfo;
 
         public  GyroControlsInfo[] GyroControlsInf => _config.gyroControlsInf;
         public  GyroControlsInfo GetGyroControlsInfo(int index)
@@ -1245,39 +1233,29 @@ namespace DS4Windows
             //return ref m_Config.m_FlashLeds[index];
         }
 
-        public  byte[] TapSensitivity => _config.tapSensitivity;
         public  byte getTapSensitivity(int index)
         {
-            return _config.tapSensitivity[index];
+            return _config.TapSensitivity[index];
         }
 
-        public  bool[] DoubleTap => _config.doubleTap;
         public  bool getDoubleTap(int index)
         {
-            return _config.doubleTap[index];
+            return _config.DoubleTap[index];
         }
 
-        public  int[] ScrollSensitivity => _config.scrollSensitivity;
-        public  int[] getScrollSensitivity()
-        {
-            return _config.scrollSensitivity;
-        }
         public  int getScrollSensitivity(int index)
         {
-            return _config.scrollSensitivity[index];
+            return _config.ScrollSensitivity[index];
         }
 
-        public  bool[] TouchClickPassthru => _config.TouchClickPassthru;
-        public  bool[] TouchpadJitterCompensation => _config.TouchpadJitterCompensation;
         public  bool getTouchpadJitterCompensation(int index)
         {
             return _config.TouchpadJitterCompensation[index];
         }
 
-        public  int[] TouchpadInvert => _config.touchpadInvert;
         public  int getTouchpadInvert(int index)
         {
-            return _config.touchpadInvert[index];
+            return _config.TouchPadInvert[index];
         }
 
         public  TriggerDeadZoneZInfo GetL2ModInfo(int index)
@@ -1454,10 +1432,9 @@ namespace DS4Windows
             return _config.RSSens[index];
         }
 
-        public  int[] BTPollRate => _config.btPollRate;
         public  int getBTPollRate(int index)
         {
-            return _config.btPollRate[index];
+            return _config.BluetoothPollRate[index];
         }
 
         public SquareStickInfo GetSquareStickInfo(int device)
@@ -1485,8 +1462,6 @@ namespace DS4Windows
             return _config.getLsOutCurveMode(index);
         }
 
-        public BezierCurve[] lsOutBezierCurveObj => _config.LSOutBezierCurveObj;
-
         public void setRsOutCurveMode(int index, int value)
         {
             _config.setRsOutCurveMode(index, value);
@@ -1496,8 +1471,6 @@ namespace DS4Windows
         {
             return _config.getRsOutCurveMode(index);
         }
-
-        public BezierCurve[] rsOutBezierCurveObj => _config.RSOutBezierCurveObj;
 
         public void setL2OutCurveMode(int index, int value)
         {
@@ -1509,8 +1482,6 @@ namespace DS4Windows
             return _config.getL2OutCurveMode(index);
         }
 
-        public BezierCurve[] l2OutBezierCurveObj => _config.L2OutBezierCurveObj;
-
         public void setR2OutCurveMode(int index, int value)
         {
             _config.setR2OutCurveMode(index, value);
@@ -1520,8 +1491,6 @@ namespace DS4Windows
         {
             return _config.getR2OutCurveMode(index);
         }
-
-        public BezierCurve[] r2OutBezierCurveObj => _config.R2OutBezierCurveObj;
 
         public void setSXOutCurveMode(int index, int value)
         {
@@ -1533,8 +1502,6 @@ namespace DS4Windows
             return _config.getSXOutCurveMode(index);
         }
 
-        public BezierCurve[] sxOutBezierCurveObj => _config.SXOutBezierCurveObj;
-
         public void setSZOutCurveMode(int index, int value)
         {
             _config.setSZOutCurveMode(index, value);
@@ -1545,26 +1512,15 @@ namespace DS4Windows
             return _config.getSZOutCurveMode(index);
         }
 
-        public BezierCurve[] szOutBezierCurveObj => _config.SZOutBezierCurveObj;
-
-        public bool[] TrackballMode => _config.trackballMode;
-
         public bool getTrackballMode(int index)
         {
-            return _config.trackballMode[index];
+            return _config.TrackballMode[index];
         }
-
-        public double[] TrackballFriction => _config.TrackballFriction;
 
         public double getTrackballFriction(int index)
         {
             return _config.TrackballFriction[index];
         }
-
-        public TouchpadAbsMouseSettings[] TouchAbsMouse => _config.TouchpadAbsMouse;
-        public TouchpadRelMouseSettings[] TouchRelMouse => _config.TouchpadRelMouse;
-
-        public ControlServiceDeviceOptions DeviceOptions => _config.DeviceOptions;
 
         public  int getProfileActionCount(int index)
         {

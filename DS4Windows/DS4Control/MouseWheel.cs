@@ -34,7 +34,7 @@ namespace DS4Windows
                currentMidX = (T0.hwX + T1.hwX) / 2d, currentMidY = (T0.hwY + T1.hwY) / 2d;
 
             // Express coefficient as a ratio
-            double coefficient = Global.Instance.ScrollSensitivity[deviceNumber] / 100.0;
+            double coefficient = Global.Instance.Config.ScrollSensitivity[deviceNumber] / 100.0;
 
             // Adjust for touch distance: "standard" distance is 960 pixels, i.e. half the width.  Scroll farther if fingers are farther apart, and vice versa, in linear proportion.
             double touchXDistance = T1.hwX - T0.hwX, touchYDistance = T1.hwY - T0.hwY, touchDistance = Math.Sqrt(touchXDistance * touchXDistance + touchYDistance * touchYDistance);

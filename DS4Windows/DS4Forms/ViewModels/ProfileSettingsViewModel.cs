@@ -493,14 +493,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool EnableTouchpadToggle
         {
-            get => Global.Instance.EnableTouchToggle[device];
-            set => Global.Instance.EnableTouchToggle[device] = value;
+            get => Global.Instance.Config.EnableTouchToggle[device];
+            set => Global.Instance.Config.EnableTouchToggle[device] = value;
         }
 
         public bool EnableOutputDataToDS4
         {
-            get => Global.Instance.EnableOutputDataToDS4[device];
-            set => Global.Instance.EnableOutputDataToDS4[device] = value;
+            get => Global.Instance.Config.EnableOutputDataToDS4[device];
+            set => Global.Instance.Config.EnableOutputDataToDS4[device] = value;
         }
 
         public bool LaunchProgramExists
@@ -575,12 +575,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool IdleDisconnectExists
         {
-            get => Global.Instance.IdleDisconnectTimeout[device] != 0;
+            get => Global.Instance.Config.IdleDisconnectTimeout[device] != 0;
             set
             {
                 // If enabling Idle Disconnect, set default time.
                 // Otherwise, set time to 0 to mean disabled
-                Global.Instance.IdleDisconnectTimeout[device] = value ?
+                Global.Instance.Config.IdleDisconnectTimeout[device] = value ?
                     Global.DEFAULT_ENABLE_IDLE_DISCONN_MINS * 60 : 0;
 
                 IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
@@ -591,12 +591,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int IdleDisconnect
         {
-            get => Global.Instance.IdleDisconnectTimeout[device] / 60;
+            get => Global.Instance.Config.IdleDisconnectTimeout[device] / 60;
             set
             {
-                int temp = Global.Instance.IdleDisconnectTimeout[device] / 60;
+                int temp = Global.Instance.Config.IdleDisconnectTimeout[device] / 60;
                 if (temp == value) return;
-                Global.Instance.IdleDisconnectTimeout[device] = value * 60;
+                Global.Instance.Config.IdleDisconnectTimeout[device] = value * 60;
                 IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
                 IdleDisconnectExistsChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1037,14 +1037,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LSCustomCurve
         {
-            get => Global.Instance.lsOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.lsOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
+            get => Global.Instance.Config.LSOutBezierCurveObj[device].CustomDefinition;
+            set => Global.Instance.Config.LSOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
         }
 
         public string RSCustomCurve
         {
-            get => Global.Instance.rsOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.rsOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
+            get => Global.Instance.Config.RSOutBezierCurveObj[device].CustomDefinition;
+            set => Global.Instance.Config.RSOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
         }
 
         public int LSFuzz
@@ -1384,14 +1384,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string L2CustomCurve
         {
-            get => Global.Instance.l2OutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.l2OutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
+            get => Global.Instance.Config.L2OutBezierCurveObj[device].CustomDefinition;
+            set => Global.Instance.Config.L2OutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
         }
 
         public string R2CustomCurve
         {
-            get => Global.Instance.r2OutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.r2OutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
+            get => Global.Instance.Config.R2OutBezierCurveObj[device].CustomDefinition;
+            set => Global.Instance.Config.R2OutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
         }
 
         private List<TriggerModeChoice> triggerModeChoices = new List<TriggerModeChoice>()
@@ -1579,14 +1579,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string SXCustomCurve
         {
-            get => Global.Instance.sxOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.sxOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.SA, true);
+            get => Global.Instance.Config.SXOutBezierCurveObj[device].CustomDefinition;
+            set => Global.Instance.Config.SXOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.SA, true);
         }
 
         public string SZCustomCurve
         {
-            get => Global.Instance.szOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.szOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.SA, true);
+            get => Global.Instance.Config.SZOutBezierCurveObj[device].CustomDefinition;
+            set => Global.Instance.Config.SZOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.SA, true);
         }
 
         public int TouchpadOutputIndex
@@ -1659,10 +1659,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchScrollExists
         {
-            get => Global.Instance.ScrollSensitivity[device] != 0;
+            get => Global.Instance.Config.ScrollSensitivity[device] != 0;
             set
             {
-                Global.Instance.ScrollSensitivity[device] = value ? (byte)100 : (byte)0;
+                Global.Instance.Config.ScrollSensitivity[device] = value ? (byte)100 : (byte)0;
                 TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1671,12 +1671,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchScroll
         {
-            get => Global.Instance.ScrollSensitivity[device];
+            get => Global.Instance.Config.ScrollSensitivity[device];
             set
             {
-                int temp = Global.Instance.ScrollSensitivity[device];
+                int temp = Global.Instance.Config.ScrollSensitivity[device];
                 if (temp == value) return;
-                Global.Instance.ScrollSensitivity[device] = value;
+                Global.Instance.Config.ScrollSensitivity[device] = value;
                 if (value == 0) TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1685,10 +1685,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchTapExists
         {
-            get => Global.Instance.TapSensitivity[device] != 0;
+            get => Global.Instance.Config.TapSensitivity[device] != 0;
             set
             {
-                Global.Instance.TapSensitivity[device] = value ? (byte)100 : (byte)0;
+                Global.Instance.Config.TapSensitivity[device] = value ? (byte)100 : (byte)0;
                 TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1697,12 +1697,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchTap
         {
-            get => Global.Instance.TapSensitivity[device];
+            get => Global.Instance.Config.TapSensitivity[device];
             set
             {
-                int temp = Global.Instance.TapSensitivity[device];
+                int temp = Global.Instance.Config.TapSensitivity[device];
                 if (temp == value) return;
-                Global.Instance.TapSensitivity[device] = (byte)value;
+                Global.Instance.Config.TapSensitivity[device] = (byte)value;
                 if (value == 0) TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1711,17 +1711,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchDoubleTap
         {
-            get => Global.Instance.DoubleTap[device];
+            get => Global.Instance.Config.DoubleTap[device];
             set
             {
-                Global.Instance.DoubleTap[device] = value;
+                Global.Instance.Config.DoubleTap[device] = value;
             }
         }
         
         public bool TouchJitter
         {
-            get => Global.Instance.TouchpadJitterCompensation[device];
-            set => Global.Instance.TouchpadJitterCompensation[device] = value;
+            get => Global.Instance.Config.TouchpadJitterCompensation[device];
+            set => Global.Instance.Config.TouchpadJitterCompensation[device] = value;
         }
 
         private int[] touchpadInvertToValue = new int[4] { 0, 2, 1, 3 };
@@ -1729,14 +1729,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int invert = Global.Instance.TouchpadInvert[device];
+                int invert = Global.Instance.Config.TouchPadInvert[device];
                 int index = Array.IndexOf(touchpadInvertToValue, invert);
                 return index;
             }
             set
             {
                 int invert = touchpadInvertToValue[value];
-                Global.Instance.TouchpadInvert[device] = invert;
+                Global.Instance.Config.TouchPadInvert[device] = invert;
             }
         }
 
@@ -1751,10 +1751,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchpadClickPassthru
         {
-            get => Global.Instance.TouchClickPassthru[device];
+            get => Global.Instance.Config.TouchClickPassthru[device];
             set
             {
-                Global.Instance.TouchClickPassthru[device] = value;
+                Global.Instance.Config.TouchClickPassthru[device] = value;
             }
         }
 
@@ -1769,70 +1769,70 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double TouchRelMouseRotation
         {
-            get => Global.Instance.TouchRelMouse[device].rotation * 180.0 / Math.PI;
-            set => Global.Instance.TouchRelMouse[device].rotation = value * Math.PI / 180.0;
+            get => Global.Instance.Config.TouchPadRelMouse[device].rotation * 180.0 / Math.PI;
+            set => Global.Instance.Config.TouchPadRelMouse[device].rotation = value * Math.PI / 180.0;
         }
 
         public double TouchRelMouseMinThreshold
         {
-            get => Global.Instance.TouchRelMouse[device].minThreshold;
+            get => Global.Instance.Config.TouchPadRelMouse[device].minThreshold;
             set
             {
-                double temp = Global.Instance.TouchRelMouse[device].minThreshold;
+                double temp = Global.Instance.Config.TouchPadRelMouse[device].minThreshold;
                 if (temp == value) return;
-                Global.Instance.TouchRelMouse[device].minThreshold = value;
+                Global.Instance.Config.TouchPadRelMouse[device].minThreshold = value;
             }
         }
 
         public bool TouchTrackball
         {
-            get => Global.Instance.TrackballMode[device];
-            set => Global.Instance.TrackballMode[device] = value;
+            get => Global.Instance.Config.TrackballMode[device];
+            set => Global.Instance.Config.TrackballMode[device] = value;
         }
 
         public double TouchTrackballFriction
         {
-            get => Global.Instance.TrackballFriction[device];
-            set => Global.Instance.TrackballFriction[device] = value;
+            get => Global.Instance.Config.TrackballFriction[device];
+            set => Global.Instance.Config.TrackballFriction[device] = value;
         }
 
         public int TouchAbsMouseMaxZoneX
         {
-            get => Global.Instance.TouchAbsMouse[device].maxZoneX;
+            get => Global.Instance.Config.TouchPadAbsMouse[device].maxZoneX;
             set
             {
-                int temp = Global.Instance.TouchAbsMouse[device].maxZoneX;
+                int temp = Global.Instance.Config.TouchPadAbsMouse[device].maxZoneX;
                 if (temp == value) return;
-                Global.Instance.TouchAbsMouse[device].maxZoneX = value;
+                Global.Instance.Config.TouchPadAbsMouse[device].maxZoneX = value;
             }
         }
 
         public int TouchAbsMouseMaxZoneY
         {
-            get => Global.Instance.TouchAbsMouse[device].maxZoneY;
+            get => Global.Instance.Config.TouchPadAbsMouse[device].maxZoneY;
             set
             {
-                int temp = Global.Instance.TouchAbsMouse[device].maxZoneY;
+                int temp = Global.Instance.Config.TouchPadAbsMouse[device].maxZoneY;
                 if (temp == value) return;
-                Global.Instance.TouchAbsMouse[device].maxZoneY = value;
+                Global.Instance.Config.TouchPadAbsMouse[device].maxZoneY = value;
             }
         }
 
         public bool TouchAbsMouseSnapCenter
         {
-            get => Global.Instance.TouchAbsMouse[device].snapToCenter;
+            get => Global.Instance.Config.TouchPadAbsMouse[device].snapToCenter;
             set
             {
-                bool temp = Global.Instance.TouchAbsMouse[device].snapToCenter;
+                bool temp = Global.Instance.Config.TouchPadAbsMouse[device].snapToCenter;
                 if (temp == value) return;
-                Global.Instance.TouchAbsMouse[device].snapToCenter = value;
+                Global.Instance.Config.TouchPadAbsMouse[device].snapToCenter = value;
             }
         }
 
         public bool GyroMouseTurns
         {
-            get => Global.Instance.GyroTriggerTurns[device];
-            set => Global.Instance.GyroTriggerTurns[device] = value;
+            get => Global.Instance.Config.GyroTriggerTurns[device];
+            set => Global.Instance.Config.GyroTriggerTurns[device] = value;
         }
 
         public int GyroSensitivity
@@ -1855,62 +1855,62 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseXAxis
         {
-            get => Global.Instance.GyroMouseHorizontalAxis[device];
-            set => Global.Instance.GyroMouseHorizontalAxis[device] = value;
+            get => Global.Instance.Config.GyroMouseHorizontalAxis[device];
+            set => Global.Instance.Config.GyroMouseHorizontalAxis[device] = value;
         }
 
         public double GyroMouseMinThreshold
         {
-            get => Global.Instance.GyroMouseInfo[device].minThreshold;
+            get => Global.Instance.Config.GyroMouseInfo[device].minThreshold;
             set
             {
-                double temp = Global.Instance.GyroMouseInfo[device].minThreshold;
+                double temp = Global.Instance.Config.GyroMouseInfo[device].minThreshold;
                 if (temp == value) return;
-                Global.Instance.GyroMouseInfo[device].minThreshold = value;
+                Global.Instance.Config.GyroMouseInfo[device].minThreshold = value;
             }
         }
 
         public bool GyroMouseInvertX
         {
-            get => (Global.Instance.GyroInvert[device] & 2) == 2;
+            get => (Global.Instance.Config.GyroInvert[device] & 2) == 2;
             set
             {
                 if (value)
                 {
-                    Global.Instance.GyroInvert[device] |= 2;
+                    Global.Instance.Config.GyroInvert[device] |= 2;
                 }
                 else
                 {
-                    Global.Instance.GyroInvert[device] &= ~2;
+                    Global.Instance.Config.GyroInvert[device] &= ~2;
                 }
             }
         }
 
         public bool GyroMouseInvertY
         {
-            get => (Global.Instance.GyroInvert[device] & 1) == 1;
+            get => (Global.Instance.Config.GyroInvert[device] & 1) == 1;
             set
             {
                 if (value)
                 {
-                    Global.Instance.GyroInvert[device] |= 1;
+                    Global.Instance.Config.GyroInvert[device] |= 1;
                 }
                 else
                 {
-                    Global.Instance.GyroInvert[device] &= ~1;
+                    Global.Instance.Config.GyroInvert[device] &= ~1;
                 }
             }
         }
 
         public bool GyroMouseSmooth
         {
-            get => Global.Instance.GyroMouseInfo[device].enableSmoothing;
+            get => Global.Instance.Config.GyroMouseInfo[device].enableSmoothing;
             set
             {
-                GyroMouseInfo tempInfo = Global.Instance.GyroMouseInfo[device];
+                GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[device];
                 if (tempInfo.enableSmoothing == value) return;
 
-                Global.Instance.GyroMouseInfo[device].enableSmoothing = value;
+                Global.Instance.Config.GyroMouseInfo[device].enableSmoothing = value;
                 GyroMouseSmoothChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1927,7 +1927,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (gyroMouseSmoothMethodIndex == value) return;
 
-                GyroMouseInfo tempInfo = Global.Instance.GyroMouseInfo[device];
+                GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[device];
                 switch (value)
                 {
                     case 0:
@@ -1953,7 +1953,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.GyroMouseInfo[device].smoothingMethod)
+                switch (Global.Instance.Config.GyroMouseInfo[device].smoothingMethod)
                 {
                     case GyroMouseInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -1973,7 +1973,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 Visibility result = Visibility.Collapsed;
-                switch(Global.Instance.GyroMouseInfo[device].smoothingMethod)
+                switch(Global.Instance.Config.GyroMouseInfo[device].smoothingMethod)
                 {
                     case GyroMouseInfo.SmoothingMethod.OneEuro:
                     case GyroMouseInfo.SmoothingMethod.None:
@@ -1991,20 +1991,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseSmoothWeight
         {
-            get => Global.Instance.GyroMouseInfo[device].smoothingWeight;
-            set => Global.Instance.GyroMouseInfo[device].smoothingWeight = value;
+            get => Global.Instance.Config.GyroMouseInfo[device].smoothingWeight;
+            set => Global.Instance.Config.GyroMouseInfo[device].smoothingWeight = value;
         }
 
         public double GyroMouseOneEuroMinCutoff
         {
-            get => Global.Instance.GyroMouseInfo[device].MinCutoff;
-            set => Global.Instance.GyroMouseInfo[device].MinCutoff = value;
+            get => Global.Instance.Config.GyroMouseInfo[device].MinCutoff;
+            set => Global.Instance.Config.GyroMouseInfo[device].MinCutoff = value;
         }
 
         public double GyroMouseOneEuroBeta
         {
-            get => Global.Instance.GyroMouseInfo[device].Beta;
-            set => Global.Instance.GyroMouseInfo[device].Beta = value;
+            get => Global.Instance.Config.GyroMouseInfo[device].Beta;
+            set => Global.Instance.Config.GyroMouseInfo[device].Beta = value;
         }
 
 
@@ -2101,7 +2101,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseDeadZone
         {
-            get => Global.Instance.GyroMouseDeadZone[device];
+            get => Global.Instance.Config.GyroMouseDeadZone[device];
             set
             {
                 Global.Instance.SetGyroMouseDeadZone(device, value, App.rootHub);
@@ -2111,7 +2111,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseToggle
         {
-            get => Global.Instance.GyroMouseToggle[device];
+            get => Global.Instance.Config.GyroMouseToggle[device];
             set
             {
                 Global.Instance.SetGyroMouseToggle(device, value, App.rootHub);
@@ -2213,8 +2213,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickXAxis
         {
-            get => Global.Instance.GyroMouseStickHorizontalAxis[device];
-            set => Global.Instance.GyroMouseStickHorizontalAxis[device] = value;
+            get => Global.Instance.Config.GyroMouseStickHorizontalAxis[device];
+            set => Global.Instance.Config.GyroMouseStickHorizontalAxis[device] = value;
         }
 
         public bool GyroMouseStickInvertX
@@ -2405,7 +2405,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             funcDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
             Global.OutDevTypeTemp[device] = OutContType.X360;
-            tempBtPollRate = Global.Instance.BTPollRate[device];
+            tempBtPollRate = Global.Instance.Config.BluetoothPollRate[device];
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
@@ -2434,7 +2434,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private int FindGyroMouseSmoothMethodIndex()
         {
             int result = 0;
-            GyroMouseInfo tempInfo = Global.Instance.GyroMouseInfo[device];
+            GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[device];
             if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro ||
                 tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.None)
             {
@@ -3052,7 +3052,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             tempControllerIndex = ControllerTypeIndex;
             Global.OutDevTypeTemp[device] = Global.Instance.Config.OutputDeviceType[device];
-            tempBtPollRate = Global.Instance.BTPollRate[device];
+            tempBtPollRate = Global.Instance.Config.BluetoothPollRate[device];
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
             gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();
