@@ -6,7 +6,7 @@ namespace DS4Windows
 {
     public partial class Global
     {
-        public void SaveWhere(string path)
+        public void SaveTo(string path)
         {
             RuntimeAppDataPath = path;
             _config.ProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.ProfilesFileName);
@@ -34,7 +34,7 @@ namespace DS4Windows
             }
             else if (programFolderAutoProfilesExists)
             {
-                SaveWhere(ExecutableDirectory);
+                SaveTo(ExecutableDirectory);
             }
             //else if (localAppDataAutoProfilesExists)
             //{
@@ -42,7 +42,7 @@ namespace DS4Windows
             //}
             else if (appDataAutoProfilesExists)
             {
-                SaveWhere(RoamingAppDataPath);
+                SaveTo(RoamingAppDataPath);
             }
             else if (!programFolderAutoProfilesExists && !appDataAutoProfilesExists)
             {
