@@ -120,8 +120,6 @@ namespace DS4Windows
             }
         }
 
-        public ulong LastVersionCheckedNumber => _config.LastVersionCheckedNumber;
-
         public double UDPServerSmoothingMincutoff
         {
             get => _config.UdpSmoothingMincutoff;

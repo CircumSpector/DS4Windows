@@ -121,7 +121,7 @@ namespace DS4Windows
 
             public string lastVersionChecked = string.Empty;
 
-            public ulong LastVersionCheckedNumber;
+            public ulong LastVersionCheckedNumber { get; set; }
 
             public BackingStore()
             {

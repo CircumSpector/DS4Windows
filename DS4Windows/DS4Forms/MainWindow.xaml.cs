@@ -221,7 +221,7 @@ namespace DS4WinWPF.DS4Forms
             string version = Global.ExecutableProductVersion;
             string newversion = string.Empty;
             string versionFilePath = Global.RuntimeAppDataPath + "\\version.txt";
-            ulong lastVersionNum = Global.Instance.LastVersionCheckedNumber;
+            ulong lastVersionNum = Global.Instance.Config.LastVersionCheckedNumber;
             //ulong lastVersion = Global.CompileVersionNumberFromString("2.1.1");
 
             bool versionFileExists = File.Exists(versionFilePath);

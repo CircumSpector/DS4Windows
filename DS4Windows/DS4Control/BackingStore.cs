@@ -251,6 +251,8 @@ namespace DS4Windows
 
         public IList<int> SAWheelFuzzValues { get; set; }
 
+        public ulong LastVersionCheckedNumber { get; set; }
+
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);
