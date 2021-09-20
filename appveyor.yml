@@ -33,6 +33,7 @@ build:
   project: $(APPVEYOR_BUILD_FOLDER)\DS4WindowsWPF.sln
 after_build:
 - cmd: 7z a DS4Windows-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%\bin\%PLATFORM%\%CONFIGURATION%\net5.0-windows\*
+- cmd: 7z a DS4Windows-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%\bin\%PLATFORM%\%CONFIGURATION%\net5.0-windows\*
 test: off
 artifacts:
   - path: DS4Windows-*.zip
