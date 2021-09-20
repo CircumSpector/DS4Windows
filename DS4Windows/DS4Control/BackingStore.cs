@@ -235,6 +235,10 @@ namespace DS4Windows
 
         public int FlashWhenLateAt { get; set; }
 
+        public bool AutoProfileRevertDefaultProfile { get; set; }
+
+        public IList<GyroOutMode> GyroOutputMode { get; set; }
+
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);

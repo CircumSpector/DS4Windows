@@ -664,7 +664,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.GyroOutputMode[device])
+                switch (Global.Instance.Config.GyroOutputMode[device])
                 {
                     case GyroOutMode.Controls:
                         index = 0; break;
@@ -698,9 +698,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                GyroOutMode current = Global.Instance.GyroOutputMode[device];
+                GyroOutMode current = Global.Instance.Config.GyroOutputMode[device];
                 if (temp == current) return;
-                Global.Instance.GyroOutputMode[device] = temp;
+                Global.Instance.Config.GyroOutputMode[device] = temp;
                 GyroOutModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }

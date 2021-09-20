@@ -159,12 +159,6 @@ namespace DS4Windows
             }
         }
 
-        public bool AutoProfileRevertDefaultProfile
-        {
-            set => _config.AutoProfileRevertDefaultProfile = value;
-            get => _config.AutoProfileRevertDefaultProfile;
-        }
-
         /// <summary>
         ///     Fake name used for user copy of DS4Windows.exe
         /// </summary>
@@ -180,8 +174,6 @@ namespace DS4Windows
 
         public bool[] TouchActive => TouchpadActive;
         
-        public GyroOutMode[] GyroOutputMode => _config.GyroOutMode;
-
         public bool[] GyroMouseStickTriggerTurns => _config.GyroMouseStickTriggerTurns;
 
         public GyroMouseStickInfo[] GyroMouseStickInf => _config.GyroMStickInfo;
@@ -785,7 +777,7 @@ namespace DS4Windows
 
         public bool IsUsingSAForControls(int index)
         {
-            return _config.GyroOutMode[index] == GyroOutMode.Controls;
+            return _config.GyroOutputMode[index] == GyroOutMode.Controls;
         }
 
         public string getSATriggers(int index)
@@ -805,7 +797,7 @@ namespace DS4Windows
 
         public GyroOutMode GetGyroOutMode(int device)
         {
-            return _config.GyroOutMode[device];
+            return _config.GyroOutputMode[device];
         }
 
         public string GetSAMouseStickTriggers(int device)

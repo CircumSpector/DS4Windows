@@ -68,7 +68,7 @@ namespace DS4Windows
                 new()
             };
 
-            public readonly GyroOutMode[] GyroOutMode = new GyroOutMode[TEST_PROFILE_ITEM_COUNT]
+            public IList<GyroOutMode> GyroOutputMode { get; set; }= new List<GyroOutMode>()
             {
                 DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls,
                 DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls,
@@ -112,7 +112,7 @@ namespace DS4Windows
             ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
             ///     active when a foreground process is unknown (ie. no matching auto-profile rule)
             /// </summary>
-            public bool AutoProfileRevertDefaultProfile = true;
+            public bool AutoProfileRevertDefaultProfile { get; set; } = true;
 
             public int FlashWhenLateAt { get; set; }= 50;
 
@@ -671,7 +671,7 @@ namespace DS4Windows
 
                 if (!customAct)
                 {
-                    customAct = GyroOutMode[device] == DS4Windows.GyroOutMode.MouseJoystick;
+                    customAct = GyroOutputMode[device] == DS4Windows.GyroOutMode.MouseJoystick;
                     customAct = customAct ||
                                 SASteeringWheelEmulationAxis[device] >= SASteeringWheelEmulationAxisType.VJoy1X;
                     customAct = customAct || LSOutputSettings[device].mode != StickMode.Controls;
@@ -1194,7 +1194,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlGyroMouseToggle);
 
                     var xmlGyroOutMode = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroOutputMode", null);
-                    xmlGyroOutMode.InnerText = GyroOutMode[device].ToString();
+                    xmlGyroOutMode.InnerText = GyroOutputMode[device].ToString();
                     rootElement.AppendChild(xmlGyroOutMode);
                     var xmlGyroMStickTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickTriggers", null);
                     xmlGyroMStickTriggers.InnerText = SAMouseStickTriggers[device];
@@ -3153,11 +3153,11 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/UseSAforMouse");
                         if (bool.TryParse(Item?.InnerText ?? "", out var temp))
                             if (temp)
-                                GyroOutMode[device] = DS4Windows.GyroOutMode.Mouse;
+                                GyroOutputMode[device] = DS4Windows.GyroOutMode.Mouse;
                     }
                     catch
                     {
-                        GyroOutMode[device] = DS4Windows.GyroOutMode.Controls;
+                        GyroOutputMode[device] = DS4Windows.GyroOutMode.Controls;
                     }
 
                     try
@@ -3270,7 +3270,8 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/GyroOutputMode");
                         var tempMode = Item.InnerText;
                         //gyroOutMode[device] = GetGyroOutModeType(tempMode);
-                        Enum.TryParse(tempMode, out GyroOutMode[device]);
+                        Enum.TryParse(tempMode, out GyroOutMode value);
+                        GyroOutputMode[device] = value;
                     }
                     catch
                     {
@@ -5082,7 +5083,8 @@ namespace DS4Windows
                         try
                         {
                             Item = m_Xdoc.SelectSingleNode("/Profile/AutoProfileRevertDefaultProfile");
-                            bool.TryParse(Item.InnerText, out AutoProfileRevertDefaultProfile);
+                            bool.TryParse(Item.InnerText, out var value);
+                            AutoProfileRevertDefaultProfile = value;
                         }
                         catch
                         {
@@ -6205,7 +6207,7 @@ namespace DS4Windows
                 ContainsCustomAction[device] = false;
                 ContainsCustomExtras[device] = false;
 
-                GyroOutMode[device] = DS4Windows.GyroOutMode.MouseJoystick;
+                GyroOutputMode[device] = DS4Windows.GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
                 SAMouseStickTriggerCond[device] = true;
                 GyroMouseStickTriggerTurns[device] = false;
@@ -6239,7 +6241,7 @@ namespace DS4Windows
                 var r2Info = R2ModInfo[device];
                 r2Info.deadZone = (byte)(0.00 * 255);
 
-                GyroOutMode[device] = DS4Windows.GyroOutMode.MouseJoystick;
+                GyroOutputMode[device] = DS4Windows.GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
                 SAMouseStickTriggerCond[device] = true;
                 GyroMouseStickTriggerTurns[device] = false;
@@ -6279,7 +6281,7 @@ namespace DS4Windows
                 ContainsCustomAction[device] = false;
                 ContainsCustomExtras[device] = false;
 
-                GyroOutMode[device] = DS4Windows.GyroOutMode.Mouse;
+                GyroOutputMode[device] = DS4Windows.GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCond[device] = true;
                 GyroTriggerTurns[device] = false;
@@ -6318,7 +6320,7 @@ namespace DS4Windows
                 var r2Info = R2ModInfo[device];
                 r2Info.deadZone = (byte)(0.00 * 255);
 
-                GyroOutMode[device] = DS4Windows.GyroOutMode.Mouse;
+                GyroOutputMode[device] = DS4Windows.GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCond[device] = true;
                 GyroTriggerTurns[device] = false;
@@ -6546,7 +6548,7 @@ namespace DS4Windows
                 var r2Info = R2ModInfo[device];
                 r2Info.deadZone = (byte)(0.20 * 255);
 
-                GyroOutMode[device] = DS4Windows.GyroOutMode.Mouse;
+                GyroOutputMode[device] = DS4Windows.GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCond[device] = true;
                 GyroTriggerTurns[device] = false;
@@ -6780,8 +6782,8 @@ namespace DS4Windows
 
             private void PortOldGyroSettings(int device)
             {
-                if (GyroOutMode[device] == DS4Windows.GyroOutMode.None)
-                    GyroOutMode[device] = DS4Windows.GyroOutMode.Controls;
+                if (GyroOutputMode[device] == DS4Windows.GyroOutMode.None)
+                    GyroOutputMode[device] = DS4Windows.GyroOutMode.Controls;
             }
 
             private string GetGyroOutModeString(GyroOutMode mode)
@@ -7018,7 +7020,7 @@ namespace DS4Windows
                 TouchOutMode[device] = TouchpadOutMode.Mouse;
                 SATriggers[device] = "-1";
                 SATriggerCond[device] = true;
-                GyroOutMode[device] = DS4Windows.GyroOutMode.Controls;
+                GyroOutputMode[device] = DS4Windows.GyroOutMode.Controls;
                 SAMouseStickTriggers[device] = "-1";
                 SAMouseStickTriggerCond[device] = true;
 
