@@ -55,7 +55,6 @@ namespace DS4Windows
         public static bool[] TouchpadActive = new bool[TEST_PROFILE_ITEM_COUNT]
             { true, true, true, true, true, true, true, true, true };
 
-        
 
         public static bool hidHideInstalled = IsHidHideInstalled;
         public static bool fakerInputInstalled = IsFakerInputInstalled;
@@ -63,8 +62,7 @@ namespace DS4Windows
 
         public static VirtualKBMBase outputKBMHandler;
         public static VirtualKBMMapping outputKBMMapping;
-        
-        
+
 
         public static Dictionary<TrayIconChoice, string> IconChoiceResources = new()
         {
@@ -81,7 +79,7 @@ namespace DS4Windows
         }
 
         /// <summary>
-        ///     Singleton instance of <see cref="Global"/>.
+        ///     Singleton instance of <see cref="Global" />.
         /// </summary>
         public static Global Instance => LazyInstance.Value;
 
@@ -103,7 +101,7 @@ namespace DS4Windows
         public static Version ViGEmBusVersionInfo => new(ViGEmBusVersion);
 
         private static Version MinimumSupportedViGEmBusVersionInfo => new(MIN_SUPPORTED_VIGEMBUS_VERSION);
-        
+
         public static bool IsHidHideInstalled => CheckForSysDevice(@"root\HidHide");
 
         public static bool IsFakerInputInstalled => CheckForSysDevice(@"root\FakerInput");
@@ -162,12 +160,6 @@ namespace DS4Windows
         }
 
         public bool[] TouchActive => TouchpadActive;
-        
-        public GyroDirectionalSwipeInfo[] GyroSwipeInf => _config.GyroSwipeInfo;
-
-        public GyroControlsInfo[] GyroControlsInf => _config.gyroControlsInf;
-
-        public int[] SAWheelFuzzValues => _config.saWheelFuzzValues;
 
         public static string GetX360ControlString(X360Controls key, OutContType conType)
         {
@@ -881,7 +873,7 @@ namespace DS4Windows
 
         public GyroControlsInfo GetGyroControlsInfo(int index)
         {
-            return _config.gyroControlsInf[index];
+            return _config.GyroControlsInfo[index];
         }
 
         //public static DS4Color[] MainColor => m_Config.m_Leds;

@@ -245,6 +245,12 @@ namespace DS4Windows
 
         public IList< bool> GyroMouseStickToggle { get; set; }
 
+        public IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
+        
+        public IList<GyroControlsInfo> GyroControlsInfo { get; set; }
+
+        public IList<int> SAWheelFuzzValues { get; set; }
+
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);

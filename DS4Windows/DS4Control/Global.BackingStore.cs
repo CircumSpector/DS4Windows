@@ -42,7 +42,7 @@ namespace DS4Windows
                     new(), new(), new(), new(), new(), new()
                 };
 
-            public readonly GyroControlsInfo[] gyroControlsInf = new GyroControlsInfo[TEST_PROFILE_ITEM_COUNT]
+            public IList<GyroControlsInfo> GyroControlsInfo { get; set; } = new List<GyroControlsInfo>()
             {
                 new(), new(), new(),
                 new(), new(), new(),
@@ -76,8 +76,8 @@ namespace DS4Windows
                 DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls
             };
 
-            public readonly GyroDirectionalSwipeInfo[] GyroSwipeInfo =
-                new GyroDirectionalSwipeInfo[TEST_PROFILE_ITEM_COUNT]
+            public IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; } =
+                new List<GyroDirectionalSwipeInfo>()
                 {
                     new(), new(),
                     new(), new(),
@@ -106,7 +106,10 @@ namespace DS4Windows
                     new(), new(), new(), new(), new(), new()
                 };
 
-            public readonly int[] saWheelFuzzValues = new int[TEST_PROFILE_ITEM_COUNT];
+            public IList<int> SAWheelFuzzValues { get; set; } = new List<int>(){
+                new(), new(), new(),
+                new(), new(), new(), new(), new(), new()
+            };
 
             /// <summary>
             ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
@@ -745,7 +748,7 @@ namespace DS4Windows
 
             public void SetGyroControlsToggle(int index, bool value, ControlService control)
             {
-                gyroControlsInf[index].triggerToggle = value;
+                GyroControlsInfo[index].triggerToggle = value;
                 if (index < ControlService.CURRENT_DS4_CONTROLLER_LIMIT && control.touchPad[index] != null)
                     control.touchPad[index].ToggleGyroControls = value;
             }
@@ -1105,7 +1108,7 @@ namespace DS4Windows
                     xmlSASteeringWheelEmulationRange.InnerText = SASteeringWheelEmulationRange[device].ToString();
                     rootElement.AppendChild(xmlSASteeringWheelEmulationRange);
                     var xmlSASteeringWheelFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelFuzz", null);
-                    xmlSASteeringWheelFuzz.InnerText = saWheelFuzzValues[device].ToString();
+                    xmlSASteeringWheelFuzz.InnerText = SAWheelFuzzValues[device].ToString();
                     rootElement.AppendChild(xmlSASteeringWheelFuzz);
 
                     var xmlSASteeringWheelSmoothingGroupEl = m_Xdoc.CreateElement("SASteeringWheelSmoothingOptions");
@@ -1148,16 +1151,16 @@ namespace DS4Windows
 
                     var xmlGyroControlsSettingsElement = m_Xdoc.CreateElement("GyroControlsSettings");
                     var xmlGyroControlsTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "Triggers", null);
-                    xmlGyroControlsTriggers.InnerText = gyroControlsInf[device].triggers;
+                    xmlGyroControlsTriggers.InnerText = GyroControlsInfo[device].triggers;
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggers);
                     var xmlGyroControlsTriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerCond", null);
-                    xmlGyroControlsTriggerCond.InnerText = SaTriggerCondString(gyroControlsInf[device].triggerCond);
+                    xmlGyroControlsTriggerCond.InnerText = SaTriggerCondString(GyroControlsInfo[device].triggerCond);
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerCond);
                     var xmlGyroControlsTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerTurns", null);
-                    xmlGyroControlsTriggerTurns.InnerText = gyroControlsInf[device].triggerTurns.ToString();
+                    xmlGyroControlsTriggerTurns.InnerText = GyroControlsInfo[device].triggerTurns.ToString();
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerTurns);
                     var xmlGyroControlsToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "Toggle", null);
-                    xmlGyroControlsToggle.InnerText = gyroControlsInf[device].triggerToggle.ToString();
+                    xmlGyroControlsToggle.InnerText = GyroControlsInfo[device].triggerToggle.ToString();
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsToggle);
                     rootElement.AppendChild(xmlGyroControlsSettingsElement);
 
@@ -3257,11 +3260,11 @@ namespace DS4Windows
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SASteeringWheelFuzz");
                         int.TryParse(Item.InnerText, out var temp);
-                        saWheelFuzzValues[device] = temp >= 0 && temp <= 100 ? temp : 0;
+                        SAWheelFuzzValues[device] = temp >= 0 && temp <= 100 ? temp : 0;
                     }
                     catch
                     {
-                        saWheelFuzzValues[device] = 0;
+                        SAWheelFuzzValues[device] = 0;
                         missingSetting = true;
                     }
 
@@ -3286,7 +3289,7 @@ namespace DS4Windows
                         try
                         {
                             Item = xmlGyroControlsElement.SelectSingleNode("Triggers");
-                            if (Item != null) gyroControlsInf[device].triggers = Item.InnerText;
+                            if (Item != null) GyroControlsInfo[device].triggers = Item.InnerText;
                         }
                         catch
                         {
@@ -3295,7 +3298,7 @@ namespace DS4Windows
                         try
                         {
                             Item = xmlGyroControlsElement.SelectSingleNode("TriggerCond");
-                            if (Item != null) gyroControlsInf[device].triggerCond = SaTriggerCondValue(Item.InnerText);
+                            if (Item != null) GyroControlsInfo[device].triggerCond = SaTriggerCondValue(Item.InnerText);
                         }
                         catch
                         {
@@ -3305,7 +3308,7 @@ namespace DS4Windows
                         {
                             Item = xmlGyroControlsElement.SelectSingleNode("TriggerTurns");
                             if (bool.TryParse(Item?.InnerText ?? "", out var tempTurns))
-                                gyroControlsInf[device].triggerTurns = tempTurns;
+                                GyroControlsInfo[device].triggerTurns = tempTurns;
                         }
                         catch
                         {
@@ -6917,7 +6920,7 @@ namespace DS4Windows
             private void ResetProfile(int device)
             {
                 ButtonMouseInfos[device].Reset();
-                gyroControlsInf[device].Reset();
+                GyroControlsInfo[device].Reset();
 
                 EnableTouchToggle[device] = true;
                 IdleDisconnectTimeout[device] = 0;
@@ -7032,7 +7035,7 @@ namespace DS4Windows
                 GyroMouseStickTriggerTurns[device] = true;
                 SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
                 SASteeringWheelEmulationRange[device] = 360;
-                saWheelFuzzValues[device] = 0;
+                SAWheelFuzzValues[device] = 0;
                 WheelSmoothInfo[device].Reset();
                 TouchDisInvertTriggers[device] = new int[1] { -1 };
                 GyroSensitivity[device] = 100;

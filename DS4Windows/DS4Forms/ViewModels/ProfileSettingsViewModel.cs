@@ -772,8 +772,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int SASteeringWheelFuzz
         {
-            get => Global.Instance.SAWheelFuzzValues[device];
-            set => Global.Instance.SAWheelFuzzValues[device] = value;
+            get => Global.Instance.Config.SAWheelFuzzValues[device];
+            set => Global.Instance.Config.SAWheelFuzzValues[device] = value;
         }
 
         public bool SASteeringWheelUseSmoothing
@@ -2290,19 +2290,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroControlsTurns
         {
-            get => Global.Instance.GyroControlsInf[device].triggerTurns;
-            set => Global.Instance.GyroControlsInf[device].triggerTurns = value;
+            get => Global.Instance.Config.GyroControlsInfo[device].triggerTurns;
+            set => Global.Instance.Config.GyroControlsInfo[device].triggerTurns = value;
         }
 
         public int GyroControlsEvalCondIndex
         {
-            get => Global.Instance.GyroControlsInf[device].triggerCond ? 0 : 1;
-            set => Global.Instance.GyroControlsInf[device].triggerCond = value == 0 ? true : false;
+            get => Global.Instance.Config.GyroControlsInfo[device].triggerCond ? 0 : 1;
+            set => Global.Instance.Config.GyroControlsInfo[device].triggerCond = value == 0 ? true : false;
         }
 
         public bool GyroControlsToggle
         {
-            get => Global.Instance.GyroControlsInf[device].triggerToggle;
+            get => Global.Instance.Config.GyroControlsInfo[device].triggerToggle;
             set
             {
                 Global.Instance.SetGyroControlsToggle(device, value, App.rootHub);
@@ -2349,46 +2349,46 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroSwipeTurns
         {
-            get => Global.Instance.GyroSwipeInf[device].triggerTurns;
-            set => Global.Instance.GyroSwipeInf[device].triggerTurns = value;
+            get => Global.Instance.Config.GyroSwipeInfo[device].triggerTurns;
+            set => Global.Instance.Config.GyroSwipeInfo[device].triggerTurns = value;
         }
 
         public int GyroSwipeEvalCondIndex
         {
-            get => Global.Instance.GyroSwipeInf[device].triggerCond ? 0 : 1;
-            set => Global.Instance.GyroSwipeInf[device].triggerCond =  value == 0 ? true : false;
+            get => Global.Instance.Config.GyroSwipeInfo[device].triggerCond ? 0 : 1;
+            set => Global.Instance.Config.GyroSwipeInfo[device].triggerCond =  value == 0 ? true : false;
         }
 
         public int GyroSwipeXAxis
         {
-            get => (int)Global.Instance.GyroSwipeInf[device].xAxis;
-            set => Global.Instance.GyroSwipeInf[device].xAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
+            get => (int)Global.Instance.Config.GyroSwipeInfo[device].xAxis;
+            set => Global.Instance.Config.GyroSwipeInfo[device].xAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
         }
 
         public int GyroSwipeDeadZoneX
         {
-            get => Global.Instance.GyroSwipeInf[device].deadzoneX;
+            get => Global.Instance.Config.GyroSwipeInfo[device].deadzoneX;
             set
             {
-                Global.Instance.GyroSwipeInf[device].deadzoneX = value;
+                Global.Instance.Config.GyroSwipeInfo[device].deadzoneX = value;
             }
         }
 
         public int GyroSwipeDeadZoneY
         {
-            get => Global.Instance.GyroSwipeInf[device].deadzoneY;
+            get => Global.Instance.Config.GyroSwipeInfo[device].deadzoneY;
             set
             {
-                Global.Instance.GyroSwipeInf[device].deadzoneY = value;
+                Global.Instance.Config.GyroSwipeInfo[device].deadzoneY = value;
             }
         }
 
         public int GyroSwipeDelayTime
         {
-            get => Global.Instance.GyroSwipeInf[device].delayTime;
+            get => Global.Instance.Config.GyroSwipeInfo[device].delayTime;
             set
             {
-                Global.Instance.GyroSwipeInf[device].delayTime = value;
+                Global.Instance.Config.GyroSwipeInfo[device].delayTime = value;
             }
         }
 
@@ -2867,13 +2867,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.GyroSwipeInf[device].triggers = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.GyroSwipeInfo[device].triggers = string.Join(",", triggerList.ToArray());
             GyroSwipeTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroSwipeTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.GyroSwipeInf[device].triggers.Split(',');
+            string[] triggers = Global.Instance.Config.GyroSwipeInfo[device].triggers.Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)
@@ -2943,13 +2943,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.GyroControlsInf[device].triggers = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.GyroControlsInfo[device].triggers = string.Join(",", triggerList.ToArray());
             GyroControlsTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroControlsTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.GyroControlsInf[device].triggers.Split(',');
+            string[] triggers = Global.Instance.Config.GyroControlsInfo[device].triggers.Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)
