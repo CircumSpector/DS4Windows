@@ -183,18 +183,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public event EventHandler CheckEveryUnitChanged;
         public bool UseUDPServer
         {
-            get => DS4Windows.Global.Instance.isUsingUDPServer();
+            get => DS4Windows.Global.Instance.Config.IsUdpServerEnabled;
             set
             {
-                if (DS4Windows.Global.Instance.isUsingUDPServer() == value) return;
-                DS4Windows.Global.Instance.setUsingUDPServer(value);
+                if (DS4Windows.Global.Instance.Config.IsUdpServerEnabled == value) return;
+                DS4Windows.Global.Instance.Config.IsUdpServerEnabled = value;
                 UseUDPServerChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         public event EventHandler UseUDPServerChanged;
 
-        public string UdpIpAddress { get => DS4Windows.Global.Instance.getUDPServerListenAddress();
-            set => DS4Windows.Global.Instance.setUDPServerListenAddress(value); }
+        public string UdpIpAddress { get => DS4Windows.Global.Instance.Config.UdpServerListenAddress;
+            set => DS4Windows.Global.Instance.Config.UdpServerListenAddress = value; }
         public int UdpPort { get => DS4Windows.Global.Instance.Config.UdpServerPort; set => DS4Windows.Global.Instance.Config.UdpServerPort = value; }
 
         public bool UseUdpSmoothing
@@ -212,7 +212,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Visibility UdpServerOneEuroPanelVisibility
         {
-            get => DS4Windows.Global.Instance.isUsingUDPServer() && DS4Windows.Global.Instance.Config.UseUdpSmoothing ? Visibility.Visible : Visibility.Collapsed;
+            get => DS4Windows.Global.Instance.Config.IsUdpServerEnabled && DS4Windows.Global.Instance.Config.UseUdpSmoothing ? Visibility.Visible : Visibility.Collapsed;
         }
         public event EventHandler UdpServerOneEuroPanelVisibilityChanged;
 

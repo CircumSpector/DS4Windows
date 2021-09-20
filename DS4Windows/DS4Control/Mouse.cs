@@ -200,10 +200,10 @@ namespace DS4Windows
             {
                 s = dev.getCurrentStateRef();
 
-                useReverseRatchet = Global.Instance.getGyroTriggerTurns(deviceNum);
+                useReverseRatchet = Global.Instance.GetGyroTriggerTurns(deviceNum);
                 int i = 0;
-                string[] ss = Global.Instance.getSATriggers(deviceNum).Split(',');
-                bool andCond = Global.Instance.getSATriggerCond(deviceNum);
+                string[] ss = Global.Instance.GetSATriggers(deviceNum).Split(',');
+                bool andCond = Global.Instance.GetSATriggerCondition(deviceNum);
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {
@@ -387,7 +387,7 @@ namespace DS4Windows
         private void SixMouseStick(SixAxisEventArgs arg)
         {
             int deltaX = 0, deltaY = 0;
-            deltaX = Global.Instance.getGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
+            deltaX = Global.Instance.GetGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
                 arg.sixAxis.gyroRollFull;
             deltaY = -arg.sixAxis.gyroPitchFull;
             //int inputX = deltaX, inputY = deltaY;
@@ -765,7 +765,7 @@ namespace DS4Windows
             firstTouch.populate(arg.touches[0].hwX, arg.touches[0].hwY, arg.touches[0].touchID,
                 arg.touches[0].previousTouch);
 
-            if (mouseMode && Global.Instance.getDoubleTap(deviceNum))
+            if (mouseMode && Global.Instance.GetDoubleTap(deviceNum))
             {
                 DateTime test = arg.timeStamp;
                 if (test <= (firstTap + TimeSpan.FromMilliseconds((double)Global.Instance.Config.TapSensitivity[deviceNum] * 1.5)) && !arg.touchButtonPressed)
@@ -782,7 +782,7 @@ namespace DS4Windows
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
-            byte tapSensitivity = Global.Instance.getTapSensitivity(deviceNum);
+            byte tapSensitivity = Global.Instance.GetTapSensitivity(deviceNum);
             if (tapSensitivity != 0 && Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
@@ -796,7 +796,7 @@ namespace DS4Windows
                 {
                     if (Math.Abs(firstTouch.hwX - arg.touches[0].hwX) < 10 && Math.Abs(firstTouch.hwY - arg.touches[0].hwY) < 10)
                     {
-                        if (Global.Instance.getDoubleTap(deviceNum))
+                        if (Global.Instance.GetDoubleTap(deviceNum))
                         {
                             tappedOnce = true;
                             firstTap = arg.timeStamp;

@@ -91,57 +91,12 @@ namespace DS4Windows
             }
         }
 
-        public bool getUseExclusiveMode()
-        {
-            return _config.UseExclusiveMode;
-        }
-
-        public bool GetMinToTaskbar()
-        {
-            return _config.MinToTaskBar;
-        }
-
-        public bool getFlashWhenLate()
-        {
-            return _config.FlashWhenLate;
-        }
-
-        public int getFlashWhenLateAt()
-        {
-            return _config.FlashWhenLateAt;
-        }
-
-        public bool isUsingUDPServer()
-        {
-            return _config.UseUdpServer;
-        }
-
-        public void setUsingUDPServer(bool state)
-        {
-            _config.UseUdpServer = state;
-        }
-
-        public string getUDPServerListenAddress()
-        {
-            return _config.UdpServerListenAddress;
-        }
-
-        public void setUDPServerListenAddress(string value)
-        {
-            _config.UdpServerListenAddress = value.Trim();
-        }
-
-        public bool IsUsingUDPServerSmoothing()
-        {
-            return _config.UseUdpSmoothing;
-        }
-
-        public byte getRumbleBoost(int index)
+        public byte GetRumbleBoost(int index)
         {
             return _config.RumbleBoost[index];
         }
 
-        public void setRumbleAutostopTime(int index, int value)
+        public void SetRumbleAutostopTime(int index, int value)
         {
             _config.RumbleAutostopTime[index] = value;
 
@@ -150,27 +105,27 @@ namespace DS4Windows
                 tempDev.RumbleAutostopTime = value;
         }
 
-        public int getRumbleAutostopTime(int index)
+        public int GetRumbleAutostopTime(int index)
         {
             return _config.RumbleAutostopTime[index];
         }
 
-        public bool getEnableTouchToggle(int index)
+        public bool GetEnableTouchToggle(int index)
         {
             return _config.EnableTouchToggle[index];
         }
 
-        public int getIdleDisconnectTimeout(int index)
+        public int GetIdleDisconnectTimeout(int index)
         {
             return _config.IdleDisconnectTimeout[index];
         }
 
-        public bool getEnableOutputDataToDS4(int index)
+        public bool GetEnableOutputDataToDS4(int index)
         {
             return _config.EnableOutputDataToDS4[index];
         }
 
-        public byte getTouchSensitivity(int index)
+        public byte GetTouchSensitivity(int index)
         {
             return _config.TouchSensitivity[index];
         }
@@ -180,7 +135,7 @@ namespace DS4Windows
             return TouchpadActive[index];
         }
 
-        public LightbarSettingInfo getLightbarSettingsInfo(int index)
+        public LightbarSettingInfo GetLightbarSettingsInfo(int index)
         {
             return _config.LightbarSettingInfo[index];
         }
@@ -200,14 +155,14 @@ namespace DS4Windows
             return _config.GyroOutputMode[index] == GyroOutMode.Controls;
         }
 
-        public string getSATriggers(int index)
+        public string GetSATriggers(int index)
         {
             return _config.SATriggers[index];
         }
 
-        public bool getSATriggerCond(int index)
+        public bool GetSATriggerCondition(int index)
         {
-            return _config.SATriggerCond[index];
+            return _config.SATriggerCondition[index];
         }
 
         public void SetSaTriggerCond(int index, string text)
@@ -240,7 +195,7 @@ namespace DS4Windows
             return _config.GyroMouseStickTriggerTurns[device];
         }
 
-        public int getGyroMouseStickHorizontalAxis(int index)
+        public int GetGyroMouseStickHorizontalAxis(int index)
         {
             return _config.GyroMouseStickHorizontalAxis[index];
         }
@@ -281,17 +236,17 @@ namespace DS4Windows
             return _config.GyroSensVerticalScale[index];
         }
 
-        public int getGyroInvert(int index)
+        public int GetGyroInvert(int index)
         {
             return _config.GyroInvert[index];
         }
 
-        public bool getGyroTriggerTurns(int index)
+        public bool GetGyroTriggerTurns(int index)
         {
             return _config.GyroTriggerTurns[index];
         }
 
-        public int getGyroMouseHorizontalAxis(int index)
+        public int GetGyroMouseHorizontalAxis(int index)
         {
             return _config.GyroMouseHorizontalAxis[index];
         }
@@ -322,7 +277,7 @@ namespace DS4Windows
         }
 
         //public static DS4Color[] MainColor => m_Config.m_Leds;
-        public ref DS4Color getMainColor(int index)
+        public ref DS4Color GetMainColor(int index)
         {
             return ref _config.LightbarSettingInfo[index].ds4winSettings.m_Led;
             //return ref m_Config.m_Leds[index];
@@ -363,27 +318,27 @@ namespace DS4Windows
             //return ref m_Config.m_FlashLeds[index];
         }
 
-        public byte getTapSensitivity(int index)
+        public byte GetTapSensitivity(int index)
         {
             return _config.TapSensitivity[index];
         }
 
-        public bool getDoubleTap(int index)
+        public bool GetDoubleTap(int index)
         {
             return _config.DoubleTap[index];
         }
 
-        public int getScrollSensitivity(int index)
+        public int GetScrollSensitivity(int index)
         {
             return _config.ScrollSensitivity[index];
         }
 
-        public bool getTouchpadJitterCompensation(int index)
+        public bool GetTouchpadJitterCompensation(int index)
         {
             return _config.TouchpadJitterCompensation[index];
         }
 
-        public int getTouchpadInvert(int index)
+        public int GetTouchPadInvert(int index)
         {
             return _config.TouchPadInvert[index];
         }
@@ -412,25 +367,25 @@ namespace DS4Windows
             //return m_Config.r2Deadzone[index];
         }
 
-        public double getSXDeadzone(int index)
+        public double GetSXDeadZone(int index)
         {
             return _config.SXDeadzone[index];
         }
 
-        public double getSZDeadzone(int index)
+        public double GetSZDeadZone(int index)
         {
             return _config.SZDeadzone[index];
         }
 
         //public static int[] LSDeadzone => m_Config.LSDeadzone;
-        public int getLSDeadzone(int index)
+        public int GetLSDeadZone(int index)
         {
             return _config.LSModInfo[index].deadZone;
             //return m_Config.LSDeadzone[index];
         }
 
         //public static int[] RSDeadzone => m_Config.RSDeadzone;
-        public int getRSDeadzone(int index)
+        public int GetRSDeadZone(int index)
         {
             return _config.RSModInfo[index].deadZone;
             //return m_Config.RSDeadzone[index];
@@ -460,12 +415,12 @@ namespace DS4Windows
             return _config.RSModInfo[index];
         }
 
-        public double getSXAntiDeadzone(int index)
+        public double GetSXAntiDeadzone(int index)
         {
             return _config.SXAntiDeadzone[index];
         }
 
-        public double getSZAntiDeadzone(int index)
+        public double GetSZAntiDeadzone(int index)
         {
             return _config.SZAntiDeadzone[index];
         }
@@ -484,12 +439,12 @@ namespace DS4Windows
             //return m_Config.RSMaxzone[index];
         }
 
-        public double getSXMaxzone(int index)
+        public double GetSXMaxzone(int index)
         {
             return _config.SXMaxzone[index];
         }
 
-        public double getSZMaxzone(int index)
+        public double GetSZMaxzone(int index)
         {
             return _config.SZMaxzone[index];
         }
@@ -522,17 +477,17 @@ namespace DS4Windows
             //return m_Config.r2Maxzone[index];
         }
 
-        public double getLSRotation(int index)
+        public double GetLSRotation(int index)
         {
             return _config.LSRotation[index];
         }
 
-        public double getRSRotation(int index)
+        public double GetRSRotation(int index)
         {
             return _config.RSRotation[index];
         }
 
-        public double getL2Sens(int index)
+        public double GetL2Sens(int index)
         {
             return _config.L2Sens[index];
         }

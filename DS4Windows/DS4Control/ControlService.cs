@@ -584,7 +584,7 @@ namespace DS4Windows
                         Task.Run(() =>
                         {
                             var UDP_SERVER_PORT = Global.Instance.Config.UdpServerPort;
-                            var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
+                            var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.Config.UdpServerListenAddress;
 
                             try
                             {
@@ -678,7 +678,7 @@ namespace DS4Windows
             await Task.Delay(100);
 
             var UDP_SERVER_PORT = Global.Instance.Config.UdpServerPort;
-            var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
+            var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.Config.UdpServerListenAddress;
 
             try
             {
@@ -1161,7 +1161,7 @@ namespace DS4Windows
                 LogDebug($"Using output KB+M handler: {DS4Windows.Global.outputKBMHandler.GetFullDisplayName()}");
                 LogDebug($"Connection to ViGEmBus {Global.ViGEmBusVersion} established");
 
-                DS4Devices.isExclusiveMode = Global.Instance.getUseExclusiveMode(); //Re-enable Exclusive Mode
+                DS4Devices.isExclusiveMode = Global.Instance.Config.UseExclusiveMode; //Re-enable Exclusive Mode
 
                 UpdateHidHiddenAttributes();
 
@@ -1172,7 +1172,7 @@ namespace DS4Windows
                     LogDebug(DS4Devices.isExclusiveMode ? DS4WinWPF.Properties.Resources.UsingExclusive : DS4WinWPF.Properties.Resources.UsingShared);
                 }
 
-                if (Global.Instance.isUsingUDPServer() && _udpServer == null)
+                if (Global.Instance.Config.IsUdpServerEnabled && _udpServer == null)
                 {
                     ChangeUDPStatus(true, false);
                     while (udpChangeStatus == true)
@@ -1281,7 +1281,7 @@ namespace DS4Windows
 
                         if (profileLoaded || useAutoProfile)
                         {
-                            device.LightBarColor = Global.Instance.getMainColor(i);
+                            device.LightBarColor = Global.Instance.GetMainColor(i);
 
                             if (!Global.Instance.getDInputOnly(i) && device.isSynced())
                             {
@@ -1362,7 +1362,7 @@ namespace DS4Windows
                 {
                     //var UDP_SERVER_PORT = 26760;
                     var UDP_SERVER_PORT = Global.Instance.Config.UdpServerPort;
-                    var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.getUDPServerListenAddress();
+                    var UDP_SERVER_LISTEN_ADDRESS = Global.Instance.Config.UdpServerListenAddress;
 
                     try
                     {
@@ -1415,7 +1415,7 @@ namespace DS4Windows
                 DS4State stateForUdp = TempState[tempIdx];
 
                 CurrentState[tempIdx].CopyTo(stateForUdp);
-                if (Global.Instance.IsUsingUDPServerSmoothing())
+                if (Global.Instance.Config.UseUdpSmoothing)
                 {
                     if (stateForUdp.elapsedTime == 0)
                     {
@@ -1720,7 +1720,7 @@ namespace DS4Windows
 
                             if (profileLoaded || useAutoProfile)
                             {
-                                device.LightBarColor = Global.Instance.getMainColor(Index);
+                                device.LightBarColor = Global.Instance.GetMainColor(Index);
 
                                 if (!Global.Instance.getDInputOnly(Index) && device.isSynced())
                                 {
@@ -1823,11 +1823,11 @@ namespace DS4Windows
 
         public void CheckProfileOptions(int ind, DS4Device device, bool startUp=false)
         {
-            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.getEnableOutputDataToDS4(ind));
-            if (!Instance.getEnableOutputDataToDS4(ind))
+            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.GetEnableOutputDataToDS4(ind));
+            if (!Instance.GetEnableOutputDataToDS4(ind))
                 LogDebug("Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 
-            device.setIdleTimeout(Instance.getIdleDisconnectTimeout(ind));
+            device.setIdleTimeout(Instance.GetIdleDisconnectTimeout(ind));
             device.setBTPollRate(Instance.getBTPollRate(ind));
             touchPad[ind].ResetTrackAccel(Instance.getTrackballFriction(ind));
             touchPad[ind].ResetToggleGyroModes();
@@ -1843,9 +1843,9 @@ namespace DS4Windows
             device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.Config.R2OutputSettings[ind].TriggerEffect,
                 Instance.Config.R2OutputSettings[ind].TrigEffectSettings);
 
-            device.RumbleAutostopTime = Instance.getRumbleAutostopTime(ind);
+            device.RumbleAutostopTime = Instance.GetRumbleAutostopTime(ind);
             device.setRumble(0, 0);
-            device.LightBarColor = Instance.getMainColor(ind);
+            device.LightBarColor = Instance.GetMainColor(ind);
 
             if (!startUp)
             {
@@ -2187,7 +2187,7 @@ namespace DS4Windows
 
                 if (inWarnMonitor[ind])
                 {
-                    int flashWhenLateAt = Instance.getFlashWhenLateAt();
+                    int flashWhenLateAt = Instance.Config.FlashWhenLateAt;
                     if (!lag[ind] && device.Latency >= flashWhenLateAt)
                     {
                         lag[ind] = true;
@@ -2254,7 +2254,7 @@ namespace DS4Windows
                     return;
                 }
 
-                if (Instance.getEnableTouchToggle(ind))
+                if (Instance.GetEnableTouchToggle(ind))
                 {
                     CheckForTouchToggle(ind, cState, pState);
                 }
@@ -2345,7 +2345,7 @@ namespace DS4Windows
             {
                 lag[ind] = true;
                 LogDebug(string.Format(DS4WinWPF.Properties.Resources.LatencyOverTen, (ind + 1), device.Latency), true);
-                if (Instance.getFlashWhenLate())
+                if (Instance.Config.FlashWhenLate)
                 {
                     DS4Color color = new DS4Color { red = 50, green = 0, blue = 0 };
                     DS4LightBar.forcedColor[ind] = color;
@@ -2359,7 +2359,7 @@ namespace DS4Windows
                 LogDebug(DS4WinWPF.Properties.Resources.LatencyNotOverTen.Replace("*number*", (ind + 1).ToString()));
                 DS4LightBar.forcelight[ind] = false;
                 DS4LightBar.forcedFlash[ind] = 0;
-                device.LightBarColor = Instance.getMainColor(ind);
+                device.LightBarColor = Instance.GetMainColor(ind);
             }
         }
 
@@ -2532,7 +2532,7 @@ namespace DS4Windows
         public void SetDevRumble(DS4Device device,
             byte heavyMotor, byte lightMotor, int deviceNum)
         {
-            byte boost = Instance.getRumbleBoost(deviceNum);
+            byte boost = Instance.GetRumbleBoost(deviceNum);
             uint lightBoosted = ((uint)lightMotor * (uint)boost) / 100;
             if (lightBoosted > 255)
                 lightBoosted = 255;

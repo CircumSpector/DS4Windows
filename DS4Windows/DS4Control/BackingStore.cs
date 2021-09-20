@@ -217,7 +217,7 @@ namespace DS4Windows
 
         public IList<int> SASteeringWheelEmulationRange { get; set; }
 
-        public IList<bool> SATriggerCond { get; set; }
+        public IList<bool> SATriggerCondition { get; set; }
 
         public IList<string> SATriggers { get; set; }
 
@@ -252,6 +252,8 @@ namespace DS4Windows
         public IList<int> SAWheelFuzzValues { get; set; }
 
         public ulong LastVersionCheckedNumber { get; set; }
+
+        public bool IsUdpServerEnabled { get; set; }
 
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);

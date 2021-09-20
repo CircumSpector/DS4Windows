@@ -737,11 +737,11 @@ namespace DS4Windows
 
         public static DS4State SetCurveAndDeadzone(int device, DS4State cState, DS4State dState)
         {
-            double rotation = /*tempDoubleArray[device] =*/  Global.Instance.getLSRotation(device);
+            double rotation = /*tempDoubleArray[device] =*/  Global.Instance.GetLSRotation(device);
             if (rotation > 0.0 || rotation < 0.0)
                 cState.rotateLSCoordinates(rotation);
 
-            double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.getRSRotation(device);
+            double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.GetRSRotation(device);
             if (rotationRS > 0.0 || rotationRS < 0.0)
                 cState.rotateRSCoordinates(rotationRS);
 
@@ -1374,7 +1374,7 @@ namespace DS4Windows
                 }
             }
 
-            double l2Sens = Global.Instance.getL2Sens(device);
+            double l2Sens = Global.Instance.GetL2Sens(device);
             if (l2Sens != 1.0)
                 dState.L2 = (byte)Global.Clamp(0, l2Sens * dState.L2, 255);
 
@@ -1766,12 +1766,12 @@ namespace DS4Windows
             bool saControls = Global.Instance.IsUsingSAForControls(device);
             if (saControls && dState.Motion.outputGyroControls)
             {
-                int SXD = (int)(128d * Global.Instance.getSXDeadzone(device));
-                int SZD = (int)(128d * Global.Instance.getSZDeadzone(device));
-                double SXMax = Global.Instance.getSXMaxzone(device);
-                double SZMax = Global.Instance.getSZMaxzone(device);
-                double sxAntiDead = Global.Instance.getSXAntiDeadzone(device);
-                double szAntiDead = Global.Instance.getSZAntiDeadzone(device);
+                int SXD = (int)(128d * Global.Instance.GetSXDeadZone(device));
+                int SZD = (int)(128d * Global.Instance.GetSZDeadZone(device));
+                double SXMax = Global.Instance.GetSXMaxzone(device);
+                double SZMax = Global.Instance.GetSZMaxzone(device);
+                double sxAntiDead = Global.Instance.GetSXAntiDeadzone(device);
+                double szAntiDead = Global.Instance.GetSZAntiDeadzone(device);
                 double sxsens = Global.Instance.getSXSens(device);
                 double szsens = Global.Instance.getSZSens(device);
                 int result = 0;
@@ -4274,9 +4274,9 @@ namespace DS4Windows
         {
             int deadzoneL = 0;
             int deadzoneR = 0;
-            if (Global.Instance.getLSDeadzone(device) == 0)
+            if (Global.Instance.GetLSDeadZone(device) == 0)
                 deadzoneL = 3;
-            if (Global.Instance.getRSDeadzone(device) == 0)
+            if (Global.Instance.GetRSDeadZone(device) == 0)
                 deadzoneR = 3;
 
             double value = 0.0;
@@ -5184,8 +5184,8 @@ namespace DS4Windows
             }
             else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
             {
-                double SXD = Global.Instance.getSXDeadzone(device);
-                double SZD = Global.Instance.getSZDeadzone(device);
+                double SXD = Global.Instance.GetSXDeadZone(device);
+                double SZD = Global.Instance.GetSZDeadZone(device);
                 bool saControls = Global.Instance.IsUsingSAForControls(device);
 
                 switch (control)
@@ -5482,7 +5482,7 @@ namespace DS4Windows
             {
                 // Re-calibration completed or cancelled. Set lightbar color back to normal color
                 DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcedColor[device] = Global.Instance.getMainColor(device);
+                DS4LightBar.forcedColor[device] = Global.Instance.GetMainColor(device);
                 DS4LightBar.forcelight[device] = false;
                 DS4LightBar.updateLightBar(controller, device);
             }
@@ -5624,7 +5624,7 @@ namespace DS4Windows
 
                 // Apply deadzone (SA X-deadzone value). This code assumes that 20deg is the max deadzone anyone ever might wanna use (in practice effective deadzone 
                 // is probably just few degrees by using SXDeadZone values 0.01...0.05)
-                double sxDead = Global.Instance.getSXDeadzone(device);
+                double sxDead = Global.Instance.GetSXDeadZone(device);
                 if (sxDead > 0)
                 {
                     int sxDeadInt = Convert.ToInt32(20.0 * C_WHEEL_ANGLE_PRECISION * sxDead);
@@ -5694,7 +5694,7 @@ namespace DS4Windows
                 //LogToGuiSACalibrationDebugMsg($"DBG gyro=({gyroAccelX}, {gyroAccelZ})  output=({exposedState.OutputAccelX}, {exposedState.OutputAccelZ})  PitRolYaw=({currentDeviceState.Motion.gyroPitch}, {currentDeviceState.Motion.gyroRoll}, {currentDeviceState.Motion.gyroYaw})  VelPitRolYaw=({currentDeviceState.Motion.angVelPitch}, {currentDeviceState.Motion.angVelRoll}, {currentDeviceState.Motion.angVelYaw})  angle={result / (1.0 * C_WHEEL_ANGLE_PRECISION)}  fullTurns={controller.wheelFullTurnCount}", false);
 
                 // Apply anti-deadzone (SA X-antideadzone value)
-                double sxAntiDead = Global.Instance.getSXAntiDeadzone(device);
+                double sxAntiDead = Global.Instance.GetSXAntiDeadzone(device);
 
                 int outputAxisMax, outputAxisMin, outputAxisZero;
                 if ( Global.Instance.Config.OutputDeviceType[device] == OutContType.DS4 )

@@ -146,7 +146,7 @@ namespace DS4Windows
 
             public bool UseExclusiveMode { get; set; } // Re-enable Ex Mode
 
-            public bool UseUdpServer { get; set; }
+            public bool IsUdpServerEnabled { get; set; }
 
             public IList<int> RumbleAutostopTime { get; } = new List<int>
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
@@ -179,7 +179,7 @@ namespace DS4Windows
             public IList<int> SASteeringWheelEmulationRange { get; set; } =
                 new List<int> { 360, 360, 360, 360, 360, 360, 360, 360, 360 };
 
-            public IList<bool> SATriggerCond { get; set; } = new List<bool>
+            public IList<bool> SATriggerCondition { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
             public IList<string> SATriggers { get; set; } = new List<string>
@@ -729,7 +729,7 @@ namespace DS4Windows
 
             public void SetSaTriggerCond(int index, string text)
             {
-                SATriggerCond[index] = SaTriggerCondValue(text);
+                SATriggerCondition[index] = SaTriggerCondValue(text);
             }
 
             public void SetSaMouseStickTriggerCond(int index, string text)
@@ -1095,7 +1095,7 @@ namespace DS4Windows
                     xmlSATriggers.InnerText = SATriggers[device];
                     rootElement.AppendChild(xmlSATriggers);
                     var xmlSATriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "SATriggerCond", null);
-                    xmlSATriggerCond.InnerText = SaTriggerCondString(SATriggerCond[device]);
+                    xmlSATriggerCond.InnerText = SaTriggerCondString(SATriggerCondition[device]);
                     rootElement.AppendChild(xmlSATriggerCond);
                     var xmlSASteeringWheelEmulationAxis =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelEmulationAxis", null);
@@ -3175,11 +3175,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SATriggerCond");
-                        SATriggerCond[device] = SaTriggerCondValue(Item.InnerText);
+                        SATriggerCondition[device] = SaTriggerCondValue(Item.InnerText);
                     }
                     catch
                     {
-                        SATriggerCond[device] = true;
+                        SATriggerCondition[device] = true;
                         missingSetting = true;
                     }
 
@@ -4990,7 +4990,7 @@ namespace DS4Windows
                         {
                             Item = m_Xdoc.SelectSingleNode("/Profile/UseUDPServer");
                             bool.TryParse(Item.InnerText, out var value);
-                            UseUdpServer = value;
+                            IsUdpServerEnabled = value;
                         }
                         catch
                         {
@@ -5311,7 +5311,7 @@ namespace DS4Windows
                 xmlAppThemeChoice.InnerText = ThemeChoice.ToString();
                 rootElement.AppendChild(xmlAppThemeChoice);
                 var xmlUseUDPServ = m_Xdoc.CreateNode(XmlNodeType.Element, "UseUDPServer", null);
-                xmlUseUDPServ.InnerText = UseUdpServer.ToString();
+                xmlUseUDPServ.InnerText = IsUdpServerEnabled.ToString();
                 rootElement.AppendChild(xmlUseUDPServ);
                 var xmlUDPServPort = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerPort", null);
                 xmlUDPServPort.InnerText = UdpServerPort.ToString();
@@ -6285,7 +6285,7 @@ namespace DS4Windows
 
                 GyroOutputMode[device] = DS4Windows.GyroOutMode.Mouse;
                 SATriggers[device] = "4";
-                SATriggerCond[device] = true;
+                SATriggerCondition[device] = true;
                 GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
@@ -6324,7 +6324,7 @@ namespace DS4Windows
 
                 GyroOutputMode[device] = DS4Windows.GyroOutMode.Mouse;
                 SATriggers[device] = "4";
-                SATriggerCond[device] = true;
+                SATriggerCondition[device] = true;
                 GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
@@ -6552,7 +6552,7 @@ namespace DS4Windows
 
                 GyroOutputMode[device] = DS4Windows.GyroOutMode.Mouse;
                 SATriggers[device] = "4";
-                SATriggerCond[device] = true;
+                SATriggerCondition[device] = true;
                 GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
@@ -7021,7 +7021,7 @@ namespace DS4Windows
                 StartTouchpadOff[device] = false;
                 TouchOutMode[device] = TouchpadOutMode.Mouse;
                 SATriggers[device] = "-1";
-                SATriggerCond[device] = true;
+                SATriggerCondition[device] = true;
                 GyroOutputMode[device] = DS4Windows.GyroOutMode.Controls;
                 SAMouseStickTriggers[device] = "-1";
                 SAMouseStickTriggerCond[device] = true;

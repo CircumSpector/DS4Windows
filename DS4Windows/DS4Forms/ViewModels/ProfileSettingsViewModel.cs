@@ -380,8 +380,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int RumbleAutostopTime
         {
             // RumbleAutostopTime value is in milliseconds in XML config file, but GUI uses just seconds
-            get => Global.Instance.getRumbleAutostopTime(device) / 1000;
-            set => Global.Instance.setRumbleAutostopTime(device, value * 1000);
+            get => Global.Instance.GetRumbleAutostopTime(device) / 1000;
+            set => Global.Instance.SetRumbleAutostopTime(device, value * 1000);
         }
 
         private bool heavyRumbleActive;
@@ -1849,7 +1849,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseEvalCondIndex
         {
-            get => Global.Instance.getSATriggerCond(device) ? 0 : 1;
+            get => Global.Instance.GetSATriggerCondition(device) ? 0 : 1;
             set => Global.Instance.SetSaTriggerCond(device, value == 0 ? "and" : "or");
         }
 

@@ -49,7 +49,7 @@ namespace DS4Windows
         {
             DS4Color color = new DS4Color();
             bool useForceLight = forcelight[deviceNum];
-            LightbarSettingInfo lightbarSettingInfo = Instance.getLightbarSettingsInfo(deviceNum);
+            LightbarSettingInfo lightbarSettingInfo = Instance.GetLightbarSettingsInfo(deviceNum);
             LightbarDS4WinInfo lightModeInfo = lightbarSettingInfo.ds4winSettings;
             bool useLightRoutine = lightbarSettingInfo.mode == LightbarMode.DS4Win;
             //bool useLightRoutine = false;
@@ -108,7 +108,7 @@ namespace DS4Windows
                     }
                     else
                     {
-                        color = Instance.getMainColor(deviceNum);
+                        color = Instance.GetMainColor(deviceNum);
                     }
                 }
 
@@ -168,7 +168,7 @@ namespace DS4Windows
                     }
                 }
 
-                int idleDisconnectTimeout = Instance.getIdleDisconnectTimeout(deviceNum);
+                int idleDisconnectTimeout = Instance.GetIdleDisconnectTimeout(deviceNum);
                 if (idleDisconnectTimeout > 0 && lightModeInfo.ledAsBattery &&
                     (!device.isCharging() || device.getBattery() >= 100))
                 {
