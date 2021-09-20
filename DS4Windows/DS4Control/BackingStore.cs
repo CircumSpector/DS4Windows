@@ -77,8 +77,6 @@ namespace DS4Windows
 
         public IList<SpecialAction> Actions { get; set; }
 
-        public IList<DS4ControlSettings>[] Ds4Settings { get; set; }
-
         public IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; }
 
         public IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; }
@@ -153,23 +151,23 @@ namespace DS4Windows
 
         public IList<BezierCurve> SZOutBezierCurveObj { get; set; }
 
-        public IList< int> GyroInvert { get; set; }
+        public IList<int> GyroInvert { get; set; }
 
-        public IList<bool> GyroTriggerTurns{ get; set; }
+        public IList<bool> GyroTriggerTurns { get; set; }
 
-        public IList<GyroMouseInfo> GyroMouseInfo{ get; set; }
+        public IList<GyroMouseInfo> GyroMouseInfo { get; set; }
 
         public IList<int> GyroMouseHorizontalAxis { get; set; }
 
         public IList<int> GyroMouseStickHorizontalAxis { get; set; }
-        
-        public IList <bool> TrackballMode{ get; set; }
+
+        public IList<bool> TrackballMode { get; set; }
 
         public IList<double> TrackballFriction { get; set; }
 
         public IList<TouchpadAbsMouseSettings> TouchPadAbsMouse { get; set; }
-        
-        public IList<TouchpadRelMouseSettings> TouchPadRelMouse{ get; set; }
+
+        public IList<TouchpadRelMouseSettings> TouchPadRelMouse { get; set; }
 
         public IList<byte> TapSensitivity { get; set; }
 
@@ -197,21 +195,41 @@ namespace DS4Windows
 
         public double UdpSmoothingMincutoff { get; set; }
 
-        public double UdpSmoothingBeta{ get; set; }
+        public double UdpSmoothingBeta { get; set; }
 
         public string FakeExeFileName { get; set; }
 
-        public IList<bool> ContainsCustomAction { get; set; } 
+        public IList<bool> ContainsCustomAction { get; set; }
 
-        public IList<bool> ContainsCustomExtras  { get; set; }
+        public IList<bool> ContainsCustomExtras { get; set; }
 
-        public IList<int> GyroSensitivity  { get; set; }
+        public IList<int> GyroSensitivity { get; set; }
 
-        public IList<int> GyroSensVerticalScale  { get; set; }
+        public IList<int> GyroSensVerticalScale { get; set; }
 
         public IList<bool> DirectInputOnly { get; set; }
 
+        public IList<TouchpadOutMode> TouchOutMode { get; set; }
 
+        public IList<IList<int>> TouchDisInvertTriggers { get; set; }
+
+        public IList<LightbarSettingInfo> LightbarSettingInfo { get; set; }
+
+        public IList<int> SASteeringWheelEmulationRange { get; set; }
+
+        public IList<bool> SATriggerCond { get; set; }
+
+        public IList<string> SATriggers { get; set; }
+
+        public IList<bool> StartTouchpadOff { get; set; }
+
+        public IList<bool> SAMouseStickTriggerCond { get; set; }
+
+        public IList<string> SAMouseStickTriggers { get; set; }
+
+        public IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
+
+        public IList<IList<DS4ControlSettings>> Ds4Settings { get; set; }
 
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);

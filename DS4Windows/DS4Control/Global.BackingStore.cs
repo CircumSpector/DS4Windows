@@ -33,14 +33,7 @@ namespace DS4Windows
 
             private readonly int[] _szOutCurveMode = new int[TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            /// <summary>
-            ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
-            ///     active when a foreground process is unknown (ie. no matching auto-profile rule)
-            /// </summary>
-            public bool AutoProfileRevertDefaultProfile = true;
-
             public readonly ControlSettingsGroup[] ds4controlSettings;
-            public int flashWhenLateAt = 50;
 
             public readonly GyroControlsInfo[] gyroControlsInf = new GyroControlsInfo[TEST_PROFILE_ITEM_COUNT]
             {
@@ -86,18 +79,6 @@ namespace DS4Windows
                     new()
                 };
 
-            public string lastVersionChecked = string.Empty;
-            public ulong LastVersionCheckedNumber;
-
-            public readonly LightbarSettingInfo[] lightbarSettingInfo = new LightbarSettingInfo[TEST_PROFILE_ITEM_COUNT]
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
             public readonly Dictionary<string, string> linkedProfiles = new();
 
             protected readonly XmlDocument m_Xdoc = new();
@@ -118,60 +99,27 @@ namespace DS4Windows
                     new(), new(), new(), new(), new(), new()
                 };
 
-            public readonly IList<int>
-                RumbleAutostopTime = new List<int>
-                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
-
-            public readonly bool[] SAMouseStickTriggerCond = new bool[TEST_PROFILE_ITEM_COUNT]
-                { true, true, true, true, true, true, true, true, true };
-
-            public readonly string[] SAMouseStickTriggers = new string[TEST_PROFILE_ITEM_COUNT]
-                { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
-
-            public readonly SASteeringWheelEmulationAxisType[] SASteeringWheelEmulationAxis =
-                new SASteeringWheelEmulationAxisType[TEST_PROFILE_ITEM_COUNT]
-                {
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None
-                };
-
-            public readonly int[] SASteeringWheelEmulationRange = new int[TEST_PROFILE_ITEM_COUNT]
-                { 360, 360, 360, 360, 360, 360, 360, 360, 360 };
-
-            public readonly bool[] SATriggerCond = new bool[TEST_PROFILE_ITEM_COUNT]
-                { true, true, true, true, true, true, true, true, true };
-
-            public readonly string[] SATriggers = new string[TEST_PROFILE_ITEM_COUNT]
-                { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
-
             public readonly int[] saWheelFuzzValues = new int[TEST_PROFILE_ITEM_COUNT];
 
-            public readonly bool[] StartTouchpadOff = new bool[TEST_PROFILE_ITEM_COUNT]
-                { false, false, false, false, false, false, false, false, false };
+            /// <summary>
+            ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
+            ///     active when a foreground process is unknown (ie. no matching auto-profile rule)
+            /// </summary>
+            public bool AutoProfileRevertDefaultProfile = true;
 
-            public bool swipeProfiles = true;
+            public int flashWhenLateAt = 50;
+
+            public string lastVersionChecked = string.Empty;
+            
+            public ulong LastVersionCheckedNumber;
+
+            public bool SwipeProfiles { get; set; } = true;
 
             private bool tempBool;
 
-            public readonly int[][] TouchDisInvertTriggers = new int[TEST_PROFILE_ITEM_COUNT][]
-            {
-                new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 },
-                new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 },
-                new int[1] { -1 }
-            };
+            public bool UseExclusiveMode { get; set; } // Re-enable Ex Mode
 
-            public readonly TouchpadOutMode[] TouchOutMode = new TouchpadOutMode[TEST_PROFILE_ITEM_COUNT]
-            {
-                TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
-                TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
-                TouchpadOutMode.Mouse
-            };
-
-            public bool useExclusiveMode; // Re-enable Ex Mode
-            public bool UseUdpServer;
+            public bool UseUdpServer { get; set; }
 
             public BackingStore()
             {
@@ -191,6 +139,60 @@ namespace DS4Windows
 
                 SetupDefaultColors();
             }
+
+            public IList<int> RumbleAutostopTime { get; } = new List<int>
+                { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
+
+            public IList<LightbarSettingInfo> LightbarSettingInfo { get; set; } = new List<LightbarSettingInfo>
+            {
+                new(), new(),
+                new(), new(),
+                new(), new(),
+                new(), new(),
+                new()
+            };
+
+            public IList<bool> SAMouseStickTriggerCond { get; set; } = new List<bool>
+                { true, true, true, true, true, true, true, true, true };
+
+            public IList<string> SAMouseStickTriggers { get; set; } = new List<string>
+                { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
+
+            public IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; } =
+                new List<SASteeringWheelEmulationAxisType>
+                {
+                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
+                    SASteeringWheelEmulationAxisType.None
+                };
+
+            public IList<int> SASteeringWheelEmulationRange { get; set; } =
+                new List<int> { 360, 360, 360, 360, 360, 360, 360, 360, 360 };
+
+            public IList<bool> SATriggerCond { get; set; } = new List<bool>
+                { true, true, true, true, true, true, true, true, true };
+
+            public IList<string> SATriggers { get; set; } = new List<string>
+                { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
+
+            public IList<bool> StartTouchpadOff { get; set; } = new List<bool>
+                { false, false, false, false, false, false, false, false, false };
+
+            public IList<IList<int>> TouchDisInvertTriggers { get; set; } = new List<IList<int>>
+            {
+                new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 },
+                new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 },
+                new int[1] { -1 }
+            };
+
+            public IList<TouchpadOutMode> TouchOutMode { get; set; } = new List<TouchpadOutMode>
+            {
+                TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
+                TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
+                TouchpadOutMode.Mouse
+            };
 
             public string ProfilesPath { get; set; } =
                 Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
@@ -530,22 +532,25 @@ namespace DS4Windows
             public bool StartMinimized { get; set; }
 
             public bool MinToTaskBar { get; set; }
+
             public DateTime LastChecked { get; set; }
+
             public int CheckWhen { get; set; } = 24;
+
             public int Notifications { get; set; } = 2;
+
             public bool DisconnectBluetoothAtStop { get; set; }
+
             public bool Ds4Mapping { get; set; }
+
             public bool QuickCharge { get; set; }
 
             public bool CloseMini { get; set; }
 
             public IList<SpecialAction> Actions { get; set; } = new List<SpecialAction>();
 
-            public IList<DS4ControlSettings>[] Ds4Settings { get; set; } =new List<DS4ControlSettings>[]
-            {
-                new(), new(), new(),
-                new(), new(), new(), new(), new(), new()
-            };
+            public IList<IList<DS4ControlSettings>> Ds4Settings { get; set; } =
+                new List<IList<DS4ControlSettings>>(TEST_PROFILE_ITEM_COUNT);
 
             public IList<string>[] ProfileActions { get; set; } =
                 { null, null, null, null, null, null, null, null, null };
@@ -553,8 +558,11 @@ namespace DS4Windows
             public string UseLang { get; set; } = string.Empty;
 
             public bool DownloadLang { get; set; } = true;
+
             public TrayIconChoice UseIconChoice { get; set; }
+
             public bool FlashWhenLate { get; set; } = true;
+
             public int UdpServerPort { get; set; } = 26760;
 
             /// <summary>
@@ -564,7 +572,9 @@ namespace DS4Windows
             public string UdpServerListenAddress { get; set; } = "127.0.0.1";
 
             public bool UseUdpSmoothing { get; set; }
+
             public double UdpSmoothingMincutoff { get; set; } = DEFAULT_UDP_SMOOTH_MINCUTOFF;
+
             public double UdpSmoothingBeta { get; set; } = DEFAULT_UDP_SMOOTH_BETA;
 
             public bool UseCustomSteamFolder { get; set; }
@@ -572,6 +582,7 @@ namespace DS4Windows
             public string CustomSteamFolder { get; set; }
 
             public AppThemeChoice ThemeChoice { get; set; }
+
             public string FakeExeFileName { get; set; } = string.Empty;
 
             public ControlServiceDeviceOptions DeviceOptions => new();
@@ -613,7 +624,6 @@ namespace DS4Windows
 
             public IList<double> TrackballFriction { get; set; } = new List<double>
                 { 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 };
-
 
             public IList<TouchpadAbsMouseSettings> TouchPadAbsMouse { get; set; } =
                 new List<TouchpadAbsMouseSettings>
@@ -794,7 +804,7 @@ namespace DS4Windows
                     rootElement.SetAttribute("app_version", ExecutableProductVersion);
                     rootElement.SetAttribute("config_version", CONFIG_VERSION.ToString());
 
-                    var lightbarSettings = lightbarSettingInfo[device];
+                    var lightbarSettings = LightbarSettingInfo[device];
                     var lightInfo = lightbarSettings.ds4winSettings;
 
                     var xmlTouchToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "touchToggle", null);
@@ -1942,7 +1952,7 @@ namespace DS4Windows
                     }
 
                     var oldContType = ActiveOutDevType[device];
-                    var lightbarSettings = lightbarSettingInfo[device];
+                    var lightbarSettings = LightbarSettingInfo[device];
                     var lightInfo = lightbarSettings.ds4winSettings;
 
                     // Make sure to reset currently set profile values before parsing
@@ -3105,7 +3115,8 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/StartTouchpadOff");
-                        bool.TryParse(Item.InnerText, out StartTouchpadOff[device]);
+                        bool.TryParse(Item.InnerText, out var value);
+                        StartTouchpadOff[device] = value;
                         if (StartTouchpadOff[device]) control.StartTPOff(device);
                     }
                     catch
@@ -3170,7 +3181,8 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SASteeringWheelEmulationAxis");
-                        Enum.TryParse(Item.InnerText, out SASteeringWheelEmulationAxis[device]);
+                        Enum.TryParse(Item.InnerText, out SASteeringWheelEmulationAxisType value);
+                        SASteeringWheelEmulationAxis[device] = value;
                     }
                     catch
                     {
@@ -3181,7 +3193,8 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SASteeringWheelEmulationRange");
-                        int.TryParse(Item.InnerText, out SASteeringWheelEmulationRange[device]);
+                        int.TryParse(Item.InnerText, out var value);
+                        SASteeringWheelEmulationRange[device] = value;
                     }
                     catch
                     {
@@ -3630,7 +3643,8 @@ namespace DS4Windows
                         {
                             Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TouchpadOutputMode");
                             var tempMode = Item.InnerText;
-                            Enum.TryParse(tempMode, out TouchOutMode[device]);
+                            Enum.TryParse(tempMode, out TouchpadOutMode value);
+                            TouchOutMode[device] = value;
                         }
                         catch
                         {
@@ -4695,7 +4709,8 @@ namespace DS4Windows
                         try
                         {
                             Item = m_Xdoc.SelectSingleNode("/Profile/useExclusiveMode");
-                            bool.TryParse(Item.InnerText, out useExclusiveMode);
+                            bool.TryParse(Item.InnerText, out var value);
+                            UseExclusiveMode = value;
                         } // Ex Mode
                         catch
                         {
@@ -4852,7 +4867,8 @@ namespace DS4Windows
                         try
                         {
                             Item = m_Xdoc.SelectSingleNode("/Profile/SwipeProfiles");
-                            bool.TryParse(Item.InnerText, out swipeProfiles);
+                            bool.TryParse(Item.InnerText, out var value);
+                            SwipeProfiles = value;
                         }
                         catch
                         {
@@ -4965,7 +4981,8 @@ namespace DS4Windows
                         try
                         {
                             Item = m_Xdoc.SelectSingleNode("/Profile/UseUDPServer");
-                            bool.TryParse(Item.InnerText, out UseUdpServer);
+                            bool.TryParse(Item.InnerText, out var value);
+                            UseUdpServer = value;
                         }
                         catch
                         {
@@ -5148,13 +5165,13 @@ namespace DS4Windows
                             {
                                 Item = m_Xdoc.SelectSingleNode("/Profile/CustomLed" + (i + 1));
                                 var ss = Item.InnerText.Split(':');
-                                bool.TryParse(ss[0], out lightbarSettingInfo[i].ds4winSettings.useCustomLed);
-                                DS4Color.TryParse(ss[1], ref lightbarSettingInfo[i].ds4winSettings.m_CustomLed);
+                                bool.TryParse(ss[0], out LightbarSettingInfo[i].ds4winSettings.useCustomLed);
+                                DS4Color.TryParse(ss[1], ref LightbarSettingInfo[i].ds4winSettings.m_CustomLed);
                             }
                             catch
                             {
-                                lightbarSettingInfo[i].ds4winSettings.useCustomLed = false;
-                                lightbarSettingInfo[i].ds4winSettings.m_CustomLed = new DS4Color(Color.Blue);
+                                LightbarSettingInfo[i].ds4winSettings.useCustomLed = false;
+                                LightbarSettingInfo[i].ds4winSettings.m_CustomLed = new DS4Color(Color.Blue);
                                 missingSetting = true;
                             }
                     }
@@ -5208,7 +5225,7 @@ namespace DS4Windows
 
                 // Ex Mode (+1 line)
                 var xmlUseExclNode = m_Xdoc.CreateNode(XmlNodeType.Element, "useExclusiveMode", null);
-                xmlUseExclNode.InnerText = useExclusiveMode.ToString();
+                xmlUseExclNode.InnerText = UseExclusiveMode.ToString();
                 rootElement.AppendChild(xmlUseExclNode);
                 var xmlStartMinimized = m_Xdoc.CreateNode(XmlNodeType.Element, "startMinimized", null);
                 xmlStartMinimized.InnerText = StartMinimized.ToString();
@@ -5257,7 +5274,7 @@ namespace DS4Windows
                 xmlDisconnectBT.InnerText = DisconnectBluetoothAtStop.ToString();
                 rootElement.AppendChild(xmlDisconnectBT);
                 var xmlSwipeProfiles = m_Xdoc.CreateNode(XmlNodeType.Element, "SwipeProfiles", null);
-                xmlSwipeProfiles.InnerText = swipeProfiles.ToString();
+                xmlSwipeProfiles.InnerText = SwipeProfiles.ToString();
                 rootElement.AppendChild(xmlSwipeProfiles);
                 //XmlNode xmlDS4Mapping = m_Xdoc.CreateNode(XmlNodeType.Element, "UseDS4ForMapping", null); xmlDS4Mapping.InnerText = ds4Mapping.ToString(); rootElement.AppendChild(xmlDS4Mapping);
                 var xmlQuickCharge = m_Xdoc.CreateNode(XmlNodeType.Element, "QuickCharge", null);
@@ -5356,10 +5373,10 @@ namespace DS4Windows
                 for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
                 {
                     var xmlCustomLed = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomLed" + (1 + i), null);
-                    xmlCustomLed.InnerText = lightbarSettingInfo[i].ds4winSettings.useCustomLed + ":" +
-                                             lightbarSettingInfo[i].ds4winSettings.m_CustomLed.red + "," +
-                                             lightbarSettingInfo[i].ds4winSettings.m_CustomLed.green + "," +
-                                             lightbarSettingInfo[i].ds4winSettings.m_CustomLed.blue;
+                    xmlCustomLed.InnerText = LightbarSettingInfo[i].ds4winSettings.useCustomLed + ":" +
+                                             LightbarSettingInfo[i].ds4winSettings.m_CustomLed.red + "," +
+                                             LightbarSettingInfo[i].ds4winSettings.m_CustomLed.green + "," +
+                                             LightbarSettingInfo[i].ds4winSettings.m_CustomLed.blue;
                     rootElement.AppendChild(xmlCustomLed);
                 }
 
@@ -6616,15 +6633,15 @@ namespace DS4Windows
 
             private void SetupDefaultColors()
             {
-                lightbarSettingInfo[0].ds4winSettings.m_Led = new DS4Color(Color.Blue);
-                lightbarSettingInfo[1].ds4winSettings.m_Led = new DS4Color(Color.Red);
-                lightbarSettingInfo[2].ds4winSettings.m_Led = new DS4Color(Color.Green);
-                lightbarSettingInfo[3].ds4winSettings.m_Led = new DS4Color(Color.Pink);
-                lightbarSettingInfo[4].ds4winSettings.m_Led = new DS4Color(Color.Blue);
-                lightbarSettingInfo[5].ds4winSettings.m_Led = new DS4Color(Color.Red);
-                lightbarSettingInfo[6].ds4winSettings.m_Led = new DS4Color(Color.Green);
-                lightbarSettingInfo[7].ds4winSettings.m_Led = new DS4Color(Color.Pink);
-                lightbarSettingInfo[8].ds4winSettings.m_Led = new DS4Color(Color.White);
+                LightbarSettingInfo[0].ds4winSettings.m_Led = new DS4Color(Color.Blue);
+                LightbarSettingInfo[1].ds4winSettings.m_Led = new DS4Color(Color.Red);
+                LightbarSettingInfo[2].ds4winSettings.m_Led = new DS4Color(Color.Green);
+                LightbarSettingInfo[3].ds4winSettings.m_Led = new DS4Color(Color.Pink);
+                LightbarSettingInfo[4].ds4winSettings.m_Led = new DS4Color(Color.Blue);
+                LightbarSettingInfo[5].ds4winSettings.m_Led = new DS4Color(Color.Red);
+                LightbarSettingInfo[6].ds4winSettings.m_Led = new DS4Color(Color.Green);
+                LightbarSettingInfo[7].ds4winSettings.m_Led = new DS4Color(Color.Pink);
+                LightbarSettingInfo[8].ds4winSettings.m_Led = new DS4Color(Color.White);
             }
 
             private string stickOutputCurveString(int id)
@@ -6939,7 +6956,7 @@ namespace DS4Windows
                 L2OutputSettings[device].ResetSettings();
                 R2OutputSettings[device].ResetSettings();
 
-                var lightbarSettings = lightbarSettingInfo[device];
+                var lightbarSettings = LightbarSettingInfo[device];
                 var lightInfo = lightbarSettings.ds4winSettings;
                 lightbarSettings.Mode = LightbarMode.DS4Win;
                 lightInfo.m_LowLed = new DS4Color(Color.Black);

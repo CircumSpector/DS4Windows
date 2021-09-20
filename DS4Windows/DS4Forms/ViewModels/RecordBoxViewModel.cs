@@ -139,8 +139,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             // Temporarily use Passthru mode for Touchpad. Store old TouchOutMode.
             // Don't conflict Touchpad Click with default output Mouse button controls
-            oldTouchpadMode = Global.Instance.TouchOutMode[deviceNum];
-            Global.Instance.TouchOutMode[deviceNum] = TouchpadOutMode.Passthru;
+            oldTouchpadMode = Global.Instance.Config.TouchOutMode[deviceNum];
+            Global.Instance.Config.TouchOutMode[deviceNum] = TouchpadOutMode.Passthru;
         }
 
         private void CreateKeyDownOverrides()
@@ -384,7 +384,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// </summary>
         public void RevertControlsSettings()
         {
-            Global.Instance.TouchOutMode[deviceNum] = oldTouchpadMode;
+            Global.Instance.Config.TouchOutMode[deviceNum] = oldTouchpadMode;
             oldTouchpadMode = TouchpadOutMode.None;
         }
     }

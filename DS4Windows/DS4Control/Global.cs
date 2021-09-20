@@ -855,13 +855,13 @@ namespace DS4Windows
         // -- Re-Enable Exclusive Mode Starts Here --
         public bool UseExclusiveMode
         {
-            set { _config.useExclusiveMode = value; }
-            get { return _config.useExclusiveMode; }
+            set { _config.UseExclusiveMode = value; }
+            get { return _config.UseExclusiveMode; }
         } // -- Re-Enable Ex Mode Ends here
 
         public bool getUseExclusiveMode()
         {
-            return _config.useExclusiveMode;
+            return _config.UseExclusiveMode;
         }
         
         public string LastVersionChecked
@@ -881,8 +881,8 @@ namespace DS4Windows
         
         public  bool SwipeProfiles
         {
-            set { _config.swipeProfiles = value; }
-            get { return _config.swipeProfiles; }
+            set { _config.SwipeProfiles = value; }
+            get { return _config.SwipeProfiles; }
         }
 
         public  bool GetMinToTaskbar()
@@ -1030,10 +1030,9 @@ namespace DS4Windows
             return TouchpadActive[index];
         }
 
-        public  LightbarSettingInfo[] LightbarSettingsInfo => _config.lightbarSettingInfo;
         public  LightbarSettingInfo getLightbarSettingsInfo(int index)
         {
-            return _config.lightbarSettingInfo[index];
+            return _config.LightbarSettingInfo[index];
         }
 
         public  bool getDInputOnly(int index)
@@ -1041,27 +1040,21 @@ namespace DS4Windows
             return _config.DirectInputOnly[index];
         }
 
-        public  bool[] StartTouchpadOff => _config.StartTouchpadOff;
-
         public  bool IsUsingTouchpadForControls(int index)
         {
             return _config.TouchOutMode[index] == TouchpadOutMode.Controls;
         }
-
-        public TouchpadOutMode[] TouchOutMode => _config.TouchOutMode;
 
         public  bool IsUsingSAForControls(int index)
         {
             return _config.GyroOutMode[index] == GyroOutMode.Controls;
         }
 
-        public  string[] SATriggers => _config.SATriggers;
         public  string getSATriggers(int index)
         {
             return _config.SATriggers[index];
         }
 
-        public  bool[] SATriggerCond => _config.SATriggerCond;
         public  bool getSATriggerCond(int index)
         {
             return _config.SATriggerCond[index];
@@ -1078,13 +1071,11 @@ namespace DS4Windows
             return _config.GyroOutMode[device];
         }
 
-        public  string[] SAMousestickTriggers => _config.SAMouseStickTriggers;
         public  string GetSAMouseStickTriggers(int device)
         {
             return _config.SAMouseStickTriggers[device];
         }
 
-        public  bool[] SAMouseStickTriggerCond => _config.SAMouseStickTriggerCond;
         public  bool GetSAMouseStickTriggerCond(int device)
         {
             return _config.SAMouseStickTriggerCond[device];
@@ -1121,23 +1112,16 @@ namespace DS4Windows
         public  void SetGyroMouseStickToggle(int index, bool value, ControlService control)
             => _config.SetGyroMouseStickToggle(index, value, control);
 
-        public  SASteeringWheelEmulationAxisType[] SASteeringWheelEmulationAxis => _config.SASteeringWheelEmulationAxis;
         public  SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index)
         {
             return _config.SASteeringWheelEmulationAxis[index];
         }
 
-        public  int[] SASteeringWheelEmulationRange => _config.SASteeringWheelEmulationRange;
         public  int GetSASteeringWheelEmulationRange(int index)
         {
             return _config.SASteeringWheelEmulationRange[index];
         }
 
-        public  int[][] TouchDisInvertTriggers => _config.TouchDisInvertTriggers;
-        public  int[] getTouchDisInvertTriggers(int index)
-        {
-            return _config.TouchDisInvertTriggers[index];
-        }
 
         public  int getGyroSensitivity(int index)
         {
@@ -1191,42 +1175,42 @@ namespace DS4Windows
         //public static DS4Color[] MainColor => m_Config.m_Leds;
         public  ref DS4Color getMainColor(int index)
         {
-            return ref _config.lightbarSettingInfo[index].ds4winSettings.m_Led;
+            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_Led;
             //return ref m_Config.m_Leds[index];
         }
 
         //public static DS4Color[] LowColor => m_Config.m_LowLeds;
         public  ref DS4Color getLowColor(int index)
         {
-            return ref _config.lightbarSettingInfo[index].ds4winSettings.m_LowLed;
+            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_LowLed;
             //return ref m_Config.m_LowLeds[index];
         }
 
         //public static DS4Color[] ChargingColor => m_Config.m_ChargingLeds;
         public  ref DS4Color getChargingColor(int index)
         {
-            return ref _config.lightbarSettingInfo[index].ds4winSettings.m_ChargingLed;
+            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_ChargingLed;
             //return ref m_Config.m_ChargingLeds[index];
         }
 
         //public static DS4Color[] CustomColor => m_Config.m_CustomLeds;
         public  ref DS4Color getCustomColor(int index)
         {
-            return ref _config.lightbarSettingInfo[index].ds4winSettings.m_CustomLed;
+            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_CustomLed;
             //return ref m_Config.m_CustomLeds[index];
         }
 
         //public static bool[] UseCustomLed => m_Config.useCustomLeds;
         public  bool getUseCustomLed(int index)
         {
-            return _config.lightbarSettingInfo[index].ds4winSettings.useCustomLed;
+            return _config.LightbarSettingInfo[index].ds4winSettings.useCustomLed;
             //return m_Config.useCustomLeds[index];
         }
 
         //public static DS4Color[] FlashColor => m_Config.m_FlashLeds;
         public  ref DS4Color getFlashColor(int index)
         {
-            return ref _config.lightbarSettingInfo[index].ds4winSettings.m_FlashLed;
+            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_FlashLed;
             //return ref m_Config.m_FlashLeds[index];
         }
 

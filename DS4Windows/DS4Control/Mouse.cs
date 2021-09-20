@@ -666,14 +666,14 @@ namespace DS4Windows
         {
             s = dev.getCurrentStateRef();
 
-            TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
+            TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             if (tempMode == TouchpadOutMode.Mouse)
             {
                 if (Global.Instance.GetTouchActive(deviceNum))
                 {
-                    int[] disArray = Global.Instance.getTouchDisInvertTriggers(deviceNum);
+                    var disArray = Global.Instance.Config.TouchDisInvertTriggers[deviceNum];
                     tempBool = true;
-                    for (int i = 0, arlen = disArray.Length; tempBool && i < arlen; i++)
+                    for (int i = 0, arlen = disArray.Count; tempBool && i < arlen; i++)
                     {
                         if (getDS4ControlsByName(disArray[i]) == false)
                             tempBool = false;
@@ -743,7 +743,7 @@ namespace DS4Windows
 
         public virtual void touchesBegan(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
+            TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             bool mouseMode = tempMode == TouchpadOutMode.Mouse;
             if (mouseMode)
             {
@@ -783,7 +783,7 @@ namespace DS4Windows
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
             byte tapSensitivity = Global.Instance.getTapSensitivity(deviceNum);
-            if (tapSensitivity != 0 && Global.Instance.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+            if (tapSensitivity != 0 && Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
                 {
@@ -809,12 +809,12 @@ namespace DS4Windows
             }
             else
             {
-                TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
+                TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
                 if (tempMode == TouchpadOutMode.Mouse)
                 {
-                    int[] disArray = Global.Instance.getTouchDisInvertTriggers(deviceNum);
+                    var disArray = Global.Instance.Config.TouchDisInvertTriggers[deviceNum];
                     tempBool = true;
-                    for (int i = 0, arlen = disArray.Length; tempBool && i < arlen; i++)
+                    for (int i = 0, arlen = disArray.Count; tempBool && i < arlen; i++)
                     {
                         if (getDS4ControlsByName(disArray[i]) == false)
                             tempBool = false;
@@ -923,11 +923,11 @@ namespace DS4Windows
 
             if (trackballActive)
             {
-                if (Global.Instance.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+                if (Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
                 {
-                    int[] disArray = Global.Instance.getTouchDisInvertTriggers(deviceNum);
+                    var disArray = Global.Instance.Config.TouchDisInvertTriggers[deviceNum];
                     tempBool = true;
-                    for (int i = 0, arlen = disArray.Length; tempBool && i < arlen; i++)
+                    for (int i = 0, arlen = disArray.Count; tempBool && i < arlen; i++)
                     {
                         if (getDS4ControlsByName(disArray[i]) == false)
                             tempBool = false;
@@ -990,7 +990,7 @@ namespace DS4Windows
 
         private void synthesizeMouseButtons()
         {
-            TouchpadOutMode tempMode = Global.Instance.TouchOutMode[deviceNum];
+            TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             if (tempMode != TouchpadOutMode.Passthru)
             {
                 bool touchClickPass = Global.Instance.Config.TouchClickPassthru[deviceNum];
@@ -1035,7 +1035,7 @@ namespace DS4Windows
                 Mapping.MapClick(deviceNum, Mapping.Click.Right);
             }
 
-            if (Global.Instance.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+            if (Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (tappedOnce)
                 {

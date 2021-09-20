@@ -29,7 +29,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch(Global.Instance.LightbarSettingsInfo[device].Mode)
+                switch(Global.Instance.Config.LightbarSettingInfo[device].Mode)
                 {
                     case LightbarMode.DS4Win:
                         index = 0; break;
@@ -52,7 +52,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                Global.Instance.LightbarSettingsInfo[device].Mode = temp;
+                Global.Instance.Config.LightbarSettingInfo[device].Mode = temp;
                 LightbarModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -63,7 +63,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 System.Windows.Media.Brush tempBrush;
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led;
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led;
                 if (!RainbowExists)
                 {
                     lightbarColBrush.Color = new System.Windows.Media.Color()
@@ -89,7 +89,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led; //ref Global.Instance.MainColor[device];
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led; //ref Global.Instance.MainColor[device];
                 return new System.Windows.Media.Color()
                 {
                     A = 255,
@@ -105,7 +105,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led; //ref Global.Instance.MainColor[device];
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led; //ref Global.Instance.MainColor[device];
                 return $"#FF{color.red.ToString("X2")}{color.green.ToString("X2")}{color.blue.ToString("X2")}";
                 /*return new System.Windows.Media.Color()
                 {
@@ -121,10 +121,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int MainColorR
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.red;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.red;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.red = (byte)value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.red = (byte)value;
                 MainColorRChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -132,16 +132,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MainColorRString
         {
-            get => $"#{ Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.red.ToString("X2")}FF0000";
+            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.red.ToString("X2")}FF0000";
         }
         public event EventHandler MainColorRStringChanged;
 
         public int MainColorG
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.green;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.green;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.green = (byte)value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.green = (byte)value;
                 MainColorGChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -149,16 +149,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MainColorGString
         {
-            get => $"#{ Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.green.ToString("X2")}00FF00";
+            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.green.ToString("X2")}00FF00";
         }
         public event EventHandler MainColorGStringChanged;
 
         public int MainColorB
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.blue;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.blue;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.blue = (byte)value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.blue = (byte)value;
                 MainColorBChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -166,7 +166,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MainColorBString
         {
-            get => $"#{ Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led.blue.ToString("X2")}0000FF";
+            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led.blue.ToString("X2")}0000FF";
         }
         public event EventHandler MainColorBStringChanged;
 
@@ -174,7 +174,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed; //ref Global.Instance.LowColor[device];
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed; //ref Global.Instance.LowColor[device];
                 return $"#FF{color.red.ToString("X2")}{color.green.ToString("X2")}{color.blue.ToString("X2")}";
             }
         }
@@ -182,10 +182,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LowColorR
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.red;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.red;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.red = (byte)value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.red = (byte)value;
                 LowColorRChanged?.Invoke(this, EventArgs.Empty);
                 LowColorRStringChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -194,16 +194,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LowColorRString
         {
-            get => $"#{ Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.red.ToString("X2")}FF0000";
+            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.red.ToString("X2")}FF0000";
         }
         public event EventHandler LowColorRStringChanged;
 
         public int LowColorG
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.green;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.green;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.green = (byte)value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.green = (byte)value;
                 LowColorGChanged?.Invoke(this, EventArgs.Empty);
                 LowColorGStringChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -212,16 +212,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LowColorGString
         {
-            get => $"#{ Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.green.ToString("X2")}00FF00";
+            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.green.ToString("X2")}00FF00";
         }
         public event EventHandler LowColorGStringChanged;
 
         public int LowColorB
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.blue;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.blue;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.blue = (byte)value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.blue = (byte)value;
                 LowColorBChanged?.Invoke(this, EventArgs.Empty);
                 LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -230,7 +230,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LowColorBString
         {
-            get => $"#{ Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed.blue.ToString("X2")}0000FF";
+            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed.blue.ToString("X2")}0000FF";
         }
         public event EventHandler LowColorBStringChanged;
 
@@ -238,7 +238,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed;
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed;
                 return new System.Windows.Media.Color()
                 {
                     A = 255,
@@ -251,24 +251,24 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int FlashTypeIndex
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.flashType; //Global.Instance.FlashType[device];
-            set => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.flashType = (byte)value;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.flashType; //Global.Instance.FlashType[device];
+            set => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.flashType = (byte)value;
         }
 
         public int FlashAt
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.flashAt; //Global.Instance.FlashAt[device];
-            set => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.flashAt = value;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.flashAt; //Global.Instance.FlashAt[device];
+            set => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.flashAt = value;
         }
 
         public string FlashColor
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_FlashLed;
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_FlashLed;
                 if (color.red == 0 && color.green == 0 && color.blue == 0)
                 {
-                    color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led;
+                    color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led;
                 }
 
                 return $"#FF{color.red.ToString("X2")}{color.green.ToString("X2")}{color.blue.ToString("X2")}";
@@ -280,10 +280,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_FlashLed;
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_FlashLed;
                 if (color.red == 0 && color.green == 0 && color.blue == 0)
                 {
-                    color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led;
+                    color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led;
                 }
 
                 return new System.Windows.Media.Color()
@@ -298,20 +298,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ChargingType
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.chargingType;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.chargingType;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.chargingType = value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.chargingType = value;
                 ChargingColorVisibleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public bool ColorBatteryPercent
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.ledAsBattery;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.ledAsBattery;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.ledAsBattery = value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.ledAsBattery = value;
             }
         }
 
@@ -319,7 +319,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_ChargingLed;
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_ChargingLed;
                 return $"#FF{color.red.ToString("X2")}{color.green.ToString("X2")}{color.blue.ToString("X2")}";
             }
         }
@@ -329,7 +329,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                ref DS4Color color = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_ChargingLed;
+                ref DS4Color color = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_ChargingLed;
                 return new System.Windows.Media.Color()
                 {
                     A = 255,
@@ -342,16 +342,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Visibility ChargingColorVisible
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.chargingType == 3 ? Visibility.Visible : Visibility.Hidden;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.chargingType == 3 ? Visibility.Visible : Visibility.Hidden;
         }
         public event EventHandler ChargingColorVisibleChanged;
 
         public double Rainbow
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.rainbow;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.rainbow;
             set
             {
-                Global.Instance.LightbarSettingsInfo[device].ds4winSettings.rainbow = value;
+                Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.rainbow = value;
                 RainbowChanged?.Invoke(this, EventArgs.Empty);
                 RainbowExistsChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -360,15 +360,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool RainbowExists
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.rainbow != 0.0;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.rainbow != 0.0;
         }
 
         public event EventHandler RainbowExistsChanged;
 
         public double MaxSatRainbow
         {
-            get => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.maxRainbowSat * 100.0;
-            set => Global.Instance.LightbarSettingsInfo[device].ds4winSettings.maxRainbowSat = value / 100.0;
+            get => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.maxRainbowSat * 100.0;
+            set => Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.maxRainbowSat = value / 100.0;
         }
 
         public int RumbleBoost
@@ -713,13 +713,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int SASteeringWheelEmulationAxisIndex
         {
-            get => (int)Global.Instance.SASteeringWheelEmulationAxis[device];
+            get => (int)Global.Instance.Config.SASteeringWheelEmulationAxis[device];
             set
             {
-                int temp = (int)Global.Instance.SASteeringWheelEmulationAxis[device];
+                int temp = (int)Global.Instance.Config.SASteeringWheelEmulationAxis[device];
                 if (temp == value) return;
 
-                Global.Instance.SASteeringWheelEmulationAxis[device] = (SASteeringWheelEmulationAxisType)value;
+                Global.Instance.Config.SASteeringWheelEmulationAxis[device] = (SASteeringWheelEmulationAxisType)value;
                 SASteeringWheelEmulationAxisIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -732,7 +732,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 360;
-                switch(Global.Instance.SASteeringWheelEmulationRange[device])
+                switch(Global.Instance.Config.SASteeringWheelEmulationRange[device])
                 {
                     case 90:
                         index = 0; break;
@@ -760,14 +760,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 int temp = saSteeringRangeValues[value];
-                Global.Instance.SASteeringWheelEmulationRange[device] = temp;
+                Global.Instance.Config.SASteeringWheelEmulationRange[device] = temp;
             }
         }
 
         public int SASteeringWheelEmulationRange
         {
-            get => Global.Instance.SASteeringWheelEmulationRange[device];
-            set => Global.Instance.SASteeringWheelEmulationRange[device] = value;
+            get => Global.Instance.Config.SASteeringWheelEmulationRange[device];
+            set => Global.Instance.Config.SASteeringWheelEmulationRange[device] = value;
         }
 
         public int SASteeringWheelFuzz
@@ -1594,7 +1594,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.TouchOutMode[device])
+                switch (Global.Instance.Config.TouchOutMode[device])
                 {
                     case TouchpadOutMode.Mouse:
                         index = 0; break;
@@ -1623,9 +1623,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                TouchpadOutMode current = Global.Instance.TouchOutMode[device];
+                TouchpadOutMode current = Global.Instance.Config.TouchOutMode[device];
                 if (temp == current) return;
-                Global.Instance.TouchOutMode[device] = temp;
+                Global.Instance.Config.TouchOutMode[device] = temp;
                 TouchpadOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1760,10 +1760,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool StartTouchpadOff
         {
-            get => Global.Instance.StartTouchpadOff[device];
+            get => Global.Instance.Config.StartTouchpadOff[device];
             set
             {
-                Global.Instance.StartTouchpadOff[device] = value;
+                Global.Instance.Config.StartTouchpadOff[device] = value;
             }
         }
 
@@ -2544,19 +2544,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateFlashColor(System.Windows.Media.Color color)
         {
-            Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_FlashLed = new DS4Color() { red = color.R, green = color.G, blue = color.B };
+            Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_FlashLed = new DS4Color() { red = color.R, green = color.G, blue = color.B };
             FlashColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateMainColor(System.Windows.Media.Color color)
         {
-            Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_Led = new DS4Color() { red = color.R, green = color.G, blue = color.B };
+            Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_Led = new DS4Color() { red = color.R, green = color.G, blue = color.B };
             MainColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateLowColor(System.Windows.Media.Color color)
         {
-            ref DS4Color lowColor = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_LowLed;
+            ref DS4Color lowColor = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_LowLed;
             lowColor.red = color.R;
             lowColor.green = color.G;
             lowColor.blue = color.B;
@@ -2604,7 +2604,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateChargingColor(System.Windows.Media.Color color)
         {
-            ref DS4Color chargeColor = ref Global.Instance.LightbarSettingsInfo[device].ds4winSettings.m_ChargingLed;
+            ref DS4Color chargeColor = ref Global.Instance.Config.LightbarSettingInfo[device].ds4winSettings.m_ChargingLed;
             chargeColor.red = color.R;
             chargeColor.green = color.G;
             chargeColor.blue = color.B;
@@ -2652,20 +2652,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 triggerName.Add("None");
             }
 
-            Global.Instance.TouchDisInvertTriggers[device] = triggerList.ToArray();
+            Global.Instance.Config.TouchDisInvertTriggers[device] = triggerList.ToArray();
             TouchDisInvertString = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateTouchDisInver(ContextMenu menu)
         {
-            int[] triggers = Global.Instance.TouchDisInvertTriggers[device];
-            int itemCount = menu.Items.Count;
-            List<string> triggerName = new List<string>();
-            foreach (int trigid in triggers)
-            {
+            var triggers = Global.Instance.Config.TouchDisInvertTriggers[device];
+            var itemCount = menu.Items.Count;
+            var triggerName = new List<string>();
+            foreach (var trigid in triggers)
                 if (trigid >= 0 && trigid < itemCount - 1)
                 {
-                    MenuItem current = menu.Items[trigid] as MenuItem;
+                    var current = menu.Items[trigid] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add(current.Header.ToString());
                 }
@@ -2674,12 +2673,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     triggerName.Add("None");
                     break;
                 }
-            }
 
-            if (triggerName.Count == 0)
-            {
-                triggerName.Add("None");
-            }
+            if (triggerName.Count == 0) triggerName.Add("None");
 
             TouchDisInvertString = string.Join(", ", triggerName.ToArray());
         }
@@ -2722,13 +2717,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.SATriggers[device] = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.SATriggers[device] = string.Join(",", triggerList.ToArray());
             GyroMouseTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroMouseTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.SATriggers[device].Split(',');
+            string[] triggers = Global.Instance.Config.SATriggers[device].Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)
@@ -2797,13 +2792,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.SAMousestickTriggers[device] = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.SAMouseStickTriggers[device] = string.Join(",", triggerList.ToArray());
             GyroMouseStickTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroMouseStickTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.SAMousestickTriggers[device].Split(',');
+            string[] triggers = Global.Instance.Config.SAMouseStickTriggers[device].Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)
