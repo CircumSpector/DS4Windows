@@ -85,14 +85,9 @@ namespace DS4Windows
             {
                 if (lightModeInfo.UseCustomLed)
                 {
-                    if (lightModeInfo.LedAsBattery)
-                    {
-                        color = GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.CustomLed, device.getBattery());
-                    }
-                    else
-                    {
-                        color = lightModeInfo.CustomLed;
-                    }
+                    color = lightModeInfo.LedAsBattery
+                        ? GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.CustomLed, device.getBattery())
+                        : lightModeInfo.CustomLed;
                 }
                 else
                 {

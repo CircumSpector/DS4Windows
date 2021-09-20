@@ -261,8 +261,6 @@ namespace DS4Windows
 
         DS4Color GetChargingColor(int index);
 
-        DS4Color GetCustomColor(int index);
-
         DS4Color GetFlashColor(int index);
 
         int SetLsOutCurveMode(int index);

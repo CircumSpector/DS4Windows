@@ -204,14 +204,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 DS4Color color;
-                if (Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed)
-                {
-                    color = Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed; //Global.CustomColor[devIndex];
-                }
-                else
-                {
-                    color = Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.Led;
-                }
+                color = Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed
+                    ? Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed
+                    : Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.Led;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }

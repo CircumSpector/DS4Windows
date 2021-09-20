@@ -673,11 +673,6 @@ namespace DS4Windows
                 return LightbarSettingInfo[index].Ds4WinSettings.ChargingLed;
             }
 
-            public DS4Color GetCustomColor(int index)
-            {
-                return LightbarSettingInfo[index].Ds4WinSettings.CustomLed;
-            }
-
             public DS4Color GetFlashColor(int index)
             {
                 return LightbarSettingInfo[index].Ds4WinSettings.FlashLed;
