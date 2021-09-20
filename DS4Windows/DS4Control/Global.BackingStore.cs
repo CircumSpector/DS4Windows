@@ -35,6 +35,13 @@ namespace DS4Windows
 
             public readonly ControlSettingsGroup[] ds4controlSettings;
 
+            private readonly List<DS4ControlSettings>[] Ds4Settings =
+                new List<DS4ControlSettings>[TEST_PROFILE_ITEM_COUNT]
+                {
+                    new(), new(), new(),
+                    new(), new(), new(), new(), new(), new()
+                };
+
             public readonly GyroControlsInfo[] gyroControlsInf = new GyroControlsInfo[TEST_PROFILE_ITEM_COUNT]
             {
                 new(), new(), new(),
@@ -110,16 +117,10 @@ namespace DS4Windows
             public int flashWhenLateAt = 50;
 
             public string lastVersionChecked = string.Empty;
-            
+
             public ulong LastVersionCheckedNumber;
 
-            public bool SwipeProfiles { get; set; } = true;
-
             private bool tempBool;
-
-            public bool UseExclusiveMode { get; set; } // Re-enable Ex Mode
-
-            public bool UseUdpServer { get; set; }
 
             public BackingStore()
             {
@@ -139,6 +140,12 @@ namespace DS4Windows
 
                 SetupDefaultColors();
             }
+
+            public bool SwipeProfiles { get; set; } = true;
+
+            public bool UseExclusiveMode { get; set; } // Re-enable Ex Mode
+
+            public bool UseUdpServer { get; set; }
 
             public IList<int> RumbleAutostopTime { get; } = new List<int>
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
@@ -548,9 +555,6 @@ namespace DS4Windows
             public bool CloseMini { get; set; }
 
             public IList<SpecialAction> Actions { get; set; } = new List<SpecialAction>();
-
-            public IList<IList<DS4ControlSettings>> Ds4Settings { get; set; } =
-                new List<IList<DS4ControlSettings>>(TEST_PROFILE_ITEM_COUNT);
 
             public IList<string>[] ProfileActions { get; set; } =
                 { null, null, null, null, null, null, null, null, null };

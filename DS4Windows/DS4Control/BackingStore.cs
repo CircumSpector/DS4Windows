@@ -229,8 +229,6 @@ namespace DS4Windows
 
         public IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
 
-        public IList<IList<DS4ControlSettings>> Ds4Settings { get; set; }
-
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);
