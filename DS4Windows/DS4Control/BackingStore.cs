@@ -25,9 +25,9 @@ namespace DS4Windows
 
         string CustomSteamFolder { get; set; }
 
-        AppThemeChoice ThemeChoice { get; set; }
+        public AppThemeChoice ThemeChoice { get; set; }
 
-        ControlServiceDeviceOptions DeviceOptions { get; }
+        public ControlServiceDeviceOptions DeviceOptions { get; }
 
         public IList<OutContType> OutputDeviceType { get; set; }
 
@@ -194,6 +194,23 @@ namespace DS4Windows
         public IList<bool> TouchpadJitterCompensation { get; set; }
 
         public IList<bool> TouchClickPassthru { get; set; }
+
+        public double UdpSmoothingMincutoff { get; set; }
+
+        public double UdpSmoothingBeta{ get; set; }
+
+        public string FakeExeFileName { get; set; }
+
+        public IList<bool> ContainsCustomAction { get; set; } 
+
+        public IList<bool> ContainsCustomExtras  { get; set; }
+
+        public IList<int> GyroSensitivity  { get; set; }
+
+        public IList<int> GyroSensVerticalScale  { get; set; }
+
+        public IList<bool> DirectInputOnly { get; set; }
+
 
 
         int getLsOutCurveMode(int index);

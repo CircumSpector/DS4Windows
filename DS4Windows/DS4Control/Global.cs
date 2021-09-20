@@ -937,12 +937,12 @@ namespace DS4Windows
 
         public  double UDPServerSmoothingMincutoff
         {
-            get => _config.udpSmoothingMincutoff;
+            get => _config.UdpSmoothingMincutoff;
             set
             {
-                double temp = _config.udpSmoothingMincutoff;
+                double temp = _config.UdpSmoothingMincutoff;
                 if (temp == value) return;
-                _config.udpSmoothingMincutoff = value;
+                _config.UdpSmoothingMincutoff = value;
                 UDPServerSmoothingMincutoffChanged?.Invoke(null, EventArgs.Empty);
             }
         }
@@ -950,12 +950,12 @@ namespace DS4Windows
 
         public  double UDPServerSmoothingBeta
         {
-            get => _config.udpSmoothingBeta;
+            get => _config.UdpSmoothingBeta;
             set
             {
-                double temp = _config.udpSmoothingBeta;
+                double temp = _config.UdpSmoothingBeta;
                 if (temp == value) return;
-                _config.udpSmoothingBeta = value;
+                _config.UdpSmoothingBeta = value;
                 UDPServerSmoothingBetaChanged?.Invoke(null, EventArgs.Empty);
             }
         }
@@ -972,13 +972,13 @@ namespace DS4Windows
         /// </summary>
         public  string FakeExeName
         {
-            get => _config.fakeExeFileName;
+            get => _config.FakeExeFileName;
             set
             {
                 bool valid = !(value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0);
                 if (valid)
                 {
-                    _config.fakeExeFileName = value;
+                    _config.FakeExeFileName = value;
                 }
             }
         }
@@ -1036,36 +1036,35 @@ namespace DS4Windows
             return _config.lightbarSettingInfo[index];
         }
 
-        public  bool[] DinputOnly => _config.dinputOnly;
         public  bool getDInputOnly(int index)
         {
-            return _config.dinputOnly[index];
+            return _config.DirectInputOnly[index];
         }
 
-        public  bool[] StartTouchpadOff => _config.startTouchpadOff;
+        public  bool[] StartTouchpadOff => _config.StartTouchpadOff;
 
         public  bool IsUsingTouchpadForControls(int index)
         {
-            return _config.touchOutMode[index] == TouchpadOutMode.Controls;
+            return _config.TouchOutMode[index] == TouchpadOutMode.Controls;
         }
 
-        public TouchpadOutMode[] TouchOutMode => _config.touchOutMode;
+        public TouchpadOutMode[] TouchOutMode => _config.TouchOutMode;
 
         public  bool IsUsingSAForControls(int index)
         {
-            return _config.gyroOutMode[index] == GyroOutMode.Controls;
+            return _config.GyroOutMode[index] == GyroOutMode.Controls;
         }
 
-        public  string[] SATriggers => _config.sATriggers;
+        public  string[] SATriggers => _config.SATriggers;
         public  string getSATriggers(int index)
         {
-            return _config.sATriggers[index];
+            return _config.SATriggers[index];
         }
 
-        public  bool[] SATriggerCond => _config.sATriggerCond;
+        public  bool[] SATriggerCond => _config.SATriggerCond;
         public  bool getSATriggerCond(int index)
         {
-            return _config.sATriggerCond[index];
+            return _config.SATriggerCond[index];
         }
         public  void SetSaTriggerCond(int index, string text)
         {
@@ -1073,32 +1072,32 @@ namespace DS4Windows
         }
 
 
-        public  GyroOutMode[] GyroOutputMode => _config.gyroOutMode;
+        public  GyroOutMode[] GyroOutputMode => _config.GyroOutMode;
         public  GyroOutMode GetGyroOutMode(int device)
         {
-            return _config.gyroOutMode[device];
+            return _config.GyroOutMode[device];
         }
 
-        public  string[] SAMousestickTriggers => _config.sAMouseStickTriggers;
+        public  string[] SAMousestickTriggers => _config.SAMouseStickTriggers;
         public  string GetSAMouseStickTriggers(int device)
         {
-            return _config.sAMouseStickTriggers[device];
+            return _config.SAMouseStickTriggers[device];
         }
 
-        public  bool[] SAMouseStickTriggerCond => _config.sAMouseStickTriggerCond;
+        public  bool[] SAMouseStickTriggerCond => _config.SAMouseStickTriggerCond;
         public  bool GetSAMouseStickTriggerCond(int device)
         {
-            return _config.sAMouseStickTriggerCond[device];
+            return _config.SAMouseStickTriggerCond[device];
         }
         public  void SetSaMouseStickTriggerCond(int index, string text)
         {
             _config.SetSaMouseStickTriggerCond(index, text);
         }
 
-        public  bool[] GyroMouseStickTriggerTurns => _config.gyroMouseStickTriggerTurns;
+        public  bool[] GyroMouseStickTriggerTurns => _config.GyroMouseStickTriggerTurns;
         public  bool GetGyroMouseStickTriggerTurns(int device)
         {
-            return _config.gyroMouseStickTriggerTurns[device];
+            return _config.GyroMouseStickTriggerTurns[device];
         }
 
         public  int getGyroMouseStickHorizontalAxis(int index)
@@ -1106,50 +1105,48 @@ namespace DS4Windows
             return _config.GyroMouseStickHorizontalAxis[index];
         }
 
-        public  GyroMouseStickInfo[] GyroMouseStickInf => _config.gyroMStickInfo;
+        public  GyroMouseStickInfo[] GyroMouseStickInf => _config.GyroMStickInfo;
         public  GyroMouseStickInfo GetGyroMouseStickInfo(int device)
         {
-            return _config.gyroMStickInfo[device];
+            return _config.GyroMStickInfo[device];
         }
 
-        public  GyroDirectionalSwipeInfo[] GyroSwipeInf => _config.gyroSwipeInfo;
+        public  GyroDirectionalSwipeInfo[] GyroSwipeInf => _config.GyroSwipeInfo;
         public  GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)
         {
-            return _config.gyroSwipeInfo[device];
+            return _config.GyroSwipeInfo[device];
         }
 
-        public  bool[] GyroMouseStickToggle => _config.gyroMouseStickToggle;
+        public  bool[] GyroMouseStickToggle => _config.GyroMouseStickToggle;
         public  void SetGyroMouseStickToggle(int index, bool value, ControlService control)
             => _config.SetGyroMouseStickToggle(index, value, control);
 
-        public  SASteeringWheelEmulationAxisType[] SASteeringWheelEmulationAxis => _config.sASteeringWheelEmulationAxis;
+        public  SASteeringWheelEmulationAxisType[] SASteeringWheelEmulationAxis => _config.SASteeringWheelEmulationAxis;
         public  SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index)
         {
-            return _config.sASteeringWheelEmulationAxis[index];
+            return _config.SASteeringWheelEmulationAxis[index];
         }
 
-        public  int[] SASteeringWheelEmulationRange => _config.sASteeringWheelEmulationRange;
+        public  int[] SASteeringWheelEmulationRange => _config.SASteeringWheelEmulationRange;
         public  int GetSASteeringWheelEmulationRange(int index)
         {
-            return _config.sASteeringWheelEmulationRange[index];
+            return _config.SASteeringWheelEmulationRange[index];
         }
 
-        public  int[][] TouchDisInvertTriggers => _config.touchDisInvertTriggers;
+        public  int[][] TouchDisInvertTriggers => _config.TouchDisInvertTriggers;
         public  int[] getTouchDisInvertTriggers(int index)
         {
-            return _config.touchDisInvertTriggers[index];
+            return _config.TouchDisInvertTriggers[index];
         }
 
-        public  int[] GyroSensitivity => _config.gyroSensitivity;
         public  int getGyroSensitivity(int index)
         {
-            return _config.gyroSensitivity[index];
+            return _config.GyroSensitivity[index];
         }
 
-        public  int[] GyroSensVerticalScale => _config.gyroSensVerticalScale;
         public  int getGyroSensVerticalScale(int index)
         {
-            return _config.gyroSensVerticalScale[index];
+            return _config.GyroSensVerticalScale[index];
         }
 
         public  int getGyroInvert(int index)
@@ -1535,15 +1532,15 @@ namespace DS4Windows
         public  void UpdateDS4CSetting (int deviceNum, string buttonName, bool shift, object action, string exts, DS4KeyType kt, int trigger = 0)
         {
             _config.UpdateDs4ControllerSetting(deviceNum, buttonName, shift, action, exts, kt, trigger);
-            _config.containsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
-            _config.containsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
+            _config.ContainsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
+            _config.ContainsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
         }
 
         public  void UpdateDS4Extra(int deviceNum, string buttonName, bool shift, string exts)
         {
             _config.UpdateDs4ControllerExtra(deviceNum, buttonName, shift, exts);
-            _config.containsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
-            _config.containsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
+            _config.ContainsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
+            _config.ContainsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
         }
 
         public  ControlActionData GetDS4Action(int deviceNum, string buttonName, bool shift) => _config.GetDs4Action(deviceNum, buttonName, shift);
@@ -1560,12 +1557,12 @@ namespace DS4Windows
 
         public  bool containsCustomAction(int deviceNum)
         {
-            return _config.containsCustomAction[deviceNum];
+            return _config.ContainsCustomAction[deviceNum];
         }
 
         public  bool containsCustomExtras(int deviceNum)
         {
-            return _config.containsCustomExtras[deviceNum];
+            return _config.ContainsCustomExtras[deviceNum];
         }
 
         public void SaveAction(string name, string controls, int mode,

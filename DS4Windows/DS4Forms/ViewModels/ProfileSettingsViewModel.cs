@@ -561,13 +561,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool DInputOnly
         {
-            get => Global.Instance.DinputOnly[device];
+            get => Global.Instance.Config.DirectInputOnly[device];
             set
             {
-                bool temp = Global.Instance.DinputOnly[device];
+                bool temp = Global.Instance.Config.DirectInputOnly[device];
                 if (temp == value) return;
 
-                Global.Instance.DinputOnly[device] = value;
+                Global.Instance.Config.DirectInputOnly[device] = value;
                 DInputOnlyChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1837,14 +1837,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroSensitivity
         {
-            get => Global.Instance.GyroSensitivity[device];
-            set => Global.Instance.GyroSensitivity[device] = value;
+            get => Global.Instance.Config.GyroSensitivity[device];
+            set => Global.Instance.Config.GyroSensitivity[device] = value;
         }
 
         public int GyroVertScale
         {
-            get => Global.Instance.GyroSensVerticalScale[device];
-            set => Global.Instance.GyroSensVerticalScale[device] = value;
+            get => Global.Instance.Config.GyroSensVerticalScale[device];
+            set => Global.Instance.Config.GyroSensVerticalScale[device] = value;
         }
 
         public int GyroMouseEvalCondIndex
