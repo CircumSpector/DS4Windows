@@ -592,7 +592,8 @@ namespace DS4Windows
     public class LightbarSettingInfo
     {
         private LightbarMode mode = LightbarMode.DS4Win;
-        public LightbarDS4WinInfo Ds4WinSettings = new();
+
+        public LightbarDS4WinInfo Ds4WinSettings { get; } = new();
 
         public LightbarMode Mode
         {

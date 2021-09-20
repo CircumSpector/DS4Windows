@@ -218,15 +218,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public event EventHandler LightColorChanged;
 
-        public Color CustomLightColor
-        {
-            get
-            {
-                DS4Color color;
-                color = Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed;
-                return new Color() { R = color.Red, G = color.Green, B = color.Blue, A = 255 };
-            }
-        }
+        public Color CustomLightColor => Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed.ToColor();
 
         public string BatteryState
         {
