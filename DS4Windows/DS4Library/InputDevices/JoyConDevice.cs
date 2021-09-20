@@ -891,13 +891,13 @@ namespace DS4Windows.InputDevices
             double tempRatio;
             if (sideType == JoyConSide.Left)
             {
-                tempRatio = currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow / 255.0;
+                tempRatio = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow / 255.0;
                 dirty = tempRatio != 0 || tempRatio != currentLeftAmpRatio;
                 currentLeftAmpRatio = tempRatio;
             }
             else if (sideType == JoyConSide.Right)
             {
-                tempRatio = currentHap.rumbleState.RumbleMotorStrengthRightLightFast / 255.0;
+                tempRatio = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast / 255.0;
                 dirty = tempRatio != 0 || tempRatio != currentRightAmpRatio;
                 currentRightAmpRatio = tempRatio;
             }

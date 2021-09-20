@@ -136,7 +136,9 @@ namespace DS4Windows.InputDevices
         private uint timeStampPrevious = 0;
         private uint deltaTimeCurrent = 0;
         private bool outputDirty = false;
-        private DS4HapticState previousHapticState = new DS4HapticState();
+
+        private DS4HapticState PreviousHapticState { get; set; } = new();
+
         private byte[] outputBTCrc32Head = new byte[] { 0xA2 };
         //private byte outputPendCount = 0;
         private new GyroMouseSensDualSense gyroMouseSensSettings;
@@ -813,7 +815,7 @@ namespace DS4Windows.InputDevices
                     if (outputDirty)
                     {
                         WriteReport();
-                        previousHapticState = currentHap;
+                        PreviousHapticState = (DS4HapticState)CurrentHaptics.Clone();
                     }
 
                     outputDirty = false;
@@ -904,7 +906,7 @@ namespace DS4Windows.InputDevices
             MergeStates();
 
             bool change = false;
-            bool rumbleSet = currentHap.IsRumbleSet();
+            bool rumbleSet = CurrentHaptics.IsRumbleSet();
 
             if (conType == ConnectionType.USB)
             {
@@ -928,9 +930,9 @@ namespace DS4Windows.InputDevices
                 if (useRumble)
                 {
                     // Right? High Freq Motor
-                    outputReport[3] = currentHap.rumbleState.RumbleMotorStrengthRightLightFast;
+                    outputReport[3] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast;
                     // Left? Low Freq Motor
-                    outputReport[4] = currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+                    outputReport[4] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
                 }
 
                 /*
@@ -1000,11 +1002,11 @@ namespace DS4Windows.InputDevices
                 outputReport[44] = activePlayerLEDMask;
 
                 /* Lightbar colors */
-                outputReport[45] = currentHap.LightbarState.LightBarColor.Red;
-                outputReport[46] = currentHap.LightbarState.LightBarColor.Green;
-                outputReport[47] = currentHap.LightbarState.LightBarColor.Blue;
+                outputReport[45] = CurrentHaptics.LightbarState.LightBarColor.Red;
+                outputReport[46] = CurrentHaptics.LightbarState.LightBarColor.Green;
+                outputReport[47] = CurrentHaptics.LightbarState.LightBarColor.Blue;
 
-                if (!previousHapticState.Equals(currentHap))
+                if (!PreviousHapticState.Equals(CurrentHaptics))
                 {
                     change = true;
                 }
@@ -1063,9 +1065,9 @@ namespace DS4Windows.InputDevices
                 if (useRumble)
                 {
                     // Right? High Freq Motor
-                    outputReport[4] = currentHap.rumbleState.RumbleMotorStrengthRightLightFast;
+                    outputReport[4] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast;
                     // Left? Low Freq Motor
-                    outputReport[5] = currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+                    outputReport[5] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
                 }
 
                 /*
@@ -1135,11 +1137,11 @@ namespace DS4Windows.InputDevices
                 outputReport[45] = activePlayerLEDMask;
 
                 /* Lightbar colors */
-                outputReport[46] = currentHap.LightbarState.LightBarColor.Red;
-                outputReport[47] = currentHap.LightbarState.LightBarColor.Green;
-                outputReport[48] = currentHap.LightbarState.LightBarColor.Blue;
+                outputReport[46] = CurrentHaptics.LightbarState.LightBarColor.Red;
+                outputReport[47] = CurrentHaptics.LightbarState.LightBarColor.Green;
+                outputReport[48] = CurrentHaptics.LightbarState.LightBarColor.Blue;
 
-                change = !previousHapticState.Equals(currentHap);
+                change = !PreviousHapticState.Equals(CurrentHaptics);
 
                 // Need to calculate and populate CRC32 data so controller will accept the report
                 uint calcCrc32 = 0;

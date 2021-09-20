@@ -12,7 +12,7 @@ using ThreadState = System.Threading.ThreadState;
 
 namespace DS4Windows
 {
-    public class DS4Color : IEquatable<DS4Color>
+    public class DS4Color : IEquatable<DS4Color>, ICloneable
     {
         public byte Red { get; set; }
         public byte Green { get; set; }
@@ -122,6 +122,11 @@ namespace DS4Windows
         {
             return $"Red: {Red} Green: {Green} Blue: {Blue}";
         }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 
     public enum ConnectionType : byte
@@ -155,7 +160,7 @@ namespace DS4Windows
         }
     }
 
-    public class DS4LightbarState : IEquatable<DS4LightbarState>
+    public class DS4LightbarState : IEquatable<DS4LightbarState>, ICloneable
     {
         public DS4Color LightBarColor { get; set; } = new();
 
@@ -176,9 +181,17 @@ namespace DS4Windows
             return LightBarExplicitlyOff || LightBarColor.Red != 0 || LightBarColor.Green != 0 ||
                    LightBarColor.Blue != 0;
         }
+
+        public object Clone()
+        {
+            var state = (DS4LightbarState)MemberwiseClone();
+            state.LightBarColor = (DS4Color)LightBarColor.Clone();
+
+            return state;
+        }
     }
 
-    public class DS4HapticState : IEquatable<DS4HapticState>
+    public class DS4HapticState : IEquatable<DS4HapticState>, ICloneable
     {
         public DS4LightbarState LightbarState { get; set; } = new();
         public DS4ForceFeedbackState rumbleState;
@@ -199,6 +212,14 @@ namespace DS4Windows
             const byte zero = 0;
             return rumbleState.RumbleMotorsExplicitlyOff || rumbleState.RumbleMotorStrengthLeftHeavySlow != zero ||
                    rumbleState.RumbleMotorStrengthRightLightFast != zero;
+        }
+
+        public object Clone()
+        {
+            var state = (DS4HapticState)MemberwiseClone();
+            state.LightbarState = (DS4LightbarState)LightbarState.Clone();
+
+            return state;
         }
     }
 
@@ -294,7 +315,7 @@ namespace DS4Windows
         protected ConnectionType conType;
         protected DS4State cState = new();
 
-        protected DS4HapticState currentHap = new();
+        protected DS4HapticState CurrentHaptics { get; set; }= new();
         private uint deltaTimeCurrent;
         protected byte deviceSlotMask = 0x00;
 
@@ -507,21 +528,21 @@ namespace DS4Windows
 
         public byte RightLightFastRumble
         {
-            get => currentHap.rumbleState.RumbleMotorStrengthRightLightFast;
+            get => CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast;
             set
             {
-                if (currentHap.rumbleState.RumbleMotorStrengthRightLightFast != value)
-                    currentHap.rumbleState.RumbleMotorStrengthRightLightFast = value;
+                if (CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast != value)
+                    CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast = value;
             }
         }
 
         public byte LeftHeavySlowRumble
         {
-            get => currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+            get => CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
             set
             {
-                if (currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow != value)
-                    currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow = value;
+                if (CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow != value)
+                    CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow = value;
             }
         }
 
@@ -543,13 +564,13 @@ namespace DS4Windows
 
         public DS4Color LightBarColor
         {
-            get => currentHap.LightbarState.LightBarColor;
+            get => CurrentHaptics.LightbarState.LightBarColor;
             set
             {
-                if (currentHap.LightbarState.LightBarColor.Red != value.Red ||
-                    currentHap.LightbarState.LightBarColor.Green != value.Green ||
-                    currentHap.LightbarState.LightBarColor.Blue != value.Blue)
-                    currentHap.LightbarState.LightBarColor = value;
+                if (CurrentHaptics.LightbarState.LightBarColor.Red != value.Red ||
+                    CurrentHaptics.LightbarState.LightBarColor.Green != value.Green ||
+                    CurrentHaptics.LightbarState.LightBarColor.Blue != value.Blue)
+                    CurrentHaptics.LightbarState.LightBarColor = value;
             }
         }
 
@@ -710,12 +731,12 @@ namespace DS4Windows
 
         public byte getLeftHeavySlowRumble()
         {
-            return currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+            return CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
         }
 
         public byte getLightBarOnDuration()
         {
-            return currentHap.LightbarState.LightBarFlashDurationOn;
+            return CurrentHaptics.LightbarState.LightBarFlashDurationOn;
         }
 
         public int getBTPollRate()
@@ -1687,13 +1708,13 @@ namespace DS4Windows
                 outReportBuffer[3] = outputFeaturesByte;
                 outReportBuffer[4] = 0x04;
 
-                outReportBuffer[6] = currentHap.rumbleState.RumbleMotorStrengthRightLightFast; // fast motor
-                outReportBuffer[7] = currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow; // slow motor
-                outReportBuffer[8] = currentHap.LightbarState.LightBarColor.Red; // red
-                outReportBuffer[9] = currentHap.LightbarState.LightBarColor.Green; // green
-                outReportBuffer[10] = currentHap.LightbarState.LightBarColor.Blue; // blue
-                outReportBuffer[11] = currentHap.LightbarState.LightBarFlashDurationOn; // flash on duration
-                outReportBuffer[12] = currentHap.LightbarState.LightBarFlashDurationOff; // flash off duration
+                outReportBuffer[6] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast; // fast motor
+                outReportBuffer[7] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow; // slow motor
+                outReportBuffer[8] = CurrentHaptics.LightbarState.LightBarColor.Red; // red
+                outReportBuffer[9] = CurrentHaptics.LightbarState.LightBarColor.Green; // green
+                outReportBuffer[10] = CurrentHaptics.LightbarState.LightBarColor.Blue; // blue
+                outReportBuffer[11] = CurrentHaptics.LightbarState.LightBarFlashDurationOn; // flash on duration
+                outReportBuffer[12] = CurrentHaptics.LightbarState.LightBarFlashDurationOff; // flash off duration
 
                 fixed (byte* byteR = outputReport, byteB = outReportBuffer)
                 {
@@ -1715,13 +1736,13 @@ namespace DS4Windows
                 // enable rumble (0x01), lightbar (0x02), flash (0x04). Default: 0xF7
                 outReportBuffer[1] = outputFeaturesByte;
                 outReportBuffer[2] = 0x04;
-                outReportBuffer[4] = currentHap.rumbleState.RumbleMotorStrengthRightLightFast; // fast motor
-                outReportBuffer[5] = currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow; // slow  motor
-                outReportBuffer[6] = currentHap.LightbarState.LightBarColor.Red; // red
-                outReportBuffer[7] = currentHap.LightbarState.LightBarColor.Green; // green
-                outReportBuffer[8] = currentHap.LightbarState.LightBarColor.Blue; // blue
-                outReportBuffer[9] = currentHap.LightbarState.LightBarFlashDurationOn; // flash on duration
-                outReportBuffer[10] = currentHap.LightbarState.LightBarFlashDurationOff; // flash off duration
+                outReportBuffer[4] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast; // fast motor
+                outReportBuffer[5] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow; // slow  motor
+                outReportBuffer[6] = CurrentHaptics.LightbarState.LightBarColor.Red; // red
+                outReportBuffer[7] = CurrentHaptics.LightbarState.LightBarColor.Green; // green
+                outReportBuffer[8] = CurrentHaptics.LightbarState.LightBarColor.Blue; // blue
+                outReportBuffer[9] = CurrentHaptics.LightbarState.LightBarFlashDurationOn; // flash on duration
+                outReportBuffer[10] = CurrentHaptics.LightbarState.LightBarFlashDurationOff; // flash off duration
 
                 fixed (byte* byteR = outputReport, byteB = outReportBuffer)
                 {
@@ -2017,8 +2038,8 @@ namespace DS4Windows
                 if (testRumble.rumbleState.RumbleMotorsExplicitlyOff)
                     rumbleAutostopTimer
                         .Reset(); // Stop an autostop timer because ViGem driver sent properly a zero rumble notification
-                else if (currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow != leftHeavySlowMotor ||
-                         currentHap.rumbleState.RumbleMotorStrengthRightLightFast != rightLightFastMotor)
+                else if (CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow != leftHeavySlowMotor ||
+                         CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast != rightLightFastMotor)
                     rumbleAutostopTimer
                         .Restart(); // Start an autostop timer to stop potentially stuck rumble motor because of lost rumble notification events from ViGem driver
             }
@@ -2033,7 +2054,7 @@ namespace DS4Windows
 
                 //currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow = testRumble.rumbleState.RumbleMotorStrengthLeftHeavySlow;
                 //currentHap.rumbleState.RumbleMotorStrengthRightLightFast = testRumble.rumbleState.RumbleMotorStrengthRightLightFast;
-                currentHap.rumbleState = testRumble.rumbleState;
+                CurrentHaptics.rumbleState = testRumble.rumbleState;
             }
         }
 
@@ -2106,17 +2127,17 @@ namespace DS4Windows
 
         public void SetHapticState(ref DS4HapticState hs)
         {
-            currentHap = hs;
+            CurrentHaptics = hs;
         }
 
         public void SetLightbarState(ref DS4LightbarState lightState)
         {
-            currentHap.LightbarState = lightState;
+            CurrentHaptics.LightbarState = lightState;
         }
 
         public void SetRumbleState(ref DS4ForceFeedbackState rumbleState)
         {
-            currentHap.rumbleState = rumbleState;
+            CurrentHaptics.rumbleState = rumbleState;
         }
 
         public override string ToString()
