@@ -18,13 +18,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         // Re-Enable Ex Mode
         public bool HideDS4Controller
         {
-            get => DS4Windows.Global.Instance.UseExclusiveMode;
-            set => DS4Windows.Global.Instance.UseExclusiveMode = value;
+            get => DS4Windows.Global.Instance.Config.UseExclusiveMode;
+            set => DS4Windows.Global.Instance.Config.UseExclusiveMode = value;
         }
 
 
-        public bool SwipeTouchSwitchProfile { get => DS4Windows.Global.Instance.SwipeProfiles;
-            set => DS4Windows.Global.Instance.SwipeProfiles = value; }
+        public bool SwipeTouchSwitchProfile { get => DS4Windows.Global.Instance.Config.SwipeProfiles;
+            set => DS4Windows.Global.Instance.Config.SwipeProfiles = value; }
 
         private bool runAtStartup;
         public bool RunAtStartup
@@ -87,7 +87,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int ShowNotificationsIndex { get => DS4Windows.Global.Instance.Config.Notifications; set => DS4Windows.Global.Instance.Config.Notifications = value; }
         public bool DisconnectBTStop { get => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop; set => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop = value; }
         public bool FlashHighLatency { get => DS4Windows.Global.Instance.Config.FlashWhenLate; set => DS4Windows.Global.Instance.Config.FlashWhenLate = value; }
-        public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.FlashWhenLateAt; set => DS4Windows.Global.Instance.FlashWhenLateAt = value; }
+        public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.Config.FlashWhenLateAt; set => DS4Windows.Global.Instance.Config.FlashWhenLateAt = value; }
         public bool StartMinimize { get => DS4Windows.Global.Instance.Config.StartMinimized; set => DS4Windows.Global.Instance.Config.StartMinimized = value; }
         public bool MinimizeToTaskbar { get => DS4Windows.Global.Instance.Config.MinToTaskBar; set => DS4Windows.Global.Instance.Config.MinToTaskBar = value; }
         public bool CloseMinimizes { get => DS4Windows.Global.Instance.Config.CloseMini; set => DS4Windows.Global.Instance.Config.CloseMini = value; }
@@ -199,12 +199,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool UseUdpSmoothing
         {
-            get => DS4Windows.Global.Instance.UseUDPSeverSmoothing;
+            get => DS4Windows.Global.Instance.Config.UseUdpSmoothing;
             set
             {
-                bool temp = DS4Windows.Global.Instance.UseUDPSeverSmoothing;
+                bool temp = DS4Windows.Global.Instance.Config.UseUdpSmoothing;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.UseUDPSeverSmoothing = value;
+                DS4Windows.Global.Instance.Config.UseUdpSmoothing = value;
                 UseUdpSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -212,7 +212,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Visibility UdpServerOneEuroPanelVisibility
         {
-            get => DS4Windows.Global.Instance.isUsingUDPServer() && DS4Windows.Global.Instance.UseUDPSeverSmoothing ? Visibility.Visible : Visibility.Collapsed;
+            get => DS4Windows.Global.Instance.isUsingUDPServer() && DS4Windows.Global.Instance.Config.UseUdpSmoothing ? Visibility.Visible : Visibility.Collapsed;
         }
         public event EventHandler UdpServerOneEuroPanelVisibilityChanged;
 

@@ -478,7 +478,7 @@ Suspend support not enabled.", true);
 
         private void ControlServiceStarted(object sender, EventArgs e)
         {
-            if (Global.Instance.SwipeProfiles)
+            if (Global.Instance.Config.SwipeProfiles)
             {
                 ChangeHotkeysStatus(true);
             }
@@ -582,7 +582,7 @@ Suspend support not enabled.", true);
         {
             hotkeysTimer.Stop();
 
-            if (Global.Instance.SwipeProfiles)
+            if (Global.Instance.Config.SwipeProfiles)
             {
                 foreach (CompositeDeviceModel item in conLvViewModel.ControllerCol)
                 //for (int i = 0; i < 4; i++)

@@ -229,6 +229,12 @@ namespace DS4Windows
 
         public IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
 
+        public bool UseExclusiveMode { get; set; }
+
+        public bool SwipeProfiles { get; set; }
+
+        public int FlashWhenLateAt { get; set; }
+
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);

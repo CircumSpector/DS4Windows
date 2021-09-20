@@ -114,7 +114,7 @@ namespace DS4Windows
             /// </summary>
             public bool AutoProfileRevertDefaultProfile = true;
 
-            public int flashWhenLateAt = 50;
+            public int FlashWhenLateAt { get; set; }= 50;
 
             public string lastVersionChecked = string.Empty;
 
@@ -4938,7 +4938,8 @@ namespace DS4Windows
                         try
                         {
                             Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLateAt");
-                            int.TryParse(Item.InnerText, out flashWhenLateAt);
+                            int.TryParse(Item.InnerText, out var value);
+                            FlashWhenLateAt = value;
                         }
                         catch
                         {
@@ -5297,7 +5298,7 @@ namespace DS4Windows
                 xmlFlashWhenLate.InnerText = FlashWhenLate.ToString();
                 rootElement.AppendChild(xmlFlashWhenLate);
                 var xmlFlashWhenLateAt = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLateAt", null);
-                xmlFlashWhenLateAt.InnerText = flashWhenLateAt.ToString();
+                xmlFlashWhenLateAt.InnerText = FlashWhenLateAt.ToString();
                 rootElement.AppendChild(xmlFlashWhenLateAt);
                 var xmlAppIconChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppIcon", null);
                 xmlAppIconChoice.InnerText = UseIconChoice.ToString();
