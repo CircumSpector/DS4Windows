@@ -123,8 +123,6 @@ namespace DS4Windows
 
             public ulong LastVersionCheckedNumber;
 
-            private bool tempBool;
-
             public BackingStore()
             {
                 ds4controlSettings = new ControlSettingsGroup[TEST_PROFILE_ITEM_COUNT];
@@ -7103,9 +7101,9 @@ namespace DS4Windows
                 {
                     var oldUseDInputOnly = UseDirectInputOnly[device];
                     var tempDevice = control.DS4Controllers[device];
-                    var exists = tempBool = tempDevice != null;
-                    var synced = tempBool = exists ? tempDevice.isSynced() : false;
-                    var isAlive = tempBool = exists ? tempDevice.IsAlive() : false;
+                    var exists = tempDevice != null;
+                    var synced = exists ? tempDevice.isSynced() : false;
+                    var isAlive = exists ? tempDevice.IsAlive() : false;
                     if (DirectInputOnly[device] != oldUseDInputOnly)
                     {
                         if (DirectInputOnly[device])
