@@ -62,8 +62,7 @@ namespace DS4Windows
 
         public static VirtualKBMBase outputKBMHandler;
         public static VirtualKBMMapping outputKBMMapping;
-
-
+        
         public static Dictionary<TrayIconChoice, string> IconChoiceResources = new()
         {
             [TrayIconChoice.Default] = "/DS4Windows;component/Resources/DS4W.ico",

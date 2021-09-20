@@ -324,29 +324,6 @@ namespace DS4Windows
             return result;
         }
 
-        private static byte ApplyRatio(byte b1, byte b2, double r)
-        {
-            if (r > 100.0)
-                r = 100.0;
-            else if (r < 0.0)
-                r = 0.0;
-
-            r *= 0.01;
-            return (byte)Math.Round(b1 * (1 - r) + b2 * r, 0);
-        }
-
-        public static DS4Color GetTransitionedColor(ref DS4Color c1, ref DS4Color c2, double ratio)
-        {
-            //Color cs = Color.FromArgb(c1.red, c1.green, c1.blue);
-            var cs = new DS4Color
-            {
-                red = ApplyRatio(c1.red, c2.red, ratio),
-                green = ApplyRatio(c1.green, c2.green, ratio),
-                blue = ApplyRatio(c1.blue, c2.blue, ratio)
-            };
-            return cs;
-        }
-
         private static Color ApplyRatio(Color c1, Color c2, uint r)
         {
             var ratio = r / 100f;

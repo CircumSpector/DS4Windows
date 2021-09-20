@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using static System.Math;
 using static DS4Windows.Global;
-using System.Diagnostics;
 
 namespace DS4Windows
 {
     public class DS4LightBar
     {
-        private readonly static byte[/* Light On duration */, /* Light Off duration */] BatteryIndicatorDurations =
+        internal const int PULSE_FLASH_DURATION = 2000;
+        internal const double PULSE_FLASH_SEGMENTS = PULSE_FLASH_DURATION / 40;
+        internal const int PULSE_CHARGING_DURATION = 4000;
+        internal const double PULSE_CHARGING_SEGMENTS = PULSE_CHARGING_DURATION / 40 - 2;
+
+        private static readonly byte[ /* Light On duration */, /* Light Off duration */] BatteryIndicatorDurations =
         {
             { 28, 252 }, // on 10% of the time at 0
             { 28, 252 },
@@ -20,38 +25,64 @@ namespace DS4Windows
             { 196, 84 },
             { 224, 56 }, // on 80% of the time at 80, etc.
             { 252, 28 }, // on 90% of the time at 90
-            { 0, 0 }     // use on 100%. 0 is for "charging" OR anything sufficiently-"charged"
+            { 0, 0 } // use on 100%. 0 is for "charging" OR anything sufficiently-"charged"
         };
 
-        static double[] counters = new double[Global.MAX_DS4_CONTROLLER_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0 };
-        public static Stopwatch[] fadewatches = new Stopwatch[Global.MAX_DS4_CONTROLLER_COUNT]
+        private static readonly double[] counters = new double[MAX_DS4_CONTROLLER_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        public static Stopwatch[] fadewatches = new Stopwatch[MAX_DS4_CONTROLLER_COUNT]
         {
-            new Stopwatch(), new Stopwatch(), new Stopwatch(), new Stopwatch(),
-            new Stopwatch(), new Stopwatch(), new Stopwatch(), new Stopwatch(),
+            new(), new(), new(), new(),
+            new(), new(), new(), new()
         };
 
-        static bool[] fadedirection = new bool[Global.MAX_DS4_CONTROLLER_COUNT] { false, false, false, false, false, false, false, false };
-        static DateTime[] oldnow = new DateTime[Global.MAX_DS4_CONTROLLER_COUNT]
+        private static readonly bool[] fadedirection = new bool[MAX_DS4_CONTROLLER_COUNT]
+            { false, false, false, false, false, false, false, false };
+
+        private static readonly DateTime[] oldnow = new DateTime[MAX_DS4_CONTROLLER_COUNT]
         {
             DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow,
-            DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow,
+            DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow
         };
 
-        public static bool[] forcelight = new bool[Global.MAX_DS4_CONTROLLER_COUNT] { false, false, false, false, false, false, false, false };
-        public static DS4Color[] forcedColor = new DS4Color[Global.MAX_DS4_CONTROLLER_COUNT];
-        public static byte[] forcedFlash = new byte[Global.MAX_DS4_CONTROLLER_COUNT];
-        internal const int PULSE_FLASH_DURATION = 2000;
-        internal const double PULSE_FLASH_SEGMENTS = PULSE_FLASH_DURATION / 40;
-        internal const int PULSE_CHARGING_DURATION = 4000;
-        internal const double PULSE_CHARGING_SEGMENTS = (PULSE_CHARGING_DURATION / 40) - 2;
+        public static bool[] forcelight = new bool[MAX_DS4_CONTROLLER_COUNT]
+            { false, false, false, false, false, false, false, false };
+
+        public static DS4Color[] forcedColor = new DS4Color[MAX_DS4_CONTROLLER_COUNT];
+        public static byte[] forcedFlash = new byte[MAX_DS4_CONTROLLER_COUNT];
+
+        public static bool defaultLight = false, shuttingdown = false;
+
+        private static byte ApplyRatio(byte b1, byte b2, double r)
+        {
+            if (r > 100.0)
+                r = 100.0;
+            else if (r < 0.0)
+                r = 0.0;
+
+            r *= 0.01;
+            return (byte)Round(b1 * (1 - r) + b2 * r, 0);
+        }
+
+        public static DS4Color GetTransitionedColor(ref DS4Color c1, ref DS4Color c2, double ratio)
+        {
+            //Color cs = Color.FromArgb(c1.red, c1.green, c1.blue);
+            var cs = new DS4Color
+            {
+                red = ApplyRatio(c1.red, c2.red, ratio),
+                green = ApplyRatio(c1.green, c2.green, ratio),
+                blue = ApplyRatio(c1.blue, c2.blue, ratio)
+            };
+            return cs;
+        }
 
         public static void updateLightBar(DS4Device device, int deviceNum)
         {
-            DS4Color color = new DS4Color();
-            bool useForceLight = forcelight[deviceNum];
-            LightbarSettingInfo lightbarSettingInfo = Instance.GetLightbarSettingsInfo(deviceNum);
-            LightbarDS4WinInfo lightModeInfo = lightbarSettingInfo.ds4winSettings;
-            bool useLightRoutine = lightbarSettingInfo.mode == LightbarMode.DS4Win;
+            var color = new DS4Color();
+            var useForceLight = forcelight[deviceNum];
+            var lightbarSettingInfo = Instance.GetLightbarSettingsInfo(deviceNum);
+            var lightModeInfo = lightbarSettingInfo.ds4winSettings;
+            var useLightRoutine = lightbarSettingInfo.mode == LightbarMode.DS4Win;
             //bool useLightRoutine = false;
             if (!defaultLight && !useForceLight && useLightRoutine)
             {
@@ -59,21 +90,24 @@ namespace DS4Windows
                 {
                     if (lightModeInfo.ledAsBattery)
                     {
-                        ref DS4Color fullColor = ref lightModeInfo.m_CustomLed; // ref getCustomColor(deviceNum);
-                        ref DS4Color lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
+                        ref var fullColor = ref lightModeInfo.m_CustomLed; // ref getCustomColor(deviceNum);
+                        ref var lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
                         color = GetTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
                     }
                     else
+                    {
                         color = lightModeInfo.m_CustomLed; //getCustomColor(deviceNum);
+                    }
                 }
                 else
                 {
-                    double rainbow = lightModeInfo.rainbow;// getRainbow(deviceNum);
+                    var rainbow = lightModeInfo.rainbow; // getRainbow(deviceNum);
                     if (rainbow > 0)
                     {
                         // Display rainbow
-                        DateTime now = DateTime.UtcNow;
-                        if (now >= oldnow[deviceNum] + TimeSpan.FromMilliseconds(10)) //update by the millisecond that way it's a smooth transtion
+                        var now = DateTime.UtcNow;
+                        if (now >= oldnow[deviceNum] +
+                            TimeSpan.FromMilliseconds(10)) //update by the millisecond that way it's a smooth transtion
                         {
                             oldnow[deviceNum] = now;
                             if (device.isCharging())
@@ -87,23 +121,24 @@ namespace DS4Windows
                         else if (counters[deviceNum] > 180000)
                             counters[deviceNum] = 0;
 
-                        double maxSat = lightModeInfo.maxRainbowSat; // GetMaxSatRainbow(deviceNum);
+                        var maxSat = lightModeInfo.maxRainbowSat; // GetMaxSatRainbow(deviceNum);
                         if (lightModeInfo.ledAsBattery)
                         {
-                            byte useSat = (byte)(maxSat == 1.0 ?
-                                device.getBattery() * 2.55 :
-                                device.getBattery() * 2.55 * maxSat);
+                            var useSat = (byte)(maxSat == 1.0
+                                ? device.getBattery() * 2.55
+                                : device.getBattery() * 2.55 * maxSat);
                             color = HuetoRGB((float)counters[deviceNum] % 360, useSat);
                         }
                         else
+                        {
                             color = HuetoRGB((float)counters[deviceNum] % 360,
                                 (byte)(maxSat == 1.0 ? 255 : 255 * maxSat));
-
+                        }
                     }
                     else if (lightModeInfo.ledAsBattery)
                     {
-                        ref DS4Color fullColor = ref lightModeInfo.m_Led; //ref getMainColor(deviceNum);
-                        ref DS4Color lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
+                        ref var fullColor = ref lightModeInfo.m_Led; //ref getMainColor(deviceNum);
+                        ref var lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
                         color = GetTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
                     }
                     else
@@ -114,26 +149,26 @@ namespace DS4Windows
 
                 if (device.getBattery() <= lightModeInfo.flashAt && !defaultLight && !device.isCharging())
                 {
-                    ref DS4Color flashColor = ref lightModeInfo.m_FlashLed; //ref getFlashColor(deviceNum);
+                    ref var flashColor = ref lightModeInfo.m_FlashLed; //ref getFlashColor(deviceNum);
                     if (!(flashColor.red == 0 &&
-                        flashColor.green == 0 &&
-                        flashColor.blue == 0))
+                          flashColor.green == 0 &&
+                          flashColor.blue == 0))
                         color = flashColor;
 
                     if (lightModeInfo.flashType == 1)
                     {
-                        double ratio = 0.0;
+                        var ratio = 0.0;
 
                         if (!fadewatches[deviceNum].IsRunning)
                         {
-                            bool temp = fadedirection[deviceNum];
+                            var temp = fadedirection[deviceNum];
                             fadedirection[deviceNum] = !temp;
                             fadewatches[deviceNum].Restart();
                             ratio = temp ? 100.0 : 0.0;
                         }
                         else
                         {
-                            long elapsed = fadewatches[deviceNum].ElapsedMilliseconds;
+                            var elapsed = fadewatches[deviceNum].ElapsedMilliseconds;
 
                             if (fadedirection[deviceNum])
                             {
@@ -163,52 +198,50 @@ namespace DS4Windows
                             }
                         }
 
-                        DS4Color tempCol = new DS4Color(0, 0, 0);
+                        var tempCol = new DS4Color(0, 0, 0);
                         color = GetTransitionedColor(ref color, ref tempCol, ratio);
                     }
                 }
 
-                int idleDisconnectTimeout = Instance.GetIdleDisconnectTimeout(deviceNum);
+                var idleDisconnectTimeout = Instance.GetIdleDisconnectTimeout(deviceNum);
                 if (idleDisconnectTimeout > 0 && lightModeInfo.ledAsBattery &&
                     (!device.isCharging() || device.getBattery() >= 100))
                 {
                     // Fade lightbar by idle time
-                    TimeSpan timeratio = new TimeSpan(DateTime.UtcNow.Ticks - device.lastActive.Ticks);
-                    double botratio = timeratio.TotalMilliseconds;
-                    double topratio = TimeSpan.FromSeconds(idleDisconnectTimeout).TotalMilliseconds;
+                    var timeratio = new TimeSpan(DateTime.UtcNow.Ticks - device.lastActive.Ticks);
+                    var botratio = timeratio.TotalMilliseconds;
+                    var topratio = TimeSpan.FromSeconds(idleDisconnectTimeout).TotalMilliseconds;
                     double ratio = 100.0 * (botratio / topratio), elapsed = ratio;
                     if (ratio >= 50.0 && ratio < 100.0)
                     {
-                        DS4Color emptyCol = new DS4Color(0, 0, 0);
+                        var emptyCol = new DS4Color(0, 0, 0);
                         color = GetTransitionedColor(ref color, ref emptyCol,
                             (uint)(-100.0 * (elapsed = 0.02 * (ratio - 50.0)) * (elapsed - 2.0)));
                     }
                     else if (ratio >= 100.0)
                     {
-                        DS4Color emptyCol = new DS4Color(0, 0, 0);
+                        var emptyCol = new DS4Color(0, 0, 0);
                         color = GetTransitionedColor(ref color, ref emptyCol, 100.0);
                     }
-                        
                 }
 
                 if (device.isCharging() && device.getBattery() < 100)
-                {
                     switch (lightModeInfo.chargingType)
                     {
                         case 1:
                         {
-                            double ratio = 0.0;
+                            var ratio = 0.0;
 
                             if (!fadewatches[deviceNum].IsRunning)
                             {
-                                bool temp = fadedirection[deviceNum];
+                                var temp = fadedirection[deviceNum];
                                 fadedirection[deviceNum] = !temp;
                                 fadewatches[deviceNum].Restart();
                                 ratio = temp ? 100.0 : 0.0;
                             }
                             else
                             {
-                                long elapsed = fadewatches[deviceNum].ElapsedMilliseconds;
+                                var elapsed = fadewatches[deviceNum].ElapsedMilliseconds;
 
                                 if (fadedirection[deviceNum])
                                 {
@@ -242,7 +275,7 @@ namespace DS4Windows
                                 }
                             }
 
-                            DS4Color emptyCol = new DS4Color(0, 0, 0);
+                            var emptyCol = new DS4Color(0, 0, 0);
                             color = GetTransitionedColor(ref color, ref emptyCol, ratio);
                             break;
                         }
@@ -257,9 +290,7 @@ namespace DS4Windows
                             color = lightModeInfo.m_ChargingLed; //getChargingColor(deviceNum);
                             break;
                         }
-                        default: break;
                     }
-                }
             }
             else if (useForceLight)
             {
@@ -281,24 +312,24 @@ namespace DS4Windows
 
             if (useLightRoutine)
             {
-                bool distanceprofile = Instance.Config.DistanceProfiles[deviceNum] || TempProfileDistance[deviceNum];
+                var distanceprofile = Instance.Config.DistanceProfiles[deviceNum] || TempProfileDistance[deviceNum];
                 //distanceprofile = (ProfilePath[deviceNum].ToLower().Contains("distance") || TempProfileNames[deviceNum].ToLower().Contains("distance"));
                 if (distanceprofile && !defaultLight)
                 {
                     // Thing I did for Distance
-                    float rumble = device.getLeftHeavySlowRumble() / 2.55f;
-                    byte max = Max(color.red, Max(color.green, color.blue));
+                    var rumble = device.getLeftHeavySlowRumble() / 2.55f;
+                    var max = Max(color.red, Max(color.green, color.blue));
                     if (device.getLeftHeavySlowRumble() > 100)
                     {
-                        DS4Color maxCol = new DS4Color(max, max, 0);
-                        DS4Color redCol = new DS4Color(255, 0, 0);
+                        var maxCol = new DS4Color(max, max, 0);
+                        var redCol = new DS4Color(255, 0, 0);
                         color = GetTransitionedColor(ref maxCol, ref redCol, rumble);
                     }
                     else
                     {
-                        DS4Color maxCol = new DS4Color(max, max, 0);
-                        DS4Color redCol = new DS4Color(255, 0, 0);
-                        DS4Color tempCol = GetTransitionedColor(ref maxCol,
+                        var maxCol = new DS4Color(max, max, 0);
+                        var redCol = new DS4Color(255, 0, 0);
+                        var tempCol = GetTransitionedColor(ref maxCol,
                             ref redCol, 39.6078f);
                         color = GetTransitionedColor(ref color, ref tempCol,
                             device.getLeftHeavySlowRumble());
@@ -310,21 +341,23 @@ namespace DS4Windows
                     LightBarColor = color
                 };
                 */
-                DS4LightbarState lightState = new DS4LightbarState
+                var lightState = new DS4LightbarState
                 {
-                    LightBarColor = color,
+                    LightBarColor = color
                 };
 
                 if (lightState.IsLightBarSet())
                 {
                     if (useForceLight && forcedFlash[deviceNum] > 0)
                     {
-                        lightState.LightBarFlashDurationOff = lightState.LightBarFlashDurationOn = (byte)(25 - forcedFlash[deviceNum]);
+                        lightState.LightBarFlashDurationOff =
+                            lightState.LightBarFlashDurationOn = (byte)(25 - forcedFlash[deviceNum]);
                         lightState.LightBarExplicitlyOff = true;
                     }
-                    else if (device.getBattery() <= lightModeInfo.flashAt && lightModeInfo.flashType == 0 && !defaultLight && !device.isCharging())
+                    else if (device.getBattery() <= lightModeInfo.flashAt && lightModeInfo.flashType == 0 &&
+                             !defaultLight && !device.isCharging())
                     {
-                        int level = device.getBattery() / 10;
+                        var level = device.getBattery() / 10;
                         if (level >= 10)
                             level = 10; // all values of >~100% are rendered the same
 
@@ -333,7 +366,8 @@ namespace DS4Windows
                     }
                     else if (distanceprofile && device.getLeftHeavySlowRumble() > 155) //also part of Distance
                     {
-                        lightState.LightBarFlashDurationOff = lightState.LightBarFlashDurationOn = (byte)((-device.getLeftHeavySlowRumble() + 265));
+                        lightState.LightBarFlashDurationOff = lightState.LightBarFlashDurationOn =
+                            (byte)(-device.getLeftHeavySlowRumble() + 265);
                         lightState.LightBarExplicitlyOff = true;
                     }
                     else
@@ -348,8 +382,9 @@ namespace DS4Windows
                     lightState.LightBarExplicitlyOff = true;
                 }
 
-                byte tempLightBarOnDuration = device.getLightBarOnDuration();
-                if (tempLightBarOnDuration != lightState.LightBarFlashDurationOn && tempLightBarOnDuration != 1 && lightState.LightBarFlashDurationOn == 0)
+                var tempLightBarOnDuration = device.getLightBarOnDuration();
+                if (tempLightBarOnDuration != lightState.LightBarFlashDurationOn && tempLightBarOnDuration != 1 &&
+                    lightState.LightBarFlashDurationOn == 0)
                     lightState.LightBarFlashDurationOff = lightState.LightBarFlashDurationOn = 1;
 
                 device.SetLightbarState(ref lightState);
@@ -358,26 +393,23 @@ namespace DS4Windows
             }
         }
 
-        public static bool defaultLight = false, shuttingdown = false;
-      
         public static DS4Color HuetoRGB(float hue, byte sat)
         {
-            byte C = sat;
-            int X = (int)((C * (float)(1 - Math.Abs((hue / 60) % 2 - 1))));
+            var C = sat;
+            var X = (int)(C * (1 - Abs(hue / 60 % 2 - 1)));
             if (0 <= hue && hue < 60)
                 return new DS4Color(C, (byte)X, 0);
-            else if (60 <= hue && hue < 120)
+            if (60 <= hue && hue < 120)
                 return new DS4Color((byte)X, C, 0);
-            else if (120 <= hue && hue < 180)
+            if (120 <= hue && hue < 180)
                 return new DS4Color(0, C, (byte)X);
-            else if (180 <= hue && hue < 240)
+            if (180 <= hue && hue < 240)
                 return new DS4Color(0, (byte)X, C);
-            else if (240 <= hue && hue < 300)
+            if (240 <= hue && hue < 300)
                 return new DS4Color((byte)X, 0, C);
-            else if (300 <= hue && hue < 360)
+            if (300 <= hue && hue < 360)
                 return new DS4Color(C, 0, (byte)X);
-            else
-                return new DS4Color(Color.Red);
+            return new DS4Color(Color.Red);
         }
     }
 }

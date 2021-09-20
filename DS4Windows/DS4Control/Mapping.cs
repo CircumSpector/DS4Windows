@@ -3606,9 +3606,9 @@ namespace DS4Windows
                                     }
                                     DS4Color empty = new DS4Color(byte.Parse(dets[3]), byte.Parse(dets[4]), byte.Parse(dets[5]));
                                     DS4Color full = new DS4Color(byte.Parse(dets[6]), byte.Parse(dets[7]), byte.Parse(dets[8]));
-                                    DS4Color trans = GetTransitionedColor(ref empty, ref full, d.Battery);
+                                    DS4Color trans = DS4LightBar.GetTransitionedColor(ref empty, ref full, d.Battery);
                                     if (fadetimer[device] < 100)
-                                        DS4LightBar.forcedColor[device] = GetTransitionedColor(ref lastColor[device], ref trans, fadetimer[device] += 2);
+                                        DS4LightBar.forcedColor[device] = DS4LightBar.GetTransitionedColor(ref lastColor[device], ref trans, fadetimer[device] += 2);
                                 }
                                 actionDone[index].dev[device] = true;
                             }
