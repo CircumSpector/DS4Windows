@@ -49,7 +49,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color() { red = color.R, green = color.G, blue = color.B };
+                DS4Color dcolor = new DS4Color(color);
                 DS4LightBar.forcedColor[device] = dcolor;
                 DS4LightBar.forcedFlash[device] = 0;
                 DS4LightBar.forcelight[device] = true;
@@ -60,7 +60,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color() { red = color.R, green = color.G, blue = color.B };
+                DS4Color dcolor = new DS4Color(color);
                 DS4LightBar.forcedColor[device] = dcolor;
                 DS4LightBar.forcedFlash[device] = 0;
                 DS4LightBar.forcelight[device] = true;

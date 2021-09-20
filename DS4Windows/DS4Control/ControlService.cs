@@ -1281,7 +1281,7 @@ namespace DS4Windows
 
                         if (profileLoaded || useAutoProfile)
                         {
-                            device.LightBarColor = Global.Instance.GetMainColor(i);
+                            device.LightBarColor = Global.Instance.Config.GetMainColor(i);
 
                             if (!Global.Instance.getDInputOnly(i) && device.isSynced())
                             {
@@ -1508,7 +1508,7 @@ namespace DS4Windows
                             DS4LightBar.forcelight[i] = false;
                             DS4LightBar.forcedFlash[i] = 0;
                             DS4LightBar.defaultLight = true;
-                            DS4LightBar.updateLightBar(DS4Controllers[i], i);
+                            DS4LightBar.UpdateLightBar(DS4Controllers[i], i);
                             tempDevice.IsRemoved = true;
                             tempDevice.StopUpdate();
                             DS4Devices.RemoveDevice(tempDevice);
@@ -1720,7 +1720,7 @@ namespace DS4Windows
 
                             if (profileLoaded || useAutoProfile)
                             {
-                                device.LightBarColor = Global.Instance.GetMainColor(Index);
+                                device.LightBarColor = Global.Instance.Config.GetMainColor(Index);
 
                                 if (!Global.Instance.getDInputOnly(Index) && device.isSynced())
                                 {
@@ -1845,7 +1845,7 @@ namespace DS4Windows
 
             device.RumbleAutostopTime = Instance.GetRumbleAutostopTime(ind);
             device.setRumble(0, 0);
-            device.LightBarColor = Instance.GetMainColor(ind);
+            device.LightBarColor = Instance.Config.GetMainColor(ind);
 
             if (!startUp)
             {
@@ -2330,7 +2330,7 @@ namespace DS4Windows
                 Mapping.Commit(ind);
 
                 // Update the Lightbar color
-                DS4LightBar.updateLightBar(device, ind);
+                DS4LightBar.UpdateLightBar(device, ind);
 
                 if (device.PerformStateMerge)
                 {
@@ -2347,7 +2347,7 @@ namespace DS4Windows
                 LogDebug(string.Format(DS4WinWPF.Properties.Resources.LatencyOverTen, (ind + 1), device.Latency), true);
                 if (Instance.Config.FlashWhenLate)
                 {
-                    DS4Color color = new DS4Color { red = 50, green = 0, blue = 0 };
+                    DS4Color color = new DS4Color(50, 0,0);
                     DS4LightBar.forcedColor[ind] = color;
                     DS4LightBar.forcedFlash[ind] = 2;
                     DS4LightBar.forcelight[ind] = true;
@@ -2359,7 +2359,7 @@ namespace DS4Windows
                 LogDebug(DS4WinWPF.Properties.Resources.LatencyNotOverTen.Replace("*number*", (ind + 1).ToString()));
                 DS4LightBar.forcelight[ind] = false;
                 DS4LightBar.forcedFlash[ind] = 0;
-                device.LightBarColor = Instance.GetMainColor(ind);
+                device.LightBarColor = Instance.Config.GetMainColor(ind);
             }
         }
 

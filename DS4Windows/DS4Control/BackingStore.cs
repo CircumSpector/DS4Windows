@@ -255,6 +255,16 @@ namespace DS4Windows
 
         public bool IsUdpServerEnabled { get; set; }
 
+        public DS4Color GetMainColor(int index);
+
+        public DS4Color GetLowColor(int index);
+
+        public DS4Color GetChargingColor(int index);
+
+        public DS4Color GetCustomColor(int index);
+
+        public DS4Color GetFlashColor(int index);
+
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);

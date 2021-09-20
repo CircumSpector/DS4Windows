@@ -64,44 +64,39 @@ namespace DS4Windows
             return (byte)Round(b1 * (1 - r) + b2 * r, 0);
         }
 
-        public static DS4Color GetTransitionedColor(ref DS4Color c1, ref DS4Color c2, double ratio)
+        public static DS4Color GetTransitionedColor(DS4Color c1, DS4Color c2, double ratio)
         {
-            //Color cs = Color.FromArgb(c1.red, c1.green, c1.blue);
-            var cs = new DS4Color
-            {
-                red = ApplyRatio(c1.red, c2.red, ratio),
-                green = ApplyRatio(c1.green, c2.green, ratio),
-                blue = ApplyRatio(c1.blue, c2.blue, ratio)
-            };
-            return cs;
+            return new DS4Color(
+                ApplyRatio(c1.Red, c2.Red, ratio), 
+                ApplyRatio(c1.Green, c2.Green, ratio),
+                ApplyRatio(c1.Blue, c2.Blue, ratio)
+                );
         }
 
-        public static void updateLightBar(DS4Device device, int deviceNum)
+        public static void UpdateLightBar(DS4Device device, int deviceNum)
         {
-            var color = new DS4Color();
+            var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight[deviceNum];
             var lightbarSettingInfo = Instance.GetLightbarSettingsInfo(deviceNum);
-            var lightModeInfo = lightbarSettingInfo.ds4winSettings;
-            var useLightRoutine = lightbarSettingInfo.mode == LightbarMode.DS4Win;
+            var lightModeInfo = lightbarSettingInfo.Ds4WinSettings;
+            var useLightRoutine = lightbarSettingInfo.Mode == LightbarMode.DS4Win;
             //bool useLightRoutine = false;
             if (!defaultLight && !useForceLight && useLightRoutine)
             {
-                if (lightModeInfo.useCustomLed)
+                if (lightModeInfo.UseCustomLed)
                 {
-                    if (lightModeInfo.ledAsBattery)
+                    if (lightModeInfo.LedAsBattery)
                     {
-                        ref var fullColor = ref lightModeInfo.m_CustomLed; // ref getCustomColor(deviceNum);
-                        ref var lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
-                        color = GetTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
+                        color = GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.CustomLed, device.getBattery());
                     }
                     else
                     {
-                        color = lightModeInfo.m_CustomLed; //getCustomColor(deviceNum);
+                        color = lightModeInfo.CustomLed;
                     }
                 }
                 else
                 {
-                    var rainbow = lightModeInfo.rainbow; // getRainbow(deviceNum);
+                    var rainbow = lightModeInfo.Rainbow;
                     if (rainbow > 0)
                     {
                         // Display rainbow
@@ -121,8 +116,8 @@ namespace DS4Windows
                         else if (counters[deviceNum] > 180000)
                             counters[deviceNum] = 0;
 
-                        var maxSat = lightModeInfo.maxRainbowSat; // GetMaxSatRainbow(deviceNum);
-                        if (lightModeInfo.ledAsBattery)
+                        var maxSat = lightModeInfo.MaxRainbowSaturation; // GetMaxSatRainbow(deviceNum);
+                        if (lightModeInfo.LedAsBattery)
                         {
                             var useSat = (byte)(maxSat == 1.0
                                 ? device.getBattery() * 2.55
@@ -135,27 +130,25 @@ namespace DS4Windows
                                 (byte)(maxSat == 1.0 ? 255 : 255 * maxSat));
                         }
                     }
-                    else if (lightModeInfo.ledAsBattery)
+                    else if (lightModeInfo.LedAsBattery)
                     {
-                        ref var fullColor = ref lightModeInfo.m_Led; //ref getMainColor(deviceNum);
-                        ref var lowColor = ref lightModeInfo.m_LowLed; //ref getLowColor(deviceNum);
-                        color = GetTransitionedColor(ref lowColor, ref fullColor, device.getBattery());
+                        color = GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.Led, device.getBattery());
                     }
                     else
                     {
-                        color = Instance.GetMainColor(deviceNum);
+                        color = Instance.Config.GetMainColor(deviceNum);
                     }
                 }
 
-                if (device.getBattery() <= lightModeInfo.flashAt && !defaultLight && !device.isCharging())
+                if (device.getBattery() <= lightModeInfo.FlashAt && !defaultLight && !device.isCharging())
                 {
-                    ref var flashColor = ref lightModeInfo.m_FlashLed; //ref getFlashColor(deviceNum);
-                    if (!(flashColor.red == 0 &&
-                          flashColor.green == 0 &&
-                          flashColor.blue == 0))
-                        color = flashColor;
+                    var flashColor = lightModeInfo.FlashLed;
+                    if (!(flashColor.Red == 0 &&
+                          flashColor.Green == 0 &&
+                          flashColor.Blue == 0))
+                        color = lightModeInfo.FlashLed;
 
-                    if (lightModeInfo.flashType == 1)
+                    if (lightModeInfo.FlashType == 1)
                     {
                         var ratio = 0.0;
 
@@ -199,12 +192,12 @@ namespace DS4Windows
                         }
 
                         var tempCol = new DS4Color(0, 0, 0);
-                        color = GetTransitionedColor(ref color, ref tempCol, ratio);
+                        color = GetTransitionedColor(color, tempCol, ratio);
                     }
                 }
 
                 var idleDisconnectTimeout = Instance.GetIdleDisconnectTimeout(deviceNum);
-                if (idleDisconnectTimeout > 0 && lightModeInfo.ledAsBattery &&
+                if (idleDisconnectTimeout > 0 && lightModeInfo.LedAsBattery &&
                     (!device.isCharging() || device.getBattery() >= 100))
                 {
                     // Fade lightbar by idle time
@@ -215,18 +208,18 @@ namespace DS4Windows
                     if (ratio >= 50.0 && ratio < 100.0)
                     {
                         var emptyCol = new DS4Color(0, 0, 0);
-                        color = GetTransitionedColor(ref color, ref emptyCol,
+                        color = GetTransitionedColor(color, emptyCol,
                             (uint)(-100.0 * (elapsed = 0.02 * (ratio - 50.0)) * (elapsed - 2.0)));
                     }
                     else if (ratio >= 100.0)
                     {
                         var emptyCol = new DS4Color(0, 0, 0);
-                        color = GetTransitionedColor(ref color, ref emptyCol, 100.0);
+                        color = GetTransitionedColor(color, emptyCol, 100.0);
                     }
                 }
 
                 if (device.isCharging() && device.getBattery() < 100)
-                    switch (lightModeInfo.chargingType)
+                    switch (lightModeInfo.ChargingType)
                     {
                         case 1:
                         {
@@ -276,7 +269,7 @@ namespace DS4Windows
                             }
 
                             var emptyCol = new DS4Color(0, 0, 0);
-                            color = GetTransitionedColor(ref color, ref emptyCol, ratio);
+                            color = GetTransitionedColor(color, emptyCol, ratio);
                             break;
                         }
                         case 2:
@@ -287,7 +280,7 @@ namespace DS4Windows
                         }
                         case 3:
                         {
-                            color = lightModeInfo.m_ChargingLed; //getChargingColor(deviceNum);
+                            color = lightModeInfo.ChargingLed; //getChargingColor(deviceNum);
                             break;
                         }
                     }
@@ -318,20 +311,20 @@ namespace DS4Windows
                 {
                     // Thing I did for Distance
                     var rumble = device.getLeftHeavySlowRumble() / 2.55f;
-                    var max = Max(color.red, Max(color.green, color.blue));
+                    var max = Max(color.Red, Max(color.Green, color.Blue));
                     if (device.getLeftHeavySlowRumble() > 100)
                     {
                         var maxCol = new DS4Color(max, max, 0);
                         var redCol = new DS4Color(255, 0, 0);
-                        color = GetTransitionedColor(ref maxCol, ref redCol, rumble);
+                        color = GetTransitionedColor(maxCol, redCol, rumble);
                     }
                     else
                     {
                         var maxCol = new DS4Color(max, max, 0);
                         var redCol = new DS4Color(255, 0, 0);
-                        var tempCol = GetTransitionedColor(ref maxCol,
-                            ref redCol, 39.6078f);
-                        color = GetTransitionedColor(ref color, ref tempCol,
+                        var tempCol = GetTransitionedColor(maxCol,
+                            redCol, 39.6078f);
+                        color = GetTransitionedColor(color, tempCol,
                             device.getLeftHeavySlowRumble());
                     }
                 }
@@ -354,7 +347,7 @@ namespace DS4Windows
                             lightState.LightBarFlashDurationOn = (byte)(25 - forcedFlash[deviceNum]);
                         lightState.LightBarExplicitlyOff = true;
                     }
-                    else if (device.getBattery() <= lightModeInfo.flashAt && lightModeInfo.flashType == 0 &&
+                    else if (device.getBattery() <= lightModeInfo.FlashAt && lightModeInfo.FlashType == 0 &&
                              !defaultLight && !device.isCharging())
                     {
                         var level = device.getBattery() / 10;

@@ -27,7 +27,6 @@ namespace DS4Windows
             return result;
         }
 
-
         public static ulong CompileVersionNumber(int majorPart, int minorPart,
             int buildPart, int privatePart)
         {

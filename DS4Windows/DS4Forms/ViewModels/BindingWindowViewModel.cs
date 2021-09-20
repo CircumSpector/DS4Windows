@@ -138,7 +138,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color() { red = color.R, green = color.G, blue = color.B };
+                DS4Color dcolor = new DS4Color(color);
                 DS4LightBar.forcedColor[deviceNum] = dcolor;
                 DS4LightBar.forcedFlash[deviceNum] = 0;
                 DS4LightBar.forcelight[deviceNum] = true;
@@ -159,7 +159,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color() { red = color.R, green = color.G, blue = color.B };
+                DS4Color dcolor = new DS4Color(color);
                 DS4LightBar.forcedColor[deviceNum] = dcolor;
                 DS4LightBar.forcedFlash[deviceNum] = 0;
                 DS4LightBar.forcelight[deviceNum] = true;
@@ -276,10 +276,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ExtrasColorR
         {
-            get => extrasColor.red;
+            get => extrasColor.Red;
             set
             {
-                extrasColor.red = (byte)value;
+                extrasColor.Red = (byte)value;
                 ExtrasColorRChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -289,17 +289,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                string temp = $"#{extrasColor.red.ToString("X2")}FF0000";
+                string temp = $"#{extrasColor.Red.ToString("X2")}FF0000";
                 return temp;
             }
         }
         public event EventHandler ExtrasColorRStringChanged;
         public int ExtrasColorG
         {
-            get => extrasColor.green;
+            get => extrasColor.Green;
             set
             {
-                extrasColor.green = (byte)value;
+                extrasColor.Green = (byte)value;
                 ExtrasColorGChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -309,7 +309,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                string temp = $"#{ extrasColor.green.ToString("X2")}00FF00";
+                string temp = $"#{ extrasColor.Green.ToString("X2")}00FF00";
                 return temp;
             }
         }
@@ -317,10 +317,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ExtrasColorB
         {
-            get => extrasColor.blue;
+            get => extrasColor.Blue;
             set
             {
-                extrasColor.blue = (byte)value;
+                extrasColor.Blue = (byte)value;
                 ExtrasColorBChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -330,7 +330,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                string temp = $"#{extrasColor.blue.ToString("X2")}0000FF";
+                string temp = $"#{extrasColor.Blue.ToString("X2")}0000FF";
                 return temp;
             }
         }
@@ -338,7 +338,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string ExtrasColorString
         {
-            get => $"#FF{extrasColor.red.ToString("X2")}{extrasColor.green.ToString("X2")}{extrasColor.blue.ToString("X2")}";
+            get => $"#FF{extrasColor.Red.ToString("X2")}{extrasColor.Green.ToString("X2")}{extrasColor.Blue.ToString("X2")}";
         }
         public event EventHandler ExtrasColorStringChanged;
 
@@ -349,9 +349,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 return new Color()
                 {
                     A = 255,
-                    R = extrasColor.red,
-                    B = extrasColor.blue,
-                    G = extrasColor.green
+                    R = extrasColor.Red,
+                    B = extrasColor.Blue,
+                    G = extrasColor.Green
                 };
             }
         }
@@ -481,15 +481,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (useColor == 1)
                 {
                     useExtrasColor = true;
-                    byte.TryParse(temp[3], out extrasColor.red);
-                    byte.TryParse(temp[4], out extrasColor.green);
-                    byte.TryParse(temp[5], out extrasColor.blue);
+                    byte.TryParse(temp[3], out var r);
+                    byte.TryParse(temp[4], out var g);
+                    byte.TryParse(temp[5], out var b);
                     int.TryParse(temp[6], out flashRate);
+
+                    extrasColor = new DS4Color(r, g, b);
                 }
                 else
                 {
                     useExtrasColor = false;
-                    extrasColor.red = extrasColor.green = extrasColor.blue = 255;
+                    extrasColor.Red = extrasColor.Green = extrasColor.Blue = 255;
                     flashRate = 0;
                 }
 
@@ -512,7 +514,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             string result = $"{heavyRumble},{lightRumble},";
             if (useExtrasColor)
             {
-                result += $"1,{extrasColor.red},{extrasColor.green},{extrasColor.blue},{flashRate},";
+                result += $"1,{extrasColor.Red},{extrasColor.Green},{extrasColor.Blue},{flashRate},";
             }
             else
             {
@@ -538,8 +540,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             result = result || (lightRumble != 0);
             result = result || useExtrasColor;
             result = result ||
-                (extrasColor.red != 255 && extrasColor.green != 255 &&
-                extrasColor.blue != 255);
+                (extrasColor.Red != 255 && extrasColor.Green != 255 &&
+                extrasColor.Blue != 255);
 
             result = result || (flashRate != 0);
             result = result || useMouseSens;

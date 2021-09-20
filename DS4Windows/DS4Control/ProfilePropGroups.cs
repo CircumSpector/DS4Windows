@@ -564,24 +564,36 @@ namespace DS4Windows
 
     public class LightbarDS4WinInfo
     {
-        public bool useCustomLed;
-        public bool ledAsBattery;
-        public DS4Color m_CustomLed = new DS4Color(0, 0, 255);
-        public DS4Color m_Led;
-        public DS4Color m_LowLed;
-        public DS4Color m_ChargingLed;
-        public DS4Color m_FlashLed;
-        public double rainbow;
-        public double maxRainbowSat = 1.0;
-        public int flashAt; // Battery % when flashing occurs. <0 means disabled
-        public byte flashType;
-        public int chargingType;
+        public bool UseCustomLed { get; set; }
+
+        public bool LedAsBattery { get; set; }
+
+        public DS4Color CustomLed { get; set; } = new(0, 0, 255);
+
+        public DS4Color Led { get; set; }
+
+        public DS4Color LowLed { get; set; }
+
+        public DS4Color ChargingLed { get; set; }
+
+        public DS4Color FlashLed { get; set; }
+
+        public double Rainbow { get; set; }
+
+        public double MaxRainbowSaturation { get; set; } = 1.0;
+
+        public int FlashAt { get; set; } // Battery % when flashing occurs. <0 means disabled
+
+        public byte FlashType { get; set; }
+
+        public int ChargingType { get; set; }
     }
 
     public class LightbarSettingInfo
     {
-        public LightbarMode mode = LightbarMode.DS4Win;
-        public LightbarDS4WinInfo ds4winSettings = new LightbarDS4WinInfo();
+        private LightbarMode mode = LightbarMode.DS4Win;
+        public LightbarDS4WinInfo Ds4WinSettings = new();
+
         public LightbarMode Mode
         {
             get => mode;
@@ -592,19 +604,8 @@ namespace DS4Windows
                 ModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ModeChanged;
 
-        public LightbarSettingInfo()
-        {
-            /*ModeChanged += (sender, e) =>
-            {
-                if (mode != LightbarMode.DS4Win)
-                {
-                    ds4winSettings = null;
-                }
-            };
-            */
-        }
+        public event EventHandler ModeChanged;
     }
 
     public class SteeringWheelSmoothingInfo

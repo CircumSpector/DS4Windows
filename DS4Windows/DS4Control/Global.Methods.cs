@@ -276,47 +276,15 @@ namespace DS4Windows
             return _config.GyroControlsInfo[index];
         }
 
-        //public static DS4Color[] MainColor => m_Config.m_Leds;
-        public ref DS4Color GetMainColor(int index)
-        {
-            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_Led;
-            //return ref m_Config.m_Leds[index];
-        }
 
-        //public static DS4Color[] LowColor => m_Config.m_LowLeds;
-        public ref DS4Color getLowColor(int index)
-        {
-            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_LowLed;
-            //return ref m_Config.m_LowLeds[index];
-        }
-
-        //public static DS4Color[] ChargingColor => m_Config.m_ChargingLeds;
-        public ref DS4Color getChargingColor(int index)
-        {
-            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_ChargingLed;
-            //return ref m_Config.m_ChargingLeds[index];
-        }
-
-        //public static DS4Color[] CustomColor => m_Config.m_CustomLeds;
-        public ref DS4Color getCustomColor(int index)
-        {
-            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_CustomLed;
-            //return ref m_Config.m_CustomLeds[index];
-        }
 
         //public static bool[] UseCustomLed => m_Config.useCustomLeds;
         public bool getUseCustomLed(int index)
         {
-            return _config.LightbarSettingInfo[index].ds4winSettings.useCustomLed;
+            return _config.LightbarSettingInfo[index].Ds4WinSettings.UseCustomLed;
             //return m_Config.useCustomLeds[index];
         }
 
-        //public static DS4Color[] FlashColor => m_Config.m_FlashLeds;
-        public ref DS4Color getFlashColor(int index)
-        {
-            return ref _config.LightbarSettingInfo[index].ds4winSettings.m_FlashLed;
-            //return ref m_Config.m_FlashLeds[index];
-        }
 
         public byte GetTapSensitivity(int index)
         {

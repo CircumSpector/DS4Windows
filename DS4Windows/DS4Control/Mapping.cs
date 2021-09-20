@@ -2895,7 +2895,7 @@ namespace DS4Windows
 
                         if (extras[2] == 1)
                         {
-                            DS4Color color = new DS4Color { red = (byte)extras[3], green = (byte)extras[4], blue = (byte)extras[5] };
+                            DS4Color color = new DS4Color((byte)extras[3], (byte)extras[4], (byte)extras[5]);
                             DS4LightBar.forcedColor[device] = color;
                             DS4LightBar.forcedFlash[device] = (byte)extras[6];
                             DS4LightBar.forcelight[device] = true;
@@ -3606,9 +3606,9 @@ namespace DS4Windows
                                     }
                                     DS4Color empty = new DS4Color(byte.Parse(dets[3]), byte.Parse(dets[4]), byte.Parse(dets[5]));
                                     DS4Color full = new DS4Color(byte.Parse(dets[6]), byte.Parse(dets[7]), byte.Parse(dets[8]));
-                                    DS4Color trans = DS4LightBar.GetTransitionedColor(ref empty, ref full, d.Battery);
+                                    DS4Color trans = DS4LightBar.GetTransitionedColor(empty, full, d.Battery);
                                     if (fadetimer[device] < 100)
-                                        DS4LightBar.forcedColor[device] = DS4LightBar.GetTransitionedColor(ref lastColor[device], ref trans, fadetimer[device] += 2);
+                                        DS4LightBar.forcedColor[device] = DS4LightBar.GetTransitionedColor(lastColor[device], trans, fadetimer[device] += 2);
                                 }
                                 actionDone[index].dev[device] = true;
                             }
@@ -5272,11 +5272,11 @@ namespace DS4Windows
         // SA steering wheel emulation mapping
 
         private const int C_WHEEL_ANGLE_PRECISION = 10; // Precision of SA angle in 1/10 of degrees
-        
-        private static readonly DS4Color calibrationColor_0 = new DS4Color { red = 0xA0, green = 0x00, blue = 0x00 };
-        private static readonly DS4Color calibrationColor_1 = new DS4Color { red = 0xFF, green = 0xFF, blue = 0x00 };
-        private static readonly DS4Color calibrationColor_2 = new DS4Color { red = 0x00, green = 0x50, blue = 0x50 };
-        private static readonly DS4Color calibrationColor_3 = new DS4Color { red = 0x00, green = 0xC0, blue = 0x00 };
+
+        private static readonly DS4Color calibrationColor_0 = new(0xA0, 0x00, 0x00);
+        private static readonly DS4Color calibrationColor_1 = new(0xFF, 0xFF, 0x00);
+        private static readonly DS4Color calibrationColor_2 = new(0x00, 0x50, 0x50);
+        private static readonly DS4Color calibrationColor_3 = new(0x00, 0xC0, 0x00);
 
         private static DateTime latestDebugMsgTime;
         private static string latestDebugData;
@@ -5482,9 +5482,9 @@ namespace DS4Windows
             {
                 // Re-calibration completed or cancelled. Set lightbar color back to normal color
                 DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcedColor[device] = Global.Instance.GetMainColor(device);
+                DS4LightBar.forcedColor[device] = Global.Instance.Config.GetMainColor(device);
                 DS4LightBar.forcelight[device] = false;
-                DS4LightBar.updateLightBar(controller, device);
+                DS4LightBar.UpdateLightBar(controller, device);
             }
         }
 

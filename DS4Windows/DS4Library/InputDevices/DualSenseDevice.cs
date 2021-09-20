@@ -1000,9 +1000,9 @@ namespace DS4Windows.InputDevices
                 outputReport[44] = activePlayerLEDMask;
 
                 /* Lightbar colors */
-                outputReport[45] = currentHap.lightbarState.LightBarColor.red;
-                outputReport[46] = currentHap.lightbarState.LightBarColor.green;
-                outputReport[47] = currentHap.lightbarState.LightBarColor.blue;
+                outputReport[45] = currentHap.LightbarState.LightBarColor.Red;
+                outputReport[46] = currentHap.LightbarState.LightBarColor.Green;
+                outputReport[47] = currentHap.LightbarState.LightBarColor.Blue;
 
                 if (!previousHapticState.Equals(currentHap))
                 {
@@ -1135,9 +1135,9 @@ namespace DS4Windows.InputDevices
                 outputReport[45] = activePlayerLEDMask;
 
                 /* Lightbar colors */
-                outputReport[46] = currentHap.lightbarState.LightBarColor.red;
-                outputReport[47] = currentHap.lightbarState.LightBarColor.green;
-                outputReport[48] = currentHap.lightbarState.LightBarColor.blue;
+                outputReport[46] = currentHap.LightbarState.LightBarColor.Red;
+                outputReport[47] = currentHap.LightbarState.LightBarColor.Green;
+                outputReport[48] = currentHap.LightbarState.LightBarColor.Blue;
 
                 change = !previousHapticState.Equals(currentHap);
 
