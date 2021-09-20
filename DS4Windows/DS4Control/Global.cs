@@ -64,18 +64,7 @@ namespace DS4Windows
         public static VirtualKBMBase outputKBMHandler;
         public static VirtualKBMMapping outputKBMMapping;
         
-        // Create mapping array at runtime
-        public static DS4Controls[] ReverseX360ButtonMapping = new Func<DS4Controls[]>(() =>
-        {
-            var temp = new DS4Controls[DefaultButtonMapping.Length];
-            for (int i = 0, arlen = DefaultButtonMapping.Length; i < arlen; i++)
-            {
-                var mapping = DefaultButtonMapping[i];
-                if (mapping != X360Controls.None) temp[(int)mapping] = (DS4Controls)i;
-            }
-
-            return temp;
-        })();
+        
 
         public static Dictionary<TrayIconChoice, string> IconChoiceResources = new()
         {
@@ -174,13 +163,7 @@ namespace DS4Windows
 
         public bool[] TouchActive => TouchpadActive;
         
-        public bool[] GyroMouseStickTriggerTurns => _config.GyroMouseStickTriggerTurns;
-
-        public GyroMouseStickInfo[] GyroMouseStickInf => _config.GyroMStickInfo;
-
         public GyroDirectionalSwipeInfo[] GyroSwipeInf => _config.GyroSwipeInfo;
-
-        public bool[] GyroMouseStickToggle => _config.GyroMouseStickToggle;
 
         public GyroControlsInfo[] GyroControlsInf => _config.gyroControlsInf;
 
@@ -827,7 +810,7 @@ namespace DS4Windows
 
         public GyroMouseStickInfo GetGyroMouseStickInfo(int device)
         {
-            return _config.GyroMStickInfo[device];
+            return _config.GyroMouseStickInfo[device];
         }
 
         public GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)

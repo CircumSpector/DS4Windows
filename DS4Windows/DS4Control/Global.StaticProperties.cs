@@ -360,5 +360,18 @@ namespace DS4Windows
             [DS4Controls.TouchLeft] = 286, [DS4Controls.TouchRight] = 286,
             [DS4Controls.TouchUpper] = 286, [DS4Controls.TouchMulti] = 286
         };
+
+        // Create mapping array at runtime
+        public static DS4Controls[] ReverseX360ButtonMapping = new Func<DS4Controls[]>(() =>
+        {
+            var temp = new DS4Controls[DefaultButtonMapping.Length];
+            for (int i = 0, arlen = DefaultButtonMapping.Length; i < arlen; i++)
+            {
+                var mapping = DefaultButtonMapping[i];
+                if (mapping != X360Controls.None) temp[(int)mapping] = (DS4Controls)i;
+            }
+
+            return temp;
+        })();
     }
 }

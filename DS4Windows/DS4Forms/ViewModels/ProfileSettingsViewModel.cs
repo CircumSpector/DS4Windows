@@ -2020,7 +2020,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (gyroMouseStickSmoothMethodIndex == value) return;
 
-                GyroMouseStickInfo tempInfo = Global.Instance.GyroMouseStickInf[device];
+                GyroMouseStickInfo tempInfo = Global.Instance.Config.GyroMouseStickInfo[device];
                 switch (value)
                 {
                     case 0:
@@ -2046,7 +2046,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.GyroMouseStickInf[device].smoothingMethod)
+                switch (Global.Instance.Config.GyroMouseStickInfo[device].smoothingMethod)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -2065,7 +2065,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.GyroMouseStickInf[device].smoothingMethod)
+                switch (Global.Instance.Config.GyroMouseStickInfo[device].smoothingMethod)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.OneEuro:
                     case GyroMouseStickInfo.SmoothingMethod.None:
@@ -2082,20 +2082,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseStickSmoothWeight
         {
-            get => Global.Instance.GyroMouseStickInf[device].smoothWeight;
-            set => Global.Instance.GyroMouseStickInf[device].smoothWeight = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight = value;
         }
 
         public double GyroMouseStickOneEuroMinCutoff
         {
-            get => Global.Instance.GyroMouseStickInf[device].MinCutoff;
-            set => Global.Instance.GyroMouseStickInf[device].MinCutoff = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].MinCutoff;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].MinCutoff = value;
         }
 
         public double GyroMouseStickOneEuroBeta
         {
-            get => Global.Instance.GyroMouseStickInf[device].Beta;
-            set => Global.Instance.GyroMouseStickInf[device].Beta = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].Beta;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].Beta = value;
         }
 
 
@@ -2120,16 +2120,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseStickTurns
         {
-            get => Global.Instance.GyroMouseStickTriggerTurns[device];
+            get => Global.Instance.Config.GyroMouseStickTriggerTurns[device];
             set
             {
-                Global.Instance.GyroMouseStickTriggerTurns[device] = value;
+                Global.Instance.Config.GyroMouseStickTriggerTurns[device] = value;
             }
         }
 
         public bool GyroMouseStickToggle
         {
-            get => Global.Instance.GyroMouseStickToggle[device];
+            get => Global.Instance.Config.GyroMouseStickToggle[device];
             set
             {
                 Global.Instance.SetGyroMouseStickToggle(device, value, App.rootHub);
@@ -2138,62 +2138,62 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickDeadZone
         {
-            get => Global.Instance.GyroMouseStickInf[device].deadZone;
-            set => Global.Instance.GyroMouseStickInf[device].deadZone = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].deadZone;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].deadZone = value;
         }
 
         public int GyroMouseStickMaxZone
         {
-            get => Global.Instance.GyroMouseStickInf[device].maxZone;
-            set => Global.Instance.GyroMouseStickInf[device].maxZone = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].maxZone;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].maxZone = value;
         }
 
         public int GyroMouseStickOutputStick
         {
-            get => (int)Global.Instance.GyroMouseStickInf[device].outputStick;
+            get => (int)Global.Instance.Config.GyroMouseStickInfo[device].outputStick;
             set
             {
-                Global.Instance.GyroMouseStickInf[device].outputStick =
+                Global.Instance.Config.GyroMouseStickInfo[device].outputStick =
                     (GyroMouseStickInfo.OutputStick)value;
             }
         }
 
         public int GyroMouseStickOutputAxes
         {
-            get => (int)Global.Instance.GyroMouseStickInf[device].outputStickDir;
+            get => (int)Global.Instance.Config.GyroMouseStickInfo[device].outputStickDir;
             set
             {
-                Global.Instance.GyroMouseStickInf[device].outputStickDir =
+                Global.Instance.Config.GyroMouseStickInfo[device].outputStickDir =
                     (GyroMouseStickInfo.OutputStickAxes)value;
             }
         }
 
         public double GyroMouseStickAntiDeadX
         {
-            get => Global.Instance.GyroMouseStickInf[device].antiDeadX * 100.0;
-            set => Global.Instance.GyroMouseStickInf[device].antiDeadX = value * 0.01;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadX * 100.0;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadX = value * 0.01;
         }
 
         public double GyroMouseStickAntiDeadY
         {
-            get => Global.Instance.GyroMouseStickInf[device].antiDeadY * 100.0;
-            set => Global.Instance.GyroMouseStickInf[device].antiDeadY = value * 0.01;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadY * 100.0;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadY = value * 0.01;
         }
 
         public int GyroMouseStickVertScale
         {
-            get => Global.Instance.GyroMouseStickInf[device].vertScale;
-            set => Global.Instance.GyroMouseStickInf[device].vertScale = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].vertScale;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].vertScale = value;
         }
 
         public bool GyroMouseStickMaxOutputEnabled
         {
-            get => Global.Instance.GyroMouseStickInf[device].maxOutputEnabled;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].maxOutputEnabled;
             set
             {
-                bool temp = Global.Instance.GyroMouseStickInf[device].maxOutputEnabled;
+                bool temp = Global.Instance.Config.GyroMouseStickInfo[device].maxOutputEnabled;
                 if (temp == value) return;
-                Global.Instance.GyroMouseStickInf[device].maxOutputEnabled = value;
+                Global.Instance.Config.GyroMouseStickInfo[device].maxOutputEnabled = value;
                 GyroMouseStickMaxOutputChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -2201,8 +2201,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseStickMaxOutput
         {
-            get => Global.Instance.GyroMouseStickInf[device].maxOutput;
-            set => Global.Instance.GyroMouseStickInf[device].maxOutput = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].maxOutput;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].maxOutput = value;
         }
 
         public int GyroMouseStickEvalCondIndex
@@ -2219,48 +2219,48 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseStickInvertX
         {
-            get => (Global.Instance.GyroMouseStickInf[device].inverted & 1) == 1;
+            get => (Global.Instance.Config.GyroMouseStickInfo[device].inverted & 1) == 1;
             set
             {
                 if (value)
                 {
-                    Global.Instance.GyroMouseStickInf[device].inverted |= 1;
+                    Global.Instance.Config.GyroMouseStickInfo[device].inverted |= 1;
                 }
                 else
                 {
-                    uint temp = Global.Instance.GyroMouseStickInf[device].inverted;
-                    Global.Instance.GyroMouseStickInf[device].inverted = (uint)(temp & ~1);
+                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].inverted;
+                    Global.Instance.Config.GyroMouseStickInfo[device].inverted = (uint)(temp & ~1);
                 }
             }
         }
 
         public bool GyroMouseStickInvertY
         {
-            get => (Global.Instance.GyroMouseStickInf[device].inverted & 2) == 2;
+            get => (Global.Instance.Config.GyroMouseStickInfo[device].inverted & 2) == 2;
             set
             {
                 if (value)
                 {
-                    Global.Instance.GyroMouseStickInf[device].inverted |= 2;
+                    Global.Instance.Config.GyroMouseStickInfo[device].inverted |= 2;
                 }
                 else
                 {
-                    uint temp = Global.Instance.GyroMouseStickInf[device].inverted;
-                    Global.Instance.GyroMouseStickInf[device].inverted = (uint)(temp & ~2);
+                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].inverted;
+                    Global.Instance.Config.GyroMouseStickInfo[device].inverted = (uint)(temp & ~2);
                 }
             }
         }
 
         public bool GyroMouseStickSmooth
         {
-            get => Global.Instance.GyroMouseStickInf[device].useSmoothing;
-            set => Global.Instance.GyroMouseStickInf[device].useSmoothing = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].useSmoothing;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].useSmoothing = value;
         }
 
         public double GyroMousetickSmoothWeight
         {
-            get => Global.Instance.GyroMouseStickInf[device].smoothWeight;
-            set => Global.Instance.GyroMouseStickInf[device].smoothWeight = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight = value;
         }
         
         private string touchDisInvertString = "None";
@@ -2451,7 +2451,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private int FindGyroMouseStickSmoothMethodIndex()
         {
             int result = 0;
-            GyroMouseStickInfo tempInfo = Global.Instance.GyroMouseStickInf[device];
+            GyroMouseStickInfo tempInfo = Global.Instance.Config.GyroMouseStickInfo[device];
             switch (tempInfo.smoothingMethod)
             {
                 case GyroMouseStickInfo.SmoothingMethod.OneEuro:

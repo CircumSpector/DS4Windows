@@ -239,6 +239,12 @@ namespace DS4Windows
 
         public IList<GyroOutMode> GyroOutputMode { get; set; }
 
+        public IList<bool> GyroMouseStickTriggerTurns { get; set; }
+
+        public IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
+
+        public IList< bool> GyroMouseStickToggle { get; set; }
+
         int getLsOutCurveMode(int index);
         void setLsOutCurveMode(int index, int value);
         int getRsOutCurveMode(int index);

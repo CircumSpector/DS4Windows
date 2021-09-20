@@ -74,8 +74,8 @@ namespace DS4Windows
 
             filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
             filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = GyroMouseStickInfo.DEFAULT_BETA;
-            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
         }
 
         public void ResetTrackAccel(double friction)
@@ -351,16 +351,16 @@ namespace DS4Windows
 
         public void ReplaceOneEuroFilterPair()
         {
-            Global.Instance.GyroMouseStickInf[deviceNum].RemoveRefreshEvents();
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].RemoveRefreshEvents();
             filterPair = new OneEuroFilterPair();
         }
 
         public void SetupLateOneEuroFilters()
         {
-            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.Instance.GyroMouseStickInf[deviceNum].MinCutoff;
-            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.Instance.GyroMouseStickInf[deviceNum].Beta;
-            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.GyroMouseStickInf[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.Instance.Config.GyroMouseStickInfo[deviceNum].MinCutoff;
+            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.Instance.Config.GyroMouseStickInfo[deviceNum].Beta;
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
         }
 
         private const int SMOOTH_BUFFER_LEN = 3;
