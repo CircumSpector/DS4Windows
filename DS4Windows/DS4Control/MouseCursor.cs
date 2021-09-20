@@ -74,7 +74,7 @@ namespace DS4Windows
             gyroSmooth = tempInfo.enableSmoothing;
             double gyroSmoothWeight = 0.0;
 
-            coefficient = (Global.Instance.getGyroSensitivity(deviceNumber) * 0.01) * gyroMouseSensSettings.mouseCoefficient;
+            coefficient = (Global.Instance.GetGyroSensitivity(deviceNumber) * 0.01) * gyroMouseSensSettings.mouseCoefficient;
             double offset = gyroMouseSensSettings.mouseOffset;
             if (gyroSmooth)
             {
@@ -121,7 +121,7 @@ namespace DS4Windows
             double xMotion = deltaX != 0 ? coefficient * (deltaX * tempDouble)
                 + (normX * (offset * signX)) : 0;
 
-            verticalScale = Global.Instance.getGyroSensVerticalScale(deviceNumber) * 0.01;
+            verticalScale = Global.Instance.GetGyroSensVerticalScale(deviceNumber) * 0.01;
             double yMotion = deltaY != 0 ? (coefficient * verticalScale) * (deltaY * tempDouble)
                 + (normY * (offset * signY)) : 0;
 

@@ -942,20 +942,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LSOutputCurveIndex
         {
-            get => Global.Instance.GetLsOutCurveMode(device);
+            get => Global.Instance.Config.SetLsOutCurveMode(device);
             set
             {
-                Global.Instance.GetLsOutCurveMode(device, value);
+                Global.Instance.Config.SetLsOutCurveMode(device, value);
                 LSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int RSOutputCurveIndex
         {
-            get => Global.Instance.GetRsOutCurveMode(device);
+            get => Global.Instance.Config.GetRsOutCurveMode(device);
             set
             {
-                Global.Instance.SetRsOutCurveMode(device, value);
+                Global.Instance.Config.SetRsOutCurveMode(device, value);
                 RSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -974,13 +974,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSCustomCurveSelected
         {
-            get => Global.Instance.GetLsOutCurveMode(device) == 6;
+            get => Global.Instance.Config.SetLsOutCurveMode(device) == 6;
         }
         public event EventHandler LSCustomCurveSelectedChanged;
 
         public bool RSCustomCurveSelected
         {
-            get => Global.Instance.GetRsOutCurveMode(device) == 6;
+            get => Global.Instance.Config.GetRsOutCurveMode(device) == 6;
         }
         public event EventHandler RSCustomCurveSelectedChanged;
 
@@ -1301,33 +1301,33 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int L2OutputCurveIndex
         {
-            get => Global.Instance.GetL2OutCurveMode(device);
+            get => Global.Instance.Config.GetL2OutCurveMode(device);
             set
             {
-                Global.Instance.SetL2OutCurveMode(device, value);
+                Global.Instance.Config.SetL2OutCurveMode(device, value);
                 L2CustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int R2OutputCurveIndex
         {
-            get => Global.Instance.GetR2OutCurveMode(device);
+            get => Global.Instance.Config.GetR2OutCurveMode(device);
             set
             {
-                Global.Instance.SetR2OutCurveMode(device, value);
+                Global.Instance.Config.SetR2OutCurveMode(device, value);
                 R2CustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public bool L2CustomCurveSelected
         {
-            get => Global.Instance.GetL2OutCurveMode(device) == 6;
+            get => Global.Instance.Config.GetL2OutCurveMode(device) == 6;
         }
         public event EventHandler L2CustomCurveSelectedChanged;
 
         public bool R2CustomCurveSelected
         {
-            get => Global.Instance.GetR2OutCurveMode(device) == 6;
+            get => Global.Instance.Config.GetR2OutCurveMode(device) == 6;
         }
         public event EventHandler R2CustomCurveSelectedChanged;
 
@@ -1496,33 +1496,33 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int SXOutputCurveIndex
         {
-            get => Global.Instance.GetSXOutCurveMode(device);
+            get => Global.Instance.Config.GetSXOutCurveMode(device);
             set
             {
-                Global.Instance.SetSXOutCurveMode(device, value);
+                Global.Instance.Config.SetSXOutCurveMode(device, value);
                 SXCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int SZOutputCurveIndex
         {
-            get => Global.Instance.GetSZOutCurveMode(device);
+            get => Global.Instance.Config.GetSZOutCurveMode(device);
             set
             {
-                Global.Instance.SetSZOutCurveMode(device, value);
+                Global.Instance.Config.SetSZOutCurveMode(device, value);
                 SZCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public bool SXCustomCurveSelected
         {
-            get => Global.Instance.GetSXOutCurveMode(device) == 6;
+            get => Global.Instance.Config.GetSXOutCurveMode(device) == 6;
         }
         public event EventHandler SXCustomCurveSelectedChanged;
 
         public bool SZCustomCurveSelected
         {
-            get => Global.Instance.GetSZOutCurveMode(device) == 6;
+            get => Global.Instance.Config.GetSZOutCurveMode(device) == 6;
         }
         public event EventHandler SZCustomCurveSelectedChanged;
 

@@ -140,7 +140,7 @@ namespace DS4Windows
             return _config.LightbarSettingInfo[index];
         }
 
-        public bool getDInputOnly(int index)
+        public bool GetDirectInputOnly(int index)
         {
             return _config.DirectInputOnly[index];
         }
@@ -226,12 +226,12 @@ namespace DS4Windows
         }
 
 
-        public int getGyroSensitivity(int index)
+        public int GetGyroSensitivity(int index)
         {
             return _config.GyroSensitivity[index];
         }
 
-        public int getGyroSensVerticalScale(int index)
+        public int GetGyroSensVerticalScale(int index)
         {
             return _config.GyroSensVerticalScale[index];
         }
@@ -249,11 +249,6 @@ namespace DS4Windows
         public int GetGyroMouseHorizontalAxis(int index)
         {
             return _config.GyroMouseHorizontalAxis[index];
-        }
-
-        public int GetGyroMouseDeadZone(int index)
-        {
-            return _config.GyroMouseDeadZone[index];
         }
 
         public void SetGyroMouseDeadZone(int index, int value, ControlService control)
@@ -276,11 +271,6 @@ namespace DS4Windows
             return _config.GyroControlsInfo[index];
         }
 
-        public bool GetUseCustomLed(int index)
-        {
-            return _config.LightbarSettingInfo[index].Ds4WinSettings.UseCustomLed;
-        }
-
         public byte GetTapSensitivity(int index)
         {
             return _config.TapSensitivity[index];
@@ -289,11 +279,6 @@ namespace DS4Windows
         public bool GetDoubleTap(int index)
         {
             return _config.DoubleTap[index];
-        }
-
-        public int GetScrollSensitivity(int index)
-        {
-            return _config.ScrollSensitivity[index];
         }
 
         public bool GetTouchPadJitterCompensation(int index)
@@ -311,19 +296,9 @@ namespace DS4Windows
             return _config.L2ModInfo[index];
         }
 
-        public byte GetL2DeadZone(int index)
-        {
-            return _config.L2ModInfo[index].deadZone;
-        }
-
         public TriggerDeadZoneZInfo GetR2ModInfo(int index)
         {
             return _config.R2ModInfo[index];
-        }
-
-        public byte GetR2DeadZone(int index)
-        {
-            return _config.R2ModInfo[index].deadZone;
         }
 
         public double GetSXDeadZone(int index)
@@ -346,16 +321,6 @@ namespace DS4Windows
             return _config.RSModInfo[index].deadZone;
         }
 
-        public int GetLSAntiDeadZone(int index)
-        {
-            return _config.LSModInfo[index].antiDeadZone;
-        }
-
-        public int GetRSAntiDeadZone(int index)
-        {
-            return _config.RSModInfo[index].antiDeadZone;
-        }
-
         public StickDeadZoneInfo GetLSDeadInfo(int index)
         {
             return _config.LSModInfo[index];
@@ -375,17 +340,7 @@ namespace DS4Windows
         {
             return _config.SZAntiDeadzone[index];
         }
-
-        public int GetLSMaxZone(int index)
-        {
-            return _config.LSModInfo[index].maxZone;
-        }
-
-        public int GetRSMaxZone(int index)
-        {
-            return _config.RSModInfo[index].maxZone;
-        }
-
+        
         public double GetSXMaxZone(int index)
         {
             return _config.SXMaxzone[index];
@@ -394,26 +349,6 @@ namespace DS4Windows
         public double GetSZMaxZone(int index)
         {
             return _config.SZMaxzone[index];
-        }
-
-        public int GetL2AntiDeadZone(int index)
-        {
-            return _config.L2ModInfo[index].antiDeadZone;
-        }
-
-        public int GetR2AntiDeadZone(int index)
-        {
-            return _config.R2ModInfo[index].antiDeadZone;
-        }
-
-        public int GetL2MaxZone(int index)
-        {
-            return _config.L2ModInfo[index].maxZone;
-        }
-
-        public int GetR2MaxZone(int index)
-        {
-            return _config.R2ModInfo[index].maxZone;
         }
 
         public double GetLSRotation(int index)
@@ -476,66 +411,6 @@ namespace DS4Windows
             return _config.RSAntiSnapbackInfo[device];
         }
 
-        public void GetLsOutCurveMode(int index, int value)
-        {
-            _config.setLsOutCurveMode(index, value);
-        }
-
-        public int GetLsOutCurveMode(int index)
-        {
-            return _config.getLsOutCurveMode(index);
-        }
-
-        public void SetRsOutCurveMode(int index, int value)
-        {
-            _config.setRsOutCurveMode(index, value);
-        }
-
-        public int GetRsOutCurveMode(int index)
-        {
-            return _config.getRsOutCurveMode(index);
-        }
-
-        public void SetL2OutCurveMode(int index, int value)
-        {
-            _config.setL2OutCurveMode(index, value);
-        }
-
-        public int GetL2OutCurveMode(int index)
-        {
-            return _config.getL2OutCurveMode(index);
-        }
-
-        public void SetR2OutCurveMode(int index, int value)
-        {
-            _config.setR2OutCurveMode(index, value);
-        }
-
-        public int GetR2OutCurveMode(int index)
-        {
-            return _config.getR2OutCurveMode(index);
-        }
-
-        public void SetSXOutCurveMode(int index, int value)
-        {
-            _config.setSXOutCurveMode(index, value);
-        }
-
-        public int GetSXOutCurveMode(int index)
-        {
-            return _config.getSXOutCurveMode(index);
-        }
-
-        public void SetSZOutCurveMode(int index, int value)
-        {
-            _config.setSZOutCurveMode(index, value);
-        }
-
-        public int GetSZOutCurveMode(int index)
-        {
-            return _config.getSZOutCurveMode(index);
-        }
-
         public bool GetTrackballMode(int index)
         {
             return _config.TrackballMode[index];
@@ -549,11 +424,6 @@ namespace DS4Windows
         public int GetProfileActionCount(int index)
         {
             return _config.profileActionCount[index];
-        }
-
-        public void CalculateProfileActionCount(int index)
-        {
-            _config.CalculateProfileActionCount(index);
         }
 
         public void UpdateDS4CSetting(int deviceNum, string buttonName, bool shift, object action, string exts,
@@ -571,41 +441,6 @@ namespace DS4Windows
             _config.ContainsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
         }
 
-        public ControlActionData GetDS4Action(int deviceNum, string buttonName, bool shift)
-        {
-            return _config.GetDs4Action(deviceNum, buttonName, shift);
-        }
-
-        public ControlActionData GetDS4Action(int deviceNum, DS4Controls control, bool shift)
-        {
-            return _config.GetDs4Action(deviceNum, control, shift);
-        }
-
-        public DS4KeyType GetDS4KeyType(int deviceNum, string buttonName, bool shift)
-        {
-            return _config.GetDs4KeyType(deviceNum, buttonName, shift);
-        }
-
-        public string GetDS4Extra(int deviceNum, string buttonName, bool shift)
-        {
-            return _config.GetDs4Extra(deviceNum, buttonName, shift);
-        }
-
-        public int GetDS4STrigger(int deviceNum, string buttonName)
-        {
-            return _config.GetDs4STrigger(deviceNum, buttonName);
-        }
-
-        public int GetDS4STrigger(int deviceNum, DS4Controls control)
-        {
-            return _config.GetDs4STrigger(deviceNum, control);
-        }
-
-        public DS4ControlSettings GetDS4CSetting(int deviceNum, string control)
-        {
-            return _config.GetDs4ControllerSetting(deviceNum, control);
-        }
-
         public DS4ControlSettings GetDS4CSetting(int deviceNum, DS4Controls control)
         {
             return _config.GetDs4ControllerSetting(deviceNum, control);
@@ -616,22 +451,12 @@ namespace DS4Windows
             return _config.ds4controlSettings[deviceNum];
         }
 
-        public bool HasCustomActions(int deviceNum)
-        {
-            return _config.HasCustomActions(deviceNum);
-        }
-
-        public bool HasCustomExtras(int deviceNum)
-        {
-            return _config.HasCustomExtras(deviceNum);
-        }
-
-        public bool containsCustomAction(int deviceNum)
+        public bool ContainsCustomAction(int deviceNum)
         {
             return _config.ContainsCustomAction[deviceNum];
         }
 
-        public bool containsCustomExtras(int deviceNum)
+        public bool ContainsCustomExtras(int deviceNum)
         {
             return _config.ContainsCustomExtras[deviceNum];
         }
@@ -677,11 +502,6 @@ namespace DS4Windows
             return sA;
         }
 
-        public void CalculateProfileActionDicts(int device)
-        {
-            _config.CalculateProfileActionDicts(device);
-        }
-
         public void CacheProfileCustomsFlags(int device)
         {
             _config.CacheProfileCustomsFlags(device);
@@ -691,34 +511,14 @@ namespace DS4Windows
         {
             _config.CacheExtraProfileInfo(device);
         }
-
-        public X360Controls GetX360ControlsByName(string key)
-        {
-            return _config.GetX360ControlsByName(key);
-        }
-
-        public string GetX360ControlString(X360Controls key)
-        {
-            return _config.GetX360ControlString(key);
-        }
-
-        public DS4Controls GetDS4ControlsByName(string key)
-        {
-            return _config.GetDs4ControlsByName(key);
-        }
-
-        public X360Controls GetDefaultX360ControlBinding(DS4Controls dc)
-        {
-            return DefaultButtonMapping[(int)dc];
-        }
-
-        public bool containsLinkedProfile(string serial)
+        
+        public bool ContainsLinkedProfile(string serial)
         {
             var tempSerial = serial.Replace(":", string.Empty);
             return _config.linkedProfiles.ContainsKey(tempSerial);
         }
 
-        public string getLinkedProfile(string serial)
+        public string GetLinkedProfile(string serial)
         {
             var temp = string.Empty;
             var tempSerial = serial.Replace(":", string.Empty);
@@ -727,13 +527,13 @@ namespace DS4Windows
             return temp;
         }
 
-        public void changeLinkedProfile(string serial, string profile)
+        public void ChangeLinkedProfile(string serial, string profile)
         {
             var tempSerial = serial.Replace(":", string.Empty);
             _config.linkedProfiles[tempSerial] = profile;
         }
 
-        public void removeLinkedProfile(string serial)
+        public void RemoveLinkedProfile(string serial)
         {
             var tempSerial = serial.Replace(":", string.Empty);
             if (_config.linkedProfiles.ContainsKey(tempSerial)) _config.linkedProfiles.Remove(tempSerial);

@@ -948,7 +948,7 @@ namespace DS4Windows
             OutContType contType = Global.Instance.Config.OutputDeviceType[index];
 
             OutSlotDevice slotDevice = null;
-            if (!Global.Instance.getDInputOnly(index))
+            if (!Global.Instance.GetDirectInputOnly(index))
             {
                 slotDevice = outputslotMan.FindExistUnboundSlotType(contType);
             }
@@ -1265,9 +1265,9 @@ namespace DS4Windows
                         bool useAutoProfile = UseTempProfiles[i];
                         if (!useAutoProfile)
                         {
-                            if (device.isValidSerial() && Global.Instance.containsLinkedProfile(device.getMacAddress()))
+                            if (device.isValidSerial() && Global.Instance.ContainsLinkedProfile(device.getMacAddress()))
                             {
-                                Global.Instance.Config.ProfilePath[i] = Global.Instance.getLinkedProfile(device.getMacAddress());
+                                Global.Instance.Config.ProfilePath[i] = Global.Instance.GetLinkedProfile(device.getMacAddress());
                                 Global.LinkedProfileCheck[i] = true;
                             }
                             else
@@ -1283,7 +1283,7 @@ namespace DS4Windows
                         {
                             device.LightBarColor = Global.Instance.Config.GetMainColor(i);
 
-                            if (!Global.Instance.getDInputOnly(i) && device.isSynced())
+                            if (!Global.Instance.GetDirectInputOnly(i) && device.isSynced())
                             {
                                 if (device.PrimaryDevice)
                                 {
@@ -1704,9 +1704,9 @@ namespace DS4Windows
                             bool useAutoProfile = UseTempProfiles[Index];
                             if (!useAutoProfile)
                             {
-                                if (device.isValidSerial() && Global.Instance.containsLinkedProfile(device.getMacAddress()))
+                                if (device.isValidSerial() && Global.Instance.ContainsLinkedProfile(device.getMacAddress()))
                                 {
-                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.getLinkedProfile(device.getMacAddress());
+                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.GetLinkedProfile(device.getMacAddress());
                                     Global.LinkedProfileCheck[Index] = true;
                                 }
                                 else
@@ -1722,7 +1722,7 @@ namespace DS4Windows
                             {
                                 device.LightBarColor = Global.Instance.Config.GetMainColor(Index);
 
-                                if (!Global.Instance.getDInputOnly(Index) && device.isSynced())
+                                if (!Global.Instance.GetDirectInputOnly(Index) && device.isSynced())
                                 {
                                     if (device.PrimaryDevice)
                                     {
@@ -2066,7 +2066,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (!Instance.getDInputOnly(ind))
+                    if (!Instance.GetDirectInputOnly(ind))
                     {
                         touchPad[ind].ReplaceOneEuroFilterPair();
                         touchPad[ind].ReplaceOneEuroFilterPair();
@@ -2262,7 +2262,7 @@ namespace DS4Windows
                 cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 
                 if (!recordingMacro && (UseTempProfiles[ind] ||
-                                        Instance.containsCustomAction(ind) || Instance.containsCustomExtras(ind) ||
+                                        Instance.ContainsCustomAction(ind) || Instance.ContainsCustomExtras(ind) ||
                                         Instance.GetProfileActionCount(ind) > 0))
                 {
                     DS4State tempMapState = MappedState[ind];

@@ -1401,7 +1401,7 @@ namespace DS4Windows
                 dState.LY = (byte)(tempY * capY + 128.0);
             }
 
-            int lsOutCurveMode = Global.Instance.GetLsOutCurveMode(device);
+            int lsOutCurveMode = Global.Instance.Config.SetLsOutCurveMode(device);
             if (lsOutCurveMode > 0 && (dState.LX != 128 || dState.LY != 128))
             {
                 double tempRatioX = 0.0, tempRatioY = 0.0;
@@ -1548,7 +1548,7 @@ namespace DS4Windows
                 dState.RY = (byte)(tempY * capY + 128.0);
             }
 
-            int rsOutCurveMode = Global.Instance.GetRsOutCurveMode(device);
+            int rsOutCurveMode = Global.Instance.Config.GetRsOutCurveMode(device);
             if (rsOutCurveMode > 0 && (dState.RX != 128 || dState.RY != 128))
             {
                 double tempRatioX = 0.0, tempRatioY = 0.0;
@@ -1676,7 +1676,7 @@ namespace DS4Windows
                 }
             }
 
-            int l2OutCurveMode = Global.Instance.GetL2OutCurveMode(device);
+            int l2OutCurveMode = Global.Instance.Config.GetL2OutCurveMode(device);
             if (l2OutCurveMode > 0 && dState.L2 != 0)
             {
                 double temp = dState.L2 / 255.0;
@@ -1719,7 +1719,7 @@ namespace DS4Windows
                 }
             }
 
-            int r2OutCurveMode = Global.Instance.GetR2OutCurveMode(device);
+            int r2OutCurveMode = Global.Instance.Config.GetR2OutCurveMode(device);
             if (r2OutCurveMode > 0 && dState.R2 != 0)
             {
                 double temp = dState.R2 / 255.0;
@@ -1819,7 +1819,7 @@ namespace DS4Windows
                         (int)Math.Min(128d, szsens * 128d * (absz / 128d));
                 }
 
-                int sxOutCurveMode = Global.Instance.GetSXOutCurveMode(device);
+                int sxOutCurveMode = Global.Instance.Config.GetSXOutCurveMode(device);
                 if (sxOutCurveMode > 0)
                 {
                     double temp = dState.Motion.outputAccelX / 128.0;
@@ -1870,7 +1870,7 @@ namespace DS4Windows
                     }
                 }
 
-                int szOutCurveMode = Global.Instance.GetSZOutCurveMode(device);
+                int szOutCurveMode = Global.Instance.Config.GetSZOutCurveMode(device);
                 if (szOutCurveMode > 0 && dState.Motion.outputAccelZ != 0)
                 {
                     double temp = dState.Motion.outputAccelZ / 128.0;

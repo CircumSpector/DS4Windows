@@ -25,264 +25,278 @@ namespace DS4Windows
 
         string CustomSteamFolder { get; set; }
 
-        public AppThemeChoice ThemeChoice { get; set; }
+        AppThemeChoice ThemeChoice { get; set; }
 
-        public ControlServiceDeviceOptions DeviceOptions { get; }
+        ControlServiceDeviceOptions DeviceOptions { get; }
 
-        public IList<OutContType> OutputDeviceType { get; set; }
+        IList<OutContType> OutputDeviceType { get; set; }
 
-        public int CheckWhen { get; set; }
+        int CheckWhen { get; set; }
 
-        public DateTime LastChecked { get; set; }
+        DateTime LastChecked { get; set; }
 
-        public bool DisconnectBluetoothAtStop { get; set; }
+        bool DisconnectBluetoothAtStop { get; set; }
 
-        public int Notifications { get; set; }
+        int Notifications { get; set; }
 
-        public bool Ds4Mapping { get; set; }
+        bool Ds4Mapping { get; set; }
 
-        public bool QuickCharge { get; set; }
+        bool QuickCharge { get; set; }
 
-        public bool CloseMini { get; set; }
+        bool CloseMini { get; set; }
 
-        public bool StartMinimized { get; set; }
+        bool StartMinimized { get; set; }
 
-        public bool MinToTaskBar { get; set; }
+        bool MinToTaskBar { get; set; }
 
-        public int FormWidth { get; set; }
+        int FormWidth { get; set; }
 
-        public int FormHeight { get; set; }
+        int FormHeight { get; set; }
 
-        public int FormLocationX { get; set; }
+        int FormLocationX { get; set; }
 
-        public int FormLocationY { get; set; }
+        int FormLocationY { get; set; }
 
-        public string UseLang { get; set; }
+        string UseLang { get; set; }
 
-        public bool DownloadLang { get; set; }
+        bool DownloadLang { get; set; }
 
-        public TrayIconChoice UseIconChoice { get; set; }
+        TrayIconChoice UseIconChoice { get; set; }
 
-        public bool FlashWhenLate { get; set; }
+        bool FlashWhenLate { get; set; }
 
-        public bool UseCustomSteamFolder { get; set; }
+        bool UseCustomSteamFolder { get; set; }
 
-        public IList<string> LaunchProgram { get; set; }
+        IList<string> LaunchProgram { get; set; }
 
-        public IList<string> ProfilePath { get; set; }
+        IList<string> ProfilePath { get; set; }
 
-        public IList<string>[] ProfileActions { get; set; }
+        IList<string>[] ProfileActions { get; set; }
 
-        public IList<SquareStickInfo> SquStickInfo { get; set; }
+        IList<SquareStickInfo> SquStickInfo { get; set; }
 
-        public IList<SpecialAction> Actions { get; set; }
+        IList<SpecialAction> Actions { get; set; }
 
-        public IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; }
+        IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; }
 
-        public IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; }
+        IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; }
 
-        public IList<StickOutputSetting> LSOutputSettings { get; set; }
+        IList<StickOutputSetting> LSOutputSettings { get; set; }
 
-        public IList<StickOutputSetting> RSOutputSettings { get; set; }
+        IList<StickOutputSetting> RSOutputSettings { get; set; }
 
-        public IList<TriggerOutputSettings> L2OutputSettings { get; set; }
+        IList<TriggerOutputSettings> L2OutputSettings { get; set; }
 
-        public IList<TriggerOutputSettings> R2OutputSettings { get; set; }
+        IList<TriggerOutputSettings> R2OutputSettings { get; set; }
 
-        public IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; }
+        IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; }
 
-        public IList<ButtonMouseInfo> ButtonMouseInfos { get; set; }
+        IList<ButtonMouseInfo> ButtonMouseInfos { get; set; }
 
-        public IList<string> OlderProfilePath { get; set; }
+        IList<string> OlderProfilePath { get; set; }
 
-        public IList<bool> DistanceProfiles { get; set; }
+        IList<bool> DistanceProfiles { get; set; }
 
-        public IList<byte> RumbleBoost { get; set; }
+        IList<byte> RumbleBoost { get; set; }
 
-        public IList<byte> TouchSensitivity { get; set; }
+        IList<byte> TouchSensitivity { get; set; }
 
-        public IList<StickDeadZoneInfo> LSModInfo { get; set; }
+        IList<StickDeadZoneInfo> LSModInfo { get; set; }
 
-        public IList<StickDeadZoneInfo> RSModInfo { get; set; }
+        IList<StickDeadZoneInfo> RSModInfo { get; set; }
 
-        public IList<TriggerDeadZoneZInfo> L2ModInfo { get; set; }
+        IList<TriggerDeadZoneZInfo> L2ModInfo { get; set; }
 
-        public IList<TriggerDeadZoneZInfo> R2ModInfo { get; set; }
+        IList<TriggerDeadZoneZInfo> R2ModInfo { get; set; }
 
-        public IList<double> L2Sens { get; set; }
+        IList<double> L2Sens { get; set; }
 
-        public IList<double> R2Sens { get; set; }
+        IList<double> R2Sens { get; set; }
 
-        public IList<double> SXSens { get; set; }
+        IList<double> SXSens { get; set; }
 
-        public IList<double> SZSens { get; set; }
+        IList<double> SZSens { get; set; }
 
-        public IList<double> SXDeadzone { get; set; }
+        IList<double> SXDeadzone { get; set; }
 
-        public IList<double> SXMaxzone { get; set; }
+        IList<double> SXMaxzone { get; set; }
 
-        public IList<double> SXAntiDeadzone { get; set; }
+        IList<double> SXAntiDeadzone { get; set; }
 
-        public IList<double> SZDeadzone { get; set; }
+        IList<double> SZDeadzone { get; set; }
 
-        public IList<double> SZAntiDeadzone { get; set; }
+        IList<double> SZAntiDeadzone { get; set; }
 
-        public IList<double> SZMaxzone { get; set; }
+        IList<double> SZMaxzone { get; set; }
 
-        public IList<double> LSSens { get; set; }
+        IList<double> LSSens { get; set; }
 
-        public IList<double> RSSens { get; set; }
+        IList<double> RSSens { get; set; }
 
-        public IList<bool> LowerRCOn { get; set; }
+        IList<bool> LowerRCOn { get; set; }
 
-        public IList<double> LSRotation { get; set; }
+        IList<double> LSRotation { get; set; }
 
-        public IList<double> RSRotation { get; set; }
+        IList<double> RSRotation { get; set; }
 
-        public IList<BezierCurve> LSOutBezierCurveObj { get; set; }
+        IList<BezierCurve> LSOutBezierCurveObj { get; set; }
 
-        public IList<BezierCurve> RSOutBezierCurveObj { get; set; }
+        IList<BezierCurve> RSOutBezierCurveObj { get; set; }
 
-        public IList<BezierCurve> L2OutBezierCurveObj { get; set; }
+        IList<BezierCurve> L2OutBezierCurveObj { get; set; }
 
-        public IList<BezierCurve> R2OutBezierCurveObj { get; set; }
+        IList<BezierCurve> R2OutBezierCurveObj { get; set; }
 
-        public IList<BezierCurve> SXOutBezierCurveObj { get; set; }
+        IList<BezierCurve> SXOutBezierCurveObj { get; set; }
 
-        public IList<BezierCurve> SZOutBezierCurveObj { get; set; }
+        IList<BezierCurve> SZOutBezierCurveObj { get; set; }
 
-        public IList<int> GyroInvert { get; set; }
+        IList<int> GyroInvert { get; set; }
 
-        public IList<bool> GyroTriggerTurns { get; set; }
+        IList<bool> GyroTriggerTurns { get; set; }
 
-        public IList<GyroMouseInfo> GyroMouseInfo { get; set; }
+        IList<GyroMouseInfo> GyroMouseInfo { get; set; }
 
-        public IList<int> GyroMouseHorizontalAxis { get; set; }
+        IList<int> GyroMouseHorizontalAxis { get; set; }
 
-        public IList<int> GyroMouseStickHorizontalAxis { get; set; }
+        IList<int> GyroMouseStickHorizontalAxis { get; set; }
 
-        public IList<bool> TrackballMode { get; set; }
+        IList<bool> TrackballMode { get; set; }
 
-        public IList<double> TrackballFriction { get; set; }
+        IList<double> TrackballFriction { get; set; }
 
-        public IList<TouchpadAbsMouseSettings> TouchPadAbsMouse { get; set; }
+        IList<TouchpadAbsMouseSettings> TouchPadAbsMouse { get; set; }
 
-        public IList<TouchpadRelMouseSettings> TouchPadRelMouse { get; set; }
+        IList<TouchpadRelMouseSettings> TouchPadRelMouse { get; set; }
 
-        public IList<byte> TapSensitivity { get; set; }
+        IList<byte> TapSensitivity { get; set; }
 
-        public IList<bool> DoubleTap { get; set; }
+        IList<bool> DoubleTap { get; set; }
 
-        public IList<int> ScrollSensitivity { get; set; }
+        IList<int> ScrollSensitivity { get; set; }
 
-        public IList<int> TouchPadInvert { get; set; }
+        IList<int> TouchPadInvert { get; set; }
 
-        public IList<int> BluetoothPollRate { get; set; }
+        IList<int> BluetoothPollRate { get; set; }
 
-        public IList<int> GyroMouseDeadZone { get; set; }
+        IList<int> GyroMouseDeadZone { get; set; }
 
-        public IList<bool> GyroMouseToggle { get; set; }
+        IList<bool> GyroMouseToggle { get; set; }
 
-        public IList<bool> EnableTouchToggle { get; set; }
+        IList<bool> EnableTouchToggle { get; set; }
 
-        public IList<int> IdleDisconnectTimeout { get; set; }
+        IList<int> IdleDisconnectTimeout { get; set; }
 
-        public IList<bool> EnableOutputDataToDS4 { get; set; }
+        IList<bool> EnableOutputDataToDS4 { get; set; }
 
-        public IList<bool> TouchpadJitterCompensation { get; set; }
+        IList<bool> TouchpadJitterCompensation { get; set; }
 
-        public IList<bool> TouchClickPassthru { get; set; }
+        IList<bool> TouchClickPassthru { get; set; }
 
-        public double UdpSmoothingMincutoff { get; set; }
+        double UdpSmoothingMincutoff { get; set; }
 
-        public double UdpSmoothingBeta { get; set; }
+        double UdpSmoothingBeta { get; set; }
 
-        public string FakeExeFileName { get; set; }
+        string FakeExeFileName { get; set; }
 
-        public IList<bool> ContainsCustomAction { get; set; }
+        IList<bool> ContainsCustomAction { get; set; }
 
-        public IList<bool> ContainsCustomExtras { get; set; }
+        IList<bool> ContainsCustomExtras { get; set; }
 
-        public IList<int> GyroSensitivity { get; set; }
+        IList<int> GyroSensitivity { get; set; }
 
-        public IList<int> GyroSensVerticalScale { get; set; }
+        IList<int> GyroSensVerticalScale { get; set; }
 
-        public IList<bool> DirectInputOnly { get; set; }
+        IList<bool> DirectInputOnly { get; set; }
 
-        public IList<TouchpadOutMode> TouchOutMode { get; set; }
+        IList<TouchpadOutMode> TouchOutMode { get; set; }
 
-        public IList<IList<int>> TouchDisInvertTriggers { get; set; }
+        IList<IList<int>> TouchDisInvertTriggers { get; set; }
 
-        public IList<LightbarSettingInfo> LightbarSettingInfo { get; set; }
+        IList<LightbarSettingInfo> LightbarSettingInfo { get; set; }
 
-        public IList<int> SASteeringWheelEmulationRange { get; set; }
+        IList<int> SASteeringWheelEmulationRange { get; set; }
 
-        public IList<bool> SATriggerCondition { get; set; }
+        IList<bool> SATriggerCondition { get; set; }
 
-        public IList<string> SATriggers { get; set; }
+        IList<string> SATriggers { get; set; }
 
-        public IList<bool> StartTouchpadOff { get; set; }
+        IList<bool> StartTouchpadOff { get; set; }
 
-        public IList<bool> SAMouseStickTriggerCond { get; set; }
+        IList<bool> SAMouseStickTriggerCond { get; set; }
 
-        public IList<string> SAMouseStickTriggers { get; set; }
+        IList<string> SAMouseStickTriggers { get; set; }
 
-        public IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
+        IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
 
-        public bool UseExclusiveMode { get; set; }
+        bool UseExclusiveMode { get; set; }
 
-        public bool SwipeProfiles { get; set; }
+        bool SwipeProfiles { get; set; }
 
-        public int FlashWhenLateAt { get; set; }
+        int FlashWhenLateAt { get; set; }
 
-        public bool AutoProfileRevertDefaultProfile { get; set; }
+        bool AutoProfileRevertDefaultProfile { get; set; }
 
-        public IList<GyroOutMode> GyroOutputMode { get; set; }
+        IList<GyroOutMode> GyroOutputMode { get; set; }
 
-        public IList<bool> GyroMouseStickTriggerTurns { get; set; }
+        IList<bool> GyroMouseStickTriggerTurns { get; set; }
 
-        public IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
+        IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
 
-        public IList< bool> GyroMouseStickToggle { get; set; }
+        IList< bool> GyroMouseStickToggle { get; set; }
 
-        public IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
+        IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
         
-        public IList<GyroControlsInfo> GyroControlsInfo { get; set; }
+        IList<GyroControlsInfo> GyroControlsInfo { get; set; }
 
-        public IList<int> SAWheelFuzzValues { get; set; }
+        IList<int> SAWheelFuzzValues { get; set; }
 
-        public ulong LastVersionCheckedNumber { get; set; }
+        ulong LastVersionCheckedNumber { get; set; }
 
-        public bool IsUdpServerEnabled { get; set; }
+        bool IsUdpServerEnabled { get; set; }
 
-        public DS4Color GetMainColor(int index);
+        DS4Color GetMainColor(int index);
 
-        public DS4Color GetLowColor(int index);
+        DS4Color GetLowColor(int index);
 
-        public DS4Color GetChargingColor(int index);
+        DS4Color GetChargingColor(int index);
 
-        public DS4Color GetCustomColor(int index);
+        DS4Color GetCustomColor(int index);
 
-        public DS4Color GetFlashColor(int index);
+        DS4Color GetFlashColor(int index);
 
-        int getLsOutCurveMode(int index);
-        void setLsOutCurveMode(int index, int value);
-        int getRsOutCurveMode(int index);
-        void setRsOutCurveMode(int index, int value);
-        int getL2OutCurveMode(int index);
-        void setL2OutCurveMode(int index, int value);
-        int getR2OutCurveMode(int index);
-        void setR2OutCurveMode(int index, int value);
-        int getSXOutCurveMode(int index);
-        void setSXOutCurveMode(int index, int value);
-        int getSZOutCurveMode(int index);
-        void setSZOutCurveMode(int index, int value);
+        int SetLsOutCurveMode(int index);
+
+        void SetLsOutCurveMode(int index, int value);
+
+        int GetRsOutCurveMode(int index);
+
+        void SetRsOutCurveMode(int index, int value);
+
+        int GetL2OutCurveMode(int index);
+
+        void SetL2OutCurveMode(int index, int value);
+
+        int GetR2OutCurveMode(int index);
+
+        void SetR2OutCurveMode(int index, int value);
+
+        int GetSXOutCurveMode(int index);
+
+        void SetSXOutCurveMode(int index, int value);
+
+        int GetSZOutCurveMode(int index);
+
+        void SetSZOutCurveMode(int index, int value);
+
         void EstablishDefaultSpecialActions(int idx);
         void CacheProfileCustomsFlags(int device);
         void CacheExtraProfileInfo(int device);
         void CalculateProfileActionCount(int index);
         void CalculateProfileActionDicts(int device);
+
         SpecialAction GetAction(string name);
+
         int GetActionIndexOf(string name);
         void SetSaTriggerCond(int index, string text);
         void SetSaMouseStickTriggerCond(int index, string text);
@@ -300,7 +314,9 @@ namespace DS4Windows
             string propath = "", bool xinputChange = true, bool postLoad = true);
 
         bool Load();
+
         bool Save();
+
         bool SaveAction(string name, string controls, int mode, string details, bool edit, string extras = "");
         void RemoveAction(string name);
         bool LoadActions();

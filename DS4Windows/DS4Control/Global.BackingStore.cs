@@ -447,79 +447,7 @@ namespace DS4Windows
 
             public IList<BezierCurve> SZOutBezierCurveObj { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
-
-            public int getLsOutCurveMode(int index)
-            {
-                return _lsOutCurveMode[index];
-            }
-
-            public void setLsOutCurveMode(int index, int value)
-            {
-                if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(LSOutBezierCurveObj, index, value, BezierCurve.AxisType.LSRS);
-                _lsOutCurveMode[index] = value;
-            }
-
-            public int getRsOutCurveMode(int index)
-            {
-                return _rsOutCurveMode[index];
-            }
-
-            public void setRsOutCurveMode(int index, int value)
-            {
-                if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(RSOutBezierCurveObj, index, value, BezierCurve.AxisType.LSRS);
-                _rsOutCurveMode[index] = value;
-            }
-
-            public int getL2OutCurveMode(int index)
-            {
-                return _l2OutCurveMode[index];
-            }
-
-            public void setL2OutCurveMode(int index, int value)
-            {
-                if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(L2OutBezierCurveObj, index, value, BezierCurve.AxisType.L2R2);
-                _l2OutCurveMode[index] = value;
-            }
-
-            public int getR2OutCurveMode(int index)
-            {
-                return _r2OutCurveMode[index];
-            }
-
-            public void setR2OutCurveMode(int index, int value)
-            {
-                if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(R2OutBezierCurveObj, index, value, BezierCurve.AxisType.L2R2);
-                _r2OutCurveMode[index] = value;
-            }
-
-            public int getSXOutCurveMode(int index)
-            {
-                return _sxOutCurveMode[index];
-            }
-
-            public void setSXOutCurveMode(int index, int value)
-            {
-                if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(SXOutBezierCurveObj, index, value, BezierCurve.AxisType.SA);
-                _sxOutCurveMode[index] = value;
-            }
-
-            public int getSZOutCurveMode(int index)
-            {
-                return _szOutCurveMode[index];
-            }
-
-            public void setSZOutCurveMode(int index, int value)
-            {
-                if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(SZOutBezierCurveObj, index, value, BezierCurve.AxisType.SA);
-                _szOutCurveMode[index] = value;
-            }
-
+            
             public IList<string> LaunchProgram { get; set; } = new List<string>
             {
                 string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
@@ -657,6 +585,78 @@ namespace DS4Windows
                 OutContType.X360,
                 OutContType.X360
             };
+
+             public int SetLsOutCurveMode(int index)
+            {
+                return _lsOutCurveMode[index];
+            }
+
+            public void SetLsOutCurveMode(int index, int value)
+            {
+                if (value >= 1)
+                    SetOutBezierCurveObjArrayItem(LSOutBezierCurveObj, index, value, BezierCurve.AxisType.LSRS);
+                _lsOutCurveMode[index] = value;
+            }
+
+            public int GetRsOutCurveMode(int index)
+            {
+                return _rsOutCurveMode[index];
+            }
+
+            public void SetRsOutCurveMode(int index, int value)
+            {
+                if (value >= 1)
+                    SetOutBezierCurveObjArrayItem(RSOutBezierCurveObj, index, value, BezierCurve.AxisType.LSRS);
+                _rsOutCurveMode[index] = value;
+            }
+
+            public int GetL2OutCurveMode(int index)
+            {
+                return _l2OutCurveMode[index];
+            }
+
+            public void SetL2OutCurveMode(int index, int value)
+            {
+                if (value >= 1)
+                    SetOutBezierCurveObjArrayItem(L2OutBezierCurveObj, index, value, BezierCurve.AxisType.L2R2);
+                _l2OutCurveMode[index] = value;
+            }
+
+            public int GetR2OutCurveMode(int index)
+            {
+                return _r2OutCurveMode[index];
+            }
+
+            public void SetR2OutCurveMode(int index, int value)
+            {
+                if (value >= 1)
+                    SetOutBezierCurveObjArrayItem(R2OutBezierCurveObj, index, value, BezierCurve.AxisType.L2R2);
+                _r2OutCurveMode[index] = value;
+            }
+
+            public int GetSXOutCurveMode(int index)
+            {
+                return _sxOutCurveMode[index];
+            }
+
+            public void SetSXOutCurveMode(int index, int value)
+            {
+                if (value >= 1)
+                    SetOutBezierCurveObjArrayItem(SXOutBezierCurveObj, index, value, BezierCurve.AxisType.SA);
+                _sxOutCurveMode[index] = value;
+            }
+
+            public int GetSZOutCurveMode(int index)
+            {
+                return _szOutCurveMode[index];
+            }
+
+            public void SetSZOutCurveMode(int index, int value)
+            {
+                if (value >= 1)
+                    SetOutBezierCurveObjArrayItem(SZOutBezierCurveObj, index, value, BezierCurve.AxisType.SA);
+                _szOutCurveMode[index] = value;
+            }
 
             public DS4Color GetMainColor(int index)
             {
@@ -1331,14 +1331,14 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlBTPollRate);
 
                     var xmlLsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveMode", null);
-                    xmlLsOutputCurveMode.InnerText = stickOutputCurveString(getLsOutCurveMode(device));
+                    xmlLsOutputCurveMode.InnerText = stickOutputCurveString(SetLsOutCurveMode(device));
                     rootElement.AppendChild(xmlLsOutputCurveMode);
                     var xmlLsOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveCustom", null);
                     xmlLsOutputCurveCustom.InnerText = LSOutBezierCurveObj[device].ToString();
                     rootElement.AppendChild(xmlLsOutputCurveCustom);
 
                     var xmlRsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveMode", null);
-                    xmlRsOutputCurveMode.InnerText = stickOutputCurveString(getRsOutCurveMode(device));
+                    xmlRsOutputCurveMode.InnerText = stickOutputCurveString(GetRsOutCurveMode(device));
                     rootElement.AppendChild(xmlRsOutputCurveMode);
                     var xmlRsOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveCustom", null);
                     xmlRsOutputCurveCustom.InnerText = RSOutBezierCurveObj[device].ToString();
@@ -1424,7 +1424,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlRsOutputSettingsElement);
 
                     var xmlL2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveMode", null);
-                    xmlL2OutputCurveMode.InnerText = axisOutputCurveString(getL2OutCurveMode(device));
+                    xmlL2OutputCurveMode.InnerText = axisOutputCurveString(GetL2OutCurveMode(device));
                     rootElement.AppendChild(xmlL2OutputCurveMode);
                     var xmlL2OutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveCustom", null);
                     xmlL2OutputCurveCustom.InnerText = L2OutBezierCurveObj[device].ToString();
@@ -1445,21 +1445,21 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlR2TriggerEffect);
 
                     var xmlR2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveMode", null);
-                    xmlR2OutputCurveMode.InnerText = axisOutputCurveString(getR2OutCurveMode(device));
+                    xmlR2OutputCurveMode.InnerText = axisOutputCurveString(GetR2OutCurveMode(device));
                     rootElement.AppendChild(xmlR2OutputCurveMode);
                     var xmlR2OutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveCustom", null);
                     xmlR2OutputCurveCustom.InnerText = R2OutBezierCurveObj[device].ToString();
                     rootElement.AppendChild(xmlR2OutputCurveCustom);
 
                     var xmlSXOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveMode", null);
-                    xmlSXOutputCurveMode.InnerText = axisOutputCurveString(getSXOutCurveMode(device));
+                    xmlSXOutputCurveMode.InnerText = axisOutputCurveString(GetSXOutCurveMode(device));
                     rootElement.AppendChild(xmlSXOutputCurveMode);
                     var xmlSXOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveCustom", null);
                     xmlSXOutputCurveCustom.InnerText = SXOutBezierCurveObj[device].ToString();
                     rootElement.AppendChild(xmlSXOutputCurveCustom);
 
                     var xmlSZOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveMode", null);
-                    xmlSZOutputCurveMode.InnerText = axisOutputCurveString(getSZOutCurveMode(device));
+                    xmlSZOutputCurveMode.InnerText = axisOutputCurveString(GetSZOutCurveMode(device));
                     rootElement.AppendChild(xmlSZOutputCurveMode);
                     var xmlSZOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveCustom", null);
                     xmlSZOutputCurveCustom.InnerText = SZOutBezierCurveObj[device].ToString();
@@ -3922,11 +3922,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSOutputCurveMode");
-                        setLsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
+                        SetLsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        setLsOutCurveMode(device, 0);
+                        SetLsOutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -3943,11 +3943,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSOutputCurveMode");
-                        setRsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
+                        SetRsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        setRsOutCurveMode(device, 0);
+                        SetRsOutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -4205,11 +4205,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/L2OutputCurveMode");
-                        setL2OutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetL2OutCurveMode(device, axisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        setL2OutCurveMode(device, 0);
+                        SetL2OutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -4256,11 +4256,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2OutputCurveMode");
-                        setR2OutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetR2OutCurveMode(device, axisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        setR2OutCurveMode(device, 0);
+                        SetR2OutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -4307,11 +4307,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SXOutputCurveMode");
-                        setSXOutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetSXOutCurveMode(device, axisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        setSXOutCurveMode(device, 0);
+                        SetSXOutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -4328,11 +4328,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SZOutputCurveMode");
-                        setSZOutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetSZOutCurveMode(device, axisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        setSZOutCurveMode(device, 0);
+                        SetSZOutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -7099,12 +7099,12 @@ namespace DS4Windows
                 LSAntiSnapbackInfo[device].timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
                 LSAntiSnapbackInfo[device].delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
                 LSAntiSnapbackInfo[device].enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
-                setLsOutCurveMode(device, 0);
-                setRsOutCurveMode(device, 0);
-                setL2OutCurveMode(device, 0);
-                setR2OutCurveMode(device, 0);
-                setSXOutCurveMode(device, 0);
-                setSZOutCurveMode(device, 0);
+                SetLsOutCurveMode(device, 0);
+                SetRsOutCurveMode(device, 0);
+                SetL2OutCurveMode(device, 0);
+                SetR2OutCurveMode(device, 0);
+                SetSXOutCurveMode(device, 0);
+                SetSZOutCurveMode(device, 0);
                 TrackballMode[device] = false;
                 TrackballFriction[device] = 10.0;
                 TouchPadAbsMouse[device].Reset();
