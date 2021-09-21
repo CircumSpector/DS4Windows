@@ -261,6 +261,18 @@ namespace DS4Windows
 
         bool SaveControllerConfigs(DS4Device device = null);
 
+        SpecialAction GetProfileAction(int device, string name);
+
+        bool ContainsLinkedProfile(string serial);
+
+        string GetLinkedProfile(string serial);
+
+        void ChangeLinkedProfile(string serial, string profile);
+
+        void RemoveLinkedProfile(string serial);
+
+        int GetProfileActionIndexOf(int device, string name);
+
         DS4Color GetMainColor(int index);
 
         DS4Color GetLowColor(int index);

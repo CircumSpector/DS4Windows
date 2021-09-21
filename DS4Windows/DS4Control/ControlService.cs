@@ -1265,9 +1265,9 @@ namespace DS4Windows
                         bool useAutoProfile = UseTempProfiles[i];
                         if (!useAutoProfile)
                         {
-                            if (device.isValidSerial() && Global.Instance.ContainsLinkedProfile(device.getMacAddress()))
+                            if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.getMacAddress()))
                             {
-                                Global.Instance.Config.ProfilePath[i] = Global.Instance.GetLinkedProfile(device.getMacAddress());
+                                Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.GetLinkedProfile(device.getMacAddress());
                                 Global.LinkedProfileCheck[i] = true;
                             }
                             else
@@ -1704,9 +1704,9 @@ namespace DS4Windows
                             bool useAutoProfile = UseTempProfiles[Index];
                             if (!useAutoProfile)
                             {
-                                if (device.isValidSerial() && Global.Instance.ContainsLinkedProfile(device.getMacAddress()))
+                                if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.getMacAddress()))
                                 {
-                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.GetLinkedProfile(device.getMacAddress());
+                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.Config.GetLinkedProfile(device.getMacAddress());
                                     Global.LinkedProfileCheck[Index] = true;
                                 }
                                 else

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Xml;
 
 namespace DS4Windows
@@ -51,6 +50,7 @@ namespace DS4Windows
             }
         }
 
+        [ConfigurationSystemComponent]
         public void CreateStdActions()
         {
             var xDoc = new XmlDocument();
@@ -110,47 +110,6 @@ namespace DS4Windows
         {
             _config.SaveAction(name, controls, mode, details, edit, extras);
             Mapping.actionDone.Add(new Mapping.ActionState());
-        }
-
-        public int GetProfileActionIndexOf(int device, string name)
-        {
-            var index = -1;
-            _config.profileActionIndexDict[device].TryGetValue(name, out index);
-            return index;
-        }
-
-        public SpecialAction GetProfileAction(int device, string name)
-        {
-            SpecialAction sA = null;
-            _config.profileActionDict[device].TryGetValue(name, out sA);
-            return sA;
-        }
-
-        public bool ContainsLinkedProfile(string serial)
-        {
-            var tempSerial = serial.Replace(":", string.Empty);
-            return _config.linkedProfiles.ContainsKey(tempSerial);
-        }
-
-        public string GetLinkedProfile(string serial)
-        {
-            var temp = string.Empty;
-            var tempSerial = serial.Replace(":", string.Empty);
-            if (_config.linkedProfiles.ContainsKey(tempSerial)) temp = _config.linkedProfiles[tempSerial];
-
-            return temp;
-        }
-
-        public void ChangeLinkedProfile(string serial, string profile)
-        {
-            var tempSerial = serial.Replace(":", string.Empty);
-            _config.linkedProfiles[tempSerial] = profile;
-        }
-
-        public void RemoveLinkedProfile(string serial)
-        {
-            var tempSerial = serial.Replace(":", string.Empty);
-            if (_config.linkedProfiles.ContainsKey(tempSerial)) _config.linkedProfiles.Remove(tempSerial);
         }
 
         public bool LoadProfile(int device, bool launchprogram, ControlService control,

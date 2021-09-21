@@ -46,16 +46,16 @@ namespace DS4Windows
 
             protected readonly XmlDocument m_Xdoc = new();
 
-            public readonly int[] profileActionCount = new int[TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            private readonly int[] profileActionCount = new int[TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            public readonly Dictionary<string, SpecialAction>[] profileActionDict =
+            private readonly Dictionary<string, SpecialAction>[] profileActionDict =
                 new Dictionary<string, SpecialAction>[TEST_PROFILE_ITEM_COUNT]
                 {
                     new(), new(), new(),
                     new(), new(), new(), new(), new(), new()
                 };
 
-            public readonly Dictionary<string, int>[] profileActionIndexDict =
+            private readonly Dictionary<string, int>[] profileActionIndexDict =
                 new Dictionary<string, int>[TEST_PROFILE_ITEM_COUNT]
                 {
                     new(), new(), new(),
@@ -85,13 +85,7 @@ namespace DS4Windows
 
             public IList<int> RumbleAutostopTime { get; } = new List<int>
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
-
-            public void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
-            {
-                ds4controlSettings[deviceNum].ResetExtraButtons();
-                if (devButtons != null) ds4controlSettings[deviceNum].EstablishExtraButtons(devButtons);
-            }
-
+            
             public IList<GyroControlsInfo> GyroControlsInfo { get; set; } = new List<GyroControlsInfo>
             {
                 new(), new(), new(),
@@ -592,6 +586,12 @@ namespace DS4Windows
                 OutContType.X360,
                 OutContType.X360
             };
+
+            public void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
+            {
+                ds4controlSettings[deviceNum].ResetExtraButtons();
+                if (devButtons != null) ds4controlSettings[deviceNum].EstablishExtraButtons(devButtons);
+            }
 
             public int SetLsOutCurveMode(int index)
             {
@@ -6332,6 +6332,47 @@ namespace DS4Windows
                     dcs.UpdateSettings(shift, action, exts, kt, trigger);
                     RefreshActionAlias(dcs, shift);
                 }
+            }
+
+            public SpecialAction GetProfileAction(int device, string name)
+            {
+                SpecialAction sA = null;
+                profileActionDict[device].TryGetValue(name, out sA);
+                return sA;
+            }
+
+            public bool ContainsLinkedProfile(string serial)
+            {
+                var tempSerial = serial.Replace(":", string.Empty);
+                return linkedProfiles.ContainsKey(tempSerial);
+            }
+
+            public string GetLinkedProfile(string serial)
+            {
+                var temp = string.Empty;
+                var tempSerial = serial.Replace(":", string.Empty);
+                if (linkedProfiles.ContainsKey(tempSerial)) temp = linkedProfiles[tempSerial];
+
+                return temp;
+            }
+
+            public void ChangeLinkedProfile(string serial, string profile)
+            {
+                var tempSerial = serial.Replace(":", string.Empty);
+                linkedProfiles[tempSerial] = profile;
+            }
+
+            public void RemoveLinkedProfile(string serial)
+            {
+                var tempSerial = serial.Replace(":", string.Empty);
+                if (linkedProfiles.ContainsKey(tempSerial)) linkedProfiles.Remove(tempSerial);
+            }
+
+            public int GetProfileActionIndexOf(int device, string name)
+            {
+                var index = -1;
+                profileActionIndexDict[device].TryGetValue(name, out index);
+                return index;
             }
 
             public void UpdateDs4ControllerExtra(int deviceNum, string buttonName, bool shift, string exts)

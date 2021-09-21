@@ -379,7 +379,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             string prof = Global.Instance.Config.ProfilePath[devIndex] = ProfileListCol[selectedIndex].Name;
             if (LinkedProfile)
             {
-                Global.Instance.ChangeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
+                Global.Instance.Config.ChangeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
                 Global.Instance.Config.SaveLinkedProfiles();
             }
             else
@@ -446,12 +446,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     if (device.isValidSerial())
                     {
-                        Global.Instance.ChangeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
+                        Global.Instance.Config.ChangeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
                     }
                 }
                 else
                 {
-                    Global.Instance.RemoveLinkedProfile(device.getMacAddress());
+                    Global.Instance.Config.RemoveLinkedProfile(device.getMacAddress());
                     Global.Instance.Config.ProfilePath[devIndex] = Global.Instance.Config.OlderProfilePath[devIndex];
                 }
 

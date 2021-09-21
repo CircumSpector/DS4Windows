@@ -3216,8 +3216,8 @@ namespace DS4Windows
                     //SpecialAction action = GetAction(actionname);
                     //int index = GetActionIndexOf(actionname);
                     string actionname = profileActions[actionIndex];
-                    SpecialAction action = Global.Instance.GetProfileAction(device, actionname);
-                    int index = Global.Instance.GetProfileActionIndexOf(device, actionname);
+                    SpecialAction action = Global.Instance.Config.GetProfileAction(device, actionname);
+                    int index = Global.Instance.Config.GetProfileActionIndexOf(device, actionname);
 
                     if (actionDoneCount < index + 1)
                     {
@@ -3470,8 +3470,8 @@ namespace DS4Windows
                                         for (int actionIndexNext = 0, profileListLenNext = profileActionsNext.Count; actionIndexNext < profileListLenNext; actionIndexNext++)
                                         {
                                             string actionnameNext = profileActionsNext[actionIndexNext];
-                                            SpecialAction actionNext = Global.Instance.GetProfileAction(device, actionnameNext);
-                                            int indexNext = Global.Instance.GetProfileActionIndexOf(device, actionnameNext);
+                                            SpecialAction actionNext = Global.Instance.Config.GetProfileAction(device, actionnameNext);
+                                            int indexNext = Global.Instance.Config.GetProfileActionIndexOf(device, actionnameNext);
 
                                             if (actionNext.Controls == action.Controls)
                                                 actionDone[indexNext].dev[device] = true;
