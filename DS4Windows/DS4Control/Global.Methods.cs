@@ -90,7 +90,7 @@ namespace DS4Windows
             {
             }
         }
-        
+
         public void SetRumbleAutostopTime(int index, int value)
         {
             _config.RumbleAutostopTime[index] = value;
@@ -99,7 +99,7 @@ namespace DS4Windows
             if (tempDev != null && tempDev.isSynced())
                 tempDev.RumbleAutostopTime = value;
         }
-        
+
         public bool GetTouchActive(int index)
         {
             return TouchpadActive[index];
@@ -125,7 +125,7 @@ namespace DS4Windows
             _config.profileActionDict[device].TryGetValue(name, out sA);
             return sA;
         }
-        
+
         public bool ContainsLinkedProfile(string serial)
         {
             var tempSerial = serial.Replace(":", string.Empty);
