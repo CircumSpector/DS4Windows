@@ -2994,7 +2994,7 @@ namespace DS4Windows
                                   ShiftTrigger2(dcs.ShiftTrigger, device, cState, eState, tp, fieldMapping);
                     bool regE = !dcs.IsExtrasEmpty(dcs.Extras);
                     if ((regE || shiftE) &&
-                        getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                        GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                     {
                         usingExtra = dcs.Control;
                         string p;
@@ -3082,12 +3082,12 @@ namespace DS4Windows
                         }
 
                         // erase default mappings for things that are remapped
-                        resetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
+                        ResetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
                     }
                     else if (actionType == DS4ControlSettings.ActionType.Key)
                     {
                         ushort value = Convert.ToUInt16(action.ActionKey);
-                        if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                        if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                         {
                             SyntheticState.KeyPresses kp;
                             if (!deviceState.keyPresses.TryGetValue(value, out kp))
@@ -3118,7 +3118,7 @@ namespace DS4Windows
                             pressedonce[value] = false;
 
                         // erase default mappings for things that are remapped
-                        resetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
+                        ResetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
                     }
                     else if (actionType == DS4ControlSettings.ActionType.Button)
                     {
@@ -3159,7 +3159,7 @@ namespace DS4Windows
                                 case X360Controls.LeftMouse:
                                 {
                                     keyvalue = 256;
-                                    if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                         deviceState.currentClicks.leftCount++;
 
                                     break;
@@ -3167,7 +3167,7 @@ namespace DS4Windows
                                 case X360Controls.RightMouse:
                                 {
                                     keyvalue = 257;
-                                    if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                         deviceState.currentClicks.rightCount++;
 
                                     break;
@@ -3175,7 +3175,7 @@ namespace DS4Windows
                                 case X360Controls.MiddleMouse:
                                 {
                                     keyvalue = 258;
-                                    if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                         deviceState.currentClicks.middleCount++;
 
                                     break;
@@ -3183,7 +3183,7 @@ namespace DS4Windows
                                 case X360Controls.FourthMouse:
                                 {
                                     keyvalue = 259;
-                                    if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                         deviceState.currentClicks.fourthCount++;
 
                                     break;
@@ -3191,14 +3191,14 @@ namespace DS4Windows
                                 case X360Controls.FifthMouse:
                                 {
                                     keyvalue = 260;
-                                    if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                         deviceState.currentClicks.fifthCount++;
 
                                     break;
                                 }
                                 case X360Controls.WUP:
                                 {
-                                    if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                     {
                                         if (isAnalog)
                                         {
@@ -3221,7 +3221,7 @@ namespace DS4Windows
                                 }
                                 case X360Controls.WDOWN:
                                 {
-                                    if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                     {
                                         if (isAnalog)
                                         {
@@ -3305,7 +3305,7 @@ namespace DS4Windows
 
                         if (keyType.HasFlag(DS4KeyType.Toggle))
                         {
-                            if (getBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                            if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                             {
                                 if (!pressedonce[keyvalue])
                                 {
@@ -3322,7 +3322,7 @@ namespace DS4Windows
                         }
 
                         // erase default mappings for things that are remapped
-                        resetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
+                        ResetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
                     }
                 }
                 else
@@ -3403,7 +3403,7 @@ namespace DS4Windows
                                 for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                                 {
                                     DS4Controls dc = action.Trigger[i];
-                                    if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                     {
                                         subtriggeractivated = false;
                                         break;
@@ -3428,7 +3428,7 @@ namespace DS4Windows
                                 for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                                 {
                                     DS4Controls dc = action.Trigger[i];
-                                    if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                     {
                                         subtriggeractivated = false;
                                         break;
@@ -3448,7 +3448,7 @@ namespace DS4Windows
                                 for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                                 {
                                     DS4Controls dc = action.Trigger[i];
-                                    if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                     {
                                         subtriggeractivated = false;
                                         break;
@@ -3473,7 +3473,7 @@ namespace DS4Windows
                                 for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                                 {
                                     DS4Controls dc = action.Trigger[i];
-                                    if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                     {
                                         triggeractivated = false;
                                         break;
@@ -3494,7 +3494,7 @@ namespace DS4Windows
                                 for (int i = 0, arlen = action.UTrigger.Count; i < arlen; i++)
                                 {
                                     DS4Controls dc = action.UTrigger[i];
-                                    if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                     {
                                         utriggeractivated = false;
                                         break;
@@ -3510,7 +3510,7 @@ namespace DS4Windows
                                 for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                                 {
                                     DS4Controls dc = action.Trigger[i];
-                                    resetToDefaultValue2(dc, MappedState, outputfieldMapping);
+                                    ResetToDefaultValue2(dc, MappedState, outputfieldMapping);
                                 }
 
                                 if (action.TypeId == SpecialAction.ActionTypeId.Program)
@@ -3920,9 +3920,9 @@ namespace DS4Windows
                                         //previousFieldMapping = new DS4StateFieldMapping(tempPrevState, eState, tp, true);
                                     }
 
-                                    bool activeCur = getBoolSpecialActionMapping(device, action.Trigger[0], cState,
+                                    bool activeCur = GetBoolSpecialActionMapping(device, action.Trigger[0], cState,
                                         eState, tp, fieldMapping);
-                                    bool activePrev = getBoolSpecialActionMapping(device, action.Trigger[0],
+                                    bool activePrev = GetBoolSpecialActionMapping(device, action.Trigger[0],
                                         tempPrevState, eState, tp, previousFieldMapping);
                                     if (activeCur && !activePrev)
                                     {
@@ -4105,7 +4105,7 @@ namespace DS4Windows
                         for (int i = 0, uTrigLen = action.UTrigger.Count; i < uTrigLen; i++)
                         {
                             DS4Controls dc = action.UTrigger[i];
-                            if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                            if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                             {
                                 utriggeractivated = false;
                                 break;
@@ -4120,7 +4120,7 @@ namespace DS4Windows
                         for (int i = 0, trigLen = action.Trigger.Count; i < trigLen; i++)
                         {
                             DS4Controls dc = action.Trigger[i];
-                            if (!getBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                            if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                             {
                                 utriggeractivated = true;
                                 break;
@@ -5069,9 +5069,11 @@ namespace DS4Windows
             return result;
         }
 
-        private static bool getBoolSpecialActionMapping(int device, DS4Controls control,
+        private static bool GetBoolSpecialActionMapping(int device, DS4Controls control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetBoolSpecialActionMapping)).StartActive(true);
+
             bool result = false;
 
             int controlNum = (int)control;
@@ -5125,9 +5127,11 @@ namespace DS4Windows
             return result;
         }
 
-        private static bool getBoolActionMapping2(int device, DS4Controls control,
+        private static bool GetBoolActionMapping2(int device, DS4Controls control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool analog = false)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetBoolActionMapping2)).StartActive(true);
+
             bool result = false;
 
             int controlNum = (int)control;
@@ -5257,6 +5261,8 @@ namespace DS4Windows
         private static byte GetXYAxisMapping2(int device, DS4Controls control, DS4State cState,
             DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool alt = false)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetXYAxisMapping2)).StartActive(true);
+
             const byte falseVal = 128;
             byte result = 0;
             byte trueVal = 0;
@@ -5360,8 +5366,10 @@ namespace DS4Windows
         }
 
         /* TODO: Possibly remove usage of this version of the method */
-        public static byte getXYAxisMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState, Mouse tp, bool alt = false)
+        public static byte GetXYAxisMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState, Mouse tp, bool alt = false)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetXYAxisMapping)).StartActive(true);
+
             byte result = 0;
             byte trueVal = 0;
             byte falseVal = 127;
@@ -5502,9 +5510,11 @@ namespace DS4Windows
             return result;
         }
 
-        private static void resetToDefaultValue2(DS4Controls control, DS4State cState,
+        private static void ResetToDefaultValue2(DS4Controls control, DS4State cState,
             DS4StateFieldMapping fieldMap)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(ResetToDefaultValue2)).StartActive(true);
+
             int controlNum = (int)control;
             DS4StateFieldMapping.ControlType controlType = DS4StateFieldMapping.mappedType[controlNum];
             if (controlType == DS4StateFieldMapping.ControlType.Button)
@@ -5569,6 +5579,8 @@ namespace DS4Windows
         // Calculate and return the angle of the controller as -180...0...+180 value.
         private static Int32 CalculateControllerAngle(int gyroAccelX, int gyroAccelZ, DS4Device controller)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(CalculateControllerAngle)).StartActive(true);
+
             Int32 result;
 
             if (gyroAccelX == controller.wheelCenterPoint.X && Math.Abs(gyroAccelZ - controller.wheelCenterPoint.Y) <= 1)
@@ -5626,6 +5638,8 @@ namespace DS4Windows
         // Calibrate sixaxis steering wheel emulation. Use DS4Windows configuration screen to start a calibration or press a special action key (if defined)
         private static void SAWheelEmulationCalibration(int device, DS4StateExposed exposedState, ControlService ctrl, DS4State currentDeviceState, DS4Device controller)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SAWheelEmulationCalibration)).StartActive(true);
+
             int gyroAccelX, gyroAccelZ;
             int result;
 
@@ -5752,6 +5766,8 @@ namespace DS4Windows
             int stickId, int delta, byte axisXValue, byte axisYValue,
             out byte useAxisX, out byte useAxisY)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(CalcStickAxisFuzz)).StartActive(true);
+
             if (stickId < 0 || stickId > 2)
             {
                 throw new ArgumentOutOfRangeException("Stick ID has to be either 0 or 1");
@@ -5802,6 +5818,8 @@ namespace DS4Windows
 
         protected static Int32 Scale360degreeGyroAxis(int device, DS4StateExposed exposedState, ControlService ctrl)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(Scale360degreeGyroAxis)).StartActive(true);
+
             unchecked
             {
                 DS4Device controller;
@@ -6041,6 +6059,8 @@ namespace DS4Windows
             int stickId, double delta, long timeout, byte axisXValue, byte axisYValue,
             out byte useAxisX, out byte useAxisY)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(CalcAntiSnapbackStick)).StartActive(true);
+
             long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             ref Queue<DS4TimedStickAxisValue> queue = ref stickValueHistory[device][stickId];
             while (queue.Count > 0 && queue.Peek().timestamp < timestamp - timeout)
