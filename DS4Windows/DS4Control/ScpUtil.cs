@@ -1,32 +1,149 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using System.IO;
-using System.Reflection;
-using System.Xml;
-using System.Drawing;
-
-using System.Security.Principal;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Globalization;
-using System.Diagnostics;
 using Sensorit.Base;
-using DS4Windows.DS4Control;
-using System.Windows.Input;
-using System.Runtime.InteropServices;
 
 namespace DS4Windows
 {
     [Flags]
-    public enum DS4KeyType : byte { None = 0, ScanCode = 1, Toggle = 2, Unbound = 4, Macro = 8, HoldMacro = 16, RepeatMacro = 32 }; // Increment by exponents of 2*, starting at 2^0
-    public enum Ds3PadId : byte { None = 0xFF, One = 0x00, Two = 0x01, Three = 0x02, Four = 0x03, All = 0x04 };
-    public enum DS4Controls : byte { None, LXNeg, LXPos, LYNeg, LYPos, RXNeg, RXPos, RYNeg, RYPos, L1, L2, L3, R1, R2, R3, Square, Triangle, Circle, Cross, DpadUp, DpadRight, DpadDown, DpadLeft, PS, TouchLeft, TouchUpper, TouchMulti, TouchRight, Share, Options, Mute, GyroXPos, GyroXNeg, GyroZPos, GyroZNeg, SwipeLeft, SwipeRight, SwipeUp, SwipeDown, L2FullPull, R2FullPull, GyroSwipeLeft, GyroSwipeRight, GyroSwipeUp, GyroSwipeDown, Capture, SideL, SideR, LSOuter, RSOuter };
-    public enum X360Controls : byte { None, LXNeg, LXPos, LYNeg, LYPos, RXNeg, RXPos, RYNeg, RYPos, LB, LT, LS, RB, RT, RS, X, Y, B, A, DpadUp, DpadRight, DpadDown, DpadLeft, Guide, Back, Start, TouchpadClick, LeftMouse, RightMouse, MiddleMouse, FourthMouse, FifthMouse, WUP, WDOWN, MouseUp, MouseDown, MouseLeft, MouseRight, Unbound };
+    public enum DS4KeyType : byte
+    {
+        None = 0,
+        ScanCode = 1,
+        Toggle = 2,
+        Unbound = 4,
+        Macro = 8,
+        HoldMacro = 16,
+        RepeatMacro = 32
+    } // Increment by exponents of 2*, starting at 2^0
 
-    public enum SASteeringWheelEmulationAxisType: byte { None = 0, LX, LY, RX, RY, L2R2, VJoy1X, VJoy1Y, VJoy1Z, VJoy2X, VJoy2Y, VJoy2Z };
-    public enum OutContType : uint { None = 0, X360, DS4 }
+    public enum Ds3PadId : byte
+    {
+        None = 0xFF,
+        One = 0x00,
+        Two = 0x01,
+        Three = 0x02,
+        Four = 0x03,
+        All = 0x04
+    }
+
+    public enum DS4Controls : byte
+    {
+        None,
+        LXNeg,
+        LXPos,
+        LYNeg,
+        LYPos,
+        RXNeg,
+        RXPos,
+        RYNeg,
+        RYPos,
+        L1,
+        L2,
+        L3,
+        R1,
+        R2,
+        R3,
+        Square,
+        Triangle,
+        Circle,
+        Cross,
+        DpadUp,
+        DpadRight,
+        DpadDown,
+        DpadLeft,
+        PS,
+        TouchLeft,
+        TouchUpper,
+        TouchMulti,
+        TouchRight,
+        Share,
+        Options,
+        Mute,
+        GyroXPos,
+        GyroXNeg,
+        GyroZPos,
+        GyroZNeg,
+        SwipeLeft,
+        SwipeRight,
+        SwipeUp,
+        SwipeDown,
+        L2FullPull,
+        R2FullPull,
+        GyroSwipeLeft,
+        GyroSwipeRight,
+        GyroSwipeUp,
+        GyroSwipeDown,
+        Capture,
+        SideL,
+        SideR,
+        LSOuter,
+        RSOuter
+    }
+
+    public enum X360Controls : byte
+    {
+        None,
+        LXNeg,
+        LXPos,
+        LYNeg,
+        LYPos,
+        RXNeg,
+        RXPos,
+        RYNeg,
+        RYPos,
+        LB,
+        LT,
+        LS,
+        RB,
+        RT,
+        RS,
+        X,
+        Y,
+        B,
+        A,
+        DpadUp,
+        DpadRight,
+        DpadDown,
+        DpadLeft,
+        Guide,
+        Back,
+        Start,
+        TouchpadClick,
+        LeftMouse,
+        RightMouse,
+        MiddleMouse,
+        FourthMouse,
+        FifthMouse,
+        WUP,
+        WDOWN,
+        MouseUp,
+        MouseDown,
+        MouseLeft,
+        MouseRight,
+        Unbound
+    }
+
+    public enum SASteeringWheelEmulationAxisType : byte
+    {
+        None = 0,
+        LX,
+        LY,
+        RX,
+        RY,
+        L2R2,
+        VJoy1X,
+        VJoy1Y,
+        VJoy1Z,
+        VJoy2X,
+        VJoy2Y,
+        VJoy2Z
+    }
+
+    public enum OutContType : uint
+    {
+        None = 0,
+        X360,
+        DS4
+    }
 
     public enum GyroOutMode : uint
     {
@@ -120,30 +237,15 @@ namespace DS4Windows
 
     public class BatteryReportArgs : EventArgs
     {
-        private int index;
-        private int level;
-        private bool charging;
+        private int Index { get; }
+        private int Level { get; }
+        private bool Charging { get; }
 
         public BatteryReportArgs(int index, int level, bool charging)
         {
-            this.index = index;
-            this.level = level;
-            this.charging = charging;
-        }
-
-        public int getIndex()
-        {
-            return index;
-        }
-
-        public int getLevel()
-        {
-            return level;
-        }
-
-        public bool isCharging()
-        {
-            return charging;
+            Index = index;
+            Level = level;
+            Charging = charging;
         }
     }
 
