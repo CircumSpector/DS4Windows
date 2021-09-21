@@ -171,8 +171,7 @@ namespace DS4Windows.InputDevices
 
         private byte muteLEDByte = 0x00;
 
-        private DualSenseControllerOptions nativeOptionsStore;
-        public DualSenseControllerOptions NativeOptionsStore { get => nativeOptionsStore; }
+        public DualSenseControllerOptions NativeOptionsStore { get; private set; }
 
         public override event ReportHandler<EventArgs> Report = null;
         public override event EventHandler BatteryChanged;
@@ -197,7 +196,7 @@ namespace DS4Windows.InputDevices
             HidDevice hidDevice = hDevice;
             deviceType = InputDeviceType.DualSense;
             gyroMouseSensSettings = new GyroMouseSensDualSense();
-            OptionsStore = nativeOptionsStore = new DualSenseControllerOptions(deviceType);
+            OptionsStore = NativeOptionsStore = new DualSenseControllerOptions(deviceType);
             SetupOptionsEvents();
 
             conType = DetermineConnectionType(hDevice);
@@ -1270,9 +1269,9 @@ namespace DS4Windows.InputDevices
 
         private void PrepareMuteLEDByte()
         {
-            if (nativeOptionsStore != null)
+            if (NativeOptionsStore != null)
             {
-                switch (nativeOptionsStore.MuteLedMode)
+                switch (NativeOptionsStore.MuteLedMode)
                 {
                     case DualSenseControllerOptions.MuteLEDMode.Off:
                         muteLEDByte = 0x00;
@@ -1292,17 +1291,17 @@ namespace DS4Windows.InputDevices
 
         private void PreparePlayerLEDBarByte()
         {
-            if (nativeOptionsStore != null)
+            if (NativeOptionsStore != null)
             {
-                if (nativeOptionsStore.LedMode == DualSenseControllerOptions.LEDBarMode.Off)
+                if (NativeOptionsStore.LedMode == DualSenseControllerOptions.LEDBarMode.Off)
                 {
                     activePlayerLEDMask = 0x00;
                 }
-                else if (nativeOptionsStore.LedMode == DualSenseControllerOptions.LEDBarMode.On)
+                else if (NativeOptionsStore.LedMode == DualSenseControllerOptions.LEDBarMode.On)
                 {
                     activePlayerLEDMask = deviceSlotMask;
                 }
-                else if (nativeOptionsStore.LedMode == DualSenseControllerOptions.LEDBarMode.BatteryPercentage)
+                else if (NativeOptionsStore.LedMode == DualSenseControllerOptions.LEDBarMode.BatteryPercentage)
                 {
                     activePlayerLEDMask = DeviceBatteryLinearMask(battery);
                 }
@@ -1352,9 +1351,9 @@ namespace DS4Windows.InputDevices
 
         public override void CheckControllerNumDeviceSettings(int numControllers)
         {
-            if (nativeOptionsStore != null)
+            if (NativeOptionsStore != null)
             {
-                if (nativeOptionsStore.LedMode ==
+                if (NativeOptionsStore.LedMode ==
                     DualSenseControllerOptions.LEDBarMode.MultipleControllers)
                 {
                     if (numControllers > 1)
@@ -1377,26 +1376,26 @@ namespace DS4Windows.InputDevices
 
         private void SetupOptionsEvents()
         {
-            if (nativeOptionsStore != null)
+            if (NativeOptionsStore != null)
             {
-                nativeOptionsStore.EnableRumbleChanged += (sender, e) =>
+                NativeOptionsStore.EnableRumbleChanged += (sender, e) =>
                 {
-                    UseRumble = nativeOptionsStore.EnableRumble;
+                    UseRumble = NativeOptionsStore.EnableRumble;
                     queueEvent(() => { outputDirty = true; });
                 };
-                nativeOptionsStore.HapticIntensityChanged += (sender, e) =>
+                NativeOptionsStore.HapticIntensityChanged += (sender, e) =>
                 {
-                    HapticChoice = nativeOptionsStore.HapticIntensity;
+                    HapticChoice = NativeOptionsStore.HapticIntensity;
                     queueEvent(() => { outputDirty = true; });
                 };
 
-                nativeOptionsStore.MuteLedModeChanged += (sender, e) =>
+                NativeOptionsStore.MuteLedModeChanged += (sender, e) =>
                 {
                     PrepareMuteLEDByte();
                     queueEvent(() => { outputDirty = true; });
                 };
 
-                nativeOptionsStore.LedModeChanged += (sender, e) =>
+                NativeOptionsStore.LedModeChanged += (sender, e) =>
                 {
                     PreparePlayerLEDBarByte();
                     queueEvent(() => { outputDirty = true; });
@@ -1406,10 +1405,10 @@ namespace DS4Windows.InputDevices
 
         public override void LoadStoreSettings()
         {
-            if (nativeOptionsStore != null)
+            if (NativeOptionsStore != null)
             {
-                UseRumble = nativeOptionsStore.EnableRumble;
-                HapticChoice = nativeOptionsStore.HapticIntensity;
+                UseRumble = NativeOptionsStore.EnableRumble;
+                HapticChoice = NativeOptionsStore.HapticIntensity;
                 PrepareMuteLEDByte();
                 PreparePlayerLEDBarByte();
             }
