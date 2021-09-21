@@ -32,7 +32,7 @@ skip_commits:
 build:
   project: $(APPVEYOR_BUILD_FOLDER)\DS4WindowsWPF.sln
 after_build:
-- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%" -c %CONFIGURATION% -r win-%PLATFORM% --no-build -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
+- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\DS4WindowsWPF.sln" -c %CONFIGURATION% -r win-%PLATFORM% --no-build -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 test: off
