@@ -34,10 +34,12 @@ namespace DS4Windows
 
         public InputDeviceType DeviceType => deviceType;
 
+        [ConfigurationSystemComponent]
         public virtual void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
         }
 
+        [ConfigurationSystemComponent]
         public virtual void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
         }
