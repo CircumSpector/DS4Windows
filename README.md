@@ -1,6 +1,6 @@
 # DS4Windows
 
-Nefarius on steroids edition
+[![Build status](https://ci.appveyor.com/api/projects/status/gt6hhm5aqy04ou7u?svg=true)](https://ci.appveyor.com/project/nefarius/ds4windows)
 
 ☣️ **Highly unstable, work-in-progress, constantly changing, incubating software ahead** ☣️
 
