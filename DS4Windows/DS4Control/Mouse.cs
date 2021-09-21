@@ -72,10 +72,10 @@ namespace DS4Windows
             trackballAccel = TRACKBALL_RADIUS * TRACKBALL_INIT_FICTION / TRACKBALL_INERTIA;
             firstTouch = new Touch(0, 0, 0, null);
 
-            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
-            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = GyroMouseStickInfo.DEFAULT_BETA;
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
+            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseStickInfo.DEFAULT_BETA;
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis1Filter);
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         public void ResetTrackAccel(double friction)
@@ -357,10 +357,10 @@ namespace DS4Windows
 
         public void SetupLateOneEuroFilters()
         {
-            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.Instance.Config.GyroMouseStickInfo[deviceNum].MinCutoff;
-            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.Instance.Config.GyroMouseStickInfo[deviceNum].Beta;
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = Global.Instance.Config.GyroMouseStickInfo[deviceNum].MinCutoff;
+            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = Global.Instance.Config.GyroMouseStickInfo[deviceNum].Beta;
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis1Filter);
+            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         private const int SMOOTH_BUFFER_LEN = 3;
@@ -379,8 +379,8 @@ namespace DS4Windows
             if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.OneEuro)
             {
                 double currentRate = 1.0 / args.sixAxis.elapsed;
-                filterPair.axis1Filter.Filter(0.0, currentRate);
-                filterPair.axis2Filter.Filter(0.0, currentRate);
+                filterPair.Axis1Filter.Filter(0.0, currentRate);
+                filterPair.Axis2Filter.Filter(0.0, currentRate);
             }
         }
 
@@ -444,8 +444,8 @@ namespace DS4Windows
                 if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.OneEuro)
                 {
                     double currentRate = 1.0 / arg.sixAxis.elapsed;
-                    deltaX = (int)(filterPair.axis1Filter.Filter(deltaX, currentRate));
-                    deltaY = (int)(filterPair.axis2Filter.Filter(deltaY, currentRate));
+                    deltaX = (int)(filterPair.Axis1Filter.Filter(deltaX, currentRate));
+                    deltaY = (int)(filterPair.Axis2Filter.Filter(deltaY, currentRate));
                 }
                 else if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.WeightedAverage)
                 {

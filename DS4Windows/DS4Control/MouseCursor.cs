@@ -10,10 +10,10 @@ namespace DS4Windows
         {
             deviceNumber = deviceNum;
             gyroMouseSensSettings = gyroMouseSens;
-            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = GyroMouseInfo.DEFAULT_MINCUTOFF;
-            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = GyroMouseInfo.DEFAULT_BETA;
-            Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.axis2Filter);
+            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseInfo.DEFAULT_MINCUTOFF;
+            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseInfo.DEFAULT_BETA;
+            Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.Axis1Filter);
+            Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         public void ReplaceOneEuroFilterPair()
@@ -24,10 +24,10 @@ namespace DS4Windows
 
         public void SetupLateOneEuroFilters()
         {
-            filterPair.axis1Filter.MinCutoff = filterPair.axis2Filter.MinCutoff = Global.Instance.Config.GyroMouseInfo[deviceNumber].MinCutoff;
-            filterPair.axis1Filter.Beta = filterPair.axis2Filter.Beta = Global.Instance.Config.GyroMouseInfo[deviceNumber].Beta;
-            Global.Instance.Config.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.axis1Filter);
-            Global.Instance.Config.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.axis2Filter);
+            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = Global.Instance.Config.GyroMouseInfo[deviceNumber].MinCutoff;
+            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = Global.Instance.Config.GyroMouseInfo[deviceNumber].Beta;
+            Global.Instance.Config.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.Axis1Filter);
+            Global.Instance.Config.GyroMouseInfo[deviceNumber].SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         // Keep track of remainders when performing moves or we lose fractional parts.
@@ -150,8 +150,8 @@ namespace DS4Windows
                 if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro)
                 {
                     double currentRate = 1.0 / arg.sixAxis.elapsed;
-                    xMotion = filterPair.axis1Filter.Filter(xMotion, currentRate);
-                    yMotion = filterPair.axis2Filter.Filter(yMotion, currentRate);
+                    xMotion = filterPair.Axis1Filter.Filter(xMotion, currentRate);
+                    yMotion = filterPair.Axis2Filter.Filter(yMotion, currentRate);
                 }
                 else
                 {
@@ -234,8 +234,8 @@ namespace DS4Windows
             if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro)
             {
                 double currentRate = 1.0 / arg.sixAxis.elapsed;
-                filterPair.axis1Filter.Filter(0.0, currentRate);
-                filterPair.axis2Filter.Filter(0.0, currentRate);
+                filterPair.Axis1Filter.Filter(0.0, currentRate);
+                filterPair.Axis2Filter.Filter(0.0, currentRate);
             }
         }
 

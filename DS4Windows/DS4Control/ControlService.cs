@@ -1425,14 +1425,14 @@ namespace DS4Windows
 
                     double rate = 1.0 / stateForUdp.elapsedTime;
                     OneEuroFilter3D accelFilter = udpEuroPairAccel[tempIdx];
-                    stateForUdp.Motion.accelXG = accelFilter.axis1Filter.Filter(stateForUdp.Motion.accelXG, rate);
-                    stateForUdp.Motion.accelYG = accelFilter.axis2Filter.Filter(stateForUdp.Motion.accelYG, rate);
-                    stateForUdp.Motion.accelZG = accelFilter.axis3Filter.Filter(stateForUdp.Motion.accelZG, rate);
+                    stateForUdp.Motion.accelXG = accelFilter.Axis1Filter.Filter(stateForUdp.Motion.accelXG, rate);
+                    stateForUdp.Motion.accelYG = accelFilter.Axis2Filter.Filter(stateForUdp.Motion.accelYG, rate);
+                    stateForUdp.Motion.accelZG = accelFilter.Axis3Filter.Filter(stateForUdp.Motion.accelZG, rate);
 
                     OneEuroFilter3D gyroFilter = udpEuroPairGyro[tempIdx];
-                    stateForUdp.Motion.angVelYaw = gyroFilter.axis1Filter.Filter(stateForUdp.Motion.angVelYaw, rate);
-                    stateForUdp.Motion.angVelPitch = gyroFilter.axis2Filter.Filter(stateForUdp.Motion.angVelPitch, rate);
-                    stateForUdp.Motion.angVelRoll = gyroFilter.axis3Filter.Filter(stateForUdp.Motion.angVelRoll, rate);
+                    stateForUdp.Motion.angVelYaw = gyroFilter.Axis1Filter.Filter(stateForUdp.Motion.angVelYaw, rate);
+                    stateForUdp.Motion.angVelPitch = gyroFilter.Axis2Filter.Filter(stateForUdp.Motion.angVelPitch, rate);
+                    stateForUdp.Motion.angVelRoll = gyroFilter.Axis3Filter.Filter(stateForUdp.Motion.angVelRoll, rate);
                 }
 
                 _udpServer.NewReportIncoming(ref padDetail, stateForUdp, udpOutBuffers[tempIdx]);
