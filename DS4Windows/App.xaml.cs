@@ -57,7 +57,6 @@ namespace DS4WinWPF
         private bool exitApp;
         private Thread testThread;
         private bool exitComThread = false;
-        private const string SingleAppComEventName = "{a52b5b20-d9ee-4f32-8518-307fa14aa0c6}";
         private EventWaitHandle threadComEvent = null;
         private Timer collectTimer;
         private static LoggerHolder logHolder;
@@ -127,7 +126,7 @@ namespace DS4WinWPF
                 //    System.Security.AccessControl.EventWaitHandleRights.Synchronize |
                 //    System.Security.AccessControl.EventWaitHandleRights.Modify);
                 // Use this for now
-                threadComEvent = CreateAndReplaceHandle(OpenEvent((uint)(System.Security.AccessControl.EventWaitHandleRights.Synchronize | System.Security.AccessControl.EventWaitHandleRights.Modify), false, SingleAppComEventName));
+                threadComEvent = CreateAndReplaceHandle(OpenEvent((uint)(System.Security.AccessControl.EventWaitHandleRights.Synchronize | System.Security.AccessControl.EventWaitHandleRights.Modify), false, Constants.SingleAppComEventName));
                 threadComEvent.Set();  // signal the other instance.
                 threadComEvent.Close();
                 Current.Shutdown();    // Quit temp instance
@@ -140,7 +139,7 @@ namespace DS4WinWPF
             DS4Windows.Global.RefreshViGEmBusInfo();
 
             // Create the Event handle
-            threadComEvent = new EventWaitHandle(false, EventResetMode.ManualReset, SingleAppComEventName);
+            threadComEvent = new EventWaitHandle(false, EventResetMode.ManualReset, Constants.SingleAppComEventName);
             CreateTempWorkerThread();
 
             CreateControlService(parser);

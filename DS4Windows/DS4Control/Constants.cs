@@ -26,5 +26,7 @@ namespace DS4Windows
         public const string ProfilesSubDirectory = "Profiles";
 
         public const string OutputSlotsFileName = "OutputSlots.xml";
+
+        public const string SingleAppComEventName = "{a52b5b20-d9ee-4f32-8518-307fa14aa0c6}";
     }
 }
