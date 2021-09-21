@@ -737,16 +737,16 @@ namespace DS4Windows
 
         public static DS4State SetCurveAndDeadzone(int device, DS4State cState, DS4State dState)
         {
-            double rotation = /*tempDoubleArray[device] =*/  Global.Instance.GetLSRotation(device);
+            double rotation = /*tempDoubleArray[device] =*/  Global.Instance.Config.GetLSRotation(device);
             if (rotation > 0.0 || rotation < 0.0)
                 cState.rotateLSCoordinates(rotation);
 
-            double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.GetRSRotation(device);
+            double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.Config.GetRSRotation(device);
             if (rotationRS > 0.0 || rotationRS < 0.0)
                 cState.rotateRSCoordinates(rotationRS);
 
-            StickAntiSnapbackInfo lsAntiSnapback = Global.Instance.GetLSAntiSnapbackInfo(device);
-            StickAntiSnapbackInfo rsAntiSnapback = Global.Instance.GetRSAntiSnapbackInfo(device);
+            StickAntiSnapbackInfo lsAntiSnapback = Global.Instance.Config.GetLSAntiSnapbackInfo(device);
+            StickAntiSnapbackInfo rsAntiSnapback = Global.Instance.Config.GetRSAntiSnapbackInfo(device);
 
             if (lsAntiSnapback.enabled)
             {
@@ -758,8 +758,8 @@ namespace DS4Windows
                 CalcAntiSnapbackStick(device, 1, rsAntiSnapback.delta, rsAntiSnapback.timeout, cState.RX, cState.RY, out cState.RX, out cState.RY);
             }
 
-            StickDeadZoneInfo lsMod = Global.Instance.GetLSDeadInfo(device);
-            StickDeadZoneInfo rsMod = Global.Instance.GetRSDeadInfo(device);
+            StickDeadZoneInfo lsMod = Global.Instance.Config.GetLSDeadInfo(device);
+            StickDeadZoneInfo rsMod = Global.Instance.Config.GetRSDeadInfo(device);
 
             if (lsMod.fuzz > 0)
             {
@@ -1246,7 +1246,7 @@ namespace DS4Windows
             int l2Maxzone = getL2Maxzone(device);
             */
 
-            TriggerDeadZoneZInfo l2ModInfo = Global.Instance.GetL2ModInfo(device);
+            TriggerDeadZoneZInfo l2ModInfo = Global.Instance.Config.GetL2ModInfo(device);
             byte l2Deadzone = l2ModInfo.deadZone;
             int l2AntiDeadzone = l2ModInfo.antiDeadZone;
             int l2Maxzone = l2ModInfo.maxZone;
@@ -1301,7 +1301,7 @@ namespace DS4Windows
             int r2AntiDeadzone = getR2AntiDeadzone(device);
             int r2Maxzone = getR2Maxzone(device);
             */
-            TriggerDeadZoneZInfo r2ModInfo = Global.Instance.GetR2ModInfo(device);
+            TriggerDeadZoneZInfo r2ModInfo = Global.Instance.Config.GetR2ModInfo(device);
             byte r2Deadzone = r2ModInfo.deadZone;
             int r2AntiDeadzone = r2ModInfo.antiDeadZone;
             int r2Maxzone = r2ModInfo.maxZone;
@@ -1355,7 +1355,7 @@ namespace DS4Windows
             // Only apply deprecated Sensitivity modifier for Radial DZ
             if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
-                double lsSens = Global.Instance.GetLSSens(device);
+                double lsSens = Global.Instance.Config.GetLSSens(device);
                 if (lsSens != 1.0)
                 {
                     dState.LX = (byte)Global.Clamp(0, lsSens * (dState.LX - 128.0) + 128.0, 255);
@@ -1366,7 +1366,7 @@ namespace DS4Windows
             // Only apply deprecated Sensitivity modifier for Radial DZ
             if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
-                double rsSens = Global.Instance.GetRSSens(device);
+                double rsSens = Global.Instance.Config.GetRSSens(device);
                 if (rsSens != 1.0)
                 {
                     dState.RX = (byte)Global.Clamp(0, rsSens * (dState.RX - 128.0) + 128.0, 255);
@@ -1374,15 +1374,15 @@ namespace DS4Windows
                 }
             }
 
-            double l2Sens = Global.Instance.GetL2Sens(device);
+            double l2Sens = Global.Instance.Config.GetL2Sens(device);
             if (l2Sens != 1.0)
                 dState.L2 = (byte)Global.Clamp(0, l2Sens * dState.L2, 255);
 
-            double r2Sens = Global.Instance.GetR2Sens(device);
+            double r2Sens = Global.Instance.Config.GetR2Sens(device);
             if (r2Sens != 1.0)
                 dState.R2 = (byte)Global.Clamp(0, r2Sens * dState.R2, 255);
 
-            SquareStickInfo squStk = Global.Instance.GetSquareStickInfo(device);
+            SquareStickInfo squStk = Global.Instance.Config.GetSquareStickInfo(device);
             if (squStk.lsMode && (dState.LX != 128 || dState.LY != 128))
             {
                 double capX = dState.LX >= 128 ? 127.0 : 128.0;
@@ -1766,14 +1766,14 @@ namespace DS4Windows
             bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
             if (saControls && dState.Motion.outputGyroControls)
             {
-                int SXD = (int)(128d * Global.Instance.GetSXDeadZone(device));
-                int SZD = (int)(128d * Global.Instance.GetSZDeadZone(device));
-                double SXMax = Global.Instance.GetSXMaxZone(device);
-                double SZMax = Global.Instance.GetSZMaxZone(device);
-                double sxAntiDead = Global.Instance.GetSXAntiDeadZone(device);
-                double szAntiDead = Global.Instance.GetSZAntiDeadZone(device);
-                double sxsens = Global.Instance.GetSXSens(device);
-                double szsens = Global.Instance.GetSZSens(device);
+                int SXD = (int)(128d * Global.Instance.Config.GetSXDeadZone(device));
+                int SZD = (int)(128d * Global.Instance.Config.GetSZDeadZone(device));
+                double SXMax = Global.Instance.Config.GetSXMaxZone(device);
+                double SZMax = Global.Instance.Config.GetSZMaxZone(device);
+                double sxAntiDead = Global.Instance.Config.GetSXAntiDeadZone(device);
+                double szAntiDead = Global.Instance.Config.GetSZAntiDeadZone(device);
+                double sxsens = Global.Instance.Config.GetSXSens(device);
+                double szsens = Global.Instance.Config.GetSZSens(device);
                 int result = 0;
 
                 int gyroX = cState.Motion.accelX, gyroZ = cState.Motion.accelZ;
@@ -2042,7 +2042,7 @@ namespace DS4Windows
             //DS4StateFieldMapping outputfieldMapping = new DS4StateFieldMapping(cState, eState, tp);
 
             SyntheticState deviceState = Mapping.deviceState[device];
-            if (Global.Instance.GetProfileActionCount(device) > 0 || UseTempProfiles[device])
+            if (Global.Instance.Config.GetProfileActionCount(device) > 0 || UseTempProfiles[device])
                 MapCustomAction(device, cState, MappedState, eState, tp, ctrl, fieldMapping, outputfieldMapping);
             //if (ctrl.DS4Controllers[device] == null) return;
 
@@ -4274,9 +4274,9 @@ namespace DS4Windows
         {
             int deadzoneL = 0;
             int deadzoneR = 0;
-            if (Global.Instance.GetLSDeadZone(device) == 0)
+            if (Global.Instance.Config.GetLSDeadZone(device) == 0)
                 deadzoneL = 3;
-            if (Global.Instance.GetRSDeadZone(device) == 0)
+            if (Global.Instance.Config.GetRSDeadZone(device) == 0)
                 deadzoneR = 3;
 
             double value = 0.0;
@@ -5184,8 +5184,8 @@ namespace DS4Windows
             }
             else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
             {
-                double SXD = Global.Instance.GetSXDeadZone(device);
-                double SZD = Global.Instance.GetSZDeadZone(device);
+                double SXD = Global.Instance.Config.GetSXDeadZone(device);
+                double SZD = Global.Instance.Config.GetSZDeadZone(device);
                 bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
@@ -5624,7 +5624,7 @@ namespace DS4Windows
 
                 // Apply deadzone (SA X-deadzone value). This code assumes that 20deg is the max deadzone anyone ever might wanna use (in practice effective deadzone 
                 // is probably just few degrees by using SXDeadZone values 0.01...0.05)
-                double sxDead = Global.Instance.GetSXDeadZone(device);
+                double sxDead = Global.Instance.Config.GetSXDeadZone(device);
                 if (sxDead > 0)
                 {
                     int sxDeadInt = Convert.ToInt32(20.0 * C_WHEEL_ANGLE_PRECISION * sxDead);
@@ -5694,7 +5694,7 @@ namespace DS4Windows
                 //LogToGuiSACalibrationDebugMsg($"DBG gyro=({gyroAccelX}, {gyroAccelZ})  output=({exposedState.OutputAccelX}, {exposedState.OutputAccelZ})  PitRolYaw=({currentDeviceState.Motion.gyroPitch}, {currentDeviceState.Motion.gyroRoll}, {currentDeviceState.Motion.gyroYaw})  VelPitRolYaw=({currentDeviceState.Motion.angVelPitch}, {currentDeviceState.Motion.angVelRoll}, {currentDeviceState.Motion.angVelYaw})  angle={result / (1.0 * C_WHEEL_ANGLE_PRECISION)}  fullTurns={controller.wheelFullTurnCount}", false);
 
                 // Apply anti-deadzone (SA X-antideadzone value)
-                double sxAntiDead = Global.Instance.GetSXAntiDeadZone(device);
+                double sxAntiDead = Global.Instance.Config.GetSXAntiDeadZone(device);
 
                 int outputAxisMax, outputAxisMin, outputAxisZero;
                 if ( Global.Instance.Config.OutputDeviceType[device] == OutContType.DS4 )

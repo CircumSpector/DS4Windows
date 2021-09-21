@@ -1828,8 +1828,8 @@ namespace DS4Windows
                 LogDebug("Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 
             device.setIdleTimeout(Instance.GetIdleDisconnectTimeout(ind));
-            device.setBTPollRate(Instance.GetBluetoothPollRate(ind));
-            touchPad[ind].ResetTrackAccel(Instance.GetTrackballFriction(ind));
+            device.setBTPollRate(Instance.Config.GetBluetoothPollRate(ind));
+            touchPad[ind].ResetTrackAccel(Instance.Config.GetTrackballFriction(ind));
             touchPad[ind].ResetToggleGyroModes();
 
             // Reset current flick stick progress from previous profile
@@ -2263,7 +2263,7 @@ namespace DS4Windows
 
                 if (!recordingMacro && (UseTempProfiles[ind] ||
                                         Instance.ContainsCustomAction(ind) || Instance.ContainsCustomExtras(ind) ||
-                                        Instance.GetProfileActionCount(ind) > 0))
+                                        Instance.Config.GetProfileActionCount(ind) > 0))
                 {
                     DS4State tempMapState = MappedState[ind];
                     Mapping.MapCustom(ind, cState, tempMapState, ExposedState[ind], touchPad[ind], this);

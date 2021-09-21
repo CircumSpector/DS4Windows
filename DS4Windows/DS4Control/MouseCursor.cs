@@ -345,7 +345,7 @@ namespace DS4Windows
             int signX = Math.Sign(dx);
             int signY = Math.Sign(dy);
             double coefficient = Global.Instance.GetTouchSensitivity(deviceNumber) * 0.01;
-            bool jitterCompenstation = Global.Instance.GetTouchPadJitterCompensation(deviceNumber);
+            bool jitterCompenstation = Global.Instance.Config.GetTouchPadJitterCompensation(deviceNumber);
 
             double xMotion = dx != 0 ?
                 coefficient * dx + (normX * (TOUCHPAD_MOUSE_OFFSET * signX)) : 0.0;
@@ -417,7 +417,7 @@ namespace DS4Windows
 
             if (disableInvert == false)
             {
-                int touchpadInvert = tempInt = Global.Instance.GetTouchPadInvert(deviceNumber);
+                int touchpadInvert = tempInt = Global.Instance.Config.GetTouchPadInvert(deviceNumber);
                 if ((touchpadInvert & 0x02) == 2)
                     xAction *= -1;
 

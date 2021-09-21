@@ -778,6 +778,166 @@ namespace DS4Windows
                 return GyroMouseHorizontalAxis[index];
             }
 
+            public GyroControlsInfo GetGyroControlsInfo(int index)
+            {
+                return GyroControlsInfo[index];
+            }
+
+            public byte GetTapSensitivity(int index)
+            {
+                return TapSensitivity[index];
+            }
+
+            public bool GetDoubleTap(int index)
+            {
+                return DoubleTap[index];
+            }
+
+            public bool GetTouchPadJitterCompensation(int index)
+            {
+                return TouchpadJitterCompensation[index];
+            }
+
+            public int GetTouchPadInvert(int index)
+            {
+                return TouchPadInvert[index];
+            }
+
+            public TriggerDeadZoneZInfo GetL2ModInfo(int index)
+            {
+                return L2ModInfo[index];
+            }
+
+            public TriggerDeadZoneZInfo GetR2ModInfo(int index)
+            {
+                return R2ModInfo[index];
+            }
+
+            public double GetSXDeadZone(int index)
+            {
+                return SXDeadzone[index];
+            }
+
+            public double GetSZDeadZone(int index)
+            {
+                return SZDeadzone[index];
+            }
+
+            public int GetLSDeadZone(int index)
+            {
+                return LSModInfo[index].deadZone;
+            }
+
+            public int GetRSDeadZone(int index)
+            {
+                return RSModInfo[index].deadZone;
+            }
+
+            public StickDeadZoneInfo GetLSDeadInfo(int index)
+            {
+                return LSModInfo[index];
+            }
+
+            public StickDeadZoneInfo GetRSDeadInfo(int index)
+            {
+                return RSModInfo[index];
+            }
+
+            public double GetSXAntiDeadZone(int index)
+            {
+                return SXAntiDeadzone[index];
+            }
+
+            public double GetSZAntiDeadZone(int index)
+            {
+                return SZAntiDeadzone[index];
+            }
+
+            public double GetSXMaxZone(int index)
+            {
+                return SXMaxzone[index];
+            }
+
+            public double GetSZMaxZone(int index)
+            {
+                return SZMaxzone[index];
+            }
+
+            public double GetLSRotation(int index)
+            {
+                return LSRotation[index];
+            }
+
+            public double GetRSRotation(int index)
+            {
+                return RSRotation[index];
+            }
+
+            public double GetL2Sens(int index)
+            {
+                return L2Sens[index];
+            }
+
+            public double GetR2Sens(int index)
+            {
+                return R2Sens[index];
+            }
+
+            public double GetSXSens(int index)
+            {
+                return SXSens[index];
+            }
+
+            public double GetSZSens(int index)
+            {
+                return SZSens[index];
+            }
+
+            public double GetLSSens(int index)
+            {
+                return LSSens[index];
+            }
+
+            public double GetRSSens(int index)
+            {
+                return RSSens[index];
+            }
+
+            public int GetBluetoothPollRate(int index)
+            {
+                return BluetoothPollRate[index];
+            }
+
+            public SquareStickInfo GetSquareStickInfo(int device)
+            {
+                return SquStickInfo[device];
+            }
+
+            public StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device)
+            {
+                return LSAntiSnapbackInfo[device];
+            }
+
+            public StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device)
+            {
+                return RSAntiSnapbackInfo[device];
+            }
+
+            public bool GetTrackballMode(int index)
+            {
+                return TrackballMode[index];
+            }
+
+            public double GetTrackballFriction(int index)
+            {
+                return TrackballFriction[index];
+            }
+
+            public int GetProfileActionCount(int index)
+            {
+                return profileActionCount[index];
+            }
+
             public void EstablishDefaultSpecialActions(int idx)
             {
                 ProfileActions[idx] = new List<string> { "Disconnect Controller" };

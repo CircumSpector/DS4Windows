@@ -243,10 +243,10 @@ namespace DS4Windows
 
         IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
 
-        IList< bool> GyroMouseStickToggle { get; set; }
+        IList<bool> GyroMouseStickToggle { get; set; }
 
         IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
-        
+
         IList<GyroControlsInfo> GyroControlsInfo { get; set; }
 
         IList<int> SAWheelFuzzValues { get; set; }
@@ -317,7 +317,7 @@ namespace DS4Windows
 
         int GetSASteeringWheelEmulationRange(int index);
 
-         int GetGyroSensitivity(int index);
+        int GetGyroSensitivity(int index);
 
         int GetGyroSensVerticalScale(int index);
 
@@ -326,6 +326,75 @@ namespace DS4Windows
         bool GetGyroTriggerTurns(int index);
 
         int GetGyroMouseHorizontalAxis(int index);
+
+
+
+
+
+
+        GyroControlsInfo GetGyroControlsInfo(int index);
+
+        byte GetTapSensitivity(int index);
+
+        bool GetDoubleTap(int index);
+
+        bool GetTouchPadJitterCompensation(int index);
+
+        int GetTouchPadInvert(int index);
+            TriggerDeadZoneZInfo GetL2ModInfo(int index);
+
+        TriggerDeadZoneZInfo GetR2ModInfo(int index);
+
+        double GetSXDeadZone(int index);
+        double GetSZDeadZone(int index);
+        int GetLSDeadZone(int index);
+        int GetRSDeadZone(int index);
+
+        StickDeadZoneInfo GetLSDeadInfo(int index);
+
+        StickDeadZoneInfo GetRSDeadInfo(int index);
+        double GetSXAntiDeadZone(int index);
+
+
+        double GetSZAntiDeadZone(int index);
+
+        double GetSXMaxZone(int index);
+
+        double GetSZMaxZone(int index);
+
+
+        double GetLSRotation(int index);
+
+
+        double GetRSRotation(int index);
+
+        double GetL2Sens(int index);
+        double GetR2Sens(int index);
+
+        double GetSXSens(int index);
+
+        double GetSZSens(int index);
+
+        double GetLSSens(int index);
+        double GetRSSens(int index);
+
+        int GetBluetoothPollRate(int index);
+
+        SquareStickInfo GetSquareStickInfo(int device);
+
+        StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
+        StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device);
+        bool GetTrackballMode(int index);
+        double GetTrackballFriction(int index);
+        int GetProfileActionCount(int index);
+
+
+
+
+
+
+
+
 
 
 

@@ -143,7 +143,7 @@ namespace DS4Windows
             {
                 s = dev.getCurrentStateRef();
 
-                GyroControlsInfo controlsMapInfo = Global.Instance.GetGyroControlsInfo(deviceNum);
+                GyroControlsInfo controlsMapInfo = Global.Instance.Config.GetGyroControlsInfo(deviceNum);
                 useReverseRatchet = controlsMapInfo.triggerTurns;
                 int i = 0;
                 string[] ss = controlsMapInfo.triggers.Split(',');
@@ -679,7 +679,7 @@ namespace DS4Windows
                             tempBool = false;
                     }
 
-                    if (Global.Instance.GetTrackballMode(deviceNum))
+                    if (Global.Instance.Config.GetTrackballMode(deviceNum))
                     {
                         int iIndex = trackballBufferTail;
                         // Establish 4 ms as the base
@@ -695,7 +695,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (Global.Instance.GetTrackballMode(deviceNum))
+                    if (Global.Instance.Config.GetTrackballMode(deviceNum))
                     {
                         int iIndex = trackballBufferTail;
                         trackballXBuffer[iIndex] = 0;
@@ -765,7 +765,7 @@ namespace DS4Windows
             firstTouch.populate(arg.touches[0].hwX, arg.touches[0].hwY, arg.touches[0].touchID,
                 arg.touches[0].previousTouch);
 
-            if (mouseMode && Global.Instance.GetDoubleTap(deviceNum))
+            if (mouseMode && Global.Instance.Config.GetDoubleTap(deviceNum))
             {
                 DateTime test = arg.timeStamp;
                 if (test <= (firstTap + TimeSpan.FromMilliseconds((double)Global.Instance.Config.TapSensitivity[deviceNum] * 1.5)) && !arg.touchButtonPressed)
@@ -782,7 +782,7 @@ namespace DS4Windows
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
-            byte tapSensitivity = Global.Instance.GetTapSensitivity(deviceNum);
+            byte tapSensitivity = Global.Instance.Config.GetTapSensitivity(deviceNum);
             if (tapSensitivity != 0 && Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
@@ -796,7 +796,7 @@ namespace DS4Windows
                 {
                     if (Math.Abs(firstTouch.hwX - arg.touches[0].hwX) < 10 && Math.Abs(firstTouch.hwY - arg.touches[0].hwY) < 10)
                     {
-                        if (Global.Instance.GetDoubleTap(deviceNum))
+                        if (Global.Instance.Config.GetDoubleTap(deviceNum))
                         {
                             tappedOnce = true;
                             firstTap = arg.timeStamp;
@@ -820,7 +820,7 @@ namespace DS4Windows
                             tempBool = false;
                     }
 
-                    if (Global.Instance.GetTrackballMode(deviceNum))
+                    if (Global.Instance.Config.GetTrackballMode(deviceNum))
                     {
                         if (!trackballActive)
                         {
