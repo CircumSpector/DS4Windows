@@ -91,10 +91,7 @@ namespace DS4Windows
             }
         }
 
-        public byte GetRumbleBoost(int index)
-        {
-            return _config.RumbleBoost[index];
-        }
+       
 
         public void SetRumbleAutostopTime(int index, int value)
         {
@@ -105,25 +102,7 @@ namespace DS4Windows
                 tempDev.RumbleAutostopTime = value;
         }
 
-        public int GetRumbleAutostopTime(int index)
-        {
-            return _config.RumbleAutostopTime[index];
-        }
-
-        public bool GetEnableTouchToggle(int index)
-        {
-            return _config.EnableTouchToggle[index];
-        }
-
-        public int GetIdleDisconnectTimeout(int index)
-        {
-            return _config.IdleDisconnectTimeout[index];
-        }
-
-        public bool GetEnableOutputDataToDS4(int index)
-        {
-            return _config.EnableOutputDataToDS4[index];
-        }
+       
 
         public byte GetTouchSensitivity(int index)
         {

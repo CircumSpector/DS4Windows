@@ -329,7 +329,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int RumbleAutostopTime
         {
             // RumbleAutostopTime value is in milliseconds in XML config file, but GUI uses just seconds
-            get => Global.Instance.GetRumbleAutostopTime(device) / 1000;
+            get => Global.Instance.Config.GetRumbleAutostopTime(device) / 1000;
             set => Global.Instance.SetRumbleAutostopTime(device, value * 1000);
         }
 

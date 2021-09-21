@@ -191,7 +191,7 @@ namespace DS4Windows
                     }
                 }
 
-                var idleDisconnectTimeout = Instance.GetIdleDisconnectTimeout(deviceNum);
+                var idleDisconnectTimeout = Instance.Config.GetIdleDisconnectTimeout(deviceNum);
                 if (idleDisconnectTimeout > 0 && lightModeInfo.LedAsBattery &&
                     (!device.isCharging() || device.getBattery() >= 100))
                 {

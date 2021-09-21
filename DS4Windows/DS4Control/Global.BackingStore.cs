@@ -938,6 +938,31 @@ namespace DS4Windows
                 return profileActionCount[index];
             }
 
+            public byte GetRumbleBoost(int index)
+            {
+                return RumbleBoost[index];
+            }
+
+            public int GetRumbleAutostopTime(int index)
+            {
+                return RumbleAutostopTime[index];
+            }
+
+            public bool GetEnableTouchToggle(int index)
+            {
+                return EnableTouchToggle[index];
+            }
+
+            public int GetIdleDisconnectTimeout(int index)
+            {
+                return IdleDisconnectTimeout[index];
+            }
+
+            public bool GetEnableOutputDataToDS4(int index)
+            {
+                return EnableOutputDataToDS4[index];
+            }
+
             public void EstablishDefaultSpecialActions(int idx)
             {
                 ProfileActions[idx] = new List<string> { "Disconnect Controller" };

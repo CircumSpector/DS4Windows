@@ -1823,11 +1823,11 @@ namespace DS4Windows
 
         public void CheckProfileOptions(int ind, DS4Device device, bool startUp=false)
         {
-            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.GetEnableOutputDataToDS4(ind));
-            if (!Instance.GetEnableOutputDataToDS4(ind))
+            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.Config.GetEnableOutputDataToDS4(ind));
+            if (!Instance.Config.GetEnableOutputDataToDS4(ind))
                 LogDebug("Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 
-            device.setIdleTimeout(Instance.GetIdleDisconnectTimeout(ind));
+            device.setIdleTimeout(Instance.Config.GetIdleDisconnectTimeout(ind));
             device.setBTPollRate(Instance.Config.GetBluetoothPollRate(ind));
             touchPad[ind].ResetTrackAccel(Instance.Config.GetTrackballFriction(ind));
             touchPad[ind].ResetToggleGyroModes();
@@ -1843,7 +1843,7 @@ namespace DS4Windows
             device.PrepareTriggerEffect(InputDevices.TriggerId.RightTrigger, Instance.Config.R2OutputSettings[ind].TriggerEffect,
                 Instance.Config.R2OutputSettings[ind].TrigEffectSettings);
 
-            device.RumbleAutostopTime = Instance.GetRumbleAutostopTime(ind);
+            device.RumbleAutostopTime = Instance.Config.GetRumbleAutostopTime(ind);
             device.setRumble(0, 0);
             device.LightBarColor = Instance.Config.GetMainColor(ind);
 
@@ -2254,7 +2254,7 @@ namespace DS4Windows
                     return;
                 }
 
-                if (Instance.GetEnableTouchToggle(ind))
+                if (Instance.Config.GetEnableTouchToggle(ind))
                 {
                     CheckForTouchToggle(ind, cState, pState);
                 }
@@ -2532,7 +2532,7 @@ namespace DS4Windows
         public void SetDevRumble(DS4Device device,
             byte heavyMotor, byte lightMotor, int deviceNum)
         {
-            byte boost = Instance.GetRumbleBoost(deviceNum);
+            byte boost = Instance.Config.GetRumbleBoost(deviceNum);
             uint lightBoosted = ((uint)lightMotor * (uint)boost) / 100;
             if (lightBoosted > 255)
                 lightBoosted = 255;

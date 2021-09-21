@@ -327,7 +327,15 @@ namespace DS4Windows
 
         int GetGyroMouseHorizontalAxis(int index);
 
+        byte GetRumbleBoost(int index);
 
+        int GetRumbleAutostopTime(int index);
+
+        bool GetEnableTouchToggle(int index);
+
+        int GetIdleDisconnectTimeout(int index);
+
+        bool GetEnableOutputDataToDS4(int index);
 
 
 
