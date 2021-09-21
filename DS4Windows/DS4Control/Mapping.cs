@@ -2081,8 +2081,8 @@ namespace DS4Windows
                         break;
                     case StickMode.FlickStick:
                         DS4Device d = ctrl.DS4Controllers[device];
-                        DS4State cRawState = d.getCurrentStateRef();
-                        DS4State pState = d.getPreviousStateRef();
+                        DS4State cRawState = d.GetCurrentStateReference();
+                        DS4State pState = d.GetPreviousStateReference();
 
                         ProcessFlickStick(device, cRawState, cRawState.LX, cRawState.LY, pState.LX, pState.LY, ctrl,
                             stickSettings.OutputSettings.flickSettings, ref tempMouseDeltaX);
@@ -2117,8 +2117,8 @@ namespace DS4Windows
                         break;
                     case StickMode.FlickStick:
                         DS4Device d = ctrl.DS4Controllers[device];
-                        DS4State cRawState = d.getCurrentStateRef();
-                        DS4State pState = d.getPreviousStateRef();
+                        DS4State cRawState = d.GetCurrentStateReference();
+                        DS4State pState = d.GetPreviousStateReference();
 
                         ProcessFlickStick(device, cRawState, cRawState.RX, cRawState.RY, pState.RX, pState.RY, ctrl,
                             stickSettings.OutputSettings.flickSettings, ref tempMouseDeltaX);
@@ -3714,7 +3714,7 @@ namespace DS4Windows
                                 DS4Device d = ctrl.DS4Controllers[device];
                                 //cus
 
-                                DS4State tempPrevState = d.getPreviousStateRef();
+                                DS4State tempPrevState = d.GetPreviousStateReference();
                                 // Only create one instance of previous DS4StateFieldMapping in case more than one multi-action
                                 // button is assigned
                                 if (previousFieldMapping == null)
@@ -5554,7 +5554,7 @@ namespace DS4Windows
                 controller = ctrl.DS4Controllers[device];
                 if (controller == null) return 0;
 
-                currentDeviceState = controller.getCurrentStateRef();
+                currentDeviceState = controller.GetCurrentStateReference();
 
                 // If calibration is active then do the calibration process instead of the normal "angle calculation"
                 if (controller.WheelRecalibrateActiveState > 0)

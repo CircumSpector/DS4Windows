@@ -1380,7 +1380,7 @@ namespace DS4Windows.InputDevices
             }
         }
 
-        public override DS4State getCurrentStateRef()
+        public override DS4State GetCurrentStateReference()
         {
             DS4State tempState = null;
             if (!performStateMerge)
@@ -1395,7 +1395,7 @@ namespace DS4Windows.InputDevices
             return tempState;
         }
 
-        public override DS4State getPreviousStateRef()
+        public override DS4State GetPreviousStateReference()
         {
             DS4State tempState = null;
             if (!performStateMerge)

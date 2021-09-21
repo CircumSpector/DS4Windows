@@ -1983,32 +1983,32 @@ namespace DS4Windows
             }
         }
 
-        public DS4State getRawCurrentState()
+        public DS4State GetRawCurrentState()
         {
             return currentState.Clone();
         }
 
-        public DS4State getRawPreviousState()
+        public DS4State GetRawPreviousState()
         {
             return pState.Clone();
         }
 
-        public void getRawCurrentState(DS4State state)
+        public void GetRawCurrentState(DS4State state)
         {
             currentState.CopyTo(state);
         }
 
-        public void getRawPreviousState(DS4State state)
+        public void GetRawPreviousState(DS4State state)
         {
             pState.CopyTo(state);
         }
 
-        public virtual DS4State getCurrentStateRef()
+        public virtual DS4State GetCurrentStateReference()
         {
             return currentState;
         }
 
-        public virtual DS4State getPreviousStateRef()
+        public virtual DS4State GetPreviousStateReference()
         {
             return pState;
         }

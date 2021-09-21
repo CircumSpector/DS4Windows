@@ -141,7 +141,7 @@ namespace DS4Windows
             GyroOutMode outMode = Global.Instance.Config.GetGyroOutMode(deviceNum);
             if (outMode == GyroOutMode.Controls)
             {
-                s = dev.getCurrentStateRef();
+                s = dev.GetCurrentStateReference();
 
                 GyroControlsInfo controlsMapInfo = Global.Instance.Config.GetGyroControlsInfo(deviceNum);
                 useReverseRatchet = controlsMapInfo.TriggerTurns;
@@ -198,7 +198,7 @@ namespace DS4Windows
             }
             else if (outMode == GyroOutMode.Mouse && Global.Instance.Config.GetGyroSensitivity(deviceNum) > 0)
             {
-                s = dev.getCurrentStateRef();
+                s = dev.GetCurrentStateReference();
 
                 useReverseRatchet = Global.Instance.Config.GetGyroTriggerTurns(deviceNum);
                 int i = 0;
@@ -249,7 +249,7 @@ namespace DS4Windows
             }
             else if (outMode == GyroOutMode.MouseJoystick)
             {
-                s = dev.getCurrentStateRef();
+                s = dev.GetCurrentStateReference();
 
                 useReverseRatchet = Global.Instance.Config.GetGyroMouseStickTriggerTurns(deviceNum);
                 int i = 0;
@@ -299,7 +299,7 @@ namespace DS4Windows
             }
             else if (outMode == GyroOutMode.DirectionalSwipe)
             {
-                s = dev.getCurrentStateRef();
+                s = dev.GetCurrentStateReference();
 
                 GyroDirectionalSwipeInfo swipeMapInfo = Global.Instance.Config.GetGyroSwipeInfo(deviceNum);
                 useReverseRatchet = swipeMapInfo.triggerTurns;
@@ -664,7 +664,7 @@ namespace DS4Windows
         private bool tempBool = false;
         public virtual void touchesMoved(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            s = dev.getCurrentStateRef();
+            s = dev.GetCurrentStateReference();
 
             TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             if (tempMode == TouchpadOutMode.Mouse)
@@ -772,13 +772,13 @@ namespace DS4Windows
                     secondtouchbegin = true;
             }
 
-            s = dev.getCurrentStateRef();
+            s = dev.GetCurrentStateReference();
             synthesizeMouseButtons();
         }
 
         public virtual void touchesEnded(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            s = dev.getCurrentStateRef();
+            s = dev.GetCurrentStateReference();
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
@@ -919,7 +919,7 @@ namespace DS4Windows
 
         public virtual void touchUnchanged(DS4Touchpad sender, EventArgs unused)
         {
-            s = dev.getCurrentStateRef();
+            s = dev.GetCurrentStateReference();
 
             if (trackballActive)
             {
@@ -1063,7 +1063,7 @@ namespace DS4Windows
         {
             pushed = DS4Controls.None;
             upperDown = leftDown = rightDown = multiDown = false;
-            s = dev.getCurrentStateRef();
+            s = dev.GetCurrentStateReference();
             if (s.Touch1 || s.Touch2)
                 synthesizeMouseButtons();
         }
@@ -1085,7 +1085,7 @@ namespace DS4Windows
                     rightDown = true;
             }
 
-            s = dev.getCurrentStateRef();
+            s = dev.GetCurrentStateReference();
             synthesizeMouseButtons();
         }
 

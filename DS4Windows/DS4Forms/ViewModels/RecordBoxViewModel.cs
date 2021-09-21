@@ -346,7 +346,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             if (Program.rootHub.DS4Controllers[0] != null)
             {
                 DS4Device dev = Program.rootHub.DS4Controllers[0];
-                DS4State cState = dev.getCurrentStateRef();
+                DS4State cState = dev.GetCurrentStateReference();
                 DS4Windows.Mouse tp = Program.rootHub.touchPad[0];
                 for (DS4Controls dc = DS4Controls.LXNeg; dc < DS4Controls.Mute; dc++)
                 {

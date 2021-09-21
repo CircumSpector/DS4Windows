@@ -2212,7 +2212,7 @@ namespace DS4Windows
                 if (!device.PerformStateMerge)
                 {
                     cState = CurrentState[ind];
-                    device.getRawCurrentState(cState);
+                    device.GetRawCurrentState(cState);
                 }
                 else
                 {
@@ -2222,7 +2222,7 @@ namespace DS4Windows
                     cState.CopyTo(CurrentState[ind]);
                 }
 
-                DS4State pState = device.getPreviousStateRef();
+                DS4State pState = device.GetPreviousStateReference();
                 //device.getPreviousState(PreviousState[ind]);
                 //DS4State pState = PreviousState[ind];
 
