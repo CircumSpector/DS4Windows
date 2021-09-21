@@ -1010,37 +1010,37 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSAntiSnapback
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[device].enabled;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[device].enabled = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[device].Enabled;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[device].Enabled = value;
         }
 
         public bool RSAntiSnapback
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[device].enabled;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[device].enabled = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[device].Enabled;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[device].Enabled = value;
         }
 
         public double LSAntiSnapbackDelta
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[device].delta;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[device].delta = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[device].Delta;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[device].Delta = value;
         }
 
         public double RSAntiSnapbackDelta
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[device].delta;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[device].delta = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[device].Delta;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[device].Delta = value;
         }
         public int LSAntiSnapbackTimeout
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[device].timeout;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[device].timeout = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[device].Timeout;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[device].Timeout = value;
         }
 
         public int RSAntiSnapbackTimeout
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[device].timeout;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[device].timeout = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[device].Timeout;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[device].Timeout = value;
         }
 
         public bool LSOuterBindInvert
@@ -1265,14 +1265,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double L2AntiDeadZone
         {
-            get => Global.Instance.Config.L2ModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.Config.L2ModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.L2ModInfo[device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.L2ModInfo[device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double R2AntiDeadZone
         {
-            get => Global.Instance.Config.R2ModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.Config.R2ModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.R2ModInfo[device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.R2ModInfo[device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double L2MaxOutput
@@ -2239,19 +2239,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroControlsTurns
         {
-            get => Global.Instance.Config.GyroControlsInfo[device].triggerTurns;
-            set => Global.Instance.Config.GyroControlsInfo[device].triggerTurns = value;
+            get => Global.Instance.Config.GyroControlsInfo[device].TriggerTurns;
+            set => Global.Instance.Config.GyroControlsInfo[device].TriggerTurns = value;
         }
 
         public int GyroControlsEvalCondIndex
         {
-            get => Global.Instance.Config.GyroControlsInfo[device].triggerCond ? 0 : 1;
-            set => Global.Instance.Config.GyroControlsInfo[device].triggerCond = value == 0 ? true : false;
+            get => Global.Instance.Config.GyroControlsInfo[device].TriggerCond ? 0 : 1;
+            set => Global.Instance.Config.GyroControlsInfo[device].TriggerCond = value == 0 ? true : false;
         }
 
         public bool GyroControlsToggle
         {
-            get => Global.Instance.Config.GyroControlsInfo[device].triggerToggle;
+            get => Global.Instance.Config.GyroControlsInfo[device].TriggerToggle;
             set
             {
                 Global.Instance.Config.SetGyroControlsToggle(device, value, App.rootHub);
@@ -2887,13 +2887,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.Config.GyroControlsInfo[device].triggers = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.GyroControlsInfo[device].Triggers = string.Join(",", triggerList.ToArray());
             GyroControlsTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroControlsTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.Config.GyroControlsInfo[device].triggers.Split(',');
+            string[] triggers = Global.Instance.Config.GyroControlsInfo[device].Triggers.Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)

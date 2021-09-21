@@ -144,10 +144,10 @@ namespace DS4Windows
                 s = dev.getCurrentStateRef();
 
                 GyroControlsInfo controlsMapInfo = Global.Instance.Config.GetGyroControlsInfo(deviceNum);
-                useReverseRatchet = controlsMapInfo.triggerTurns;
+                useReverseRatchet = controlsMapInfo.TriggerTurns;
                 int i = 0;
-                string[] ss = controlsMapInfo.triggers.Split(',');
-                bool andCond = controlsMapInfo.triggerCond;
+                string[] ss = controlsMapInfo.Triggers.Split(',');
+                bool andCond = controlsMapInfo.TriggerCond;
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {

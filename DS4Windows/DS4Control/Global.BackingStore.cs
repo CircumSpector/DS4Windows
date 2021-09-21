@@ -1061,7 +1061,7 @@ namespace DS4Windows
 
             public void SetGyroControlsToggle(int index, bool value, ControlService control)
             {
-                GyroControlsInfo[index].triggerToggle = value;
+                GyroControlsInfo[index].TriggerToggle = value;
                 if (index < ControlService.CURRENT_DS4_CONTROLLER_LIMIT && control.touchPad[index] != null)
                     control.touchPad[index].ToggleGyroControls = value;
             }
@@ -1205,10 +1205,10 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlTouchClickPasthru);
 
                     var xmlL2AD = m_Xdoc.CreateNode(XmlNodeType.Element, "L2AntiDeadZone", null);
-                    xmlL2AD.InnerText = L2ModInfo[device].antiDeadZone.ToString();
+                    xmlL2AD.InnerText = L2ModInfo[device].AntiDeadZone.ToString();
                     rootElement.AppendChild(xmlL2AD);
                     var xmlR2AD = m_Xdoc.CreateNode(XmlNodeType.Element, "R2AntiDeadZone", null);
-                    xmlR2AD.InnerText = R2ModInfo[device].antiDeadZone.ToString();
+                    xmlR2AD.InnerText = R2ModInfo[device].AntiDeadZone.ToString();
                     rootElement.AppendChild(xmlR2AD);
                     var xmlL2Maxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "L2MaxZone", null);
                     xmlL2Maxzone.InnerText = L2ModInfo[device].maxZone.ToString();
@@ -1465,16 +1465,16 @@ namespace DS4Windows
 
                     var xmlGyroControlsSettingsElement = m_Xdoc.CreateElement("GyroControlsSettings");
                     var xmlGyroControlsTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "Triggers", null);
-                    xmlGyroControlsTriggers.InnerText = GyroControlsInfo[device].triggers;
+                    xmlGyroControlsTriggers.InnerText = GyroControlsInfo[device].Triggers;
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggers);
                     var xmlGyroControlsTriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerCond", null);
-                    xmlGyroControlsTriggerCond.InnerText = SaTriggerCondString(GyroControlsInfo[device].triggerCond);
+                    xmlGyroControlsTriggerCond.InnerText = SaTriggerCondString(GyroControlsInfo[device].TriggerCond);
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerCond);
                     var xmlGyroControlsTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerTurns", null);
-                    xmlGyroControlsTriggerTurns.InnerText = GyroControlsInfo[device].triggerTurns.ToString();
+                    xmlGyroControlsTriggerTurns.InnerText = GyroControlsInfo[device].TriggerTurns.ToString();
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerTurns);
                     var xmlGyroControlsToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "Toggle", null);
-                    xmlGyroControlsToggle.InnerText = GyroControlsInfo[device].triggerToggle.ToString();
+                    xmlGyroControlsToggle.InnerText = GyroControlsInfo[device].TriggerToggle.ToString();
                     xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsToggle);
                     rootElement.AppendChild(xmlGyroControlsSettingsElement);
 
@@ -1651,26 +1651,26 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlSquareRStickRoundness);
 
                     var xmlLsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapback", null);
-                    xmlLsAntiSnapbackEnabled.InnerText = LSAntiSnapbackInfo[device].enabled.ToString();
+                    xmlLsAntiSnapbackEnabled.InnerText = LSAntiSnapbackInfo[device].Enabled.ToString();
                     rootElement.AppendChild(xmlLsAntiSnapbackEnabled);
                     var xmlRsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapback", null);
-                    xmlRsAntiSnapbackEnabled.InnerText = RSAntiSnapbackInfo[device].enabled.ToString();
+                    xmlRsAntiSnapbackEnabled.InnerText = RSAntiSnapbackInfo[device].Enabled.ToString();
                     rootElement.AppendChild(xmlRsAntiSnapbackEnabled);
 
                     var xmlLsAntiSnapbackDelta = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapbackDelta", null);
-                    xmlLsAntiSnapbackDelta.InnerText = LSAntiSnapbackInfo[device].delta.ToString();
+                    xmlLsAntiSnapbackDelta.InnerText = LSAntiSnapbackInfo[device].Delta.ToString();
                     rootElement.AppendChild(xmlLsAntiSnapbackDelta);
                     var xmlRsAntiSnapbackDelta = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapbackDelta", null);
-                    xmlRsAntiSnapbackDelta.InnerText = RSAntiSnapbackInfo[device].delta.ToString();
+                    xmlRsAntiSnapbackDelta.InnerText = RSAntiSnapbackInfo[device].Delta.ToString();
                     rootElement.AppendChild(xmlRsAntiSnapbackDelta);
 
                     var xmlLsAntiSnapbackTimeout =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapbackTimeout", null);
-                    xmlLsAntiSnapbackTimeout.InnerText = LSAntiSnapbackInfo[device].timeout.ToString();
+                    xmlLsAntiSnapbackTimeout.InnerText = LSAntiSnapbackInfo[device].Timeout.ToString();
                     rootElement.AppendChild(xmlLsAntiSnapbackTimeout);
                     var xmlRsAntiSnapbackTimeout =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapbackTimeout", null);
-                    xmlRsAntiSnapbackTimeout.InnerText = RSAntiSnapbackInfo[device].timeout.ToString();
+                    xmlRsAntiSnapbackTimeout.InnerText = RSAntiSnapbackInfo[device].Timeout.ToString();
                     rootElement.AppendChild(xmlRsAntiSnapbackTimeout);
 
                     var xmlLsOutputMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputMode", null);
@@ -2678,22 +2678,24 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/L2AntiDeadZone");
-                        int.TryParse(Item.InnerText, out L2ModInfo[device].antiDeadZone);
+                        int.TryParse(Item.InnerText, out var value);
+                        L2ModInfo[device].AntiDeadZone = value;
                     }
                     catch
                     {
-                        L2ModInfo[device].antiDeadZone = 0;
+                        L2ModInfo[device].AntiDeadZone = 0;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2AntiDeadZone");
-                        int.TryParse(Item.InnerText, out R2ModInfo[device].antiDeadZone);
+                        int.TryParse(Item.InnerText, out var value);
+                        R2ModInfo[device].AntiDeadZone = value;
                     }
                     catch
                     {
-                        R2ModInfo[device].antiDeadZone = 0;
+                        R2ModInfo[device].AntiDeadZone = 0;
                         missingSetting = true;
                     }
 
@@ -3621,7 +3623,7 @@ namespace DS4Windows
                         try
                         {
                             Item = xmlGyroControlsElement.SelectSingleNode("Triggers");
-                            if (Item != null) GyroControlsInfo[device].triggers = Item.InnerText;
+                            if (Item != null) GyroControlsInfo[device].Triggers = Item.InnerText;
                         }
                         catch
                         {
@@ -3630,7 +3632,7 @@ namespace DS4Windows
                         try
                         {
                             Item = xmlGyroControlsElement.SelectSingleNode("TriggerCond");
-                            if (Item != null) GyroControlsInfo[device].triggerCond = SaTriggerCondValue(Item.InnerText);
+                            if (Item != null) GyroControlsInfo[device].TriggerCond = SaTriggerCondValue(Item.InnerText);
                         }
                         catch
                         {
@@ -3640,7 +3642,7 @@ namespace DS4Windows
                         {
                             Item = xmlGyroControlsElement.SelectSingleNode("TriggerTurns");
                             if (bool.TryParse(Item?.InnerText ?? "", out var tempTurns))
-                                GyroControlsInfo[device].triggerTurns = tempTurns;
+                                GyroControlsInfo[device].TriggerTurns = tempTurns;
                         }
                         catch
                         {
@@ -4297,66 +4299,72 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSAntiSnapback");
-                        bool.TryParse(Item.InnerText, out LSAntiSnapbackInfo[device].enabled);
+                        bool.TryParse(Item.InnerText, out var value);
+                        LSAntiSnapbackInfo[device].Enabled = value;
                     }
                     catch
                     {
-                        LSAntiSnapbackInfo[device].enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
+                        LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSAntiSnapback");
-                        bool.TryParse(Item.InnerText, out RSAntiSnapbackInfo[device].enabled);
+                        bool.TryParse(Item.InnerText, out var value);
+                        RSAntiSnapbackInfo[device].Enabled = value;
                     }
                     catch
                     {
-                        RSAntiSnapbackInfo[device].enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
+                        RSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSAntiSnapbackDelta");
-                        double.TryParse(Item.InnerText, out LSAntiSnapbackInfo[device].delta);
+                        double.TryParse(Item.InnerText, out var value);
+                        LSAntiSnapbackInfo[device].Delta = value;
                     }
                     catch
                     {
-                        LSAntiSnapbackInfo[device].delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
+                        LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSAntiSnapbackDelta");
-                        double.TryParse(Item.InnerText, out RSAntiSnapbackInfo[device].delta);
+                        double.TryParse(Item.InnerText, out var value);
+                        RSAntiSnapbackInfo[device].Delta = value;
                     }
                     catch
                     {
-                        RSAntiSnapbackInfo[device].delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
+                        RSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSAntiSnapbackTimeout");
-                        int.TryParse(Item.InnerText, out LSAntiSnapbackInfo[device].timeout);
+                        int.TryParse(Item.InnerText, out var value);
+                        LSAntiSnapbackInfo[device].Timeout = value;
                     }
                     catch
                     {
-                        LSAntiSnapbackInfo[device].timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
+                        LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSAntiSnapbackTimeout");
-                        int.TryParse(Item.InnerText, out RSAntiSnapbackInfo[device].timeout);
+                        int.TryParse(Item.InnerText, out var value);
+                        RSAntiSnapbackInfo[device].Timeout = value;
                     }
                     catch
                     {
-                        RSAntiSnapbackInfo[device].timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
+                        RSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
                         missingSetting = true;
                     }
 
@@ -7405,9 +7413,9 @@ namespace DS4Windows
                 SquStickInfo[device].RSMode = false;
                 SquStickInfo[device].LSRoundness = 5.0;
                 SquStickInfo[device].RSRoundness = 5.0;
-                LSAntiSnapbackInfo[device].timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
-                LSAntiSnapbackInfo[device].delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
-                LSAntiSnapbackInfo[device].enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
+                LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
+                LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
+                LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
                 SetLsOutCurveMode(device, 0);
                 SetRsOutCurveMode(device, 0);
                 SetL2OutCurveMode(device, 0);

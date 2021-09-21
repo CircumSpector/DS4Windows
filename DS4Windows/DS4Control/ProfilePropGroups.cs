@@ -7,7 +7,7 @@ namespace DS4Windows
     {
         public bool LSMode { get; set; }
         public bool RSMode { get; set; }
-        public double LSRoundness  { get; set; }= 5.0;
+        public double LSRoundness { get; set; } = 5.0;
         public double RSRoundness { get; set; } = 5.0;
     }
 
@@ -85,9 +85,9 @@ namespace DS4Windows
         public const int DEFAULT_TIMEOUT = 50;
         public const bool DEFAULT_ENABLED = false;
 
-        public bool enabled = DEFAULT_ENABLED;
-        public double delta = DEFAULT_DELTA;
-        public int timeout = DEFAULT_TIMEOUT;
+        public bool Enabled { get; set; } = DEFAULT_ENABLED;
+        public double Delta { get; set; } = DEFAULT_DELTA;
+        public int Timeout { get; set; } = DEFAULT_TIMEOUT;
     }
 
     public class TriggerDeadZoneZInfo
@@ -107,7 +107,7 @@ namespace DS4Windows
         }
         public event EventHandler DeadZoneChanged;
 
-        public int antiDeadZone;
+        public int AntiDeadZone { get; set; }
         public int maxZone = 100;
         public int MaxZone
         {
@@ -138,7 +138,7 @@ namespace DS4Windows
         public void Reset()
         {
             deadZone = 0;
-            antiDeadZone = 0;
+            AntiDeadZone = 0;
             MaxZone = 100;
             MaxOutput = 100.0;
         }
@@ -485,17 +485,17 @@ namespace DS4Windows
         public const bool DEFAULT_TRIGGER_TURNS = true;
         public const bool DEFAULT_TRIGGER_TOGGLE = false;
 
-        public string triggers = DEFAULT_TRIGGERS;
-        public bool triggerCond = DEFAULT_TRIGGER_COND;
-        public bool triggerTurns = DEFAULT_TRIGGER_TURNS;
-        public bool triggerToggle = DEFAULT_TRIGGER_TOGGLE;
+        public string Triggers { get; set; } = DEFAULT_TRIGGERS;
+        public bool TriggerCond { get; set; } = DEFAULT_TRIGGER_COND;
+        public bool TriggerTurns { get; set; } = DEFAULT_TRIGGER_TURNS;
+        public bool TriggerToggle { get; set; } = DEFAULT_TRIGGER_TOGGLE;
 
         public void Reset()
         {
-            triggers = DEFAULT_TRIGGERS;
-            triggerCond = DEFAULT_TRIGGER_COND;
-            triggerTurns = DEFAULT_TRIGGER_TURNS;
-            triggerToggle = DEFAULT_TRIGGER_TOGGLE;
+            Triggers = DEFAULT_TRIGGERS;
+            TriggerCond = DEFAULT_TRIGGER_COND;
+            TriggerTurns = DEFAULT_TRIGGER_TURNS;
+            TriggerToggle = DEFAULT_TRIGGER_TOGGLE;
         }
     }
 

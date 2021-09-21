@@ -748,14 +748,14 @@ namespace DS4Windows
             StickAntiSnapbackInfo lsAntiSnapback = Global.Instance.Config.GetLSAntiSnapbackInfo(device);
             StickAntiSnapbackInfo rsAntiSnapback = Global.Instance.Config.GetRSAntiSnapbackInfo(device);
 
-            if (lsAntiSnapback.enabled)
+            if (lsAntiSnapback.Enabled)
             {
-                CalcAntiSnapbackStick(device, 0, lsAntiSnapback.delta, lsAntiSnapback.timeout, cState.LX, cState.LY, out cState.LX, out cState.LY);
+                CalcAntiSnapbackStick(device, 0, lsAntiSnapback.Delta, lsAntiSnapback.Timeout, cState.LX, cState.LY, out cState.LX, out cState.LY);
             }
 
-            if (rsAntiSnapback.enabled)
+            if (rsAntiSnapback.Enabled)
             {
-                CalcAntiSnapbackStick(device, 1, rsAntiSnapback.delta, rsAntiSnapback.timeout, cState.RX, cState.RY, out cState.RX, out cState.RY);
+                CalcAntiSnapbackStick(device, 1, rsAntiSnapback.Delta, rsAntiSnapback.Timeout, cState.RX, cState.RY, out cState.RX, out cState.RY);
             }
 
             StickDeadZoneInfo lsMod = Global.Instance.Config.GetLSDeadInfo(device);
@@ -1248,7 +1248,7 @@ namespace DS4Windows
 
             TriggerDeadZoneZInfo l2ModInfo = Global.Instance.Config.GetL2ModInfo(device);
             byte l2Deadzone = l2ModInfo.deadZone;
-            int l2AntiDeadzone = l2ModInfo.antiDeadZone;
+            int l2AntiDeadzone = l2ModInfo.AntiDeadZone;
             int l2Maxzone = l2ModInfo.maxZone;
             double l2MaxOutput = l2ModInfo.maxOutput;
             if (l2Deadzone > 0 || l2AntiDeadzone > 0 || l2Maxzone != 100 || l2MaxOutput != 100.0)
@@ -1303,7 +1303,7 @@ namespace DS4Windows
             */
             TriggerDeadZoneZInfo r2ModInfo = Global.Instance.Config.GetR2ModInfo(device);
             byte r2Deadzone = r2ModInfo.deadZone;
-            int r2AntiDeadzone = r2ModInfo.antiDeadZone;
+            int r2AntiDeadzone = r2ModInfo.AntiDeadZone;
             int r2Maxzone = r2ModInfo.maxZone;
             double r2MaxOutput = r2ModInfo.maxOutput;
             if (r2Deadzone > 0 || r2AntiDeadzone > 0 || r2Maxzone != 100 || r2MaxOutput != 100.0)
