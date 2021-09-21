@@ -1072,7 +1072,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.Config.LSOutputSettings[device].mode)
+                switch (Global.Instance.Config.LSOutputSettings[device].Mode)
                 {
                     case StickMode.None:
                         index = 0; break;
@@ -1102,9 +1102,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                StickMode current = Global.Instance.Config.LSOutputSettings[device].mode;
+                StickMode current = Global.Instance.Config.LSOutputSettings[device].Mode;
                 if (temp == current) return;
-                Global.Instance.Config.LSOutputSettings[device].mode = temp;
+                Global.Instance.Config.LSOutputSettings[device].Mode = temp;
                 LSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1112,37 +1112,37 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSFlickRWC
         {
-            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration;
+            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration;
             set
             {
-                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration = value;
+                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration = value;
             }
         }
 
         public double LSFlickThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickThreshold;
+            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickThreshold;
             set
             {
-                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickThreshold = value;
+                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickThreshold = value;
             }
         }
 
         public double LSFlickTime
         {
-            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickTime;
+            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickTime;
             set
             {
-                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.flickTime = value;
+                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickTime = value;
             }
         }
 
         public double LSMinAngleThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold;
+            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold;
             set
             {
-                Global.Instance.Config.LSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold = value;
+                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold = value;
             }
         }
 
@@ -1151,7 +1151,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.Config.RSOutputSettings[device].mode)
+                switch (Global.Instance.Config.RSOutputSettings[device].Mode)
                 {
                     case StickMode.None:
                         break;
@@ -1181,9 +1181,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                StickMode current = Global.Instance.Config.RSOutputSettings[device].mode;
+                StickMode current = Global.Instance.Config.RSOutputSettings[device].Mode;
                 if (temp == current) return;
-                Global.Instance.Config.RSOutputSettings[device].mode = temp;
+                Global.Instance.Config.RSOutputSettings[device].Mode = temp;
                 RSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1191,37 +1191,37 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double RSFlickRWC
         {
-            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration;
+            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration;
             set
             {
-                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.realWorldCalibration = value;
+                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration = value;
             }
         }
 
         public double RSFlickThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickThreshold;
+            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickThreshold;
             set
             {
-                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickThreshold = value;
+                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickThreshold = value;
             }
         }
 
         public double RSFlickTime
         {
-            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickTime;
+            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickTime;
             set
             {
-                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.flickTime = value;
+                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickTime = value;
             }
         }
 
         public double RSMinAngleThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold;
+            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold;
             set
             {
-                Global.Instance.Config.RSOutputSettings[device].outputSettings.flickSettings.minAngleThreshold = value;
+                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold = value;
             }
         }
 
@@ -1974,11 +1974,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     case 0:
                         tempInfo.ResetSmoothingMethods();
-                        tempInfo.smoothingMethod = GyroMouseStickInfo.SmoothingMethod.OneEuro;
+                        tempInfo.Smoothing = GyroMouseStickInfo.SmoothingMethod.OneEuro;
                         break;
                     case 1:
                         tempInfo.ResetSmoothingMethods();
-                        tempInfo.smoothingMethod = GyroMouseStickInfo.SmoothingMethod.WeightedAverage;
+                        tempInfo.Smoothing = GyroMouseStickInfo.SmoothingMethod.WeightedAverage;
                         break;
                     default:
                         break;
@@ -1995,7 +1995,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseStickInfo[device].smoothingMethod)
+                switch (Global.Instance.Config.GyroMouseStickInfo[device].Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -2014,7 +2014,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseStickInfo[device].smoothingMethod)
+                switch (Global.Instance.Config.GyroMouseStickInfo[device].Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.OneEuro:
                     case GyroMouseStickInfo.SmoothingMethod.None:
@@ -2031,8 +2031,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseStickSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight = value;
         }
 
         public double GyroMouseStickOneEuroMinCutoff
@@ -2087,14 +2087,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickDeadZone
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].deadZone;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].deadZone = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].DeadZone;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].DeadZone = value;
         }
 
         public int GyroMouseStickMaxZone
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].maxZone;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].maxZone = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].MaxZone;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].MaxZone = value;
         }
 
         public int GyroMouseStickOutputStick
@@ -2119,30 +2119,30 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseStickAntiDeadX
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadX * 100.0;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadX = value * 0.01;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadX * 100.0;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadX = value * 0.01;
         }
 
         public double GyroMouseStickAntiDeadY
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadY * 100.0;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].antiDeadY = value * 0.01;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadY * 100.0;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadY = value * 0.01;
         }
 
         public int GyroMouseStickVertScale
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].vertScale;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].vertScale = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].VertScale;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].VertScale = value;
         }
 
         public bool GyroMouseStickMaxOutputEnabled
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].maxOutputEnabled;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].MaxOutputEnabled;
             set
             {
-                bool temp = Global.Instance.Config.GyroMouseStickInfo[device].maxOutputEnabled;
+                bool temp = Global.Instance.Config.GyroMouseStickInfo[device].MaxOutputEnabled;
                 if (temp == value) return;
-                Global.Instance.Config.GyroMouseStickInfo[device].maxOutputEnabled = value;
+                Global.Instance.Config.GyroMouseStickInfo[device].MaxOutputEnabled = value;
                 GyroMouseStickMaxOutputChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -2150,8 +2150,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseStickMaxOutput
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].maxOutput;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].maxOutput = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].MaxOutput;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].MaxOutput = value;
         }
 
         public int GyroMouseStickEvalCondIndex
@@ -2168,48 +2168,48 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseStickInvertX
         {
-            get => (Global.Instance.Config.GyroMouseStickInfo[device].inverted & 1) == 1;
+            get => (Global.Instance.Config.GyroMouseStickInfo[device].Inverted & 1) == 1;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroMouseStickInfo[device].inverted |= 1;
+                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted |= 1;
                 }
                 else
                 {
-                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].inverted;
-                    Global.Instance.Config.GyroMouseStickInfo[device].inverted = (uint)(temp & ~1);
+                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].Inverted;
+                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted = (uint)(temp & ~1);
                 }
             }
         }
 
         public bool GyroMouseStickInvertY
         {
-            get => (Global.Instance.Config.GyroMouseStickInfo[device].inverted & 2) == 2;
+            get => (Global.Instance.Config.GyroMouseStickInfo[device].Inverted & 2) == 2;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroMouseStickInfo[device].inverted |= 2;
+                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted |= 2;
                 }
                 else
                 {
-                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].inverted;
-                    Global.Instance.Config.GyroMouseStickInfo[device].inverted = (uint)(temp & ~2);
+                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].Inverted;
+                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted = (uint)(temp & ~2);
                 }
             }
         }
 
         public bool GyroMouseStickSmooth
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].useSmoothing;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].useSmoothing = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].UseSmoothing;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].UseSmoothing = value;
         }
 
         public double GyroMousetickSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].smoothWeight = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight;
+            set => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight = value;
         }
         
         private string touchDisInvertString = "None";
@@ -2401,7 +2401,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             int result = 0;
             GyroMouseStickInfo tempInfo = Global.Instance.Config.GyroMouseStickInfo[device];
-            switch (tempInfo.smoothingMethod)
+            switch (tempInfo.Smoothing)
             {
                 case GyroMouseStickInfo.SmoothingMethod.OneEuro:
                 case GyroMouseStickInfo.SmoothingMethod.None:

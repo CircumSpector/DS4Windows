@@ -303,18 +303,18 @@ namespace DS4Windows
         public const OutputStick DEFAULT_OUTPUT_STICK = OutputStick.RightStick;
         public const OutputStickAxes DEFAULT_OUTPUT_STICK_AXES = OutputStickAxes.XY;
 
-        public int deadZone;
-        public int maxZone;
-        public double antiDeadX;
-        public double antiDeadY;
-        public int vertScale;
-        public bool maxOutputEnabled;
-        public double maxOutput = 100.0;
+        public int DeadZone { get; set; }
+        public int MaxZone { get; set; }
+        public double AntiDeadX { get; set; }
+        public double AntiDeadY { get; set; }
+        public int VertScale { get; set; }
+        public bool MaxOutputEnabled { get; set; }
+        public double MaxOutput { get; set; } = 100.0;
         // Flags representing invert axis choices
-        public uint inverted;
-        public bool useSmoothing;
-        public double smoothWeight;
-        public SmoothingMethod smoothingMethod;
+        public uint Inverted { get; set; }
+        public bool UseSmoothing { get; set; }
+        public double SmoothWeight { get; set; }
+        public SmoothingMethod Smoothing { get; set; }
         public double minCutoff = DEFAULT_MINCUTOFF;
         public double beta = DEFAULT_BETA;
         public OutputStick outputStick = DEFAULT_OUTPUT_STICK;
@@ -350,29 +350,29 @@ namespace DS4Windows
 
         public void Reset()
         {
-            deadZone = 30; maxZone = 830;
-            antiDeadX = 0.4; antiDeadY = 0.4;
-            inverted = 0; vertScale = 100;
-            maxOutputEnabled = false; maxOutput = 100.0;
+            DeadZone = 30; MaxZone = 830;
+            AntiDeadX = 0.4; AntiDeadY = 0.4;
+            Inverted = 0; VertScale = 100;
+            MaxOutputEnabled = false; MaxOutput = 100.0;
             outputStick = DEFAULT_OUTPUT_STICK;
             outputStickDir = DEFAULT_OUTPUT_STICK_AXES;
 
             minCutoff = DEFAULT_MINCUTOFF;
             beta = DEFAULT_BETA;
-            smoothingMethod = SmoothingMethod.None;
-            useSmoothing = false;
-            smoothWeight = 0.5;
+            Smoothing = SmoothingMethod.None;
+            UseSmoothing = false;
+            SmoothWeight = 0.5;
         }
 
         public void ResetSmoothing()
         {
-            useSmoothing = false;
+            UseSmoothing = false;
             ResetSmoothingMethods();
         }
 
         public void ResetSmoothingMethods()
         {
-            smoothingMethod = SmoothingMethod.None;
+            Smoothing = SmoothingMethod.None;
         }
 
         public void DetermineSmoothMethod(string identier)
@@ -382,13 +382,13 @@ namespace DS4Windows
             switch (identier)
             {
                 case "weighted-average":
-                    smoothingMethod = SmoothingMethod.WeightedAverage;
+                    Smoothing = SmoothingMethod.WeightedAverage;
                     break;
                 case "one-euro":
-                    smoothingMethod = SmoothingMethod.OneEuro;
+                    Smoothing = SmoothingMethod.OneEuro;
                     break;
                 default:
-                    smoothingMethod = SmoothingMethod.None;
+                    Smoothing = SmoothingMethod.None;
                     break;
             }
         }
@@ -396,7 +396,7 @@ namespace DS4Windows
         public string SmoothMethodIdentifier()
         {
             string result = "none";
-            switch (smoothingMethod)
+            switch (Smoothing)
             {
                 case SmoothingMethod.WeightedAverage:
                     result = "weighted-average";
@@ -823,14 +823,14 @@ namespace DS4Windows
 
     public class StickOutputSetting
     {
-        public StickMode mode = StickMode.Controls;
-        public StickModeSettings outputSettings = new StickModeSettings();
+        public StickMode Mode { get; set; } = StickMode.Controls;
+        public StickModeSettings OutputSettings { get; set; } = new();
 
         public void ResetSettings()
         {
-            mode = StickMode.Controls;
-            outputSettings.controlSettings.Reset();
-            outputSettings.flickSettings.Reset();
+            Mode = StickMode.Controls;
+            OutputSettings.controlSettings.Reset();
+            OutputSettings.flickSettings.Reset();
         }
     }
 

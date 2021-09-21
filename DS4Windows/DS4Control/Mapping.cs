@@ -2058,7 +2058,7 @@ namespace DS4Windows
             // Process LS
             ControlSettingsGroup controlSetGroup = Global.Instance.Config.GetControlSettingsGroup(device);
             StickOutputSetting stickSettings = Global.Instance.Config.LSOutputSettings[device];
-            if (stickSettings.mode == StickMode.Controls)
+            if (stickSettings.Mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.LS.GetEnumerator(); settingEnum.MoveNext();)
                 {
@@ -2075,7 +2075,7 @@ namespace DS4Windows
                 outputfieldMapping.axisdirs[(int)DS4Controls.LYNeg] = 128;
                 outputfieldMapping.axisdirs[(int)DS4Controls.LYPos] = 128;
 
-                switch (stickSettings.mode)
+                switch (stickSettings.Mode)
                 {
                     case StickMode.None:
                         break;
@@ -2085,7 +2085,7 @@ namespace DS4Windows
                         DS4State pState = d.getPreviousStateRef();
 
                         ProcessFlickStick(device, cRawState, cRawState.LX, cRawState.LY, pState.LX, pState.LY, ctrl,
-                            stickSettings.outputSettings.flickSettings, ref tempMouseDeltaX);
+                            stickSettings.OutputSettings.flickSettings, ref tempMouseDeltaX);
                         break;
                     default:
                         break;
@@ -2094,7 +2094,7 @@ namespace DS4Windows
 
             // Process RS
             stickSettings = Global.Instance.Config.RSOutputSettings[device];
-            if (stickSettings.mode == StickMode.Controls)
+            if (stickSettings.Mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.RS.GetEnumerator(); settingEnum.MoveNext();)
                 {
@@ -2111,7 +2111,7 @@ namespace DS4Windows
                 outputfieldMapping.axisdirs[(int)DS4Controls.RYNeg] = 128;
                 outputfieldMapping.axisdirs[(int)DS4Controls.RYPos] = 128;
 
-                switch (stickSettings.mode)
+                switch (stickSettings.Mode)
                 {
                     case StickMode.None:
                         break;
@@ -2121,7 +2121,7 @@ namespace DS4Windows
                         DS4State pState = d.getPreviousStateRef();
 
                         ProcessFlickStick(device, cRawState, cRawState.RX, cRawState.RY, pState.RX, pState.RY, ctrl,
-                            stickSettings.outputSettings.flickSettings, ref tempMouseDeltaX);
+                            stickSettings.OutputSettings.flickSettings, ref tempMouseDeltaX);
                         break;
                     default:
                         break;

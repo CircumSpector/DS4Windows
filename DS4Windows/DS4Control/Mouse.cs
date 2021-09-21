@@ -376,7 +376,7 @@ namespace DS4Windows
             smoothBufferTail = iIndex + 1;
 
             GyroMouseStickInfo msinfo = Global.Instance.Config.GetGyroMouseStickInfo(deviceNum);
-            if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.OneEuro)
+            if (msinfo.Smoothing == GyroMouseStickInfo.SmoothingMethod.OneEuro)
             {
                 double currentRate = 1.0 / args.sixAxis.elapsed;
                 filterPair.Axis1Filter.Filter(0.0, currentRate);
@@ -403,15 +403,15 @@ namespace DS4Windows
             int signX = Math.Sign(deltaX);
             int signY = Math.Sign(deltaY);
 
-            int deadzoneX = (int)Math.Abs(normX * msinfo.deadZone);
-            int deadzoneY = (int)Math.Abs(normY * msinfo.deadZone);
+            int deadzoneX = (int)Math.Abs(normX * msinfo.DeadZone);
+            int deadzoneY = (int)Math.Abs(normY * msinfo.DeadZone);
 
-            int maxValX = signX * msinfo.maxZone;
-            int maxValY = signY * msinfo.maxZone;
+            int maxValX = signX * msinfo.MaxZone;
+            int maxValY = signY * msinfo.MaxZone;
 
             double xratio = 0.0, yratio = 0.0;
-            double antiX = msinfo.antiDeadX * normX;
-            double antiY = msinfo.antiDeadY * normY;
+            double antiX = msinfo.AntiDeadX * normX;
+            double antiY = msinfo.AntiDeadY * normY;
 
             if (Math.Abs(deltaX) > deadzoneX)
             {
@@ -439,15 +439,15 @@ namespace DS4Windows
                 deltaY = 0;
             }
 
-            if (msinfo.useSmoothing)
+            if (msinfo.UseSmoothing)
             {
-                if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.OneEuro)
+                if (msinfo.Smoothing == GyroMouseStickInfo.SmoothingMethod.OneEuro)
                 {
                     double currentRate = 1.0 / arg.sixAxis.elapsed;
                     deltaX = (int)(filterPair.Axis1Filter.Filter(deltaX, currentRate));
                     deltaY = (int)(filterPair.Axis2Filter.Filter(deltaY, currentRate));
                 }
-                else if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.WeightedAverage)
+                else if (msinfo.Smoothing == GyroMouseStickInfo.SmoothingMethod.WeightedAverage)
                 {
                     int iIndex = smoothBufferTail % SMOOTH_BUFFER_LEN;
                     xSmoothBuffer[iIndex] = deltaX;
@@ -464,7 +464,7 @@ namespace DS4Windows
                         x_out += xSmoothBuffer[idx] * currentWeight;
                         y_out += ySmoothBuffer[idx] * currentWeight;
                         finalWeight += currentWeight;
-                        currentWeight *= msinfo.smoothWeight;
+                        currentWeight *= msinfo.SmoothWeight;
                     }
 
                     x_out /= finalWeight;
@@ -473,15 +473,15 @@ namespace DS4Windows
                     deltaY = (int)y_out;
                 }
 
-                maxValX = deltaX < 0 ? -msinfo.maxZone : msinfo.maxZone;
-                maxValY = deltaY < 0 ? -msinfo.maxZone : msinfo.maxZone;
+                maxValX = deltaX < 0 ? -msinfo.MaxZone : msinfo.MaxZone;
+                maxValY = deltaY < 0 ? -msinfo.MaxZone : msinfo.MaxZone;
                 maxDirX = deltaX >= 0 ? 127 : -128;
                 maxDirY = deltaY >= 0 ? 127 : -128;
             }
 
-            if (msinfo.vertScale != 100)
+            if (msinfo.VertScale != 100)
             {
-                double verticalScale = msinfo.vertScale * 0.01;
+                double verticalScale = msinfo.VertScale * 0.01;
                 deltaY = (int)(deltaY * verticalScale);
                 deltaY = (deltaY < 0 && deltaY < maxValY) ? maxValY :
                     (deltaY > 0 && deltaY > maxValY) ? maxValY : deltaY;
@@ -490,9 +490,9 @@ namespace DS4Windows
             if (deltaX != 0) xratio = deltaX / (double)maxValX;
             if (deltaY != 0) yratio = deltaY / (double)maxValY;
 
-            if (msinfo.maxOutputEnabled)
+            if (msinfo.MaxOutputEnabled)
             {
-                double maxOutRatio = msinfo.maxOutput / 100.0;
+                double maxOutRatio = msinfo.MaxOutput / 100.0;
                 // Expand output a bit. Likely not going to get a straight line with Gyro
                 double maxOutXRatio = Math.Min(normX / 0.99, 1.0) * maxOutRatio;
                 double maxOutYRatio = Math.Min(normY / 0.99, 1.0) * maxOutRatio;
@@ -512,15 +512,15 @@ namespace DS4Windows
                 yNorm = (1.0 - antiY) * yratio + antiY;
             }
 
-            if (msinfo.inverted != 0)
+            if (msinfo.Inverted != 0)
             {
-                if ((msinfo.inverted & 1) == 1)
+                if ((msinfo.Inverted & 1) == 1)
                 {
                     // Invert max dir value
                     maxDirX = deltaX >= 0 ? -128 : 127;
                 }
 
-                if ((msinfo.inverted & 2) == 2)
+                if ((msinfo.Inverted & 2) == 2)
                 {
                     // Invert max dir value
                     maxDirY = deltaY >= 0 ? -128 : 127;

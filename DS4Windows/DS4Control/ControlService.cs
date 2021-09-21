@@ -1908,11 +1908,11 @@ namespace DS4Windows
             wheelSmoothInfo.SetFilterAttrs(tempFilter);
             wheelSmoothInfo.SetRefreshEvents(tempFilter);
 
-            FlickStickSettings flickStickSettings = Instance.Config.LSOutputSettings[ind].outputSettings.flickSettings;
+            FlickStickSettings flickStickSettings = Instance.Config.LSOutputSettings[ind].OutputSettings.flickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
-            flickStickSettings = Instance.Config.RSOutputSettings[ind].outputSettings.flickSettings;
+            flickStickSettings = Instance.Config.RSOutputSettings[ind].OutputSettings.flickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
