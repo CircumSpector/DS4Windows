@@ -29,10 +29,9 @@ skip_commits:
     - .github/*
     - extras/*
     - '**/*.md'
-build:
-  project: $(APPVEYOR_BUILD_FOLDER)\DS4WindowsWPF.sln
+build_script:
+- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\DS4WindowsWPF.sln" -c %CONFIGURATION% -r win-%PLATFORM% -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 after_build:
-- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\DS4WindowsWPF.sln" -c %CONFIGURATION% -r win-%PLATFORM% --no-build -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 test: off
