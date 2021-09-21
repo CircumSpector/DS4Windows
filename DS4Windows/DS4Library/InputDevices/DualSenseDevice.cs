@@ -710,7 +710,7 @@ namespace DS4Windows.InputDevices
                         // don't seem to contain relevant data. ds4drv does not use them either.
                         int touchOffset = 0;
 
-                        cState.TouchPacketCounter = inputReport[-1 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset];
+                        cState.TouchPacketCounter = inputReport[8 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset];
                         cState.Touch1 = (inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0 ? false : true; // finger 1 detected
                         cState.Touch1Identifier = (byte)(inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0x7f);
                         cState.Touch2 = (inputReport[4 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0 ? false : true; // finger 2 detected
