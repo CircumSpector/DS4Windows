@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using Color = System.Drawing.Color;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4Windows.DS4Library;
