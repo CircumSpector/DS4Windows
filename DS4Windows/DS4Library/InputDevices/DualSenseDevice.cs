@@ -930,9 +930,9 @@ namespace DS4Windows.InputDevices
                 if (useRumble)
                 {
                     // Right? High Freq Motor
-                    outputReport[3] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast;
+                    outputReport[3] = CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast;
                     // Left? Low Freq Motor
-                    outputReport[4] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+                    outputReport[4] = CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow;
                 }
 
                 /*
@@ -1065,9 +1065,9 @@ namespace DS4Windows.InputDevices
                 if (useRumble)
                 {
                     // Right? High Freq Motor
-                    outputReport[4] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast;
+                    outputReport[4] = CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast;
                     // Left? Low Freq Motor
-                    outputReport[5] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+                    outputReport[5] = CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow;
                 }
 
                 /*

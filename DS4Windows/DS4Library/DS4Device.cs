@@ -22,10 +22,13 @@ namespace DS4Windows
      * The haptics engine uses a stack of these states representing the light bar and rumble motor settings.
      * It (will) handle composing them and the details of output report management.
      */
-    public struct DS4ForceFeedbackState : IEquatable<DS4ForceFeedbackState>
+    public class DS4ForceFeedbackState : IEquatable<DS4ForceFeedbackState>, ICloneable
     {
-        public byte RumbleMotorStrengthLeftHeavySlow, RumbleMotorStrengthRightLightFast;
-        public bool RumbleMotorsExplicitlyOff;
+        public byte RumbleMotorStrengthLeftHeavySlow { get; set; }
+
+        public byte RumbleMotorStrengthRightLightFast { get; set; }
+
+        public bool RumbleMotorsExplicitlyOff { get; set; }
 
         public bool Equals(DS4ForceFeedbackState other)
         {
@@ -39,6 +42,11 @@ namespace DS4Windows
             const byte zero = 0;
             return RumbleMotorsExplicitlyOff || RumbleMotorStrengthLeftHeavySlow != zero ||
                    RumbleMotorStrengthRightLightFast != zero;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 
@@ -76,12 +84,12 @@ namespace DS4Windows
     public class DS4HapticState : IEquatable<DS4HapticState>, ICloneable
     {
         public DS4LightbarState LightbarState { get; set; } = new();
-        public DS4ForceFeedbackState rumbleState;
+        public DS4ForceFeedbackState RumbleState { get; set; } = new();
 
         public bool Equals(DS4HapticState other)
         {
             return LightbarState.Equals(other.LightbarState) &&
-                   rumbleState.Equals(other.rumbleState);
+                   RumbleState.Equals(other.RumbleState);
         }
 
         public bool IsLightBarSet()
@@ -91,15 +99,14 @@ namespace DS4Windows
 
         public bool IsRumbleSet()
         {
-            const byte zero = 0;
-            return rumbleState.RumbleMotorsExplicitlyOff || rumbleState.RumbleMotorStrengthLeftHeavySlow != zero ||
-                   rumbleState.RumbleMotorStrengthRightLightFast != zero;
+            return RumbleState.IsRumbleSet();
         }
 
         public object Clone()
         {
             var state = (DS4HapticState)MemberwiseClone();
             state.LightbarState = (DS4LightbarState)LightbarState.Clone();
+            state.RumbleState = (DS4ForceFeedbackState)RumbleState.Clone();
 
             return state;
         }
@@ -411,21 +418,21 @@ namespace DS4Windows
 
         public byte RightLightFastRumble
         {
-            get => CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast;
+            get => CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast;
             set
             {
-                if (CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast != value)
-                    CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast = value;
+                if (CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast != value)
+                    CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast = value;
             }
         }
 
         public byte LeftHeavySlowRumble
         {
-            get => CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+            get => CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow;
             set
             {
-                if (CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow != value)
-                    CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow = value;
+                if (CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow != value)
+                    CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow = value;
             }
         }
 
@@ -614,7 +621,7 @@ namespace DS4Windows
 
         public byte getLeftHeavySlowRumble()
         {
-            return CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow;
+            return CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow;
         }
 
         public byte getLightBarOnDuration()
@@ -1591,8 +1598,8 @@ namespace DS4Windows
                 outReportBuffer[3] = outputFeaturesByte;
                 outReportBuffer[4] = 0x04;
 
-                outReportBuffer[6] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast; // fast motor
-                outReportBuffer[7] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow; // slow motor
+                outReportBuffer[6] = CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast; // fast motor
+                outReportBuffer[7] = CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow; // slow motor
                 outReportBuffer[8] = CurrentHaptics.LightbarState.LightBarColor.Red; // red
                 outReportBuffer[9] = CurrentHaptics.LightbarState.LightBarColor.Green; // green
                 outReportBuffer[10] = CurrentHaptics.LightbarState.LightBarColor.Blue; // blue
@@ -1619,8 +1626,8 @@ namespace DS4Windows
                 // enable rumble (0x01), lightbar (0x02), flash (0x04). Default: 0xF7
                 outReportBuffer[1] = outputFeaturesByte;
                 outReportBuffer[2] = 0x04;
-                outReportBuffer[4] = CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast; // fast motor
-                outReportBuffer[5] = CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow; // slow  motor
+                outReportBuffer[4] = CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast; // fast motor
+                outReportBuffer[5] = CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow; // slow  motor
                 outReportBuffer[6] = CurrentHaptics.LightbarState.LightBarColor.Red; // red
                 outReportBuffer[7] = CurrentHaptics.LightbarState.LightBarColor.Green; // green
                 outReportBuffer[8] = CurrentHaptics.LightbarState.LightBarColor.Blue; // blue
@@ -1911,18 +1918,18 @@ namespace DS4Windows
 
         public void setRumble(byte rightLightFastMotor, byte leftHeavySlowMotor)
         {
-            testRumble.rumbleState.RumbleMotorStrengthRightLightFast = rightLightFastMotor;
-            testRumble.rumbleState.RumbleMotorStrengthLeftHeavySlow = leftHeavySlowMotor;
-            testRumble.rumbleState.RumbleMotorsExplicitlyOff = rightLightFastMotor == 0 && leftHeavySlowMotor == 0;
+            testRumble.RumbleState.RumbleMotorStrengthRightLightFast = rightLightFastMotor;
+            testRumble.RumbleState.RumbleMotorStrengthLeftHeavySlow = leftHeavySlowMotor;
+            testRumble.RumbleState.RumbleMotorsExplicitlyOff = rightLightFastMotor == 0 && leftHeavySlowMotor == 0;
 
             // If rumble autostop timer (msecs) is enabled for this device then restart autostop timer everytime rumble is modified (or stop the timer if rumble is set to zero)
             if (rumbleAutostopTime > 0)
             {
-                if (testRumble.rumbleState.RumbleMotorsExplicitlyOff)
+                if (testRumble.RumbleState.RumbleMotorsExplicitlyOff)
                     rumbleAutostopTimer
                         .Reset(); // Stop an autostop timer because ViGem driver sent properly a zero rumble notification
-                else if (CurrentHaptics.rumbleState.RumbleMotorStrengthLeftHeavySlow != leftHeavySlowMotor ||
-                         CurrentHaptics.rumbleState.RumbleMotorStrengthRightLightFast != rightLightFastMotor)
+                else if (CurrentHaptics.RumbleState.RumbleMotorStrengthLeftHeavySlow != leftHeavySlowMotor ||
+                         CurrentHaptics.RumbleState.RumbleMotorStrengthRightLightFast != rightLightFastMotor)
                     rumbleAutostopTimer
                         .Restart(); // Start an autostop timer to stop potentially stuck rumble motor because of lost rumble notification events from ViGem driver
             }
@@ -1932,12 +1939,12 @@ namespace DS4Windows
         {
             if (testRumble.IsRumbleSet())
             {
-                if (testRumble.rumbleState.RumbleMotorsExplicitlyOff)
-                    testRumble.rumbleState.RumbleMotorsExplicitlyOff = false;
+                if (testRumble.RumbleState.RumbleMotorsExplicitlyOff)
+                    testRumble.RumbleState.RumbleMotorsExplicitlyOff = false;
 
                 //currentHap.rumbleState.RumbleMotorStrengthLeftHeavySlow = testRumble.rumbleState.RumbleMotorStrengthLeftHeavySlow;
                 //currentHap.rumbleState.RumbleMotorStrengthRightLightFast = testRumble.rumbleState.RumbleMotorStrengthRightLightFast;
-                CurrentHaptics.rumbleState = testRumble.rumbleState;
+                CurrentHaptics.RumbleState = testRumble.RumbleState;
             }
         }
 
@@ -2020,7 +2027,7 @@ namespace DS4Windows
 
         public void SetRumbleState(ref DS4ForceFeedbackState rumbleState)
         {
-            CurrentHaptics.rumbleState = rumbleState;
+            CurrentHaptics.RumbleState = rumbleState;
         }
 
         public override string ToString()
