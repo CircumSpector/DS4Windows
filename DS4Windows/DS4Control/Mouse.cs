@@ -896,8 +896,8 @@ namespace DS4Windows
                 }
                 else if (tempMode == TouchpadOutMode.AbsoluteMouse)
                 {
-                    TouchpadAbsMouseSettings absMouseSettings = Global.Instance.Config.TouchPadAbsMouse[deviceNum];
-                    if (Global.Instance.GetTouchActive(deviceNum) && absMouseSettings.snapToCenter)
+                    TouchPadAbsMouseSettings absMouseSettings = Global.Instance.Config.TouchPadAbsMouse[deviceNum];
+                    if (Global.Instance.GetTouchActive(deviceNum) && absMouseSettings.SnapToCenter)
                     {
                         cursor.TouchCenterAbsolute();
                     }

@@ -558,15 +558,15 @@ namespace DS4Windows
             public IList<double> TrackballFriction { get; set; } = new List<double>
                 { 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 };
 
-            public IList<TouchpadAbsMouseSettings> TouchPadAbsMouse { get; set; } =
-                new List<TouchpadAbsMouseSettings>
+            public IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; } =
+                new List<TouchPadAbsMouseSettings>
                 {
                     new(), new(), new(),
                     new(), new(), new(), new(), new(), new()
                 };
 
-            public IList<TouchpadRelMouseSettings> TouchPadRelMouse { get; set; } =
-                new List<TouchpadRelMouseSettings>
+            public IList<TouchPadRelMouseSettings> TouchPadRelMouse { get; set; } =
+                new List<TouchPadRelMouseSettings>
                 {
                     new(), new(), new(), new(),
                     new(), new(), new(), new(), new()
@@ -1766,22 +1766,22 @@ namespace DS4Windows
                     var xmlTouchRelMouseRotation =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "TouchRelMouseRotation", null);
                     xmlTouchRelMouseRotation.InnerText =
-                        Convert.ToInt32(TouchPadRelMouse[device].rotation * 180.0 / Math.PI).ToString();
+                        Convert.ToInt32(TouchPadRelMouse[device].Rotation * 180.0 / Math.PI).ToString();
                     rootElement.AppendChild(xmlTouchRelMouseRotation);
                     var xmlTouchRelMouseMinThreshold =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "TouchRelMouseMinThreshold", null);
-                    xmlTouchRelMouseMinThreshold.InnerText = TouchPadRelMouse[device].minThreshold.ToString();
+                    xmlTouchRelMouseMinThreshold.InnerText = TouchPadRelMouse[device].MinThreshold.ToString();
                     rootElement.AppendChild(xmlTouchRelMouseMinThreshold);
 
                     var xmlTouchAbsMouseGroupEl = m_Xdoc.CreateElement("TouchpadAbsMouseSettings");
                     var xmlTouchAbsMouseMaxZoneX = m_Xdoc.CreateElement("MaxZoneX");
-                    xmlTouchAbsMouseMaxZoneX.InnerText = TouchPadAbsMouse[device].maxZoneX.ToString();
+                    xmlTouchAbsMouseMaxZoneX.InnerText = TouchPadAbsMouse[device].MaxZoneX.ToString();
                     xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseMaxZoneX);
                     var xmlTouchAbsMouseMaxZoneY = m_Xdoc.CreateElement("MaxZoneY");
-                    xmlTouchAbsMouseMaxZoneY.InnerText = TouchPadAbsMouse[device].maxZoneY.ToString();
+                    xmlTouchAbsMouseMaxZoneY.InnerText = TouchPadAbsMouse[device].MaxZoneY.ToString();
                     xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseMaxZoneY);
                     var xmlTouchAbsMouseSnapCenter = m_Xdoc.CreateElement("SnapToCenter");
-                    xmlTouchAbsMouseSnapCenter.InnerText = TouchPadAbsMouse[device].snapToCenter.ToString();
+                    xmlTouchAbsMouseSnapCenter.InnerText = TouchPadAbsMouse[device].SnapToCenter.ToString();
                     xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseSnapCenter);
                     rootElement.AppendChild(xmlTouchAbsMouseGroupEl);
 
@@ -4675,11 +4675,11 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TouchRelMouseRotation");
                         int.TryParse(Item.InnerText, out var temp);
                         temp = Math.Min(Math.Max(temp, -180), 180);
-                        TouchPadRelMouse[device].rotation = temp * Math.PI / 180.0;
+                        TouchPadRelMouse[device].Rotation = temp * Math.PI / 180.0;
                     }
                     catch
                     {
-                        TouchPadRelMouse[device].rotation = 0.0;
+                        TouchPadRelMouse[device].Rotation = 0.0;
                         missingSetting = true;
                     }
 
@@ -4688,11 +4688,11 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TouchRelMouseMinThreshold");
                         double.TryParse(Item.InnerText, out var temp);
                         temp = Math.Min(Math.Max(temp, 1.0), 40.0);
-                        TouchPadRelMouse[device].minThreshold = temp;
+                        TouchPadRelMouse[device].MinThreshold = temp;
                     }
                     catch
                     {
-                        TouchPadRelMouse[device].minThreshold = TouchpadRelMouseSettings.DEFAULT_MIN_THRESHOLD;
+                        TouchPadRelMouse[device].MinThreshold = TouchPadRelMouseSettings.DEFAULT_MIN_THRESHOLD;
                         missingSetting = true;
                     }
 
@@ -4708,11 +4708,11 @@ namespace DS4Windows
                         {
                             Item = touchpadAbsMouseElement.SelectSingleNode("MaxZoneX");
                             int.TryParse(Item.InnerText, out var temp);
-                            TouchPadAbsMouse[device].maxZoneX = temp;
+                            TouchPadAbsMouse[device].MaxZoneX = temp;
                         }
                         catch
                         {
-                            TouchPadAbsMouse[device].maxZoneX = TouchpadAbsMouseSettings.DEFAULT_MAXZONE_X;
+                            TouchPadAbsMouse[device].MaxZoneX = TouchPadAbsMouseSettings.DEFAULT_MAXZONE_X;
                             missingSetting = true;
                         }
 
@@ -4720,11 +4720,11 @@ namespace DS4Windows
                         {
                             Item = touchpadAbsMouseElement.SelectSingleNode("MaxZoneY");
                             int.TryParse(Item.InnerText, out var temp);
-                            TouchPadAbsMouse[device].maxZoneY = temp;
+                            TouchPadAbsMouse[device].MaxZoneY = temp;
                         }
                         catch
                         {
-                            TouchPadAbsMouse[device].maxZoneY = TouchpadAbsMouseSettings.DEFAULT_MAXZONE_Y;
+                            TouchPadAbsMouse[device].MaxZoneY = TouchPadAbsMouseSettings.DEFAULT_MAXZONE_Y;
                             missingSetting = true;
                         }
 
@@ -4732,11 +4732,11 @@ namespace DS4Windows
                         {
                             Item = touchpadAbsMouseElement.SelectSingleNode("SnapToCenter");
                             bool.TryParse(Item.InnerText, out var temp);
-                            TouchPadAbsMouse[device].snapToCenter = temp;
+                            TouchPadAbsMouse[device].SnapToCenter = temp;
                         }
                         catch
                         {
-                            TouchPadAbsMouse[device].snapToCenter = TouchpadAbsMouseSettings.DEFAULT_SNAP_CENTER;
+                            TouchPadAbsMouse[device].SnapToCenter = TouchPadAbsMouseSettings.DEFAULT_SNAP_CENTER;
                             missingSetting = true;
                         }
                     }

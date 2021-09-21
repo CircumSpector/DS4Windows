@@ -675,37 +675,37 @@ namespace DS4Windows
     }
 
 
-    public class TouchpadRelMouseSettings
+    public class TouchPadRelMouseSettings
     {
         public const double DEFAULT_ANG_DEGREE = 0.0;
         public const double DEFAULT_ANG_RAD = DEFAULT_ANG_DEGREE * Math.PI / 180.0;
         public const double DEFAULT_MIN_THRESHOLD = 1.0;
 
-        public double rotation = DEFAULT_ANG_RAD;
-        public double minThreshold = DEFAULT_MIN_THRESHOLD;
+        public double Rotation { get; set; } = DEFAULT_ANG_RAD;
+        public double MinThreshold { get; set; } = DEFAULT_MIN_THRESHOLD;
 
         public void Reset()
         {
-            rotation = DEFAULT_ANG_RAD;
-            minThreshold = DEFAULT_MIN_THRESHOLD;
+            Rotation = DEFAULT_ANG_RAD;
+            MinThreshold = DEFAULT_MIN_THRESHOLD;
         }
     }
 
-    public class TouchpadAbsMouseSettings
+    public class TouchPadAbsMouseSettings
     {
         public const int DEFAULT_MAXZONE_X = 90;
         public const int DEFAULT_MAXZONE_Y = 90;
         public const bool DEFAULT_SNAP_CENTER = false;
 
-        public int maxZoneX = DEFAULT_MAXZONE_X;
-        public int maxZoneY = DEFAULT_MAXZONE_Y;
-        public bool snapToCenter = DEFAULT_SNAP_CENTER;
+        public int MaxZoneX { get; set; } = DEFAULT_MAXZONE_X;
+        public int MaxZoneY { get; set; } = DEFAULT_MAXZONE_Y;
+        public bool SnapToCenter { get; set; } = DEFAULT_SNAP_CENTER;
 
         public void Reset()
         {
-            maxZoneX = DEFAULT_MAXZONE_X;
-            maxZoneY = DEFAULT_MAXZONE_Y;
-            snapToCenter = DEFAULT_SNAP_CENTER;
+            MaxZoneX = DEFAULT_MAXZONE_X;
+            MaxZoneY = DEFAULT_MAXZONE_Y;
+            SnapToCenter = DEFAULT_SNAP_CENTER;
         }
     }
 

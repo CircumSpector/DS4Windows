@@ -299,12 +299,12 @@ namespace DS4Windows
                 currentY = arg.touches[0].hwY;
             }
 
-            TouchpadAbsMouseSettings absSettings = Global.Instance.Config.TouchPadAbsMouse[deviceNumber];
+            TouchPadAbsMouseSettings absSettings = Global.Instance.Config.TouchPadAbsMouse[deviceNumber];
 
-            int minX = (int)(DS4Touchpad.RES_HALFED_X - (absSettings.maxZoneX * 0.01 * DS4Touchpad.RES_HALFED_X));
-            int minY = (int)(DS4Touchpad.RES_HALFED_Y - (absSettings.maxZoneY * 0.01 * DS4Touchpad.RES_HALFED_Y));
-            int maxX = (int)(DS4Touchpad.RES_HALFED_X + (absSettings.maxZoneX * 0.01 * DS4Touchpad.RES_HALFED_X));
-            int maxY = (int)(DS4Touchpad.RES_HALFED_Y + (absSettings.maxZoneY * 0.01 * DS4Touchpad.RES_HALFED_Y));
+            int minX = (int)(DS4Touchpad.RES_HALFED_X - (absSettings.MaxZoneX * 0.01 * DS4Touchpad.RES_HALFED_X));
+            int minY = (int)(DS4Touchpad.RES_HALFED_Y - (absSettings.MaxZoneY * 0.01 * DS4Touchpad.RES_HALFED_Y));
+            int maxX = (int)(DS4Touchpad.RES_HALFED_X + (absSettings.MaxZoneX * 0.01 * DS4Touchpad.RES_HALFED_X));
+            int maxY = (int)(DS4Touchpad.RES_HALFED_Y + (absSettings.MaxZoneY * 0.01 * DS4Touchpad.RES_HALFED_Y));
 
             double mX = (DS4Touchpad.RESOLUTION_X_MAX - 0) / (double)(maxX - minX);
             double bX = minX * mX;
@@ -328,11 +328,11 @@ namespace DS4Windows
 
         public void TouchMoveCursor(int dx, int dy, bool disableInvert = false)
         {
-            TouchpadRelMouseSettings relMouseSettings = Global.Instance.Config.TouchPadRelMouse[deviceNumber];
-            if (relMouseSettings.rotation != 0.0)
+            TouchPadRelMouseSettings relMouseSettings = Global.Instance.Config.TouchPadRelMouse[deviceNumber];
+            if (relMouseSettings.Rotation != 0.0)
             {
                 //double rotation = 5.0 * Math.PI / 180.0;
-                double rotation = relMouseSettings.rotation;
+                double rotation = relMouseSettings.Rotation;
                 double sinAngle = Math.Sin(rotation), cosAngle = Math.Cos(rotation);
                 int tempX = dx, tempY = dy;
                 dx = (int)Global.Clamp(-DS4Touchpad.RESOLUTION_X_MAX, tempX * cosAngle - tempY * sinAngle, DS4Touchpad.RESOLUTION_X_MAX);
@@ -391,7 +391,7 @@ namespace DS4Windows
             int xAction = (int)xMotion;
             int yAction = (int)yMotion;
 
-            if (relMouseSettings.minThreshold == 1.0)
+            if (relMouseSettings.MinThreshold == 1.0)
             {
                 horizontalRemainder = xMotion - xAction;
                 verticalRemainder = yMotion - yAction;
@@ -400,7 +400,7 @@ namespace DS4Windows
             {
                 //Console.WriteLine("{0} {1}", horizontalRemainder, xAction, distSqu);
 
-                if (distSqu >= (relMouseSettings.minThreshold * relMouseSettings.minThreshold))
+                if (distSqu >= (relMouseSettings.MinThreshold * relMouseSettings.MinThreshold))
                 {
                     horizontalRemainder = xMotion - xAction;
                     verticalRemainder = yMotion - yAction;

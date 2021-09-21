@@ -165,9 +165,9 @@ namespace DS4Windows
 
         IList<double> TrackballFriction { get; set; }
 
-        IList<TouchpadAbsMouseSettings> TouchPadAbsMouse { get; set; }
+        IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; }
 
-        IList<TouchpadRelMouseSettings> TouchPadRelMouse { get; set; }
+        IList<TouchPadRelMouseSettings> TouchPadRelMouse { get; set; }
 
         IList<byte> TapSensitivity { get; set; }
 
