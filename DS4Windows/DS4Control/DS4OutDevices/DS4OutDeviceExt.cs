@@ -1,17 +1,13 @@
-﻿using Nefarius.ViGEm.Client;
+﻿using DS4Windows.VJoyFeeder;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DS4Windows
 {
-    class DS4OutDeviceExt : DS4OutDevice
+    internal class DS4OutDeviceExt : DS4OutDevice
     {
-        private byte[] rawOutReportEx = new byte[63];
         private DS4_REPORT_EX outDS4Report;
+        private readonly byte[] rawOutReportEx = new byte[63];
 
         public DS4OutDeviceExt(ViGEmClient client) : base(client)
         {
@@ -22,7 +18,7 @@ namespace DS4Windows
             if (!connected) return;
 
             ushort tempButtons = 0;
-            DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
+            var tempDPad = DualShock4DPadDirection.None;
             ushort tempSpecial = 0;
 
             unchecked
@@ -70,7 +66,7 @@ namespace DS4Windows
             outDS4Report.bTriggerL = state.L2;
             outDS4Report.bTriggerR = state.R2;
 
-            SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Global.Instance.Config.GetSASteeringWheelEmulationAxis(device);
+            var steeringWheelMappedAxis = Global.Instance.Config.GetSASteeringWheelEmulationAxis(device);
             switch (steeringWheelMappedAxis)
             {
                 case SASteeringWheelEmulationAxisType.None:
@@ -110,23 +106,30 @@ namespace DS4Windows
 
                 case SASteeringWheelEmulationAxisType.L2R2:
                     outDS4Report.bTriggerL = outDS4Report.bTriggerR = 0;
-                    if (state.SASteeringWheelEmulationUnit >= 0) outDS4Report.bTriggerL = (Byte)state.SASteeringWheelEmulationUnit;
-                    else outDS4Report.bTriggerR = (Byte)state.SASteeringWheelEmulationUnit;
+                    if (state.SASteeringWheelEmulationUnit >= 0)
+                        outDS4Report.bTriggerL = (byte)state.SASteeringWheelEmulationUnit;
+                    else outDS4Report.bTriggerR = (byte)state.SASteeringWheelEmulationUnit;
                     goto case SASteeringWheelEmulationAxisType.None;
 
                 case SASteeringWheelEmulationAxisType.VJoy1X:
                 case SASteeringWheelEmulationAxisType.VJoy2X:
-                    DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit, ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) + 1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_X);
+                    vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                        ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                        HID_USAGES.HID_USAGE_X);
                     goto case SASteeringWheelEmulationAxisType.None;
 
                 case SASteeringWheelEmulationAxisType.VJoy1Y:
                 case SASteeringWheelEmulationAxisType.VJoy2Y:
-                    DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit, ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) + 1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_Y);
+                    vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                        ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                        HID_USAGES.HID_USAGE_Y);
                     goto case SASteeringWheelEmulationAxisType.None;
 
                 case SASteeringWheelEmulationAxisType.VJoy1Z:
                 case SASteeringWheelEmulationAxisType.VJoy2Z:
-                    DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit, ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) + 1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_Z);
+                    vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                        ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                        HID_USAGES.HID_USAGE_Z);
                     goto case SASteeringWheelEmulationAxisType.None;
 
                 default:
@@ -139,12 +142,14 @@ namespace DS4Windows
             outDS4Report.sCurrentTouch.bPacketCounter = state.TouchPacketCounter;
             outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = state.TrackPadTouch0.RawTrackingNum;
             outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(state.TrackPadTouch0.X & 0xFF);
-            outDS4Report.sCurrentTouch.bTouchData1[1] = (byte)((state.TrackPadTouch0.X >> 8) & 0x0F | (state.TrackPadTouch0.Y << 4) & 0xF0);
+            outDS4Report.sCurrentTouch.bTouchData1[1] =
+                (byte)(((state.TrackPadTouch0.X >> 8) & 0x0F) | ((state.TrackPadTouch0.Y << 4) & 0xF0));
             outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(state.TrackPadTouch0.Y >> 4);
 
             outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = state.TrackPadTouch1.RawTrackingNum;
             outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(state.TrackPadTouch1.X & 0xFF);
-            outDS4Report.sCurrentTouch.bTouchData2[1] = (byte)((state.TrackPadTouch1.X >> 8) & 0x0F | (state.TrackPadTouch1.Y << 4) & 0xF0);
+            outDS4Report.sCurrentTouch.bTouchData2[1] =
+                (byte)(((state.TrackPadTouch1.X >> 8) & 0x0F) | ((state.TrackPadTouch1.Y << 4) & 0xF0));
             outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(state.TrackPadTouch1.Y >> 4);
 
             // Flip some coordinates back to DS4 device coordinate system
@@ -170,7 +175,7 @@ namespace DS4Windows
 
         public override void ResetState(bool submit = true)
         {
-            outDS4Report = default(DS4_REPORT_EX);
+            outDS4Report = default;
             outDS4Report.wButtons &= unchecked((ushort)~0X0F);
             outDS4Report.wButtons |= 0x08;
             outDS4Report.bThumbLX = 0x80;
@@ -179,10 +184,7 @@ namespace DS4Windows
             outDS4Report.bThumbRY = 0x80;
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 
-            if (submit)
-            {
-                cont.SubmitRawReport(rawOutReportEx);
-            }
+            if (submit) cont.SubmitRawReport(rawOutReportEx);
         }
     }
 }
