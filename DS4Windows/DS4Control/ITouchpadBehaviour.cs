@@ -4,12 +4,12 @@ namespace DS4Windows
 {
     interface ITouchpadBehaviour
     {
-        void touchesBegan(DS4Touchpad sender, TouchpadEventArgs arg);
-        void touchesMoved(DS4Touchpad sender, TouchpadEventArgs arg);
+        void TouchesBegan(DS4Touchpad sender, TouchpadEventArgs arg);
+        void TouchesMoved(DS4Touchpad sender, TouchpadEventArgs arg);
         void touchButtonUp(DS4Touchpad sender, TouchpadEventArgs arg);
         void touchButtonDown(DS4Touchpad sender, TouchpadEventArgs arg);
-        void touchesEnded(DS4Touchpad sender, TouchpadEventArgs arg);
-        void sixaxisMoved(DS4SixAxis sender, SixAxisEventArgs unused);
-        void touchUnchanged(DS4Touchpad sender, EventArgs unused);
+        void TouchesEnded(DS4Touchpad sender, TouchpadEventArgs arg);
+        void SixAxisMoved(DS4SixAxis sender, SixAxisEventArgs unused);
+        void TouchUnchanged(DS4Touchpad sender, EventArgs unused);
     }
 }

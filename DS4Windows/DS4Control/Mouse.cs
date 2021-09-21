@@ -1,4 +1,6 @@
 ﻿using System;
+using OpenTracing.Util;
+
 //using System.Diagnostics;
 
 namespace DS4Windows
@@ -136,8 +138,10 @@ namespace DS4Windows
         bool currentToggleGyroM = false;
         bool currentToggleGyroStick = false;
 
-        public virtual void sixaxisMoved(DS4SixAxis sender, SixAxisEventArgs arg)
+        public virtual void SixAxisMoved(DS4SixAxis sender, SixAxisEventArgs arg)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixAxisMoved)).StartActive(true);
+
             GyroOutMode outMode = Global.Instance.Config.GetGyroOutMode(deviceNum);
             if (outMode == GyroOutMode.Controls)
             {
@@ -240,9 +244,9 @@ namespace DS4Windows
                 }
 
                 if (useReverseRatchet && triggeractivated)
-                    cursor.sixaxisMoved(arg);
+                    cursor.SixAxisMoved(arg);
                 else if (!useReverseRatchet && !triggeractivated)
-                    cursor.sixaxisMoved(arg);
+                    cursor.SixAxisMoved(arg);
                 else
                     cursor.mouseRemainderReset(arg);
 
@@ -370,6 +374,8 @@ namespace DS4Windows
 
         private void SixMouseReset(SixAxisEventArgs args)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixMouseReset)).StartActive(true);
+
             int iIndex = smoothBufferTail % SMOOTH_BUFFER_LEN;
             xSmoothBuffer[iIndex] = 0;
             ySmoothBuffer[iIndex] = 0;
@@ -386,6 +392,8 @@ namespace DS4Windows
 
         private void SixMouseStick(SixAxisEventArgs arg)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixMouseStick)).StartActive(true);
+
             int deltaX = 0, deltaY = 0;
             deltaX = Global.Instance.Config.GetGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
                 arg.sixAxis.gyroRollFull;
@@ -546,6 +554,8 @@ namespace DS4Windows
 
         private void SixDirectionalSwipe(SixAxisEventArgs arg, GyroDirectionalSwipeInfo swipeInfo)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixDirectionalSwipe)).StartActive(true);
+
             double velX = swipeInfo.xAxis == GyroDirectionalSwipeInfo.XAxisSwipe.Yaw ?
                 arg.sixAxis.angVelYaw : arg.sixAxis.angVelRoll;
             double velY = arg.sixAxis.angVelPitch;
@@ -662,8 +672,10 @@ namespace DS4Windows
         }
 
         private bool tempBool = false;
-        public virtual void touchesMoved(DS4Touchpad sender, TouchpadEventArgs arg)
+        public virtual void TouchesMoved(DS4Touchpad sender, TouchpadEventArgs arg)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesMoved)).StartActive(true);
+
             s = dev.GetCurrentStateReference();
 
             TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
@@ -690,7 +702,7 @@ namespace DS4Windows
                             trackballBufferHead = (trackballBufferHead + 1) % TRACKBALL_BUFFER_LEN;
                     }
 
-                    cursor.touchesMoved(arg, dragging || dragging2, tempBool);
+                    cursor.TouchesMoved(arg, dragging || dragging2, tempBool);
                     wheel.touchesMoved(arg, dragging || dragging2);
                 }
                 else
@@ -738,11 +750,13 @@ namespace DS4Windows
                     slideleft = true;
             }
 
-            synthesizeMouseButtons();
+            SynthesizeMouseButtons();
         }
 
-        public virtual void touchesBegan(DS4Touchpad sender, TouchpadEventArgs arg)
+        public virtual void TouchesBegan(DS4Touchpad sender, TouchpadEventArgs arg)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesBegan)).StartActive(true);
+
             TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             bool mouseMode = tempMode == TouchpadOutMode.Mouse;
             if (mouseMode)
@@ -773,11 +787,13 @@ namespace DS4Windows
             }
 
             s = dev.GetCurrentStateReference();
-            synthesizeMouseButtons();
+            SynthesizeMouseButtons();
         }
 
-        public virtual void touchesEnded(DS4Touchpad sender, TouchpadEventArgs arg)
+        public virtual void TouchesEnded(DS4Touchpad sender, TouchpadEventArgs arg)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesEnded)).StartActive(true);
+
             s = dev.GetCurrentStateReference();
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
@@ -904,7 +920,7 @@ namespace DS4Windows
                 }
             }
 
-            synthesizeMouseButtons();
+            SynthesizeMouseButtons();
         }
 
         private bool isLeft(Touch t)
@@ -917,8 +933,10 @@ namespace DS4Windows
             return t.hwX >= 1920 * 2 / 5;
         }
 
-        public virtual void touchUnchanged(DS4Touchpad sender, EventArgs unused)
+        public virtual void TouchUnchanged(DS4Touchpad sender, EventArgs unused)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchUnchanged)).StartActive(true);
+
             s = dev.GetCurrentStateReference();
 
             if (trackballActive)
@@ -983,13 +1001,15 @@ namespace DS4Windows
             }
 
             if (s.Touch1Finger || s.TouchButton)
-                synthesizeMouseButtons();
+                SynthesizeMouseButtons();
         }
 
         public bool dragging, dragging2;
 
-        private void synthesizeMouseButtons()
+        private void SynthesizeMouseButtons()
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SynthesizeMouseButtons)).StartActive(true);
+
             TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             if (tempMode != TouchpadOutMode.Passthru)
             {
@@ -1065,7 +1085,7 @@ namespace DS4Windows
             upperDown = leftDown = rightDown = multiDown = false;
             s = dev.GetCurrentStateReference();
             if (s.Touch1 || s.Touch2)
-                synthesizeMouseButtons();
+                SynthesizeMouseButtons();
         }
 
         public virtual void touchButtonDown(DS4Touchpad sender, TouchpadEventArgs arg)
@@ -1086,7 +1106,7 @@ namespace DS4Windows
             }
 
             s = dev.GetCurrentStateReference();
-            synthesizeMouseButtons();
+            SynthesizeMouseButtons();
         }
 
         public void populatePriorButtonStates()

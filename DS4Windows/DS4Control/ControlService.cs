@@ -1975,13 +1975,13 @@ namespace DS4Windows
             //ITouchpadBehaviour tPad = touchPad[ind];
             device.Touchpad.TouchButtonDown += tPad.touchButtonDown;
             device.Touchpad.TouchButtonUp += tPad.touchButtonUp;
-            device.Touchpad.TouchesBegan += tPad.touchesBegan;
-            device.Touchpad.TouchesMoved += tPad.touchesMoved;
-            device.Touchpad.TouchesEnded += tPad.touchesEnded;
-            device.Touchpad.TouchUnchanged += tPad.touchUnchanged;
+            device.Touchpad.TouchesBegan += tPad.TouchesBegan;
+            device.Touchpad.TouchesMoved += tPad.TouchesMoved;
+            device.Touchpad.TouchesEnded += tPad.TouchesEnded;
+            device.Touchpad.TouchUnchanged += tPad.TouchUnchanged;
             //device.Touchpad.PreTouchProcess += delegate { touchPad[ind].populatePriorButtonStates(); };
             device.Touchpad.PreTouchProcess += (sender, args) => { touchPad[ind].populatePriorButtonStates(); };
-            device.SixAxis.SixAccelMoved += tPad.sixaxisMoved;
+            device.SixAxis.SixAccelMoved += tPad.SixAxisMoved;
             //LogDebug("Touchpad mode for " + device.MacAddress + " is now " + tmode.ToString());
             //Log.LogToTray("Touchpad mode for " + device.MacAddress + " is now " + tmode.ToString());
         }

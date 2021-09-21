@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -61,8 +62,10 @@ namespace DS4Windows
         double tempDouble = 0.0;
         //bool tempBool = false;
 
-        public virtual void sixaxisMoved(SixAxisEventArgs arg)
+        public virtual void SixAxisMoved(SixAxisEventArgs arg)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixAxisMoved)).StartActive(true);
+
             int deltaX = 0, deltaY = 0;
             deltaX = Global.Instance.Config.GetGyroMouseHorizontalAxis(deviceNumber) == 0 ? arg.sixAxis.gyroYawFull :
                 arg.sixAxis.gyroRollFull;
@@ -250,8 +253,10 @@ namespace DS4Windows
         }
 
         private byte lastTouchID;
-        public void touchesMoved(TouchpadEventArgs arg, bool dragging, bool disableInvert = false)
+        public void TouchesMoved(TouchpadEventArgs arg, bool dragging, bool disableInvert = false)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesMoved)).StartActive(true);
+
             int touchesLen = arg.touches.Length;
             if ((!dragging && touchesLen != 1) || (dragging && touchesLen < 1))
                 return;
@@ -283,6 +288,8 @@ namespace DS4Windows
 
         public void TouchesMovedAbsolute(TouchpadEventArgs arg)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesMovedAbsolute)).StartActive(true);
+
             int touchesLen = arg.touches.Length;
             if (touchesLen != 1)
                 return;
@@ -328,6 +335,8 @@ namespace DS4Windows
 
         public void TouchMoveCursor(int dx, int dy, bool disableInvert = false)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchMoveCursor)).StartActive(true);
+
             TouchPadRelMouseSettings relMouseSettings = Global.Instance.Config.TouchPadRelMouse[deviceNumber];
             if (relMouseSettings.Rotation != 0.0)
             {
