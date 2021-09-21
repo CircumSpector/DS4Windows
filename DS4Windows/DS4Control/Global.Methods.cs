@@ -283,35 +283,5 @@ namespace DS4Windows
             UseTempProfiles[device] = false;
             TempProfileDistance[device] = false;
         }
-
-        public bool SaveControllerConfigs(DS4Device device = null)
-        {
-            if (device != null)
-                return _config.SaveControllerConfigsForDevice(device);
-
-            for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
-                if (Program.rootHub.DS4Controllers[idx] != null)
-                    _config.SaveControllerConfigsForDevice(Program.rootHub.DS4Controllers[idx]);
-
-            return true;
-        }
-
-        public bool LoadControllerConfigs(DS4Device device = null)
-        {
-            if (device != null)
-                return _config.LoadControllerConfigsForDevice(device);
-
-            for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
-                if (Program.rootHub.DS4Controllers[idx] != null)
-                    _config.LoadControllerConfigsForDevice(Program.rootHub.DS4Controllers[idx]);
-
-            return true;
-        }
-
-        public void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
-        {
-            _config.ds4controlSettings[deviceNum].ResetExtraButtons();
-            if (devButtons != null) _config.ds4controlSettings[deviceNum].EstablishExtraButtons(devButtons);
-        }
     }
 }

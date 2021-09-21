@@ -255,6 +255,12 @@ namespace DS4Windows
 
         bool IsUdpServerEnabled { get; set; }
 
+        void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons);
+
+        bool LoadControllerConfigs(DS4Device device = null);
+
+        bool SaveControllerConfigs(DS4Device device = null);
+
         DS4Color GetMainColor(int index);
 
         DS4Color GetLowColor(int index);
@@ -350,7 +356,7 @@ namespace DS4Windows
         bool GetTouchPadJitterCompensation(int index);
 
         int GetTouchPadInvert(int index);
-            TriggerDeadZoneZInfo GetL2ModInfo(int index);
+        TriggerDeadZoneZInfo GetL2ModInfo(int index);
 
         TriggerDeadZoneZInfo GetR2ModInfo(int index);
 
@@ -365,17 +371,17 @@ namespace DS4Windows
         StickDeadZoneInfo GetLSDeadInfo(int index);
 
         StickDeadZoneInfo GetRSDeadInfo(int index);
-        
+
         double GetSXAntiDeadZone(int index);
-        
+
         double GetSZAntiDeadZone(int index);
 
         double GetSXMaxZone(int index);
 
         double GetSZMaxZone(int index);
-        
+
         double GetLSRotation(int index);
-        
+
         double GetRSRotation(int index);
 
         double GetL2Sens(int index);
@@ -417,27 +423,27 @@ namespace DS4Windows
         SpecialAction GetAction(string name);
 
         int GetActionIndexOf(string name);
-        
+
         void SetSaTriggerCond(int index, string text);
-        
+
         void SetSaMouseStickTriggerCond(int index, string text);
-        
+
         void SetGyroMouseDZ(int index, int value, ControlService control);
-        
+
         void SetGyroControlsToggle(int index, bool value, ControlService control);
-        
+
         void SetGyroMouseToggle(int index, bool value, ControlService control);
-        
+
         void SetGyroMouseStickToggle(int index, bool value, ControlService control);
-        
+
         bool SaveAsNewProfile(int device, string proName);
-        
+
         bool SaveProfile(int device, string proName);
-        
+
         DS4Controls GetDs4ControlsByName(string key);
-        
+
         X360Controls GetX360ControlsByName(string key);
-        
+
         string GetX360ControlString(X360Controls key);
 
         bool LoadProfile(int device, bool launchprogram, ControlService control,
@@ -448,46 +454,46 @@ namespace DS4Windows
         bool Save();
 
         bool SaveAction(string name, string controls, int mode, string details, bool edit, string extras = "");
-        
+
         void RemoveAction(string name);
-        
+
         bool LoadActions();
-        
+
         bool CreateLinkedProfiles();
-        
+
         bool LoadLinkedProfiles();
-        
+
         bool SaveLinkedProfiles();
-        
+
         bool CreateControllerConfigs();
-        
+
         bool LoadControllerConfigsForDevice(DS4Device device);
-        
+
         bool SaveControllerConfigsForDevice(DS4Device device);
 
         void UpdateDs4ControllerSetting(int deviceNum, string buttonName, bool shift, object action, string exts,
             DS4KeyType kt, int trigger = 0);
 
         void UpdateDs4ControllerExtra(int deviceNum, string buttonName, bool shift, string exts);
-        
+
         ControlActionData GetDs4Action(int deviceNum, string buttonName, bool shift);
-        
+
         ControlActionData GetDs4Action(int deviceNum, DS4Controls dc, bool shift);
-        
+
         string GetDs4Extra(int deviceNum, string buttonName, bool shift);
-        
+
         DS4KeyType GetDs4KeyType(int deviceNum, string buttonName, bool shift);
-        
+
         int GetDs4STrigger(int deviceNum, string buttonName);
-        
+
         int GetDs4STrigger(int deviceNum, DS4Controls dc);
-        
+
         DS4ControlSettings GetDs4ControllerSetting(int deviceNum, string buttonName);
-        
+
         DS4ControlSettings GetDs4ControllerSetting(int deviceNum, DS4Controls dc);
-        
+
         bool HasCustomActions(int deviceNum);
-        
+
         bool HasCustomExtras(int deviceNum);
 
         void LoadBlankDs4Profile(int device, bool launchprogram, ControlService control,

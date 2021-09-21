@@ -5402,7 +5402,7 @@ namespace DS4Windows
 
                 // If any of the calibration points (center, left 90deg, right 90deg) are missing then reset back to default calibration values
                 if (((controller.wheelCalibratedAxisBitmask & DS4Device.WheelCalibrationPoint.All) == DS4Device.WheelCalibrationPoint.All))
-                    Global.Instance.SaveControllerConfigs(controller);
+                    Global.Instance.Config.SaveControllerConfigs(controller);
                 else
                     controller.wheelCenterPoint.X = controller.wheelCenterPoint.Y = 0;
 
@@ -5576,7 +5576,7 @@ namespace DS4Windows
                 if (controller.wheelCenterPoint.IsEmpty)
                 {
                     // Run if no controller config exists or if an empty wheelCenterPoint is still being used
-                    if (!Global.Instance.LoadControllerConfigs(controller) || controller.wheelCenterPoint.IsEmpty)
+                    if (!Global.Instance.Config.LoadControllerConfigs(controller) || controller.wheelCenterPoint.IsEmpty)
                     {
                         AppLogger.LogToGui($"Controller {1 + device} sixaxis steering wheel calibration data missing. It is recommended to run steering wheel calibration process by pressing SASteeringWheelEmulationCalibration special action key. Using estimated values until the controller is calibrated at least once.", false);
 
@@ -5599,7 +5599,6 @@ namespace DS4Windows
                     AppLogger.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.Config.GetSASteeringWheelEmulationRange(device)}", false);
                     controller.wheelPrevRecalibrateTime = DateTime.Now;
                 }
-
 
                 int maxRangeRight = Global.Instance.Config.GetSASteeringWheelEmulationRange(device) / 2 * C_WHEEL_ANGLE_PRECISION;
                 int maxRangeLeft = -maxRangeRight;

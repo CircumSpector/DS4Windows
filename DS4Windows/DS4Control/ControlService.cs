@@ -1247,8 +1247,8 @@ namespace DS4Windows
                         DS4Controllers[i] = device;
                         device.DeviceSlotNumber = i;
 
-                        Global.Instance.RefreshExtrasButtons(i, GetKnownExtraButtons(device));
-                        Global.Instance.LoadControllerConfigs(device);
+                        Global.Instance.Config.RefreshExtrasButtons(i, GetKnownExtraButtons(device));
+                        Global.Instance.Config.LoadControllerConfigs(device);
                         device.LoadStoreSettings();
                         device.CheckControllerNumDeviceSettings(numControllers);
 
@@ -1686,8 +1686,8 @@ namespace DS4Windows
                             DS4Controllers[Index] = device;
                             device.DeviceSlotNumber = Index;
 
-                            Global.Instance.RefreshExtrasButtons(Index, GetKnownExtraButtons(device));
-                            Global.Instance.LoadControllerConfigs(device);
+                            Global.Instance.Config.RefreshExtrasButtons(Index, GetKnownExtraButtons(device));
+                            Global.Instance.Config.LoadControllerConfigs(device);
                             device.LoadStoreSettings();
                             device.CheckControllerNumDeviceSettings(numControllers);
 
