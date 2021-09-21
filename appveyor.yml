@@ -35,6 +35,8 @@ after_build:
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 test: off
+cache:
+- '%USERPROFILE%\.nuget\packages'
 artifacts:
   - path: $(APPVEYOR_PROJECT_NAME)-*.zip
     name: $(APPVEYOR_PROJECT_NAME)
