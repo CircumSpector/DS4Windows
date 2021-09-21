@@ -47,7 +47,7 @@ namespace DS4Windows
                 Node = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
                 m_Xdoc.AppendChild(Node);
 
-                Node = m_Xdoc.CreateComment(string.Format(" Profile Configuration Data. {0} ", DateTime.Now));
+                Node = m_Xdoc.CreateComment($" Profile Configuration Data. {DateTime.Now} ");
                 m_Xdoc.AppendChild(Node);
 
                 Node = m_Xdoc.CreateWhitespace("\r\n");
