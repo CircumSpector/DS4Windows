@@ -185,15 +185,15 @@ namespace DS4Windows
 
                 if (useReverseRatchet && triggeractivated)
                 {
-                    s.Motion.outputGyroControls = true;
+                    s.Motion.OutputGyroControls = true;
                 }
                 else if (!useReverseRatchet && !triggeractivated)
                 {
-                    s.Motion.outputGyroControls = true;
+                    s.Motion.OutputGyroControls = true;
                 }
                 else
                 {
-                    s.Motion.outputGyroControls = false;
+                    s.Motion.OutputGyroControls = false;
                 }
             }
             else if (outMode == GyroOutMode.Mouse && Global.Instance.Config.GetGyroSensitivity(deviceNum) > 0)
@@ -378,7 +378,7 @@ namespace DS4Windows
             GyroMouseStickInfo msinfo = Global.Instance.Config.GetGyroMouseStickInfo(deviceNum);
             if (msinfo.Smoothing == GyroMouseStickInfo.SmoothingMethod.OneEuro)
             {
-                double currentRate = 1.0 / args.sixAxis.elapsed;
+                double currentRate = 1.0 / args.sixAxis.Elapsed;
                 filterPair.Axis1Filter.Filter(0.0, currentRate);
                 filterPair.Axis2Filter.Filter(0.0, currentRate);
             }
@@ -387,16 +387,16 @@ namespace DS4Windows
         private void SixMouseStick(SixAxisEventArgs arg)
         {
             int deltaX = 0, deltaY = 0;
-            deltaX = Global.Instance.Config.GetGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
-                arg.sixAxis.gyroRollFull;
-            deltaY = -arg.sixAxis.gyroPitchFull;
+            deltaX = Global.Instance.Config.GetGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.GyroYawFull :
+                arg.sixAxis.GyroRollFull;
+            deltaY = -arg.sixAxis.GyroPitchFull;
             //int inputX = deltaX, inputY = deltaY;
             int maxDirX = deltaX >= 0 ? 127 : -128;
             int maxDirY = deltaY >= 0 ? 127 : -128;
 
             GyroMouseStickInfo msinfo = Global.Instance.Config.GetGyroMouseStickInfo(deviceNum);
 
-            double tempDouble = arg.sixAxis.elapsed * 250.0; // Base default speed on 4 ms
+            double tempDouble = arg.sixAxis.Elapsed * 250.0; // Base default speed on 4 ms
             double tempAngle = Math.Atan2(-deltaY, deltaX);
             double normX = Math.Abs(Math.Cos(tempAngle));
             double normY = Math.Abs(Math.Sin(tempAngle));
@@ -443,7 +443,7 @@ namespace DS4Windows
             {
                 if (msinfo.Smoothing == GyroMouseStickInfo.SmoothingMethod.OneEuro)
                 {
-                    double currentRate = 1.0 / arg.sixAxis.elapsed;
+                    double currentRate = 1.0 / arg.sixAxis.Elapsed;
                     deltaX = (int)(filterPair.Axis1Filter.Filter(deltaX, currentRate));
                     deltaY = (int)(filterPair.Axis2Filter.Filter(deltaY, currentRate));
                 }
@@ -547,8 +547,8 @@ namespace DS4Windows
         private void SixDirectionalSwipe(SixAxisEventArgs arg, GyroDirectionalSwipeInfo swipeInfo)
         {
             double velX = swipeInfo.xAxis == GyroDirectionalSwipeInfo.XAxisSwipe.Yaw ?
-                arg.sixAxis.angVelYaw : arg.sixAxis.angVelRoll;
-            double velY = arg.sixAxis.angVelPitch;
+                arg.sixAxis.AngVelYaw : arg.sixAxis.AngVelRoll;
+            double velY = arg.sixAxis.AngVelPitch;
             int delayTime = swipeInfo.delayTime;
 
             int deadzoneX = (int)Math.Abs(swipeInfo.deadzoneX);

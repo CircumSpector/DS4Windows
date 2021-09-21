@@ -267,8 +267,8 @@ namespace DS4WinWPF.DS4Forms
                     y = exposeState.getAccelZ() + 127;
                     Canvas.SetLeft(sixAxisValRec, x / 255.0 * CANVAS_WIDTH - 3);
                     Canvas.SetTop(sixAxisValRec, y / 255.0 * CANVAS_WIDTH - 3);
-                    Canvas.SetLeft(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.outputAccelX + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
-                    Canvas.SetTop(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.outputAccelZ + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
+                    Canvas.SetLeft(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.OutputAccelX + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
+                    Canvas.SetTop(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.OutputAccelZ + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
 
                     l2Slider.Value = baseState.L2;
                     l2ValLbTrans.Y = Math.Min(interState.L2, Math.Max(0, 255)) / 255.0 * -70.0 + TRIG_LB_TRANSFORM_OFFSETY;
@@ -300,9 +300,9 @@ namespace DS4WinWPF.DS4Forms
                         r2ValLbBrush.Color = Colors.Black;
                     }
 
-                    gyroYawSlider.Value = baseState.Motion.gyroYawFull;
-                    gyroPitchSlider.Value = baseState.Motion.gyroPitchFull;
-                    gyroRollSlider.Value = baseState.Motion.gyroRollFull;
+                    gyroYawSlider.Value = baseState.Motion.GyroYawFull;
+                    gyroPitchSlider.Value = baseState.Motion.GyroPitchFull;
+                    gyroRollSlider.Value = baseState.Motion.GyroRollFull;
 
                     accelXSlider.Value = exposeState.getAccelX();
                     accelYSlider.Value = exposeState.getAccelY();
@@ -363,9 +363,9 @@ namespace DS4WinWPF.DS4Forms
             ryOutValLb.Content = mapState.RY;
 
             sixAxisXInValLb.Content = exposeState.AccelX;
-            sixAxisXOutValLb.Content = mapState.Motion.outputAccelX;
+            sixAxisXOutValLb.Content = mapState.Motion.OutputAccelX;
             sixAxisZInValLb.Content = exposeState.AccelZ;
-            sixAxisZOutValLb.Content = mapState.Motion.outputAccelZ;
+            sixAxisZOutValLb.Content = mapState.Motion.OutputAccelZ;
 
             l2InValLb.Content = inState.L2;
             l2OutValLb.Content = mapState.L2;

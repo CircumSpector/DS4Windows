@@ -48,58 +48,58 @@ namespace DS4Windows
             get => _state.Motion;
         }
 
-        public int GyroYaw { get { return _state.Motion.gyroYaw; } }
+        public int GyroYaw { get { return _state.Motion.GyroYaw; } }
         public int getGyroYaw()
         {
-            return _state.Motion.gyroYaw;
+            return _state.Motion.GyroYaw;
         }
 
-        public int GyroPitch { get { return _state.Motion.gyroPitch; } }
+        public int GyroPitch { get { return _state.Motion.GyroPitch; } }
         public int getGyroPitch()
         {
-            return _state.Motion.gyroPitch;
+            return _state.Motion.GyroPitch;
         }
 
-        public int GyroRoll { get { return _state.Motion.gyroRoll; } }
+        public int GyroRoll { get { return _state.Motion.GyroRoll; } }
         public int getGyroRoll()
         {
-            return _state.Motion.gyroRoll;
+            return _state.Motion.GyroRoll;
         }
 
-        public int AccelX { get { return _state.Motion.accelX; } }
+        public int AccelX { get { return _state.Motion.AccelX; } }
         public int getAccelX()
         {
-            return _state.Motion.accelX;
+            return _state.Motion.AccelX;
         }
 
-        public int AccelY { get { return _state.Motion.accelY; } }
+        public int AccelY { get { return _state.Motion.AccelY; } }
         public int getAccelY()
         {
-            return _state.Motion.accelY;
+            return _state.Motion.AccelY;
         }
 
-        public int AccelZ { get { return _state.Motion.accelZ; } }
+        public int AccelZ { get { return _state.Motion.AccelZ; } }
         public int getAccelZ()
         {
-            return _state.Motion.accelZ;
+            return _state.Motion.AccelZ;
         }
 
-        public int OutputAccelX { get { return _state.Motion.outputAccelX; } }
+        public int OutputAccelX { get { return _state.Motion.OutputAccelX; } }
         public int getOutputAccelX()
         {
-            return _state.Motion.outputAccelX;
+            return _state.Motion.OutputAccelX;
         }
 
-        public int OutputAccelY { get { return _state.Motion.outputAccelY; } }
+        public int OutputAccelY { get { return _state.Motion.OutputAccelY; } }
         public int getOutputAccelY()
         {
-            return _state.Motion.outputAccelY;
+            return _state.Motion.OutputAccelY;
         }
 
-        public int OutputAccelZ { get { return _state.Motion.outputAccelZ; } }
+        public int OutputAccelZ { get { return _state.Motion.OutputAccelZ; } }
         public int getOutputAccelZ()
         {
-            return _state.Motion.outputAccelZ;
+            return _state.Motion.OutputAccelZ;
         }
     }
 }
