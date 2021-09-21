@@ -7,6 +7,8 @@ namespace DS4Windows
     /// </summary>
     internal static class Constants
     {
+        public const string ApplicationName = "DS4Windows";
+
         public const string ProfilesFileName = "Profiles.xml";
         
         public const string ActionsFileName = "Actions.xml";
