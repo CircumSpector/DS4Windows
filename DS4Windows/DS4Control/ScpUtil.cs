@@ -149,53 +149,33 @@ namespace DS4Windows
 
     public class ControllerRemovedArgs : EventArgs
     {
-        private int index;
+        public int Index { get; }
 
         public ControllerRemovedArgs(int index)
         {
-            this.index = index;
-        }
-
-        public int getIndex()
-        {
-            return this.index;
+            Index = index;
         }
     }
 
     public class DeviceStatusChangeEventArgs : EventArgs
     {
-        private int index;
+        private int Index { get; }
 
         public DeviceStatusChangeEventArgs(int index)
         {
-            this.index = index;
-        }
-
-        public int getIndex()
-        {
-            return index;
+            Index = index;
         }
     }
 
     public class SerialChangeArgs : EventArgs
     {
-        private int index;
-        private string serial;
+        private int Index { get; }
+        private string Serial { get; }
 
         public SerialChangeArgs(int index, string serial)
         {
-            this.index = index;
-            this.serial = serial;
-        }
-
-        public int getIndex()
-        {
-            return index;
-        }
-
-        public string getSerial()
-        {
-            return serial;
+            Index = index;
+            Serial = serial;
         }
     }
 
