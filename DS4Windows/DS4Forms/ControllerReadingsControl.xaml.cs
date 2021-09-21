@@ -233,8 +233,8 @@ namespace DS4WinWPF.DS4Forms
                 ds.ReadWaitEv.Reset();
 
                 // Make copy of current state values for UI thread
-                baseState = (DS4State)tmpbaseState.Clone();
-                interState = (DS4State)tmpinterState.Clone();
+                tmpbaseState.CopyTo(baseState);
+                tmpinterState.CopyTo(interState);
 
                 if (deviceNum != profileDeviceNum)
                     Mapping.SetCurveAndDeadzone(profileDeviceNum, baseState, interState);
@@ -267,8 +267,8 @@ namespace DS4WinWPF.DS4Forms
                     y = exposeState.getAccelZ() + 127;
                     Canvas.SetLeft(sixAxisValRec, x / 255.0 * CANVAS_WIDTH - 3);
                     Canvas.SetTop(sixAxisValRec, y / 255.0 * CANVAS_WIDTH - 3);
-                    Canvas.SetLeft(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.OutputAccelX + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
-                    Canvas.SetTop(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.OutputAccelZ + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
+                    Canvas.SetLeft(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.outputAccelX + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
+                    Canvas.SetTop(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.outputAccelZ + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
 
                     l2Slider.Value = baseState.L2;
                     l2ValLbTrans.Y = Math.Min(interState.L2, Math.Max(0, 255)) / 255.0 * -70.0 + TRIG_LB_TRANSFORM_OFFSETY;
@@ -300,9 +300,9 @@ namespace DS4WinWPF.DS4Forms
                         r2ValLbBrush.Color = Colors.Black;
                     }
 
-                    gyroYawSlider.Value = baseState.Motion.GyroYawFull;
-                    gyroPitchSlider.Value = baseState.Motion.GyroPitchFull;
-                    gyroRollSlider.Value = baseState.Motion.GyroRollFull;
+                    gyroYawSlider.Value = baseState.Motion.gyroYawFull;
+                    gyroPitchSlider.Value = baseState.Motion.gyroPitchFull;
+                    gyroRollSlider.Value = baseState.Motion.gyroRollFull;
 
                     accelXSlider.Value = exposeState.getAccelX();
                     accelYSlider.Value = exposeState.getAccelY();
@@ -363,9 +363,9 @@ namespace DS4WinWPF.DS4Forms
             ryOutValLb.Content = mapState.RY;
 
             sixAxisXInValLb.Content = exposeState.AccelX;
-            sixAxisXOutValLb.Content = mapState.Motion.OutputAccelX;
+            sixAxisXOutValLb.Content = mapState.Motion.outputAccelX;
             sixAxisZInValLb.Content = exposeState.AccelZ;
-            sixAxisZOutValLb.Content = mapState.Motion.OutputAccelZ;
+            sixAxisZOutValLb.Content = mapState.Motion.outputAccelZ;
 
             l2InValLb.Content = inState.L2;
             l2OutValLb.Content = mapState.L2;

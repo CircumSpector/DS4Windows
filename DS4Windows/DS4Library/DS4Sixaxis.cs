@@ -16,22 +16,22 @@ namespace DS4Windows
         }
     }
 
-    public class SixAxis : ICloneable
+    public class SixAxis
     {
         public const int ACC_RES_PER_G = 8192;
         public const float F_ACC_RES_PER_G = ACC_RES_PER_G;
         public const int GYRO_RES_IN_DEG_SEC = 16;
         public const float F_GYRO_RES_IN_DEG_SEC = GYRO_RES_IN_DEG_SEC;
 
-        public int GyroYaw, GyroPitch, GyroRoll, AccelX, AccelY, AccelZ;
-        public int OutputAccelX, OutputAccelY, OutputAccelZ;
-        public bool OutputGyroControls;
-        public double AccelXg, AccelYg, AccelZg;
-        public double AngVelYaw, AngVelPitch, AngVelRoll;
-        public int GyroYawFull, GyroPitchFull, GyroRollFull;
-        public int AccelXFull, AccelYFull, AccelZFull;
-        public double Elapsed;
-        public SixAxis PreviousAxis = null;
+        public int gyroYaw, gyroPitch, gyroRoll, accelX, accelY, accelZ;
+        public int outputAccelX, outputAccelY, outputAccelZ;
+        public bool outputGyroControls;
+        public double accelXG, accelYG, accelZG;
+        public double angVelYaw, angVelPitch, angVelRoll;
+        public int gyroYawFull, gyroPitchFull, gyroRollFull;
+        public int accelXFull, accelYFull, accelZFull;
+        public double elapsed;
+        public SixAxis previousAxis = null;
 
         private double tempDouble = 0d;
 
@@ -39,50 +39,71 @@ namespace DS4Windows
             int aX, int aY, int aZ,
             double elapsedDelta, SixAxis prevAxis = null)
         {
-            Populate(X, Y, Z, aX, aY, aZ, elapsedDelta, prevAxis);
+            populate(X, Y, Z, aX, aY, aZ, elapsedDelta, prevAxis);
         }
 
-        public void Populate(int X, int Y, int Z,
+        public void copy(SixAxis src)
+        {
+            gyroYaw = src.gyroYaw;
+            gyroPitch = src.gyroPitch;
+            gyroRoll = src.gyroRoll;
+
+            gyroYawFull = src.gyroYawFull;
+            accelXFull = src.accelXFull; accelYFull = src.accelYFull; accelZFull = src.accelZFull;
+
+            angVelYaw = src.angVelYaw;
+            angVelPitch = src.angVelPitch;
+            angVelRoll = src.angVelRoll;
+
+            accelXG = src.accelXG;
+            accelYG = src.accelYG;
+            accelZG = src.accelZG;
+
+            // Put accel ranges between 0 - 128 abs
+            accelX = src.accelX;
+            accelY = src.accelY;
+            accelZ = src.accelZ;
+            outputAccelX = accelX;
+            outputAccelY = accelY;
+            outputAccelZ = accelZ;
+
+            elapsed = src.elapsed;
+            previousAxis = src.previousAxis;
+            outputGyroControls = src.outputGyroControls;
+        }
+
+        public void populate(int X, int Y, int Z,
             int aX, int aY, int aZ,
             double elapsedDelta, SixAxis prevAxis = null)
         {
-            GyroYaw = -X / 256;
-            GyroPitch = Y / 256;
-            GyroRoll = -Z / 256;
+            gyroYaw = -X / 256;
+            gyroPitch = Y / 256;
+            gyroRoll = -Z / 256;
 
-            GyroYawFull = -X; GyroPitchFull = Y; GyroRollFull = -Z;
-            AccelXFull = -aX; AccelYFull = -aY; AccelZFull = aZ;
+            gyroYawFull = -X; gyroPitchFull = Y; gyroRollFull = -Z;
+            accelXFull = -aX; accelYFull = -aY; accelZFull = aZ;
 
-            AngVelYaw = GyroYawFull / F_GYRO_RES_IN_DEG_SEC;
-            AngVelPitch = GyroPitchFull / F_GYRO_RES_IN_DEG_SEC;
-            AngVelRoll = GyroRollFull / F_GYRO_RES_IN_DEG_SEC;
+            angVelYaw = gyroYawFull / F_GYRO_RES_IN_DEG_SEC;
+            angVelPitch = gyroPitchFull / F_GYRO_RES_IN_DEG_SEC;
+            angVelRoll = gyroRollFull / F_GYRO_RES_IN_DEG_SEC;
 
-            AccelXg = tempDouble = AccelXFull / F_ACC_RES_PER_G;
-            AccelYg = tempDouble = AccelYFull / F_ACC_RES_PER_G;
-            AccelZg = tempDouble = AccelZFull / F_ACC_RES_PER_G;
+            accelXG = tempDouble = accelXFull / F_ACC_RES_PER_G;
+            accelYG = tempDouble = accelYFull / F_ACC_RES_PER_G;
+            accelZG = tempDouble = accelZFull / F_ACC_RES_PER_G;
 
             // Put accel ranges between 0 - 128 abs
-            AccelX = -aX / 64;
-            AccelY = -aY / 64;
-            AccelZ = aZ / 64;
+            accelX = -aX / 64;
+            accelY = -aY / 64;
+            accelZ = aZ / 64;
 
             // Leave blank and have mapping routine alter values as needed
-            OutputAccelX = 0;
-            OutputAccelY = 0;
-            OutputAccelZ = 0;
-            OutputGyroControls = false;
+            outputAccelX = 0;
+            outputAccelY = 0;
+            outputAccelZ = 0;
+            outputGyroControls = false;
 
-            Elapsed = elapsedDelta;
-            PreviousAxis = prevAxis;
-        }
-
-        public object Clone()
-        {
-            var sa = (SixAxis)MemberwiseClone();
-            if (PreviousAxis != null)
-                sa.PreviousAxis = (SixAxis)PreviousAxis.Clone();
-
-            return sa;
+            elapsed = elapsedDelta;
+            previousAxis = prevAxis;
         }
     }
 
@@ -308,8 +329,8 @@ namespace DS4Windows
                 {
                     if (SixAccelMoved != null)
                     {
-                        sPrev = (SixAxis)now.Clone();
-                        now.Populate(currentYaw, currentPitch, currentRoll,
+                        sPrev.copy(now);
+                        now.populate(currentYaw, currentPitch, currentRoll,
                             AccelX, AccelY, AccelZ, elapsedDelta, sPrev);
 
                         args = new SixAxisEventArgs(state.ReportTimeStamp, now);

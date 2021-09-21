@@ -431,13 +431,13 @@ namespace DS4Windows.InputDevices
                     Latency = latencySum / (double)tempLatencyCount;
 
                     utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
-                    currentState.PacketCounter = previousState.PacketCounter + 1;
+                    currentState.PacketCounter = pState.PacketCounter + 1;
                     // DS4 Frame Counter range is [0-127]
                     currentState.FrameCounter = (byte)(currentState.PacketCounter % 128);
                     currentState.ReportTimeStamp = utcNow;
 
                     currentState.elapsedTime = combLatency;
-                    currentState.totalMicroSec = previousState.totalMicroSec + (uint)(combLatency * 1000000);
+                    currentState.totalMicroSec = pState.totalMicroSec + (uint)(combLatency * 1000000);
                     combLatency = 0.0;
 
                     if ((this.featureSet & VidPidFeatureSet.NoBatteryReading) == 0)
@@ -561,24 +561,24 @@ namespace DS4Windows.InputDevices
                     sixAxis.PrepareNonDS4SixAxis(ref gyroYaw, ref gyroPitch, ref gyroRoll,
                         ref accelX, ref accelY, ref accelZ);
 
-                    tempMotion.GyroYawFull = gyroYaw; tempMotion.GyroPitchFull = -gyroPitch; tempMotion.GyroRollFull = gyroRoll;
-                    tempMotion.AccelXFull = accelX * 2; tempMotion.AccelYFull = -accelZ * 2; tempMotion.AccelZFull = -accelY * 2;
+                    tempMotion.gyroYawFull = gyroYaw; tempMotion.gyroPitchFull = -gyroPitch; tempMotion.gyroRollFull = gyroRoll;
+                    tempMotion.accelXFull = accelX * 2; tempMotion.accelYFull = -accelZ * 2; tempMotion.accelZFull = -accelY * 2;
 
-                    tempMotion.Elapsed = elapsedDeltaTime;
-                    tempMotion.PreviousAxis = previousState.Motion;
-                    tempMotion.GyroYaw = gyroYaw / 256; tempMotion.GyroPitch = -gyroPitch / 256; tempMotion.GyroRoll = gyroRoll / 256;
-                    tempMotion.AccelX = accelX / 31; tempMotion.AccelY = -accelZ / 31; tempMotion.AccelZ = -accelY / 31;
+                    tempMotion.elapsed = elapsedDeltaTime;
+                    tempMotion.previousAxis = pState.Motion;
+                    tempMotion.gyroYaw = gyroYaw / 256; tempMotion.gyroPitch = -gyroPitch / 256; tempMotion.gyroRoll = gyroRoll / 256;
+                    tempMotion.accelX = accelX / 31; tempMotion.accelY = -accelZ / 31; tempMotion.accelZ = -accelY / 31;
                     //tempMotion.outputAccelX = tempMotion.accelX; tempMotion.outputAccelY = tempMotion.accelY; tempMotion.outputAccelZ = tempMotion.accelZ;
-                    tempMotion.OutputAccelX = 0; tempMotion.OutputAccelY = 0; tempMotion.OutputAccelZ = 0;
-                    tempMotion.OutputGyroControls = false;
+                    tempMotion.outputAccelX = 0; tempMotion.outputAccelY = 0; tempMotion.outputAccelZ = 0;
+                    tempMotion.outputGyroControls = false;
                     //Console.WriteLine(gyroRoll);
-                    tempMotion.AccelXg = (accelX * 2) / DS4Windows.SixAxis.F_ACC_RES_PER_G;
-                    tempMotion.AccelYg = (-accelZ * 2) / DS4Windows.SixAxis.F_ACC_RES_PER_G;
-                    tempMotion.AccelZg = (-accelY * 2) / DS4Windows.SixAxis.F_ACC_RES_PER_G;
+                    tempMotion.accelXG = (accelX * 2) / DS4Windows.SixAxis.F_ACC_RES_PER_G;
+                    tempMotion.accelYG = (-accelZ * 2) / DS4Windows.SixAxis.F_ACC_RES_PER_G;
+                    tempMotion.accelZG = (-accelY * 2) / DS4Windows.SixAxis.F_ACC_RES_PER_G;
 
-                    tempMotion.AngVelYaw = gyroYaw * GYRO_IN_DEG_SEC_FACTOR;
-                    tempMotion.AngVelPitch = -gyroPitch * GYRO_IN_DEG_SEC_FACTOR;
-                    tempMotion.AngVelRoll = gyroRoll * GYRO_IN_DEG_SEC_FACTOR;
+                    tempMotion.angVelYaw = gyroYaw * GYRO_IN_DEG_SEC_FACTOR;
+                    tempMotion.angVelPitch = -gyroPitch * GYRO_IN_DEG_SEC_FACTOR;
+                    tempMotion.angVelRoll = gyroRoll * GYRO_IN_DEG_SEC_FACTOR;
 
                     SixAxisEventArgs args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
@@ -645,8 +645,8 @@ namespace DS4Windows.InputDevices
                     else if (!string.IsNullOrEmpty(error))
                         error = string.Empty;
 
-                    previousState.Motion = (SixAxis)currentState.Motion.Clone();
-                    previousState = (DS4State)currentState.Clone();
+                    pState.Motion.copy(currentState.Motion);
+                    currentState.CopyTo(pState);
 
                     if (hasInputEvts)
                     {

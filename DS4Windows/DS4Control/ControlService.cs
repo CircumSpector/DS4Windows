@@ -1414,7 +1414,7 @@ namespace DS4Windows
                 GetPadDetailForIdx(tempIdx, ref padDetail);
                 DS4State stateForUdp = TempState[tempIdx];
 
-                stateForUdp = (DS4State)CurrentState[tempIdx].Clone();
+                CurrentState[tempIdx].CopyTo(stateForUdp);
                 if (Global.Instance.Config.UseUdpSmoothing)
                 {
                     if (stateForUdp.elapsedTime == 0)
@@ -1425,14 +1425,14 @@ namespace DS4Windows
 
                     double rate = 1.0 / stateForUdp.elapsedTime;
                     OneEuroFilter3D accelFilter = udpEuroPairAccel[tempIdx];
-                    stateForUdp.Motion.AccelXg = accelFilter.Axis1Filter.Filter(stateForUdp.Motion.AccelXg, rate);
-                    stateForUdp.Motion.AccelYg = accelFilter.Axis2Filter.Filter(stateForUdp.Motion.AccelYg, rate);
-                    stateForUdp.Motion.AccelZg = accelFilter.Axis3Filter.Filter(stateForUdp.Motion.AccelZg, rate);
+                    stateForUdp.Motion.accelXG = accelFilter.Axis1Filter.Filter(stateForUdp.Motion.accelXG, rate);
+                    stateForUdp.Motion.accelYG = accelFilter.Axis2Filter.Filter(stateForUdp.Motion.accelYG, rate);
+                    stateForUdp.Motion.accelZG = accelFilter.Axis3Filter.Filter(stateForUdp.Motion.accelZG, rate);
 
                     OneEuroFilter3D gyroFilter = udpEuroPairGyro[tempIdx];
-                    stateForUdp.Motion.AngVelYaw = gyroFilter.Axis1Filter.Filter(stateForUdp.Motion.AngVelYaw, rate);
-                    stateForUdp.Motion.AngVelPitch = gyroFilter.Axis2Filter.Filter(stateForUdp.Motion.AngVelPitch, rate);
-                    stateForUdp.Motion.AngVelRoll = gyroFilter.Axis3Filter.Filter(stateForUdp.Motion.AngVelRoll, rate);
+                    stateForUdp.Motion.angVelYaw = gyroFilter.Axis1Filter.Filter(stateForUdp.Motion.angVelYaw, rate);
+                    stateForUdp.Motion.angVelPitch = gyroFilter.Axis2Filter.Filter(stateForUdp.Motion.angVelPitch, rate);
+                    stateForUdp.Motion.angVelRoll = gyroFilter.Axis3Filter.Filter(stateForUdp.Motion.angVelRoll, rate);
                 }
 
                 _udpServer.NewReportIncoming(ref padDetail, stateForUdp, udpOutBuffers[tempIdx]);
@@ -2211,14 +2211,15 @@ namespace DS4Windows
                 DS4State cState;
                 if (!device.PerformStateMerge)
                 {
-                    cState = CurrentState[ind] = device.GetRawCurrentState();
+                    cState = CurrentState[ind];
+                    device.getRawCurrentState(cState);
                 }
                 else
                 {
                     cState = device.JointState;
                     device.MergeStateData(cState);
                     // Need to copy state object info for use in UDP server
-                    CurrentState[ind] = (DS4State)cState.Clone();
+                    cState.CopyTo(CurrentState[ind]);
                 }
 
                 DS4State pState = device.getPreviousStateRef();

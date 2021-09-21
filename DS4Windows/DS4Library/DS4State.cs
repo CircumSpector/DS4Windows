@@ -2,7 +2,7 @@
 
 namespace DS4Windows
 {
-    public class DS4State : ICloneable
+    public class DS4State
     {
         public uint PacketCounter;
         public DateTime ReportTimeStamp;
@@ -78,9 +78,135 @@ namespace DS4Windows
             OutputLSOuter = OutputRSOuter = 0;
         }
 
-        public object Clone()
+        public DS4State(DS4State state)
         {
-            return MemberwiseClone();
+            PacketCounter = state.PacketCounter;
+            ReportTimeStamp = state.ReportTimeStamp;
+            Square = state.Square;
+            Triangle = state.Triangle;
+            Circle = state.Circle;
+            Cross = state.Cross;
+            DpadUp = state.DpadUp;
+            DpadDown = state.DpadDown;
+            DpadLeft = state.DpadLeft;
+            DpadRight = state.DpadRight;
+            L1 = state.L1;
+            L2 = state.L2;
+            L2Btn = state.L2Btn;
+            L3 = state.L3;
+            R1 = state.R1;
+            R2 = state.R2;
+            R2Btn = state.R2Btn;
+            R3 = state.R3;
+            Share = state.Share;
+            Options = state.Options;
+            PS = state.PS;
+            Mute = state.Mute;
+            Capture = state.Capture;
+            SideL = state.SideL;
+            SideR = state.SideR;
+            Touch1 = state.Touch1;
+            TouchRight = state.TouchRight;
+            TouchLeft = state.TouchLeft;
+            Touch1Identifier = state.Touch1Identifier;
+            Touch2 = state.Touch2;
+            Touch2Identifier = state.Touch2Identifier;
+            TouchButton = state.TouchButton;
+            OutputTouchButton = state.OutputTouchButton;
+            TouchPacketCounter = state.TouchPacketCounter;
+            Touch1Finger = state.Touch1Finger;
+            Touch2Fingers = state.Touch2Fingers;
+            LX = state.LX;
+            RX = state.RX;
+            LY = state.LY;
+            RY = state.RY;
+            FrameCounter = state.FrameCounter;
+            Battery = state.Battery;
+            LSAngle = state.LSAngle;
+            LSAngleRad = state.LSAngleRad;
+            RSAngle = state.RSAngle;
+            RSAngleRad = state.RSAngleRad;
+            LXUnit = state.LXUnit;
+            LYUnit = state.LYUnit;
+            RXUnit = state.RXUnit;
+            RYUnit = state.RYUnit;
+            elapsedTime = state.elapsedTime;
+            totalMicroSec = state.totalMicroSec;
+            ds4Timestamp = state.ds4Timestamp;
+            Motion = state.Motion;
+            TrackPadTouch0 = state.TrackPadTouch0;
+            TrackPadTouch1 = state.TrackPadTouch1;
+            SASteeringWheelEmulationUnit = state.SASteeringWheelEmulationUnit;
+            OutputLSOuter = state.OutputLSOuter;
+            OutputRSOuter = state.OutputRSOuter;
+        }
+
+        public DS4State Clone()
+        {
+            return new DS4State(this);
+        }
+
+        public void CopyTo(DS4State state)
+        {
+            state.PacketCounter = PacketCounter;
+            state.ReportTimeStamp = ReportTimeStamp;
+            state.Square = Square;
+            state.Triangle = Triangle;
+            state.Circle = Circle;
+            state.Cross = Cross;
+            state.DpadUp = DpadUp;
+            state.DpadDown = DpadDown;
+            state.DpadLeft = DpadLeft;
+            state.DpadRight = DpadRight;
+            state.L1 = L1;
+            state.L2 = L2;
+            state.L2Btn = L2Btn;
+            state.L3 = L3;
+            state.R1 = R1;
+            state.R2 = R2;
+            state.R2Btn = R2Btn;
+            state.R3 = R3;
+            state.Share = Share;
+            state.Options = Options;
+            state.PS = PS;
+            state.Mute = Mute;
+            state.Capture = Capture;
+            state.SideL = SideL;
+            state.SideR = SideR;
+            state.Touch1 = Touch1;
+            state.Touch1Identifier = Touch1Identifier;
+            state.Touch2 = Touch2;
+            state.Touch2Identifier = Touch2Identifier;
+            state.TouchLeft = TouchLeft;
+            state.TouchRight = TouchRight;
+            state.TouchButton = TouchButton;
+            state.OutputTouchButton = OutputTouchButton;
+            state.TouchPacketCounter = TouchPacketCounter;
+            state.Touch1Finger = Touch1Finger;
+            state.Touch2Fingers = Touch2Fingers;
+            state.LX = LX;
+            state.RX = RX;
+            state.LY = LY;
+            state.RY = RY;
+            state.FrameCounter = FrameCounter;
+            state.Battery = Battery;
+            state.LSAngle = LSAngle;
+            state.LSAngleRad = LSAngleRad;
+            state.RSAngle = RSAngle;
+            state.RSAngleRad = RSAngleRad;
+            state.LXUnit = LXUnit;
+            state.LYUnit = LYUnit;
+            state.RXUnit = RXUnit;
+            state.RYUnit = RYUnit;
+            state.elapsedTime = elapsedTime;
+            state.totalMicroSec = totalMicroSec;
+            state.ds4Timestamp = ds4Timestamp;
+            state.Motion = Motion;
+            state.TrackPadTouch0 = TrackPadTouch0;
+            state.TrackPadTouch1 = TrackPadTouch1;
+            state.SASteeringWheelEmulationUnit = SASteeringWheelEmulationUnit;
+            state.OutputLSOuter = OutputLSOuter;
+            state.OutputRSOuter = OutputRSOuter;
         }
 
         /// <summary>
@@ -99,7 +225,7 @@ namespace DS4Windows
             state.TrackPadTouch1 = TrackPadTouch1;
         }
 
-        public void CalculateStickAngles()
+        public void calculateStickAngles()
         {
             double lsangle = Math.Atan2(-(LY - 128), (LX - 128));
             LSAngleRad = lsangle;
@@ -116,7 +242,7 @@ namespace DS4Windows
             RYUnit = Math.Abs(Math.Sin(RSAngleRad));
         }
 
-        public void RotateLSCoordinates(double rotation)
+        public void rotateLSCoordinates(double rotation)
         {
             double sinAngle = Math.Sin(rotation), cosAngle = Math.Cos(rotation);
             double tempLX = LX - 128.0, tempLY = LY - 128.0;
@@ -124,7 +250,7 @@ namespace DS4Windows
             LY = (Byte)(Global.Clamp(-128.0, (tempLX * sinAngle + tempLY * cosAngle), 127.0) + 128.0);
         }
 
-        public void RotateRSCoordinates(double rotation)
+        public void rotateRSCoordinates(double rotation)
         {
             double sinAngle = Math.Sin(rotation), cosAngle = Math.Cos(rotation);
             double tempRX = RX - 128.0, tempRY = RY - 128.0;

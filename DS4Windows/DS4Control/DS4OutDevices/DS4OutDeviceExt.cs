@@ -155,12 +155,12 @@ namespace DS4Windows
             // Flip some coordinates back to DS4 device coordinate system
             //outDS4Report.wGyroX = (short)-state.Motion.gyroYawFull;
             //outDS4Report.wGyroY = (short)state.Motion.gyroPitchFull;
-            outDS4Report.wGyroX = (short)state.Motion.GyroPitchFull;
-            outDS4Report.wGyroY = (short)-state.Motion.GyroYawFull;
-            outDS4Report.wGyroZ = (short)-state.Motion.GyroRollFull;
-            outDS4Report.wAccelX = (short)-state.Motion.AccelXFull;
-            outDS4Report.wAccelY = (short)-state.Motion.AccelYFull;
-            outDS4Report.wAccelZ = (short)state.Motion.AccelZFull;
+            outDS4Report.wGyroX = (short)state.Motion.gyroPitchFull;
+            outDS4Report.wGyroY = (short)-state.Motion.gyroYawFull;
+            outDS4Report.wGyroZ = (short)-state.Motion.gyroRollFull;
+            outDS4Report.wAccelX = (short)-state.Motion.accelXFull;
+            outDS4Report.wAccelY = (short)-state.Motion.accelYFull;
+            outDS4Report.wAccelZ = (short)state.Motion.accelZFull;
 
             // USB DS4 v.1 battery level range is [0-11]
             outDS4Report.bBatteryLvlSpecial = (byte)(state.Battery / 11);

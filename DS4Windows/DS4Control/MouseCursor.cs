@@ -64,11 +64,11 @@ namespace DS4Windows
         public virtual void sixaxisMoved(SixAxisEventArgs arg)
         {
             int deltaX = 0, deltaY = 0;
-            deltaX = Global.Instance.Config.GetGyroMouseHorizontalAxis(deviceNumber) == 0 ? arg.sixAxis.GyroYawFull :
-                arg.sixAxis.GyroRollFull;
-            deltaY = -arg.sixAxis.GyroPitchFull;
+            deltaX = Global.Instance.Config.GetGyroMouseHorizontalAxis(deviceNumber) == 0 ? arg.sixAxis.gyroYawFull :
+                arg.sixAxis.gyroRollFull;
+            deltaY = -arg.sixAxis.gyroPitchFull;
             //tempDouble = arg.sixAxis.elapsed * 0.001 * 200.0; // Base default speed on 5 ms
-            tempDouble = arg.sixAxis.Elapsed * 200.0; // Base default speed on 5 ms
+            tempDouble = arg.sixAxis.elapsed * 200.0; // Base default speed on 5 ms
 
             GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[deviceNumber];
             gyroSmooth = tempInfo.enableSmoothing;
@@ -149,7 +149,7 @@ namespace DS4Windows
             {
                 if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro)
                 {
-                    double currentRate = 1.0 / arg.sixAxis.Elapsed;
+                    double currentRate = 1.0 / arg.sixAxis.elapsed;
                     xMotion = filterPair.Axis1Filter.Filter(xMotion, currentRate);
                     yMotion = filterPair.Axis2Filter.Filter(yMotion, currentRate);
                 }
@@ -233,7 +233,7 @@ namespace DS4Windows
             GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[deviceNumber];
             if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro)
             {
-                double currentRate = 1.0 / arg.sixAxis.Elapsed;
+                double currentRate = 1.0 / arg.sixAxis.elapsed;
                 filterPair.Axis1Filter.Filter(0.0, currentRate);
                 filterPair.Axis2Filter.Filter(0.0, currentRate);
             }

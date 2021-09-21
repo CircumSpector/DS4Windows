@@ -285,7 +285,7 @@ namespace DS4Windows
         protected bool primaryDevice = true;
 
         private byte priorInputReport30 = 0xff;
-        protected DS4State previousState = new();
+        protected DS4State pState = new();
 
         protected ManualResetEventSlim readWaitEv = new();
         protected bool readyQuickChargeDisconnect;
@@ -1148,7 +1148,7 @@ namespace DS4Windows
                                         //                    "> invalid CRC32 in BT input report: 0x" + recvCrc32.ToString("X8") + " expected: 0x" + calcCrc32.ToString("X8"));
 
                                         currentState.PacketCounter =
-                                            previousState.PacketCounter +
+                                            pState.PacketCounter +
                                             1; //still increase so we know there were lost packets
 
                                         // If the incoming data packet does not have the native DS4 type or CRC-32 checks keep failing. Fail out and disconnect controller.
@@ -1257,7 +1257,7 @@ namespace DS4Windows
 
                         utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
 
-                        currentState.PacketCounter = previousState.PacketCounter + 1;
+                        currentState.PacketCounter = pState.PacketCounter + 1;
                         currentState.ReportTimeStamp = utcNow;
                         currentState.LX = inputReport[1];
                         currentState.LY = inputReport[2];
@@ -1405,13 +1405,13 @@ namespace DS4Windows
                         if (deltaTimeCurrent != 0)
                         {
                             elapsedDeltaTime = 0.000001 * deltaTimeCurrent; // Convert from microseconds to seconds
-                            currentState.totalMicroSec = previousState.totalMicroSec + deltaTimeCurrent;
+                            currentState.totalMicroSec = pState.totalMicroSec + deltaTimeCurrent;
                         }
                         else
                         {
                             // Duplicate timestamp. Use system clock for elapsed time instead
                             elapsedDeltaTime = lastTimeElapsedDouble * .001;
-                            currentState.totalMicroSec = previousState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
+                            currentState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
                         }
 
                         currentState.elapsedTime = elapsedDeltaTime;
@@ -1524,7 +1524,7 @@ namespace DS4Windows
                         }
                         */
 
-                        ds4InactiveFrame = currentState.FrameCounter == previousState.FrameCounter;
+                        ds4InactiveFrame = currentState.FrameCounter == pState.FrameCounter;
                         if (!ds4InactiveFrame) isRemoved = false;
 
                         if (conType == ConnectionType.USB)
@@ -1591,7 +1591,7 @@ namespace DS4Windows
                         else if (!string.IsNullOrEmpty(error))
                             error = string.Empty;
 
-                        previousState = (DS4State)currentState.Clone();
+                        currentState.CopyTo(pState);
 
                         if (hasInputEvts)
                             lock (eventQueueLock)
@@ -1983,19 +1983,24 @@ namespace DS4Windows
             }
         }
 
-        public DS4State GetRawCurrentState()
+        public DS4State getRawCurrentState()
         {
-            return (DS4State)currentState.Clone();
+            return currentState.Clone();
         }
 
-        public DS4State GetRawPreviousState()
+        public DS4State getRawPreviousState()
         {
-            return (DS4State)previousState.Clone();
+            return pState.Clone();
         }
 
-        public void GetRawPreviousState(out DS4State state)
+        public void getRawCurrentState(DS4State state)
         {
-            state = (DS4State)previousState.Clone();
+            currentState.CopyTo(state);
+        }
+
+        public void getRawPreviousState(DS4State state)
+        {
+            pState.CopyTo(state);
         }
 
         public virtual DS4State getCurrentStateRef()
@@ -2005,7 +2010,7 @@ namespace DS4Windows
 
         public virtual DS4State getPreviousStateRef()
         {
-            return previousState;
+            return pState;
         }
 
         public DS4State GetRawCurrentStateRef()
@@ -2015,7 +2020,7 @@ namespace DS4Windows
 
         public DS4State GetRawPreviousStateRef()
         {
-            return previousState;
+            return pState;
         }
 
         public virtual void PreserveMergedStateData()

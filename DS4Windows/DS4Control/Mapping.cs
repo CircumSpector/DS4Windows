@@ -739,11 +739,11 @@ namespace DS4Windows
         {
             double rotation = /*tempDoubleArray[device] =*/  Global.Instance.Config.GetLSRotation(device);
             if (rotation > 0.0 || rotation < 0.0)
-                cState.RotateLSCoordinates(rotation);
+                cState.rotateLSCoordinates(rotation);
 
             double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.Config.GetRSRotation(device);
             if (rotationRS > 0.0 || rotationRS < 0.0)
-                cState.RotateRSCoordinates(rotationRS);
+                cState.rotateRSCoordinates(rotationRS);
 
             StickAntiSnapbackInfo lsAntiSnapback = Global.Instance.Config.GetLSAntiSnapbackInfo(device);
             StickAntiSnapbackInfo rsAntiSnapback = Global.Instance.Config.GetRSAntiSnapbackInfo(device);
@@ -771,7 +771,8 @@ namespace DS4Windows
                 CalcStickAxisFuzz(device, 1, rsMod.Fuzz, cState.RX, cState.RY, out cState.RX, out cState.RY);
             }
 
-            dState = (DS4State)cState.Clone();
+            cState.CopyTo(dState);
+            //DS4State dState = new DS4State(cState);
 
             if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
@@ -1763,7 +1764,7 @@ namespace DS4Windows
                 
 
             bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
-            if (saControls && dState.Motion.OutputGyroControls)
+            if (saControls && dState.Motion.outputGyroControls)
             {
                 int SXD = (int)(128d * Global.Instance.Config.GetSXDeadZone(device));
                 int SZD = (int)(128d * Global.Instance.Config.GetSZDeadZone(device));
@@ -1775,7 +1776,7 @@ namespace DS4Windows
                 double szsens = Global.Instance.Config.GetSZSens(device);
                 int result = 0;
 
-                int gyroX = cState.Motion.AccelX, gyroZ = cState.Motion.AccelZ;
+                int gyroX = cState.Motion.accelX, gyroZ = cState.Motion.accelZ;
                 int absx = Math.Abs(gyroX), absz = Math.Abs(gyroZ);
 
                 if (SXD > 0 || SXMax < 1.0 || sxAntiDead > 0)
@@ -1784,17 +1785,17 @@ namespace DS4Windows
                     if (absx > SXD)
                     {
                         double ratioX = absx < maxValue ? (absx - SXD) / (double)(maxValue - SXD) : 1.0;
-                        dState.Motion.OutputAccelX = Math.Sign(gyroX) *
+                        dState.Motion.outputAccelX = Math.Sign(gyroX) *
                             (int)Math.Min(128d, sxsens * 128d * ((1.0 - sxAntiDead) * ratioX + sxAntiDead));
                     }
                     else
                     {
-                        dState.Motion.OutputAccelX = 0;
+                        dState.Motion.outputAccelX = 0;
                     }
                 }
                 else
                 {
-                    dState.Motion.OutputAccelX = Math.Sign(gyroX) *
+                    dState.Motion.outputAccelX = Math.Sign(gyroX) *
                         (int)Math.Min(128d, sxsens * 128d * (absx / 128d));
                 }
 
@@ -1804,24 +1805,24 @@ namespace DS4Windows
                     if (absz > SZD)
                     {
                         double ratioZ = absz < maxValue ? (absz - SZD) / (double)(maxValue - SZD) : 1.0;
-                        dState.Motion.OutputAccelZ = Math.Sign(gyroZ) *
+                        dState.Motion.outputAccelZ = Math.Sign(gyroZ) *
                             (int)Math.Min(128d, szsens * 128d * ((1.0 - szAntiDead) * ratioZ + szAntiDead));
                     }
                     else
                     {
-                        dState.Motion.OutputAccelZ = 0;
+                        dState.Motion.outputAccelZ = 0;
                     }
                 }
                 else
                 {
-                    dState.Motion.OutputAccelZ = Math.Sign(gyroZ) *
+                    dState.Motion.outputAccelZ = Math.Sign(gyroZ) *
                         (int)Math.Min(128d, szsens * 128d * (absz / 128d));
                 }
 
                 int sxOutCurveMode = Global.Instance.Config.GetSXOutCurveMode(device);
                 if (sxOutCurveMode > 0)
                 {
-                    double temp = dState.Motion.OutputAccelX / 128.0;
+                    double temp = dState.Motion.outputAccelX / 128.0;
                     double sign = Math.Sign(temp);
                     if (sxOutCurveMode == 1)
                     {
@@ -1834,45 +1835,45 @@ namespace DS4Windows
                             output = abs - 0.18;
                         else // if (abs > 0.75)
                             output = (abs * 1.72) - 0.72;
-                        dState.Motion.OutputAccelX = (int)(output * sign * 128.0);
+                        dState.Motion.outputAccelX = (int)(output * sign * 128.0);
                     }
                     else if (sxOutCurveMode == 2)
                     {
                         double output = temp * temp;
                         result = (int)(output * sign * 128.0);
-                        dState.Motion.OutputAccelX = result;
+                        dState.Motion.outputAccelX = result;
                     }
                     else if (sxOutCurveMode == 3)
                     {
                         double output = temp * temp * temp;
                         result = (int)(output * 128.0);
-                        dState.Motion.OutputAccelX = result;
+                        dState.Motion.outputAccelX = result;
                     }
                     else if (sxOutCurveMode == 4)
                     {
                         double abs = Math.Abs(temp);
                         double output = abs * (abs - 2.0);
-                        dState.Motion.OutputAccelX = (int)(-1.0 * output *
+                        dState.Motion.outputAccelX = (int)(-1.0 * output *
                             sign * 128.0);
                     }
                     else if (sxOutCurveMode == 5)
                     {
                         double inner = Math.Abs(temp) - 1.0;
                         double output = inner * inner * inner + 1.0;
-                        dState.Motion.OutputAccelX = (int)(output *
+                        dState.Motion.outputAccelX = (int)(output *
                             sign * 128.0);
                     }
                     else if (sxOutCurveMode == 6)
                     {
-                        int signSA = Math.Sign(dState.Motion.OutputAccelX);
-                        dState.Motion.OutputAccelX = Global.Instance.Config.SXOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.OutputAccelX), 128)] * signSA;
+                        int signSA = Math.Sign(dState.Motion.outputAccelX);
+                        dState.Motion.outputAccelX = Global.Instance.Config.SXOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
                     }
                 }
 
                 int szOutCurveMode = Global.Instance.Config.GetSZOutCurveMode(device);
-                if (szOutCurveMode > 0 && dState.Motion.OutputAccelZ != 0)
+                if (szOutCurveMode > 0 && dState.Motion.outputAccelZ != 0)
                 {
-                    double temp = dState.Motion.OutputAccelZ / 128.0;
+                    double temp = dState.Motion.outputAccelZ / 128.0;
                     double sign = Math.Sign(temp);
                     if (szOutCurveMode == 1)
                     {
@@ -1885,38 +1886,38 @@ namespace DS4Windows
                             output = abs - 0.18;
                         else // if (abs > 0.75)
                             output = (abs * 1.72) - 0.72;
-                        dState.Motion.OutputAccelZ = (int)(output * sign * 128.0);
+                        dState.Motion.outputAccelZ = (int)(output * sign * 128.0);
                     }
                     else if (szOutCurveMode == 2)
                     {
                         double output = temp * temp;
                         result = (int)(output * sign * 128.0);
-                        dState.Motion.OutputAccelZ = result;
+                        dState.Motion.outputAccelZ = result;
                     }
                     else if (szOutCurveMode == 3)
                     {
                         double output = temp * temp * temp;
                         result = (int)(output * 128.0);
-                        dState.Motion.OutputAccelZ = result;
+                        dState.Motion.outputAccelZ = result;
                     }
                     else if (szOutCurveMode == 4)
                     {
                         double abs = Math.Abs(temp);
                         double output = abs * (abs - 2.0);
-                        dState.Motion.OutputAccelZ = (int)(-1.0 * output *
+                        dState.Motion.outputAccelZ = (int)(-1.0 * output *
                             sign * 128.0);
                     }
                     else if (szOutCurveMode == 5)
                     {
                         double inner = Math.Abs(temp) - 1.0;
                         double output = inner * inner * inner + 1.0;
-                        dState.Motion.OutputAccelZ = (int)(output *
+                        dState.Motion.outputAccelZ = (int)(output *
                             sign * 128.0);
                     }
                     else if (szOutCurveMode == 6)
                     {
-                        int signSA = Math.Sign(dState.Motion.OutputAccelZ);
-                        dState.Motion.OutputAccelZ = Global.Instance.Config.SZOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.OutputAccelZ), 128)] * signSA;
+                        int signSA = Math.Sign(dState.Motion.outputAccelZ);
+                        dState.Motion.outputAccelZ = Global.Instance.Config.SZOutBezierCurveObj[device].arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
                     }
                 }
             }
@@ -2032,7 +2033,7 @@ namespace DS4Windows
             int mouseDeltaX = 0;
             int mouseDeltaY = 0;
 
-            cState.CalculateStickAngles();
+            cState.calculateStickAngles();
             DS4StateFieldMapping fieldMapping = fieldMappings[device];
             fieldMapping.PopulateFieldMapping(cState, eState, tp);
             DS4StateFieldMapping outputfieldMapping = outputFieldMappings[device];
@@ -5422,7 +5423,7 @@ namespace DS4Windows
                 if (currentDeviceState.Cross == true) controller.wheelPrevRecalibrateTime = DateTime.Now;
 
                 // Make sure controller is hold steady (velocity of gyro axis) to avoid misaligments and set calibration few secs after the "X" key was released
-                if (Math.Abs(currentDeviceState.Motion.AngVelPitch) < 0.5 && Math.Abs(currentDeviceState.Motion.AngVelYaw) < 0.5 && Math.Abs(currentDeviceState.Motion.AngVelRoll) < 0.5
+                if (Math.Abs(currentDeviceState.Motion.angVelPitch) < 0.5 && Math.Abs(currentDeviceState.Motion.angVelYaw) < 0.5 && Math.Abs(currentDeviceState.Motion.angVelRoll) < 0.5
                     && ((TimeSpan)(DateTime.Now - controller.wheelPrevRecalibrateTime)).TotalSeconds > 1)
                 {
                     controller.wheelPrevRecalibrateTime = new DateTime(2500, 1, 1);
