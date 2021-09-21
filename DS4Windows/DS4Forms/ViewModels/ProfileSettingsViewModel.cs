@@ -2053,7 +2053,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroMouseDeadZone[device];
             set
             {
-                Global.Instance.Config.SetGyroMouseDeadZone(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroMouseDZ(device, value, App.rootHub);
 
             }
         }
