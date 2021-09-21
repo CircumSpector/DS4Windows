@@ -32,13 +32,13 @@ skip_commits:
 build:
   project: $(APPVEYOR_BUILD_FOLDER)\DS4WindowsWPF.sln
 after_build:
-- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%" -c %CONFIGURATION% -r win-%PLATFORM% --no-build -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
-- cmd: 7z a DS4Windows-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
-- cmd: 7z a DS4Windows-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
+- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%" -c %CONFIGURATION% -r win-%PLATFORM% --no-build -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
+- cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
+- cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%"
 test: off
 artifacts:
-  - path: DS4Windows-*.zip
-    name: DS4Windows
+  - path: $(APPVEYOR_PROJECT_NAME)-*.zip
+    name: $(APPVEYOR_PROJECT_NAME)
 deploy:
 - provider: Environment
   name: BUILDBOT
