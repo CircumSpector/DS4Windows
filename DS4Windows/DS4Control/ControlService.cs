@@ -2281,7 +2281,7 @@ namespace DS4Windows
 
                 if (!UseDirectInputOnly[ind])
                 {
-                    outputDevices[ind]?.ConvertandSendReport(cState, ind);
+                    outputDevices[ind]?.ConvertAndSendReport(cState, ind);
                     //testNewReport(ref x360reports[ind], cState, ind);
                     //x360controls[ind]?.SendReport(x360reports[ind]);
 

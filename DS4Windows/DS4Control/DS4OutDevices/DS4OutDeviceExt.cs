@@ -17,7 +17,7 @@ namespace DS4Windows
         {
         }
 
-        public override unsafe void ConvertandSendReport(DS4State state, int device)
+        public override unsafe void ConvertAndSendReport(DS4State state, int device)
         {
             if (!connected) return;
 
