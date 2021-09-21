@@ -645,7 +645,7 @@ namespace DS4Windows.InputDevices
                     else if (!string.IsNullOrEmpty(error))
                         error = string.Empty;
 
-                    previousState.Motion.Copy(currentState.Motion);
+                    previousState.Motion = (SixAxis)currentState.Motion.Clone();
                     previousState = (DS4State)currentState.Clone();
 
                     if (hasInputEvts)

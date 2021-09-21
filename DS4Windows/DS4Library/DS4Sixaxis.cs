@@ -16,7 +16,7 @@ namespace DS4Windows
         }
     }
 
-    public class SixAxis
+    public class SixAxis : ICloneable
     {
         public const int ACC_RES_PER_G = 8192;
         public const float F_ACC_RES_PER_G = ACC_RES_PER_G;
@@ -40,36 +40,6 @@ namespace DS4Windows
             double elapsedDelta, SixAxis prevAxis = null)
         {
             Populate(X, Y, Z, aX, aY, aZ, elapsedDelta, prevAxis);
-        }
-
-        public void Copy(SixAxis src)
-        {
-            GyroYaw = src.GyroYaw;
-            GyroPitch = src.GyroPitch;
-            GyroRoll = src.GyroRoll;
-
-            GyroYawFull = src.GyroYawFull;
-            AccelXFull = src.AccelXFull; AccelYFull = src.AccelYFull; AccelZFull = src.AccelZFull;
-
-            AngVelYaw = src.AngVelYaw;
-            AngVelPitch = src.AngVelPitch;
-            AngVelRoll = src.AngVelRoll;
-
-            AccelXg = src.AccelXg;
-            AccelYg = src.AccelYg;
-            AccelZg = src.AccelZg;
-
-            // Put accel ranges between 0 - 128 abs
-            AccelX = src.AccelX;
-            AccelY = src.AccelY;
-            AccelZ = src.AccelZ;
-            OutputAccelX = AccelX;
-            OutputAccelY = AccelY;
-            OutputAccelZ = AccelZ;
-
-            Elapsed = src.Elapsed;
-            PreviousAxis = src.PreviousAxis;
-            OutputGyroControls = src.OutputGyroControls;
         }
 
         public void Populate(int X, int Y, int Z,
@@ -104,6 +74,15 @@ namespace DS4Windows
 
             Elapsed = elapsedDelta;
             PreviousAxis = prevAxis;
+        }
+
+        public object Clone()
+        {
+            var sa = (SixAxis)MemberwiseClone();
+            if (PreviousAxis != null)
+                sa.PreviousAxis = (SixAxis)PreviousAxis.Clone();
+
+            return sa;
         }
     }
 
@@ -329,7 +308,7 @@ namespace DS4Windows
                 {
                     if (SixAccelMoved != null)
                     {
-                        sPrev.Copy(now);
+                        sPrev = (SixAxis)now.Clone();
                         now.Populate(currentYaw, currentPitch, currentRoll,
                             AccelX, AccelY, AccelZ, elapsedDelta, sPrev);
 
