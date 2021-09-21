@@ -2262,7 +2262,7 @@ namespace DS4Windows
                 cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 
                 if (!recordingMacro && (UseTempProfiles[ind] ||
-                                        Instance.ContainsCustomAction(ind) || Instance.ContainsCustomExtras(ind) ||
+                                        Instance.Config.ContainsCustomAction[ind] || Instance.Config.ContainsCustomExtras[ind] ||
                                         Instance.Config.GetProfileActionCount(ind) > 0))
                 {
                     DS4State tempMapState = MappedState[ind];

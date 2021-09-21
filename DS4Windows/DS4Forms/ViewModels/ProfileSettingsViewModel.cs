@@ -3447,7 +3447,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             int idx = 0;
             foreach(DS4Controls dsControl in inputControls)
             {
-                DS4ControlSettings setting = Global.Instance.GetDS4CSetting(deviceNum, dsControl);
+                DS4ControlSettings setting = Global.Instance.Config.GetDs4ControllerSetting(deviceNum, dsControl);
                 setting.Reset();
                 if (idx < actionBtns.Count && actionBtns[idx] != null)
                 {

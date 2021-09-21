@@ -344,7 +344,7 @@ namespace DS4Windows
             double normY = Math.Abs(Math.Sin(tempAngle));
             int signX = Math.Sign(dx);
             int signY = Math.Sign(dy);
-            double coefficient = Global.Instance.GetTouchSensitivity(deviceNumber) * 0.01;
+            double coefficient = Global.Instance.Config.GetTouchSensitivity(deviceNumber) * 0.01;
             bool jitterCompenstation = Global.Instance.Config.GetTouchPadJitterCompensation(deviceNumber);
 
             double xMotion = dx != 0 ?

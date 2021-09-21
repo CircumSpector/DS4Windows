@@ -963,6 +963,16 @@ namespace DS4Windows
                 return EnableOutputDataToDS4[index];
             }
 
+            public byte GetTouchSensitivity(int index)
+            {
+                return TouchSensitivity[index];
+            }
+
+            public ControlSettingsGroup GetControlSettingsGroup(int deviceNum)
+            {
+                return ds4controlSettings[deviceNum];
+            }
+
             public void EstablishDefaultSpecialActions(int idx)
             {
                 ProfileActions[idx] = new List<string> { "Disconnect Controller" };

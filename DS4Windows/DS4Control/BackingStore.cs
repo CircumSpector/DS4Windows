@@ -337,8 +337,9 @@ namespace DS4Windows
 
         bool GetEnableOutputDataToDS4(int index);
 
+        byte GetTouchSensitivity(int index);
 
-
+        ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
 
         GyroControlsInfo GetGyroControlsInfo(int index);
 
@@ -354,29 +355,31 @@ namespace DS4Windows
         TriggerDeadZoneZInfo GetR2ModInfo(int index);
 
         double GetSXDeadZone(int index);
+
         double GetSZDeadZone(int index);
+
         int GetLSDeadZone(int index);
+
         int GetRSDeadZone(int index);
 
         StickDeadZoneInfo GetLSDeadInfo(int index);
 
         StickDeadZoneInfo GetRSDeadInfo(int index);
+        
         double GetSXAntiDeadZone(int index);
-
-
+        
         double GetSZAntiDeadZone(int index);
 
         double GetSXMaxZone(int index);
 
         double GetSZMaxZone(int index);
-
-
+        
         double GetLSRotation(int index);
-
-
+        
         double GetRSRotation(int index);
 
         double GetL2Sens(int index);
+
         double GetR2Sens(int index);
 
         double GetSXSens(int index);
@@ -384,6 +387,7 @@ namespace DS4Windows
         double GetSZSens(int index);
 
         double GetLSSens(int index);
+
         double GetRSSens(int index);
 
         int GetBluetoothPollRate(int index);
@@ -391,40 +395,49 @@ namespace DS4Windows
         SquareStickInfo GetSquareStickInfo(int device);
 
         StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
+
         StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device);
+
         bool GetTrackballMode(int index);
+
         double GetTrackballFriction(int index);
+
         int GetProfileActionCount(int index);
 
-
-
-
-
-
-
-
-
-
-
         void EstablishDefaultSpecialActions(int idx);
+
         void CacheProfileCustomsFlags(int device);
+
         void CacheExtraProfileInfo(int device);
+
         void CalculateProfileActionCount(int index);
+
         void CalculateProfileActionDicts(int device);
 
         SpecialAction GetAction(string name);
 
         int GetActionIndexOf(string name);
+        
         void SetSaTriggerCond(int index, string text);
+        
         void SetSaMouseStickTriggerCond(int index, string text);
+        
         void SetGyroMouseDZ(int index, int value, ControlService control);
+        
         void SetGyroControlsToggle(int index, bool value, ControlService control);
+        
         void SetGyroMouseToggle(int index, bool value, ControlService control);
+        
         void SetGyroMouseStickToggle(int index, bool value, ControlService control);
+        
         bool SaveAsNewProfile(int device, string proName);
+        
         bool SaveProfile(int device, string proName);
+        
         DS4Controls GetDs4ControlsByName(string key);
+        
         X360Controls GetX360ControlsByName(string key);
+        
         string GetX360ControlString(X360Controls key);
 
         bool LoadProfile(int device, bool launchprogram, ControlService control,
@@ -435,28 +448,46 @@ namespace DS4Windows
         bool Save();
 
         bool SaveAction(string name, string controls, int mode, string details, bool edit, string extras = "");
+        
         void RemoveAction(string name);
+        
         bool LoadActions();
+        
         bool CreateLinkedProfiles();
+        
         bool LoadLinkedProfiles();
+        
         bool SaveLinkedProfiles();
+        
         bool CreateControllerConfigs();
+        
         bool LoadControllerConfigsForDevice(DS4Device device);
+        
         bool SaveControllerConfigsForDevice(DS4Device device);
 
         void UpdateDs4ControllerSetting(int deviceNum, string buttonName, bool shift, object action, string exts,
             DS4KeyType kt, int trigger = 0);
 
         void UpdateDs4ControllerExtra(int deviceNum, string buttonName, bool shift, string exts);
+        
         ControlActionData GetDs4Action(int deviceNum, string buttonName, bool shift);
+        
         ControlActionData GetDs4Action(int deviceNum, DS4Controls dc, bool shift);
+        
         string GetDs4Extra(int deviceNum, string buttonName, bool shift);
+        
         DS4KeyType GetDs4KeyType(int deviceNum, string buttonName, bool shift);
+        
         int GetDs4STrigger(int deviceNum, string buttonName);
+        
         int GetDs4STrigger(int deviceNum, DS4Controls dc);
+        
         DS4ControlSettings GetDs4ControllerSetting(int deviceNum, string buttonName);
+        
         DS4ControlSettings GetDs4ControllerSetting(int deviceNum, DS4Controls dc);
+        
         bool HasCustomActions(int deviceNum);
+        
         bool HasCustomExtras(int deviceNum);
 
         void LoadBlankDs4Profile(int device, bool launchprogram, ControlService control,

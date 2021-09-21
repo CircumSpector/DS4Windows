@@ -90,9 +90,7 @@ namespace DS4Windows
             {
             }
         }
-
-       
-
+        
         public void SetRumbleAutostopTime(int index, int value)
         {
             _config.RumbleAutostopTime[index] = value;
@@ -101,54 +99,10 @@ namespace DS4Windows
             if (tempDev != null && tempDev.isSynced())
                 tempDev.RumbleAutostopTime = value;
         }
-
-       
-
-        public byte GetTouchSensitivity(int index)
-        {
-            return _config.TouchSensitivity[index];
-        }
-
+        
         public bool GetTouchActive(int index)
         {
             return TouchpadActive[index];
-        }
-
-       
-
-        public void UpdateDS4CSetting(int deviceNum, string buttonName, bool shift, object action, string exts,
-            DS4KeyType kt, int trigger = 0)
-        {
-            _config.UpdateDs4ControllerSetting(deviceNum, buttonName, shift, action, exts, kt, trigger);
-            _config.ContainsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
-            _config.ContainsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
-        }
-
-        public void UpdateDS4Extra(int deviceNum, string buttonName, bool shift, string exts)
-        {
-            _config.UpdateDs4ControllerExtra(deviceNum, buttonName, shift, exts);
-            _config.ContainsCustomAction[deviceNum] = _config.HasCustomActions(deviceNum);
-            _config.ContainsCustomExtras[deviceNum] = _config.HasCustomExtras(deviceNum);
-        }
-
-        public DS4ControlSettings GetDS4CSetting(int deviceNum, DS4Controls control)
-        {
-            return _config.GetDs4ControllerSetting(deviceNum, control);
-        }
-
-        public ControlSettingsGroup GetControlSettingsGroup(int deviceNum)
-        {
-            return _config.ds4controlSettings[deviceNum];
-        }
-
-        public bool ContainsCustomAction(int deviceNum)
-        {
-            return _config.ContainsCustomAction[deviceNum];
-        }
-
-        public bool ContainsCustomExtras(int deviceNum)
-        {
-            return _config.ContainsCustomExtras[deviceNum];
         }
 
         public void SaveAction(string name, string controls, int mode,
@@ -271,18 +225,6 @@ namespace DS4Windows
         }
 
         public void LoadDefaultMixedControlsProfile(int device, bool launchprogram, ControlService control,
-            bool xinputChange = true, bool postLoad = true)
-        {
-            _config.LoadDefaultMixedControlsProfile(device, launchprogram, control, "", xinputChange, postLoad);
-            _config.EstablishDefaultSpecialActions(device);
-            _config.CacheExtraProfileInfo(device);
-
-            TempProfileNames[device] = string.Empty;
-            UseTempProfiles[device] = false;
-            TempProfileDistance[device] = false;
-        }
-
-        public void LoadDefaultDS4MixedControlsProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
             _config.LoadDefaultMixedControlsProfile(device, launchprogram, control, "", xinputChange, postLoad);
