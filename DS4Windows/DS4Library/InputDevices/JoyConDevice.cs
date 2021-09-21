@@ -477,13 +477,13 @@ namespace DS4Windows.InputDevices
                     Latency = latencySum / (double)tempLatencyCount;
 
                     utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
-                    cState.PacketCounter = pState.PacketCounter + 1;
+                    currentState.PacketCounter = pState.PacketCounter + 1;
                     // DS4 Frame Counter range is [0-127]
-                    cState.FrameCounter = (byte)(cState.PacketCounter % 128);
-                    cState.ReportTimeStamp = utcNow;
+                    currentState.FrameCounter = (byte)(currentState.PacketCounter % 128);
+                    currentState.ReportTimeStamp = utcNow;
 
-                    cState.elapsedTime = combLatency;
-                    cState.totalMicroSec = pState.totalMicroSec + (uint)(combLatency * 1000000);
+                    currentState.elapsedTime = combLatency;
+                    currentState.totalMicroSec = pState.totalMicroSec + (uint)(combLatency * 1000000);
                     combLatency = 0.0;
 
                     if ((this.featureSet & VidPidFeatureSet.NoBatteryReading) == 0)
@@ -498,7 +498,7 @@ namespace DS4Windows.InputDevices
                             BatteryChanged?.Invoke(this, EventArgs.Empty);
                         }
 
-                        cState.Battery = (byte)tempBattery;
+                        currentState.Battery = (byte)tempBattery;
 
                         tempCharging = (tempByte & 0x10) != 0;
                         if (tempCharging != charging)
@@ -510,28 +510,28 @@ namespace DS4Windows.InputDevices
                     else
                     {
                         battery = 99;
-                        cState.Battery = 99;
+                        currentState.Battery = 99;
                     }
 
                     if (sideType == JoyConSide.Left)
                     {
                         tempByte = inputReportBuffer[4];
-                        cState.Share = (tempByte & 0x01) != 0;
-                        cState.L3 = (tempByte & 0x08) != 0;
+                        currentState.Share = (tempByte & 0x01) != 0;
+                        currentState.L3 = (tempByte & 0x08) != 0;
                         // Capture Button
                         //cState.PS = (tempByte & 0x20) != 0;
-                        cState.Capture = (tempByte & 0x20) != 0;
+                        currentState.Capture = (tempByte & 0x20) != 0;
 
                         tempByte = inputReportBuffer[5];
-                        cState.DpadUp = (tempByte & 0x02) != 0;
-                        cState.DpadDown = (tempByte & 0x01) != 0;
-                        cState.DpadLeft = (tempByte & 0x08) != 0;
-                        cState.DpadRight = (tempByte & 0x04) != 0;
-                        cState.L1 = (tempByte & 0x40) != 0;
-                        cState.L2Btn = (tempByte & 0x80) != 0;
-                        cState.L2 = (byte)(cState.L2Btn ? 255 : 0);
-                        cState.SideL = (tempByte & 0x20) != 0;
-                        cState.SideR = (tempByte & 0x10) != 0;
+                        currentState.DpadUp = (tempByte & 0x02) != 0;
+                        currentState.DpadDown = (tempByte & 0x01) != 0;
+                        currentState.DpadLeft = (tempByte & 0x08) != 0;
+                        currentState.DpadRight = (tempByte & 0x04) != 0;
+                        currentState.L1 = (tempByte & 0x40) != 0;
+                        currentState.L2Btn = (tempByte & 0x80) != 0;
+                        currentState.L2 = (byte)(currentState.L2Btn ? 255 : 0);
+                        currentState.SideL = (tempByte & 0x20) != 0;
+                        currentState.SideR = (tempByte & 0x10) != 0;
 
                         stick_raw[0] = inputReportBuffer[6];
                         stick_raw[1] = inputReportBuffer[7];
@@ -539,11 +539,11 @@ namespace DS4Windows.InputDevices
 
                         tempAxisX = (stick_raw[0] | ((stick_raw[1] & 0x0F) << 8)) - leftStickOffsetX;
                         tempAxisX = tempAxisX > leftStickXData.max ? leftStickXData.max : (tempAxisX < leftStickXData.min ? leftStickXData.min : tempAxisX);
-                        cState.LX = (byte)((tempAxisX - leftStickXData.min) / (double)(leftStickXData.max - leftStickXData.min) * 255);
+                        currentState.LX = (byte)((tempAxisX - leftStickXData.min) / (double)(leftStickXData.max - leftStickXData.min) * 255);
 
                         tempAxisY = ((stick_raw[1] >> 4) | (stick_raw[2] << 4)) - leftStickOffsetY;
                         tempAxisY = tempAxisY > leftStickYData.max ? leftStickYData.max : (tempAxisY < leftStickYData.min ? leftStickYData.min : tempAxisY);
-                        cState.LY = (byte)((((tempAxisY - leftStickYData.min) / (double)(leftStickYData.max - leftStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
+                        currentState.LY = (byte)((((tempAxisY - leftStickYData.min) / (double)(leftStickYData.max - leftStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
 
                         // JoyCon on its side flips axes and directions
                         //cState.LY = JoyConStickAdjust(tempAxisX, leftStickXData.mid, leftStickXData.max - leftStickXData.min, -1);
@@ -552,20 +552,20 @@ namespace DS4Windows.InputDevices
                     else if (sideType == JoyConSide.Right)
                     {
                         tempByte = inputReportBuffer[3];
-                        cState.Circle = (tempByte & 0x08) != 0;
-                        cState.Cross = (tempByte & 0x04) != 0;
-                        cState.Triangle = (tempByte & 0x02) != 0;
-                        cState.Square = (tempByte & 0x01) != 0;
-                        cState.R1 = (tempByte & 0x40) != 0;
-                        cState.R2Btn = (tempByte & 0x80) != 0;
-                        cState.R2 = (byte)(cState.R2Btn ? 255 : 0);
-                        cState.SideL = (tempByte & 0x20) != 0;
-                        cState.SideR = (tempByte & 0x10) != 0;
+                        currentState.Circle = (tempByte & 0x08) != 0;
+                        currentState.Cross = (tempByte & 0x04) != 0;
+                        currentState.Triangle = (tempByte & 0x02) != 0;
+                        currentState.Square = (tempByte & 0x01) != 0;
+                        currentState.R1 = (tempByte & 0x40) != 0;
+                        currentState.R2Btn = (tempByte & 0x80) != 0;
+                        currentState.R2 = (byte)(currentState.R2Btn ? 255 : 0);
+                        currentState.SideL = (tempByte & 0x20) != 0;
+                        currentState.SideR = (tempByte & 0x10) != 0;
 
                         tempByte = inputReportBuffer[4];
-                        cState.Options = (tempByte & 0x02) != 0;
-                        cState.R3 = (tempByte & 0x04) != 0;
-                        cState.PS = (tempByte & 0x10) != 0;
+                        currentState.Options = (tempByte & 0x02) != 0;
+                        currentState.R3 = (tempByte & 0x04) != 0;
+                        currentState.PS = (tempByte & 0x10) != 0;
 
                         stick_raw2[0] = inputReportBuffer[9];
                         stick_raw2[1] = inputReportBuffer[10];
@@ -573,11 +573,11 @@ namespace DS4Windows.InputDevices
 
                         tempAxisX = (stick_raw2[0] | ((stick_raw2[1] & 0x0F) << 8)) - rightStickOffsetX;
                         tempAxisX = tempAxisX > rightStickXData.max ? rightStickXData.max : (tempAxisX < rightStickXData.min ? rightStickXData.min : tempAxisX);
-                        cState.RX = (byte)((tempAxisX - rightStickXData.min) / (double)(rightStickXData.max - rightStickXData.min) * 255);
+                        currentState.RX = (byte)((tempAxisX - rightStickXData.min) / (double)(rightStickXData.max - rightStickXData.min) * 255);
 
                         tempAxisY = ((stick_raw2[1] >> 4) | (stick_raw2[2] << 4)) - rightStickOffsetY;
                         tempAxisY = tempAxisY > rightStickYData.max ? rightStickYData.max : (tempAxisY < rightStickYData.min ? rightStickYData.min : tempAxisY);
-                        cState.RY = (byte)((((tempAxisY - rightStickYData.min) / (double)(rightStickYData.max - rightStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
+                        currentState.RY = (byte)((((tempAxisY - rightStickYData.min) / (double)(rightStickYData.max - rightStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
 
                         // JoyCon on its side flips axes
                         //cState.LY = JoyConStickAdjust(tempAxisX, rightStickXData.mid, rightStickXData.max - rightStickXData.min, -1);
@@ -631,7 +631,7 @@ namespace DS4Windows.InputDevices
 
                     // Need to populate the SixAxis object manually to work around conversions
                     //Console.WriteLine("GyroYaw: {0}", gyroYaw);
-                    SixAxis tempMotion = cState.Motion;
+                    SixAxis tempMotion = currentState.Motion;
                     // Perform continous calibration routine with raw values
                     sixAxis.PrepareNonDS4SixAxis(ref gyroYaw, ref gyroPitch, ref gyroRoll,
                         ref accelX, ref accelY, ref accelZ);
@@ -661,7 +661,7 @@ namespace DS4Windows.InputDevices
                     tempMotion.angVelPitch = -gyroPitch * GYRO_IN_DEG_SEC_FACTOR;
                     tempMotion.angVelRoll = gyroRoll * GYRO_IN_DEG_SEC_FACTOR;
 
-                    SixAxisEventArgs args = new SixAxisEventArgs(cState.ReportTimeStamp, cState.Motion);
+                    SixAxisEventArgs args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
                     if (conType == ConnectionType.USB)
@@ -726,8 +726,8 @@ namespace DS4Windows.InputDevices
                     else if (!string.IsNullOrEmpty(error))
                         error = string.Empty;
 
-                    pState.Motion.copy(cState.Motion);
-                    cState.CopyTo(pState);
+                    pState.Motion.copy(currentState.Motion);
+                    currentState.CopyTo(pState);
 
                     if (hasInputEvts)
                     {
@@ -1385,7 +1385,7 @@ namespace DS4Windows.InputDevices
             DS4State tempState = null;
             if (!performStateMerge)
             {
-                tempState = cState;
+                tempState = currentState;
             }
             else
             {
@@ -1421,54 +1421,54 @@ namespace DS4Windows.InputDevices
             {
                 if (DeviceType == InputDeviceType.JoyConL)
                 {
-                    dState.LX = cState.LX;
-                    dState.LY = cState.LY;
-                    dState.L1 = cState.L1;
-                    dState.L2 = cState.L2;
-                    dState.L3 = cState.L3;
-                    dState.L2Btn = cState.L2Btn;
-                    dState.DpadUp = cState.DpadUp;
-                    dState.DpadDown = cState.DpadDown;
-                    dState.DpadLeft = cState.DpadLeft;
-                    dState.DpadRight = cState.DpadRight;
-                    dState.Share = cState.Share;
-                    dState.Capture = cState.Capture;
+                    dState.LX = currentState.LX;
+                    dState.LY = currentState.LY;
+                    dState.L1 = currentState.L1;
+                    dState.L2 = currentState.L2;
+                    dState.L3 = currentState.L3;
+                    dState.L2Btn = currentState.L2Btn;
+                    dState.DpadUp = currentState.DpadUp;
+                    dState.DpadDown = currentState.DpadDown;
+                    dState.DpadLeft = currentState.DpadLeft;
+                    dState.DpadRight = currentState.DpadRight;
+                    dState.Share = currentState.Share;
+                    dState.Capture = currentState.Capture;
                     if (primaryDevice)
                     {
-                        dState.elapsedTime = cState.elapsedTime;
-                        dState.totalMicroSec = cState.totalMicroSec;
-                        dState.ReportTimeStamp = cState.ReportTimeStamp;
-                        dState.SideL = cState.SideL;
-                        dState.SideR = cState.SideR;
+                        dState.elapsedTime = currentState.elapsedTime;
+                        dState.totalMicroSec = currentState.totalMicroSec;
+                        dState.ReportTimeStamp = currentState.ReportTimeStamp;
+                        dState.SideL = currentState.SideL;
+                        dState.SideR = currentState.SideR;
                     }
 
-                    if (outputMapGyro) dState.Motion = cState.Motion;
+                    if (outputMapGyro) dState.Motion = currentState.Motion;
                     //dState.Motion = cState.Motion;
                 }
                 else if (DeviceType == InputDeviceType.JoyConR)
                 {
-                    dState.RX = cState.RX;
-                    dState.RY = cState.RY;
-                    dState.R1 = cState.R1;
-                    dState.R2 = cState.R2;
-                    dState.R3 = cState.R3;
-                    dState.R2Btn = cState.R2Btn;
-                    dState.Cross = cState.Cross;
-                    dState.Circle = cState.Circle;
-                    dState.Triangle = cState.Triangle;
-                    dState.Square = cState.Square;
-                    dState.PS = cState.PS;
-                    dState.Options = cState.Options;
+                    dState.RX = currentState.RX;
+                    dState.RY = currentState.RY;
+                    dState.R1 = currentState.R1;
+                    dState.R2 = currentState.R2;
+                    dState.R3 = currentState.R3;
+                    dState.R2Btn = currentState.R2Btn;
+                    dState.Cross = currentState.Cross;
+                    dState.Circle = currentState.Circle;
+                    dState.Triangle = currentState.Triangle;
+                    dState.Square = currentState.Square;
+                    dState.PS = currentState.PS;
+                    dState.Options = currentState.Options;
                     if (primaryDevice)
                     {
-                        dState.elapsedTime = cState.elapsedTime;
-                        dState.totalMicroSec = cState.totalMicroSec;
-                        dState.ReportTimeStamp = cState.ReportTimeStamp;
-                        dState.SideL = cState.SideL;
-                        dState.SideR = cState.SideR;
+                        dState.elapsedTime = currentState.elapsedTime;
+                        dState.totalMicroSec = currentState.totalMicroSec;
+                        dState.ReportTimeStamp = currentState.ReportTimeStamp;
+                        dState.SideL = currentState.SideL;
+                        dState.SideR = currentState.SideR;
                     }
 
-                    if (outputMapGyro) dState.Motion = cState.Motion;
+                    if (outputMapGyro) dState.Motion = currentState.Motion;
                     //dState.Motion = cState.Motion;
                 }
             }

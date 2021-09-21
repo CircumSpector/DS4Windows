@@ -431,13 +431,13 @@ namespace DS4Windows.InputDevices
                     Latency = latencySum / (double)tempLatencyCount;
 
                     utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
-                    cState.PacketCounter = pState.PacketCounter + 1;
+                    currentState.PacketCounter = pState.PacketCounter + 1;
                     // DS4 Frame Counter range is [0-127]
-                    cState.FrameCounter = (byte)(cState.PacketCounter % 128);
-                    cState.ReportTimeStamp = utcNow;
+                    currentState.FrameCounter = (byte)(currentState.PacketCounter % 128);
+                    currentState.ReportTimeStamp = utcNow;
 
-                    cState.elapsedTime = combLatency;
-                    cState.totalMicroSec = pState.totalMicroSec + (uint)(combLatency * 1000000);
+                    currentState.elapsedTime = combLatency;
+                    currentState.totalMicroSec = pState.totalMicroSec + (uint)(combLatency * 1000000);
                     combLatency = 0.0;
 
                     if ((this.featureSet & VidPidFeatureSet.NoBatteryReading) == 0)
@@ -452,7 +452,7 @@ namespace DS4Windows.InputDevices
                             BatteryChanged?.Invoke(this, EventArgs.Empty);
                         }
 
-                        cState.Battery = (byte)tempBattery;
+                        currentState.Battery = (byte)tempBattery;
 
                         tempCharging = (tempByte & 0x10) != 0;
                         if (tempCharging != charging)
@@ -464,34 +464,34 @@ namespace DS4Windows.InputDevices
                     else
                     {
                         battery = 99;
-                        cState.Battery = 99;
+                        currentState.Battery = 99;
                     }
 
                     tempByte = inputReportBuffer[3];
-                    cState.Circle = (tempByte & 0x08) != 0;
-                    cState.Cross = (tempByte & 0x04) != 0;
-                    cState.Triangle = (tempByte & 0x02) != 0;
-                    cState.Square = (tempByte & 0x01) != 0;
-                    cState.R1 = (tempByte & 0x40) != 0;
-                    cState.R2Btn = (tempByte & 0x80) != 0;
-                    cState.R2 = (byte)(cState.R2Btn ? 255 : 0);
+                    currentState.Circle = (tempByte & 0x08) != 0;
+                    currentState.Cross = (tempByte & 0x04) != 0;
+                    currentState.Triangle = (tempByte & 0x02) != 0;
+                    currentState.Square = (tempByte & 0x01) != 0;
+                    currentState.R1 = (tempByte & 0x40) != 0;
+                    currentState.R2Btn = (tempByte & 0x80) != 0;
+                    currentState.R2 = (byte)(currentState.R2Btn ? 255 : 0);
 
                     tempByte = inputReportBuffer[4];
-                    cState.Share = (tempByte & 0x01) != 0;
-                    cState.Options = (tempByte & 0x02) != 0;
-                    cState.PS = (tempByte & 0x10) != 0;
-                    cState.Capture = (tempByte & 0x20) != 0;
-                    cState.L3 = (tempByte & 0x08) != 0;
-                    cState.R3 = (tempByte & 0x04) != 0;
+                    currentState.Share = (tempByte & 0x01) != 0;
+                    currentState.Options = (tempByte & 0x02) != 0;
+                    currentState.PS = (tempByte & 0x10) != 0;
+                    currentState.Capture = (tempByte & 0x20) != 0;
+                    currentState.L3 = (tempByte & 0x08) != 0;
+                    currentState.R3 = (tempByte & 0x04) != 0;
 
                     tempByte = inputReportBuffer[5];
-                    cState.DpadUp = (tempByte & 0x02) != 0;
-                    cState.DpadDown = (tempByte & 0x01) != 0;
-                    cState.DpadLeft = (tempByte & 0x08) != 0;
-                    cState.DpadRight = (tempByte & 0x04) != 0;
-                    cState.L1 = (tempByte & 0x40) != 0;
-                    cState.L2Btn = (tempByte & 0x80) != 0;
-                    cState.L2 = (byte)(cState.L2Btn ? 255 : 0);
+                    currentState.DpadUp = (tempByte & 0x02) != 0;
+                    currentState.DpadDown = (tempByte & 0x01) != 0;
+                    currentState.DpadLeft = (tempByte & 0x08) != 0;
+                    currentState.DpadRight = (tempByte & 0x04) != 0;
+                    currentState.L1 = (tempByte & 0x40) != 0;
+                    currentState.L2Btn = (tempByte & 0x80) != 0;
+                    currentState.L2 = (byte)(currentState.L2Btn ? 255 : 0);
 
                     stick_raw[0] = inputReportBuffer[6];
                     stick_raw[1] = inputReportBuffer[7];
@@ -499,11 +499,11 @@ namespace DS4Windows.InputDevices
 
                     tempAxis = (stick_raw[0] | ((stick_raw[1] & 0x0F) << 8)) - leftStickOffsetX;
                     tempAxis = tempAxis > leftStickXData.max ? leftStickXData.max : (tempAxis < leftStickXData.min ? leftStickXData.min : tempAxis);
-                    cState.LX = (byte)((tempAxis - leftStickXData.min) / (double)(leftStickXData.max - leftStickXData.min) * 255);
+                    currentState.LX = (byte)((tempAxis - leftStickXData.min) / (double)(leftStickXData.max - leftStickXData.min) * 255);
 
                     tempAxis = ((stick_raw[1] >> 4) | (stick_raw[2] << 4)) - leftStickOffsetY;
                     tempAxis = tempAxis > leftStickYData.max ? leftStickYData.max : (tempAxis < leftStickYData.min ? leftStickYData.min : tempAxis);
-                    cState.LY = (byte)((((tempAxis - leftStickYData.min) / (double)(leftStickYData.max - leftStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
+                    currentState.LY = (byte)((((tempAxis - leftStickYData.min) / (double)(leftStickYData.max - leftStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
 
                     stick_raw2[0] = inputReportBuffer[9];
                     stick_raw2[1] = inputReportBuffer[10];
@@ -511,12 +511,12 @@ namespace DS4Windows.InputDevices
 
                     tempAxis = (stick_raw2[0] | ((stick_raw2[1] & 0x0F) << 8)) - rightStickOffsetX;
                     tempAxis = tempAxis > rightStickXData.max ? rightStickXData.max : (tempAxis < rightStickXData.min ? rightStickXData.min : tempAxis);
-                    cState.RX = (byte)((tempAxis - rightStickXData.min) / (double)(rightStickXData.max - rightStickXData.min) * 255);
+                    currentState.RX = (byte)((tempAxis - rightStickXData.min) / (double)(rightStickXData.max - rightStickXData.min) * 255);
 
                     tempAxis = ((stick_raw2[1] >> 4) | (stick_raw2[2] << 4)) - rightStickOffsetY;
                     tempAxis = tempAxis > rightStickYData.max ? rightStickYData.max : (tempAxis < rightStickYData.min ? rightStickYData.min : tempAxis);
                     //cState.RY = (byte)((tempAxis - STICK_MIN) / (STICK_MAX - STICK_MIN) * 255);
-                    cState.RY = (byte)((((tempAxis - rightStickYData.min) / (double)(rightStickYData.max - rightStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
+                    currentState.RY = (byte)((((tempAxis - rightStickYData.min) / (double)(rightStickYData.max - rightStickYData.min) - 0.5) * -1.0 + 0.5) * 255);
 
                     for (int i = 0; i < 3; i++)
                     {
@@ -557,7 +557,7 @@ namespace DS4Windows.InputDevices
                     
                     // Need to populate the SixAxis object manually to work around conversions
                     //Console.WriteLine("GyroYaw: {0}", gyroYaw);
-                    SixAxis tempMotion = cState.Motion;
+                    SixAxis tempMotion = currentState.Motion;
                     sixAxis.PrepareNonDS4SixAxis(ref gyroYaw, ref gyroPitch, ref gyroRoll,
                         ref accelX, ref accelY, ref accelZ);
 
@@ -580,7 +580,7 @@ namespace DS4Windows.InputDevices
                     tempMotion.angVelPitch = -gyroPitch * GYRO_IN_DEG_SEC_FACTOR;
                     tempMotion.angVelRoll = gyroRoll * GYRO_IN_DEG_SEC_FACTOR;
 
-                    SixAxisEventArgs args = new SixAxisEventArgs(cState.ReportTimeStamp, cState.Motion);
+                    SixAxisEventArgs args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
                     if (conType == ConnectionType.USB)
@@ -645,8 +645,8 @@ namespace DS4Windows.InputDevices
                     else if (!string.IsNullOrEmpty(error))
                         error = string.Empty;
 
-                    pState.Motion.copy(cState.Motion);
-                    cState.CopyTo(pState);
+                    pState.Motion.copy(currentState.Motion);
+                    currentState.CopyTo(pState);
 
                     if (hasInputEvts)
                     {

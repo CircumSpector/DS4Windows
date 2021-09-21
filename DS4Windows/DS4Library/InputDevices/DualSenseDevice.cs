@@ -453,7 +453,7 @@ namespace DS4Windows.InputDevices
                                     ref crcoffset, ref crcpos);
                                 if (recvCrc32 != calcCrc32)
                                 {
-                                    cState.PacketCounter =
+                                    currentState.PacketCounter =
                                         pState.PacketCounter + 1; //still increase so we know there were lost packets
                                     if (this.inputReportErrorCount >= 10)
                                     {
@@ -555,22 +555,22 @@ namespace DS4Windows.InputDevices
 
                         utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
 
-                        cState.PacketCounter = pState.PacketCounter + 1;
-                        cState.ReportTimeStamp = utcNow;
-                        cState.LX = inputReport[1 + reportOffset];
-                        cState.LY = inputReport[2 + reportOffset];
-                        cState.RX = inputReport[3 + reportOffset];
-                        cState.RY = inputReport[4 + reportOffset];
-                        cState.L2 = inputReport[5 + reportOffset];
-                        cState.R2 = inputReport[6 + reportOffset];
+                        currentState.PacketCounter = pState.PacketCounter + 1;
+                        currentState.ReportTimeStamp = utcNow;
+                        currentState.LX = inputReport[1 + reportOffset];
+                        currentState.LY = inputReport[2 + reportOffset];
+                        currentState.RX = inputReport[3 + reportOffset];
+                        currentState.RY = inputReport[4 + reportOffset];
+                        currentState.L2 = inputReport[5 + reportOffset];
+                        currentState.R2 = inputReport[6 + reportOffset];
 
                         // DS4 Frame Counter range is [0-127]. DS version range is [0-255]. Convert
-                        cState.FrameCounter = (byte)(inputReport[7 + reportOffset] % 128);
+                        currentState.FrameCounter = (byte)(inputReport[7 + reportOffset] % 128);
                         tempByte = inputReport[8 + reportOffset];
-                        cState.Triangle = (tempByte & (1 << 7)) != 0;
-                        cState.Circle = (tempByte & (1 << 6)) != 0;
-                        cState.Cross = (tempByte & (1 << 5)) != 0;
-                        cState.Square = (tempByte & (1 << 4)) != 0;
+                        currentState.Triangle = (tempByte & (1 << 7)) != 0;
+                        currentState.Circle = (tempByte & (1 << 6)) != 0;
+                        currentState.Cross = (tempByte & (1 << 5)) != 0;
+                        currentState.Square = (tempByte & (1 << 4)) != 0;
 
                         // First 4 bits denote dpad state. Clock representation
                         // with 8 meaning centered and 0 meaning DpadUp.
@@ -579,77 +579,77 @@ namespace DS4Windows.InputDevices
                         switch (dpad_state)
                         {
                             case 0:
-                                cState.DpadUp = true;
-                                cState.DpadDown = false;
-                                cState.DpadLeft = false;
-                                cState.DpadRight = false;
+                                currentState.DpadUp = true;
+                                currentState.DpadDown = false;
+                                currentState.DpadLeft = false;
+                                currentState.DpadRight = false;
                                 break;
                             case 1:
-                                cState.DpadUp = true;
-                                cState.DpadDown = false;
-                                cState.DpadLeft = false;
-                                cState.DpadRight = true;
+                                currentState.DpadUp = true;
+                                currentState.DpadDown = false;
+                                currentState.DpadLeft = false;
+                                currentState.DpadRight = true;
                                 break;
                             case 2:
-                                cState.DpadUp = false;
-                                cState.DpadDown = false;
-                                cState.DpadLeft = false;
-                                cState.DpadRight = true;
+                                currentState.DpadUp = false;
+                                currentState.DpadDown = false;
+                                currentState.DpadLeft = false;
+                                currentState.DpadRight = true;
                                 break;
                             case 3:
-                                cState.DpadUp = false;
-                                cState.DpadDown = true;
-                                cState.DpadLeft = false;
-                                cState.DpadRight = true;
+                                currentState.DpadUp = false;
+                                currentState.DpadDown = true;
+                                currentState.DpadLeft = false;
+                                currentState.DpadRight = true;
                                 break;
                             case 4:
-                                cState.DpadUp = false;
-                                cState.DpadDown = true;
-                                cState.DpadLeft = false;
-                                cState.DpadRight = false;
+                                currentState.DpadUp = false;
+                                currentState.DpadDown = true;
+                                currentState.DpadLeft = false;
+                                currentState.DpadRight = false;
                                 break;
                             case 5:
-                                cState.DpadUp = false;
-                                cState.DpadDown = true;
-                                cState.DpadLeft = true;
-                                cState.DpadRight = false;
+                                currentState.DpadUp = false;
+                                currentState.DpadDown = true;
+                                currentState.DpadLeft = true;
+                                currentState.DpadRight = false;
                                 break;
                             case 6:
-                                cState.DpadUp = false;
-                                cState.DpadDown = false;
-                                cState.DpadLeft = true;
-                                cState.DpadRight = false;
+                                currentState.DpadUp = false;
+                                currentState.DpadDown = false;
+                                currentState.DpadLeft = true;
+                                currentState.DpadRight = false;
                                 break;
                             case 7:
-                                cState.DpadUp = true;
-                                cState.DpadDown = false;
-                                cState.DpadLeft = true;
-                                cState.DpadRight = false;
+                                currentState.DpadUp = true;
+                                currentState.DpadDown = false;
+                                currentState.DpadLeft = true;
+                                currentState.DpadRight = false;
                                 break;
                             case 8:
                             default:
-                                cState.DpadUp = false;
-                                cState.DpadDown = false;
-                                cState.DpadLeft = false;
-                                cState.DpadRight = false;
+                                currentState.DpadUp = false;
+                                currentState.DpadDown = false;
+                                currentState.DpadLeft = false;
+                                currentState.DpadRight = false;
                                 break;
                         }
 
                         tempByte = inputReport[9 + reportOffset];
-                        cState.R3 = (tempByte & (1 << 7)) != 0;
-                        cState.L3 = (tempByte & (1 << 6)) != 0;
-                        cState.Options = (tempByte & (1 << 5)) != 0;
-                        cState.Share = (tempByte & (1 << 4)) != 0;
-                        cState.R2Btn = (tempByte & (1 << 3)) != 0;
-                        cState.L2Btn = (tempByte & (1 << 2)) != 0;
-                        cState.R1 = (tempByte & (1 << 1)) != 0;
-                        cState.L1 = (tempByte & (1 << 0)) != 0;
+                        currentState.R3 = (tempByte & (1 << 7)) != 0;
+                        currentState.L3 = (tempByte & (1 << 6)) != 0;
+                        currentState.Options = (tempByte & (1 << 5)) != 0;
+                        currentState.Share = (tempByte & (1 << 4)) != 0;
+                        currentState.R2Btn = (tempByte & (1 << 3)) != 0;
+                        currentState.L2Btn = (tempByte & (1 << 2)) != 0;
+                        currentState.R1 = (tempByte & (1 << 1)) != 0;
+                        currentState.L1 = (tempByte & (1 << 0)) != 0;
 
                         tempByte = inputReport[10 + reportOffset];
-                        cState.PS = (tempByte & (1 << 0)) != 0;
-                        cState.TouchButton = (tempByte & 0x02) != 0;
-                        cState.OutputTouchButton = cState.TouchButton;
-                        cState.Mute = (tempByte & (1 << 2)) != 0;
+                        currentState.PS = (tempByte & (1 << 0)) != 0;
+                        currentState.TouchButton = (tempByte & 0x02) != 0;
+                        currentState.OutputTouchButton = currentState.TouchButton;
+                        currentState.Mute = (tempByte & (1 << 2)) != 0;
 
                         if ((this.featureSet & VidPidFeatureSet.NoBatteryReading) == 0)
                         {
@@ -682,7 +682,7 @@ namespace DS4Windows.InputDevices
                                 BatteryChanged?.Invoke(this, EventArgs.Empty);
                             }
 
-                            cState.Battery = (byte)battery;
+                            currentState.Battery = (byte)battery;
                             //System.Diagnostics.Debug.WriteLine("CURRENT BATTERY: " + (inputReport[30] & 0x0f) + " | " + tempBattery + " | " + battery);
                         }
                         else
@@ -690,7 +690,7 @@ namespace DS4Windows.InputDevices
                             // Some gamepads don't send battery values in DS4 compatible data fields, so use dummy 99% value to avoid constant low battery warnings
                             //priorInputReport30 = 0x0F;
                             battery = 99;
-                            cState.Battery = 99;
+                            currentState.Battery = 99;
                         }
 
                         tempStamp = inputReport[28 + reportOffset] |
@@ -723,19 +723,19 @@ namespace DS4Windows.InputDevices
                         if (deltaTimeCurrent != 0)
                         {
                             elapsedDeltaTime = 0.000001 * deltaTimeCurrent; // Convert from microseconds to seconds
-                            cState.totalMicroSec = pState.totalMicroSec + deltaTimeCurrent;
+                            currentState.totalMicroSec = pState.totalMicroSec + deltaTimeCurrent;
                         }
                         else
                         {
                             // Duplicate timestamp. Use system clock for elapsed time instead
                             elapsedDeltaTime = lastTimeElapsedDouble * .001;
-                            cState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
+                            currentState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
                         }
 
                         //Console.WriteLine("{0} {1} {2} {3} {4} Diff({5}) TSms({6}) Sys({7})", tempStamp, inputReport[31 + reportOffset], inputReport[30 + reportOffset], inputReport[29 + reportOffset], inputReport[28 + reportOffset], tempStamp - timeStampPrevious, elapsedDeltaTime, lastTimeElapsedDouble * 0.001);
 
-                        cState.elapsedTime = elapsedDeltaTime;
-                        cState.ds4Timestamp = (ushort)((tempStamp / 16) % ushort.MaxValue);
+                        currentState.elapsedTime = elapsedDeltaTime;
+                        currentState.ds4Timestamp = (ushort)((tempStamp / 16) % ushort.MaxValue);
                         timeStampPrevious = tempStamp;
 
                         //elapsedDeltaTime = lastTimeElapsedDouble * .001;
@@ -743,20 +743,20 @@ namespace DS4Windows.InputDevices
                         //cState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
 
                         // Simpler touch storing
-                        cState.TrackPadTouch0.RawTrackingNum = inputReport[33 + reportOffset];
-                        cState.TrackPadTouch0.Id = (byte)(inputReport[33 + reportOffset] & 0x7f);
-                        cState.TrackPadTouch0.IsActive = (inputReport[33 + reportOffset] & 0x80) == 0;
-                        cState.TrackPadTouch0.X = (short)(((ushort)(inputReport[35 + reportOffset] & 0x0f) << 8) |
+                        currentState.TrackPadTouch0.RawTrackingNum = inputReport[33 + reportOffset];
+                        currentState.TrackPadTouch0.Id = (byte)(inputReport[33 + reportOffset] & 0x7f);
+                        currentState.TrackPadTouch0.IsActive = (inputReport[33 + reportOffset] & 0x80) == 0;
+                        currentState.TrackPadTouch0.X = (short)(((ushort)(inputReport[35 + reportOffset] & 0x0f) << 8) |
                                                           (ushort)(inputReport[34 + reportOffset]));
-                        cState.TrackPadTouch0.Y = (short)(((ushort)(inputReport[36 + reportOffset]) << 4) |
+                        currentState.TrackPadTouch0.Y = (short)(((ushort)(inputReport[36 + reportOffset]) << 4) |
                                                           ((ushort)(inputReport[35 + reportOffset] & 0xf0) >> 4));
 
-                        cState.TrackPadTouch1.RawTrackingNum = inputReport[37 + reportOffset];
-                        cState.TrackPadTouch1.Id = (byte)(inputReport[37 + reportOffset] & 0x7f);
-                        cState.TrackPadTouch1.IsActive = (inputReport[37 + reportOffset] & 0x80) == 0;
-                        cState.TrackPadTouch1.X = (short)(((ushort)(inputReport[39 + reportOffset] & 0x0f) << 8) |
+                        currentState.TrackPadTouch1.RawTrackingNum = inputReport[37 + reportOffset];
+                        currentState.TrackPadTouch1.Id = (byte)(inputReport[37 + reportOffset] & 0x7f);
+                        currentState.TrackPadTouch1.IsActive = (inputReport[37 + reportOffset] & 0x80) == 0;
+                        currentState.TrackPadTouch1.X = (short)(((ushort)(inputReport[39 + reportOffset] & 0x0f) << 8) |
                                                           (ushort)(inputReport[38 + reportOffset]));
-                        cState.TrackPadTouch1.Y = (short)(((ushort)(inputReport[40 + reportOffset]) << 4) |
+                        currentState.TrackPadTouch1.Y = (short)(((ushort)(inputReport[40 + reportOffset]) << 4) |
                                                           ((ushort)(inputReport[39 + reportOffset] & 0xf0) >> 4));
 
                         // XXX DS4State mapping needs fixup, turn touches into an array[4] of structs.  And include the touchpad details there instead.
@@ -766,31 +766,31 @@ namespace DS4Windows.InputDevices
                             // don't seem to contain relevant data. ds4drv does not use them either.
                             int touchOffset = 0;
 
-                            cState.TouchPacketCounter =
+                            currentState.TouchPacketCounter =
                                 inputReport[8 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset];
-                            cState.Touch1 =
+                            currentState.Touch1 =
                                 (inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0
                                     ? false
                                     : true; // finger 1 detected
-                            cState.Touch1Identifier =
+                            currentState.Touch1Identifier =
                                 (byte)(inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0x7f);
-                            cState.Touch2 =
+                            currentState.Touch2 =
                                 (inputReport[4 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0
                                     ? false
                                     : true; // finger 2 detected
-                            cState.Touch2Identifier =
+                            currentState.Touch2Identifier =
                                 (byte)(inputReport[4 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0x7f);
-                            cState.Touch1Finger = cState.Touch1 || cState.Touch2; // >= 1 touch detected
-                            cState.Touch2Fingers = cState.Touch1 && cState.Touch2; // 2 touches detected
+                            currentState.Touch1Finger = currentState.Touch1 || currentState.Touch2; // >= 1 touch detected
+                            currentState.Touch2Fingers = currentState.Touch1 && currentState.Touch2; // 2 touches detected
                             int touchX =
                                 (((inputReport[2 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0xF) << 8) |
                                  inputReport[1 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset]);
-                            cState.TouchLeft = touchX >= DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
-                            cState.TouchRight = touchX < DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
+                            currentState.TouchLeft = touchX >= DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
+                            currentState.TouchRight = touchX < DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
                             // Even when idling there is still a touch packet indicating no touch 1 or 2
                             if (synced)
                             {
-                                touchpad.handleTouchpad(inputReport, cState, TOUCHPAD_DATA_OFFSET + reportOffset,
+                                touchpad.handleTouchpad(inputReport, currentState, TOUCHPAD_DATA_OFFSET + reportOffset,
                                     touchOffset);
                             }
                         }
@@ -813,7 +813,7 @@ namespace DS4Windows.InputDevices
 
                             if (synced)
                             {
-                                sixAxis.handleSixaxis(pbGyro, pbAccel, cState, elapsedDeltaTime);
+                                sixAxis.handleSixaxis(pbGyro, pbAccel, currentState, elapsedDeltaTime);
                             }
                         }
 
@@ -897,7 +897,7 @@ namespace DS4Windows.InputDevices
                         else if (!string.IsNullOrEmpty(error))
                             error = string.Empty;
 
-                        cState.CopyTo(pState);
+                        currentState.CopyTo(pState);
 
                         if (hasInputEvts)
                         {
