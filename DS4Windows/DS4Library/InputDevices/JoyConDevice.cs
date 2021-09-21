@@ -477,13 +477,13 @@ namespace DS4Windows.InputDevices
                     Latency = latencySum / (double)tempLatencyCount;
 
                     utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
-                    currentState.PacketCounter = pState.PacketCounter + 1;
+                    currentState.PacketCounter = previousState.PacketCounter + 1;
                     // DS4 Frame Counter range is [0-127]
                     currentState.FrameCounter = (byte)(currentState.PacketCounter % 128);
                     currentState.ReportTimeStamp = utcNow;
 
                     currentState.elapsedTime = combLatency;
-                    currentState.totalMicroSec = pState.totalMicroSec + (uint)(combLatency * 1000000);
+                    currentState.totalMicroSec = previousState.totalMicroSec + (uint)(combLatency * 1000000);
                     combLatency = 0.0;
 
                     if ((this.featureSet & VidPidFeatureSet.NoBatteryReading) == 0)
@@ -647,7 +647,7 @@ namespace DS4Windows.InputDevices
                     tempMotion.accelXFull = accelX * 2; tempMotion.accelYFull = -accelZ * 2; tempMotion.accelZFull = -accelY * 2;
 
                     tempMotion.elapsed = elapsedDeltaTime;
-                    tempMotion.previousAxis = pState.Motion;
+                    tempMotion.previousAxis = previousState.Motion;
                     tempMotion.gyroYaw = gyroYaw / 256; tempMotion.gyroPitch = -gyroPitch / 256; tempMotion.gyroRoll = gyroRoll / 256;
                     tempMotion.accelX = accelX / 31; tempMotion.accelY = -accelZ / 31; tempMotion.accelZ = -accelY / 31;
                     //tempMotion.outputAccelX = tempMotion.accelX; tempMotion.outputAccelY = tempMotion.accelY; tempMotion.outputAccelZ = tempMotion.accelZ;
@@ -726,8 +726,8 @@ namespace DS4Windows.InputDevices
                     else if (!string.IsNullOrEmpty(error))
                         error = string.Empty;
 
-                    pState.Motion.copy(currentState.Motion);
-                    currentState.CopyTo(pState);
+                    previousState.Motion.copy(currentState.Motion);
+                    previousState = (DS4State)currentState.Clone();
 
                     if (hasInputEvts)
                     {
@@ -1400,7 +1400,7 @@ namespace DS4Windows.InputDevices
             DS4State tempState = null;
             if (!performStateMerge)
             {
-                tempState = pState;
+                tempState = previousState;
             }
             else
             {
@@ -1412,7 +1412,7 @@ namespace DS4Windows.InputDevices
 
         public override void PreserveMergedStateData()
         {
-            jointState.CopyTo(jointPreviousState);
+            jointPreviousState = (DS4State)jointState.Clone();
         }
 
         public override void MergeStateData(DS4State dState)

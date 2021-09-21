@@ -233,8 +233,8 @@ namespace DS4WinWPF.DS4Forms
                 ds.ReadWaitEv.Reset();
 
                 // Make copy of current state values for UI thread
-                tmpbaseState.CopyTo(baseState);
-                tmpinterState.CopyTo(interState);
+                baseState = (DS4State)tmpbaseState.Clone();
+                interState = (DS4State)tmpinterState.Clone();
 
                 if (deviceNum != profileDeviceNum)
                     Mapping.SetCurveAndDeadzone(profileDeviceNum, baseState, interState);

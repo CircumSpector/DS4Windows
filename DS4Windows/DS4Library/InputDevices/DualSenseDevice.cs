@@ -454,7 +454,7 @@ namespace DS4Windows.InputDevices
                                 if (recvCrc32 != calcCrc32)
                                 {
                                     currentState.PacketCounter =
-                                        pState.PacketCounter + 1; //still increase so we know there were lost packets
+                                        previousState.PacketCounter + 1; //still increase so we know there were lost packets
                                     if (this.inputReportErrorCount >= 10)
                                     {
                                         exitInputThread = true;
@@ -555,7 +555,7 @@ namespace DS4Windows.InputDevices
 
                         utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
 
-                        currentState.PacketCounter = pState.PacketCounter + 1;
+                        currentState.PacketCounter = previousState.PacketCounter + 1;
                         currentState.ReportTimeStamp = utcNow;
                         currentState.LX = inputReport[1 + reportOffset];
                         currentState.LY = inputReport[2 + reportOffset];
@@ -723,13 +723,13 @@ namespace DS4Windows.InputDevices
                         if (deltaTimeCurrent != 0)
                         {
                             elapsedDeltaTime = 0.000001 * deltaTimeCurrent; // Convert from microseconds to seconds
-                            currentState.totalMicroSec = pState.totalMicroSec + deltaTimeCurrent;
+                            currentState.totalMicroSec = previousState.totalMicroSec + deltaTimeCurrent;
                         }
                         else
                         {
                             // Duplicate timestamp. Use system clock for elapsed time instead
                             elapsedDeltaTime = lastTimeElapsedDouble * .001;
-                            currentState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
+                            currentState.totalMicroSec = previousState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
                         }
 
                         //Console.WriteLine("{0} {1} {2} {3} {4} Diff({5}) TSms({6}) Sys({7})", tempStamp, inputReport[31 + reportOffset], inputReport[30 + reportOffset], inputReport[29 + reportOffset], inputReport[28 + reportOffset], tempStamp - timeStampPrevious, elapsedDeltaTime, lastTimeElapsedDouble * 0.001);
@@ -897,7 +897,7 @@ namespace DS4Windows.InputDevices
                         else if (!string.IsNullOrEmpty(error))
                             error = string.Empty;
 
-                        currentState.CopyTo(pState);
+                        previousState = (DS4State)currentState.Clone();
 
                         if (hasInputEvts)
                         {

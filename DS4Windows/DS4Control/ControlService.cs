@@ -1414,7 +1414,7 @@ namespace DS4Windows
                 GetPadDetailForIdx(tempIdx, ref padDetail);
                 DS4State stateForUdp = TempState[tempIdx];
 
-                CurrentState[tempIdx].CopyTo(stateForUdp);
+                stateForUdp = (DS4State)CurrentState[tempIdx].Clone();
                 if (Global.Instance.Config.UseUdpSmoothing)
                 {
                     if (stateForUdp.elapsedTime == 0)
@@ -2211,15 +2211,14 @@ namespace DS4Windows
                 DS4State cState;
                 if (!device.PerformStateMerge)
                 {
-                    cState = CurrentState[ind];
-                    device.getRawCurrentState(cState);
+                    cState = CurrentState[ind] = device.GetRawCurrentState();
                 }
                 else
                 {
                     cState = device.JointState;
                     device.MergeStateData(cState);
                     // Need to copy state object info for use in UDP server
-                    cState.CopyTo(CurrentState[ind]);
+                    CurrentState[ind] = (DS4State)cState.Clone();
                 }
 
                 DS4State pState = device.getPreviousStateRef();
