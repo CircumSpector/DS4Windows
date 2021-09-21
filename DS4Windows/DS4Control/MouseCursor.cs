@@ -64,7 +64,7 @@ namespace DS4Windows
         public virtual void sixaxisMoved(SixAxisEventArgs arg)
         {
             int deltaX = 0, deltaY = 0;
-            deltaX = Global.Instance.GetGyroMouseHorizontalAxis(deviceNumber) == 0 ? arg.sixAxis.gyroYawFull :
+            deltaX = Global.Instance.Config.GetGyroMouseHorizontalAxis(deviceNumber) == 0 ? arg.sixAxis.gyroYawFull :
                 arg.sixAxis.gyroRollFull;
             deltaY = -arg.sixAxis.gyroPitchFull;
             //tempDouble = arg.sixAxis.elapsed * 0.001 * 200.0; // Base default speed on 5 ms
@@ -74,7 +74,7 @@ namespace DS4Windows
             gyroSmooth = tempInfo.enableSmoothing;
             double gyroSmoothWeight = 0.0;
 
-            coefficient = (Global.Instance.GetGyroSensitivity(deviceNumber) * 0.01) * gyroMouseSensSettings.mouseCoefficient;
+            coefficient = (Global.Instance.Config.GetGyroSensitivity(deviceNumber) * 0.01) * gyroMouseSensSettings.mouseCoefficient;
             double offset = gyroMouseSensSettings.mouseOffset;
             if (gyroSmooth)
             {
@@ -121,7 +121,7 @@ namespace DS4Windows
             double xMotion = deltaX != 0 ? coefficient * (deltaX * tempDouble)
                 + (normX * (offset * signX)) : 0;
 
-            verticalScale = Global.Instance.GetGyroSensVerticalScale(deviceNumber) * 0.01;
+            verticalScale = Global.Instance.Config.GetGyroSensVerticalScale(deviceNumber) * 0.01;
             double yMotion = deltaY != 0 ? (coefficient * verticalScale) * (deltaY * tempDouble)
                 + (normY * (offset * signY)) : 0;
 
@@ -208,7 +208,7 @@ namespace DS4Windows
                 }
             }
 
-            int gyroInvert = Global.Instance.GetGyroInvert(deviceNumber);
+            int gyroInvert = Global.Instance.Config.GetGyroInvert(deviceNumber);
             if ((gyroInvert & 0x02) == 2)
                 xAction *= -1;
 

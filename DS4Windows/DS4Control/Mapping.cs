@@ -1763,7 +1763,7 @@ namespace DS4Windows
             }
                 
 
-            bool saControls = Global.Instance.IsUsingSAForControls(device);
+            bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
             if (saControls && dState.Motion.outputGyroControls)
             {
                 int SXD = (int)(128d * Global.Instance.GetSXDeadZone(device));
@@ -2280,7 +2280,7 @@ namespace DS4Windows
                     ref tempMouseDeltaY, ctrl);
             }
 
-            GyroOutMode imuOutMode = Global.Instance.GetGyroOutMode(device);
+            GyroOutMode imuOutMode = Global.Instance.Config.GetGyroOutMode(device);
             if (imuOutMode == GyroOutMode.DirectionalSwipe)
             {
                 DS4ControlSettings gyroSwipeXDcs = null;
@@ -2428,14 +2428,14 @@ namespace DS4Windows
                 if (macroControl[25]) MappedState.OutputTouchButton = true;
             }
 
-            if (Global.Instance.GetSASteeringWheelEmulationAxis(device) != SASteeringWheelEmulationAxisType.None)
+            if (Global.Instance.Config.GetSASteeringWheelEmulationAxis(device) != SASteeringWheelEmulationAxisType.None)
             {
                 MappedState.SASteeringWheelEmulationUnit = Mapping.Scale360degreeGyroAxis(device, eState, ctrl);
             }
 
             if (imuOutMode == GyroOutMode.MouseJoystick)
             {
-                GyroMouseStickInfo msinfo = Global.Instance.GetGyroMouseStickInfo(device);
+                GyroMouseStickInfo msinfo = Global.Instance.Config.GetGyroMouseStickInfo(device);
                 if (msinfo.outputStick != GyroMouseStickInfo.OutputStick.None)
                 {
                     ref byte gyroTempX = ref gyroStickX[device];
@@ -4615,7 +4615,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = Global.Instance.IsUsingSAForControls(device);
+                bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
                 {
@@ -4729,7 +4729,7 @@ namespace DS4Windows
             }
             else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
             {
-                bool saControls = Global.Instance.IsUsingSAForControls(device);
+                bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
                 {
@@ -4792,7 +4792,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = Global.Instance.IsUsingSAForControls(device);
+                bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
                 bool safeTest = false;
 
                 switch (control)
@@ -4848,7 +4848,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = Global.Instance.IsUsingSAForControls(device);
+                bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
                 bool safeTest = false;
 
                 switch (control)
@@ -4946,7 +4946,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = Global.Instance.IsUsingSAForControls(device);
+                bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
                 bool safeTest = false;
 
                 switch (control)
@@ -5053,7 +5053,7 @@ namespace DS4Windows
             }
             else if (controlType == DS4StateFieldMapping.ControlType.GyroDir)
             {
-                bool saControls = Global.Instance.IsUsingSAForControls(device);
+                bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
                 {
@@ -5186,7 +5186,7 @@ namespace DS4Windows
             {
                 double SXD = Global.Instance.GetSXDeadZone(device);
                 double SZD = Global.Instance.GetSZDeadZone(device);
-                bool saControls = Global.Instance.IsUsingSAForControls(device);
+                bool saControls = Global.Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
                 {
@@ -5596,12 +5596,12 @@ namespace DS4Windows
                     controller.wheelCircleCenterPointLeft.X = controller.wheelCenterPoint.X;
                     controller.wheelCircleCenterPointLeft.Y = controller.wheel90DegPointLeft.Y;
 
-                    AppLogger.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.GetSASteeringWheelEmulationRange(device)}", false);
+                    AppLogger.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.Config.GetSASteeringWheelEmulationRange(device)}", false);
                     controller.wheelPrevRecalibrateTime = DateTime.Now;
                 }
 
 
-                int maxRangeRight = Global.Instance.GetSASteeringWheelEmulationRange(device) / 2 * C_WHEEL_ANGLE_PRECISION;
+                int maxRangeRight = Global.Instance.Config.GetSASteeringWheelEmulationRange(device) / 2 * C_WHEEL_ANGLE_PRECISION;
                 int maxRangeLeft = -maxRangeRight;
 
                 //Console.WriteLine("Values {0} {1}", gyroAccelX, gyroAccelZ);
@@ -5712,7 +5712,7 @@ namespace DS4Windows
                     outputAxisZero = 0;
                 }
 
-                switch (Global.Instance.GetSASteeringWheelEmulationAxis(device))
+                switch (Global.Instance.Config.GetSASteeringWheelEmulationAxis(device))
                 {
                     case SASteeringWheelEmulationAxisType.LX:
                     case SASteeringWheelEmulationAxisType.LY:

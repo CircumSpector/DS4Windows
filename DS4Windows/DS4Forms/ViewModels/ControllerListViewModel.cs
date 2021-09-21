@@ -177,7 +177,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 controllerDict.Remove(found.DevIndex);
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Global.Instance.Save();
+                    Global.Instance.Config.Save();
                 });
                 Global.LinkedProfileCheck[found.DevIndex] = false;
                 _colListLocker.ExitWriteLock();
@@ -380,7 +380,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             if (LinkedProfile)
             {
                 Global.Instance.ChangeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
-                Global.Instance.SaveLinkedProfiles();
+                Global.Instance.Config.SaveLinkedProfiles();
             }
             else
             {
@@ -455,7 +455,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     Global.Instance.Config.ProfilePath[devIndex] = Global.Instance.Config.OlderProfilePath[devIndex];
                 }
 
-                Global.Instance.SaveLinkedProfiles();
+                Global.Instance.Config.SaveLinkedProfiles();
             }
         }
 

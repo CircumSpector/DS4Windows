@@ -233,7 +233,7 @@ namespace DS4WinWPF.DS4Forms
                 bool editMode = specialActVM.EditMode;
                 if (editMode && specialActVM.SavedAction.Name != specialActVM.ActionName)
                 {
-                    DS4Windows.Global.Instance.RemoveAction(specialActVM.SavedAction.Name);
+                    DS4Windows.Global.Instance.Config.RemoveAction(specialActVM.SavedAction.Name);
                     editMode = false;
                 }
 

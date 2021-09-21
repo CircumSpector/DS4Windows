@@ -138,7 +138,7 @@ namespace DS4Windows
 
         public virtual void sixaxisMoved(DS4SixAxis sender, SixAxisEventArgs arg)
         {
-            GyroOutMode outMode = Global.Instance.GetGyroOutMode(deviceNum);
+            GyroOutMode outMode = Global.Instance.Config.GetGyroOutMode(deviceNum);
             if (outMode == GyroOutMode.Controls)
             {
                 s = dev.getCurrentStateRef();
@@ -196,14 +196,14 @@ namespace DS4Windows
                     s.Motion.outputGyroControls = false;
                 }
             }
-            else if (outMode == GyroOutMode.Mouse && Global.Instance.GetGyroSensitivity(deviceNum) > 0)
+            else if (outMode == GyroOutMode.Mouse && Global.Instance.Config.GetGyroSensitivity(deviceNum) > 0)
             {
                 s = dev.getCurrentStateRef();
 
-                useReverseRatchet = Global.Instance.GetGyroTriggerTurns(deviceNum);
+                useReverseRatchet = Global.Instance.Config.GetGyroTriggerTurns(deviceNum);
                 int i = 0;
-                string[] ss = Global.Instance.GetSATriggers(deviceNum).Split(',');
-                bool andCond = Global.Instance.GetSATriggerCondition(deviceNum);
+                string[] ss = Global.Instance.Config.GetSATriggers(deviceNum).Split(',');
+                bool andCond = Global.Instance.Config.GetSATriggerCondition(deviceNum);
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {
@@ -251,10 +251,10 @@ namespace DS4Windows
             {
                 s = dev.getCurrentStateRef();
 
-                useReverseRatchet = Global.Instance.GetGyroMouseStickTriggerTurns(deviceNum);
+                useReverseRatchet = Global.Instance.Config.GetGyroMouseStickTriggerTurns(deviceNum);
                 int i = 0;
-                string[] ss = Global.Instance.GetSAMouseStickTriggers(deviceNum).Split(',');
-                bool andCond = Global.Instance.GetSAMouseStickTriggerCond(deviceNum);
+                string[] ss = Global.Instance.Config.GetSAMouseStickTriggers(deviceNum).Split(',');
+                bool andCond = Global.Instance.Config.GetSAMouseStickTriggerCond(deviceNum);
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {
@@ -301,7 +301,7 @@ namespace DS4Windows
             {
                 s = dev.getCurrentStateRef();
 
-                GyroDirectionalSwipeInfo swipeMapInfo = Global.Instance.GetGyroSwipeInfo(deviceNum);
+                GyroDirectionalSwipeInfo swipeMapInfo = Global.Instance.Config.GetGyroSwipeInfo(deviceNum);
                 useReverseRatchet = swipeMapInfo.triggerTurns;
                 int i = 0;
                 string[] ss = swipeMapInfo.triggers.Split(',');
@@ -375,7 +375,7 @@ namespace DS4Windows
             ySmoothBuffer[iIndex] = 0;
             smoothBufferTail = iIndex + 1;
 
-            GyroMouseStickInfo msinfo = Global.Instance.GetGyroMouseStickInfo(deviceNum);
+            GyroMouseStickInfo msinfo = Global.Instance.Config.GetGyroMouseStickInfo(deviceNum);
             if (msinfo.smoothingMethod == GyroMouseStickInfo.SmoothingMethod.OneEuro)
             {
                 double currentRate = 1.0 / args.sixAxis.elapsed;
@@ -387,14 +387,14 @@ namespace DS4Windows
         private void SixMouseStick(SixAxisEventArgs arg)
         {
             int deltaX = 0, deltaY = 0;
-            deltaX = Global.Instance.GetGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
+            deltaX = Global.Instance.Config.GetGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
                 arg.sixAxis.gyroRollFull;
             deltaY = -arg.sixAxis.gyroPitchFull;
             //int inputX = deltaX, inputY = deltaY;
             int maxDirX = deltaX >= 0 ? 127 : -128;
             int maxDirY = deltaY >= 0 ? 127 : -128;
 
-            GyroMouseStickInfo msinfo = Global.Instance.GetGyroMouseStickInfo(deviceNum);
+            GyroMouseStickInfo msinfo = Global.Instance.Config.GetGyroMouseStickInfo(deviceNum);
 
             double tempDouble = arg.sixAxis.elapsed * 250.0; // Base default speed on 4 ms
             double tempAngle = Math.Atan2(-deltaY, deltaX);

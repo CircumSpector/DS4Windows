@@ -49,16 +49,16 @@ namespace DS4Windows
                 new(), new(), new()
             };
 
-            public IList< bool> GyroMouseStickToggle { get; set; } = new List<bool>()
+            public IList<bool> GyroMouseStickToggle { get; set; } = new List<bool>()
             {
                 false, false, false,
                 false, false, false, false, false, false
             };
 
-            public IList<bool> GyroMouseStickTriggerTurns { get; set; }= new List<bool>()
+            public IList<bool> GyroMouseStickTriggerTurns { get; set; } = new List<bool>()
                 { true, true, true, true, true, true, true, true, true };
 
-            public IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }= new List<GyroMouseStickInfo>()
+            public IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; } = new List<GyroMouseStickInfo>()
             {
                 new(),
                 new(),
@@ -68,7 +68,7 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<GyroOutMode> GyroOutputMode { get; set; }= new List<GyroOutMode>()
+            public IList<GyroOutMode> GyroOutputMode { get; set; } = new List<GyroOutMode>()
             {
                 DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls,
                 DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls, DS4Windows.GyroOutMode.Controls,
@@ -117,7 +117,7 @@ namespace DS4Windows
             /// </summary>
             public bool AutoProfileRevertDefaultProfile { get; set; } = true;
 
-            public int FlashWhenLateAt { get; set; }= 50;
+            public int FlashWhenLateAt { get; set; } = 50;
 
             public string lastVersionChecked = string.Empty;
 
@@ -447,7 +447,7 @@ namespace DS4Windows
 
             public IList<BezierCurve> SZOutBezierCurveObj { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
-            
+
             public IList<string> LaunchProgram { get; set; } = new List<string>
             {
                 string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
@@ -586,7 +586,7 @@ namespace DS4Windows
                 OutContType.X360
             };
 
-             public int SetLsOutCurveMode(int index)
+            public int SetLsOutCurveMode(int index)
             {
                 return _lsOutCurveMode[index];
             }
@@ -676,6 +676,106 @@ namespace DS4Windows
             public DS4Color GetFlashColor(int index)
             {
                 return LightbarSettingInfo[index].Ds4WinSettings.FlashLed;
+            }
+
+            public string GetSATriggers(int index)
+            {
+                return SATriggers[index];
+            }
+
+            public bool GetSATriggerCondition(int index)
+            {
+                return SATriggerCondition[index];
+            }
+
+            public GyroOutMode GetGyroOutMode(int device)
+            {
+                return GyroOutputMode[device];
+            }
+
+            public string GetSAMouseStickTriggers(int device)
+            {
+                return SAMouseStickTriggers[device];
+            }
+
+            public bool GetSAMouseStickTriggerCond(int device)
+            {
+                return SAMouseStickTriggerCond[device];
+            }
+
+            public bool GetGyroMouseStickTriggerTurns(int device)
+            {
+                return GyroMouseStickTriggerTurns[device];
+            }
+
+            public int GetGyroMouseStickHorizontalAxis(int index)
+            {
+                return GyroMouseStickHorizontalAxis[index];
+            }
+
+            public GyroMouseStickInfo GetGyroMouseStickInfo(int device)
+            {
+                return GyroMouseStickInfo[device];
+            }
+
+            public GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)
+            {
+                return GyroSwipeInfo[device];
+            }
+
+            public LightbarSettingInfo GetLightbarSettingsInfo(int index)
+            {
+                return LightbarSettingInfo[index];
+            }
+
+            public bool GetDirectInputOnly(int index)
+            {
+                return DirectInputOnly[index];
+            }
+
+            public bool IsUsingTouchpadForControls(int index)
+            {
+                return TouchOutMode[index] == TouchpadOutMode.Controls;
+            }
+
+            public bool IsUsingSAForControls(int index)
+            {
+                return GyroOutputMode[index] == GyroOutMode.Controls;
+            }
+
+            public SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index)
+            {
+                return SASteeringWheelEmulationAxis[index];
+            }
+
+            public int GetSASteeringWheelEmulationRange(int index)
+            {
+                return SASteeringWheelEmulationRange[index];
+            }
+
+            public int GetGyroSensitivity(int index)
+            {
+                return GyroSensitivity[index];
+            }
+
+            public int GetGyroSensVerticalScale(int index)
+            {
+                return GyroSensVerticalScale[index];
+            }
+
+            public int GetGyroInvert(int index)
+            {
+                return GyroInvert[index];
+            }
+
+            public bool GetGyroTriggerTurns(int index)
+            {
+                return GyroTriggerTurns[index];
+            }
+
+            public int GetGyroMouseHorizontalAxis(int index)
+            {
+                return GyroMouseHorizontalAxis[index];
             }
 
             public void EstablishDefaultSpecialActions(int idx)
@@ -4478,8 +4578,8 @@ namespace DS4Windows
                     profileActionIndexDict[device].Clear();
                     foreach (var actionname in ProfileActions[device])
                     {
-                        profileActionDict[device][actionname] = Instance.GetAction(actionname);
-                        profileActionIndexDict[device][actionname] = Instance.GetActionIndexOf(actionname);
+                        profileActionDict[device][actionname] = Instance.Config.GetAction(actionname);
+                        profileActionIndexDict[device][actionname] = Instance.Config.GetActionIndexOf(actionname);
                     }
 
                     DS4KeyType keyType;

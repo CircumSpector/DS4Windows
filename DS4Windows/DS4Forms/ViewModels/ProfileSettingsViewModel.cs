@@ -1798,8 +1798,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseEvalCondIndex
         {
-            get => Global.Instance.GetSATriggerCondition(device) ? 0 : 1;
-            set => Global.Instance.SetSaTriggerCond(device, value == 0 ? "and" : "or");
+            get => Global.Instance.Config.GetSATriggerCondition(device) ? 0 : 1;
+            set => Global.Instance.Config.SetSaTriggerCond(device, value == 0 ? "and" : "or");
         }
 
         public int GyroMouseXAxis
@@ -2053,7 +2053,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroMouseDeadZone[device];
             set
             {
-                Global.Instance.SetGyroMouseDeadZone(device, value, App.rootHub);
+                Global.Instance.Config.Config.SetGyroMouseDeadZone(device, value, App.rootHub);
 
             }
         }
@@ -2063,7 +2063,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroMouseToggle[device];
             set
             {
-                Global.Instance.SetGyroMouseToggle(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroMouseToggle(device, value, App.rootHub);
             }
         }
 
@@ -2081,7 +2081,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroMouseStickToggle[device];
             set
             {
-                Global.Instance.SetGyroMouseStickToggle(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroMouseStickToggle(device, value, App.rootHub);
             }
         }
 
@@ -2156,8 +2156,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickEvalCondIndex
         {
-            get => Global.Instance.GetSAMouseStickTriggerCond(device) ? 0 : 1;
-            set => Global.Instance.SetSaMouseStickTriggerCond(device, value == 0 ? "and" : "or");
+            get => Global.Instance.Config.GetSAMouseStickTriggerCond(device) ? 0 : 1;
+            set => Global.Instance.Config.SetSaMouseStickTriggerCond(device, value == 0 ? "and" : "or");
         }
 
         public int GyroMouseStickXAxis
@@ -2254,7 +2254,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroControlsInfo[device].triggerToggle;
             set
             {
-                Global.Instance.SetGyroControlsToggle(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroControlsToggle(device, value, App.rootHub);
             }
         }
 
@@ -2419,7 +2419,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void CalcProfileFlags(object sender, EventArgs e)
         {
-            Global.Instance.CacheProfileCustomsFlags(device);
+            Global.Instance.Config.CacheProfileCustomsFlags(device);
         }
 
         private void SetupEvents()

@@ -77,7 +77,7 @@ namespace DS4Windows
         {
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight[deviceNum];
-            var lightbarSettingInfo = Instance.GetLightbarSettingsInfo(deviceNum);
+            var lightbarSettingInfo = Instance.Config.GetLightbarSettingsInfo(deviceNum);
             var lightModeInfo = lightbarSettingInfo.Ds4WinSettings;
             var useLightRoutine = lightbarSettingInfo.Mode == LightbarMode.DS4Win;
             //bool useLightRoutine = false;

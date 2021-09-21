@@ -176,7 +176,7 @@ namespace DS4WinWPF
             logger.Info($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
             logger.Info("Logger created");
 
-            bool readAppConfig = DS4Windows.Global.Instance.Load();
+            bool readAppConfig = DS4Windows.Global.Instance.Config.Load();
             if (!firstRun && !readAppConfig)
             {
                 logger.Info($@"{Constants.ProfilesFileName} not read at location ${DS4Windows.Global.RuntimeAppDataPath}\{Constants.ProfilesFileName}. Using default app settings");
@@ -187,7 +187,7 @@ namespace DS4WinWPF
                 logger.Info("No config found. Creating default config");
                 AttemptSave();
 
-                DS4Windows.Global.Instance.SaveAsNewProfile(0, "Default");
+                DS4Windows.Global.Instance.Config.SaveAsNewProfile(0, "Default");
                 for (int i = 0; i < DS4Windows.ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
                 {
                     DS4Windows.Global.Instance.Config.ProfilePath[i] = DS4Windows.Global.Instance.Config.OlderProfilePath[i] = "Default";
@@ -198,7 +198,7 @@ namespace DS4WinWPF
 
             skipSave = false;
 
-            if (!DS4Windows.Global.Instance.LoadActions())
+            if (!DS4Windows.Global.Instance.Config.LoadActions())
             {
                 DS4Windows.Global.Instance.CreateStdActions();
             }
@@ -210,7 +210,7 @@ namespace DS4WinWPF
                 ChangeTheme(DS4Windows.Global.Instance.Config.ThemeChoice, false);
             }
 
-            DS4Windows.Global.Instance.LoadLinkedProfiles();
+            DS4Windows.Global.Instance.Config.LoadLinkedProfiles();
             DS4Forms.MainWindow window = new DS4Forms.MainWindow(parser);
             MainWindow = window;
             window.Show();
@@ -295,7 +295,7 @@ namespace DS4WinWPF
 
         private void AttemptSave()
         {
-            if (!DS4Windows.Global.Instance.Save()) //if can't write to file
+            if (!DS4Windows.Global.Instance.Config.Save()) //if can't write to file
             {
                 if (MessageBox.Show("Cannot write at current location\nCopy Settings to appdata?", "DS4Windows",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -714,7 +714,7 @@ namespace DS4WinWPF
 
                 if (!skipSave)
                 {
-                    DS4Windows.Global.Instance.Save();
+                    DS4Windows.Global.Instance.Config.Save();
                 }
 
                 exitComThread = true;

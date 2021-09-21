@@ -138,15 +138,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
 
             Global.Instance.Config.ProfileActions[deviceNum] = pactions;
-            Global.Instance.CacheExtraProfileInfo(deviceNum);
+            Global.Instance.Config.CacheExtraProfileInfo(deviceNum);
         }
 
         public void RemoveAction(SpecialActionItem item)
         {
-            Global.Instance.RemoveAction(item.SpecialAction.Name);
+            Global.Instance.Config.RemoveAction(item.SpecialAction.Name);
             actionCol.RemoveAt(specialActionIndex);
             Global.Instance.Config.ProfileActions[deviceNum].Remove(item.SpecialAction.Name);
-            Global.Instance.CacheExtraProfileInfo(deviceNum);
+            Global.Instance.Config.CacheExtraProfileInfo(deviceNum);
         }
     }
 

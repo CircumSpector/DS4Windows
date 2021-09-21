@@ -82,7 +82,7 @@ namespace DS4Windows
                         }
 
                         xDoc.Save(s);
-                        LoadActions();
+                        Config.LoadActions();
                     }
                 }
             }
@@ -133,137 +133,6 @@ namespace DS4Windows
         public bool GetTouchActive(int index)
         {
             return TouchpadActive[index];
-        }
-
-        public LightbarSettingInfo GetLightbarSettingsInfo(int index)
-        {
-            return _config.LightbarSettingInfo[index];
-        }
-
-        public bool GetDirectInputOnly(int index)
-        {
-            return _config.DirectInputOnly[index];
-        }
-
-        public bool IsUsingTouchpadForControls(int index)
-        {
-            return _config.TouchOutMode[index] == TouchpadOutMode.Controls;
-        }
-
-        public bool IsUsingSAForControls(int index)
-        {
-            return _config.GyroOutputMode[index] == GyroOutMode.Controls;
-        }
-
-        public string GetSATriggers(int index)
-        {
-            return _config.SATriggers[index];
-        }
-
-        public bool GetSATriggerCondition(int index)
-        {
-            return _config.SATriggerCondition[index];
-        }
-
-        public void SetSaTriggerCond(int index, string text)
-        {
-            _config.SetSaTriggerCond(index, text);
-        }
-
-        public GyroOutMode GetGyroOutMode(int device)
-        {
-            return _config.GyroOutputMode[device];
-        }
-
-        public string GetSAMouseStickTriggers(int device)
-        {
-            return _config.SAMouseStickTriggers[device];
-        }
-
-        public bool GetSAMouseStickTriggerCond(int device)
-        {
-            return _config.SAMouseStickTriggerCond[device];
-        }
-
-        public void SetSaMouseStickTriggerCond(int index, string text)
-        {
-            _config.SetSaMouseStickTriggerCond(index, text);
-        }
-
-        public bool GetGyroMouseStickTriggerTurns(int device)
-        {
-            return _config.GyroMouseStickTriggerTurns[device];
-        }
-
-        public int GetGyroMouseStickHorizontalAxis(int index)
-        {
-            return _config.GyroMouseStickHorizontalAxis[index];
-        }
-
-        public GyroMouseStickInfo GetGyroMouseStickInfo(int device)
-        {
-            return _config.GyroMouseStickInfo[device];
-        }
-
-        public GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)
-        {
-            return _config.GyroSwipeInfo[device];
-        }
-
-        public void SetGyroMouseStickToggle(int index, bool value, ControlService control)
-        {
-            _config.SetGyroMouseStickToggle(index, value, control);
-        }
-
-        public SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index)
-        {
-            return _config.SASteeringWheelEmulationAxis[index];
-        }
-
-        public int GetSASteeringWheelEmulationRange(int index)
-        {
-            return _config.SASteeringWheelEmulationRange[index];
-        }
-
-
-        public int GetGyroSensitivity(int index)
-        {
-            return _config.GyroSensitivity[index];
-        }
-
-        public int GetGyroSensVerticalScale(int index)
-        {
-            return _config.GyroSensVerticalScale[index];
-        }
-
-        public int GetGyroInvert(int index)
-        {
-            return _config.GyroInvert[index];
-        }
-
-        public bool GetGyroTriggerTurns(int index)
-        {
-            return _config.GyroTriggerTurns[index];
-        }
-
-        public int GetGyroMouseHorizontalAxis(int index)
-        {
-            return _config.GyroMouseHorizontalAxis[index];
-        }
-
-        public void SetGyroMouseDeadZone(int index, int value, ControlService control)
-        {
-            _config.SetGyroMouseDZ(index, value, control);
-        }
-
-        public void SetGyroMouseToggle(int index, bool value, ControlService control)
-        {
-            _config.SetGyroMouseToggle(index, value, control);
-        }
-
-        public void SetGyroControlsToggle(int index, bool value, ControlService control)
-        {
-            _config.SetGyroControlsToggle(index, value, control);
         }
 
         public GyroControlsInfo GetGyroControlsInfo(int index)
@@ -468,21 +337,6 @@ namespace DS4Windows
             Mapping.actionDone.Add(new Mapping.ActionState());
         }
 
-        public void RemoveAction(string name)
-        {
-            _config.RemoveAction(name);
-        }
-
-        public bool LoadActions()
-        {
-            return _config.LoadActions();
-        }
-
-        public int GetActionIndexOf(string name)
-        {
-            return _config.GetActionIndexOf(name);
-        }
-
         public int GetProfileActionIndexOf(int device, string name)
         {
             var index = -1;
@@ -490,26 +344,11 @@ namespace DS4Windows
             return index;
         }
 
-        public SpecialAction GetAction(string name)
-        {
-            return _config.GetAction(name);
-        }
-
         public SpecialAction GetProfileAction(int device, string name)
         {
             SpecialAction sA = null;
             _config.profileActionDict[device].TryGetValue(name, out sA);
             return sA;
-        }
-
-        public void CacheProfileCustomsFlags(int device)
-        {
-            _config.CacheProfileCustomsFlags(device);
-        }
-
-        public void CacheExtraProfileInfo(int device)
-        {
-            _config.CacheExtraProfileInfo(device);
         }
         
         public bool ContainsLinkedProfile(string serial)
@@ -537,11 +376,6 @@ namespace DS4Windows
         {
             var tempSerial = serial.Replace(":", string.Empty);
             if (_config.linkedProfiles.ContainsKey(tempSerial)) _config.linkedProfiles.Remove(tempSerial);
-        }
-
-        public bool Load()
-        {
-            return _config.Load();
         }
 
         public bool LoadProfile(int device, bool launchprogram, ControlService control,
@@ -685,31 +519,6 @@ namespace DS4Windows
             TempProfileNames[device] = string.Empty;
             UseTempProfiles[device] = false;
             TempProfileDistance[device] = false;
-        }
-
-        public bool Save()
-        {
-            return _config.Save();
-        }
-
-        public void SaveProfile(int device, string proName)
-        {
-            _config.SaveProfile(device, proName);
-        }
-
-        public void SaveAsNewProfile(int device, string propath)
-        {
-            _config.SaveAsNewProfile(device, propath);
-        }
-
-        public bool SaveLinkedProfiles()
-        {
-            return _config.SaveLinkedProfiles();
-        }
-
-        public bool LoadLinkedProfiles()
-        {
-            return _config.LoadLinkedProfiles();
         }
 
         public bool SaveControllerConfigs(DS4Device device = null)

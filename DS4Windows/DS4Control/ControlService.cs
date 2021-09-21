@@ -948,7 +948,7 @@ namespace DS4Windows
             OutContType contType = Global.Instance.Config.OutputDeviceType[index];
 
             OutSlotDevice slotDevice = null;
-            if (!Global.Instance.GetDirectInputOnly(index))
+            if (!Global.Instance.Config.GetDirectInputOnly(index))
             {
                 slotDevice = outputslotMan.FindExistUnboundSlotType(contType);
             }
@@ -1283,7 +1283,7 @@ namespace DS4Windows
                         {
                             device.LightBarColor = Global.Instance.Config.GetMainColor(i);
 
-                            if (!Global.Instance.GetDirectInputOnly(i) && device.isSynced())
+                            if (!Global.Instance.Config.GetDirectInputOnly(i) && device.isSynced())
                             {
                                 if (device.PrimaryDevice)
                                 {
@@ -1722,7 +1722,7 @@ namespace DS4Windows
                             {
                                 device.LightBarColor = Global.Instance.Config.GetMainColor(Index);
 
-                                if (!Global.Instance.GetDirectInputOnly(Index) && device.isSynced())
+                                if (!Global.Instance.Config.GetDirectInputOnly(Index) && device.isSynced())
                                 {
                                     if (device.PrimaryDevice)
                                     {
@@ -2066,7 +2066,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (!Instance.GetDirectInputOnly(ind))
+                    if (!Instance.Config.GetDirectInputOnly(ind))
                     {
                         touchPad[ind].ReplaceOneEuroFilterPair();
                         touchPad[ind].ReplaceOneEuroFilterPair();
@@ -2304,7 +2304,7 @@ namespace DS4Windows
                 {
                     // UseDInputOnly profile may re-map sixaxis gyro sensor values as a VJoy joystick axis (steering wheel emulation mode using VJoy output device). Handle this option because VJoy output works even in USeDInputOnly mode.
                     // If steering wheel emulation uses LS/RS/R2/L2 output axies then the profile should NOT use UseDInputOnly option at all because those require a virtual output device.
-                    SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Instance.GetSASteeringWheelEmulationAxis(ind);
+                    SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Instance.Config.GetSASteeringWheelEmulationAxis(ind);
                     switch (steeringWheelMappedAxis)
                     {
                         case SASteeringWheelEmulationAxisType.None: break;
@@ -2443,7 +2443,7 @@ namespace DS4Windows
 
         protected virtual void CheckForTouchToggle(int deviceID, DS4State cState, DS4State pState)
         {
-            if (!Instance.IsUsingTouchpadForControls(deviceID) && cState.Touch1 && pState.PS)
+            if (!Instance.Config.IsUsingTouchpadForControls(deviceID) && cState.Touch1 && pState.PS)
             {
                 if (Instance.GetTouchActive(deviceID) && touchreleased[deviceID])
                 {

@@ -43,8 +43,8 @@ namespace DS4WinWPF
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                Global.Instance.SaveProfile(deviceNum, name);
-                Global.Instance.CacheExtraProfileInfo(deviceNum);
+                Global.Instance.Config.SaveProfile(deviceNum, name);
+                Global.Instance.Config.CacheExtraProfileInfo(deviceNum);
             }
         }
 

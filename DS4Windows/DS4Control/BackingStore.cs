@@ -287,6 +287,48 @@ namespace DS4Windows
 
         void SetSZOutCurveMode(int index, int value);
 
+        GyroOutMode GetGyroOutMode(int device);
+
+        string GetSAMouseStickTriggers(int device);
+
+        bool GetSAMouseStickTriggerCond(int device);
+
+        bool GetGyroMouseStickTriggerTurns(int device);
+
+        int GetGyroMouseStickHorizontalAxis(int index);
+
+        GyroMouseStickInfo GetGyroMouseStickInfo(int device);
+
+        GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device);
+
+        bool GetSATriggerCondition(int index);
+
+        string GetSATriggers(int index);
+
+        LightbarSettingInfo GetLightbarSettingsInfo(int index);
+
+        bool GetDirectInputOnly(int index);
+
+        bool IsUsingTouchpadForControls(int index);
+
+        bool IsUsingSAForControls(int index);
+
+        SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index);
+
+        int GetSASteeringWheelEmulationRange(int index);
+
+         int GetGyroSensitivity(int index);
+
+        int GetGyroSensVerticalScale(int index);
+
+        int GetGyroInvert(int index);
+
+        bool GetGyroTriggerTurns(int index);
+
+        int GetGyroMouseHorizontalAxis(int index);
+
+
+
         void EstablishDefaultSpecialActions(int idx);
         void CacheProfileCustomsFlags(int device);
         void CacheExtraProfileInfo(int device);
