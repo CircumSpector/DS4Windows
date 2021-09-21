@@ -112,6 +112,8 @@ namespace DS4Windows
             // at http://theinstructionlimit.com/squaring-the-thumbsticks
             public void CircleToSquare(double roundness)
             {
+                using var scope = GlobalTracer.Instance.BuildSpan(nameof(CircleToSquare)).StartActive(true);
+
                 const double PiOverFour = Math.PI / 4.0;
 
                 // Determine the theta angle
@@ -706,6 +708,8 @@ namespace DS4Windows
         public enum Click { None, Left, Middle, Right, Fourth, Fifth, WUP, WDOWN };
         public static void MapClick(int device, Click mouseClick)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(MapClick)).StartActive(true);
+
             switch (mouseClick)
             {
                 case Click.Left:
@@ -735,6 +739,8 @@ namespace DS4Windows
 
         public static int DS4ControltoInt(DS4Controls ctrl)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(DS4ControltoInt)).StartActive(true);
+
             int result = 0;
             if (ctrl >= DS4Controls.None && ctrl <= DS4Controls.SideR)
             {
@@ -2009,6 +2015,8 @@ namespace DS4Windows
         /* TODO: Possibly remove usage of this version of the method */
         private static bool ShiftTrigger(int trigger, int device, DS4State cState, DS4StateExposed eState, Mouse tp)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(ShiftTrigger)).StartActive(true);
+
             bool result = false;
             if (trigger == 0)
             {
@@ -2017,7 +2025,7 @@ namespace DS4Windows
             else
             {
                 DS4Controls ds = shiftTriggerMapping[trigger];
-                result = getBoolMapping(device, ds, cState, eState, tp);
+                result = GetBoolMapping(device, ds, cState, eState, tp);
             }
 
             return result;
@@ -2025,6 +2033,8 @@ namespace DS4Windows
 
         private static bool ShiftTrigger2(int trigger, int device, DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMapping)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(ShiftTrigger2)).StartActive(true);
+
             bool result = false;
             if (trigger == 0)
             {
@@ -2033,7 +2043,7 @@ namespace DS4Windows
             else if (trigger < 31 && trigger != 26)
             {
                 DS4Controls ds = shiftTriggerMapping[trigger];
-                result = getBoolMapping2(device, ds, cState, eState, tp, fieldMapping);
+                result = GetBoolMapping2(device, ds, cState, eState, tp, fieldMapping);
             }
             // 26 is a special case. It does not correlate to a direct DS4Controls value
             else if (trigger == 26)
@@ -2485,7 +2495,7 @@ namespace DS4Windows
                             }
                             else
                             {
-                                bool value = getBoolMapping2(device, tempMap.ds4input, cState, eState, tp,
+                                bool value = GetBoolMapping2(device, tempMap.ds4input, cState, eState, tp,
                                     fieldMapping);
                                 if (value)
                                     outputfieldMapping.buttons[tempOutControl] = value;
@@ -2599,7 +2609,7 @@ namespace DS4Windows
                     }
                 }
 
-                calculateFinalMouseMovement(ref tempMouseDeltaX, ref tempMouseDeltaY,
+                CalculateFinalMouseMovement(ref tempMouseDeltaX, ref tempMouseDeltaY,
                     out mouseDeltaX, out mouseDeltaY);
                 if (mouseDeltaX != 0 || mouseDeltaY != 0)
                 {
@@ -3060,7 +3070,7 @@ namespace DS4Windows
                 {
                     if (actionType == DS4ControlSettings.ActionType.Macro)
                     {
-                        bool active = getBoolMapping2(device, dcs.Control, cState, eState, tp, fieldMapping);
+                        bool active = GetBoolMapping2(device, dcs.Control, cState, eState, tp, fieldMapping);
                         if (active)
                         {
                             PlayMacro(device, macroControl, string.Empty, null, action.ActionMacro, dcs.Control,
@@ -3138,7 +3148,7 @@ namespace DS4Windows
                         }
                         else if (xboxControl == X360Controls.TouchpadClick)
                         {
-                            bool value = getBoolMapping2(device, dcs.Control, cState, eState, tp, fieldMapping);
+                            bool value = GetBoolMapping2(device, dcs.Control, cState, eState, tp, fieldMapping);
                             if (value)
                                 outputfieldMapping.outputTouchButton = value;
                         }
@@ -3244,7 +3254,7 @@ namespace DS4Windows
                                 {
                                     if (tempMouseDeltaY == 0)
                                     {
-                                        tempMouseDeltaY = getMouseMapping(device, dcs.Control, cState, eState,
+                                        tempMouseDeltaY = GetMouseMapping(device, dcs.Control, cState, eState,
                                             fieldMapping, 0, ctrl);
                                         tempMouseDeltaY =
                                             -Math.Abs((tempMouseDeltaY == -2147483648 ? 0 : tempMouseDeltaY));
@@ -3256,7 +3266,7 @@ namespace DS4Windows
                                 {
                                     if (tempMouseDeltaY == 0)
                                     {
-                                        tempMouseDeltaY = getMouseMapping(device, dcs.Control, cState, eState,
+                                        tempMouseDeltaY = GetMouseMapping(device, dcs.Control, cState, eState,
                                             fieldMapping, 1, ctrl);
                                         tempMouseDeltaY =
                                             Math.Abs((tempMouseDeltaY == -2147483648 ? 0 : tempMouseDeltaY));
@@ -3268,7 +3278,7 @@ namespace DS4Windows
                                 {
                                     if (tempMouseDeltaX == 0)
                                     {
-                                        tempMouseDeltaX = getMouseMapping(device, dcs.Control, cState, eState,
+                                        tempMouseDeltaX = GetMouseMapping(device, dcs.Control, cState, eState,
                                             fieldMapping, 2, ctrl);
                                         tempMouseDeltaX =
                                             -Math.Abs((tempMouseDeltaX == -2147483648 ? 0 : tempMouseDeltaX));
@@ -3280,7 +3290,7 @@ namespace DS4Windows
                                 {
                                     if (tempMouseDeltaX == 0)
                                     {
-                                        tempMouseDeltaX = getMouseMapping(device, dcs.Control, cState, eState,
+                                        tempMouseDeltaX = GetMouseMapping(device, dcs.Control, cState, eState,
                                             fieldMapping, 3, ctrl);
                                         tempMouseDeltaX =
                                             Math.Abs((tempMouseDeltaX == -2147483648 ? 0 : tempMouseDeltaX));
@@ -4176,6 +4186,8 @@ namespace DS4Windows
 
         private static void ReleaseActionKeys(SpecialAction action, int device)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(ReleaseActionKeys)).StartActive(true);
+
             //foreach (DS4Controls dc in action.trigger)
             for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
             {
@@ -4223,6 +4235,8 @@ namespace DS4Windows
         // Play through a macro. The macro steps are defined either as string, List or Array object (always only one of those parameters is set to a valid value)
         private static void PlayMacroTask(int device, bool[] macrocontrol, string macroStr, List<int> macroLst, int[] macroArr, DS4Controls control, DS4KeyType keyType, SpecialAction action, ActionState actionDoneState)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(PlayMacroTask)).StartActive(true);
+
             if (!String.IsNullOrEmpty(macroStr))
             {
                 string[] skeys;
@@ -4315,6 +4329,8 @@ namespace DS4Windows
 
         private static bool PlayMacroCodeValue(int device, bool[] macrocontrol, DS4KeyType keyType, int macroCodeValue, bool[] keydown)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(PlayMacroCodeValue)).StartActive(true);
+
             bool doDelayOnCaller = false;
             if (macroCodeValue >= 261 && macroCodeValue <= DS4ControlSettings.MaxMacroValue)
             {
@@ -4502,9 +4518,11 @@ namespace DS4Windows
             }
         }
 
-        private static double getMouseMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
+        private static double GetMouseMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
             DS4StateFieldMapping fieldMapping, int mnum, ControlService ctrl)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetMouseMapping)).StartActive(true);
+
             int deadzoneL = 0;
             int deadzoneR = 0;
             if (Global.Instance.Config.GetLSDeadZone(device) == 0)
@@ -4747,9 +4765,11 @@ namespace DS4Windows
             return value;
         }
 
-        private static void calculateFinalMouseMovement(ref double rawMouseX, ref double rawMouseY,
+        private static void CalculateFinalMouseMovement(ref double rawMouseX, ref double rawMouseY,
             out int mouseX, out int mouseY)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(CalculateFinalMouseMovement)).StartActive(true);
+
             if ((rawMouseX > 0.0 && horizontalRemainder > 0.0) || (rawMouseX < 0.0 && horizontalRemainder < 0.0))
             {
                 rawMouseX += horizontalRemainder;
@@ -4813,6 +4833,8 @@ namespace DS4Windows
         private static byte GetByteMapping2(int device, DS4Controls control, DS4State cState, DS4StateExposed eState, Mouse tp,
             DS4StateFieldMapping fieldMap)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetByteMapping2)).StartActive(true);
+
             byte result = 0;
 
             int controlNum = (int)control;
@@ -4884,8 +4906,10 @@ namespace DS4Windows
         }
 
         /* TODO: Possibly remove usage of this version of the method */
-        public static bool getBoolMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState, Mouse tp)
+        public static bool GetBoolMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState, Mouse tp)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetBoolMapping)).StartActive(true);
+
             bool result = false;
 
             if (control >= DS4Controls.Square && control <= DS4Controls.Cross)
@@ -4987,9 +5011,11 @@ namespace DS4Windows
             return result;
         }
 
-        private static bool getBoolMapping2(int device, DS4Controls control,
+        private static bool GetBoolMapping2(int device, DS4Controls control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan(nameof(GetBoolMapping2)).StartActive(true);
+
             bool result = false;
 
             int controlNum = (int)control;
