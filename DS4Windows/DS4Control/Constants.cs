@@ -28,5 +28,7 @@ namespace DS4Windows
         public const string OutputSlotsFileName = "OutputSlots.xml";
 
         public const string SingleAppComEventName = "{a52b5b20-d9ee-4f32-8518-307fa14aa0c6}";
+
+        public static Guid BluetoothHidGuild = new("{00001124-0000-1000-8000-00805F9B34FB}");
     }
 }

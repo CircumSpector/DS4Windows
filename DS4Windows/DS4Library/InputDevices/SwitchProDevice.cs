@@ -146,8 +146,6 @@ namespace DS4Windows.InputDevices
         private StickAxisData rightStickXData;
         private StickAxisData rightStickYData;
 
-        private const string BLUETOOTH_HID_GUID = "{00001124-0000-1000-8000-00805F9B34FB}";
-
         private byte frameCount = 0;
         public byte FrameCount { get => frameCount; set => frameCount = value; }
 
@@ -270,7 +268,7 @@ namespace DS4Windows.InputDevices
         public static ConnectionType DetermineConnectionType(HidDevice hDevice)
         {
             ConnectionType result;
-            if (hDevice.DevicePath.ToUpper().Contains(BLUETOOTH_HID_GUID))
+            if (hDevice.DevicePath.ToUpper().Contains(Constants.BluetoothHidGuild.ToString().ToUpper()))
             {
                 result = ConnectionType.BT;
             }
