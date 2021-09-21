@@ -19,8 +19,22 @@ namespace DS4Windows
             SASteeringWheelEmulationCalibrate
         }
 
-        public SpecialAction(string name, string controls, string type, string details, double delayTime = 0,
-            string extras = "")
+        //
+        // TODO: here to satisfy serializer until I found out how to improve this class
+        // 
+        public SpecialAction()
+        {
+
+        }
+
+        public SpecialAction(
+            string name, 
+            string controls, 
+            string type, 
+            string details, 
+            double delayTime = 0,
+            string extras = ""
+            )
         {
             Name = name;
             Type = type;

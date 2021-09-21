@@ -13,6 +13,7 @@ using DS4Windows.InputDevices;
 using DS4WinWPF.Properties;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -1110,879 +1111,913 @@ namespace DS4Windows
                     $"{proName}{XML_EXTENSION}"
                 );
 
-                /*
-                IExtendedXmlSerializer serializer = new ConfigurationContainer()
-                    .UseAutoFormatting()
-                    .UseOptimizedNamespaces()
-                    .EnableParameterizedContent()
-                    .EnableImplicitTyping(typeof(BackingStore))
-                    // Additional configurations...
-                    .Create();
-
-                var document = serializer.Serialize(new XmlWriterSettings {Indent = true}, this);
-                */
-
-                try
+                //
+                // TODO: experimental, needs tuning. For now just generates a 2nd file for experimentation.
+                // 
+                using (GlobalTracer.Instance.BuildSpan("Serialize-NEW").StartActive(true))
                 {
-                    XmlNode tmpNode;
-                    var xmlControls = m_Xdoc.SelectSingleNode("/DS4Windows/Control");
-                    var xmlShiftControls = m_Xdoc.SelectSingleNode("/DS4Windows/ShiftControl");
-                    m_Xdoc.RemoveAll();
-
-                    tmpNode = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                    m_Xdoc.AppendChild(tmpNode);
-
-                    tmpNode = m_Xdoc.CreateComment(string.Format(" DS4Windows Configuration Data. {0} ", DateTime.Now));
-                    m_Xdoc.AppendChild(tmpNode);
-
-                    tmpNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ",
-                        ExecutableProductVersion));
-                    m_Xdoc.AppendChild(tmpNode);
-
-                    tmpNode = m_Xdoc.CreateWhitespace("\r\n");
-                    m_Xdoc.AppendChild(tmpNode);
-
-                    var rootElement = m_Xdoc.CreateElement("DS4Windows", null);
-                    rootElement.SetAttribute("app_version", ExecutableProductVersion);
-                    rootElement.SetAttribute("config_version", CONFIG_VERSION.ToString());
-
-                    var lightbarSettings = LightbarSettingInfo[device];
-                    var lightInfo = lightbarSettings.Ds4WinSettings;
-
-                    var xmlTouchToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "touchToggle", null);
-                    xmlTouchToggle.InnerText = EnableTouchToggle[device].ToString();
-                    rootElement.AppendChild(xmlTouchToggle);
-                    var xmlIdleDisconnectTimeout =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "idleDisconnectTimeout", null);
-                    xmlIdleDisconnectTimeout.InnerText = IdleDisconnectTimeout[device].ToString();
-                    rootElement.AppendChild(xmlIdleDisconnectTimeout);
-                    var xmlOutputDataToDS4 = m_Xdoc.CreateNode(XmlNodeType.Element, "outputDataToDS4", null);
-                    xmlOutputDataToDS4.InnerText = EnableOutputDataToDS4[device].ToString();
-                    rootElement.AppendChild(xmlOutputDataToDS4);
-                    var xmlColor = m_Xdoc.CreateNode(XmlNodeType.Element, "Color", null);
-                    xmlColor.InnerText = lightInfo.Led.Red + "," + lightInfo.Led.Green + "," + lightInfo.Led.Blue;
-                    rootElement.AppendChild(xmlColor);
-                    var xmlRumbleBoost = m_Xdoc.CreateNode(XmlNodeType.Element, "RumbleBoost", null);
-                    xmlRumbleBoost.InnerText = RumbleBoost[device].ToString();
-                    rootElement.AppendChild(xmlRumbleBoost);
-                    var xmlRumbleAutostopTime = m_Xdoc.CreateNode(XmlNodeType.Element, "RumbleAutostopTime", null);
-                    xmlRumbleAutostopTime.InnerText = RumbleAutostopTime[device].ToString();
-                    rootElement.AppendChild(xmlRumbleAutostopTime);
-                    var xmlLightbarMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LightbarMode", null);
-                    xmlLightbarMode.InnerText = GetLightbarModeString(lightbarSettings.Mode);
-                    rootElement.AppendChild(xmlLightbarMode);
-                    var xmlLedAsBatteryIndicator =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "ledAsBatteryIndicator", null);
-                    xmlLedAsBatteryIndicator.InnerText = lightInfo.LedAsBattery.ToString();
-                    rootElement.AppendChild(xmlLedAsBatteryIndicator);
-                    var xmlLowBatteryFlash = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashType", null);
-                    xmlLowBatteryFlash.InnerText = lightInfo.FlashType.ToString();
-                    rootElement.AppendChild(xmlLowBatteryFlash);
-                    var xmlFlashBatterAt = m_Xdoc.CreateNode(XmlNodeType.Element, "flashBatteryAt", null);
-                    xmlFlashBatterAt.InnerText = lightInfo.FlashAt.ToString();
-                    rootElement.AppendChild(xmlFlashBatterAt);
-                    var xmlTouchSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "touchSensitivity", null);
-                    xmlTouchSensitivity.InnerText = TouchSensitivity[device].ToString();
-                    rootElement.AppendChild(xmlTouchSensitivity);
-                    var xmlLowColor = m_Xdoc.CreateNode(XmlNodeType.Element, "LowColor", null);
-                    xmlLowColor.InnerText = lightInfo.LowLed.Red + "," + lightInfo.LowLed.Green + "," +
-                                            lightInfo.LowLed.Blue;
-                    rootElement.AppendChild(xmlLowColor);
-                    var xmlChargingColor = m_Xdoc.CreateNode(XmlNodeType.Element, "ChargingColor", null);
-                    xmlChargingColor.InnerText = lightInfo.ChargingLed.Red + "," + lightInfo.ChargingLed.Green +
-                                                 "," + lightInfo.ChargingLed.Blue;
-                    rootElement.AppendChild(xmlChargingColor);
-                    var xmlFlashColor = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashColor", null);
-                    xmlFlashColor.InnerText = lightInfo.FlashLed.Red + "," + lightInfo.FlashLed.Green + "," +
-                                              lightInfo.FlashLed.Blue;
-                    rootElement.AppendChild(xmlFlashColor);
-                    var xmlTouchpadJitterCompensation =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "touchpadJitterCompensation", null);
-                    xmlTouchpadJitterCompensation.InnerText = TouchpadJitterCompensation[device].ToString();
-                    rootElement.AppendChild(xmlTouchpadJitterCompensation);
-                    var xmlLowerRCOn = m_Xdoc.CreateNode(XmlNodeType.Element, "lowerRCOn", null);
-                    xmlLowerRCOn.InnerText = LowerRCOn[device].ToString();
-                    rootElement.AppendChild(xmlLowerRCOn);
-                    var xmlTapSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "tapSensitivity", null);
-                    xmlTapSensitivity.InnerText = TapSensitivity[device].ToString();
-                    rootElement.AppendChild(xmlTapSensitivity);
-                    var xmlDouble = m_Xdoc.CreateNode(XmlNodeType.Element, "doubleTap", null);
-                    xmlDouble.InnerText = DoubleTap[device].ToString();
-                    rootElement.AppendChild(xmlDouble);
-                    var xmlScrollSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "scrollSensitivity", null);
-                    xmlScrollSensitivity.InnerText = ScrollSensitivity[device].ToString();
-                    rootElement.AppendChild(xmlScrollSensitivity);
-                    var xmlLeftTriggerMiddle = m_Xdoc.CreateNode(XmlNodeType.Element, "LeftTriggerMiddle", null);
-                    xmlLeftTriggerMiddle.InnerText = L2ModInfo[device].deadZone.ToString();
-                    rootElement.AppendChild(xmlLeftTriggerMiddle);
-                    var xmlRightTriggerMiddle = m_Xdoc.CreateNode(XmlNodeType.Element, "RightTriggerMiddle", null);
-                    xmlRightTriggerMiddle.InnerText = R2ModInfo[device].deadZone.ToString();
-                    rootElement.AppendChild(xmlRightTriggerMiddle);
-                    var xmlTouchpadInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "TouchpadInvert", null);
-                    xmlTouchpadInvert.InnerText = TouchPadInvert[device].ToString();
-                    rootElement.AppendChild(xmlTouchpadInvert);
-                    var xmlTouchClickPasthru = m_Xdoc.CreateNode(XmlNodeType.Element, "TouchpadClickPassthru", null);
-                    xmlTouchClickPasthru.InnerText = TouchClickPassthru[device].ToString();
-                    rootElement.AppendChild(xmlTouchClickPasthru);
-
-                    var xmlL2AD = m_Xdoc.CreateNode(XmlNodeType.Element, "L2AntiDeadZone", null);
-                    xmlL2AD.InnerText = L2ModInfo[device].AntiDeadZone.ToString();
-                    rootElement.AppendChild(xmlL2AD);
-                    var xmlR2AD = m_Xdoc.CreateNode(XmlNodeType.Element, "R2AntiDeadZone", null);
-                    xmlR2AD.InnerText = R2ModInfo[device].AntiDeadZone.ToString();
-                    rootElement.AppendChild(xmlR2AD);
-                    var xmlL2Maxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "L2MaxZone", null);
-                    xmlL2Maxzone.InnerText = L2ModInfo[device].maxZone.ToString();
-                    rootElement.AppendChild(xmlL2Maxzone);
-                    var xmlR2Maxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "R2MaxZone", null);
-                    xmlR2Maxzone.InnerText = R2ModInfo[device].maxZone.ToString();
-                    rootElement.AppendChild(xmlR2Maxzone);
-                    var xmlL2MaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "L2MaxOutput", null);
-                    xmlL2MaxOutput.InnerText = L2ModInfo[device].maxOutput.ToString();
-                    rootElement.AppendChild(xmlL2MaxOutput);
-                    var xmlR2MaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "R2MaxOutput", null);
-                    xmlR2MaxOutput.InnerText = R2ModInfo[device].maxOutput.ToString();
-                    rootElement.AppendChild(xmlR2MaxOutput);
-                    var xmlButtonMouseSensitivity =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "ButtonMouseSensitivity", null);
-                    xmlButtonMouseSensitivity.InnerText = ButtonMouseInfos[device].buttonSensitivity.ToString();
-                    rootElement.AppendChild(xmlButtonMouseSensitivity);
-                    var xmlButtonMouseOffset = m_Xdoc.CreateNode(XmlNodeType.Element, "ButtonMouseOffset", null);
-                    xmlButtonMouseOffset.InnerText = ButtonMouseInfos[device].mouseVelocityOffset.ToString();
-                    rootElement.AppendChild(xmlButtonMouseOffset);
-                    var xmlRainbow = m_Xdoc.CreateNode(XmlNodeType.Element, "Rainbow", null);
-                    xmlRainbow.InnerText = lightInfo.Rainbow.ToString();
-                    rootElement.AppendChild(xmlRainbow);
-                    var xmlMaxSatRainbow = m_Xdoc.CreateNode(XmlNodeType.Element, "MaxSatRainbow", null);
-                    xmlMaxSatRainbow.InnerText = Convert.ToInt32(lightInfo.MaxRainbowSaturation * 100.0).ToString();
-                    rootElement.AppendChild(xmlMaxSatRainbow);
-                    var xmlLSD = m_Xdoc.CreateNode(XmlNodeType.Element, "LSDeadZone", null);
-                    xmlLSD.InnerText = LSModInfo[device].DeadZone.ToString();
-                    rootElement.AppendChild(xmlLSD);
-                    var xmlRSD = m_Xdoc.CreateNode(XmlNodeType.Element, "RSDeadZone", null);
-                    xmlRSD.InnerText = RSModInfo[device].DeadZone.ToString();
-                    rootElement.AppendChild(xmlRSD);
-                    var xmlLSAD = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiDeadZone", null);
-                    xmlLSAD.InnerText = LSModInfo[device].AntiDeadZone.ToString();
-                    rootElement.AppendChild(xmlLSAD);
-                    var xmlRSAD = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiDeadZone", null);
-                    xmlRSAD.InnerText = RSModInfo[device].AntiDeadZone.ToString();
-                    rootElement.AppendChild(xmlRSAD);
-                    var xmlLSMaxZone = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxZone", null);
-                    xmlLSMaxZone.InnerText = LSModInfo[device].MaxZone.ToString();
-                    rootElement.AppendChild(xmlLSMaxZone);
-                    var xmlRSMaxZone = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxZone", null);
-                    xmlRSMaxZone.InnerText = RSModInfo[device].MaxZone.ToString();
-                    rootElement.AppendChild(xmlRSMaxZone);
-                    var xmlLSVerticalScale = m_Xdoc.CreateNode(XmlNodeType.Element, "LSVerticalScale", null);
-                    xmlLSVerticalScale.InnerText = LSModInfo[device].VerticalScale.ToString();
-                    rootElement.AppendChild(xmlLSVerticalScale);
-                    var xmlRSVerticalScale = m_Xdoc.CreateNode(XmlNodeType.Element, "RSVerticalScale", null);
-                    xmlRSVerticalScale.InnerText = RSModInfo[device].VerticalScale.ToString();
-                    rootElement.AppendChild(xmlRSVerticalScale);
-                    var xmlLSMaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxOutput", null);
-                    xmlLSMaxOutput.InnerText = LSModInfo[device].MaxOutput.ToString();
-                    rootElement.AppendChild(xmlLSMaxOutput);
-                    var xmlRSMaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxOutput", null);
-                    xmlRSMaxOutput.InnerText = RSModInfo[device].MaxOutput.ToString();
-                    rootElement.AppendChild(xmlRSMaxOutput);
-                    var xmlLSMaxOutputForce = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxOutputForce", null);
-                    xmlLSMaxOutputForce.InnerText = LSModInfo[device].MaxOutputForce.ToString();
-                    rootElement.AppendChild(xmlLSMaxOutputForce);
-                    var xmlRSMaxOutputForce = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxOutputForce", null);
-                    xmlRSMaxOutputForce.InnerText = RSModInfo[device].MaxOutputForce.ToString();
-                    rootElement.AppendChild(xmlRSMaxOutputForce);
-                    var xmlLSDeadZoneType = m_Xdoc.CreateNode(XmlNodeType.Element, "LSDeadZoneType", null);
-                    xmlLSDeadZoneType.InnerText = LSModInfo[device].DZType.ToString();
-                    rootElement.AppendChild(xmlLSDeadZoneType);
-                    var xmlRSDeadZoneType = m_Xdoc.CreateNode(XmlNodeType.Element, "RSDeadZoneType", null);
-                    xmlRSDeadZoneType.InnerText = RSModInfo[device].DZType.ToString();
-                    rootElement.AppendChild(xmlRSDeadZoneType);
-
-                    var xmlLSAxialDeadGroupEl = m_Xdoc.CreateElement("LSAxialDeadOptions");
-                    var xmlLSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
-                    xmlLSAxialDeadX.InnerText = LSModInfo[device].XAxisDeadInfo.DeadZone.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialDeadX);
-                    var xmlLSAxialDeadY = m_Xdoc.CreateElement("DeadZoneY");
-                    xmlLSAxialDeadY.InnerText = LSModInfo[device].YAxisDeadInfo.DeadZone.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialDeadY);
-                    var xmlLSAxialMaxX = m_Xdoc.CreateElement("MaxZoneX");
-                    xmlLSAxialMaxX.InnerText = LSModInfo[device].XAxisDeadInfo.MaxZone.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxX);
-                    var xmlLSAxialMaxY = m_Xdoc.CreateElement("MaxZoneY");
-                    xmlLSAxialMaxY.InnerText = LSModInfo[device].YAxisDeadInfo.MaxZone.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxY);
-                    var xmlLSAxialAntiDeadX = m_Xdoc.CreateElement("AntiDeadZoneX");
-                    xmlLSAxialAntiDeadX.InnerText = LSModInfo[device].XAxisDeadInfo.AntiDeadZone.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialAntiDeadX);
-                    var xmlLSAxialAntiDeadY = m_Xdoc.CreateElement("AntiDeadZoneY");
-                    xmlLSAxialAntiDeadY.InnerText = LSModInfo[device].YAxisDeadInfo.AntiDeadZone.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialAntiDeadY);
-                    var xmlLSAxialMaxOutputX = m_Xdoc.CreateElement("MaxOutputX");
-                    xmlLSAxialMaxOutputX.InnerText = LSModInfo[device].XAxisDeadInfo.MaxOutput.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxOutputX);
-                    var xmlLSAxialMaxOutputY = m_Xdoc.CreateElement("MaxOutputY");
-                    xmlLSAxialMaxOutputY.InnerText = LSModInfo[device].YAxisDeadInfo.MaxOutput.ToString();
-                    xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxOutputY);
-                    rootElement.AppendChild(xmlLSAxialDeadGroupEl);
-
-                    var xmlRSAxialDeadGroupEl = m_Xdoc.CreateElement("RSAxialDeadOptions");
-                    var xmlRSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
-                    xmlRSAxialDeadX.InnerText = RSModInfo[device].XAxisDeadInfo.DeadZone.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialDeadX);
-                    var xmlRSAxialDeadY = m_Xdoc.CreateElement("DeadZoneY");
-                    xmlRSAxialDeadY.InnerText = RSModInfo[device].YAxisDeadInfo.DeadZone.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialDeadY);
-                    var xmlRSAxialMaxX = m_Xdoc.CreateElement("MaxZoneX");
-                    xmlRSAxialMaxX.InnerText = RSModInfo[device].XAxisDeadInfo.MaxZone.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxX);
-                    var xmlRSAxialMaxY = m_Xdoc.CreateElement("MaxZoneY");
-                    xmlRSAxialMaxY.InnerText = RSModInfo[device].YAxisDeadInfo.MaxZone.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxY);
-                    var xmlRSAxialAntiDeadX = m_Xdoc.CreateElement("AntiDeadZoneX");
-                    xmlRSAxialAntiDeadX.InnerText = RSModInfo[device].XAxisDeadInfo.AntiDeadZone.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialAntiDeadX);
-                    var xmlRSAxialAntiDeadY = m_Xdoc.CreateElement("AntiDeadZoneY");
-                    xmlRSAxialAntiDeadY.InnerText = RSModInfo[device].YAxisDeadInfo.AntiDeadZone.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialAntiDeadY);
-                    var xmlRSAxialMaxOutputX = m_Xdoc.CreateElement("MaxOutputX");
-                    xmlRSAxialMaxOutputX.InnerText = RSModInfo[device].XAxisDeadInfo.MaxOutput.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxOutputX);
-                    var xmlRSAxialMaxOutputY = m_Xdoc.CreateElement("MaxOutputY");
-                    xmlRSAxialMaxOutputY.InnerText = RSModInfo[device].YAxisDeadInfo.MaxOutput.ToString();
-                    xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxOutputY);
-                    rootElement.AppendChild(xmlRSAxialDeadGroupEl);
-
-                    var xmlLSRotation = m_Xdoc.CreateNode(XmlNodeType.Element, "LSRotation", null);
-                    xmlLSRotation.InnerText = Convert.ToInt32(LSRotation[device] * 180.0 / Math.PI).ToString();
-                    rootElement.AppendChild(xmlLSRotation);
-                    var xmlRSRotation = m_Xdoc.CreateNode(XmlNodeType.Element, "RSRotation", null);
-                    xmlRSRotation.InnerText = Convert.ToInt32(RSRotation[device] * 180.0 / Math.PI).ToString();
-                    rootElement.AppendChild(xmlRSRotation);
-                    var xmlLSFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "LSFuzz", null);
-                    xmlLSFuzz.InnerText = LSModInfo[device].Fuzz.ToString();
-                    rootElement.AppendChild(xmlLSFuzz);
-                    var xmlRSFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "RSFuzz", null);
-                    xmlRSFuzz.InnerText = RSModInfo[device].Fuzz.ToString();
-                    rootElement.AppendChild(xmlRSFuzz);
-                    var xmlLSOuterBindDead = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOuterBindDead", null);
-                    xmlLSOuterBindDead.InnerText = Convert.ToInt32(LSModInfo[device].OuterBindDeadZone).ToString();
-                    rootElement.AppendChild(xmlLSOuterBindDead);
-                    var xmlRSOuterBindDead = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOuterBindDead", null);
-                    xmlRSOuterBindDead.InnerText = Convert.ToInt32(RSModInfo[device].OuterBindDeadZone).ToString();
-                    rootElement.AppendChild(xmlRSOuterBindDead);
-                    var xmlLSOuterBindInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOuterBindInvert", null);
-                    xmlLSOuterBindInvert.InnerText = LSModInfo[device].OuterBindInvert.ToString();
-                    rootElement.AppendChild(xmlLSOuterBindInvert);
-                    var xmlRSOuterBindInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOuterBindInvert", null);
-                    xmlRSOuterBindInvert.InnerText = RSModInfo[device].OuterBindInvert.ToString();
-                    rootElement.AppendChild(xmlRSOuterBindInvert);
-
-                    var xmlSXD = m_Xdoc.CreateNode(XmlNodeType.Element, "SXDeadZone", null);
-                    xmlSXD.InnerText = SXDeadzone[device].ToString();
-                    rootElement.AppendChild(xmlSXD);
-                    var xmlSZD = m_Xdoc.CreateNode(XmlNodeType.Element, "SZDeadZone", null);
-                    xmlSZD.InnerText = SZDeadzone[device].ToString();
-                    rootElement.AppendChild(xmlSZD);
-
-                    var xmlSXMaxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SXMaxZone", null);
-                    xmlSXMaxzone.InnerText = Convert.ToInt32(SXMaxzone[device] * 100.0).ToString();
-                    rootElement.AppendChild(xmlSXMaxzone);
-                    var xmlSZMaxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SZMaxZone", null);
-                    xmlSZMaxzone.InnerText = Convert.ToInt32(SZMaxzone[device] * 100.0).ToString();
-                    rootElement.AppendChild(xmlSZMaxzone);
-
-                    var xmlSXAntiDeadzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SXAntiDeadZone", null);
-                    xmlSXAntiDeadzone.InnerText = Convert.ToInt32(SXAntiDeadzone[device] * 100.0).ToString();
-                    rootElement.AppendChild(xmlSXAntiDeadzone);
-                    var xmlSZAntiDeadzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SZAntiDeadZone", null);
-                    xmlSZAntiDeadzone.InnerText = Convert.ToInt32(SZAntiDeadzone[device] * 100.0).ToString();
-                    rootElement.AppendChild(xmlSZAntiDeadzone);
-
-                    var xmlSens = m_Xdoc.CreateNode(XmlNodeType.Element, "Sensitivity", null);
-                    xmlSens.InnerText =
-                        $"{LSSens[device]}|{RSSens[device]}|{L2Sens[device]}|{R2Sens[device]}|{SXSens[device]}|{SZSens[device]}";
-                    rootElement.AppendChild(xmlSens);
-
-                    var xmlChargingType = m_Xdoc.CreateNode(XmlNodeType.Element, "ChargingType", null);
-                    xmlChargingType.InnerText = lightInfo.ChargingType.ToString();
-                    rootElement.AppendChild(xmlChargingType);
-                    var xmlMouseAccel = m_Xdoc.CreateNode(XmlNodeType.Element, "MouseAcceleration", null);
-                    xmlMouseAccel.InnerText = ButtonMouseInfos[device].mouseAccel.ToString();
-                    rootElement.AppendChild(xmlMouseAccel);
-                    var xmlMouseVerticalScale =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "ButtonMouseVerticalScale", null);
-                    xmlMouseVerticalScale.InnerText =
-                        Convert.ToInt32(ButtonMouseInfos[device].buttonVerticalScale * 100).ToString();
-                    rootElement.AppendChild(xmlMouseVerticalScale);
-                    //XmlNode xmlShiftMod = m_Xdoc.CreateNode(XmlNodeType.Element, "ShiftModifier", null); xmlShiftMod.InnerText = shiftModifier[device].ToString(); rootElement.AppendChild(xmlShiftMod);
-                    var xmlLaunchProgram = m_Xdoc.CreateNode(XmlNodeType.Element, "LaunchProgram", null);
-                    xmlLaunchProgram.InnerText = LaunchProgram[device];
-                    rootElement.AppendChild(xmlLaunchProgram);
-                    var xmlDinput = m_Xdoc.CreateNode(XmlNodeType.Element, "DinputOnly", null);
-                    xmlDinput.InnerText = DirectInputOnly[device].ToString();
-                    rootElement.AppendChild(xmlDinput);
-                    var xmlStartTouchpadOff = m_Xdoc.CreateNode(XmlNodeType.Element, "StartTouchpadOff", null);
-                    xmlStartTouchpadOff.InnerText = StartTouchpadOff[device].ToString();
-                    rootElement.AppendChild(xmlStartTouchpadOff);
-                    var xmlTouchOutMode = m_Xdoc.CreateNode(XmlNodeType.Element, "TouchpadOutputMode", null);
-                    xmlTouchOutMode.InnerText = TouchOutMode[device].ToString();
-                    rootElement.AppendChild(xmlTouchOutMode);
-                    var xmlSATriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "SATriggers", null);
-                    xmlSATriggers.InnerText = SATriggers[device];
-                    rootElement.AppendChild(xmlSATriggers);
-                    var xmlSATriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "SATriggerCond", null);
-                    xmlSATriggerCond.InnerText = SaTriggerCondString(SATriggerCondition[device]);
-                    rootElement.AppendChild(xmlSATriggerCond);
-                    var xmlSASteeringWheelEmulationAxis =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelEmulationAxis", null);
-                    xmlSASteeringWheelEmulationAxis.InnerText = SASteeringWheelEmulationAxis[device].ToString("G");
-                    rootElement.AppendChild(xmlSASteeringWheelEmulationAxis);
-                    var xmlSASteeringWheelEmulationRange =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelEmulationRange", null);
-                    xmlSASteeringWheelEmulationRange.InnerText = SASteeringWheelEmulationRange[device].ToString();
-                    rootElement.AppendChild(xmlSASteeringWheelEmulationRange);
-                    var xmlSASteeringWheelFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelFuzz", null);
-                    xmlSASteeringWheelFuzz.InnerText = SAWheelFuzzValues[device].ToString();
-                    rootElement.AppendChild(xmlSASteeringWheelFuzz);
-
-                    var xmlSASteeringWheelSmoothingGroupEl = m_Xdoc.CreateElement("SASteeringWheelSmoothingOptions");
-                    var xmlSASteeringWheelUseSmoothing = m_Xdoc.CreateElement("SASteeringWheelUseSmoothing");
-                    xmlSASteeringWheelUseSmoothing.InnerText = WheelSmoothInfo[device].Enabled.ToString();
-                    xmlSASteeringWheelSmoothingGroupEl.AppendChild(xmlSASteeringWheelUseSmoothing);
-                    var xmlSASteeringWheelSmoothMinCutoff = m_Xdoc.CreateElement("SASteeringWheelSmoothMinCutoff");
-                    xmlSASteeringWheelSmoothMinCutoff.InnerText = WheelSmoothInfo[device].MinCutoff.ToString();
-                    xmlSASteeringWheelSmoothingGroupEl.AppendChild(xmlSASteeringWheelSmoothMinCutoff);
-                    var xmlSASteeringWheelSmoothBeta = m_Xdoc.CreateElement("SASteeringWheelSmoothBeta");
-                    xmlSASteeringWheelSmoothBeta.InnerText = WheelSmoothInfo[device].Beta.ToString();
-                    xmlSASteeringWheelSmoothingGroupEl.AppendChild(xmlSASteeringWheelSmoothBeta);
-                    rootElement.AppendChild(xmlSASteeringWheelSmoothingGroupEl);
-
-                    //XmlNode xmlSASteeringWheelUseSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelUseSmoothing", null); xmlSASteeringWheelUseSmoothing.InnerText = wheelSmoothInfo[device].Enabled.ToString(); rootElement.AppendChild(xmlSASteeringWheelUseSmoothing);
-                    //XmlNode xmlSASteeringWheelSmoothMinCutoff = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelSmoothMinCutoff", null); xmlSASteeringWheelSmoothMinCutoff.InnerText = wheelSmoothInfo[device].MinCutoff.ToString(); rootElement.AppendChild(xmlSASteeringWheelSmoothMinCutoff);
-                    //XmlNode xmlSASteeringWheelSmoothBeta = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelSmoothBeta", null); xmlSASteeringWheelSmoothBeta.InnerText = wheelSmoothInfo[device].Beta.ToString(); rootElement.AppendChild(xmlSASteeringWheelSmoothBeta);
-
-                    var xmlTouchDisInvTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "TouchDisInvTriggers", null);
-                    var tempTouchDisInv = string.Join(",", TouchDisInvertTriggers[device]);
-                    xmlTouchDisInvTriggers.InnerText = tempTouchDisInv;
-                    rootElement.AppendChild(xmlTouchDisInvTriggers);
-
-                    var xmlGyroSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSensitivity", null);
-                    xmlGyroSensitivity.InnerText = GyroSensitivity[device].ToString();
-                    rootElement.AppendChild(xmlGyroSensitivity);
-                    var xmlGyroSensVerticalScale =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSensVerticalScale", null);
-                    xmlGyroSensVerticalScale.InnerText = GyroSensVerticalScale[device].ToString();
-                    rootElement.AppendChild(xmlGyroSensVerticalScale);
-                    var xmlGyroInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroInvert", null);
-                    xmlGyroInvert.InnerText = GyroInvert[device].ToString();
-                    rootElement.AppendChild(xmlGyroInvert);
-                    var xmlGyroTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroTriggerTurns", null);
-                    xmlGyroTriggerTurns.InnerText = GyroTriggerTurns[device].ToString();
-                    rootElement.AppendChild(xmlGyroTriggerTurns);
-                    /*XmlNode xmlGyroSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSmoothingWeight", null); xmlGyroSmoothWeight.InnerText = Convert.ToInt32(gyroSmoothWeight[device] * 100).ToString(); rootElement.AppendChild(xmlGyroSmoothWeight);
-                    XmlNode xmlGyroSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSmoothing", null); xmlGyroSmoothing.InnerText = gyroSmoothing[device].ToString(); rootElement.AppendChild(xmlGyroSmoothing);
-                    */
-
-                    var xmlGyroControlsSettingsElement = m_Xdoc.CreateElement("GyroControlsSettings");
-                    var xmlGyroControlsTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "Triggers", null);
-                    xmlGyroControlsTriggers.InnerText = GyroControlsInfo[device].Triggers;
-                    xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggers);
-                    var xmlGyroControlsTriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerCond", null);
-                    xmlGyroControlsTriggerCond.InnerText = SaTriggerCondString(GyroControlsInfo[device].TriggerCond);
-                    xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerCond);
-                    var xmlGyroControlsTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerTurns", null);
-                    xmlGyroControlsTriggerTurns.InnerText = GyroControlsInfo[device].TriggerTurns.ToString();
-                    xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerTurns);
-                    var xmlGyroControlsToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "Toggle", null);
-                    xmlGyroControlsToggle.InnerText = GyroControlsInfo[device].TriggerToggle.ToString();
-                    xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsToggle);
-                    rootElement.AppendChild(xmlGyroControlsSettingsElement);
-
-                    var xmlGyroSmoothingElement = m_Xdoc.CreateElement("GyroMouseSmoothingSettings");
-                    var xmlGyroSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "UseSmoothing", null);
-                    xmlGyroSmoothing.InnerText = GyroMouseInfo[device].enableSmoothing.ToString();
-                    xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothing);
-                    var xmlGyroSmoothingMethod = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMethod", null);
-                    xmlGyroSmoothingMethod.InnerText = GyroMouseInfo[device].SmoothMethodIdentifier();
-                    xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothingMethod);
-                    var xmlGyroSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingWeight", null);
-                    xmlGyroSmoothWeight.InnerText =
-                        Convert.ToInt32(GyroMouseInfo[device].smoothingWeight * 100).ToString();
-                    xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothWeight);
-                    var xmlGyroSmoothMincutoff = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMinCutoff", null);
-                    xmlGyroSmoothMincutoff.InnerText = GyroMouseInfo[device].minCutoff.ToString();
-                    xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothMincutoff);
-                    var xmlGyroSmoothBeta = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingBeta", null);
-                    xmlGyroSmoothBeta.InnerText = GyroMouseInfo[device].beta.ToString();
-                    xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothBeta);
-                    rootElement.AppendChild(xmlGyroSmoothingElement);
-
-                    var xmlGyroMouseHAxis = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseHAxis", null);
-                    xmlGyroMouseHAxis.InnerText = GyroMouseHorizontalAxis[device].ToString();
-                    rootElement.AppendChild(xmlGyroMouseHAxis);
-                    var xmlGyroMouseDZ = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseDeadZone", null);
-                    xmlGyroMouseDZ.InnerText = GyroMouseDeadZone[device].ToString();
-                    rootElement.AppendChild(xmlGyroMouseDZ);
-                    var xmlGyroMinThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseMinThreshold", null);
-                    xmlGyroMinThreshold.InnerText = GyroMouseInfo[device].minThreshold.ToString();
-                    rootElement.AppendChild(xmlGyroMinThreshold);
-                    var xmlGyroMouseToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseToggle", null);
-                    xmlGyroMouseToggle.InnerText = GyroMouseToggle[device].ToString();
-                    rootElement.AppendChild(xmlGyroMouseToggle);
-
-                    var xmlGyroOutMode = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroOutputMode", null);
-                    xmlGyroOutMode.InnerText = GyroOutputMode[device].ToString();
-                    rootElement.AppendChild(xmlGyroOutMode);
-                    var xmlGyroMStickTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickTriggers", null);
-                    xmlGyroMStickTriggers.InnerText = SAMouseStickTriggers[device];
-                    rootElement.AppendChild(xmlGyroMStickTriggers);
-                    var xmlGyroMStickTriggerCond =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickTriggerCond", null);
-                    xmlGyroMStickTriggerCond.InnerText = SaTriggerCondString(SAMouseStickTriggerCond[device]);
-                    rootElement.AppendChild(xmlGyroMStickTriggerCond);
-                    var xmlGyroMStickTriggerTurns =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickTriggerTurns", null);
-                    xmlGyroMStickTriggerTurns.InnerText = GyroMouseStickTriggerTurns[device].ToString();
-                    rootElement.AppendChild(xmlGyroMStickTriggerTurns);
-                    var xmlGyroMStickHAxis = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickHAxis", null);
-                    xmlGyroMStickHAxis.InnerText = GyroMouseStickHorizontalAxis[device].ToString();
-                    rootElement.AppendChild(xmlGyroMStickHAxis);
-                    var xmlGyroMStickDZ = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickDeadZone", null);
-                    xmlGyroMStickDZ.InnerText = GyroMouseStickInfo[device].DeadZone.ToString();
-                    rootElement.AppendChild(xmlGyroMStickDZ);
-                    var xmlGyroMStickMaxZ = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickMaxZone", null);
-                    xmlGyroMStickMaxZ.InnerText = GyroMouseStickInfo[device].MaxZone.ToString();
-                    rootElement.AppendChild(xmlGyroMStickMaxZ);
-                    var xmlGyroMStickOutputStick =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickOutputStick", null);
-                    xmlGyroMStickOutputStick.InnerText = GyroMouseStickInfo[device].outputStick.ToString();
-                    rootElement.AppendChild(xmlGyroMStickOutputStick);
-                    var xmlGyroMStickOutputStickAxes =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickOutputStickAxes", null);
-                    xmlGyroMStickOutputStickAxes.InnerText = GyroMouseStickInfo[device].outputStickDir.ToString();
-                    rootElement.AppendChild(xmlGyroMStickOutputStickAxes);
-                    var xmlGyroMStickAntiDX = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickAntiDeadX", null);
-                    xmlGyroMStickAntiDX.InnerText = GyroMouseStickInfo[device].AntiDeadX.ToString();
-                    rootElement.AppendChild(xmlGyroMStickAntiDX);
-                    var xmlGyroMStickAntiDY = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickAntiDeadY", null);
-                    xmlGyroMStickAntiDY.InnerText = GyroMouseStickInfo[device].AntiDeadY.ToString();
-                    rootElement.AppendChild(xmlGyroMStickAntiDY);
-                    var xmlGyroMStickInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickInvert", null);
-                    xmlGyroMStickInvert.InnerText = GyroMouseStickInfo[device].Inverted.ToString();
-                    rootElement.AppendChild(xmlGyroMStickInvert);
-                    var xmlGyroMStickToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickToggle", null);
-                    xmlGyroMStickToggle.InnerText = GyroMouseStickToggle[device].ToString();
-                    rootElement.AppendChild(xmlGyroMStickToggle);
-                    var xmlGyroMStickMaxOutput =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickMaxOutput", null);
-                    xmlGyroMStickMaxOutput.InnerText = GyroMouseStickInfo[device].MaxOutput.ToString();
-                    rootElement.AppendChild(xmlGyroMStickMaxOutput);
-                    var xmlGyroMStickMaxOutputEnabled =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickMaxOutputEnabled", null);
-                    xmlGyroMStickMaxOutputEnabled.InnerText = GyroMouseStickInfo[device].MaxOutputEnabled.ToString();
-                    rootElement.AppendChild(xmlGyroMStickMaxOutputEnabled);
-                    var xmlGyroMStickVerticalScale =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickVerticalScale", null);
-                    xmlGyroMStickVerticalScale.InnerText = GyroMouseStickInfo[device].VertScale.ToString();
-                    rootElement.AppendChild(xmlGyroMStickVerticalScale);
-
-
-                    /*XmlNode xmlGyroMStickSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickSmoothing", null); xmlGyroMStickSmoothing.InnerText = gyroMStickInfo[device].useSmoothing.ToString(); rootElement.AppendChild(xmlGyroMStickSmoothing);
-                    XmlNode xmlGyroMStickSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickSmoothingWeight", null); xmlGyroMStickSmoothWeight.InnerText = Convert.ToInt32(gyroMStickInfo[device].smoothWeight * 100).ToString(); rootElement.AppendChild(xmlGyroMStickSmoothWeight);
-                    */
-                    var xmlGyroMStickSmoothingElement = m_Xdoc.CreateElement("GyroMouseStickSmoothingSettings");
-                    var xmlGyroMStickSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "UseSmoothing", null);
-                    xmlGyroMStickSmoothing.InnerText = GyroMouseStickInfo[device].UseSmoothing.ToString();
-                    xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothing);
-                    var xmlGyroMStickSmoothingMethod = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMethod", null);
-                    xmlGyroMStickSmoothingMethod.InnerText = GyroMouseStickInfo[device].SmoothMethodIdentifier();
-                    xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothingMethod);
-                    var xmlGyroMStickSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingWeight", null);
-                    xmlGyroMStickSmoothWeight.InnerText =
-                        Convert.ToInt32(GyroMouseStickInfo[device].SmoothWeight * 100).ToString();
-                    xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothWeight);
-                    var xmlGyroMStickSmoothMincutoff =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMinCutoff", null);
-                    xmlGyroMStickSmoothMincutoff.InnerText = GyroMouseStickInfo[device].minCutoff.ToString();
-                    xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothMincutoff);
-                    var xmlGyroMStickSmoothBeta = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingBeta", null);
-                    xmlGyroMStickSmoothBeta.InnerText = GyroMouseStickInfo[device].beta.ToString();
-                    xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothBeta);
-                    rootElement.AppendChild(xmlGyroMStickSmoothingElement);
-
-                    var xmlGyroSwipeSettingsElement = m_Xdoc.CreateElement("GyroSwipeSettings");
-                    var xmlGyroSwipeDeadzoneX = m_Xdoc.CreateNode(XmlNodeType.Element, "DeadZoneX", null);
-                    xmlGyroSwipeDeadzoneX.InnerText = GyroSwipeInfo[device].deadzoneX.ToString();
-                    xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeDeadzoneX);
-                    var xmlGyroSwipeDeadzoneY = m_Xdoc.CreateNode(XmlNodeType.Element, "DeadZoneY", null);
-                    xmlGyroSwipeDeadzoneY.InnerText = GyroSwipeInfo[device].deadzoneY.ToString();
-                    xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeDeadzoneY);
-                    var xmlGyroSwipeTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "Triggers", null);
-                    xmlGyroSwipeTriggers.InnerText = GyroSwipeInfo[device].triggers;
-                    xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeTriggers);
-                    var xmlGyroSwipeTriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerCond", null);
-                    xmlGyroSwipeTriggerCond.InnerText = SaTriggerCondString(GyroSwipeInfo[device].triggerCond);
-                    xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeTriggerCond);
-                    var xmlGyroSwipeTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerTurns", null);
-                    xmlGyroSwipeTriggerTurns.InnerText = GyroSwipeInfo[device].triggerTurns.ToString();
-                    xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeTriggerTurns);
-                    var xmlGyroSwipeXAxis = m_Xdoc.CreateNode(XmlNodeType.Element, "XAxis", null);
-                    xmlGyroSwipeXAxis.InnerText = GyroSwipeInfo[device].xAxis.ToString();
-                    xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeXAxis);
-                    var xmlGyroSwipeDelayTime = m_Xdoc.CreateNode(XmlNodeType.Element, "DelayTime", null);
-                    xmlGyroSwipeDelayTime.InnerText = GyroSwipeInfo[device].delayTime.ToString();
-                    xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeDelayTime);
-                    rootElement.AppendChild(xmlGyroSwipeSettingsElement);
-
-                    var xmlProfileActions = m_Xdoc.CreateNode(XmlNodeType.Element, "ProfileActions", null);
-                    xmlProfileActions.InnerText = string.Join("/", ProfileActions[device]);
-                    rootElement.AppendChild(xmlProfileActions);
-                    var xmlBTPollRate = m_Xdoc.CreateNode(XmlNodeType.Element, "BTPollRate", null);
-                    xmlBTPollRate.InnerText = BluetoothPollRate[device].ToString();
-                    rootElement.AppendChild(xmlBTPollRate);
-
-                    var xmlLsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveMode", null);
-                    xmlLsOutputCurveMode.InnerText = stickOutputCurveString(SetLsOutCurveMode(device));
-                    rootElement.AppendChild(xmlLsOutputCurveMode);
-                    var xmlLsOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveCustom", null);
-                    xmlLsOutputCurveCustom.InnerText = LSOutBezierCurveObj[device].ToString();
-                    rootElement.AppendChild(xmlLsOutputCurveCustom);
-
-                    var xmlRsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveMode", null);
-                    xmlRsOutputCurveMode.InnerText = stickOutputCurveString(GetRsOutCurveMode(device));
-                    rootElement.AppendChild(xmlRsOutputCurveMode);
-                    var xmlRsOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveCustom", null);
-                    xmlRsOutputCurveCustom.InnerText = RSOutBezierCurveObj[device].ToString();
-                    rootElement.AppendChild(xmlRsOutputCurveCustom);
-
-                    var xmlLsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSSquareStick", null);
-                    xmlLsSquareStickMode.InnerText = SquStickInfo[device].LSMode.ToString();
-                    rootElement.AppendChild(xmlLsSquareStickMode);
-                    var xmlRsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSSquareStick", null);
-                    xmlRsSquareStickMode.InnerText = SquStickInfo[device].RSMode.ToString();
-                    rootElement.AppendChild(xmlRsSquareStickMode);
-
-                    var xmlSquareStickRoundness = m_Xdoc.CreateNode(XmlNodeType.Element, "SquareStickRoundness", null);
-                    xmlSquareStickRoundness.InnerText = SquStickInfo[device].LSRoundness.ToString();
-                    rootElement.AppendChild(xmlSquareStickRoundness);
-                    var xmlSquareRStickRoundness =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "SquareRStickRoundness", null);
-                    xmlSquareRStickRoundness.InnerText = SquStickInfo[device].RSRoundness.ToString();
-                    rootElement.AppendChild(xmlSquareRStickRoundness);
-
-                    var xmlLsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapback", null);
-                    xmlLsAntiSnapbackEnabled.InnerText = LSAntiSnapbackInfo[device].Enabled.ToString();
-                    rootElement.AppendChild(xmlLsAntiSnapbackEnabled);
-                    var xmlRsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapback", null);
-                    xmlRsAntiSnapbackEnabled.InnerText = RSAntiSnapbackInfo[device].Enabled.ToString();
-                    rootElement.AppendChild(xmlRsAntiSnapbackEnabled);
-
-                    var xmlLsAntiSnapbackDelta = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapbackDelta", null);
-                    xmlLsAntiSnapbackDelta.InnerText = LSAntiSnapbackInfo[device].Delta.ToString();
-                    rootElement.AppendChild(xmlLsAntiSnapbackDelta);
-                    var xmlRsAntiSnapbackDelta = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapbackDelta", null);
-                    xmlRsAntiSnapbackDelta.InnerText = RSAntiSnapbackInfo[device].Delta.ToString();
-                    rootElement.AppendChild(xmlRsAntiSnapbackDelta);
-
-                    var xmlLsAntiSnapbackTimeout =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapbackTimeout", null);
-                    xmlLsAntiSnapbackTimeout.InnerText = LSAntiSnapbackInfo[device].Timeout.ToString();
-                    rootElement.AppendChild(xmlLsAntiSnapbackTimeout);
-                    var xmlRsAntiSnapbackTimeout =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapbackTimeout", null);
-                    xmlRsAntiSnapbackTimeout.InnerText = RSAntiSnapbackInfo[device].Timeout.ToString();
-                    rootElement.AppendChild(xmlRsAntiSnapbackTimeout);
-
-                    var xmlLsOutputMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputMode", null);
-                    xmlLsOutputMode.InnerText = LSOutputSettings[device].Mode.ToString();
-                    rootElement.AppendChild(xmlLsOutputMode);
-                    var xmlRsOutputMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputMode", null);
-                    xmlRsOutputMode.InnerText = RSOutputSettings[device].Mode.ToString();
-                    rootElement.AppendChild(xmlRsOutputMode);
-
-                    var xmlLsOutputSettingsElement = m_Xdoc.CreateElement("LSOutputSettings");
-                    var xmlLsFlickStickGroupElement = m_Xdoc.CreateElement("FlickStickSettings");
-                    xmlLsOutputSettingsElement.AppendChild(xmlLsFlickStickGroupElement);
-                    var xmlLsFlickStickRWC = m_Xdoc.CreateNode(XmlNodeType.Element, "RealWorldCalibration", null);
-                    xmlLsFlickStickRWC.InnerText = LSOutputSettings[device].OutputSettings.flickSettings
-                        .realWorldCalibration.ToString();
-                    xmlLsFlickStickGroupElement.AppendChild(xmlLsFlickStickRWC);
-                    var xmlLsFlickStickThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickThreshold", null);
-                    xmlLsFlickStickThreshold.InnerText = LSOutputSettings[device].OutputSettings.flickSettings
-                        .flickThreshold.ToString();
-                    xmlLsFlickStickGroupElement.AppendChild(xmlLsFlickStickThreshold);
-                    var xmlLsFlickStickTime = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickTime", null);
-                    xmlLsFlickStickTime.InnerText =
-                        LSOutputSettings[device].OutputSettings.flickSettings.flickTime.ToString();
-                    xmlLsFlickStickGroupElement.AppendChild(xmlLsFlickStickTime);
-                    rootElement.AppendChild(xmlLsOutputSettingsElement);
-
-                    var xmlRsOutputSettingsElement = m_Xdoc.CreateElement("RSOutputSettings");
-                    var xmlRsFlickStickGroupElement = m_Xdoc.CreateElement("FlickStickSettings");
-                    xmlRsOutputSettingsElement.AppendChild(xmlRsFlickStickGroupElement);
-                    var xmlRsFlickStickRWC = m_Xdoc.CreateNode(XmlNodeType.Element, "RealWorldCalibration", null);
-                    xmlRsFlickStickRWC.InnerText = RSOutputSettings[device].OutputSettings.flickSettings
-                        .realWorldCalibration.ToString();
-                    xmlRsFlickStickGroupElement.AppendChild(xmlRsFlickStickRWC);
-                    var xmlRsFlickStickThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickThreshold", null);
-                    xmlRsFlickStickThreshold.InnerText = RSOutputSettings[device].OutputSettings.flickSettings
-                        .flickThreshold.ToString();
-                    xmlRsFlickStickGroupElement.AppendChild(xmlRsFlickStickThreshold);
-                    var xmlRsFlickStickTime = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickTime", null);
-                    xmlRsFlickStickTime.InnerText =
-                        RSOutputSettings[device].OutputSettings.flickSettings.flickTime.ToString();
-                    xmlRsFlickStickGroupElement.AppendChild(xmlRsFlickStickTime);
-                    rootElement.AppendChild(xmlRsOutputSettingsElement);
-
-                    var xmlL2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveMode", null);
-                    xmlL2OutputCurveMode.InnerText = axisOutputCurveString(GetL2OutCurveMode(device));
-                    rootElement.AppendChild(xmlL2OutputCurveMode);
-                    var xmlL2OutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveCustom", null);
-                    xmlL2OutputCurveCustom.InnerText = L2OutBezierCurveObj[device].ToString();
-                    rootElement.AppendChild(xmlL2OutputCurveCustom);
-
-                    var xmlL2TwoStageMode = m_Xdoc.CreateNode(XmlNodeType.Element, "L2TwoStageMode", null);
-                    xmlL2TwoStageMode.InnerText = L2OutputSettings[device].twoStageMode.ToString();
-                    rootElement.AppendChild(xmlL2TwoStageMode);
-                    var xmlR2TwoStageMode = m_Xdoc.CreateNode(XmlNodeType.Element, "R2TwoStageMode", null);
-                    xmlR2TwoStageMode.InnerText = R2OutputSettings[device].twoStageMode.ToString();
-                    rootElement.AppendChild(xmlR2TwoStageMode);
-
-                    var xmlL2TriggerEffect = m_Xdoc.CreateNode(XmlNodeType.Element, "L2TriggerEffect", null);
-                    xmlL2TriggerEffect.InnerText = L2OutputSettings[device].triggerEffect.ToString();
-                    rootElement.AppendChild(xmlL2TriggerEffect);
-                    var xmlR2TriggerEffect = m_Xdoc.CreateNode(XmlNodeType.Element, "R2TriggerEffect", null);
-                    xmlR2TriggerEffect.InnerText = R2OutputSettings[device].triggerEffect.ToString();
-                    rootElement.AppendChild(xmlR2TriggerEffect);
-
-                    var xmlR2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveMode", null);
-                    xmlR2OutputCurveMode.InnerText = axisOutputCurveString(GetR2OutCurveMode(device));
-                    rootElement.AppendChild(xmlR2OutputCurveMode);
-                    var xmlR2OutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveCustom", null);
-                    xmlR2OutputCurveCustom.InnerText = R2OutBezierCurveObj[device].ToString();
-                    rootElement.AppendChild(xmlR2OutputCurveCustom);
-
-                    var xmlSXOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveMode", null);
-                    xmlSXOutputCurveMode.InnerText = axisOutputCurveString(GetSXOutCurveMode(device));
-                    rootElement.AppendChild(xmlSXOutputCurveMode);
-                    var xmlSXOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveCustom", null);
-                    xmlSXOutputCurveCustom.InnerText = SXOutBezierCurveObj[device].ToString();
-                    rootElement.AppendChild(xmlSXOutputCurveCustom);
-
-                    var xmlSZOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveMode", null);
-                    xmlSZOutputCurveMode.InnerText = axisOutputCurveString(GetSZOutCurveMode(device));
-                    rootElement.AppendChild(xmlSZOutputCurveMode);
-                    var xmlSZOutputCurveCustom = m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveCustom", null);
-                    xmlSZOutputCurveCustom.InnerText = SZOutBezierCurveObj[device].ToString();
-                    rootElement.AppendChild(xmlSZOutputCurveCustom);
-
-                    var xmlTrackBallMode = m_Xdoc.CreateNode(XmlNodeType.Element, "TrackballMode", null);
-                    xmlTrackBallMode.InnerText = TrackballMode[device].ToString();
-                    rootElement.AppendChild(xmlTrackBallMode);
-                    var xmlTrackBallFriction = m_Xdoc.CreateNode(XmlNodeType.Element, "TrackballFriction", null);
-                    xmlTrackBallFriction.InnerText = TrackballFriction[device].ToString();
-                    rootElement.AppendChild(xmlTrackBallFriction);
-
-                    var xmlTouchRelMouseRotation =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "TouchRelMouseRotation", null);
-                    xmlTouchRelMouseRotation.InnerText =
-                        Convert.ToInt32(TouchPadRelMouse[device].Rotation * 180.0 / Math.PI).ToString();
-                    rootElement.AppendChild(xmlTouchRelMouseRotation);
-                    var xmlTouchRelMouseMinThreshold =
-                        m_Xdoc.CreateNode(XmlNodeType.Element, "TouchRelMouseMinThreshold", null);
-                    xmlTouchRelMouseMinThreshold.InnerText = TouchPadRelMouse[device].MinThreshold.ToString();
-                    rootElement.AppendChild(xmlTouchRelMouseMinThreshold);
-
-                    var xmlTouchAbsMouseGroupEl = m_Xdoc.CreateElement("TouchpadAbsMouseSettings");
-                    var xmlTouchAbsMouseMaxZoneX = m_Xdoc.CreateElement("MaxZoneX");
-                    xmlTouchAbsMouseMaxZoneX.InnerText = TouchPadAbsMouse[device].MaxZoneX.ToString();
-                    xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseMaxZoneX);
-                    var xmlTouchAbsMouseMaxZoneY = m_Xdoc.CreateElement("MaxZoneY");
-                    xmlTouchAbsMouseMaxZoneY.InnerText = TouchPadAbsMouse[device].MaxZoneY.ToString();
-                    xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseMaxZoneY);
-                    var xmlTouchAbsMouseSnapCenter = m_Xdoc.CreateElement("SnapToCenter");
-                    xmlTouchAbsMouseSnapCenter.InnerText = TouchPadAbsMouse[device].SnapToCenter.ToString();
-                    xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseSnapCenter);
-                    rootElement.AppendChild(xmlTouchAbsMouseGroupEl);
-
-                    var xmlOutContDevice = m_Xdoc.CreateNode(XmlNodeType.Element, "OutputContDevice", null);
-                    xmlOutContDevice.InnerText = OutContDeviceString(OutputDeviceType[device]);
-                    rootElement.AppendChild(xmlOutContDevice);
-
-                    var NodeControl = m_Xdoc.CreateNode(XmlNodeType.Element, "Control", null);
-                    var Key = m_Xdoc.CreateNode(XmlNodeType.Element, "Key", null);
-                    var Macro = m_Xdoc.CreateNode(XmlNodeType.Element, "Macro", null);
-                    var KeyType = m_Xdoc.CreateNode(XmlNodeType.Element, "KeyType", null);
-                    var Button = m_Xdoc.CreateNode(XmlNodeType.Element, "Button", null);
-                    var Extras = m_Xdoc.CreateNode(XmlNodeType.Element, "Extras", null);
-
-                    var NodeShiftControl = m_Xdoc.CreateNode(XmlNodeType.Element, "ShiftControl", null);
-
-                    var ShiftKey = m_Xdoc.CreateNode(XmlNodeType.Element, "Key", null);
-                    var ShiftMacro = m_Xdoc.CreateNode(XmlNodeType.Element, "Macro", null);
-                    var ShiftKeyType = m_Xdoc.CreateNode(XmlNodeType.Element, "KeyType", null);
-                    var ShiftButton = m_Xdoc.CreateNode(XmlNodeType.Element, "Button", null);
-                    var ShiftExtras = m_Xdoc.CreateNode(XmlNodeType.Element, "Extras", null);
-
-                    foreach (var dcs in Ds4Settings[device])
-                    {
-                        if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
-                        {
-                            XmlNode buttonNode;
-                            var keyType = string.Empty;
-
-                            if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button &&
-                                dcs.ActionData.ActionButton == X360Controls.Unbound)
-                                keyType += DS4KeyType.Unbound;
-
-                            if (dcs.KeyType.HasFlag(DS4KeyType.HoldMacro))
-                                keyType += DS4KeyType.HoldMacro;
-                            else if (dcs.KeyType.HasFlag(DS4KeyType.Macro))
-                                keyType += DS4KeyType.Macro;
-
-                            if (dcs.KeyType.HasFlag(DS4KeyType.Toggle))
-                                keyType += DS4KeyType.Toggle;
-                            if (dcs.KeyType.HasFlag(DS4KeyType.ScanCode))
-                                keyType += DS4KeyType.ScanCode;
-
-                            if (keyType != string.Empty)
-                            {
-                                buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
-                                buttonNode.InnerText = keyType;
-                                KeyType.AppendChild(buttonNode);
-                            }
-
-                            buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
-                            if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
-                            {
-                                var ii = dcs.ActionData.ActionMacro;
-                                buttonNode.InnerText = string.Join("/", ii);
-                                Macro.AppendChild(buttonNode);
-                            }
-                            else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
-                            {
-                                buttonNode.InnerText = dcs.ActionData.ActionKey.ToString();
-                                Key.AppendChild(buttonNode);
-                            }
-                            else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
-                            {
-                                buttonNode.InnerText = GetX360ControlString(dcs.ActionData.ActionButton);
-                                Button.AppendChild(buttonNode);
-                            }
-                        }
-
-                        var hasvalue = false;
-                        if (!string.IsNullOrEmpty(dcs.Extras))
-                            foreach (var s in dcs.Extras.Split(','))
-                                if (s != "0")
-                                {
-                                    hasvalue = true;
-                                    break;
-                                }
-
-                        if (hasvalue)
-                        {
-                            var extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
-                            extraNode.InnerText = dcs.Extras;
-                            Extras.AppendChild(extraNode);
-                        }
-
-                        if (dcs.ShiftActionType != DS4ControlSettings.ActionType.Default && dcs.ShiftTrigger > 0)
-                        {
-                            XmlElement buttonNode;
-                            var keyType = string.Empty;
-
-                            if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button &&
-                                dcs.ShiftAction.ActionButton == X360Controls.Unbound)
-                                keyType += DS4KeyType.Unbound;
-
-                            if (dcs.ShiftKeyType.HasFlag(DS4KeyType.HoldMacro))
-                                keyType += DS4KeyType.HoldMacro;
-                            if (dcs.ShiftKeyType.HasFlag(DS4KeyType.Macro))
-                                keyType += DS4KeyType.Macro;
-                            if (dcs.ShiftKeyType.HasFlag(DS4KeyType.Toggle))
-                                keyType += DS4KeyType.Toggle;
-                            if (dcs.ShiftKeyType.HasFlag(DS4KeyType.ScanCode))
-                                keyType += DS4KeyType.ScanCode;
-
-                            if (keyType != string.Empty)
-                            {
-                                buttonNode = m_Xdoc.CreateElement(dcs.Control.ToString());
-                                buttonNode.InnerText = keyType;
-                                ShiftKeyType.AppendChild(buttonNode);
-                            }
-
-                            buttonNode = m_Xdoc.CreateElement(dcs.Control.ToString());
-                            buttonNode.SetAttribute("Trigger", dcs.ShiftTrigger.ToString());
-                            if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
-                            {
-                                var ii = dcs.ShiftAction.ActionMacro;
-                                buttonNode.InnerText = string.Join("/", ii);
-                                ShiftMacro.AppendChild(buttonNode);
-                            }
-                            else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
-                            {
-                                buttonNode.InnerText = dcs.ShiftAction.ActionKey.ToString();
-                                ShiftKey.AppendChild(buttonNode);
-                            }
-                            else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
-                            {
-                                buttonNode.InnerText = dcs.ShiftAction.ActionButton.ToString();
-                                ShiftButton.AppendChild(buttonNode);
-                            }
-                        }
-
-                        hasvalue = false;
-                        if (!string.IsNullOrEmpty(dcs.ShiftExtras))
-                            foreach (var s in dcs.ShiftExtras.Split(','))
-                                if (s != "0")
-                                {
-                                    hasvalue = true;
-                                    break;
-                                }
-
-                        if (hasvalue)
-                        {
-                            var extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
-                            extraNode.InnerText = dcs.ShiftExtras;
-                            ShiftExtras.AppendChild(extraNode);
-                        }
-                    }
-
-                    rootElement.AppendChild(NodeControl);
-                    if (Button.HasChildNodes)
-                        NodeControl.AppendChild(Button);
-                    if (Macro.HasChildNodes)
-                        NodeControl.AppendChild(Macro);
-                    if (Key.HasChildNodes)
-                        NodeControl.AppendChild(Key);
-                    if (Extras.HasChildNodes)
-                        NodeControl.AppendChild(Extras);
-                    if (KeyType.HasChildNodes)
-                        NodeControl.AppendChild(KeyType);
-
-                    if (NodeControl.HasChildNodes)
-                        rootElement.AppendChild(NodeControl);
-
-                    rootElement.AppendChild(NodeShiftControl);
-                    if (ShiftButton.HasChildNodes)
-                        NodeShiftControl.AppendChild(ShiftButton);
-                    if (ShiftMacro.HasChildNodes)
-                        NodeShiftControl.AppendChild(ShiftMacro);
-                    if (ShiftKey.HasChildNodes)
-                        NodeShiftControl.AppendChild(ShiftKey);
-                    if (ShiftKeyType.HasChildNodes)
-                        NodeShiftControl.AppendChild(ShiftKeyType);
-                    if (ShiftExtras.HasChildNodes)
-                        NodeShiftControl.AppendChild(ShiftExtras);
-
-                    m_Xdoc.AppendChild(rootElement);
-                    m_Xdoc.Save(path);
+                    IExtendedXmlSerializer serializer = new ConfigurationContainer()
+                        .UseAutoFormatting()
+                        .UseOptimizedNamespaces()
+                        //.EnableParameterizedContent()
+                        .EnableImplicitTyping(typeof(BackingStore))
+                        .Create();
+
+                    var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, this);
+                    
+                    var betaPath = Path.Combine(
+                        RuntimeAppDataPath,
+                        Constants.ProfilesSubDirectory,
+                        $"{proName}-BETA{XML_EXTENSION}"
+                    );
+
+                    File.WriteAllText(betaPath, document);
                 }
-                catch
+
+                using (GlobalTracer.Instance.BuildSpan("Serialize-OLD").StartActive(true))
                 {
-                    Saved = false;
+                    try
+                    {
+                        XmlNode tmpNode;
+                        var xmlControls = m_Xdoc.SelectSingleNode("/DS4Windows/Control");
+                        var xmlShiftControls = m_Xdoc.SelectSingleNode("/DS4Windows/ShiftControl");
+                        m_Xdoc.RemoveAll();
+
+                        tmpNode = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
+                        m_Xdoc.AppendChild(tmpNode);
+
+                        tmpNode = m_Xdoc.CreateComment(string.Format(" DS4Windows Configuration Data. {0} ",
+                            DateTime.Now));
+                        m_Xdoc.AppendChild(tmpNode);
+
+                        tmpNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ",
+                            ExecutableProductVersion));
+                        m_Xdoc.AppendChild(tmpNode);
+
+                        tmpNode = m_Xdoc.CreateWhitespace("\r\n");
+                        m_Xdoc.AppendChild(tmpNode);
+
+                        var rootElement = m_Xdoc.CreateElement("DS4Windows", null);
+                        rootElement.SetAttribute("app_version", ExecutableProductVersion);
+                        rootElement.SetAttribute("config_version", CONFIG_VERSION.ToString());
+
+                        var lightbarSettings = LightbarSettingInfo[device];
+                        var lightInfo = lightbarSettings.Ds4WinSettings;
+
+                        var xmlTouchToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "touchToggle", null);
+                        xmlTouchToggle.InnerText = EnableTouchToggle[device].ToString();
+                        rootElement.AppendChild(xmlTouchToggle);
+                        var xmlIdleDisconnectTimeout =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "idleDisconnectTimeout", null);
+                        xmlIdleDisconnectTimeout.InnerText = IdleDisconnectTimeout[device].ToString();
+                        rootElement.AppendChild(xmlIdleDisconnectTimeout);
+                        var xmlOutputDataToDS4 = m_Xdoc.CreateNode(XmlNodeType.Element, "outputDataToDS4", null);
+                        xmlOutputDataToDS4.InnerText = EnableOutputDataToDS4[device].ToString();
+                        rootElement.AppendChild(xmlOutputDataToDS4);
+                        var xmlColor = m_Xdoc.CreateNode(XmlNodeType.Element, "Color", null);
+                        xmlColor.InnerText = lightInfo.Led.Red + "," + lightInfo.Led.Green + "," + lightInfo.Led.Blue;
+                        rootElement.AppendChild(xmlColor);
+                        var xmlRumbleBoost = m_Xdoc.CreateNode(XmlNodeType.Element, "RumbleBoost", null);
+                        xmlRumbleBoost.InnerText = RumbleBoost[device].ToString();
+                        rootElement.AppendChild(xmlRumbleBoost);
+                        var xmlRumbleAutostopTime = m_Xdoc.CreateNode(XmlNodeType.Element, "RumbleAutostopTime", null);
+                        xmlRumbleAutostopTime.InnerText = RumbleAutostopTime[device].ToString();
+                        rootElement.AppendChild(xmlRumbleAutostopTime);
+                        var xmlLightbarMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LightbarMode", null);
+                        xmlLightbarMode.InnerText = GetLightbarModeString(lightbarSettings.Mode);
+                        rootElement.AppendChild(xmlLightbarMode);
+                        var xmlLedAsBatteryIndicator =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "ledAsBatteryIndicator", null);
+                        xmlLedAsBatteryIndicator.InnerText = lightInfo.LedAsBattery.ToString();
+                        rootElement.AppendChild(xmlLedAsBatteryIndicator);
+                        var xmlLowBatteryFlash = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashType", null);
+                        xmlLowBatteryFlash.InnerText = lightInfo.FlashType.ToString();
+                        rootElement.AppendChild(xmlLowBatteryFlash);
+                        var xmlFlashBatterAt = m_Xdoc.CreateNode(XmlNodeType.Element, "flashBatteryAt", null);
+                        xmlFlashBatterAt.InnerText = lightInfo.FlashAt.ToString();
+                        rootElement.AppendChild(xmlFlashBatterAt);
+                        var xmlTouchSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "touchSensitivity", null);
+                        xmlTouchSensitivity.InnerText = TouchSensitivity[device].ToString();
+                        rootElement.AppendChild(xmlTouchSensitivity);
+                        var xmlLowColor = m_Xdoc.CreateNode(XmlNodeType.Element, "LowColor", null);
+                        xmlLowColor.InnerText = lightInfo.LowLed.Red + "," + lightInfo.LowLed.Green + "," +
+                                                lightInfo.LowLed.Blue;
+                        rootElement.AppendChild(xmlLowColor);
+                        var xmlChargingColor = m_Xdoc.CreateNode(XmlNodeType.Element, "ChargingColor", null);
+                        xmlChargingColor.InnerText = lightInfo.ChargingLed.Red + "," + lightInfo.ChargingLed.Green +
+                                                     "," + lightInfo.ChargingLed.Blue;
+                        rootElement.AppendChild(xmlChargingColor);
+                        var xmlFlashColor = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashColor", null);
+                        xmlFlashColor.InnerText = lightInfo.FlashLed.Red + "," + lightInfo.FlashLed.Green + "," +
+                                                  lightInfo.FlashLed.Blue;
+                        rootElement.AppendChild(xmlFlashColor);
+                        var xmlTouchpadJitterCompensation =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "touchpadJitterCompensation", null);
+                        xmlTouchpadJitterCompensation.InnerText = TouchpadJitterCompensation[device].ToString();
+                        rootElement.AppendChild(xmlTouchpadJitterCompensation);
+                        var xmlLowerRCOn = m_Xdoc.CreateNode(XmlNodeType.Element, "lowerRCOn", null);
+                        xmlLowerRCOn.InnerText = LowerRCOn[device].ToString();
+                        rootElement.AppendChild(xmlLowerRCOn);
+                        var xmlTapSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "tapSensitivity", null);
+                        xmlTapSensitivity.InnerText = TapSensitivity[device].ToString();
+                        rootElement.AppendChild(xmlTapSensitivity);
+                        var xmlDouble = m_Xdoc.CreateNode(XmlNodeType.Element, "doubleTap", null);
+                        xmlDouble.InnerText = DoubleTap[device].ToString();
+                        rootElement.AppendChild(xmlDouble);
+                        var xmlScrollSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "scrollSensitivity", null);
+                        xmlScrollSensitivity.InnerText = ScrollSensitivity[device].ToString();
+                        rootElement.AppendChild(xmlScrollSensitivity);
+                        var xmlLeftTriggerMiddle = m_Xdoc.CreateNode(XmlNodeType.Element, "LeftTriggerMiddle", null);
+                        xmlLeftTriggerMiddle.InnerText = L2ModInfo[device].deadZone.ToString();
+                        rootElement.AppendChild(xmlLeftTriggerMiddle);
+                        var xmlRightTriggerMiddle = m_Xdoc.CreateNode(XmlNodeType.Element, "RightTriggerMiddle", null);
+                        xmlRightTriggerMiddle.InnerText = R2ModInfo[device].deadZone.ToString();
+                        rootElement.AppendChild(xmlRightTriggerMiddle);
+                        var xmlTouchpadInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "TouchpadInvert", null);
+                        xmlTouchpadInvert.InnerText = TouchPadInvert[device].ToString();
+                        rootElement.AppendChild(xmlTouchpadInvert);
+                        var xmlTouchClickPasthru =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "TouchpadClickPassthru", null);
+                        xmlTouchClickPasthru.InnerText = TouchClickPassthru[device].ToString();
+                        rootElement.AppendChild(xmlTouchClickPasthru);
+
+                        var xmlL2AD = m_Xdoc.CreateNode(XmlNodeType.Element, "L2AntiDeadZone", null);
+                        xmlL2AD.InnerText = L2ModInfo[device].AntiDeadZone.ToString();
+                        rootElement.AppendChild(xmlL2AD);
+                        var xmlR2AD = m_Xdoc.CreateNode(XmlNodeType.Element, "R2AntiDeadZone", null);
+                        xmlR2AD.InnerText = R2ModInfo[device].AntiDeadZone.ToString();
+                        rootElement.AppendChild(xmlR2AD);
+                        var xmlL2Maxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "L2MaxZone", null);
+                        xmlL2Maxzone.InnerText = L2ModInfo[device].maxZone.ToString();
+                        rootElement.AppendChild(xmlL2Maxzone);
+                        var xmlR2Maxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "R2MaxZone", null);
+                        xmlR2Maxzone.InnerText = R2ModInfo[device].maxZone.ToString();
+                        rootElement.AppendChild(xmlR2Maxzone);
+                        var xmlL2MaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "L2MaxOutput", null);
+                        xmlL2MaxOutput.InnerText = L2ModInfo[device].maxOutput.ToString();
+                        rootElement.AppendChild(xmlL2MaxOutput);
+                        var xmlR2MaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "R2MaxOutput", null);
+                        xmlR2MaxOutput.InnerText = R2ModInfo[device].maxOutput.ToString();
+                        rootElement.AppendChild(xmlR2MaxOutput);
+                        var xmlButtonMouseSensitivity =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "ButtonMouseSensitivity", null);
+                        xmlButtonMouseSensitivity.InnerText = ButtonMouseInfos[device].buttonSensitivity.ToString();
+                        rootElement.AppendChild(xmlButtonMouseSensitivity);
+                        var xmlButtonMouseOffset = m_Xdoc.CreateNode(XmlNodeType.Element, "ButtonMouseOffset", null);
+                        xmlButtonMouseOffset.InnerText = ButtonMouseInfos[device].mouseVelocityOffset.ToString();
+                        rootElement.AppendChild(xmlButtonMouseOffset);
+                        var xmlRainbow = m_Xdoc.CreateNode(XmlNodeType.Element, "Rainbow", null);
+                        xmlRainbow.InnerText = lightInfo.Rainbow.ToString();
+                        rootElement.AppendChild(xmlRainbow);
+                        var xmlMaxSatRainbow = m_Xdoc.CreateNode(XmlNodeType.Element, "MaxSatRainbow", null);
+                        xmlMaxSatRainbow.InnerText = Convert.ToInt32(lightInfo.MaxRainbowSaturation * 100.0).ToString();
+                        rootElement.AppendChild(xmlMaxSatRainbow);
+                        var xmlLSD = m_Xdoc.CreateNode(XmlNodeType.Element, "LSDeadZone", null);
+                        xmlLSD.InnerText = LSModInfo[device].DeadZone.ToString();
+                        rootElement.AppendChild(xmlLSD);
+                        var xmlRSD = m_Xdoc.CreateNode(XmlNodeType.Element, "RSDeadZone", null);
+                        xmlRSD.InnerText = RSModInfo[device].DeadZone.ToString();
+                        rootElement.AppendChild(xmlRSD);
+                        var xmlLSAD = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiDeadZone", null);
+                        xmlLSAD.InnerText = LSModInfo[device].AntiDeadZone.ToString();
+                        rootElement.AppendChild(xmlLSAD);
+                        var xmlRSAD = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiDeadZone", null);
+                        xmlRSAD.InnerText = RSModInfo[device].AntiDeadZone.ToString();
+                        rootElement.AppendChild(xmlRSAD);
+                        var xmlLSMaxZone = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxZone", null);
+                        xmlLSMaxZone.InnerText = LSModInfo[device].MaxZone.ToString();
+                        rootElement.AppendChild(xmlLSMaxZone);
+                        var xmlRSMaxZone = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxZone", null);
+                        xmlRSMaxZone.InnerText = RSModInfo[device].MaxZone.ToString();
+                        rootElement.AppendChild(xmlRSMaxZone);
+                        var xmlLSVerticalScale = m_Xdoc.CreateNode(XmlNodeType.Element, "LSVerticalScale", null);
+                        xmlLSVerticalScale.InnerText = LSModInfo[device].VerticalScale.ToString();
+                        rootElement.AppendChild(xmlLSVerticalScale);
+                        var xmlRSVerticalScale = m_Xdoc.CreateNode(XmlNodeType.Element, "RSVerticalScale", null);
+                        xmlRSVerticalScale.InnerText = RSModInfo[device].VerticalScale.ToString();
+                        rootElement.AppendChild(xmlRSVerticalScale);
+                        var xmlLSMaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxOutput", null);
+                        xmlLSMaxOutput.InnerText = LSModInfo[device].MaxOutput.ToString();
+                        rootElement.AppendChild(xmlLSMaxOutput);
+                        var xmlRSMaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxOutput", null);
+                        xmlRSMaxOutput.InnerText = RSModInfo[device].MaxOutput.ToString();
+                        rootElement.AppendChild(xmlRSMaxOutput);
+                        var xmlLSMaxOutputForce = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxOutputForce", null);
+                        xmlLSMaxOutputForce.InnerText = LSModInfo[device].MaxOutputForce.ToString();
+                        rootElement.AppendChild(xmlLSMaxOutputForce);
+                        var xmlRSMaxOutputForce = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxOutputForce", null);
+                        xmlRSMaxOutputForce.InnerText = RSModInfo[device].MaxOutputForce.ToString();
+                        rootElement.AppendChild(xmlRSMaxOutputForce);
+                        var xmlLSDeadZoneType = m_Xdoc.CreateNode(XmlNodeType.Element, "LSDeadZoneType", null);
+                        xmlLSDeadZoneType.InnerText = LSModInfo[device].DZType.ToString();
+                        rootElement.AppendChild(xmlLSDeadZoneType);
+                        var xmlRSDeadZoneType = m_Xdoc.CreateNode(XmlNodeType.Element, "RSDeadZoneType", null);
+                        xmlRSDeadZoneType.InnerText = RSModInfo[device].DZType.ToString();
+                        rootElement.AppendChild(xmlRSDeadZoneType);
+
+                        var xmlLSAxialDeadGroupEl = m_Xdoc.CreateElement("LSAxialDeadOptions");
+                        var xmlLSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
+                        xmlLSAxialDeadX.InnerText = LSModInfo[device].XAxisDeadInfo.DeadZone.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialDeadX);
+                        var xmlLSAxialDeadY = m_Xdoc.CreateElement("DeadZoneY");
+                        xmlLSAxialDeadY.InnerText = LSModInfo[device].YAxisDeadInfo.DeadZone.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialDeadY);
+                        var xmlLSAxialMaxX = m_Xdoc.CreateElement("MaxZoneX");
+                        xmlLSAxialMaxX.InnerText = LSModInfo[device].XAxisDeadInfo.MaxZone.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxX);
+                        var xmlLSAxialMaxY = m_Xdoc.CreateElement("MaxZoneY");
+                        xmlLSAxialMaxY.InnerText = LSModInfo[device].YAxisDeadInfo.MaxZone.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxY);
+                        var xmlLSAxialAntiDeadX = m_Xdoc.CreateElement("AntiDeadZoneX");
+                        xmlLSAxialAntiDeadX.InnerText = LSModInfo[device].XAxisDeadInfo.AntiDeadZone.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialAntiDeadX);
+                        var xmlLSAxialAntiDeadY = m_Xdoc.CreateElement("AntiDeadZoneY");
+                        xmlLSAxialAntiDeadY.InnerText = LSModInfo[device].YAxisDeadInfo.AntiDeadZone.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialAntiDeadY);
+                        var xmlLSAxialMaxOutputX = m_Xdoc.CreateElement("MaxOutputX");
+                        xmlLSAxialMaxOutputX.InnerText = LSModInfo[device].XAxisDeadInfo.MaxOutput.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxOutputX);
+                        var xmlLSAxialMaxOutputY = m_Xdoc.CreateElement("MaxOutputY");
+                        xmlLSAxialMaxOutputY.InnerText = LSModInfo[device].YAxisDeadInfo.MaxOutput.ToString();
+                        xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxOutputY);
+                        rootElement.AppendChild(xmlLSAxialDeadGroupEl);
+
+                        var xmlRSAxialDeadGroupEl = m_Xdoc.CreateElement("RSAxialDeadOptions");
+                        var xmlRSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
+                        xmlRSAxialDeadX.InnerText = RSModInfo[device].XAxisDeadInfo.DeadZone.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialDeadX);
+                        var xmlRSAxialDeadY = m_Xdoc.CreateElement("DeadZoneY");
+                        xmlRSAxialDeadY.InnerText = RSModInfo[device].YAxisDeadInfo.DeadZone.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialDeadY);
+                        var xmlRSAxialMaxX = m_Xdoc.CreateElement("MaxZoneX");
+                        xmlRSAxialMaxX.InnerText = RSModInfo[device].XAxisDeadInfo.MaxZone.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxX);
+                        var xmlRSAxialMaxY = m_Xdoc.CreateElement("MaxZoneY");
+                        xmlRSAxialMaxY.InnerText = RSModInfo[device].YAxisDeadInfo.MaxZone.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxY);
+                        var xmlRSAxialAntiDeadX = m_Xdoc.CreateElement("AntiDeadZoneX");
+                        xmlRSAxialAntiDeadX.InnerText = RSModInfo[device].XAxisDeadInfo.AntiDeadZone.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialAntiDeadX);
+                        var xmlRSAxialAntiDeadY = m_Xdoc.CreateElement("AntiDeadZoneY");
+                        xmlRSAxialAntiDeadY.InnerText = RSModInfo[device].YAxisDeadInfo.AntiDeadZone.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialAntiDeadY);
+                        var xmlRSAxialMaxOutputX = m_Xdoc.CreateElement("MaxOutputX");
+                        xmlRSAxialMaxOutputX.InnerText = RSModInfo[device].XAxisDeadInfo.MaxOutput.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxOutputX);
+                        var xmlRSAxialMaxOutputY = m_Xdoc.CreateElement("MaxOutputY");
+                        xmlRSAxialMaxOutputY.InnerText = RSModInfo[device].YAxisDeadInfo.MaxOutput.ToString();
+                        xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxOutputY);
+                        rootElement.AppendChild(xmlRSAxialDeadGroupEl);
+
+                        var xmlLSRotation = m_Xdoc.CreateNode(XmlNodeType.Element, "LSRotation", null);
+                        xmlLSRotation.InnerText = Convert.ToInt32(LSRotation[device] * 180.0 / Math.PI).ToString();
+                        rootElement.AppendChild(xmlLSRotation);
+                        var xmlRSRotation = m_Xdoc.CreateNode(XmlNodeType.Element, "RSRotation", null);
+                        xmlRSRotation.InnerText = Convert.ToInt32(RSRotation[device] * 180.0 / Math.PI).ToString();
+                        rootElement.AppendChild(xmlRSRotation);
+                        var xmlLSFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "LSFuzz", null);
+                        xmlLSFuzz.InnerText = LSModInfo[device].Fuzz.ToString();
+                        rootElement.AppendChild(xmlLSFuzz);
+                        var xmlRSFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "RSFuzz", null);
+                        xmlRSFuzz.InnerText = RSModInfo[device].Fuzz.ToString();
+                        rootElement.AppendChild(xmlRSFuzz);
+                        var xmlLSOuterBindDead = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOuterBindDead", null);
+                        xmlLSOuterBindDead.InnerText = Convert.ToInt32(LSModInfo[device].OuterBindDeadZone).ToString();
+                        rootElement.AppendChild(xmlLSOuterBindDead);
+                        var xmlRSOuterBindDead = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOuterBindDead", null);
+                        xmlRSOuterBindDead.InnerText = Convert.ToInt32(RSModInfo[device].OuterBindDeadZone).ToString();
+                        rootElement.AppendChild(xmlRSOuterBindDead);
+                        var xmlLSOuterBindInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOuterBindInvert", null);
+                        xmlLSOuterBindInvert.InnerText = LSModInfo[device].OuterBindInvert.ToString();
+                        rootElement.AppendChild(xmlLSOuterBindInvert);
+                        var xmlRSOuterBindInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOuterBindInvert", null);
+                        xmlRSOuterBindInvert.InnerText = RSModInfo[device].OuterBindInvert.ToString();
+                        rootElement.AppendChild(xmlRSOuterBindInvert);
+
+                        var xmlSXD = m_Xdoc.CreateNode(XmlNodeType.Element, "SXDeadZone", null);
+                        xmlSXD.InnerText = SXDeadzone[device].ToString();
+                        rootElement.AppendChild(xmlSXD);
+                        var xmlSZD = m_Xdoc.CreateNode(XmlNodeType.Element, "SZDeadZone", null);
+                        xmlSZD.InnerText = SZDeadzone[device].ToString();
+                        rootElement.AppendChild(xmlSZD);
+
+                        var xmlSXMaxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SXMaxZone", null);
+                        xmlSXMaxzone.InnerText = Convert.ToInt32(SXMaxzone[device] * 100.0).ToString();
+                        rootElement.AppendChild(xmlSXMaxzone);
+                        var xmlSZMaxzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SZMaxZone", null);
+                        xmlSZMaxzone.InnerText = Convert.ToInt32(SZMaxzone[device] * 100.0).ToString();
+                        rootElement.AppendChild(xmlSZMaxzone);
+
+                        var xmlSXAntiDeadzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SXAntiDeadZone", null);
+                        xmlSXAntiDeadzone.InnerText = Convert.ToInt32(SXAntiDeadzone[device] * 100.0).ToString();
+                        rootElement.AppendChild(xmlSXAntiDeadzone);
+                        var xmlSZAntiDeadzone = m_Xdoc.CreateNode(XmlNodeType.Element, "SZAntiDeadZone", null);
+                        xmlSZAntiDeadzone.InnerText = Convert.ToInt32(SZAntiDeadzone[device] * 100.0).ToString();
+                        rootElement.AppendChild(xmlSZAntiDeadzone);
+
+                        var xmlSens = m_Xdoc.CreateNode(XmlNodeType.Element, "Sensitivity", null);
+                        xmlSens.InnerText =
+                            $"{LSSens[device]}|{RSSens[device]}|{L2Sens[device]}|{R2Sens[device]}|{SXSens[device]}|{SZSens[device]}";
+                        rootElement.AppendChild(xmlSens);
+
+                        var xmlChargingType = m_Xdoc.CreateNode(XmlNodeType.Element, "ChargingType", null);
+                        xmlChargingType.InnerText = lightInfo.ChargingType.ToString();
+                        rootElement.AppendChild(xmlChargingType);
+                        var xmlMouseAccel = m_Xdoc.CreateNode(XmlNodeType.Element, "MouseAcceleration", null);
+                        xmlMouseAccel.InnerText = ButtonMouseInfos[device].mouseAccel.ToString();
+                        rootElement.AppendChild(xmlMouseAccel);
+                        var xmlMouseVerticalScale =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "ButtonMouseVerticalScale", null);
+                        xmlMouseVerticalScale.InnerText =
+                            Convert.ToInt32(ButtonMouseInfos[device].buttonVerticalScale * 100).ToString();
+                        rootElement.AppendChild(xmlMouseVerticalScale);
+                        //XmlNode xmlShiftMod = m_Xdoc.CreateNode(XmlNodeType.Element, "ShiftModifier", null); xmlShiftMod.InnerText = shiftModifier[device].ToString(); rootElement.AppendChild(xmlShiftMod);
+                        var xmlLaunchProgram = m_Xdoc.CreateNode(XmlNodeType.Element, "LaunchProgram", null);
+                        xmlLaunchProgram.InnerText = LaunchProgram[device];
+                        rootElement.AppendChild(xmlLaunchProgram);
+                        var xmlDinput = m_Xdoc.CreateNode(XmlNodeType.Element, "DinputOnly", null);
+                        xmlDinput.InnerText = DirectInputOnly[device].ToString();
+                        rootElement.AppendChild(xmlDinput);
+                        var xmlStartTouchpadOff = m_Xdoc.CreateNode(XmlNodeType.Element, "StartTouchpadOff", null);
+                        xmlStartTouchpadOff.InnerText = StartTouchpadOff[device].ToString();
+                        rootElement.AppendChild(xmlStartTouchpadOff);
+                        var xmlTouchOutMode = m_Xdoc.CreateNode(XmlNodeType.Element, "TouchpadOutputMode", null);
+                        xmlTouchOutMode.InnerText = TouchOutMode[device].ToString();
+                        rootElement.AppendChild(xmlTouchOutMode);
+                        var xmlSATriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "SATriggers", null);
+                        xmlSATriggers.InnerText = SATriggers[device];
+                        rootElement.AppendChild(xmlSATriggers);
+                        var xmlSATriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "SATriggerCond", null);
+                        xmlSATriggerCond.InnerText = SaTriggerCondString(SATriggerCondition[device]);
+                        rootElement.AppendChild(xmlSATriggerCond);
+                        var xmlSASteeringWheelEmulationAxis =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelEmulationAxis", null);
+                        xmlSASteeringWheelEmulationAxis.InnerText = SASteeringWheelEmulationAxis[device].ToString("G");
+                        rootElement.AppendChild(xmlSASteeringWheelEmulationAxis);
+                        var xmlSASteeringWheelEmulationRange =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelEmulationRange", null);
+                        xmlSASteeringWheelEmulationRange.InnerText = SASteeringWheelEmulationRange[device].ToString();
+                        rootElement.AppendChild(xmlSASteeringWheelEmulationRange);
+                        var xmlSASteeringWheelFuzz =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelFuzz", null);
+                        xmlSASteeringWheelFuzz.InnerText = SAWheelFuzzValues[device].ToString();
+                        rootElement.AppendChild(xmlSASteeringWheelFuzz);
+
+                        var xmlSASteeringWheelSmoothingGroupEl =
+                            m_Xdoc.CreateElement("SASteeringWheelSmoothingOptions");
+                        var xmlSASteeringWheelUseSmoothing = m_Xdoc.CreateElement("SASteeringWheelUseSmoothing");
+                        xmlSASteeringWheelUseSmoothing.InnerText = WheelSmoothInfo[device].Enabled.ToString();
+                        xmlSASteeringWheelSmoothingGroupEl.AppendChild(xmlSASteeringWheelUseSmoothing);
+                        var xmlSASteeringWheelSmoothMinCutoff = m_Xdoc.CreateElement("SASteeringWheelSmoothMinCutoff");
+                        xmlSASteeringWheelSmoothMinCutoff.InnerText = WheelSmoothInfo[device].MinCutoff.ToString();
+                        xmlSASteeringWheelSmoothingGroupEl.AppendChild(xmlSASteeringWheelSmoothMinCutoff);
+                        var xmlSASteeringWheelSmoothBeta = m_Xdoc.CreateElement("SASteeringWheelSmoothBeta");
+                        xmlSASteeringWheelSmoothBeta.InnerText = WheelSmoothInfo[device].Beta.ToString();
+                        xmlSASteeringWheelSmoothingGroupEl.AppendChild(xmlSASteeringWheelSmoothBeta);
+                        rootElement.AppendChild(xmlSASteeringWheelSmoothingGroupEl);
+
+                        //XmlNode xmlSASteeringWheelUseSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelUseSmoothing", null); xmlSASteeringWheelUseSmoothing.InnerText = wheelSmoothInfo[device].Enabled.ToString(); rootElement.AppendChild(xmlSASteeringWheelUseSmoothing);
+                        //XmlNode xmlSASteeringWheelSmoothMinCutoff = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelSmoothMinCutoff", null); xmlSASteeringWheelSmoothMinCutoff.InnerText = wheelSmoothInfo[device].MinCutoff.ToString(); rootElement.AppendChild(xmlSASteeringWheelSmoothMinCutoff);
+                        //XmlNode xmlSASteeringWheelSmoothBeta = m_Xdoc.CreateNode(XmlNodeType.Element, "SASteeringWheelSmoothBeta", null); xmlSASteeringWheelSmoothBeta.InnerText = wheelSmoothInfo[device].Beta.ToString(); rootElement.AppendChild(xmlSASteeringWheelSmoothBeta);
+
+                        var xmlTouchDisInvTriggers =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "TouchDisInvTriggers", null);
+                        var tempTouchDisInv = string.Join(",", TouchDisInvertTriggers[device]);
+                        xmlTouchDisInvTriggers.InnerText = tempTouchDisInv;
+                        rootElement.AppendChild(xmlTouchDisInvTriggers);
+
+                        var xmlGyroSensitivity = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSensitivity", null);
+                        xmlGyroSensitivity.InnerText = GyroSensitivity[device].ToString();
+                        rootElement.AppendChild(xmlGyroSensitivity);
+                        var xmlGyroSensVerticalScale =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSensVerticalScale", null);
+                        xmlGyroSensVerticalScale.InnerText = GyroSensVerticalScale[device].ToString();
+                        rootElement.AppendChild(xmlGyroSensVerticalScale);
+                        var xmlGyroInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroInvert", null);
+                        xmlGyroInvert.InnerText = GyroInvert[device].ToString();
+                        rootElement.AppendChild(xmlGyroInvert);
+                        var xmlGyroTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroTriggerTurns", null);
+                        xmlGyroTriggerTurns.InnerText = GyroTriggerTurns[device].ToString();
+                        rootElement.AppendChild(xmlGyroTriggerTurns);
+                        /*XmlNode xmlGyroSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSmoothingWeight", null); xmlGyroSmoothWeight.InnerText = Convert.ToInt32(gyroSmoothWeight[device] * 100).ToString(); rootElement.AppendChild(xmlGyroSmoothWeight);
+                        XmlNode xmlGyroSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroSmoothing", null); xmlGyroSmoothing.InnerText = gyroSmoothing[device].ToString(); rootElement.AppendChild(xmlGyroSmoothing);
+                        */
+
+                        var xmlGyroControlsSettingsElement = m_Xdoc.CreateElement("GyroControlsSettings");
+                        var xmlGyroControlsTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "Triggers", null);
+                        xmlGyroControlsTriggers.InnerText = GyroControlsInfo[device].Triggers;
+                        xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggers);
+                        var xmlGyroControlsTriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerCond", null);
+                        xmlGyroControlsTriggerCond.InnerText =
+                            SaTriggerCondString(GyroControlsInfo[device].TriggerCond);
+                        xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerCond);
+                        var xmlGyroControlsTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerTurns", null);
+                        xmlGyroControlsTriggerTurns.InnerText = GyroControlsInfo[device].TriggerTurns.ToString();
+                        xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsTriggerTurns);
+                        var xmlGyroControlsToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "Toggle", null);
+                        xmlGyroControlsToggle.InnerText = GyroControlsInfo[device].TriggerToggle.ToString();
+                        xmlGyroControlsSettingsElement.AppendChild(xmlGyroControlsToggle);
+                        rootElement.AppendChild(xmlGyroControlsSettingsElement);
+
+                        var xmlGyroSmoothingElement = m_Xdoc.CreateElement("GyroMouseSmoothingSettings");
+                        var xmlGyroSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "UseSmoothing", null);
+                        xmlGyroSmoothing.InnerText = GyroMouseInfo[device].enableSmoothing.ToString();
+                        xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothing);
+                        var xmlGyroSmoothingMethod = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMethod", null);
+                        xmlGyroSmoothingMethod.InnerText = GyroMouseInfo[device].SmoothMethodIdentifier();
+                        xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothingMethod);
+                        var xmlGyroSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingWeight", null);
+                        xmlGyroSmoothWeight.InnerText =
+                            Convert.ToInt32(GyroMouseInfo[device].smoothingWeight * 100).ToString();
+                        xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothWeight);
+                        var xmlGyroSmoothMincutoff = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMinCutoff", null);
+                        xmlGyroSmoothMincutoff.InnerText = GyroMouseInfo[device].minCutoff.ToString();
+                        xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothMincutoff);
+                        var xmlGyroSmoothBeta = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingBeta", null);
+                        xmlGyroSmoothBeta.InnerText = GyroMouseInfo[device].beta.ToString();
+                        xmlGyroSmoothingElement.AppendChild(xmlGyroSmoothBeta);
+                        rootElement.AppendChild(xmlGyroSmoothingElement);
+
+                        var xmlGyroMouseHAxis = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseHAxis", null);
+                        xmlGyroMouseHAxis.InnerText = GyroMouseHorizontalAxis[device].ToString();
+                        rootElement.AppendChild(xmlGyroMouseHAxis);
+                        var xmlGyroMouseDZ = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseDeadZone", null);
+                        xmlGyroMouseDZ.InnerText = GyroMouseDeadZone[device].ToString();
+                        rootElement.AppendChild(xmlGyroMouseDZ);
+                        var xmlGyroMinThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseMinThreshold", null);
+                        xmlGyroMinThreshold.InnerText = GyroMouseInfo[device].minThreshold.ToString();
+                        rootElement.AppendChild(xmlGyroMinThreshold);
+                        var xmlGyroMouseToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseToggle", null);
+                        xmlGyroMouseToggle.InnerText = GyroMouseToggle[device].ToString();
+                        rootElement.AppendChild(xmlGyroMouseToggle);
+
+                        var xmlGyroOutMode = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroOutputMode", null);
+                        xmlGyroOutMode.InnerText = GyroOutputMode[device].ToString();
+                        rootElement.AppendChild(xmlGyroOutMode);
+                        var xmlGyroMStickTriggers =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickTriggers", null);
+                        xmlGyroMStickTriggers.InnerText = SAMouseStickTriggers[device];
+                        rootElement.AppendChild(xmlGyroMStickTriggers);
+                        var xmlGyroMStickTriggerCond =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickTriggerCond", null);
+                        xmlGyroMStickTriggerCond.InnerText = SaTriggerCondString(SAMouseStickTriggerCond[device]);
+                        rootElement.AppendChild(xmlGyroMStickTriggerCond);
+                        var xmlGyroMStickTriggerTurns =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickTriggerTurns", null);
+                        xmlGyroMStickTriggerTurns.InnerText = GyroMouseStickTriggerTurns[device].ToString();
+                        rootElement.AppendChild(xmlGyroMStickTriggerTurns);
+                        var xmlGyroMStickHAxis = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickHAxis", null);
+                        xmlGyroMStickHAxis.InnerText = GyroMouseStickHorizontalAxis[device].ToString();
+                        rootElement.AppendChild(xmlGyroMStickHAxis);
+                        var xmlGyroMStickDZ = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickDeadZone", null);
+                        xmlGyroMStickDZ.InnerText = GyroMouseStickInfo[device].DeadZone.ToString();
+                        rootElement.AppendChild(xmlGyroMStickDZ);
+                        var xmlGyroMStickMaxZ = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickMaxZone", null);
+                        xmlGyroMStickMaxZ.InnerText = GyroMouseStickInfo[device].MaxZone.ToString();
+                        rootElement.AppendChild(xmlGyroMStickMaxZ);
+                        var xmlGyroMStickOutputStick =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickOutputStick", null);
+                        xmlGyroMStickOutputStick.InnerText = GyroMouseStickInfo[device].outputStick.ToString();
+                        rootElement.AppendChild(xmlGyroMStickOutputStick);
+                        var xmlGyroMStickOutputStickAxes =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickOutputStickAxes", null);
+                        xmlGyroMStickOutputStickAxes.InnerText = GyroMouseStickInfo[device].outputStickDir.ToString();
+                        rootElement.AppendChild(xmlGyroMStickOutputStickAxes);
+                        var xmlGyroMStickAntiDX =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickAntiDeadX", null);
+                        xmlGyroMStickAntiDX.InnerText = GyroMouseStickInfo[device].AntiDeadX.ToString();
+                        rootElement.AppendChild(xmlGyroMStickAntiDX);
+                        var xmlGyroMStickAntiDY =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickAntiDeadY", null);
+                        xmlGyroMStickAntiDY.InnerText = GyroMouseStickInfo[device].AntiDeadY.ToString();
+                        rootElement.AppendChild(xmlGyroMStickAntiDY);
+                        var xmlGyroMStickInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickInvert", null);
+                        xmlGyroMStickInvert.InnerText = GyroMouseStickInfo[device].Inverted.ToString();
+                        rootElement.AppendChild(xmlGyroMStickInvert);
+                        var xmlGyroMStickToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickToggle", null);
+                        xmlGyroMStickToggle.InnerText = GyroMouseStickToggle[device].ToString();
+                        rootElement.AppendChild(xmlGyroMStickToggle);
+                        var xmlGyroMStickMaxOutput =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickMaxOutput", null);
+                        xmlGyroMStickMaxOutput.InnerText = GyroMouseStickInfo[device].MaxOutput.ToString();
+                        rootElement.AppendChild(xmlGyroMStickMaxOutput);
+                        var xmlGyroMStickMaxOutputEnabled =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickMaxOutputEnabled", null);
+                        xmlGyroMStickMaxOutputEnabled.InnerText =
+                            GyroMouseStickInfo[device].MaxOutputEnabled.ToString();
+                        rootElement.AppendChild(xmlGyroMStickMaxOutputEnabled);
+                        var xmlGyroMStickVerticalScale =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickVerticalScale", null);
+                        xmlGyroMStickVerticalScale.InnerText = GyroMouseStickInfo[device].VertScale.ToString();
+                        rootElement.AppendChild(xmlGyroMStickVerticalScale);
+
+
+                        /*XmlNode xmlGyroMStickSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickSmoothing", null); xmlGyroMStickSmoothing.InnerText = gyroMStickInfo[device].useSmoothing.ToString(); rootElement.AppendChild(xmlGyroMStickSmoothing);
+                        XmlNode xmlGyroMStickSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "GyroMouseStickSmoothingWeight", null); xmlGyroMStickSmoothWeight.InnerText = Convert.ToInt32(gyroMStickInfo[device].smoothWeight * 100).ToString(); rootElement.AppendChild(xmlGyroMStickSmoothWeight);
+                        */
+                        var xmlGyroMStickSmoothingElement = m_Xdoc.CreateElement("GyroMouseStickSmoothingSettings");
+                        var xmlGyroMStickSmoothing = m_Xdoc.CreateNode(XmlNodeType.Element, "UseSmoothing", null);
+                        xmlGyroMStickSmoothing.InnerText = GyroMouseStickInfo[device].UseSmoothing.ToString();
+                        xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothing);
+                        var xmlGyroMStickSmoothingMethod =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMethod", null);
+                        xmlGyroMStickSmoothingMethod.InnerText = GyroMouseStickInfo[device].SmoothMethodIdentifier();
+                        xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothingMethod);
+                        var xmlGyroMStickSmoothWeight = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingWeight", null);
+                        xmlGyroMStickSmoothWeight.InnerText =
+                            Convert.ToInt32(GyroMouseStickInfo[device].SmoothWeight * 100).ToString();
+                        xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothWeight);
+                        var xmlGyroMStickSmoothMincutoff =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingMinCutoff", null);
+                        xmlGyroMStickSmoothMincutoff.InnerText = GyroMouseStickInfo[device].minCutoff.ToString();
+                        xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothMincutoff);
+                        var xmlGyroMStickSmoothBeta = m_Xdoc.CreateNode(XmlNodeType.Element, "SmoothingBeta", null);
+                        xmlGyroMStickSmoothBeta.InnerText = GyroMouseStickInfo[device].beta.ToString();
+                        xmlGyroMStickSmoothingElement.AppendChild(xmlGyroMStickSmoothBeta);
+                        rootElement.AppendChild(xmlGyroMStickSmoothingElement);
+
+                        var xmlGyroSwipeSettingsElement = m_Xdoc.CreateElement("GyroSwipeSettings");
+                        var xmlGyroSwipeDeadzoneX = m_Xdoc.CreateNode(XmlNodeType.Element, "DeadZoneX", null);
+                        xmlGyroSwipeDeadzoneX.InnerText = GyroSwipeInfo[device].deadzoneX.ToString();
+                        xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeDeadzoneX);
+                        var xmlGyroSwipeDeadzoneY = m_Xdoc.CreateNode(XmlNodeType.Element, "DeadZoneY", null);
+                        xmlGyroSwipeDeadzoneY.InnerText = GyroSwipeInfo[device].deadzoneY.ToString();
+                        xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeDeadzoneY);
+                        var xmlGyroSwipeTriggers = m_Xdoc.CreateNode(XmlNodeType.Element, "Triggers", null);
+                        xmlGyroSwipeTriggers.InnerText = GyroSwipeInfo[device].triggers;
+                        xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeTriggers);
+                        var xmlGyroSwipeTriggerCond = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerCond", null);
+                        xmlGyroSwipeTriggerCond.InnerText = SaTriggerCondString(GyroSwipeInfo[device].triggerCond);
+                        xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeTriggerCond);
+                        var xmlGyroSwipeTriggerTurns = m_Xdoc.CreateNode(XmlNodeType.Element, "TriggerTurns", null);
+                        xmlGyroSwipeTriggerTurns.InnerText = GyroSwipeInfo[device].triggerTurns.ToString();
+                        xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeTriggerTurns);
+                        var xmlGyroSwipeXAxis = m_Xdoc.CreateNode(XmlNodeType.Element, "XAxis", null);
+                        xmlGyroSwipeXAxis.InnerText = GyroSwipeInfo[device].xAxis.ToString();
+                        xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeXAxis);
+                        var xmlGyroSwipeDelayTime = m_Xdoc.CreateNode(XmlNodeType.Element, "DelayTime", null);
+                        xmlGyroSwipeDelayTime.InnerText = GyroSwipeInfo[device].delayTime.ToString();
+                        xmlGyroSwipeSettingsElement.AppendChild(xmlGyroSwipeDelayTime);
+                        rootElement.AppendChild(xmlGyroSwipeSettingsElement);
+
+                        var xmlProfileActions = m_Xdoc.CreateNode(XmlNodeType.Element, "ProfileActions", null);
+                        xmlProfileActions.InnerText = string.Join("/", ProfileActions[device]);
+                        rootElement.AppendChild(xmlProfileActions);
+                        var xmlBTPollRate = m_Xdoc.CreateNode(XmlNodeType.Element, "BTPollRate", null);
+                        xmlBTPollRate.InnerText = BluetoothPollRate[device].ToString();
+                        rootElement.AppendChild(xmlBTPollRate);
+
+                        var xmlLsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveMode", null);
+                        xmlLsOutputCurveMode.InnerText = stickOutputCurveString(SetLsOutCurveMode(device));
+                        rootElement.AppendChild(xmlLsOutputCurveMode);
+                        var xmlLsOutputCurveCustom =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveCustom", null);
+                        xmlLsOutputCurveCustom.InnerText = LSOutBezierCurveObj[device].ToString();
+                        rootElement.AppendChild(xmlLsOutputCurveCustom);
+
+                        var xmlRsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveMode", null);
+                        xmlRsOutputCurveMode.InnerText = stickOutputCurveString(GetRsOutCurveMode(device));
+                        rootElement.AppendChild(xmlRsOutputCurveMode);
+                        var xmlRsOutputCurveCustom =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveCustom", null);
+                        xmlRsOutputCurveCustom.InnerText = RSOutBezierCurveObj[device].ToString();
+                        rootElement.AppendChild(xmlRsOutputCurveCustom);
+
+                        var xmlLsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSSquareStick", null);
+                        xmlLsSquareStickMode.InnerText = SquStickInfo[device].LSMode.ToString();
+                        rootElement.AppendChild(xmlLsSquareStickMode);
+                        var xmlRsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSSquareStick", null);
+                        xmlRsSquareStickMode.InnerText = SquStickInfo[device].RSMode.ToString();
+                        rootElement.AppendChild(xmlRsSquareStickMode);
+
+                        var xmlSquareStickRoundness =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SquareStickRoundness", null);
+                        xmlSquareStickRoundness.InnerText = SquStickInfo[device].LSRoundness.ToString();
+                        rootElement.AppendChild(xmlSquareStickRoundness);
+                        var xmlSquareRStickRoundness =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SquareRStickRoundness", null);
+                        xmlSquareRStickRoundness.InnerText = SquStickInfo[device].RSRoundness.ToString();
+                        rootElement.AppendChild(xmlSquareRStickRoundness);
+
+                        var xmlLsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapback", null);
+                        xmlLsAntiSnapbackEnabled.InnerText = LSAntiSnapbackInfo[device].Enabled.ToString();
+                        rootElement.AppendChild(xmlLsAntiSnapbackEnabled);
+                        var xmlRsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapback", null);
+                        xmlRsAntiSnapbackEnabled.InnerText = RSAntiSnapbackInfo[device].Enabled.ToString();
+                        rootElement.AppendChild(xmlRsAntiSnapbackEnabled);
+
+                        var xmlLsAntiSnapbackDelta =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapbackDelta", null);
+                        xmlLsAntiSnapbackDelta.InnerText = LSAntiSnapbackInfo[device].Delta.ToString();
+                        rootElement.AppendChild(xmlLsAntiSnapbackDelta);
+                        var xmlRsAntiSnapbackDelta =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapbackDelta", null);
+                        xmlRsAntiSnapbackDelta.InnerText = RSAntiSnapbackInfo[device].Delta.ToString();
+                        rootElement.AppendChild(xmlRsAntiSnapbackDelta);
+
+                        var xmlLsAntiSnapbackTimeout =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapbackTimeout", null);
+                        xmlLsAntiSnapbackTimeout.InnerText = LSAntiSnapbackInfo[device].Timeout.ToString();
+                        rootElement.AppendChild(xmlLsAntiSnapbackTimeout);
+                        var xmlRsAntiSnapbackTimeout =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiSnapbackTimeout", null);
+                        xmlRsAntiSnapbackTimeout.InnerText = RSAntiSnapbackInfo[device].Timeout.ToString();
+                        rootElement.AppendChild(xmlRsAntiSnapbackTimeout);
+
+                        var xmlLsOutputMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputMode", null);
+                        xmlLsOutputMode.InnerText = LSOutputSettings[device].Mode.ToString();
+                        rootElement.AppendChild(xmlLsOutputMode);
+                        var xmlRsOutputMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputMode", null);
+                        xmlRsOutputMode.InnerText = RSOutputSettings[device].Mode.ToString();
+                        rootElement.AppendChild(xmlRsOutputMode);
+
+                        var xmlLsOutputSettingsElement = m_Xdoc.CreateElement("LSOutputSettings");
+                        var xmlLsFlickStickGroupElement = m_Xdoc.CreateElement("FlickStickSettings");
+                        xmlLsOutputSettingsElement.AppendChild(xmlLsFlickStickGroupElement);
+                        var xmlLsFlickStickRWC = m_Xdoc.CreateNode(XmlNodeType.Element, "RealWorldCalibration", null);
+                        xmlLsFlickStickRWC.InnerText = LSOutputSettings[device].OutputSettings.flickSettings
+                            .realWorldCalibration.ToString();
+                        xmlLsFlickStickGroupElement.AppendChild(xmlLsFlickStickRWC);
+                        var xmlLsFlickStickThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickThreshold", null);
+                        xmlLsFlickStickThreshold.InnerText = LSOutputSettings[device].OutputSettings.flickSettings
+                            .flickThreshold.ToString();
+                        xmlLsFlickStickGroupElement.AppendChild(xmlLsFlickStickThreshold);
+                        var xmlLsFlickStickTime = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickTime", null);
+                        xmlLsFlickStickTime.InnerText =
+                            LSOutputSettings[device].OutputSettings.flickSettings.flickTime.ToString();
+                        xmlLsFlickStickGroupElement.AppendChild(xmlLsFlickStickTime);
+                        rootElement.AppendChild(xmlLsOutputSettingsElement);
+
+                        var xmlRsOutputSettingsElement = m_Xdoc.CreateElement("RSOutputSettings");
+                        var xmlRsFlickStickGroupElement = m_Xdoc.CreateElement("FlickStickSettings");
+                        xmlRsOutputSettingsElement.AppendChild(xmlRsFlickStickGroupElement);
+                        var xmlRsFlickStickRWC = m_Xdoc.CreateNode(XmlNodeType.Element, "RealWorldCalibration", null);
+                        xmlRsFlickStickRWC.InnerText = RSOutputSettings[device].OutputSettings.flickSettings
+                            .realWorldCalibration.ToString();
+                        xmlRsFlickStickGroupElement.AppendChild(xmlRsFlickStickRWC);
+                        var xmlRsFlickStickThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickThreshold", null);
+                        xmlRsFlickStickThreshold.InnerText = RSOutputSettings[device].OutputSettings.flickSettings
+                            .flickThreshold.ToString();
+                        xmlRsFlickStickGroupElement.AppendChild(xmlRsFlickStickThreshold);
+                        var xmlRsFlickStickTime = m_Xdoc.CreateNode(XmlNodeType.Element, "FlickTime", null);
+                        xmlRsFlickStickTime.InnerText =
+                            RSOutputSettings[device].OutputSettings.flickSettings.flickTime.ToString();
+                        xmlRsFlickStickGroupElement.AppendChild(xmlRsFlickStickTime);
+                        rootElement.AppendChild(xmlRsOutputSettingsElement);
+
+                        var xmlL2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveMode", null);
+                        xmlL2OutputCurveMode.InnerText = axisOutputCurveString(GetL2OutCurveMode(device));
+                        rootElement.AppendChild(xmlL2OutputCurveMode);
+                        var xmlL2OutputCurveCustom =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveCustom", null);
+                        xmlL2OutputCurveCustom.InnerText = L2OutBezierCurveObj[device].ToString();
+                        rootElement.AppendChild(xmlL2OutputCurveCustom);
+
+                        var xmlL2TwoStageMode = m_Xdoc.CreateNode(XmlNodeType.Element, "L2TwoStageMode", null);
+                        xmlL2TwoStageMode.InnerText = L2OutputSettings[device].twoStageMode.ToString();
+                        rootElement.AppendChild(xmlL2TwoStageMode);
+                        var xmlR2TwoStageMode = m_Xdoc.CreateNode(XmlNodeType.Element, "R2TwoStageMode", null);
+                        xmlR2TwoStageMode.InnerText = R2OutputSettings[device].twoStageMode.ToString();
+                        rootElement.AppendChild(xmlR2TwoStageMode);
+
+                        var xmlL2TriggerEffect = m_Xdoc.CreateNode(XmlNodeType.Element, "L2TriggerEffect", null);
+                        xmlL2TriggerEffect.InnerText = L2OutputSettings[device].triggerEffect.ToString();
+                        rootElement.AppendChild(xmlL2TriggerEffect);
+                        var xmlR2TriggerEffect = m_Xdoc.CreateNode(XmlNodeType.Element, "R2TriggerEffect", null);
+                        xmlR2TriggerEffect.InnerText = R2OutputSettings[device].triggerEffect.ToString();
+                        rootElement.AppendChild(xmlR2TriggerEffect);
+
+                        var xmlR2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveMode", null);
+                        xmlR2OutputCurveMode.InnerText = axisOutputCurveString(GetR2OutCurveMode(device));
+                        rootElement.AppendChild(xmlR2OutputCurveMode);
+                        var xmlR2OutputCurveCustom =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveCustom", null);
+                        xmlR2OutputCurveCustom.InnerText = R2OutBezierCurveObj[device].ToString();
+                        rootElement.AppendChild(xmlR2OutputCurveCustom);
+
+                        var xmlSXOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveMode", null);
+                        xmlSXOutputCurveMode.InnerText = axisOutputCurveString(GetSXOutCurveMode(device));
+                        rootElement.AppendChild(xmlSXOutputCurveMode);
+                        var xmlSXOutputCurveCustom =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveCustom", null);
+                        xmlSXOutputCurveCustom.InnerText = SXOutBezierCurveObj[device].ToString();
+                        rootElement.AppendChild(xmlSXOutputCurveCustom);
+
+                        var xmlSZOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveMode", null);
+                        xmlSZOutputCurveMode.InnerText = axisOutputCurveString(GetSZOutCurveMode(device));
+                        rootElement.AppendChild(xmlSZOutputCurveMode);
+                        var xmlSZOutputCurveCustom =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveCustom", null);
+                        xmlSZOutputCurveCustom.InnerText = SZOutBezierCurveObj[device].ToString();
+                        rootElement.AppendChild(xmlSZOutputCurveCustom);
+
+                        var xmlTrackBallMode = m_Xdoc.CreateNode(XmlNodeType.Element, "TrackballMode", null);
+                        xmlTrackBallMode.InnerText = TrackballMode[device].ToString();
+                        rootElement.AppendChild(xmlTrackBallMode);
+                        var xmlTrackBallFriction = m_Xdoc.CreateNode(XmlNodeType.Element, "TrackballFriction", null);
+                        xmlTrackBallFriction.InnerText = TrackballFriction[device].ToString();
+                        rootElement.AppendChild(xmlTrackBallFriction);
+
+                        var xmlTouchRelMouseRotation =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "TouchRelMouseRotation", null);
+                        xmlTouchRelMouseRotation.InnerText =
+                            Convert.ToInt32(TouchPadRelMouse[device].Rotation * 180.0 / Math.PI).ToString();
+                        rootElement.AppendChild(xmlTouchRelMouseRotation);
+                        var xmlTouchRelMouseMinThreshold =
+                            m_Xdoc.CreateNode(XmlNodeType.Element, "TouchRelMouseMinThreshold", null);
+                        xmlTouchRelMouseMinThreshold.InnerText = TouchPadRelMouse[device].MinThreshold.ToString();
+                        rootElement.AppendChild(xmlTouchRelMouseMinThreshold);
+
+                        var xmlTouchAbsMouseGroupEl = m_Xdoc.CreateElement("TouchpadAbsMouseSettings");
+                        var xmlTouchAbsMouseMaxZoneX = m_Xdoc.CreateElement("MaxZoneX");
+                        xmlTouchAbsMouseMaxZoneX.InnerText = TouchPadAbsMouse[device].MaxZoneX.ToString();
+                        xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseMaxZoneX);
+                        var xmlTouchAbsMouseMaxZoneY = m_Xdoc.CreateElement("MaxZoneY");
+                        xmlTouchAbsMouseMaxZoneY.InnerText = TouchPadAbsMouse[device].MaxZoneY.ToString();
+                        xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseMaxZoneY);
+                        var xmlTouchAbsMouseSnapCenter = m_Xdoc.CreateElement("SnapToCenter");
+                        xmlTouchAbsMouseSnapCenter.InnerText = TouchPadAbsMouse[device].SnapToCenter.ToString();
+                        xmlTouchAbsMouseGroupEl.AppendChild(xmlTouchAbsMouseSnapCenter);
+                        rootElement.AppendChild(xmlTouchAbsMouseGroupEl);
+
+                        var xmlOutContDevice = m_Xdoc.CreateNode(XmlNodeType.Element, "OutputContDevice", null);
+                        xmlOutContDevice.InnerText = OutContDeviceString(OutputDeviceType[device]);
+                        rootElement.AppendChild(xmlOutContDevice);
+
+                        var NodeControl = m_Xdoc.CreateNode(XmlNodeType.Element, "Control", null);
+                        var Key = m_Xdoc.CreateNode(XmlNodeType.Element, "Key", null);
+                        var Macro = m_Xdoc.CreateNode(XmlNodeType.Element, "Macro", null);
+                        var KeyType = m_Xdoc.CreateNode(XmlNodeType.Element, "KeyType", null);
+                        var Button = m_Xdoc.CreateNode(XmlNodeType.Element, "Button", null);
+                        var Extras = m_Xdoc.CreateNode(XmlNodeType.Element, "Extras", null);
+
+                        var NodeShiftControl = m_Xdoc.CreateNode(XmlNodeType.Element, "ShiftControl", null);
+
+                        var ShiftKey = m_Xdoc.CreateNode(XmlNodeType.Element, "Key", null);
+                        var ShiftMacro = m_Xdoc.CreateNode(XmlNodeType.Element, "Macro", null);
+                        var ShiftKeyType = m_Xdoc.CreateNode(XmlNodeType.Element, "KeyType", null);
+                        var ShiftButton = m_Xdoc.CreateNode(XmlNodeType.Element, "Button", null);
+                        var ShiftExtras = m_Xdoc.CreateNode(XmlNodeType.Element, "Extras", null);
+
+                        foreach (var dcs in Ds4Settings[device])
+                        {
+                            if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
+                            {
+                                XmlNode buttonNode;
+                                var keyType = string.Empty;
+
+                                if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button &&
+                                    dcs.ActionData.ActionButton == X360Controls.Unbound)
+                                    keyType += DS4KeyType.Unbound;
+
+                                if (dcs.KeyType.HasFlag(DS4KeyType.HoldMacro))
+                                    keyType += DS4KeyType.HoldMacro;
+                                else if (dcs.KeyType.HasFlag(DS4KeyType.Macro))
+                                    keyType += DS4KeyType.Macro;
+
+                                if (dcs.KeyType.HasFlag(DS4KeyType.Toggle))
+                                    keyType += DS4KeyType.Toggle;
+                                if (dcs.KeyType.HasFlag(DS4KeyType.ScanCode))
+                                    keyType += DS4KeyType.ScanCode;
+
+                                if (keyType != string.Empty)
+                                {
+                                    buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+                                    buttonNode.InnerText = keyType;
+                                    KeyType.AppendChild(buttonNode);
+                                }
+
+                                buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+                                if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
+                                {
+                                    var ii = dcs.ActionData.ActionMacro;
+                                    buttonNode.InnerText = string.Join("/", ii);
+                                    Macro.AppendChild(buttonNode);
+                                }
+                                else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
+                                {
+                                    buttonNode.InnerText = dcs.ActionData.ActionKey.ToString();
+                                    Key.AppendChild(buttonNode);
+                                }
+                                else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
+                                {
+                                    buttonNode.InnerText = GetX360ControlString(dcs.ActionData.ActionButton);
+                                    Button.AppendChild(buttonNode);
+                                }
+                            }
+
+                            var hasvalue = false;
+                            if (!string.IsNullOrEmpty(dcs.Extras))
+                                foreach (var s in dcs.Extras.Split(','))
+                                    if (s != "0")
+                                    {
+                                        hasvalue = true;
+                                        break;
+                                    }
+
+                            if (hasvalue)
+                            {
+                                var extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+                                extraNode.InnerText = dcs.Extras;
+                                Extras.AppendChild(extraNode);
+                            }
+
+                            if (dcs.ShiftActionType != DS4ControlSettings.ActionType.Default && dcs.ShiftTrigger > 0)
+                            {
+                                XmlElement buttonNode;
+                                var keyType = string.Empty;
+
+                                if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button &&
+                                    dcs.ShiftAction.ActionButton == X360Controls.Unbound)
+                                    keyType += DS4KeyType.Unbound;
+
+                                if (dcs.ShiftKeyType.HasFlag(DS4KeyType.HoldMacro))
+                                    keyType += DS4KeyType.HoldMacro;
+                                if (dcs.ShiftKeyType.HasFlag(DS4KeyType.Macro))
+                                    keyType += DS4KeyType.Macro;
+                                if (dcs.ShiftKeyType.HasFlag(DS4KeyType.Toggle))
+                                    keyType += DS4KeyType.Toggle;
+                                if (dcs.ShiftKeyType.HasFlag(DS4KeyType.ScanCode))
+                                    keyType += DS4KeyType.ScanCode;
+
+                                if (keyType != string.Empty)
+                                {
+                                    buttonNode = m_Xdoc.CreateElement(dcs.Control.ToString());
+                                    buttonNode.InnerText = keyType;
+                                    ShiftKeyType.AppendChild(buttonNode);
+                                }
+
+                                buttonNode = m_Xdoc.CreateElement(dcs.Control.ToString());
+                                buttonNode.SetAttribute("Trigger", dcs.ShiftTrigger.ToString());
+                                if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
+                                {
+                                    var ii = dcs.ShiftAction.ActionMacro;
+                                    buttonNode.InnerText = string.Join("/", ii);
+                                    ShiftMacro.AppendChild(buttonNode);
+                                }
+                                else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
+                                {
+                                    buttonNode.InnerText = dcs.ShiftAction.ActionKey.ToString();
+                                    ShiftKey.AppendChild(buttonNode);
+                                }
+                                else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
+                                {
+                                    buttonNode.InnerText = dcs.ShiftAction.ActionButton.ToString();
+                                    ShiftButton.AppendChild(buttonNode);
+                                }
+                            }
+
+                            hasvalue = false;
+                            if (!string.IsNullOrEmpty(dcs.ShiftExtras))
+                                foreach (var s in dcs.ShiftExtras.Split(','))
+                                    if (s != "0")
+                                    {
+                                        hasvalue = true;
+                                        break;
+                                    }
+
+                            if (hasvalue)
+                            {
+                                var extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+                                extraNode.InnerText = dcs.ShiftExtras;
+                                ShiftExtras.AppendChild(extraNode);
+                            }
+                        }
+
+                        rootElement.AppendChild(NodeControl);
+                        if (Button.HasChildNodes)
+                            NodeControl.AppendChild(Button);
+                        if (Macro.HasChildNodes)
+                            NodeControl.AppendChild(Macro);
+                        if (Key.HasChildNodes)
+                            NodeControl.AppendChild(Key);
+                        if (Extras.HasChildNodes)
+                            NodeControl.AppendChild(Extras);
+                        if (KeyType.HasChildNodes)
+                            NodeControl.AppendChild(KeyType);
+
+                        if (NodeControl.HasChildNodes)
+                            rootElement.AppendChild(NodeControl);
+
+                        rootElement.AppendChild(NodeShiftControl);
+                        if (ShiftButton.HasChildNodes)
+                            NodeShiftControl.AppendChild(ShiftButton);
+                        if (ShiftMacro.HasChildNodes)
+                            NodeShiftControl.AppendChild(ShiftMacro);
+                        if (ShiftKey.HasChildNodes)
+                            NodeShiftControl.AppendChild(ShiftKey);
+                        if (ShiftKeyType.HasChildNodes)
+                            NodeShiftControl.AppendChild(ShiftKeyType);
+                        if (ShiftExtras.HasChildNodes)
+                            NodeShiftControl.AppendChild(ShiftExtras);
+
+                        m_Xdoc.AppendChild(rootElement);
+                        m_Xdoc.Save(path);
+                    }
+                    catch
+                    {
+                        Saved = false;
+                    }
                 }
 
                 return Saved;
