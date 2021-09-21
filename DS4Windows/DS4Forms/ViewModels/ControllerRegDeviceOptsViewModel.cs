@@ -95,8 +95,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (device != null)
                 {
                     currentInputDevices.Add(new DeviceListItem(device));
-                    inputDeviceSettings.Add(device.MacAddress, device.optionsStore);
-                    controllerOptionsStores.Add(device.optionsStore);
+                    inputDeviceSettings.Add(device.MacAddress, device.OptionsStore);
+                    controllerOptionsStores.Add(device.OptionsStore);
                 }
                 idx++;
             }

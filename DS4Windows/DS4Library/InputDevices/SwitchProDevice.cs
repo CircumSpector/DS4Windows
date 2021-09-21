@@ -245,7 +245,7 @@ namespace DS4Windows.InputDevices
             deviceType = InputDeviceType.SwitchPro;
             gyroMouseSensSettings = new GyroMouseSens();
             conType = DetermineConnectionType(hDevice);
-            optionsStore = nativeOptionsStore = new SwitchProControllerOptions(deviceType);
+            OptionsStore = nativeOptionsStore = new SwitchProControllerOptions(deviceType);
             SetupOptionsEvents();
 
             if (conType == ConnectionType.BT)

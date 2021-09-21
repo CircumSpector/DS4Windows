@@ -262,7 +262,8 @@ namespace DS4Windows
         private DS4ControllerOptions nativeOptionsStore;
         public bool oldCharging;
 
-        public ControllerOptionsStore optionsStore;
+        public ControllerOptionsStore OptionsStore { get; protected set; }
+
         private readonly byte[] outputBTCrc32Head = { 0xA2 };
         private byte outputFeaturesByte = DEFAULT_OUTPUT_FEATURES;
 
@@ -658,7 +659,7 @@ namespace DS4Windows
             var hidDevice = hDevice;
             deviceType = InputDeviceType.DS4;
             gyroMouseSensSettings = new GyroMouseSens();
-            optionsStore = nativeOptionsStore = new DS4ControllerOptions(deviceType);
+            OptionsStore = nativeOptionsStore = new DS4ControllerOptions(deviceType);
             SetupOptionsEvents();
 
             if (conType == ConnectionType.USB || conType == ConnectionType.SONYWA)
