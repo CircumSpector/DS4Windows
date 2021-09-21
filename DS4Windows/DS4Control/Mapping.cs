@@ -3361,16 +3361,16 @@ namespace DS4Windows
                                 if (!actionDone[index].dev[device])
                                 {
                                     actionDone[index].dev[device] = true;
-                                    if (!string.IsNullOrEmpty(action.Extra))
+                                    if (!string.IsNullOrEmpty(action.Extras))
                                     {
-                                        int pos = action.Extra.IndexOf("$hidden", StringComparison.OrdinalIgnoreCase);
+                                        int pos = action.Extras.IndexOf("$hidden", StringComparison.OrdinalIgnoreCase);
                                         if (pos >= 0)
                                         {
                                             System.Diagnostics.Process specActionLaunchProc = new System.Diagnostics.Process();
 
                                             // LaunchProgram specAction has $hidden argument to indicate that the child process window should be hidden (especially useful when launching .bat/.cmd batch files).
                                             // Removes the first occurence of $hidden substring from extra argument because it was a special action modifier keyword
-                                            string cmdArgs = specActionLaunchProc.StartInfo.Arguments = action.Extra.Remove(pos, 7);
+                                            string cmdArgs = specActionLaunchProc.StartInfo.Arguments = action.Extras.Remove(pos, 7);
                                             string cmdExt = Path.GetExtension(action.Details).ToLower();
 
                                             if (cmdExt == ".bat" || cmdExt == ".cmd")
@@ -3398,7 +3398,7 @@ namespace DS4Windows
                                             using (Process temp = new Process())
                                             {
                                                 temp.StartInfo.FileName = action.Details;
-                                                temp.StartInfo.Arguments = action.Extra;
+                                                temp.StartInfo.Arguments = action.Extras;
                                                 temp.StartInfo.UseShellExecute = true;
                                                 temp.Start();
                                             }

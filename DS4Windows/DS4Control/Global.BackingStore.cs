@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Xml;
 using DS4Windows.InputDevices;
 using DS4WinWPF.Properties;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace DS4Windows
 {
@@ -1107,6 +1109,18 @@ namespace DS4Windows
                     Constants.ProfilesSubDirectory,
                     $"{proName}{XML_EXTENSION}"
                 );
+
+                /*
+                IExtendedXmlSerializer serializer = new ConfigurationContainer()
+                    .UseAutoFormatting()
+                    .UseOptimizedNamespaces()
+                    .EnableParameterizedContent()
+                    .EnableImplicitTyping(typeof(BackingStore))
+                    // Additional configurations...
+                    .Create();
+
+                var document = serializer.Serialize(new XmlWriterSettings {Indent = true}, this);
+                */
 
                 try
                 {

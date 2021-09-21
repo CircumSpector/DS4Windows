@@ -85,7 +85,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             filepath = action.Details;
             delay = action.DelayTime;
-            arguments = action.Extra;
+            arguments = action.Extras;
         }
 
         public void SaveAction(SpecialAction action, bool edit = false)

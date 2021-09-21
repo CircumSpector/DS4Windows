@@ -19,14 +19,16 @@ namespace DS4Windows
             SASteeringWheelEmulationCalibrate
         }
 
-        public SpecialAction(string name, string controls, string type, string details, double delay = 0,
+        public SpecialAction(string name, string controls, string type, string details, double delayTime = 0,
             string extras = "")
         {
             Name = name;
             Type = type;
             TypeId = ActionTypeId.None;
             Controls = controls;
-            DelayTime = delay;
+            DelayTime = delayTime;
+            Extras = extras;
+
             var ctrls = controls.Split('/');
             foreach (var s in ctrls)
                 Trigger.Add(GetDs4ControlsByName(s));
@@ -53,13 +55,13 @@ namespace DS4Windows
                 TypeId = ActionTypeId.Program;
                 Details = details;
                 if (extras != string.Empty)
-                    Extra = extras;
+                    Extras = extras;
             }
             else if (type == "Profile")
             {
                 TypeId = ActionTypeId.Profile;
                 Details = details;
-                if (extras != string.Empty) Extra = extras;
+                if (extras != string.Empty) Extras = extras;
             }
             else if (type == "Macro")
             {
@@ -169,7 +171,7 @@ namespace DS4Windows
 
         public double DelayTime { get; set; }
 
-        public string Extra { get; set; }
+        public string Extras { get; set; }
 
         public bool PressRelease { get; set; }
 
