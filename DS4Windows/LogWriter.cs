@@ -5,8 +5,8 @@ namespace DS4WinWPF
 {
     public class LogWriter
     {
-        private string filename;
-        private List<LogItem> logCol;
+        private readonly string filename;
+        private readonly List<LogItem> logCol;
 
         public LogWriter(string filename, List<LogItem> col)
         {
@@ -16,22 +16,18 @@ namespace DS4WinWPF
 
         public void Process()
         {
-            List<string> outputLines = new List<string>();
-            foreach(LogItem item in logCol)
-            {
-                outputLines.Add($"{item.Datetime}: {item.Message}");
-            }
+            var outputLines = new List<string>();
+            foreach (var item in logCol) outputLines.Add($"{item.Datetime}: {item.Message}");
 
             try
             {
-                StreamWriter stream = new StreamWriter(filename);
-                foreach(string line in outputLines)
-                {
-                    stream.WriteLine(line);
-                }
+                var stream = new StreamWriter(filename);
+                foreach (var line in outputLines) stream.WriteLine(line);
                 stream.Close();
             }
-            catch { }
+            catch
+            {
+            }
         }
     }
 }

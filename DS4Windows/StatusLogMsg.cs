@@ -6,6 +6,7 @@ namespace DS4WinWPF
     {
         private string message;
         private bool warning;
+
         public string Message
         {
             get => message;
@@ -17,9 +18,9 @@ namespace DS4WinWPF
             }
         }
 
-        public event EventHandler MessageChanged;
-
-        public bool Warning { get => warning;
+        public bool Warning
+        {
+            get => warning;
             set
             {
                 if (warning == value) return;
@@ -29,15 +30,11 @@ namespace DS4WinWPF
             }
         }
 
-        public event EventHandler WarningChanged;
+        public string Color => warning ? "Red" : "#FF696969";
 
-        public string Color
-        {
-            get
-            {
-                return warning ? "Red" : "#FF696969";
-            }
-        }
+        public event EventHandler MessageChanged;
+
+        public event EventHandler WarningChanged;
 
         public event EventHandler ColorChanged;
     }

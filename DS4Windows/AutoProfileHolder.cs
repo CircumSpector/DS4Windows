@@ -29,6 +29,7 @@ namespace DS4WinWPF
             BindingOperations.EnableCollectionSynchronization(autoProfileColl, _colLockobj);
         }
 
+        [ConfigurationSystemComponent]
         private void Load()
         {
             try
@@ -69,6 +70,7 @@ namespace DS4WinWPF
             catch (Exception) { }
         }
 
+        [ConfigurationSystemComponent]
         public bool Save(string m_Profile)
         {
             XmlDocument doc = new XmlDocument();

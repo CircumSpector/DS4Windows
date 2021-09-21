@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -90,6 +89,7 @@ namespace DS4Windows
             }
         }
 
+        [ConfigurationSystemComponent]
         private void PrepareReaderMigration(string migratedText)
         {
             usedMigration = true;
@@ -102,6 +102,7 @@ namespace DS4Windows
             profileReader = XmlReader.Create(stringReader);
         }
 
+        [ConfigurationSystemComponent]
         private void DetermineProfileVersion()
         {
             bool hasAntiDeadLSTag = false;
@@ -162,6 +163,7 @@ namespace DS4Windows
             public double gyroMouseStickSmoothingWeight;
         }
 
+        [ConfigurationSystemComponent]
         private string Version0004Migration()
         {
             MigrationSettings0004 gyroSmoothSettings = new MigrationSettings0004()
@@ -353,6 +355,7 @@ namespace DS4Windows
             return stringWrite.ToString();
         }
 
+        [ConfigurationSystemComponent]
         private string Version0002Migration()
         {
             StringWriter stringWrite = new StringWriter();
@@ -421,6 +424,7 @@ namespace DS4Windows
             return stringWrite.ToString();
         }
 
+        [ConfigurationSystemComponent]
         private string Version0005Migration()
         {
             StringWriter stringWrite = new StringWriter();

@@ -1,22 +1,17 @@
 ﻿using DS4Windows;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace DS4WinWPF.DS4Control
 {
     public static class OutputSlotPersist
     {
-        private const string CONFIG_FILENAME = "OutputSlots.xml";
-
+        [ConfigurationSystemComponent]
         public static bool ReadConfig(OutputSlotManager slotManager)
         {
             bool result = false;
-            string output_path = Path.Combine(Global.RuntimeAppDataPath, CONFIG_FILENAME);
+            string output_path = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
             if (File.Exists(output_path))
             {
                 XmlDocument m_Xdoc = new XmlDocument();
@@ -53,6 +48,7 @@ namespace DS4WinWPF.DS4Control
             return result;
         }
 
+        [ConfigurationSystemComponent]
         public static bool WriteConfig(OutputSlotManager slotManager)
         {
             bool result = false;
@@ -91,7 +87,7 @@ namespace DS4WinWPF.DS4Control
 
             m_Xdoc.AppendChild(baseElement);
 
-            string output_path = Path.Combine(Global.RuntimeAppDataPath, CONFIG_FILENAME);
+            string output_path = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
             try { m_Xdoc.Save(output_path); result = true; }
             catch (UnauthorizedAccessException) { result = false; }
 

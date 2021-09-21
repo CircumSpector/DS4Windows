@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DS4Windows;
 
 namespace DS4WinWPF
@@ -11,6 +7,7 @@ namespace DS4WinWPF
     public class ProfileEntity
     {
         private string name;
+
         public string Name
         {
             get => name;
@@ -26,11 +23,12 @@ namespace DS4WinWPF
         public event EventHandler ProfileSaved;
         public event EventHandler ProfileDeleted;
 
+        [ConfigurationSystemComponent]
         public void DeleteFile()
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                string filepath = DS4Windows.Global.RuntimeAppDataPath + @"\Profiles\" + name + ".xml";
+                var filepath = Global.RuntimeAppDataPath + @"\Profiles\" + name + ".xml";
                 if (File.Exists(filepath))
                 {
                     File.Delete(filepath);
@@ -53,12 +51,13 @@ namespace DS4WinWPF
             ProfileSaved?.Invoke(this, EventArgs.Empty);
         }
 
+        [ConfigurationSystemComponent]
         public void RenameProfile(string newProfileName)
         {
-            string oldFilePath = Path.Combine(DS4Windows.Global.RuntimeAppDataPath,
+            var oldFilePath = Path.Combine(Global.RuntimeAppDataPath,
                 "Profiles", $"{name}.xml");
 
-            string newFilePath = Path.Combine(DS4Windows.Global.RuntimeAppDataPath,
+            var newFilePath = Path.Combine(Global.RuntimeAppDataPath,
                 "Profiles", $"{newProfileName}.xml");
 
             if (File.Exists(oldFilePath) && !File.Exists(newFilePath))

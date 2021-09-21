@@ -24,5 +24,7 @@ namespace DS4Windows
         public static Guid WindowsScriptHostShellObjectGuild = new("{72C24DD5-D70A-438B-8A42-98424B88AFB8}");
 
         public const string ProfilesSubDirectory = "Profiles";
+
+        public const string OutputSlotsFileName = "OutputSlots.xml";
     }
 }

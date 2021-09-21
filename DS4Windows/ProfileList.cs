@@ -1,73 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
+using DS4Windows;
 
 namespace DS4WinWPF
 {
     public class ProfileList
     {
-        private object _proLockobj = new object();
-        private ObservableCollection<ProfileEntity> profileListCol =
-            new ObservableCollection<ProfileEntity>();
-
-        public ObservableCollection<ProfileEntity> ProfileListCol { get => profileListCol; set => profileListCol = value; }
+        private readonly object _proLockobj = new();
 
         public ProfileList()
         {
-            BindingOperations.EnableCollectionSynchronization(profileListCol, _proLockobj);
+            BindingOperations.EnableCollectionSynchronization(ProfileListCol, _proLockobj);
         }
 
+        public ObservableCollection<ProfileEntity> ProfileListCol { get; set; } = new();
+
+        [ConfigurationSystemComponent]
         public void Refresh()
         {
-            profileListCol.Clear();
-            string[] profiles = Directory.GetFiles(DS4Windows.Global.RuntimeAppDataPath + @"\Profiles\");
-            foreach (string s in profiles)
-            {
+            ProfileListCol.Clear();
+            var profiles = Directory.GetFiles(Global.RuntimeAppDataPath + @"\Profiles\");
+            foreach (var s in profiles)
                 if (s.EndsWith(".xml"))
                 {
-                    ProfileEntity item = new ProfileEntity()
+                    var item = new ProfileEntity
                     {
                         Name = Path.GetFileNameWithoutExtension(s)
                     };
 
-                    profileListCol.Add(item);
+                    ProfileListCol.Add(item);
                 }
-            }
         }
 
         public void AddProfileSort(string profilename)
         {
-            int idx = 0;
-            bool inserted = false;
-            foreach (ProfileEntity entry in profileListCol)
+            var idx = 0;
+            var inserted = false;
+            foreach (var entry in ProfileListCol)
             {
                 if (entry.Name.CompareTo(profilename) > 0)
                 {
-                    profileListCol.Insert(idx, new ProfileEntity() { Name = profilename });
+                    ProfileListCol.Insert(idx, new ProfileEntity { Name = profilename });
                     inserted = true;
                     break;
                 }
+
                 idx++;
             }
 
-            if (!inserted)
-            {
-                profileListCol.Add(new ProfileEntity() { Name = profilename });
-            }
+            if (!inserted) ProfileListCol.Add(new ProfileEntity { Name = profilename });
         }
 
         public void RemoveProfile(string profile)
         {
-            var selectedEntity = profileListCol.SingleOrDefault(x => x.Name == profile);
+            var selectedEntity = ProfileListCol.SingleOrDefault(x => x.Name == profile);
             if (selectedEntity != null)
             {
-                int selectedIndex = profileListCol.IndexOf(selectedEntity);
-                profileListCol.RemoveAt(selectedIndex);
+                var selectedIndex = ProfileListCol.IndexOf(selectedEntity);
+                ProfileListCol.RemoveAt(selectedIndex);
             }
         }
     }

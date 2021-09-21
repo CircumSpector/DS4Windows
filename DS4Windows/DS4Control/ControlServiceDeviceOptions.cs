@@ -82,6 +82,7 @@ namespace DS4Windows
 
         public event EventHandler IsCopyCatChanged;
 
+        [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var tempOptsNode = node.SelectSingleNode("DS4SupportSettings");
@@ -97,6 +98,7 @@ namespace DS4Windows
             node.AppendChild(tempOptsNode);
         }
 
+        [ConfigurationSystemComponent]
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var baseNode = node.SelectSingleNode("DS4SupportSettings");
@@ -205,6 +207,7 @@ namespace DS4Windows
         public event EventHandler LedModeChanged;
         public event EventHandler MuteLedModeChanged;
 
+        [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var tempOptsNode = node.SelectSingleNode("DualSenseSupportSettings");
@@ -232,6 +235,7 @@ namespace DS4Windows
             node.AppendChild(tempOptsNode);
         }
 
+        [ConfigurationSystemComponent]
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var baseNode = node.SelectSingleNode("DualSenseSupportSettings");
@@ -297,6 +301,7 @@ namespace DS4Windows
 
         public event EventHandler EnableHomeLEDChanged;
 
+        [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var tempOptsNode = node.SelectSingleNode("SwitchProSupportSettings");
@@ -312,6 +317,7 @@ namespace DS4Windows
             node.AppendChild(tempOptsNode);
         }
 
+        [ConfigurationSystemComponent]
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var baseNode = node.SelectSingleNode("SwitchProSupportSettings");
@@ -399,6 +405,7 @@ namespace DS4Windows
 
         public event EventHandler EnableHomeLEDChanged;
 
+        [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var tempOptsNode = node.SelectSingleNode("JoyConSupportSettings");
@@ -414,6 +421,7 @@ namespace DS4Windows
             node.AppendChild(tempOptsNode);
         }
 
+        [ConfigurationSystemComponent]
         public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
         {
             var baseNode = node.SelectSingleNode("JoyConSupportSettings");

@@ -2175,6 +2175,7 @@ namespace DS4Windows
         private string[] tempStrings = new string[MAX_DS4_CONTROLLER_COUNT] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
 
         // Called every time a new input report has arrived
+        [ConfigurationSystemComponent]
         protected virtual void On_Report(DS4Device device, EventArgs e, int ind)
         {
             if (ind != -1)
