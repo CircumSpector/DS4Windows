@@ -6,13 +6,13 @@ namespace DS4Windows
 {
     public class ControlServiceDeviceOptions
     {
-        public DS4DeviceOptions Ds4DeviceOpts { get; } = new();
+        public DS4DeviceOptions Ds4DeviceOpts { get; set; } = new();
 
-        public DualSenseDeviceOptions DualSenseOpts { get; } = new();
+        public DualSenseDeviceOptions DualSenseOpts { get; set; } = new();
 
-        public SwitchProDeviceOptions SwitchProDeviceOpts { get; } = new();
+        public SwitchProDeviceOptions SwitchProDeviceOpts { get; set; } = new();
 
-        public JoyConDeviceOptions JoyConDeviceOpts { get; } = new();
+        public JoyConDeviceOptions JoyConDeviceOpts { get; set; } = new();
 
         /// <summary>
         ///     If enabled then DS4Windows shows additional log messages when a gamepad is connected (may be useful to diagnose
