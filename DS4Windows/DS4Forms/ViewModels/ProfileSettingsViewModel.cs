@@ -918,26 +918,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSSquareStick
         {
-            get => Global.Instance.Config.SquStickInfo[device].lsMode;
-            set => Global.Instance.Config.SquStickInfo[device].lsMode = value;
+            get => Global.Instance.Config.SquStickInfo[device].LSMode;
+            set => Global.Instance.Config.SquStickInfo[device].LSMode = value;
         }
 
         public bool RSSquareStick
         {
-            get => Global.Instance.Config.SquStickInfo[device].rsMode;
-            set => Global.Instance.Config.SquStickInfo[device].rsMode = value;
+            get => Global.Instance.Config.SquStickInfo[device].RSMode;
+            set => Global.Instance.Config.SquStickInfo[device].RSMode = value;
         }
 
         public double LSSquareRoundness
         {
-            get => Global.Instance.Config.SquStickInfo[device].lsRoundness;
-            set => Global.Instance.Config.SquStickInfo[device].lsRoundness = value;
+            get => Global.Instance.Config.SquStickInfo[device].LSRoundness;
+            set => Global.Instance.Config.SquStickInfo[device].LSRoundness = value;
         }
 
         public double RSSquareRoundness
         {
-            get => Global.Instance.Config.SquStickInfo[device].rsRoundness;
-            set => Global.Instance.Config.SquStickInfo[device].rsRoundness = value;
+            get => Global.Instance.Config.SquStickInfo[device].RSRoundness;
+            set => Global.Instance.Config.SquStickInfo[device].RSRoundness = value;
         }
 
         public int LSOutputCurveIndex

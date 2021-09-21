@@ -1088,6 +1088,7 @@ namespace DS4Windows
                 return Saved;
             }
 
+            [ConfigurationSystemComponent]
             public bool SaveProfile(int device, string proName)
             {
                 var Saved = true;
@@ -1635,18 +1636,18 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlRsOutputCurveCustom);
 
                     var xmlLsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSSquareStick", null);
-                    xmlLsSquareStickMode.InnerText = SquStickInfo[device].lsMode.ToString();
+                    xmlLsSquareStickMode.InnerText = SquStickInfo[device].LSMode.ToString();
                     rootElement.AppendChild(xmlLsSquareStickMode);
                     var xmlRsSquareStickMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSSquareStick", null);
-                    xmlRsSquareStickMode.InnerText = SquStickInfo[device].rsMode.ToString();
+                    xmlRsSquareStickMode.InnerText = SquStickInfo[device].RSMode.ToString();
                     rootElement.AppendChild(xmlRsSquareStickMode);
 
                     var xmlSquareStickRoundness = m_Xdoc.CreateNode(XmlNodeType.Element, "SquareStickRoundness", null);
-                    xmlSquareStickRoundness.InnerText = SquStickInfo[device].lsRoundness.ToString();
+                    xmlSquareStickRoundness.InnerText = SquStickInfo[device].LSRoundness.ToString();
                     rootElement.AppendChild(xmlSquareStickRoundness);
                     var xmlSquareRStickRoundness =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "SquareRStickRoundness", null);
-                    xmlSquareRStickRoundness.InnerText = SquStickInfo[device].rsRoundness.ToString();
+                    xmlSquareRStickRoundness.InnerText = SquStickInfo[device].RSRoundness.ToString();
                     rootElement.AppendChild(xmlSquareRStickRoundness);
 
                     var xmlLsAntiSnapbackEnabled = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiSnapback", null);
@@ -2211,6 +2212,7 @@ namespace DS4Windows
                 return "Unbound";
             }
 
+            [ConfigurationSystemComponent]
             public bool LoadProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -4244,44 +4246,48 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSSquareStick");
-                        bool.TryParse(Item.InnerText, out SquStickInfo[device].lsMode);
+                        bool.TryParse(Item.InnerText, out var value);
+                        SquStickInfo[device].LSMode = value;
                     }
                     catch
                     {
-                        SquStickInfo[device].lsMode = false;
+                        SquStickInfo[device].LSMode = false;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SquareStickRoundness");
-                        double.TryParse(Item.InnerText, out SquStickInfo[device].lsRoundness);
+                        double.TryParse(Item.InnerText, out var value);
+                        SquStickInfo[device].LSRoundness = value;
                     }
                     catch
                     {
-                        SquStickInfo[device].lsRoundness = 5.0;
+                        SquStickInfo[device].LSRoundness = 5.0;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SquareRStickRoundness");
-                        double.TryParse(Item.InnerText, out SquStickInfo[device].rsRoundness);
+                        double.TryParse(Item.InnerText, out var value);
+                        SquStickInfo[device].RSRoundness = value;
                     }
                     catch
                     {
-                        SquStickInfo[device].rsRoundness = 5.0;
+                        SquStickInfo[device].RSRoundness = 5.0;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSSquareStick");
-                        bool.TryParse(Item.InnerText, out SquStickInfo[device].rsMode);
+                        bool.TryParse(Item.InnerText, out var value);
+                        SquStickInfo[device].RSMode = value;
                     }
                     catch
                     {
-                        SquStickInfo[device].rsMode = false;
+                        SquStickInfo[device].RSMode = false;
                         missingSetting = true;
                     }
 
@@ -5030,6 +5036,7 @@ namespace DS4Windows
                 return Loaded;
             }
 
+            [ConfigurationSystemComponent]
             public bool Load()
             {
                 var Loaded = true;
@@ -5545,6 +5552,7 @@ namespace DS4Windows
                 return Loaded;
             }
 
+            [ConfigurationSystemComponent]
             public bool Save()
             {
                 var Saved = true;
@@ -5751,6 +5759,7 @@ namespace DS4Windows
                 return Saved;
             }
 
+            [ConfigurationSystemComponent]
             public bool SaveAction(string name, string controls, int mode, string details, bool edit,
                 string extras = "")
             {
@@ -5852,6 +5861,7 @@ namespace DS4Windows
                 return saved;
             }
 
+            [ConfigurationSystemComponent]
             public void RemoveAction(string name)
             {
                 m_Xdoc.Load(ActionsPath);
@@ -5865,6 +5875,7 @@ namespace DS4Windows
                 LoadActions();
             }
 
+            [ConfigurationSystemComponent]
             public bool LoadActions()
             {
                 var saved = true;
@@ -5978,6 +5989,7 @@ namespace DS4Windows
                 return saved;
             }
 
+            [ConfigurationSystemComponent]
             public bool CreateLinkedProfiles()
             {
                 var saved = true;
@@ -6009,6 +6021,7 @@ namespace DS4Windows
                 return saved;
             }
 
+            [ConfigurationSystemComponent]
             public bool LoadLinkedProfiles()
             {
                 var loaded = true;
@@ -6045,6 +6058,7 @@ namespace DS4Windows
                 return loaded;
             }
 
+            [ConfigurationSystemComponent]
             public bool SaveLinkedProfiles()
             {
                 var saved = true;
@@ -6097,6 +6111,7 @@ namespace DS4Windows
                 return saved;
             }
 
+            [ConfigurationSystemComponent]
             public bool CreateControllerConfigs()
             {
                 var saved = true;
@@ -6128,6 +6143,7 @@ namespace DS4Windows
                 return saved;
             }
 
+            [ConfigurationSystemComponent]
             public bool LoadControllerConfigsForDevice(DS4Device device)
             {
                 var loaded = false;
@@ -6172,6 +6188,7 @@ namespace DS4Windows
                 return loaded;
             }
 
+            [ConfigurationSystemComponent]
             public bool SaveControllerConfigsForDevice(DS4Device device)
             {
                 var saved = true;
@@ -7382,10 +7399,10 @@ namespace DS4Windows
 
                 GyroMouseHorizontalAxis[device] = 0;
                 GyroMouseToggle[device] = false;
-                SquStickInfo[device].lsMode = false;
-                SquStickInfo[device].rsMode = false;
-                SquStickInfo[device].lsRoundness = 5.0;
-                SquStickInfo[device].rsRoundness = 5.0;
+                SquStickInfo[device].LSMode = false;
+                SquStickInfo[device].RSMode = false;
+                SquStickInfo[device].LSRoundness = 5.0;
+                SquStickInfo[device].RSRoundness = 5.0;
                 LSAntiSnapbackInfo[device].timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
                 LSAntiSnapbackInfo[device].delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
                 LSAntiSnapbackInfo[device].enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;

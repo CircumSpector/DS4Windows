@@ -5,10 +5,10 @@ namespace DS4Windows
 {
     public class SquareStickInfo
     {
-        public bool lsMode;
-        public bool rsMode;
-        public double lsRoundness = 5.0;
-        public double rsRoundness = 5.0;
+        public bool LSMode { get; set; }
+        public bool RSMode { get; set; }
+        public double LSRoundness  { get; set; }= 5.0;
+        public double RSRoundness { get; set; } = 5.0;
     }
 
     public class StickDeadZoneInfo
