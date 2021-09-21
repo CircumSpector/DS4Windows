@@ -33,49 +33,49 @@ namespace DS4Windows
         public class AxisDeadZoneInfo
         {
             // DeadZone value from 0-127 (old bad convention)
-            public int deadZone = DEFAULT_DEADZONE;
-            public int antiDeadZone = DEFAULT_ANTIDEADZONE;
-            public int maxZone = DEFAULT_MAXZONE;
-            public double maxOutput = DEFAULT_MAXOUTPUT;
+            public int DeadZone { get; set; } = DEFAULT_DEADZONE;
+            public int AntiDeadZone { get; set; } = DEFAULT_ANTIDEADZONE;
+            public int MaxZone { get; set; } = DEFAULT_MAXZONE;
+            public double MaxOutput { get; set; } = DEFAULT_MAXOUTPUT;
 
             public void Reset()
             {
-                deadZone = DEFAULT_DEADZONE;
-                antiDeadZone = DEFAULT_ANTIDEADZONE;
-                maxZone = DEFAULT_MAXZONE;
-                maxOutput = DEFAULT_MAXOUTPUT;
+                DeadZone = DEFAULT_DEADZONE;
+                AntiDeadZone = DEFAULT_ANTIDEADZONE;
+                MaxZone = DEFAULT_MAXZONE;
+                MaxOutput = DEFAULT_MAXOUTPUT;
             }
         }
 
         // DeadZone value from 0-127 (old bad convention)
-        public int deadZone;
-        public int antiDeadZone;
-        public int maxZone = DEFAULT_MAXZONE;
-        public double maxOutput = DEFAULT_MAXOUTPUT;
-        public bool maxOutputForce = DEFAULT_MAXOUTPUT_FORCE;
-        public int fuzz = DEFAULT_FUZZ;
-        public double verticalScale = DEFAULT_VERTICAL_SCALE;
-        public DeadZoneType deadzoneType = DEFAULT_DEADZONE_TYPE;
-        public double outerBindDeadZone = DEFAULT_OUTER_BIND_DEAD;
-        public bool outerBindInvert = DEFAULT_OUTER_BIND_INVERT;
-        public AxisDeadZoneInfo xAxisDeadInfo = new AxisDeadZoneInfo();
-        public AxisDeadZoneInfo yAxisDeadInfo = new AxisDeadZoneInfo();
+        public int DeadZone { get; set; }
+        public int AntiDeadZone { get; set; }
+        public int MaxZone  { get; set; } = DEFAULT_MAXZONE;
+        public double MaxOutput { get; set; } = DEFAULT_MAXOUTPUT;
+        public bool MaxOutputForce { get; set; } = DEFAULT_MAXOUTPUT_FORCE;
+        public int Fuzz { get; set; } = DEFAULT_FUZZ;
+        public double VerticalScale { get; set; } = DEFAULT_VERTICAL_SCALE;
+        public DeadZoneType DZType { get; set; } = DEFAULT_DEADZONE_TYPE;
+        public double OuterBindDeadZone { get; set; } = DEFAULT_OUTER_BIND_DEAD;
+        public bool OuterBindInvert { get; set; } = DEFAULT_OUTER_BIND_INVERT;
+        public AxisDeadZoneInfo XAxisDeadInfo { get; set; } = new();
+        public AxisDeadZoneInfo YAxisDeadInfo { get; set; } = new();
 
         public void Reset()
         {
-            deadZone = 0;
-            antiDeadZone = 0;
-            maxZone = DEFAULT_MAXZONE;
-            maxOutput = DEFAULT_MAXOUTPUT;
-            maxOutputForce = DEFAULT_MAXOUTPUT_FORCE;
+            DeadZone = 0;
+            AntiDeadZone = 0;
+            MaxZone = DEFAULT_MAXZONE;
+            MaxOutput = DEFAULT_MAXOUTPUT;
+            MaxOutputForce = DEFAULT_MAXOUTPUT_FORCE;
 
-            fuzz = DEFAULT_FUZZ;
-            verticalScale = DEFAULT_VERTICAL_SCALE;
-            deadzoneType = DEFAULT_DEADZONE_TYPE;
-            outerBindDeadZone = DEFAULT_OUTER_BIND_DEAD;
-            outerBindInvert = DEFAULT_OUTER_BIND_INVERT;
-            xAxisDeadInfo.Reset();
-            yAxisDeadInfo.Reset();
+            Fuzz = DEFAULT_FUZZ;
+            VerticalScale = DEFAULT_VERTICAL_SCALE;
+            DZType = DEFAULT_DEADZONE_TYPE;
+            OuterBindDeadZone = DEFAULT_OUTER_BIND_DEAD;
+            OuterBindInvert = DEFAULT_OUTER_BIND_INVERT;
+            XAxisDeadInfo.Reset();
+            YAxisDeadInfo.Reset();
         }
     }
 

@@ -752,12 +752,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSDeadZone
         {
-            get => Math.Round(Global.Instance.Config.LSModInfo[device].deadZone / 127d, 2);
+            get => Math.Round(Global.Instance.Config.LSModInfo[device].DeadZone / 127d, 2);
             set
             {
-                double temp = Math.Round(Global.Instance.Config.LSModInfo[device].deadZone / 127d, 2);
+                double temp = Math.Round(Global.Instance.Config.LSModInfo[device].DeadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.Config.LSModInfo[device].deadZone = (int)Math.Round(value * 127d);
+                Global.Instance.Config.LSModInfo[device].DeadZone = (int)Math.Round(value * 127d);
                 LSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -765,12 +765,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double RSDeadZone
         {
-            get => Math.Round(Global.Instance.Config.RSModInfo[device].deadZone / 127d, 2);
+            get => Math.Round(Global.Instance.Config.RSModInfo[device].DeadZone / 127d, 2);
             set
             {
-                double temp = Math.Round(Global.Instance.Config.RSModInfo[device].deadZone / 127d, 2);
+                double temp = Math.Round(Global.Instance.Config.RSModInfo[device].DeadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.Config.RSModInfo[device].deadZone = (int)Math.Round(value * 127d);
+                Global.Instance.Config.RSModInfo[device].DeadZone = (int)Math.Round(value * 127d);
                 RSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -778,62 +778,62 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSMaxZone
         {
-            get => Global.Instance.Config.LSModInfo[device].maxZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].maxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.LSModInfo[device].MaxZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].MaxZone = (int)(value * 100.0);
         }
 
         public double RSMaxZone
         {
-            get => Global.Instance.Config.RSModInfo[device].maxZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].maxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.RSModInfo[device].MaxZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].MaxZone = (int)(value * 100.0);
         }
 
         public double LSAntiDeadZone
         {
-            get => Global.Instance.Config.LSModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.LSModInfo[device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double RSAntiDeadZone
         {
-            get => Global.Instance.Config.RSModInfo[device].antiDeadZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].antiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.RSModInfo[device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double LSVerticalScale
         {
-            get => Global.Instance.Config.LSModInfo[device].verticalScale / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].verticalScale = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[device].VerticalScale / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].VerticalScale = value * 100.0;
         }
 
         public double LSMaxOutput
         {
-            get => Global.Instance.Config.LSModInfo[device].maxOutput / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].maxOutput = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[device].MaxOutput / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].MaxOutput = value * 100.0;
         }
 
         public bool LSMaxOutputForce
         {
-            get => Global.Instance.Config.LSModInfo[device].maxOutputForce;
-            set => Global.Instance.Config.LSModInfo[device].maxOutputForce = value;
+            get => Global.Instance.Config.LSModInfo[device].MaxOutputForce;
+            set => Global.Instance.Config.LSModInfo[device].MaxOutputForce = value;
         }
 
         public double RSVerticalScale
         {
-            get => Global.Instance.Config.RSModInfo[device].verticalScale / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].verticalScale = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[device].VerticalScale / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].VerticalScale = value * 100.0;
         }
 
         public double RSMaxOutput
         {
-            get => Global.Instance.Config.RSModInfo[device].maxOutput / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].maxOutput = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[device].MaxOutput / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].MaxOutput = value * 100.0;
         }
 
         public bool RSMaxOutputForce
         {
-            get => Global.Instance.Config.RSModInfo[device].maxOutputForce;
-            set => Global.Instance.Config.RSModInfo[device].maxOutputForce = value;
+            get => Global.Instance.Config.RSModInfo[device].MaxOutputForce;
+            set => Global.Instance.Config.RSModInfo[device].MaxOutputForce = value;
         }
 
         public int LSDeadTypeIndex
@@ -841,7 +841,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch(Global.Instance.Config.LSModInfo[device].deadzoneType)
+                switch(Global.Instance.Config.LSModInfo[device].DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -864,9 +864,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.LSModInfo[device].deadzoneType;
+                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.LSModInfo[device].DZType;
                 if (temp == current) return;
-                Global.Instance.Config.LSModInfo[device].deadzoneType = temp;
+                Global.Instance.Config.LSModInfo[device].DZType = temp;
             }
         }
 
@@ -875,7 +875,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.Config.RSModInfo[device].deadzoneType)
+                switch (Global.Instance.Config.RSModInfo[device].DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -898,9 +898,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.RSModInfo[device].deadzoneType;
+                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.RSModInfo[device].DZType;
                 if (temp == current) return;
-                Global.Instance.Config.RSModInfo[device].deadzoneType = temp;
+                Global.Instance.Config.RSModInfo[device].DZType = temp;
             }
         }
 
@@ -998,14 +998,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LSFuzz
         {
-            get => Global.Instance.Config.LSModInfo[device].fuzz;
-            set => Global.Instance.Config.LSModInfo[device].fuzz = value;
+            get => Global.Instance.Config.LSModInfo[device].Fuzz;
+            set => Global.Instance.Config.LSModInfo[device].Fuzz = value;
         }
 
         public int RSFuzz
         {
-            get => Global.Instance.Config.RSModInfo[device].fuzz;
-            set => Global.Instance.Config.RSModInfo[device].fuzz = value;
+            get => Global.Instance.Config.RSModInfo[device].Fuzz;
+            set => Global.Instance.Config.RSModInfo[device].Fuzz = value;
         }
 
         public bool LSAntiSnapback
@@ -1045,26 +1045,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSOuterBindInvert
         {
-            get => Global.Instance.Config.LSModInfo[device].outerBindInvert;
-            set => Global.Instance.Config.LSModInfo[device].outerBindInvert = value;
+            get => Global.Instance.Config.LSModInfo[device].OuterBindInvert;
+            set => Global.Instance.Config.LSModInfo[device].OuterBindInvert = value;
         }
 
         public bool RSOuterBindInvert
         {
-            get => Global.Instance.Config.RSModInfo[device].outerBindInvert;
-            set => Global.Instance.Config.RSModInfo[device].outerBindInvert = value;
+            get => Global.Instance.Config.RSModInfo[device].OuterBindInvert;
+            set => Global.Instance.Config.RSModInfo[device].OuterBindInvert = value;
         }
 
         public double LSOuterBindDead
         {
-            get => Global.Instance.Config.LSModInfo[device].outerBindDeadZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].outerBindDeadZone = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[device].OuterBindDeadZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[device].OuterBindDeadZone = value * 100.0;
         }
 
         public double RSOuterBindDead
         {
-            get => Global.Instance.Config.RSModInfo[device].outerBindDeadZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].outerBindDeadZone = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[device].OuterBindDeadZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[device].OuterBindDeadZone = value * 100.0;
         }
 
         public int LSOutputIndex

@@ -825,12 +825,12 @@ namespace DS4Windows
 
             public int GetLSDeadZone(int index)
             {
-                return LSModInfo[index].deadZone;
+                return LSModInfo[index].DeadZone;
             }
 
             public int GetRSDeadZone(int index)
             {
-                return RSModInfo[index].deadZone;
+                return RSModInfo[index].DeadZone;
             }
 
             public StickDeadZoneInfo GetLSDeadInfo(int index)
@@ -1236,99 +1236,99 @@ namespace DS4Windows
                     xmlMaxSatRainbow.InnerText = Convert.ToInt32(lightInfo.MaxRainbowSaturation * 100.0).ToString();
                     rootElement.AppendChild(xmlMaxSatRainbow);
                     var xmlLSD = m_Xdoc.CreateNode(XmlNodeType.Element, "LSDeadZone", null);
-                    xmlLSD.InnerText = LSModInfo[device].deadZone.ToString();
+                    xmlLSD.InnerText = LSModInfo[device].DeadZone.ToString();
                     rootElement.AppendChild(xmlLSD);
                     var xmlRSD = m_Xdoc.CreateNode(XmlNodeType.Element, "RSDeadZone", null);
-                    xmlRSD.InnerText = RSModInfo[device].deadZone.ToString();
+                    xmlRSD.InnerText = RSModInfo[device].DeadZone.ToString();
                     rootElement.AppendChild(xmlRSD);
                     var xmlLSAD = m_Xdoc.CreateNode(XmlNodeType.Element, "LSAntiDeadZone", null);
-                    xmlLSAD.InnerText = LSModInfo[device].antiDeadZone.ToString();
+                    xmlLSAD.InnerText = LSModInfo[device].AntiDeadZone.ToString();
                     rootElement.AppendChild(xmlLSAD);
                     var xmlRSAD = m_Xdoc.CreateNode(XmlNodeType.Element, "RSAntiDeadZone", null);
-                    xmlRSAD.InnerText = RSModInfo[device].antiDeadZone.ToString();
+                    xmlRSAD.InnerText = RSModInfo[device].AntiDeadZone.ToString();
                     rootElement.AppendChild(xmlRSAD);
                     var xmlLSMaxZone = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxZone", null);
-                    xmlLSMaxZone.InnerText = LSModInfo[device].maxZone.ToString();
+                    xmlLSMaxZone.InnerText = LSModInfo[device].MaxZone.ToString();
                     rootElement.AppendChild(xmlLSMaxZone);
                     var xmlRSMaxZone = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxZone", null);
-                    xmlRSMaxZone.InnerText = RSModInfo[device].maxZone.ToString();
+                    xmlRSMaxZone.InnerText = RSModInfo[device].MaxZone.ToString();
                     rootElement.AppendChild(xmlRSMaxZone);
                     var xmlLSVerticalScale = m_Xdoc.CreateNode(XmlNodeType.Element, "LSVerticalScale", null);
-                    xmlLSVerticalScale.InnerText = LSModInfo[device].verticalScale.ToString();
+                    xmlLSVerticalScale.InnerText = LSModInfo[device].VerticalScale.ToString();
                     rootElement.AppendChild(xmlLSVerticalScale);
                     var xmlRSVerticalScale = m_Xdoc.CreateNode(XmlNodeType.Element, "RSVerticalScale", null);
-                    xmlRSVerticalScale.InnerText = RSModInfo[device].verticalScale.ToString();
+                    xmlRSVerticalScale.InnerText = RSModInfo[device].VerticalScale.ToString();
                     rootElement.AppendChild(xmlRSVerticalScale);
                     var xmlLSMaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxOutput", null);
-                    xmlLSMaxOutput.InnerText = LSModInfo[device].maxOutput.ToString();
+                    xmlLSMaxOutput.InnerText = LSModInfo[device].MaxOutput.ToString();
                     rootElement.AppendChild(xmlLSMaxOutput);
                     var xmlRSMaxOutput = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxOutput", null);
-                    xmlRSMaxOutput.InnerText = RSModInfo[device].maxOutput.ToString();
+                    xmlRSMaxOutput.InnerText = RSModInfo[device].MaxOutput.ToString();
                     rootElement.AppendChild(xmlRSMaxOutput);
                     var xmlLSMaxOutputForce = m_Xdoc.CreateNode(XmlNodeType.Element, "LSMaxOutputForce", null);
-                    xmlLSMaxOutputForce.InnerText = LSModInfo[device].maxOutputForce.ToString();
+                    xmlLSMaxOutputForce.InnerText = LSModInfo[device].MaxOutputForce.ToString();
                     rootElement.AppendChild(xmlLSMaxOutputForce);
                     var xmlRSMaxOutputForce = m_Xdoc.CreateNode(XmlNodeType.Element, "RSMaxOutputForce", null);
-                    xmlRSMaxOutputForce.InnerText = RSModInfo[device].maxOutputForce.ToString();
+                    xmlRSMaxOutputForce.InnerText = RSModInfo[device].MaxOutputForce.ToString();
                     rootElement.AppendChild(xmlRSMaxOutputForce);
                     var xmlLSDeadZoneType = m_Xdoc.CreateNode(XmlNodeType.Element, "LSDeadZoneType", null);
-                    xmlLSDeadZoneType.InnerText = LSModInfo[device].deadzoneType.ToString();
+                    xmlLSDeadZoneType.InnerText = LSModInfo[device].DZType.ToString();
                     rootElement.AppendChild(xmlLSDeadZoneType);
                     var xmlRSDeadZoneType = m_Xdoc.CreateNode(XmlNodeType.Element, "RSDeadZoneType", null);
-                    xmlRSDeadZoneType.InnerText = RSModInfo[device].deadzoneType.ToString();
+                    xmlRSDeadZoneType.InnerText = RSModInfo[device].DZType.ToString();
                     rootElement.AppendChild(xmlRSDeadZoneType);
 
                     var xmlLSAxialDeadGroupEl = m_Xdoc.CreateElement("LSAxialDeadOptions");
                     var xmlLSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
-                    xmlLSAxialDeadX.InnerText = LSModInfo[device].xAxisDeadInfo.deadZone.ToString();
+                    xmlLSAxialDeadX.InnerText = LSModInfo[device].XAxisDeadInfo.DeadZone.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialDeadX);
                     var xmlLSAxialDeadY = m_Xdoc.CreateElement("DeadZoneY");
-                    xmlLSAxialDeadY.InnerText = LSModInfo[device].yAxisDeadInfo.deadZone.ToString();
+                    xmlLSAxialDeadY.InnerText = LSModInfo[device].YAxisDeadInfo.DeadZone.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialDeadY);
                     var xmlLSAxialMaxX = m_Xdoc.CreateElement("MaxZoneX");
-                    xmlLSAxialMaxX.InnerText = LSModInfo[device].xAxisDeadInfo.maxZone.ToString();
+                    xmlLSAxialMaxX.InnerText = LSModInfo[device].XAxisDeadInfo.MaxZone.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxX);
                     var xmlLSAxialMaxY = m_Xdoc.CreateElement("MaxZoneY");
-                    xmlLSAxialMaxY.InnerText = LSModInfo[device].yAxisDeadInfo.maxZone.ToString();
+                    xmlLSAxialMaxY.InnerText = LSModInfo[device].YAxisDeadInfo.MaxZone.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxY);
                     var xmlLSAxialAntiDeadX = m_Xdoc.CreateElement("AntiDeadZoneX");
-                    xmlLSAxialAntiDeadX.InnerText = LSModInfo[device].xAxisDeadInfo.antiDeadZone.ToString();
+                    xmlLSAxialAntiDeadX.InnerText = LSModInfo[device].XAxisDeadInfo.AntiDeadZone.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialAntiDeadX);
                     var xmlLSAxialAntiDeadY = m_Xdoc.CreateElement("AntiDeadZoneY");
-                    xmlLSAxialAntiDeadY.InnerText = LSModInfo[device].yAxisDeadInfo.antiDeadZone.ToString();
+                    xmlLSAxialAntiDeadY.InnerText = LSModInfo[device].YAxisDeadInfo.AntiDeadZone.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialAntiDeadY);
                     var xmlLSAxialMaxOutputX = m_Xdoc.CreateElement("MaxOutputX");
-                    xmlLSAxialMaxOutputX.InnerText = LSModInfo[device].xAxisDeadInfo.maxOutput.ToString();
+                    xmlLSAxialMaxOutputX.InnerText = LSModInfo[device].XAxisDeadInfo.MaxOutput.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxOutputX);
                     var xmlLSAxialMaxOutputY = m_Xdoc.CreateElement("MaxOutputY");
-                    xmlLSAxialMaxOutputY.InnerText = LSModInfo[device].yAxisDeadInfo.maxOutput.ToString();
+                    xmlLSAxialMaxOutputY.InnerText = LSModInfo[device].YAxisDeadInfo.MaxOutput.ToString();
                     xmlLSAxialDeadGroupEl.AppendChild(xmlLSAxialMaxOutputY);
                     rootElement.AppendChild(xmlLSAxialDeadGroupEl);
 
                     var xmlRSAxialDeadGroupEl = m_Xdoc.CreateElement("RSAxialDeadOptions");
                     var xmlRSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
-                    xmlRSAxialDeadX.InnerText = RSModInfo[device].xAxisDeadInfo.deadZone.ToString();
+                    xmlRSAxialDeadX.InnerText = RSModInfo[device].XAxisDeadInfo.DeadZone.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialDeadX);
                     var xmlRSAxialDeadY = m_Xdoc.CreateElement("DeadZoneY");
-                    xmlRSAxialDeadY.InnerText = RSModInfo[device].yAxisDeadInfo.deadZone.ToString();
+                    xmlRSAxialDeadY.InnerText = RSModInfo[device].YAxisDeadInfo.DeadZone.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialDeadY);
                     var xmlRSAxialMaxX = m_Xdoc.CreateElement("MaxZoneX");
-                    xmlRSAxialMaxX.InnerText = RSModInfo[device].xAxisDeadInfo.maxZone.ToString();
+                    xmlRSAxialMaxX.InnerText = RSModInfo[device].XAxisDeadInfo.MaxZone.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxX);
                     var xmlRSAxialMaxY = m_Xdoc.CreateElement("MaxZoneY");
-                    xmlRSAxialMaxY.InnerText = RSModInfo[device].yAxisDeadInfo.maxZone.ToString();
+                    xmlRSAxialMaxY.InnerText = RSModInfo[device].YAxisDeadInfo.MaxZone.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxY);
                     var xmlRSAxialAntiDeadX = m_Xdoc.CreateElement("AntiDeadZoneX");
-                    xmlRSAxialAntiDeadX.InnerText = RSModInfo[device].xAxisDeadInfo.antiDeadZone.ToString();
+                    xmlRSAxialAntiDeadX.InnerText = RSModInfo[device].XAxisDeadInfo.AntiDeadZone.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialAntiDeadX);
                     var xmlRSAxialAntiDeadY = m_Xdoc.CreateElement("AntiDeadZoneY");
-                    xmlRSAxialAntiDeadY.InnerText = RSModInfo[device].yAxisDeadInfo.antiDeadZone.ToString();
+                    xmlRSAxialAntiDeadY.InnerText = RSModInfo[device].YAxisDeadInfo.AntiDeadZone.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialAntiDeadY);
                     var xmlRSAxialMaxOutputX = m_Xdoc.CreateElement("MaxOutputX");
-                    xmlRSAxialMaxOutputX.InnerText = RSModInfo[device].xAxisDeadInfo.maxOutput.ToString();
+                    xmlRSAxialMaxOutputX.InnerText = RSModInfo[device].XAxisDeadInfo.MaxOutput.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxOutputX);
                     var xmlRSAxialMaxOutputY = m_Xdoc.CreateElement("MaxOutputY");
-                    xmlRSAxialMaxOutputY.InnerText = RSModInfo[device].yAxisDeadInfo.maxOutput.ToString();
+                    xmlRSAxialMaxOutputY.InnerText = RSModInfo[device].YAxisDeadInfo.MaxOutput.ToString();
                     xmlRSAxialDeadGroupEl.AppendChild(xmlRSAxialMaxOutputY);
                     rootElement.AppendChild(xmlRSAxialDeadGroupEl);
 
@@ -1339,22 +1339,22 @@ namespace DS4Windows
                     xmlRSRotation.InnerText = Convert.ToInt32(RSRotation[device] * 180.0 / Math.PI).ToString();
                     rootElement.AppendChild(xmlRSRotation);
                     var xmlLSFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "LSFuzz", null);
-                    xmlLSFuzz.InnerText = LSModInfo[device].fuzz.ToString();
+                    xmlLSFuzz.InnerText = LSModInfo[device].Fuzz.ToString();
                     rootElement.AppendChild(xmlLSFuzz);
                     var xmlRSFuzz = m_Xdoc.CreateNode(XmlNodeType.Element, "RSFuzz", null);
-                    xmlRSFuzz.InnerText = RSModInfo[device].fuzz.ToString();
+                    xmlRSFuzz.InnerText = RSModInfo[device].Fuzz.ToString();
                     rootElement.AppendChild(xmlRSFuzz);
                     var xmlLSOuterBindDead = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOuterBindDead", null);
-                    xmlLSOuterBindDead.InnerText = Convert.ToInt32(LSModInfo[device].outerBindDeadZone).ToString();
+                    xmlLSOuterBindDead.InnerText = Convert.ToInt32(LSModInfo[device].OuterBindDeadZone).ToString();
                     rootElement.AppendChild(xmlLSOuterBindDead);
                     var xmlRSOuterBindDead = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOuterBindDead", null);
-                    xmlRSOuterBindDead.InnerText = Convert.ToInt32(RSModInfo[device].outerBindDeadZone).ToString();
+                    xmlRSOuterBindDead.InnerText = Convert.ToInt32(RSModInfo[device].OuterBindDeadZone).ToString();
                     rootElement.AppendChild(xmlRSOuterBindDead);
                     var xmlLSOuterBindInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOuterBindInvert", null);
-                    xmlLSOuterBindInvert.InnerText = LSModInfo[device].outerBindInvert.ToString();
+                    xmlLSOuterBindInvert.InnerText = LSModInfo[device].OuterBindInvert.ToString();
                     rootElement.AppendChild(xmlLSOuterBindInvert);
                     var xmlRSOuterBindInvert = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOuterBindInvert", null);
-                    xmlRSOuterBindInvert.InnerText = RSModInfo[device].outerBindInvert.ToString();
+                    xmlRSOuterBindInvert.InnerText = RSModInfo[device].OuterBindInvert.ToString();
                     rootElement.AppendChild(xmlRSOuterBindInvert);
 
                     var xmlSXD = m_Xdoc.CreateNode(XmlNodeType.Element, "SXDeadZone", null);
@@ -2783,11 +2783,11 @@ namespace DS4Windows
                         var temp = 0;
                         int.TryParse(Item.InnerText, out temp);
                         temp = Math.Min(Math.Max(temp, 0), 100);
-                        LSModInfo[device].fuzz = temp;
+                        LSModInfo[device].Fuzz = temp;
                     }
                     catch
                     {
-                        LSModInfo[device].fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
+                        LSModInfo[device].Fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
                         missingSetting = true;
                     }
 
@@ -2797,11 +2797,11 @@ namespace DS4Windows
                         var temp = 0;
                         int.TryParse(Item.InnerText, out temp);
                         temp = Math.Min(Math.Max(temp, 0), 100);
-                        RSModInfo[device].fuzz = temp;
+                        RSModInfo[device].Fuzz = temp;
                     }
                     catch
                     {
-                        RSModInfo[device].fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
+                        RSModInfo[device].Fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
                         missingSetting = true;
                     }
 
@@ -2865,11 +2865,11 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSDeadZone");
                         int.TryParse(Item.InnerText, out var temp);
                         temp = Math.Min(Math.Max(temp, 0), 127);
-                        LSModInfo[device].deadZone = temp;
+                        LSModInfo[device].DeadZone = temp;
                     }
                     catch
                     {
-                        LSModInfo[device].deadZone = 10;
+                        LSModInfo[device].DeadZone = 10;
                         missingSetting = true;
                     }
 
@@ -2878,33 +2878,35 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSDeadZone");
                         int.TryParse(Item.InnerText, out var temp);
                         temp = Math.Min(Math.Max(temp, 0), 127);
-                        RSModInfo[device].deadZone = temp;
+                        RSModInfo[device].DeadZone = temp;
                     }
                     catch
                     {
-                        RSModInfo[device].deadZone = 10;
+                        RSModInfo[device].DeadZone = 10;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSAntiDeadZone");
-                        int.TryParse(Item.InnerText, out LSModInfo[device].antiDeadZone);
+                        int.TryParse(Item.InnerText, out var value);
+                        LSModInfo[device].AntiDeadZone = value;
                     }
                     catch
                     {
-                        LSModInfo[device].antiDeadZone = 20;
+                        LSModInfo[device].AntiDeadZone = 20;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSAntiDeadZone");
-                        int.TryParse(Item.InnerText, out RSModInfo[device].antiDeadZone);
+                        int.TryParse(Item.InnerText, out var value);
+                        RSModInfo[device].AntiDeadZone = value;
                     }
                     catch
                     {
-                        RSModInfo[device].antiDeadZone = 20;
+                        RSModInfo[device].AntiDeadZone = 20;
                         missingSetting = true;
                     }
 
@@ -2913,11 +2915,11 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSMaxZone");
                         var temp = 100;
                         int.TryParse(Item.InnerText, out temp);
-                        LSModInfo[device].maxZone = Math.Min(Math.Max(temp, 0), 100);
+                        LSModInfo[device].MaxZone = Math.Min(Math.Max(temp, 0), 100);
                     }
                     catch
                     {
-                        LSModInfo[device].maxZone = 100;
+                        LSModInfo[device].MaxZone = 100;
                         missingSetting = true;
                     }
 
@@ -2926,11 +2928,11 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSMaxZone");
                         var temp = 100;
                         int.TryParse(Item.InnerText, out temp);
-                        RSModInfo[device].maxZone = Math.Min(Math.Max(temp, 0), 100);
+                        RSModInfo[device].MaxZone = Math.Min(Math.Max(temp, 0), 100);
                     }
                     catch
                     {
-                        RSModInfo[device].maxZone = 100;
+                        RSModInfo[device].MaxZone = 100;
                         missingSetting = true;
                     }
 
@@ -2938,11 +2940,11 @@ namespace DS4Windows
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSVerticalScale");
                         if (double.TryParse(Item?.InnerText ?? "", out var temp))
-                            LSModInfo[device].verticalScale = Math.Min(Math.Max(temp, 0.0), 200.0);
+                            LSModInfo[device].VerticalScale = Math.Min(Math.Max(temp, 0.0), 200.0);
                     }
                     catch
                     {
-                        LSModInfo[device].verticalScale = StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE;
+                        LSModInfo[device].VerticalScale = StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE;
                     }
 
                     try
@@ -2950,22 +2952,22 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSMaxOutput");
                         var temp = 100.0;
                         temp = double.Parse(Item.InnerText);
-                        LSModInfo[device].maxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
+                        LSModInfo[device].MaxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
                     }
                     catch
                     {
-                        LSModInfo[device].maxOutput = 100.0;
+                        LSModInfo[device].MaxOutput = 100.0;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSMaxOutputForce");
-                        if (bool.TryParse(Item?.InnerText ?? "", out var temp)) LSModInfo[device].maxOutputForce = temp;
+                        if (bool.TryParse(Item?.InnerText ?? "", out var temp)) LSModInfo[device].MaxOutputForce = temp;
                     }
                     catch
                     {
-                        LSModInfo[device].maxOutputForce = StickDeadZoneInfo.DEFAULT_MAXOUTPUT_FORCE;
+                        LSModInfo[device].MaxOutputForce = StickDeadZoneInfo.DEFAULT_MAXOUTPUT_FORCE;
                         missingSetting = true;
                     }
 
@@ -2974,22 +2976,22 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSMaxOutput");
                         var temp = 100.0;
                         temp = double.Parse(Item.InnerText);
-                        RSModInfo[device].maxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
+                        RSModInfo[device].MaxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
                     }
                     catch
                     {
-                        RSModInfo[device].maxOutput = 100;
+                        RSModInfo[device].MaxOutput = 100;
                         missingSetting = true;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSMaxOutputForce");
-                        if (bool.TryParse(Item?.InnerText ?? "", out var temp)) RSModInfo[device].maxOutputForce = temp;
+                        if (bool.TryParse(Item?.InnerText ?? "", out var temp)) RSModInfo[device].MaxOutputForce = temp;
                     }
                     catch
                     {
-                        RSModInfo[device].maxOutputForce = StickDeadZoneInfo.DEFAULT_MAXOUTPUT_FORCE;
+                        RSModInfo[device].MaxOutputForce = StickDeadZoneInfo.DEFAULT_MAXOUTPUT_FORCE;
                         missingSetting = true;
                     }
 
@@ -2999,12 +3001,12 @@ namespace DS4Windows
                         if (int.TryParse(Item?.InnerText ?? "", out var temp))
                         {
                             temp = Math.Min(Math.Max(temp, 0), 100);
-                            LSModInfo[device].outerBindDeadZone = temp;
+                            LSModInfo[device].OuterBindDeadZone = temp;
                         }
                     }
                     catch
                     {
-                        LSModInfo[device].outerBindDeadZone = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
+                        LSModInfo[device].OuterBindDeadZone = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
                     }
 
                     try
@@ -3013,52 +3015,52 @@ namespace DS4Windows
                         if (int.TryParse(Item?.InnerText ?? "", out var temp))
                         {
                             temp = Math.Min(Math.Max(temp, 0), 100);
-                            RSModInfo[device].outerBindDeadZone = temp;
+                            RSModInfo[device].OuterBindDeadZone = temp;
                         }
                     }
                     catch
                     {
-                        RSModInfo[device].outerBindDeadZone = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
+                        RSModInfo[device].OuterBindDeadZone = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSOuterBindInvert");
                         if (bool.TryParse(Item?.InnerText ?? "", out var temp))
-                            LSModInfo[device].outerBindInvert = temp;
+                            LSModInfo[device].OuterBindInvert = temp;
                     }
                     catch
                     {
-                        LSModInfo[device].outerBindInvert = StickDeadZoneInfo.DEFAULT_OUTER_BIND_INVERT;
+                        LSModInfo[device].OuterBindInvert = StickDeadZoneInfo.DEFAULT_OUTER_BIND_INVERT;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSOuterBindInvert");
                         if (bool.TryParse(Item?.InnerText ?? "", out var temp))
-                            RSModInfo[device].outerBindInvert = temp;
+                            RSModInfo[device].OuterBindInvert = temp;
                     }
                     catch
                     {
-                        RSModInfo[device].outerBindInvert = StickDeadZoneInfo.DEFAULT_OUTER_BIND_INVERT;
+                        RSModInfo[device].OuterBindInvert = StickDeadZoneInfo.DEFAULT_OUTER_BIND_INVERT;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSVerticalScale");
                         if (double.TryParse(Item?.InnerText ?? "", out var temp))
-                            RSModInfo[device].verticalScale = Math.Min(Math.Max(temp, 0.0), 200.0);
+                            RSModInfo[device].VerticalScale = Math.Min(Math.Max(temp, 0.0), 200.0);
                     }
                     catch
                     {
-                        RSModInfo[device].verticalScale = StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE;
+                        RSModInfo[device].VerticalScale = StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE;
                     }
 
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSDeadZoneType");
                         if (Enum.TryParse(Item?.InnerText ?? "", out StickDeadZoneInfo.DeadZoneType temp))
-                            LSModInfo[device].deadzoneType = temp;
+                            LSModInfo[device].DZType = temp;
                     }
                     catch
                     {
@@ -3076,7 +3078,7 @@ namespace DS4Windows
                             Item = lsAxialDeadElement.SelectSingleNode("DeadZoneX");
                             int.TryParse(Item.InnerText, out var temp);
                             temp = Math.Min(Math.Max(temp, 0), 127);
-                            LSModInfo[device].xAxisDeadInfo.deadZone = temp;
+                            LSModInfo[device].XAxisDeadInfo.DeadZone = temp;
                         }
                         catch
                         {
@@ -3087,7 +3089,7 @@ namespace DS4Windows
                             Item = lsAxialDeadElement.SelectSingleNode("DeadZoneY");
                             int.TryParse(Item.InnerText, out var temp);
                             temp = Math.Min(Math.Max(temp, 0), 127);
-                            LSModInfo[device].yAxisDeadInfo.deadZone = temp;
+                            LSModInfo[device].YAxisDeadInfo.DeadZone = temp;
                         }
                         catch
                         {
@@ -3097,7 +3099,7 @@ namespace DS4Windows
                         {
                             Item = lsAxialDeadElement.SelectSingleNode("MaxZoneX");
                             int.TryParse(Item.InnerText, out var temp);
-                            LSModInfo[device].xAxisDeadInfo.maxZone = Math.Min(Math.Max(temp, 0), 100);
+                            LSModInfo[device].XAxisDeadInfo.MaxZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3107,7 +3109,7 @@ namespace DS4Windows
                         {
                             Item = lsAxialDeadElement.SelectSingleNode("MaxZoneY");
                             int.TryParse(Item.InnerText, out var temp);
-                            LSModInfo[device].yAxisDeadInfo.maxZone = Math.Min(Math.Max(temp, 0), 100);
+                            LSModInfo[device].YAxisDeadInfo.MaxZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3117,7 +3119,7 @@ namespace DS4Windows
                         {
                             Item = lsAxialDeadElement.SelectSingleNode("AntiDeadZoneX");
                             int.TryParse(Item.InnerText, out var temp);
-                            LSModInfo[device].xAxisDeadInfo.antiDeadZone = Math.Min(Math.Max(temp, 0), 100);
+                            LSModInfo[device].XAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3127,7 +3129,7 @@ namespace DS4Windows
                         {
                             Item = lsAxialDeadElement.SelectSingleNode("AntiDeadZoneY");
                             int.TryParse(Item.InnerText, out var temp);
-                            LSModInfo[device].yAxisDeadInfo.antiDeadZone = Math.Min(Math.Max(temp, 0), 100);
+                            LSModInfo[device].YAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3137,7 +3139,7 @@ namespace DS4Windows
                         {
                             Item = lsAxialDeadElement.SelectSingleNode("MaxOutputX");
                             double.TryParse(Item.InnerText, out var temp);
-                            LSModInfo[device].xAxisDeadInfo.maxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
+                            LSModInfo[device].XAxisDeadInfo.MaxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
                         }
                         catch
                         {
@@ -3147,7 +3149,7 @@ namespace DS4Windows
                         {
                             Item = lsAxialDeadElement.SelectSingleNode("MaxOutputY");
                             double.TryParse(Item.InnerText, out var temp);
-                            LSModInfo[device].yAxisDeadInfo.maxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
+                            LSModInfo[device].YAxisDeadInfo.MaxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
                         }
                         catch
                         {
@@ -3158,7 +3160,7 @@ namespace DS4Windows
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSDeadZoneType");
                         if (Enum.TryParse(Item?.InnerText ?? "", out StickDeadZoneInfo.DeadZoneType temp))
-                            RSModInfo[device].deadzoneType = temp;
+                            RSModInfo[device].DZType = temp;
                     }
                     catch
                     {
@@ -3176,7 +3178,7 @@ namespace DS4Windows
                             Item = rsAxialDeadElement.SelectSingleNode("DeadZoneX");
                             int.TryParse(Item.InnerText, out var temp);
                             temp = Math.Min(Math.Max(temp, 0), 127);
-                            RSModInfo[device].xAxisDeadInfo.deadZone = temp;
+                            RSModInfo[device].XAxisDeadInfo.DeadZone = temp;
                         }
                         catch
                         {
@@ -3187,7 +3189,7 @@ namespace DS4Windows
                             Item = rsAxialDeadElement.SelectSingleNode("DeadZoneY");
                             int.TryParse(Item.InnerText, out var temp);
                             temp = Math.Min(Math.Max(temp, 0), 127);
-                            RSModInfo[device].yAxisDeadInfo.deadZone = temp;
+                            RSModInfo[device].YAxisDeadInfo.DeadZone = temp;
                         }
                         catch
                         {
@@ -3197,7 +3199,7 @@ namespace DS4Windows
                         {
                             Item = rsAxialDeadElement.SelectSingleNode("MaxZoneX");
                             int.TryParse(Item.InnerText, out var temp);
-                            RSModInfo[device].xAxisDeadInfo.maxZone = Math.Min(Math.Max(temp, 0), 100);
+                            RSModInfo[device].XAxisDeadInfo.MaxZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3207,7 +3209,7 @@ namespace DS4Windows
                         {
                             Item = rsAxialDeadElement.SelectSingleNode("MaxZoneY");
                             int.TryParse(Item.InnerText, out var temp);
-                            RSModInfo[device].yAxisDeadInfo.maxZone = Math.Min(Math.Max(temp, 0), 100);
+                            RSModInfo[device].YAxisDeadInfo.MaxZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3217,7 +3219,7 @@ namespace DS4Windows
                         {
                             Item = rsAxialDeadElement.SelectSingleNode("AntiDeadZoneX");
                             int.TryParse(Item.InnerText, out var temp);
-                            RSModInfo[device].xAxisDeadInfo.antiDeadZone = Math.Min(Math.Max(temp, 0), 100);
+                            RSModInfo[device].XAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3227,7 +3229,7 @@ namespace DS4Windows
                         {
                             Item = rsAxialDeadElement.SelectSingleNode("AntiDeadZoneY");
                             int.TryParse(Item.InnerText, out var temp);
-                            RSModInfo[device].yAxisDeadInfo.antiDeadZone = Math.Min(Math.Max(temp, 0), 100);
+                            RSModInfo[device].YAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(temp, 0), 100);
                         }
                         catch
                         {
@@ -3237,7 +3239,7 @@ namespace DS4Windows
                         {
                             Item = rsAxialDeadElement.SelectSingleNode("MaxOutputX");
                             double.TryParse(Item.InnerText, out var temp);
-                            RSModInfo[device].xAxisDeadInfo.maxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
+                            RSModInfo[device].XAxisDeadInfo.MaxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
                         }
                         catch
                         {
@@ -3247,7 +3249,7 @@ namespace DS4Windows
                         {
                             Item = rsAxialDeadElement.SelectSingleNode("MaxOutputY");
                             double.TryParse(Item.InnerText, out var temp);
-                            RSModInfo[device].yAxisDeadInfo.maxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
+                            RSModInfo[device].YAxisDeadInfo.MaxOutput = Math.Min(Math.Max(temp, 0.0), 100.0);
                         }
                         catch
                         {
@@ -6485,14 +6487,14 @@ namespace DS4Windows
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
                 var lsInfo = LSModInfo[device];
-                lsInfo.deadZone = (int)(0.00 * 127);
-                lsInfo.antiDeadZone = 0;
-                lsInfo.maxZone = 100;
+                lsInfo.DeadZone = (int)(0.00 * 127);
+                lsInfo.AntiDeadZone = 0;
+                lsInfo.MaxZone = 100;
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.00 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 100;
+                rsInfo.DeadZone = (int)(0.00 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 100;
 
                 var l2Info = L2ModInfo[device];
                 l2Info.deadZone = (byte)(0.00 * 255);
@@ -6583,14 +6585,14 @@ namespace DS4Windows
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
                 var lsInfo = LSModInfo[device];
-                lsInfo.deadZone = (int)(0.00 * 127);
-                lsInfo.antiDeadZone = 0;
-                lsInfo.maxZone = 100;
+                lsInfo.DeadZone = (int)(0.00 * 127);
+                lsInfo.AntiDeadZone = 0;
+                lsInfo.MaxZone = 100;
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.00 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 100;
+                rsInfo.DeadZone = (int)(0.00 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 100;
 
                 var l2Info = L2ModInfo[device];
                 l2Info.deadZone = (byte)(0.00 * 255);
@@ -6646,9 +6648,9 @@ namespace DS4Windows
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.10 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 90;
+                rsInfo.DeadZone = (int)(0.10 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 90;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -6662,14 +6664,14 @@ namespace DS4Windows
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
                 var lsInfo = LSModInfo[device];
-                lsInfo.deadZone = (int)(0.00 * 127);
-                lsInfo.antiDeadZone = 0;
-                lsInfo.maxZone = 100;
+                lsInfo.DeadZone = (int)(0.00 * 127);
+                lsInfo.AntiDeadZone = 0;
+                lsInfo.MaxZone = 100;
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.10 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 100;
+                rsInfo.DeadZone = (int)(0.10 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 100;
 
                 var l2Info = L2ModInfo[device];
                 l2Info.deadZone = (byte)(0.00 * 255);
@@ -6707,9 +6709,9 @@ namespace DS4Windows
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.035 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 90;
+                rsInfo.DeadZone = (int)(0.035 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 90;
 
                 OutputDeviceType[device] = OutContType.DS4;
 
@@ -6754,9 +6756,9 @@ namespace DS4Windows
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.035 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 90;
+                rsInfo.DeadZone = (int)(0.035 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 90;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -6790,12 +6792,12 @@ namespace DS4Windows
                 ContainsCustomExtras[device] = false;
 
                 var lsInfo = LSModInfo[device];
-                lsInfo.antiDeadZone = 0;
+                lsInfo.AntiDeadZone = 0;
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.035 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 90;
+                rsInfo.DeadZone = (int)(0.035 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 90;
 
                 var l2Info = L2ModInfo[device];
                 l2Info.deadZone = (byte)(0.20 * 255);
@@ -6892,12 +6894,12 @@ namespace DS4Windows
                 ContainsCustomExtras[device] = false;
 
                 var lsInfo = LSModInfo[device];
-                lsInfo.antiDeadZone = 0;
+                lsInfo.AntiDeadZone = 0;
 
                 var rsInfo = RSModInfo[device];
-                rsInfo.deadZone = (int)(0.105 * 127);
-                rsInfo.antiDeadZone = 0;
-                rsInfo.maxZone = 90;
+                rsInfo.DeadZone = (int)(0.105 * 127);
+                rsInfo.AntiDeadZone = 0;
+                rsInfo.MaxZone = 90;
 
                 var l2Info = L2ModInfo[device];
                 l2Info.deadZone = (byte)(0.20 * 255);
@@ -7288,11 +7290,11 @@ namespace DS4Windows
 
                 LSModInfo[device].Reset();
                 RSModInfo[device].Reset();
-                LSModInfo[device].deadZone = RSModInfo[device].deadZone = 10;
-                LSModInfo[device].antiDeadZone = RSModInfo[device].antiDeadZone = 20;
-                LSModInfo[device].maxZone = RSModInfo[device].maxZone = 100;
-                LSModInfo[device].maxOutput = RSModInfo[device].maxOutput = 100.0;
-                LSModInfo[device].fuzz = RSModInfo[device].fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
+                LSModInfo[device].DeadZone = RSModInfo[device].DeadZone = 10;
+                LSModInfo[device].AntiDeadZone = RSModInfo[device].AntiDeadZone = 20;
+                LSModInfo[device].MaxZone = RSModInfo[device].MaxZone = 100;
+                LSModInfo[device].MaxOutput = RSModInfo[device].MaxOutput = 100.0;
+                LSModInfo[device].Fuzz = RSModInfo[device].Fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
 
                 //l2ModInfo[device].deadZone = r2ModInfo[device].deadZone = 0;
                 //l2ModInfo[device].antiDeadZone = r2ModInfo[device].antiDeadZone = 0;

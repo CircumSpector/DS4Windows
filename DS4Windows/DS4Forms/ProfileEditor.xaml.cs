@@ -582,24 +582,24 @@ namespace DS4WinWPF.DS4Forms
             lightbarRect.DataContext = profileSettingsVM;
 
             StickDeadZoneInfo lsMod = Global.Instance.Config.LSModInfo[device];
-            if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
+            if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.LsDeadX = profileSettingsVM.LSDeadZone;
                 conReadingsUserCon.LsDeadY = profileSettingsVM.LSDeadZone;
             }
-            else if (lsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Axial)
+            else if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
             {
                 conReadingsUserCon.LsDeadX = axialLSStickControl.AxialVM.DeadZoneX;
                 conReadingsUserCon.LsDeadY = axialLSStickControl.AxialVM.DeadZoneY;
             }
 
             StickDeadZoneInfo rsMod = Global.Instance.Config.RSModInfo[device];
-            if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Radial)
+            if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.RsDeadX = profileSettingsVM.RSDeadZone;
                 conReadingsUserCon.RsDeadY = profileSettingsVM.RSDeadZone;
             }
-            else if (rsMod.deadzoneType == StickDeadZoneInfo.DeadZoneType.Axial)
+            else if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
             {
                 conReadingsUserCon.RsDeadX = axialRSStickControl.AxialVM.DeadZoneX;
                 conReadingsUserCon.RsDeadY = axialRSStickControl.AxialVM.DeadZoneY;
