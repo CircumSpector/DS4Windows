@@ -9,7 +9,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeviceType")]
         public string DeviceType { get; set; }
 
-        [XmlAttribute(AttributeName = "idx")] public int Idx { get; set; }
+        [XmlAttribute(AttributeName = "idx")] 
+        public int Idx { get; set; }
 
         [XmlText] public string Text { get; set; }
     }
@@ -17,7 +18,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     [XmlRoot(ElementName = "OutputSlots")]
     public class OutputSlots
     {
-        [XmlElement(ElementName = "Slot")] public List<Slot> Slot { get; set; }
+        [XmlElement(ElementName = "Slot")] 
+        public List<Slot> Slot { get; set; }
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }

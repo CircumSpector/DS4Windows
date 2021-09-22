@@ -23,14 +23,15 @@ namespace DS4WinWPF.DS4Forms
         public event EventHandler Cancel;
         public event SaveHandler Save;
 
+        [ConfigurationSystemComponent]
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
             var profile = profileTxt.Text;
             if (!string.IsNullOrWhiteSpace(profile) &&
                 profile.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
             {
-                File.Copy(Path.Combine(Global.RuntimeAppDataPath, "Profiles", OldFilename, ".xml"),
-                    Path.Combine(Global.RuntimeAppDataPath, "Profiles", profile, ".xml"), true);
+                File.Copy(Path.Combine(Global.RuntimeAppDataPath, "Profiles", $"{OldFilename}.xml"),
+                    Path.Combine(Global.RuntimeAppDataPath, "Profiles", $"{profile}.xml"), true);
                 Save?.Invoke(this, profile);
             }
             else

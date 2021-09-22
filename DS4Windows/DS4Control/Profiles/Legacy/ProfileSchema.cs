@@ -16,9 +16,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneX")] public int MaxZoneX { get; set; }
+        [XmlElement(ElementName = "MaxZoneX")] 
+        public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")] public int MaxZoneY { get; set; }
+        [XmlElement(ElementName = "MaxZoneY")] 
+        public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "AntiDeadZoneX")]
         public int AntiDeadZoneX { get; set; }
@@ -42,9 +44,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneX")] public int MaxZoneX { get; set; }
+        [XmlElement(ElementName = "MaxZoneX")] 
+        public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")] public int MaxZoneY { get; set; }
+        [XmlElement(ElementName = "MaxZoneY")] 
+        public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "AntiDeadZoneX")]
         public int AntiDeadZoneX { get; set; }
@@ -75,7 +79,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     [XmlRoot(ElementName = "GyroControlsSettings")]
     public class GyroControlsSettings
     {
-        [XmlElement(ElementName = "Triggers")] public int Triggers { get; set; }
+        [XmlElement(ElementName = "Triggers")] 
+        public int Triggers { get; set; }
 
         [XmlElement(ElementName = "TriggerCond")]
         public string TriggerCond { get; set; }
@@ -83,7 +88,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "TriggerTurns")]
         public bool TriggerTurns { get; set; }
 
-        [XmlElement(ElementName = "Toggle")] public bool Toggle { get; set; }
+        [XmlElement(ElementName = "Toggle")] 
+        public bool Toggle { get; set; }
     }
 
     [XmlRoot(ElementName = "GyroMouseSmoothingSettings")]
@@ -133,7 +139,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "Triggers")] public int Triggers { get; set; }
+        [XmlElement(ElementName = "Triggers")] 
+        public int Triggers { get; set; }
 
         [XmlElement(ElementName = "TriggerCond")]
         public string TriggerCond { get; set; }
@@ -141,7 +148,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "TriggerTurns")]
         public bool TriggerTurns { get; set; }
 
-        [XmlElement(ElementName = "XAxis")] public string XAxis { get; set; }
+        [XmlElement(ElementName = "XAxis")] 
+        public string XAxis { get; set; }
 
         [XmlElement(ElementName = "DelayTime")]
         public int DelayTime { get; set; }
@@ -177,9 +185,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     [XmlRoot(ElementName = "TouchpadAbsMouseSettings")]
     public class TouchpadAbsMouseSettings
     {
-        [XmlElement(ElementName = "MaxZoneX")] public int MaxZoneX { get; set; }
+        [XmlElement(ElementName = "MaxZoneX")] 
+        public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")] public int MaxZoneY { get; set; }
+        [XmlElement(ElementName = "MaxZoneY")] 
+        public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "SnapToCenter")]
         public bool SnapToCenter { get; set; }
@@ -197,7 +207,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "outputDataToDS4")]
         public bool OutputDataToDS4 { get; set; }
 
-        [XmlElement(ElementName = "Color")] public double Color { get; set; }
+        [XmlElement(ElementName = "Color")] 
+        public double Color { get; set; }
 
         [XmlElement(ElementName = "RumbleBoost")]
         public int RumbleBoost { get; set; }
@@ -220,7 +231,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "touchSensitivity")]
         public int TouchSensitivity { get; set; }
 
-        [XmlElement(ElementName = "LowColor")] public double LowColor { get; set; }
+        [XmlElement(ElementName = "LowColor")] 
+        public double LowColor { get; set; }
 
         [XmlElement(ElementName = "ChargingColor")]
         public double ChargingColor { get; set; }
@@ -279,7 +291,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "ButtonMouseOffset")]
         public double ButtonMouseOffset { get; set; }
 
-        [XmlElement(ElementName = "Rainbow")] public int Rainbow { get; set; }
+        [XmlElement(ElementName = "Rainbow")] 
+        public int Rainbow { get; set; }
 
         [XmlElement(ElementName = "MaxSatRainbow")]
         public int MaxSatRainbow { get; set; }
@@ -338,9 +351,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "RSRotation")]
         public int RSRotation { get; set; }
 
-        [XmlElement(ElementName = "LSFuzz")] public int LSFuzz { get; set; }
+        [XmlElement(ElementName = "LSFuzz")] 
+        public int LSFuzz { get; set; }
 
-        [XmlElement(ElementName = "RSFuzz")] public int RSFuzz { get; set; }
+        [XmlElement(ElementName = "RSFuzz")] 
+        public int RSFuzz { get; set; }
 
         [XmlElement(ElementName = "LSOuterBindDead")]
         public int LSOuterBindDead { get; set; }
@@ -615,7 +630,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "OutputContDevice")]
         public string OutputContDevice { get; set; }
 
-        [XmlElement(ElementName = "Control")] public object Control { get; set; }
+        [XmlElement(ElementName = "Control")] 
+        public object Control { get; set; }
 
         [XmlElement(ElementName = "ShiftControl")]
         public object ShiftControl { get; set; }
@@ -626,6 +642,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlAttribute(AttributeName = "config_version")]
         public int ConfigVersion { get; set; }
 
-        [XmlText] public string Text { get; set; }
+        [XmlText] 
+        public string Text { get; set; }
     }
 }
