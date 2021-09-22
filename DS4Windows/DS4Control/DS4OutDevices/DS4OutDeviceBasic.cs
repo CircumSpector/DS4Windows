@@ -15,7 +15,8 @@ namespace DS4Windows
         {
             if (!connected) return;
 
-            using (GlobalTracer.Instance.BuildSpan(nameof(ConvertAndSendReport)).StartActive(true))
+            using (GlobalTracer.Instance.BuildSpan($"{nameof(DS4OutDeviceBasic)}::{nameof(ConvertAndSendReport)}")
+                .StartActive(true))
             {
                 //cont.ResetReport();
                 ushort tempButtons = 0;

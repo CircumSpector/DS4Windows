@@ -18,7 +18,8 @@ namespace DS4Windows
         {
             if (!connected) return;
 
-            using (GlobalTracer.Instance.BuildSpan(nameof(ConvertAndSendReport)).StartActive(true))
+            using (GlobalTracer.Instance.BuildSpan($"{nameof(DS4OutDeviceExt)}::{nameof(ConvertAndSendReport)}")
+                .StartActive(true))
             {
                 ushort tempButtons = 0;
                 var tempDPad = DualShock4DPadDirection.None;
