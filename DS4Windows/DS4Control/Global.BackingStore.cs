@@ -6215,7 +6215,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public bool LoadControllerConfigsForDevice(DS4Device device)
+            private bool LoadControllerConfigsForDevice(DS4Device device)
             {
                 var loaded = false;
 
@@ -6260,7 +6260,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public bool SaveControllerConfigsForDevice(DS4Device device)
+            private bool SaveControllerConfigsForDevice(DS4Device device)
             {
                 var saved = true;
 

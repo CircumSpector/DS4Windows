@@ -479,10 +479,6 @@ namespace DS4Windows
 
         bool CreateControllerConfigs();
 
-        bool LoadControllerConfigsForDevice(DS4Device device);
-
-        bool SaveControllerConfigsForDevice(DS4Device device);
-
         void UpdateDs4ControllerSetting(int deviceNum, string buttonName, bool shift, object action, string exts,
             DS4KeyType kt, int trigger = 0);
 
