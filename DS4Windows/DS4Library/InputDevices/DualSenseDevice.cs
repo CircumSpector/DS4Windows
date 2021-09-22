@@ -793,7 +793,7 @@ namespace DS4Windows.InputDevices
                         // Even when idling there is still a touch packet indicating no touch 1 or 2
                         if (synced)
                         {
-                            touchpad.handleTouchpad(inputReport, currentState, TOUCHPAD_DATA_OFFSET + reportOffset,
+                            touchpad.HandleTouchPad(inputReport, currentState, TOUCHPAD_DATA_OFFSET + reportOffset,
                                 touchOffset);
                         }
                     }

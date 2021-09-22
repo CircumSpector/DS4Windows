@@ -776,7 +776,7 @@ namespace DS4Windows
             }
 
             pastTime = arg.timeStamp;
-            firstTouch.populate(arg.touches[0].hwX, arg.touches[0].hwY, arg.touches[0].touchID,
+            firstTouch.Populate(arg.touches[0].hwX, arg.touches[0].hwY, arg.touches[0].touchID,
                 arg.touches[0].previousTouch);
 
             if (mouseMode && Global.Instance.Config.GetDoubleTap(deviceNum))

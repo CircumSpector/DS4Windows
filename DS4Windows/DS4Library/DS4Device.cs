@@ -1507,7 +1507,7 @@ namespace DS4Windows
                                 currentState.TouchRight = touchX < DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
                                 // Even when idling there is still a touch packet indicating no touch 1 or 2
                                 if (synced)
-                                    touchpad.handleTouchpad(inputReport, currentState,
+                                    touchpad.HandleTouchPad(inputReport, currentState,
                                         DS4Touchpad.DS4_TOUCHPAD_DATA_OFFSET,
                                         touchOffset);
                             }
