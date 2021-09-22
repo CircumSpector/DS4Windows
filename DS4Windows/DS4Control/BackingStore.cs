@@ -337,6 +337,8 @@ namespace DS4Windows
 
         SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index);
 
+        public string AxisOutputCurveString(int id);
+
         int GetSASteeringWheelEmulationRange(int index);
 
         int GetGyroSensitivity(int index);

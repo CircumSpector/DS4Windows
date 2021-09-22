@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Xml.Serialization;
 using DS4Windows;
+using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
@@ -164,7 +165,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class FlickStickSettings
     {
         [XmlElement(ElementName = "RealWorldCalibration")]
-        public DateTime RealWorldCalibration { get; set; }
+        public double RealWorldCalibration { get; set; }
 
         [XmlElement(ElementName = "FlickThreshold")]
         public double FlickThreshold { get; set; }
@@ -177,14 +178,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class LSOutputSettings
     {
         [XmlElement(ElementName = "FlickStickSettings")]
-        public FlickStickSettings FlickStickSettings { get; set; }
+        public FlickStickSettings FlickStickSettings { get; set; } = new();
     }
 
     [XmlRoot(ElementName = "RSOutputSettings")]
     public class RSOutputSettings
     {
         [XmlElement(ElementName = "FlickStickSettings")]
-        public FlickStickSettings FlickStickSettings { get; set; }
+        public FlickStickSettings FlickStickSettings { get; set; } = new();
     }
 
     [XmlRoot(ElementName = "TouchpadAbsMouseSettings")]
@@ -546,10 +547,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool RSSquareStick { get; set; }
 
         [XmlElement(ElementName = "SquareStickRoundness")]
-        public int SquareStickRoundness { get; set; }
+        public double SquareStickRoundness { get; set; }
 
         [XmlElement(ElementName = "SquareRStickRoundness")]
-        public int SquareRStickRoundness { get; set; }
+        public double SquareRStickRoundness { get; set; }
 
         [XmlElement(ElementName = "LSAntiSnapback")]
         public bool LSAntiSnapback { get; set; }
@@ -558,10 +559,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool RSAntiSnapback { get; set; }
 
         [XmlElement(ElementName = "LSAntiSnapbackDelta")]
-        public int LSAntiSnapbackDelta { get; set; }
+        public double LSAntiSnapbackDelta { get; set; }
 
         [XmlElement(ElementName = "RSAntiSnapbackDelta")]
-        public int RSAntiSnapbackDelta { get; set; }
+        public double RSAntiSnapbackDelta { get; set; }
 
         [XmlElement(ElementName = "LSAntiSnapbackTimeout")]
         public int LSAntiSnapbackTimeout { get; set; }
@@ -570,16 +571,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int RSAntiSnapbackTimeout { get; set; }
 
         [XmlElement(ElementName = "LSOutputMode")]
-        public string LSOutputMode { get; set; }
+        public StickMode LSOutputMode { get; set; }
 
         [XmlElement(ElementName = "RSOutputMode")]
-        public string RSOutputMode { get; set; }
+        public StickMode RSOutputMode { get; set; }
 
         [XmlElement(ElementName = "LSOutputSettings")]
-        public LSOutputSettings LSOutputSettings { get; set; }
+        public LSOutputSettings LSOutputSettings { get; set; } = new();
 
         [XmlElement(ElementName = "RSOutputSettings")]
-        public RSOutputSettings RSOutputSettings { get; set; }
+        public RSOutputSettings RSOutputSettings { get; set; } = new();
 
         [XmlElement(ElementName = "L2OutputCurveMode")]
         public string L2OutputCurveMode { get; set; }
@@ -588,16 +589,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public object L2OutputCurveCustom { get; set; }
 
         [XmlElement(ElementName = "L2TwoStageMode")]
-        public string L2TwoStageMode { get; set; }
+        public TwoStageTriggerMode L2TwoStageMode { get; set; }
 
         [XmlElement(ElementName = "R2TwoStageMode")]
-        public string R2TwoStageMode { get; set; }
+        public TwoStageTriggerMode R2TwoStageMode { get; set; }
 
         [XmlElement(ElementName = "L2TriggerEffect")]
-        public string L2TriggerEffect { get; set; }
+        public TriggerEffects L2TriggerEffect { get; set; }
 
         [XmlElement(ElementName = "R2TriggerEffect")]
-        public string R2TriggerEffect { get; set; }
+        public TriggerEffects R2TriggerEffect { get; set; }
 
         [XmlElement(ElementName = "R2OutputCurveMode")]
         public string R2OutputCurveMode { get; set; }
@@ -621,19 +622,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool TrackballMode { get; set; }
 
         [XmlElement(ElementName = "TrackballFriction")]
-        public int TrackballFriction { get; set; }
+        public double TrackballFriction { get; set; }
 
         [XmlElement(ElementName = "TouchRelMouseRotation")]
         public int TouchRelMouseRotation { get; set; }
 
         [XmlElement(ElementName = "TouchRelMouseMinThreshold")]
-        public int TouchRelMouseMinThreshold { get; set; }
+        public double TouchRelMouseMinThreshold { get; set; }
 
         [XmlElement(ElementName = "TouchpadAbsMouseSettings")]
-        public TouchpadAbsMouseSettings TouchpadAbsMouseSettings { get; set; }
+        public TouchpadAbsMouseSettings TouchpadAbsMouseSettings { get; set; } = new();
 
         [XmlElement(ElementName = "OutputContDevice")]
-        public string OutputContDevice { get; set; }
+        public OutContType OutputContDevice { get; set; }
 
         [XmlElement(ElementName = "Control")] 
         public object Control { get; set; }
@@ -855,16 +856,96 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             GyroSwipeSettings.XAxis = store.GyroSwipeInfo[device].xAxis;
             GyroSwipeSettings.DelayTime = store.GyroSwipeInfo[device].delayTime;
 
+            ProfileActions = string.Join("/", store.ProfileActions[device]);
+            BTPollRate = store.BluetoothPollRate[device];
 
+            // TODO: missing stuff
 
+            LSSquareStick = store.SquStickInfo[device].LSMode;
+            RSSquareStick = store.SquStickInfo[device].RSMode;
 
+            SquareStickRoundness = store.SquStickInfo[device].LSRoundness;
+            SquareRStickRoundness = store.SquStickInfo[device].RSRoundness;
 
+            LSAntiSnapback = store.LSAntiSnapbackInfo[device].Enabled;
+            RSAntiSnapback = store.RSAntiSnapbackInfo[device].Enabled;
 
+            LSAntiSnapbackDelta = store.LSAntiSnapbackInfo[device].Delta;
+            RSAntiSnapbackDelta = store.RSAntiSnapbackInfo[device].Delta;
 
+            LSAntiSnapbackTimeout = store.LSAntiSnapbackInfo[device].Timeout;
+            RSAntiSnapbackTimeout = store.RSAntiSnapbackInfo[device].Timeout;
 
+            LSOutputMode = store.LSOutputSettings[device].Mode;
+            RSOutputMode = store.RSOutputSettings[device].Mode;
 
+            LSOutputSettings.FlickStickSettings.RealWorldCalibration = store
+                .LSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .realWorldCalibration;
+            LSOutputSettings.FlickStickSettings.FlickThreshold = store
+                .LSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .flickThreshold;
+            LSOutputSettings.FlickStickSettings.FlickTime = store
+                .LSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .flickTime;
 
+            RSOutputSettings.FlickStickSettings.RealWorldCalibration = store
+                .RSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .realWorldCalibration;
+            RSOutputSettings.FlickStickSettings.FlickThreshold = store
+                .RSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .flickThreshold;
+            RSOutputSettings.FlickStickSettings.FlickTime = store
+                .RSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .flickTime;
 
+            L2OutputCurveMode = store.AxisOutputCurveString(store.GetL2OutCurveMode(device));
+            L2OutputCurveCustom = store.L2OutBezierCurveObj[device];
+
+            //
+            // TODO: missing
+            // 
+
+            L2TwoStageMode = store.L2OutputSettings[device].twoStageMode;
+            R2TwoStageMode = store.R2OutputSettings[device].twoStageMode;
+
+            L2TriggerEffect = store.L2OutputSettings[device].triggerEffect;
+            R2TriggerEffect = store.R2OutputSettings[device].triggerEffect;
+
+            
+
+            R2OutputCurveMode = store.AxisOutputCurveString(store.GetR2OutCurveMode(device));
+            R2OutputCurveCustom = store.R2OutBezierCurveObj[device];
+
+            SXOutputCurveMode = store.AxisOutputCurveString(store.GetSXOutCurveMode(device));
+            SXOutputCurveCustom = store.SXOutBezierCurveObj[device];
+
+            SZOutputCurveMode = store.AxisOutputCurveString(store.GetSZOutCurveMode(device));
+            SZOutputCurveCustom = store.SZOutBezierCurveObj[device];
+
+            TrackballMode = store.TrackballMode[device];
+            TrackballFriction = store.TrackballFriction[device];
+
+            TouchRelMouseRotation = Convert.ToInt32(store.TouchPadRelMouse[device].Rotation * 180.0 / Math.PI);
+            TouchRelMouseMinThreshold = store.TouchPadRelMouse[device].MinThreshold;
+
+            TouchpadAbsMouseSettings.MaxZoneX = store.TouchPadAbsMouse[device].MaxZoneX;
+            TouchpadAbsMouseSettings.MaxZoneY = store.TouchPadAbsMouse[device].MaxZoneY;
+            TouchpadAbsMouseSettings.SnapToCenter = store.TouchPadAbsMouse[device].SnapToCenter;
+
+            OutputContDevice = store.OutputDeviceType[device];
         }
     }
 }

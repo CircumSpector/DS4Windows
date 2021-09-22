@@ -1777,7 +1777,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlRsOutputSettingsElement);
 
                     var xmlL2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveMode", null);
-                    xmlL2OutputCurveMode.InnerText = axisOutputCurveString(GetL2OutCurveMode(device));
+                    xmlL2OutputCurveMode.InnerText = AxisOutputCurveString(GetL2OutCurveMode(device));
                     rootElement.AppendChild(xmlL2OutputCurveMode);
                     var xmlL2OutputCurveCustom =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveCustom", null);
@@ -1799,7 +1799,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlR2TriggerEffect);
 
                     var xmlR2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveMode", null);
-                    xmlR2OutputCurveMode.InnerText = axisOutputCurveString(GetR2OutCurveMode(device));
+                    xmlR2OutputCurveMode.InnerText = AxisOutputCurveString(GetR2OutCurveMode(device));
                     rootElement.AppendChild(xmlR2OutputCurveMode);
                     var xmlR2OutputCurveCustom =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "R2OutputCurveCustom", null);
@@ -1807,7 +1807,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlR2OutputCurveCustom);
 
                     var xmlSXOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveMode", null);
-                    xmlSXOutputCurveMode.InnerText = axisOutputCurveString(GetSXOutCurveMode(device));
+                    xmlSXOutputCurveMode.InnerText = AxisOutputCurveString(GetSXOutCurveMode(device));
                     rootElement.AppendChild(xmlSXOutputCurveMode);
                     var xmlSXOutputCurveCustom =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "SXOutputCurveCustom", null);
@@ -1815,7 +1815,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlSXOutputCurveCustom);
 
                     var xmlSZOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveMode", null);
-                    xmlSZOutputCurveMode.InnerText = axisOutputCurveString(GetSZOutCurveMode(device));
+                    xmlSZOutputCurveMode.InnerText = AxisOutputCurveString(GetSZOutCurveMode(device));
                     rootElement.AppendChild(xmlSZOutputCurveMode);
                     var xmlSZOutputCurveCustom =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "SZOutputCurveCustom", null);
@@ -7213,7 +7213,7 @@ namespace DS4Windows
                 return id;
             }
 
-            private string axisOutputCurveString(int id)
+            public string AxisOutputCurveString(int id)
             {
                 return stickOutputCurveString(id);
             }
