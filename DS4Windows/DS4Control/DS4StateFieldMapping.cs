@@ -1,4 +1,6 @@
 ﻿
+using OpenTracing.Util;
+
 namespace DS4Windows
 {
     public class DS4StateFieldMapping
@@ -79,6 +81,10 @@ namespace DS4Windows
 
         public void PopulateFieldMapping(DS4State cState, DS4StateExposed exposeState, Mouse tp, bool priorMouse = false)
         {
+            using var scope = GlobalTracer.Instance
+                .BuildSpan($"{nameof(DS4StateFieldMapping)}::{nameof(PopulateFieldMapping)}")
+                .StartActive(true);
+
             unchecked
             {
                 axisdirs[(int)DS4Controls.LXNeg] = cState.LX;
@@ -155,6 +161,10 @@ namespace DS4Windows
 
         public void PopulateState(DS4State state)
         {
+            using var scope = GlobalTracer.Instance
+                .BuildSpan($"{nameof(DS4StateFieldMapping)}::{nameof(PopulateState)}")
+                .StartActive(true);
+
             unchecked
             {
                 state.LX = axisdirs[(int)DS4Controls.LXNeg];

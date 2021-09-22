@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -78,6 +79,10 @@ namespace DS4Windows
 
         private MacroStep ParseStep(int value)
         {
+            using var scope = GlobalTracer.Instance
+                .BuildSpan($"{nameof(MacroParser)}::{nameof(ParseStep)}")
+                .StartActive(true);
+
             string name = string.Empty;
             MacroStep.StepType type = MacroStep.StepType.ActDown;
             MacroStep.StepOutput outType = MacroStep.StepOutput.Key;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using OpenTracing.Util;
 using static System.Math;
 using static DS4Windows.Global;
 
@@ -75,6 +76,9 @@ namespace DS4Windows
 
         public static void UpdateLightBar(DS4Device device, int deviceNum)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBar)}::{nameof(UpdateLightBar)}")
+                .StartActive(true);
+
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight[deviceNum];
             var lightbarSettingInfo = Instance.Config.GetLightbarSettingsInfo(deviceNum);
