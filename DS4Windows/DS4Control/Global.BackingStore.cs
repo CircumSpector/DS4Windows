@@ -1117,7 +1117,12 @@ namespace DS4Windows
                 // 
                 using (GlobalTracer.Instance.BuildSpan("Serialize-NEW").StartActive(true))
                 {
-                    var profileObject = new DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows(this, device);
+                    var profileObject = new DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows(
+                        this,
+                        device,
+                        ExecutableProductVersion,
+                        CONFIG_VERSION
+                    );
 
                     IExtendedXmlSerializer serializer = new ConfigurationContainer()
                         .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))

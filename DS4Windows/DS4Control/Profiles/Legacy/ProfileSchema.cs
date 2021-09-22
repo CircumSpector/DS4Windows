@@ -655,8 +655,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         {
         }
 
-        public DS4Windows(IBackingStore store, int device)
+        public DS4Windows(IBackingStore store, int device, string appVersion, int configVersion)
         {
+            AppVersion = appVersion;
+            ConfigVersion = configVersion;
+
             CopyFrom(store, device);
         }
 
