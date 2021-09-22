@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -389,7 +390,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int SZAntiDeadZone { get; set; }
 
         [XmlElement(ElementName = "Sensitivity")]
-        public string Sensitivity { get; set; }
+        public SensitivityProxyType Sensitivity { get; set; }
 
         [XmlElement(ElementName = "ChargingType")]
         public int ChargingType { get; set; }
