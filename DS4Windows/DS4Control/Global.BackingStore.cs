@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.Properties;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
@@ -1114,17 +1115,17 @@ namespace DS4Windows
                 //
                 // TODO: experimental, needs tuning. For now just generates a 2nd file for experimentation.
                 // 
-                /*
                 using (GlobalTracer.Instance.BuildSpan("Serialize-NEW").StartActive(true))
                 {
+                    var profileObject = new DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows(this, device);
+
                     IExtendedXmlSerializer serializer = new ConfigurationContainer()
-                        .UseAutoFormatting()
-                        .UseOptimizedNamespaces()
-                        //.EnableParameterizedContent()
-                        .EnableImplicitTyping(typeof(BackingStore))
+                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))
+                        .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                        .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
                         .Create();
 
-                    var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, this);
+                    var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject);
 
                     var betaPath = Path.Combine(
                         RuntimeAppDataPath,
@@ -1134,7 +1135,6 @@ namespace DS4Windows
 
                     File.WriteAllText(betaPath, document);
                 }
-                */
 
                 using var scope = GlobalTracer.Instance.BuildSpan("Serialize").StartActive(true);
 
@@ -1165,6 +1165,8 @@ namespace DS4Windows
 
                     var lightbarSettings = LightbarSettingInfo[device];
                     var lightInfo = lightbarSettings.Ds4WinSettings;
+
+                    #region CONVERTED
 
                     var xmlTouchToggle = m_Xdoc.CreateNode(XmlNodeType.Element, "touchToggle", null);
                     xmlTouchToggle.InnerText = EnableTouchToggle[device].ToString();
@@ -1316,6 +1318,12 @@ namespace DS4Windows
                     var xmlRSDeadZoneType = m_Xdoc.CreateNode(XmlNodeType.Element, "RSDeadZoneType", null);
                     xmlRSDeadZoneType.InnerText = RSModInfo[device].DZType.ToString();
                     rootElement.AppendChild(xmlRSDeadZoneType);
+
+                    #endregion
+
+                    //
+                    // TODO: -- CONTINUE HERE --
+                    // 
 
                     var xmlLSAxialDeadGroupEl = m_Xdoc.CreateElement("LSAxialDeadOptions");
                     var xmlLSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
@@ -7233,7 +7241,7 @@ namespace DS4Windows
                 return result;
             }
 
-            private string SaTriggerCondString(bool value)
+            public string SaTriggerCondString(bool value)
             {
                 var result = value ? "and" : "or";
                 return result;

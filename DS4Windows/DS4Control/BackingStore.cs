@@ -99,6 +99,8 @@ namespace DS4Windows
 
         IList<byte> RumbleBoost { get; set; }
 
+        IList<int> RumbleAutostopTime { get; }
+
         IList<byte> TouchSensitivity { get; set; }
 
         IList<StickDeadZoneInfo> LSModInfo { get; set; }
@@ -254,6 +256,8 @@ namespace DS4Windows
         ulong LastVersionCheckedNumber { get; set; }
 
         bool IsUdpServerEnabled { get; set; }
+
+        string SaTriggerCondString(bool value);
 
         void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons);
 

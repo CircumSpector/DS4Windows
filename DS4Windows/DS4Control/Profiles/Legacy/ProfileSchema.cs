@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Controls;
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
@@ -31,10 +32,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int AntiDeadZoneY { get; set; }
 
         [XmlElement(ElementName = "MaxOutputX")]
-        public int MaxOutputX { get; set; }
+        public double MaxOutputX { get; set; }
 
         [XmlElement(ElementName = "MaxOutputY")]
-        public int MaxOutputY { get; set; }
+        public double MaxOutputY { get; set; }
     }
 
     [XmlRoot(ElementName = "RSAxialDeadOptions")]
@@ -59,10 +60,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int AntiDeadZoneY { get; set; }
 
         [XmlElement(ElementName = "MaxOutputX")]
-        public int MaxOutputX { get; set; }
+        public double MaxOutputX { get; set; }
 
         [XmlElement(ElementName = "MaxOutputY")]
-        public int MaxOutputY { get; set; }
+        public double MaxOutputY { get; set; }
     }
 
     [XmlRoot(ElementName = "SASteeringWheelSmoothingOptions")]
@@ -219,7 +220,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int RumbleAutostopTime { get; set; }
 
         [XmlElement(ElementName = "LightbarMode")]
-        public string LightbarMode { get; set; }
+        public LightbarMode LightbarMode { get; set; }
 
         [XmlElement(ElementName = "ledAsBatteryIndicator")]
         public bool LedAsBatteryIndicator { get; set; }
@@ -237,7 +238,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public DS4Color LowColor { get; set; }
 
         [XmlElement(ElementName = "ChargingColor")]
-        public double ChargingColor { get; set; }
+        public DS4Color ChargingColor { get; set; }
 
         [XmlElement(ElementName = "FlashColor")]
         public DS4Color FlashColor { get; set; }
@@ -282,10 +283,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int R2MaxZone { get; set; }
 
         [XmlElement(ElementName = "L2MaxOutput")]
-        public int L2MaxOutput { get; set; }
+        public double L2MaxOutput { get; set; }
 
         [XmlElement(ElementName = "R2MaxOutput")]
-        public int R2MaxOutput { get; set; }
+        public double R2MaxOutput { get; set; }
 
         [XmlElement(ElementName = "ButtonMouseSensitivity")]
         public int ButtonMouseSensitivity { get; set; }
@@ -294,7 +295,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double ButtonMouseOffset { get; set; }
 
         [XmlElement(ElementName = "Rainbow")] 
-        public int Rainbow { get; set; }
+        public double Rainbow { get; set; }
 
         [XmlElement(ElementName = "MaxSatRainbow")]
         public int MaxSatRainbow { get; set; }
@@ -318,16 +319,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int RSMaxZone { get; set; }
 
         [XmlElement(ElementName = "LSVerticalScale")]
-        public int LSVerticalScale { get; set; }
+        public double LSVerticalScale { get; set; }
 
         [XmlElement(ElementName = "RSVerticalScale")]
-        public int RSVerticalScale { get; set; }
+        public double RSVerticalScale { get; set; }
 
         [XmlElement(ElementName = "LSMaxOutput")]
-        public int LSMaxOutput { get; set; }
+        public double LSMaxOutput { get; set; }
 
         [XmlElement(ElementName = "RSMaxOutput")]
-        public int RSMaxOutput { get; set; }
+        public double RSMaxOutput { get; set; }
 
         [XmlElement(ElementName = "LSMaxOutputForce")]
         public bool LSMaxOutputForce { get; set; }
@@ -336,16 +337,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool RSMaxOutputForce { get; set; }
 
         [XmlElement(ElementName = "LSDeadZoneType")]
-        public string LSDeadZoneType { get; set; }
+        public StickDeadZoneInfo.DeadZoneType LSDeadZoneType { get; set; }
 
         [XmlElement(ElementName = "RSDeadZoneType")]
-        public string RSDeadZoneType { get; set; }
+        public StickDeadZoneInfo.DeadZoneType RSDeadZoneType { get; set; }
 
         [XmlElement(ElementName = "LSAxialDeadOptions")]
-        public LSAxialDeadOptions LSAxialDeadOptions { get; set; }
+        public LSAxialDeadOptions LSAxialDeadOptions { get; set; } = new();
 
         [XmlElement(ElementName = "RSAxialDeadOptions")]
-        public RSAxialDeadOptions RSAxialDeadOptions { get; set; }
+        public RSAxialDeadOptions RSAxialDeadOptions { get; set; } = new();
 
         [XmlElement(ElementName = "LSRotation")]
         public int LSRotation { get; set; }
@@ -411,10 +412,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool StartTouchpadOff { get; set; }
 
         [XmlElement(ElementName = "TouchpadOutputMode")]
-        public string TouchpadOutputMode { get; set; }
+        public TouchpadOutMode TouchpadOutputMode { get; set; }
 
         [XmlElement(ElementName = "SATriggers")]
-        public int SATriggers { get; set; }
+        public string SATriggers { get; set; }
 
         [XmlElement(ElementName = "SATriggerCond")]
         public string SATriggerCond { get; set; }
@@ -646,5 +647,150 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         [XmlText] 
         public string Text { get; set; }
+
+        public DS4Windows()
+        {
+        }
+
+        public DS4Windows(IBackingStore store, int device)
+        {
+            CopyFrom(store, device);
+        }
+
+        /// <summary>
+        ///     Converts properties from <see cref="IBackingStore" /> for a specified device index to this
+        ///     <see cref="DS4Windows" /> instance.
+        /// </summary>
+        /// <param name="store">The <see cref="IBackingStore"/>.</param>
+        /// <param name="device">The zero-based device index to copy.</param>
+        public void CopyFrom(IBackingStore store, int device)
+        {
+            var light = store.LightbarSettingInfo[device];
+
+            TouchToggle = store.EnableTouchToggle[device];
+            IdleDisconnectTimeout = store.IdleDisconnectTimeout[device];
+            OutputDataToDS4 = store.EnableOutputDataToDS4[device];
+            Color = light.Ds4WinSettings.Led;
+            RumbleBoost = store.RumbleBoost[device];
+            RumbleAutostopTime = store.RumbleAutostopTime[device];
+            LightbarMode = store.LightbarSettingInfo[device].Mode;
+            LedAsBatteryIndicator = light.Ds4WinSettings.LedAsBattery;
+            FlashType = light.Ds4WinSettings.FlashType;
+            FlashBatteryAt = light.Ds4WinSettings.FlashAt;
+            TouchSensitivity = store.TouchSensitivity[device];
+            
+            LowColor = light.Ds4WinSettings.LowLed;
+            ChargingColor = light.Ds4WinSettings.ChargingLed;
+            FlashColor = light.Ds4WinSettings.FlashLed;
+            
+            TouchpadJitterCompensation = store.TouchpadJitterCompensation[device];
+            LowerRCOn = store.LowerRCOn[device];
+            TapSensitivity = store.TapSensitivity[device];
+            DoubleTap = store.DoubleTap[device];
+            ScrollSensitivity = store.ScrollSensitivity[device];
+            
+            LeftTriggerMiddle = store.L2ModInfo[device].deadZone;
+            RightTriggerMiddle = store.R2ModInfo[device].deadZone;
+            
+            TouchpadInvert = store.TouchPadInvert[device];
+            TouchpadClickPassthru = store.TouchClickPassthru[device];
+            
+            L2AntiDeadZone = store.L2ModInfo[device].AntiDeadZone;
+            R2AntiDeadZone = store.R2ModInfo[device].AntiDeadZone;
+            
+            L2MaxZone = store.L2ModInfo[device].maxZone;
+            R2MaxZone = store.R2ModInfo[device].maxZone;
+            
+            L2MaxOutput = store.L2ModInfo[device].maxOutput;
+            R2MaxOutput = store.R2ModInfo[device].maxOutput;
+            
+            ButtonMouseSensitivity = store.ButtonMouseInfos[device].buttonSensitivity;
+            ButtonMouseOffset = store.ButtonMouseInfos[device].mouseVelocityOffset;
+            
+            Rainbow = light.Ds4WinSettings.Rainbow;
+            MaxSatRainbow = Convert.ToInt32(light.Ds4WinSettings.MaxRainbowSaturation * 100.0);
+            
+            LSDeadZone = store.LSModInfo[device].DeadZone;
+            RSDeadZone = store.RSModInfo[device].DeadZone;
+            
+            LSAntiDeadZone = store.LSModInfo[device].AntiDeadZone;
+            RSAntiDeadZone = store.RSModInfo[device].AntiDeadZone;
+
+            LSMaxZone = store.LSModInfo[device].MaxZone;
+            RSMaxZone = store.RSModInfo[device].MaxZone;
+
+            LSVerticalScale = store.LSModInfo[device].VerticalScale;
+            RSVerticalScale = store.RSModInfo[device].VerticalScale;
+
+            LSMaxOutput = store.LSModInfo[device].MaxOutput;
+            RSMaxOutput = store.RSModInfo[device].MaxOutput;
+
+            LSMaxOutputForce = store.LSModInfo[device].MaxOutputForce;
+            RSMaxOutputForce = store.RSModInfo[device].MaxOutputForce;
+
+            LSDeadZoneType = store.LSModInfo[device].DZType;
+            RSDeadZoneType = store.RSModInfo[device].DZType;
+
+            LSAxialDeadOptions.DeadZoneX = store.LSModInfo[device].XAxisDeadInfo.DeadZone;
+            LSAxialDeadOptions.DeadZoneY = store.LSModInfo[device].YAxisDeadInfo.DeadZone;
+            LSAxialDeadOptions.MaxZoneX = store.LSModInfo[device].XAxisDeadInfo.MaxZone;
+            LSAxialDeadOptions.MaxZoneY = store.LSModInfo[device].YAxisDeadInfo.MaxZone;
+            LSAxialDeadOptions.AntiDeadZoneX = store.LSModInfo[device].XAxisDeadInfo.AntiDeadZone;
+            LSAxialDeadOptions.AntiDeadZoneY = store.LSModInfo[device].YAxisDeadInfo.AntiDeadZone;
+            LSAxialDeadOptions.MaxOutputX = store.LSModInfo[device].XAxisDeadInfo.MaxOutput;
+            LSAxialDeadOptions.MaxOutputY = store.LSModInfo[device].YAxisDeadInfo.MaxOutput;
+
+            RSAxialDeadOptions.DeadZoneX = store.RSModInfo[device].XAxisDeadInfo.DeadZone;
+            RSAxialDeadOptions.DeadZoneY = store.RSModInfo[device].YAxisDeadInfo.DeadZone;
+            RSAxialDeadOptions.MaxZoneX = store.RSModInfo[device].XAxisDeadInfo.MaxZone;
+            RSAxialDeadOptions.MaxZoneY = store.RSModInfo[device].YAxisDeadInfo.MaxZone;
+            RSAxialDeadOptions.AntiDeadZoneX = store.RSModInfo[device].XAxisDeadInfo.AntiDeadZone;
+            RSAxialDeadOptions.AntiDeadZoneY = store.RSModInfo[device].YAxisDeadInfo.AntiDeadZone;
+            RSAxialDeadOptions.MaxOutputX = store.RSModInfo[device].XAxisDeadInfo.MaxOutput;
+            RSAxialDeadOptions.MaxOutputY = store.RSModInfo[device].YAxisDeadInfo.MaxOutput;
+
+            LSRotation = Convert.ToInt32(store.LSRotation[device] * 180.0 / Math.PI);
+            RSRotation = Convert.ToInt32(store.RSRotation[device] * 180.0 / Math.PI);
+
+            LSFuzz = store.LSModInfo[device].Fuzz;
+            RSFuzz = store.RSModInfo[device].Fuzz;
+
+            LSOuterBindDead = Convert.ToInt32(store.LSModInfo[device].OuterBindDeadZone);
+            RSOuterBindDead = Convert.ToInt32(store.RSModInfo[device].OuterBindDeadZone);
+
+            LSOuterBindInvert = store.LSModInfo[device].OuterBindInvert;
+            RSOuterBindInvert = store.RSModInfo[device].OuterBindInvert;
+
+            SXDeadZone = store.SXDeadzone[device];
+            SZDeadZone = store.SZDeadzone[device];
+
+            SXMaxZone = Convert.ToInt32(store.SXMaxzone[device] * 100.0);
+            SZMaxZone = Convert.ToInt32(store.SZMaxzone[device] * 100.0);
+
+            SXAntiDeadZone = Convert.ToInt32(store.SXAntiDeadzone[device] * 100.0);
+            SZAntiDeadZone = Convert.ToInt32(store.SZAntiDeadzone[device] * 100.0);
+
+            Sensitivity = new SensitivityProxyType()
+            {
+                LSSens = store.LSSens[device],
+                RSSens = store.RSSens[device],
+                L2Sens = store.L2Sens[device],
+                R2Sens = store.R2Sens[device],
+                SXSens = store.SXSens[device],
+                SZSens = store.SZSens[device]
+            };
+
+            ChargingType = light.Ds4WinSettings.ChargingType;
+
+            MouseAcceleration = store.ButtonMouseInfos[device].mouseAccel;
+            ButtonMouseVerticalScale = Convert.ToInt32(store.ButtonMouseInfos[device].buttonVerticalScale * 100);
+
+            LaunchProgram = store.LaunchProgram[device];
+            DinputOnly = store.DirectInputOnly[device];
+            StartTouchpadOff = store.StartTouchpadOff[device];
+            TouchpadOutputMode = store.TouchOutMode[device];
+            SATriggers = store.SATriggers[device];
+            SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
+        }
     }
 }
