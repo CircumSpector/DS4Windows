@@ -148,7 +148,8 @@ namespace DS4Windows.InputDevices
         private byte activePlayerLEDMask = 0x00;
 
         private byte hapticsIntensityByte = 0x02;
-        public HapticIntensity HapticChoice {
+        public HapticIntensity HapticChoice
+        {
             set
             {
                 switch (value)
@@ -182,7 +183,8 @@ namespace DS4Windows.InputDevices
             base(hidDevice, disName, featureSet)
         {
             synced = true;
-            DeviceSlotNumberChanged += (sender, e) => {
+            DeviceSlotNumberChanged += (sender, e) =>
+            {
                 CalculateDeviceSlotMask();
             };
 
@@ -418,501 +420,502 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
-                    using (GlobalTracer.Instance.BuildSpan(nameof(ReadInput)).StartActive(true))
+                    using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DualSenseDevice)}::{nameof(ReadInput)}")
+                        .StartActive(true);
+
+                    oldCharging = charging;
+                    currerror = string.Empty;
+
+                    if (tempLatencyCount >= 20)
                     {
-                        oldCharging = charging;
-                        currerror = string.Empty;
+                        latencySum -= latencyQueue.Dequeue();
+                        tempLatencyCount--;
+                    }
 
-                        if (tempLatencyCount >= 20)
+                    latencySum += this.lastTimeElapsed;
+                    latencyQueue.Enqueue(this.lastTimeElapsed);
+                    tempLatencyCount++;
+
+                    //Latency = latencyQueue.Average();
+                    Latency = latencySum / (double)tempLatencyCount;
+
+                    readWaitEv.Set();
+
+                    if (conType == ConnectionType.BT)
+                    {
+                        timeoutEvent = false;
+                        HidDevice.ReadStatus res = hDevice.ReadWithFileStream(inputReport);
+                        if (res == HidDevice.ReadStatus.Success)
                         {
-                            latencySum -= latencyQueue.Dequeue();
-                            tempLatencyCount--;
-                        }
+                            uint recvCrc32 = inputReport[BT_INPUT_REPORT_CRC32_POS] |
+                                             (uint)(inputReport[CRC32_POS_1] << 8) |
+                                             (uint)(inputReport[CRC32_POS_2] << 16) |
+                                             (uint)(inputReport[CRC32_POS_3] << 24);
 
-                        latencySum += this.lastTimeElapsed;
-                        latencyQueue.Enqueue(this.lastTimeElapsed);
-                        tempLatencyCount++;
-
-                        //Latency = latencyQueue.Average();
-                        Latency = latencySum / (double)tempLatencyCount;
-
-                        readWaitEv.Set();
-
-                        if (conType == ConnectionType.BT)
-                        {
-                            timeoutEvent = false;
-                            HidDevice.ReadStatus res = hDevice.ReadWithFileStream(inputReport);
-                            if (res == HidDevice.ReadStatus.Success)
+                            uint calcCrc32 = ~Crc32Algorithm.CalculateFasterBT78Hash(ref HamSeed, ref inputReport,
+                                ref crcoffset, ref crcpos);
+                            if (recvCrc32 != calcCrc32)
                             {
-                                uint recvCrc32 = inputReport[BT_INPUT_REPORT_CRC32_POS] |
-                                                 (uint)(inputReport[CRC32_POS_1] << 8) |
-                                                 (uint)(inputReport[CRC32_POS_2] << 16) |
-                                                 (uint)(inputReport[CRC32_POS_3] << 24);
-
-                                uint calcCrc32 = ~Crc32Algorithm.CalculateFasterBT78Hash(ref HamSeed, ref inputReport,
-                                    ref crcoffset, ref crcpos);
-                                if (recvCrc32 != calcCrc32)
+                                currentState.PacketCounter =
+                                    pState.PacketCounter + 1; //still increase so we know there were lost packets
+                                if (this.inputReportErrorCount >= 10)
                                 {
-                                    currentState.PacketCounter =
-                                        pState.PacketCounter + 1; //still increase so we know there were lost packets
-                                    if (this.inputReportErrorCount >= 10)
-                                    {
-                                        exitInputThread = true;
+                                    exitInputThread = true;
 
-                                        AppLogger.LogToGui(DS4WinWPF.Translations.Strings.CRC32Fail, true);
-                                        readWaitEv.Reset();
-                                        //sendOutputReport(true, true); // Kick Windows into noticing the disconnection.
-                                        StopOutputUpdate();
-                                        isDisconnecting = true;
-                                        RunRemoval();
-
-                                        timeoutExecuted = true;
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        this.inputReportErrorCount++;
-                                    }
-
+                                    AppLogger.LogToGui(DS4WinWPF.Translations.Strings.CRC32Fail, true);
                                     readWaitEv.Reset();
+                                    //sendOutputReport(true, true); // Kick Windows into noticing the disconnection.
+                                    StopOutputUpdate();
+                                    isDisconnecting = true;
+                                    RunRemoval();
+
+                                    timeoutExecuted = true;
                                     continue;
                                 }
                                 else
                                 {
-                                    this.inputReportErrorCount = 0;
+                                    this.inputReportErrorCount++;
                                 }
+
+                                readWaitEv.Reset();
+                                continue;
                             }
                             else
                             {
-                                if (res == HidDevice.ReadStatus.WaitTimedOut)
-                                {
-                                    AppLogger.LogToGui(Mac.ToString() + " disconnected due to timeout", true);
-                                }
-                                else
-                                {
-                                    int winError = Marshal.GetLastWin32Error();
-                                    Console.WriteLine(Mac.ToString() + " " + DateTime.UtcNow.ToString("o") +
-                                                      "> disconnect due to read failure: " + winError);
-                                    //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
-                                    AppLogger.LogToGui(
-                                        Mac.ToString() + " disconnected due to read failure: " + winError, true);
-                                }
-
-                                exitInputThread = true;
-                                readWaitEv.Reset();
-                                //SendEmptyOutputReport();
-                                //sendOutputReport(true, true); // Kick Windows into noticing the disconnection.
-                                StopOutputUpdate();
-                                isDisconnecting = true;
-                                RunRemoval();
-
-                                timeoutExecuted = true;
-                                continue;
+                                this.inputReportErrorCount = 0;
                             }
                         }
                         else
                         {
-                            HidDevice.ReadStatus res = hDevice.ReadWithFileStream(inputReport);
-                            if (res != HidDevice.ReadStatus.Success)
+                            if (res == HidDevice.ReadStatus.WaitTimedOut)
                             {
-                                if (res == HidDevice.ReadStatus.WaitTimedOut)
-                                {
-                                    AppLogger.LogToGui(Mac.ToString() + " disconnected due to timeout", true);
-                                }
-                                else
-                                {
-                                    int winError = Marshal.GetLastWin32Error();
-                                    Console.WriteLine(Mac.ToString() + " " + DateTime.UtcNow.ToString("o") +
-                                                      "> disconnect due to read failure: " + winError);
-                                    //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
-                                }
-
-                                exitInputThread = true;
-                                readWaitEv.Reset();
-                                StopOutputUpdate();
-                                isDisconnecting = true;
-                                RunRemoval();
-
-                                timeoutExecuted = true;
-                                continue;
+                                AppLogger.LogToGui(Mac.ToString() + " disconnected due to timeout", true);
                             }
-                        }
+                            else
+                            {
+                                int winError = Marshal.GetLastWin32Error();
+                                Console.WriteLine(Mac.ToString() + " " + DateTime.UtcNow.ToString("o") +
+                                                  "> disconnect due to read failure: " + winError);
+                                //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
+                                AppLogger.LogToGui(
+                                    Mac.ToString() + " disconnected due to read failure: " + winError, true);
+                            }
 
-                        readWaitEv.Wait();
-                        readWaitEv.Reset();
+                            exitInputThread = true;
+                            readWaitEv.Reset();
+                            //SendEmptyOutputReport();
+                            //sendOutputReport(true, true); // Kick Windows into noticing the disconnection.
+                            StopOutputUpdate();
+                            isDisconnecting = true;
+                            RunRemoval();
 
-                        curtime = Stopwatch.GetTimestamp();
-                        testelapsed = curtime - oldtime;
-                        lastTimeElapsedDouble = testelapsed * (1.0 / Stopwatch.Frequency) * 1000.0;
-                        lastTimeElapsed = (long)lastTimeElapsedDouble;
-                        oldtime = curtime;
-
-                        if (conType == ConnectionType.BT && inputReport[0] != 0x31)
-                        {
-                            // Received incorrect report, skip it
+                            timeoutExecuted = true;
                             continue;
                         }
-
-                        utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
-
-                        currentState.PacketCounter = pState.PacketCounter + 1;
-                        currentState.ReportTimeStamp = utcNow;
-                        currentState.LX = inputReport[1 + reportOffset];
-                        currentState.LY = inputReport[2 + reportOffset];
-                        currentState.RX = inputReport[3 + reportOffset];
-                        currentState.RY = inputReport[4 + reportOffset];
-                        currentState.L2 = inputReport[5 + reportOffset];
-                        currentState.R2 = inputReport[6 + reportOffset];
-
-                        // DS4 Frame Counter range is [0-127]. DS version range is [0-255]. Convert
-                        currentState.FrameCounter = (byte)(inputReport[7 + reportOffset] % 128);
-                        tempByte = inputReport[8 + reportOffset];
-                        currentState.Triangle = (tempByte & (1 << 7)) != 0;
-                        currentState.Circle = (tempByte & (1 << 6)) != 0;
-                        currentState.Cross = (tempByte & (1 << 5)) != 0;
-                        currentState.Square = (tempByte & (1 << 4)) != 0;
-
-                        // First 4 bits denote dpad state. Clock representation
-                        // with 8 meaning centered and 0 meaning DpadUp.
-                        byte dpad_state = (byte)(tempByte & 0x0F);
-
-                        switch (dpad_state)
+                    }
+                    else
+                    {
+                        HidDevice.ReadStatus res = hDevice.ReadWithFileStream(inputReport);
+                        if (res != HidDevice.ReadStatus.Success)
                         {
-                            case 0:
-                                currentState.DpadUp = true;
-                                currentState.DpadDown = false;
-                                currentState.DpadLeft = false;
-                                currentState.DpadRight = false;
-                                break;
-                            case 1:
-                                currentState.DpadUp = true;
-                                currentState.DpadDown = false;
-                                currentState.DpadLeft = false;
-                                currentState.DpadRight = true;
-                                break;
-                            case 2:
-                                currentState.DpadUp = false;
-                                currentState.DpadDown = false;
-                                currentState.DpadLeft = false;
-                                currentState.DpadRight = true;
-                                break;
-                            case 3:
-                                currentState.DpadUp = false;
-                                currentState.DpadDown = true;
-                                currentState.DpadLeft = false;
-                                currentState.DpadRight = true;
-                                break;
-                            case 4:
-                                currentState.DpadUp = false;
-                                currentState.DpadDown = true;
-                                currentState.DpadLeft = false;
-                                currentState.DpadRight = false;
-                                break;
-                            case 5:
-                                currentState.DpadUp = false;
-                                currentState.DpadDown = true;
-                                currentState.DpadLeft = true;
-                                currentState.DpadRight = false;
-                                break;
-                            case 6:
-                                currentState.DpadUp = false;
-                                currentState.DpadDown = false;
-                                currentState.DpadLeft = true;
-                                currentState.DpadRight = false;
-                                break;
-                            case 7:
-                                currentState.DpadUp = true;
-                                currentState.DpadDown = false;
-                                currentState.DpadLeft = true;
-                                currentState.DpadRight = false;
-                                break;
-                            case 8:
-                            default:
-                                currentState.DpadUp = false;
-                                currentState.DpadDown = false;
-                                currentState.DpadLeft = false;
-                                currentState.DpadRight = false;
-                                break;
-                        }
-
-                        tempByte = inputReport[9 + reportOffset];
-                        currentState.R3 = (tempByte & (1 << 7)) != 0;
-                        currentState.L3 = (tempByte & (1 << 6)) != 0;
-                        currentState.Options = (tempByte & (1 << 5)) != 0;
-                        currentState.Share = (tempByte & (1 << 4)) != 0;
-                        currentState.R2Btn = (tempByte & (1 << 3)) != 0;
-                        currentState.L2Btn = (tempByte & (1 << 2)) != 0;
-                        currentState.R1 = (tempByte & (1 << 1)) != 0;
-                        currentState.L1 = (tempByte & (1 << 0)) != 0;
-
-                        tempByte = inputReport[10 + reportOffset];
-                        currentState.PS = (tempByte & (1 << 0)) != 0;
-                        currentState.TouchButton = (tempByte & 0x02) != 0;
-                        currentState.OutputTouchButton = currentState.TouchButton;
-                        currentState.Mute = (tempByte & (1 << 2)) != 0;
-
-                        if ((this.featureSet & VidPidFeatureSet.NoBatteryReading) == 0)
-                        {
-                            tempByte = inputReport[54 + reportOffset];
-                            tempCharging = (tempByte & 0x08) != 0;
-                            if (tempCharging != charging)
+                            if (res == HidDevice.ReadStatus.WaitTimedOut)
                             {
-                                charging = tempCharging;
-                                ChargingChanged?.Invoke(this, EventArgs.Empty);
-                            }
-
-                            tempByte = inputReport[53 + reportOffset];
-                            tempFull = (tempByte & 0x20) != 0; // Check for Full status
-                            maxBatteryValue = BATTERY_MAX;
-                            if (tempFull)
-                            {
-                                // Full Charge flag found
-                                tempBattery = 100;
+                                AppLogger.LogToGui(Mac.ToString() + " disconnected due to timeout", true);
                             }
                             else
                             {
-                                // Partial charge
-                                tempBattery = (tempByte & 0x0F) * 100 / maxBatteryValue;
-                                tempBattery = Math.Min(tempBattery, 100);
+                                int winError = Marshal.GetLastWin32Error();
+                                Console.WriteLine(Mac.ToString() + " " + DateTime.UtcNow.ToString("o") +
+                                                  "> disconnect due to read failure: " + winError);
+                                //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
                             }
 
-                            if (tempBattery != battery)
-                            {
-                                battery = tempBattery;
-                                BatteryChanged?.Invoke(this, EventArgs.Empty);
-                            }
+                            exitInputThread = true;
+                            readWaitEv.Reset();
+                            StopOutputUpdate();
+                            isDisconnecting = true;
+                            RunRemoval();
 
-                            currentState.Battery = (byte)battery;
-                            //System.Diagnostics.Debug.WriteLine("CURRENT BATTERY: " + (inputReport[30] & 0x0f) + " | " + tempBattery + " | " + battery);
+                            timeoutExecuted = true;
+                            continue;
+                        }
+                    }
+
+                    readWaitEv.Wait();
+                    readWaitEv.Reset();
+
+                    curtime = Stopwatch.GetTimestamp();
+                    testelapsed = curtime - oldtime;
+                    lastTimeElapsedDouble = testelapsed * (1.0 / Stopwatch.Frequency) * 1000.0;
+                    lastTimeElapsed = (long)lastTimeElapsedDouble;
+                    oldtime = curtime;
+
+                    if (conType == ConnectionType.BT && inputReport[0] != 0x31)
+                    {
+                        // Received incorrect report, skip it
+                        continue;
+                    }
+
+                    utcNow = DateTime.UtcNow; // timestamp with UTC in case system time zone changes
+
+                    currentState.PacketCounter = pState.PacketCounter + 1;
+                    currentState.ReportTimeStamp = utcNow;
+                    currentState.LX = inputReport[1 + reportOffset];
+                    currentState.LY = inputReport[2 + reportOffset];
+                    currentState.RX = inputReport[3 + reportOffset];
+                    currentState.RY = inputReport[4 + reportOffset];
+                    currentState.L2 = inputReport[5 + reportOffset];
+                    currentState.R2 = inputReport[6 + reportOffset];
+
+                    // DS4 Frame Counter range is [0-127]. DS version range is [0-255]. Convert
+                    currentState.FrameCounter = (byte)(inputReport[7 + reportOffset] % 128);
+                    tempByte = inputReport[8 + reportOffset];
+                    currentState.Triangle = (tempByte & (1 << 7)) != 0;
+                    currentState.Circle = (tempByte & (1 << 6)) != 0;
+                    currentState.Cross = (tempByte & (1 << 5)) != 0;
+                    currentState.Square = (tempByte & (1 << 4)) != 0;
+
+                    // First 4 bits denote dpad state. Clock representation
+                    // with 8 meaning centered and 0 meaning DpadUp.
+                    byte dpad_state = (byte)(tempByte & 0x0F);
+
+                    switch (dpad_state)
+                    {
+                        case 0:
+                            currentState.DpadUp = true;
+                            currentState.DpadDown = false;
+                            currentState.DpadLeft = false;
+                            currentState.DpadRight = false;
+                            break;
+                        case 1:
+                            currentState.DpadUp = true;
+                            currentState.DpadDown = false;
+                            currentState.DpadLeft = false;
+                            currentState.DpadRight = true;
+                            break;
+                        case 2:
+                            currentState.DpadUp = false;
+                            currentState.DpadDown = false;
+                            currentState.DpadLeft = false;
+                            currentState.DpadRight = true;
+                            break;
+                        case 3:
+                            currentState.DpadUp = false;
+                            currentState.DpadDown = true;
+                            currentState.DpadLeft = false;
+                            currentState.DpadRight = true;
+                            break;
+                        case 4:
+                            currentState.DpadUp = false;
+                            currentState.DpadDown = true;
+                            currentState.DpadLeft = false;
+                            currentState.DpadRight = false;
+                            break;
+                        case 5:
+                            currentState.DpadUp = false;
+                            currentState.DpadDown = true;
+                            currentState.DpadLeft = true;
+                            currentState.DpadRight = false;
+                            break;
+                        case 6:
+                            currentState.DpadUp = false;
+                            currentState.DpadDown = false;
+                            currentState.DpadLeft = true;
+                            currentState.DpadRight = false;
+                            break;
+                        case 7:
+                            currentState.DpadUp = true;
+                            currentState.DpadDown = false;
+                            currentState.DpadLeft = true;
+                            currentState.DpadRight = false;
+                            break;
+                        case 8:
+                        default:
+                            currentState.DpadUp = false;
+                            currentState.DpadDown = false;
+                            currentState.DpadLeft = false;
+                            currentState.DpadRight = false;
+                            break;
+                    }
+
+                    tempByte = inputReport[9 + reportOffset];
+                    currentState.R3 = (tempByte & (1 << 7)) != 0;
+                    currentState.L3 = (tempByte & (1 << 6)) != 0;
+                    currentState.Options = (tempByte & (1 << 5)) != 0;
+                    currentState.Share = (tempByte & (1 << 4)) != 0;
+                    currentState.R2Btn = (tempByte & (1 << 3)) != 0;
+                    currentState.L2Btn = (tempByte & (1 << 2)) != 0;
+                    currentState.R1 = (tempByte & (1 << 1)) != 0;
+                    currentState.L1 = (tempByte & (1 << 0)) != 0;
+
+                    tempByte = inputReport[10 + reportOffset];
+                    currentState.PS = (tempByte & (1 << 0)) != 0;
+                    currentState.TouchButton = (tempByte & 0x02) != 0;
+                    currentState.OutputTouchButton = currentState.TouchButton;
+                    currentState.Mute = (tempByte & (1 << 2)) != 0;
+
+                    if ((this.featureSet & VidPidFeatureSet.NoBatteryReading) == 0)
+                    {
+                        tempByte = inputReport[54 + reportOffset];
+                        tempCharging = (tempByte & 0x08) != 0;
+                        if (tempCharging != charging)
+                        {
+                            charging = tempCharging;
+                            ChargingChanged?.Invoke(this, EventArgs.Empty);
+                        }
+
+                        tempByte = inputReport[53 + reportOffset];
+                        tempFull = (tempByte & 0x20) != 0; // Check for Full status
+                        maxBatteryValue = BATTERY_MAX;
+                        if (tempFull)
+                        {
+                            // Full Charge flag found
+                            tempBattery = 100;
                         }
                         else
                         {
-                            // Some gamepads don't send battery values in DS4 compatible data fields, so use dummy 99% value to avoid constant low battery warnings
-                            //priorInputReport30 = 0x0F;
-                            battery = 99;
-                            currentState.Battery = 99;
+                            // Partial charge
+                            tempBattery = (tempByte & 0x0F) * 100 / maxBatteryValue;
+                            tempBattery = Math.Min(tempBattery, 100);
                         }
 
-                        tempStamp = inputReport[28 + reportOffset] |
-                                    (uint)(inputReport[29 + reportOffset] << 8) |
-                                    (uint)(inputReport[30 + reportOffset] << 16) |
-                                    (uint)(inputReport[31 + reportOffset] << 24);
-
-                        if (timeStampInit == false)
+                        if (tempBattery != battery)
                         {
-                            timeStampInit = true;
-                            deltaTimeCurrent = tempStamp * 1u / 3u;
+                            battery = tempBattery;
+                            BatteryChanged?.Invoke(this, EventArgs.Empty);
                         }
-                        else if (timeStampPrevious > tempStamp)
+
+                        currentState.Battery = (byte)battery;
+                        //System.Diagnostics.Debug.WriteLine("CURRENT BATTERY: " + (inputReport[30] & 0x0f) + " | " + tempBattery + " | " + battery);
+                    }
+                    else
+                    {
+                        // Some gamepads don't send battery values in DS4 compatible data fields, so use dummy 99% value to avoid constant low battery warnings
+                        //priorInputReport30 = 0x0F;
+                        battery = 99;
+                        currentState.Battery = 99;
+                    }
+
+                    tempStamp = inputReport[28 + reportOffset] |
+                                (uint)(inputReport[29 + reportOffset] << 8) |
+                                (uint)(inputReport[30 + reportOffset] << 16) |
+                                (uint)(inputReport[31 + reportOffset] << 24);
+
+                    if (timeStampInit == false)
+                    {
+                        timeStampInit = true;
+                        deltaTimeCurrent = tempStamp * 1u / 3u;
+                    }
+                    else if (timeStampPrevious > tempStamp)
+                    {
+                        tempDelta = uint.MaxValue - timeStampPrevious + tempStamp + 1u;
+                        deltaTimeCurrent = tempDelta * 1u / 3u;
+                    }
+                    else
+                    {
+                        tempDelta = tempStamp - timeStampPrevious;
+                        deltaTimeCurrent = tempDelta * 1u / 3u;
+                    }
+
+                    //if (tempStamp == timeStampPrevious)
+                    //{
+                    //    Console.WriteLine("PINEAPPLES");
+                    //}
+
+                    // Make sure timestamps don't match
+                    if (deltaTimeCurrent != 0)
+                    {
+                        elapsedDeltaTime = 0.000001 * deltaTimeCurrent; // Convert from microseconds to seconds
+                        currentState.totalMicroSec = pState.totalMicroSec + deltaTimeCurrent;
+                    }
+                    else
+                    {
+                        // Duplicate timestamp. Use system clock for elapsed time instead
+                        elapsedDeltaTime = lastTimeElapsedDouble * .001;
+                        currentState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
+                    }
+
+                    //Console.WriteLine("{0} {1} {2} {3} {4} Diff({5}) TSms({6}) Sys({7})", tempStamp, inputReport[31 + reportOffset], inputReport[30 + reportOffset], inputReport[29 + reportOffset], inputReport[28 + reportOffset], tempStamp - timeStampPrevious, elapsedDeltaTime, lastTimeElapsedDouble * 0.001);
+
+                    currentState.elapsedTime = elapsedDeltaTime;
+                    currentState.ds4Timestamp = (ushort)((tempStamp / 16) % ushort.MaxValue);
+                    timeStampPrevious = tempStamp;
+
+                    //elapsedDeltaTime = lastTimeElapsedDouble * .001;
+                    //cState.elapsedTime = elapsedDeltaTime;
+                    //cState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
+
+                    // Simpler touch storing
+                    currentState.TrackPadTouch0.RawTrackingNum = inputReport[33 + reportOffset];
+                    currentState.TrackPadTouch0.Id = (byte)(inputReport[33 + reportOffset] & 0x7f);
+                    currentState.TrackPadTouch0.IsActive = (inputReport[33 + reportOffset] & 0x80) == 0;
+                    currentState.TrackPadTouch0.X = (short)(((ushort)(inputReport[35 + reportOffset] & 0x0f) << 8) |
+                                                      (ushort)(inputReport[34 + reportOffset]));
+                    currentState.TrackPadTouch0.Y = (short)(((ushort)(inputReport[36 + reportOffset]) << 4) |
+                                                      ((ushort)(inputReport[35 + reportOffset] & 0xf0) >> 4));
+
+                    currentState.TrackPadTouch1.RawTrackingNum = inputReport[37 + reportOffset];
+                    currentState.TrackPadTouch1.Id = (byte)(inputReport[37 + reportOffset] & 0x7f);
+                    currentState.TrackPadTouch1.IsActive = (inputReport[37 + reportOffset] & 0x80) == 0;
+                    currentState.TrackPadTouch1.X = (short)(((ushort)(inputReport[39 + reportOffset] & 0x0f) << 8) |
+                                                      (ushort)(inputReport[38 + reportOffset]));
+                    currentState.TrackPadTouch1.Y = (short)(((ushort)(inputReport[40 + reportOffset]) << 4) |
+                                                      ((ushort)(inputReport[39 + reportOffset] & 0xf0) >> 4));
+
+                    // XXX DS4State mapping needs fixup, turn touches into an array[4] of structs.  And include the touchpad details there instead.
+                    try
+                    {
+                        // Only care if one touch packet is detected. Other touch packets
+                        // don't seem to contain relevant data. ds4drv does not use them either.
+                        int touchOffset = 0;
+
+                        currentState.TouchPacketCounter =
+                            inputReport[8 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset];
+                        currentState.Touch1 =
+                            (inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0
+                                ? false
+                                : true; // finger 1 detected
+                        currentState.Touch1Identifier =
+                            (byte)(inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0x7f);
+                        currentState.Touch2 =
+                            (inputReport[4 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0
+                                ? false
+                                : true; // finger 2 detected
+                        currentState.Touch2Identifier =
+                            (byte)(inputReport[4 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0x7f);
+                        currentState.Touch1Finger = currentState.Touch1 || currentState.Touch2; // >= 1 touch detected
+                        currentState.Touch2Fingers = currentState.Touch1 && currentState.Touch2; // 2 touches detected
+                        int touchX =
+                            (((inputReport[2 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0xF) << 8) |
+                             inputReport[1 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset]);
+                        currentState.TouchLeft = touchX >= DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
+                        currentState.TouchRight = touchX < DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
+                        // Even when idling there is still a touch packet indicating no touch 1 or 2
+                        if (synced)
                         {
-                            tempDelta = uint.MaxValue - timeStampPrevious + tempStamp + 1u;
-                            deltaTimeCurrent = tempDelta * 1u / 3u;
+                            touchpad.handleTouchpad(inputReport, currentState, TOUCHPAD_DATA_OFFSET + reportOffset,
+                                touchOffset);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        currerror = $"Touchpad: {ex.Message}";
+                    }
+
+                    fixed (byte* pbInput = &inputReport[16 + reportOffset], pbGyro = gyro, pbAccel = accel)
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            pbGyro[i] = pbInput[i];
+                        }
+
+                        for (int i = 6; i < 12; i++)
+                        {
+                            pbAccel[i - 6] = pbInput[i];
+                        }
+
+                        if (synced)
+                        {
+                            sixAxis.handleSixaxis(pbGyro, pbAccel, currentState, elapsedDeltaTime);
+                        }
+                    }
+
+                    /* Debug output of incoming HID data:
+                    if (cState.L2 == 0xff && cState.R2 == 0xff)
+                    {
+                        Console.Write(MacAddress.ToString() + " " + System.DateTime.UtcNow.ToString("o") + ">");
+                        for (int i = 0; i < inputReport.Length; i++)
+                            Console.Write(" " + inputReport[i].ToString("x2"));
+                        Console.WriteLine();
+                    }
+                    ///*/
+
+                    if (conType == ConnectionType.USB)
+                    {
+                        if (idleTimeout == 0)
+                        {
+                            lastActive = utcNow;
                         }
                         else
                         {
-                            tempDelta = tempStamp - timeStampPrevious;
-                            deltaTimeCurrent = tempDelta * 1u / 3u;
-                        }
-
-                        //if (tempStamp == timeStampPrevious)
-                        //{
-                        //    Console.WriteLine("PINEAPPLES");
-                        //}
-
-                        // Make sure timestamps don't match
-                        if (deltaTimeCurrent != 0)
-                        {
-                            elapsedDeltaTime = 0.000001 * deltaTimeCurrent; // Convert from microseconds to seconds
-                            currentState.totalMicroSec = pState.totalMicroSec + deltaTimeCurrent;
-                        }
-                        else
-                        {
-                            // Duplicate timestamp. Use system clock for elapsed time instead
-                            elapsedDeltaTime = lastTimeElapsedDouble * .001;
-                            currentState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
-                        }
-
-                        //Console.WriteLine("{0} {1} {2} {3} {4} Diff({5}) TSms({6}) Sys({7})", tempStamp, inputReport[31 + reportOffset], inputReport[30 + reportOffset], inputReport[29 + reportOffset], inputReport[28 + reportOffset], tempStamp - timeStampPrevious, elapsedDeltaTime, lastTimeElapsedDouble * 0.001);
-
-                        currentState.elapsedTime = elapsedDeltaTime;
-                        currentState.ds4Timestamp = (ushort)((tempStamp / 16) % ushort.MaxValue);
-                        timeStampPrevious = tempStamp;
-
-                        //elapsedDeltaTime = lastTimeElapsedDouble * .001;
-                        //cState.elapsedTime = elapsedDeltaTime;
-                        //cState.totalMicroSec = pState.totalMicroSec + (uint)(elapsedDeltaTime * 1000000);
-
-                        // Simpler touch storing
-                        currentState.TrackPadTouch0.RawTrackingNum = inputReport[33 + reportOffset];
-                        currentState.TrackPadTouch0.Id = (byte)(inputReport[33 + reportOffset] & 0x7f);
-                        currentState.TrackPadTouch0.IsActive = (inputReport[33 + reportOffset] & 0x80) == 0;
-                        currentState.TrackPadTouch0.X = (short)(((ushort)(inputReport[35 + reportOffset] & 0x0f) << 8) |
-                                                          (ushort)(inputReport[34 + reportOffset]));
-                        currentState.TrackPadTouch0.Y = (short)(((ushort)(inputReport[36 + reportOffset]) << 4) |
-                                                          ((ushort)(inputReport[35 + reportOffset] & 0xf0) >> 4));
-
-                        currentState.TrackPadTouch1.RawTrackingNum = inputReport[37 + reportOffset];
-                        currentState.TrackPadTouch1.Id = (byte)(inputReport[37 + reportOffset] & 0x7f);
-                        currentState.TrackPadTouch1.IsActive = (inputReport[37 + reportOffset] & 0x80) == 0;
-                        currentState.TrackPadTouch1.X = (short)(((ushort)(inputReport[39 + reportOffset] & 0x0f) << 8) |
-                                                          (ushort)(inputReport[38 + reportOffset]));
-                        currentState.TrackPadTouch1.Y = (short)(((ushort)(inputReport[40 + reportOffset]) << 4) |
-                                                          ((ushort)(inputReport[39 + reportOffset] & 0xf0) >> 4));
-
-                        // XXX DS4State mapping needs fixup, turn touches into an array[4] of structs.  And include the touchpad details there instead.
-                        try
-                        {
-                            // Only care if one touch packet is detected. Other touch packets
-                            // don't seem to contain relevant data. ds4drv does not use them either.
-                            int touchOffset = 0;
-
-                            currentState.TouchPacketCounter =
-                                inputReport[8 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset];
-                            currentState.Touch1 =
-                                (inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0
-                                    ? false
-                                    : true; // finger 1 detected
-                            currentState.Touch1Identifier =
-                                (byte)(inputReport[0 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0x7f);
-                            currentState.Touch2 =
-                                (inputReport[4 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] >> 7) != 0
-                                    ? false
-                                    : true; // finger 2 detected
-                            currentState.Touch2Identifier =
-                                (byte)(inputReport[4 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0x7f);
-                            currentState.Touch1Finger = currentState.Touch1 || currentState.Touch2; // >= 1 touch detected
-                            currentState.Touch2Fingers = currentState.Touch1 && currentState.Touch2; // 2 touches detected
-                            int touchX =
-                                (((inputReport[2 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset] & 0xF) << 8) |
-                                 inputReport[1 + TOUCHPAD_DATA_OFFSET + reportOffset + touchOffset]);
-                            currentState.TouchLeft = touchX >= DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
-                            currentState.TouchRight = touchX < DS4Touchpad.RESOLUTION_X_MAX * 2 / 5 ? false : true;
-                            // Even when idling there is still a touch packet indicating no touch 1 or 2
-                            if (synced)
-                            {
-                                touchpad.handleTouchpad(inputReport, currentState, TOUCHPAD_DATA_OFFSET + reportOffset,
-                                    touchOffset);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            currerror = $"Touchpad: {ex.Message}";
-                        }
-
-                        fixed (byte* pbInput = &inputReport[16 + reportOffset], pbGyro = gyro, pbAccel = accel)
-                        {
-                            for (int i = 0; i < 6; i++)
-                            {
-                                pbGyro[i] = pbInput[i];
-                            }
-
-                            for (int i = 6; i < 12; i++)
-                            {
-                                pbAccel[i - 6] = pbInput[i];
-                            }
-
-                            if (synced)
-                            {
-                                sixAxis.handleSixaxis(pbGyro, pbAccel, currentState, elapsedDeltaTime);
-                            }
-                        }
-
-                        /* Debug output of incoming HID data:
-                        if (cState.L2 == 0xff && cState.R2 == 0xff)
-                        {
-                            Console.Write(MacAddress.ToString() + " " + System.DateTime.UtcNow.ToString("o") + ">");
-                            for (int i = 0; i < inputReport.Length; i++)
-                                Console.Write(" " + inputReport[i].ToString("x2"));
-                            Console.WriteLine();
-                        }
-                        ///*/
-
-                        if (conType == ConnectionType.USB)
-                        {
-                            if (idleTimeout == 0)
+                            idleInput = isDS4Idle();
+                            if (!idleInput)
                             {
                                 lastActive = utcNow;
                             }
-                            else
-                            {
-                                idleInput = isDS4Idle();
-                                if (!idleInput)
-                                {
-                                    lastActive = utcNow;
-                                }
-                            }
                         }
-                        else
+                    }
+                    else
+                    {
+                        bool shouldDisconnect = false;
+                        if (!isRemoved && idleTimeout > 0)
                         {
-                            bool shouldDisconnect = false;
-                            if (!isRemoved && idleTimeout > 0)
+                            idleInput = isDS4Idle();
+                            if (idleInput)
                             {
-                                idleInput = isDS4Idle();
-                                if (idleInput)
-                                {
-                                    DateTime timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);
-                                    if (!charging)
-                                        shouldDisconnect = utcNow >= timeout;
-                                }
-                                else
-                                {
-                                    lastActive = utcNow;
-                                }
+                                DateTime timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);
+                                if (!charging)
+                                    shouldDisconnect = utcNow >= timeout;
                             }
                             else
                             {
                                 lastActive = utcNow;
                             }
+                        }
+                        else
+                        {
+                            lastActive = utcNow;
+                        }
 
-                            if (shouldDisconnect)
+                        if (shouldDisconnect)
+                        {
+                            AppLogger.LogToGui(Mac.ToString() + " disconnecting due to idle disconnect", false);
+
+                            if (conType == ConnectionType.BT)
                             {
-                                AppLogger.LogToGui(Mac.ToString() + " disconnecting due to idle disconnect", false);
-
-                                if (conType == ConnectionType.BT)
+                                if (DisconnectBT(true))
                                 {
-                                    if (DisconnectBT(true))
-                                    {
-                                        exitInputThread = true;
-                                        timeoutExecuted = true;
-                                        return; // all done
-                                    }
+                                    exitInputThread = true;
+                                    timeoutExecuted = true;
+                                    return; // all done
                                 }
                             }
                         }
+                    }
 
-                        Report?.Invoke(this, EventArgs.Empty);
+                    Report?.Invoke(this, EventArgs.Empty);
 
-                        PrepareOutReport();
-                        if (outputDirty)
+                    PrepareOutReport();
+                    if (outputDirty)
+                    {
+                        WriteReport();
+                        PreviousHapticState = (DS4HapticState)CurrentHaptics.Clone();
+                    }
+
+                    outputDirty = false;
+                    //forceWrite = false;
+
+                    if (!string.IsNullOrEmpty(currerror))
+                        error = currerror;
+                    else if (!string.IsNullOrEmpty(error))
+                        error = string.Empty;
+
+                    currentState.CopyTo(pState);
+
+                    if (hasInputEvts)
+                    {
+                        lock (eventQueueLock)
                         {
-                            WriteReport();
-                            PreviousHapticState = (DS4HapticState)CurrentHaptics.Clone();
-                        }
-
-                        outputDirty = false;
-                        //forceWrite = false;
-
-                        if (!string.IsNullOrEmpty(currerror))
-                            error = currerror;
-                        else if (!string.IsNullOrEmpty(error))
-                            error = string.Empty;
-
-                        currentState.CopyTo(pState);
-
-                        if (hasInputEvts)
-                        {
-                            lock (eventQueueLock)
+                            Action tempAct = null;
+                            for (int actInd = 0, actLen = eventQueue.Count; actInd < actLen; actInd++)
                             {
-                                Action tempAct = null;
-                                for (int actInd = 0, actLen = eventQueue.Count; actInd < actLen; actInd++)
-                                {
-                                    tempAct = eventQueue.Dequeue();
-                                    tempAct.Invoke();
-                                }
-
-                                hasInputEvts = false;
+                                tempAct = eventQueue.Dequeue();
+                                tempAct.Invoke();
                             }
+
+                            hasInputEvts = false;
                         }
+
                     }
                 }
             }
@@ -1032,9 +1035,9 @@ namespace DS4Windows.InputDevices
                 outputReport[11] = r2EffectData.triggerMotorMode; // right trigger motor mode (0 = no resistance, 1 = continuous resistance, 2 = section resistance, 0x20 and 0x04 enable additional effects together with 1 and 2 (configuration yet unknown), 252 = likely a calibration program* / PS Remote Play defaults this to 5; bit 4 only disables the motor?)
                 outputReport[12] = r2EffectData.triggerStartResistance; // right trigger start of resistance section 0-255 (0 = released state; 0xb0 roughly matches trigger value 0xff); in mode 26 this field has something to do with motor re-extension after a press-release-cycle (0 = no re-extension)
                 outputReport[13] = r2EffectData.triggerEffectForce; // right trigger
-                                         // (mode1) amount of force exerted; 0-255
-                                         // (mode2) end of resistance section (>= begin of resistance section is enforced); 0xff makes it behave like mode1
-                                         // (supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully pressed
+                                                                    // (mode1) amount of force exerted; 0-255
+                                                                    // (mode2) end of resistance section (>= begin of resistance section is enforced); 0xff makes it behave like mode1
+                                                                    // (supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully pressed
                 outputReport[14] = r2EffectData.triggerRangeForce; // right trigger force exerted in range (mode2), 0-255
                 outputReport[15] = r2EffectData.triggerNearReleaseStrength; // strength of effect near release state (requires supplement modes 4 and 20)
                 outputReport[16] = r2EffectData.triggerNearMiddleStrength; // strength of effect near middle (requires supplement modes 4 and 20)
@@ -1046,9 +1049,9 @@ namespace DS4Windows.InputDevices
                 outputReport[22] = l2EffectData.triggerMotorMode; // left trigger motor mode (0 = no resistance, 1 = continuous resistance, 2 = section resistance, 0x20 and 0x04 enable additional effects together with 1 and 2 (configuration yet unknown), 252 = likely a calibration program* / PS Remote Play defaults this to 5; bit 4 only disables the motor?)
                 outputReport[23] = l2EffectData.triggerStartResistance; // left trigger start of resistance section 0-255 (0 = released state; 0xb0 roughly matches trigger value 0xff); in mode 26 this field has something to do with motor re-extension after a press-release-cycle (0 = no re-extension)
                 outputReport[24] = l2EffectData.triggerEffectForce; // left trigger
-                                         // (mode1) amount of force exerted; 0-255
-                                         // (mode2) end of resistance section (>= begin of resistance section is enforced); 0xff makes it behave like mode1
-                                         // (supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully pressed
+                                                                    // (mode1) amount of force exerted; 0-255
+                                                                    // (mode2) end of resistance section (>= begin of resistance section is enforced); 0xff makes it behave like mode1
+                                                                    // (supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully pressed
                 outputReport[25] = l2EffectData.triggerRangeForce; // left trigger: (mode2) amount of force exerted within range; 0-255
                 outputReport[26] = l2EffectData.triggerNearReleaseStrength; // strength of effect near release state (requires supplement modes 4 and 20)
                 outputReport[27] = l2EffectData.triggerNearMiddleStrength; // strength of effect near middle (requires supplement modes 4 and 20)

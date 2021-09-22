@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
 {
@@ -352,6 +353,9 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
+                    using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(JoyConDevice)}::{nameof(ReadInput)}")
+                        .StartActive(true);
+
                     oldCharging = charging;
                     currerror = string.Empty;
 

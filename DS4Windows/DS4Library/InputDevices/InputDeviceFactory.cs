@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DS4Windows.InputDevices
+﻿namespace DS4Windows.InputDevices
 {
     public enum InputDeviceType : uint
     {
@@ -12,7 +6,7 @@ namespace DS4Windows.InputDevices
         SwitchPro,
         JoyConL,
         JoyConR,
-        DualSense,
+        DualSense
     }
 
     public abstract class InputDeviceFactory
@@ -22,7 +16,7 @@ namespace DS4Windows.InputDevices
         {
             DS4Device temp = null;
 
-            switch(tempType)
+            switch (tempType)
             {
                 case InputDeviceType.DS4:
                     temp = new DS4Device(hidDevice, disName, featureSet);

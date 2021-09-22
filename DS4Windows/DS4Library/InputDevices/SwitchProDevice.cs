@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
 {
@@ -366,6 +367,9 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
+                    using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SwitchProDevice)}::{nameof(ReadInput)}")
+                        .StartActive(true);
+
                     oldCharging = charging;
                     currerror = string.Empty;
 
