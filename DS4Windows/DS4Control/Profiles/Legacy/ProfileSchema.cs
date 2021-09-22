@@ -145,7 +145,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int DeadZoneY { get; set; }
 
         [XmlElement(ElementName = "Triggers")] 
-        public int Triggers { get; set; }
+        public string Triggers { get; set; }
 
         [XmlElement(ElementName = "TriggerCond")]
         public string TriggerCond { get; set; }
@@ -154,7 +154,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool TriggerTurns { get; set; }
 
         [XmlElement(ElementName = "XAxis")] 
-        public string XAxis { get; set; }
+        public GyroDirectionalSwipeInfo.XAxisSwipe XAxis { get; set; }
 
         [XmlElement(ElementName = "DelayTime")]
         public int DelayTime { get; set; }
@@ -516,10 +516,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int GyroMouseStickVerticalScale { get; set; }
 
         [XmlElement(ElementName = "GyroMouseStickSmoothingSettings")]
-        public GyroMouseStickSmoothingSettings GyroMouseStickSmoothingSettings { get; set; }
+        public GyroMouseStickSmoothingSettings GyroMouseStickSmoothingSettings { get; set; } = new();
 
         [XmlElement(ElementName = "GyroSwipeSettings")]
-        public GyroSwipeSettings GyroSwipeSettings { get; set; }
+        public GyroSwipeSettings GyroSwipeSettings { get; set; } = new();
 
         [XmlElement(ElementName = "ProfileActions")]
         public string ProfileActions { get; set; }
@@ -840,6 +840,27 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             GyroMouseStickMaxOutput = store.GyroMouseStickInfo[device].MaxOutput;
             GyroMouseStickMaxOutputEnabled = store.GyroMouseStickInfo[device].MaxOutputEnabled;
             GyroMouseStickVerticalScale = store.GyroMouseStickInfo[device].VertScale;
+
+            GyroMouseStickSmoothingSettings.UseSmoothing = store.GyroMouseStickInfo[device].UseSmoothing;
+            GyroMouseStickSmoothingSettings.SmoothingMethod = store.GyroMouseStickInfo[device].SmoothMethodIdentifier();
+            GyroMouseStickSmoothingSettings.SmoothingWeight = Convert.ToInt32(store.GyroMouseStickInfo[device].SmoothWeight * 100);
+            GyroMouseStickSmoothingSettings.SmoothingMinCutoff = store.GyroMouseStickInfo[device].minCutoff;
+            GyroMouseStickSmoothingSettings.SmoothingBeta = store.GyroMouseStickInfo[device].beta;
+
+            GyroSwipeSettings.DeadZoneX = store.GyroSwipeInfo[device].deadzoneX;
+            GyroSwipeSettings.DeadZoneY = store.GyroSwipeInfo[device].deadzoneY;
+            GyroSwipeSettings.Triggers = store.GyroSwipeInfo[device].triggers;
+            GyroSwipeSettings.TriggerCond = store.SaTriggerCondString(store.GyroSwipeInfo[device].triggerCond);
+            GyroSwipeSettings.TriggerTurns = store.GyroSwipeInfo[device].triggerTurns;
+            GyroSwipeSettings.XAxis = store.GyroSwipeInfo[device].xAxis;
+            GyroSwipeSettings.DelayTime = store.GyroSwipeInfo[device].delayTime;
+
+
+
+
+
+
+
 
 
 
