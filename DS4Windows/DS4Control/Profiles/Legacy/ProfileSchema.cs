@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -208,7 +209,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool OutputDataToDS4 { get; set; }
 
         [XmlElement(ElementName = "Color")] 
-        public double Color { get; set; }
+        public DS4Color Color { get; set; }
 
         [XmlElement(ElementName = "RumbleBoost")]
         public int RumbleBoost { get; set; }
@@ -232,13 +233,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int TouchSensitivity { get; set; }
 
         [XmlElement(ElementName = "LowColor")] 
-        public double LowColor { get; set; }
+        public DS4Color LowColor { get; set; }
 
         [XmlElement(ElementName = "ChargingColor")]
         public double ChargingColor { get; set; }
 
         [XmlElement(ElementName = "FlashColor")]
-        public double FlashColor { get; set; }
+        public DS4Color FlashColor { get; set; }
 
         [XmlElement(ElementName = "touchpadJitterCompensation")]
         public bool TouchpadJitterCompensation { get; set; }
