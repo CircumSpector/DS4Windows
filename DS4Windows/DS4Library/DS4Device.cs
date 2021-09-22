@@ -1509,7 +1509,7 @@ namespace DS4Windows
 
                         for (var i = 6; i < 12; i++) pbAccel[i - 6] = pbInput[i];
 
-                        if (synced) sixAxis.handleSixaxis(pbGyro, pbAccel, currentState, elapsedDeltaTime);
+                        if (synced) sixAxis.HandleSixAxis(pbGyro, pbAccel, currentState, elapsedDeltaTime);
                     }
 
                     /* Debug output of incoming HID data:

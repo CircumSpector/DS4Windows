@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using DS4Windows.InputDevices;
+using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -39,11 +41,14 @@ namespace DS4Windows
             int aX, int aY, int aZ,
             double elapsedDelta, SixAxis prevAxis = null)
         {
-            populate(X, Y, Z, aX, aY, aZ, elapsedDelta, prevAxis);
+            Populate(X, Y, Z, aX, aY, aZ, elapsedDelta, prevAxis);
         }
 
-        public void copy(SixAxis src)
+        public void CopyFrom(SixAxis src)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(CopyFrom)}")
+                .StartActive(true);
+
             gyroYaw = src.gyroYaw;
             gyroPitch = src.gyroPitch;
             gyroRoll = src.gyroRoll;
@@ -72,10 +77,13 @@ namespace DS4Windows
             outputGyroControls = src.outputGyroControls;
         }
 
-        public void populate(int X, int Y, int Z,
+        public void Populate(int X, int Y, int Z,
             int aX, int aY, int aZ,
             double elapsedDelta, SixAxis prevAxis = null)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(Populate)}")
+                .StartActive(true);
+
             gyroYaw = -X / 256;
             gyroPitch = Y / 256;
             gyroRoll = -Z / 256;
@@ -298,9 +306,12 @@ namespace DS4Windows
             accelZ = temInt = (int)(temInt * (current.sensNumer / (float)current.sensDenom));
         }
 
-        public unsafe void handleSixaxis(byte* gyro, byte* accel, DS4State state,
+        public unsafe void HandleSixAxis(byte* gyro, byte* accel, DS4State state,
             double elapsedDelta)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(HandleSixAxis)}")
+                .StartActive(true);
+
             unchecked
             {
                 int currentYaw = (short)((ushort)(gyro[3] << 8) | gyro[2]);
@@ -329,8 +340,8 @@ namespace DS4Windows
                 {
                     if (SixAccelMoved != null)
                     {
-                        sPrev.copy(now);
-                        now.populate(currentYaw, currentPitch, currentRoll,
+                        sPrev.CopyFrom(now);
+                        now.Populate(currentYaw, currentPitch, currentRoll,
                             AccelX, AccelY, AccelZ, elapsedDelta, sPrev);
 
                         args = new SixAxisEventArgs(state.ReportTimeStamp, now);
@@ -439,6 +450,9 @@ namespace DS4Windows
 
         public void AverageGyro(ref int x, ref int y, ref int z, ref double accelMagnitude)
         {
+            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(AverageGyro)}")
+                .StartActive(true);
+
             double weight = 0.0;
             double totalX = 0.0;
             double totalY = 0.0;

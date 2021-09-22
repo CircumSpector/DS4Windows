@@ -696,7 +696,7 @@ namespace DS4Windows.InputDevices
                     else if (!string.IsNullOrEmpty(error))
                         error = string.Empty;
 
-                    pState.Motion.copy(currentState.Motion);
+                    pState.Motion.CopyFrom(currentState.Motion);
                     currentState.CopyTo(pState);
 
                     if (hasInputEvts)

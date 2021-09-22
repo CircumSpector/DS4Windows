@@ -816,7 +816,7 @@ namespace DS4Windows.InputDevices
 
                         if (synced)
                         {
-                            sixAxis.handleSixaxis(pbGyro, pbAccel, currentState, elapsedDeltaTime);
+                            sixAxis.HandleSixAxis(pbGyro, pbAccel, currentState, elapsedDeltaTime);
                         }
                     }
 
