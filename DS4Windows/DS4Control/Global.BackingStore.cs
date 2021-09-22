@@ -1123,6 +1123,7 @@ namespace DS4Windows
                         .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))
                         .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                         .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
+                        .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
                         .Create();
 
                     var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using System.Xml.Serialization;
 using DS4Windows;
@@ -83,7 +85,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class GyroControlsSettings
     {
         [XmlElement(ElementName = "Triggers")] 
-        public int Triggers { get; set; }
+        public string Triggers { get; set; }
 
         [XmlElement(ElementName = "TriggerCond")]
         public string TriggerCond { get; set; }
@@ -421,7 +423,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string SATriggerCond { get; set; }
 
         [XmlElement(ElementName = "SASteeringWheelEmulationAxis")]
-        public string SASteeringWheelEmulationAxis { get; set; }
+        public SASteeringWheelEmulationAxisType SASteeringWheelEmulationAxis { get; set; }
 
         [XmlElement(ElementName = "SASteeringWheelEmulationRange")]
         public int SASteeringWheelEmulationRange { get; set; }
@@ -430,10 +432,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int SASteeringWheelFuzz { get; set; }
 
         [XmlElement(ElementName = "SASteeringWheelSmoothingOptions")]
-        public SASteeringWheelSmoothingOptions SASteeringWheelSmoothingOptions { get; set; }
+        public SASteeringWheelSmoothingOptions SASteeringWheelSmoothingOptions { get; set; } = new();
 
         [XmlElement(ElementName = "TouchDisInvTriggers")]
-        public int TouchDisInvTriggers { get; set; }
+        public List<int> TouchDisInvTriggers { get; set; }
 
         [XmlElement(ElementName = "GyroSensitivity")]
         public int GyroSensitivity { get; set; }
@@ -448,7 +450,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool GyroTriggerTurns { get; set; }
 
         [XmlElement(ElementName = "GyroControlsSettings")]
-        public GyroControlsSettings GyroControlsSettings { get; set; }
+        public GyroControlsSettings GyroControlsSettings { get; set; } = new();
 
         [XmlElement(ElementName = "GyroMouseSmoothingSettings")]
         public GyroMouseSmoothingSettings GyroMouseSmoothingSettings { get; set; }
@@ -791,6 +793,26 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             TouchpadOutputMode = store.TouchOutMode[device];
             SATriggers = store.SATriggers[device];
             SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
+            SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
+            SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
+            SASteeringWheelFuzz = store.SAWheelFuzzValues[device];
+            
+            SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing = store.WheelSmoothInfo[device].Enabled;
+            SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff = store.WheelSmoothInfo[device].MinCutoff;
+            SASteeringWheelSmoothingOptions.SASteeringWheelSmoothBeta = store.WheelSmoothInfo[device].Beta;
+
+            TouchDisInvTriggers = store.TouchDisInvertTriggers[device].ToList();
+
+            GyroSensitivity = store.GyroSensitivity[device];
+            GyroSensVerticalScale = store.GyroSensVerticalScale[device];
+            GyroInvert = store.GyroInvert[device];
+            GyroTriggerTurns = store.GyroTriggerTurns[device];
+
+            GyroControlsSettings.Triggers = store.GyroControlsInfo[device].Triggers;
+            GyroControlsSettings.TriggerCond = store.SaTriggerCondString(store.GyroControlsInfo[device].TriggerCond);
+            GyroControlsSettings.TriggerTurns = store.GyroControlsInfo[device].TriggerTurns;
+            GyroControlsSettings.Toggle = store.GyroControlsInfo[device].TriggerToggle;
+            
         }
     }
 }
