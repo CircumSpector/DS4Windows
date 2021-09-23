@@ -1148,7 +1148,7 @@ namespace DS4Windows
             }
         }
 
-        public bool Start(bool showlog = true)
+        public async Task<bool> Start(bool showlog = true)
         {
             inServiceTask = true;
             StartViGEm();
@@ -1276,7 +1276,7 @@ namespace DS4Windows
                                 Global.LinkedProfileCheck[i] = false;
                             }
 
-                            profileLoaded = Global.Instance.LoadProfile(i, false, this, false, false);
+                            profileLoaded = await Global.Instance.LoadProfile(i, false, this, false, false);
                         }
 
                         if (profileLoaded || useAutoProfile)
@@ -1570,7 +1570,7 @@ namespace DS4Windows
             return true;
         }
 
-        public bool HotPlug()
+        public async Task<bool> HotPlug()
         {
             if (running)
             {
@@ -1715,7 +1715,7 @@ namespace DS4Windows
                                     Global.LinkedProfileCheck[Index] = false;
                                 }
 
-                                profileLoaded = Global.Instance.LoadProfile(Index, false, this, false, false);
+                                profileLoaded = await Global.Instance.LoadProfile(Index, false, this, false, false);
                             }
 
                             if (profileLoaded || useAutoProfile)

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace DS4Windows
@@ -112,10 +113,10 @@ namespace DS4Windows
             Mapping.actionDone.Add(new Mapping.ActionState());
         }
 
-        public bool LoadProfile(int device, bool launchprogram, ControlService control,
+        public async Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
             bool xinputChange = true, bool postLoad = true)
         {
-            var result = _config.LoadProfile(device, launchprogram, control, "", xinputChange, postLoad);
+            var result = await _config.LoadProfile(device, launchprogram, control, "", xinputChange, postLoad);
             TempProfileNames[device] = string.Empty;
             UseTempProfiles[device] = false;
             TempProfileDistance[device] = false;
@@ -123,10 +124,10 @@ namespace DS4Windows
             return result;
         }
 
-        public bool LoadTempProfile(int device, string name, bool launchprogram,
+        public async Task<bool> LoadTempProfile(int device, string name, bool launchprogram,
             ControlService control, bool xinputChange = true)
         {
-            var result = _config.LoadProfile(device, launchprogram, control,
+            var result = await _config.LoadProfile(device, launchprogram, control,
                 RuntimeAppDataPath + @"\Profiles\" + name + ".xml");
             TempProfileNames[device] = name;
             UseTempProfiles[device] = true;

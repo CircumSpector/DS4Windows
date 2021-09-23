@@ -137,17 +137,17 @@ namespace DS4WinWPF.DS4Forms
 
         public void LateChecks(ArgumentParser parser)
         {
-            Task tempTask = Task.Run(() =>
+            Task tempTask = Task.Run(async () =>
             {
                 CheckDrivers();
                 if (!parser.Stop)
                 {
-                    Dispatcher.BeginInvoke((Action)(() =>
+                    await Dispatcher.BeginInvoke((Action)(() =>
                     {
                         StartStopBtn.IsEnabled = false;
                     }));
                     Thread.Sleep(1000);
-                    App.rootHub.Start();
+                    await App.rootHub.Start();
                     //root.rootHubtest.Start();
                 }
             });
@@ -519,7 +519,7 @@ Suspend support not enabled.", true);
             autoprofileChecker.AutoProfileDebugLogLevel = autoProfControl.AutoDebug == true ? 1 : 0;
         }
 
-        private void PowerEventArrive(object sender, EventArrivedEventArgs e)
+        private async void PowerEventArrive(object sender, EventArrivedEventArgs e)
         {
             short evType = Convert.ToInt16(e.NewEvent.GetPropertyValue("EventType"));
             switch (evType)
@@ -533,12 +533,12 @@ Suspend support not enabled.", true);
                     {
                         wasrunning = false;
                         Thread.Sleep(16000);
-                        Dispatcher.BeginInvoke((Action)(() =>
+                        await Dispatcher.BeginInvoke((Action)(() =>
                         {
                             StartStopBtn.IsEnabled = false;
                         }));
 
-                        App.rootHub.Start();
+                        await App.rootHub.Start();
                     }
 
                     break;
@@ -549,7 +549,7 @@ Suspend support not enabled.", true);
 
                     if (App.rootHub.running)
                     {
-                        Dispatcher.BeginInvoke((Action)(() =>
+                        await Dispatcher.BeginInvoke((Action)(() =>
                         {
                             StartStopBtn.IsEnabled = false;
                         }));
@@ -719,11 +719,11 @@ Suspend support not enabled.", true);
             }
         }
 
-        private void AutoProfilesTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private async void AutoProfilesTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             autoProfilesTimer.Stop();
             //Console.WriteLine("Event triggered");
-            autoprofileChecker.Process();
+            await autoprofileChecker.Process();
 
             if (autoprofileChecker.Running)
             {
@@ -814,12 +814,12 @@ Suspend support not enabled.", true);
             App root = Application.Current as App;
             //Tester service = root.rootHubtest;
             ControlService service = App.rootHub;
-            Task serviceTask = Task.Run(() =>
+            Task serviceTask = Task.Run(async () =>
             {
                 if (service.running)
                     service.Stop(immediateUnplug: true);
                 else
-                    service.Start();
+                    await service.Start();
             });
 
             // Log exceptions that might occur
@@ -925,7 +925,7 @@ Suspend support not enabled.", true);
         /// <summary>
         /// Change profile based on selection
         /// </summary>
-        private void SelectProfCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void SelectProfCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox box = sender as ComboBox;
             int idx = Convert.ToInt32(box.Tag);
@@ -934,7 +934,7 @@ Suspend support not enabled.", true);
                 CompositeDeviceModel item = conLvViewModel.ControllerDict[idx];
                 if (item.SelectedIndex > -1)
                 {
-                    item.ChangeSelectedProfile();
+                    await item.ChangeSelectedProfile();
                     trayIconVM.PopulateContextMenu();
                 }
             }
@@ -1154,7 +1154,7 @@ Suspend support not enabled.", true);
                                         }
                                         else
                                         {
-                                            Global.Instance.LoadTempProfile(tdevice, strData[2], true, Program.rootHub);
+                                            Global.Instance.LoadTempProfile(tdevice, strData[2], true, Program.rootHub).Wait();
                                         }
 
                                         DS4Device device = conLvViewModel.ControllerCol[tdevice].Device;
@@ -1261,7 +1261,7 @@ Suspend support not enabled.", true);
             return IntPtr.Zero;
         }
 
-        private void InnerHotplug2()
+        private async void InnerHotplug2()
         {
             inHotPlug = true;
 
@@ -1275,7 +1275,7 @@ Suspend support not enabled.", true);
             while (loopHotplug == true)
             {
                 Thread.Sleep(HOTPLUG_CHECK_DELAY);
-                Program.rootHub.HotPlug();
+                await Program.rootHub.HotPlug();
                 lock (hotplugCounterLock)
                 {
                     hotplugCounter--;
@@ -1328,10 +1328,10 @@ Suspend support not enabled.", true);
             StartStopBtn.IsEnabled = false;
             //bool checkStatus = hideDS4ContCk.IsChecked == true;
             hideDS4ContCk.IsEnabled = false;
-            Task serviceTask = Task.Run(() =>
+            Task serviceTask = Task.Run(async () =>
             {
                 App.rootHub.Stop();
-                App.rootHub.Start();
+                await App.rootHub.Start();
             });
 
             // Log exceptions that might occur
@@ -1637,7 +1637,7 @@ Suspend support not enabled.", true);
             ShowProfileEditor(Global.TEST_PROFILE_INDEX, null);
         }
 
-        private void ShowProfileEditor(int device, ProfileEntity entity = null)
+        private async void ShowProfileEditor(int device, ProfileEntity entity = null)
         {
             if (editor == null)
             {
@@ -1662,7 +1662,7 @@ Suspend support not enabled.", true);
                 editor.CreatedProfile += Editor_CreatedProfile;
                 editor.Closed += ProfileEditor_Closed;
                 profDockPanel.Children.Add(editor);
-                editor.Reload(device, entity);
+                await editor.Reload(device, entity);
             }
             
         }

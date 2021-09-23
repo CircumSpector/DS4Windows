@@ -3653,7 +3653,7 @@ namespace DS4Windows
                                             (device + 1).ToString(), action.Details, $"{d.Battery}");
 
                                         AppLogger.LogToGui(prolog, false);
-                                        Global.Instance.LoadTempProfile(device, action.Details, true, ctrl);
+                                        await Global.Instance.LoadTempProfile(device, action.Details, true, ctrl);
                                         //LoadProfile(device, false, ctrl);
 
                                         if (action.UTrigger.Count == 0 && !action.AutomaticUnTrigger)
@@ -4188,10 +4188,10 @@ namespace DS4Windows
                                 untriggeraction[device] = null;
 
                                 if (profileName == string.Empty)
-                                    Global.Instance.LoadProfile(device, false,
+                                    await Global.Instance.LoadProfile(device, false,
                                         ctrl); // Previous profile was a regular default profile of a controller
                                 else
-                                    Global.Instance.LoadTempProfile(device, profileName, true,
+                                    await Global.Instance.LoadTempProfile(device, profileName, true,
                                         ctrl); // Previous profile was a temporary profile, so re-load it as a temp profile
                             }
                         }

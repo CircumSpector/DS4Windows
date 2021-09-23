@@ -516,7 +516,7 @@ namespace DS4WinWPF.DS4Forms
             hoverImages[leftConBtn] = leftHover;
         }
 
-        public void Reload(int device, ProfileEntity profile = null)
+        public async Task Reload(int device, ProfileEntity profile = null)
         {
             profileSettingsTabCon.DataContext = null;
             mappingListBox.DataContext = null;
@@ -532,7 +532,7 @@ namespace DS4WinWPF.DS4Forms
                     Global.Instance.Config.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
                 }
 
-                Global.Instance.LoadProfile(device, false, App.rootHub, false);
+                await Global.Instance.LoadProfile(device, false, App.rootHub, false);
                 profileNameTxt.Text = profile.Name;
                 profileNameTxt.IsEnabled = false;
                 applyBtn.IsEnabled = true;
@@ -658,14 +658,14 @@ namespace DS4WinWPF.DS4Forms
             conReadingsUserCon.SixAxisZDead = profileSettingsVM.SZDeadZone;
         }
 
-        private void CancelBtn_Click(object sender, RoutedEventArgs e)
+        private async void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
                 App.rootHub.setRumble(0, 0, profileSettingsVM.FuncDevNum);
             }
             Global.OutDevTypeTemp[deviceNum] = OutContType.X360;
-            Global.Instance.LoadProfile(deviceNum, false, App.rootHub);
+            await Global.Instance.LoadProfile(deviceNum, false, App.rootHub);
             Closed?.Invoke(this, EventArgs.Empty);
         }
 

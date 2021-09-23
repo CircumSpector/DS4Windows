@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -369,7 +370,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             useCustomColor = Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed;
         }
 
-        public void ChangeSelectedProfile()
+        public async Task ChangeSelectedProfile()
         {
             if (this.selectedEntity != null)
             {
@@ -388,7 +389,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
 
             //Global.Save();
-            Global.Instance.LoadProfile(devIndex, true, App.rootHub);
+            await Global.Instance.LoadProfile(devIndex, true, App.rootHub);
             string prolog = string.Format(Properties.Resources.UsingProfile, (devIndex + 1).ToString(), prof, $"{device.Battery}");
             DS4Windows.AppLogger.LogToGui(prolog, false);
 
@@ -427,9 +428,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        private void SelectedEntity_ProfileSaved(object sender, EventArgs e)
+        private async void SelectedEntity_ProfileSaved(object sender, EventArgs e)
         {
-            Global.Instance.LoadProfile(devIndex, false, App.rootHub);
+            await Global.Instance.LoadProfile(devIndex, false, App.rootHub);
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 

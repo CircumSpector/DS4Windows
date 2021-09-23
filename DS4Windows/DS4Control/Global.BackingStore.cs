@@ -1091,16 +1091,29 @@ namespace DS4Windows
                     control.touchPad[index].ToggleGyroStick = value;
             }
 
-            public bool SaveAsNewProfile(int device, string proName)
+            public async Task<bool> SaveAsNewProfile(int device, string proName)
             {
                 var Saved = true;
                 ResetProfile(device);
-                Saved = SaveProfile(device, proName);
+                Saved = await SaveProfile(device, proName);
                 return Saved;
             }
 
+            private static async Task<IExtendedXmlSerializer> GetProfileSerializerAsync()
+            {
+                return await Task.Run(() =>
+                {
+                    return new ConfigurationContainer()
+                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))
+                        .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                        .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
+                        .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
+                        .Create();
+                });
+            }
+
             [ConfigurationSystemComponent]
-            public bool SaveProfile(int device, string proName)
+            public async Task<bool> SaveProfile(int device, string proName)
             {
                 var Saved = true;
                 //string path = Global.RuntimeAppDataPath + @"\Profiles\" + Path.GetFileNameWithoutExtension(proName) + ".xml";
@@ -1124,14 +1137,10 @@ namespace DS4Windows
                         CONFIG_VERSION
                     );
 
-                    IExtendedXmlSerializer serializer = new ConfigurationContainer()
-                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))
-                        .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
-                        .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
-                        .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
-                        .Create();
+                    var serializer = await GetProfileSerializerAsync();
 
-                    var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject);
+                    var document = await Task.Run(() =>
+                        serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject));
 
                     var betaPath = Path.Combine(
                         RuntimeAppDataPath,
@@ -1139,7 +1148,7 @@ namespace DS4Windows
                         $"{proName}-BETA{XML_EXTENSION}"
                     );
 
-                    File.WriteAllText(betaPath, document);
+                    await File.WriteAllTextAsync(betaPath, document);
                 }
 
                 using var scope = GlobalTracer.Instance.BuildSpan("Serialize").StartActive(true);
@@ -2285,7 +2294,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public bool LoadProfile(int device, bool launchprogram, ControlService control,
+            public async Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
                 var Loaded = true;
@@ -5087,7 +5096,7 @@ namespace DS4Windows
                 if ((missingSetting || migratePerformed) && Loaded) // && buttons != null)
                 {
                     var proName = Path.GetFileName(profilepath);
-                    SaveProfile(device, proName);
+                    await SaveProfile(device, proName);
                 }
 
                 if (Loaded)

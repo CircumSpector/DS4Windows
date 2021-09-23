@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DS4Windows
 {
@@ -454,9 +455,9 @@ namespace DS4Windows
 
         void SetGyroMouseStickToggle(int index, bool value, ControlService control);
 
-        bool SaveAsNewProfile(int device, string proName);
+        Task<bool> SaveAsNewProfile(int device, string proName);
 
-        bool SaveProfile(int device, string proName);
+        Task<bool> SaveProfile(int device, string proName);
 
         DS4Controls GetDs4ControlsByName(string key);
 
@@ -464,7 +465,7 @@ namespace DS4Windows
 
         string GetX360ControlString(X360Controls key);
 
-        bool LoadProfile(int device, bool launchprogram, ControlService control,
+        Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true);
 
         bool Load();
