@@ -953,7 +953,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         /// <param name="device">The zero-based device index to copy.</param>
-        public void CopyTo(ref IBackingStore store, int device)
+        public void CopyTo(IBackingStore store, int device)
         {
             var lightbarSettings = store.LightbarSettingInfo[device];
             var lightInfo = lightbarSettings.Ds4WinSettings;

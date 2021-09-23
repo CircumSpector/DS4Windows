@@ -3046,8 +3046,9 @@ namespace DS4Windows
 
                     using (var stream = File.OpenRead(profilepath))
                     {
-                        profileObject = await Task.Run(() =>
-                            serializer.Deserialize<DS4WindowsProfile>(stream));
+                        profileObject = await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream));
+
+                        profileObject.CopyTo(this, device);
                     }
 
                     XmlNode Item;
