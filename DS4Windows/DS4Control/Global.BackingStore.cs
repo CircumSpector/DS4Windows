@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.Properties;
 using ExtendedXmlSerializer;
@@ -2083,7 +2084,7 @@ namespace DS4Windows
                 // 
                 using (GlobalTracer.Instance.BuildSpan("Serialize-NEW").StartActive(true))
                 {
-                    var profileObject = new DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows(
+                    var profileObject = new DS4WindowsProfile(
                         this,
                         device,
                         ExecutableProductVersion,
@@ -3036,12 +3037,12 @@ namespace DS4Windows
                     // 
                     var serializer = await GetProfileSerializerAsync();
 
-                    DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows profileObject;
+                    DS4WindowsProfile profileObject;
 
                     using (var stream = File.OpenRead(profilepath))
                     {
                         profileObject = await Task.Run(() =>
-                            serializer.Deserialize<DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows>(stream));
+                            serializer.Deserialize<DS4WindowsProfile>(stream));
                     }
 
                     XmlNode Item;
@@ -7051,7 +7052,7 @@ namespace DS4Windows
                 return await Task.Run(() =>
                 {
                     return new ConfigurationContainer()
-                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))
+                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4WindowsProfile))
                         .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                         .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
                         .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)

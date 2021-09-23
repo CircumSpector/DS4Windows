@@ -202,7 +202,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     }
 
     [XmlRoot(ElementName = "DS4Windows")]
-    public class DS4Windows
+    public class DS4WindowsProfile
     {
         [XmlElement(ElementName = "touchToggle")]
         public bool TouchToggle { get; set; }
@@ -650,14 +650,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlAttribute(AttributeName = "config_version")]
         public int ConfigVersion { get; set; }
 
-        [XmlText] 
-        public string Text { get; set; }
-
-        public DS4Windows()
+        public DS4WindowsProfile()
         {
         }
 
-        public DS4Windows(IBackingStore store, int device, string appVersion, int configVersion)
+        public DS4WindowsProfile(IBackingStore store, int device, string appVersion, int configVersion)
         {
             AppVersion = appVersion;
             ConfigVersion = configVersion;
@@ -667,7 +664,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         /// <summary>
         ///     Converts properties from <see cref="IBackingStore" /> for a specified device index to this
-        ///     <see cref="DS4Windows" /> instance.
+        ///     <see cref="DS4WindowsProfile" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore"/>.</param>
         /// <param name="device">The zero-based device index to copy.</param>
