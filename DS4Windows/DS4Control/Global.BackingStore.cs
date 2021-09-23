@@ -597,7 +597,7 @@ namespace DS4Windows
                 if (devButtons != null) ds4controlSettings[deviceNum].EstablishExtraButtons(devButtons);
             }
 
-            public int SetLsOutCurveMode(int index)
+            public int GetLsOutCurveMode(int index)
             {
                 return _lsOutCurveMode[index];
             }
@@ -1334,12 +1334,6 @@ namespace DS4Windows
                     xmlRSDeadZoneType.InnerText = RSModInfo[device].DZType.ToString();
                     rootElement.AppendChild(xmlRSDeadZoneType);
 
-                    #endregion
-
-                    //
-                    // TODO: -- CONTINUE HERE --
-                    // 
-
                     var xmlLSAxialDeadGroupEl = m_Xdoc.CreateElement("LSAxialDeadOptions");
                     var xmlLSAxialDeadX = m_Xdoc.CreateElement("DeadZoneX");
                     xmlLSAxialDeadX.InnerText = LSModInfo[device].XAxisDeadInfo.DeadZone.ToString();
@@ -1693,7 +1687,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlBTPollRate);
 
                     var xmlLsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveMode", null);
-                    xmlLsOutputCurveMode.InnerText = stickOutputCurveString(SetLsOutCurveMode(device));
+                    xmlLsOutputCurveMode.InnerText = StickOutputCurveString(GetLsOutCurveMode(device));
                     rootElement.AppendChild(xmlLsOutputCurveMode);
                     var xmlLsOutputCurveCustom =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "LSOutputCurveCustom", null);
@@ -1701,7 +1695,7 @@ namespace DS4Windows
                     rootElement.AppendChild(xmlLsOutputCurveCustom);
 
                     var xmlRsOutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveMode", null);
-                    xmlRsOutputCurveMode.InnerText = stickOutputCurveString(GetRsOutCurveMode(device));
+                    xmlRsOutputCurveMode.InnerText = StickOutputCurveString(GetRsOutCurveMode(device));
                     rootElement.AppendChild(xmlRsOutputCurveMode);
                     var xmlRsOutputCurveCustom =
                         m_Xdoc.CreateNode(XmlNodeType.Element, "RSOutputCurveCustom", null);
@@ -1868,6 +1862,8 @@ namespace DS4Windows
                     var xmlOutContDevice = m_Xdoc.CreateNode(XmlNodeType.Element, "OutputContDevice", null);
                     xmlOutContDevice.InnerText = OutContDeviceString(OutputDeviceType[device]);
                     rootElement.AppendChild(xmlOutContDevice);
+
+                    #endregion
 
                     var NodeControl = m_Xdoc.CreateNode(XmlNodeType.Element, "Control", null);
                     var Key = m_Xdoc.CreateNode(XmlNodeType.Element, "Key", null);
@@ -4300,11 +4296,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSOutputCurveMode");
-                        SetLsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
+                        GetLsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        SetLsOutCurveMode(device, 0);
+                        GetLsOutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -7167,7 +7163,7 @@ namespace DS4Windows
                 LightbarSettingInfo[8].Ds4WinSettings.Led = new DS4Color(Color.White);
             }
 
-            private string stickOutputCurveString(int id)
+            public string StickOutputCurveString(int id)
             {
                 var result = "linear";
                 switch (id)
@@ -7229,7 +7225,7 @@ namespace DS4Windows
 
             public string AxisOutputCurveString(int id)
             {
-                return stickOutputCurveString(id);
+                return StickOutputCurveString(id);
             }
 
             private int axisOutputCurveId(string name)
@@ -7565,7 +7561,7 @@ namespace DS4Windows
                 LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
                 LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
                 LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
-                SetLsOutCurveMode(device, 0);
+                GetLsOutCurveMode(device, 0);
                 SetRsOutCurveMode(device, 0);
                 SetL2OutCurveMode(device, 0);
                 SetR2OutCurveMode(device, 0);

@@ -1476,7 +1476,7 @@ namespace DS4Windows
                     dState.LY = (byte)(tempY * capY + 128.0);
                 }
 
-                int lsOutCurveMode = Global.Instance.Config.SetLsOutCurveMode(device);
+                int lsOutCurveMode = Global.Instance.Config.GetLsOutCurveMode(device);
                 if (lsOutCurveMode > 0 && (dState.LX != 128 || dState.LY != 128))
                 {
                     double tempRatioX = 0.0, tempRatioY = 0.0;

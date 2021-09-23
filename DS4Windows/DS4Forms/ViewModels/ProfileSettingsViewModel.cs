@@ -942,10 +942,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LSOutputCurveIndex
         {
-            get => Global.Instance.Config.SetLsOutCurveMode(device);
+            get => Global.Instance.Config.GetLsOutCurveMode(device);
             set
             {
-                Global.Instance.Config.SetLsOutCurveMode(device, value);
+                Global.Instance.Config.GetLsOutCurveMode(device, value);
                 LSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -974,7 +974,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSCustomCurveSelected
         {
-            get => Global.Instance.Config.SetLsOutCurveMode(device) == 6;
+            get => Global.Instance.Config.GetLsOutCurveMode(device) == 6;
         }
         public event EventHandler LSCustomCurveSelectedChanged;
 

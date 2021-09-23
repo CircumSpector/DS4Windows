@@ -862,7 +862,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             ProfileActions = string.Join("/", store.ProfileActions[device]);
             BTPollRate = store.BluetoothPollRate[device];
 
-            // TODO: missing stuff
+            LSOutputCurveMode = store.StickOutputCurveString(store.GetLsOutCurveMode(device));
+            LSOutputCurveCustom = store.LSOutBezierCurveObj[device];
+
+            RSOutputCurveMode = store.StickOutputCurveString(store.GetRsOutCurveMode(device));
+            RSOutputCurveCustom = store.RSOutBezierCurveObj[device];
 
             LSSquareStick = store.SquStickInfo[device].LSMode;
             RSSquareStick = store.SquStickInfo[device].RSMode;
@@ -917,18 +921,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             L2OutputCurveMode = store.AxisOutputCurveString(store.GetL2OutCurveMode(device));
             L2OutputCurveCustom = store.L2OutBezierCurveObj[device];
 
-            //
-            // TODO: missing
-            // 
-
             L2TwoStageMode = store.L2OutputSettings[device].twoStageMode;
             R2TwoStageMode = store.R2OutputSettings[device].twoStageMode;
 
             L2TriggerEffect = store.L2OutputSettings[device].triggerEffect;
             R2TriggerEffect = store.R2OutputSettings[device].triggerEffect;
-
             
-
             R2OutputCurveMode = store.AxisOutputCurveString(store.GetR2OutCurveMode(device));
             R2OutputCurveCustom = store.R2OutBezierCurveObj[device];
 

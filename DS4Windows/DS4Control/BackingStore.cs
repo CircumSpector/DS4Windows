@@ -286,7 +286,7 @@ namespace DS4Windows
 
         DS4Color GetFlashColor(int index);
 
-        int SetLsOutCurveMode(int index);
+        int GetLsOutCurveMode(int index);
 
         void SetLsOutCurveMode(int index, int value);
 
@@ -462,6 +462,8 @@ namespace DS4Windows
         DS4Controls GetDs4ControlsByName(string key);
 
         X360Controls GetX360ControlsByName(string key);
+
+        string StickOutputCurveString(int id);
 
         string GetX360ControlString(X360Controls key);
 
