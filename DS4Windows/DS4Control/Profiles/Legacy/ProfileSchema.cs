@@ -394,7 +394,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int SZAntiDeadZone { get; set; }
 
         [XmlElement(ElementName = "Sensitivity")]
-        public SensitivityProxyType Sensitivity { get; set; }
+        public SensitivityProxyType Sensitivity { get; set; } = new();
 
         [XmlElement(ElementName = "ChargingType")]
         public int ChargingType { get; set; }
@@ -406,7 +406,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int ButtonMouseVerticalScale { get; set; }
 
         [XmlElement(ElementName = "LaunchProgram")]
-        public object LaunchProgram { get; set; }
+        public string LaunchProgram { get; set; }
 
         [XmlElement(ElementName = "DinputOnly")]
         public bool DinputOnly { get; set; }
@@ -436,7 +436,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public SASteeringWheelSmoothingOptions SASteeringWheelSmoothingOptions { get; set; } = new();
 
         [XmlElement(ElementName = "TouchDisInvTriggers")]
-        public List<int> TouchDisInvTriggers { get; set; }
+        public List<int> TouchDisInvTriggers { get; set; } = new();
 
         [XmlElement(ElementName = "GyroSensitivity")]
         public int GyroSensitivity { get; set; }
@@ -532,13 +532,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string LSOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "LSOutputCurveCustom")]
-        public object LSOutputCurveCustom { get; set; }
+        public BezierCurve LSOutputCurveCustom { get; set; }
 
         [XmlElement(ElementName = "RSOutputCurveMode")]
         public string RSOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "RSOutputCurveCustom")]
-        public object RSOutputCurveCustom { get; set; }
+        public BezierCurve RSOutputCurveCustom { get; set; }
 
         [XmlElement(ElementName = "LSSquareStick")]
         public bool LSSquareStick { get; set; }
@@ -586,7 +586,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string L2OutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "L2OutputCurveCustom")]
-        public object L2OutputCurveCustom { get; set; }
+        public BezierCurve L2OutputCurveCustom { get; set; }
 
         [XmlElement(ElementName = "L2TwoStageMode")]
         public TwoStageTriggerMode L2TwoStageMode { get; set; }
@@ -604,19 +604,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string R2OutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "R2OutputCurveCustom")]
-        public object R2OutputCurveCustom { get; set; }
+        public BezierCurve R2OutputCurveCustom { get; set; }
 
         [XmlElement(ElementName = "SXOutputCurveMode")]
         public string SXOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "SXOutputCurveCustom")]
-        public object SXOutputCurveCustom { get; set; }
+        public BezierCurve SXOutputCurveCustom { get; set; }
 
         [XmlElement(ElementName = "SZOutputCurveMode")]
         public string SZOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "SZOutputCurveCustom")]
-        public object SZOutputCurveCustom { get; set; }
+        public BezierCurve SZOutputCurveCustom { get; set; }
 
         [XmlElement(ElementName = "TrackballMode")]
         public bool TrackballMode { get; set; }
@@ -636,11 +636,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "OutputContDevice")]
         public OutContType OutputContDevice { get; set; }
 
+        /*
         [XmlElement(ElementName = "Control")] 
         public object Control { get; set; }
 
         [XmlElement(ElementName = "ShiftControl")]
         public object ShiftControl { get; set; }
+        */
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }

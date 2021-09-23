@@ -3031,6 +3031,19 @@ namespace DS4Windows
 
                 if (File.Exists(profilepath))
                 {
+                    //
+                    // TODO: unfinished
+                    // 
+                    var serializer = await GetProfileSerializerAsync();
+
+                    DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows profileObject;
+
+                    using (var stream = File.OpenRead(profilepath))
+                    {
+                        profileObject = await Task.Run(() =>
+                            serializer.Deserialize<DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows>(stream));
+                    }
+
                     XmlNode Item;
 
                     var tmpMigration = new ProfileMigration(profilepath);
@@ -7042,6 +7055,8 @@ namespace DS4Windows
                         .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                         .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
                         .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
+                        .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
+                        .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
                         .Create();
                 });
             }
