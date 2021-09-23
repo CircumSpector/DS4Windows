@@ -3037,18 +3037,6 @@ namespace DS4Windows
 
                 if (File.Exists(profilepath))
                 {
-                    //
-                    // TODO: unfinished
-                    // 
-                    var serializer = await GetProfileSerializerAsync();
-
-                    await using (var stream = File.OpenRead(profilepath))
-                    {
-                        var profileObject = await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream));
-
-                        profileObject.CopyTo(this, device);
-                    }
-
                     XmlNode Item;
 
                     var tmpMigration = new ProfileMigration(profilepath);
@@ -3089,6 +3077,17 @@ namespace DS4Windows
                     ResetMouseProperties(device, control);
                     
                     
+                    //
+                    // TODO: unfinished
+                    // 
+                    var serializer = await GetProfileSerializerAsync();
+
+                    await using (var stream = File.OpenRead(profilepath))
+                    {
+                        var profileObject = await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream));
+
+                        profileObject.CopyTo(this, device);
+                    }
                     
 
 

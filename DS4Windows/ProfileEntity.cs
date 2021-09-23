@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using DS4Windows;
 
 namespace DS4WinWPF
@@ -37,11 +38,11 @@ namespace DS4WinWPF
             }
         }
 
-        public void SaveProfile(int deviceNum)
+        public async Task SaveProfileAsync(int deviceNum)
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                Global.Instance.Config.SaveProfile(deviceNum, name);
+                await Global.Instance.Config.SaveProfile(deviceNum, name);
                 Global.Instance.Config.CacheExtraProfileInfo(deviceNum);
             }
         }

@@ -806,14 +806,14 @@ namespace DS4WinWPF.DS4Forms
             if (fullSave) Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
         }
 
-        private void SaveBtn_Click(object sender, RoutedEventArgs e)
+        private async void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            var saved = ApplyProfileStep(false);
+            var saved = await ApplyProfileStep(false);
             if (saved) Closed?.Invoke(this, EventArgs.Empty);
         }
 
         [ConfigurationSystemComponent]
-        private bool ApplyProfileStep(bool fullSave = true)
+        private async Task<bool> ApplyProfileStep(bool fullSave = true)
         {
             var result = false;
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
@@ -837,7 +837,7 @@ namespace DS4WinWPF.DS4Forms
 
                 if (currentProfile != null)
                 {
-                    currentProfile.SaveProfile(DeviceNum);
+                    await currentProfile.SaveProfileAsync(DeviceNum);
                     currentProfile.FireSaved();
                     result = true;
                 }
@@ -846,7 +846,7 @@ namespace DS4WinWPF.DS4Forms
                     var tempprof = Global.RuntimeAppDataPath + @"\Profiles\" + temp + ".xml";
                     if (!File.Exists(tempprof))
                     {
-                        Global.Instance.Config.SaveProfile(DeviceNum, temp);
+                        await Global.Instance.Config.SaveProfile(DeviceNum, temp);
                         CreatedProfile?.Invoke(this, temp);
                         result = true;
                     }
@@ -1484,9 +1484,9 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        private void ApplyBtn_Click(object sender, RoutedEventArgs e)
+        private async void ApplyBtn_Click(object sender, RoutedEventArgs e)
         {
-            ApplyProfileStep();
+            await ApplyProfileStep();
         }
 
         private void TriggerFullPullBtn_Click(object sender, RoutedEventArgs e)
