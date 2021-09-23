@@ -2116,8 +2116,7 @@ namespace DS4Windows
                 try
                 {
                     XmlNode tmpNode;
-                    var xmlControls = m_Xdoc.SelectSingleNode("/DS4Windows/Control");
-                    var xmlShiftControls = m_Xdoc.SelectSingleNode("/DS4Windows/ShiftControl");
+                    
                     m_Xdoc.RemoveAll();
 
                     tmpNode = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
