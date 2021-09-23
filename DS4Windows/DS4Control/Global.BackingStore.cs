@@ -2066,11 +2066,17 @@ namespace DS4Windows
                 return Loaded;
             }
 
+            /// <summary>
+            ///     Persists a <see cref="DS4WindowsProfile"/> on disk.
+            /// </summary>
+            /// <param name="device">The index of the device to store the profile for.</param>
+            /// <param name="proName">The profile name (without extension or root path).</param>
+            /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
             public async Task<bool> SaveProfile(int device, string proName)
             {
                 var Saved = true;
-                //string path = Global.RuntimeAppDataPath + @"\Profiles\" + Path.GetFileNameWithoutExtension(proName) + ".xml";
+                
                 if (proName.EndsWith(XML_EXTENSION)) proName = proName.Remove(proName.LastIndexOf(XML_EXTENSION));
 
                 var path = Path.Combine(
