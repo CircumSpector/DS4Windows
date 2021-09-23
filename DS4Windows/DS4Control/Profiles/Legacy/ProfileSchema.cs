@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Controls;
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4Windows.InputDevices;
@@ -217,7 +216,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public DS4Color Color { get; set; }
 
         [XmlElement(ElementName = "RumbleBoost")]
-        public int RumbleBoost { get; set; }
+        public byte RumbleBoost { get; set; }
 
         [XmlElement(ElementName = "RumbleAutostopTime")]
         public int RumbleAutostopTime { get; set; }
@@ -229,13 +228,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool LedAsBatteryIndicator { get; set; }
 
         [XmlElement(ElementName = "FlashType")]
-        public int FlashType { get; set; }
+        public byte FlashType { get; set; }
 
         [XmlElement(ElementName = "flashBatteryAt")]
         public int FlashBatteryAt { get; set; }
 
         [XmlElement(ElementName = "touchSensitivity")]
-        public int TouchSensitivity { get; set; }
+        public byte TouchSensitivity { get; set; }
 
         [XmlElement(ElementName = "LowColor")] 
         public DS4Color LowColor { get; set; }
@@ -253,7 +252,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool LowerRCOn { get; set; }
 
         [XmlElement(ElementName = "tapSensitivity")]
-        public int TapSensitivity { get; set; }
+        public byte TapSensitivity { get; set; }
 
         [XmlElement(ElementName = "doubleTap")]
         public bool DoubleTap { get; set; }
@@ -262,10 +261,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int ScrollSensitivity { get; set; }
 
         [XmlElement(ElementName = "LeftTriggerMiddle")]
-        public int LeftTriggerMiddle { get; set; }
+        public byte LeftTriggerMiddle { get; set; }
 
         [XmlElement(ElementName = "RightTriggerMiddle")]
-        public int RightTriggerMiddle { get; set; }
+        public byte RightTriggerMiddle { get; set; }
 
         [XmlElement(ElementName = "TouchpadInvert")]
         public int TouchpadInvert { get; set; }
@@ -946,6 +945,48 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             TouchpadAbsMouseSettings.SnapToCenter = store.TouchPadAbsMouse[device].SnapToCenter;
 
             OutputContDevice = store.OutputDeviceType[device];
+        }
+
+        public void CopyTo(ref IBackingStore store, int device)
+        {
+            var lightbarSettings = store.LightbarSettingInfo[device];
+            var lightInfo = lightbarSettings.Ds4WinSettings;
+
+            store.EnableTouchToggle[device] = TouchToggle;
+            store.IdleDisconnectTimeout[device] = IdleDisconnectTimeout;
+            store.EnableOutputDataToDS4[device] = OutputDataToDS4;
+            lightbarSettings.Mode = LightbarMode;
+            lightInfo.Led = Color;
+            store.RumbleBoost[device] = RumbleBoost;
+            store.RumbleAutostopTime[device] = RumbleAutostopTime;
+            lightInfo.LedAsBattery = LedAsBatteryIndicator;
+            lightInfo.FlashType = FlashType;
+            lightInfo.FlashAt = FlashBatteryAt;
+            store.TouchSensitivity[device] = TouchSensitivity;
+            lightInfo.LowLed = LowColor;
+            lightInfo.ChargingLed = ChargingColor;
+            lightInfo.FlashLed = FlashColor;
+            store.TouchpadJitterCompensation[device] = TouchpadJitterCompensation;
+            store.LowerRCOn[device] = LowerRCOn;
+            store.TapSensitivity[device] = TapSensitivity;
+            store.DoubleTap[device] = DoubleTap;
+            store.ScrollSensitivity[device] = ScrollSensitivity;
+            store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);
+            store.TouchClickPassthru[device] = TouchpadClickPassthru;
+            store.L2ModInfo[device].deadZone = LeftTriggerMiddle;
+            store.R2ModInfo[device].deadZone = RightTriggerMiddle;
+            store.L2ModInfo[device].AntiDeadZone = L2AntiDeadZone;
+            store.R2ModInfo[device].AntiDeadZone = R2AntiDeadZone;
+            store.L2ModInfo[device].maxZone = L2MaxZone;
+            store.R2ModInfo[device].maxZone = R2MaxZone;
+            store.L2ModInfo[device].maxOutput = L2MaxOutput;
+            store.R2ModInfo[device].maxOutput = R2MaxOutput;
+            store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
+            store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
+            store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
+            store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
+
+
         }
     }
 }
