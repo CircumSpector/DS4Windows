@@ -1091,25 +1091,978 @@ namespace DS4Windows
                     control.touchPad[index].ToggleGyroStick = value;
             }
 
-            public async Task<bool> SaveAsNewProfile(int device, string proName)
+            public DS4Controls GetDs4ControlsByName(string key)
             {
-                var Saved = true;
-                ResetProfile(device);
-                Saved = await SaveProfile(device, proName);
-                return Saved;
+                if (!key.StartsWith("bn"))
+                    return (DS4Controls)Enum.Parse(typeof(DS4Controls), key, true);
+
+                switch (key)
+                {
+                    case "bnShare": return DS4Controls.Share;
+                    case "bnL3": return DS4Controls.L3;
+                    case "bnR3": return DS4Controls.R3;
+                    case "bnOptions": return DS4Controls.Options;
+                    case "bnUp": return DS4Controls.DpadUp;
+                    case "bnRight": return DS4Controls.DpadRight;
+                    case "bnDown": return DS4Controls.DpadDown;
+                    case "bnLeft": return DS4Controls.DpadLeft;
+
+                    case "bnL1": return DS4Controls.L1;
+                    case "bnR1": return DS4Controls.R1;
+                    case "bnTriangle": return DS4Controls.Triangle;
+                    case "bnCircle": return DS4Controls.Circle;
+                    case "bnCross": return DS4Controls.Cross;
+                    case "bnSquare": return DS4Controls.Square;
+
+                    case "bnPS": return DS4Controls.PS;
+                    case "bnLSLeft": return DS4Controls.LXNeg;
+                    case "bnLSUp": return DS4Controls.LYNeg;
+                    case "bnRSLeft": return DS4Controls.RXNeg;
+                    case "bnRSUp": return DS4Controls.RYNeg;
+
+                    case "bnLSRight": return DS4Controls.LXPos;
+                    case "bnLSDown": return DS4Controls.LYPos;
+                    case "bnRSRight": return DS4Controls.RXPos;
+                    case "bnRSDown": return DS4Controls.RYPos;
+                    case "bnL2": return DS4Controls.L2;
+                    case "bnR2": return DS4Controls.R2;
+
+                    case "bnTouchLeft": return DS4Controls.TouchLeft;
+                    case "bnTouchMulti": return DS4Controls.TouchMulti;
+                    case "bnTouchUpper": return DS4Controls.TouchUpper;
+                    case "bnTouchRight": return DS4Controls.TouchRight;
+                    case "bnGyroXP": return DS4Controls.GyroXPos;
+                    case "bnGyroXN": return DS4Controls.GyroXNeg;
+                    case "bnGyroZP": return DS4Controls.GyroZPos;
+                    case "bnGyroZN": return DS4Controls.GyroZNeg;
+
+                    case "bnSwipeUp": return DS4Controls.SwipeUp;
+                    case "bnSwipeDown": return DS4Controls.SwipeDown;
+                    case "bnSwipeLeft": return DS4Controls.SwipeLeft;
+                    case "bnSwipeRight": return DS4Controls.SwipeRight;
+
+                    #region OldShiftname
+
+                    case "sbnShare": return DS4Controls.Share;
+                    case "sbnL3": return DS4Controls.L3;
+                    case "sbnR3": return DS4Controls.R3;
+                    case "sbnOptions": return DS4Controls.Options;
+                    case "sbnUp": return DS4Controls.DpadUp;
+                    case "sbnRight": return DS4Controls.DpadRight;
+                    case "sbnDown": return DS4Controls.DpadDown;
+                    case "sbnLeft": return DS4Controls.DpadLeft;
+
+                    case "sbnL1": return DS4Controls.L1;
+                    case "sbnR1": return DS4Controls.R1;
+                    case "sbnTriangle": return DS4Controls.Triangle;
+                    case "sbnCircle": return DS4Controls.Circle;
+                    case "sbnCross": return DS4Controls.Cross;
+                    case "sbnSquare": return DS4Controls.Square;
+
+                    case "sbnPS": return DS4Controls.PS;
+                    case "sbnLSLeft": return DS4Controls.LXNeg;
+                    case "sbnLSUp": return DS4Controls.LYNeg;
+                    case "sbnRSLeft": return DS4Controls.RXNeg;
+                    case "sbnRSUp": return DS4Controls.RYNeg;
+
+                    case "sbnLSRight": return DS4Controls.LXPos;
+                    case "sbnLSDown": return DS4Controls.LYPos;
+                    case "sbnRSRight": return DS4Controls.RXPos;
+                    case "sbnRSDown": return DS4Controls.RYPos;
+                    case "sbnL2": return DS4Controls.L2;
+                    case "sbnR2": return DS4Controls.R2;
+
+                    case "sbnTouchLeft": return DS4Controls.TouchLeft;
+                    case "sbnTouchMulti": return DS4Controls.TouchMulti;
+                    case "sbnTouchUpper": return DS4Controls.TouchUpper;
+                    case "sbnTouchRight": return DS4Controls.TouchRight;
+                    case "sbnGsyroXP": return DS4Controls.GyroXPos;
+                    case "sbnGyroXN": return DS4Controls.GyroXNeg;
+                    case "sbnGyroZP": return DS4Controls.GyroZPos;
+                    case "sbnGyroZN": return DS4Controls.GyroZNeg;
+
+                    #endregion
+
+                    case "bnShiftShare": return DS4Controls.Share;
+                    case "bnShiftL3": return DS4Controls.L3;
+                    case "bnShiftR3": return DS4Controls.R3;
+                    case "bnShiftOptions": return DS4Controls.Options;
+                    case "bnShiftUp": return DS4Controls.DpadUp;
+                    case "bnShiftRight": return DS4Controls.DpadRight;
+                    case "bnShiftDown": return DS4Controls.DpadDown;
+                    case "bnShiftLeft": return DS4Controls.DpadLeft;
+
+                    case "bnShiftL1": return DS4Controls.L1;
+                    case "bnShiftR1": return DS4Controls.R1;
+                    case "bnShiftTriangle": return DS4Controls.Triangle;
+                    case "bnShiftCircle": return DS4Controls.Circle;
+                    case "bnShiftCross": return DS4Controls.Cross;
+                    case "bnShiftSquare": return DS4Controls.Square;
+
+                    case "bnShiftPS": return DS4Controls.PS;
+                    case "bnShiftLSLeft": return DS4Controls.LXNeg;
+                    case "bnShiftLSUp": return DS4Controls.LYNeg;
+                    case "bnShiftRSLeft": return DS4Controls.RXNeg;
+                    case "bnShiftRSUp": return DS4Controls.RYNeg;
+
+                    case "bnShiftLSRight": return DS4Controls.LXPos;
+                    case "bnShiftLSDown": return DS4Controls.LYPos;
+                    case "bnShiftRSRight": return DS4Controls.RXPos;
+                    case "bnShiftRSDown": return DS4Controls.RYPos;
+                    case "bnShiftL2": return DS4Controls.L2;
+                    case "bnShiftR2": return DS4Controls.R2;
+
+                    case "bnShiftTouchLeft": return DS4Controls.TouchLeft;
+                    case "bnShiftTouchMulti": return DS4Controls.TouchMulti;
+                    case "bnShiftTouchUpper": return DS4Controls.TouchUpper;
+                    case "bnShiftTouchRight": return DS4Controls.TouchRight;
+                    case "bnShiftGyroXP": return DS4Controls.GyroXPos;
+                    case "bnShiftGyroXN": return DS4Controls.GyroXNeg;
+                    case "bnShiftGyroZP": return DS4Controls.GyroZPos;
+                    case "bnShiftGyroZN": return DS4Controls.GyroZNeg;
+
+                    case "bnShiftSwipeUp": return DS4Controls.SwipeUp;
+                    case "bnShiftSwipeDown": return DS4Controls.SwipeDown;
+                    case "bnShiftSwipeLeft": return DS4Controls.SwipeLeft;
+                    case "bnShiftSwipeRight": return DS4Controls.SwipeRight;
+                }
+
+                return 0;
             }
 
-            private static async Task<IExtendedXmlSerializer> GetProfileSerializerAsync()
+            public X360Controls GetX360ControlsByName(string key)
             {
-                return await Task.Run(() =>
+                X360Controls x3c;
+                if (Enum.TryParse(key, true, out x3c))
+                    return x3c;
+
+                switch (key)
                 {
-                    return new ConfigurationContainer()
-                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))
-                        .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
-                        .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
-                        .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
-                        .Create();
-                });
+                    case "Back": return X360Controls.Back;
+                    case "Left Stick": return X360Controls.LS;
+                    case "Right Stick": return X360Controls.RS;
+                    case "Start": return X360Controls.Start;
+                    case "Up Button": return X360Controls.DpadUp;
+                    case "Right Button": return X360Controls.DpadRight;
+                    case "Down Button": return X360Controls.DpadDown;
+                    case "Left Button": return X360Controls.DpadLeft;
+
+                    case "Left Bumper": return X360Controls.LB;
+                    case "Right Bumper": return X360Controls.RB;
+                    case "Y Button": return X360Controls.Y;
+                    case "B Button": return X360Controls.B;
+                    case "A Button": return X360Controls.A;
+                    case "X Button": return X360Controls.X;
+
+                    case "Guide": return X360Controls.Guide;
+                    case "Left X-Axis-": return X360Controls.LXNeg;
+                    case "Left Y-Axis-": return X360Controls.LYNeg;
+                    case "Right X-Axis-": return X360Controls.RXNeg;
+                    case "Right Y-Axis-": return X360Controls.RYNeg;
+
+                    case "Left X-Axis+": return X360Controls.LXPos;
+                    case "Left Y-Axis+": return X360Controls.LYPos;
+                    case "Right X-Axis+": return X360Controls.RXPos;
+                    case "Right Y-Axis+": return X360Controls.RYPos;
+                    case "Left Trigger": return X360Controls.LT;
+                    case "Right Trigger": return X360Controls.RT;
+                    case "Touchpad Click": return X360Controls.TouchpadClick;
+
+                    case "Left Mouse Button": return X360Controls.LeftMouse;
+                    case "Right Mouse Button": return X360Controls.RightMouse;
+                    case "Middle Mouse Button": return X360Controls.MiddleMouse;
+                    case "4th Mouse Button": return X360Controls.FourthMouse;
+                    case "5th Mouse Button": return X360Controls.FifthMouse;
+                    case "Mouse Wheel Up": return X360Controls.WUP;
+                    case "Mouse Wheel Down": return X360Controls.WDOWN;
+                    case "Mouse Up": return X360Controls.MouseUp;
+                    case "Mouse Down": return X360Controls.MouseDown;
+                    case "Mouse Left": return X360Controls.MouseLeft;
+                    case "Mouse Right": return X360Controls.MouseRight;
+                    case "Unbound": return X360Controls.Unbound;
+                }
+
+                return X360Controls.Unbound;
+            }
+
+            public string GetX360ControlString(X360Controls key)
+            {
+                switch (key)
+                {
+                    case X360Controls.Back: return "Back";
+                    case X360Controls.LS: return "Left Stick";
+                    case X360Controls.RS: return "Right Stick";
+                    case X360Controls.Start: return "Start";
+                    case X360Controls.DpadUp: return "Up Button";
+                    case X360Controls.DpadRight: return "Right Button";
+                    case X360Controls.DpadDown: return "Down Button";
+                    case X360Controls.DpadLeft: return "Left Button";
+
+                    case X360Controls.LB: return "Left Bumper";
+                    case X360Controls.RB: return "Right Bumper";
+                    case X360Controls.Y: return "Y Button";
+                    case X360Controls.B: return "B Button";
+                    case X360Controls.A: return "A Button";
+                    case X360Controls.X: return "X Button";
+
+                    case X360Controls.Guide: return "Guide";
+                    case X360Controls.LXNeg: return "Left X-Axis-";
+                    case X360Controls.LYNeg: return "Left Y-Axis-";
+                    case X360Controls.RXNeg: return "Right X-Axis-";
+                    case X360Controls.RYNeg: return "Right Y-Axis-";
+
+                    case X360Controls.LXPos: return "Left X-Axis+";
+                    case X360Controls.LYPos: return "Left Y-Axis+";
+                    case X360Controls.RXPos: return "Right X-Axis+";
+                    case X360Controls.RYPos: return "Right Y-Axis+";
+                    case X360Controls.LT: return "Left Trigger";
+                    case X360Controls.RT: return "Right Trigger";
+                    case X360Controls.TouchpadClick: return "Touchpad Click";
+
+                    case X360Controls.LeftMouse: return "Left Mouse Button";
+                    case X360Controls.RightMouse: return "Right Mouse Button";
+                    case X360Controls.MiddleMouse: return "Middle Mouse Button";
+                    case X360Controls.FourthMouse: return "4th Mouse Button";
+                    case X360Controls.FifthMouse: return "5th Mouse Button";
+                    case X360Controls.WUP: return "Mouse Wheel Up";
+                    case X360Controls.WDOWN: return "Mouse Wheel Down";
+                    case X360Controls.MouseUp: return "Mouse Up";
+                    case X360Controls.MouseDown: return "Mouse Down";
+                    case X360Controls.MouseLeft: return "Mouse Left";
+                    case X360Controls.MouseRight: return "Mouse Right";
+                    case X360Controls.Unbound: return "Unbound";
+                }
+
+                return "Unbound";
+            }
+
+            public async Task<bool> SaveAsNewProfile(int device, string proName)
+            {
+                ResetProfile(device);
+                return await SaveProfile(device, proName);
+            }
+
+            [ConfigurationSystemComponent]
+            public bool Save()
+            {
+                var Saved = true;
+
+                XmlNode Node;
+
+                m_Xdoc.RemoveAll();
+
+                Node = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
+                m_Xdoc.AppendChild(Node);
+
+                Node = m_Xdoc.CreateComment(string.Format(" Profile Configuration Data. {0} ", DateTime.Now));
+                m_Xdoc.AppendChild(Node);
+
+                Node = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ",
+                    ExecutableProductVersion));
+                m_Xdoc.AppendChild(Node);
+
+                Node = m_Xdoc.CreateWhitespace("\r\n");
+                m_Xdoc.AppendChild(Node);
+
+                var rootElement = m_Xdoc.CreateElement("Profile", null);
+                rootElement.SetAttribute("app_version", ExecutableProductVersion);
+                rootElement.SetAttribute("config_version", APP_CONFIG_VERSION.ToString());
+
+                // Ex Mode (+1 line)
+                var xmlUseExclNode = m_Xdoc.CreateNode(XmlNodeType.Element, "useExclusiveMode", null);
+                xmlUseExclNode.InnerText = UseExclusiveMode.ToString();
+                rootElement.AppendChild(xmlUseExclNode);
+                var xmlStartMinimized = m_Xdoc.CreateNode(XmlNodeType.Element, "startMinimized", null);
+                xmlStartMinimized.InnerText = StartMinimized.ToString();
+                rootElement.AppendChild(xmlStartMinimized);
+                var xmlminToTaskbar = m_Xdoc.CreateNode(XmlNodeType.Element, "minimizeToTaskbar", null);
+                xmlminToTaskbar.InnerText = MinToTaskBar.ToString();
+                rootElement.AppendChild(xmlminToTaskbar);
+                var xmlFormWidth = m_Xdoc.CreateNode(XmlNodeType.Element, "formWidth", null);
+                xmlFormWidth.InnerText = FormWidth.ToString();
+                rootElement.AppendChild(xmlFormWidth);
+                var xmlFormHeight = m_Xdoc.CreateNode(XmlNodeType.Element, "formHeight", null);
+                xmlFormHeight.InnerText = FormHeight.ToString();
+                rootElement.AppendChild(xmlFormHeight);
+                var xmlFormLocationX = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationX", null);
+                xmlFormLocationX.InnerText = FormLocationX.ToString();
+                rootElement.AppendChild(xmlFormLocationX);
+                var xmlFormLocationY = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationY", null);
+                xmlFormLocationY.InnerText = FormLocationY.ToString();
+                rootElement.AppendChild(xmlFormLocationY);
+
+                for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
+                {
+                    var contTagName = $"Controller{i + 1}";
+                    var xmlControllerNode = m_Xdoc.CreateNode(XmlNodeType.Element, contTagName, null);
+                    xmlControllerNode.InnerText = !LinkedProfileCheck[i] ? ProfilePath[i] : OlderProfilePath[i];
+                    if (!string.IsNullOrEmpty(xmlControllerNode.InnerText)) rootElement.AppendChild(xmlControllerNode);
+                }
+
+                var xmlLastChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastChecked", null);
+                xmlLastChecked.InnerText = LastChecked.ToString();
+                rootElement.AppendChild(xmlLastChecked);
+                var xmlCheckWhen = m_Xdoc.CreateNode(XmlNodeType.Element, "CheckWhen", null);
+                xmlCheckWhen.InnerText = CheckWhen.ToString();
+                rootElement.AppendChild(xmlCheckWhen);
+                if (!string.IsNullOrEmpty(lastVersionChecked))
+                {
+                    var xmlLastVersionChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastVersionChecked", null);
+                    xmlLastVersionChecked.InnerText = lastVersionChecked;
+                    rootElement.AppendChild(xmlLastVersionChecked);
+                }
+
+                var xmlNotifications = m_Xdoc.CreateNode(XmlNodeType.Element, "Notifications", null);
+                xmlNotifications.InnerText = Notifications.ToString();
+                rootElement.AppendChild(xmlNotifications);
+                var xmlDisconnectBT = m_Xdoc.CreateNode(XmlNodeType.Element, "DisconnectBTAtStop", null);
+                xmlDisconnectBT.InnerText = DisconnectBluetoothAtStop.ToString();
+                rootElement.AppendChild(xmlDisconnectBT);
+                var xmlSwipeProfiles = m_Xdoc.CreateNode(XmlNodeType.Element, "SwipeProfiles", null);
+                xmlSwipeProfiles.InnerText = SwipeProfiles.ToString();
+                rootElement.AppendChild(xmlSwipeProfiles);
+                //XmlNode xmlDS4Mapping = m_Xdoc.CreateNode(XmlNodeType.Element, "UseDS4ForMapping", null); xmlDS4Mapping.InnerText = ds4Mapping.ToString(); rootElement.AppendChild(xmlDS4Mapping);
+                var xmlQuickCharge = m_Xdoc.CreateNode(XmlNodeType.Element, "QuickCharge", null);
+                xmlQuickCharge.InnerText = QuickCharge.ToString();
+                rootElement.AppendChild(xmlQuickCharge);
+                var xmlCloseMini = m_Xdoc.CreateNode(XmlNodeType.Element, "CloseMinimizes", null);
+                xmlCloseMini.InnerText = CloseMini.ToString();
+                rootElement.AppendChild(xmlCloseMini);
+                var xmlUseLang = m_Xdoc.CreateNode(XmlNodeType.Element, "UseLang", null);
+                xmlUseLang.InnerText = UseLang;
+                rootElement.AppendChild(xmlUseLang);
+                var xmlDownloadLang = m_Xdoc.CreateNode(XmlNodeType.Element, "DownloadLang", null);
+                xmlDownloadLang.InnerText = DownloadLang.ToString();
+                rootElement.AppendChild(xmlDownloadLang);
+                var xmlFlashWhenLate = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLate", null);
+                xmlFlashWhenLate.InnerText = FlashWhenLate.ToString();
+                rootElement.AppendChild(xmlFlashWhenLate);
+                var xmlFlashWhenLateAt = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLateAt", null);
+                xmlFlashWhenLateAt.InnerText = FlashWhenLateAt.ToString();
+                rootElement.AppendChild(xmlFlashWhenLateAt);
+                var xmlAppIconChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppIcon", null);
+                xmlAppIconChoice.InnerText = UseIconChoice.ToString();
+                rootElement.AppendChild(xmlAppIconChoice);
+                var xmlAppThemeChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppTheme", null);
+                xmlAppThemeChoice.InnerText = ThemeChoice.ToString();
+                rootElement.AppendChild(xmlAppThemeChoice);
+                var xmlUseUDPServ = m_Xdoc.CreateNode(XmlNodeType.Element, "UseUDPServer", null);
+                xmlUseUDPServ.InnerText = IsUdpServerEnabled.ToString();
+                rootElement.AppendChild(xmlUseUDPServ);
+                var xmlUDPServPort = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerPort", null);
+                xmlUDPServPort.InnerText = UdpServerPort.ToString();
+                rootElement.AppendChild(xmlUDPServPort);
+                var xmlUDPServListenAddress = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerListenAddress", null);
+                xmlUDPServListenAddress.InnerText = UdpServerListenAddress;
+                rootElement.AppendChild(xmlUDPServListenAddress);
+
+                var xmlUdpServerSmoothElement = m_Xdoc.CreateElement("UDPServerSmoothingOptions");
+                var xmlUDPUseSmoothing = m_Xdoc.CreateElement("UseSmoothing");
+                xmlUDPUseSmoothing.InnerText = UseUdpSmoothing.ToString();
+                xmlUdpServerSmoothElement.AppendChild(xmlUDPUseSmoothing);
+                var xmlUDPSmoothMinCutoff = m_Xdoc.CreateElement("UdpSmoothMinCutoff");
+                xmlUDPSmoothMinCutoff.InnerText = UdpSmoothingMincutoff.ToString();
+                xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothMinCutoff);
+                var xmlUDPSmoothBeta = m_Xdoc.CreateElement("UdpSmoothBeta");
+                xmlUDPSmoothBeta.InnerText = UdpSmoothingBeta.ToString();
+                xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothBeta);
+                rootElement.AppendChild(xmlUdpServerSmoothElement);
+
+                var xmlUseCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "UseCustomSteamFolder", null);
+                xmlUseCustomSteamFolder.InnerText = UseCustomSteamFolder.ToString();
+                rootElement.AppendChild(xmlUseCustomSteamFolder);
+                var xmlCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomSteamFolder", null);
+                xmlCustomSteamFolder.InnerText = CustomSteamFolder;
+                rootElement.AppendChild(xmlCustomSteamFolder);
+                var xmlAutoProfileRevertDefaultProfile =
+                    m_Xdoc.CreateNode(XmlNodeType.Element, "AutoProfileRevertDefaultProfile", null);
+                xmlAutoProfileRevertDefaultProfile.InnerText = AutoProfileRevertDefaultProfile.ToString();
+                rootElement.AppendChild(xmlAutoProfileRevertDefaultProfile);
+
+                var xmlDeviceOptions = m_Xdoc.CreateElement("DeviceOptions", null);
+                var xmlDS4Support = m_Xdoc.CreateElement("DS4SupportSettings", null);
+                var xmlDS4Enabled = m_Xdoc.CreateElement("Enabled", null);
+                xmlDS4Enabled.InnerText = DeviceOptions.Ds4DeviceOpts.Enabled.ToString();
+                xmlDS4Support.AppendChild(xmlDS4Enabled);
+                xmlDeviceOptions.AppendChild(xmlDS4Support);
+
+                var xmlDualSenseSupport = m_Xdoc.CreateElement("DualSenseSupportSettings", null);
+                var xmlDualSenseEnabled = m_Xdoc.CreateElement("Enabled", null);
+                xmlDualSenseEnabled.InnerText = DeviceOptions.DualSenseOpts.Enabled.ToString();
+                xmlDualSenseSupport.AppendChild(xmlDualSenseEnabled);
+
+                xmlDeviceOptions.AppendChild(xmlDualSenseSupport);
+
+                var xmlSwitchProSupport = m_Xdoc.CreateElement("SwitchProSupportSettings", null);
+                var xmlSwitchProEnabled = m_Xdoc.CreateElement("Enabled", null);
+                xmlSwitchProEnabled.InnerText = DeviceOptions.SwitchProDeviceOpts.Enabled.ToString();
+                xmlSwitchProSupport.AppendChild(xmlSwitchProEnabled);
+
+                xmlDeviceOptions.AppendChild(xmlSwitchProSupport);
+
+                var xmlJoyConSupport = m_Xdoc.CreateElement("JoyConSupportSettings", null);
+                var xmlJoyconEnabled = m_Xdoc.CreateElement("Enabled", null);
+                xmlJoyconEnabled.InnerText = DeviceOptions.JoyConDeviceOpts.Enabled.ToString();
+                xmlJoyConSupport.AppendChild(xmlJoyconEnabled);
+                var xmlJoyconLinkMode = m_Xdoc.CreateElement("LinkMode", null);
+                xmlJoyconLinkMode.InnerText = DeviceOptions.JoyConDeviceOpts.LinkedMode.ToString();
+                xmlJoyConSupport.AppendChild(xmlJoyconLinkMode);
+                var xmlJoyconUnionGyro = m_Xdoc.CreateElement("JoinedGyroProvider", null);
+                xmlJoyconUnionGyro.InnerText = DeviceOptions.JoyConDeviceOpts.JoinGyroProv.ToString();
+                xmlJoyConSupport.AppendChild(xmlJoyconUnionGyro);
+
+                xmlDeviceOptions.AppendChild(xmlJoyConSupport);
+
+                rootElement.AppendChild(xmlDeviceOptions);
+
+                for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
+                {
+                    var xmlCustomLed = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomLed" + (1 + i), null);
+                    xmlCustomLed.InnerText = LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed + ":" +
+                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Red + "," +
+                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Green + "," +
+                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Blue;
+                    rootElement.AppendChild(xmlCustomLed);
+                }
+
+                m_Xdoc.AppendChild(rootElement);
+
+                try
+                {
+                    m_Xdoc.Save(ProfilesPath);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    Saved = false;
+                }
+
+                var adminNeeded = IsAdminNeeded;
+                if (Saved &&
+                    (!adminNeeded || adminNeeded && IsAdministrator))
+                {
+                    var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
+                    var fakeExeFileExists = File.Exists(custom_exe_name_path);
+                    if (!string.IsNullOrEmpty(FakeExeFileName) || fakeExeFileExists)
+                        File.WriteAllText(custom_exe_name_path, FakeExeFileName);
+                }
+
+                return Saved;
+            }
+ 
+            [ConfigurationSystemComponent]
+            public bool Load()
+            {
+                var Loaded = true;
+                var missingSetting = false;
+
+                try
+                {
+                    if (File.Exists(ProfilesPath))
+                    {
+                        XmlNode Item;
+
+                        m_Xdoc.Load(ProfilesPath);
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/useExclusiveMode");
+                            bool.TryParse(Item.InnerText, out var value);
+                            UseExclusiveMode = value;
+                        } // Ex Mode
+                        catch
+                        {
+                            missingSetting = true;
+                        } // Ex Mode
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/startMinimized");
+                            bool.TryParse(Item.InnerText, out var value);
+                            StartMinimized = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/minimizeToTaskbar");
+                            bool.TryParse(Item.InnerText, out var value);
+                            MinToTaskBar = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/formWidth");
+                            int.TryParse(Item.InnerText, out var value);
+                            FormWidth = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/formHeight");
+                            int.TryParse(Item.InnerText, out var value);
+                            FormHeight = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            var temp = 0;
+                            Item = m_Xdoc.SelectSingleNode("/Profile/formLocationX");
+                            int.TryParse(Item.InnerText, out temp);
+                            FormLocationX = Math.Max(temp, 0);
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            var temp = 0;
+                            Item = m_Xdoc.SelectSingleNode("/Profile/formLocationY");
+                            int.TryParse(Item.InnerText, out temp);
+                            FormLocationY = Math.Max(temp, 0);
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
+                        {
+                            var contTag = $"/Profile/Controller{i + 1}";
+                            try
+                            {
+                                Item = m_Xdoc.SelectSingleNode(contTag);
+                                ProfilePath[i] = Item?.InnerText ?? string.Empty;
+                                if (ProfilePath[i].ToLower().Contains("distance")) DistanceProfiles[i] = true;
+
+                                OlderProfilePath[i] = ProfilePath[i];
+                            }
+                            catch
+                            {
+                                ProfilePath[i] = OlderProfilePath[i] = string.Empty;
+                                DistanceProfiles[i] = false;
+                            }
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/LastChecked");
+                            DateTime.TryParse(Item.InnerText, out var lc);
+                            LastChecked = lc;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/CheckWhen");
+                            int.TryParse(Item.InnerText, out var cw);
+                            CheckWhen = cw;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/LastVersionChecked");
+                            var tempVer = Item?.InnerText ?? string.Empty;
+                            if (!string.IsNullOrEmpty(tempVer))
+                            {
+                                LastVersionCheckedNumber = CompileVersionNumberFromString(tempVer);
+                                if (LastVersionCheckedNumber > 0) lastVersionChecked = tempVer;
+                            }
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/Notifications");
+                            if (!int.TryParse(Item.InnerText, out var not))
+                                Notifications = bool.Parse(Item.InnerText) ? 2 : 0;
+
+                            Notifications = not;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/DisconnectBTAtStop");
+                            bool.TryParse(Item.InnerText, out var dc);
+                            DisconnectBluetoothAtStop = dc;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/SwipeProfiles");
+                            bool.TryParse(Item.InnerText, out var value);
+                            SwipeProfiles = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        //try { Item = m_Xdoc.SelectSingleNode("/Profile/UseDS4ForMapping"); Boolean.TryParse(Item.InnerText, out ds4Mapping); }
+                        //catch { missingSetting = true; }
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/QuickCharge");
+                            bool.TryParse(Item.InnerText, out var value);
+                            QuickCharge = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/CloseMinimizes");
+                            bool.TryParse(Item.InnerText, out var value);
+                            CloseMini = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/UseLang");
+                            UseLang = Item.InnerText;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/DownloadLang");
+                            bool.TryParse(Item.InnerText, out var value);
+                            DownloadLang = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLate");
+                            bool.TryParse(Item.InnerText, out var value);
+                            FlashWhenLate = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLateAt");
+                            int.TryParse(Item.InnerText, out var value);
+                            FlashWhenLateAt = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        Item = m_Xdoc.SelectSingleNode("/Profile/AppIcon");
+                        var hasIconChoice = Item != null;
+                        if (hasIconChoice)
+                        {
+                            hasIconChoice = Enum.TryParse(Item.InnerText ?? "", out TrayIconChoice ch);
+                            UseIconChoice = ch;
+                        }
+
+                        if (!hasIconChoice)
+                        {
+                            missingSetting = true;
+
+                            try
+                            {
+                                Item = m_Xdoc.SelectSingleNode("/Profile/WhiteIcon");
+                                if (bool.TryParse(Item?.InnerText ?? "", out var temp))
+                                    UseIconChoice = temp ? TrayIconChoice.White : TrayIconChoice.Default;
+                            }
+                            catch
+                            {
+                                missingSetting = true;
+                            }
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/AppTheme");
+                            var temp = Item.InnerText;
+                            Enum.TryParse(temp, out AppThemeChoice choice);
+                            ThemeChoice = choice;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                            ThemeChoice = AppThemeChoice.Default;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/UseUDPServer");
+                            bool.TryParse(Item.InnerText, out var value);
+                            IsUdpServerEnabled = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerPort");
+                            int temp;
+                            int.TryParse(Item.InnerText, out temp);
+                            UdpServerPort = Math.Min(Math.Max(temp, 1024), 65535);
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerListenAddress");
+                            UdpServerListenAddress = Item.InnerText;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        var udpServerSmoothingGroup = false;
+                        var xmlUdpServerSmoothElement =
+                            m_Xdoc.SelectSingleNode("/Profile/UDPServerSmoothingOptions");
+                        udpServerSmoothingGroup = xmlUdpServerSmoothElement != null;
+                        if (udpServerSmoothingGroup)
+                        {
+                            try
+                            {
+                                Item = xmlUdpServerSmoothElement.SelectSingleNode("UseSmoothing");
+                                bool.TryParse(Item.InnerText, out var temp);
+                                UseUdpSmoothing = temp;
+                            }
+                            catch
+                            {
+                                missingSetting = true;
+                            }
+
+                            try
+                            {
+                                Item = xmlUdpServerSmoothElement.SelectSingleNode("UdpSmoothMinCutoff");
+                                double.TryParse(Item.InnerText, out var temp);
+                                temp = Math.Min(Math.Max(temp, 0.00001), 100.0);
+                                UdpSmoothingMincutoff = temp;
+                            }
+                            catch
+                            {
+                                missingSetting = true;
+                            }
+
+                            try
+                            {
+                                Item = xmlUdpServerSmoothElement.SelectSingleNode("UdpSmoothBeta");
+                                double.TryParse(Item.InnerText, out var temp);
+                                temp = Math.Min(Math.Max(temp, 0.0), 1.0);
+                                UdpSmoothingBeta = temp;
+                            }
+                            catch
+                            {
+                                missingSetting = true;
+                            }
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/UseCustomSteamFolder");
+                            bool.TryParse(Item.InnerText, out var value);
+                            UseCustomSteamFolder = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/CustomSteamFolder");
+                            CustomSteamFolder = Item.InnerText;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+                        try
+                        {
+                            Item = m_Xdoc.SelectSingleNode("/Profile/AutoProfileRevertDefaultProfile");
+                            bool.TryParse(Item.InnerText, out var value);
+                            AutoProfileRevertDefaultProfile = value;
+                        }
+                        catch
+                        {
+                            missingSetting = true;
+                        }
+
+
+                        var xmlDeviceOptions = m_Xdoc.SelectSingleNode("/Profile/DeviceOptions");
+                        if (xmlDeviceOptions != null)
+                        {
+                            var xmlDS4Support = xmlDeviceOptions.SelectSingleNode("DS4SupportSettings");
+                            if (xmlDS4Support != null)
+                                try
+                                {
+                                    var item = xmlDS4Support.SelectSingleNode("Enabled");
+                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
+                                        DeviceOptions.Ds4DeviceOpts.Enabled = temp;
+                                }
+                                catch
+                                {
+                                }
+
+                            var xmlDualSenseSupport = xmlDeviceOptions.SelectSingleNode("DualSenseSupportSettings");
+                            if (xmlDualSenseSupport != null)
+                                try
+                                {
+                                    var item = xmlDualSenseSupport.SelectSingleNode("Enabled");
+                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
+                                        DeviceOptions.DualSenseOpts.Enabled = temp;
+                                }
+                                catch
+                                {
+                                }
+
+                            var xmlSwitchProSupport = xmlDeviceOptions.SelectSingleNode("SwitchProSupportSettings");
+                            if (xmlSwitchProSupport != null)
+                                try
+                                {
+                                    var item = xmlSwitchProSupport.SelectSingleNode("Enabled");
+                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
+                                        DeviceOptions.SwitchProDeviceOpts.Enabled = temp;
+                                }
+                                catch
+                                {
+                                }
+
+                            var xmlJoyConSupport = xmlDeviceOptions.SelectSingleNode("JoyConSupportSettings");
+                            if (xmlJoyConSupport != null)
+                            {
+                                try
+                                {
+                                    var item = xmlJoyConSupport.SelectSingleNode("Enabled");
+                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
+                                        DeviceOptions.JoyConDeviceOpts.Enabled = temp;
+                                }
+                                catch
+                                {
+                                }
+
+                                try
+                                {
+                                    var item = xmlJoyConSupport.SelectSingleNode("LinkMode");
+                                    if (Enum.TryParse(item?.InnerText ?? "", out JoyConDeviceOptions.LinkMode temp))
+                                        DeviceOptions.JoyConDeviceOpts.LinkedMode = temp;
+                                }
+                                catch
+                                {
+                                }
+
+                                try
+                                {
+                                    var item = xmlJoyConSupport.SelectSingleNode("JoinedGyroProvider");
+                                    if (Enum.TryParse(item?.InnerText ?? "",
+                                        out JoyConDeviceOptions.JoinedGyroProvider temp))
+                                        DeviceOptions.JoyConDeviceOpts.JoinGyroProv = temp;
+                                }
+                                catch
+                                {
+                                }
+                            }
+                        }
+
+                        for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
+                            try
+                            {
+                                Item = m_Xdoc.SelectSingleNode("/Profile/CustomLed" + (i + 1));
+                                var ss = Item.InnerText.Split(':');
+                                bool.TryParse(ss[0], out var value);
+                                LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed = value;
+
+                                var colorInfo = ss[1].Split(',');
+
+                                byte.TryParse(colorInfo[0], out var r);
+                                byte.TryParse(colorInfo[1], out var g);
+                                byte.TryParse(colorInfo[2], out var b);
+
+                                LightbarSettingInfo[i].Ds4WinSettings.CustomLed = new DS4Color(r, g, b);
+                            }
+                            catch
+                            {
+                                LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed = false;
+                                LightbarSettingInfo[i].Ds4WinSettings.CustomLed = new DS4Color(Color.Blue);
+                                missingSetting = true;
+                            }
+                    }
+                }
+                catch
+                {
+                }
+
+                if (missingSetting)
+                    Save();
+
+                if (Loaded)
+                {
+                    var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
+                    var fakeExeFileExists = File.Exists(custom_exe_name_path);
+                    if (fakeExeFileExists)
+                    {
+                        var fake_exe_name = File.ReadAllText(custom_exe_name_path).Trim();
+                        var valid = !(fake_exe_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0);
+                        if (valid) FakeExeFileName = fake_exe_name;
+                    }
+                }
+
+                return Loaded;
             }
 
             [ConfigurationSystemComponent]
@@ -1865,6 +2818,10 @@ namespace DS4Windows
 
                     #endregion
 
+                    //
+                    // TODO: needs to be converted still
+                    // 
+
                     var NodeControl = m_Xdoc.CreateNode(XmlNodeType.Element, "Control", null);
                     var Key = m_Xdoc.CreateNode(XmlNodeType.Element, "Key", null);
                     var Macro = m_Xdoc.CreateNode(XmlNodeType.Element, "Macro", null);
@@ -2043,252 +3000,7 @@ namespace DS4Windows
 
                 return Saved;
             }
-
-            public DS4Controls GetDs4ControlsByName(string key)
-            {
-                if (!key.StartsWith("bn"))
-                    return (DS4Controls)Enum.Parse(typeof(DS4Controls), key, true);
-
-                switch (key)
-                {
-                    case "bnShare": return DS4Controls.Share;
-                    case "bnL3": return DS4Controls.L3;
-                    case "bnR3": return DS4Controls.R3;
-                    case "bnOptions": return DS4Controls.Options;
-                    case "bnUp": return DS4Controls.DpadUp;
-                    case "bnRight": return DS4Controls.DpadRight;
-                    case "bnDown": return DS4Controls.DpadDown;
-                    case "bnLeft": return DS4Controls.DpadLeft;
-
-                    case "bnL1": return DS4Controls.L1;
-                    case "bnR1": return DS4Controls.R1;
-                    case "bnTriangle": return DS4Controls.Triangle;
-                    case "bnCircle": return DS4Controls.Circle;
-                    case "bnCross": return DS4Controls.Cross;
-                    case "bnSquare": return DS4Controls.Square;
-
-                    case "bnPS": return DS4Controls.PS;
-                    case "bnLSLeft": return DS4Controls.LXNeg;
-                    case "bnLSUp": return DS4Controls.LYNeg;
-                    case "bnRSLeft": return DS4Controls.RXNeg;
-                    case "bnRSUp": return DS4Controls.RYNeg;
-
-                    case "bnLSRight": return DS4Controls.LXPos;
-                    case "bnLSDown": return DS4Controls.LYPos;
-                    case "bnRSRight": return DS4Controls.RXPos;
-                    case "bnRSDown": return DS4Controls.RYPos;
-                    case "bnL2": return DS4Controls.L2;
-                    case "bnR2": return DS4Controls.R2;
-
-                    case "bnTouchLeft": return DS4Controls.TouchLeft;
-                    case "bnTouchMulti": return DS4Controls.TouchMulti;
-                    case "bnTouchUpper": return DS4Controls.TouchUpper;
-                    case "bnTouchRight": return DS4Controls.TouchRight;
-                    case "bnGyroXP": return DS4Controls.GyroXPos;
-                    case "bnGyroXN": return DS4Controls.GyroXNeg;
-                    case "bnGyroZP": return DS4Controls.GyroZPos;
-                    case "bnGyroZN": return DS4Controls.GyroZNeg;
-
-                    case "bnSwipeUp": return DS4Controls.SwipeUp;
-                    case "bnSwipeDown": return DS4Controls.SwipeDown;
-                    case "bnSwipeLeft": return DS4Controls.SwipeLeft;
-                    case "bnSwipeRight": return DS4Controls.SwipeRight;
-
-                    #region OldShiftname
-
-                    case "sbnShare": return DS4Controls.Share;
-                    case "sbnL3": return DS4Controls.L3;
-                    case "sbnR3": return DS4Controls.R3;
-                    case "sbnOptions": return DS4Controls.Options;
-                    case "sbnUp": return DS4Controls.DpadUp;
-                    case "sbnRight": return DS4Controls.DpadRight;
-                    case "sbnDown": return DS4Controls.DpadDown;
-                    case "sbnLeft": return DS4Controls.DpadLeft;
-
-                    case "sbnL1": return DS4Controls.L1;
-                    case "sbnR1": return DS4Controls.R1;
-                    case "sbnTriangle": return DS4Controls.Triangle;
-                    case "sbnCircle": return DS4Controls.Circle;
-                    case "sbnCross": return DS4Controls.Cross;
-                    case "sbnSquare": return DS4Controls.Square;
-
-                    case "sbnPS": return DS4Controls.PS;
-                    case "sbnLSLeft": return DS4Controls.LXNeg;
-                    case "sbnLSUp": return DS4Controls.LYNeg;
-                    case "sbnRSLeft": return DS4Controls.RXNeg;
-                    case "sbnRSUp": return DS4Controls.RYNeg;
-
-                    case "sbnLSRight": return DS4Controls.LXPos;
-                    case "sbnLSDown": return DS4Controls.LYPos;
-                    case "sbnRSRight": return DS4Controls.RXPos;
-                    case "sbnRSDown": return DS4Controls.RYPos;
-                    case "sbnL2": return DS4Controls.L2;
-                    case "sbnR2": return DS4Controls.R2;
-
-                    case "sbnTouchLeft": return DS4Controls.TouchLeft;
-                    case "sbnTouchMulti": return DS4Controls.TouchMulti;
-                    case "sbnTouchUpper": return DS4Controls.TouchUpper;
-                    case "sbnTouchRight": return DS4Controls.TouchRight;
-                    case "sbnGsyroXP": return DS4Controls.GyroXPos;
-                    case "sbnGyroXN": return DS4Controls.GyroXNeg;
-                    case "sbnGyroZP": return DS4Controls.GyroZPos;
-                    case "sbnGyroZN": return DS4Controls.GyroZNeg;
-
-                    #endregion
-
-                    case "bnShiftShare": return DS4Controls.Share;
-                    case "bnShiftL3": return DS4Controls.L3;
-                    case "bnShiftR3": return DS4Controls.R3;
-                    case "bnShiftOptions": return DS4Controls.Options;
-                    case "bnShiftUp": return DS4Controls.DpadUp;
-                    case "bnShiftRight": return DS4Controls.DpadRight;
-                    case "bnShiftDown": return DS4Controls.DpadDown;
-                    case "bnShiftLeft": return DS4Controls.DpadLeft;
-
-                    case "bnShiftL1": return DS4Controls.L1;
-                    case "bnShiftR1": return DS4Controls.R1;
-                    case "bnShiftTriangle": return DS4Controls.Triangle;
-                    case "bnShiftCircle": return DS4Controls.Circle;
-                    case "bnShiftCross": return DS4Controls.Cross;
-                    case "bnShiftSquare": return DS4Controls.Square;
-
-                    case "bnShiftPS": return DS4Controls.PS;
-                    case "bnShiftLSLeft": return DS4Controls.LXNeg;
-                    case "bnShiftLSUp": return DS4Controls.LYNeg;
-                    case "bnShiftRSLeft": return DS4Controls.RXNeg;
-                    case "bnShiftRSUp": return DS4Controls.RYNeg;
-
-                    case "bnShiftLSRight": return DS4Controls.LXPos;
-                    case "bnShiftLSDown": return DS4Controls.LYPos;
-                    case "bnShiftRSRight": return DS4Controls.RXPos;
-                    case "bnShiftRSDown": return DS4Controls.RYPos;
-                    case "bnShiftL2": return DS4Controls.L2;
-                    case "bnShiftR2": return DS4Controls.R2;
-
-                    case "bnShiftTouchLeft": return DS4Controls.TouchLeft;
-                    case "bnShiftTouchMulti": return DS4Controls.TouchMulti;
-                    case "bnShiftTouchUpper": return DS4Controls.TouchUpper;
-                    case "bnShiftTouchRight": return DS4Controls.TouchRight;
-                    case "bnShiftGyroXP": return DS4Controls.GyroXPos;
-                    case "bnShiftGyroXN": return DS4Controls.GyroXNeg;
-                    case "bnShiftGyroZP": return DS4Controls.GyroZPos;
-                    case "bnShiftGyroZN": return DS4Controls.GyroZNeg;
-
-                    case "bnShiftSwipeUp": return DS4Controls.SwipeUp;
-                    case "bnShiftSwipeDown": return DS4Controls.SwipeDown;
-                    case "bnShiftSwipeLeft": return DS4Controls.SwipeLeft;
-                    case "bnShiftSwipeRight": return DS4Controls.SwipeRight;
-                }
-
-                return 0;
-            }
-
-            public X360Controls GetX360ControlsByName(string key)
-            {
-                X360Controls x3c;
-                if (Enum.TryParse(key, true, out x3c))
-                    return x3c;
-
-                switch (key)
-                {
-                    case "Back": return X360Controls.Back;
-                    case "Left Stick": return X360Controls.LS;
-                    case "Right Stick": return X360Controls.RS;
-                    case "Start": return X360Controls.Start;
-                    case "Up Button": return X360Controls.DpadUp;
-                    case "Right Button": return X360Controls.DpadRight;
-                    case "Down Button": return X360Controls.DpadDown;
-                    case "Left Button": return X360Controls.DpadLeft;
-
-                    case "Left Bumper": return X360Controls.LB;
-                    case "Right Bumper": return X360Controls.RB;
-                    case "Y Button": return X360Controls.Y;
-                    case "B Button": return X360Controls.B;
-                    case "A Button": return X360Controls.A;
-                    case "X Button": return X360Controls.X;
-
-                    case "Guide": return X360Controls.Guide;
-                    case "Left X-Axis-": return X360Controls.LXNeg;
-                    case "Left Y-Axis-": return X360Controls.LYNeg;
-                    case "Right X-Axis-": return X360Controls.RXNeg;
-                    case "Right Y-Axis-": return X360Controls.RYNeg;
-
-                    case "Left X-Axis+": return X360Controls.LXPos;
-                    case "Left Y-Axis+": return X360Controls.LYPos;
-                    case "Right X-Axis+": return X360Controls.RXPos;
-                    case "Right Y-Axis+": return X360Controls.RYPos;
-                    case "Left Trigger": return X360Controls.LT;
-                    case "Right Trigger": return X360Controls.RT;
-                    case "Touchpad Click": return X360Controls.TouchpadClick;
-
-                    case "Left Mouse Button": return X360Controls.LeftMouse;
-                    case "Right Mouse Button": return X360Controls.RightMouse;
-                    case "Middle Mouse Button": return X360Controls.MiddleMouse;
-                    case "4th Mouse Button": return X360Controls.FourthMouse;
-                    case "5th Mouse Button": return X360Controls.FifthMouse;
-                    case "Mouse Wheel Up": return X360Controls.WUP;
-                    case "Mouse Wheel Down": return X360Controls.WDOWN;
-                    case "Mouse Up": return X360Controls.MouseUp;
-                    case "Mouse Down": return X360Controls.MouseDown;
-                    case "Mouse Left": return X360Controls.MouseLeft;
-                    case "Mouse Right": return X360Controls.MouseRight;
-                    case "Unbound": return X360Controls.Unbound;
-                }
-
-                return X360Controls.Unbound;
-            }
-
-            public string GetX360ControlString(X360Controls key)
-            {
-                switch (key)
-                {
-                    case X360Controls.Back: return "Back";
-                    case X360Controls.LS: return "Left Stick";
-                    case X360Controls.RS: return "Right Stick";
-                    case X360Controls.Start: return "Start";
-                    case X360Controls.DpadUp: return "Up Button";
-                    case X360Controls.DpadRight: return "Right Button";
-                    case X360Controls.DpadDown: return "Down Button";
-                    case X360Controls.DpadLeft: return "Left Button";
-
-                    case X360Controls.LB: return "Left Bumper";
-                    case X360Controls.RB: return "Right Bumper";
-                    case X360Controls.Y: return "Y Button";
-                    case X360Controls.B: return "B Button";
-                    case X360Controls.A: return "A Button";
-                    case X360Controls.X: return "X Button";
-
-                    case X360Controls.Guide: return "Guide";
-                    case X360Controls.LXNeg: return "Left X-Axis-";
-                    case X360Controls.LYNeg: return "Left Y-Axis-";
-                    case X360Controls.RXNeg: return "Right X-Axis-";
-                    case X360Controls.RYNeg: return "Right Y-Axis-";
-
-                    case X360Controls.LXPos: return "Left X-Axis+";
-                    case X360Controls.LYPos: return "Left Y-Axis+";
-                    case X360Controls.RXPos: return "Right X-Axis+";
-                    case X360Controls.RYPos: return "Right Y-Axis+";
-                    case X360Controls.LT: return "Left Trigger";
-                    case X360Controls.RT: return "Right Trigger";
-                    case X360Controls.TouchpadClick: return "Touchpad Click";
-
-                    case X360Controls.LeftMouse: return "Left Mouse Button";
-                    case X360Controls.RightMouse: return "Right Mouse Button";
-                    case X360Controls.MiddleMouse: return "Middle Mouse Button";
-                    case X360Controls.FourthMouse: return "4th Mouse Button";
-                    case X360Controls.FifthMouse: return "5th Mouse Button";
-                    case X360Controls.WUP: return "Mouse Wheel Up";
-                    case X360Controls.WDOWN: return "Mouse Wheel Down";
-                    case X360Controls.MouseUp: return "Mouse Up";
-                    case X360Controls.MouseDown: return "Mouse Down";
-                    case X360Controls.MouseLeft: return "Mouse Left";
-                    case X360Controls.MouseRight: return "Mouse Right";
-                    case X360Controls.Unbound: return "Unbound";
-                }
-
-                return "Unbound";
-            }
-
+            
             [ConfigurationSystemComponent]
             public async Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
@@ -5125,730 +5837,7 @@ namespace DS4Windows
 
                 return Loaded;
             }
-
-            [ConfigurationSystemComponent]
-            public bool Load()
-            {
-                var Loaded = true;
-                var missingSetting = false;
-
-                try
-                {
-                    if (File.Exists(ProfilesPath))
-                    {
-                        XmlNode Item;
-
-                        m_Xdoc.Load(ProfilesPath);
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/useExclusiveMode");
-                            bool.TryParse(Item.InnerText, out var value);
-                            UseExclusiveMode = value;
-                        } // Ex Mode
-                        catch
-                        {
-                            missingSetting = true;
-                        } // Ex Mode
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/startMinimized");
-                            bool.TryParse(Item.InnerText, out var value);
-                            StartMinimized = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/minimizeToTaskbar");
-                            bool.TryParse(Item.InnerText, out var value);
-                            MinToTaskBar = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/formWidth");
-                            int.TryParse(Item.InnerText, out var value);
-                            FormWidth = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/formHeight");
-                            int.TryParse(Item.InnerText, out var value);
-                            FormHeight = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            var temp = 0;
-                            Item = m_Xdoc.SelectSingleNode("/Profile/formLocationX");
-                            int.TryParse(Item.InnerText, out temp);
-                            FormLocationX = Math.Max(temp, 0);
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            var temp = 0;
-                            Item = m_Xdoc.SelectSingleNode("/Profile/formLocationY");
-                            int.TryParse(Item.InnerText, out temp);
-                            FormLocationY = Math.Max(temp, 0);
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
-                        {
-                            var contTag = $"/Profile/Controller{i + 1}";
-                            try
-                            {
-                                Item = m_Xdoc.SelectSingleNode(contTag);
-                                ProfilePath[i] = Item?.InnerText ?? string.Empty;
-                                if (ProfilePath[i].ToLower().Contains("distance")) DistanceProfiles[i] = true;
-
-                                OlderProfilePath[i] = ProfilePath[i];
-                            }
-                            catch
-                            {
-                                ProfilePath[i] = OlderProfilePath[i] = string.Empty;
-                                DistanceProfiles[i] = false;
-                            }
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/LastChecked");
-                            DateTime.TryParse(Item.InnerText, out var lc);
-                            LastChecked = lc;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/CheckWhen");
-                            int.TryParse(Item.InnerText, out var cw);
-                            CheckWhen = cw;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/LastVersionChecked");
-                            var tempVer = Item?.InnerText ?? string.Empty;
-                            if (!string.IsNullOrEmpty(tempVer))
-                            {
-                                LastVersionCheckedNumber = CompileVersionNumberFromString(tempVer);
-                                if (LastVersionCheckedNumber > 0) lastVersionChecked = tempVer;
-                            }
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/Notifications");
-                            if (!int.TryParse(Item.InnerText, out var not))
-                                Notifications = bool.Parse(Item.InnerText) ? 2 : 0;
-
-                            Notifications = not;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/DisconnectBTAtStop");
-                            bool.TryParse(Item.InnerText, out var dc);
-                            DisconnectBluetoothAtStop = dc;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/SwipeProfiles");
-                            bool.TryParse(Item.InnerText, out var value);
-                            SwipeProfiles = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        //try { Item = m_Xdoc.SelectSingleNode("/Profile/UseDS4ForMapping"); Boolean.TryParse(Item.InnerText, out ds4Mapping); }
-                        //catch { missingSetting = true; }
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/QuickCharge");
-                            bool.TryParse(Item.InnerText, out var value);
-                            QuickCharge = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/CloseMinimizes");
-                            bool.TryParse(Item.InnerText, out var value);
-                            CloseMini = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/UseLang");
-                            UseLang = Item.InnerText;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/DownloadLang");
-                            bool.TryParse(Item.InnerText, out var value);
-                            DownloadLang = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLate");
-                            bool.TryParse(Item.InnerText, out var value);
-                            FlashWhenLate = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/FlashWhenLateAt");
-                            int.TryParse(Item.InnerText, out var value);
-                            FlashWhenLateAt = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        Item = m_Xdoc.SelectSingleNode("/Profile/AppIcon");
-                        var hasIconChoice = Item != null;
-                        if (hasIconChoice)
-                        {
-                            hasIconChoice = Enum.TryParse(Item.InnerText ?? "", out TrayIconChoice ch);
-                            UseIconChoice = ch;
-                        }
-
-                        if (!hasIconChoice)
-                        {
-                            missingSetting = true;
-
-                            try
-                            {
-                                Item = m_Xdoc.SelectSingleNode("/Profile/WhiteIcon");
-                                if (bool.TryParse(Item?.InnerText ?? "", out var temp))
-                                    UseIconChoice = temp ? TrayIconChoice.White : TrayIconChoice.Default;
-                            }
-                            catch
-                            {
-                                missingSetting = true;
-                            }
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/AppTheme");
-                            var temp = Item.InnerText;
-                            Enum.TryParse(temp, out AppThemeChoice choice);
-                            ThemeChoice = choice;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                            ThemeChoice = AppThemeChoice.Default;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/UseUDPServer");
-                            bool.TryParse(Item.InnerText, out var value);
-                            IsUdpServerEnabled = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerPort");
-                            int temp;
-                            int.TryParse(Item.InnerText, out temp);
-                            UdpServerPort = Math.Min(Math.Max(temp, 1024), 65535);
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/UDPServerListenAddress");
-                            UdpServerListenAddress = Item.InnerText;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        var udpServerSmoothingGroup = false;
-                        var xmlUdpServerSmoothElement =
-                            m_Xdoc.SelectSingleNode("/Profile/UDPServerSmoothingOptions");
-                        udpServerSmoothingGroup = xmlUdpServerSmoothElement != null;
-                        if (udpServerSmoothingGroup)
-                        {
-                            try
-                            {
-                                Item = xmlUdpServerSmoothElement.SelectSingleNode("UseSmoothing");
-                                bool.TryParse(Item.InnerText, out var temp);
-                                UseUdpSmoothing = temp;
-                            }
-                            catch
-                            {
-                                missingSetting = true;
-                            }
-
-                            try
-                            {
-                                Item = xmlUdpServerSmoothElement.SelectSingleNode("UdpSmoothMinCutoff");
-                                double.TryParse(Item.InnerText, out var temp);
-                                temp = Math.Min(Math.Max(temp, 0.00001), 100.0);
-                                UdpSmoothingMincutoff = temp;
-                            }
-                            catch
-                            {
-                                missingSetting = true;
-                            }
-
-                            try
-                            {
-                                Item = xmlUdpServerSmoothElement.SelectSingleNode("UdpSmoothBeta");
-                                double.TryParse(Item.InnerText, out var temp);
-                                temp = Math.Min(Math.Max(temp, 0.0), 1.0);
-                                UdpSmoothingBeta = temp;
-                            }
-                            catch
-                            {
-                                missingSetting = true;
-                            }
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/UseCustomSteamFolder");
-                            bool.TryParse(Item.InnerText, out var value);
-                            UseCustomSteamFolder = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/CustomSteamFolder");
-                            CustomSteamFolder = Item.InnerText;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = m_Xdoc.SelectSingleNode("/Profile/AutoProfileRevertDefaultProfile");
-                            bool.TryParse(Item.InnerText, out var value);
-                            AutoProfileRevertDefaultProfile = value;
-                        }
-                        catch
-                        {
-                            missingSetting = true;
-                        }
-
-
-                        var xmlDeviceOptions = m_Xdoc.SelectSingleNode("/Profile/DeviceOptions");
-                        if (xmlDeviceOptions != null)
-                        {
-                            var xmlDS4Support = xmlDeviceOptions.SelectSingleNode("DS4SupportSettings");
-                            if (xmlDS4Support != null)
-                                try
-                                {
-                                    var item = xmlDS4Support.SelectSingleNode("Enabled");
-                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
-                                        DeviceOptions.Ds4DeviceOpts.Enabled = temp;
-                                }
-                                catch
-                                {
-                                }
-
-                            var xmlDualSenseSupport = xmlDeviceOptions.SelectSingleNode("DualSenseSupportSettings");
-                            if (xmlDualSenseSupport != null)
-                                try
-                                {
-                                    var item = xmlDualSenseSupport.SelectSingleNode("Enabled");
-                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
-                                        DeviceOptions.DualSenseOpts.Enabled = temp;
-                                }
-                                catch
-                                {
-                                }
-
-                            var xmlSwitchProSupport = xmlDeviceOptions.SelectSingleNode("SwitchProSupportSettings");
-                            if (xmlSwitchProSupport != null)
-                                try
-                                {
-                                    var item = xmlSwitchProSupport.SelectSingleNode("Enabled");
-                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
-                                        DeviceOptions.SwitchProDeviceOpts.Enabled = temp;
-                                }
-                                catch
-                                {
-                                }
-
-                            var xmlJoyConSupport = xmlDeviceOptions.SelectSingleNode("JoyConSupportSettings");
-                            if (xmlJoyConSupport != null)
-                            {
-                                try
-                                {
-                                    var item = xmlJoyConSupport.SelectSingleNode("Enabled");
-                                    if (bool.TryParse(item?.InnerText ?? "", out var temp))
-                                        DeviceOptions.JoyConDeviceOpts.Enabled = temp;
-                                }
-                                catch
-                                {
-                                }
-
-                                try
-                                {
-                                    var item = xmlJoyConSupport.SelectSingleNode("LinkMode");
-                                    if (Enum.TryParse(item?.InnerText ?? "", out JoyConDeviceOptions.LinkMode temp))
-                                        DeviceOptions.JoyConDeviceOpts.LinkedMode = temp;
-                                }
-                                catch
-                                {
-                                }
-
-                                try
-                                {
-                                    var item = xmlJoyConSupport.SelectSingleNode("JoinedGyroProvider");
-                                    if (Enum.TryParse(item?.InnerText ?? "",
-                                        out JoyConDeviceOptions.JoinedGyroProvider temp))
-                                        DeviceOptions.JoyConDeviceOpts.JoinGyroProv = temp;
-                                }
-                                catch
-                                {
-                                }
-                            }
-                        }
-
-                        for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
-                            try
-                            {
-                                Item = m_Xdoc.SelectSingleNode("/Profile/CustomLed" + (i + 1));
-                                var ss = Item.InnerText.Split(':');
-                                bool.TryParse(ss[0], out var value);
-                                LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed = value;
-
-                                var colorInfo = ss[1].Split(',');
-
-                                byte.TryParse(colorInfo[0], out var r);
-                                byte.TryParse(colorInfo[1], out var g);
-                                byte.TryParse(colorInfo[2], out var b);
-
-                                LightbarSettingInfo[i].Ds4WinSettings.CustomLed = new DS4Color(r, g, b);
-                            }
-                            catch
-                            {
-                                LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed = false;
-                                LightbarSettingInfo[i].Ds4WinSettings.CustomLed = new DS4Color(Color.Blue);
-                                missingSetting = true;
-                            }
-                    }
-                }
-                catch
-                {
-                }
-
-                if (missingSetting)
-                    Save();
-
-                if (Loaded)
-                {
-                    var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
-                    var fakeExeFileExists = File.Exists(custom_exe_name_path);
-                    if (fakeExeFileExists)
-                    {
-                        var fake_exe_name = File.ReadAllText(custom_exe_name_path).Trim();
-                        var valid = !(fake_exe_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0);
-                        if (valid) FakeExeFileName = fake_exe_name;
-                    }
-                }
-
-                return Loaded;
-            }
-
-            [ConfigurationSystemComponent]
-            public bool Save()
-            {
-                var Saved = true;
-
-                XmlNode Node;
-
-                m_Xdoc.RemoveAll();
-
-                Node = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateComment(string.Format(" Profile Configuration Data. {0} ", DateTime.Now));
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ",
-                    ExecutableProductVersion));
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateWhitespace("\r\n");
-                m_Xdoc.AppendChild(Node);
-
-                var rootElement = m_Xdoc.CreateElement("Profile", null);
-                rootElement.SetAttribute("app_version", ExecutableProductVersion);
-                rootElement.SetAttribute("config_version", APP_CONFIG_VERSION.ToString());
-
-                // Ex Mode (+1 line)
-                var xmlUseExclNode = m_Xdoc.CreateNode(XmlNodeType.Element, "useExclusiveMode", null);
-                xmlUseExclNode.InnerText = UseExclusiveMode.ToString();
-                rootElement.AppendChild(xmlUseExclNode);
-                var xmlStartMinimized = m_Xdoc.CreateNode(XmlNodeType.Element, "startMinimized", null);
-                xmlStartMinimized.InnerText = StartMinimized.ToString();
-                rootElement.AppendChild(xmlStartMinimized);
-                var xmlminToTaskbar = m_Xdoc.CreateNode(XmlNodeType.Element, "minimizeToTaskbar", null);
-                xmlminToTaskbar.InnerText = MinToTaskBar.ToString();
-                rootElement.AppendChild(xmlminToTaskbar);
-                var xmlFormWidth = m_Xdoc.CreateNode(XmlNodeType.Element, "formWidth", null);
-                xmlFormWidth.InnerText = FormWidth.ToString();
-                rootElement.AppendChild(xmlFormWidth);
-                var xmlFormHeight = m_Xdoc.CreateNode(XmlNodeType.Element, "formHeight", null);
-                xmlFormHeight.InnerText = FormHeight.ToString();
-                rootElement.AppendChild(xmlFormHeight);
-                var xmlFormLocationX = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationX", null);
-                xmlFormLocationX.InnerText = FormLocationX.ToString();
-                rootElement.AppendChild(xmlFormLocationX);
-                var xmlFormLocationY = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationY", null);
-                xmlFormLocationY.InnerText = FormLocationY.ToString();
-                rootElement.AppendChild(xmlFormLocationY);
-
-                for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
-                {
-                    var contTagName = $"Controller{i + 1}";
-                    var xmlControllerNode = m_Xdoc.CreateNode(XmlNodeType.Element, contTagName, null);
-                    xmlControllerNode.InnerText = !LinkedProfileCheck[i] ? ProfilePath[i] : OlderProfilePath[i];
-                    if (!string.IsNullOrEmpty(xmlControllerNode.InnerText)) rootElement.AppendChild(xmlControllerNode);
-                }
-
-                var xmlLastChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastChecked", null);
-                xmlLastChecked.InnerText = LastChecked.ToString();
-                rootElement.AppendChild(xmlLastChecked);
-                var xmlCheckWhen = m_Xdoc.CreateNode(XmlNodeType.Element, "CheckWhen", null);
-                xmlCheckWhen.InnerText = CheckWhen.ToString();
-                rootElement.AppendChild(xmlCheckWhen);
-                if (!string.IsNullOrEmpty(lastVersionChecked))
-                {
-                    var xmlLastVersionChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastVersionChecked", null);
-                    xmlLastVersionChecked.InnerText = lastVersionChecked;
-                    rootElement.AppendChild(xmlLastVersionChecked);
-                }
-
-                var xmlNotifications = m_Xdoc.CreateNode(XmlNodeType.Element, "Notifications", null);
-                xmlNotifications.InnerText = Notifications.ToString();
-                rootElement.AppendChild(xmlNotifications);
-                var xmlDisconnectBT = m_Xdoc.CreateNode(XmlNodeType.Element, "DisconnectBTAtStop", null);
-                xmlDisconnectBT.InnerText = DisconnectBluetoothAtStop.ToString();
-                rootElement.AppendChild(xmlDisconnectBT);
-                var xmlSwipeProfiles = m_Xdoc.CreateNode(XmlNodeType.Element, "SwipeProfiles", null);
-                xmlSwipeProfiles.InnerText = SwipeProfiles.ToString();
-                rootElement.AppendChild(xmlSwipeProfiles);
-                //XmlNode xmlDS4Mapping = m_Xdoc.CreateNode(XmlNodeType.Element, "UseDS4ForMapping", null); xmlDS4Mapping.InnerText = ds4Mapping.ToString(); rootElement.AppendChild(xmlDS4Mapping);
-                var xmlQuickCharge = m_Xdoc.CreateNode(XmlNodeType.Element, "QuickCharge", null);
-                xmlQuickCharge.InnerText = QuickCharge.ToString();
-                rootElement.AppendChild(xmlQuickCharge);
-                var xmlCloseMini = m_Xdoc.CreateNode(XmlNodeType.Element, "CloseMinimizes", null);
-                xmlCloseMini.InnerText = CloseMini.ToString();
-                rootElement.AppendChild(xmlCloseMini);
-                var xmlUseLang = m_Xdoc.CreateNode(XmlNodeType.Element, "UseLang", null);
-                xmlUseLang.InnerText = UseLang;
-                rootElement.AppendChild(xmlUseLang);
-                var xmlDownloadLang = m_Xdoc.CreateNode(XmlNodeType.Element, "DownloadLang", null);
-                xmlDownloadLang.InnerText = DownloadLang.ToString();
-                rootElement.AppendChild(xmlDownloadLang);
-                var xmlFlashWhenLate = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLate", null);
-                xmlFlashWhenLate.InnerText = FlashWhenLate.ToString();
-                rootElement.AppendChild(xmlFlashWhenLate);
-                var xmlFlashWhenLateAt = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLateAt", null);
-                xmlFlashWhenLateAt.InnerText = FlashWhenLateAt.ToString();
-                rootElement.AppendChild(xmlFlashWhenLateAt);
-                var xmlAppIconChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppIcon", null);
-                xmlAppIconChoice.InnerText = UseIconChoice.ToString();
-                rootElement.AppendChild(xmlAppIconChoice);
-                var xmlAppThemeChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppTheme", null);
-                xmlAppThemeChoice.InnerText = ThemeChoice.ToString();
-                rootElement.AppendChild(xmlAppThemeChoice);
-                var xmlUseUDPServ = m_Xdoc.CreateNode(XmlNodeType.Element, "UseUDPServer", null);
-                xmlUseUDPServ.InnerText = IsUdpServerEnabled.ToString();
-                rootElement.AppendChild(xmlUseUDPServ);
-                var xmlUDPServPort = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerPort", null);
-                xmlUDPServPort.InnerText = UdpServerPort.ToString();
-                rootElement.AppendChild(xmlUDPServPort);
-                var xmlUDPServListenAddress = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerListenAddress", null);
-                xmlUDPServListenAddress.InnerText = UdpServerListenAddress;
-                rootElement.AppendChild(xmlUDPServListenAddress);
-
-                var xmlUdpServerSmoothElement = m_Xdoc.CreateElement("UDPServerSmoothingOptions");
-                var xmlUDPUseSmoothing = m_Xdoc.CreateElement("UseSmoothing");
-                xmlUDPUseSmoothing.InnerText = UseUdpSmoothing.ToString();
-                xmlUdpServerSmoothElement.AppendChild(xmlUDPUseSmoothing);
-                var xmlUDPSmoothMinCutoff = m_Xdoc.CreateElement("UdpSmoothMinCutoff");
-                xmlUDPSmoothMinCutoff.InnerText = UdpSmoothingMincutoff.ToString();
-                xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothMinCutoff);
-                var xmlUDPSmoothBeta = m_Xdoc.CreateElement("UdpSmoothBeta");
-                xmlUDPSmoothBeta.InnerText = UdpSmoothingBeta.ToString();
-                xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothBeta);
-                rootElement.AppendChild(xmlUdpServerSmoothElement);
-
-                var xmlUseCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "UseCustomSteamFolder", null);
-                xmlUseCustomSteamFolder.InnerText = UseCustomSteamFolder.ToString();
-                rootElement.AppendChild(xmlUseCustomSteamFolder);
-                var xmlCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomSteamFolder", null);
-                xmlCustomSteamFolder.InnerText = CustomSteamFolder;
-                rootElement.AppendChild(xmlCustomSteamFolder);
-                var xmlAutoProfileRevertDefaultProfile =
-                    m_Xdoc.CreateNode(XmlNodeType.Element, "AutoProfileRevertDefaultProfile", null);
-                xmlAutoProfileRevertDefaultProfile.InnerText = AutoProfileRevertDefaultProfile.ToString();
-                rootElement.AppendChild(xmlAutoProfileRevertDefaultProfile);
-
-                var xmlDeviceOptions = m_Xdoc.CreateElement("DeviceOptions", null);
-                var xmlDS4Support = m_Xdoc.CreateElement("DS4SupportSettings", null);
-                var xmlDS4Enabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlDS4Enabled.InnerText = DeviceOptions.Ds4DeviceOpts.Enabled.ToString();
-                xmlDS4Support.AppendChild(xmlDS4Enabled);
-                xmlDeviceOptions.AppendChild(xmlDS4Support);
-
-                var xmlDualSenseSupport = m_Xdoc.CreateElement("DualSenseSupportSettings", null);
-                var xmlDualSenseEnabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlDualSenseEnabled.InnerText = DeviceOptions.DualSenseOpts.Enabled.ToString();
-                xmlDualSenseSupport.AppendChild(xmlDualSenseEnabled);
-
-                xmlDeviceOptions.AppendChild(xmlDualSenseSupport);
-
-                var xmlSwitchProSupport = m_Xdoc.CreateElement("SwitchProSupportSettings", null);
-                var xmlSwitchProEnabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlSwitchProEnabled.InnerText = DeviceOptions.SwitchProDeviceOpts.Enabled.ToString();
-                xmlSwitchProSupport.AppendChild(xmlSwitchProEnabled);
-
-                xmlDeviceOptions.AppendChild(xmlSwitchProSupport);
-
-                var xmlJoyConSupport = m_Xdoc.CreateElement("JoyConSupportSettings", null);
-                var xmlJoyconEnabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlJoyconEnabled.InnerText = DeviceOptions.JoyConDeviceOpts.Enabled.ToString();
-                xmlJoyConSupport.AppendChild(xmlJoyconEnabled);
-                var xmlJoyconLinkMode = m_Xdoc.CreateElement("LinkMode", null);
-                xmlJoyconLinkMode.InnerText = DeviceOptions.JoyConDeviceOpts.LinkedMode.ToString();
-                xmlJoyConSupport.AppendChild(xmlJoyconLinkMode);
-                var xmlJoyconUnionGyro = m_Xdoc.CreateElement("JoinedGyroProvider", null);
-                xmlJoyconUnionGyro.InnerText = DeviceOptions.JoyConDeviceOpts.JoinGyroProv.ToString();
-                xmlJoyConSupport.AppendChild(xmlJoyconUnionGyro);
-
-                xmlDeviceOptions.AppendChild(xmlJoyConSupport);
-
-                rootElement.AppendChild(xmlDeviceOptions);
-
-                for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
-                {
-                    var xmlCustomLed = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomLed" + (1 + i), null);
-                    xmlCustomLed.InnerText = LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed + ":" +
-                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Red + "," +
-                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Green + "," +
-                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Blue;
-                    rootElement.AppendChild(xmlCustomLed);
-                }
-
-                m_Xdoc.AppendChild(rootElement);
-
-                try
-                {
-                    m_Xdoc.Save(ProfilesPath);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    Saved = false;
-                }
-
-                var adminNeeded = IsAdminNeeded;
-                if (Saved &&
-                    (!adminNeeded || adminNeeded && IsAdministrator))
-                {
-                    var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
-                    var fakeExeFileExists = File.Exists(custom_exe_name_path);
-                    if (!string.IsNullOrEmpty(FakeExeFileName) || fakeExeFileExists)
-                        File.WriteAllText(custom_exe_name_path, FakeExeFileName);
-                }
-
-                return Saved;
-            }
-
+            
             [ConfigurationSystemComponent]
             public bool SaveAction(string name, string controls, int mode, string details, bool edit,
                 string extras = "")
@@ -6223,133 +6212,6 @@ namespace DS4Windows
                 try
                 {
                     configXdoc.Save(ControllerConfigsPath);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
-                    saved = false;
-                }
-
-                return saved;
-            }
-
-            [ConfigurationSystemComponent]
-            private bool LoadControllerConfigsForDevice(DS4Device device)
-            {
-                var loaded = false;
-
-                if (device == null) return false;
-                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
-
-                try
-                {
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.Load(ControllerConfigsPath);
-
-                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
-                                                       "\"]");
-                    if (node != null)
-                    {
-                        int intValue;
-                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheelCenterPoint.X = intValue;
-                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheelCenterPoint.Y = intValue;
-                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheel90DegPointLeft.X = intValue;
-                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheel90DegPointLeft.Y = intValue;
-                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheel90DegPointRight.X = intValue;
-                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheel90DegPointRight.Y = intValue;
-
-                        device.OptionsStore.LoadSettings(xmlDoc, node);
-
-                        loaded = true;
-                    }
-                }
-                catch
-                {
-                    AppLogger.LogToGui("ControllerConfigs.xml can't be found.", false);
-                    loaded = false;
-                }
-
-                return loaded;
-            }
-
-            [ConfigurationSystemComponent]
-            private bool SaveControllerConfigsForDevice(DS4Device device)
-            {
-                var saved = true;
-
-                if (device == null) return false;
-                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
-
-                try
-                {
-                    //XmlNode node = null;
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.Load(ControllerConfigsPath);
-
-                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
-                                                       "\"]");
-                    var xmlControllersNode = xmlDoc.SelectSingleNode("/Controllers");
-                    if (node == null)
-                    {
-                        var el = xmlDoc.CreateElement("Controller");
-                        node = xmlControllersNode.AppendChild(el);
-                    }
-                    else
-                    {
-                        node.RemoveAll();
-                    }
-
-                    var macAttr = xmlDoc.CreateAttribute("Mac");
-                    macAttr.Value = device.getMacAddress();
-                    node.Attributes.Append(macAttr);
-
-                    var contTypeAttr = xmlDoc.CreateAttribute("ControllerType");
-                    contTypeAttr.Value = device.DeviceType.ToString();
-                    node.Attributes.Append(contTypeAttr);
-
-                    if (!device.wheelCenterPoint.IsEmpty)
-                    {
-                        var wheelCenterEl = xmlDoc.CreateElement("wheelCenterPoint");
-                        wheelCenterEl.InnerText = $"{device.wheelCenterPoint.X},{device.wheelCenterPoint.Y}";
-                        node.AppendChild(wheelCenterEl);
-
-                        var wheel90DegPointLeftEl = xmlDoc.CreateElement("wheel90DegPointLeft");
-                        wheel90DegPointLeftEl.InnerText =
-                            $"{device.wheel90DegPointLeft.X},{device.wheel90DegPointLeft.Y}";
-                        node.AppendChild(wheel90DegPointLeftEl);
-
-                        var wheel90DegPointRightEl = xmlDoc.CreateElement("wheel90DegPointRight");
-                        wheel90DegPointRightEl.InnerText =
-                            $"{device.wheel90DegPointRight.X},{device.wheel90DegPointRight.Y}";
-                        node.AppendChild(wheel90DegPointRightEl);
-                    }
-
-                    device.OptionsStore.PersistSettings(xmlDoc, node);
-
-                    // Remove old elements
-                    xmlDoc.RemoveAll();
-
-                    XmlNode Node;
-                    Node = xmlDoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                    xmlDoc.AppendChild(Node);
-
-                    Node = xmlDoc.CreateComment(string.Format(" Controller config data. {0} ", DateTime.Now));
-                    xmlDoc.AppendChild(Node);
-
-                    Node = xmlDoc.CreateWhitespace("\r\n");
-                    xmlDoc.AppendChild(Node);
-
-                    // Write old Controllers node back in
-                    xmlDoc.AppendChild(xmlControllersNode);
-
-                    // Save XML to file
-                    xmlDoc.Save(ControllerConfigsPath);
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -7131,6 +6993,186 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            public string StickOutputCurveString(int id)
+            {
+                var result = "linear";
+                switch (id)
+                {
+                    case 0: break;
+                    case 1:
+                        result = "enhanced-precision";
+                        break;
+                    case 2:
+                        result = "quadratic";
+                        break;
+                    case 3:
+                        result = "cubic";
+                        break;
+                    case 4:
+                        result = "easeout-quad";
+                        break;
+                    case 5:
+                        result = "easeout-cubic";
+                        break;
+                    case 6:
+                        result = "custom";
+                        break;
+                }
+
+                return result;
+            }
+
+            public string AxisOutputCurveString(int id)
+            {
+                return StickOutputCurveString(id);
+            }
+
+            public string SaTriggerCondString(bool value)
+            {
+                var result = value ? "and" : "or";
+                return result;
+            }
+
+            private static async Task<IExtendedXmlSerializer> GetProfileSerializerAsync()
+            {
+                return await Task.Run(() =>
+                {
+                    return new ConfigurationContainer()
+                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4Windows))
+                        .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                        .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
+                        .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
+                        .Create();
+                });
+            }
+
+            [ConfigurationSystemComponent]
+            private bool LoadControllerConfigsForDevice(DS4Device device)
+            {
+                var loaded = false;
+
+                if (device == null) return false;
+                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
+
+                try
+                {
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.Load(ControllerConfigsPath);
+
+                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
+                                                       "\"]");
+                    if (node != null)
+                    {
+                        int intValue;
+                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[0] ?? "", out intValue))
+                            device.wheelCenterPoint.X = intValue;
+                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[1] ?? "", out intValue))
+                            device.wheelCenterPoint.Y = intValue;
+                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[0] ?? "", out intValue))
+                            device.wheel90DegPointLeft.X = intValue;
+                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[1] ?? "", out intValue))
+                            device.wheel90DegPointLeft.Y = intValue;
+                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[0] ?? "", out intValue))
+                            device.wheel90DegPointRight.X = intValue;
+                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[1] ?? "", out intValue))
+                            device.wheel90DegPointRight.Y = intValue;
+
+                        device.OptionsStore.LoadSettings(xmlDoc, node);
+
+                        loaded = true;
+                    }
+                }
+                catch
+                {
+                    AppLogger.LogToGui("ControllerConfigs.xml can't be found.", false);
+                    loaded = false;
+                }
+
+                return loaded;
+            }
+
+            [ConfigurationSystemComponent]
+            private bool SaveControllerConfigsForDevice(DS4Device device)
+            {
+                var saved = true;
+
+                if (device == null) return false;
+                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
+
+                try
+                {
+                    //XmlNode node = null;
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.Load(ControllerConfigsPath);
+
+                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
+                                                       "\"]");
+                    var xmlControllersNode = xmlDoc.SelectSingleNode("/Controllers");
+                    if (node == null)
+                    {
+                        var el = xmlDoc.CreateElement("Controller");
+                        node = xmlControllersNode.AppendChild(el);
+                    }
+                    else
+                    {
+                        node.RemoveAll();
+                    }
+
+                    var macAttr = xmlDoc.CreateAttribute("Mac");
+                    macAttr.Value = device.getMacAddress();
+                    node.Attributes.Append(macAttr);
+
+                    var contTypeAttr = xmlDoc.CreateAttribute("ControllerType");
+                    contTypeAttr.Value = device.DeviceType.ToString();
+                    node.Attributes.Append(contTypeAttr);
+
+                    if (!device.wheelCenterPoint.IsEmpty)
+                    {
+                        var wheelCenterEl = xmlDoc.CreateElement("wheelCenterPoint");
+                        wheelCenterEl.InnerText = $"{device.wheelCenterPoint.X},{device.wheelCenterPoint.Y}";
+                        node.AppendChild(wheelCenterEl);
+
+                        var wheel90DegPointLeftEl = xmlDoc.CreateElement("wheel90DegPointLeft");
+                        wheel90DegPointLeftEl.InnerText =
+                            $"{device.wheel90DegPointLeft.X},{device.wheel90DegPointLeft.Y}";
+                        node.AppendChild(wheel90DegPointLeftEl);
+
+                        var wheel90DegPointRightEl = xmlDoc.CreateElement("wheel90DegPointRight");
+                        wheel90DegPointRightEl.InnerText =
+                            $"{device.wheel90DegPointRight.X},{device.wheel90DegPointRight.Y}";
+                        node.AppendChild(wheel90DegPointRightEl);
+                    }
+
+                    device.OptionsStore.PersistSettings(xmlDoc, node);
+
+                    // Remove old elements
+                    xmlDoc.RemoveAll();
+
+                    XmlNode Node;
+                    Node = xmlDoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
+                    xmlDoc.AppendChild(Node);
+
+                    Node = xmlDoc.CreateComment(string.Format(" Controller config data. {0} ", DateTime.Now));
+                    xmlDoc.AppendChild(Node);
+
+                    Node = xmlDoc.CreateWhitespace("\r\n");
+                    xmlDoc.AppendChild(Node);
+
+                    // Write old Controllers node back in
+                    xmlDoc.AppendChild(xmlControllersNode);
+
+                    // Save XML to file
+                    xmlDoc.Save(ControllerConfigsPath);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
+                    saved = false;
+                }
+
+                return saved;
+            }
+
             private void SetOutBezierCurveObjArrayItem(IList<BezierCurve> bezierCurveArray, int device,
                 int curveOptionValue, BezierCurve.AxisType axisType)
             {
@@ -7161,35 +7203,6 @@ namespace DS4Windows
                 LightbarSettingInfo[6].Ds4WinSettings.Led = new DS4Color(Color.Green);
                 LightbarSettingInfo[7].Ds4WinSettings.Led = new DS4Color(Color.Pink);
                 LightbarSettingInfo[8].Ds4WinSettings.Led = new DS4Color(Color.White);
-            }
-
-            public string StickOutputCurveString(int id)
-            {
-                var result = "linear";
-                switch (id)
-                {
-                    case 0: break;
-                    case 1:
-                        result = "enhanced-precision";
-                        break;
-                    case 2:
-                        result = "quadratic";
-                        break;
-                    case 3:
-                        result = "cubic";
-                        break;
-                    case 4:
-                        result = "easeout-quad";
-                        break;
-                    case 5:
-                        result = "easeout-cubic";
-                        break;
-                    case 6:
-                        result = "custom";
-                        break;
-                }
-
-                return result;
             }
 
             private int stickOutputCurveId(string name)
@@ -7223,11 +7236,6 @@ namespace DS4Windows
                 return id;
             }
 
-            public string AxisOutputCurveString(int id)
-            {
-                return StickOutputCurveString(id);
-            }
-
             private int axisOutputCurveId(string name)
             {
                 return stickOutputCurveId(name);
@@ -7249,12 +7257,6 @@ namespace DS4Windows
                         break;
                 }
 
-                return result;
-            }
-
-            public string SaTriggerCondString(bool value)
-            {
-                var result = value ? "and" : "or";
                 return result;
             }
 
