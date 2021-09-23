@@ -945,6 +945,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             TouchpadAbsMouseSettings.SnapToCenter = store.TouchPadAbsMouse[device].SnapToCenter;
 
             OutputContDevice = store.OutputDeviceType[device];
+
+            //
+            // TODO: to be continued
+            // 
         }
 
         /// <summary>
@@ -1006,6 +1010,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.RSModInfo[device].VerticalScale = Math.Min(Math.Max(RSVerticalScale, 0.0), 200.0);
             store.LSModInfo[device].MaxOutput = Math.Min(Math.Max(LSMaxOutput, 0.0), 100.0);
             store.RSModInfo[device].MaxOutput = Math.Min(Math.Max(RSMaxOutput, 0.0), 100.0);
+            store.LSModInfo[device].MaxOutputForce = LSMaxOutputForce;
+            store.RSModInfo[device].MaxOutputForce = RSMaxOutputForce;
             store.LSModInfo[device].OuterBindDeadZone = Math.Min(Math.Max(LSOuterBindDead, 0), 100);
             store.RSModInfo[device].OuterBindDeadZone = Math.Min(Math.Max(RSOuterBindDead, 0), 100);
             store.LSModInfo[device].OuterBindInvert = LSOuterBindInvert;
@@ -1156,14 +1162,32 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.L2OutputSettings[device].TwoStageMode = L2TwoStageMode;
             //store.L2OutputSettings[device].hipFireMS = Math.Max(Math.Min(0, L2HipFireDelay), 5000);
 
+            store.L2OutputSettings[device].TriggerEffect = L2TriggerEffect;
+            store.R2OutBezierCurveObj[device] = R2OutputCurveCustom;
+            store.SetR2OutCurveMode(device, store.StickOutputCurveId(R2OutputCurveMode));
+            store.R2OutputSettings[device].TwoStageMode = R2TwoStageMode;
+            store.R2OutputSettings[device].TriggerEffect = R2TriggerEffect;
+            store.SXOutBezierCurveObj[device] = SXOutputCurveCustom;
+            store.SetSXOutCurveMode(device, store.StickOutputCurveId(SXOutputCurveMode));
+            store.SZOutBezierCurveObj[device] = SZOutputCurveCustom;
+            store.SetSZOutCurveMode(device, store.StickOutputCurveId(SZOutputCurveMode));
+            store.TrackballMode[device] = TrackballMode;
+            store.TrackballFriction[device] = TrackballFriction;
+            
+            store.TouchPadRelMouse[device].Rotation =
+                Math.Min(Math.Max(TouchRelMouseRotation, -180), 180) * Math.PI / 180.0;
+            store.TouchPadRelMouse[device].MinThreshold = Math.Min(Math.Max(TouchRelMouseMinThreshold, 1.0), 40.0);
 
+            store.TouchPadAbsMouse[device].MaxZoneX = TouchpadAbsMouseSettings.MaxZoneX;
+            store.TouchPadAbsMouse[device].MaxZoneY = TouchpadAbsMouseSettings.MaxZoneY;
+            store.TouchPadAbsMouse[device].SnapToCenter = TouchpadAbsMouseSettings.SnapToCenter;
 
+            store.OutputDeviceType[device] = OutputContDevice;
 
-
-
-
-
-
+            //
+            // TODO: to be continued
+            // 
+            
         }
     }
 }

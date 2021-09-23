@@ -3042,11 +3042,9 @@ namespace DS4Windows
                     // 
                     var serializer = await GetProfileSerializerAsync();
 
-                    DS4WindowsProfile profileObject;
-
-                    using (var stream = File.OpenRead(profilepath))
+                    await using (var stream = File.OpenRead(profilepath))
                     {
-                        profileObject = await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream));
+                        var profileObject = await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream));
 
                         profileObject.CopyTo(this, device);
                     }
@@ -3090,30 +3088,6 @@ namespace DS4Windows
                     ResetProfile(device);
                     ResetMouseProperties(device, control);
                     
-                    
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSMaxOutputForce");
-                        if (bool.TryParse(Item?.InnerText ?? "", out var temp)) LSModInfo[device].MaxOutputForce = temp;
-                    }
-                    catch
-                    {
-                        LSModInfo[device].MaxOutputForce = StickDeadZoneInfo.DEFAULT_MAXOUTPUT_FORCE;
-                        missingSetting = true;
-                    }
-                    
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSMaxOutputForce");
-                        if (bool.TryParse(Item?.InnerText ?? "", out var temp)) RSModInfo[device].MaxOutputForce = temp;
-                    }
-                    catch
-                    {
-                        RSModInfo[device].MaxOutputForce = StickDeadZoneInfo.DEFAULT_MAXOUTPUT_FORCE;
-                        missingSetting = true;
-                    }
                     
                     
 
@@ -3280,47 +3254,6 @@ namespace DS4Windows
 
                     try
                     {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/L2TriggerEffect");
-                        if (Enum.TryParse(Item?.InnerText, out TriggerEffects tempMode))
-                            L2OutputSettings[device].TriggerEffect = tempMode;
-                    }
-                    catch
-                    {
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2OutputCurveCustom");
-                        R2OutBezierCurveObj[device].CustomDefinition = Item.InnerText;
-                    }
-                    catch
-                    {
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2OutputCurveMode");
-                        SetR2OutCurveMode(device, AxisOutputCurveId(Item.InnerText));
-                    }
-                    catch
-                    {
-                        SetR2OutCurveMode(device, 0);
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2TwoStageMode");
-                        if (Enum.TryParse(Item?.InnerText, out TwoStageTriggerMode tempMode))
-                            R2OutputSettings[device].TwoStageMode = tempMode;
-                    }
-                    catch
-                    {
-                    }
-
-                    try
-                    {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2HipFireDelay");
                         if (int.TryParse(Item?.InnerText, out var temp))
                             R2OutputSettings[device].hipFireMS = Math.Max(Math.Min(0, temp), 5000);
@@ -3329,167 +3262,7 @@ namespace DS4Windows
                     {
                     }
 
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2TriggerEffect");
-                        if (Enum.TryParse(Item?.InnerText, out TriggerEffects tempMode))
-                            R2OutputSettings[device].TriggerEffect = tempMode;
-                    }
-                    catch
-                    {
-                    }
 
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SXOutputCurveCustom");
-                        SXOutBezierCurveObj[device].CustomDefinition = Item.InnerText;
-                    }
-                    catch
-                    {
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SXOutputCurveMode");
-                        SetSXOutCurveMode(device, AxisOutputCurveId(Item.InnerText));
-                    }
-                    catch
-                    {
-                        SetSXOutCurveMode(device, 0);
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SZOutputCurveCustom");
-                        SZOutBezierCurveObj[device].CustomDefinition = Item.InnerText;
-                    }
-                    catch
-                    {
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SZOutputCurveMode");
-                        SetSZOutCurveMode(device, AxisOutputCurveId(Item.InnerText));
-                    }
-                    catch
-                    {
-                        SetSZOutCurveMode(device, 0);
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TrackballMode");
-                        bool.TryParse(Item.InnerText, out var value);
-                        TrackballMode[device] = value;
-                    }
-                    catch
-                    {
-                        TrackballMode[device] = false;
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TrackballFriction");
-                        double.TryParse(Item.InnerText, out var value);
-                        TrackballFriction[device] = value;
-                    }
-                    catch
-                    {
-                        TrackballFriction[device] = 10.0;
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TouchRelMouseRotation");
-                        int.TryParse(Item.InnerText, out var temp);
-                        temp = Math.Min(Math.Max(temp, -180), 180);
-                        TouchPadRelMouse[device].Rotation = temp * Math.PI / 180.0;
-                    }
-                    catch
-                    {
-                        TouchPadRelMouse[device].Rotation = 0.0;
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TouchRelMouseMinThreshold");
-                        double.TryParse(Item.InnerText, out var temp);
-                        temp = Math.Min(Math.Max(temp, 1.0), 40.0);
-                        TouchPadRelMouse[device].MinThreshold = temp;
-                    }
-                    catch
-                    {
-                        TouchPadRelMouse[device].MinThreshold = TouchPadRelMouseSettings.DEFAULT_MIN_THRESHOLD;
-                        missingSetting = true;
-                    }
-
-
-                    var touchpadAbsMouseGroup = false;
-                    var touchpadAbsMouseElement =
-                        m_Xdoc.SelectSingleNode("/" + rootname + "/TouchpadAbsMouseSettings");
-                    touchpadAbsMouseGroup = touchpadAbsMouseElement != null;
-
-                    if (touchpadAbsMouseGroup)
-                    {
-                        try
-                        {
-                            Item = touchpadAbsMouseElement.SelectSingleNode("MaxZoneX");
-                            int.TryParse(Item.InnerText, out var temp);
-                            TouchPadAbsMouse[device].MaxZoneX = temp;
-                        }
-                        catch
-                        {
-                            TouchPadAbsMouse[device].MaxZoneX = TouchPadAbsMouseSettings.DEFAULT_MAXZONE_X;
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = touchpadAbsMouseElement.SelectSingleNode("MaxZoneY");
-                            int.TryParse(Item.InnerText, out var temp);
-                            TouchPadAbsMouse[device].MaxZoneY = temp;
-                        }
-                        catch
-                        {
-                            TouchPadAbsMouse[device].MaxZoneY = TouchPadAbsMouseSettings.DEFAULT_MAXZONE_Y;
-                            missingSetting = true;
-                        }
-
-                        try
-                        {
-                            Item = touchpadAbsMouseElement.SelectSingleNode("SnapToCenter");
-                            bool.TryParse(Item.InnerText, out var temp);
-                            TouchPadAbsMouse[device].SnapToCenter = temp;
-                        }
-                        catch
-                        {
-                            TouchPadAbsMouse[device].SnapToCenter = TouchPadAbsMouseSettings.DEFAULT_SNAP_CENTER;
-                            missingSetting = true;
-                        }
-                    }
-                    else
-                    {
-                        missingSetting = true;
-                    }
-
-                    try
-                    {
-                        Item = m_Xdoc.SelectSingleNode("/" + rootname + "/OutputContDevice");
-                        OutputDeviceType[device] = OutContDeviceId(Item.InnerText);
-                    }
-                    catch
-                    {
-                        OutputDeviceType[device] = OutContType.X360;
-                        missingSetting = true;
-                    }
 
                     // Only change xinput devices under certain conditions. Avoid
                     // performing this upon program startup before loading devices.
