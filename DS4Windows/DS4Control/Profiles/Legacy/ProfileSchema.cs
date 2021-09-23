@@ -75,10 +75,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool SASteeringWheelUseSmoothing { get; set; }
 
         [XmlElement(ElementName = "SASteeringWheelSmoothMinCutoff")]
-        public double SASteeringWheelSmoothMinCutoff { get; set; }
+        public double SASteeringWheelSmoothMinCutoff { get; set; } = OneEuroFilterPair.DEFAULT_WHEEL_CUTOFF;
 
         [XmlElement(ElementName = "SASteeringWheelSmoothBeta")]
-        public double SASteeringWheelSmoothBeta { get; set; }
+        public double SASteeringWheelSmoothBeta { get; set; } = OneEuroFilterPair.DEFAULT_WHEEL_BETA;
     }
 
     [XmlRoot(ElementName = "GyroControlsSettings")]
@@ -107,13 +107,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string SmoothingMethod { get; set; }
 
         [XmlElement(ElementName = "SmoothingWeight")]
-        public int SmoothingWeight { get; set; }
+        public double SmoothingWeight { get; set; } = 0.5;
 
         [XmlElement(ElementName = "SmoothingMinCutoff")]
-        public double SmoothingMinCutoff { get; set; }
+        public double SmoothingMinCutoff { get; set; } = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
 
         [XmlElement(ElementName = "SmoothingBeta")]
-        public double SmoothingBeta { get; set; }
+        public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DEFAULT_BETA;
     }
 
     [XmlRoot(ElementName = "GyroMouseStickSmoothingSettings")]
@@ -126,13 +126,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string SmoothingMethod { get; set; }
 
         [XmlElement(ElementName = "SmoothingWeight")]
-        public int SmoothingWeight { get; set; }
+        public double SmoothingWeight { get; set; } = 0.5;
 
         [XmlElement(ElementName = "SmoothingMinCutoff")]
-        public double SmoothingMinCutoff { get; set; }
+        public double SmoothingMinCutoff { get; set; } = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
 
         [XmlElement(ElementName = "SmoothingBeta")]
-        public double SmoothingBeta { get; set; }
+        public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DEFAULT_BETA;
     }
 
     [XmlRoot(ElementName = "GyroSwipeSettings")]
@@ -279,16 +279,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int R2AntiDeadZone { get; set; }
 
         [XmlElement(ElementName = "L2MaxZone")]
-        public int L2MaxZone { get; set; }
+        public int L2MaxZone { get; set; } = 100;
 
         [XmlElement(ElementName = "R2MaxZone")]
-        public int R2MaxZone { get; set; }
+        public int R2MaxZone { get; set; } = 100;
 
         [XmlElement(ElementName = "L2MaxOutput")]
-        public double L2MaxOutput { get; set; }
+        public double L2MaxOutput { get; set; } = 100;
 
         [XmlElement(ElementName = "R2MaxOutput")]
-        public double R2MaxOutput { get; set; }
+        public double R2MaxOutput { get; set; } = 100;
 
         [XmlElement(ElementName = "ButtonMouseSensitivity")]
         public int ButtonMouseSensitivity { get; set; }
@@ -315,10 +315,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int RSAntiDeadZone { get; set; }
 
         [XmlElement(ElementName = "LSMaxZone")]
-        public int LSMaxZone { get; set; }
+        public int LSMaxZone { get; set; } = 100;
 
         [XmlElement(ElementName = "RSMaxZone")]
-        public int RSMaxZone { get; set; }
+        public int RSMaxZone { get; set; } = 100;
 
         [XmlElement(ElementName = "LSVerticalScale")]
         public double LSVerticalScale { get; set; }
@@ -327,10 +327,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double RSVerticalScale { get; set; }
 
         [XmlElement(ElementName = "LSMaxOutput")]
-        public double LSMaxOutput { get; set; }
+        public double LSMaxOutput { get; set; } = 100;
 
         [XmlElement(ElementName = "RSMaxOutput")]
-        public double RSMaxOutput { get; set; }
+        public double RSMaxOutput { get; set; } = 100;
 
         [XmlElement(ElementName = "LSMaxOutputForce")]
         public bool LSMaxOutputForce { get; set; }
@@ -363,10 +363,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int RSFuzz { get; set; }
 
         [XmlElement(ElementName = "LSOuterBindDead")]
-        public int LSOuterBindDead { get; set; }
+        public double LSOuterBindDead { get; set; } = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
 
         [XmlElement(ElementName = "RSOuterBindDead")]
-        public int RSOuterBindDead { get; set; }
+        public double RSOuterBindDead { get; set; } = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
 
         [XmlElement(ElementName = "LSOuterBindInvert")]
         public bool LSOuterBindInvert { get; set; }
@@ -375,22 +375,22 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool RSOuterBindInvert { get; set; }
 
         [XmlElement(ElementName = "SXDeadZone")]
-        public double SXDeadZone { get; set; }
+        public double SXDeadZone { get; set; } = 0.02;
 
         [XmlElement(ElementName = "SZDeadZone")]
-        public double SZDeadZone { get; set; }
+        public double SZDeadZone { get; set; } = 0.02;
 
         [XmlElement(ElementName = "SXMaxZone")]
-        public int SXMaxZone { get; set; }
+        public double SXMaxZone { get; set; } = 1.0f;
 
         [XmlElement(ElementName = "SZMaxZone")]
-        public int SZMaxZone { get; set; }
+        public double SZMaxZone { get; set; } = 1.0f;
 
         [XmlElement(ElementName = "SXAntiDeadZone")]
-        public int SXAntiDeadZone { get; set; }
+        public double SXAntiDeadZone { get; set; } = 0.0f;
 
         [XmlElement(ElementName = "SZAntiDeadZone")]
-        public int SZAntiDeadZone { get; set; }
+        public double SZAntiDeadZone { get; set; } = 0.0f;
 
         [XmlElement(ElementName = "Sensitivity")]
         public SensitivityProxyType Sensitivity { get; set; } = new();
@@ -405,7 +405,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int ButtonMouseVerticalScale { get; set; }
 
         [XmlElement(ElementName = "LaunchProgram")]
-        public string LaunchProgram { get; set; }
+        public string LaunchProgram { get; set; } = string.Empty;
 
         [XmlElement(ElementName = "DinputOnly")]
         public bool DinputOnly { get; set; }
@@ -414,19 +414,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool StartTouchpadOff { get; set; }
 
         [XmlElement(ElementName = "TouchpadOutputMode")]
-        public TouchpadOutMode TouchpadOutputMode { get; set; }
+        public TouchpadOutMode TouchpadOutputMode { get; set; } = TouchpadOutMode.Mouse;
 
         [XmlElement(ElementName = "SATriggers")]
-        public string SATriggers { get; set; }
+        public string SATriggers { get; set; } = "-1";
 
         [XmlElement(ElementName = "SATriggerCond")]
         public string SATriggerCond { get; set; }
 
         [XmlElement(ElementName = "SASteeringWheelEmulationAxis")]
-        public SASteeringWheelEmulationAxisType SASteeringWheelEmulationAxis { get; set; }
+        public SASteeringWheelEmulationAxisType SASteeringWheelEmulationAxis { get; set; } = SASteeringWheelEmulationAxisType.None;
 
         [XmlElement(ElementName = "SASteeringWheelEmulationRange")]
-        public int SASteeringWheelEmulationRange { get; set; }
+        public int SASteeringWheelEmulationRange { get; set; } = 360;
 
         [XmlElement(ElementName = "SASteeringWheelFuzz")]
         public int SASteeringWheelFuzz { get; set; }
@@ -435,19 +435,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public SASteeringWheelSmoothingOptions SASteeringWheelSmoothingOptions { get; set; } = new();
 
         [XmlElement(ElementName = "TouchDisInvTriggers")]
-        public List<int> TouchDisInvTriggers { get; set; } = new();
+        public List<int> TouchDisInvTriggers { get; set; } = new() { -1 };
 
         [XmlElement(ElementName = "GyroSensitivity")]
-        public int GyroSensitivity { get; set; }
+        public int GyroSensitivity { get; set; } = 100;
 
         [XmlElement(ElementName = "GyroSensVerticalScale")]
-        public int GyroSensVerticalScale { get; set; }
+        public int GyroSensVerticalScale { get; set; } = 100;
 
         [XmlElement(ElementName = "GyroInvert")]
         public int GyroInvert { get; set; }
 
         [XmlElement(ElementName = "GyroTriggerTurns")]
-        public bool GyroTriggerTurns { get; set; }
+        public bool GyroTriggerTurns { get; set; } = true;
 
         [XmlElement(ElementName = "GyroControlsSettings")]
         public GyroControlsSettings GyroControlsSettings { get; set; } = new();
@@ -471,7 +471,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public GyroOutMode GyroOutputMode { get; set; }
 
         [XmlElement(ElementName = "GyroMouseStickTriggers")]
-        public string GyroMouseStickTriggers { get; set; }
+        public string GyroMouseStickTriggers { get; set; } = "-1";
 
         [XmlElement(ElementName = "GyroMouseStickTriggerCond")]
         public string GyroMouseStickTriggerCond { get; set; }
@@ -483,10 +483,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int GyroMouseStickHAxis { get; set; }
 
         [XmlElement(ElementName = "GyroMouseStickDeadZone")]
-        public int GyroMouseStickDeadZone { get; set; }
+        public int GyroMouseStickDeadZone { get; set; } = 30;
 
         [XmlElement(ElementName = "GyroMouseStickMaxZone")]
-        public int GyroMouseStickMaxZone { get; set; }
+        public int GyroMouseStickMaxZone { get; set; } = 830;
 
         [XmlElement(ElementName = "GyroMouseStickOutputStick")]
         public GyroMouseStickInfo.OutputStick GyroMouseStickOutputStick { get; set; }
@@ -495,10 +495,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public GyroMouseStickInfo.OutputStickAxes GyroMouseStickOutputStickAxes { get; set; }
 
         [XmlElement(ElementName = "GyroMouseStickAntiDeadX")]
-        public double GyroMouseStickAntiDeadX { get; set; }
+        public double GyroMouseStickAntiDeadX { get; set; } = 0.4;
 
         [XmlElement(ElementName = "GyroMouseStickAntiDeadY")]
-        public double GyroMouseStickAntiDeadY { get; set; }
+        public double GyroMouseStickAntiDeadY { get; set; } = 0.4;
 
         [XmlElement(ElementName = "GyroMouseStickInvert")]
         public uint GyroMouseStickInvert { get; set; }
@@ -507,13 +507,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool GyroMouseStickToggle { get; set; }
 
         [XmlElement(ElementName = "GyroMouseStickMaxOutput")]
-        public double GyroMouseStickMaxOutput { get; set; }
+        public double GyroMouseStickMaxOutput { get; set; } = 100.0;
 
         [XmlElement(ElementName = "GyroMouseStickMaxOutputEnabled")]
         public bool GyroMouseStickMaxOutputEnabled { get; set; }
 
         [XmlElement(ElementName = "GyroMouseStickVerticalScale")]
-        public int GyroMouseStickVerticalScale { get; set; }
+        public int GyroMouseStickVerticalScale { get; set; } = 100;
 
         [XmlElement(ElementName = "GyroMouseStickSmoothingSettings")]
         public GyroMouseStickSmoothingSettings GyroMouseStickSmoothingSettings { get; set; } = new();
@@ -525,7 +525,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string ProfileActions { get; set; }
 
         [XmlElement(ElementName = "BTPollRate")]
-        public int BTPollRate { get; set; }
+        public int BTPollRate { get; set; } = 4;
 
         [XmlElement(ElementName = "LSOutputCurveMode")]
         public string LSOutputCurveMode { get; set; }
@@ -546,10 +546,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool RSSquareStick { get; set; }
 
         [XmlElement(ElementName = "SquareStickRoundness")]
-        public double SquareStickRoundness { get; set; }
+        public double SquareStickRoundness { get; set; } = 5.0;
 
         [XmlElement(ElementName = "SquareRStickRoundness")]
-        public double SquareRStickRoundness { get; set; }
+        public double SquareRStickRoundness { get; set; } = 5.0;
 
         [XmlElement(ElementName = "LSAntiSnapback")]
         public bool LSAntiSnapback { get; set; }
@@ -558,7 +558,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool RSAntiSnapback { get; set; }
 
         [XmlElement(ElementName = "LSAntiSnapbackDelta")]
-        public double LSAntiSnapbackDelta { get; set; }
+        public double LSAntiSnapbackDelta { get; set; } = StickAntiSnapbackInfo.DEFAULT_DELTA;
 
         [XmlElement(ElementName = "RSAntiSnapbackDelta")]
         public double RSAntiSnapbackDelta { get; set; }
