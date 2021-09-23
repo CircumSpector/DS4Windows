@@ -4296,11 +4296,11 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSOutputCurveMode");
-                        GetLsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
+                        SetLsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
-                        GetLsOutCurveMode(device, 0);
+                        SetLsOutCurveMode(device, 0);
                         missingSetting = true;
                     }
 
@@ -7561,7 +7561,7 @@ namespace DS4Windows
                 LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
                 LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
                 LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
-                GetLsOutCurveMode(device, 0);
+                SetLsOutCurveMode(device, 0);
                 SetRsOutCurveMode(device, 0);
                 SetL2OutCurveMode(device, 0);
                 SetR2OutCurveMode(device, 0);

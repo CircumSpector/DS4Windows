@@ -945,7 +945,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GetLsOutCurveMode(device);
             set
             {
-                Global.Instance.Config.GetLsOutCurveMode(device, value);
+                Global.Instance.Config.SetLsOutCurveMode(device, value);
                 LSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
