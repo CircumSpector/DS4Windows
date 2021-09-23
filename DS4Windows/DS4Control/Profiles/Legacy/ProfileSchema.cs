@@ -983,10 +983,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.R2ModInfo[device].deadZone = RightTriggerMiddle;
             store.L2ModInfo[device].AntiDeadZone = L2AntiDeadZone;
             store.R2ModInfo[device].AntiDeadZone = R2AntiDeadZone;
-            store.L2ModInfo[device].maxZone = L2MaxZone;
-            store.R2ModInfo[device].maxZone = R2MaxZone;
-            store.L2ModInfo[device].maxOutput = L2MaxOutput;
-            store.R2ModInfo[device].maxOutput = R2MaxOutput;
+            store.L2ModInfo[device].maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
+            store.R2ModInfo[device].maxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
+            store.L2ModInfo[device].maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);;
+            store.R2ModInfo[device].maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);;
             store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
             store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
@@ -1044,7 +1044,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
             lightInfo.ChargingType = ChargingType;
             store.ButtonMouseInfos[device].mouseAccel = MouseAcceleration;
-
+            //ShiftModifier
             store.LaunchProgram[device] = LaunchProgram;
             store.DirectInputOnly[device] = DinputOnly;
             store.StartTouchpadOff[device] = StartTouchpadOff;
