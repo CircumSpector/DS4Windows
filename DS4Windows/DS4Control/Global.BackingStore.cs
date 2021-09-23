@@ -2122,12 +2122,10 @@ namespace DS4Windows
                     tmpNode = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
                     m_Xdoc.AppendChild(tmpNode);
 
-                    tmpNode = m_Xdoc.CreateComment(string.Format(" DS4Windows Configuration Data. {0} ",
-                        DateTime.Now));
+                    tmpNode = m_Xdoc.CreateComment($" DS4Windows Configuration Data. {DateTime.Now} ");
                     m_Xdoc.AppendChild(tmpNode);
 
-                    tmpNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ",
-                        ExecutableProductVersion));
+                    tmpNode = m_Xdoc.CreateComment($" Made with DS4Windows version {ExecutableProductVersion} ");
                     m_Xdoc.AppendChild(tmpNode);
 
                     tmpNode = m_Xdoc.CreateWhitespace("\r\n");
@@ -3002,7 +3000,6 @@ namespace DS4Windows
                 {
                     Saved = false;
                 }
-
 
                 return Saved;
             }

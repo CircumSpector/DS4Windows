@@ -204,19 +204,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class DS4WindowsProfile
     {
         [XmlElement(ElementName = "touchToggle")]
-        public bool TouchToggle { get; set; }
+        public bool TouchToggle { get; set; } = true;
 
         [XmlElement(ElementName = "idleDisconnectTimeout")]
-        public int IdleDisconnectTimeout { get; set; }
+        public int IdleDisconnectTimeout { get; set; } = 0;
 
         [XmlElement(ElementName = "outputDataToDS4")]
-        public bool OutputDataToDS4 { get; set; }
+        public bool OutputDataToDS4 { get; set; } = true;
 
         [XmlElement(ElementName = "Color")]
-        public DS4Color Color { get; set; } = new(System.Drawing.Color.Black);
+        public DS4Color Color { get; set; } = new(System.Drawing.Color.Blue);
 
         [XmlElement(ElementName = "RumbleBoost")]
-        public byte RumbleBoost { get; set; }
+        public byte RumbleBoost { get; set; } = 100;
 
         [XmlElement(ElementName = "RumbleAutostopTime")]
         public int RumbleAutostopTime { get; set; }
@@ -234,7 +234,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int FlashBatteryAt { get; set; }
 
         [XmlElement(ElementName = "touchSensitivity")]
-        public byte TouchSensitivity { get; set; }
+        public byte TouchSensitivity { get; set; } = 100;
 
         [XmlElement(ElementName = "LowColor")]
         public DS4Color LowColor { get; set; } = new(System.Drawing.Color.Black);
@@ -246,7 +246,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public DS4Color FlashColor { get; set; } = new(System.Drawing.Color.Black);
 
         [XmlElement(ElementName = "touchpadJitterCompensation")]
-        public bool TouchpadJitterCompensation { get; set; }
+        public bool TouchpadJitterCompensation { get; set; } = true;
 
         [XmlElement(ElementName = "lowerRCOn")]
         public bool LowerRCOn { get; set; }
@@ -300,7 +300,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double Rainbow { get; set; }
 
         [XmlElement(ElementName = "MaxSatRainbow")]
-        public int MaxSatRainbow { get; set; }
+        public double MaxSatRainbow { get; set; } = 1.0;
 
         [XmlElement(ElementName = "LSDeadZone")]
         public int LSDeadZone { get; set; }
@@ -387,10 +387,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double SZMaxZone { get; set; } = 1.0f;
 
         [XmlElement(ElementName = "SXAntiDeadZone")]
-        public double SXAntiDeadZone { get; set; } = 0.0f;
+        public double SXAntiDeadZone { get; set; }
 
         [XmlElement(ElementName = "SZAntiDeadZone")]
-        public double SZAntiDeadZone { get; set; } = 0.0f;
+        public double SZAntiDeadZone { get; set; }
 
         [XmlElement(ElementName = "Sensitivity")]
         public SensitivityProxyType Sensitivity { get; set; } = new();
@@ -633,7 +633,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public TouchpadAbsMouseSettings TouchpadAbsMouseSettings { get; set; } = new();
 
         [XmlElement(ElementName = "OutputContDevice")]
-        public OutContType OutputContDevice { get; set; }
+        public OutContType OutputContDevice { get; set; } = OutContType.X360;
 
         /*
         [XmlElement(ElementName = "Control")] 
