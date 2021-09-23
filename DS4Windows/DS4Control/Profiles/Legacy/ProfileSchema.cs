@@ -21,10 +21,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneX")] 
+        [XmlElement(ElementName = "MaxZoneX")]
         public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")] 
+        [XmlElement(ElementName = "MaxZoneY")]
         public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "AntiDeadZoneX")]
@@ -49,10 +49,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneX")] 
+        [XmlElement(ElementName = "MaxZoneX")]
         public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")] 
+        [XmlElement(ElementName = "MaxZoneY")]
         public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "AntiDeadZoneX")]
@@ -84,7 +84,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     [XmlRoot(ElementName = "GyroControlsSettings")]
     public class GyroControlsSettings
     {
-        [XmlElement(ElementName = "Triggers")] 
+        [XmlElement(ElementName = "Triggers")]
         public string Triggers { get; set; }
 
         [XmlElement(ElementName = "TriggerCond")]
@@ -93,7 +93,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "TriggerTurns")]
         public bool TriggerTurns { get; set; }
 
-        [XmlElement(ElementName = "Toggle")] 
+        [XmlElement(ElementName = "Toggle")]
         public bool Toggle { get; set; }
     }
 
@@ -144,7 +144,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "Triggers")] 
+        [XmlElement(ElementName = "Triggers")]
         public string Triggers { get; set; }
 
         [XmlElement(ElementName = "TriggerCond")]
@@ -153,7 +153,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "TriggerTurns")]
         public bool TriggerTurns { get; set; }
 
-        [XmlElement(ElementName = "XAxis")] 
+        [XmlElement(ElementName = "XAxis")]
         public GyroDirectionalSwipeInfo.XAxisSwipe XAxis { get; set; }
 
         [XmlElement(ElementName = "DelayTime")]
@@ -190,10 +190,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     [XmlRoot(ElementName = "TouchpadAbsMouseSettings")]
     public class TouchpadAbsMouseSettings
     {
-        [XmlElement(ElementName = "MaxZoneX")] 
+        [XmlElement(ElementName = "MaxZoneX")]
         public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")] 
+        [XmlElement(ElementName = "MaxZoneY")]
         public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "SnapToCenter")]
@@ -212,7 +212,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "outputDataToDS4")]
         public bool OutputDataToDS4 { get; set; }
 
-        [XmlElement(ElementName = "Color")] 
+        [XmlElement(ElementName = "Color")]
         public DS4Color Color { get; set; }
 
         [XmlElement(ElementName = "RumbleBoost")]
@@ -236,7 +236,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "touchSensitivity")]
         public byte TouchSensitivity { get; set; }
 
-        [XmlElement(ElementName = "LowColor")] 
+        [XmlElement(ElementName = "LowColor")]
         public DS4Color LowColor { get; set; }
 
         [XmlElement(ElementName = "ChargingColor")]
@@ -296,7 +296,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "ButtonMouseOffset")]
         public double ButtonMouseOffset { get; set; }
 
-        [XmlElement(ElementName = "Rainbow")] 
+        [XmlElement(ElementName = "Rainbow")]
         public double Rainbow { get; set; }
 
         [XmlElement(ElementName = "MaxSatRainbow")]
@@ -356,10 +356,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "RSRotation")]
         public int RSRotation { get; set; }
 
-        [XmlElement(ElementName = "LSFuzz")] 
+        [XmlElement(ElementName = "LSFuzz")]
         public int LSFuzz { get; set; }
 
-        [XmlElement(ElementName = "RSFuzz")] 
+        [XmlElement(ElementName = "RSFuzz")]
         public int RSFuzz { get; set; }
 
         [XmlElement(ElementName = "LSOuterBindDead")]
@@ -682,41 +682,41 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             FlashType = light.Ds4WinSettings.FlashType;
             FlashBatteryAt = light.Ds4WinSettings.FlashAt;
             TouchSensitivity = store.TouchSensitivity[device];
-            
+
             LowColor = light.Ds4WinSettings.LowLed;
             ChargingColor = light.Ds4WinSettings.ChargingLed;
             FlashColor = light.Ds4WinSettings.FlashLed;
-            
+
             TouchpadJitterCompensation = store.TouchpadJitterCompensation[device];
             LowerRCOn = store.LowerRCOn[device];
             TapSensitivity = store.TapSensitivity[device];
             DoubleTap = store.DoubleTap[device];
             ScrollSensitivity = store.ScrollSensitivity[device];
-            
+
             LeftTriggerMiddle = store.L2ModInfo[device].deadZone;
             RightTriggerMiddle = store.R2ModInfo[device].deadZone;
-            
+
             TouchpadInvert = store.TouchPadInvert[device];
             TouchpadClickPassthru = store.TouchClickPassthru[device];
-            
+
             L2AntiDeadZone = store.L2ModInfo[device].AntiDeadZone;
             R2AntiDeadZone = store.R2ModInfo[device].AntiDeadZone;
-            
+
             L2MaxZone = store.L2ModInfo[device].maxZone;
             R2MaxZone = store.R2ModInfo[device].maxZone;
-            
+
             L2MaxOutput = store.L2ModInfo[device].maxOutput;
             R2MaxOutput = store.R2ModInfo[device].maxOutput;
-            
+
             ButtonMouseSensitivity = store.ButtonMouseInfos[device].buttonSensitivity;
             ButtonMouseOffset = store.ButtonMouseInfos[device].mouseVelocityOffset;
-            
+
             Rainbow = light.Ds4WinSettings.Rainbow;
             MaxSatRainbow = Convert.ToInt32(light.Ds4WinSettings.MaxRainbowSaturation * 100.0);
-            
+
             LSDeadZone = store.LSModInfo[device].DeadZone;
             RSDeadZone = store.RSModInfo[device].DeadZone;
-            
+
             LSAntiDeadZone = store.LSModInfo[device].AntiDeadZone;
             RSAntiDeadZone = store.RSModInfo[device].AntiDeadZone;
 
@@ -798,7 +798,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
             SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
             SASteeringWheelFuzz = store.SAWheelFuzzValues[device];
-            
+
             SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing = store.WheelSmoothInfo[device].Enabled;
             SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff = store.WheelSmoothInfo[device].MinCutoff;
             SASteeringWheelSmoothingOptions.SASteeringWheelSmoothBeta = store.WheelSmoothInfo[device].Beta;
@@ -924,7 +924,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
             L2TriggerEffect = store.L2OutputSettings[device].triggerEffect;
             R2TriggerEffect = store.R2OutputSettings[device].triggerEffect;
-            
+
             R2OutputCurveMode = store.AxisOutputCurveString(store.GetR2OutCurveMode(device));
             R2OutputCurveCustom = store.R2OutBezierCurveObj[device];
 
@@ -991,6 +991,177 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
             store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
+            store.ButtonMouseInfos[device].buttonSensitivity = ButtonMouseSensitivity;
+            store.ButtonMouseInfos[device].mouseVelocityOffset = ButtonMouseOffset;
+            store.ButtonMouseInfos[device].buttonVerticalScale = Math.Min(Math.Max(ButtonMouseVerticalScale, 0), 500) * 0.01;
+            lightInfo.Rainbow = Rainbow;
+            lightInfo.MaxRainbowSaturation = Math.Max(0, Math.Min(100, MaxSatRainbow)) / 100.0;
+            store.LSModInfo[device].DeadZone = Math.Min(Math.Max(LSDeadZone, 0), 127);
+            store.RSModInfo[device].DeadZone = Math.Min(Math.Max(RSDeadZone, 0), 127);
+            store.LSModInfo[device].AntiDeadZone = LSAntiDeadZone;
+            store.RSModInfo[device].AntiDeadZone = RSAntiDeadZone;
+            store.LSModInfo[device].MaxZone = Math.Min(Math.Max(LSMaxZone, 0), 100);
+            store.RSModInfo[device].MaxZone = Math.Min(Math.Max(RSMaxZone, 0), 100);
+            store.LSModInfo[device].VerticalScale = Math.Min(Math.Max(LSVerticalScale, 0.0), 200.0);
+            store.RSModInfo[device].VerticalScale = Math.Min(Math.Max(RSVerticalScale, 0.0), 200.0);
+            store.LSModInfo[device].MaxOutput = Math.Min(Math.Max(LSMaxOutput, 0.0), 100.0);
+            store.RSModInfo[device].MaxOutput = Math.Min(Math.Max(RSMaxOutput, 0.0), 100.0);
+            store.LSModInfo[device].OuterBindDeadZone = Math.Min(Math.Max(LSOuterBindDead, 0), 100);
+            store.RSModInfo[device].OuterBindDeadZone = Math.Min(Math.Max(RSOuterBindDead, 0), 100);
+            store.LSModInfo[device].OuterBindInvert = LSOuterBindInvert;
+            store.RSModInfo[device].OuterBindInvert = RSOuterBindInvert;
+            store.LSModInfo[device].DZType = LSDeadZoneType;
+            store.RSModInfo[device].DZType = RSDeadZoneType;
+            store.LSModInfo[device].XAxisDeadInfo.DeadZone = Math.Min(Math.Max(LSAxialDeadOptions.DeadZoneX, 0), 127);
+            store.LSModInfo[device].YAxisDeadInfo.DeadZone = Math.Min(Math.Max(LSAxialDeadOptions.DeadZoneY, 0), 127);
+            store.LSModInfo[device].XAxisDeadInfo.MaxZone = Math.Min(Math.Max(LSAxialDeadOptions.MaxZoneX, 0), 100);
+            store.LSModInfo[device].YAxisDeadInfo.MaxZone = Math.Min(Math.Max(LSAxialDeadOptions.MaxZoneY, 0), 100);
+            store.LSModInfo[device].XAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneX, 0), 100);
+            store.LSModInfo[device].YAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneY, 0), 100);
+            store.LSModInfo[device].XAxisDeadInfo.MaxOutput = Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
+            store.LSModInfo[device].YAxisDeadInfo.MaxOutput = Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            store.RSModInfo[device].XAxisDeadInfo.DeadZone = Math.Min(Math.Max(RSAxialDeadOptions.DeadZoneX, 0), 127);
+            store.RSModInfo[device].YAxisDeadInfo.DeadZone = Math.Min(Math.Max(RSAxialDeadOptions.DeadZoneY, 0), 127);
+            store.RSModInfo[device].XAxisDeadInfo.MaxZone = Math.Min(Math.Max(RSAxialDeadOptions.MaxZoneX, 0), 100);
+            store.RSModInfo[device].YAxisDeadInfo.MaxZone = Math.Min(Math.Max(RSAxialDeadOptions.MaxZoneY, 0), 100);
+            store.RSModInfo[device].XAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneX, 0), 100);
+            store.RSModInfo[device].YAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneY, 0), 100);
+            store.RSModInfo[device].XAxisDeadInfo.MaxOutput = Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
+            store.RSModInfo[device].YAxisDeadInfo.MaxOutput = Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            store.SXDeadzone[device] = SXDeadZone;
+            store.SZDeadzone[device] = SZDeadZone;
+            store.SXMaxzone[device] = Math.Min(Math.Max(SXMaxZone * 0.01, 0.0), 1.0);
+            store.SZMaxzone[device] = Math.Min(Math.Max(SZMaxZone * 0.01, 0.0), 1.0);
+            store.SXAntiDeadzone[device] = Math.Min(Math.Max(SXAntiDeadZone * 0.01, 0.0), 1.0);
+            store.SZAntiDeadzone[device] = Math.Min(Math.Max(SZAntiDeadZone * 0.01, 0.0), 1.0);
+
+            store.LSSens[device] = Sensitivity.LSSens;
+            store.RSSens[device] = Sensitivity.RSSens;
+            store.L2Sens[device] = Sensitivity.L2Sens;
+            store.R2Sens[device] = Sensitivity.R2Sens;
+            store.SXSens[device] = Sensitivity.SXSens;
+            store.SZSens[device] = Sensitivity.SZSens;
+
+            lightInfo.ChargingType = ChargingType;
+            store.ButtonMouseInfos[device].mouseAccel = MouseAcceleration;
+
+            store.LaunchProgram[device] = LaunchProgram;
+            store.DirectInputOnly[device] = DinputOnly;
+            store.StartTouchpadOff[device] = StartTouchpadOff;
+
+            store.SATriggers[device] = SATriggers;
+            store.SATriggerCondition[device] = store.SaTriggerCondValue(SATriggerCond);
+            store.SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxis;
+            store.SASteeringWheelEmulationRange[device] = SASteeringWheelEmulationRange;
+
+            store.WheelSmoothInfo[device].Enabled = SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing;
+            store.WheelSmoothInfo[device].MinCutoff = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff;
+            store.WheelSmoothInfo[device].Beta = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothBeta;
+
+            store.SAWheelFuzzValues[device] = SASteeringWheelFuzz is >= 0 and <= 100 ? SASteeringWheelFuzz : 0;
+
+            store.GyroOutputMode[device] = GyroOutputMode;
+
+            store.GyroControlsInfo[device].Triggers = GyroControlsSettings.Triggers;
+            store.GyroControlsInfo[device].TriggerCond = store.SaTriggerCondValue(GyroControlsSettings.TriggerCond);
+            store.GyroControlsInfo[device].TriggerTurns = GyroControlsSettings.TriggerTurns;
+            store.GyroControlsInfo[device].TriggerToggle = GyroControlsSettings.Toggle;
+
+            store.SAMouseStickTriggers[device] = GyroMouseStickTriggers;
+            store.SAMouseStickTriggerCond[device] = store.SaTriggerCondValue(GyroMouseStickTriggerCond);
+            store.GyroMouseStickTriggerTurns[device] = GyroMouseStickTriggerTurns;
+            store.GyroMouseStickHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseStickHAxis), 1);
+            store.GyroMouseStickInfo[device].DeadZone = GyroMouseStickDeadZone;
+            store.GyroMouseStickInfo[device].MaxZone = Math.Max(GyroMouseStickMaxZone, 1);
+            store.GyroMouseStickInfo[device].outputStick = GyroMouseStickOutputStick;
+            store.GyroMouseStickInfo[device].outputStickDir = GyroMouseStickOutputStickAxes;
+            store.GyroMouseStickInfo[device].AntiDeadX = GyroMouseStickAntiDeadX;
+            store.GyroMouseStickInfo[device].AntiDeadY = GyroMouseStickAntiDeadY;
+            store.GyroMouseStickInfo[device].Inverted = GyroMouseStickInvert;
+            //store.SetGyroMouseStickToggle(device, GyroMouseStickToggle, control)
+            store.GyroMouseStickInfo[device].MaxOutput = Math.Min(Math.Max(GyroMouseStickMaxOutput, 0.0), 100.0);
+            store.GyroMouseStickInfo[device].MaxOutputEnabled = GyroMouseStickMaxOutputEnabled;
+            store.GyroMouseStickInfo[device].VertScale = GyroMouseStickVerticalScale;
+            store.GyroMouseStickInfo[device].UseSmoothing = GyroMouseStickSmoothingSettings.UseSmoothing;
+            store.GyroMouseStickInfo[device].DetermineSmoothMethod(GyroMouseStickSmoothingSettings.SmoothingMethod);
+            store.GyroMouseStickInfo[device].SmoothWeight = Math.Min(
+                Math.Max(0.0, Convert.ToDouble(GyroMouseStickSmoothingSettings.SmoothingWeight * 0.01)), 1.0);
+            store.GyroMouseStickInfo[device].minCutoff =
+                Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingMinCutoff), 100.0);
+            store.GyroMouseStickInfo[device].beta =
+                Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingBeta), 1.0);
+
+            store.GyroSwipeInfo[device].deadzoneX = GyroSwipeSettings.DeadZoneX;
+            store.GyroSwipeInfo[device].deadzoneY = GyroSwipeSettings.DeadZoneY;
+            store.GyroSwipeInfo[device].triggers = GyroSwipeSettings.Triggers;
+            store.GyroSwipeInfo[device].triggerCond = store.SaTriggerCondValue(GyroSwipeSettings.TriggerCond);
+            store.GyroSwipeInfo[device].triggerTurns = GyroSwipeSettings.TriggerTurns;
+            store.GyroSwipeInfo[device].xAxis = GyroSwipeSettings.XAxis;
+            store.GyroSwipeInfo[device].delayTime = GyroSwipeSettings.DelayTime;
+
+            store.TouchOutMode[device] = TouchpadOutputMode;
+            store.TouchDisInvertTriggers[device] = TouchDisInvTriggers;
+            store.GyroSensitivity[device] = GyroSensitivity;
+            store.GyroSensVerticalScale[device] = GyroSensVerticalScale;
+            store.GyroInvert[device] = GyroInvert;
+            store.GyroTriggerTurns[device] = GyroTriggerTurns;
+
+            store.GyroMouseInfo[device].enableSmoothing = GyroMouseSmoothingSettings.UseSmoothing;
+            store.GyroMouseInfo[device].DetermineSmoothMethod(GyroMouseSmoothingSettings.SmoothingMethod);
+            store.GyroMouseInfo[device].smoothingWeight =
+                Math.Min(Math.Max(0.0, Convert.ToDouble(GyroMouseSmoothingSettings.SmoothingWeight * 0.01)), 1.0);
+            store.GyroMouseInfo[device].minCutoff =
+                Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingMinCutoff), 100.0);
+            store.GyroMouseInfo[device].beta = Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingBeta), 1.0);
+
+            store. GyroMouseHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseHAxis), 1);
+            //store.SetGyroMouseDZ(device, temp, control);
+            store.GyroMouseInfo[device].minThreshold = Math.Min(Math.Max(GyroMouseMinThreshold, 1.0), 40.0);
+            //SetGyroMouseToggle(device, temp, control);
+            store.BluetoothPollRate[device] = BTPollRate is >= 0 and <= 16 ? BTPollRate : 4;
+
+            store.LSOutBezierCurveObj[device] = LSOutputCurveCustom;
+            store.SetLsOutCurveMode(device, store.StickOutputCurveId(RSOutputCurveMode));
+            store.RSOutBezierCurveObj[device] = LSOutputCurveCustom;
+            store.SetRsOutCurveMode(device, store.StickOutputCurveId(RSOutputCurveMode));
+
+            store.SquStickInfo[device].LSMode = LSSquareStick;
+            store.SquStickInfo[device].LSRoundness = SquareStickRoundness;
+            store.SquStickInfo[device].RSRoundness = SquareRStickRoundness;
+            store.SquStickInfo[device].RSMode = RSSquareStick;
+            store.LSAntiSnapbackInfo[device].Enabled = LSAntiSnapback;
+            store.RSAntiSnapbackInfo[device].Enabled = RSAntiSnapback;
+            store.LSAntiSnapbackInfo[device].Delta = LSAntiSnapbackDelta;
+            store.RSAntiSnapbackInfo[device].Delta = RSAntiSnapbackDelta;
+            store.LSAntiSnapbackInfo[device].Timeout = LSAntiSnapbackTimeout;
+            store.RSAntiSnapbackInfo[device].Timeout = RSAntiSnapbackTimeout;
+            store.LSOutputSettings[device].Mode = LSOutputMode;
+            store.RSOutputSettings[device].Mode = RSOutputMode;
+
+            store.LSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration =
+                LSOutputSettings.FlickStickSettings.RealWorldCalibration;
+            store.LSOutputSettings[device].OutputSettings.flickSettings.flickThreshold =
+                LSOutputSettings.FlickStickSettings.FlickThreshold;
+            store.LSOutputSettings[device].OutputSettings.flickSettings.flickTime =
+                LSOutputSettings.FlickStickSettings.FlickTime;
+            store.RSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration =
+                RSOutputSettings.FlickStickSettings.RealWorldCalibration;
+            store.RSOutputSettings[device].OutputSettings.flickSettings.flickThreshold =
+                RSOutputSettings.FlickStickSettings.FlickThreshold;
+            store.RSOutputSettings[device].OutputSettings.flickSettings.flickTime =
+                RSOutputSettings.FlickStickSettings.FlickTime;
+
+            store.L2OutBezierCurveObj[device] = L2OutputCurveCustom;
+            store.SetL2OutCurveMode(device, store.StickOutputCurveId(L2OutputCurveMode));
+            store.L2OutputSettings[device].TwoStageMode = L2TwoStageMode;
+            //store.L2OutputSettings[device].hipFireMS = Math.Max(Math.Min(0, L2HipFireDelay), 5000);
+
+
+
+
+
+
+
 
 
         }

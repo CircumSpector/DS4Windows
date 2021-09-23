@@ -258,6 +258,10 @@ namespace DS4Windows
 
         bool IsUdpServerEnabled { get; set; }
 
+        int StickOutputCurveId(string name);
+
+        bool SaTriggerCondValue(string text);
+
         string SaTriggerCondString(bool value);
 
         void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons);

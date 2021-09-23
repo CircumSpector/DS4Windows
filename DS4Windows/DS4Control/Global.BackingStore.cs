@@ -5027,7 +5027,7 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/LSOutputCurveMode");
-                        SetLsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
+                        SetLsOutCurveMode(device, StickOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
@@ -5048,7 +5048,7 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/RSOutputCurveMode");
-                        SetRsOutCurveMode(device, stickOutputCurveId(Item.InnerText));
+                        SetRsOutCurveMode(device, StickOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
@@ -5322,7 +5322,7 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/L2OutputCurveMode");
-                        SetL2OutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetL2OutCurveMode(device, AxisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
@@ -5373,7 +5373,7 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2OutputCurveMode");
-                        SetR2OutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetR2OutCurveMode(device, AxisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
@@ -5424,7 +5424,7 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SXOutputCurveMode");
-                        SetSXOutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetSXOutCurveMode(device, AxisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
@@ -5445,7 +5445,7 @@ namespace DS4Windows
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/SZOutputCurveMode");
-                        SetSZOutCurveMode(device, axisOutputCurveId(Item.InnerText));
+                        SetSZOutCurveMode(device, AxisOutputCurveId(Item.InnerText));
                     }
                     catch
                     {
@@ -7226,7 +7226,7 @@ namespace DS4Windows
                 LightbarSettingInfo[8].Ds4WinSettings.Led = new DS4Color(Color.White);
             }
 
-            private int stickOutputCurveId(string name)
+            public int StickOutputCurveId(string name)
             {
                 var id = 0;
                 switch (name)
@@ -7257,12 +7257,12 @@ namespace DS4Windows
                 return id;
             }
 
-            private int axisOutputCurveId(string name)
+            private int AxisOutputCurveId(string name)
             {
-                return stickOutputCurveId(name);
+                return StickOutputCurveId(name);
             }
 
-            private bool SaTriggerCondValue(string text)
+            public bool SaTriggerCondValue(string text)
             {
                 var result = true;
                 switch (text)
