@@ -947,6 +947,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             OutputContDevice = store.OutputDeviceType[device];
         }
 
+        /// <summary>
+        ///     Injects properties from <see cref="DS4WindowsProfile" /> for a specified device index into
+        ///     <see cref="IBackingStore" /> instance.
+        /// </summary>
+        /// <param name="store">The <see cref="IBackingStore" />.</param>
+        /// <param name="device">The zero-based device index to copy.</param>
         public void CopyTo(ref IBackingStore store, int device)
         {
             var lightbarSettings = store.LightbarSettingInfo[device];
