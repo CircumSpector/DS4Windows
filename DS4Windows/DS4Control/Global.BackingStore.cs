@@ -4755,17 +4755,15 @@ namespace DS4Windows
 
             private static async Task<IExtendedXmlSerializer> GetProfileSerializerAsync()
             {
-                return await Task.Run(() =>
-                {
-                    return new ConfigurationContainer()
-                        .EnableImplicitTyping(typeof(DS4WinWPF.DS4Control.Profiles.Legacy.DS4WindowsProfile))
-                        .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
-                        .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
-                        .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
-                        .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
-                        .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
-                        .Create();
-                });
+                return await Task.Run(() => new ConfigurationContainer()
+                    .EnableReferences()
+                    .EnableImplicitTyping(typeof(DS4WindowsProfile))
+                    .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                    .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
+                    .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
+                    .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
+                    .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
+                    .Create());
             }
 
             [ConfigurationSystemComponent]

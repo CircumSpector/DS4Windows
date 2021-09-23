@@ -213,7 +213,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool OutputDataToDS4 { get; set; }
 
         [XmlElement(ElementName = "Color")]
-        public DS4Color Color { get; set; }
+        public DS4Color Color { get; set; } = new(System.Drawing.Color.Black);
 
         [XmlElement(ElementName = "RumbleBoost")]
         public byte RumbleBoost { get; set; }
@@ -237,13 +237,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public byte TouchSensitivity { get; set; }
 
         [XmlElement(ElementName = "LowColor")]
-        public DS4Color LowColor { get; set; }
+        public DS4Color LowColor { get; set; } = new(System.Drawing.Color.Black);
 
         [XmlElement(ElementName = "ChargingColor")]
-        public DS4Color ChargingColor { get; set; }
+        public DS4Color ChargingColor { get; set; } = new(System.Drawing.Color.Black);
 
         [XmlElement(ElementName = "FlashColor")]
-        public DS4Color FlashColor { get; set; }
+        public DS4Color FlashColor { get; set; } = new(System.Drawing.Color.Black);
 
         [XmlElement(ElementName = "touchpadJitterCompensation")]
         public bool TouchpadJitterCompensation { get; set; }
