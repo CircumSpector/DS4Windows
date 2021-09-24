@@ -15,6 +15,7 @@ using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.Properties;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel.Format;
 using OpenTracing.Util;
 
 namespace DS4Windows
@@ -4179,6 +4180,7 @@ namespace DS4Windows
             {
                 return await Task.Run(() => new ConfigurationContainer()
                     .EnableReferences()
+                    .WithUnknownContent().Continue()
                     .EnableImplicitTyping(typeof(DS4WindowsAppSettings))
                     .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                     .Type<bool>().Register().Converter().Using(BooleanConverter.Default)

@@ -60,16 +60,15 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     {
 
         [XmlElement(ElementName = "DS4SupportSettings")]
-        public DS4SupportSettings DS4SupportSettings { get; set; }
+        public DS4SupportSettings DS4SupportSettings { get; set; } = new();
 
         [XmlElement(ElementName = "DualSenseSupportSettings")]
-        public DualSenseSupportSettings DualSenseSupportSettings { get; set; }
+        public DualSenseSupportSettings DualSenseSupportSettings { get; set; } = new();
 
         [XmlElement(ElementName = "SwitchProSupportSettings")]
-        public SwitchProSupportSettings SwitchProSupportSettings { get; set; }
+        public SwitchProSupportSettings SwitchProSupportSettings { get; set; } = new();
 
         [XmlElement(ElementName = "JoyConSupportSettings")]
-        public JoyConSupportSettings JoyConSupportSettings { get; set; }
+        public JoyConSupportSettings JoyConSupportSettings { get; set; } = new();
     }
-
 }

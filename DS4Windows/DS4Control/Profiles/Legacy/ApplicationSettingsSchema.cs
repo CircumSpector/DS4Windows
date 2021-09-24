@@ -29,9 +29,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "formLocationY")]
         public int FormLocationY { get; set; }
 
-        [XmlElement(ElementName = "Controller1")]
-        public string Controller1 { get; set; }
-
         [XmlElement(ElementName = "LastChecked")]
         public DateTime LastChecked { get; set; }
 
@@ -96,7 +93,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool AutoProfileRevertDefaultProfile { get; set; }
 
         [XmlElement(ElementName = "DeviceOptions")]
-        public DeviceOptions DeviceOptions { get; set; }
+        public DeviceOptions DeviceOptions { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed1")]
         public CustomLedProxyType CustomLed1 { get; set; } = new();
