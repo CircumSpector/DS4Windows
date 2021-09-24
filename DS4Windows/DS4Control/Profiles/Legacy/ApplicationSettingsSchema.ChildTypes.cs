@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -48,10 +49,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool Enabled { get; set; }
 
         [XmlElement(ElementName = "LinkMode")]
-        public string LinkMode { get; set; }
+        public JoyConDeviceOptions.LinkMode LinkMode { get; set; }
 
         [XmlElement(ElementName = "JoinedGyroProvider")]
-        public string JoinedGyroProvider { get; set; }
+        public JoyConDeviceOptions.JoinedGyroProvider JoinedGyroProvider { get; set; }
     }
 
     [XmlRoot(ElementName = "DeviceOptions")]

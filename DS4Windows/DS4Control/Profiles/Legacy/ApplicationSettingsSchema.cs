@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Xml.Serialization;
+using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
     [XmlRoot(ElementName = "Profile")]
-    public class DS4WindowsAppSettings
+    public partial class DS4WindowsAppSettings
     {
         [XmlElement(ElementName = "useExclusiveMode")]
         public bool UseExclusiveMode { get; set; }
@@ -55,7 +56,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool CloseMinimizes { get; set; }
 
         [XmlElement(ElementName = "UseLang")]
-        public object UseLang { get; set; }
+        public string UseLang { get; set; }
 
         [XmlElement(ElementName = "DownloadLang")]
         public bool DownloadLang { get; set; }
@@ -66,11 +67,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "FlashWhenLateAt")]
         public int FlashWhenLateAt { get; set; }
 
-        [XmlElement(ElementName = "AppIcon")]
-        public string AppIcon { get; set; }
+        [XmlElement(ElementName = "AppIcon")] 
+        public TrayIconChoice AppIcon { get; set; } = TrayIconChoice.Default;
 
-        [XmlElement(ElementName = "AppTheme")]
-        public string AppTheme { get; set; }
+        [XmlElement(ElementName = "AppTheme")] 
+        public AppThemeChoice AppTheme { get; set; } = AppThemeChoice.Default;
 
         [XmlElement(ElementName = "UseUDPServer")]
         public bool UseUDPServer { get; set; }
@@ -82,13 +83,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string UDPServerListenAddress { get; set; }
 
         [XmlElement(ElementName = "UDPServerSmoothingOptions")]
-        public UDPServerSmoothingOptions UDPServerSmoothingOptions { get; set; }
+        public UDPServerSmoothingOptions UDPServerSmoothingOptions { get; set; } = new();
 
         [XmlElement(ElementName = "UseCustomSteamFolder")]
         public bool UseCustomSteamFolder { get; set; }
 
         [XmlElement(ElementName = "CustomSteamFolder")]
-        public object CustomSteamFolder { get; set; }
+        public string CustomSteamFolder { get; set; }
 
         [XmlElement(ElementName = "AutoProfileRevertDefaultProfile")]
         public bool AutoProfileRevertDefaultProfile { get; set; }
