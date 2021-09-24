@@ -474,9 +474,9 @@ namespace DS4Windows
         Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true);
 
-        bool Load();
+        bool LoadApplicationSettings();
 
-        bool Save();
+        bool SaveApplicationSettings();
 
         bool SaveAction(string name, string controls, int mode, string details, bool edit, string extras = "");
 

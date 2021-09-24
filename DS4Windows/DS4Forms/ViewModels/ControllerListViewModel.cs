@@ -178,7 +178,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 controllerDict.Remove(found.DevIndex);
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Global.Instance.Config.Save();
+                    Global.Instance.Config.SaveApplicationSettings();
                 });
                 Global.LinkedProfileCheck[found.DevIndex] = false;
                 _colListLocker.ExitWriteLock();

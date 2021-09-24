@@ -1344,7 +1344,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public bool Save()
+            public bool SaveApplicationSettings()
             {
                 var Saved = true;
 
@@ -1551,7 +1551,7 @@ namespace DS4Windows
             }
  
             [ConfigurationSystemComponent]
-            public bool Load()
+            public bool LoadApplicationSettings()
             {
                 var Loaded = true;
                 var missingSetting = false;
@@ -2049,7 +2049,7 @@ namespace DS4Windows
                 }
 
                 if (missingSetting)
-                    Save();
+                    SaveApplicationSettings();
 
                 if (Loaded)
                 {

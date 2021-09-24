@@ -177,7 +177,7 @@ namespace DS4WinWPF
             logger.Info($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
             logger.Info("Logger created");
 
-            var readAppConfig = Global.Instance.Config.Load();
+            var readAppConfig = Global.Instance.Config.LoadApplicationSettings();
             if (!firstRun && !readAppConfig)
                 logger.Info(
                     $@"{Constants.ProfilesFileName} not read at location ${Global.RuntimeAppDataPath}\{Constants.ProfilesFileName}. Using default app settings");
@@ -282,7 +282,7 @@ namespace DS4WinWPF
 
         private void AttemptSave()
         {
-            if (!Global.Instance.Config.Save()) //if can't write to file
+            if (!Global.Instance.Config.SaveApplicationSettings()) //if can't write to file
             {
                 if (MessageBox.Show("Cannot write at current location\nCopy Settings to appdata?", "DS4Windows",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -692,7 +692,7 @@ namespace DS4WinWPF
                         }
                     }).Wait();
 
-                if (!skipSave) Global.Instance.Config.Save();
+                if (!skipSave) Global.Instance.Config.SaveApplicationSettings();
 
                 exitComThread = true;
                 if (threadComEvent != null)

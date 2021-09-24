@@ -46,7 +46,7 @@ namespace DS4WinWPF.DS4Forms
             if (loadConfig)
             {
                 DS4Windows.Global.Instance.FindConfigLocation();
-                DS4Windows.Global.Instance.Config.Load();
+                DS4Windows.Global.Instance.Config.LoadApplicationSettings();
                 //DS4Windows.Global.SetCulture(DS4Windows.Global.UseLang);
             }
 
