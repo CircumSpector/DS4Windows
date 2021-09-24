@@ -1,5 +1,6 @@
 ﻿using System;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -57,6 +58,47 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             DeviceOptions.JoyConSupportSettings.Enabled = store.DeviceOptions.JoyConDeviceOpts.Enabled;
             DeviceOptions.JoyConSupportSettings.LinkMode = store.DeviceOptions.JoyConDeviceOpts.LinkedMode;
             DeviceOptions.JoyConSupportSettings.JoinedGyroProvider = store.DeviceOptions.JoyConDeviceOpts.JoinGyroProv;
+
+            CustomLed1 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[0].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[0].Ds4WinSettings.Led
+            };
+            CustomLed2 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[1].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[1].Ds4WinSettings.Led
+            };
+            CustomLed3 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[2].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[2].Ds4WinSettings.Led
+            };
+            CustomLed4 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[3].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[3].Ds4WinSettings.Led
+            };
+            CustomLed5 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[4].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[4].Ds4WinSettings.Led
+            };
+            CustomLed6 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[5].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[5].Ds4WinSettings.Led
+            };
+            CustomLed7 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[6].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[6].Ds4WinSettings.Led
+            };
+            CustomLed8 = new CustomLedProxyType()
+            {
+                IsEnabled = store.LightbarSettingInfo[7].Ds4WinSettings.UseCustomLed,
+                CustomColor = store.LightbarSettingInfo[7].Ds4WinSettings.Led
+            };
         }
 
         /// <summary>
@@ -110,6 +152,23 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.DeviceOptions.JoyConDeviceOpts.Enabled = DeviceOptions.JoyConSupportSettings.Enabled;
             store.DeviceOptions.JoyConDeviceOpts.LinkedMode = DeviceOptions.JoyConSupportSettings.LinkMode;
             store.DeviceOptions.JoyConDeviceOpts.JoinGyroProv = DeviceOptions.JoyConSupportSettings.JoinedGyroProvider;
+
+            store.LightbarSettingInfo[0].Ds4WinSettings.UseCustomLed = CustomLed1.IsEnabled;
+            store.LightbarSettingInfo[0].Ds4WinSettings.Led = CustomLed1.CustomColor;
+            store.LightbarSettingInfo[1].Ds4WinSettings.UseCustomLed = CustomLed2.IsEnabled;
+            store.LightbarSettingInfo[1].Ds4WinSettings.Led = CustomLed2.CustomColor;
+            store.LightbarSettingInfo[2].Ds4WinSettings.UseCustomLed = CustomLed3.IsEnabled;
+            store.LightbarSettingInfo[2].Ds4WinSettings.Led = CustomLed3.CustomColor;
+            store.LightbarSettingInfo[3].Ds4WinSettings.UseCustomLed = CustomLed4.IsEnabled;
+            store.LightbarSettingInfo[3].Ds4WinSettings.Led = CustomLed4.CustomColor;
+            store.LightbarSettingInfo[4].Ds4WinSettings.UseCustomLed = CustomLed5.IsEnabled;
+            store.LightbarSettingInfo[4].Ds4WinSettings.Led = CustomLed5.CustomColor;
+            store.LightbarSettingInfo[5].Ds4WinSettings.UseCustomLed = CustomLed6.IsEnabled;
+            store.LightbarSettingInfo[5].Ds4WinSettings.Led = CustomLed6.CustomColor;
+            store.LightbarSettingInfo[6].Ds4WinSettings.UseCustomLed = CustomLed7.IsEnabled;
+            store.LightbarSettingInfo[6].Ds4WinSettings.Led = CustomLed7.CustomColor;
+            store.LightbarSettingInfo[7].Ds4WinSettings.UseCustomLed = CustomLed8.IsEnabled;
+            store.LightbarSettingInfo[7].Ds4WinSettings.Led = CustomLed8.CustomColor;
         }
     }
 }

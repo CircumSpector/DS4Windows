@@ -1344,9 +1344,18 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public bool SaveApplicationSettings()
+            public async Task<bool> SaveApplicationSettings()
             {
                 var Saved = true;
+
+                var settings = new DS4WindowsAppSettings(this, ExecutableProductVersion, APP_CONFIG_VERSION);
+
+                var serializer = await GetProfileSerializerAsync();
+
+                var document = await Task.Run(() =>
+                    serializer.Serialize(new XmlWriterSettings { Indent = true }, settings));
+
+                await File.WriteAllTextAsync(ProfilesPath, document);
 
                 XmlNode Node;
 
@@ -1369,28 +1378,6 @@ namespace DS4Windows
                 rootElement.SetAttribute("app_version", ExecutableProductVersion);
                 rootElement.SetAttribute("config_version", APP_CONFIG_VERSION.ToString());
 
-                // Ex Mode (+1 line)
-                var xmlUseExclNode = m_Xdoc.CreateNode(XmlNodeType.Element, "useExclusiveMode", null);
-                xmlUseExclNode.InnerText = UseExclusiveMode.ToString();
-                rootElement.AppendChild(xmlUseExclNode);
-                var xmlStartMinimized = m_Xdoc.CreateNode(XmlNodeType.Element, "startMinimized", null);
-                xmlStartMinimized.InnerText = StartMinimized.ToString();
-                rootElement.AppendChild(xmlStartMinimized);
-                var xmlminToTaskbar = m_Xdoc.CreateNode(XmlNodeType.Element, "minimizeToTaskbar", null);
-                xmlminToTaskbar.InnerText = MinToTaskBar.ToString();
-                rootElement.AppendChild(xmlminToTaskbar);
-                var xmlFormWidth = m_Xdoc.CreateNode(XmlNodeType.Element, "formWidth", null);
-                xmlFormWidth.InnerText = FormWidth.ToString();
-                rootElement.AppendChild(xmlFormWidth);
-                var xmlFormHeight = m_Xdoc.CreateNode(XmlNodeType.Element, "formHeight", null);
-                xmlFormHeight.InnerText = FormHeight.ToString();
-                rootElement.AppendChild(xmlFormHeight);
-                var xmlFormLocationX = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationX", null);
-                xmlFormLocationX.InnerText = FormLocationX.ToString();
-                rootElement.AppendChild(xmlFormLocationX);
-                var xmlFormLocationY = m_Xdoc.CreateNode(XmlNodeType.Element, "formLocationY", null);
-                xmlFormLocationY.InnerText = FormLocationY.ToString();
-                rootElement.AppendChild(xmlFormLocationY);
 
                 for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
                 {
@@ -1398,132 +1385,6 @@ namespace DS4Windows
                     var xmlControllerNode = m_Xdoc.CreateNode(XmlNodeType.Element, contTagName, null);
                     xmlControllerNode.InnerText = !LinkedProfileCheck[i] ? ProfilePath[i] : OlderProfilePath[i];
                     if (!string.IsNullOrEmpty(xmlControllerNode.InnerText)) rootElement.AppendChild(xmlControllerNode);
-                }
-
-                var xmlLastChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastChecked", null);
-                xmlLastChecked.InnerText = LastChecked.ToString();
-                rootElement.AppendChild(xmlLastChecked);
-                var xmlCheckWhen = m_Xdoc.CreateNode(XmlNodeType.Element, "CheckWhen", null);
-                xmlCheckWhen.InnerText = CheckWhen.ToString();
-                rootElement.AppendChild(xmlCheckWhen);
-                if (!string.IsNullOrEmpty(lastVersionChecked))
-                {
-                    var xmlLastVersionChecked = m_Xdoc.CreateNode(XmlNodeType.Element, "LastVersionChecked", null);
-                    xmlLastVersionChecked.InnerText = lastVersionChecked;
-                    rootElement.AppendChild(xmlLastVersionChecked);
-                }
-
-                var xmlNotifications = m_Xdoc.CreateNode(XmlNodeType.Element, "Notifications", null);
-                xmlNotifications.InnerText = Notifications.ToString();
-                rootElement.AppendChild(xmlNotifications);
-                var xmlDisconnectBT = m_Xdoc.CreateNode(XmlNodeType.Element, "DisconnectBTAtStop", null);
-                xmlDisconnectBT.InnerText = DisconnectBluetoothAtStop.ToString();
-                rootElement.AppendChild(xmlDisconnectBT);
-                var xmlSwipeProfiles = m_Xdoc.CreateNode(XmlNodeType.Element, "SwipeProfiles", null);
-                xmlSwipeProfiles.InnerText = SwipeProfiles.ToString();
-                rootElement.AppendChild(xmlSwipeProfiles);
-                //XmlNode xmlDS4Mapping = m_Xdoc.CreateNode(XmlNodeType.Element, "UseDS4ForMapping", null); xmlDS4Mapping.InnerText = ds4Mapping.ToString(); rootElement.AppendChild(xmlDS4Mapping);
-                var xmlQuickCharge = m_Xdoc.CreateNode(XmlNodeType.Element, "QuickCharge", null);
-                xmlQuickCharge.InnerText = QuickCharge.ToString();
-                rootElement.AppendChild(xmlQuickCharge);
-                var xmlCloseMini = m_Xdoc.CreateNode(XmlNodeType.Element, "CloseMinimizes", null);
-                xmlCloseMini.InnerText = CloseMini.ToString();
-                rootElement.AppendChild(xmlCloseMini);
-                var xmlUseLang = m_Xdoc.CreateNode(XmlNodeType.Element, "UseLang", null);
-                xmlUseLang.InnerText = UseLang;
-                rootElement.AppendChild(xmlUseLang);
-                var xmlDownloadLang = m_Xdoc.CreateNode(XmlNodeType.Element, "DownloadLang", null);
-                xmlDownloadLang.InnerText = DownloadLang.ToString();
-                rootElement.AppendChild(xmlDownloadLang);
-                var xmlFlashWhenLate = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLate", null);
-                xmlFlashWhenLate.InnerText = FlashWhenLate.ToString();
-                rootElement.AppendChild(xmlFlashWhenLate);
-                var xmlFlashWhenLateAt = m_Xdoc.CreateNode(XmlNodeType.Element, "FlashWhenLateAt", null);
-                xmlFlashWhenLateAt.InnerText = FlashWhenLateAt.ToString();
-                rootElement.AppendChild(xmlFlashWhenLateAt);
-                var xmlAppIconChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppIcon", null);
-                xmlAppIconChoice.InnerText = UseIconChoice.ToString();
-                rootElement.AppendChild(xmlAppIconChoice);
-                var xmlAppThemeChoice = m_Xdoc.CreateNode(XmlNodeType.Element, "AppTheme", null);
-                xmlAppThemeChoice.InnerText = ThemeChoice.ToString();
-                rootElement.AppendChild(xmlAppThemeChoice);
-                var xmlUseUDPServ = m_Xdoc.CreateNode(XmlNodeType.Element, "UseUDPServer", null);
-                xmlUseUDPServ.InnerText = IsUdpServerEnabled.ToString();
-                rootElement.AppendChild(xmlUseUDPServ);
-                var xmlUDPServPort = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerPort", null);
-                xmlUDPServPort.InnerText = UdpServerPort.ToString();
-                rootElement.AppendChild(xmlUDPServPort);
-                var xmlUDPServListenAddress = m_Xdoc.CreateNode(XmlNodeType.Element, "UDPServerListenAddress", null);
-                xmlUDPServListenAddress.InnerText = UdpServerListenAddress;
-                rootElement.AppendChild(xmlUDPServListenAddress);
-
-                var xmlUdpServerSmoothElement = m_Xdoc.CreateElement("UDPServerSmoothingOptions");
-                var xmlUDPUseSmoothing = m_Xdoc.CreateElement("UseSmoothing");
-                xmlUDPUseSmoothing.InnerText = UseUdpSmoothing.ToString();
-                xmlUdpServerSmoothElement.AppendChild(xmlUDPUseSmoothing);
-                var xmlUDPSmoothMinCutoff = m_Xdoc.CreateElement("UdpSmoothMinCutoff");
-                xmlUDPSmoothMinCutoff.InnerText = UdpSmoothingMincutoff.ToString();
-                xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothMinCutoff);
-                var xmlUDPSmoothBeta = m_Xdoc.CreateElement("UdpSmoothBeta");
-                xmlUDPSmoothBeta.InnerText = UdpSmoothingBeta.ToString();
-                xmlUdpServerSmoothElement.AppendChild(xmlUDPSmoothBeta);
-                rootElement.AppendChild(xmlUdpServerSmoothElement);
-
-                var xmlUseCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "UseCustomSteamFolder", null);
-                xmlUseCustomSteamFolder.InnerText = UseCustomSteamFolder.ToString();
-                rootElement.AppendChild(xmlUseCustomSteamFolder);
-                var xmlCustomSteamFolder = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomSteamFolder", null);
-                xmlCustomSteamFolder.InnerText = CustomSteamFolder;
-                rootElement.AppendChild(xmlCustomSteamFolder);
-                var xmlAutoProfileRevertDefaultProfile =
-                    m_Xdoc.CreateNode(XmlNodeType.Element, "AutoProfileRevertDefaultProfile", null);
-                xmlAutoProfileRevertDefaultProfile.InnerText = AutoProfileRevertDefaultProfile.ToString();
-                rootElement.AppendChild(xmlAutoProfileRevertDefaultProfile);
-
-                var xmlDeviceOptions = m_Xdoc.CreateElement("DeviceOptions", null);
-                var xmlDS4Support = m_Xdoc.CreateElement("DS4SupportSettings", null);
-                var xmlDS4Enabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlDS4Enabled.InnerText = DeviceOptions.Ds4DeviceOpts.Enabled.ToString();
-                xmlDS4Support.AppendChild(xmlDS4Enabled);
-                xmlDeviceOptions.AppendChild(xmlDS4Support);
-
-                var xmlDualSenseSupport = m_Xdoc.CreateElement("DualSenseSupportSettings", null);
-                var xmlDualSenseEnabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlDualSenseEnabled.InnerText = DeviceOptions.DualSenseOpts.Enabled.ToString();
-                xmlDualSenseSupport.AppendChild(xmlDualSenseEnabled);
-
-                xmlDeviceOptions.AppendChild(xmlDualSenseSupport);
-
-                var xmlSwitchProSupport = m_Xdoc.CreateElement("SwitchProSupportSettings", null);
-                var xmlSwitchProEnabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlSwitchProEnabled.InnerText = DeviceOptions.SwitchProDeviceOpts.Enabled.ToString();
-                xmlSwitchProSupport.AppendChild(xmlSwitchProEnabled);
-
-                xmlDeviceOptions.AppendChild(xmlSwitchProSupport);
-
-                var xmlJoyConSupport = m_Xdoc.CreateElement("JoyConSupportSettings", null);
-                var xmlJoyconEnabled = m_Xdoc.CreateElement("Enabled", null);
-                xmlJoyconEnabled.InnerText = DeviceOptions.JoyConDeviceOpts.Enabled.ToString();
-                xmlJoyConSupport.AppendChild(xmlJoyconEnabled);
-                var xmlJoyconLinkMode = m_Xdoc.CreateElement("LinkMode", null);
-                xmlJoyconLinkMode.InnerText = DeviceOptions.JoyConDeviceOpts.LinkedMode.ToString();
-                xmlJoyConSupport.AppendChild(xmlJoyconLinkMode);
-                var xmlJoyconUnionGyro = m_Xdoc.CreateElement("JoinedGyroProvider", null);
-                xmlJoyconUnionGyro.InnerText = DeviceOptions.JoyConDeviceOpts.JoinGyroProv.ToString();
-                xmlJoyConSupport.AppendChild(xmlJoyconUnionGyro);
-
-                xmlDeviceOptions.AppendChild(xmlJoyConSupport);
-
-                rootElement.AppendChild(xmlDeviceOptions);
-
-                for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
-                {
-                    var xmlCustomLed = m_Xdoc.CreateNode(XmlNodeType.Element, "CustomLed" + (1 + i), null);
-                    xmlCustomLed.InnerText = LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed + ":" +
-                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Red + "," +
-                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Green + "," +
-                                             LightbarSettingInfo[i].Ds4WinSettings.CustomLed.Blue;
-                    rootElement.AppendChild(xmlCustomLed);
                 }
 
                 m_Xdoc.AppendChild(rootElement);
@@ -1551,7 +1412,7 @@ namespace DS4Windows
             }
  
             [ConfigurationSystemComponent]
-            public bool LoadApplicationSettings()
+            public async Task<bool> LoadApplicationSettings()
             {
                 var Loaded = true;
                 var missingSetting = false;
@@ -1560,15 +1421,19 @@ namespace DS4Windows
                 {
                     if (File.Exists(ProfilesPath))
                     {
+                        await using (var stream = File.OpenRead(ProfilesPath))
+                        {
+                            var serializer = await GetAppSettingsSerializerAsync();
+
+                            (await Task.Run(() => serializer.Deserialize<DS4WindowsAppSettings>(stream))).CopyTo(this);
+                        }
+
                         XmlNode Item;
 
                         m_Xdoc.Load(ProfilesPath);
 
                         
-                        
-
-                        #region Legacy?
-
+                     
                         for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
                         {
                             var contTag = $"/Profile/Controller{i + 1}";
@@ -1587,35 +1452,11 @@ namespace DS4Windows
                             }
                         }
 
-                        #endregion
 
                       
                        
 
                         
-
-                        for (var i = 0; i < MAX_DS4_CONTROLLER_COUNT; i++)
-                            try
-                            {
-                                Item = m_Xdoc.SelectSingleNode("/Profile/CustomLed" + (i + 1));
-                                var ss = Item.InnerText.Split(':');
-                                bool.TryParse(ss[0], out var value);
-                                LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed = value;
-
-                                var colorInfo = ss[1].Split(',');
-
-                                byte.TryParse(colorInfo[0], out var r);
-                                byte.TryParse(colorInfo[1], out var g);
-                                byte.TryParse(colorInfo[2], out var b);
-
-                                LightbarSettingInfo[i].Ds4WinSettings.CustomLed = new DS4Color(r, g, b);
-                            }
-                            catch
-                            {
-                                LightbarSettingInfo[i].Ds4WinSettings.UseCustomLed = false;
-                                LightbarSettingInfo[i].Ds4WinSettings.CustomLed = new DS4Color(Color.Blue);
-                                missingSetting = true;
-                            }
                     }
                 }
                 catch
@@ -1623,7 +1464,7 @@ namespace DS4Windows
                 }
 
                 if (missingSetting)
-                    SaveApplicationSettings();
+                    await SaveApplicationSettings();
 
                 if (Loaded)
                 {
@@ -2651,13 +2492,11 @@ namespace DS4Windows
                     //
                     // TODO: unfinished
                     // 
-                    var serializer = await GetProfileSerializerAsync();
-
                     await using (var stream = File.OpenRead(profilepath))
                     {
-                        var profileObject = await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream));
+                        var serializer = await GetProfileSerializerAsync();
 
-                        profileObject.CopyTo(this, device);
+                        (await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream))).CopyTo(this, device);
                     }
                     
 
@@ -4333,6 +4172,17 @@ namespace DS4Windows
                     .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
                     .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                     .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
+                    .Create());
+            }
+
+            private static async Task<IExtendedXmlSerializer> GetAppSettingsSerializerAsync()
+            {
+                return await Task.Run(() => new ConfigurationContainer()
+                    .EnableReferences()
+                    .EnableImplicitTyping(typeof(DS4WindowsAppSettings))
+                    .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                    .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
+                    .Type<CustomLedProxyType>().Register().Converter().Using(CustomLedConverter.Default)
                     .Create());
             }
 

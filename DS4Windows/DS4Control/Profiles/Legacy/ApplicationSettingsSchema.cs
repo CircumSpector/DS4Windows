@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -98,33 +99,45 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public DeviceOptions DeviceOptions { get; set; }
 
         [XmlElement(ElementName = "CustomLed1")]
-        public string CustomLed1 { get; set; }
+        public CustomLedProxyType CustomLed1 { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed2")]
-        public string CustomLed2 { get; set; }
+        public CustomLedProxyType CustomLed2 { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed3")]
-        public string CustomLed3 { get; set; }
+        public CustomLedProxyType CustomLed3 { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed4")]
-        public string CustomLed4 { get; set; }
+        public CustomLedProxyType CustomLed4 { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed5")]
-        public string CustomLed5 { get; set; }
+        public CustomLedProxyType CustomLed5 { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed6")]
-        public string CustomLed6 { get; set; }
+        public CustomLedProxyType CustomLed6 { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed7")]
-        public string CustomLed7 { get; set; }
+        public CustomLedProxyType CustomLed7 { get; set; } = new();
 
         [XmlElement(ElementName = "CustomLed8")]
-        public string CustomLed8 { get; set; }
+        public CustomLedProxyType CustomLed8 { get; set; } = new();
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }
 
         [XmlAttribute(AttributeName = "config_version")]
         public int ConfigVersion { get; set; }
+
+        public DS4WindowsAppSettings()
+        {
+        }
+
+        public DS4WindowsAppSettings(IBackingStore store, string appVersion, int configVersion)
+        {
+            AppVersion = appVersion;
+            ConfigVersion = configVersion;
+
+            CopyFrom(store);
+        }
     }
 }
