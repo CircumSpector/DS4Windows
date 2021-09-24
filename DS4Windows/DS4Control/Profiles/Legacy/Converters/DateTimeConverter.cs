@@ -4,6 +4,9 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
 {
+    /// <summary>
+    ///     (De-)serializes <see cref="DateTime"/> types.
+    /// </summary>
     internal sealed class DateTimeConverter : ConverterBase<DateTime>
     {
         private DateTimeConverter()

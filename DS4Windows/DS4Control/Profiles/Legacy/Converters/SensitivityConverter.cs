@@ -17,6 +17,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
         public double SZSens { get; set; } = 1;
     }
 
+    /// <summary>
+    ///     (De-)serializes <see cref="SensitivityProxyType"/> types.
+    /// </summary>
     internal sealed class SensitivityConverter : ConverterBase<SensitivityProxyType>
     {
         private SensitivityConverter()

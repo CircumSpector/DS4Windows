@@ -2,6 +2,9 @@
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
 {
+    /// <summary>
+    ///     (De-)serializes <see cref="bool"/> values.
+    /// </summary>
     internal sealed class BooleanConverter : ConverterBase<bool>
     {
         private BooleanConverter()

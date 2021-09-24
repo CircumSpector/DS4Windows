@@ -11,6 +11,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
         public DS4Color CustomColor { get; set; } = new(Color.Blue);
     }
 
+    /// <summary>
+    ///     (de-)serializes <see cref="CustomLedProxyType"/> types.
+    /// </summary>
     internal sealed class CustomLedConverter : ConverterBase<CustomLedProxyType>
     {
         public static CustomLedConverter Default { get; } = new();
