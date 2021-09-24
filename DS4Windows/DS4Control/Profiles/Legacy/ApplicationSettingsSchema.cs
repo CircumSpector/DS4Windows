@@ -29,8 +29,32 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "formLocationY")]
         public int FormLocationY { get; set; }
 
+        [XmlElement(ElementName = "Controller1")]
+        public string Controller1 { get; set; } = string.Empty;
+
+        [XmlElement(ElementName = "Controller2")]
+        public string Controller2 { get; set; } = string.Empty;
+
+        [XmlElement(ElementName = "Controller3")]
+        public string Controller3 { get; set; } = string.Empty;
+
+        [XmlElement(ElementName = "Controller4")]
+        public string Controller4 { get; set; } = string.Empty;
+
+        [XmlElement(ElementName = "Controller5")]
+        public string Controller5 { get; set; } = string.Empty;
+
+        [XmlElement(ElementName = "Controller6")]
+        public string Controller6 { get; set; } = string.Empty;
+
+        [XmlElement(ElementName = "Controller7")]
+        public string Controller7 { get; set; } = string.Empty;
+
+        [XmlElement(ElementName = "Controller8")]
+        public string Controller8 { get; set; } = string.Empty;
+
         [XmlElement(ElementName = "LastChecked")]
-        public DateTime LastChecked { get; set; }
+        public DateTime LastChecked { get; set; } = DateTime.MinValue;
 
         [XmlElement(ElementName = "CheckWhen")]
         public int CheckWhen { get; set; }

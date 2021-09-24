@@ -476,7 +476,7 @@ namespace DS4Windows
 
         Task<bool> LoadApplicationSettings();
 
-        Task<bool> SaveApplicationSettings();
+        bool SaveApplicationSettings();
 
         bool SaveAction(string name, string controls, int mode, string details, bool edit, string extras = "");
 

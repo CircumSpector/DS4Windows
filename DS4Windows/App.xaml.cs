@@ -185,7 +185,7 @@ namespace DS4WinWPF
             if (firstRun)
             {
                 logger.Info("No config found. Creating default config");
-                await AttemptSave();
+                AttemptSave();
 
                 await Global.Instance.Config.SaveAsNewProfile(0, "Default");
                 for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
@@ -280,9 +280,9 @@ namespace DS4WinWPF
             return result;
         }
 
-        private async Task AttemptSave()
+        private void AttemptSave()
         {
-            if (!await Global.Instance.Config.SaveApplicationSettings()) //if can't write to file
+            if (!Global.Instance.Config.SaveApplicationSettings()) //if can't write to file
             {
                 if (MessageBox.Show("Cannot write at current location\nCopy Settings to appdata?", "DS4Windows",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -692,7 +692,8 @@ namespace DS4WinWPF
                         }
                     }).Wait();
 
-                if (!skipSave) Global.Instance.Config.SaveApplicationSettings();
+                if (!skipSave)
+                    Global.Instance.Config.SaveApplicationSettings();
 
                 exitComThread = true;
                 if (threadComEvent != null)

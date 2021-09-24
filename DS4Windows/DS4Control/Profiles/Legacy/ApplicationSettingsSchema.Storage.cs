@@ -24,6 +24,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             FormLocationX = store.FormLocationX;
             FormLocationY = store.FormLocationY;
 
+            for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
+            {
+                var value = !Global.LinkedProfileCheck[i] ? store.ProfilePath[i] : store.OlderProfilePath[i];
+
+                GetType().GetProperty($"Controller{i + 1}")?.SetValue(this, value);
+            }
+
             LastChecked = store.LastChecked;
             CheckWhen = store.CheckWhen;
             // TODO: improve this conversion mess
@@ -115,6 +122,25 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.FormHeight = FormHeight;
             store.FormLocationX = Math.Max(FormLocationX, 0);
             store.FormLocationY = Math.Max(FormLocationY, 0);
+
+            for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
+            {
+                var value = (string)GetType().GetProperty($"Controller{i + 1}")?.GetValue(this, null);
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    store.ProfilePath[i] = store.OlderProfilePath[i] = string.Empty;
+                    store.DistanceProfiles[i] = false;
+                }
+                else
+                {
+                    store.ProfilePath[i] = value;
+                    if (store.ProfilePath[i].ToLower().Contains("distance"))
+                        store.DistanceProfiles[i] = true;
+
+                    store.OlderProfilePath[i] = store.ProfilePath[i];
+                }
+            }
 
             store.LastChecked = LastChecked;
             store.CheckWhen = CheckWhen;
