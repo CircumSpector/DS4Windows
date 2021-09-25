@@ -214,7 +214,7 @@ namespace DS4WinWPF
 
             if (Global.hidHideInstalled) rootHub.CheckHidHidePresence();
 
-            rootHub.LoadPermanentSlotsConfig();
+            await rootHub.LoadPermanentSlotsConfig();
             window.LateChecks(parser);
         }
 

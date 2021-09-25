@@ -475,9 +475,9 @@ namespace DS4Windows
             }
         }
 
-        public void LoadPermanentSlotsConfig()
+        public async Task LoadPermanentSlotsConfig()
         {
-            OutputSlotPersist.ReadConfig(outputslotMan);
+            await OutputSlotPersist.ReadConfig(outputslotMan);
         }
 
         public void UpdateHidHideAttributes()

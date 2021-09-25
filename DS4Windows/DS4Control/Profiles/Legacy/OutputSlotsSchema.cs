@@ -18,7 +18,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class OutputSlots
     {
         [XmlElement(ElementName = "Slot")]
-        public List<Slot> Slots { get; set; } = new();
+        public List<Slot> Slot { get; set; } = new(Global.MAX_DS4_CONTROLLER_COUNT);
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }

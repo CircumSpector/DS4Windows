@@ -21,108 +21,80 @@ namespace DS4WinWPF.DS4Control
         {
             return new ConfigurationContainer()
                 .UseOptimizedNamespaces()
-                .EnableImplicitTyping(typeof(OutputSlots))
+                .EnableImplicitTyping(typeof(OutputSlots), typeof(Slot))
                 .Type<Slot>().EnableReferences(c => c.Idx)
+                .EnableMemberExceptionHandling()
                 .Create();
         }
-
+        
         [ConfigurationSystemComponent]
         public static async Task<bool> ReadConfig(OutputSlotManager slotManager)
         {
-            bool result = false;
-            string output_path = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
-            if (File.Exists(output_path))
+            string outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
+
+            if (!File.Exists(outputPath))
+                return false;
+
+            OutputSlots settings;
+
+            await using (var stream = File.OpenRead(outputPath))
             {
-                OutputSlots settings;
+                var serializer = await GetOutputSlotsSerializerAsync();
 
-                await using (var stream = File.OpenRead(output_path))
+                settings = await Task.Run(() =>
                 {
-                    var serializer = await GetOutputSlotsSerializerAsync();
-
-                    settings = await Task.Run(() => serializer.Deserialize<OutputSlots>(stream));
-                }
-
-                foreach (var slot in settings.Slots)
-                {
-                    slotManager.OutputSlots[slot.Idx].PermanentType = slot.DeviceType;
-                }
-
-                result = true;
+                    try
+                    {
+                        return serializer.Deserialize<OutputSlots>(stream);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        return new OutputSlots();
+                    }
+                });
             }
 
-            return result;
+            foreach (var slot in settings.Slot)
+            {
+                slotManager.OutputSlots[slot.Idx].CurrentReserveStatus = OutSlotDevice.ReserveStatus.Permanent;
+                slotManager.OutputSlots[slot.Idx].PermanentType = slot.DeviceType;
+            }
+            
+            return true;
         }
 
         [ConfigurationSystemComponent]
-        public static async Task<bool> WriteConfig(OutputSlotManager slotManager)
+        public static bool WriteConfig(OutputSlotManager slotManager)
         {
             bool result = false;
 
-            var serializer = await GetOutputSlotsSerializerAsync();
+            var serializer = GetOutputSlotsSerializer();
 
-            var settings = new OutputSlots()
+            var settings = new OutputSlots
             {
-                AppVersion = Global.ExecutableProductVersion
+                AppVersion = Global.ExecutableProductVersion,
+                Slot = slotManager.OutputSlots
+                    .Where(s => s.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent)
+                    .Select(s => new Slot()
+                    {
+                        Idx = slotManager.OutputSlots.IndexOf(s),
+                        DeviceType = s.PermanentType
+                    }).ToList()
             };
-            /*
-            settings.Slots = slotManager.OutputSlots
-                .Where(s => s.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent)
-                .Select(s => new Slot()
-                {
-                    Idx = slotManager.OutputSlots
-                });
-            
-            var document = await Task.Run(() =>
-                serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject));
 
-            var betaPath = Path.Combine(
-                RuntimeAppDataPath,
-                Constants.ProfilesSubDirectory,
-                $"{proName}-BETA{XML_EXTENSION}"
-            );
+            var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, settings);
 
-            await File.WriteAllTextAsync(betaPath, document);
-            */
+            var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
 
-
-            XmlDocument m_Xdoc = new XmlDocument();
-            XmlNode rootNode;
-            rootNode = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-            m_Xdoc.AppendChild(rootNode);
-
-            rootNode = m_Xdoc.CreateComment(string.Format(" Made with DS4Windows version {0} ", Global.ExecutableProductVersion));
-            m_Xdoc.AppendChild(rootNode);
-
-            rootNode = m_Xdoc.CreateWhitespace("\r\n");
-            m_Xdoc.AppendChild(rootNode);
-
-            XmlElement baseElement = m_Xdoc.CreateElement("OutputSlots", null);
-            baseElement.SetAttribute("app_version", Global.ExecutableProductVersion);
-
-            int idx = 0;
-            foreach (OutSlotDevice dev in slotManager.OutputSlots)
+            try
             {
-                if (dev.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent)
-                {
-                    XmlElement slotElement = m_Xdoc.CreateElement("Slot");
-                    slotElement.SetAttribute("idx", idx.ToString());
-
-                    XmlElement propElement;
-                    propElement = m_Xdoc.CreateElement("DeviceType");
-                    propElement.InnerText = dev.PermanentType.ToString();
-                    slotElement.AppendChild(propElement);
-
-                    baseElement.AppendChild(slotElement);
-                }
-
-                idx++;
+                File.WriteAllText(outputPath, document);
+                result = true;
             }
-
-            m_Xdoc.AppendChild(baseElement);
-
-            string output_path = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
-            try { m_Xdoc.Save(output_path); result = true; }
-            catch (UnauthorizedAccessException) { result = false; }
+            catch (UnauthorizedAccessException)
+            {
+                result = false;
+            }
 
             return result;
         }
