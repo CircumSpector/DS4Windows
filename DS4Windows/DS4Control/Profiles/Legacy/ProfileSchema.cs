@@ -43,13 +43,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public byte TouchSensitivity { get; set; } = 100;
 
         [XmlElement(ElementName = "LowColor")]
-        public DS4Color LowColor { get; set; } = new(System.Drawing.Color.Black);
+        public DS4Color LowColor { get; set; } = new(System.Drawing.Color.Red);
 
         [XmlElement(ElementName = "ChargingColor")]
-        public DS4Color ChargingColor { get; set; } = new(System.Drawing.Color.Black);
+        public DS4Color ChargingColor { get; set; } = new(System.Drawing.Color.Orange);
 
         [XmlElement(ElementName = "FlashColor")]
-        public DS4Color FlashColor { get; set; } = new(System.Drawing.Color.Black);
+        public DS4Color FlashColor { get; set; } = new(System.Drawing.Color.Blue);
 
         [XmlElement(ElementName = "touchpadJitterCompensation")]
         public bool TouchpadJitterCompensation { get; set; } = true;
