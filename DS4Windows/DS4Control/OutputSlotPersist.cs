@@ -1,19 +1,53 @@
 ﻿using DS4Windows;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
+using DS4WinWPF.DS4Control.Profiles.Legacy;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control
 {
     public static class OutputSlotPersist
     {
+        private static async Task<IExtendedXmlSerializer> GetOutputSlotsSerializerAsync()
+        {
+            return await Task.Run(GetOutputSlotsSerializer);
+        }
+
+        private static IExtendedXmlSerializer GetOutputSlotsSerializer()
+        {
+            return new ConfigurationContainer()
+                .EnableImplicitTyping(typeof(OutputSlots))
+                .Type<Slot>().EnableReferences(c => c.Idx)
+                .Create();
+        }
+
         [ConfigurationSystemComponent]
-        public static bool ReadConfig(OutputSlotManager slotManager)
+        public static async Task<bool> ReadConfig(OutputSlotManager slotManager)
         {
             bool result = false;
             string output_path = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
             if (File.Exists(output_path))
             {
+                /*
+                 TODO: pick this up after weekend
+                OutputSlots settings;
+
+                await using (var stream = File.OpenRead(output_path))
+                {
+                    var serializer = await GetOutputSlotsSerializerAsync();
+
+                    settings = await Task.Run(() => serializer.Deserialize<OutputSlots>(stream));
+                }
+
+                foreach (var slot in settings.Slots)
+                {
+                    
+                }
+                */
+
                 XmlDocument m_Xdoc = new XmlDocument();
                 try { m_Xdoc.Load(output_path); }
                 catch (UnauthorizedAccessException) { }

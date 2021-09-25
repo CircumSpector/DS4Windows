@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -7,17 +8,17 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class Slot
     {
         [XmlElement(ElementName = "DeviceType")]
-        public string DeviceType { get; set; }
+        public OutContType DeviceType { get; set; } = OutContType.X360;
 
-        [XmlAttribute(AttributeName = "idx")] 
+        [XmlAttribute(AttributeName = "idx")]
         public int Idx { get; set; }
     }
 
     [XmlRoot(ElementName = "OutputSlots")]
     public class OutputSlots
     {
-        [XmlElement(ElementName = "Slot")] 
-        public List<Slot> Slot { get; set; }
+        [XmlElement(ElementName = "Slot")]
+        public List<Slot> Slots { get; set; } = new();
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }
