@@ -397,7 +397,7 @@ namespace DS4Windows
         {
             DS4Devices.checkVirtualFunc = null;
             outputslotMan.ShutDown();
-            OutputSlotPersist.WriteConfig(outputslotMan);
+            OutputSlotPersist.Instance.WriteConfig(outputslotMan);
 
             outputKBMHandler.Disconnect();
 
@@ -477,7 +477,7 @@ namespace DS4Windows
 
         public async Task LoadPermanentSlotsConfig()
         {
-            await OutputSlotPersist.ReadConfig(outputslotMan);
+            await OutputSlotPersist.Instance.ReadConfig(outputslotMan);
         }
 
         public void UpdateHidHideAttributes()
