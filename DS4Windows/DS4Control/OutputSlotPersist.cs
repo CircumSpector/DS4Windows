@@ -1,6 +1,7 @@
 ﻿using DS4Windows;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
@@ -19,6 +20,7 @@ namespace DS4WinWPF.DS4Control
         private static IExtendedXmlSerializer GetOutputSlotsSerializer()
         {
             return new ConfigurationContainer()
+                .UseOptimizedNamespaces()
                 .EnableImplicitTyping(typeof(OutputSlots))
                 .Type<Slot>().EnableReferences(c => c.Idx)
                 .Create();
@@ -31,8 +33,6 @@ namespace DS4WinWPF.DS4Control
             string output_path = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
             if (File.Exists(output_path))
             {
-                /*
-                 TODO: pick this up after weekend
                 OutputSlots settings;
 
                 await using (var stream = File.OpenRead(output_path))
@@ -44,36 +44,7 @@ namespace DS4WinWPF.DS4Control
 
                 foreach (var slot in settings.Slots)
                 {
-                    
-                }
-                */
-
-                XmlDocument m_Xdoc = new XmlDocument();
-                try { m_Xdoc.Load(output_path); }
-                catch (UnauthorizedAccessException) { }
-                catch (XmlException) { }
-
-                XmlElement rootElement = m_Xdoc.DocumentElement;
-                if (rootElement == null) return false;
-
-                foreach(XmlElement element in rootElement.GetElementsByTagName("Slot"))
-                {
-                    OutSlotDevice tempDev = null;
-                    string temp = element.GetAttribute("idx");
-                    if (int.TryParse(temp, out int idx) && idx >= 0 && idx <= 3)
-                    {
-                        tempDev = slotManager.OutputSlots[idx];
-                    }
-
-                    if (tempDev != null)
-                    {
-                        tempDev.CurrentReserveStatus = OutSlotDevice.ReserveStatus.Permanent;
-                        XmlNode tempNode = element.SelectSingleNode("DeviceType");
-                        if (tempNode != null && Enum.TryParse(tempNode.InnerText, out OutContType tempType))
-                        {
-                            tempDev.PermanentType = tempType;
-                        }
-                    }
+                    slotManager.OutputSlots[slot.Idx].PermanentType = slot.DeviceType;
                 }
 
                 result = true;
@@ -83,9 +54,37 @@ namespace DS4WinWPF.DS4Control
         }
 
         [ConfigurationSystemComponent]
-        public static bool WriteConfig(OutputSlotManager slotManager)
+        public static async Task<bool> WriteConfig(OutputSlotManager slotManager)
         {
             bool result = false;
+
+            var serializer = await GetOutputSlotsSerializerAsync();
+
+            var settings = new OutputSlots()
+            {
+                AppVersion = Global.ExecutableProductVersion
+            };
+            /*
+            settings.Slots = slotManager.OutputSlots
+                .Where(s => s.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent)
+                .Select(s => new Slot()
+                {
+                    Idx = slotManager.OutputSlots
+                });
+            
+            var document = await Task.Run(() =>
+                serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject));
+
+            var betaPath = Path.Combine(
+                RuntimeAppDataPath,
+                Constants.ProfilesSubDirectory,
+                $"{proName}-BETA{XML_EXTENSION}"
+            );
+
+            await File.WriteAllTextAsync(betaPath, document);
+            */
+
+
             XmlDocument m_Xdoc = new XmlDocument();
             XmlNode rootNode;
             rootNode = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);

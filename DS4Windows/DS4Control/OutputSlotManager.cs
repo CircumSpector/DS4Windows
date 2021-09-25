@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using DS4WinWPF.DS4Control;
 using Nefarius.ViGEm.Client;
@@ -30,7 +31,7 @@ namespace DS4Windows
             OutputSlots = new OutSlotDevice[ControlService.CURRENT_DS4_CONTROLLER_LIMIT];
             for (var i = 0; i < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; i++) OutputSlots[i] = new OutSlotDevice(i);
 
-            lastSlotIndex = OutputSlots.Length > 0 ? OutputSlots.Length - 1 : 0;
+            lastSlotIndex = OutputSlots.Count > 0 ? OutputSlots.Count - 1 : 0;
 
             queueLocker = new ReaderWriterLockSlim();
         }
@@ -39,19 +40,12 @@ namespace DS4Windows
         {
             get
             {
-                var result = 0;
-                for (var i = 0; i < OutputSlots.Length; i++)
-                {
-                    var tmp = OutputSlots[i];
-                    if (tmp.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached) result++;
-                }
-
-                return result;
+                return OutputSlots.Count(tmp => tmp.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached);
             }
         }
 
         public bool RunningQueue => queuedTasks > 0;
-        public OutSlotDevice[] OutputSlots { get; }
+        public IList<OutSlotDevice> OutputSlots { get; }
 
         public event SlotAssignedDelegate SlotAssigned;
         public event SlotUnassignedDelegate SlotUnassigned;
@@ -177,7 +171,7 @@ namespace DS4Windows
         public OutSlotDevice FindOpenSlot()
         {
             OutSlotDevice temp = null;
-            for (var i = 0; i < OutputSlots.Length; i++)
+            for (var i = 0; i < OutputSlots.Count; i++)
             {
                 var tmp = OutputSlots[i];
                 if (tmp.CurrentInputBound == OutSlotDevice.InputBound.Unbound &&
@@ -223,21 +217,10 @@ namespace DS4Windows
 
         public OutSlotDevice FindExistUnboundSlotType(OutContType contType)
         {
-            OutSlotDevice temp = null;
-            var devtype = contType.ToString();
-            for (var i = 0; i < OutputSlots.Length; i++)
-            {
-                var tmp = OutputSlots[i];
-                if (tmp.CurrentInputBound == OutSlotDevice.InputBound.Unbound &&
-                    tmp.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached && tmp.OutputDevice != null &&
-                    tmp.OutputDevice.GetDeviceType() == devtype)
-                {
-                    temp = tmp;
-                    break;
-                }
-            }
-
-            return temp;
+            return OutputSlots.FirstOrDefault(tmp =>
+                tmp.CurrentInputBound == OutSlotDevice.InputBound.Unbound &&
+                tmp.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached && tmp.OutputDevice != null &&
+                tmp.OutputDevice.GetDeviceType() == contType.ToString());
         }
 
         public void UnplugRemainingControllers(bool immediate = false)
