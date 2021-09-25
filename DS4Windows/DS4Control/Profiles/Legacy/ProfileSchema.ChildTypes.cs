@@ -76,16 +76,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class GyroControlsSettings
     {
         [XmlElement(ElementName = "Triggers")]
-        public string Triggers { get; set; }
+        public string Triggers { get; set; } = "-1";
 
         [XmlElement(ElementName = "TriggerCond")]
-        public string TriggerCond { get; set; }
+        public string TriggerCond { get; set; } = "and";
 
         [XmlElement(ElementName = "TriggerTurns")]
-        public bool TriggerTurns { get; set; }
+        public bool TriggerTurns { get; set; } = true;
 
-        [XmlElement(ElementName = "Toggle")]
-        public bool Toggle { get; set; }
+        [XmlElement(ElementName = "Toggle")] 
+        public bool Toggle { get; set; } = false;
     }
 
     [XmlRoot(ElementName = "GyroMouseSmoothingSettings")]
