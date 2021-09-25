@@ -9,13 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
-using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.Properties;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel.Format;
 using OpenTracing.Util;
 
 namespace DS4Windows
@@ -1344,6 +1342,10 @@ namespace DS4Windows
                 return await SaveProfile(device, proName);
             }
 
+            /// <summary>
+            ///     Persists <see cref="DS4WindowsAppSettings"/> on disk.
+            /// </summary>
+            /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
             public bool SaveApplicationSettings()
             {
@@ -1380,6 +1382,10 @@ namespace DS4Windows
                 return saved;
             }
 
+            /// <summary>
+            ///     Restores <see cref="DS4WindowsAppSettings"/> from disk.
+            /// </summary>
+            /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
             public async Task<bool> LoadApplicationSettings()
             {
