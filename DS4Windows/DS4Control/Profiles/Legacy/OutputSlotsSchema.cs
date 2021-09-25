@@ -11,8 +11,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         [XmlAttribute(AttributeName = "idx")] 
         public int Idx { get; set; }
-
-        [XmlText] public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "OutputSlots")]
@@ -23,7 +21,5 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }
-
-        [XmlText] public string Text { get; set; }
     }
 }
