@@ -391,7 +391,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string L2OutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "L2OutputCurveCustom")]
-        public BezierCurve L2OutputCurveCustom { get; set; }
+        public BezierCurve L2OutputCurveCustom { get; set; } = new();
 
         [XmlElement(ElementName = "L2TwoStageMode")]
         public TwoStageTriggerMode L2TwoStageMode { get; set; }
@@ -409,19 +409,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string R2OutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "R2OutputCurveCustom")]
-        public BezierCurve R2OutputCurveCustom { get; set; }
+        public BezierCurve R2OutputCurveCustom { get; set; } = new();
 
         [XmlElement(ElementName = "SXOutputCurveMode")]
         public string SXOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "SXOutputCurveCustom")]
-        public BezierCurve SXOutputCurveCustom { get; set; }
+        public BezierCurve SXOutputCurveCustom { get; set; } = new();
 
         [XmlElement(ElementName = "SZOutputCurveMode")]
         public string SZOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "SZOutputCurveCustom")]
-        public BezierCurve SZOutputCurveCustom { get; set; }
+        public BezierCurve SZOutputCurveCustom { get; set; } = new();
 
         [XmlElement(ElementName = "TrackballMode")]
         public bool TrackballMode { get; set; }
