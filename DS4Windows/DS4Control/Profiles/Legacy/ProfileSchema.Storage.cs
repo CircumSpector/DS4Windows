@@ -473,8 +473,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.BluetoothPollRate[device] = BTPollRate is >= 0 and <= 16 ? BTPollRate : 4;
 
             store.LSOutBezierCurveObj[device] = LSOutputCurveCustom;
-            store.SetLsOutCurveMode(device, store.StickOutputCurveId(RSOutputCurveMode));
-            store.RSOutBezierCurveObj[device] = LSOutputCurveCustom;
+            store.SetLsOutCurveMode(device, store.StickOutputCurveId(LSOutputCurveMode));
+            store.RSOutBezierCurveObj[device] = RSOutputCurveCustom;
             store.SetRsOutCurveMode(device, store.StickOutputCurveId(RSOutputCurveMode));
 
             store.SquStickInfo[device].LSMode = LSSquareStick;
