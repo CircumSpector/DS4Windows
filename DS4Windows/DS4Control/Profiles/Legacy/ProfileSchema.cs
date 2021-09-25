@@ -337,13 +337,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string LSOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "LSOutputCurveCustom")]
-        public BezierCurve LSOutputCurveCustom { get; set; }
+        public BezierCurve LSOutputCurveCustom { get; set; } = new();
 
         [XmlElement(ElementName = "RSOutputCurveMode")]
         public string RSOutputCurveMode { get; set; }
 
         [XmlElement(ElementName = "RSOutputCurveCustom")]
-        public BezierCurve RSOutputCurveCustom { get; set; }
+        public BezierCurve RSOutputCurveCustom { get; set; } = new();
 
         [XmlElement(ElementName = "LSSquareStick")]
         public bool LSSquareStick { get; set; }
