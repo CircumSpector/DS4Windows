@@ -162,6 +162,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         [XmlElement(ElementName = "FlickTime")]
         public double FlickTime { get; set; }
+
+        [XmlElement(ElementName = "MinAngleThreshold")]
+        public double MinAngleThreshold { get; set; }
     }
 
     [XmlRoot(ElementName = "LSOutputSettings")]

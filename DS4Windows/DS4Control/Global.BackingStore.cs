@@ -2072,6 +2072,9 @@ namespace DS4Windows
                     xmlLsFlickStickTime.InnerText =
                         LSOutputSettings[device].OutputSettings.flickSettings.flickTime.ToString();
                     xmlLsFlickStickGroupElement.AppendChild(xmlLsFlickStickTime);
+                    var xmlLsMinAngleThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "MinAngleThreshold", null);
+                    xmlLsMinAngleThreshold.InnerText =
+                        LSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold.ToString();
                     rootElement.AppendChild(xmlLsOutputSettingsElement);
 
                     var xmlRsOutputSettingsElement = m_Xdoc.CreateElement("RSOutputSettings");
@@ -2089,6 +2092,12 @@ namespace DS4Windows
                     xmlRsFlickStickTime.InnerText =
                         RSOutputSettings[device].OutputSettings.flickSettings.flickTime.ToString();
                     xmlRsFlickStickGroupElement.AppendChild(xmlRsFlickStickTime);
+                    var xmlRsMinAngleThreshold = m_Xdoc.CreateNode(XmlNodeType.Element, "MinAngleThreshold", null);
+                    xmlRsMinAngleThreshold.InnerText =
+                        RSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold.ToString();
+                    xmlRsFlickStickGroupElement.AppendChild(xmlRsMinAngleThreshold);
+
+
                     rootElement.AppendChild(xmlRsOutputSettingsElement);
 
                     var xmlL2OutputCurveMode = m_Xdoc.CreateNode(XmlNodeType.Element, "L2OutputCurveMode", null);
