@@ -1440,25 +1440,23 @@ namespace DS4Windows
                 // 
                 using (GlobalTracer.Instance.BuildSpan("Serialize-NEW").StartActive(true))
                 {
-                    var profileObject = new DS4WindowsProfile(
-                        this,
-                        device,
-                        ExecutableProductVersion,
-                        CONFIG_VERSION
-                    );
-
-                    var serializer = await DS4WindowsProfile.GetSerializerAsync();
-
-                    var document = await Task.Run(() =>
-                        serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject));
-
                     var betaPath = Path.Combine(
                         RuntimeAppDataPath,
                         Constants.ProfilesSubDirectory,
                         $"{proName}-BETA{XML_EXTENSION}"
                     );
 
-                    await File.WriteAllTextAsync(betaPath, document);
+                    await using (var file = File.OpenWrite(betaPath))
+                    {
+                        var profileObject = new DS4WindowsProfile(
+                            this,
+                            device,
+                            ExecutableProductVersion,
+                            CONFIG_VERSION
+                        );
+
+                        await profileObject.SerializeAsync(file);
+                    }
                 }
 
                 using var scope = GlobalTracer.Instance.BuildSpan("Serialize").StartActive(true);
@@ -2429,9 +2427,7 @@ namespace DS4Windows
                     // 
                     await using (var stream = File.OpenRead(profilepath))
                     {
-                        var serializer = await DS4WindowsProfile.GetSerializerAsync();
-
-                        (await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream))).CopyTo(this, device);
+                        (await DS4WindowsProfile.DeserializeAsync(stream)).CopyTo(this, device);
                     }
 
 
