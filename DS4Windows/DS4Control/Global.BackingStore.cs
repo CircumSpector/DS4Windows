@@ -3135,39 +3135,7 @@ namespace DS4Windows
 
                 return saved;
             }
-
-            [ConfigurationSystemComponent]
-            public bool CreateLinkedProfiles()
-            {
-                var saved = true;
-                var m_Xdoc = new XmlDocument();
-                XmlNode Node;
-
-                Node = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateComment(string.Format(" Mac Address and Profile Linking Data. {0} ", DateTime.Now));
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateWhitespace("\r\n");
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateNode(XmlNodeType.Element, "LinkedControllers", "");
-                m_Xdoc.AppendChild(Node);
-
-                try
-                {
-                    m_Xdoc.Save(LinkedProfilesPath);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false);
-                    saved = false;
-                }
-
-                return saved;
-            }
-
+            
             [ConfigurationSystemComponent]
             public bool LoadLinkedProfiles()
             {
@@ -3203,30 +3171,23 @@ namespace DS4Windows
             public bool SaveLinkedProfiles()
             {
                 var saved = true;
-                if (File.Exists(LinkedProfilesPath))
+
+                try
                 {
-                    try
-                    {
-                        using var stream = File.Open(LinkedProfilesPath, FileMode.Create);
+                    using var stream = File.Open(LinkedProfilesPath, FileMode.Create);
 
-                        var profiles = new DS4WinWPF.DS4Control.Profiles.Legacy.LinkedProfiles()
-                        {
-                            //Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => Guid.Parse(x.Value))
-                            Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => x.Value)
-                        };
-
-                        profiles.Serialize(stream);
-                    }
-                    catch (UnauthorizedAccessException)
+                    var profiles = new LinkedProfiles
                     {
-                        AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false);
-                        saved = false;
-                    }
+                        //Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => Guid.Parse(x.Value))
+                        Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => x.Value)
+                    };
+
+                    profiles.Serialize(stream);
                 }
-                else
+                catch (UnauthorizedAccessException)
                 {
-                    saved = CreateLinkedProfiles();
-                    saved = saved && SaveLinkedProfiles();
+                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false);
+                    saved = false;
                 }
 
                 return saved;

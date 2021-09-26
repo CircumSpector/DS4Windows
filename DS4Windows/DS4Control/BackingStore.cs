@@ -484,8 +484,6 @@ namespace DS4Windows
 
         bool LoadActions();
 
-        bool CreateLinkedProfiles();
-
         bool LoadLinkedProfiles();
 
         bool SaveLinkedProfiles();
