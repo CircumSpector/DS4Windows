@@ -72,7 +72,7 @@ namespace DS4WinWPF.DS4Control
 
             try
             {
-                using var stream = File.OpenWrite(outputPath);
+                using var stream = File.Open(outputPath, FileMode.Create);
 
                 settings.Serialize(stream);
                 

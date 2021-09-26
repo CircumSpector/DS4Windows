@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +17,7 @@ using DS4WinWPF.Properties;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using OpenTracing.Util;
+using File = System.IO.File;
 
 namespace DS4Windows
 {
@@ -46,7 +49,7 @@ namespace DS4Windows
                     new(), new(), new(), new(), new(), new()
                 };
 
-            private Dictionary<string, string> LinkedProfiles { get; } = new();
+            private Dictionary<string, string> LinkedProfiles { get; set; } = new();
 
             protected readonly XmlDocument m_Xdoc = new();
 
@@ -1355,7 +1358,7 @@ namespace DS4Windows
 
                 try
                 {
-                    using var stream = File.OpenWrite(ProfilesPath);
+                    using var stream = File.Open(ProfilesPath, FileMode.Create);
 
                     settings.Serialize(stream);
                 }
@@ -1442,7 +1445,7 @@ namespace DS4Windows
                         $"{proName}-BETA{XML_EXTENSION}"
                     );
 
-                    await using (var file = File.OpenWrite(betaPath))
+                    await using (var file = File.Open(betaPath, FileMode.Create))
                     {
                         var profileObject = new DS4WindowsProfile(
                             this,
@@ -3171,22 +3174,16 @@ namespace DS4Windows
                 var loaded = true;
                 if (File.Exists(LinkedProfilesPath))
                 {
-                    var linkedXdoc = new XmlDocument();
-                    XmlNode Node;
-                    linkedXdoc.Load(LinkedProfilesPath);
-                    LinkedProfiles.Clear();
-
                     try
                     {
-                        Node = linkedXdoc.SelectSingleNode("/LinkedControllers");
-                        var links = Node.ChildNodes;
-                        for (int i = 0, listLen = links.Count; i < listLen; i++)
-                        {
-                            var current = links[i];
-                            var serial = current.Name.Replace("MAC", string.Empty);
-                            var profile = current.InnerText;
-                            LinkedProfiles[serial] = profile;
-                        }
+                        using var stream = File.OpenRead(LinkedProfilesPath);
+
+                        var profiles = DS4WinWPF.DS4Control.Profiles.Legacy.LinkedProfiles.Deserialize(stream);
+
+                        LinkedProfiles = profiles.Assignments.ToDictionary(
+                            x => x.Key.ToString(),
+                            x => x.Value.ToString()
+                        );
                     }
                     catch
                     {
@@ -3208,37 +3205,17 @@ namespace DS4Windows
                 var saved = true;
                 if (File.Exists(LinkedProfilesPath))
                 {
-                    var linkedXdoc = new XmlDocument();
-                    XmlNode Node;
-
-                    Node = linkedXdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                    linkedXdoc.AppendChild(Node);
-
-                    Node = linkedXdoc.CreateComment(string.Format(" Mac Address and Profile Linking Data. {0} ",
-                        DateTime.Now));
-                    linkedXdoc.AppendChild(Node);
-
-                    Node = linkedXdoc.CreateWhitespace("\r\n");
-                    linkedXdoc.AppendChild(Node);
-
-                    Node = linkedXdoc.CreateNode(XmlNodeType.Element, "LinkedControllers", "");
-                    linkedXdoc.AppendChild(Node);
-
-                    var serials = LinkedProfiles.Keys;
-                    //for (int i = 0, itemCount = linkedProfiles.Count; i < itemCount; i++)
-                    for (var serialEnum = serials.GetEnumerator(); serialEnum.MoveNext();)
-                    {
-                        //string serial = serials.ElementAt(i);
-                        var serial = serialEnum.Current;
-                        var profile = LinkedProfiles[serial];
-                        var link = linkedXdoc.CreateElement("MAC" + serial);
-                        link.InnerText = profile;
-                        Node.AppendChild(link);
-                    }
-
                     try
                     {
-                        linkedXdoc.Save(LinkedProfilesPath);
+                        using var stream = File.Open(LinkedProfilesPath, FileMode.Create);
+
+                        var profiles = new DS4WinWPF.DS4Control.Profiles.Legacy.LinkedProfiles()
+                        {
+                            //Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => Guid.Parse(x.Value))
+                            Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => x.Value)
+                        };
+
+                        profiles.Serialize(stream);
                     }
                     catch (UnauthorizedAccessException)
                     {
