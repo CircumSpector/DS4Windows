@@ -262,6 +262,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .OutputSettings
                 .flickSettings
                 .flickTime;
+            LSOutputSettings.FlickStickSettings.MinAngleThreshold = store
+                .LSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .minAngleThreshold;
 
             RSOutputSettings.FlickStickSettings.RealWorldCalibration = store
                 .RSOutputSettings[device]
@@ -278,6 +283,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .OutputSettings
                 .flickSettings
                 .flickTime;
+            RSOutputSettings.FlickStickSettings.MinAngleThreshold = store
+                .RSOutputSettings[device]
+                .OutputSettings
+                .flickSettings
+                .minAngleThreshold;
 
             L2OutputCurveMode = store.AxisOutputCurveString(store.GetL2OutCurveMode(device));
             L2OutputCurveCustom = store.L2OutBezierCurveObj[device];
@@ -513,12 +523,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 LSOutputSettings.FlickStickSettings.FlickThreshold;
             store.LSOutputSettings[device].OutputSettings.flickSettings.flickTime =
                 LSOutputSettings.FlickStickSettings.FlickTime;
+            store.LSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold =
+                LSOutputSettings.FlickStickSettings.MinAngleThreshold;
             store.RSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration =
                 RSOutputSettings.FlickStickSettings.RealWorldCalibration;
             store.RSOutputSettings[device].OutputSettings.flickSettings.flickThreshold =
                 RSOutputSettings.FlickStickSettings.FlickThreshold;
             store.RSOutputSettings[device].OutputSettings.flickSettings.flickTime =
                 RSOutputSettings.FlickStickSettings.FlickTime;
+            store.RSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold =
+                RSOutputSettings.FlickStickSettings.MinAngleThreshold;
 
             store.L2OutBezierCurveObj[device] = L2OutputCurveCustom;
             store.SetL2OutCurveMode(device, store.StickOutputCurveId(L2OutputCurveMode));
