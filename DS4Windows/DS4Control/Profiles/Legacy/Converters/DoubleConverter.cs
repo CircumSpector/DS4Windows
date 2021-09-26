@@ -30,7 +30,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
             //
             // Take wrong culture into consideration
             // 
-            return double.Parse(ReplaceLastOccurrence(data, ",", "."));
+            return double.Parse(ReplaceLastOccurrence(data, ",", "."), new CultureInfo("en-US"));
         }
 
         public override string Format(double instance)
