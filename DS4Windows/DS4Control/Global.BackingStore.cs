@@ -4107,6 +4107,7 @@ namespace DS4Windows
                     .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
                     .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                     .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
+                    .Type<double>().Register().Converter().Using(DoubleConverter.Default)
                     .Create());
             }
 
