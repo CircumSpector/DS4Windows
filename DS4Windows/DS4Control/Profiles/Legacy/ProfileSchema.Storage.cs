@@ -10,7 +10,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
     public partial class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>
     {
-        public new static IExtendedXmlSerializer GetSerializer()
+        public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .EnableReferences()

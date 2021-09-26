@@ -4089,20 +4089,6 @@ namespace DS4Windows
                 return result;
             }
 
-            private static async Task<IExtendedXmlSerializer> GetLinkedProfilesSerializerAsync()
-            {
-                return await Task.Run(GetLinkedProfilesSerializer);
-            }
-
-            private static IExtendedXmlSerializer GetLinkedProfilesSerializer()
-            {
-                return new ConfigurationContainer()
-                    .EnableReferences()
-                    .WithUnknownContent().Continue()
-                    .EnableImplicitTyping(typeof(LinkedProfiles))
-                    .Create();
-            }
-
             [ConfigurationSystemComponent]
             private bool LoadControllerConfigsForDevice(DS4Device device)
             {

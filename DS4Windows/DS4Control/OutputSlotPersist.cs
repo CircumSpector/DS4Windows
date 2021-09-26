@@ -2,11 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
-using ExtendedXmlSerializer;
-using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control
 {
@@ -20,21 +17,6 @@ namespace DS4WinWPF.DS4Control
 
         public static OutputSlotPersist Instance => LazyInstance.Value;
 
-        private static async Task<IExtendedXmlSerializer> GetOutputSlotsSerializerAsync()
-        {
-            return await Task.Run(GetOutputSlotsSerializer);
-        }
-
-        private static IExtendedXmlSerializer GetOutputSlotsSerializer()
-        {
-            return new ConfigurationContainer()
-                .UseOptimizedNamespaces()
-                .EnableImplicitTyping(typeof(OutputSlots), typeof(Slot))
-                .Type<Slot>().EnableReferences(c => c.Idx)
-                .EnableMemberExceptionHandling()
-                .Create();
-        }
-
         [ConfigurationSystemComponent]
         public async Task<bool> ReadConfig(OutputSlotManager slotManager)
         {
@@ -47,13 +29,11 @@ namespace DS4WinWPF.DS4Control
 
             await using (var stream = File.OpenRead(outputPath))
             {
-                var serializer = await GetOutputSlotsSerializerAsync();
-
                 settings = await Task.Run(() =>
                 {
                     try
                     {
-                        return serializer.Deserialize<OutputSlots>(stream);
+                        return OutputSlots.Deserialize(stream);
                     }
                     catch (InvalidOperationException)
                     {
@@ -76,8 +56,6 @@ namespace DS4WinWPF.DS4Control
         {
             var result = false;
 
-            var serializer = GetOutputSlotsSerializer();
-
             var settings = new OutputSlots
             {
                 AppVersion = Global.ExecutableProductVersion,
@@ -89,14 +67,15 @@ namespace DS4WinWPF.DS4Control
                         DeviceType = s.PermanentType
                     }).ToList()
             };
-
-            var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, settings);
-
+            
             var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
 
             try
             {
-                File.WriteAllText(outputPath, document);
+                using var stream = File.OpenWrite(outputPath);
+
+                settings.Serialize(stream);
+                
                 result = true;
             }
             catch (UnauthorizedAccessException)

@@ -11,7 +11,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     /// </summary>
     public partial class DS4WindowsAppSettings : XmlSerializable<DS4WindowsAppSettings>
     {
-        public new static IExtendedXmlSerializer GetSerializer()
+        public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .EnableReferences()

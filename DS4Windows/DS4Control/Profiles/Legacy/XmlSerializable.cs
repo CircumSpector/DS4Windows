@@ -7,20 +7,24 @@ using ExtendedXmlSerializer;
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
     /// <summary>
-    ///     Adds XML (de-)serialization helper methods to <see cref="T"/>.
+    ///     Describes an XML serializable object.
+    /// </summary>
+    public interface IXmlSerializable
+    {
+        IExtendedXmlSerializer GetSerializer();
+    }
+
+    /// <summary>
+    ///     Adds XML (de-)serialization helper methods to <see cref="T" />.
     /// </summary>
     /// <typeparam name="T">The type to (de-)serialize.</typeparam>
-    public abstract class XmlSerializable<T>
+    public abstract class XmlSerializable<T> : IXmlSerializable where T : IXmlSerializable, new()
     {
-        public static async Task<IExtendedXmlSerializer> GetSerializerAsync()
+        public abstract IExtendedXmlSerializer GetSerializer();
+
+        public async Task<IExtendedXmlSerializer> GetSerializerAsync()
         {
             return await Task.Run(GetSerializer);
-        }
-
-        public static IExtendedXmlSerializer GetSerializer()
-        {
-            throw new NotImplementedException(
-                $"Please override {nameof(GetSerializerAsync)} with your own implementation!");
         }
 
         public async Task SerializeAsync(Stream stream)
@@ -44,12 +48,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         public static async Task<T> DeserializeAsync(Stream stream)
         {
-            return await Task.Run(async () => (await GetSerializerAsync()).Deserialize<T>(stream));
+            return await Task.Run(() => Activator.CreateInstance<T>().GetSerializer().Deserialize<T>(stream));
         }
 
         public static T Deserialize(Stream stream)
         {
-            return GetSerializer().Deserialize<T>(stream);
+            return Activator.CreateInstance<T>().GetSerializer().Deserialize<T>(stream);
         }
     }
 }
