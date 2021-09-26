@@ -1,12 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
     public partial class DS4WindowsProfile
     {
+        public static async Task<IExtendedXmlSerializer> GetSerializerAsync()
+        {
+            return await Task.Run(() => new ConfigurationContainer()
+                .EnableReferences()
+                .EnableImplicitTyping(typeof(DS4WindowsProfile))
+                .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
+                .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
+                .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
+                .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
+                .Type<double>().Register().Converter().Using(DoubleConverter.Default)
+                .Create());
+        }
+
         /// <summary>
         ///     Converts properties from <see cref="IBackingStore" /> for a specified device index to this
         ///     <see cref="DS4WindowsProfile" /> instance.

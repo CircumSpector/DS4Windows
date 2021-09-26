@@ -1353,7 +1353,7 @@ namespace DS4Windows
 
                 var settings = new DS4WindowsAppSettings(this, ExecutableProductVersion, APP_CONFIG_VERSION);
 
-                var serializer = GetAppSettingsSerializer();
+                var serializer = DS4WindowsAppSettings.GetSerializer();
 
                 var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, settings);
 
@@ -1395,7 +1395,7 @@ namespace DS4Windows
                 {
                     await using (var stream = File.OpenRead(ProfilesPath))
                     {
-                        var serializer = await GetAppSettingsSerializerAsync();
+                        var serializer = await DS4WindowsAppSettings.GetSerializerAsync();
 
                         (await Task.Run(() => serializer.Deserialize<DS4WindowsAppSettings>(stream))).CopyTo(this);
                     }
@@ -1447,7 +1447,7 @@ namespace DS4Windows
                         CONFIG_VERSION
                     );
 
-                    var serializer = await GetProfileSerializerAsync();
+                    var serializer = await DS4WindowsProfile.GetSerializerAsync();
 
                     var document = await Task.Run(() =>
                         serializer.Serialize(new XmlWriterSettings { Indent = true }, profileObject));
@@ -2429,7 +2429,7 @@ namespace DS4Windows
                     // 
                     await using (var stream = File.OpenRead(profilepath))
                     {
-                        var serializer = await GetProfileSerializerAsync();
+                        var serializer = await DS4WindowsProfile.GetSerializerAsync();
 
                         (await Task.Run(() => serializer.Deserialize<DS4WindowsProfile>(stream))).CopyTo(this, device);
                     }
@@ -4096,39 +4096,7 @@ namespace DS4Windows
                 var result = value ? "and" : "or";
                 return result;
             }
-
-            private static async Task<IExtendedXmlSerializer> GetProfileSerializerAsync()
-            {
-                return await Task.Run(() => new ConfigurationContainer()
-                    .EnableReferences()
-                    .EnableImplicitTyping(typeof(DS4WindowsProfile))
-                    .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
-                    .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
-                    .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
-                    .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
-                    .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
-                    .Type<double>().Register().Converter().Using(DoubleConverter.Default)
-                    .Create());
-            }
-
-            private static async Task<IExtendedXmlSerializer> GetAppSettingsSerializerAsync()
-            {
-                return await Task.Run(GetAppSettingsSerializer);
-            }
-
-            private static IExtendedXmlSerializer GetAppSettingsSerializer()
-            {
-                return new ConfigurationContainer()
-                    .EnableReferences()
-                    .WithUnknownContent().Continue()
-                    .EnableImplicitTyping(typeof(DS4WindowsAppSettings))
-                    .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
-                    .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
-                    .Type<CustomLedProxyType>().Register().Converter().Using(CustomLedConverter.Default)
-                    .Type<DateTime>().Register().Converter().Using(DateTimeConverter.Default)
-                    .Create();
-            }
-
+            
             private static async Task<IExtendedXmlSerializer> GetLinkedProfilesSerializerAsync()
             {
                 return await Task.Run(GetLinkedProfilesSerializer);

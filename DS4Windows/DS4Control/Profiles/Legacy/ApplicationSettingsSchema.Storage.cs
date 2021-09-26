@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -9,6 +12,24 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     /// </summary>
     public partial class DS4WindowsAppSettings
     {
+        public static async Task<IExtendedXmlSerializer> GetSerializerAsync()
+        {
+            return await Task.Run(GetSerializer);
+        }
+
+        public static IExtendedXmlSerializer GetSerializer()
+        {
+            return new ConfigurationContainer()
+                .EnableReferences()
+                .WithUnknownContent().Continue()
+                .EnableImplicitTyping(typeof(DS4WindowsAppSettings))
+                .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
+                .Type<CustomLedProxyType>().Register().Converter().Using(CustomLedConverter.Default)
+                .Type<DateTime>().Register().Converter().Using(DateTimeConverter.Default)
+                .Create();
+        }
+
         /// <summary>
         ///     Converts properties from <see cref="IBackingStore" /> to this <see cref="DS4WindowsAppSettings" /> instance.
         /// </summary>
