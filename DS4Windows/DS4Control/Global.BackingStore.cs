@@ -46,7 +46,7 @@ namespace DS4Windows
                     new(), new(), new(), new(), new(), new()
                 };
 
-            public readonly Dictionary<string, string> linkedProfiles = new();
+            private Dictionary<string, string> LinkedProfiles { get; } = new();
 
             protected readonly XmlDocument m_Xdoc = new();
 
@@ -3173,7 +3173,7 @@ namespace DS4Windows
                     var linkedXdoc = new XmlDocument();
                     XmlNode Node;
                     linkedXdoc.Load(LinkedProfilesPath);
-                    linkedProfiles.Clear();
+                    LinkedProfiles.Clear();
 
                     try
                     {
@@ -3184,7 +3184,7 @@ namespace DS4Windows
                             var current = links[i];
                             var serial = current.Name.Replace("MAC", string.Empty);
                             var profile = current.InnerText;
-                            linkedProfiles[serial] = profile;
+                            LinkedProfiles[serial] = profile;
                         }
                     }
                     catch
@@ -3223,13 +3223,13 @@ namespace DS4Windows
                     Node = linkedXdoc.CreateNode(XmlNodeType.Element, "LinkedControllers", "");
                     linkedXdoc.AppendChild(Node);
 
-                    var serials = linkedProfiles.Keys;
+                    var serials = LinkedProfiles.Keys;
                     //for (int i = 0, itemCount = linkedProfiles.Count; i < itemCount; i++)
                     for (var serialEnum = serials.GetEnumerator(); serialEnum.MoveNext();)
                     {
                         //string serial = serials.ElementAt(i);
                         var serial = serialEnum.Current;
-                        var profile = linkedProfiles[serial];
+                        var profile = LinkedProfiles[serial];
                         var link = linkedXdoc.CreateElement("MAC" + serial);
                         link.InnerText = profile;
                         Node.AppendChild(link);
@@ -3340,14 +3340,14 @@ namespace DS4Windows
             public bool ContainsLinkedProfile(string serial)
             {
                 var tempSerial = serial.Replace(":", string.Empty);
-                return linkedProfiles.ContainsKey(tempSerial);
+                return LinkedProfiles.ContainsKey(tempSerial);
             }
 
             public string GetLinkedProfile(string serial)
             {
                 var temp = string.Empty;
                 var tempSerial = serial.Replace(":", string.Empty);
-                if (linkedProfiles.ContainsKey(tempSerial)) temp = linkedProfiles[tempSerial];
+                if (LinkedProfiles.ContainsKey(tempSerial)) temp = LinkedProfiles[tempSerial];
 
                 return temp;
             }
@@ -3355,13 +3355,13 @@ namespace DS4Windows
             public void ChangeLinkedProfile(string serial, string profile)
             {
                 var tempSerial = serial.Replace(":", string.Empty);
-                linkedProfiles[tempSerial] = profile;
+                LinkedProfiles[tempSerial] = profile;
             }
 
             public void RemoveLinkedProfile(string serial)
             {
                 var tempSerial = serial.Replace(":", string.Empty);
-                if (linkedProfiles.ContainsKey(tempSerial)) linkedProfiles.Remove(tempSerial);
+                if (LinkedProfiles.ContainsKey(tempSerial)) LinkedProfiles.Remove(tempSerial);
             }
 
             public int GetProfileActionIndexOf(int device, string name)
