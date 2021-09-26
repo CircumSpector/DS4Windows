@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using ExtendedXmlSerializer;
@@ -11,11 +8,11 @@ using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
-    public partial class DS4WindowsProfile
+    public partial class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>
     {
-        public static async Task<IExtendedXmlSerializer> GetSerializerAsync()
+        public new static IExtendedXmlSerializer GetSerializer()
         {
-            return await Task.Run(() => new ConfigurationContainer()
+            return new ConfigurationContainer()
                 .EnableReferences()
                 .EnableImplicitTyping(typeof(DS4WindowsProfile))
                 .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
@@ -24,22 +21,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
                 .Type<double>().Register().Converter().Using(DoubleConverter.Default)
-                .Create());
-        }
-
-        public async Task SerializeAsync(Stream stream)
-        {
-            var document = await Task.Run(async () =>
-                (await GetSerializerAsync()).Serialize(new XmlWriterSettings { Indent = true }, this));
-
-            await using var writer = new StreamWriter(stream);
-
-            await writer.WriteAsync(document);
-        }
-
-        public static async Task<DS4WindowsProfile> DeserializeAsync(Stream stream)
-        {
-            return await Task.Run(async () => (await GetSerializerAsync()).Deserialize<DS4WindowsProfile>(stream));
+                .Create();
         }
 
         /// <summary>

@@ -1353,13 +1353,11 @@ namespace DS4Windows
 
                 var settings = new DS4WindowsAppSettings(this, ExecutableProductVersion, APP_CONFIG_VERSION);
 
-                var serializer = DS4WindowsAppSettings.GetSerializer();
-
-                var document = serializer.Serialize(new XmlWriterSettings { Indent = true }, settings);
-
                 try
                 {
-                    File.WriteAllText(ProfilesPath, document);
+                    using var stream = File.OpenWrite(ProfilesPath);
+
+                    settings.Serialize(stream);
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -1395,9 +1393,7 @@ namespace DS4Windows
                 {
                     await using (var stream = File.OpenRead(ProfilesPath))
                     {
-                        var serializer = await DS4WindowsAppSettings.GetSerializerAsync();
-
-                        (await Task.Run(() => serializer.Deserialize<DS4WindowsAppSettings>(stream))).CopyTo(this);
+                        (await DS4WindowsAppSettings.DeserializeAsync(stream)).CopyTo(this);
                     }
 
                     if (loaded)
@@ -2462,8 +2458,8 @@ namespace DS4Windows
                                 var tempProcess = new Process();
                                 tempProcess.StartInfo.FileName = programPath;
                                 tempProcess.StartInfo.WorkingDirectory = new FileInfo(programPath).Directory.ToString();
-                                    //tempProcess.StartInfo.UseShellExecute = false;
-                                    try
+                                //tempProcess.StartInfo.UseShellExecute = false;
+                                try
                                 {
                                     tempProcess.Start();
                                 }
@@ -4092,7 +4088,7 @@ namespace DS4Windows
                 var result = value ? "and" : "or";
                 return result;
             }
-            
+
             private static async Task<IExtendedXmlSerializer> GetLinkedProfilesSerializerAsync()
             {
                 return await Task.Run(GetLinkedProfilesSerializer);
@@ -4705,9 +4701,9 @@ namespace DS4Windows
                 if (tempDev != null && tempDev.isSynced())
                     tempDev.queueEvent(() =>
                     {
-                            //tempDev.setIdleTimeout(idleDisconnectTimeout[device]);
-                            //tempDev.setBTPollRate(btPollRate[device]);
-                            if (xinputStatus && tempDev.PrimaryDevice)
+                        //tempDev.setIdleTimeout(idleDisconnectTimeout[device]);
+                        //tempDev.setBTPollRate(btPollRate[device]);
+                        if (xinputStatus && tempDev.PrimaryDevice)
                         {
                             if (xinputPlug)
                             {
@@ -4715,25 +4711,25 @@ namespace DS4Windows
                                 if (tempOutDev != null)
                                 {
                                     tempOutDev = null;
-                                        //Global.ActiveOutDevType[device] = OutContType.None;
-                                        control.UnplugOutDev(device, tempDev);
+                                    //Global.ActiveOutDevType[device] = OutContType.None;
+                                    control.UnplugOutDev(device, tempDev);
                                 }
 
                                 var tempContType = OutputDeviceType[device];
                                 control.PluginOutDev(device, tempDev);
-                                    //Global.UseDirectInputOnly[device] = false;
-                                }
+                                //Global.UseDirectInputOnly[device] = false;
+                            }
                             else
                             {
-                                    //Global.ActiveOutDevType[device] = OutContType.None;
-                                    control.UnplugOutDev(device, tempDev);
+                                //Global.ActiveOutDevType[device] = OutContType.None;
+                                control.UnplugOutDev(device, tempDev);
                             }
                         }
 
-                            //tempDev.RumbleAutostopTime = rumbleAutostopTime[device];
-                            //tempDev.setRumble(0, 0);
-                            //tempDev.LightBarColor = Global.getMainColor(device);
-                            control.CheckProfileOptions(device, tempDev, true);
+                        //tempDev.RumbleAutostopTime = rumbleAutostopTime[device];
+                        //tempDev.setRumble(0, 0);
+                        //tempDev.LightBarColor = Global.getMainColor(device);
+                        control.CheckProfileOptions(device, tempDev, true);
                     });
 
                 //Program.rootHub.touchPad[device]?.ResetTrackAccel(trackballFriction[device]);

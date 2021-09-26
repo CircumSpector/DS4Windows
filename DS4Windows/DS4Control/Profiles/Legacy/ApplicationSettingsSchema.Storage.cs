@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using ExtendedXmlSerializer;
@@ -10,14 +9,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     /// <summary>
     ///     Represents application-wide settings.
     /// </summary>
-    public partial class DS4WindowsAppSettings
+    public partial class DS4WindowsAppSettings : XmlSerializable<DS4WindowsAppSettings>
     {
-        public static async Task<IExtendedXmlSerializer> GetSerializerAsync()
-        {
-            return await Task.Run(GetSerializer);
-        }
-
-        public static IExtendedXmlSerializer GetSerializer()
+        public new static IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .EnableReferences()
