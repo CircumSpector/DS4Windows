@@ -268,6 +268,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             L2TwoStageMode = store.L2OutputSettings[device].twoStageMode;
             R2TwoStageMode = store.R2OutputSettings[device].twoStageMode;
 
+            L2HipFireTime = store.L2OutputSettings[device].hipFireMS;
+            R2HipFireTime = store.R2OutputSettings[device].hipFireMS;
+
             L2TriggerEffect = store.L2OutputSettings[device].triggerEffect;
             R2TriggerEffect = store.R2OutputSettings[device].triggerEffect;
 
@@ -506,13 +509,15 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.L2OutBezierCurveObj[device] = L2OutputCurveCustom;
             store.SetL2OutCurveMode(device, store.StickOutputCurveId(L2OutputCurveMode));
             store.L2OutputSettings[device].TwoStageMode = L2TwoStageMode;
-            //store.L2OutputSettings[device].hipFireMS = Math.Max(Math.Min(0, L2HipFireDelay), 5000);
-
+            store.L2OutputSettings[device].hipFireMS = Math.Min(Math.Max(0, L2HipFireTime), 5000);
             store.L2OutputSettings[device].TriggerEffect = L2TriggerEffect;
+
             store.R2OutBezierCurveObj[device] = R2OutputCurveCustom;
             store.SetR2OutCurveMode(device, store.StickOutputCurveId(R2OutputCurveMode));
             store.R2OutputSettings[device].TwoStageMode = R2TwoStageMode;
             store.R2OutputSettings[device].TriggerEffect = R2TriggerEffect;
+            store.R2OutputSettings[device].hipFireMS = Math.Min(Math.Max(0, R2HipFireTime), 5000);
+
             store.SXOutBezierCurveObj[device] = SXOutputCurveCustom;
             store.SetSXOutCurveMode(device, store.StickOutputCurveId(SXOutputCurveMode));
             store.SZOutBezierCurveObj[device] = SZOutputCurveCustom;

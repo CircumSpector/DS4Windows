@@ -399,6 +399,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "R2TwoStageMode")]
         public TwoStageTriggerMode R2TwoStageMode { get; set; }
 
+        [XmlElement(ElementName = "L2HipFireTime")]
+        public int L2HipFireTime { get; set; }
+
+        [XmlElement(ElementName = "R2HipFireTime")]
+        public int R2HipFireTime { get; set; }
+
         [XmlElement(ElementName = "L2TriggerEffect")]
         public TriggerEffects L2TriggerEffect { get; set; }
 
