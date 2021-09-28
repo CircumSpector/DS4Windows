@@ -3231,8 +3231,8 @@ namespace DS4Windows
                     return LoadControllerConfigsForDevice(device);
 
                 for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
-                    if (Program.rootHub.DS4Controllers[idx] != null)
-                        LoadControllerConfigsForDevice(Program.rootHub.DS4Controllers[idx]);
+                    if (ControlService.CurrentInstance.DS4Controllers[idx] != null)
+                        LoadControllerConfigsForDevice(ControlService.CurrentInstance.DS4Controllers[idx]);
 
                 return true;
             }
@@ -3243,8 +3243,8 @@ namespace DS4Windows
                     return SaveControllerConfigsForDevice(device);
 
                 for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
-                    if (Program.rootHub.DS4Controllers[idx] != null)
-                        SaveControllerConfigsForDevice(Program.rootHub.DS4Controllers[idx]);
+                    if (ControlService.CurrentInstance.DS4Controllers[idx] != null)
+                        SaveControllerConfigsForDevice(ControlService.CurrentInstance.DS4Controllers[idx]);
 
                 return true;
             }
@@ -4665,7 +4665,7 @@ namespace DS4Windows
                         control.CheckProfileOptions(device, tempDev, true);
                     });
 
-                //Program.rootHub.touchPad[device]?.ResetTrackAccel(trackballFriction[device]);
+                //ControlService.CurrentInstance.touchPad[device]?.ResetTrackAccel(trackballFriction[device]);
             }
         }
     }

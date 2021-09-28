@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DS4Windows;
 using NonFormTimer = System.Timers.Timer;
 using Microsoft.Win32;
 using Xceed.Wpf.Toolkit;
@@ -153,7 +154,7 @@ namespace DS4WinWPF.DS4Forms
             bool recording = recordBoxVM.Recording = !recordBoxVM.Recording;
             if (recording)
             {
-                DS4Windows.Program.rootHub.recordingMacro = true;
+                ControlService.CurrentInstance.recordingMacro = true;
                 recordBtn.Content = "Stop";
                 if (recordBoxVM.MacroStepIndex == -1)
                 {
@@ -178,7 +179,7 @@ namespace DS4WinWPF.DS4Forms
             }
             else
             {
-                DS4Windows.Program.rootHub.recordingMacro = false;
+                ControlService.CurrentInstance.recordingMacro = false;
                 recordBoxVM.AppendIndex = -1;
                 ds4.Stop();
                 recordBtn.Content = "Record";

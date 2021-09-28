@@ -219,13 +219,13 @@ namespace DS4WinWPF.DS4Forms
         {
             readingTimer.Stop();
 
-            DS4Device ds = Program.rootHub.DS4Controllers[deviceNum];
+            DS4Device ds = ControlService.CurrentInstance.DS4Controllers[deviceNum];
             if (ds != null)
             {
                 // Don't bother waiting for UI thread to grab references
-                //DS4StateExposed tmpexposeState = Program.rootHub.ExposedState[deviceNum];
-                DS4State tmpbaseState = Program.rootHub.getDS4State(deviceNum);
-                DS4State tmpinterState = Program.rootHub.getDS4StateTemp(deviceNum);
+                //DS4StateExposed tmpexposeState = ControlService.CurrentInstance.ExposedState[deviceNum];
+                DS4State tmpbaseState = ControlService.CurrentInstance.getDS4State(deviceNum);
+                DS4State tmpinterState = ControlService.CurrentInstance.getDS4StateTemp(deviceNum);
                 long cntCalibrating = ds.SixAxis.CntCalibrating;
 
                 // Wait for controller to be in a wait period

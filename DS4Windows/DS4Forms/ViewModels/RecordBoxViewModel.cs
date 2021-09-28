@@ -343,11 +343,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ProcessDS4Tick()
         {
-            if (Program.rootHub.DS4Controllers[0] != null)
+            if (ControlService.CurrentInstance.DS4Controllers[0] != null)
             {
-                DS4Device dev = Program.rootHub.DS4Controllers[0];
+                DS4Device dev = ControlService.CurrentInstance.DS4Controllers[0];
                 DS4State cState = dev.GetCurrentStateReference();
-                DS4Windows.Mouse tp = Program.rootHub.touchPad[0];
+                DS4Windows.Mouse tp = ControlService.CurrentInstance.touchPad[0];
                 for (DS4Controls dc = DS4Controls.LXNeg; dc < DS4Controls.Mute; dc++)
                 {
                     int macroValue = Global.MacroDs4Values[dc];

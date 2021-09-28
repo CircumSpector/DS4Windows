@@ -446,7 +446,7 @@ namespace DS4WinWPF
 
                 rootHub = new ControlService(parser);
 
-                Program.rootHub = rootHub;
+                ControlService.CurrentInstance = rootHub;
                 requestClient = new HttpClient();
                 collectTimer = new Timer(GarbageTask, null, 30000, 30000);
             });
@@ -463,7 +463,7 @@ namespace DS4WinWPF
             {
                 if (!Global.IsWin8OrGreater) ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-                Program.rootHub = rootHub;
+                ControlService.CurrentInstance = rootHub;
                 requestClient = new HttpClient();
                 collectTimer = new Timer(GarbageTask, null, 30000, 30000);
             });

@@ -1255,7 +1255,7 @@ namespace DS4WinWPF.DS4Forms
             if (activeWin && profileSettingsVM.UseControllerReadout)
             {
                 var index = -1;
-                switch (Program.rootHub.GetActiveInputControl(tempDeviceNum))
+                switch (ControlService.CurrentInstance.GetActiveInputControl(tempDeviceNum))
                 {
                     case DS4Controls.None: break;
                     case DS4Controls.Cross:

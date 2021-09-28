@@ -545,7 +545,7 @@ Suspend support not enabled.", true);
                 // Entering Suspend
                 case 4:
                     DS4LightBar.shuttingdown = true;
-                    Program.rootHub.suspending = true;
+                    ControlService.CurrentInstance.suspending = true;
 
                     if (App.rootHub.running)
                     {
@@ -1065,12 +1065,12 @@ Suspend support not enabled.", true);
 
                                 if (strData[0] == "start")
                                 { 
-                                    if(!Program.rootHub.running) 
+                                    if(!ControlService.CurrentInstance.running) 
                                         ChangeService();
                                 }
                                 else if (strData[0] == "stop")
                                 {    
-                                    if (Program.rootHub.running)
+                                    if (ControlService.CurrentInstance.running)
                                         ChangeService();
                                 }
                                 else if (strData[0] == "cycle")
@@ -1080,7 +1080,7 @@ Suspend support not enabled.", true);
                                 else if (strData[0] == "shutdown")
                                 {
                                     // Force disconnect all gamepads before closing the app to avoid "Are you sure you want to close the app" messagebox
-                                    if (Program.rootHub.running)
+                                    if (ControlService.CurrentInstance.running)
                                         ChangeService();
 
                                     // Call closing method and let it to close editor wnd (if it is open) before proceeding to the actual "app closed" handler
@@ -1149,19 +1149,19 @@ Suspend support not enabled.", true);
                                             {
                                                 // Preset profile name for later loading
                                                 Global.Instance.Config.ProfilePath[tdevice] = strData[2];
-                                                //Global.LoadProfile(tdevice, true, Program.rootHub);
+                                                //Global.LoadProfile(tdevice, true, ControlService.CurrentInstance);
                                             }
                                         }
                                         else
                                         {
-                                            Global.Instance.LoadTempProfile(tdevice, strData[2], true, Program.rootHub).Wait();
+                                            Global.Instance.LoadTempProfile(tdevice, strData[2], true, ControlService.CurrentInstance).Wait();
                                         }
 
                                         DS4Device device = conLvViewModel.ControllerCol[tdevice].Device;
                                         if (device != null)
                                         {
                                             string prolog = string.Format(Properties.Resources.UsingProfile, (tdevice + 1).ToString(), strData[2], $"{device.Battery}");
-                                            Program.rootHub.LogDebug(prolog);
+                                            ControlService.CurrentInstance.LogDebug(prolog);
                                         }
                                     }
                                 }
@@ -1177,13 +1177,13 @@ Suspend support not enabled.", true);
                                     if (tdevice >= 0 && tdevice < ControlService.MAX_DS4_CONTROLLER_COUNT)
                                     {
                                         strData[2] = strData[2].ToLower();
-                                        DS4Control.OutSlotDevice slotDevice = Program.rootHub.OutputslotMan.OutputSlots[tdevice];
+                                        DS4Control.OutSlotDevice slotDevice = ControlService.CurrentInstance.OutputslotMan.OutputSlots[tdevice];
                                         if (strData[2] == "unplug")
-                                            Program.rootHub.DetachUnboundOutDev(slotDevice);
+                                            ControlService.CurrentInstance.DetachUnboundOutDev(slotDevice);
                                         else if (strData[2] == "plugds4")
-                                            Program.rootHub.AttachUnboundOutDev(slotDevice, OutContType.DS4);
+                                            ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice, OutContType.DS4);
                                         else if (strData[2] == "plugx360")
-                                            Program.rootHub.AttachUnboundOutDev(slotDevice, OutContType.X360);
+                                            ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice, OutContType.X360);
                                     }
                                 }
                                 else if (strData[0] == "query" && strData.Length >= 3)
@@ -1271,11 +1271,11 @@ Suspend support not enabled.", true);
                 loopHotplug = hotplugCounter > 0;
             }
 
-            Program.rootHub.UpdateHidHiddenAttributes();
+            ControlService.CurrentInstance.UpdateHidHiddenAttributes();
             while (loopHotplug == true)
             {
                 Thread.Sleep(HOTPLUG_CHECK_DELAY);
-                await Program.rootHub.HotPlug();
+                await ControlService.CurrentInstance.HotPlug();
                 lock (hotplugCounterLock)
                 {
                     hotplugCounter--;
@@ -1354,7 +1354,7 @@ Suspend support not enabled.", true);
             }
             else
             {
-                Program.rootHub.ChangeUDPStatus(status);
+                ControlService.CurrentInstance.ChangeUDPStatus(status);
                 await Task.Delay(100).ContinueWith((t) =>
                 {
                     App.rootHub.ChangeMotionEventStatus(status);
@@ -1405,7 +1405,7 @@ Suspend support not enabled.", true);
                     temp.WaitForExit();
                     Global.RefreshHidHideInfo();
                     Global.RefreshFakerInputInfo();
-                    Program.rootHub.RefreshOutputKBMHandler();
+                    ControlService.CurrentInstance.RefreshOutputKBMHandler();
 
                     settingsWrapVM.DriverCheckRefresh();
                 }
@@ -1750,7 +1750,7 @@ Suspend support not enabled.", true);
         private void DeviceOptionSettingsBtn_Click(object sender, RoutedEventArgs e)
         {
             ControllerRegisterOptionsWindow optsWindow =
-                new ControllerRegisterOptionsWindow(Program.rootHub.DeviceOptions, Program.rootHub);
+                new ControllerRegisterOptionsWindow(ControlService.CurrentInstance.DeviceOptions, ControlService.CurrentInstance);
 
             optsWindow.Owner = this;
             optsWindow.Show();

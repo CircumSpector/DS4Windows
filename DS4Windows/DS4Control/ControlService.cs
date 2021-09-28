@@ -17,6 +17,8 @@ namespace DS4Windows
 {
     public class ControlService
     {
+        public static ControlService CurrentInstance { get; set; }
+
         public ViGEmClient vigemTestClient = null;
         // Might be useful for ScpVBus build
         public const int EXPANDED_CONTROLLER_COUNT = 8;

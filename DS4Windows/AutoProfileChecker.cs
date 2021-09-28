@@ -87,7 +87,7 @@ namespace DS4WinWPF
                                 if (autoProfileDebugLogLevel > 0)
                                     DS4Windows.AppLogger.LogToGui($"DEBUG: Auto-Profile. LoadProfile Controller {j + 1}={tempname}", false, true);
 
-                                await Global.Instance.LoadTempProfile(j, tempname, true, Program.rootHub); // j is controller index, i is filename
+                                await Global.Instance.LoadTempProfile(j, tempname, true, ControlService.CurrentInstance); // j is controller index, i is filename
                                                                                               //if (LaunchProgram[j] != string.Empty) Process.Start(LaunchProgram[j]);
                             }
                             else
@@ -136,7 +136,7 @@ namespace DS4WinWPF
                                 if (autoProfileDebugLogLevel > 0)
                                     DS4Windows.AppLogger.LogToGui($"DEBUG: Auto-Profile. Unknown process. Reverting to default profile. Controller {j + 1}={Global.Instance.Config.ProfilePath[j]} (default)", false, true);
 
-                                await Global.Instance.LoadProfile(j, false, Program.rootHub);
+                                await Global.Instance.LoadProfile(j, false, ControlService.CurrentInstance);
                             }
                             else
                             {

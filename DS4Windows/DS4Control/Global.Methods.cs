@@ -96,7 +96,7 @@ namespace DS4Windows
         {
             _config.RumbleAutostopTime[index] = value;
 
-            var tempDev = Program.rootHub.DS4Controllers[index];
+            var tempDev = ControlService.CurrentInstance.DS4Controllers[index];
             if (tempDev != null && tempDev.isSynced())
                 tempDev.RumbleAutostopTime = value;
         }
