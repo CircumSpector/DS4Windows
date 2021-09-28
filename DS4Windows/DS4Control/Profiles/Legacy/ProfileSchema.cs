@@ -446,11 +446,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         [XmlElement(ElementName = "OutputContDevice")]
         public OutContType OutputContDevice { get; set; } = OutContType.X360;
+        
+        [XmlElement(ElementName = "Control")] 
+        public Control Controls { get; set; } = new();
 
         /*
-        [XmlElement(ElementName = "Control")] 
-        public object Control { get; set; }
-
         [XmlElement(ElementName = "ShiftControl")]
         public object ShiftControl { get; set; }
         */

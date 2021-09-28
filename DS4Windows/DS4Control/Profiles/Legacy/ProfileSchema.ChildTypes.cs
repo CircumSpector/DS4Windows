@@ -193,4 +193,93 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "SnapToCenter")]
         public bool SnapToCenter { get; set; }
     }
+
+    public abstract class ControlsCollection
+    {
+        public string LXNeg { get; set; }
+        public string LXPos { get; set; }
+        public string LYNeg { get; set; }
+        public string LYPos { get; set; }
+        public string RXNeg { get; set; }
+        public string RXPos { get; set; }
+        public string RYNeg { get; set; }
+        public string RYPos { get; set; }
+        public string L1 { get; set; }
+        public string L2 { get; set; }
+        public string L3 { get; set; }
+        public string R1 { get; set; }
+        public string R2 { get; set; }
+        public string R3 { get; set; }
+        public string Square { get; set; }
+        public string Triangle { get; set; }
+        public string Circle { get; set; }
+        public string Cross { get; set; }
+        public string DpadUp { get; set; }
+        public string DpadRight { get; set; }
+        public string DpadDown { get; set; }
+        public string DpadLeft { get; set; }
+        public string PS { get; set; }
+        public string TouchLeft { get; set; }
+        public string TouchUpper { get; set; }
+        public string TouchMulti { get; set; }
+        public string TouchRight { get; set; }
+        public string Share { get; set; }
+        public string Options { get; set; }
+        public string Mute { get; set; }
+        public string GyroXPos { get; set; }
+        public string GyroXNeg { get; set; }
+        public string GyroZPos { get; set; }
+        public string GyroZNeg { get; set; }
+        public string SwipeLeft { get; set; }
+        public string SwipeRight { get; set; }
+        public string SwipeUp { get; set; }
+        public string SwipeDown { get; set; }
+        public string L2FullPull { get; set; }
+        public string R2FullPull { get; set; }
+        public string GyroSwipeLeft { get; set; }
+        public string GyroSwipeRight { get; set; }
+        public string GyroSwipeUp { get; set; }
+        public string GyroSwipeDown { get; set; }
+        public string Capture { get; set; }
+        public string SideL { get; set; }
+        public string SideR { get; set; }
+        public string LSOuter { get; set; }
+        public string RSOuter { get; set; }
+    }
+
+    [XmlRoot(ElementName = "Key")]
+    public class ControlKey : ControlsCollection
+    {
+    }
+
+    [XmlRoot(ElementName = "KeyType")]
+    public class ControlKeyType : ControlsCollection
+    {
+    }
+
+    [XmlRoot(ElementName = "Button")]
+    public class ControlButton : ControlsCollection
+    {
+    }
+
+    [XmlRoot(ElementName = "Extras")]
+    public class ControlExtras : ControlsCollection
+    {
+    }
+
+    [XmlRoot(ElementName = "Control")]
+    public class Control
+    {
+        [XmlElement(ElementName = "Key")] 
+        public ControlKey Keys { get; set; } = new();
+
+        [XmlElement(ElementName = "KeyType")] 
+        public ControlKeyType KeyTypes { get; set; } = new();
+
+        [XmlElement(ElementName = "Button")] 
+        public ControlButton Buttons { get; set; } = new();
+
+        [XmlElement(ElementName = "Extras")] 
+        public ControlExtras Extras { get; set; } = new();
+    }
 }

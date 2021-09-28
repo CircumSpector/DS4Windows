@@ -2438,7 +2438,9 @@ namespace DS4Windows
                     // 
                     await using (var stream = File.OpenRead(profilepath))
                     {
-                        (await DS4WindowsProfile.DeserializeAsync(stream)).CopyTo(this, device);
+                        var profile = await DS4WindowsProfile.DeserializeAsync(stream);
+
+                        profile.CopyTo(this, device);
                     }
 
 
