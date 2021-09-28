@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
@@ -194,57 +195,65 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool SnapToCenter { get; set; }
     }
 
+    public class ControlsCollectionEntity
+    {
+        [XmlAttribute(AttributeName = "Trigger")]
+        public string ShiftTrigger { get; set; }
+
+        public string Value { get; set; }
+    }
+
     public abstract class ControlsCollection
     {
-        public string LXNeg { get; set; }
-        public string LXPos { get; set; }
-        public string LYNeg { get; set; }
-        public string LYPos { get; set; }
-        public string RXNeg { get; set; }
-        public string RXPos { get; set; }
-        public string RYNeg { get; set; }
-        public string RYPos { get; set; }
-        public string L1 { get; set; }
-        public string L2 { get; set; }
-        public string L3 { get; set; }
-        public string R1 { get; set; }
-        public string R2 { get; set; }
-        public string R3 { get; set; }
-        public string Square { get; set; }
-        public string Triangle { get; set; }
-        public string Circle { get; set; }
-        public string Cross { get; set; }
-        public string DpadUp { get; set; }
-        public string DpadRight { get; set; }
-        public string DpadDown { get; set; }
-        public string DpadLeft { get; set; }
-        public string PS { get; set; }
-        public string TouchLeft { get; set; }
-        public string TouchUpper { get; set; }
-        public string TouchMulti { get; set; }
-        public string TouchRight { get; set; }
-        public string Share { get; set; }
-        public string Options { get; set; }
-        public string Mute { get; set; }
-        public string GyroXPos { get; set; }
-        public string GyroXNeg { get; set; }
-        public string GyroZPos { get; set; }
-        public string GyroZNeg { get; set; }
-        public string SwipeLeft { get; set; }
-        public string SwipeRight { get; set; }
-        public string SwipeUp { get; set; }
-        public string SwipeDown { get; set; }
-        public string L2FullPull { get; set; }
-        public string R2FullPull { get; set; }
-        public string GyroSwipeLeft { get; set; }
-        public string GyroSwipeRight { get; set; }
-        public string GyroSwipeUp { get; set; }
-        public string GyroSwipeDown { get; set; }
-        public string Capture { get; set; }
-        public string SideL { get; set; }
-        public string SideR { get; set; }
-        public string LSOuter { get; set; }
-        public string RSOuter { get; set; }
+        public ControlsCollectionEntity LXNeg { get; set; } = new();
+        public ControlsCollectionEntity LXPos { get; set; } = new();
+        public ControlsCollectionEntity LYNeg { get; set; } = new();
+        public ControlsCollectionEntity LYPos { get; set; } = new();
+        public ControlsCollectionEntity RXNeg { get; set; } = new();
+        public ControlsCollectionEntity RXPos { get; set; } = new();
+        public ControlsCollectionEntity RYNeg { get; set; } = new();
+        public ControlsCollectionEntity RYPos { get; set; } = new();
+        public ControlsCollectionEntity L1 { get; set; } = new();
+        public ControlsCollectionEntity L2 { get; set; } = new();
+        public ControlsCollectionEntity L3 { get; set; } = new();
+        public ControlsCollectionEntity R1 { get; set; } = new();
+        public ControlsCollectionEntity R2 { get; set; } = new();
+        public ControlsCollectionEntity R3 { get; set; } = new();
+        public ControlsCollectionEntity Square { get; set; } = new();
+        public ControlsCollectionEntity Triangle { get; set; } = new();
+        public ControlsCollectionEntity Circle { get; set; } = new();
+        public ControlsCollectionEntity Cross { get; set; } = new();
+        public ControlsCollectionEntity DpadUp { get; set; } = new();
+        public ControlsCollectionEntity DpadRight { get; set; } = new();
+        public ControlsCollectionEntity DpadDown { get; set; } = new();
+        public ControlsCollectionEntity DpadLeft { get; set; } = new();
+        public ControlsCollectionEntity PS { get; set; } = new();
+        public ControlsCollectionEntity TouchLeft { get; set; } = new();
+        public ControlsCollectionEntity TouchUpper { get; set; } = new();
+        public ControlsCollectionEntity TouchMulti { get; set; } = new();
+        public ControlsCollectionEntity TouchRight { get; set; } = new();
+        public ControlsCollectionEntity Share { get; set; } = new();
+        public ControlsCollectionEntity Options { get; set; } = new();
+        public ControlsCollectionEntity Mute { get; set; } = new();
+        public ControlsCollectionEntity GyroXPos { get; set; } = new();
+        public ControlsCollectionEntity GyroXNeg { get; set; } = new();
+        public ControlsCollectionEntity GyroZPos { get; set; } = new();
+        public ControlsCollectionEntity GyroZNeg { get; set; } = new();
+        public ControlsCollectionEntity SwipeLeft { get; set; } = new();
+        public ControlsCollectionEntity SwipeRight { get; set; } = new();
+        public ControlsCollectionEntity SwipeUp { get; set; } = new();
+        public ControlsCollectionEntity SwipeDown { get; set; } = new();
+        public ControlsCollectionEntity L2FullPull { get; set; } = new();
+        public ControlsCollectionEntity R2FullPull { get; set; } = new();
+        public ControlsCollectionEntity GyroSwipeLeft { get; set; } = new();
+        public ControlsCollectionEntity GyroSwipeRight { get; set; } = new();
+        public ControlsCollectionEntity GyroSwipeUp { get; set; } = new();
+        public ControlsCollectionEntity GyroSwipeDown { get; set; } = new();
+        public ControlsCollectionEntity Capture { get; set; } = new();
+        public ControlsCollectionEntity SideL { get; set; } = new();
+        public ControlsCollectionEntity SideR { get; set; } = new();
+        public ControlsCollectionEntity LSOuter { get; set; } = new();
+        public ControlsCollectionEntity RSOuter { get; set; } = new();
     }
 
     [XmlRoot(ElementName = "Key")]
