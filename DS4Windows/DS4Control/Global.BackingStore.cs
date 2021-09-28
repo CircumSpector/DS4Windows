@@ -2112,6 +2112,13 @@ namespace DS4Windows
                     xmlR2TwoStageMode.InnerText = R2OutputSettings[device].twoStageMode.ToString();
                     rootElement.AppendChild(xmlR2TwoStageMode);
 
+                    var xmlL2HipFireTime = m_Xdoc.CreateNode(XmlNodeType.Element, "L2HipFireTime", null);
+                    xmlL2HipFireTime.InnerText = L2OutputSettings[device].hipFireMS.ToString();
+                    rootElement.AppendChild(xmlL2HipFireTime);
+                    var xmlR2HipFireTime = m_Xdoc.CreateNode(XmlNodeType.Element, "R2HipFireTime", null);
+                    xmlR2HipFireTime.InnerText = R2OutputSettings[device].hipFireMS.ToString();
+                    rootElement.AppendChild(xmlR2HipFireTime);
+
                     var xmlL2TriggerEffect = m_Xdoc.CreateNode(XmlNodeType.Element, "L2TriggerEffect", null);
                     xmlL2TriggerEffect.InnerText = L2OutputSettings[device].triggerEffect.ToString();
                     rootElement.AppendChild(xmlL2TriggerEffect);
