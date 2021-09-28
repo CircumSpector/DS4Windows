@@ -1430,30 +1430,13 @@ namespace DS4Windows
                     $"{proName}{XML_EXTENSION}"
                 );
 
-                //
-                // TODO: experimental, needs tuning. For now just generates a 2nd file for experimentation.
-                // 
-                using (GlobalTracer.Instance.BuildSpan("Serialize-NEW").StartActive(true))
-                {
-                    var betaPath = Path.Combine(
-                        RuntimeAppDataPath,
-                        Constants.ProfilesSubDirectory,
-                        $"{proName}-BETA{XML_EXTENSION}"
-                    );
-
-                    await using (var file = File.Open(betaPath, FileMode.Create))
-                    {
-                        var profileObject = new DS4WindowsProfile(
-                            this,
-                            device,
-                            ExecutableProductVersion,
-                            CONFIG_VERSION
-                        );
-
-                        await profileObject.SerializeAsync(file);
-                    }
-                }
-
+                var profileObject = new DS4WindowsProfile(
+                    this,
+                    device,
+                    ExecutableProductVersion,
+                    CONFIG_VERSION
+                );
+                
                 using var scope = GlobalTracer.Instance.BuildSpan("Serialize").StartActive(true);
 
                 try
@@ -2237,11 +2220,21 @@ namespace DS4Windows
                             }
                             else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
                             {
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.Controls.Keys, 
+                                    dcs.ActionData.ActionKey.ToString()
+                                );
+
                                 buttonNode.InnerText = dcs.ActionData.ActionKey.ToString();
                                 Key.AppendChild(buttonNode);
                             }
                             else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
                             {
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.Controls.Buttons, 
+                                    GetX360ControlString(dcs.ActionData.ActionButton)
+                                    );
+
                                 buttonNode.InnerText = GetX360ControlString(dcs.ActionData.ActionButton);
                                 Button.AppendChild(buttonNode);
                             }
@@ -2354,6 +2347,20 @@ namespace DS4Windows
 
                     m_Xdoc.AppendChild(rootElement);
                     m_Xdoc.Save(path);
+
+                    //
+                    // TODO: experimental, needs tuning. For now just generates a 2nd file for experimentation.
+                    // 
+                    var betaPath = Path.Combine(
+                        RuntimeAppDataPath,
+                        Constants.ProfilesSubDirectory,
+                        $"{proName}-BETA{XML_EXTENSION}"
+                    );
+
+                    await using (var file = File.Open(betaPath, FileMode.Create))
+                    {
+                        await profileObject.SerializeAsync(file);
+                    }
                 }
                 catch
                 {
@@ -2364,8 +2371,14 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public async Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
-                string propath = "", bool xinputChange = true, bool postLoad = true)
+            public async Task<bool> LoadProfile(
+                int device, 
+                bool launchprogram, 
+                ControlService control,
+                string profilePath = null, 
+                bool xinputChange = true, 
+                bool postLoad = true
+                )
             {
                 var Loaded = true;
                 var customMapKeyTypes = new Dictionary<DS4Controls, DS4KeyType>();
@@ -2382,11 +2395,11 @@ namespace DS4Windows
                 var missingSetting = false;
                 var migratePerformed = false;
                 string profilepath;
-                if (string.IsNullOrEmpty(propath))
+                if (string.IsNullOrEmpty(profilePath))
                     profilepath = Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
                         $"{ProfilePath[device]}{XML_EXTENSION}");
                 else
-                    profilepath = propath;
+                    profilepath = profilePath;
 
                 var xinputPlug = false;
                 var xinputStatus = false;

@@ -472,7 +472,7 @@ namespace DS4Windows
         string GetX360ControlString(X360Controls key);
 
         Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
-            string propath = "", bool xinputChange = true, bool postLoad = true);
+            string profilePath = "", bool xinputChange = true, bool postLoad = true);
 
         Task<bool> LoadApplicationSettings();
 
