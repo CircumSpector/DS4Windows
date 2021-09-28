@@ -44,10 +44,6 @@ namespace DS4WinWPF.DS4Forms
                 }
                 catch { }
             }
-            else if (!multisaves)
-            {
-                Global.SaveDefault(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesFileName));
-            }
 
             choiceMade = true;
             Close();
@@ -66,8 +62,6 @@ namespace DS4WinWPF.DS4Forms
                 {
                     MessageBox.Show("Cannot Delete old settings, please manually delete", "DS4Windows");
                 }
-            else if (!multisaves)
-                Global.SaveDefault(Path.Combine(Global.RoamingAppDataPath, Constants.ProfilesFileName));
 
             Global.Instance.SaveTo(Global.RoamingAppDataPath);
             choiceMade = true;

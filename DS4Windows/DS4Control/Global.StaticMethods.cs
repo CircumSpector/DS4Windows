@@ -34,39 +34,6 @@ namespace DS4Windows
             return result;
         }
 
-        public static bool SaveDefault(string path)
-        {
-            var Saved = true;
-            var m_Xdoc = new XmlDocument();
-            try
-            {
-                XmlNode Node;
-
-                m_Xdoc.RemoveAll();
-
-                Node = m_Xdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateComment($" Profile Configuration Data. {DateTime.Now} ");
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateWhitespace("\r\n");
-                m_Xdoc.AppendChild(Node);
-
-                Node = m_Xdoc.CreateNode(XmlNodeType.Element, "Profile", null);
-
-                m_Xdoc.AppendChild(Node);
-
-                m_Xdoc.Save(path);
-            }
-            catch
-            {
-                Saved = false;
-            }
-
-            return Saved;
-        }
-
         public static bool CheckForDevice(string guid)
         {
             var result = false;

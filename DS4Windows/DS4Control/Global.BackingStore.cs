@@ -12,12 +12,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.Properties;
-using ExtendedXmlSerializer;
-using ExtendedXmlSerializer.Configuration;
 using OpenTracing.Util;
-using File = System.IO.File;
 
 namespace DS4Windows
 {
@@ -48,8 +44,6 @@ namespace DS4Windows
                     new(), new(), new(),
                     new(), new(), new(), new(), new(), new()
                 };
-
-            private Dictionary<string, string> LinkedProfiles { get; set; } = new();
 
             protected readonly XmlDocument m_Xdoc = new();
 
@@ -89,6 +83,8 @@ namespace DS4Windows
 
                 SetupDefaultColors();
             }
+
+            private Dictionary<string, string> LinkedProfiles { get; set; } = new();
 
             public IList<int> RumbleAutostopTime { get; } = new List<int>
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
@@ -1346,7 +1342,7 @@ namespace DS4Windows
             }
 
             /// <summary>
-            ///     Persists <see cref="DS4WindowsAppSettings"/> on disk.
+            ///     Persists <see cref="DS4WindowsAppSettings" /> on disk.
             /// </summary>
             /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
@@ -1384,7 +1380,7 @@ namespace DS4Windows
             }
 
             /// <summary>
-            ///     Restores <see cref="DS4WindowsAppSettings"/> from disk.
+            ///     Restores <see cref="DS4WindowsAppSettings" /> from disk.
             /// </summary>
             /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
@@ -1416,7 +1412,7 @@ namespace DS4Windows
             }
 
             /// <summary>
-            ///     Persists a <see cref="DS4WindowsProfile"/> on disk.
+            ///     Persists a <see cref="DS4WindowsProfile" /> on disk.
             /// </summary>
             /// <param name="device">The index of the device to store the profile for.</param>
             /// <param name="proName">The profile name (without extension or root path).</param>
@@ -2446,7 +2442,6 @@ namespace DS4Windows
                     }
 
 
-
                     var shiftM = 0;
                     if (m_Xdoc.SelectSingleNode("/" + rootname + "/ShiftModifier") != null)
                         int.TryParse(m_Xdoc.SelectSingleNode("/" + rootname + "/ShiftModifier").InnerText, out shiftM);
@@ -2536,9 +2531,6 @@ namespace DS4Windows
                     }
 
 
-
-
-
                     // Check for TouchpadOutputMode if UseTPforControls is not present in profile
                     if (!tpForControlsPresent)
                         try
@@ -2553,8 +2545,6 @@ namespace DS4Windows
                             TouchOutMode[device] = TouchpadOutMode.Mouse;
                             missingSetting = true;
                         }
-
-
 
 
                     /*try { Item = m_Xdoc.SelectSingleNode("/" + rootname + "/GyroSmoothing"); bool.TryParse(Item.InnerText, out gyroSmoothing[device]); }
@@ -2589,12 +2579,7 @@ namespace DS4Windows
                     }
 
 
-
-
                     // Note! xxOutputCurveCustom property needs to be read before xxOutputCurveMode property in case the curveMode is value 6
-
-
-
 
 
                     try
@@ -2616,7 +2601,6 @@ namespace DS4Windows
                     catch
                     {
                     }
-
 
 
                     // Only change xinput devices under certain conditions. Avoid
@@ -3142,7 +3126,7 @@ namespace DS4Windows
 
                 return saved;
             }
-            
+
             [ConfigurationSystemComponent]
             public bool LoadLinkedProfiles()
             {
@@ -4043,6 +4027,56 @@ namespace DS4Windows
                 return result;
             }
 
+            public int StickOutputCurveId(string name)
+            {
+                var id = 0;
+                switch (name)
+                {
+                    case "linear":
+                        id = 0;
+                        break;
+                    case "enhanced-precision":
+                        id = 1;
+                        break;
+                    case "quadratic":
+                        id = 2;
+                        break;
+                    case "cubic":
+                        id = 3;
+                        break;
+                    case "easeout-quad":
+                        id = 4;
+                        break;
+                    case "easeout-cubic":
+                        id = 5;
+                        break;
+                    case "custom":
+                        id = 6;
+                        break;
+                }
+
+                return id;
+            }
+
+            public bool SaTriggerCondValue(string text)
+            {
+                var result = true;
+                switch (text)
+                {
+                    case "and":
+                        result = true;
+                        break;
+                    case "or":
+                        result = false;
+                        break;
+                    default:
+                        result = true;
+                        break;
+                }
+
+                return result;
+            }
+
             [ConfigurationSystemComponent]
             private bool LoadControllerConfigsForDevice(DS4Device device)
             {
@@ -4202,59 +4236,9 @@ namespace DS4Windows
                 LightbarSettingInfo[8].Ds4WinSettings.Led = new DS4Color(Color.White);
             }
 
-            public int StickOutputCurveId(string name)
-            {
-                var id = 0;
-                switch (name)
-                {
-                    case "linear":
-                        id = 0;
-                        break;
-                    case "enhanced-precision":
-                        id = 1;
-                        break;
-                    case "quadratic":
-                        id = 2;
-                        break;
-                    case "cubic":
-                        id = 3;
-                        break;
-                    case "easeout-quad":
-                        id = 4;
-                        break;
-                    case "easeout-cubic":
-                        id = 5;
-                        break;
-                    case "custom":
-                        id = 6;
-                        break;
-                }
-
-                return id;
-            }
-
             private int AxisOutputCurveId(string name)
             {
                 return StickOutputCurveId(name);
-            }
-
-            public bool SaTriggerCondValue(string text)
-            {
-                var result = true;
-                switch (text)
-                {
-                    case "and":
-                        result = true;
-                        break;
-                    case "or":
-                        result = false;
-                        break;
-                    default:
-                        result = true;
-                        break;
-                }
-
-                return result;
             }
 
             private string OutContDeviceString(OutContType id)
