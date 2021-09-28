@@ -2204,17 +2204,29 @@ namespace DS4Windows
                             if (dcs.KeyType.HasFlag(DS4KeyType.ScanCode))
                                 keyType += DS4KeyType.ScanCode;
 
-                            if (keyType != string.Empty)
+                            if (string.IsNullOrEmpty(keyType))
                             {
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.Controls.KeyTypes, 
+                                    keyType
+                                );
+
                                 buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
                                 buttonNode.InnerText = keyType;
                                 KeyType.AppendChild(buttonNode);
                             }
 
                             buttonNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
+
                             if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                             {
                                 var ii = dcs.ActionData.ActionMacro;
+
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.Controls.Macros, 
+                                    string.Join("/", ii)
+                                );
+
                                 buttonNode.InnerText = string.Join("/", ii);
                                 Macro.AppendChild(buttonNode);
                             }
@@ -2240,17 +2252,20 @@ namespace DS4Windows
                             }
                         }
 
-                        var hasvalue = false;
+                        var hasValue = false;
                         if (!string.IsNullOrEmpty(dcs.Extras))
-                            foreach (var s in dcs.Extras.Split(','))
-                                if (s != "0")
-                                {
-                                    hasvalue = true;
-                                    break;
-                                }
+                            if (dcs.Extras.Split(',').Any(s => s != "0"))
+                            {
+                                hasValue = true;
+                            }
 
-                        if (hasvalue)
+                        if (hasValue)
                         {
+                            typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                profileObject.Controls.Extras, 
+                                dcs.Extras
+                            );
+
                             var extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
                             extraNode.InnerText = dcs.Extras;
                             Extras.AppendChild(extraNode);
@@ -2276,6 +2291,11 @@ namespace DS4Windows
 
                             if (keyType != string.Empty)
                             {
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.ShiftControls.KeyTypes, 
+                                    keyType
+                                );
+
                                 buttonNode = m_Xdoc.CreateElement(dcs.Control.ToString());
                                 buttonNode.InnerText = keyType;
                                 ShiftKeyType.AppendChild(buttonNode);
@@ -2286,32 +2306,51 @@ namespace DS4Windows
                             if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
                             {
                                 var ii = dcs.ShiftAction.ActionMacro;
+
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.ShiftControls.Macros,
+                                    string.Join("/", ii)
+                                );
+
                                 buttonNode.InnerText = string.Join("/", ii);
                                 ShiftMacro.AppendChild(buttonNode);
                             }
                             else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
                             {
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.ShiftControls.Keys,
+                                    dcs.ShiftAction.ActionKey.ToString()
+                                );
+
                                 buttonNode.InnerText = dcs.ShiftAction.ActionKey.ToString();
                                 ShiftKey.AppendChild(buttonNode);
                             }
                             else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
                             {
+                                typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                    profileObject.ShiftControls.Buttons,
+                                    dcs.ShiftAction.ActionKey.ToString()
+                                );
+
                                 buttonNode.InnerText = dcs.ShiftAction.ActionButton.ToString();
                                 ShiftButton.AppendChild(buttonNode);
                             }
                         }
 
-                        hasvalue = false;
+                        hasValue = false;
                         if (!string.IsNullOrEmpty(dcs.ShiftExtras))
-                            foreach (var s in dcs.ShiftExtras.Split(','))
-                                if (s != "0")
-                                {
-                                    hasvalue = true;
-                                    break;
-                                }
+                            if (dcs.ShiftExtras.Split(',').Any(s => s != "0"))
+                            {
+                                hasValue = true;
+                            }
 
-                        if (hasvalue)
+                        if (hasValue)
                         {
+                            typeof(ControlsCollection).GetProperty(dcs.Control.ToString())?.SetValue(
+                                profileObject.ShiftControls.Extras,
+                                dcs.ShiftExtras
+                            );
+
                             var extraNode = m_Xdoc.CreateNode(XmlNodeType.Element, dcs.Control.ToString(), null);
                             extraNode.InnerText = dcs.ShiftExtras;
                             ShiftExtras.AppendChild(extraNode);

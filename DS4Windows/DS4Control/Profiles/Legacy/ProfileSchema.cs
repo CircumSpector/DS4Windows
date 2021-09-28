@@ -450,10 +450,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "Control")] 
         public Control Controls { get; set; } = new();
 
-        /*
         [XmlElement(ElementName = "ShiftControl")]
-        public object ShiftControl { get; set; }
-        */
+        public ShiftControl ShiftControls { get; set; } = new();
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }

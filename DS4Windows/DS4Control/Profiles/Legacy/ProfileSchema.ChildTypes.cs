@@ -267,6 +267,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     {
     }
 
+    [XmlRoot(ElementName = "Macro")]
+    public class ControlMacro : ControlsCollection
+    {
+    }
+
     [XmlRoot(ElementName = "Control")]
     public class Control
     {
@@ -281,5 +286,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         [XmlElement(ElementName = "Extras")] 
         public ControlExtras Extras { get; set; } = new();
+
+        [XmlElement(ElementName = "Macro")] 
+        public ControlMacro Macros { get; set; } = new();
+    }
+
+    [XmlRoot(ElementName = "ShiftControl")]
+    public class ShiftControl : Control
+    {
     }
 }
