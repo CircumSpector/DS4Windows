@@ -143,10 +143,10 @@
                                onBlur: this.onChangeInputCurveDefinition,
                                style: { width: "250px"},
                             }, ""), 
-                            i.createElement("h3", null, "easing curve definition: ", 
+                            i.createElement("h3", null, "easing curve definition: ", 
                             i.createElement("code", null, this.state.value.map(function(e) {
                                 return e.toFixed(2)
-                            }).join(", ")), i.createElement("br", null), "progress: ", i.createElement("code", null, this.state.progress.toFixed(2).substring(2, 4), "%")), 
+                            }).join(", ")), i.createElement("br", null), "progress: ", i.createElement("code", null, this.state.progress.toFixed(2).substring(2, 4), "%")), 
 
                            i.createElement("table", null, i.createElement("tr", null, 
                            i.createElement("td", null,

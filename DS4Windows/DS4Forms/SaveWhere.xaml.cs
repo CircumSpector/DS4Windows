@@ -1,18 +1,18 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using DS4Windows;
 
-
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for SaveWhere.xaml
+    ///     Interaction logic for SaveWhere.xaml
     /// </summary>
     public partial class SaveWhere : Window
     {
-        private bool multisaves;
-        private bool choiceMade = false;
+        private bool choiceMade;
+        private readonly bool multisaves;
 
         public SaveWhere(bool multisavespots)
         {
@@ -24,26 +24,20 @@ namespace DS4WinWPF.DS4Forms
                 pickWhereTxt.Text += Properties.Resources.OtherFileLocation;
             }
 
-            if (DS4Windows.Global.IsAdminNeeded)
-            {
-                progFolderPanel.IsEnabled = false;
-            }
+            if (Global.IsAdminNeeded) progFolderPanel.IsEnabled = false;
         }
 
         private void ProgFolderBtn_Click(object sender, RoutedEventArgs e)
         {
-            Global.Instance.SaveTo(DS4Windows.Global.ExecutableDirectory);
+            Global.Instance.SaveTo(Global.ExecutableDirectory);
             if (multisaves && dontDeleteCk.IsChecked == false)
-            {
                 try
                 {
-                    if (Directory.Exists(DS4Windows.Global.RoamingAppDataPath))
-                    {
-                        Directory.Delete(DS4Windows.Global.RoamingAppDataPath, true);
-                    }
+                    if (Directory.Exists(Global.RoamingAppDataPath)) Directory.Delete(Global.RoamingAppDataPath, true);
                 }
-                catch { }
-            }
+                catch
+                {
+                }
 
             choiceMade = true;
             Close();
@@ -68,12 +62,9 @@ namespace DS4WinWPF.DS4Forms
             Close();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (!choiceMade)
-            {
-                e.Cancel = true;
-            }
+            if (!choiceMade) e.Cancel = true;
         }
     }
 }
