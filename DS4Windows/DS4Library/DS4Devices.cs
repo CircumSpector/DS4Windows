@@ -20,7 +20,17 @@ namespace DS4Windows
     // VendorDefinedDevice  = Accept the gamepad VID/PID even when it would be shown as vendor defined HID device on Windows (fex DS3 over DsMiniHid gamepad may have vendor defined HID type)
     //
     [Flags]
-    public enum VidPidFeatureSet : ushort { DefaultDS4 = 0, OnlyInputData0x01 = 1, OnlyOutputData0x05 = 2, NoOutputData = 4, NoBatteryReading = 8, NoGyroCalib = 16, MonitorAudio = 32, VendorDefinedDevice = 64 };
+    public enum VidPidFeatureSet : ushort
+    {
+        DefaultDS4 = 0,
+        OnlyInputData0x01 = 1,
+        OnlyOutputData0x05 = 2,
+        NoOutputData = 4,
+        NoBatteryReading = 8,
+        NoGyroCalib = 16,
+        MonitorAudio = 32,
+        VendorDefinedDevice = 64
+    }
 
     public class VidPidInfo
     {
