@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Threading;
 using DS4Windows.InputDevices;
 
 namespace DS4Windows
@@ -25,29 +24,34 @@ namespace DS4Windows
 
     public class VidPidInfo
     {
-        public readonly int vid;
-        public readonly int pid;
-        public readonly string name;
-        public readonly InputDeviceType inputDevType;
-        public readonly VidPidFeatureSet featureSet;
-        public CheckConnectionDelegate checkConnection;
-        internal VidPidInfo(int vid, int pid, string name = "Generic DS4", InputDeviceType inputDevType = InputDeviceType.DS4,
-            VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4, CheckConnectionDelegate checkConnection = null)
-        {
-            this.vid = vid;
-            this.pid = pid;
-            this.name = name;
-            this.inputDevType = inputDevType;
-            this.featureSet = featureSet;
+        public int Vid { get; }
 
-            if (checkConnection == null)
-            {
-                this.checkConnection = DS4Device.HidConnectionType;
-            }
-            else
-            {
-                this.checkConnection = checkConnection;
-            }
+        public int Pid { get; }
+
+        public string Name { get; }
+
+        public InputDeviceType InputDevType { get; }
+
+        public VidPidFeatureSet FeatureSet { get; }
+
+        public CheckConnectionDelegate CheckConnection { get; }
+
+        internal VidPidInfo(
+            int vid,
+            int pid,
+            string name = "Generic DS4",
+            InputDeviceType inputDevType = InputDeviceType.DS4,
+            VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4,
+            CheckConnectionDelegate checkConnection = null
+        )
+        {
+            Vid = vid;
+            Pid = pid;
+            Name = name;
+            InputDevType = inputDevType;
+            FeatureSet = featureSet;
+
+            CheckConnection = checkConnection ?? DS4Device.HidConnectionType;
         }
     }
 
@@ -211,8 +215,8 @@ namespace DS4Windows
                 IEnumerable<HidDevice> hDevices = HidDevices.EnumerateDS4(knownDevices);
                 hDevices = hDevices.Where(d =>
                 {
-                    VidPidInfo metainfo = knownDevices.Single(x => x.vid == d.Attributes.VendorId &&
-                        x.pid == d.Attributes.ProductId);
+                    VidPidInfo metainfo = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
+                        x.Pid == d.Attributes.ProductId);
                     return PreparePendingDevice(d, metainfo);
                 });
 
@@ -227,11 +231,11 @@ namespace DS4Windows
                 {
                     // Need VidPidInfo instance to get CheckConnectionDelegate and
                     // check the connection type
-                    VidPidInfo metainfo = knownDevices.Single(x => x.vid == d.Attributes.VendorId &&
-                        x.pid == d.Attributes.ProductId);
+                    VidPidInfo metainfo = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
+                        x.Pid == d.Attributes.ProductId);
 
                     //return DS4Device.HidConnectionType(d);
-                    return metainfo.checkConnection(d);
+                    return metainfo.CheckConnection(d);
                 });
 
                 List<HidDevice> tempList = hDevices.ToList();
@@ -245,10 +249,10 @@ namespace DS4Windows
                 //foreach (HidDevice hDevice in hDevices)
                 {
                     HidDevice hDevice = tempList[i];
-                    VidPidInfo metainfo = knownDevices.Single(x => x.vid == hDevice.Attributes.VendorId &&
-                        x.pid == hDevice.Attributes.ProductId);
+                    VidPidInfo metainfo = knownDevices.Single(x => x.Vid == hDevice.Attributes.VendorId &&
+                        x.Pid == hDevice.Attributes.ProductId);
 
-                    if (!metainfo.featureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice) && hDevice.Description == "HID-compliant vendor-defined device")
+                    if (!metainfo.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice) && hDevice.Description == "HID-compliant vendor-defined device")
                         continue; // ignore the Nacon Revolution Pro programming interface
                     else if (DevicePaths.Contains(hDevice.DevicePath))
                         continue; // BT/USB endpoint already open once
@@ -294,12 +298,12 @@ namespace DS4Windows
                     {
                         //string serial = hDevice.ReadSerial();
                         string serial = DS4Device.BLANK_SERIAL;
-                        if (metainfo.inputDevType == InputDeviceType.DualSense)
+                        if (metainfo.InputDevType == InputDeviceType.DualSense)
                         {
                             serial = hDevice.ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
                         }
-                        else if (metainfo.inputDevType == InputDeviceType.DS4 &&
-                            metainfo.checkConnection(hDevice) == ConnectionType.SONYWA)
+                        else if (metainfo.InputDevType == InputDeviceType.DS4 &&
+                            metainfo.CheckConnection(hDevice) == ConnectionType.SONYWA)
                         {
                             serial = hDevice.GenerateFakeHwSerial();
                         }
@@ -341,7 +345,7 @@ namespace DS4Windows
 
                         if (newdev)
                         {
-                            DS4Device ds4Device = InputDeviceFactory.CreateDevice(metainfo.inputDevType, hDevice, metainfo.name, metainfo.featureSet);
+                            DS4Device ds4Device = InputDeviceFactory.CreateDevice(metainfo.InputDevType, hDevice, metainfo.Name, metainfo.FeatureSet);
                             //DS4Device ds4Device = new DS4Device(hDevice, metainfo.name, metainfo.featureSet);
                             if (ds4Device == null)
                             {

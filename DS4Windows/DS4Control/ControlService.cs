@@ -352,7 +352,7 @@ namespace DS4Windows
         public bool CheckForSupportedDevice(HidDevice device, VidPidInfo metaInfo)
         {
             bool result = false;
-            switch (metaInfo.inputDevType)
+            switch (metaInfo.InputDevType)
             {
                 case InputDevices.InputDeviceType.DS4:
                     result = deviceOptions.Ds4DeviceOpts.Enabled;
