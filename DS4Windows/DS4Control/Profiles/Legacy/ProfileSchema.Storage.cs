@@ -22,7 +22,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
                 .Type<double>().Register().Converter().Using(DoubleConverter.Default)
-                .Type<ControlsCollectionEntity>().Member(m => m.Value).Name("Test")
+                //.Type<ControlsCollectionEntity>().Member(m => m.Value).Attribute()
                 .Create();
         }
 
