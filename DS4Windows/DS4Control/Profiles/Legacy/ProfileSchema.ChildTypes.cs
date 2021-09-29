@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy

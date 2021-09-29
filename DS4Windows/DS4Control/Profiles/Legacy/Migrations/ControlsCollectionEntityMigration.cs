@@ -6,6 +6,9 @@ using ExtendedXmlSerializer;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
 {
+    /// <summary>
+    ///     Helper to transparently upgrade the remapping nodes in <see cref="DS4WindowsProfile"/>s.
+    /// </summary>
     internal sealed class ControlsCollectionEntityMigration : IEnumerable<Action<XElement>>
     {
         public IEnumerator<Action<XElement>> GetEnumerator()
@@ -42,6 +45,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
             // 
             if (!string.IsNullOrEmpty(shiftTrigger)) node.Add(new XElement("Trigger", shiftTrigger));
 
+            //
+            // Add content (value) as its own dedicated node
+            // 
             node.Add(new XElement("Value", value));
         }
     }
