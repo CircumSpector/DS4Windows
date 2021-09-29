@@ -1450,7 +1450,7 @@ namespace DS4Windows
                     CONFIG_VERSION
                 );
                 
-                using var scope = GlobalTracer.Instance.BuildSpan("Serialize").StartActive(true);
+                using var scope = GlobalTracer.Instance.BuildSpan(nameof(SaveProfile)).StartActive(true);
 
                 try
                 {
@@ -1620,6 +1620,8 @@ namespace DS4Windows
                 var xinputPlug = false;
                 var xinputStatus = false;
 
+                using var scope = GlobalTracer.Instance.BuildSpan(nameof(LoadProfile)).StartActive(true);
+
                 if (File.Exists(profilepath))
                 {
                     XmlNode Item;
@@ -1654,8 +1656,6 @@ namespace DS4Windows
                     }
 
                     var oldContType = ActiveOutDevType[device];
-                    var lightbarSettings = LightbarSettingInfo[device];
-                    var lightInfo = lightbarSettings.Ds4WinSettings;
 
                     // Make sure to reset currently set profile values before parsing
                     ResetProfile(device);
