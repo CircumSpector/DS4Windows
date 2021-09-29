@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 
@@ -22,7 +23,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
                 .Type<double>().Register().Converter().Using(DoubleConverter.Default)
-                //.Type<ControlsCollectionEntity>().Member(m => m.Value).Attribute()
+                .Type<ControlsCollectionEntity>().AddMigration(new ControlsCollectionEntityMigration())
                 .Create();
         }
 

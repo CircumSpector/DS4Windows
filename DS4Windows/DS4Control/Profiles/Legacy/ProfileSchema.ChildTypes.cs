@@ -197,10 +197,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
     public class ControlsCollectionEntity
     {
-        [XmlAttribute(AttributeName = "Trigger")]
-        public string ShiftTrigger { get; set; }
-
         public string Value { get; set; }
+
+        public string ShiftTrigger { get; set; }
     }
 
     public abstract class ControlsCollection
