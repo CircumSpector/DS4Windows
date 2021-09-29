@@ -1596,7 +1596,7 @@ namespace DS4Windows
                 bool postLoad = true
                 )
             {
-                var Loaded = true;
+                var loaded = true;
                 var customMapKeyTypes = new Dictionary<DS4Controls, DS4KeyType>();
                 var customMapKeys = new Dictionary<DS4Controls, ushort>();
                 var customMapButtons = new Dictionary<DS4Controls, X360Controls>();
@@ -1638,7 +1638,7 @@ namespace DS4Windows
                     }
                     else
                     {
-                        Loaded = false;
+                        loaded = false;
                     }
 
                     if (m_Xdoc.SelectSingleNode(rootname) == null)
@@ -1661,13 +1661,14 @@ namespace DS4Windows
                     ResetProfile(device);
                     ResetMouseProperties(device, control);
 
+                    DS4WindowsProfile profile = null;
 
                     //
                     // TODO: unfinished
                     // 
                     await using (var stream = File.OpenRead(profilepath))
                     {
-                        var profile = await DS4WindowsProfile.DeserializeAsync(stream);
+                        profile = await DS4WindowsProfile.DeserializeAsync(stream);
 
                         profile.CopyTo(this, device);
                     }
@@ -1878,201 +1879,335 @@ namespace DS4Windows
                     DS4KeyType keyType;
                     ushort wvk;
 
+                    //
+                    // Buttons
+                    // 
                     {
-                        var ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/Control/Button");
-                        if (ParentItem != null)
-                            foreach (XmlNode item in ParentItem.ChildNodes)
-                                if (Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                {
-                                    UpdateDs4ControllerSetting(device, item.Name, false,
-                                        GetX360ControlsByName(item.InnerText), "", DS4KeyType.None);
-                                    customMapButtons.Add(GetDs4ControlsByName(item.Name),
-                                        GetX360ControlsByName(item.InnerText));
-                                }
-
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/Control/Macro");
-                        if (ParentItem != null)
-                            foreach (XmlNode item in ParentItem.ChildNodes)
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
                             {
-                                customMapMacros.Add(GetDs4ControlsByName(item.Name), item.InnerText);
-                                string[] skeys;
-                                int[] keys;
-                                if (!string.IsNullOrEmpty(item.InnerText))
-                                {
-                                    skeys = item.InnerText.Split('/');
-                                    keys = new int[skeys.Length];
-                                }
-                                else
-                                {
-                                    skeys = new string[0];
-                                    keys = new int[0];
-                                }
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.Controls.Buttons)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
 
-                                for (int i = 0, keylen = keys.Length; i < keylen; i++)
-                                    keys[i] = int.Parse(skeys[i]);
+                        foreach (var item in controls.Where(item => Enum.TryParse(item.Name, out DS4Controls _)))
+                        {
+                            UpdateDs4ControllerSetting(device, item.Name, false,
+                                GetX360ControlsByName(item.Entity.Value), "", DS4KeyType.None);
+                            customMapButtons.Add(GetDs4ControlsByName(item.Name),
+                                GetX360ControlsByName(item.Entity.Value));
+                        }
+                    }
 
-                                if (Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                    UpdateDs4ControllerSetting(device, item.Name, false, keys, "", DS4KeyType.None);
+                    //
+                    // Macros
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
+                            {
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.Controls.Macros)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
+
+                        foreach (var item in controls)
+                        {
+                            customMapMacros.Add(GetDs4ControlsByName(item.Name), item.Entity.Value);
+                            string[] skeys;
+                            int[] keys;
+                            if (!string.IsNullOrEmpty(item.Entity.Value))
+                            {
+                                skeys = item.Entity.Value.Split('/');
+                                keys = new int[skeys.Length];
+                            }
+                            else
+                            {
+                                skeys = Array.Empty<string>();
+                                keys = Array.Empty<int>();
                             }
 
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/Control/Key");
-                        if (ParentItem != null)
-                            foreach (XmlNode item in ParentItem.ChildNodes)
-                                if (ushort.TryParse(item.InnerText, out wvk) &&
-                                    Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                {
-                                    UpdateDs4ControllerSetting(device, item.Name, false, wvk, "", DS4KeyType.None);
-                                    customMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
-                                }
+                            for (int i = 0, keysLength = keys.Length; i < keysLength; i++)
+                                keys[i] = int.Parse(skeys[i]);
 
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/Control/Extras");
-                        if (ParentItem != null)
-                            foreach (XmlNode item in ParentItem.ChildNodes)
-                                if (item.InnerText != string.Empty &&
-                                    Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                {
-                                    UpdateDs4ControllerExtra(device, item.Name, false, item.InnerText);
-                                    customMapExtras.Add(GetDs4ControlsByName(item.Name), item.InnerText);
-                                }
-                                else
-                                {
-                                    ParentItem.RemoveChild(item);
-                                }
+                            if (Enum.TryParse(item.Name, out DS4Controls _))
+                                UpdateDs4ControllerSetting(device, item.Name, false, keys, "", DS4KeyType.None);
+                        }
+                    }
 
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/Control/KeyType");
-                        if (ParentItem != null)
-                            foreach (XmlNode item in ParentItem.ChildNodes)
-                                if (item != null)
-                                {
-                                    keyType = DS4KeyType.None;
-                                    if (item.InnerText.Contains(DS4KeyType.ScanCode.ToString()))
-                                        keyType |= DS4KeyType.ScanCode;
-                                    if (item.InnerText.Contains(DS4KeyType.Toggle.ToString()))
-                                        keyType |= DS4KeyType.Toggle;
-                                    if (item.InnerText.Contains(DS4KeyType.Macro.ToString()))
-                                        keyType |= DS4KeyType.Macro;
-                                    if (item.InnerText.Contains(DS4KeyType.HoldMacro.ToString()))
-                                        keyType |= DS4KeyType.HoldMacro;
-                                    if (item.InnerText.Contains(DS4KeyType.Unbound.ToString()))
-                                        keyType |= DS4KeyType.Unbound;
-
-                                    if (keyType != DS4KeyType.None &&
-                                        Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                    {
-                                        UpdateDs4ControllerKeyType(device, item.Name, false, keyType);
-                                        customMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
-                                    }
-                                }
-
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/ShiftControl/Button");
-                        if (ParentItem != null)
-                            foreach (XmlElement item in ParentItem.ChildNodes)
+                    //
+                    // Keys
+                    //
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
                             {
-                                var shiftT = shiftM;
-                                if (item.HasAttribute("Trigger"))
-                                    int.TryParse(item.Attributes["Trigger"].Value, out shiftT);
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.Controls.Keys)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
 
-                                if (Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                {
-                                    UpdateDs4ControllerSetting(device, item.Name, true,
-                                        GetX360ControlsByName(item.InnerText), "", DS4KeyType.None, shiftT);
-                                    shiftCustomMapButtons.Add(GetDs4ControlsByName(item.Name),
-                                        GetX360ControlsByName(item.InnerText));
-                                }
+                        foreach (var item in controls)
+                        {
+                            if (ushort.TryParse(item.Entity.Value, out wvk) &&
+                                Enum.TryParse(item.Name, out DS4Controls _))
+                            {
+                                UpdateDs4ControllerSetting(device, item.Name, false, wvk, "", DS4KeyType.None);
+                                customMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
+                            }
+                        }
+                    }
+
+                    //
+                    // Extras
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
+                            {
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.Controls.Extras)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
+
+                        foreach (var item in controls.Where(item => item.Entity.Value != string.Empty &&
+                                                                    Enum.TryParse(item.Name, out DS4Controls _)))
+                        {
+                            UpdateDs4ControllerExtra(device, item.Name, false, item.Entity.Value);
+                            customMapExtras.Add(GetDs4ControlsByName(item.Name), item.Entity.Value);
+                        }
+                    }
+
+                    //
+                    // KeyTypes
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
+                            {
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.Controls.KeyTypes)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
+
+                        foreach (var item in controls)
+                        {
+                            keyType = DS4KeyType.None;
+                            if (item.Entity.Value.Contains(DS4KeyType.ScanCode.ToString()))
+                                keyType |= DS4KeyType.ScanCode;
+                            if (item.Entity.Value.Contains(DS4KeyType.Toggle.ToString()))
+                                keyType |= DS4KeyType.Toggle;
+                            if (item.Entity.Value.Contains(DS4KeyType.Macro.ToString()))
+                                keyType |= DS4KeyType.Macro;
+                            if (item.Entity.Value.Contains(DS4KeyType.HoldMacro.ToString()))
+                                keyType |= DS4KeyType.HoldMacro;
+                            if (item.Entity.Value.Contains(DS4KeyType.Unbound.ToString()))
+                                keyType |= DS4KeyType.Unbound;
+
+                            if (keyType == DS4KeyType.None || !Enum.TryParse(item.Name, out DS4Controls _)) continue;
+
+                            UpdateDs4ControllerKeyType(device, item.Name, false, keyType);
+                            customMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
+                        }
+                    }
+
+                    //
+                    // ShiftControl/Button
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
+                            {
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.ShiftControls.Buttons)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
+
+                        foreach (var item in controls)
+                        {
+                            var shiftT = shiftM;
+                            if (!string.IsNullOrEmpty(item.Entity.ShiftTrigger))
+                                int.TryParse(item.Entity.ShiftTrigger, out shiftT);
+
+                            if (Enum.TryParse(item.Name, out DS4Controls _))
+                            {
+                                UpdateDs4ControllerSetting(device, item.Name, true,
+                                    GetX360ControlsByName(item.Entity.Value), "", DS4KeyType.None, shiftT);
+                                shiftCustomMapButtons.Add(GetDs4ControlsByName(item.Name),
+                                    GetX360ControlsByName(item.Entity.Value));
+                            }
+                        }
+                    }
+
+                    //
+                    // ShiftControl/Macro
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
+                            {
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.ShiftControls.Macros)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
+
+                        foreach (var item in controls)
+                        {
+                            shiftCustomMapMacros.Add(GetDs4ControlsByName(item.Name), item.Entity.Value);
+                            string[] skeys;
+                            int[] keys;
+                            if (!string.IsNullOrEmpty(item.Entity.Value))
+                            {
+                                skeys = item.Entity.Value.Split('/');
+                                keys = new int[skeys.Length];
+                            }
+                            else
+                            {
+                                skeys = Array.Empty<string>();
+                                keys = Array.Empty<int>();
                             }
 
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/ShiftControl/Macro");
-                        if (ParentItem != null)
-                            foreach (XmlElement item in ParentItem.ChildNodes)
+                            for (int i = 0, keysLength = keys.Length; i < keysLength; i++)
+                                keys[i] = int.Parse(skeys[i]);
+
+                            var shiftT = shiftM;
+                            if (string.IsNullOrEmpty(item.Entity.ShiftTrigger))
+                                int.TryParse(item.Entity.ShiftTrigger, out shiftT);
+
+                            if (Enum.TryParse(item.Name, out DS4Controls _))
+                                UpdateDs4ControllerSetting(device, item.Name, true, keys, "", DS4KeyType.None,
+                                    shiftT);
+                        }
+                    }
+
+                    // 
+                    // ShiftControl/Key
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
                             {
-                                shiftCustomMapMacros.Add(GetDs4ControlsByName(item.Name), item.InnerText);
-                                string[] skeys;
-                                int[] keys;
-                                if (!string.IsNullOrEmpty(item.InnerText))
-                                {
-                                    skeys = item.InnerText.Split('/');
-                                    keys = new int[skeys.Length];
-                                }
-                                else
-                                {
-                                    skeys = new string[0];
-                                    keys = new int[0];
-                                }
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.ShiftControls.Keys)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
 
-                                for (int i = 0, keylen = keys.Length; i < keylen; i++)
-                                    keys[i] = int.Parse(skeys[i]);
-
+                        foreach (var item in controls)
+                        {
+                            if (ushort.TryParse(item.Entity.Value, out wvk))
+                            {
                                 var shiftT = shiftM;
-                                if (item.HasAttribute("Trigger"))
-                                    int.TryParse(item.Attributes["Trigger"].Value, out shiftT);
+                                if (string.IsNullOrEmpty(item.Entity.ShiftTrigger))
+                                    int.TryParse(item.Entity.ShiftTrigger, out shiftT);
 
-                                if (Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                    UpdateDs4ControllerSetting(device, item.Name, true, keys, "", DS4KeyType.None,
+                                if (Enum.TryParse(item.Name, out DS4Controls _))
+                                {
+                                    UpdateDs4ControllerSetting(device, item.Name, true, wvk, "", DS4KeyType.None,
                                         shiftT);
+                                    shiftCustomMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
+                                }
                             }
+                        }
+                    }
 
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/ShiftControl/Key");
-                        if (ParentItem != null)
-                            foreach (XmlElement item in ParentItem.ChildNodes)
-                                if (ushort.TryParse(item.InnerText, out wvk))
-                                {
-                                    var shiftT = shiftM;
-                                    if (item.HasAttribute("Trigger"))
-                                        int.TryParse(item.Attributes["Trigger"].Value, out shiftT);
+                    //
+                    // ShiftControl/Extras
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
+                            {
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.ShiftControls.Extras)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
 
-                                    if (Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                    {
-                                        UpdateDs4ControllerSetting(device, item.Name, true, wvk, "", DS4KeyType.None,
-                                            shiftT);
-                                        shiftCustomMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
-                                    }
-                                }
+                        foreach (var item in controls.Where(item => Enum.TryParse(item.Name, out DS4Controls _)))
+                        {
+                            UpdateDs4ControllerExtra(device, item.Name, true, item.Entity.Value);
+                            shiftCustomMapExtras.Add(GetDs4ControlsByName(item.Name), item.Entity.Value);
+                        }
+                    }
 
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/ShiftControl/Extras");
-                        if (ParentItem != null)
-                            foreach (XmlElement item in ParentItem.ChildNodes)
-                                if (item.InnerText != string.Empty)
-                                {
-                                    if (Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                    {
-                                        UpdateDs4ControllerExtra(device, item.Name, true, item.InnerText);
-                                        shiftCustomMapExtras.Add(GetDs4ControlsByName(item.Name), item.InnerText);
-                                    }
-                                }
-                                else
-                                {
-                                    ParentItem.RemoveChild(item);
-                                }
+                    //
+                    // ShiftControl/KeyType
+                    // 
+                    {
+                        var controls = typeof(ControlsCollection)
+                            .GetProperties()
+                            .Select(p => new
+                            {
+                                p.Name,
+                                Entity = (ControlsCollectionEntity)typeof(ControlsCollection)
+                                    .GetProperty(p.Name)
+                                    .GetValue(profile.ShiftControls.KeyTypes)
+                            })
+                            .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
+                            .ToList();
 
-                        ParentItem = m_Xdoc.SelectSingleNode("/" + rootname + "/ShiftControl/KeyType");
-                        if (ParentItem != null)
-                            foreach (XmlElement item in ParentItem.ChildNodes)
-                                if (item != null)
-                                {
-                                    keyType = DS4KeyType.None;
-                                    if (item.InnerText.Contains(DS4KeyType.ScanCode.ToString()))
-                                        keyType |= DS4KeyType.ScanCode;
-                                    if (item.InnerText.Contains(DS4KeyType.Toggle.ToString()))
-                                        keyType |= DS4KeyType.Toggle;
-                                    if (item.InnerText.Contains(DS4KeyType.Macro.ToString()))
-                                        keyType |= DS4KeyType.Macro;
-                                    if (item.InnerText.Contains(DS4KeyType.HoldMacro.ToString()))
-                                        keyType |= DS4KeyType.HoldMacro;
-                                    if (item.InnerText.Contains(DS4KeyType.Unbound.ToString()))
-                                        keyType |= DS4KeyType.Unbound;
+                        foreach (var item in controls)
+                        {
+                            keyType = DS4KeyType.None;
+                            if (item.Entity.Value.Contains(DS4KeyType.ScanCode.ToString()))
+                                keyType |= DS4KeyType.ScanCode;
+                            if (item.Entity.Value.Contains(DS4KeyType.Toggle.ToString()))
+                                keyType |= DS4KeyType.Toggle;
+                            if (item.Entity.Value.Contains(DS4KeyType.Macro.ToString()))
+                                keyType |= DS4KeyType.Macro;
+                            if (item.Entity.Value.Contains(DS4KeyType.HoldMacro.ToString()))
+                                keyType |= DS4KeyType.HoldMacro;
+                            if (item.Entity.Value.Contains(DS4KeyType.Unbound.ToString()))
+                                keyType |= DS4KeyType.Unbound;
 
-                                    if (keyType != DS4KeyType.None &&
-                                        Enum.TryParse(item.Name, out DS4Controls currentControl))
-                                    {
-                                        UpdateDs4ControllerKeyType(device, item.Name, true, keyType);
-                                        shiftCustomMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
-                                    }
-                                }
+                            if (keyType != DS4KeyType.None &&
+                                Enum.TryParse(item.Name, out DS4Controls _))
+                            {
+                                UpdateDs4ControllerKeyType(device, item.Name, true, keyType);
+                                shiftCustomMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    Loaded = false;
+                    loaded = false;
                     ResetProfile(device);
                     ResetMouseProperties(device, control);
 
@@ -2091,13 +2226,13 @@ namespace DS4Windows
                 }
 
                 // Only add missing settings if the actual load was graceful
-                if ((missingSetting || migratePerformed) && Loaded) // && buttons != null)
+                if ((missingSetting || migratePerformed) && loaded) // && buttons != null)
                 {
                     var proName = Path.GetFileName(profilepath);
                     await SaveProfile(device, proName);
                 }
 
-                if (Loaded)
+                if (loaded)
                 {
                     CacheProfileCustomsFlags(device);
                     ButtonMouseInfos[device].activeButtonSensitivity =
@@ -2125,7 +2260,7 @@ namespace DS4Windows
                         PostLoadSnippet(device, control, xinputStatus, xinputPlug);
                 }
 
-                return Loaded;
+                return loaded;
             }
 
             [ConfigurationSystemComponent]
