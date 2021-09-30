@@ -11,6 +11,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
     /// </summary>
     internal sealed class OutputSlotsMigration : IEnumerable<Action<XElement>>
     {
+        public IEnumerator<Action<XElement>> GetEnumerator()
+        {
+            yield return MigrateFromAppVersion3;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public static void MigrateFromAppVersion3(XElement node)
         {
             XNamespace sysNs = "https://extendedxmlserializer.github.io/system";
@@ -21,7 +31,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
             // 
             var appVersion = node.Attribute("app_version")?.Value ?? string.Empty;
             var slots = node.Nodes().ToList();
-            
+
             //
             // Rebuild root node with necessary namespaces and new structure
             // 
@@ -31,20 +41,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
                 new XAttribute(XNamespace.Xmlns + "exs", exsNs),
                 new XAttribute(exsNs + "version", 1),
                 new XElement("Slot",
-                new XAttribute(exsNs + "member", string.Empty),
-                new XElement("Capacity", 8),
-                slots
-            ));
-        }
-
-        public IEnumerator<Action<XElement>> GetEnumerator()
-        {
-            yield return MigrateFromAppVersion3;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+                    new XAttribute(exsNs + "member", string.Empty),
+                    new XElement("Capacity", 8),
+                    slots
+                ));
         }
     }
 }

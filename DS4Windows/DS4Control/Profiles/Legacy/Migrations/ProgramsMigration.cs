@@ -8,6 +8,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
 {
     internal sealed class ProgramsMigration : IEnumerable<Action<XElement>>
     {
+        public IEnumerator<Action<XElement>> GetEnumerator()
+        {
+            yield return MigrateFromAppVersion3;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public static void MigrateFromAppVersion3(XElement node)
         {
             XNamespace sysNs = "https://extendedxmlserializer.github.io/system";
@@ -56,7 +66,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
                     )
                 ));
             }
-            
+
             //
             // Rebuild root node with necessary namespaces and new structure
             // 
@@ -70,16 +80,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
                     new XElement("Capacity", 255),
                     entries
                 ));
-        }
-
-        public IEnumerator<Action<XElement>> GetEnumerator()
-        {
-            yield return MigrateFromAppVersion3;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }
