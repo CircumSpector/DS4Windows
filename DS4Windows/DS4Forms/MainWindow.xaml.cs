@@ -898,7 +898,7 @@ Suspend support not enabled.", true);
             dialog.InitialDirectory = Global.RuntimeAppDataPath;
             if (dialog.ShowDialog() == true)
             {
-                LogWriter logWriter = new LogWriter(dialog.FileName, logvm.LogItems.ToList());
+                LogExporter logWriter = new LogExporter(dialog.FileName, logvm.LogItems.ToList());
                 logWriter.Process();
             }
         }

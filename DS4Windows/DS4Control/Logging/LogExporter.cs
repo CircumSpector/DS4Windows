@@ -3,12 +3,12 @@ using System.IO;
 
 namespace DS4WinWPF
 {
-    public class LogWriter
+    public class LogExporter
     {
         private readonly string filename;
         private readonly List<LogItem> logCol;
 
-        public LogWriter(string filename, List<LogItem> col)
+        public LogExporter(string filename, List<LogItem> col)
         {
             this.filename = filename;
             logCol = col;
