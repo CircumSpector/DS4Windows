@@ -365,16 +365,16 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        private void ShowNotification(object sender, DS4Windows.DebugEventArgs e)
+        private void ShowNotification(object sender, DS4Windows.LogEntryEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
 
                 if (!IsActive && (Global.Instance.Config.Notifications == 2 ||
-                                  (Global.Instance.Config.Notifications == 1 && e.Warning)))
+                                  (Global.Instance.Config.Notifications == 1 && e.IsWarning)))
                 {
                     notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
-                    e.Data, !e.Warning ? Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info :
+                    e.Data, !e.IsWarning ? Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info :
                     Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Warning);
                 }
             }));
@@ -388,8 +388,8 @@ namespace DS4WinWPF.DS4Forms
             App.rootHub.PreServiceStop += PrepareForServiceStop;
             //root.rootHubtest.RunningChanged += ControlServiceChanged;
             conLvViewModel.ControllerCol.CollectionChanged += ControllerCol_CollectionChanged;
-            AppLogger.TrayIconLog += ShowNotification;
-            AppLogger.GuiLog += UpdateLastStatusMessage;
+            AppLogger.NewTrayAreaLog += ShowNotification;
+            AppLogger.NewGuiLog += UpdateLastStatusMessage;
             logvm.LogItems.CollectionChanged += LogItems_CollectionChanged;
             App.rootHub.Debug += UpdateLastStatusMessage;
             trayIconVM.RequestShutdown += TrayIconVM_RequestShutdown;
@@ -669,10 +669,10 @@ Suspend support not enabled.", true);
             this.Close();
         }
 
-        private void UpdateLastStatusMessage(object sender, DS4Windows.DebugEventArgs e)
+        private void UpdateLastStatusMessage(object sender, DS4Windows.LogEntryEventArgs e)
         {
             lastLogMsg.Message = e.Data;
-            lastLogMsg.Warning = e.Warning;
+            lastLogMsg.Warning = e.IsWarning;
         }
 
         private void ChangeControllerPanel()

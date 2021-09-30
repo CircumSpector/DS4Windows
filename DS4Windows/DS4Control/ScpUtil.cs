@@ -3,24 +3,6 @@ using Sensorit.Base;
 
 namespace DS4Windows
 {
-    public class DebugEventArgs : EventArgs
-    {
-        public DebugEventArgs(string data, bool warn, bool temporary = false)
-        {
-            Data = data;
-            Warning = warn;
-            Temporary = temporary;
-        }
-
-        public DateTime Time { get; protected set; } = DateTime.Now;
-
-        public string Data { get; protected set; }
-
-        public bool Warning { get; protected set; }
-
-        public bool Temporary { get; protected set; }
-    }
-
     public class MappingDoneEventArgs : EventArgs
     {
         protected int deviceNum = -1;

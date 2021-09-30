@@ -42,7 +42,7 @@ namespace DS4Windows
         public DS4StateExposed[] ExposedState = new DS4StateExposed[MAX_DS4_CONTROLLER_COUNT];
         public ControllerSlotManager slotManager = new ControllerSlotManager();
         public bool recordingMacro = false;
-        public event EventHandler<DebugEventArgs> Debug = null;
+        public event EventHandler<LogEntryEventArgs> Debug = null;
         bool[] buttonsdown = new bool[MAX_DS4_CONTROLLER_COUNT] { false, false, false, false, false, false, false, false };
         bool[] held = new bool[MAX_DS4_CONTROLLER_COUNT];
         int[] oldmouse = new int[MAX_DS4_CONTROLLER_COUNT] { -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -2507,12 +2507,12 @@ namespace DS4Windows
             //Console.WriteLine(System.DateTime.Now.ToString("G") + "> " + Data);
             if (Debug != null)
             {
-                DebugEventArgs args = new DebugEventArgs(Data, warning);
+                LogEntryEventArgs args = new LogEntryEventArgs(Data, warning);
                 OnDebug(this, args);
             }
         }
 
-        public virtual void OnDebug(object sender, DebugEventArgs args)
+        public virtual void OnDebug(object sender, LogEntryEventArgs args)
         {
             if (Debug != null)
                 Debug(this, args);

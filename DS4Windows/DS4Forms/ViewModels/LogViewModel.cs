@@ -36,7 +36,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             //BindingOperations.EnableCollectionSynchronization(logItems, _colLockobj);
             BindingOperations.EnableCollectionSynchronization(LogItems, _logListLocker, LogLockCallback);
             service.Debug += AddLogMessage;
-            AppLogger.GuiLog += AddLogMessage;
+            AppLogger.NewGuiLog += AddLogMessage;
         }
 
         public ObservableCollection<LogItem> LogItems { get; } = new();
@@ -55,9 +55,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
         }
 
-        private void AddLogMessage(object sender, DebugEventArgs e)
+        private void AddLogMessage(object sender, LogEntryEventArgs e)
         {
-            var item = new LogItem { Datetime = e.Time, Message = e.Data, Warning = e.Warning };
+            var item = new LogItem { Datetime = e.Time, Message = e.Data, Warning = e.IsWarning };
             _logListLocker.EnterWriteLock();
             LogItems.Add(item);
             _logListLocker.ExitWriteLock();
