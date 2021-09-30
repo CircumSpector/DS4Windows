@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
@@ -11,8 +10,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     [XmlRoot(ElementName = "Controller")]
     public class AutoProfileController
     {
-        public int Index { get; set; }
-
         public string Profile { get; set; } = "(none)";
     }
 
@@ -20,7 +17,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class AutoProfileProgram
     {
         [XmlElement(ElementName = "Controller")] 
-        public List<AutoProfileController> Controllers { get; set; } = new(ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
+        public List<AutoProfileController> Controllers { get; set; } = new();
 
         [XmlElement(ElementName = "TurnOff")] 
         public bool TurnOff { get; set; }
@@ -36,7 +33,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     public class AutoProfilePrograms : XmlSerializable<AutoProfilePrograms>
     {
         [XmlElement(ElementName = "Program")] 
-        public List<AutoProfileProgram> ProgramEntries { get; set; }
+        public List<AutoProfileProgram> ProgramEntries { get; set; } = new();
 
         public override IExtendedXmlSerializer GetSerializer()
         {
@@ -45,8 +42,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .EnableMemberExceptionHandling()
                 .EnableImplicitTyping(typeof(AutoProfilePrograms), typeof(AutoProfileProgram), typeof(AutoProfileController))
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
-                .Type<AutoProfileProgram>().EnableReferences(m => m.Path)
-                .Type<AutoProfileController>().EnableReferences(m => m.Index)
                 .Type<AutoProfilePrograms>().AddMigration(new AutoProfilesMigration())
                 .Create();
         }

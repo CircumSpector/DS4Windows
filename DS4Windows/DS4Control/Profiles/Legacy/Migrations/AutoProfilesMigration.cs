@@ -49,6 +49,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
                             .StartsWith("Controller"))
                     .Select(controllerEntry =>
                         new XElement("Controller",
+                            new XAttribute(exsNs + "member", string.Empty),
                             new XAttribute("Index", index++),
                             new XElement("Profile", controllerEntry.Value))
                     )

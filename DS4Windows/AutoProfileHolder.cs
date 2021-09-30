@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Xml;
@@ -30,7 +31,7 @@ namespace DS4WinWPF
         public ObservableCollection<AutoProfileEntity> AutoProfileCollection { get; }
 
         [ConfigurationSystemComponent]
-        private async Task Load()
+        private void Load()
         {
             var settingsPath = Path.Combine(Global.RuntimeAppDataPath, Constants.AutoProfilesFileName);
 
@@ -39,9 +40,9 @@ namespace DS4WinWPF
 
             AutoProfilePrograms settings;
 
-            await using (var stream = File.OpenRead(settingsPath))
+            using (var stream = File.OpenRead(settingsPath))
             {
-                settings = await AutoProfilePrograms.DeserializeAsync(stream);
+                settings = AutoProfilePrograms.Deserialize(stream);
             }
             
             foreach (var programEntry in settings.ProgramEntries)
@@ -60,55 +61,42 @@ namespace DS4WinWPF
         }
 
         [ConfigurationSystemComponent]
-        public bool Save(string m_Profile)
+        public bool Save(string profile)
         {
-            var doc = new XmlDocument();
-            XmlNode Node;
-            var saved = true;
-            try
+            var settings = new AutoProfilePrograms();
+
+            foreach (var profileEntity in AutoProfileCollection)
             {
-                Node = doc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                doc.AppendChild(Node);
-
-                Node = doc.CreateComment(string.Format(" Auto-Profile Configuration Data. {0} ", DateTime.Now));
-                doc.AppendChild(Node);
-
-                Node = doc.CreateWhitespace("\r\n");
-                doc.AppendChild(Node);
-
-                Node = doc.CreateNode(XmlNodeType.Element, "Programs", "");
-                doc.AppendChild(Node);
-                foreach (var entity in AutoProfileCollection)
+                var entry = new AutoProfileProgram()
                 {
-                    var el = doc.CreateElement("Program");
-                    el.SetAttribute("path", entity.Path);
-                    if (!string.IsNullOrEmpty(entity.Title)) el.SetAttribute("title", entity.Title);
+                    Path = profileEntity.Path,
+                    Title = profileEntity.Title,
+                    TurnOff = profileEntity.Turnoff
+                };
 
-                    el.AppendChild(doc.CreateElement("Controller1")).InnerText = entity.ProfileNames[0];
-                    el.AppendChild(doc.CreateElement("Controller2")).InnerText = entity.ProfileNames[1];
-                    el.AppendChild(doc.CreateElement("Controller3")).InnerText = entity.ProfileNames[2];
-                    el.AppendChild(doc.CreateElement("Controller4")).InnerText = entity.ProfileNames[3];
-                    if (ControlService.USING_MAX_CONTROLLERS)
+                foreach (var profileName in profileEntity.ProfileNames)
+                {
+                    entry.Controllers.Add(new AutoProfileController()
                     {
-                        el.AppendChild(doc.CreateElement("Controller5")).InnerText = entity.ProfileNames[4];
-                        el.AppendChild(doc.CreateElement("Controller6")).InnerText = entity.ProfileNames[5];
-                        el.AppendChild(doc.CreateElement("Controller7")).InnerText = entity.ProfileNames[6];
-                        el.AppendChild(doc.CreateElement("Controller8")).InnerText = entity.ProfileNames[7];
-                    }
-
-                    el.AppendChild(doc.CreateElement("TurnOff")).InnerText = entity.Turnoff.ToString();
-
-                    Node.AppendChild(el);
+                        Profile = profileName
+                    });
                 }
 
-                doc.Save(m_Profile);
-            }
-            catch (Exception)
-            {
-                saved = false;
+                settings.ProgramEntries.Add(entry);
             }
 
-            return saved;
+            try
+            {
+                using var stream = File.Open(profile, FileMode.Create);
+
+                settings.Serialize(stream);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void Remove(AutoProfileEntity item)
