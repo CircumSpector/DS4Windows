@@ -61,9 +61,9 @@ namespace DS4WinWPF
 
             services.AddSingleton(new LoggerFactory().AddSerilog(logger));
 
-            services
-                .AddOptions()
-                .AddSingleton<ArgumentParser>();
+            services.AddOptions();
+                
+            services.AddSingleton<ArgumentParser>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
