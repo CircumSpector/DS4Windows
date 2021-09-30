@@ -18,6 +18,9 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using DS4Windows;
 using DS4WinWPF.DS4Forms;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Win32.SafeHandles;
 using NLog;
 using WPFLocalizeExtension.Engine;
@@ -30,6 +33,41 @@ namespace DS4WinWPF
     [SuppressUnmanagedCodeSecurity]
     public partial class App : Application
     {
+        private readonly IHost _host;
+
+        public App()
+        {
+            _host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) => { ConfigureServices(context.Configuration, services); })
+                .Build();
+        }
+
+        private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
+        {
+            //services
+            //    .Configure<AppSettings>( configuration.GetSection( nameof( AppSettings ) ) )
+            //    .AddScoped<ISampleService, SampleService>()
+            //    .AddTransient<MainViewModel>();
+        }
+
+        protected override async void OnStartup(StartupEventArgs e)
+        {
+            await _host.StartAsync();
+
+
+            base.OnStartup(e);
+        }
+
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            using (_host)
+            {
+                await _host.StopAsync();
+            }
+
+            base.OnExit(e);
+        }
+
         public static ControlService rootHub;
         public static HttpClient requestClient;
         private static LoggerHolder logHolder;

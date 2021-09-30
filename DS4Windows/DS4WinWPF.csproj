@@ -80,6 +80,7 @@
     <PackageReference Include="Jaeger" Version="1.0.3" />
     <PackageReference Include="MdXaml" Version="1.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.11" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="4.0.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
