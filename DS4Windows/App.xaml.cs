@@ -17,6 +17,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Forms;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,7 @@ namespace DS4WinWPF
         {
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
+                .WriteTo.SerilogInMemorySink()
                 .CreateLogger();
 
             services.AddLogging(builder =>

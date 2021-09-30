@@ -8,7 +8,7 @@ using Serilog.Formatting.Display;
 
 namespace DS4WinWPF.DS4Control.Logging
 {
-    internal class InMemorySink : ILogEventSink
+    public class InMemorySink : ILogEventSink
     {
         readonly ITextFormatter _textFormatter = new MessageTemplateTextFormatter("{Timestamp} [{Level}] {Message}{Exception}");
 
