@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using ExtendedXmlSerializer;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
 {
-    internal sealed class ProgramsMigration : IEnumerable<Action<XElement>>
+    internal sealed class AutoProfilesMigration : IEnumerable<Action<XElement>>
     {
         public IEnumerator<Action<XElement>> GetEnumerator()
         {
@@ -59,6 +60,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
                 entries.Add(new XElement("Program",
                     programEntry.Attribute("path"),
                     programEntry.Attribute("title"),
+                    new XElement("TurnOff", programEntry.Member("TurnOff").Value),
                     new XElement("Controller",
                         new XAttribute(exsNs + "member", string.Empty),
                         new XElement("Capacity", 8),

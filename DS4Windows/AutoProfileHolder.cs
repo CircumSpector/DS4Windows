@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -42,38 +43,19 @@ namespace DS4WinWPF
             {
                 settings = await AutoProfilePrograms.DeserializeAsync(stream);
             }
-
-            try
+            
+            foreach (var programEntry in settings.ProgramEntries)
             {
-                var doc = new XmlDocument();
+                var autoProfile = new AutoProfileEntity(programEntry.Path, programEntry.Title);
 
-                if (!File.Exists(Path.Combine(Global.RuntimeAppDataPath, Constants.AutoProfilesFileName)))
-                    return;
-
-                doc.Load(Path.Combine(Global.RuntimeAppDataPath, Constants.AutoProfilesFileName));
-                var programslist = doc.SelectNodes("Programs/Program");
-                foreach (XmlNode x in programslist)
+                for (int i = 0; i < programEntry.Controllers.Count; i++)
                 {
-                    var path = x.Attributes["path"]?.Value ?? string.Empty;
-                    var title = x.Attributes["title"]?.Value ?? string.Empty;
-                    var autoprof = new AutoProfileEntity(path, title);
-
-                    XmlNode item;
-                    for (var i = 0; i < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; i++)
-                    {
-                        item = x.SelectSingleNode($"Controller{i + 1}");
-                        if (item != null) autoprof.ProfileNames[i] = item.InnerText;
-                    }
-
-                    item = x.SelectSingleNode("TurnOff");
-                    if (item != null && bool.TryParse(item.InnerText, out var turnoff)) autoprof.Turnoff = turnoff;
-
-                    AutoProfileCollection.Add(autoprof);
-                    //autoProfileDict.Add(path, autoprof);
+                    autoProfile.ProfileNames[i] = programEntry.Controllers[i].Profile;
                 }
-            }
-            catch (Exception)
-            {
+
+                autoProfile.Turnoff = programEntry.TurnOff;
+
+                AutoProfileCollection.Add(autoProfile);
             }
         }
 
@@ -167,7 +149,7 @@ namespace DS4WinWPF
 
         public bool Turnoff { get; set; }
 
-        public string[] ProfileNames { get; set; } = new string[Global.MAX_DS4_CONTROLLER_COUNT]
+        public List<string> ProfileNames { get; set; } = new(Global.MAX_DS4_CONTROLLER_COUNT)
         {
             string.Empty, string.Empty,
             string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty

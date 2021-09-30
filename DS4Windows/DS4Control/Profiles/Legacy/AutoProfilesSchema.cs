@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
@@ -12,14 +13,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     {
         public int Index { get; set; }
 
-        public string Profile { get; set; }
+        public string Profile { get; set; } = "(none)";
     }
 
     [XmlRoot(ElementName = "Program")]
     public class AutoProfileProgram
     {
         [XmlElement(ElementName = "Controller")] 
-        public List<AutoProfileController> Controllers { get; set; } = new();
+        public List<AutoProfileController> Controllers { get; set; } = new(ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
 
         [XmlElement(ElementName = "TurnOff")] 
         public bool TurnOff { get; set; }
@@ -46,7 +47,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<AutoProfileProgram>().EnableReferences(m => m.Path)
                 .Type<AutoProfileController>().EnableReferences(m => m.Index)
-                .Type<AutoProfilePrograms>().AddMigration(new ProgramsMigration())
+                .Type<AutoProfilePrograms>().AddMigration(new AutoProfilesMigration())
                 .Create();
         }
     }
