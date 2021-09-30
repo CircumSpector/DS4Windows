@@ -79,11 +79,19 @@
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf.NetCore" Version="1.0.18" />
     <PackageReference Include="Jaeger" Version="1.0.3" />
     <PackageReference Include="MdXaml" Version="1.11.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.11" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="4.0.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.Management" Version="5.0.0" />
     <PackageReference Include="TaskScheduler" Version="2.9.1" />
     <PackageReference Include="WPFLocalizeExtension" Version="3.9.0" />
@@ -267,6 +275,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="libs\$(Platform)\FakerInputWrapper\FakerInputDll.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>FakerInputDll.dll</Link>

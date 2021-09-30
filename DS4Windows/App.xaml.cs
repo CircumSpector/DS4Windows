@@ -21,9 +21,12 @@ using DS4WinWPF.DS4Forms;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 using NLog;
+using Serilog;
 using WPFLocalizeExtension.Engine;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace DS4WinWPF
 {
@@ -44,6 +47,18 @@ namespace DS4WinWPF
 
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            services.AddLogging(builder =>
+            {
+                builder.SetMinimumLevel(LogLevel.Information);
+                builder.AddSerilog(logger, true);
+            });
+
+            services.AddSingleton(new LoggerFactory().AddSerilog(logger));
+
             services
                 .AddOptions()
                 .AddSingleton<ArgumentParser>();
@@ -55,6 +70,8 @@ namespace DS4WinWPF
 
             runShutdown = true;
             skipSave = true;
+
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
 
             var parser = _host.Services.GetRequiredService<ArgumentParser>();
             
@@ -125,32 +142,33 @@ namespace DS4WinWPF
             logHolder = new LoggerHolder(rootHub);
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            var logger = logHolder.Logger;
+            
             var version = Global.ExecutableProductVersion;
-            logger.Info($"DS4Windows version {version}");
-            logger.Info($"DS4Windows exe file: {Global.ExecutableFileName}");
-            logger.Info($"DS4Windows Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
-            logger.Info($"OS Version: {Environment.OSVersion}");
-            logger.Info($"OS Product Name: {Util.GetOSProductName()}");
-            logger.Info($"OS Release ID: {Util.GetOSReleaseId()}");
-            logger.Info($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
-            logger.Info("Logger created");
+
+            logger.LogInformation($"DS4Windows version {version}");
+            logger.LogInformation($"DS4Windows exe file: {Global.ExecutableFileName}");
+            logger.LogInformation($"DS4Windows Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
+            logger.LogInformation($"OS Version: {Environment.OSVersion}");
+            logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
+            logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
+            logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
+            logger.LogInformation("Logger created");
 
             var readAppConfig = await Global.Instance.Config.LoadApplicationSettings();
             if (!firstRun && !readAppConfig)
-                logger.Info(
+                logger.LogInformation(
                     $@"{Constants.ProfilesFileName} not read at location ${Global.RuntimeAppDataPath}\{Constants.ProfilesFileName}. Using default app settings");
 
             if (firstRun)
             {
-                logger.Info("No config found. Creating default config");
+                logger.LogInformation("No config found. Creating default config");
                 AttemptSave();
 
                 await Global.Instance.Config.SaveAsNewProfile(0, "Default");
                 for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
                     Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                logger.Info("Default config created");
+                logger.LogInformation("Default config created");
             }
 
             skipSave = false;
