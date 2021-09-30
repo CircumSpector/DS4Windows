@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Data;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4WinWPF
 {

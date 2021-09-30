@@ -76,11 +76,11 @@ namespace DS4Windows
                 {
                     if (found)
                     {
-                        AppLogger.LogToGui($"HID#{iEnumeratedDevCount} CONNECTING to {x.Description}  VID={tempDev.Attributes.VendorHexId}  PID={tempDev.Attributes.ProductHexId}  Usage=0x{tempDev.Capabilities.Usage.ToString("X")}  Version=0x{tempDev.Attributes.Version.ToString("X")}  Path={x.Path}", false);
+                        AppLogger.Instance.LogToGui($"HID#{iEnumeratedDevCount} CONNECTING to {x.Description}  VID={tempDev.Attributes.VendorHexId}  PID={tempDev.Attributes.ProductHexId}  Usage=0x{tempDev.Capabilities.Usage.ToString("X")}  Version=0x{tempDev.Attributes.Version.ToString("X")}  Path={x.Path}", false);
                     }
                     else
                     {
-                        AppLogger.LogToGui($"HID#{iEnumeratedDevCount} Unknown device {x.Description}  VID={tempDev.Attributes.VendorHexId}  PID={tempDev.Attributes.ProductHexId}  Usage=0x{tempDev.Capabilities.Usage.ToString("X")}  Version=0x{tempDev.Attributes.Version.ToString("X")}  Path={x.Path}", false);
+                        AppLogger.Instance.LogToGui($"HID#{iEnumeratedDevCount} Unknown device {x.Description}  VID={tempDev.Attributes.VendorHexId}  PID={tempDev.Attributes.ProductHexId}  Usage=0x{tempDev.Capabilities.Usage.ToString("X")}  Version=0x{tempDev.Attributes.Version.ToString("X")}  Path={x.Path}", false);
                     }
                 }
             }
@@ -88,7 +88,7 @@ namespace DS4Windows
             if (Global.Instance.Config.DeviceOptions.VerboseLogMessages && iEnumeratedDevCount > 0)
             {
                 // This EnumerateDS4 method is called 3-4 times when a gamepad is connected. Print out "separator" log msg line between different enumeration loops to make the logfile easier to read
-                AppLogger.LogToGui($"-------------------------", false);
+                AppLogger.Instance.LogToGui($"-------------------------", false);
             }
 
             return foundDevs;

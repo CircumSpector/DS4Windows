@@ -392,7 +392,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             //Global.Save();
             await Global.Instance.LoadProfile(devIndex, true, App.rootHub);
             string prolog = string.Format(Properties.Resources.UsingProfile, (devIndex + 1).ToString(), prof, $"{device.Battery}");
-            AppLogger.LogToGui(prolog, false);
+            AppLogger.Instance.LogToGui(prolog, false);
 
             selectedProfile = prof;
             this.selectedEntity = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == prof);

@@ -517,7 +517,7 @@ namespace DS4Windows
             // as long the same device is always connected to the same usb port.
             if (serial == null)
             {
-                AppLogger.LogToGui($"WARNING: Failed to read serial# from a gamepad ({this._deviceAttributes.VendorHexId}/{this._deviceAttributes.ProductHexId}). Generating MAC address from a device path. From now on you should connect this gamepad always into the same USB port or BT pairing host to keep the same device path.", true);
+                AppLogger.Instance.LogToGui($"WARNING: Failed to read serial# from a gamepad ({this._deviceAttributes.VendorHexId}/{this._deviceAttributes.ProductHexId}). Generating MAC address from a device path. From now on you should connect this gamepad always into the same USB port or BT pairing host to keep the same device path.", true);
                 serial = GenerateFakeHwSerial();
             }
 
@@ -561,7 +561,7 @@ namespace DS4Windows
             }
             catch (Exception e)
             {
-                AppLogger.LogToGui($"ERROR: Failed to generate runtime MAC address from device path {this.DevicePath}. {e.Message}", true);
+                AppLogger.Instance.LogToGui($"ERROR: Failed to generate runtime MAC address from device path {this.DevicePath}. {e.Message}", true);
                 //serial = BLANK_SERIAL;
                 MACAddr = BLANK_SERIAL;
             }

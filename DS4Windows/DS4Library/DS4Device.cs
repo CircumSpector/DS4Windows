@@ -338,7 +338,7 @@ namespace DS4Windows
             if (hidDevice.IsExclusive) exclusiveStatus = ExclusiveStatus.Exclusive;
 
             if (FeatureSet != VidPidFeatureSet.DefaultDS4)
-                AppLogger.LogToGui(
+                AppLogger.Instance.LogToGui(
                     $"The gamepad {displayName} ({conType}) uses custom feature set ({FeatureSet.ToString("F")})",
                     false);
 
@@ -827,7 +827,7 @@ namespace DS4Windows
                     var validCrc = recvCrc32 == calcCrc32;
                     if (!validCrc && tries >= 5)
                     {
-                        AppLogger.LogToGui("Gyro Calibration Failed", true);
+                        AppLogger.Instance.LogToGui("Gyro Calibration Failed", true);
                         continue;
                     }
 
@@ -838,7 +838,7 @@ namespace DS4Windows
 
                 if (hDevice.Attributes.ProductId == 0x5C4 && hDevice.Attributes.VendorId == 0x054C &&
                     sixAxis.fixupInvertedGyroAxis())
-                    AppLogger.LogToGui($"Automatically fixed inverted YAW gyro axis in DS4 v.1 BT gamepad ({Mac})",
+                    AppLogger.Instance.LogToGui($"Automatically fixed inverted YAW gyro axis in DS4 v.1 BT gamepad ({Mac})",
                         false);
             }
             else
@@ -1160,7 +1160,7 @@ namespace DS4Windows
                                     // If the incoming data packet does not have the native DS4 type or CRC-32 checks keep failing. Fail out and disconnect controller.
                                     if (inputReportErrorCount >= CRC32_NUM_ATTEMPTS)
                                     {
-                                        AppLogger.LogToGui(
+                                        AppLogger.Instance.LogToGui(
                                             $"{Mac} failed CRC-32 checks {CRC32_NUM_ATTEMPTS} times. Disconnecting",
                                             false);
 
@@ -1188,7 +1188,7 @@ namespace DS4Windows
                         {
                             if (res == HidDevice.ReadStatus.WaitTimedOut)
                             {
-                                AppLogger.LogToGui(Mac + " disconnected due to timeout", true);
+                                AppLogger.Instance.LogToGui(Mac + " disconnected due to timeout", true);
                             }
                             else
                             {
@@ -1196,7 +1196,7 @@ namespace DS4Windows
                                 Console.WriteLine(Mac + " " + DateTime.UtcNow.ToString("o") +
                                                   "> disconnect due to read failure: " + winError);
                                 //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
-                                AppLogger.LogToGui(Mac + " disconnected due to read failure: " + winError, true);
+                                AppLogger.Instance.LogToGui(Mac + " disconnected due to read failure: " + winError, true);
                             }
 
                             readWaitEv.Reset();
@@ -1224,7 +1224,7 @@ namespace DS4Windows
                             {
                                 if (res == HidDevice.ReadStatus.WaitTimedOut)
                                 {
-                                    AppLogger.LogToGui(Mac + " disconnected due to timeout", true);
+                                    AppLogger.Instance.LogToGui(Mac + " disconnected due to timeout", true);
                                 }
                                 else
                                 {
@@ -1592,7 +1592,7 @@ namespace DS4Windows
 
                             if (shouldDisconnect)
                             {
-                                AppLogger.LogToGui(Mac + " disconnecting due to idle disconnect", false);
+                                AppLogger.Instance.LogToGui(Mac + " disconnecting due to idle disconnect", false);
 
                                 if (conType == ConnectionType.BT)
                                 {
@@ -1824,7 +1824,7 @@ namespace DS4Windows
 
                                     // Logfile notification that the gamepad is force disconnected because of writeOutput failed
                                     if (quitOutputThread == false && !isDisconnecting)
-                                        AppLogger.LogToGui(
+                                        AppLogger.Instance.LogToGui(
                                             $"Gamepad data write connection is lost. Disconnecting the gamepad. LastErrorCode={winError}",
                                             false);
 

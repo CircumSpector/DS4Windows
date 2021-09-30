@@ -195,7 +195,7 @@ namespace DS4Windows
             {
                 if (t.IsFaulted)
                 {
-                    AppLogger.LogToGui(t.Exception.ToString(), true);
+                    AppLogger.Instance.LogToGui(t.Exception.ToString(), true);
                 }
             });
         }

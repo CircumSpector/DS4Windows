@@ -442,7 +442,7 @@
                                 <GridViewColumn Header="Time" Width="150">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Datetime, StringFormat=\{0:G\}}"/>
+                                            <TextBlock Text="{Binding Path=Time, StringFormat=\{0:G\}}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

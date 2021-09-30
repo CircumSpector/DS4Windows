@@ -37,7 +37,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             //BindingOperations.EnableCollectionSynchronization(logItems, _colLockobj);
             BindingOperations.EnableCollectionSynchronization(LogItems, _logListLocker, LogLockCallback);
             service.Debug += AddLogMessage;
-            AppLogger.NewGuiLog += AddLogMessage;
+            
+            AppLogger.Instance.NewGuiLog += AddLogMessage;
         }
 
         public ObservableCollection<LogItem> LogItems { get; } = new();

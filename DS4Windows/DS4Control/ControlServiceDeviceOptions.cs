@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4Windows
 {

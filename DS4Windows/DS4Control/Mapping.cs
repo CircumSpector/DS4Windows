@@ -3653,7 +3653,7 @@ namespace DS4Windows
                                         string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile,
                                             (device + 1).ToString(), action.Details, $"{d.Battery}");
 
-                                        AppLogger.LogToGui(prolog, false);
+                                        AppLogger.Instance.LogToGui(prolog, false);
                                         await Global.Instance.LoadTempProfile(device, action.Details, true, ctrl);
                                         //LoadProfile(device, false, ctrl);
 
@@ -3797,7 +3797,7 @@ namespace DS4Windows
                                         dets = action.Details.Split(',');
                                     if (bool.Parse(dets[1]) && !actionDone[index].dev[device])
                                     {
-                                        AppLogger.LogToTray("Controller " + (device + 1) + ": " +
+                                        AppLogger.Instance.LogToTray("Controller " + (device + 1) + ": " +
                                                             ctrl.GetDS4Battery(device), true);
                                     }
 
@@ -4184,7 +4184,7 @@ namespace DS4Windows
                                         ? Global.Instance.Config.ProfilePath[device]
                                         : profileName), $"{d.Battery}");
 
-                                AppLogger.LogToGui(prolog, false);
+                                AppLogger.Instance.LogToGui(prolog, false);
 
                                 untriggeraction[device] = null;
 
@@ -5607,7 +5607,7 @@ namespace DS4Windows
                 latestDebugMsgTime = curTime;
                 if (data != latestDebugData)
                 {
-                    AppLogger.LogToGui(data, false);
+                    AppLogger.Instance.LogToGui(data, false);
                     latestDebugData = data;
                 }
             }
@@ -5702,7 +5702,7 @@ namespace DS4Windows
             // State 0=Normal mode (ie. calibration process is not running), 1=Activating calibration, 2=Calibration process running, 3=Completing calibration, 4=Cancelling calibration
             if (controller.WheelRecalibrateActiveState == 1)
             {
-                AppLogger.LogToGui($"Controller {1 + device} activated re-calibration of SA steering wheel emulation", false);
+                AppLogger.Instance.LogToGui($"Controller {1 + device} activated re-calibration of SA steering wheel emulation", false);
 
                 controller.WheelRecalibrateActiveState = 2;
 
@@ -5724,7 +5724,7 @@ namespace DS4Windows
             }
             else if (controller.WheelRecalibrateActiveState == 3)
             {
-                AppLogger.LogToGui($"Controller {1 + device} completed the calibration of SA steering wheel emulation. center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})", false);
+                AppLogger.Instance.LogToGui($"Controller {1 + device} completed the calibration of SA steering wheel emulation. center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})", false);
 
                 // If any of the calibration points (center, left 90deg, right 90deg) are missing then reset back to default calibration values
                 if (((controller.wheelCalibratedAxisBitmask & DS4Device.WheelCalibrationPoint.All) == DS4Device.WheelCalibrationPoint.All))
@@ -5737,7 +5737,7 @@ namespace DS4Windows
             }
             else if (controller.WheelRecalibrateActiveState == 4)
             {
-                AppLogger.LogToGui($"Controller {1 + device} cancelled the calibration of SA steering wheel emulation.", false);
+                AppLogger.Instance.LogToGui($"Controller {1 + device} cancelled the calibration of SA steering wheel emulation.", false);
 
                 controller.WheelRecalibrateActiveState = 0;
                 controller.wheelPrevRecalibrateTime = DateTime.Now;
@@ -5912,7 +5912,7 @@ namespace DS4Windows
                     // Run if no controller config exists or if an empty wheelCenterPoint is still being used
                     if (!Global.Instance.Config.LoadControllerConfigs(controller) || controller.wheelCenterPoint.IsEmpty)
                     {
-                        AppLogger.LogToGui($"Controller {1 + device} sixaxis steering wheel calibration data missing. It is recommended to run steering wheel calibration process by pressing SASteeringWheelEmulationCalibration special action key. Using estimated values until the controller is calibrated at least once.", false);
+                        AppLogger.Instance.LogToGui($"Controller {1 + device} sixaxis steering wheel calibration data missing. It is recommended to run steering wheel calibration process by pressing SASteeringWheelEmulationCalibration special action key. Using estimated values until the controller is calibrated at least once.", false);
 
                         // Use current controller position as "center point". Assume DS4Windows was started while controller was hold in center position (yes, dangerous assumption but can't do much until controller is calibrated)
                         controller.wheelCenterPoint.X = gyroAccelX;
@@ -5930,7 +5930,7 @@ namespace DS4Windows
                     controller.wheelCircleCenterPointLeft.X = controller.wheelCenterPoint.X;
                     controller.wheelCircleCenterPointLeft.Y = controller.wheel90DegPointLeft.Y;
 
-                    AppLogger.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.Config.GetSASteeringWheelEmulationRange(device)}", false);
+                    AppLogger.Instance.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.Config.GetSASteeringWheelEmulationRange(device)}", false);
                     controller.wheelPrevRecalibrateTime = DateTime.Now;
                 }
 

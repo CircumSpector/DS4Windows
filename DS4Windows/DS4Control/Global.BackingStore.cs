@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.Properties;
@@ -2270,7 +2271,7 @@ namespace DS4Windows
                 catch (XmlException)
                 {
                     // XML file has become corrupt. Start from scratch
-                    AppLogger.LogToGui(Resources.XMLActionsCorrupt, true);
+                    AppLogger.Instance.LogToGui(Resources.XMLActionsCorrupt, true);
                     m_Xdoc.RemoveAll();
                     PrepareActionsXml(m_Xdoc);
                 }
@@ -2509,7 +2510,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    AppLogger.LogToGui("LinkedProfiles.xml can't be found.", false);
+                    AppLogger.Instance.LogToGui("LinkedProfiles.xml can't be found.", false);
                     loaded = false;
                 }
 
@@ -2535,7 +2536,7 @@ namespace DS4Windows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false);
+                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false);
                     saved = false;
                 }
 
@@ -2567,7 +2568,7 @@ namespace DS4Windows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
+                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
                     saved = false;
                 }
 
@@ -3473,7 +3474,7 @@ namespace DS4Windows
                 }
                 catch
                 {
-                    AppLogger.LogToGui("ControllerConfigs.xml can't be found.", false);
+                    AppLogger.Instance.LogToGui("ControllerConfigs.xml can't be found.", false);
                     loaded = false;
                 }
 
@@ -3555,7 +3556,7 @@ namespace DS4Windows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
+                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
                     saved = false;
                 }
 

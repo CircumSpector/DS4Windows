@@ -337,7 +337,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
             catch (COMException ex)
             {
-                AppLogger.LogToGui(string.Format("Error in TaskService. Check WinOS TaskScheduler service functionality. {0}", ex.Message), true);
+                AppLogger.Instance.LogToGui(string.Format("Error in TaskService. Check WinOS TaskScheduler service functionality. {0}", ex.Message), true);
             }
 
             runAtStartup = runStartProg || runStartTask;

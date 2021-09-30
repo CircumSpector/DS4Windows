@@ -389,8 +389,10 @@ namespace DS4WinWPF.DS4Forms
             App.rootHub.PreServiceStop += PrepareForServiceStop;
             //root.rootHubtest.RunningChanged += ControlServiceChanged;
             conLvViewModel.ControllerCol.CollectionChanged += ControllerCol_CollectionChanged;
-            AppLogger.NewTrayAreaLog += ShowNotification;
-            AppLogger.NewGuiLog += UpdateLastStatusMessage;
+            
+            AppLogger.Instance.NewTrayAreaLog += ShowNotification;
+            AppLogger.Instance.NewGuiLog += UpdateLastStatusMessage;
+            
             logvm.LogItems.CollectionChanged += LogItems_CollectionChanged;
             App.rootHub.Debug += UpdateLastStatusMessage;
             trayIconVM.RequestShutdown += TrayIconVM_RequestShutdown;
@@ -433,7 +435,7 @@ namespace DS4WinWPF.DS4Forms
 
             if (!wmiConnected)
             {
-                AppLogger.LogToGui(@"Could not connect to Windows Management Instrumentation service.
+                AppLogger.Instance.LogToGui(@"Could not connect to Windows Management Instrumentation service.
 Suspend support not enabled.", true);
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4WinWPF.DS4Control.Logging
 {
@@ -25,22 +26,22 @@ namespace DS4WinWPF.DS4Control.Logging
     /// </summary>
     public class AppLogger
     {
-        [Obsolete]
+        [IntermediateSolution]
         private static readonly Lazy<AppLogger> LazyInstance = new(new AppLogger());
 
-        [Obsolete]
+        [IntermediateSolution]
         public static AppLogger Instance => LazyInstance.Value;
 
-        public static event EventHandler<LogEntryEventArgs> NewTrayAreaLog;
+        public event EventHandler<LogEntryEventArgs> NewTrayAreaLog;
 
-        public static event EventHandler<LogEntryEventArgs> NewGuiLog;
+        public event EventHandler<LogEntryEventArgs> NewGuiLog;
 
-        public static void LogToGui(string data, bool warning, bool temporary = false)
+        public void LogToGui(string data, bool warning, bool temporary = false)
         {
             NewGuiLog?.Invoke(null, new LogEntryEventArgs(data, warning, temporary));
         }
 
-        public static void LogToTray(string data, bool warning = false, bool ignoreSettings = false)
+        public void LogToTray(string data, bool warning = false, bool ignoreSettings = false)
         {
             NewTrayAreaLog?.Invoke(ignoreSettings, new LogEntryEventArgs(data, warning));
         }

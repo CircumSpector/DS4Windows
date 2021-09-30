@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
+using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4Windows
 {

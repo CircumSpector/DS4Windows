@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DS4Windows
+namespace DS4WinWPF.DS4Control.Attributes
 {
     /// <summary>
     ///     Attribute used to keep track of code loading from or writing to disk. Slap this attribute on every method reading,

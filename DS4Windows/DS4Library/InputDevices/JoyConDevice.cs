@@ -277,7 +277,7 @@ namespace DS4Windows.InputDevices
             }
             catch (IOException)
             {
-                AppLogger.LogToGui($"Controller {MacAddress} failed to initialize. Closing device", true);
+                AppLogger.Instance.LogToGui($"Controller {MacAddress} failed to initialize. Closing device", true);
             }
 
             if (!connectionOpened)
@@ -676,7 +676,7 @@ namespace DS4Windows.InputDevices
 
                         if (shouldDisconnect)
                         {
-                            AppLogger.LogToGui(Mac + " disconnecting due to idle disconnect", false);
+                            AppLogger.Instance.LogToGui(Mac + " disconnecting due to idle disconnect", false);
 
                             if (conType == ConnectionType.BT)
                                 if (DisconnectBT(true))

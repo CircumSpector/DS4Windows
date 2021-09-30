@@ -10,6 +10,7 @@ using System.Text;
 using Sensorit.Base;
 using DS4WinWPF.DS4Control;
 using DS4Windows.DS4Control;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 using Nefarius.ViGEm.Client;
 using static DS4Windows.Global;
@@ -599,7 +600,7 @@ namespace DS4Windows
                                 var errMsg = String.Format("Couldn't start UDP server on address {0}:{1}, outside applications won't be able to access pad data ({2})", UDP_SERVER_LISTEN_ADDRESS, UDP_SERVER_PORT, ex.SocketErrorCode);
 
                                 LogDebug(errMsg, true);
-                                AppLogger.LogToTray(errMsg, true, true);
+                                AppLogger.Instance.LogToTray(errMsg, true, true);
                             }
                         }).Wait();
                     }
@@ -614,7 +615,7 @@ namespace DS4Windows
                     udpChangeStatus = true;
                     _udpServer.Stop();
                     _udpServer = null;
-                    AppLogger.LogToGui("Closed UDP server", false);
+                    AppLogger.Instance.LogToGui("Closed UDP server", false);
                     udpChangeStatus = false;
 
                     for (int i = 0; i < UdpServer.NUMBER_SLOTS; i++)
@@ -703,7 +704,7 @@ namespace DS4Windows
                 var errMsg = String.Format("Couldn't start UDP server on address {0}:{1}, outside applications won't be able to access pad data ({2})", UDP_SERVER_LISTEN_ADDRESS, UDP_SERVER_PORT, ex.SocketErrorCode);
 
                 LogDebug(errMsg, true);
-                AppLogger.LogToTray(errMsg, true, true);
+                AppLogger.Instance.LogToTray(errMsg, true, true);
             }
 
             changingUDPPort = false;
@@ -716,7 +717,7 @@ namespace DS4Windows
                 string message = DS4WinWPF.Properties.Resources.CouldNotOpenDS4.Replace("*Mac address*", device.getMacAddress()) + " " +
                     DS4WinWPF.Properties.Resources.QuitOtherPrograms;
                 LogDebug(message, true);
-                AppLogger.LogToTray(message, true);
+                AppLogger.Instance.LogToTray(message, true);
             }
         }
 
@@ -1356,7 +1357,7 @@ namespace DS4Windows
                 catch (Exception e)
                 {
                     LogDebug(e.Message, true);
-                    AppLogger.LogToTray(e.Message, true);
+                    AppLogger.Instance.LogToTray(e.Message, true);
                 }
 
                 running = true;
@@ -1377,7 +1378,7 @@ namespace DS4Windows
                         var errMsg = String.Format("Couldn't start UDP server on address {0}:{1}, outside applications won't be able to access pad data ({2})", UDP_SERVER_LISTEN_ADDRESS, UDP_SERVER_PORT, ex.SocketErrorCode);
 
                         LogDebug(errMsg, true);
-                        AppLogger.LogToTray(errMsg, true, true);
+                        AppLogger.Instance.LogToTray(errMsg, true, true);
                     }
                 }
             }
@@ -1398,7 +1399,7 @@ namespace DS4Windows
                 }
 
                 LogDebug(logMessage);
-                AppLogger.LogToTray(logMessage);
+                AppLogger.Instance.LogToTray(logMessage);
             }
 
             inServiceTask = false;
@@ -2136,7 +2137,7 @@ namespace DS4Windows
                     }
 
                     LogDebug(removed);
-                    AppLogger.LogToTray(removed);
+                    AppLogger.Instance.LogToTray(removed);
                     /*Stopwatch sw = new Stopwatch();
                     sw.Start();
                     while (sw.ElapsedMilliseconds < XINPUT_UNPLUG_SETTLE_TIME)
@@ -2239,13 +2240,13 @@ namespace DS4Windows
                         {
                             string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile, (ind + 1).ToString(), Instance.Config.ProfilePath[ind], $"{device.Battery}");
                             LogDebug(prolog);
-                            AppLogger.LogToTray(prolog);
+                            AppLogger.Instance.LogToTray(prolog);
                         }
                         else
                         {
                             string prolog = string.Format(DS4WinWPF.Properties.Resources.NotUsingProfile, (ind + 1).ToString(), $"{device.Battery}");
                             LogDebug(prolog);
-                            AppLogger.LogToTray(prolog);
+                            AppLogger.Instance.LogToTray(prolog);
                         }
                     }
 
@@ -2453,14 +2454,14 @@ namespace DS4Windows
                 {
                     Instance.TouchActive[deviceID] = false;
                     LogDebug(DS4WinWPF.Properties.Resources.TouchpadMovementOff);
-                    AppLogger.LogToTray(DS4WinWPF.Properties.Resources.TouchpadMovementOff);
+                    AppLogger.Instance.LogToTray(DS4WinWPF.Properties.Resources.TouchpadMovementOff);
                     touchreleased[deviceID] = false;
                 }
                 else if (touchreleased[deviceID])
                 {
                     Instance.TouchActive[deviceID] = true;
                     LogDebug(DS4WinWPF.Properties.Resources.TouchpadMovementOn);
-                    AppLogger.LogToTray(DS4WinWPF.Properties.Resources.TouchpadMovementOn);
+                    AppLogger.Instance.LogToTray(DS4WinWPF.Properties.Resources.TouchpadMovementOn);
                     touchreleased[deviceID] = false;
                 }
             }
