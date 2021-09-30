@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
+using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.Properties;
 using OpenTracing.Util;

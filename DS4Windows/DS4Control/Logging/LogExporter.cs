@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace DS4WinWPF
+namespace DS4WinWPF.DS4Control.Logging
 {
     public class LogExporter
     {

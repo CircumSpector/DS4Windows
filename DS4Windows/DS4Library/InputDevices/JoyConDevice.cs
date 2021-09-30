@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DS4WinWPF.DS4Control.Logging;
 using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices

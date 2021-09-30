@@ -33,6 +33,7 @@
 */
 using System;
 using System.Globalization;
+using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4Windows
 {

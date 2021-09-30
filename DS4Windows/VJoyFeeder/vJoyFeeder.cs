@@ -12,7 +12,8 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;    // SuppressUnmanagedCodeSecurity support to optimize for performance instead of code security
+using System.Security;
+using DS4WinWPF.DS4Control.Logging; // SuppressUnmanagedCodeSecurity support to optimize for performance instead of code security
 
 namespace DS4Windows.VJoyFeeder
 {

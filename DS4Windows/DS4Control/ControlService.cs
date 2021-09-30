@@ -10,6 +10,7 @@ using System.Text;
 using Sensorit.Base;
 using DS4WinWPF.DS4Control;
 using DS4Windows.DS4Control;
+using DS4WinWPF.DS4Control.Logging;
 using Nefarius.ViGEm.Client;
 using static DS4Windows.Global;
 

@@ -10,6 +10,7 @@ using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
+using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -336,7 +337,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
             catch (COMException ex)
             {
-                DS4Windows.AppLogger.LogToGui(string.Format("Error in TaskService. Check WinOS TaskScheduler service functionality. {0}", ex.Message), true);
+                AppLogger.LogToGui(string.Format("Error in TaskService. Check WinOS TaskScheduler service functionality. {0}", ex.Message), true);
             }
 
             runAtStartup = runStartProg || runStartTask;

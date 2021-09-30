@@ -7,6 +7,7 @@ using System.Threading;
 using DS4Windows.DS4Library;
 using DS4Windows.DS4Library.CoreAudio;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Control.Logging;
 using OpenTracing.Util;
 using ThreadState = System.Threading.ThreadState;
 

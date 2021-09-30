@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4WinWPF.DS4Control
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DS4Windows
+namespace DS4WinWPF.DS4Control.Logging
 {
     public class LogEntryEventArgs : EventArgs
     {

@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
 using Color = System.Windows.Media.Color;
 
 namespace DS4WinWPF.DS4Forms.ViewModels

@@ -21,6 +21,7 @@ using HttpProgress;
 
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Translations;
 
 namespace DS4WinWPF.DS4Forms
@@ -365,7 +366,7 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        private void ShowNotification(object sender, DS4Windows.LogEntryEventArgs e)
+        private void ShowNotification(object sender, LogEntryEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
@@ -669,7 +670,7 @@ Suspend support not enabled.", true);
             this.Close();
         }
 
-        private void UpdateLastStatusMessage(object sender, DS4Windows.LogEntryEventArgs e)
+        private void UpdateLastStatusMessage(object sender, LogEntryEventArgs e)
         {
             lastLogMsg.Message = e.Data;
             lastLogMsg.Warning = e.IsWarning;

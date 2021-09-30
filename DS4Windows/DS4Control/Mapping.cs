@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using static DS4Windows.Global;
 using System.Drawing;
+using DS4WinWPF.DS4Control.Logging;
 using OpenTracing.Util; // Point struct
 using Sensorit.Base;
 

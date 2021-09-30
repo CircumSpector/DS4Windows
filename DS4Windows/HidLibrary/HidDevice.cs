@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.IO;
 using System.Threading.Tasks;
+using DS4WinWPF.DS4Control.Logging;
 using Microsoft.Win32.SafeHandles;
 namespace DS4Windows
 {

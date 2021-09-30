@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -391,7 +392,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             //Global.Save();
             await Global.Instance.LoadProfile(devIndex, true, App.rootHub);
             string prolog = string.Format(Properties.Resources.UsingProfile, (devIndex + 1).ToString(), prof, $"{device.Battery}");
-            DS4Windows.AppLogger.LogToGui(prolog, false);
+            AppLogger.LogToGui(prolog, false);
 
             selectedProfile = prof;
             this.selectedEntity = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == prof);
