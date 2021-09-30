@@ -37,7 +37,43 @@ namespace DS4WinWPF
     [SuppressUnmanagedCodeSecurity]
     public partial class App : Application
     {
+        public static ControlService rootHub;
+        public static HttpClient requestClient;
+
+        private static readonly Dictionary<AppThemeChoice, string> themeLocs = new()
+        {
+            [AppThemeChoice.Default] = "DS4Forms/Themes/DefaultTheme.xaml",
+            [AppThemeChoice.Dark] = "DS4Forms/Themes/DarkTheme.xaml"
+        };
+
         private readonly IHost _host;
+
+        private Timer collectTimer;
+
+        private Thread controlThread;
+        private bool exitApp;
+        private bool exitComThread;
+        private MemoryMappedViewAccessor ipcClassNameMMA;
+
+        /// <summary>
+        ///     MemoryMappedFile for inter-process communication used to hold className of DS4Form window.
+        /// </summary>
+        private MemoryMappedFile
+            ipcClassNameMMF;
+
+        private MemoryMappedViewAccessor ipcResultDataMMA;
+
+        /// <summary>
+        ///     MemoryMappedFile for inter-process communication used to exchange string result data between cmdline client process
+        ///     and the background running DS4Windows app.
+        /// </summary>
+        private MemoryMappedFile
+            ipcResultDataMMF;
+
+        private bool runShutdown;
+        private bool skipSave;
+        private Thread testThread;
+        private EventWaitHandle threadComEvent;
 
         public App()
         {
@@ -62,7 +98,7 @@ namespace DS4WinWPF
             services.AddSingleton(new LoggerFactory().AddSerilog(logger));
 
             services.AddOptions();
-                
+
             services.AddSingleton<ArgumentParser>();
         }
 
@@ -76,7 +112,7 @@ namespace DS4WinWPF
             var logger = _host.Services.GetRequiredService<ILogger<App>>();
 
             var parser = _host.Services.GetRequiredService<ArgumentParser>();
-            
+
             parser.Parse(e.Args);
 
             CheckOptions(parser);
@@ -144,7 +180,7 @@ namespace DS4WinWPF
             //logHolder = new LoggerHolder(rootHub);
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            
+
             var version = Global.ExecutableProductVersion;
 
             logger.LogInformation($"DS4Windows version {version}");
@@ -238,35 +274,6 @@ namespace DS4WinWPF
             base.OnExit(e);
         }
 
-        public static ControlService rootHub;
-        public static HttpClient requestClient;
-
-        private static readonly Dictionary<AppThemeChoice, string> themeLocs = new()
-        {
-            [AppThemeChoice.Default] = "DS4Forms/Themes/DefaultTheme.xaml",
-            [AppThemeChoice.Dark] = "DS4Forms/Themes/DarkTheme.xaml"
-        };
-
-        private Timer collectTimer;
-
-        private Thread controlThread;
-        private bool exitApp;
-        private bool exitComThread;
-        private MemoryMappedViewAccessor ipcClassNameMMA;
-
-        private MemoryMappedFile
-            ipcClassNameMMF; // MemoryMappedFile for inter-process communication used to hold className of DS4Form window
-
-        private MemoryMappedViewAccessor ipcResultDataMMA;
-
-        private MemoryMappedFile
-            ipcResultDataMMF; // MemoryMappedFile for inter-process communication used to exchange string result data between cmdline client process and the background running DS4Windows app
-
-        private bool runShutdown;
-        private bool skipSave;
-        private Thread testThread;
-        private EventWaitHandle threadComEvent;
-        
         public event EventHandler ThemeChanged;
 
         private static EventWaitHandle CreateAndReplaceHandle(SafeWaitHandle replacementHandle)
@@ -279,7 +286,7 @@ namespace DS4WinWPF
 
             return eventWaitHandle;
         }
-        
+
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var logger = _host.Services.GetRequiredService<ILogger<App>>();
@@ -287,10 +294,10 @@ namespace DS4WinWPF
             if (!Current.Dispatcher.CheckAccess())
             {
                 var exp = e.ExceptionObject as Exception;
-                
+
                 logger.LogError($"Thread App Crashed with message {exp.Message}");
                 logger.LogError(exp.ToString());
-                
+
                 if (e.IsTerminating)
                     Dispatcher.Invoke(() =>
                     {
