@@ -1435,7 +1435,8 @@ namespace DS4Windows
             {
                 var saved = true;
 
-                if (proName.EndsWith(XML_EXTENSION)) proName = proName.Remove(proName.LastIndexOf(XML_EXTENSION));
+                if (proName.EndsWith(XML_EXTENSION))
+                    proName = proName.Remove(proName.LastIndexOf(XML_EXTENSION, StringComparison.Ordinal));
 
                 var path = Path.Combine(
                     RuntimeAppDataPath,
