@@ -1433,7 +1433,7 @@ namespace DS4Windows
             [ConfigurationSystemComponent]
             public async Task<bool> SaveProfile(int device, string proName)
             {
-                var Saved = true;
+                var saved = true;
 
                 if (proName.EndsWith(XML_EXTENSION)) proName = proName.Remove(proName.LastIndexOf(XML_EXTENSION));
 
@@ -1564,26 +1564,16 @@ namespace DS4Windows
                         }
                     }
 
-                    //
-                    // TODO: experimental, needs tuning. For now just generates a 2nd file for experimentation.
-                    // 
-                    var betaPath = Path.Combine(
-                        RuntimeAppDataPath,
-                        Constants.ProfilesSubDirectory,
-                        $"{proName}-BETA{XML_EXTENSION}"
-                    );
+                    await using var file = File.Open(path, FileMode.Create);
 
-                    await using (var file = File.Open(betaPath, FileMode.Create))
-                    {
-                        await profileObject.SerializeAsync(file);
-                    }
+                    await profileObject.SerializeAsync(file);
                 }
                 catch
                 {
-                    Saved = false;
+                    saved = false;
                 }
 
-                return Saved;
+                return saved;
             }
 
             [ConfigurationSystemComponent]
