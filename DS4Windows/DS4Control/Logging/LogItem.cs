@@ -4,12 +4,12 @@ namespace DS4WinWPF.DS4Control.Logging
 {
     public class LogItem
     {
-        public DateTime Datetime { get; set; }
+        public DateTime Time { get; set; }
 
         public string Message { get; set; }
 
-        public bool Warning { get; set; }
+        public bool IsWarning { get; set; }
 
-        public string Color => Warning ? "Red" : "Black";
+        public string Color => IsWarning ? "Red" : "Black";
     }
 }

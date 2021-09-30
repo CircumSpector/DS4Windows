@@ -16,20 +16,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public LogViewModel(ControlService service)
         {
             var version = Global.ExecutableProductVersion;
-            LogItems.Add(new LogItem { Datetime = DateTime.Now, Message = $"DS4Windows version {version}" });
+            LogItems.Add(new LogItem { Time = DateTime.Now, Message = $"DS4Windows version {version}" });
             LogItems.Add(new LogItem
             {
-                Datetime = DateTime.Now,
+                Time = DateTime.Now,
                 Message = $"DS4Windows Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}"
             });
-            LogItems.Add(new LogItem { Datetime = DateTime.Now, Message = $"OS Version: {Environment.OSVersion}" });
+            LogItems.Add(new LogItem { Time = DateTime.Now, Message = $"OS Version: {Environment.OSVersion}" });
             LogItems.Add(new LogItem
-                { Datetime = DateTime.Now, Message = $"OS Product Name: {DS4Windows.Util.GetOSProductName()}" });
+                { Time = DateTime.Now, Message = $"OS Product Name: {DS4Windows.Util.GetOSProductName()}" });
             LogItems.Add(new LogItem
-                { Datetime = DateTime.Now, Message = $"OS Release ID: {DS4Windows.Util.GetOSReleaseId()}" });
+                { Time = DateTime.Now, Message = $"OS Release ID: {DS4Windows.Util.GetOSReleaseId()}" });
             LogItems.Add(new LogItem
             {
-                Datetime = DateTime.Now,
+                Time = DateTime.Now,
                 Message = $"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x32")}"
             });
 
@@ -58,7 +58,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void AddLogMessage(object sender, LogEntryEventArgs e)
         {
-            var item = new LogItem { Datetime = e.Time, Message = e.Data, Warning = e.IsWarning };
+            var item = new LogItem { Time = e.Time, Message = e.Data, IsWarning = e.IsWarning };
             _logListLocker.EnterWriteLock();
             LogItems.Add(item);
             _logListLocker.ExitWriteLock();
