@@ -100,6 +100,7 @@ namespace DS4WinWPF
             services.AddOptions();
 
             services.AddSingleton<ArgumentParser>();
+            services.AddSingleton<AppLogger>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -108,6 +109,11 @@ namespace DS4WinWPF
 
             runShutdown = true;
             skipSave = true;
+
+            //
+            // TODO: intermediate hack until DI is propagated throughout all classes
+            // 
+            AppLogger.Instance = _host.Services.GetRequiredService<AppLogger>();
 
             var logger = _host.Services.GetRequiredService<ILogger<App>>();
 

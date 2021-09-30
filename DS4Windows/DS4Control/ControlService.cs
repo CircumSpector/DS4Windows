@@ -2504,6 +2504,7 @@ namespace DS4Windows
             return slidedir;
         }
 
+        [LoggingComponent]
         public virtual void LogDebug(String Data, bool warning = false)
         {
             //Console.WriteLine(System.DateTime.Now.ToString("G") + "> " + Data);
@@ -2514,6 +2515,7 @@ namespace DS4Windows
             }
         }
 
+        [LoggingComponent]
         public virtual void OnDebug(object sender, LogEntryEventArgs args)
         {
             if (Debug != null)

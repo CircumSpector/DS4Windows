@@ -1,5 +1,6 @@
 ﻿using System;
 using DS4WinWPF.DS4Control.Attributes;
+using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.Logging
 {
@@ -26,11 +27,15 @@ namespace DS4WinWPF.DS4Control.Logging
     /// </summary>
     public class AppLogger
     {
-        [IntermediateSolution]
-        private static readonly Lazy<AppLogger> LazyInstance = new(new AppLogger());
+        private readonly ILogger<AppLogger> logger;
+
+        public AppLogger(ILogger<AppLogger> logger)
+        {
+            this.logger = logger;
+        }
 
         [IntermediateSolution]
-        public static AppLogger Instance => LazyInstance.Value;
+        public static AppLogger Instance { get; set; }
 
         public event EventHandler<LogEntryEventArgs> NewTrayAreaLog;
 
@@ -38,6 +43,14 @@ namespace DS4WinWPF.DS4Control.Logging
 
         public void LogToGui(string data, bool warning, bool temporary = false)
         {
+            //
+            // Proxy UI logging through to logging sub-system (e.g. file)
+            // 
+            if (warning)
+                logger.LogWarning(data);
+            else
+                logger.LogInformation(data);
+
             NewGuiLog?.Invoke(null, new LogEntryEventArgs(data, warning, temporary));
         }
 
