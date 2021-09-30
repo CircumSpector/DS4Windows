@@ -25,6 +25,12 @@ namespace DS4WinWPF.DS4Control.Logging
     /// </summary>
     public class AppLogger
     {
+        [Obsolete]
+        private static readonly Lazy<AppLogger> LazyInstance = new(new AppLogger());
+
+        [Obsolete]
+        public static AppLogger Instance => LazyInstance.Value;
+
         public static event EventHandler<LogEntryEventArgs> NewTrayAreaLog;
 
         public static event EventHandler<LogEntryEventArgs> NewGuiLog;
