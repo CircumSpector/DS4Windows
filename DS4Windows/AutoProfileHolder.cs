@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Xml;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy;
 
 namespace DS4WinWPF
 {
@@ -27,8 +29,20 @@ namespace DS4WinWPF
         public ObservableCollection<AutoProfileEntity> AutoProfileCollection { get; }
 
         [ConfigurationSystemComponent]
-        private void Load()
+        private async Task Load()
         {
+            var settingsPath = Path.Combine(Global.RuntimeAppDataPath, Constants.AutoProfilesFileName);
+
+            if (!File.Exists(settingsPath))
+                return;
+
+            AutoProfilePrograms settings;
+
+            await using (var stream = File.OpenRead(settingsPath))
+            {
+                settings = await AutoProfilePrograms.DeserializeAsync(stream);
+            }
+
             try
             {
                 var doc = new XmlDocument();

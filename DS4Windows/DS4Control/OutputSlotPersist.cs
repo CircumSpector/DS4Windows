@@ -29,7 +29,7 @@ namespace DS4WinWPF.DS4Control
 
             await using (var stream = File.OpenRead(outputPath))
             {
-                settings = await Task.Run(() => OutputSlots.Deserialize(stream));
+                settings = await OutputSlots.DeserializeAsync(stream);
             }
 
             foreach (var slot in settings.Slot)

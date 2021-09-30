@@ -1,34 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
-    [XmlRoot(ElementName = "Program")]
-    public class Program
+    [XmlRoot(ElementName = "Controller")]
+    public class AutoProfileController
     {
-        [XmlElement(ElementName = "Controller1")]
-        public string Controller1 { get; set; }
+        public int Index { get; set; }
 
-        [XmlElement(ElementName = "Controller2")]
-        public string Controller2 { get; set; }
+        public string Profile { get; set; }
+    }
 
-        [XmlElement(ElementName = "Controller3")]
-        public string Controller3 { get; set; }
-
-        [XmlElement(ElementName = "Controller4")]
-        public string Controller4 { get; set; }
-
-        [XmlElement(ElementName = "Controller5")]
-        public string Controller5 { get; set; }
-
-        [XmlElement(ElementName = "Controller6")]
-        public string Controller6 { get; set; }
-
-        [XmlElement(ElementName = "Controller7")]
-        public string Controller7 { get; set; }
-
-        [XmlElement(ElementName = "Controller8")]
-        public string Controller8 { get; set; }
+    [XmlRoot(ElementName = "Program")]
+    public class AutoProfileProgram
+    {
+        [XmlElement(ElementName = "Controller")] 
+        public List<AutoProfileController> Controllers { get; set; } = new();
 
         [XmlElement(ElementName = "TurnOff")] 
         public bool TurnOff { get; set; }
@@ -36,16 +27,27 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlAttribute(AttributeName = "path")] 
         public string Path { get; set; }
 
-        [XmlText] public string Text { get; set; }
-
         [XmlAttribute(AttributeName = "title")]
         public string Title { get; set; }
     }
 
     [XmlRoot(ElementName = "Programs")]
-    public class Programs
+    public class AutoProfilePrograms : XmlSerializable<AutoProfilePrograms>
     {
         [XmlElement(ElementName = "Program")] 
-        public List<Program> Program { get; set; }
+        public List<AutoProfileProgram> ProgramEntries { get; set; }
+
+        public override IExtendedXmlSerializer GetSerializer()
+        {
+            return new ConfigurationContainer()
+                .UseOptimizedNamespaces()
+                .EnableMemberExceptionHandling()
+                .EnableImplicitTyping(typeof(AutoProfilePrograms), typeof(AutoProfileProgram), typeof(AutoProfileController))
+                .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
+                .Type<AutoProfileProgram>().EnableReferences(m => m.Path)
+                .Type<AutoProfileController>().EnableReferences(m => m.Index)
+                .Type<AutoProfilePrograms>().AddMigration(new ProgramsMigration())
+                .Create();
+        }
     }
 }
