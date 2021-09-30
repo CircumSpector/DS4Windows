@@ -402,7 +402,7 @@ namespace DS4WinWPF.DS4Forms
 
             autoProfControl.AutoDebugChanged += AutoProfControl_AutoDebugChanged;
             autoprofileChecker.RequestServiceChange += AutoprofileChecker_RequestServiceChange;
-            autoProfileHolder.AutoProfileColl.CollectionChanged += AutoProfileColl_CollectionChanged;
+            autoProfileHolder.AutoProfileCollection.CollectionChanged += AutoProfileColl_CollectionChanged;
             //autoProfControl.AutoProfVM.AutoProfileSystemChange += AutoProfVM_AutoProfileSystemChange;
             mainWinVM.FullTabsEnabledChanged += MainWinVM_FullTabsEnabledChanged;
 
@@ -499,12 +499,12 @@ Suspend support not enabled.", true);
             if (state)
             {
                 ChangeAutoProfilesStatus(true);
-                autoProfileHolder.AutoProfileColl.CollectionChanged += AutoProfileColl_CollectionChanged;
+                autoProfileHolder.AutoProfileCollection.CollectionChanged += AutoProfileColl_CollectionChanged;
             }
             else
             {
                 ChangeAutoProfilesStatus(false);
-                autoProfileHolder.AutoProfileColl.CollectionChanged -= AutoProfileColl_CollectionChanged;
+                autoProfileHolder.AutoProfileCollection.CollectionChanged -= AutoProfileColl_CollectionChanged;
             }
         }
 
@@ -707,7 +707,7 @@ Suspend support not enabled.", true);
 
         private void CheckAutoProfileStatus()
         {
-            int pathCount = autoProfileHolder.AutoProfileColl.Count;
+            int pathCount = autoProfileHolder.AutoProfileCollection.Count;
             bool timerEnabled = autoprofileChecker.Running;
             if (pathCount > 0 && !timerEnabled)
             {

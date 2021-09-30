@@ -46,9 +46,9 @@ namespace DS4WinWPF
             {
                 // Find a profile match based on autoprofile program path and wnd title list.
                 // The same program may set different profiles for each of the controllers, so we need an array of newProfileName[controllerIdx] values.
-                for (int i = 0, pathsLen = profileHolder.AutoProfileColl.Count; i < pathsLen; i++)
+                for (int i = 0, pathsLen = profileHolder.AutoProfileCollection.Count; i < pathsLen; i++)
                 {
-                    AutoProfileEntity tempEntity = profileHolder.AutoProfileColl[i];
+                    AutoProfileEntity tempEntity = profileHolder.AutoProfileCollection[i];
                     if (tempEntity.IsMatch(topProcessName, topWindowTitle))
                     {
                         if (autoProfileDebugLogLevel > 0)

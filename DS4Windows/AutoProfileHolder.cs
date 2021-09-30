@@ -9,7 +9,7 @@ namespace DS4WinWPF
 {
     public class AutoProfileHolder
     {
-        private readonly object _colLockobj = new();
+        private readonly object _collectionLock = new();
 
         //public Dictionary<string, AutoProfileEntity> AutoProfileDict { get => autoProfileDict; }
 
@@ -17,14 +17,14 @@ namespace DS4WinWPF
 
         public AutoProfileHolder()
         {
-            AutoProfileColl = new ObservableCollection<AutoProfileEntity>();
+            AutoProfileCollection = new ObservableCollection<AutoProfileEntity>();
             //autoProfileDict = new Dictionary<string, AutoProfileEntity>();
             Load();
 
-            BindingOperations.EnableCollectionSynchronization(AutoProfileColl, _colLockobj);
+            BindingOperations.EnableCollectionSynchronization(AutoProfileCollection, _collectionLock);
         }
 
-        public ObservableCollection<AutoProfileEntity> AutoProfileColl { get; }
+        public ObservableCollection<AutoProfileEntity> AutoProfileCollection { get; }
 
         [ConfigurationSystemComponent]
         private void Load()
@@ -54,7 +54,7 @@ namespace DS4WinWPF
                     item = x.SelectSingleNode("TurnOff");
                     if (item != null && bool.TryParse(item.InnerText, out var turnoff)) autoprof.Turnoff = turnoff;
 
-                    AutoProfileColl.Add(autoprof);
+                    AutoProfileCollection.Add(autoprof);
                     //autoProfileDict.Add(path, autoprof);
                 }
             }
@@ -82,7 +82,7 @@ namespace DS4WinWPF
 
                 Node = doc.CreateNode(XmlNodeType.Element, "Programs", "");
                 doc.AppendChild(Node);
-                foreach (var entity in AutoProfileColl)
+                foreach (var entity in AutoProfileCollection)
                 {
                     var el = doc.CreateElement("Program");
                     el.SetAttribute("path", entity.Path);
@@ -118,7 +118,7 @@ namespace DS4WinWPF
         public void Remove(AutoProfileEntity item)
         {
             //autoProfileDict.Remove(item.Path);
-            AutoProfileColl.Remove(item);
+            AutoProfileCollection.Remove(item);
         }
     }
 

@@ -89,7 +89,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void PopulateCurrentEntries()
         {
-            foreach(AutoProfileEntity entry in autoProfileHolder.AutoProfileColl)
+            foreach(AutoProfileEntity entry in autoProfileHolder.AutoProfileCollection)
             {
                 ProgramItem item = new ProgramItem(entry.Path, entry);
 
@@ -250,7 +250,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
 
                 item.MatchedAutoProfile = tempEntry;
-                autoProfileHolder.AutoProfileColl.Add(item.MatchedAutoProfile);
+                autoProfileHolder.AutoProfileCollection.Add(item.MatchedAutoProfile);
             }
         }
 
@@ -298,7 +298,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void RemoveAutoProfileEntry(ProgramItem item)
         {
-            autoProfileHolder.AutoProfileColl.Remove(item.MatchedAutoProfile);
+            autoProfileHolder.AutoProfileCollection.Remove(item.MatchedAutoProfile);
             item.MatchedAutoProfile = null;
         }
 
@@ -391,15 +391,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             bool itemMoved = true;
             int oldIdx = programColl.IndexOf(item);
 
-            if (moveDirection == -1 && oldIdx > 0 && oldIdx < autoProfileHolder.AutoProfileColl.Count)
+            if (moveDirection == -1 && oldIdx > 0 && oldIdx < autoProfileHolder.AutoProfileCollection.Count)
             {
                 programColl.Move(oldIdx, oldIdx - 1);
-                autoProfileHolder.AutoProfileColl.Move(oldIdx, oldIdx - 1);
+                autoProfileHolder.AutoProfileCollection.Move(oldIdx, oldIdx - 1);
             }
-            else if (moveDirection == 1 && oldIdx >= 0 && oldIdx < programColl.Count - 1 && oldIdx < autoProfileHolder.AutoProfileColl.Count - 1)
+            else if (moveDirection == 1 && oldIdx >= 0 && oldIdx < programColl.Count - 1 && oldIdx < autoProfileHolder.AutoProfileCollection.Count - 1)
             {    
                 programColl.Move(oldIdx, oldIdx + 1);
-                autoProfileHolder.AutoProfileColl.Move(oldIdx, oldIdx + 1);
+                autoProfileHolder.AutoProfileCollection.Move(oldIdx, oldIdx + 1);
             }
             else
                 itemMoved = false;
