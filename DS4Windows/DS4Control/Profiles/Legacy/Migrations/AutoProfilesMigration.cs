@@ -7,6 +7,9 @@ using ExtendedXmlSerializer;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
 {
+    /// <summary>
+    ///     Transparently transforms outdated XML formats into the currently required one.
+    /// </summary>
     internal sealed class AutoProfilesMigration : IEnumerable<Action<XElement>>
     {
         public IEnumerator<Action<XElement>> GetEnumerator()
