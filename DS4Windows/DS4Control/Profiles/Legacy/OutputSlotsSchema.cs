@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 
@@ -12,14 +13,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DeviceType")]
         public OutContType DeviceType { get; set; } = OutContType.X360;
 
-        [XmlAttribute(AttributeName = "idx")]
+        [XmlAttribute(AttributeName = "idx")] 
         public int Idx { get; set; }
     }
 
     [XmlRoot(ElementName = "OutputSlots")]
     public class OutputSlots : XmlSerializable<OutputSlots>
     {
-        [XmlElement(ElementName = "Slot")]
+        [XmlElement(ElementName = "Slot")] 
         public List<Slot> Slot { get; set; } = new(Global.MAX_DS4_CONTROLLER_COUNT);
 
         [XmlAttribute(AttributeName = "app_version")]
@@ -31,8 +32,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 .UseOptimizedNamespaces()
                 .EnableImplicitTyping(typeof(OutputSlots), typeof(Slot))
                 .Type<Slot>().EnableReferences(c => c.Idx)
+                .Type<OutputSlots>().AddMigration(new OutputSlotsMigration())
                 .EnableMemberExceptionHandling()
-                .Create();   
+                .Create();
         }
     }
 }

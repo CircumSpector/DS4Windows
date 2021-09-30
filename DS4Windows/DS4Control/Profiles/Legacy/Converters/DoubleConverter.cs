@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using DS4Windows;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
@@ -30,7 +30,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
             //
             // Take wrong culture into consideration
             // 
-            return double.Parse(ReplaceLastOccurrence(data, ",", "."), new CultureInfo("en-US"));
+            return double.Parse(ReplaceLastOccurrence(data, ",", "."), Constants.StorageCulture);
         }
 
         public override string Format(double instance)
@@ -38,7 +38,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
             //
             // Always persist with dot as decimal separator
             // 
-            return instance.ToString(new CultureInfo("en-US"));
+            return instance.ToString(Constants.StorageCulture);
         }
     }
 }

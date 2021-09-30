@@ -7,13 +7,13 @@ using ExtendedXmlSerializer;
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
 {
     /// <summary>
-    ///     Helper to transparently upgrade the remapping nodes in <see cref="DS4WindowsProfile"/>s.
+    ///     Transparently transforms outdated XML formats into the currently required one.
     /// </summary>
     internal sealed class ControlsCollectionEntityMigration : IEnumerable<Action<XElement>>
     {
         public IEnumerator<Action<XElement>> GetEnumerator()
         {
-            yield return Migration;
+            yield return MigrateFromAppVersion3;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -21,7 +21,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
             return GetEnumerator();
         }
 
-        public static void Migration(XElement node)
+        public static void MigrateFromAppVersion3(XElement node)
         {
             //
             // Missing critical value, no use to continue

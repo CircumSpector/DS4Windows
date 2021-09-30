@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using DS4Windows;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
@@ -18,12 +18,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
 
         public override DateTime Parse(string data)
         {
-            return DateTime.Parse(data);
+            return DateTime.Parse(data, Constants.StorageCulture);
         }
 
         public override string Format(DateTime instance)
         {
-            return instance.ToString(CultureInfo.InvariantCulture);
+            return instance.ToString(Constants.StorageCulture);
         }
     }
 }
