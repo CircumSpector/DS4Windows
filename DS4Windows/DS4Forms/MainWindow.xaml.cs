@@ -91,7 +91,7 @@ namespace DS4WinWPF.DS4Forms
             trayIconVM = new TrayIconViewModel(App.rootHub, profileListHolder);
             notifyIcon.DataContext = trayIconVM;
 
-            if (Global.Instance.Config.StartMinimized || parser.Mini)
+            if (Global.Instance.Config.StartMinimized || parser.StartMinimized)
             {
                 WindowState = WindowState.Minimized;
             }

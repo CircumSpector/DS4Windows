@@ -1,34 +1,29 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DS4Windows.DS4Control;
 
 namespace DS4WinWPF
 {
     public class ArgumentParser
     {
-        private bool mini;
-        private bool stop;
-        private bool driverinstall;
-        private bool reenableDevice;
-        private string deviceInstanceId;
-        private bool runtask;
-        private bool command;
-        private string commandArgs;
-        private string virtualkbmHandler = VirtualKBMFactory.DEFAULT_IDENTIFIER;
+        private readonly Dictionary<string, string> errors = new();
 
-        private Dictionary<string, string> errors =
-            new Dictionary<string, string>();
+        public bool StartMinimized { get; private set; }
 
-        public bool Mini { get => mini; }
-        public bool Stop { get => stop; }
-        public bool Driverinstall { get => driverinstall; }
-        public bool ReenableDevice { get => reenableDevice; }
-        public bool Runtask { get => runtask; }
-        public bool Command { get => command; }
-        public string DeviceInstanceId { get => deviceInstanceId; }
-        public string CommandArgs { get => commandArgs; }
-        public string VirtualkbmHandler { get => virtualkbmHandler; }
-        public Dictionary<string, string> Errors { get => errors; }
+        public bool Stop { get; private set; }
+
+        public bool DriverInstall { get; private set; }
+
+        public bool ReenableDevice { get; private set; }
+
+        public bool RunTask { get; private set; }
+
+        public bool Command { get; private set; }
+
+        public string DeviceInstanceId { get; private set; }
+
+        public string CommandArgs { get; private set; }
+
+        public string VirtualkbmHandler { get; private set; } = VirtualKBMFactory.DEFAULT_IDENTIFIER;
 
         public bool HasErrors => errors.Count > 0;
 
@@ -36,53 +31,50 @@ namespace DS4WinWPF
         {
             errors.Clear();
             //foreach (string arg in args)
-            for (int i = 0; i < args.Length; i++)
+            for (var i = 0; i < args.Length; i++)
             {
-                string arg = args[i];
-                switch(arg)
+                var arg = args[i];
+                switch (arg)
                 {
                     case "driverinstall":
                     case "-driverinstall":
-                        driverinstall = true;
+                        DriverInstall = true;
                         break;
 
                     case "re-enabledevice":
                     case "-re-enabledevice":
-                        reenableDevice = true;
-                        if (i + 1 < args.Length)
-                        {
-                            deviceInstanceId = args[++i];
-                        }
+                        ReenableDevice = true;
+                        if (i + 1 < args.Length) DeviceInstanceId = args[++i];
 
                         break;
 
                     case "runtask":
                     case "-runtask":
-                        runtask = true;
+                        RunTask = true;
                         break;
 
                     case "-stop":
-                        stop = true;
+                        Stop = true;
                         break;
 
                     case "-m":
-                        mini = true;
+                        StartMinimized = true;
                         break;
 
                     case "command":
                     case "-command":
-                        command = true;
+                        Command = true;
                         if (i + 1 < args.Length)
                         {
                             i++;
-                            string temp = args[i];
+                            var temp = args[i];
                             if (temp.Length > 0 && temp.Length <= 256)
                             {
-                                commandArgs = temp;
+                                CommandArgs = temp;
                             }
                             else
                             {
-                                command = false;
+                                Command = false;
                                 errors["Command"] = "Command length is invalid";
                             }
                         }
@@ -90,22 +82,18 @@ namespace DS4WinWPF
                         {
                             errors["Command"] = "Command string not given";
                         }
+
                         break;
                     case "-virtualkbm":
                         if (i + 1 < args.Length)
                         {
                             i++;
-                            string temp = args[i];
-                            bool valid = VirtualKBMFactory.IsValidHandler(temp);
-                            if (valid)
-                            {
-                                virtualkbmHandler = temp;
-                            }
+                            var temp = args[i];
+                            var valid = VirtualKBMFactory.IsValidHandler(temp);
+                            if (valid) VirtualkbmHandler = temp;
                         }
 
                         break;
-
-                    default: break;
                 }
             }
         }

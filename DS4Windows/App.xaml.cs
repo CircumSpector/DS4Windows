@@ -405,7 +405,7 @@ namespace DS4WinWPF
                 exitApp = true;
                 Current.Shutdown(1);
             }
-            else if (parser.Driverinstall)
+            else if (parser.DriverInstall)
             {
                 // Retrieve info about installed ViGEmBus device if found.
                 // Might not be needed here
@@ -425,7 +425,7 @@ namespace DS4WinWPF
                 exitApp = true;
                 Current.Shutdown();
             }
-            else if (parser.Runtask)
+            else if (parser.RunTask)
             {
                 StartupMethods.LaunchOldTask();
                 runShutdown = false;
