@@ -141,7 +141,7 @@ namespace DS4WinWPF
                 Current.Shutdown(1);
             }
 
-            logHolder = new LoggerHolder(rootHub);
+            //logHolder = new LoggerHolder(rootHub);
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             
@@ -225,8 +225,8 @@ namespace DS4WinWPF
         {
             if (runShutdown)
             {
-                var logger = logHolder.Logger;
-                logger.Info("Request App Shutdown");
+                var logger = _host.Services.GetRequiredService<ILogger<App>>();
+                logger.LogInformation("Request App Shutdown");
                 CleanShutdown();
             }
 
@@ -240,7 +240,6 @@ namespace DS4WinWPF
 
         public static ControlService rootHub;
         public static HttpClient requestClient;
-        private static LoggerHolder logHolder;
 
         private static readonly Dictionary<AppThemeChoice, string> themeLocs = new()
         {
@@ -283,14 +282,15 @@ namespace DS4WinWPF
         
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+
             if (!Current.Dispatcher.CheckAccess())
             {
-                var logger = logHolder.Logger;
                 var exp = e.ExceptionObject as Exception;
-                logger.Error($"Thread App Crashed with message {exp.Message}");
-                logger.Error(exp.ToString());
-                //LogManager.Flush();
-                //LogManager.Shutdown();
+                
+                logger.LogError($"Thread App Crashed with message {exp.Message}");
+                logger.LogError(exp.ToString());
+                
                 if (e.IsTerminating)
                     Dispatcher.Invoke(() =>
                     {
@@ -300,12 +300,11 @@ namespace DS4WinWPF
             }
             else
             {
-                var logger = logHolder.Logger;
                 var exp = e.ExceptionObject as Exception;
                 if (e.IsTerminating)
                 {
-                    logger.Error($"Thread Crashed with message {exp.Message}");
-                    logger.Error(exp.ToString());
+                    logger.LogError($"Thread Crashed with message {exp.Message}");
+                    logger.LogError(exp.ToString());
 
                     rootHub?.PrepareAbort();
                     CleanShutdown();
@@ -317,9 +316,9 @@ namespace DS4WinWPF
         {
             //Debug.WriteLine("App Crashed");
             //Debug.WriteLine(e.Exception.StackTrace);
-            var logger = logHolder.Logger;
-            logger.Error($"Thread Crashed with message {e.Exception.Message}");
-            logger.Error(e.Exception.ToString());
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+            logger.LogError($"Thread Crashed with message {e.Exception.Message}");
+            logger.LogError(e.Exception.ToString());
             //LogManager.Flush();
             //LogManager.Shutdown();
         }
@@ -726,8 +725,8 @@ namespace DS4WinWPF
 
         private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
-            var logger = logHolder.Logger;
-            logger.Info("User Session Ending");
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+            logger.LogInformation("User Session Ending");
             CleanShutdown();
         }
 
