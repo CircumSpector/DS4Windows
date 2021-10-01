@@ -51,7 +51,7 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DS4DeviceOptions
     {
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
         private void OnEnabledChanged()
@@ -110,7 +110,7 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DualSenseDeviceOptions
     {
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
         private void OnEnabledChanged()
@@ -144,7 +144,7 @@ namespace DS4Windows
         {
         }
 
-        public bool EnableRumble { get; set; }
+        public bool EnableRumble { get; set; } = true;
 
         public DualSenseDevice.HapticIntensity HapticIntensity { get; set; } = DualSenseDevice.HapticIntensity.Medium;
 
@@ -236,44 +236,36 @@ namespace DS4Windows
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class SwitchProDeviceOptions
     {
-        private bool enabled = true;
+        public bool Enabled { get; set; } = true;
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class SwitchProControllerOptions : ControllerOptionsStore
     {
-        private bool enableHomeLED = true;
-
         public SwitchProControllerOptions(InputDeviceType deviceType) : base(deviceType)
         {
         }
 
-        public bool EnableHomeLED
+        public bool EnableHomeLED { get; set; } = true;
+
+        [UsedImplicitly]
+        private void OnEnableHomeLEDChanged()
         {
-            get => enableHomeLED;
-            set
-            {
-                if (enableHomeLED == value) return;
-                enableHomeLED = value;
-                EnableHomeLEDChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnableHomeLEDChanged?.Invoke();
         }
 
-        public event EventHandler EnableHomeLEDChanged;
+        public event Action EnableHomeLEDChanged;
 
         [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
@@ -285,7 +277,7 @@ namespace DS4Windows
                 tempOptsNode.RemoveAll();
 
             XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
-            tempElement.InnerText = enableHomeLED.ToString();
+            tempElement.InnerText = EnableHomeLED.ToString();
             tempOptsNode.AppendChild(tempElement);
 
             node.AppendChild(tempOptsNode);
@@ -298,11 +290,12 @@ namespace DS4Windows
             if (baseNode != null)
             {
                 var item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableHomeLED = temp;
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) EnableHomeLED = temp;
             }
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class JoyConDeviceOptions
     {
         public enum JoinedGyroProvider : ushort
@@ -317,67 +310,37 @@ namespace DS4Windows
             Joined
         }
 
-        private bool enabled = true;
+        public bool Enabled { get; set; } = true;
 
-        private JoinedGyroProvider joinGyroProv = JoinedGyroProvider.JoyConR;
+        public LinkMode LinkedMode { get; set; } = LinkMode.Joined;
 
-        private LinkMode linkedMode = LinkMode.Joined;
+        public JoinedGyroProvider JoinGyroProv { get; set; } = JoinedGyroProvider.JoyConR;
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public LinkMode LinkedMode
-        {
-            get => linkedMode;
-            set
-            {
-                if (linkedMode == value) return;
-                linkedMode = value;
-            }
-        }
-
-        public JoinedGyroProvider JoinGyroProv
-        {
-            get => joinGyroProv;
-            set
-            {
-                if (joinGyroProv == value) return;
-                joinGyroProv = value;
-            }
-        }
-
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class JoyConControllerOptions : ControllerOptionsStore
     {
-        private bool enableHomeLED = true;
-
         public JoyConControllerOptions(InputDeviceType deviceType) :
             base(deviceType)
         {
         }
 
-        public bool EnableHomeLED
+        public bool EnableHomeLED { get; set; } = true;
+
+        private void OnEnableHomeLEDChanged()
         {
-            get => enableHomeLED;
-            set
-            {
-                if (enableHomeLED == value) return;
-                enableHomeLED = value;
-                EnableHomeLEDChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnableHomeLEDChanged?.Invoke();
         }
 
-        public event EventHandler EnableHomeLEDChanged;
+        public event Action EnableHomeLEDChanged;
 
         [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
@@ -389,7 +352,7 @@ namespace DS4Windows
                 tempOptsNode.RemoveAll();
 
             XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
-            tempElement.InnerText = enableHomeLED.ToString();
+            tempElement.InnerText = EnableHomeLED.ToString();
             tempOptsNode.AppendChild(tempElement);
 
             node.AppendChild(tempOptsNode);
@@ -402,7 +365,7 @@ namespace DS4Windows
             if (baseNode != null)
             {
                 var item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableHomeLED = temp;
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) EnableHomeLED = temp;
             }
         }
     }
