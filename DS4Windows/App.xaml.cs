@@ -23,7 +23,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
-using NLog;
 using Serilog;
 using WPFLocalizeExtension.Engine;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -624,9 +623,6 @@ namespace DS4WinWPF
 
                 if (ipcClassNameMMA != null) ipcClassNameMMA.Dispose();
                 if (ipcClassNameMMF != null) ipcClassNameMMF.Dispose();
-
-                LogManager.Flush();
-                LogManager.Shutdown();
             }
         }
     }

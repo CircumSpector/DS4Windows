@@ -85,7 +85,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="NLog" Version="4.7.11" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="4.0.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
@@ -281,9 +280,6 @@
     <None Update="libs\$(Platform)\FakerInputWrapper\FakerInputDll.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>FakerInputDll.dll</Link>
-    </None>
-    <None Update="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
