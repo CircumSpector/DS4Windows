@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 
@@ -11,12 +8,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 {
     public class LoadProfileViewModel : NotifyDataErrorBase
     {
-        private bool autoUntrigger;
-        private ProfileList profileList;
         private int profileIndex;
-        private bool normalTrigger = true;
 
-        public bool AutoUntrigger { get => autoUntrigger; set => autoUntrigger = value; }
+        public LoadProfileViewModel(ProfileList profileList)
+        {
+            ProfileList = profileList;
+
+            ProfileIndexChanged += LoadProfileViewModel_ProfileIndexChanged;
+        }
+
+        public bool AutoUntrigger { get; set; }
+
         public int ProfileIndex
         {
             get => profileIndex;
@@ -27,30 +29,21 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                 ProfileIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        public bool UnloadEnabled => profileIndex > 0;
+
+        public ProfileList ProfileList { get; }
+
+        public bool NormalTrigger { get; set; } = true;
         public event EventHandler ProfileIndexChanged;
-
-        public bool UnloadEnabled { get => profileIndex > 0; }
         public event EventHandler UnloadEnabledChanged;
-
-        public ProfileList ProfileList { get => profileList; }
-        public bool NormalTrigger { get => normalTrigger; set => normalTrigger = value; }
-
-        public LoadProfileViewModel(ProfileList profileList)
-        {
-            this.profileList = profileList;
-
-            ProfileIndexChanged += LoadProfileViewModel_ProfileIndexChanged;
-        }
 
         public void LoadAction(SpecialAction action)
         {
-            autoUntrigger = action.AutomaticUnTrigger;
-            string profilename = action.Details;
-            ProfileEntity item = profileList.ProfileListCollection.SingleOrDefault(x => x.Name == profilename);
-            if (item != null)
-            {
-                profileIndex = profileList.ProfileListCollection.IndexOf(item) + 1;
-            }
+            AutoUntrigger = action.AutomaticUnTrigger;
+            var profilename = action.Details;
+            var item = ProfileList.ProfileListCollection.SingleOrDefault(x => x.Name == profilename);
+            if (item != null) profileIndex = ProfileList.ProfileListCollection.IndexOf(item) + 1;
         }
 
         private void LoadProfileViewModel_ProfileIndexChanged(object sender, EventArgs e)
@@ -62,15 +55,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             if (profileIndex > 0)
             {
-                string profilename = profileList.ProfileListCollection[profileIndex - 1].Name;
-                if (action.UControls == null)
-                {
-                    action.UControls = string.Empty;
-                }
+                var profilename = ProfileList.ProfileListCollection[profileIndex - 1].Name;
+                if (action.UControls == null) action.UControls = string.Empty;
 
                 Global.Instance.SaveAction(action.Name, action.Controls, 3, profilename, edit,
                     action.UControls +
-                    (autoUntrigger ? (action.UControls.Length > 0 ? "/" : "") + "AutomaticUntrigger" : ""));
+                    (AutoUntrigger ? (action.UControls.Length > 0 ? "/" : "") + "AutomaticUntrigger" : ""));
             }
         }
 
@@ -78,8 +68,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             ClearOldErrors();
 
-            bool valid = true;
-            List<string> profileIndexErrors = new List<string>();
+            var valid = true;
+            var profileIndexErrors = new List<string>();
 
             if (profileIndex == 0)
             {
