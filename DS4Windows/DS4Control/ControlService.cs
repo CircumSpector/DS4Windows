@@ -343,7 +343,7 @@ namespace DS4Windows
                 InputDevices.DualSenseDevice tempDSDev = device as InputDevices.DualSenseDevice;
 
                 DualSenseControllerOptions dSOpts = tempDSDev.NativeOptionsStore;
-                dSOpts.LedModeChanged += (sender, e) => { tempDSDev.CheckControllerNumDeviceSettings(activeControllers); };
+                dSOpts.LedModeChanged += () => { tempDSDev.CheckControllerNumDeviceSettings(activeControllers); };
             }
             else if (device.DeviceType == InputDevices.InputDeviceType.JoyConL ||
                 device.DeviceType == InputDevices.InputDeviceType.JoyConR)

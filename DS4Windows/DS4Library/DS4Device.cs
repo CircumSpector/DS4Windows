@@ -2241,7 +2241,7 @@ namespace DS4Windows
         private void SetupOptionsEvents()
         {
             if (nativeOptionsStore != null)
-                nativeOptionsStore.IsCopyCatChanged += (sender, e) => { PrepareOutputFeaturesByte(); };
+                nativeOptionsStore.IsCopyCatChanged += PrepareOutputFeaturesByte;
         }
 
         public virtual void PrepareTriggerEffect(TriggerId trigger,

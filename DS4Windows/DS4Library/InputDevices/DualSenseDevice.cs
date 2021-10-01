@@ -1457,24 +1457,24 @@ namespace DS4Windows.InputDevices
         {
             if (NativeOptionsStore != null)
             {
-                NativeOptionsStore.EnableRumbleChanged += (sender, e) =>
+                NativeOptionsStore.EnableRumbleChanged += () =>
                 {
                     UseRumble = NativeOptionsStore.EnableRumble;
                     queueEvent(() => { outputDirty = true; });
                 };
-                NativeOptionsStore.HapticIntensityChanged += (sender, e) =>
+                NativeOptionsStore.HapticIntensityChanged += () =>
                 {
                     HapticChoice = NativeOptionsStore.HapticIntensity;
                     queueEvent(() => { outputDirty = true; });
                 };
 
-                NativeOptionsStore.MuteLedModeChanged += (sender, e) =>
+                NativeOptionsStore.MuteLedModeChanged += () =>
                 {
                     PrepareMuteLEDByte();
                     queueEvent(() => { outputDirty = true; });
                 };
 
-                NativeOptionsStore.LedModeChanged += (sender, e) =>
+                NativeOptionsStore.LedModeChanged += () =>
                 {
                     PreparePlayerLEDBarByte();
                     queueEvent(() => { outputDirty = true; });

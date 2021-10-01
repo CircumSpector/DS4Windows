@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Xml;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Attributes;
@@ -62,27 +61,23 @@ namespace DS4Windows
 
         public event Action EnabledChanged;
     }
-    
+
+    [AddINotifyPropertyChangedInterface]
     public class DS4ControllerOptions : ControllerOptionsStore
     {
-        private bool copyCatController;
-
         public DS4ControllerOptions(InputDeviceType deviceType) : base(deviceType)
         {
         }
 
-        public bool IsCopyCat
+        public bool IsCopyCat { get; set; }
+
+        [UsedImplicitly]
+        private void OnIsCopyCatChanged()
         {
-            get => copyCatController;
-            set
-            {
-                if (copyCatController == value) return;
-                copyCatController = value;
-                IsCopyCatChanged?.Invoke(this, EventArgs.Empty);
-            }
+            IsCopyCatChanged?.Invoke();
         }
 
-        public event EventHandler IsCopyCatChanged;
+        public event Action IsCopyCatChanged;
 
         [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
@@ -94,7 +89,7 @@ namespace DS4Windows
                 tempOptsNode.RemoveAll();
 
             XmlNode tempRumbleNode = xmlDoc.CreateElement("Copycat");
-            tempRumbleNode.InnerText = copyCatController.ToString();
+            tempRumbleNode.InnerText = IsCopyCat.ToString();
             tempOptsNode.AppendChild(tempRumbleNode);
 
             node.AppendChild(tempOptsNode);
@@ -107,29 +102,26 @@ namespace DS4Windows
             if (baseNode != null)
             {
                 var item = baseNode.SelectSingleNode("Copycat");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) copyCatController = temp;
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) IsCopyCat = temp;
             }
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class DualSenseDeviceOptions
     {
-        private bool enabled = true;
+        public bool Enabled { get; set; }
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class DualSenseControllerOptions : ControllerOptionsStore
     {
         public enum LEDBarMode : ushort
@@ -147,67 +139,47 @@ namespace DS4Windows
             Pulse
         }
 
-        private bool enableRumble = true;
-
-        private DualSenseDevice.HapticIntensity hapticIntensity = DualSenseDevice.HapticIntensity.Medium;
-
-        private LEDBarMode ledMode = LEDBarMode.MultipleControllers;
-
-        private MuteLEDMode muteLedMode = MuteLEDMode.Off;
-
         public DualSenseControllerOptions(InputDeviceType deviceType) :
             base(deviceType)
         {
         }
 
-        public bool EnableRumble
+        public bool EnableRumble { get; set; }
+
+        public DualSenseDevice.HapticIntensity HapticIntensity { get; set; } = DualSenseDevice.HapticIntensity.Medium;
+
+        public LEDBarMode LedMode { get; set; } = LEDBarMode.MultipleControllers;
+
+        public MuteLEDMode MuteLedMode { get; set; } = MuteLEDMode.Off;
+
+        [UsedImplicitly]
+        private void OnEnableRumbleChanged()
         {
-            get => enableRumble;
-            set
-            {
-                if (enableRumble == value) return;
-                enableRumble = value;
-                EnableRumbleChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnableRumbleChanged?.Invoke();
         }
 
-        public DualSenseDevice.HapticIntensity HapticIntensity
+        [UsedImplicitly]
+        private void OnHapticIntensityChanged()
         {
-            get => hapticIntensity;
-            set
-            {
-                if (hapticIntensity == value) return;
-                hapticIntensity = value;
-                HapticIntensityChanged?.Invoke(this, EventArgs.Empty);
-            }
+            HapticIntensityChanged?.Invoke();
         }
 
-        public LEDBarMode LedMode
+        [UsedImplicitly]
+        private void OnLedModeChanged()
         {
-            get => ledMode;
-            set
-            {
-                if (ledMode == value) return;
-                ledMode = value;
-                LedModeChanged?.Invoke(this, EventArgs.Empty);
-            }
+            LedModeChanged?.Invoke();
         }
 
-        public MuteLEDMode MuteLedMode
+        [UsedImplicitly]
+        private void OnMuteLedModeChanged()
         {
-            get => muteLedMode;
-            set
-            {
-                if (muteLedMode == value) return;
-                muteLedMode = value;
-                MuteLedModeChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MuteLedModeChanged?.Invoke();
         }
 
-        public event EventHandler EnableRumbleChanged;
-        public event EventHandler HapticIntensityChanged;
-        public event EventHandler LedModeChanged;
-        public event EventHandler MuteLedModeChanged;
+        public event Action EnableRumbleChanged;
+        public event Action HapticIntensityChanged;
+        public event Action LedModeChanged;
+        public event Action MuteLedModeChanged;
 
         [ConfigurationSystemComponent]
         public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
@@ -219,19 +191,19 @@ namespace DS4Windows
                 tempOptsNode.RemoveAll();
 
             XmlNode tempRumbleNode = xmlDoc.CreateElement("EnableRumble");
-            tempRumbleNode.InnerText = enableRumble.ToString();
+            tempRumbleNode.InnerText = EnableRumble.ToString();
             tempOptsNode.AppendChild(tempRumbleNode);
 
             XmlNode tempRumbleStrengthNode = xmlDoc.CreateElement("RumbleStrength");
-            tempRumbleStrengthNode.InnerText = hapticIntensity.ToString();
+            tempRumbleStrengthNode.InnerText = HapticIntensity.ToString();
             tempOptsNode.AppendChild(tempRumbleStrengthNode);
 
             XmlNode tempLedMode = xmlDoc.CreateElement("LEDBarMode");
-            tempLedMode.InnerText = ledMode.ToString();
+            tempLedMode.InnerText = LedMode.ToString();
             tempOptsNode.AppendChild(tempLedMode);
 
             XmlNode tempMuteLedMode = xmlDoc.CreateElement("MuteLEDMode");
-            tempMuteLedMode.InnerText = muteLedMode.ToString();
+            tempMuteLedMode.InnerText = MuteLedMode.ToString();
             tempOptsNode.AppendChild(tempMuteLedMode);
 
             node.AppendChild(tempOptsNode);
@@ -244,22 +216,22 @@ namespace DS4Windows
             if (baseNode != null)
             {
                 var item = baseNode.SelectSingleNode("EnableRumble");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableRumble = temp;
+                if (bool.TryParse(item?.InnerText ?? "", out var temp)) EnableRumble = temp;
 
                 var itemStrength = baseNode.SelectSingleNode("RumbleStrength");
                 if (Enum.TryParse(itemStrength?.InnerText ?? "",
                     out DualSenseDevice.HapticIntensity tempHap))
-                    hapticIntensity = tempHap;
+                    HapticIntensity = tempHap;
 
                 var itemLedMode = baseNode.SelectSingleNode("LEDBarMode");
                 if (Enum.TryParse(itemLedMode?.InnerText ?? "",
                     out LEDBarMode tempLED))
-                    ledMode = tempLED;
+                    LedMode = tempLED;
 
                 var itemMuteLedMode = baseNode.SelectSingleNode("MuteLEDMode");
                 if (Enum.TryParse(itemMuteLedMode?.InnerText ?? "",
                     out MuteLEDMode tempMuteLED))
-                    muteLedMode = tempMuteLED;
+                    MuteLedMode = tempMuteLED;
             }
         }
     }
