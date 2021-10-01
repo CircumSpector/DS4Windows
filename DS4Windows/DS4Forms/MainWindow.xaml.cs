@@ -57,7 +57,7 @@ namespace DS4WinWPF.DS4Forms
 
         public ProfileList ProfileListHolder { get => profileListHolder; }
 
-        public MainWindow(ArgumentParser parser)
+        public MainWindow(CommandLineOptions parser)
         {
             InitializeComponent();
 
@@ -136,7 +136,7 @@ namespace DS4WinWPF.DS4Forms
             timerThread.Join();
         }
 
-        public void LateChecks(ArgumentParser parser)
+        public void LateChecks(CommandLineOptions parser)
         {
             Task tempTask = Task.Run(async () =>
             {

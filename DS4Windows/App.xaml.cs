@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -79,7 +78,7 @@ namespace DS4WinWPF
 
             services.AddOptions();
 
-            services.AddSingleton<ArgumentParser>();
+            services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<AppLogger>();
         }
 
@@ -97,7 +96,7 @@ namespace DS4WinWPF
 
             var logger = _host.Services.GetRequiredService<ILogger<App>>();
 
-            var parser = _host.Services.GetRequiredService<ArgumentParser>();
+            var parser = (CommandLineOptions)_host.Services.GetRequiredService<ICommandLineOptions>();
 
             parser.Parse(e.Args);
 
@@ -377,7 +376,7 @@ namespace DS4WinWPF
             }
         }
 
-        private void CheckOptions(ArgumentParser parser)
+        private void CheckOptions(CommandLineOptions parser)
         {
             if (parser.HasErrors)
             {
@@ -493,7 +492,7 @@ namespace DS4WinWPF
             }
         }
 
-        private void CreateControlService(ArgumentParser parser)
+        private void CreateControlService(CommandLineOptions parser)
         {
             controlThread = new Thread(() =>
             {

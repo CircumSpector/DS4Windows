@@ -3,9 +3,32 @@ using DS4Windows.DS4Control;
 
 namespace DS4WinWPF
 {
-    public class ArgumentParser
+    public interface ICommandLineOptions
+    {
+        bool StartMinimized { get; }
+
+        bool Stop { get; }
+
+        bool DriverInstall { get; }
+
+        bool ReenableDevice { get; }
+
+        bool RunTask { get; }
+
+        bool Command { get; }
+
+        string DeviceInstanceId { get; }
+
+        string CommandArgs { get; }
+
+        string VirtualKBMHandler { get; }
+    }
+
+    public class CommandLineOptions : ICommandLineOptions
     {
         private readonly Dictionary<string, string> errors = new();
+
+        public bool HasErrors => errors.Count > 0;
 
         public bool StartMinimized { get; private set; }
 
@@ -23,9 +46,7 @@ namespace DS4WinWPF
 
         public string CommandArgs { get; private set; }
 
-        public string VirtualkbmHandler { get; private set; } = VirtualKBMFactory.DEFAULT_IDENTIFIER;
-
-        public bool HasErrors => errors.Count > 0;
+        public string VirtualKBMHandler { get; private set; } = VirtualKBMFactory.DEFAULT_IDENTIFIER;
 
         public void Parse(string[] args)
         {
@@ -90,7 +111,7 @@ namespace DS4WinWPF
                             i++;
                             var temp = args[i];
                             var valid = VirtualKBMFactory.IsValidHandler(temp);
-                            if (valid) VirtualkbmHandler = temp;
+                            if (valid) VirtualKBMHandler = temp;
                         }
 
                         break;

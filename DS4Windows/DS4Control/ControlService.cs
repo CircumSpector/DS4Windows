@@ -76,7 +76,7 @@ namespace DS4Windows
         private ControlServiceDeviceOptions deviceOptions;
         public ControlServiceDeviceOptions DeviceOptions { get => deviceOptions; }
 
-        private DS4WinWPF.ArgumentParser cmdParser;
+        private DS4WinWPF.CommandLineOptions cmdParser;
 
         public event EventHandler ServiceStarted;
         public event EventHandler PreServiceStop;
@@ -163,7 +163,7 @@ namespace DS4Windows
         private bool busThrRunning = false;
         private Queue<Action> busEvtQueue = new Queue<Action>();
         private object busEvtQueueLock = new object();
-        public ControlService(DS4WinWPF.ArgumentParser cmdParser)
+        public ControlService(DS4WinWPF.CommandLineOptions cmdParser)
         {
             this.cmdParser = cmdParser;
 
@@ -264,7 +264,7 @@ namespace DS4Windows
 
         private void InitOutputKBMHandler()
         {
-            string attemptVirtualkbmHandler = cmdParser.VirtualkbmHandler;
+            string attemptVirtualkbmHandler = cmdParser.VirtualKBMHandler;
             Global.InitOutputKBMHandler(attemptVirtualkbmHandler);
             if (!Global.outputKBMHandler.Connect() &&
                 attemptVirtualkbmHandler != VirtualKBMFactory.GetFallbackHandlerIdentifier())
