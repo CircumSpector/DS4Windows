@@ -1124,25 +1124,35 @@ namespace DS4Windows
                         //HidDevice.ReadStatus res = hDevice.ReadAsyncWithFileStream(btInputReport, READ_STREAM_TIMEOUT);
                         HidDevice.ReadStatus res;
 
+#if WITH_TRACING
                         using (GlobalTracer.Instance.BuildSpan(nameof(hDevice.ReadWithFileStream)).StartActive(true))
                         {
+#endif
                             res = hDevice.ReadWithFileStream(btInputReport);
+#if WITH_TRACING
                         }
+#endif
 
                         timeoutEvent = false;
                         if (res == HidDevice.ReadStatus.Success)
                         {
                             //Array.Copy(btInputReport, 2, inputReport, 0, inputReport.Length);
+#if WITH_TRACING
                             using (GlobalTracer.Instance.BuildSpan("CopyReport").StartActive(true))
                             {
+#endif
                                 fixed (byte* byteP = &btInputReport[2], imp = inputReport)
                                 {
                                     for (var j = 0; j < BT_INPUT_REPORT_LENGTH - 2; j++) imp[j] = byteP[j];
                                 }
+#if WITH_TRACING
                             }
+#endif
 
+#if WITH_TRACING
                             using (GlobalTracer.Instance.BuildSpan("CalculateCRC32").StartActive(true))
                             {
+#endif
                                 //uint recvCrc32 = BitConverter.ToUInt32(btInputReport, BT_INPUT_REPORT_CRC32_POS);
                                 var recvCrc32 = btInputReport[BT_INPUT_REPORT_CRC32_POS] |
                                                 (uint)(btInputReport[CRC32_POS_1] << 8) |
@@ -1185,7 +1195,9 @@ namespace DS4Windows
                                     readWaitEv.Reset();
                                     continue;
                                 }
+#if WITH_TRACING
                             }
+#endif
 
                             inputReportErrorCount = 0;
                         }

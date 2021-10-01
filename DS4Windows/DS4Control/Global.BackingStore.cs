@@ -1451,7 +1451,9 @@ namespace DS4Windows
                     CONFIG_VERSION
                 );
                 
+#if WITH_TRACING
                 using var scope = GlobalTracer.Instance.BuildSpan(nameof(SaveProfile)).StartActive(true);
+#endif
 
                 try
                 {
@@ -1611,7 +1613,9 @@ namespace DS4Windows
                 var xinputPlug = false;
                 var xinputStatus = false;
 
+#if WITH_TRACING
                 using var scope = GlobalTracer.Instance.BuildSpan(nameof(LoadProfile)).StartActive(true);
+#endif
 
                 if (File.Exists(profilepath))
                 {
