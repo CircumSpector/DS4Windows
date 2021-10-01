@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Data;
@@ -9,11 +10,11 @@ namespace DS4WinWPF
 {
     public class ProfileList
     {
-        private readonly object _proLockobj = new();
+        private readonly object _lockObject = new();
 
         public ProfileList()
         {
-            BindingOperations.EnableCollectionSynchronization(ProfileListCollection, _proLockobj);
+            BindingOperations.EnableCollectionSynchronization(ProfileListCollection, _lockObject);
         }
 
         public ObservableCollection<ProfileEntity> ProfileListCollection { get; set; } = new();
@@ -22,7 +23,7 @@ namespace DS4WinWPF
         public void Refresh()
         {
             ProfileListCollection.Clear();
-            var profiles = Directory.GetFiles(Global.RuntimeAppDataPath + @"\Profiles\");
+            var profiles = Directory.GetFiles(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory));
             foreach (var s in profiles)
                 if (s.EndsWith(".xml"))
                 {
@@ -35,15 +36,15 @@ namespace DS4WinWPF
                 }
         }
 
-        public void AddProfileSort(string profilename)
+        public void AddProfileSort(string profileName)
         {
             var idx = 0;
             var inserted = false;
             foreach (var entry in ProfileListCollection)
             {
-                if (entry.Name.CompareTo(profilename) > 0)
+                if (string.Compare(entry.Name, profileName, StringComparison.Ordinal) > 0)
                 {
-                    ProfileListCollection.Insert(idx, new ProfileEntity { Name = profilename });
+                    ProfileListCollection.Insert(idx, new ProfileEntity { Name = profileName });
                     inserted = true;
                     break;
                 }
@@ -51,7 +52,7 @@ namespace DS4WinWPF
                 idx++;
             }
 
-            if (!inserted) ProfileListCollection.Add(new ProfileEntity { Name = profilename });
+            if (!inserted) ProfileListCollection.Add(new ProfileEntity { Name = profileName });
         }
 
         public void RemoveProfile(string profile)
