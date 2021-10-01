@@ -23,6 +23,7 @@ using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Translations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -57,15 +58,19 @@ namespace DS4WinWPF.DS4Forms
 
         public ProfileList ProfileListHolder { get => profileListHolder; }
 
-        public MainWindow(CommandLineOptions parser)
+        private readonly IServiceProvider ServiceProvider;
+
+        public MainWindow(ICommandLineOptions parser, IServiceProvider serviceProvider)
         {
+            ServiceProvider = serviceProvider;
+
             InitializeComponent();
 
-            mainWinVM = new MainWindowsViewModel();
+            mainWinVM = ServiceProvider.GetRequiredService<MainWindowsViewModel>();
             DataContext = mainWinVM;
 
             App root = Application.Current as App;
-            settingsWrapVM = new SettingsViewModel();
+            settingsWrapVM = ServiceProvider.GetRequiredService<SettingsViewModel>();
             settingsTab.DataContext = settingsWrapVM;
             logvm = new LogViewModel(App.rootHub);
             //logListView.ItemsSource = logvm.LogItems;

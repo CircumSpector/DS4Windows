@@ -22,6 +22,8 @@ namespace DS4WinWPF
         string CommandArgs { get; }
 
         string VirtualKBMHandler { get; }
+
+        bool HasErrors { get; }
     }
 
     public class CommandLineOptions : ICommandLineOptions

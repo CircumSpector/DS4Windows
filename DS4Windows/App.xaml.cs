@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Forms;
+using DS4WinWPF.DS4Forms.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -80,6 +81,10 @@ namespace DS4WinWPF
 
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<AppLogger>();
+            services.AddSingleton<MainWindow>();
+
+            services.AddTransient<MainWindowsViewModel>();
+            services.AddTransient<SettingsViewModel>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -203,9 +208,11 @@ namespace DS4WinWPF
             if (themeChoice != AppThemeChoice.Default) ChangeTheme(Global.Instance.Config.ThemeChoice, false);
 
             Global.Instance.Config.LoadLinkedProfiles();
-            var window = new MainWindow(parser);
+
+            var window = _host.Services.GetRequiredService<MainWindow>();
             MainWindow = window;
             window.Show();
+
             var source = PresentationSource.FromVisual(window) as HwndSource;
             CreateIPCClassNameMMF(source.Handle);
 
@@ -376,7 +383,7 @@ namespace DS4WinWPF
             }
         }
 
-        private void CheckOptions(CommandLineOptions parser)
+        private void CheckOptions(ICommandLineOptions parser)
         {
             if (parser.HasErrors)
             {
