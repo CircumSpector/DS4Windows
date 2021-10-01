@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using static DS4Windows.Global;
 using System.Drawing;
+using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.Logging;
 using OpenTracing.Util; // Point struct
 using Sensorit.Base;
 
@@ -2133,6 +2135,7 @@ namespace DS4Windows
         /// </summary>
         static DS4Controls[] held = new DS4Controls[Global.MAX_DS4_CONTROLLER_COUNT];
 
+        [HighMemoryPressure]
         public static void MapCustom(int device, DS4State cState, DS4State MappedState, DS4StateExposed eState,
             Mouse tp, ControlService ctrl)
         {
