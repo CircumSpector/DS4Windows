@@ -199,7 +199,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public DS4Device Device { get => device; set => device = value; }
         public string SelectedProfile { get => selectedProfile; set => selectedProfile = value; }
         public ProfileList ProfileEntities { get => profileListHolder; set => profileListHolder = value; }
-        public ObservableCollection<ProfileEntity> ProfileListCol => profileListHolder.ProfileListCol;
+        public ObservableCollection<ProfileEntity> ProfileListCol => profileListHolder.ProfileListCollection;
 
         public string LightColor
         {
@@ -359,12 +359,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             profileListHolder = collection;
             if (!string.IsNullOrEmpty(selectedProfile))
             {
-                this.selectedEntity = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == selectedProfile);
+                this.selectedEntity = profileListHolder.ProfileListCollection.SingleOrDefault(x => x.Name == selectedProfile);
             }
 
             if (this.selectedEntity != null)
             {
-                selectedIndex = profileListHolder.ProfileListCol.IndexOf(this.selectedEntity);
+                selectedIndex = profileListHolder.ProfileListCollection.IndexOf(this.selectedEntity);
                 HookEvents(true);
             }
 
@@ -395,10 +395,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             AppLogger.Instance.LogToGui(prolog, false);
 
             selectedProfile = prof;
-            this.selectedEntity = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == prof);
+            this.selectedEntity = profileListHolder.ProfileListCollection.SingleOrDefault(x => x.Name == prof);
             if (this.selectedEntity != null)
             {
-                selectedIndex = profileListHolder.ProfileListCol.IndexOf(this.selectedEntity);
+                selectedIndex = profileListHolder.ProfileListCollection.IndexOf(this.selectedEntity);
                 HookEvents(true);
             }
 
@@ -422,10 +422,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void SelectedEntity_ProfileDeleted(object sender, EventArgs e)
         {
             HookEvents(false);
-            ProfileEntity entity = profileListHolder.ProfileListCol.FirstOrDefault();
+            ProfileEntity entity = profileListHolder.ProfileListCollection.FirstOrDefault();
             if (entity != null)
             {
-                SelectedIndex = profileListHolder.ProfileListCol.IndexOf(entity);
+                SelectedIndex = profileListHolder.ProfileListCollection.IndexOf(entity);
             }
         }
 
@@ -502,10 +502,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ChangeSelectedProfile(string loadprofile)
         {
-            ProfileEntity temp = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == loadprofile);
+            ProfileEntity temp = profileListHolder.ProfileListCollection.SingleOrDefault(x => x.Name == loadprofile);
             if (temp != null)
             {
-                SelectedIndex = profileListHolder.ProfileListCol.IndexOf(temp);
+                SelectedIndex = profileListHolder.ProfileListCollection.IndexOf(temp);
             }
         }
 

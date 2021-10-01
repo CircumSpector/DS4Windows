@@ -86,7 +86,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             PopulateToolText();
             PopulateContextMenu();
             SetupEvents();
-            profileListHolder.ProfileListCol.CollectionChanged += ProfileListCol_CollectionChanged;
+            profileListHolder.ProfileListCollection.CollectionChanged += ProfileListCol_CollectionChanged;
 
             service.ServiceStarted += BuildControllerList;
             service.ServiceStarted += HookEvents;
@@ -168,7 +168,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     //item.ContextMenu = new ContextMenu();
                     ItemCollection subitems = item.Items;
                     string currentProfile = Global.Instance.Config.ProfilePath[idx];
-                    foreach (ProfileEntity entry in profileListHolder.ProfileListCol)
+                    foreach (ProfileEntity entry in profileListHolder.ProfileListCollection)
                     {
                         // Need to escape profile name to disable Access Keys for control
                         string name = entry.Name;

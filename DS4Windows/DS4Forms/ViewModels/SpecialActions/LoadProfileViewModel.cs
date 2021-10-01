@@ -46,10 +46,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             autoUntrigger = action.AutomaticUnTrigger;
             string profilename = action.Details;
-            ProfileEntity item = profileList.ProfileListCol.SingleOrDefault(x => x.Name == profilename);
+            ProfileEntity item = profileList.ProfileListCollection.SingleOrDefault(x => x.Name == profilename);
             if (item != null)
             {
-                profileIndex = profileList.ProfileListCol.IndexOf(item) + 1;
+                profileIndex = profileList.ProfileListCollection.IndexOf(item) + 1;
             }
         }
 
@@ -62,7 +62,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             if (profileIndex > 0)
             {
-                string profilename = profileList.ProfileListCol[profileIndex - 1].Name;
+                string profilename = profileList.ProfileListCollection[profileIndex - 1].Name;
                 if (action.UControls == null)
                 {
                     action.UControls = string.Empty;

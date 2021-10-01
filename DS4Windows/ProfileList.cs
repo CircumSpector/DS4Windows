@@ -13,15 +13,15 @@ namespace DS4WinWPF
 
         public ProfileList()
         {
-            BindingOperations.EnableCollectionSynchronization(ProfileListCol, _proLockobj);
+            BindingOperations.EnableCollectionSynchronization(ProfileListCollection, _proLockobj);
         }
 
-        public ObservableCollection<ProfileEntity> ProfileListCol { get; set; } = new();
+        public ObservableCollection<ProfileEntity> ProfileListCollection { get; set; } = new();
 
         [ConfigurationSystemComponent]
         public void Refresh()
         {
-            ProfileListCol.Clear();
+            ProfileListCollection.Clear();
             var profiles = Directory.GetFiles(Global.RuntimeAppDataPath + @"\Profiles\");
             foreach (var s in profiles)
                 if (s.EndsWith(".xml"))
@@ -31,7 +31,7 @@ namespace DS4WinWPF
                         Name = Path.GetFileNameWithoutExtension(s)
                     };
 
-                    ProfileListCol.Add(item);
+                    ProfileListCollection.Add(item);
                 }
         }
 
@@ -39,11 +39,11 @@ namespace DS4WinWPF
         {
             var idx = 0;
             var inserted = false;
-            foreach (var entry in ProfileListCol)
+            foreach (var entry in ProfileListCollection)
             {
                 if (entry.Name.CompareTo(profilename) > 0)
                 {
-                    ProfileListCol.Insert(idx, new ProfileEntity { Name = profilename });
+                    ProfileListCollection.Insert(idx, new ProfileEntity { Name = profilename });
                     inserted = true;
                     break;
                 }
@@ -51,16 +51,16 @@ namespace DS4WinWPF
                 idx++;
             }
 
-            if (!inserted) ProfileListCol.Add(new ProfileEntity { Name = profilename });
+            if (!inserted) ProfileListCollection.Add(new ProfileEntity { Name = profilename });
         }
 
         public void RemoveProfile(string profile)
         {
-            var selectedEntity = ProfileListCol.SingleOrDefault(x => x.Name == profile);
+            var selectedEntity = ProfileListCollection.SingleOrDefault(x => x.Name == profile);
             if (selectedEntity != null)
             {
-                var selectedIndex = ProfileListCol.IndexOf(selectedEntity);
-                ProfileListCol.RemoveAt(selectedIndex);
+                var selectedIndex = ProfileListCollection.IndexOf(selectedEntity);
+                ProfileListCollection.RemoveAt(selectedIndex);
             }
         }
     }

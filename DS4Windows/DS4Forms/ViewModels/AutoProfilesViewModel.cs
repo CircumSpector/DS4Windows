@@ -215,37 +215,37 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 AutoProfileEntity tempEntry = new AutoProfileEntity(item.Path, item.Title);
                 tempEntry.Turnoff = item.Turnoff;
                 int tempindex = item.SelectedIndexCon1;
-                tempEntry.ProfileNames[0] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[0] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 tempindex = item.SelectedIndexCon2;
-                tempEntry.ProfileNames[1] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[1] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 tempindex = item.SelectedIndexCon3;
-                tempEntry.ProfileNames[2] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[2] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 tempindex = item.SelectedIndexCon4;
-                tempEntry.ProfileNames[3] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[3] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 if (UsingExpandedControllers)
                 {
                     tempindex = item.SelectedIndexCon5;
-                    tempEntry.ProfileNames[4] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[4] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
 
                     tempindex = item.SelectedIndexCon6;
-                    tempEntry.ProfileNames[5] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[5] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
 
                     tempindex = item.SelectedIndexCon7;
-                    tempEntry.ProfileNames[6] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[6] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
 
                     tempindex = item.SelectedIndexCon8;
-                    tempEntry.ProfileNames[7] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[7] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
                 }
 
@@ -260,37 +260,37 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 AutoProfileEntity tempEntry = item.MatchedAutoProfile;
                 int tempindex = item.SelectedIndexCon1;
-                tempEntry.ProfileNames[0] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[0] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 tempindex = item.SelectedIndexCon2;
-                tempEntry.ProfileNames[1] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[1] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 tempindex = item.SelectedIndexCon3;
-                tempEntry.ProfileNames[2] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[2] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 tempindex = item.SelectedIndexCon4;
-                tempEntry.ProfileNames[3] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                tempEntry.ProfileNames[3] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                     AutoProfileEntity.NONE_STRING;
 
                 if (UsingExpandedControllers)
                 {
                     tempindex = item.SelectedIndexCon5;
-                    tempEntry.ProfileNames[4] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[4] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
 
                     tempindex = item.SelectedIndexCon6;
-                    tempEntry.ProfileNames[5] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[5] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
 
                     tempindex = item.SelectedIndexCon7;
-                    tempEntry.ProfileNames[6] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[6] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
 
                     tempindex = item.SelectedIndexCon8;
-                    tempEntry.ProfileNames[7] = tempindex > 0 ? profileList.ProfileListCol[tempindex - 1].Name :
+                    tempEntry.ProfileNames[7] = tempindex > 0 ? profileList.ProfileListCollection[tempindex - 1].Name :
                         AutoProfileEntity.NONE_STRING;
                 }
             }

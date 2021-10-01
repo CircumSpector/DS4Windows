@@ -78,7 +78,7 @@ namespace DS4WinWPF.DS4Forms
             lastMsgLb.DataContext = lastLogMsg;
 
             profileListHolder.Refresh();
-            profilesListBox.ItemsSource = profileListHolder.ProfileListCol;
+            profilesListBox.ItemsSource = profileListHolder.ProfileListCollection;
 
             StartStopBtn.Content = App.rootHub.running ? Translations.Strings.StopText :
                 Translations.Strings.StartText;
@@ -1146,7 +1146,7 @@ Suspend support not enabled.", true);
                                     {
                                         if (strData[0] == "loadprofile")
                                         {
-                                            int idx = profileListHolder.ProfileListCol.Select((item, index) => new { item, index }).
+                                            int idx = profileListHolder.ProfileListCollection.Select((item, index) => new { item, index }).
                                                     Where(x => x.item.Name == strData[2]).Select(x => x.index).DefaultIfEmpty(-1).First();
 
                                             if (idx >= 0 && tdevice < conLvViewModel.ControllerCol.Count)
@@ -1314,7 +1314,7 @@ Suspend support not enabled.", true);
 
             if (item != null)
             {
-                ProfileEntity entity = profileListHolder.ProfileListCol[item.SelectedIndex];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[item.SelectedIndex];
                 ShowProfileEditor(idx, entity);
                 mainTabCon.SelectedIndex = 1;
             }
@@ -1496,7 +1496,7 @@ Suspend support not enabled.", true);
                 Stream stream;
                 int idx = profilesListBox.SelectedIndex;
                 var profile = new StreamReader(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                    profileListHolder.ProfileListCol[idx].Name + ".xml")).BaseStream;
+                    profileListHolder.ProfileListCollection[idx].Name + ".xml")).BaseStream;
                 if (dialog.ShowDialog() == true)
                 {
                     if ((stream = dialog.OpenFile()) != null)
@@ -1515,7 +1515,7 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex >= 0)
             {
                 int idx = profilesListBox.SelectedIndex;
-                filename = profileListHolder.ProfileListCol[idx].Name;
+                filename = profileListHolder.ProfileListCollection[idx].Name;
                 dupBox.OldFilename = filename;
                 dupBoxBar.Visibility = Visibility.Visible;
                 dupBox.Save -= DupBox_Save;
@@ -1541,14 +1541,14 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex >= 0)
             {
                 int idx = profilesListBox.SelectedIndex;
-                ProfileEntity entity = profileListHolder.ProfileListCol[idx];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[idx];
                 string filename = entity.Name;
                 if (MessageBox.Show(Properties.Resources.ProfileCannotRestore.Replace("*Profile name*", "\"" + filename + "\""),
                     Properties.Resources.DeleteProfile,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     entity.DeleteFile();
-                    profileListHolder.ProfileListCol.RemoveAt(idx);
+                    profileListHolder.ProfileListCollection.RemoveAt(idx);
                 }
             }
         }
@@ -1613,7 +1613,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                ProfileEntity entity = profileListHolder.ProfileListCol[profilesListBox.SelectedIndex];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
                 ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
             }
         }
@@ -1699,7 +1699,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                ProfileEntity entity = profileListHolder.ProfileListCol[profilesListBox.SelectedIndex];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
                 ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
             }
         }
@@ -1769,7 +1769,7 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex >= 0)
             {
                 int idx = profilesListBox.SelectedIndex;
-                ProfileEntity entity = profileListHolder.ProfileListCol[idx];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[idx];
                 string filename = Path.Combine(Global.RuntimeAppDataPath,
                     "Profiles", $"{entity.Name}.xml");
 
