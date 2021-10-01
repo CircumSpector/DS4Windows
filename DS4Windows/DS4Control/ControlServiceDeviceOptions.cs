@@ -28,7 +28,7 @@ namespace DS4Windows
     {
         protected InputDeviceType deviceType;
 
-        public ControllerOptionsStore(InputDeviceType deviceType)
+        protected ControllerOptionsStore(InputDeviceType deviceType)
         {
             this.deviceType = deviceType;
         }
