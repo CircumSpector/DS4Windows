@@ -48,7 +48,6 @@ namespace DS4WinWPF
 
         private readonly IHost _host;
 
-        private Timer collectTimer;
 
         private Thread controlThread;
         private bool exitApp;
@@ -523,7 +522,6 @@ namespace DS4WinWPF
 
                 ControlService.CurrentInstance = rootHub;
                 requestClient = new HttpClient();
-                collectTimer = new Timer(GarbageTask, null, 30000, 30000);
             });
             controlThread.Priority = ThreadPriority.Normal;
             controlThread.IsBackground = true;
@@ -540,18 +538,12 @@ namespace DS4WinWPF
 
                 ControlService.CurrentInstance = rootHub;
                 requestClient = new HttpClient();
-                collectTimer = new Timer(GarbageTask, null, 30000, 30000);
             });
             controlThread.Priority = ThreadPriority.Normal;
             controlThread.IsBackground = true;
             controlThread.Start();
             while (controlThread.IsAlive)
                 Thread.SpinWait(500);
-        }
-
-        private void GarbageTask(object state)
-        {
-            GC.Collect(0, GCCollectionMode.Forced, false);
         }
 
         private void CreateTempWorkerThread()
