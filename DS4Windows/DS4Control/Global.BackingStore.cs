@@ -15,7 +15,6 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.Properties;
-using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -46,6 +45,9 @@ namespace DS4Windows
                     new(), new(), new(),
                     new(), new(), new(), new(), new(), new()
                 };
+
+            private readonly Lazy<ControlServiceDeviceOptions> LazyDeviceOptions =
+                new(new ControlServiceDeviceOptions());
 
             protected readonly XmlDocument m_Xdoc = new();
 
@@ -524,7 +526,7 @@ namespace DS4Windows
 
             public string FakeExeFileName { get; set; } = string.Empty;
 
-            public ControlServiceDeviceOptions DeviceOptions => new();
+            public ControlServiceDeviceOptions DeviceOptions => LazyDeviceOptions.Value;
 
             // Cache whether profile has custom action
             public IList<bool> ContainsCustomAction { get; set; } = new bool[TEST_PROFILE_ITEM_COUNT]
@@ -1413,19 +1415,6 @@ namespace DS4Windows
                 return loaded;
             }
 
-            private void SetNestedProperty(string compoundProperty, object target, object value)
-            {
-                var bits = compoundProperty.Split('.');
-                for (var i = 0; i < bits.Length - 1; i++)
-                {
-                    var propertyToGet = target.GetType().GetProperty(bits[i]);
-                    target = propertyToGet.GetValue(target, null);
-                }
-
-                var propertyToSet = target.GetType().GetProperty(bits.Last());
-                propertyToSet.SetValue(target, value, null);
-            }
-
             /// <summary>
             ///     Persists a <see cref="DS4WindowsProfile" /> on disk.
             /// </summary>
@@ -1452,7 +1441,7 @@ namespace DS4Windows
                     ExecutableProductVersion,
                     CONFIG_VERSION
                 );
-                
+
 #if WITH_TRACING
                 using var scope = GlobalTracer.Instance.BuildSpan(nameof(SaveProfile)).StartActive(true);
 #endif
@@ -1482,10 +1471,8 @@ namespace DS4Windows
                                 keyType += DS4KeyType.ScanCode;
 
                             if (string.IsNullOrEmpty(keyType))
-                            {
                                 SetNestedProperty(property, profileObject.Controls.KeyTypes, keyType);
-                            }
-                            
+
                             if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                             {
                                 var ii = dcs.ActionData.ActionMacro;
@@ -1494,25 +1481,22 @@ namespace DS4Windows
                             }
                             else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
                             {
-                                SetNestedProperty(property, profileObject.Controls.Keys, dcs.ActionData.ActionKey.ToString());
+                                SetNestedProperty(property, profileObject.Controls.Keys,
+                                    dcs.ActionData.ActionKey.ToString());
                             }
                             else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
                             {
-                                SetNestedProperty(property, profileObject.Controls.Buttons, GetX360ControlString(dcs.ActionData.ActionButton));
+                                SetNestedProperty(property, profileObject.Controls.Buttons,
+                                    GetX360ControlString(dcs.ActionData.ActionButton));
                             }
                         }
 
                         var hasValue = false;
                         if (!string.IsNullOrEmpty(dcs.Extras))
                             if (dcs.Extras.Split(',').Any(s => s != "0"))
-                            {
                                 hasValue = true;
-                            }
 
-                        if (hasValue)
-                        {
-                            SetNestedProperty(property, profileObject.Controls.Extras, dcs.Extras);
-                        }
+                        if (hasValue) SetNestedProperty(property, profileObject.Controls.Extras, dcs.Extras);
 
                         if (dcs.ShiftActionType != DS4ControlSettings.ActionType.Default && dcs.ShiftTrigger > 0)
                         {
@@ -1532,40 +1516,42 @@ namespace DS4Windows
                                 keyType += DS4KeyType.ScanCode;
 
                             if (keyType != string.Empty)
-                            {
                                 SetNestedProperty(property, profileObject.ShiftControls.KeyTypes, keyType);
-                            }
-                            
+
                             if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
                             {
                                 var ii = dcs.ShiftAction.ActionMacro;
 
                                 SetNestedProperty(property, profileObject.ShiftControls.Macros, string.Join("/", ii));
-                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Macros, dcs.ShiftTrigger.ToString());
+                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Macros,
+                                    dcs.ShiftTrigger.ToString());
                             }
                             else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
                             {
-                                SetNestedProperty(property, profileObject.ShiftControls.Keys, dcs.ShiftAction.ActionKey.ToString());
-                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Keys, dcs.ShiftTrigger.ToString());
+                                SetNestedProperty(property, profileObject.ShiftControls.Keys,
+                                    dcs.ShiftAction.ActionKey.ToString());
+                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Keys,
+                                    dcs.ShiftTrigger.ToString());
                             }
                             else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
                             {
-                                SetNestedProperty(property, profileObject.ShiftControls.Buttons, dcs.ShiftAction.ActionKey.ToString());
-                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Buttons, dcs.ShiftTrigger.ToString());
+                                SetNestedProperty(property, profileObject.ShiftControls.Buttons,
+                                    dcs.ShiftAction.ActionKey.ToString());
+                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Buttons,
+                                    dcs.ShiftTrigger.ToString());
                             }
                         }
 
                         hasValue = false;
                         if (!string.IsNullOrEmpty(dcs.ShiftExtras))
                             if (dcs.ShiftExtras.Split(',').Any(s => s != "0"))
-                            {
                                 hasValue = true;
-                            }
 
                         if (hasValue)
                         {
                             SetNestedProperty(property, profileObject.ShiftControls.Extras, dcs.ShiftExtras);
-                            SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Extras, dcs.ShiftTrigger.ToString());
+                            SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Extras,
+                                dcs.ShiftTrigger.ToString());
                         }
                     }
 
@@ -1583,13 +1569,13 @@ namespace DS4Windows
 
             [ConfigurationSystemComponent]
             public async Task<bool> LoadProfile(
-                int device, 
-                bool launchprogram, 
+                int device,
+                bool launchprogram,
                 ControlService control,
-                string profilePath = null, 
-                bool xinputChange = true, 
+                string profilePath = null,
+                bool xinputChange = true,
                 bool postLoad = true
-                )
+            )
             {
                 var loaded = true;
                 var customMapKeyTypes = new Dictionary<DS4Controls, DS4KeyType>();
@@ -1958,14 +1944,12 @@ namespace DS4Windows
                             .ToList();
 
                         foreach (var item in controls)
-                        {
                             if (ushort.TryParse(item.Entity.Value, out wvk) &&
                                 Enum.TryParse(item.Name, out DS4Controls _))
                             {
                                 UpdateDs4ControllerSetting(device, item.Name, false, wvk, "", DS4KeyType.None);
                                 customMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
                             }
-                        }
                     }
 
                     //
@@ -2123,7 +2107,6 @@ namespace DS4Windows
                             .ToList();
 
                         foreach (var item in controls)
-                        {
                             if (ushort.TryParse(item.Entity.Value, out wvk))
                             {
                                 var shiftT = shiftM;
@@ -2137,7 +2120,6 @@ namespace DS4Windows
                                     shiftCustomMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
                                 }
                             }
-                        }
                     }
 
                     //
@@ -2540,7 +2522,8 @@ namespace DS4Windows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false);
+                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath,
+                        false);
                     saved = false;
                 }
 
@@ -2572,7 +2555,8 @@ namespace DS4Windows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
+                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath,
+                        false);
                     saved = false;
                 }
 
@@ -3440,6 +3424,19 @@ namespace DS4Windows
                 return result;
             }
 
+            private void SetNestedProperty(string compoundProperty, object target, object value)
+            {
+                var bits = compoundProperty.Split('.');
+                for (var i = 0; i < bits.Length - 1; i++)
+                {
+                    var propertyToGet = target.GetType().GetProperty(bits[i]);
+                    target = propertyToGet.GetValue(target, null);
+                }
+
+                var propertyToSet = target.GetType().GetProperty(bits.Last());
+                propertyToSet.SetValue(target, value, null);
+            }
+
             [ConfigurationSystemComponent]
             private bool LoadControllerConfigsForDevice(DS4Device device)
             {
@@ -3560,7 +3557,8 @@ namespace DS4Windows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
+                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath,
+                        false);
                     saved = false;
                 }
 

@@ -200,7 +200,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             this.options = options;
             this.parentOptions = parentOpts;
-            parentOptions.EnabledChanged += (sender, e) => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
+            parentOptions.EnabledChanged += () =>
+            {
+                VisibleChanged?.Invoke(this, EventArgs.Empty);
+            };
         }
     }
 

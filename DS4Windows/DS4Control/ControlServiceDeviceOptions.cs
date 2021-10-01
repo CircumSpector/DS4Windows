@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Xml;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Attributes;
+using JetBrains.Annotations;
+using PropertyChanged;
 
 namespace DS4Windows
 {
@@ -46,24 +49,20 @@ namespace DS4Windows
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class DS4DeviceOptions
     {
-        private bool enabled = true;
+        public bool Enabled { get; set; }
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
-
+    
     public class DS4ControllerOptions : ControllerOptionsStore
     {
         private bool copyCatController;
