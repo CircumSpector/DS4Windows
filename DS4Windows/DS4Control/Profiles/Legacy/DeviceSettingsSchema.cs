@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
@@ -25,13 +27,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "DualSenseSupportSettings")]
         public DeviceDualSenseSupportSettings DualSenseSupportSettings { get; set; }
 
-        [XmlAttribute(AttributeName = "Mac")]
+        [XmlAttribute(AttributeName = "Mac")] 
         public string Mac { get; set; }
 
         [XmlAttribute(AttributeName = "ControllerType")]
         public string ControllerType { get; set; }
-
-        [XmlText] public string Text { get; set; }
 
         [XmlElement(ElementName = "DS4SupportSettings")]
         public DeviceDS4SupportSettings DS4SupportSettings { get; set; }
@@ -40,14 +40,23 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
     [XmlRoot(ElementName = "DS4SupportSettings")]
     public class DeviceDS4SupportSettings
     {
-        [XmlElement(ElementName = "Copycat")] 
+        [XmlElement(ElementName = "Copycat")]
         public bool Copycat { get; set; }
     }
 
     [XmlRoot(ElementName = "Controllers")]
-    public class Controllers
+    public class Controllers : XmlSerializable<Controllers>
     {
         [XmlElement(ElementName = "Controller")]
         public List<DeviceController> Controller { get; set; }
+
+        public override IExtendedXmlSerializer GetSerializer()
+        {
+            return new ConfigurationContainer()
+                .UseOptimizedNamespaces()
+                .EnableImplicitTyping(typeof(Controllers))
+                .EnableMemberExceptionHandling()
+                .Create();
+        }
     }
 }

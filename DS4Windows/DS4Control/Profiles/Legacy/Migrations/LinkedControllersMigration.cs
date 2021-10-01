@@ -24,9 +24,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
 
         public static void MigrateFromAppVersion3(XElement node)
         {
-            XNamespace sysNs = "https://extendedxmlserializer.github.io/system";
-            XNamespace exsNs = "https://extendedxmlserializer.github.io/v2";
-
             //
             // Store copies of data we need to keep and transform
             // 
@@ -37,13 +34,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
                 Profile = ((XElement)n).Value
             });
 
-            var dictionary = new List<XElement>();
-
-            foreach (var entry in entries)
-                dictionary.Add(new XElement("Item",
+            var dictionary = entries.Select(entry =>
+                new XElement("Item",
                     new XElement("Key", entry.Address.ToString()),
                     new XElement("Value", entry.Profile)
-                ));
+                )
+            ).ToList();
 
             //
             // Rebuild root node with necessary namespaces and new structure
