@@ -1,46 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using System.Diagnostics; // StopWatch
-using System.Threading; // Sleep
+using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Logging; // StopWatch
+// Sleep
 
 namespace DS4WinWPF
 {
     [SuppressUnmanagedCodeSecurity]
     public class AutoProfileChecker
     {
-        private AutoProfileHolder profileHolder;
-        private IntPtr prevForegroundWnd = IntPtr.Zero;
+        public delegate void ChangeServiceHandler(AutoProfileChecker sender, bool state);
+
+        private readonly StringBuilder autoProfileCheckTextBuilder = new(1000);
         private uint prevForegroundProcessID;
         private string prevForegroundProcessName = string.Empty;
+        private IntPtr prevForegroundWnd = IntPtr.Zero;
         private string prevForegroundWndTitleName = string.Empty;
-        private StringBuilder autoProfileCheckTextBuilder = new StringBuilder(1000);
-        private int autoProfileDebugLogLevel = 0;
-        private bool turnOffTemp;
+        private readonly AutoProfileHolder profileHolder;
         private AutoProfileEntity tempAutoProfile;
-        private bool running;
-
-        public int AutoProfileDebugLogLevel { get => autoProfileDebugLogLevel; set => autoProfileDebugLogLevel = value; }
-        public bool Running { get => running; set => running = value; }
-
-        public delegate void ChangeServiceHandler(AutoProfileChecker sender, bool state);
-        public event ChangeServiceHandler RequestServiceChange;
+        private bool turnOffTemp;
 
         public AutoProfileChecker(AutoProfileHolder holder)
         {
             profileHolder = holder;
         }
 
+        public int AutoProfileDebugLogLevel { get; set; } = 0;
+        public bool Running { get; set; }
+
+        public event ChangeServiceHandler RequestServiceChange;
+
         public async Task Process()
         {
             string topProcessName, topWindowTitle;
-            bool turnOffDS4WinApp = false;
+            var turnOffDS4WinApp = false;
             AutoProfileEntity matchedProfileEntity = null;
 
             if (GetTopWindowName(out topProcessName, out topWindowTitle))
@@ -49,11 +47,13 @@ namespace DS4WinWPF
                 // The same program may set different profiles for each of the controllers, so we need an array of newProfileName[controllerIdx] values.
                 for (int i = 0, pathsLen = profileHolder.AutoProfileCollection.Count; i < pathsLen; i++)
                 {
-                    AutoProfileEntity tempEntity = profileHolder.AutoProfileCollection[i];
+                    var tempEntity = profileHolder.AutoProfileCollection[i];
                     if (tempEntity.IsMatch(topProcessName, topWindowTitle))
                     {
-                        if (autoProfileDebugLogLevel > 0)
-                            AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. Rule#{i + 1}  Path={tempEntity.path}  Title={tempEntity.title}", false, true);
+                        if (AutoProfileDebugLogLevel > 0)
+                            AppLogger.Instance.LogToGui(
+                                $"DEBUG: Auto-Profile. Rule#{i + 1}  Path={tempEntity.path}  Title={tempEntity.title}",
+                                false, true);
 
                         // Matching autoprofile rule found
                         turnOffDS4WinApp = tempEntity.Turnoff;
@@ -64,7 +64,7 @@ namespace DS4WinWPF
 
                 if (matchedProfileEntity != null)
                 {
-                    bool forceLoadProfile = false;
+                    var forceLoadProfile = false;
 
                     if (!turnOffDS4WinApp && turnOffTemp)
                     {
@@ -76,25 +76,29 @@ namespace DS4WinWPF
                     }
 
                     // Program match found. Check if the new profile is different than current profile of the controller. Load the new profile only if it is not already loaded.
-                    for (int j = 0; j < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; j++)
+                    for (var j = 0; j < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; j++)
                     {
-                        string tempname = matchedProfileEntity.ProfileNames[j];
+                        var tempname = matchedProfileEntity.ProfileNames[j];
                         if (tempname != string.Empty && tempname != "(none)")
                         {
-                            if ((Global.UseTempProfiles[j] && tempname != Global.TempProfileNames[j]) ||
-                                (!Global.UseTempProfiles[j] && tempname != Global.Instance.Config.ProfilePath[j]) ||
+                            if (Global.UseTempProfiles[j] && tempname != Global.TempProfileNames[j] ||
+                                !Global.UseTempProfiles[j] && tempname != Global.Instance.Config.ProfilePath[j] ||
                                 forceLoadProfile)
                             {
-                                if (autoProfileDebugLogLevel > 0)
-                                    AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. LoadProfile Controller {j + 1}={tempname}", false, true);
+                                if (AutoProfileDebugLogLevel > 0)
+                                    AppLogger.Instance.LogToGui(
+                                        $"DEBUG: Auto-Profile. LoadProfile Controller {j + 1}={tempname}", false, true);
 
-                                await Global.Instance.LoadTempProfile(j, tempname, true, ControlService.CurrentInstance); // j is controller index, i is filename
-                                                                                              //if (LaunchProgram[j] != string.Empty) Process.Start(LaunchProgram[j]);
+                                await Global.Instance.LoadTempProfile(j, tempname, true,
+                                    ControlService.CurrentInstance); // j is controller index, i is filename
+                                //if (LaunchProgram[j] != string.Empty) Process.Start(LaunchProgram[j]);
                             }
                             else
                             {
-                                if (autoProfileDebugLogLevel > 0)
-                                    AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. LoadProfile Controller {j + 1}={tempname} (already loaded)", false, true);
+                                if (AutoProfileDebugLogLevel > 0)
+                                    AppLogger.Instance.LogToGui(
+                                        $"DEBUG: Auto-Profile. LoadProfile Controller {j + 1}={tempname} (already loaded)",
+                                        false, true);
                             }
                         }
                     }
@@ -104,8 +108,9 @@ namespace DS4WinWPF
                         turnOffTemp = true;
                         if (App.rootHub.running)
                         {
-                            if (autoProfileDebugLogLevel > 0)
-                                AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. Turning DS4Windows temporarily off", false, true);
+                            if (AutoProfileDebugLogLevel > 0)
+                                AppLogger.Instance.LogToGui("DEBUG: Auto-Profile. Turning DS4Windows temporarily off",
+                                    false, true);
 
                             SetAndWaitServiceStatus(false);
                         }
@@ -115,50 +120,54 @@ namespace DS4WinWPF
                 }
                 else if (tempAutoProfile != null)
                 {
-                    if (turnOffTemp && DS4Windows.Global.Instance.Config.AutoProfileRevertDefaultProfile)
+                    if (turnOffTemp && Global.Instance.Config.AutoProfileRevertDefaultProfile)
                     {
                         turnOffTemp = false;
                         if (!App.rootHub.running)
                         {
-                            if (autoProfileDebugLogLevel > 0)
-                                AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. Turning DS4Windows on before reverting to default profile", false, true);
+                            if (AutoProfileDebugLogLevel > 0)
+                                AppLogger.Instance.LogToGui(
+                                    "DEBUG: Auto-Profile. Turning DS4Windows on before reverting to default profile",
+                                    false, true);
 
                             SetAndWaitServiceStatus(true);
                         }
                     }
 
                     tempAutoProfile = null;
-                    for (int j = 0; j < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; j++)
-                    {
+                    for (var j = 0; j < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; j++)
                         if (Global.UseTempProfiles[j])
                         {
-                            if (DS4Windows.Global.Instance.Config.AutoProfileRevertDefaultProfile)
+                            if (Global.Instance.Config.AutoProfileRevertDefaultProfile)
                             {
-                                if (autoProfileDebugLogLevel > 0)
-                                    AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. Unknown process. Reverting to default profile. Controller {j + 1}={Global.Instance.Config.ProfilePath[j]} (default)", false, true);
+                                if (AutoProfileDebugLogLevel > 0)
+                                    AppLogger.Instance.LogToGui(
+                                        $"DEBUG: Auto-Profile. Unknown process. Reverting to default profile. Controller {j + 1}={Global.Instance.Config.ProfilePath[j]} (default)",
+                                        false, true);
 
                                 await Global.Instance.LoadProfile(j, false, ControlService.CurrentInstance);
                             }
                             else
                             {
-                                if (autoProfileDebugLogLevel > 0)
-                                    AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. Unknown process. Existing profile left as active. Controller {j + 1}={Global.TempProfileNames[j]}", false, true);
+                                if (AutoProfileDebugLogLevel > 0)
+                                    AppLogger.Instance.LogToGui(
+                                        $"DEBUG: Auto-Profile. Unknown process. Existing profile left as active. Controller {j + 1}={Global.TempProfileNames[j]}",
+                                        false, true);
                             }
                         }
-                    }
                 }
             }
         }
 
         private bool GetTopWindowName(out string topProcessName, out string topWndTitleName)
         {
-            IntPtr hWnd = GetForegroundWindow();
+            var hWnd = GetForegroundWindow();
             if (hWnd == IntPtr.Zero)
             {
                 // Top window unknown or cannot acquire a handle. Return FALSE and return unknown process and wndTitle values
                 prevForegroundWnd = IntPtr.Zero;
                 prevForegroundProcessID = 0;
-                topProcessName = topWndTitleName = String.Empty;
+                topProcessName = topWndTitleName = string.Empty;
                 return false;
             }
 
@@ -181,7 +190,7 @@ namespace DS4WinWPF
 
             prevForegroundWnd = hWnd;
 
-            IntPtr hProcess = IntPtr.Zero;
+            var hProcess = IntPtr.Zero;
             uint lpdwProcessId = 0;
             GetWindowThreadProcessId(hWnd, out lpdwProcessId);
 
@@ -194,10 +203,13 @@ namespace DS4WinWPF
                 prevForegroundProcessID = lpdwProcessId;
 
                 hProcess = OpenProcess(0x0410, false, lpdwProcessId);
-                if (hProcess != IntPtr.Zero) GetModuleFileNameEx(hProcess, IntPtr.Zero, autoProfileCheckTextBuilder, autoProfileCheckTextBuilder.Capacity);
+                if (hProcess != IntPtr.Zero)
+                    GetModuleFileNameEx(hProcess, IntPtr.Zero, autoProfileCheckTextBuilder,
+                        autoProfileCheckTextBuilder.Capacity);
                 else autoProfileCheckTextBuilder.Clear();
 
-                prevForegroundProcessName = topProcessName = autoProfileCheckTextBuilder.Replace('/', '\\').ToString().ToLower();
+                prevForegroundProcessName =
+                    topProcessName = autoProfileCheckTextBuilder.Replace('/', '\\').ToString().ToLower();
             }
 
             GetWindowText(hWnd, autoProfileCheckTextBuilder, autoProfileCheckTextBuilder.Capacity);
@@ -206,8 +218,10 @@ namespace DS4WinWPF
 
             if (hProcess != IntPtr.Zero) CloseHandle(hProcess);
 
-            if (autoProfileDebugLogLevel > 0)
-                AppLogger.Instance.LogToGui($"DEBUG: Auto-Profile. PID={lpdwProcessId}  Path={topProcessName} | WND={hWnd}  Title={topWndTitleName}", false, true);
+            if (AutoProfileDebugLogLevel > 0)
+                AppLogger.Instance.LogToGui(
+                    $"DEBUG: Auto-Profile. PID={lpdwProcessId}  Path={topProcessName} | WND={hWnd}  Title={topWndTitleName}",
+                    false, true);
 
             return true;
         }
@@ -221,12 +235,10 @@ namespace DS4WinWPF
 
                 // Wait until DS4Win app service is running or stopped (as requested by serviceRunningStatus value) or timeout.
                 // LoadProfile call fails if a new profile is loaded while DS4Win service is still in stopped state (ie the loaded temp profile doesn't do anything).
-                Stopwatch sw = new Stopwatch();
+                var sw = new Stopwatch();
                 sw.Start();
                 while (App.rootHub.running != serviceRunningStatus && sw.Elapsed.TotalSeconds < 10)
-                {
                     Thread.SpinWait(1000);
-                }
                 Thread.SpinWait(1000);
             }
         }
@@ -244,7 +256,8 @@ namespace DS4WinWPF
         private static extern bool CloseHandle(IntPtr handle);
 
         [DllImport("psapi.dll")]
-        private static extern uint GetModuleFileNameEx(IntPtr hWnd, IntPtr hModule, StringBuilder lpFileName, int nSize);
+        private static extern uint
+            GetModuleFileNameEx(IntPtr hWnd, IntPtr hModule, StringBuilder lpFileName, int nSize);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nSize);
