@@ -60,17 +60,22 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly IServiceProvider ServiceProvider;
 
-        public MainWindow(ICommandLineOptions parser, IServiceProvider serviceProvider)
+        public MainWindow(
+            ICommandLineOptions parser, 
+            IServiceProvider serviceProvider,
+            MainWindowsViewModel mainWindowsViewModel,
+            SettingsViewModel settingsViewModel
+            )
         {
             ServiceProvider = serviceProvider;
 
             InitializeComponent();
 
-            mainWinVM = ServiceProvider.GetRequiredService<MainWindowsViewModel>();
+            mainWinVM = mainWindowsViewModel;
             DataContext = mainWinVM;
 
             App root = Application.Current as App;
-            settingsWrapVM = ServiceProvider.GetRequiredService<SettingsViewModel>();
+            settingsWrapVM = settingsViewModel;
             settingsTab.DataContext = settingsWrapVM;
             logvm = new LogViewModel(App.rootHub);
             //logListView.ItemsSource = logvm.LogItems;

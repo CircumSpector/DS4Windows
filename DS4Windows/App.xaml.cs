@@ -85,6 +85,8 @@ namespace DS4WinWPF
 
             services.AddTransient<MainWindowsViewModel>();
             services.AddTransient<SettingsViewModel>();
+
+            services.AddTransient<IProfileList, ProfileList>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
