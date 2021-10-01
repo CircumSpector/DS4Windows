@@ -2180,6 +2180,7 @@ namespace DS4Windows
 
         // Called every time a new input report has arrived
         [ConfigurationSystemComponent]
+        [HighMemoryPressure]
         protected virtual void On_Report(DS4Device device, EventArgs e, int ind)
         {
             if (ind != -1)
