@@ -46,8 +46,10 @@ namespace DS4Windows
 
         public void CopyFrom(SixAxis src)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(CopyFrom)}")
                 .StartActive(true);
+#endif
 
             gyroYaw = src.gyroYaw;
             gyroPitch = src.gyroPitch;
@@ -81,8 +83,10 @@ namespace DS4Windows
             int aX, int aY, int aZ,
             double elapsedDelta, SixAxis prevAxis = null)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(Populate)}")
                 .StartActive(true);
+#endif
 
             gyroYaw = -X / 256;
             gyroPitch = Y / 256;
@@ -309,8 +313,10 @@ namespace DS4Windows
         public unsafe void HandleSixAxis(byte* gyro, byte* accel, DS4State state,
             double elapsedDelta)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(HandleSixAxis)}")
                 .StartActive(true);
+#endif
 
             unchecked
             {
@@ -450,8 +456,10 @@ namespace DS4Windows
 
         public void AverageGyro(ref int x, ref int y, ref int z, ref double accelMagnitude)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(AverageGyro)}")
                 .StartActive(true);
+#endif
 
             double weight = 0.0;
             double totalX = 0.0;

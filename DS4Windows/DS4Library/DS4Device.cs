@@ -1085,12 +1085,16 @@ namespace DS4Windows
 
                 while (!exitInputThread)
                 {
+#if WITH_TRACING
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4Device)}::{nameof(PerformDs4Input)}")
                         .StartActive(true);
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("Prepare")
                         .StartActive(true))
                     {
+#endif
                         oldCharging = charging;
                         currerror = string.Empty;
 
@@ -1108,7 +1112,9 @@ namespace DS4Windows
                         Latency = latencySum / (double)tempLatencyCount;
 
                         readWaitEv.Set();
+#if WITH_TRACING
                     }
+#endif
 
                     // Sony DS4 and compatible gamepads send data packets with 0x11 type code in BT mode. 
                     // Will no longer support any third party fake DS4 that does not behave according to official DS4 specs
@@ -1119,25 +1125,35 @@ namespace DS4Windows
                         //HidDevice.ReadStatus res = hDevice.ReadAsyncWithFileStream(btInputReport, READ_STREAM_TIMEOUT);
                         HidDevice.ReadStatus res;
 
+#if WITH_TRACING
                         using (GlobalTracer.Instance.BuildSpan(nameof(hDevice.ReadWithFileStream)).StartActive(true))
                         {
+#endif
                             res = hDevice.ReadWithFileStream(btInputReport);
+#if WITH_TRACING
                         }
+#endif
 
                         timeoutEvent = false;
                         if (res == HidDevice.ReadStatus.Success)
                         {
                             //Array.Copy(btInputReport, 2, inputReport, 0, inputReport.Length);
+#if WITH_TRACING
                             using (GlobalTracer.Instance.BuildSpan("CopyReport").StartActive(true))
                             {
+#endif
                                 fixed (byte* byteP = &btInputReport[2], imp = inputReport)
                                 {
                                     for (var j = 0; j < BT_INPUT_REPORT_LENGTH - 2; j++) imp[j] = byteP[j];
                                 }
+#if WITH_TRACING
                             }
+#endif
 
+#if WITH_TRACING
                             using (GlobalTracer.Instance.BuildSpan("CalculateCRC32").StartActive(true))
                             {
+#endif
                                 //uint recvCrc32 = BitConverter.ToUInt32(btInputReport, BT_INPUT_REPORT_CRC32_POS);
                                 var recvCrc32 = btInputReport[BT_INPUT_REPORT_CRC32_POS] |
                                                 (uint)(btInputReport[CRC32_POS_1] << 8) |
@@ -1180,7 +1196,9 @@ namespace DS4Windows
                                     readWaitEv.Reset();
                                     continue;
                                 }
+#if WITH_TRACING
                             }
+#endif
 
                             inputReportErrorCount = 0;
                         }
@@ -1215,9 +1233,11 @@ namespace DS4Windows
                         //Array.Clear(inputReport, 0, inputReport.Length);
                         //HidDevice.ReadStatus res = hDevice.ReadAsyncWithFileStream(inputReport, READ_STREAM_TIMEOUT);
 
+#if WITH_TRACING
                         using (GlobalTracer.Instance.BuildSpan(nameof(hDevice.ReadWithFileStream))
                             .StartActive(true))
                         {
+#endif
                             var res = hDevice.ReadWithFileStream(inputReport);
 
                             if (res != HidDevice.ReadStatus.Success)
@@ -1242,19 +1262,27 @@ namespace DS4Windows
                                 timeoutExecuted = true;
                                 return;
                             }
+#if WITH_TRACING
                         }
+#endif
                     }
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("ReadWaitEvent")
                         .StartActive(true))
                     {
+#endif
                         readWaitEv.Wait();
                         readWaitEv.Reset();
+#if WITH_TRACING
                     }
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("ReportTranslation")
                         .StartActive(true))
                     {
+#endif
                         curtime = Stopwatch.GetTimestamp();
                         testelapsed = curtime - oldtime;
                         lastTimeElapsedDouble = testelapsed * (1.0 / Stopwatch.Frequency) * 1000.0;
@@ -1466,11 +1494,15 @@ namespace DS4Windows
                                 }
                             }
                         }
+#if WITH_TRACING
                     }
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("TouchMapping")
                         .StartActive(true))
                     {
+#endif
                         // XXX DS4State mapping needs fixup, turn touches into an array[4] of structs.  And include the touchpad details there instead.
                         try
                         {
@@ -1517,11 +1549,15 @@ namespace DS4Windows
                         {
                             currerror = $"Touchpad: {ex.Message}";
                         }
+#if WITH_TRACING
                     }
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("MotionMapping")
                         .StartActive(true))
                     {
+#endif
                         // Store Gyro and Accel values
                         //Array.Copy(inputReport, 13, gyro, 0, 6);
                         //Array.Copy(inputReport, 19, accel, 0, 6);
@@ -1548,11 +1584,15 @@ namespace DS4Windows
                             Console.WriteLine();
                         }
                         */
+#if WITH_TRACING
                     }
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("FrameCounting")
                         .StartActive(true))
                     {
+#endif
                         ds4InactiveFrame = currentState.FrameCounter == pState.FrameCounter;
                         if (!ds4InactiveFrame) isRemoved = false;
 
@@ -1608,35 +1648,51 @@ namespace DS4Windows
                                 }
                             }
                         }
+#if WITH_TRACING
                     }
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("InvokeReportEvent")
                         .StartActive(true))
                     {
+#endif
                         Report?.Invoke(this, EventArgs.Empty);
+#if WITH_TRACING
                     }
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan(nameof(SendOutputReport))
                         .StartActive(true))
                     {
+#endif
                         SendOutputReport(syncWriteReport, forceWrite);
                         forceWrite = false;
+#if WITH_TRACING
                     }
+#endif
 
                     if (!string.IsNullOrEmpty(currerror))
                         error = currerror;
                     else if (!string.IsNullOrEmpty(error))
                         error = string.Empty;
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("CopyState")
                         .StartActive(true))
                     {
+#endif
                         currentState.CopyTo(pState);
+#if WITH_TRACING
                     }
+#endif
 
+#if WITH_TRACING
                     using (GlobalTracer.Instance.BuildSpan("ProcessActions")
                         .StartActive(true))
                     {
+#endif
                         if (!hasInputEvts) continue;
 
                         lock (eventQueueLock)
@@ -1650,7 +1706,9 @@ namespace DS4Windows
 
                             hasInputEvts = false;
                         }
+#if WITH_TRACING
                     }
+#endif
                 }
             }
 
@@ -1729,8 +1787,10 @@ namespace DS4Windows
 
         private void SendOutputReport(bool synchronous, bool force = false, bool quitOutputThreadOnError = true)
         {
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan(nameof(SendOutputReport)).StartActive(true))
             {
+#endif
                 MergeStates();
                 //setTestRumble();
                 //setHapticState();
@@ -1874,7 +1934,9 @@ namespace DS4Windows
                     StopOutputUpdate();
                     exitOutputThread = true;
                 }
+#if WITH_TRACING
             }
+#endif
         }
 
         // Perform outReportBuffer copy on a separate thread to save

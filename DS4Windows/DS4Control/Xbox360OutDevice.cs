@@ -33,9 +33,11 @@ namespace DS4Windows
         {
             if (!connected) return;
 
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan($"{nameof(Xbox360OutDevice)}::{nameof(ConvertAndSendReport)}")
                 .StartActive(true))
             {
+#endif
                 //cont.ResetReport();
                 ushort tempButtons = 0;
 
@@ -134,7 +136,9 @@ namespace DS4Windows
                 }
 
                 cont.SubmitReport();
+#if WITH_TRACING
             }
+#endif
         }
 
         private short AxisScale(int Value, bool Flip)

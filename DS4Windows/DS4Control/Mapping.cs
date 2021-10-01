@@ -476,8 +476,10 @@ namespace DS4Windows
 
         public static void Commit(int device)
         {
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan(nameof(Commit)).StartActive(true))
             {
+#endif
                 SyntheticState state = deviceState[device];
                 syncStateLock.EnterWriteLock();
 
@@ -705,13 +707,17 @@ namespace DS4Windows
                 // Send possible virtual events to system. Only used for FakerInput atm.
                 // SendInput version does nothing
                 outputKBMHandler.Sync();
+#if WITH_TRACING
             }
+#endif
         }
 
         public enum Click { None, Left, Middle, Right, Fourth, Fifth, WUP, WDOWN };
         public static void MapClick(int device, Click mouseClick)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(MapClick)).StartActive(true);
+#endif
 
             switch (mouseClick)
             {
@@ -768,8 +774,10 @@ namespace DS4Windows
 
         public static DS4State SetCurveAndDeadzone(int device, DS4State cState, DS4State dState)
         {
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan(nameof(SetCurveAndDeadzone)).StartActive(true))
             {
+#endif
                 double rotation = /*tempDoubleArray[device] =*/ Global.Instance.Config.GetLSRotation(device);
                 if (rotation > 0.0 || rotation < 0.0)
                     cState.rotateLSCoordinates(rotation);
@@ -2014,7 +2022,9 @@ namespace DS4Windows
                 }
 
                 return dState;
+#if WITH_TRACING
             }
+#endif
         }
 
         /* TODO: Possibly remove usage of this version of the method */
@@ -3368,8 +3378,10 @@ namespace DS4Windows
         private static async void MapCustomAction(int device, DS4State cState, DS4State MappedState,
             DS4StateExposed eState, Mouse tp, ControlService ctrl, DS4StateFieldMapping fieldMapping, DS4StateFieldMapping outputfieldMapping)
         {
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan(nameof(MapCustomAction)).StartActive(true))
             {
+#endif
                 /* TODO: This method is slow sauce. Find ways to speed up action execution */
                 try
                 {
@@ -4202,12 +4214,16 @@ namespace DS4Windows
                         actionDone[index].dev[device] = false;
                     }
                 }
+#if WITH_TRACING
             }
+#endif
         }
 
         private static void ReleaseActionKeys(SpecialAction action, int device)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(ReleaseActionKeys)).StartActive(true);
+#endif
 
             //foreach (DS4Controls dc in action.trigger)
             for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)

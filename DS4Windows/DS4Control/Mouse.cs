@@ -140,7 +140,9 @@ namespace DS4Windows
 
         public virtual void SixAxisMoved(DS4SixAxis sender, SixAxisEventArgs arg)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixAxisMoved)).StartActive(true);
+#endif
 
             GyroOutMode outMode = Global.Instance.Config.GetGyroOutMode(deviceNum);
             if (outMode == GyroOutMode.Controls)
@@ -374,7 +376,9 @@ namespace DS4Windows
 
         private void SixMouseReset(SixAxisEventArgs args)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixMouseReset)).StartActive(true);
+#endif
 
             int iIndex = smoothBufferTail % SMOOTH_BUFFER_LEN;
             xSmoothBuffer[iIndex] = 0;
@@ -392,7 +396,9 @@ namespace DS4Windows
 
         private void SixMouseStick(SixAxisEventArgs arg)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixMouseStick)).StartActive(true);
+#endif
 
             int deltaX = 0, deltaY = 0;
             deltaX = Global.Instance.Config.GetGyroMouseStickHorizontalAxis(0) == 0 ? arg.sixAxis.gyroYawFull :
@@ -554,7 +560,9 @@ namespace DS4Windows
 
         private void SixDirectionalSwipe(SixAxisEventArgs arg, GyroDirectionalSwipeInfo swipeInfo)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixDirectionalSwipe)).StartActive(true);
+#endif
 
             double velX = swipeInfo.xAxis == GyroDirectionalSwipeInfo.XAxisSwipe.Yaw ?
                 arg.sixAxis.angVelYaw : arg.sixAxis.angVelRoll;
@@ -674,7 +682,9 @@ namespace DS4Windows
         private bool tempBool = false;
         public virtual void TouchesMoved(DS4Touchpad sender, TouchpadEventArgs arg)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesMoved)).StartActive(true);
+#endif
 
             s = dev.GetCurrentStateReference();
 
@@ -755,7 +765,9 @@ namespace DS4Windows
 
         public virtual void TouchesBegan(DS4Touchpad sender, TouchpadEventArgs arg)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesBegan)).StartActive(true);
+#endif
 
             TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             bool mouseMode = tempMode == TouchpadOutMode.Mouse;
@@ -792,7 +804,9 @@ namespace DS4Windows
 
         public virtual void TouchesEnded(DS4Touchpad sender, TouchpadEventArgs arg)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesEnded)).StartActive(true);
+#endif
 
             s = dev.GetCurrentStateReference();
             slideright = slideleft = false;
@@ -935,7 +949,9 @@ namespace DS4Windows
 
         public virtual void TouchUnchanged(DS4Touchpad sender, EventArgs unused)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchUnchanged)).StartActive(true);
+#endif
 
             s = dev.GetCurrentStateReference();
 
@@ -1008,7 +1024,9 @@ namespace DS4Windows
 
         private void SynthesizeMouseButtons()
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SynthesizeMouseButtons)).StartActive(true);
+#endif
 
             TouchpadOutMode tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             if (tempMode != TouchpadOutMode.Passthru)

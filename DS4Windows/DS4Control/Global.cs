@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using DS4Windows.DS4Control;
+#if WITH_TRACING
 using Jaeger;
 using Jaeger.Samplers;
 using Jaeger.Senders;
 using Jaeger.Senders.Thrift;
 using Microsoft.Extensions.Logging.Abstractions;
 using OpenTracing.Util;
+#endif
 
 namespace DS4Windows
 {
@@ -77,6 +79,7 @@ namespace DS4Windows
 
         private Global()
         {
+#if WITH_TRACING
             // This is necessary to pick the correct sender, otherwise a NoopSender is used!
             Configuration.SenderConfiguration.DefaultSenderResolver = new SenderResolver(new NullLoggerFactory())
                 .RegisterSenderFactory<ThriftSenderFactory>();
@@ -89,6 +92,7 @@ namespace DS4Windows
 
             // Allows code that can't use DI to also access the tracer.
             GlobalTracer.Register(tracer);
+#endif
         }
 
         /// <summary>
