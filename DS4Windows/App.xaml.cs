@@ -165,7 +165,7 @@ namespace DS4WinWPF
             if (firstRun && !CreateConfDirSkeleton())
             {
                 MessageBox.Show($"Cannot create config folder structure in {Global.RuntimeAppDataPath}. Exiting",
-                    "DS4Windows", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Constants.ApplicationName, MessageBoxButton.OK, MessageBoxImage.Error);
                 Current.Shutdown(1);
             }
 
@@ -175,9 +175,9 @@ namespace DS4WinWPF
 
             var version = Global.ExecutableProductVersion;
 
-            logger.LogInformation($"DS4Windows version {version}");
-            logger.LogInformation($"DS4Windows exe file: {Global.ExecutableFileName}");
-            logger.LogInformation($"DS4Windows Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
+            logger.LogInformation($"{Constants.ApplicationName} version {version}");
+            logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
+            logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
             logger.LogInformation($"OS Version: {Environment.OSVersion}");
             logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
             logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
@@ -371,12 +371,12 @@ namespace DS4WinWPF
 
                     MessageBox.Show(
                         "Copy complete, please relaunch DS4Windows and remove settings from Program Directory",
-                        "DS4Windows");
+                        Constants.ApplicationName);
                 }
                 else
                 {
                     MessageBox.Show("DS4Windows cannot edit settings here, This will now close",
-                        "DS4Windows");
+                        Constants.ApplicationName);
                 }
 
                 Global.RuntimeAppDataPath = null;
@@ -423,7 +423,7 @@ namespace DS4WinWPF
             else if (parser.Command)
             {
                 var hWndDS4WindowsForm = IntPtr.Zero;
-                hWndDS4WindowsForm = FindWindow(ReadIPCClassNameMMF(), "DS4Windows");
+                hWndDS4WindowsForm = FindWindow(ReadIPCClassNameMMF(), Constants.ApplicationName);
                 if (hWndDS4WindowsForm != IntPtr.Zero)
                 {
                     var bDoSendMsg = true;
