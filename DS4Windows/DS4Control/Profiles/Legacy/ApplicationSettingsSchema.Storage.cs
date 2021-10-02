@@ -74,12 +74,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
             AutoProfileRevertDefaultProfile = store.AutoProfileRevertDefaultProfile;
 
-            DeviceOptions.DS4SupportSettings.Enabled = store.DeviceOptions.Ds4DeviceOpts.Enabled;
-            DeviceOptions.DualSenseSupportSettings.Enabled = store.DeviceOptions.DualSenseOpts.Enabled;
-            DeviceOptions.SwitchProSupportSettings.Enabled = store.DeviceOptions.SwitchProDeviceOpts.Enabled;
-            DeviceOptions.JoyConSupportSettings.Enabled = store.DeviceOptions.JoyConDeviceOpts.Enabled;
-            DeviceOptions.JoyConSupportSettings.LinkMode = store.DeviceOptions.JoyConDeviceOpts.LinkedMode;
-            DeviceOptions.JoyConSupportSettings.JoinedGyroProvider = store.DeviceOptions.JoyConDeviceOpts.JoinGyroProv;
+            DeviceOptions.DS4SupportSettings = store.DeviceOptions.Ds4DeviceOpts;
+            DeviceOptions.DualSenseSupportSettings = store.DeviceOptions.DualSenseOpts;
+            DeviceOptions.SwitchProSupportSettings = store.DeviceOptions.SwitchProDeviceOpts;
+            DeviceOptions.JoyConSupportSettings = store.DeviceOptions.JoyConDeviceOpts;
 
             CustomLed1 = new CustomLedProxyType()
             {
@@ -187,12 +185,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
             store.AutoProfileRevertDefaultProfile = AutoProfileRevertDefaultProfile;
 
-            store.DeviceOptions.Ds4DeviceOpts.Enabled = DeviceOptions.DS4SupportSettings.Enabled;
-            store.DeviceOptions.DualSenseOpts.Enabled = DeviceOptions.DualSenseSupportSettings.Enabled;
-            store.DeviceOptions.SwitchProDeviceOpts.Enabled = DeviceOptions.SwitchProSupportSettings.Enabled;
-            store.DeviceOptions.JoyConDeviceOpts.Enabled = DeviceOptions.JoyConSupportSettings.Enabled;
-            store.DeviceOptions.JoyConDeviceOpts.LinkedMode = DeviceOptions.JoyConSupportSettings.LinkMode;
-            store.DeviceOptions.JoyConDeviceOpts.JoinGyroProv = DeviceOptions.JoyConSupportSettings.JoinedGyroProvider;
+            store.DeviceOptions.Ds4DeviceOpts = DeviceOptions.DS4SupportSettings;
+            store.DeviceOptions.DualSenseOpts = DeviceOptions.DualSenseSupportSettings;
+            store.DeviceOptions.SwitchProDeviceOpts = DeviceOptions.SwitchProSupportSettings;
+            store.DeviceOptions.JoyConDeviceOpts = DeviceOptions.JoyConSupportSettings;
 
             store.LightbarSettingInfo[0].Ds4WinSettings.UseCustomLed = CustomLed1.IsEnabled;
             store.LightbarSettingInfo[0].Ds4WinSettings.Led = CustomLed1.CustomColor;

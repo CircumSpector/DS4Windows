@@ -47,9 +47,11 @@ namespace DS4Windows
         }
     }
 
+    [XmlRoot(ElementName = "DS4SupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class DS4DeviceOptions
     {
+        [XmlElement(ElementName = "Enabled")]
         public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
@@ -108,9 +110,11 @@ namespace DS4Windows
         }
     }
 
+    [XmlRoot(ElementName = "DualSenseSupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class DualSenseDeviceOptions
     {
+        [XmlElement(ElementName = "Enabled")]
         public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
@@ -242,9 +246,11 @@ namespace DS4Windows
         }
     }
 
+    [XmlRoot(ElementName = "SwitchProSupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class SwitchProDeviceOptions
     {
+        [XmlElement(ElementName = "Enabled")]
         public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
@@ -303,6 +309,7 @@ namespace DS4Windows
         }
     }
 
+    [XmlRoot(ElementName = "JoyConSupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class JoyConDeviceOptions
     {
@@ -318,10 +325,13 @@ namespace DS4Windows
             Joined
         }
 
+        [XmlElement(ElementName = "Enabled")]
         public bool Enabled { get; set; } = true;
 
+        [XmlElement(ElementName = "LinkMode")]
         public LinkMode LinkedMode { get; set; } = LinkMode.Joined;
 
+        [XmlElement(ElementName = "JoinedGyroProvider")]
         public JoinedGyroProvider JoinGyroProv { get; set; } = JoinedGyroProvider.JoyConR;
 
         [UsedImplicitly]
