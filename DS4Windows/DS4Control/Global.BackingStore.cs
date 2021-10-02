@@ -2542,6 +2542,7 @@ namespace DS4Windows
                 return saved;
             }
 
+            [ConfigurationSystemComponent]
             public bool LoadControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
@@ -2554,6 +2555,7 @@ namespace DS4Windows
                 return true;
             }
 
+            [ConfigurationSystemComponent]
             public bool SaveControllerConfigs(DS4Device device = null)
             {
                 if (device != null)

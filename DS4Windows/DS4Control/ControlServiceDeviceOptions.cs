@@ -34,6 +34,7 @@ namespace DS4Windows
             DeviceType = deviceType;
         }
 
+        [XmlAttribute(AttributeName = "ControllerType")]
         public InputDeviceType DeviceType { get; }
 
         [ConfigurationSystemComponent]
