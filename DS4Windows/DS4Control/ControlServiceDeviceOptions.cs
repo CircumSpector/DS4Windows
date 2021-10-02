@@ -28,14 +28,12 @@ namespace DS4Windows
 
     public abstract class ControllerOptionsStore
     {
-        protected InputDeviceType deviceType;
-
         protected ControllerOptionsStore(InputDeviceType deviceType)
         {
-            this.deviceType = deviceType;
+            DeviceType = deviceType;
         }
 
-        public InputDeviceType DeviceType => deviceType;
+        public InputDeviceType DeviceType { get; }
 
         [ConfigurationSystemComponent]
         public virtual void PersistSettings(XmlDocument xmlDoc, XmlNode node)
