@@ -1609,28 +1609,7 @@ namespace DS4Windows
                 {
                     XmlNode Item;
 
-                    var tmpMigration = new ProfileMigration(profilepath);
-                    if (tmpMigration.RequiresMigration())
-                    {
-                        tmpMigration.Migrate();
-                        m_Xdoc.Load(tmpMigration.ProfileReader);
-                        migratePerformed = true;
-                    }
-                    else if (tmpMigration.ProfileReader != null)
-                    {
-                        m_Xdoc.Load(tmpMigration.ProfileReader);
-                        //m_Xdoc.Load(profilepath);
-                    }
-                    else
-                    {
-                        loaded = false;
-                    }
-
-                    if (m_Xdoc.SelectSingleNode(rootname) == null)
-                    {
-                        rootname = "DS4Windows";
-                        missingSetting = true;
-                    }
+                    m_Xdoc.Load(profilepath);
 
                     if (device < MAX_DS4_CONTROLLER_COUNT)
                     {
