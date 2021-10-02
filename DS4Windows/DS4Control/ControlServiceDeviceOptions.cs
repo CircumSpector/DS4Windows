@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using System.Xml.Serialization;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Attributes;
 using JetBrains.Annotations;
@@ -60,6 +61,7 @@ namespace DS4Windows
         public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "DS4SupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class DS4ControllerOptions : ControllerOptionsStore
     {
@@ -67,6 +69,7 @@ namespace DS4Windows
         {
         }
 
+        [XmlElement(ElementName = "Copycat")]
         public bool IsCopyCat { get; set; }
 
         [UsedImplicitly]
@@ -119,6 +122,7 @@ namespace DS4Windows
         public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "DualSenseSupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class DualSenseControllerOptions : ControllerOptionsStore
     {
@@ -142,12 +146,16 @@ namespace DS4Windows
         {
         }
 
+        [XmlElement(ElementName = "EnableRumble")]
         public bool EnableRumble { get; set; } = true;
 
+        [XmlElement(ElementName = "RumbleStrength")]
         public DualSenseDevice.HapticIntensity HapticIntensity { get; set; } = DualSenseDevice.HapticIntensity.Medium;
 
+        [XmlElement(ElementName = "LEDBarMode")]
         public LEDBarMode LedMode { get; set; } = LEDBarMode.MultipleControllers;
 
+        [XmlElement(ElementName = "MuteLEDMode")]
         public MuteLEDMode MuteLedMode { get; set; } = MuteLEDMode.Off;
 
         [UsedImplicitly]
@@ -248,6 +256,7 @@ namespace DS4Windows
         public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "SwitchProSupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class SwitchProControllerOptions : ControllerOptionsStore
     {
@@ -255,6 +264,7 @@ namespace DS4Windows
         {
         }
 
+        [XmlElement(ElementName = "EnableHomeLED")]
         public bool EnableHomeLED { get; set; } = true;
 
         [UsedImplicitly]
@@ -323,6 +333,7 @@ namespace DS4Windows
         public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "JoyConSupportSettings")]
     [AddINotifyPropertyChangedInterface]
     public class JoyConControllerOptions : ControllerOptionsStore
     {
@@ -331,8 +342,10 @@ namespace DS4Windows
         {
         }
 
+        [XmlElement(ElementName = "EnableHomeLED")]
         public bool EnableHomeLED { get; set; } = true;
 
+        [UsedImplicitly]
         private void OnEnableHomeLEDChanged()
         {
             EnableHomeLEDChanged?.Invoke();
