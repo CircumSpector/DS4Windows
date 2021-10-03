@@ -42,7 +42,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public async void RetrieveChangelogInfo()
         {
             // Sorry other devs, gonna have to find your own server
-            var url = new Uri(UpdaterWindowViewModel.CHANGELOG_URI);
+            var url = new Uri(Constants.ChangelogUri);
             var filename = Path.Combine(Path.GetTempPath(), "Changelog.min.json");
             var readFile = false;
             using (var downloadStream = new FileStream(filename, FileMode.Create))
