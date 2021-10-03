@@ -35,5 +35,7 @@ namespace DS4Windows
         public static Guid BluetoothHidGuild = new("{00001124-0000-1000-8000-00805F9B34FB}");
 
         public static CultureInfo StorageCulture = new("en-US");
+
+        public const string ChangelogUri = "https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/Changelog.min.json";
     }
 }
