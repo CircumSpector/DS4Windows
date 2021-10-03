@@ -6,6 +6,7 @@ using PropertyChanged;
 
 namespace DS4Windows
 {
+    [AddINotifyPropertyChangedInterface]
     public class ControlServiceDeviceOptions
     {
         public DS4DeviceOptions Ds4DeviceOpts { get; set; } = new();
