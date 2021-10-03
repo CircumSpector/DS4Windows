@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Net.NetworkInformation;
-using System.Xml;
 using System.Xml.Serialization;
 using DS4Windows.InputDevices;
-using DS4WinWPF.DS4Control.Attributes;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
 using JetBrains.Annotations;
 using PropertyChanged;
 
