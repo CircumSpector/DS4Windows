@@ -2513,11 +2513,11 @@ namespace DS4Windows
             public bool LoadControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
-                    return LoadControllerConfigsForDevice(device);
+                    return device.LoadOptionsStoreFrom(ControllerConfigsPath);
 
                 for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
                     if (ControlService.CurrentInstance.DS4Controllers[idx] != null)
-                        LoadControllerConfigsForDevice(ControlService.CurrentInstance.DS4Controllers[idx]);
+                        ControlService.CurrentInstance.DS4Controllers[idx].LoadOptionsStoreFrom(ControllerConfigsPath);
 
                 return true;
             }
@@ -2526,11 +2526,11 @@ namespace DS4Windows
             public bool SaveControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
-                    return SaveControllerConfigsForDevice(device);
+                    return device.PersistOptionsStore(ControllerConfigsPath);
 
                 for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
                     if (ControlService.CurrentInstance.DS4Controllers[idx] != null)
-                        SaveControllerConfigsForDevice(ControlService.CurrentInstance.DS4Controllers[idx]);
+                        ControlService.CurrentInstance.DS4Controllers[idx].PersistOptionsStore(ControllerConfigsPath);
 
                 return true;
             }
@@ -3383,109 +3383,6 @@ namespace DS4Windows
 
                 var propertyToSet = target.GetType().GetProperty(bits.Last());
                 propertyToSet.SetValue(target, value, null);
-            }
-
-            [ConfigurationSystemComponent]
-            private bool LoadControllerConfigsForDevice(DS4Device device)
-            {
-                var loaded = false;
-
-                if (device == null) return false;
-                
-                var address = PhysicalAddress.Parse(device.GetMacAddress());
-                ControllerConfigs config = null;
-
-                try
-                {
-                    using var stream = File.OpenRead(ControllerConfigsPath);
-
-                    config = ControllerConfigs.Deserialize(stream);
-
-                   
-                }
-                catch (InvalidOperationException)
-                {
-
-                }
-
-
-                try
-                {
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.Load(ControllerConfigsPath);
-
-                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.GetMacAddress() +
-                                                       "\"]");
-                    if (node != null)
-                    {
-                        int intValue;
-                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheelCenterPoint.X = intValue;
-                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheelCenterPoint.Y = intValue;
-                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheel90DegPointLeft.X = intValue;
-                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheel90DegPointLeft.Y = intValue;
-                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheel90DegPointRight.X = intValue;
-                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheel90DegPointRight.Y = intValue;
-
-                        device.OptionsStore.LoadSettings(xmlDoc, node);
-
-                        loaded = true;
-                    }
-                }
-                catch
-                {
-                    AppLogger.Instance.LogToGui("ControllerConfigs.xml can't be found.", false);
-                    loaded = false;
-                }
-
-                return loaded;
-            }
-
-            [ConfigurationSystemComponent]
-            private bool SaveControllerConfigsForDevice(DS4Device device)
-            {
-                var saved = true;
-
-                if (device == null) return false;
-
-                var address = PhysicalAddress.Parse(device.GetMacAddress());
-                ControllerConfigs config = null;
-
-                try
-                {
-                    using var stream = File.OpenRead(ControllerConfigsPath);
-
-                    config = ControllerConfigs.Deserialize(stream);
-                }
-                catch (InvalidOperationException)
-                {
-                    //
-                    // Old format loaded, ignore and overwrite
-                    // 
-                    config = new ControllerConfigs();
-                }
-
-                config.Controllers[address] = device.OptionsStore;
-                
-                try
-                {
-                    using var stream = File.Open(ControllerConfigsPath, FileMode.Create);
-
-                    config.Serialize(stream);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath,
-                        false);
-                    saved = false;
-                }
-
-                return saved;
             }
 
             private void SetOutBezierCurveObjArrayItem(IList<BezierCurve> bezierCurveArray, int device,

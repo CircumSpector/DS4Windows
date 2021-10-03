@@ -15,7 +15,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         {
             return new ConfigurationContainer()
                 .UseOptimizedNamespaces()
-                .EnableImplicitTyping(typeof(ControllerConfigs))
+                .EnableMemberExceptionHandling()
+                .EnableImplicitTyping(
+                    typeof(ControllerConfigs),
+                    typeof(DS4ControllerOptions),
+                    typeof(DualSenseControllerOptions),
+                    typeof(SwitchProControllerOptions),
+                    typeof(JoyConControllerOptions)
+                )
                 .Type<PhysicalAddress>().Register().Converter().Using(PhysicalAddressConverter.Default)
                 .Create();
         }

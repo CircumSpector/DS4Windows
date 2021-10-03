@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4Windows.DS4Library;
 using DS4Windows.DS4Library.CoreAudio;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Profiles.Legacy;
 using OpenTracing.Util;
 using ThreadState = System.Threading.ThreadState;
 
@@ -272,6 +275,74 @@ namespace DS4Windows
         public bool oldCharging;
 
         public ControllerOptionsStore OptionsStore { get; protected set; }
+
+        /// <summary>
+        ///     Persist <see cref="OptionsStore"/> to XML.
+        /// </summary>
+        /// <param name="path">Full path to XML file.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        public bool PersistOptionsStore(string path)
+        {
+            var address = PhysicalAddress.Parse(Mac);
+            ControllerConfigs config = null;
+
+            try
+            {
+                using var read = File.OpenRead(path);
+
+                config = ControllerConfigs.Deserialize(read);
+            }
+            catch (InvalidOperationException)
+            {
+                //
+                // Old format loaded, ignore and overwrite
+                // 
+                config = new ControllerConfigs();
+            }
+
+            config.Controllers[address] = OptionsStore;
+
+            using var write = File.Open(path, FileMode.Create);
+
+            config.Serialize(write);
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Load <see cref="OptionsStore"/> from XML.
+        /// </summary>
+        /// <param name="path">Full path to XML file.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        public bool LoadOptionsStoreFrom(string path)
+        {
+            var address = PhysicalAddress.Parse(Mac);
+
+            try
+            {
+                using var stream = File.OpenRead(path);
+
+                var config = ControllerConfigs.Deserialize(stream);
+
+                OptionsStore = config.Controllers[address];
+            }
+            catch (InvalidOperationException)
+            {
+                //
+                // XML format malformed, ignore
+                // 
+                return false;
+            }
+            catch (KeyNotFoundException)
+            {
+                //
+                // No config for this device found, ignore
+                // 
+                return false;
+            }
+
+            return true;
+        }
 
         private readonly byte[] outputBTCrc32Head = { 0xA2 };
         private byte outputFeaturesByte = DEFAULT_OUTPUT_FEATURES;
