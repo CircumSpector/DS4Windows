@@ -30,6 +30,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                     typeof(JoyConControllerOptions)
                 )
                 .Type<PhysicalAddress>().Register().Converter().Using(PhysicalAddressConverter.Default)
+                .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Create();
         }
     }
