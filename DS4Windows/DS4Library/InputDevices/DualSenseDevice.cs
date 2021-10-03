@@ -200,7 +200,7 @@ namespace DS4Windows.InputDevices
             HidDevice hidDevice = hDevice;
             deviceType = InputDeviceType.DualSense;
             gyroMouseSensSettings = new GyroMouseSensDualSense();
-            OptionsStore = NativeOptionsStore = new DualSenseControllerOptions(deviceType);
+            OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
             SetupOptionsEvents();
 
             conType = DetermineConnectionType(hDevice);

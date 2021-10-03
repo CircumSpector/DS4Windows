@@ -2510,39 +2510,6 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public bool CreateControllerConfigs()
-            {
-                var saved = true;
-                var configXdoc = new XmlDocument();
-                XmlNode Node;
-
-                Node = configXdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                configXdoc.AppendChild(Node);
-
-                Node = configXdoc.CreateComment(string.Format(" Controller config data. {0} ", DateTime.Now));
-                configXdoc.AppendChild(Node);
-
-                Node = configXdoc.CreateWhitespace("\r\n");
-                configXdoc.AppendChild(Node);
-
-                Node = configXdoc.CreateNode(XmlNodeType.Element, "Controllers", "");
-                configXdoc.AppendChild(Node);
-
-                try
-                {
-                    configXdoc.Save(ControllerConfigsPath);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath,
-                        false);
-                    saved = false;
-                }
-
-                return saved;
-            }
-
-            [ConfigurationSystemComponent]
             public bool LoadControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
@@ -3424,14 +3391,30 @@ namespace DS4Windows
                 var loaded = false;
 
                 if (device == null) return false;
-                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
+                
+                var address = PhysicalAddress.Parse(device.GetMacAddress());
+                ControllerConfigs config = null;
+
+                try
+                {
+                    using var stream = File.OpenRead(ControllerConfigsPath);
+
+                    config = ControllerConfigs.Deserialize(stream);
+
+                   
+                }
+                catch (InvalidOperationException)
+                {
+
+                }
+
 
                 try
                 {
                     var xmlDoc = new XmlDocument();
                     xmlDoc.Load(ControllerConfigsPath);
 
-                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
+                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.GetMacAddress() +
                                                        "\"]");
                     if (node != null)
                     {
@@ -3469,72 +3452,31 @@ namespace DS4Windows
                 var saved = true;
 
                 if (device == null) return false;
-                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
+
+                var address = PhysicalAddress.Parse(device.GetMacAddress());
+                ControllerConfigs config = null;
 
                 try
                 {
-                    //XmlNode node = null;
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.Load(ControllerConfigsPath);
+                    using var stream = File.OpenRead(ControllerConfigsPath);
 
-                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
-                                                       "\"]");
-                    var xmlControllersNode = xmlDoc.SelectSingleNode("/Controllers");
-                    if (node == null)
-                    {
-                        var el = xmlDoc.CreateElement("Controller");
-                        node = xmlControllersNode.AppendChild(el);
-                    }
-                    else
-                    {
-                        node.RemoveAll();
-                    }
+                    config = ControllerConfigs.Deserialize(stream);
+                }
+                catch (InvalidOperationException)
+                {
+                    //
+                    // Old format loaded, ignore and overwrite
+                    // 
+                    config = new ControllerConfigs();
+                }
 
-                    var macAttr = xmlDoc.CreateAttribute("Mac");
-                    macAttr.Value = device.getMacAddress();
-                    node.Attributes.Append(macAttr);
+                config.Controllers[address] = device.OptionsStore;
+                
+                try
+                {
+                    using var stream = File.Open(ControllerConfigsPath, FileMode.Create);
 
-                    var contTypeAttr = xmlDoc.CreateAttribute("ControllerType");
-                    contTypeAttr.Value = device.DeviceType.ToString();
-                    node.Attributes.Append(contTypeAttr);
-
-                    if (!device.wheelCenterPoint.IsEmpty)
-                    {
-                        var wheelCenterEl = xmlDoc.CreateElement("wheelCenterPoint");
-                        wheelCenterEl.InnerText = $"{device.wheelCenterPoint.X},{device.wheelCenterPoint.Y}";
-                        node.AppendChild(wheelCenterEl);
-
-                        var wheel90DegPointLeftEl = xmlDoc.CreateElement("wheel90DegPointLeft");
-                        wheel90DegPointLeftEl.InnerText =
-                            $"{device.wheel90DegPointLeft.X},{device.wheel90DegPointLeft.Y}";
-                        node.AppendChild(wheel90DegPointLeftEl);
-
-                        var wheel90DegPointRightEl = xmlDoc.CreateElement("wheel90DegPointRight");
-                        wheel90DegPointRightEl.InnerText =
-                            $"{device.wheel90DegPointRight.X},{device.wheel90DegPointRight.Y}";
-                        node.AppendChild(wheel90DegPointRightEl);
-                    }
-
-                    device.OptionsStore.PersistSettings(xmlDoc, node);
-
-                    // Remove old elements
-                    xmlDoc.RemoveAll();
-
-                    XmlNode Node;
-                    Node = xmlDoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                    xmlDoc.AppendChild(Node);
-
-                    Node = xmlDoc.CreateComment(string.Format(" Controller config data. {0} ", DateTime.Now));
-                    xmlDoc.AppendChild(Node);
-
-                    Node = xmlDoc.CreateWhitespace("\r\n");
-                    xmlDoc.AppendChild(Node);
-
-                    // Write old Controllers node back in
-                    xmlDoc.AppendChild(xmlControllersNode);
-
-                    // Save XML to file
-                    xmlDoc.Save(ControllerConfigsPath);
+                    config.Serialize(stream);
                 }
                 catch (UnauthorizedAccessException)
                 {

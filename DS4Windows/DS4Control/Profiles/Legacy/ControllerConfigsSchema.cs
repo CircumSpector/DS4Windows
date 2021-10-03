@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
-    [XmlRoot(ElementName = "Controllers")]
     public class ControllerConfigs : XmlSerializable<ControllerConfigs>
     {
-        //[XmlElement(ElementName = "Controller")]
-        //public List<ControllerConfig> Controller { get; set; }
+        public Dictionary<PhysicalAddress, ControllerOptionsStore> Controllers { get; set; } = new();
 
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .UseOptimizedNamespaces()
                 .EnableImplicitTyping(typeof(ControllerConfigs))
-                .EnableMemberExceptionHandling()
+                .Type<PhysicalAddress>().Register().Converter().Using(PhysicalAddressConverter.Default)
                 .Create();
         }
     }

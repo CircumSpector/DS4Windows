@@ -451,13 +451,13 @@ namespace DS4Windows
                 if (device != null)
                 {
                     string devPath = device.HidDevice.DevicePath;
-                    string serial = device.getMacAddress();
+                    string serial = device.GetMacAddress();
                     if (Devices.ContainsKey(devPath))
                     {
                         deviceSerials.Remove(serial);
                         serialDevices.Remove(serial);
                         device.updateSerial();
-                        serial = device.getMacAddress();
+                        serial = device.GetMacAddress();
                         if (DS4Device.isValidSerial(serial))
                         {
                             deviceSerials.Add(serial);

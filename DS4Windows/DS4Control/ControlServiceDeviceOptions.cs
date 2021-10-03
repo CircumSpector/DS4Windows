@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using System.Xml;
 using System.Xml.Serialization;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.Profiles.Legacy;
 using JetBrains.Annotations;
 using PropertyChanged;
 
@@ -27,16 +29,9 @@ namespace DS4Windows
         public bool VerboseLogMessages { get; set; }
     }
 
+    [XmlRoot(ElementName = "Controller")]
     public abstract class ControllerOptionsStore
     {
-        protected ControllerOptionsStore(InputDeviceType deviceType)
-        {
-            DeviceType = deviceType;
-        }
-
-        [XmlAttribute(AttributeName = "ControllerType")]
-        public InputDeviceType DeviceType { get; }
-
         [ConfigurationSystemComponent]
         public virtual void PersistSettings(XmlDocument xmlDoc, XmlNode node)
         {
@@ -68,10 +63,6 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DS4ControllerOptions : ControllerOptionsStore
     {
-        public DS4ControllerOptions(InputDeviceType deviceType) : base(deviceType)
-        {
-        }
-
         [XmlElement(ElementName = "Copycat")]
         public bool IsCopyCat { get; set; }
 
@@ -144,11 +135,6 @@ namespace DS4Windows
             Off,
             On,
             Pulse
-        }
-
-        public DualSenseControllerOptions(InputDeviceType deviceType) :
-            base(deviceType)
-        {
         }
 
         [XmlElement(ElementName = "EnableRumble")]
@@ -267,10 +253,6 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class SwitchProControllerOptions : ControllerOptionsStore
     {
-        public SwitchProControllerOptions(InputDeviceType deviceType) : base(deviceType)
-        {
-        }
-
         [XmlElement(ElementName = "EnableHomeLED")]
         public bool EnableHomeLED { get; set; } = true;
 
@@ -326,7 +308,6 @@ namespace DS4Windows
             Joined
         }
 
-        [XmlElement(ElementName = "Enabled")]
         public bool Enabled { get; set; } = true;
 
         [XmlElement(ElementName = "LinkMode")]
@@ -348,11 +329,6 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class JoyConControllerOptions : ControllerOptionsStore
     {
-        public JoyConControllerOptions(InputDeviceType deviceType) :
-            base(deviceType)
-        {
-        }
-
         [XmlElement(ElementName = "EnableHomeLED")]
         public bool EnableHomeLED { get; set; } = true;
 

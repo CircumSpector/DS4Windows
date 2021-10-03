@@ -251,7 +251,7 @@ namespace DS4Windows.InputDevices
             warnInterval = WARN_INTERVAL_BT;
 
             gyroMouseSensSettings = new GyroMouseSens();
-            OptionsStore = nativeOptionsStore = new JoyConControllerOptions(deviceType);
+            OptionsStore = nativeOptionsStore = new JoyConControllerOptions();
             SetupOptionsEvents();
 
             inputReportBuffer = new byte[INPUT_REPORT_LEN];

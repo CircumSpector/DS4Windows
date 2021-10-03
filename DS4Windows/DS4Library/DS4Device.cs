@@ -570,7 +570,7 @@ namespace DS4Windows
 
         public event EventHandler MacAddressChanged;
 
-        public string getMacAddress()
+        public string GetMacAddress()
         {
             return Mac;
         }
@@ -668,7 +668,7 @@ namespace DS4Windows
             var hidDevice = hDevice;
             deviceType = InputDeviceType.DS4;
             gyroMouseSensSettings = new GyroMouseSens();
-            OptionsStore = nativeOptionsStore = new DS4ControllerOptions(deviceType);
+            OptionsStore = nativeOptionsStore = new DS4ControllerOptions();
             SetupOptionsEvents();
 
             if (conType == ConnectionType.USB || conType == ConnectionType.SONYWA)
