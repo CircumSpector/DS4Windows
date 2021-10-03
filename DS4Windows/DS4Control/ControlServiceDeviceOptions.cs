@@ -32,15 +32,6 @@ namespace DS4Windows
     [XmlRoot(ElementName = "Controller")]
     public abstract class ControllerOptionsStore
     {
-        [ConfigurationSystemComponent]
-        public virtual void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-        }
-
-        [ConfigurationSystemComponent]
-        public virtual void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-        }
     }
 
     [XmlRoot(ElementName = "DS4SupportSettings")]
@@ -73,33 +64,6 @@ namespace DS4Windows
         }
 
         public event Action IsCopyCatChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("DS4SupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("DS4SupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempRumbleNode = xmlDoc.CreateElement("Copycat");
-            tempRumbleNode.InnerText = IsCopyCat.ToString();
-            tempOptsNode.AppendChild(tempRumbleNode);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("DS4SupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("Copycat");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) IsCopyCat = temp;
-            }
-        }
     }
 
     [XmlRoot(ElementName = "DualSenseSupportSettings")]
@@ -177,60 +141,6 @@ namespace DS4Windows
         public event Action HapticIntensityChanged;
         public event Action LedModeChanged;
         public event Action MuteLedModeChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("DualSenseSupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("DualSenseSupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempRumbleNode = xmlDoc.CreateElement("EnableRumble");
-            tempRumbleNode.InnerText = EnableRumble.ToString();
-            tempOptsNode.AppendChild(tempRumbleNode);
-
-            XmlNode tempRumbleStrengthNode = xmlDoc.CreateElement("RumbleStrength");
-            tempRumbleStrengthNode.InnerText = HapticIntensity.ToString();
-            tempOptsNode.AppendChild(tempRumbleStrengthNode);
-
-            XmlNode tempLedMode = xmlDoc.CreateElement("LEDBarMode");
-            tempLedMode.InnerText = LedMode.ToString();
-            tempOptsNode.AppendChild(tempLedMode);
-
-            XmlNode tempMuteLedMode = xmlDoc.CreateElement("MuteLEDMode");
-            tempMuteLedMode.InnerText = MuteLedMode.ToString();
-            tempOptsNode.AppendChild(tempMuteLedMode);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("DualSenseSupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("EnableRumble");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) EnableRumble = temp;
-
-                var itemStrength = baseNode.SelectSingleNode("RumbleStrength");
-                if (Enum.TryParse(itemStrength?.InnerText ?? "",
-                    out DualSenseDevice.HapticIntensity tempHap))
-                    HapticIntensity = tempHap;
-
-                var itemLedMode = baseNode.SelectSingleNode("LEDBarMode");
-                if (Enum.TryParse(itemLedMode?.InnerText ?? "",
-                    out LEDBarMode tempLED))
-                    LedMode = tempLED;
-
-                var itemMuteLedMode = baseNode.SelectSingleNode("MuteLEDMode");
-                if (Enum.TryParse(itemMuteLedMode?.InnerText ?? "",
-                    out MuteLEDMode tempMuteLED))
-                    MuteLedMode = tempMuteLED;
-            }
-        }
     }
 
     [XmlRoot(ElementName = "SwitchProSupportSettings")]
@@ -263,33 +173,6 @@ namespace DS4Windows
         }
 
         public event Action EnableHomeLEDChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("SwitchProSupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("SwitchProSupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
-            tempElement.InnerText = EnableHomeLED.ToString();
-            tempOptsNode.AppendChild(tempElement);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("SwitchProSupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) EnableHomeLED = temp;
-            }
-        }
     }
 
     [XmlRoot(ElementName = "JoyConSupportSettings")]
@@ -339,32 +222,5 @@ namespace DS4Windows
         }
 
         public event Action EnableHomeLEDChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("JoyConSupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("JoyConSupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
-            tempElement.InnerText = EnableHomeLED.ToString();
-            tempOptsNode.AppendChild(tempElement);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("JoyConSupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) EnableHomeLED = temp;
-            }
-        }
     }
 }
