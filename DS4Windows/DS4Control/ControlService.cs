@@ -529,7 +529,7 @@ namespace DS4Windows
             bool result = false;
             if (dev != null && hidDeviceHidingEnabled)
             {
-                string deviceInstanceId = DS4Devices.devicePathToInstanceId(dev.HidDevice.DevicePath);
+                string deviceInstanceId = DS4Devices.DevicePathToInstanceId(dev.HidDevice.DevicePath);
                 if (Global.hidHideInstalled)
                 {
                     result = Global.CheckHidHideAffectedStatus(deviceInstanceId,
@@ -632,7 +632,7 @@ namespace DS4Windows
 
         public void ChangeMotionEventStatus(bool state)
         {
-            IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
+            IEnumerable<DS4Device> devices = DS4Devices.GetDS4Controllers();
             if (state)
             {
                 int i = 0;
@@ -671,7 +671,7 @@ namespace DS4Windows
         public async void UseUDPPort()
         {
             changingUDPPort = true;
-            IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
+            IEnumerable<DS4Device> devices = DS4Devices.GetDS4Controllers();
             foreach (DS4Device dev in devices)
             {
                 dev.queueEvent(() =>
@@ -1196,10 +1196,10 @@ namespace DS4Windows
 
                     eventDispatcher.Invoke(() =>
                     {
-                        DS4Devices.findControllers();
+                        DS4Devices.FindControllers();
                     });
 
-                    IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
+                    IEnumerable<DS4Device> devices = DS4Devices.GetDS4Controllers();
                     int numControllers = new List<DS4Device>(devices).Count;
                     activeControllers = numControllers;
                     //int ind = 0;
@@ -1545,7 +1545,7 @@ namespace DS4Windows
                 if (showlog)
                     LogDebug(DS4WinWPF.Properties.Resources.StoppingDS4);
 
-                DS4Devices.stopControllers();
+                DS4Devices.StopControllers();
                 slotManager.ClearControllerList();
 
                 if (_udpServer != null)
@@ -1586,10 +1586,10 @@ namespace DS4Windows
                 loopControllers = true;
                 eventDispatcher.Invoke(() =>
                 {
-                    DS4Devices.findControllers();
+                    DS4Devices.FindControllers();
                 });
 
-                IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
+                IEnumerable<DS4Device> devices = DS4Devices.GetDS4Controllers();
                 int numControllers = new List<DS4Device>(devices).Count;
                 activeControllers = numControllers;
                 //foreach (DS4Device device in devices)

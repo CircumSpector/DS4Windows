@@ -176,12 +176,12 @@ namespace DS4Windows
             new VidPidInfo(0x7331, 0x0001, "DualShock 3 (DS4 Emulation)", InputDeviceType.DS4, VidPidFeatureSet.NoGyroCalib | VidPidFeatureSet.VendorDefinedDevice), // Sony DualShock 3 using DsHidMini driver. DsHidMini uses vendor-defined HID device type when it's emulating DS3 using DS4 button layout
         };
 
-        public static string devicePathToInstanceId(string devicePath)
+        public static string DevicePathToInstanceId(string devicePath)
         {
             string deviceInstanceId = devicePath;
             if (!string.IsNullOrEmpty(deviceInstanceId))
             {
-                int searchIdx = deviceInstanceId.LastIndexOf("?\\");
+                int searchIdx = deviceInstanceId.LastIndexOf("?\\", StringComparison.Ordinal);
                 if (searchIdx + 2 <= deviceInstanceId.Length)
                 {
                     deviceInstanceId = deviceInstanceId.Remove(0, searchIdx + 2);
@@ -205,7 +205,7 @@ namespace DS4Windows
         {
             // Assume true by default
             bool result = true;
-            string deviceInstanceId = devicePathToInstanceId(hDevice.DevicePath);
+            string deviceInstanceId = DevicePathToInstanceId(hDevice.DevicePath);
             if (!string.IsNullOrEmpty(deviceInstanceId))
             {
                 CheckVirtualInfo info = checkVirtualFunc(deviceInstanceId);
@@ -219,7 +219,7 @@ namespace DS4Windows
         }
 
         // Enumerates ds4 controllers in the system
-        public static void findControllers()
+        public static void FindControllers()
         {
             lock (Devices)
             {
@@ -250,7 +250,7 @@ namespace DS4Windows
                 });
 
                 List<HidDevice> tempList = hDevices.ToList();
-                purgeHiddenExclusiveDevices();
+                PurgeHiddenExclusiveDevices();
                 tempList.AddRange(DisabledDevices);
                 int devCount = tempList.Count();
                 string devicePlural = "device" + (devCount == 0 || devCount > 1 ? "s" : "");
@@ -284,7 +284,7 @@ namespace DS4Windows
                                 {
                                     // Tell the client to launch routine to re-enable a device
                                     RequestElevationArgs eleArgs = 
-                                        new RequestElevationArgs(devicePathToInstanceId(hDevice.DevicePath));
+                                        new RequestElevationArgs(DevicePathToInstanceId(hDevice.DevicePath));
                                     RequestElevation?.Invoke(eleArgs);
                                     if (eleArgs.StatusCode == RequestElevationArgs.STATUS_SUCCESS)
                                     {
@@ -293,7 +293,7 @@ namespace DS4Windows
                                 }
                                 else
                                 {
-                                    reEnableDevice(devicePathToInstanceId(hDevice.DevicePath));
+                                    ReEnableDevice(DevicePathToInstanceId(hDevice.DevicePath));
                                     hDevice.OpenDevice(isExclusiveMode);
                                 }
                             }
@@ -382,7 +382,7 @@ namespace DS4Windows
         }
         
         // Returns DS4 controllers that were found and are running
-        public static IEnumerable<DS4Device> getDS4Controllers()
+        public static IEnumerable<DS4Device> GetDS4Controllers()
         {
             lock (Devices)
             {
@@ -392,7 +392,7 @@ namespace DS4Windows
             }
         }
 
-        public static void stopControllers()
+        public static void StopControllers()
         {
             lock (Devices)
             {
@@ -472,7 +472,7 @@ namespace DS4Windows
             }
         }
 
-        private static void purgeHiddenExclusiveDevices()
+        private static void PurgeHiddenExclusiveDevices()
         {
             int disabledDevCount = DisabledDevices.Count;
             if (disabledDevCount > 0)
@@ -513,7 +513,7 @@ namespace DS4Windows
             }
         }
 
-        public static void reEnableDevice(string deviceInstanceId)
+        public static void ReEnableDevice(string deviceInstanceId)
         {
             bool success;
             Guid hidGuid = new Guid();
