@@ -7,8 +7,14 @@ using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    /// <summary>
+    ///     Persists and retrieves <see cref="ControllerOptionsStore"/> entries to and from disk (XML).
+    /// </summary>
     public class ControllerConfigs : XmlSerializable<ControllerConfigs>
     {
+        /// <summary>
+        ///     Controller-specific settings identified by controller MAC address.
+        /// </summary>
         public Dictionary<PhysicalAddress, ControllerOptionsStore> Controllers { get; set; } = new();
 
         public override IExtendedXmlSerializer GetSerializer()
