@@ -1,8 +1,10 @@
 ﻿using System.Xml.Serialization;
 using DS4Windows;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "UDPServerSmoothingOptions")]
     public class UDPServerSmoothingOptions
     {
@@ -16,6 +18,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double UdpSmoothBeta { get; set; } = 0.2f;
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "DeviceOptions")]
     public class DeviceOptions
     {

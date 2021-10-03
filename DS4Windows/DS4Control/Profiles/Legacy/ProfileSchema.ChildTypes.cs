@@ -1,8 +1,10 @@
 ﻿using System.Xml.Serialization;
 using DS4Windows;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "LSAxialDeadOptions")]
     public class LSAxialDeadOptions
     {
@@ -31,6 +33,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double MaxOutputY { get; set; }
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "RSAxialDeadOptions")]
     public class RSAxialDeadOptions
     {
@@ -59,6 +62,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double MaxOutputY { get; set; }
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "SASteeringWheelSmoothingOptions")]
     public class SASteeringWheelSmoothingOptions
     {
@@ -72,6 +76,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double SASteeringWheelSmoothBeta { get; set; } = OneEuroFilterPair.DEFAULT_WHEEL_BETA;
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "GyroControlsSettings")]
     public class GyroControlsSettings
     {
@@ -88,6 +93,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool Toggle { get; set; } = false;
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "GyroMouseSmoothingSettings")]
     public class GyroMouseSmoothingSettings
     {
@@ -107,6 +113,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DEFAULT_BETA;
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "GyroMouseStickSmoothingSettings")]
     public class GyroMouseStickSmoothingSettings
     {
@@ -126,6 +133,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DEFAULT_BETA;
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "GyroSwipeSettings")]
     public class GyroSwipeSettings
     {
@@ -151,6 +159,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int DelayTime { get; set; } = 0;
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "FlickStickSettings")]
     public class FlickStickSettings
     {
@@ -167,6 +176,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double MinAngleThreshold { get; set; }
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "LSOutputSettings")]
     public class LSOutputSettings
     {
@@ -174,6 +184,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public FlickStickSettings FlickStickSettings { get; set; } = new();
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "RSOutputSettings")]
     public class RSOutputSettings
     {
@@ -181,6 +192,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public FlickStickSettings FlickStickSettings { get; set; } = new();
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "TouchpadAbsMouseSettings")]
     public class TouchpadAbsMouseSettings
     {
@@ -194,6 +206,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public bool SnapToCenter { get; set; }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class ControlsCollectionEntity
     {
         public string Value { get; set; }
@@ -201,6 +214,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string ShiftTrigger { get; set; }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public abstract class ControlsCollection
     {
         public ControlsCollectionEntity LXNeg { get; set; } = new();
@@ -254,31 +268,37 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public ControlsCollectionEntity RSOuter { get; set; } = new();
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Key")]
     public class ControlKey : ControlsCollection
     {
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "KeyType")]
     public class ControlKeyType : ControlsCollection
     {
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Button")]
     public class ControlButton : ControlsCollection
     {
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Extras")]
     public class ControlExtras : ControlsCollection
     {
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Macro")]
     public class ControlMacro : ControlsCollection
     {
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Control")]
     public class Control
     {
@@ -298,6 +318,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public ControlMacro Macros { get; set; } = new();
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "ShiftControl")]
     public class ShiftControl : Control
     {

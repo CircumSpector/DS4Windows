@@ -4,12 +4,14 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
     /// <summary>
     ///     Persists and retrieves <see cref="ControllerOptionsStore"/> entries to and from disk (XML).
     /// </summary>
+    [AddINotifyPropertyChangedInterface]
     public class ControllerConfigs : XmlSerializable<ControllerConfigs>
     {
         /// <summary>

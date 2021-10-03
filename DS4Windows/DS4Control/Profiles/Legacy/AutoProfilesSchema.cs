@@ -4,15 +4,18 @@ using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Controller")]
     public class AutoProfileController
     {
         public string Profile { get; set; } = "(none)";
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Program")]
     public class AutoProfileProgram
     {
@@ -29,6 +32,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public string Title { get; set; }
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Programs")]
     public class AutoProfilePrograms : XmlSerializable<AutoProfilePrograms>
     {

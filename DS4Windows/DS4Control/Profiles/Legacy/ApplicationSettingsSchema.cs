@@ -2,9 +2,11 @@
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Profile")]
     public partial class DS4WindowsAppSettings
     {

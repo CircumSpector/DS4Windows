@@ -5,9 +5,11 @@ using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "LinkedControllers")]
     public class LinkedProfiles : XmlSerializable<LinkedProfiles>
     {
