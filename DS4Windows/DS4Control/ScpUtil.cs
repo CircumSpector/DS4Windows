@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using Sensorit.Base;
 
 namespace DS4Windows
@@ -78,9 +79,9 @@ namespace DS4Windows
     public class SerialChangeArgs : EventArgs
     {
         private int Index { get; }
-        private string Serial { get; }
+        private PhysicalAddress Serial { get; }
 
-        public SerialChangeArgs(int index, string serial)
+        public SerialChangeArgs(int index, PhysicalAddress serial)
         {
             Index = index;
             Serial = serial;

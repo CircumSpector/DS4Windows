@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.NetworkInformation;
 using System.Xml;
 using DS4Windows.DS4Control;
 #if WITH_TRACING
@@ -250,7 +251,7 @@ namespace DS4Windows
 
         public static event EventHandler<SerialChangeArgs> DeviceSerialChange;
 
-        public static void OnDeviceSerialChange(object sender, int index, string serial)
+        public static void OnDeviceSerialChange(object sender, int index, PhysicalAddress serial)
         {
             if (DeviceSerialChange != null)
             {

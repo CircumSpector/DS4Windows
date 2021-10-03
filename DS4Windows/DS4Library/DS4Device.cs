@@ -11,6 +11,7 @@ using DS4Windows.DS4Library.CoreAudio;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
+using DS4WinWPF.DS4Control.Util;
 using PropertyChanged;
 using ThreadState = System.Threading.ThreadState;
 #if WITH_TRACING
@@ -289,7 +290,7 @@ namespace DS4Windows
 
         public double Latency;
 
-        public string MacAddress { get; protected set; }
+        public PhysicalAddress MacAddress { get; protected set; }
 
         protected DS4Audio micAudio;
 
@@ -574,7 +575,6 @@ namespace DS4Windows
         /// <returns>True on success, false otherwise.</returns>
         public bool PersistOptionsStore(string path)
         {
-            var address = PhysicalAddress.Parse(MacAddress);
             ControllerConfigs config = null;
 
             try
@@ -591,7 +591,7 @@ namespace DS4Windows
                 config = new ControllerConfigs();
             }
 
-            config.Controllers[address] = OptionsStore;
+            config.Controllers[MacAddress] = OptionsStore;
 
             using var write = File.Open(path, FileMode.Create);
 
@@ -607,15 +607,13 @@ namespace DS4Windows
         /// <returns>True on success, false otherwise.</returns>
         public bool LoadOptionsStoreFrom(string path)
         {
-            var address = PhysicalAddress.Parse(MacAddress);
-
             try
             {
                 using var stream = File.OpenRead(path);
 
                 var config = ControllerConfigs.Deserialize(stream);
 
-                OptionsStore = config.Controllers[address];
+                OptionsStore = config.Controllers[MacAddress];
             }
             catch (InvalidOperationException)
             {
@@ -2068,7 +2066,10 @@ namespace DS4Windows
                 uint IOCTL_BTH_DISCONNECT_DEVICE = 0x41000c;
 
                 var btAddr = new byte[8];
-                var sbytes = MacAddress.Split(':');
+                //
+                // TODO: can be further simplified
+                // 
+                var sbytes = MacAddress.AsFriendlyName().Split(':');
                 for (var i = 0; i < 6; i++)
                     // parse hex byte in reverse order
                     btAddr[5 - i] = Convert.ToByte(sbytes[i], 16);
@@ -2265,7 +2266,7 @@ namespace DS4Windows
 
         public override string ToString()
         {
-            return MacAddress;
+            return MacAddress.AsFriendlyName();
         }
 
         protected void RunRemoval()
@@ -2290,23 +2291,24 @@ namespace DS4Windows
         public void updateSerial()
         {
             hDevice.resetSerial();
+            
             var tempMac = hDevice.ReadSerial(SerialReportID);
-            if (tempMac != MacAddress)
-            {
-                MacAddress = tempMac;
-                SerialChange?.Invoke(this, EventArgs.Empty);
-                MacAddressChanged?.Invoke(this, EventArgs.Empty);
-            }
+            
+            if (tempMac.Equals(MacAddress)) return;
+
+            MacAddress = tempMac;
+            SerialChange?.Invoke(this, EventArgs.Empty);
+            MacAddressChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public bool isValidSerial()
         {
-            return !MacAddress.Equals(BLANK_SERIAL);
+            return !MacAddress.Equals(PhysicalAddress.Parse(BLANK_SERIAL));
         }
 
-        public static bool isValidSerial(string test)
+        public static bool isValidSerial(PhysicalAddress test)
         {
-            return !test.Equals(BLANK_SERIAL);
+            return !test.Equals(PhysicalAddress.Parse(BLANK_SERIAL));
         }
 
         public void PrepareAbort()

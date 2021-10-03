@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
@@ -1230,7 +1231,10 @@ namespace DS4Windows.InputDevices
             uint IOCTL_BTH_DISCONNECT_DEVICE = 0x41000c;
 
             var btAddr = new byte[8];
-            var sbytes = MacAddress.Split(':');
+            //
+            // TODO: can be further simplified
+            // 
+            var sbytes = MacAddress.AsFriendlyName().Split(':');
             for (var i = 0; i < 6; i++)
                 // parse hex byte in reverse order
                 btAddr[5 - i] = Convert.ToByte(sbytes[i], 16);

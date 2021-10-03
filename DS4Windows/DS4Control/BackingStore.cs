@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
 namespace DS4Windows
@@ -272,13 +273,13 @@ namespace DS4Windows
 
         SpecialAction GetProfileAction(int device, string name);
 
-        bool ContainsLinkedProfile(string serial);
+        bool ContainsLinkedProfile(PhysicalAddress serial);
 
-        string GetLinkedProfile(string serial);
+        string GetLinkedProfile(PhysicalAddress serial);
 
-        void ChangeLinkedProfile(string serial, string profile);
+        void ChangeLinkedProfile(PhysicalAddress serial, string profile);
 
-        void RemoveLinkedProfile(string serial);
+        void RemoveLinkedProfile(PhysicalAddress serial);
 
         int GetProfileActionIndexOf(int device, string name);
 

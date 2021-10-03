@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using DS4Windows.InputDevices;
@@ -111,10 +112,10 @@ namespace DS4Windows
     public class DS4Devices
     {
         // (HID device path, DS4Device)
-        private static Dictionary<string, DS4Device> Devices = new Dictionary<string, DS4Device>();
+        private static Dictionary<string, DS4Device> Devices = new();
         // (MacAddress, DS4Device)
-        private static Dictionary<string, DS4Device> serialDevices = new Dictionary<string, DS4Device>();
-        private static HashSet<string> deviceSerials = new HashSet<string>();
+        private static Dictionary<PhysicalAddress, DS4Device> serialDevices = new();
+        private static HashSet<PhysicalAddress> deviceSerials = new();
         private static HashSet<string> DevicePaths = new HashSet<string>();
         // Keep instance of opened exclusive mode devices not in use (Charging while using BT connection)
         private static List<HidDevice> DisabledDevices = new List<HidDevice>();
@@ -307,7 +308,7 @@ namespace DS4Windows
                     if (hDevice.IsOpen)
                     {
                         //string serial = hDevice.ReadSerial();
-                        string serial = DS4Device.BLANK_SERIAL;
+                        var serial = PhysicalAddress.Parse(DS4Device.BLANK_SERIAL);
                         if (metainfo.InputDevType == InputDeviceType.DualSense)
                         {
                             serial = hDevice.ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
@@ -322,7 +323,7 @@ namespace DS4Windows
                             serial = hDevice.ReadSerial(DS4Device.SERIAL_FEATURE_ID);
                         }
 
-                        bool validSerial = !serial.Equals(DS4Device.BLANK_SERIAL);
+                        bool validSerial = !serial.Equals(PhysicalAddress.Parse(DS4Device.BLANK_SERIAL));
                         bool newdev = true;
                         if (validSerial && deviceSerials.Contains(serial))
                         {
@@ -450,8 +451,8 @@ namespace DS4Windows
                 DS4Device device = (DS4Device)sender;
                 if (device != null)
                 {
-                    string devPath = device.HidDevice.DevicePath;
-                    string serial = device.MacAddress;
+                    var devPath = device.HidDevice.DevicePath;
+                    var serial = device.MacAddress;
                     if (Devices.ContainsKey(devPath))
                     {
                         deviceSerials.Remove(serial);

@@ -22,6 +22,7 @@ using HttpProgress;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -1232,7 +1233,7 @@ Suspend support not enabled.", true);
                                             else if (propName == "devicepath" && App.rootHub.DS4Controllers[tdevice] != null)
                                                 propValue = App.rootHub.DS4Controllers[tdevice].HidDevice.DevicePath;
                                             else if (propName == "macaddress" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].MacAddress;
+                                                propValue = App.rootHub.DS4Controllers[tdevice].MacAddress.AsFriendlyName();
                                             else if (propName == "displayname" && App.rootHub.DS4Controllers[tdevice] != null)
                                                 propValue = App.rootHub.DS4Controllers[tdevice].DisplayName;
                                             else if (propName == "conntype" && App.rootHub.DS4Controllers[tdevice] != null)

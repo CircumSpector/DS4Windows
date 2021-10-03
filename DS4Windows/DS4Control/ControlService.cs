@@ -12,6 +12,7 @@ using DS4WinWPF.DS4Control;
 using DS4Windows.DS4Control;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using Nefarius.ViGEm.Client;
 using static DS4Windows.Global;
 
@@ -112,7 +113,10 @@ namespace DS4Windows
             }
 
             bool isValidSerial = false;
-            string stringMac = d.MacAddress;
+            //
+            // TODO: can be further simplified
+            // 
+            string stringMac = d.MacAddress.AsFriendlyName();
             if (!string.IsNullOrEmpty(stringMac))
             {
                 stringMac = string.Join("", stringMac.Split(':'));
@@ -714,7 +718,7 @@ namespace DS4Windows
         {
             if (DS4Devices.isExclusiveMode && !device.isExclusive())
             {
-                string message = DS4WinWPF.Properties.Resources.CouldNotOpenDS4.Replace("*Mac address*", device.MacAddress) + " " +
+                string message = DS4WinWPF.Properties.Resources.CouldNotOpenDS4.Replace("*Mac address*", device.MacAddress.AsFriendlyName()) + " " +
                     DS4WinWPF.Properties.Resources.QuitOtherPrograms;
                 LogDebug(message, true);
                 AppLogger.Instance.LogToTray(message, true);

@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.IO;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.Logging;
 using Microsoft.Win32.SafeHandles;
@@ -26,7 +27,7 @@ namespace DS4Windows
 
         private readonly HidDeviceCapabilities _deviceCapabilities;
         //private bool _monitorDeviceEvents;
-        private string serial = null;
+        private PhysicalAddress serial = null;
         private const string BLANK_SERIAL = "00:00:00:00:00:00";
 
         internal HidDevice(string devicePath, string description = null, string parentPath = null)
@@ -478,7 +479,7 @@ namespace DS4Windows
             serial = null;
         }
 
-        public string ReadSerial(byte featureID = 18)
+        public PhysicalAddress ReadSerial(byte featureID = 18)
         {
             if (serial != null)
                 return serial;
@@ -493,8 +494,9 @@ namespace DS4Windows
                 //buffer[0] = 18;
                 buffer[0] = featureID;
                 if (readFeatureData(buffer))
-                    serial = String.Format("{0:X02}:{1:X02}:{2:X02}:{3:X02}:{4:X02}:{5:X02}",
-                        buffer[6], buffer[5], buffer[4], buffer[3], buffer[2], buffer[1]);
+                    serial = PhysicalAddress.Parse(
+                        $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
+                        );
             }
             else
             {
@@ -508,7 +510,7 @@ namespace DS4Windows
                 {
                     string MACAddr = System.Text.Encoding.Unicode.GetString(buffer).Replace("\0", string.Empty).ToUpper();
                     MACAddr = $"{MACAddr[0]}{MACAddr[1]}:{MACAddr[2]}{MACAddr[3]}:{MACAddr[4]}{MACAddr[5]}:{MACAddr[6]}{MACAddr[7]}:{MACAddr[8]}{MACAddr[9]}:{MACAddr[10]}{MACAddr[11]}";
-                    serial = MACAddr;
+                    serial = PhysicalAddress.Parse(MACAddr);
                 }
             }
 
@@ -524,7 +526,7 @@ namespace DS4Windows
             return serial;
         }
 
-        public string GenerateFakeHwSerial()
+        public PhysicalAddress GenerateFakeHwSerial()
         {
             string MACAddr = string.Empty;
 
@@ -566,7 +568,7 @@ namespace DS4Windows
                 MACAddr = BLANK_SERIAL;
             }
 
-            return MACAddr;
+            return PhysicalAddress.Parse(MACAddr);
         }
     }
 }

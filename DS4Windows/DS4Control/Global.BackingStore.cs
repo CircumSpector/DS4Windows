@@ -88,7 +88,7 @@ namespace DS4Windows
                 SetupDefaultColors();
             }
 
-            private Dictionary<string, string> LinkedProfiles { get; set; } = new();
+            private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
 
             public IList<int> RumbleAutostopTime { get; } = new List<int>
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
@@ -2464,7 +2464,7 @@ namespace DS4Windows
                         var profiles = DS4WinWPF.DS4Control.Profiles.Legacy.LinkedProfiles.Deserialize(stream);
 
                         LinkedProfiles = profiles.Assignments.ToDictionary(
-                            x => x.Key.ToString(),
+                            x => x.Key,
                             x => x.Value.ToString()
                         );
                     }
@@ -2494,7 +2494,7 @@ namespace DS4Windows
                     var profiles = new LinkedProfiles
                     {
                         //Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => Guid.Parse(x.Value))
-                        Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => x.Value)
+                        Assignments = LinkedProfiles.ToDictionary(x => x.Key, x => x.Value)
                     };
 
                     profiles.Serialize(stream);
@@ -2562,31 +2562,28 @@ namespace DS4Windows
                 return sA;
             }
 
-            public bool ContainsLinkedProfile(string serial)
+            public bool ContainsLinkedProfile(PhysicalAddress serial)
             {
-                var tempSerial = serial.Replace(":", string.Empty);
-                return LinkedProfiles.ContainsKey(tempSerial);
+                return LinkedProfiles.ContainsKey(serial);
             }
 
-            public string GetLinkedProfile(string serial)
+            public string GetLinkedProfile(PhysicalAddress serial)
             {
                 var temp = string.Empty;
-                var tempSerial = serial.Replace(":", string.Empty);
-                if (LinkedProfiles.ContainsKey(tempSerial)) temp = LinkedProfiles[tempSerial];
+
+                if (LinkedProfiles.ContainsKey(serial)) temp = LinkedProfiles[serial];
 
                 return temp;
             }
 
-            public void ChangeLinkedProfile(string serial, string profile)
+            public void ChangeLinkedProfile(PhysicalAddress serial, string profile)
             {
-                var tempSerial = serial.Replace(":", string.Empty);
-                LinkedProfiles[tempSerial] = profile;
+                LinkedProfiles[serial] = profile;
             }
 
-            public void RemoveLinkedProfile(string serial)
+            public void RemoveLinkedProfile(PhysicalAddress serial)
             {
-                var tempSerial = serial.Replace(":", string.Empty);
-                if (LinkedProfiles.ContainsKey(tempSerial)) LinkedProfiles.Remove(tempSerial);
+                if (LinkedProfiles.ContainsKey(serial)) LinkedProfiles.Remove(serial);
             }
 
             public int GetProfileActionIndexOf(int device, string name)

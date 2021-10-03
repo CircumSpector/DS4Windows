@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using DS4Windows;
@@ -35,7 +36,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public List<DeviceListItem> CurrentInputDevices { get => currentInputDevices; }
 
         // Serial, ControllerOptionsStore instance
-        private Dictionary<string, ControllerOptionsStore> inputDeviceSettings = new Dictionary<string, ControllerOptionsStore>();
+        private Dictionary<PhysicalAddress, ControllerOptionsStore> inputDeviceSettings = new();
         private List<ControllerOptionsStore> controllerOptionsStores = new List<ControllerOptionsStore>();
 
         private int controllerSelectedIndex = -1;
