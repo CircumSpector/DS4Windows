@@ -3786,7 +3786,7 @@ namespace DS4Windows
 
                                     DS4Device d = ctrl.DS4Controllers[device];
                                     bool synced = /*tempBool =*/ d.isSynced();
-                                    if (synced && !d.isCharging())
+                                    if (synced && !d.IsCharging())
                                     {
                                         ConnectionType deviceConn = d.getConnectionType();
                                         //bool exclusive = /*tempBool =*/ d.isExclusive();

@@ -137,8 +137,8 @@ namespace DS4Windows
             meta.ConnectionType = (d.getConnectionType() == ConnectionType.USB) ? DsConnection.Usb : DsConnection.Bluetooth;
             meta.IsActive = !d.isDS4Idle();
 
-            int batteryLevel = d.getBattery();
-            if (d.isCharging() && batteryLevel >= 100)
+            int batteryLevel = d.GetBattery();
+            if (d.IsCharging() && batteryLevel >= 100)
                 meta.BatteryStatus = DsBattery.Charged;
             else
             {
@@ -1490,7 +1490,7 @@ namespace DS4Windows
                     DS4Device tempDevice = DS4Controllers[i];
                     if (tempDevice != null)
                     {
-                        if ((Global.Instance.Config.DisconnectBluetoothAtStop && !tempDevice.isCharging()) || suspending)
+                        if ((Global.Instance.Config.DisconnectBluetoothAtStop && !tempDevice.IsCharging()) || suspending)
                         {
                             if (tempDevice.getConnectionType() == ConnectionType.BT)
                             {
@@ -1999,16 +1999,16 @@ namespace DS4Windows
                 if (!d.IsAlive())
                     battery = "...";
 
-                if (d.isCharging())
+                if (d.IsCharging())
                 {
-                    if (d.getBattery() >= 100)
+                    if (d.GetBattery() >= 100)
                         battery = DS4WinWPF.Properties.Resources.Full;
                     else
-                        battery = d.getBattery() + "%+";
+                        battery = d.GetBattery() + "%+";
                 }
                 else
                 {
-                    battery = d.getBattery() + "%";
+                    battery = d.GetBattery() + "%";
                 }
 
                 return battery;
@@ -2130,8 +2130,8 @@ namespace DS4Windows
                     }).Wait();
 
                     string removed = DS4WinWPF.Properties.Resources.ControllerWasRemoved.Replace("*Mac address*", (ind + 1).ToString());
-                    if (device.getBattery() <= 20 &&
-                        device.getConnectionType() == ConnectionType.BT && !device.isCharging())
+                    if (device.GetBattery() <= 20 &&
+                        device.getConnectionType() == ConnectionType.BT && !device.IsCharging())
                     {
                         removed += ". " + DS4WinWPF.Properties.Resources.ChargeController;
                     }
