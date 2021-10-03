@@ -231,7 +231,7 @@ namespace DS4WinWPF.DS4Forms
         {
             string version = Global.ExecutableProductVersion;
             string newversion = string.Empty;
-            string versionFilePath = Global.RuntimeAppDataPath + "\\version.txt";
+            string versionFilePath = Path.Combine(Global.RuntimeAppDataPath, "version.txt");
             ulong lastVersionNum = Global.Instance.Config.LastVersionCheckedNumber;
             //ulong lastVersion = Global.CompileVersionNumberFromString("2.1.1");
 
@@ -263,28 +263,28 @@ namespace DS4WinWPF.DS4Forms
 
                     if (launch)
                     {
-                        using (Process p = new Process())
+                        using Process p = new Process();
+
+                        p.StartInfo.FileName = Path.Combine(Global.ExecutableDirectory, "DS4Updater.exe");
+                        bool isAdmin = Global.IsAdministrator;
+                        List<string> argList = new List<string>();
+                        argList.Add("-autolaunch");
+                        
+                        if (!isAdmin)
                         {
-                            p.StartInfo.FileName = System.IO.Path.Combine(Global.ExecutableDirectory, "DS4Updater.exe");
-                            bool isAdmin = Global.IsAdministrator;
-                            List<string> argList = new List<string>();
-                            argList.Add("-autolaunch");
-                            if (!isAdmin)
-                            {
-                                argList.Add("-user");
-                            }
-
-                            // Specify current exe to have DS4Updater launch
-                            argList.Add("--launchExe");
-                            argList.Add(Global.ExecutableFileName);
-
-                            p.StartInfo.Arguments = string.Join(" ", argList);
-                            if (Global.IsAdminNeeded)
-                                p.StartInfo.Verb = "runas";
-
-                            try { launch = p.Start(); }
-                            catch (InvalidOperationException) { }
+                            argList.Add("-user");
                         }
+
+                        // Specify current exe to have DS4Updater launch
+                        argList.Add("--launchExe");
+                        argList.Add(Global.ExecutableFileName);
+
+                        p.StartInfo.Arguments = string.Join(" ", argList);
+                        if (Global.IsAdminNeeded)
+                            p.StartInfo.Verb = "runas";
+
+                        try { launch = p.Start(); }
+                        catch (InvalidOperationException) { }
                     }
 
                     if (launch)
@@ -308,13 +308,13 @@ namespace DS4WinWPF.DS4Forms
                 else
                 {
                     if (versionFileExists)
-                        File.Delete(Global.RuntimeAppDataPath + "\\version.txt");
+                        File.Delete(Path.Combine(Global.RuntimeAppDataPath, "version.txt"));
                 }
             }
             else
             {
                 if (versionFileExists)
-                    File.Delete(Global.RuntimeAppDataPath + "\\version.txt");
+                    File.Delete(Path.Combine(Global.RuntimeAppDataPath, "version.txt"));
 
                 if (showstatus)
                 {
@@ -333,7 +333,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 launch = false;
                 Uri url2 = new Uri($"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
-                string filename = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "DS4Updater.exe");
+                string filename = Path.Combine(Path.GetTempPath(), "DS4Updater.exe");
                 using (var downloadStream = new FileStream(filename, FileMode.Create))
                 {
                     Task<System.Net.Http.HttpResponseMessage> temp =
