@@ -629,7 +629,7 @@ namespace DS4Windows.InputDevices
 
                         if (shouldDisconnect)
                         {
-                            AppLogger.Instance.LogToGui(Mac.ToString() + " disconnecting due to idle disconnect", false);
+                            AppLogger.Instance.LogToGui(MacAddress.ToString() + " disconnecting due to idle disconnect", false);
 
                             if (conType == ConnectionType.BT)
                             {
@@ -1148,7 +1148,7 @@ namespace DS4Windows.InputDevices
             uint IOCTL_BTH_DISCONNECT_DEVICE = 0x41000c;
 
             byte[] btAddr = new byte[8];
-            string[] sbytes = Mac.Split(':');
+            string[] sbytes = MacAddress.Split(':');
             for (int i = 0; i < 6; i++)
             {
                 // parse hex byte in reverse order

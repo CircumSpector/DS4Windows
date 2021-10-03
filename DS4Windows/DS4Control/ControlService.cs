@@ -112,7 +112,7 @@ namespace DS4Windows
             }
 
             bool isValidSerial = false;
-            string stringMac = d.GetMacAddress();
+            string stringMac = d.MacAddress;
             if (!string.IsNullOrEmpty(stringMac))
             {
                 stringMac = string.Join("", stringMac.Split(':'));
@@ -714,7 +714,7 @@ namespace DS4Windows
         {
             if (DS4Devices.isExclusiveMode && !device.isExclusive())
             {
-                string message = DS4WinWPF.Properties.Resources.CouldNotOpenDS4.Replace("*Mac address*", device.GetMacAddress()) + " " +
+                string message = DS4WinWPF.Properties.Resources.CouldNotOpenDS4.Replace("*Mac address*", device.MacAddress) + " " +
                     DS4WinWPF.Properties.Resources.QuitOtherPrograms;
                 LogDebug(message, true);
                 AppLogger.Instance.LogToTray(message, true);
@@ -1208,7 +1208,7 @@ namespace DS4Windows
                     {
                         DS4Device device = devEnum.Current;
                         if (showlog)
-                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.GetMacAddress() + " (" + device.getConnectionType() + ") (" +
+                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.MacAddress + " (" + device.getConnectionType() + ") (" +
                                 device.DisplayName + ")");
 
                         if (hidDeviceHidingEnabled && CheckAffected(device))
@@ -1269,9 +1269,9 @@ namespace DS4Windows
                         bool useAutoProfile = UseTempProfiles[i];
                         if (!useAutoProfile)
                         {
-                            if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.GetMacAddress()))
+                            if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.MacAddress))
                             {
-                                Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.GetLinkedProfile(device.GetMacAddress());
+                                Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.GetLinkedProfile(device.MacAddress);
                                 Global.LinkedProfileCheck[i] = true;
                             }
                             else
@@ -1616,7 +1616,7 @@ namespace DS4Windows
                         for (Int32 Index = 0, arlength = DS4Controllers.Length; Index < arlength; Index++)
                         {
                             if (DS4Controllers[Index] != null &&
-                                DS4Controllers[Index].GetMacAddress() == device.GetMacAddress())
+                                DS4Controllers[Index].MacAddress == device.MacAddress)
                             {
                                 device.CheckControllerNumDeviceSettings(numControllers);
                                 return true;
@@ -1634,7 +1634,7 @@ namespace DS4Windows
                         if (DS4Controllers[Index] == null)
                         {
                             //LogDebug(DS4WinWPF.Properties.Resources.FoundController + device.getMacAddress() + " (" + device.getConnectionType() + ")");
-                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.GetMacAddress() + " (" + device.getConnectionType() + ") (" +
+                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.MacAddress + " (" + device.getConnectionType() + ") (" +
                                 device.DisplayName + ")");
 
                             if (hidDeviceHidingEnabled && CheckAffected(device))
@@ -1708,9 +1708,9 @@ namespace DS4Windows
                             bool useAutoProfile = UseTempProfiles[Index];
                             if (!useAutoProfile)
                             {
-                                if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.GetMacAddress()))
+                                if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.MacAddress))
                                 {
-                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.Config.GetLinkedProfile(device.GetMacAddress());
+                                    Global.Instance.Config.ProfilePath[Index] = Global.Instance.Config.GetLinkedProfile(device.MacAddress);
                                     Global.LinkedProfileCheck[Index] = true;
                                 }
                                 else
@@ -2041,7 +2041,7 @@ namespace DS4Windows
 
             if (ind >= 0)
             {
-                OnDeviceSerialChange(this, ind, device.GetMacAddress());
+                OnDeviceSerialChange(this, ind, device.MacAddress);
             }
         }
 
@@ -2090,7 +2090,7 @@ namespace DS4Windows
             int ind = -1;
             for (int i = 0, arlength = DS4Controllers.Length; ind == -1 && i < arlength; i++)
             {
-                if (DS4Controllers[i] != null && device.GetMacAddress() == DS4Controllers[i].GetMacAddress())
+                if (DS4Controllers[i] != null && device.MacAddress == DS4Controllers[i].MacAddress)
                     ind = i;
             }
 

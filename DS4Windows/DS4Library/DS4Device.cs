@@ -11,6 +11,7 @@ using DS4Windows.DS4Library.CoreAudio;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
+using PropertyChanged;
 using ThreadState = System.Threading.ThreadState;
 #if WITH_TRACING
 using OpenTracing.Util;
@@ -121,6 +122,7 @@ namespace DS4Windows
     /// <summary>
     ///     Represents a Sony DualShock 4 compatible device.
     /// </summary>
+    [AddINotifyPropertyChangedInterface]
     public class DS4Device
     {
         public delegate void BatteryUpdateHandler(object sender, EventArgs e);
@@ -286,7 +288,8 @@ namespace DS4Windows
         public double lastTimeElapsedDouble;
 
         public double Latency;
-        protected string Mac;
+
+        public string MacAddress { get; protected set; }
 
         protected DS4Audio micAudio;
 
@@ -362,7 +365,7 @@ namespace DS4Windows
                     $"The gamepad {displayName} ({conType}) uses custom feature set ({FeatureSet:F})",
                     false);
 
-            Mac = hDevice.ReadSerial(SerialReportID);
+            MacAddress = hDevice.ReadSerial(SerialReportID);
             runCalib = (this.featureSet & VidPidFeatureSet.NoGyroCalib) == 0;
 
             touchpad = new DS4Touchpad();
@@ -415,8 +418,6 @@ namespace DS4Windows
             get => isRemoved;
             set => isRemoved = value;
         }
-
-        public string MacAddress => Mac;
 
         public ConnectionType ConnectionType => conType;
 
@@ -573,7 +574,7 @@ namespace DS4Windows
         /// <returns>True on success, false otherwise.</returns>
         public bool PersistOptionsStore(string path)
         {
-            var address = PhysicalAddress.Parse(Mac);
+            var address = PhysicalAddress.Parse(MacAddress);
             ControllerConfigs config = null;
 
             try
@@ -606,7 +607,7 @@ namespace DS4Windows
         /// <returns>True on success, false otherwise.</returns>
         public bool LoadOptionsStoreFrom(string path)
         {
-            var address = PhysicalAddress.Parse(Mac);
+            var address = PhysicalAddress.Parse(MacAddress);
 
             try
             {
@@ -661,11 +662,6 @@ namespace DS4Windows
         }
 
         public event EventHandler MacAddressChanged;
-
-        public string GetMacAddress()
-        {
-            return Mac;
-        }
 
         public ConnectionType getConnectionType()
         {
@@ -931,7 +927,7 @@ namespace DS4Windows
                 if (hDevice.Attributes.ProductId == 0x5C4 && hDevice.Attributes.VendorId == 0x054C &&
                     sixAxis.fixupInvertedGyroAxis())
                     AppLogger.Instance.LogToGui(
-                        $"Automatically fixed inverted YAW gyro axis in DS4 v.1 BT gamepad ({Mac})",
+                        $"Automatically fixed inverted YAW gyro axis in DS4 v.1 BT gamepad ({MacAddress})",
                         false);
             }
             else
@@ -953,14 +949,14 @@ namespace DS4Windows
                     {
                         ds4Output = new Thread(performDs4Output);
                         ds4Output.Priority = ThreadPriority.Normal;
-                        ds4Output.Name = "DS4 Output thread: " + Mac;
+                        ds4Output.Name = "DS4 Output thread: " + MacAddress;
                         ds4Output.IsBackground = true;
                         ds4Output.Start();
                     }
 
                     timeoutCheckThread = new Thread(TimeoutTestThread);
                     timeoutCheckThread.Priority = ThreadPriority.BelowNormal;
-                    timeoutCheckThread.Name = "DS4 Timeout thread: " + Mac;
+                    timeoutCheckThread.Name = "DS4 Timeout thread: " + MacAddress;
                     timeoutCheckThread.IsBackground = true;
                     timeoutCheckThread.Start();
                 }
@@ -968,20 +964,20 @@ namespace DS4Windows
                 {
                     ds4Output = new Thread(OutReportCopy);
                     ds4Output.Priority = ThreadPriority.Normal;
-                    ds4Output.Name = "DS4 Arr Copy thread: " + Mac;
+                    ds4Output.Name = "DS4 Arr Copy thread: " + MacAddress;
                     ds4Output.IsBackground = true;
                     ds4Output.Start();
                 }
 
                 ds4Input = new Thread(PerformDs4Input);
                 ds4Input.Priority = ThreadPriority.AboveNormal;
-                ds4Input.Name = "DS4 Input thread: " + Mac;
+                ds4Input.Name = "DS4 Input thread: " + MacAddress;
                 ds4Input.IsBackground = true;
                 ds4Input.Start();
             }
             else
             {
-                Debug.WriteLine("Thread already running for DS4: " + Mac);
+                Debug.WriteLine("Thread already running for DS4: " + MacAddress);
             }
         }
 
@@ -1080,7 +1076,7 @@ namespace DS4Windows
                             var thisError = Marshal.GetLastWin32Error();
                             if (lastError != thisError)
                             {
-                                Console.WriteLine(Mac + " " + DateTime.UtcNow.ToString("o") +
+                                Console.WriteLine(MacAddress + " " + DateTime.UtcNow.ToString("o") +
                                                   "> encountered write failure: " + thisError);
                                 //Log.LogToGui(Mac.ToString() + " encountered write failure: " + thisError, true);
                                 lastError = thisError;
@@ -1270,7 +1266,7 @@ namespace DS4Windows
                                 if (inputReportErrorCount >= CRC32_NUM_ATTEMPTS)
                                 {
                                     AppLogger.Instance.LogToGui(
-                                        $"{Mac} failed CRC-32 checks {CRC32_NUM_ATTEMPTS} times. Disconnecting",
+                                        $"{MacAddress} failed CRC-32 checks {CRC32_NUM_ATTEMPTS} times. Disconnecting",
                                         false);
 
                                     readWaitEv.Reset();
@@ -1299,15 +1295,15 @@ namespace DS4Windows
                         {
                             if (res == HidDevice.ReadStatus.WaitTimedOut)
                             {
-                                AppLogger.Instance.LogToGui(Mac + " disconnected due to timeout", true);
+                                AppLogger.Instance.LogToGui(MacAddress + " disconnected due to timeout", true);
                             }
                             else
                             {
                                 var winError = Marshal.GetLastWin32Error();
-                                Console.WriteLine(Mac + " " + DateTime.UtcNow.ToString("o") +
+                                Console.WriteLine(MacAddress + " " + DateTime.UtcNow.ToString("o") +
                                                   "> disconnect due to read failure: " + winError);
                                 //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
-                                AppLogger.Instance.LogToGui(Mac + " disconnected due to read failure: " + winError,
+                                AppLogger.Instance.LogToGui(MacAddress + " disconnected due to read failure: " + winError,
                                     true);
                             }
 
@@ -1338,12 +1334,12 @@ namespace DS4Windows
                         {
                             if (res == HidDevice.ReadStatus.WaitTimedOut)
                             {
-                                AppLogger.Instance.LogToGui(Mac + " disconnected due to timeout", true);
+                                AppLogger.Instance.LogToGui(MacAddress + " disconnected due to timeout", true);
                             }
                             else
                             {
                                 var winError = Marshal.GetLastWin32Error();
-                                Console.WriteLine(Mac + " " + DateTime.UtcNow.ToString("o") +
+                                Console.WriteLine(MacAddress + " " + DateTime.UtcNow.ToString("o") +
                                                   "> disconnect due to read failure: " + winError);
                                 //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
                             }
@@ -1726,7 +1722,7 @@ namespace DS4Windows
 
                         if (shouldDisconnect)
                         {
-                            AppLogger.Instance.LogToGui(Mac + " disconnecting due to idle disconnect", false);
+                            AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
                             if (conType == ConnectionType.BT)
                             {
@@ -2063,16 +2059,16 @@ namespace DS4Windows
 
         public virtual bool DisconnectBT(bool callRemoval = false)
         {
-            if (Mac != null)
+            if (MacAddress != null)
             {
                 // Wait for output report to be written
                 StopOutputUpdate();
-                Console.WriteLine("Trying to disconnect BT device " + Mac);
+                Console.WriteLine("Trying to disconnect BT device " + MacAddress);
                 var btHandle = IntPtr.Zero;
                 uint IOCTL_BTH_DISCONNECT_DEVICE = 0x41000c;
 
                 var btAddr = new byte[8];
-                var sbytes = Mac.Split(':');
+                var sbytes = MacAddress.Split(':');
                 for (var i = 0; i < 6; i++)
                     // parse hex byte in reverse order
                     btAddr[5 - i] = Convert.ToByte(sbytes[i], 16);
@@ -2269,7 +2265,7 @@ namespace DS4Windows
 
         public override string ToString()
         {
-            return Mac;
+            return MacAddress;
         }
 
         protected void RunRemoval()
@@ -2295,9 +2291,9 @@ namespace DS4Windows
         {
             hDevice.resetSerial();
             var tempMac = hDevice.ReadSerial(SerialReportID);
-            if (tempMac != Mac)
+            if (tempMac != MacAddress)
             {
-                Mac = tempMac;
+                MacAddress = tempMac;
                 SerialChange?.Invoke(this, EventArgs.Empty);
                 MacAddressChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -2305,7 +2301,7 @@ namespace DS4Windows
 
         public bool isValidSerial()
         {
-            return !Mac.Equals(BLANK_SERIAL);
+            return !MacAddress.Equals(BLANK_SERIAL);
         }
 
         public static bool isValidSerial(string test)

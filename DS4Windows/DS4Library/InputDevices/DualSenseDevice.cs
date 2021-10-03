@@ -336,7 +336,7 @@ namespace DS4Windows.InputDevices
 
                     timeoutCheckThread = new Thread(TimeoutTestThread);
                     timeoutCheckThread.Priority = ThreadPriority.BelowNormal;
-                    timeoutCheckThread.Name = "DualSense Timeout thread: " + Mac;
+                    timeoutCheckThread.Name = "DualSense Timeout thread: " + MacAddress;
                     timeoutCheckThread.IsBackground = true;
                     timeoutCheckThread.Start();
                 }
@@ -351,12 +351,12 @@ namespace DS4Windows.InputDevices
 
                 ds4Input = new Thread(ReadInput);
                 ds4Input.Priority = ThreadPriority.AboveNormal;
-                ds4Input.Name = "DualSense Input thread: " + Mac;
+                ds4Input.Name = "DualSense Input thread: " + MacAddress;
                 ds4Input.IsBackground = true;
                 ds4Input.Start();
             }
             else
-                Console.WriteLine("Thread already running for DS4: " + Mac);
+                Console.WriteLine("Thread already running for DS4: " + MacAddress);
         }
 
         private void TimeoutTestThread()
@@ -492,16 +492,16 @@ namespace DS4Windows.InputDevices
                         {
                             if (res == HidDevice.ReadStatus.WaitTimedOut)
                             {
-                                AppLogger.Instance.LogToGui(Mac.ToString() + " disconnected due to timeout", true);
+                                AppLogger.Instance.LogToGui(MacAddress.ToString() + " disconnected due to timeout", true);
                             }
                             else
                             {
                                 int winError = Marshal.GetLastWin32Error();
-                                Console.WriteLine(Mac.ToString() + " " + DateTime.UtcNow.ToString("o") +
+                                Console.WriteLine(MacAddress.ToString() + " " + DateTime.UtcNow.ToString("o") +
                                                   "> disconnect due to read failure: " + winError);
                                 //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
                                 AppLogger.Instance.LogToGui(
-                                    Mac.ToString() + " disconnected due to read failure: " + winError, true);
+                                    MacAddress.ToString() + " disconnected due to read failure: " + winError, true);
                             }
 
                             exitInputThread = true;
@@ -523,12 +523,12 @@ namespace DS4Windows.InputDevices
                         {
                             if (res == HidDevice.ReadStatus.WaitTimedOut)
                             {
-                                AppLogger.Instance.LogToGui(Mac.ToString() + " disconnected due to timeout", true);
+                                AppLogger.Instance.LogToGui(MacAddress.ToString() + " disconnected due to timeout", true);
                             }
                             else
                             {
                                 int winError = Marshal.GetLastWin32Error();
-                                Console.WriteLine(Mac.ToString() + " " + DateTime.UtcNow.ToString("o") +
+                                Console.WriteLine(MacAddress.ToString() + " " + DateTime.UtcNow.ToString("o") +
                                                   "> disconnect due to read failure: " + winError);
                                 //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
                             }
@@ -872,7 +872,7 @@ namespace DS4Windows.InputDevices
 
                         if (shouldDisconnect)
                         {
-                            AppLogger.Instance.LogToGui(Mac.ToString() + " disconnecting due to idle disconnect", false);
+                            AppLogger.Instance.LogToGui(MacAddress.ToString() + " disconnecting due to idle disconnect", false);
 
                             if (conType == ConnectionType.BT)
                             {
