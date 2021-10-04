@@ -920,7 +920,7 @@ namespace DS4Windows
                     if (validCrc) found = true;
                 }
 
-                sixAxis.setCalibrationData(ref calibration, conType == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, conType == ConnectionType.USB);
 
                 if (hDevice.Attributes.ProductId == 0x5C4 && hDevice.Attributes.VendorId == 0x054C &&
                     sixAxis.fixupInvertedGyroAxis())
@@ -931,7 +931,7 @@ namespace DS4Windows
             else
             {
                 hDevice.readFeatureData(calibration);
-                sixAxis.setCalibrationData(ref calibration, conType == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, conType == ConnectionType.USB);
             }
         }
 

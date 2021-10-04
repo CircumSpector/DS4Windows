@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Translations;
+using PropertyChanged;
 #if WITH_TRACING
 using OpenTracing.Util;
 #endif
@@ -70,6 +71,7 @@ namespace DS4Windows.InputDevices
         private DS4HapticState PreviousHapticState { get; set; } = new();
         public override GyroMouseSens GyroMouseSensSettings => gyroMouseSensSettings;
 
+        [SuppressPropertyChangedWarnings]
         public HapticIntensity HapticChoice
         {
             set
@@ -201,12 +203,12 @@ namespace DS4Windows.InputDevices
                     if (validCrc) found = true;
                 }
 
-                sixAxis.setCalibrationData(ref calibration, true);
+                sixAxis.SetCalibrationData(ref calibration, true);
             }
             else
             {
                 hDevice.readFeatureData(calibration);
-                sixAxis.setCalibrationData(ref calibration, true);
+                sixAxis.SetCalibrationData(ref calibration, true);
             }
         }
 

@@ -781,11 +781,11 @@ namespace DS4Windows
 #endif
                 double rotation = /*tempDoubleArray[device] =*/ Global.Instance.Config.GetLSRotation(device);
                 if (rotation > 0.0 || rotation < 0.0)
-                    cState.rotateLSCoordinates(rotation);
+                    cState.RotateLSCoordinates(rotation);
 
                 double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.Config.GetRSRotation(device);
                 if (rotationRS > 0.0 || rotationRS < 0.0)
-                    cState.rotateRSCoordinates(rotationRS);
+                    cState.RotateRSCoordinates(rotationRS);
 
                 StickAntiSnapbackInfo lsAntiSnapback = Global.Instance.Config.GetLSAntiSnapbackInfo(device);
                 StickAntiSnapbackInfo rsAntiSnapback = Global.Instance.Config.GetRSAntiSnapbackInfo(device);
@@ -2149,7 +2149,7 @@ namespace DS4Windows
             int mouseDeltaX = 0;
             int mouseDeltaY = 0;
 
-            cState.calculateStickAngles();
+            cState.CalculateStickAngles();
             DS4StateFieldMapping fieldMapping = fieldMappings[device];
             fieldMapping.PopulateFieldMapping(cState, eState, tp);
             DS4StateFieldMapping outputfieldMapping = outputFieldMappings[device];
