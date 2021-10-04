@@ -71,11 +71,8 @@ namespace DS4Windows
 
         public override string ToString()
         {
-            return string.Format("VendorID={0}, ProductID={1}, Version={2}, DevicePath={3}",
-                Attributes.VendorHexId,
-                Attributes.ProductHexId,
-                Attributes.Version,
-                DevicePath);
+            return
+                $"VendorID={Attributes.VendorHexId}, ProductID={Attributes.ProductHexId}, Version={Attributes.Version}, DevicePath={DevicePath}";
         }
 
         public void OpenDevice(bool isExclusive)
