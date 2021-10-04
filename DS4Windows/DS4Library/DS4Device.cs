@@ -215,6 +215,7 @@ namespace DS4Windows
         protected DS4Audio audio;
         protected int battery;
         protected byte[] btInputReport;
+        protected IntPtr BtInputReportBuffer;
 
         /// <summary>
         ///     Specify the poll rate interval used for the DS4 hardware when connected via Bluetooth
@@ -265,6 +266,7 @@ namespace DS4Windows
         protected int idleTimeout;
 
         protected byte[] inputReport;
+        protected IntPtr InputReportBuffer;
 
         /// <summary>
         ///     Num of consecutive input report errors (fex if BT device fails 5 times in crc32 and 0x11 data type check then
@@ -760,6 +762,7 @@ namespace DS4Windows
             if (conType == ConnectionType.USB || conType == ConnectionType.SONYWA)
             {
                 inputReport = new byte[64];
+                InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
                 outputReport = new byte[hDevice.Capabilities.OutputReportByteLength];
                 outReportBuffer = new byte[hDevice.Capabilities.OutputReportByteLength];
                 if (conType == ConnectionType.USB)
@@ -800,7 +803,9 @@ namespace DS4Windows
             else
             {
                 btInputReport = new byte[BT_INPUT_REPORT_LENGTH];
+                BtInputReportBuffer = Marshal.AllocHGlobal(btInputReport.Length);
                 inputReport = new byte[BT_INPUT_REPORT_LENGTH - 2];
+                InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
                 // If OnlyOutputData0x05 feature is not set then use the default DS4 output buffer size. However, some Razer gamepads use 32 bytes output buffer and output data type 0x05 in BT mode (writeData fails if the code tries to write too many unnecessary bytes)
                 if ((featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 {
@@ -825,8 +830,6 @@ namespace DS4Windows
 
             if (runCalib)
                 RefreshCalibration();
-
-            if (!hDevice.IsFileStreamOpen()) hDevice.OpenFileStream(outputReport.Length);
 
             if (conType == ConnectionType.BT &&
                 !featureSet.HasFlag(VidPidFeatureSet.NoOutputData) &&
@@ -901,7 +904,7 @@ namespace DS4Windows
                 var found = false;
                 for (var tries = 0; !found && tries < 5; tries++)
                 {
-                    hDevice.readFeatureData(calibration);
+                    hDevice.ReadFeatureData(calibration);
                     var recvCrc32 = calibration[DS4_FEATURE_REPORT_5_CRC32_POS] |
                                     (uint)(calibration[DS4_FEATURE_REPORT_5_CRC32_POS + 1] << 8) |
                                     (uint)(calibration[DS4_FEATURE_REPORT_5_CRC32_POS + 2] << 16) |
@@ -930,7 +933,7 @@ namespace DS4Windows
             }
             else
             {
-                hDevice.readFeatureData(calibration);
+                hDevice.ReadFeatureData(calibration);
                 sixAxis.SetCalibrationData(ref calibration, conType == ConnectionType.USB);
             }
         }
@@ -1137,7 +1140,7 @@ namespace DS4Windows
             unchecked
             {
                 firstActive = DateTime.UtcNow;
-                NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
+                //NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
                 var latencyQueue = new Queue<long>(21); // Set capacity at max + 1 to avoid any resizing
                 var tempLatencyCount = 0;
                 long oldtime = 0;
@@ -1216,7 +1219,8 @@ namespace DS4Windows
                         using (GlobalTracer.Instance.BuildSpan(nameof(hDevice.ReadWithFileStream)).StartActive(true))
                         {
 #endif
-                        res = hDevice.ReadWithFileStream(btInputReport);
+                        res = hDevice.ReadFile(BtInputReportBuffer, btInputReport.Length, out _);
+                        Marshal.Copy(BtInputReportBuffer, btInputReport, 0, btInputReport.Length);
 #if WITH_TRACING
                         }
 #endif
@@ -1326,7 +1330,8 @@ namespace DS4Windows
                             .StartActive(true))
                         {
 #endif
-                        var res = hDevice.ReadWithFileStream(inputReport);
+                        var res = hDevice.ReadFile(InputReportBuffer, inputReport.Length, out _);
+                        Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
                         if (res != HidDevice.ReadStatus.Success)
                         {
@@ -2290,7 +2295,7 @@ namespace DS4Windows
 
         public void updateSerial()
         {
-            hDevice.resetSerial();
+            hDevice.ResetSerial();
             
             var tempMac = hDevice.ReadSerial(SerialReportID);
             

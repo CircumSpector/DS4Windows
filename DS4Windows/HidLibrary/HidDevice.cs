@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Net.NetworkInformation;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using Microsoft.Win32.SafeHandles;
+using PInvoke;
 
 namespace DS4Windows
 {
@@ -48,8 +51,11 @@ namespace DS4Windows
             }
         }
 
-        public SafeFileHandle safeReadHandle { get; private set; }
-        public FileStream fileStream { get; private set; }
+        /// <summary>
+        ///     Native handle to device.
+        /// </summary>
+        protected Kernel32.SafeObjectHandle DeviceHandle { get; private set; }
+
         public bool IsOpen { get; private set; }
         public bool IsExclusive { get; private set; }
         public bool IsConnected => HidDevices.IsConnected(DevicePath);
@@ -80,8 +86,8 @@ namespace DS4Windows
             if (IsOpen) return;
             try
             {
-                if (safeReadHandle == null || safeReadHandle.IsInvalid)
-                    safeReadHandle = OpenHandle(DevicePath, isExclusive, false);
+                if (DeviceHandle == null || DeviceHandle.IsInvalid)
+                    DeviceHandle = OpenHandle(DevicePath, isExclusive, false);
             }
             catch (Exception exception)
             {
@@ -89,29 +95,13 @@ namespace DS4Windows
                 throw new Exception("Error opening HID device.", exception);
             }
 
-            IsOpen = !safeReadHandle.IsInvalid;
+            IsOpen = !DeviceHandle.IsInvalid;
             IsExclusive = isExclusive;
-        }
-
-        public void OpenFileStream(int reportSize)
-        {
-            if (fileStream == null && !safeReadHandle.IsInvalid)
-                fileStream = new FileStream(safeReadHandle, FileAccess.ReadWrite, reportSize, true);
-        }
-
-        public bool IsFileStreamOpen()
-        {
-            var result = false;
-            if (fileStream != null)
-                result = !fileStream.SafeFileHandle.IsInvalid && !fileStream.SafeFileHandle.IsClosed;
-
-            return result;
         }
 
         public void CloseDevice()
         {
             if (!IsOpen) return;
-            CloseFileStreamIo();
 
             IsOpen = false;
         }
@@ -119,27 +109,29 @@ namespace DS4Windows
         public void CancelIO()
         {
             if (IsOpen)
-                NativeMethods.CancelIoEx(safeReadHandle.DangerousGetHandle(), IntPtr.Zero);
+                NativeMethods.CancelIoEx(DeviceHandle.DangerousGetHandle(), IntPtr.Zero);
         }
 
+        /*
         public bool ReadInputReport(byte[] data)
         {
             if (safeReadHandle == null)
                 safeReadHandle = OpenHandle(DevicePath, true, false);
             return NativeMethods.HidD_GetInputReport(safeReadHandle, data, data.Length);
         }
+        */
 
         public bool WriteFeatureReport(byte[] data)
         {
             var result = false;
-            if (IsOpen && safeReadHandle != null)
-                result = NativeMethods.HidD_SetFeature(safeReadHandle, data, data.Length);
+            if (IsOpen && DeviceHandle != null)
+                result = NativeMethods.HidD_SetFeature(DeviceHandle.DangerousGetHandle(), data, data.Length);
 
             return result;
         }
 
 
-        private static HidDeviceAttributes GetDeviceAttributes(SafeFileHandle hidHandle)
+        private static HidDeviceAttributes GetDeviceAttributes(Kernel32.SafeObjectHandle hidHandle)
         {
             var deviceAttributes = default(NativeMethods.HIDD_ATTRIBUTES);
             deviceAttributes.Size = Marshal.SizeOf(deviceAttributes);
@@ -147,7 +139,7 @@ namespace DS4Windows
             return new HidDeviceAttributes(deviceAttributes);
         }
 
-        private static HidDeviceCapabilities GetDeviceCapabilities(SafeFileHandle hidHandle)
+        private static HidDeviceCapabilities GetDeviceCapabilities(Kernel32.SafeObjectHandle hidHandle)
         {
             var capabilities = default(NativeMethods.HIDP_CAPS);
             var preparsedDataPointer = default(IntPtr);
@@ -161,90 +153,42 @@ namespace DS4Windows
             return new HidDeviceCapabilities(capabilities);
         }
 
-        private void CloseFileStreamIo()
+        public ReadStatus ReadFile(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
         {
-            if (fileStream != null)
-                try
-                {
-                    fileStream.Close();
-                }
-                catch (IOException)
-                {
-                }
-                catch (OperationCanceledException)
-                {
-                }
-
-            fileStream = null;
-            Console.WriteLine("Close fs");
-            if (safeReadHandle != null && !safeReadHandle.IsInvalid)
-                try
-                {
-                    if (!safeReadHandle.IsClosed)
-                    {
-                        safeReadHandle.Close();
-                        Console.WriteLine("Close sh");
-                    }
-                }
-                catch (IOException)
-                {
-                }
-
-            safeReadHandle = null;
-        }
-
-        public void flush_Queue()
-        {
-            if (safeReadHandle != null) NativeMethods.HidD_FlushQueue(safeReadHandle);
-        }
-
-        private ReadStatus ReadWithFileStreamTask(byte[] inputBuffer)
-        {
-            try
-            {
-                if (fileStream.Read(inputBuffer, 0, inputBuffer.Length) > 0)
-                    return ReadStatus.Success;
-                return ReadStatus.NoDataRead;
-            }
-            catch (Exception)
-            {
-                return ReadStatus.ReadError;
-            }
-        }
-
-        public ReadStatus ReadFile(byte[] inputBuffer)
-        {
-            safeReadHandle ??= OpenHandle(DevicePath, true, false);
+            DeviceHandle ??= OpenHandle(DevicePath, true, false);
 
             try
             {
-                uint bytesRead;
-                return NativeMethods.ReadFile(safeReadHandle.DangerousGetHandle(), inputBuffer,
-                    (uint)inputBuffer.Length,
-                    out bytesRead, IntPtr.Zero)
+                return DeviceHandle.OverlappedReadFile(inputBuffer, bufferSize, out bytesReturned)
                     ? ReadStatus.Success
                     : ReadStatus.NoDataRead;
             }
             catch (Exception)
             {
+                bytesReturned = 0;
                 return ReadStatus.ReadError;
             }
         }
 
-        public ReadStatus ReadWithFileStream(byte[] inputBuffer)
+        public ReadStatus ReadWithTimeout(byte[] inputBuffer, int timeout)
         {
+            //
+            // TODO: work in timeout value
+            // 
+
+            var unmanagedBuffer = Marshal.AllocHGlobal(inputBuffer.Length);
+
             try
             {
-                if (fileStream.Read(inputBuffer, 0, inputBuffer.Length) > 0)
-                    return ReadStatus.Success;
-                return ReadStatus.NoDataRead;
+                return ReadFile(unmanagedBuffer, inputBuffer.Length, out _);
             }
-            catch (Exception)
+            finally
             {
-                return ReadStatus.ReadError;
+                Marshal.FreeHGlobal(unmanagedBuffer);
             }
         }
 
+        /*
         public ReadStatus ReadWithFileStream(byte[] inputBuffer, int timeout)
         {
             try
@@ -286,67 +230,34 @@ namespace DS4Windows
 
             return ReadStatus.ReadError;
         }
-
-        public ReadStatus ReadAsyncWithFileStream(byte[] inputBuffer, int timeout)
-        {
-            try
-            {
-                //if (safeReadHandle == null)
-                //    safeReadHandle = OpenHandle(_devicePath, true, enumerate: false);
-                //if (fileStream == null && !safeReadHandle.IsInvalid)
-                //    fileStream = new FileStream(safeReadHandle, FileAccess.ReadWrite, inputBuffer.Length, true);
-
-                if (!safeReadHandle.IsInvalid && fileStream.CanRead)
-                {
-                    var readTask = fileStream.ReadAsync(inputBuffer, 0, inputBuffer.Length);
-                    var success = readTask.Wait(timeout);
-                    if (success)
-                    {
-                        if (readTask.Result > 0)
-                            return ReadStatus.Success;
-                        return ReadStatus.NoDataRead;
-                    }
-
-                    return ReadStatus.WaitTimedOut;
-                }
-            }
-            catch (Exception e)
-            {
-                if (e is AggregateException)
-                {
-                    Console.WriteLine(e.Message);
-                    return ReadStatus.WaitFail;
-                }
-
-                return ReadStatus.ReadError;
-            }
-
-            return ReadStatus.ReadError;
-        }
+        */
 
         public bool WriteOutputReportViaControl(byte[] outputBuffer)
         {
-            if (safeReadHandle == null) safeReadHandle = OpenHandle(DevicePath, true, false);
+            if (DeviceHandle == null) DeviceHandle = OpenHandle(DevicePath, true, false);
 
-            if (NativeMethods.HidD_SetOutputReport(safeReadHandle, outputBuffer, outputBuffer.Length))
+            if (NativeMethods.HidD_SetOutputReport(DeviceHandle.DangerousGetHandle(), outputBuffer, outputBuffer.Length))
                 return true;
             return false;
         }
 
-        private bool WriteOutputReportViaInterruptTask(byte[] outputBuffer)
+        public bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
         {
+            var unmanagedBuffer = Marshal.AllocHGlobal(outputBuffer.Length);
+
             try
             {
-                fileStream.Write(outputBuffer, 0, outputBuffer.Length);
-                return true;
+                DeviceHandle.OverlappedWriteFile(unmanagedBuffer, outputBuffer.Length, out _);
             }
-            catch (Exception e)
+            finally
             {
-                Console.WriteLine(e.Message);
-                return false;
+                Marshal.FreeHGlobal(unmanagedBuffer);
             }
+
+            return true;
         }
 
+        /*
         public bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
         {
             try
@@ -372,7 +283,9 @@ namespace DS4Windows
                 return false;
             }
         }
+        */
 
+        /*
         public bool WriteAsyncOutputReportViaInterrupt(byte[] outputBuffer)
         {
             try
@@ -400,32 +313,28 @@ namespace DS4Windows
                 return false;
             }
         }
+        */
 
-        private SafeFileHandle OpenHandle(string devicePathName, bool isExclusive, bool enumerate)
+        private Kernel32.SafeObjectHandle OpenHandle(string devicePathName, bool isExclusive, bool enumerate)
         {
-            SafeFileHandle hidHandle;
-            var access = enumerate ? 0 : NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE;
-
-            if (isExclusive)
-                hidHandle = NativeMethods.CreateFile(devicePathName, access, 0, IntPtr.Zero, NativeMethods.OpenExisting,
-                    NativeMethods.FILE_FLAG_NO_BUFFERING | NativeMethods.FILE_FLAG_WRITE_THROUGH |
-                    NativeMethods.FILE_ATTRIBUTE_TEMPORARY | NativeMethods.FILE_FLAG_OVERLAPPED, 0);
-            else
-                hidHandle = NativeMethods.CreateFile(devicePathName, access,
-                    NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero,
-                    NativeMethods.OpenExisting,
-                    NativeMethods.FILE_FLAG_NO_BUFFERING | NativeMethods.FILE_FLAG_WRITE_THROUGH |
-                    NativeMethods.FILE_ATTRIBUTE_TEMPORARY | NativeMethods.FILE_FLAG_OVERLAPPED, 0);
-
-            return hidHandle;
+            return Kernel32.CreateFile(devicePathName,
+                (enumerate) ? 0 : Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ | Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                IntPtr.Zero, (isExclusive) ? 0 : Kernel32.CreationDisposition.OPEN_EXISTING,
+                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
+                | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
+                | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
+                Kernel32.SafeObjectHandle.Null
+            );
         }
 
-        public bool readFeatureData(byte[] inputBuffer)
+        public bool ReadFeatureData(byte[] inputBuffer)
         {
-            return NativeMethods.HidD_GetFeature(safeReadHandle.DangerousGetHandle(), inputBuffer, inputBuffer.Length);
+            return NativeMethods.HidD_GetFeature(DeviceHandle.DangerousGetHandle(), inputBuffer, inputBuffer.Length);
         }
 
-        public void resetSerial()
+        public void ResetSerial()
         {
             serial = null;
         }
@@ -444,7 +353,7 @@ namespace DS4Windows
                 var buffer = new byte[64];
                 //buffer[0] = 18;
                 buffer[0] = featureID;
-                if (readFeatureData(buffer))
+                if (ReadFeatureData(buffer))
                     serial = PhysicalAddress.Parse(
                         $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
                     );
@@ -457,7 +366,7 @@ namespace DS4Windows
 #else
                 uint bufferLen = 126;
 #endif
-                if (NativeMethods.HidD_GetSerialNumberString(safeReadHandle.DangerousGetHandle(), buffer, bufferLen))
+                if (NativeMethods.HidD_GetSerialNumberString(DeviceHandle.DangerousGetHandle(), buffer, bufferLen))
                 {
                     var MACAddr = Encoding.Unicode.GetString(buffer).Replace("\0", string.Empty).ToUpper();
                     MACAddr =

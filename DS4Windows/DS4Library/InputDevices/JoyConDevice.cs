@@ -258,8 +258,6 @@ namespace DS4Windows.InputDevices
             inputReportBuffer = new byte[INPUT_REPORT_LEN];
             outputReportBuffer = new byte[OUTPUT_REPORT_LEN];
             rumbleReportBuffer = new byte[RUMBLE_REPORT_LEN];
-
-            if (!hDevice.IsFileStreamOpen()) hDevice.OpenFileStream(inputReportBuffer.Length);
         }
 
         public static ConnectionType DetermineConnectionType(HidDevice hDevice)
@@ -327,7 +325,7 @@ namespace DS4Windows.InputDevices
             unchecked
             {
                 firstActive = DateTime.UtcNow;
-                NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
+                //NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
                 var latencyQueue = new Queue<long>(21); // Set capacity at max + 1 to avoid any resizing
                 var tempLatencyCount = 0;
                 long oldtime = 0;
@@ -364,8 +362,10 @@ namespace DS4Windows.InputDevices
                     currerror = string.Empty;
 
                     readWaitEv.Set();
+                    
+                    var res = hDevice.ReadFile(InputReportBuffer, inputReportBuffer.Length, out _);
+                    Marshal.Copy(InputReportBuffer, inputReportBuffer, 0, inputReportBuffer.Length);
 
-                    var res = hDevice.ReadWithFileStream(inputReportBuffer);
                     if (res == HidDevice.ReadStatus.Success)
                     {
                         if (inputReportBuffer[0] != 0x30)
@@ -811,7 +811,7 @@ namespace DS4Windows.InputDevices
             FrameCount = (byte)(++FrameCount & 0x0F);
 
             result = hDevice.WriteOutputReportViaInterrupt(tmpRumble, 0);
-            hDevice.fileStream.Flush();
+            
             //res = hidDevice.ReadWithFileStream(tmpReport, 500);
             //res = hidDevice.ReadFile(tmpReport);
         }
@@ -830,20 +830,19 @@ namespace DS4Windows.InputDevices
             commandBuffer[10] = subcommand;
 
             result = hDevice.WriteOutputReportViaInterrupt(commandBuffer, 0);
-            hDevice.fileStream.Flush();
-
+            
             byte[] tmpReport = null;
             if (result && checkResponse)
             {
                 tmpReport = new byte[INPUT_REPORT_LEN];
                 HidDevice.ReadStatus res;
-                res = hDevice.ReadWithFileStream(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
+                res = hDevice.ReadWithTimeout(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
                 var tries = 1;
                 while (res == HidDevice.ReadStatus.Success &&
                        tmpReport[0] != 0x21 && tmpReport[14] != subcommand && tries < 100)
                 {
                     //Console.WriteLine("TRY AGAIN: {0}", tmpReport[0]);
-                    res = hDevice.ReadWithFileStream(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
+                    res = hDevice.ReadWithTimeout(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
                     tries++;
                 }
 

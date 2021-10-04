@@ -136,8 +136,6 @@ namespace DS4Windows.InputDevices
             if (runCalib)
                 RefreshCalibration();
 
-            if (!hDevice.IsFileStreamOpen()) hDevice.OpenFileStream(outputReport.Length);
-
             // Need to blank LED lights so lightbar will change colors
             // as requested
             if (conType == ConnectionType.BT) SendInitialBTOutputReport();
@@ -185,7 +183,7 @@ namespace DS4Windows.InputDevices
                 var found = false;
                 for (var tries = 0; !found && tries < 5; tries++)
                 {
-                    hDevice.readFeatureData(calibration);
+                    hDevice.ReadFeatureData(calibration);
                     var recvCrc32 = calibration[DS4_FEATURE_REPORT_5_CRC32_POS] |
                                     (uint)(calibration[DS4_FEATURE_REPORT_5_CRC32_POS + 1] << 8) |
                                     (uint)(calibration[DS4_FEATURE_REPORT_5_CRC32_POS + 2] << 16) |
@@ -208,7 +206,7 @@ namespace DS4Windows.InputDevices
             }
             else
             {
-                hDevice.readFeatureData(calibration);
+                hDevice.ReadFeatureData(calibration);
                 sixAxis.SetCalibrationData(ref calibration, true);
             }
         }
@@ -265,7 +263,7 @@ namespace DS4Windows.InputDevices
                     // device.
                     var tmpFeatureData = new byte[64];
                     tmpFeatureData[0] = SERIAL_FEATURE_ID;
-                    hDevice.readFeatureData(tmpFeatureData); // Kick Windows into noticing the disconnection.
+                    hDevice.ReadFeatureData(tmpFeatureData); // Kick Windows into noticing the disconnection.
                 }
                 else
                 {
@@ -279,7 +277,7 @@ namespace DS4Windows.InputDevices
             unchecked
             {
                 firstActive = DateTime.UtcNow;
-                NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
+                //NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
                 var latencyQueue = new Queue<long>(21); // Set capacity at max + 1 to avoid any resizing
                 var tempLatencyCount = 0;
                 long oldtime = 0;
@@ -340,7 +338,10 @@ namespace DS4Windows.InputDevices
                     if (conType == ConnectionType.BT)
                     {
                         timeoutEvent = false;
-                        var res = hDevice.ReadWithFileStream(inputReport);
+                        
+                        var res = hDevice.ReadFile(InputReportBuffer, inputReport.Length, out _);
+                        Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
+
                         if (res == HidDevice.ReadStatus.Success)
                         {
                             var recvCrc32 = inputReport[BT_INPUT_REPORT_CRC32_POS] |
@@ -407,7 +408,9 @@ namespace DS4Windows.InputDevices
                     }
                     else
                     {
-                        var res = hDevice.ReadWithFileStream(inputReport);
+                        var res = hDevice.ReadFile(InputReportBuffer, inputReport.Length, out _);
+                        Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
+
                         if (res != HidDevice.ReadStatus.Success)
                         {
                             if (res == HidDevice.ReadStatus.WaitTimedOut)
