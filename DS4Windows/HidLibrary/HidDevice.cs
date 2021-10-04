@@ -1,13 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Net.NetworkInformation;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
-using Microsoft.Win32.SafeHandles;
 using PInvoke;
 
 namespace DS4Windows
@@ -236,7 +232,8 @@ namespace DS4Windows
         {
             if (DeviceHandle == null) DeviceHandle = OpenHandle(DevicePath, true, false);
 
-            if (NativeMethods.HidD_SetOutputReport(DeviceHandle.DangerousGetHandle(), outputBuffer, outputBuffer.Length))
+            if (NativeMethods.HidD_SetOutputReport(DeviceHandle.DangerousGetHandle(), outputBuffer,
+                outputBuffer.Length))
                 return true;
             return false;
         }
@@ -244,6 +241,8 @@ namespace DS4Windows
         public bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
         {
             var unmanagedBuffer = Marshal.AllocHGlobal(outputBuffer.Length);
+
+            Marshal.Copy(outputBuffer, 0, unmanagedBuffer, outputBuffer.Length);
 
             try
             {
@@ -318,9 +317,11 @@ namespace DS4Windows
         private Kernel32.SafeObjectHandle OpenHandle(string devicePathName, bool isExclusive, bool enumerate)
         {
             return Kernel32.CreateFile(devicePathName,
-                (enumerate) ? 0 : Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ | Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                enumerate
+                    ? 0
+                    : Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ | Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
                 Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-                IntPtr.Zero, (isExclusive) ? 0 : Kernel32.CreationDisposition.OPEN_EXISTING,
+                IntPtr.Zero, isExclusive ? 0 : Kernel32.CreationDisposition.OPEN_EXISTING,
                 Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
                 | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
                 | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
@@ -339,7 +340,7 @@ namespace DS4Windows
             serial = null;
         }
 
-        public PhysicalAddress ReadSerial(byte featureID = 18)
+        public PhysicalAddress ReadSerial(byte featureId = 18)
         {
             if (serial != null)
                 return serial;
@@ -352,7 +353,7 @@ namespace DS4Windows
             {
                 var buffer = new byte[64];
                 //buffer[0] = 18;
-                buffer[0] = featureID;
+                buffer[0] = featureId;
                 if (ReadFeatureData(buffer))
                     serial = PhysicalAddress.Parse(
                         $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
