@@ -130,7 +130,7 @@ namespace DS4Windows.InputDevices
                 outReportBuffer = new byte[BT_OUTPUT_REPORT_LENGTH];
 
                 warnInterval = WARN_INTERVAL_BT;
-                synced = isValidSerial();
+                synced = IsValidSerial();
             }
 
             if (runCalib)
@@ -339,7 +339,7 @@ namespace DS4Windows.InputDevices
                     {
                         timeoutEvent = false;
                         
-                        var res = hDevice.ReadFile(InputReportBuffer, inputReport.Length, out _);
+                        var res = hDevice.ReadInputReport(InputReportBuffer, inputReport.Length, out _);
                         Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
                         if (res == HidDevice.ReadStatus.Success)
@@ -408,7 +408,7 @@ namespace DS4Windows.InputDevices
                     }
                     else
                     {
-                        var res = hDevice.ReadFile(InputReportBuffer, inputReport.Length, out _);
+                        var res = hDevice.ReadInputReport(InputReportBuffer, inputReport.Length, out _);
                         Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
                         if (res != HidDevice.ReadStatus.Success)
@@ -720,7 +720,7 @@ namespace DS4Windows.InputDevices
                         }
                         else
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (!idleInput) lastActive = utcNow;
                         }
                     }
@@ -729,7 +729,7 @@ namespace DS4Windows.InputDevices
                         var shouldDisconnect = false;
                         if (!isRemoved && idleTimeout > 0)
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (idleInput)
                             {
                                 var timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);
@@ -1299,7 +1299,7 @@ namespace DS4Windows.InputDevices
             else
                 throw new ArgumentOutOfRangeException("Invalid Trigger Id");
 
-            queueEvent(() =>
+            QueueEvent(() =>
             {
                 outputDirty = true;
                 PrepareOutReport();
@@ -1337,7 +1337,7 @@ namespace DS4Windows.InputDevices
                         activePlayerLEDMask = 0x00;
                 }
 
-            queueEvent(() =>
+            QueueEvent(() =>
             {
                 outputDirty = true;
                 //PrepareOutReport();
@@ -1351,24 +1351,24 @@ namespace DS4Windows.InputDevices
                 NativeOptionsStore.EnableRumbleChanged += () =>
                 {
                     UseRumble = NativeOptionsStore.EnableRumble;
-                    queueEvent(() => { outputDirty = true; });
+                    QueueEvent(() => { outputDirty = true; });
                 };
                 NativeOptionsStore.HapticIntensityChanged += () =>
                 {
                     HapticChoice = NativeOptionsStore.HapticIntensity;
-                    queueEvent(() => { outputDirty = true; });
+                    QueueEvent(() => { outputDirty = true; });
                 };
 
                 NativeOptionsStore.MuteLedModeChanged += () =>
                 {
                     PrepareMuteLEDByte();
-                    queueEvent(() => { outputDirty = true; });
+                    QueueEvent(() => { outputDirty = true; });
                 };
 
                 NativeOptionsStore.LedModeChanged += () =>
                 {
                     PreparePlayerLEDBarByte();
-                    queueEvent(() => { outputDirty = true; });
+                    QueueEvent(() => { outputDirty = true; });
                 };
             }
         }

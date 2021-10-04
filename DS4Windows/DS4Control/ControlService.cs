@@ -122,7 +122,7 @@ namespace DS4Windows
                 stringMac = string.Join("", stringMac.Split(':'));
                 //stringMac = stringMac.Replace(":", "").Trim();
                 meta.PadMacAddress = System.Net.NetworkInformation.PhysicalAddress.Parse(stringMac);
-                isValidSerial = d.isValidSerial();
+                isValidSerial = d.IsValidSerial();
             }
 
             if (!isValidSerial)
@@ -132,14 +132,14 @@ namespace DS4Windows
             }
             else
             {
-                if (d.isSynced() || d.IsAlive())
+                if (d.IsSynced() || d.IsAlive())
                     meta.PadState = DsState.Connected;
                 else
                     meta.PadState = DsState.Reserved;
             }
 
-            meta.ConnectionType = (d.getConnectionType() == ConnectionType.USB) ? DsConnection.Usb : DsConnection.Bluetooth;
-            meta.IsActive = !d.isDS4Idle();
+            meta.ConnectionType = (d.GetConnectionType() == ConnectionType.USB) ? DsConnection.Usb : DsConnection.Bluetooth;
+            meta.IsActive = !d.IsDs4Idle();
 
             int batteryLevel = d.GetBattery();
             if (d.IsCharging() && batteryLevel >= 100)
@@ -639,7 +639,7 @@ namespace DS4Windows
                 foreach (DS4Device dev in devices)
                 {
                     int tempIdx = i;
-                    dev.queueEvent(() =>
+                    dev.QueueEvent(() =>
                     {
                         if (i < UdpServer.NUMBER_SLOTS && dev.PrimaryDevice)
                         {
@@ -654,7 +654,7 @@ namespace DS4Windows
             {
                 foreach (DS4Device dev in devices)
                 {
-                    dev.queueEvent(() =>
+                    dev.QueueEvent(() =>
                     {
                         if (dev.MotionEvent != null)
                         {
@@ -674,7 +674,7 @@ namespace DS4Windows
             IEnumerable<DS4Device> devices = DS4Devices.GetDS4Controllers();
             foreach (DS4Device dev in devices)
             {
-                dev.queueEvent(() =>
+                dev.QueueEvent(() =>
                 {
                     if (dev.MotionEvent != null)
                     {
@@ -693,7 +693,7 @@ namespace DS4Windows
                 _udpServer.Start(UDP_SERVER_PORT, UDP_SERVER_LISTEN_ADDRESS);
                 foreach (DS4Device dev in devices)
                 {
-                    dev.queueEvent(() =>
+                    dev.QueueEvent(() =>
                     {
                         if (dev.MotionEvent != null)
                         {
@@ -1212,7 +1212,7 @@ namespace DS4Windows
                     {
                         DS4Device device = devEnum.Current;
                         if (showlog)
-                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.MacAddress + " (" + device.getConnectionType() + ") (" +
+                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.MacAddress + " (" + device.GetConnectionType() + ") (" +
                                 device.DisplayName + ")");
 
                         if (hidDeviceHidingEnabled && CheckAffected(device))
@@ -1273,7 +1273,7 @@ namespace DS4Windows
                         bool useAutoProfile = UseTempProfiles[i];
                         if (!useAutoProfile)
                         {
-                            if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.MacAddress))
+                            if (device.IsValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.MacAddress))
                             {
                                 Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.GetLinkedProfile(device.MacAddress);
                                 Global.LinkedProfileCheck[i] = true;
@@ -1291,7 +1291,7 @@ namespace DS4Windows
                         {
                             device.LightBarColor = Global.Instance.Config.GetMainColor(i);
 
-                            if (!Global.Instance.Config.GetDirectInputOnly(i) && device.isSynced())
+                            if (!Global.Instance.Config.GetDirectInputOnly(i) && device.IsSynced())
                             {
                                 if (device.PrimaryDevice)
                                 {
@@ -1495,12 +1495,12 @@ namespace DS4Windows
                     {
                         if ((Global.Instance.Config.DisconnectBluetoothAtStop && !tempDevice.IsCharging()) || suspending)
                         {
-                            if (tempDevice.getConnectionType() == ConnectionType.BT)
+                            if (tempDevice.GetConnectionType() == ConnectionType.BT)
                             {
                                 tempDevice.StopUpdate();
                                 tempDevice.DisconnectBT(true);
                             }
-                            else if (tempDevice.getConnectionType() == ConnectionType.SONYWA)
+                            else if (tempDevice.GetConnectionType() == ConnectionType.SONYWA)
                             {
                                 tempDevice.StopUpdate();
                                 tempDevice.DisconnectDongle(true);
@@ -1611,7 +1611,7 @@ namespace DS4Windows
                 {
                     DS4Device device = devEnum.Current;
 
-                    if (device.isDisconnectingStatus())
+                    if (device.IsDisconnectingStatus())
                         continue;
 
                     if (((Func<bool>)delegate
@@ -1637,7 +1637,7 @@ namespace DS4Windows
                         if (DS4Controllers[Index] == null)
                         {
                             //LogDebug(DS4WinWPF.Properties.Resources.FoundController + device.getMacAddress() + " (" + device.getConnectionType() + ")");
-                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.MacAddress + " (" + device.getConnectionType() + ") (" +
+                            LogDebug(DS4WinWPF.Properties.Resources.FoundController + " " + device.MacAddress + " (" + device.GetConnectionType() + ") (" +
                                 device.DisplayName + ")");
 
                             if (hidDeviceHidingEnabled && CheckAffected(device))
@@ -1711,7 +1711,7 @@ namespace DS4Windows
                             bool useAutoProfile = UseTempProfiles[Index];
                             if (!useAutoProfile)
                             {
-                                if (device.isValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.MacAddress))
+                                if (device.IsValidSerial() && Global.Instance.Config.ContainsLinkedProfile(device.MacAddress))
                                 {
                                     Global.Instance.Config.ProfilePath[Index] = Global.Instance.Config.GetLinkedProfile(device.MacAddress);
                                     Global.LinkedProfileCheck[Index] = true;
@@ -1729,7 +1729,7 @@ namespace DS4Windows
                             {
                                 device.LightBarColor = Global.Instance.Config.GetMainColor(Index);
 
-                                if (!Global.Instance.Config.GetDirectInputOnly(Index) && device.isSynced())
+                                if (!Global.Instance.Config.GetDirectInputOnly(Index) && device.IsSynced())
                                 {
                                     if (device.PrimaryDevice)
                                     {
@@ -1834,8 +1834,8 @@ namespace DS4Windows
             if (!Instance.Config.GetEnableOutputDataToDS4(ind))
                 LogDebug("Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 
-            device.setIdleTimeout(Instance.Config.GetIdleDisconnectTimeout(ind));
-            device.setBTPollRate(Instance.Config.GetBluetoothPollRate(ind));
+            device.SetIdleTimeout(Instance.Config.GetIdleDisconnectTimeout(ind));
+            device.SetBtPollRate(Instance.Config.GetBluetoothPollRate(ind));
             touchPad[ind].ResetTrackAccel(Instance.Config.GetTrackballFriction(ind));
             touchPad[ind].ResetToggleGyroModes();
 
@@ -1851,7 +1851,7 @@ namespace DS4Windows
                 Instance.Config.R2OutputSettings[ind].TrigEffectSettings);
 
             device.RumbleAutostopTime = Instance.Config.GetRumbleAutostopTime(ind);
-            device.setRumble(0, 0);
+            device.SetRumble(0, 0);
             device.LightBarColor = Instance.Config.GetMainColor(ind);
 
             if (!startUp)
@@ -2025,7 +2025,7 @@ namespace DS4Windows
             DS4Device d = DS4Controllers[index];
             if (d != null)
             {
-                return d.getConnectionType() + "";
+                return d.GetConnectionType() + "";
             }
             else
                 return DS4WinWPF.Properties.Resources.NoneText;
@@ -2061,7 +2061,7 @@ namespace DS4Windows
 
             if (ind >= 0)
             {
-                bool synced = device.isSynced();
+                bool synced = device.IsSynced();
 
                 if (!synced)
                 {
@@ -2134,7 +2134,7 @@ namespace DS4Windows
 
                     string removed = DS4WinWPF.Properties.Resources.ControllerWasRemoved.Replace("*Mac address*", (ind + 1).ToString());
                     if (device.GetBattery() <= 20 &&
-                        device.getConnectionType() == ConnectionType.BT && !device.IsCharging())
+                        device.GetConnectionType() == ConnectionType.BT && !device.IsCharging())
                     {
                         removed += ". " + DS4WinWPF.Properties.Resources.ChargeController;
                     }
@@ -2234,7 +2234,7 @@ namespace DS4Windows
                 //device.getPreviousState(PreviousState[ind]);
                 //DS4State pState = PreviousState[ind];
 
-                if (device.firstReport && device.isSynced())
+                if (device.firstReport && device.IsSynced())
                 {
                     // Only send Log message when device is considered a primary device
                     if (device.PrimaryDevice)
@@ -2551,7 +2551,7 @@ namespace DS4Windows
             if (heavyBoosted > 255)
                 heavyBoosted = 255;
 
-            device.setRumble((byte)lightBoosted, (byte)heavyBoosted);
+            device.SetRumble((byte)lightBoosted, (byte)heavyBoosted);
         }
 
         public DS4State getDS4State(int ind)

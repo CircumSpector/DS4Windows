@@ -363,7 +363,7 @@ namespace DS4Windows.InputDevices
 
                     readWaitEv.Set();
                     
-                    var res = hDevice.ReadFile(InputReportBuffer, inputReportBuffer.Length, out _);
+                    var res = hDevice.ReadInputReport(InputReportBuffer, inputReportBuffer.Length, out _);
                     Marshal.Copy(InputReportBuffer, inputReportBuffer, 0, inputReportBuffer.Length);
 
                     if (res == HidDevice.ReadStatus.Success)
@@ -651,7 +651,7 @@ namespace DS4Windows.InputDevices
                         }
                         else
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (!idleInput) lastActive = utcNow;
                         }
                     }
@@ -660,7 +660,7 @@ namespace DS4Windows.InputDevices
                         var shouldDisconnect = false;
                         if (!isRemoved && idleTimeout > 0)
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (idleInput)
                             {
                                 var timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);
@@ -1274,7 +1274,7 @@ namespace DS4Windows.InputDevices
             // code. Would be better placed in DisconnectWireless method
             if (primaryDevice &&
                 tempJointDevice != null)
-                tempJointDevice.queueEvent(() => { tempJointDevice.DisconnectBT(callRemoval); });
+                tempJointDevice.QueueEvent(() => { tempJointDevice.DisconnectBT(callRemoval); });
 
             return success;
         }

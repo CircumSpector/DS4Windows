@@ -447,9 +447,9 @@ namespace DS4Windows
                     {
                         deviceSerials.Remove(serial);
                         serialDevices.Remove(serial);
-                        device.updateSerial();
+                        device.UpdateSerial();
                         serial = device.MacAddress;
-                        if (DS4Device.isValidSerial(serial))
+                        if (DS4Device.IsValidSerial(serial))
                         {
                             deviceSerials.Add(serial);
                             serialDevices.Add(serial, device);

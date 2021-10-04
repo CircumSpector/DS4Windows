@@ -3785,10 +3785,10 @@ namespace DS4Windows
                                     actionFound = true;
 
                                     DS4Device d = ctrl.DS4Controllers[device];
-                                    bool synced = /*tempBool =*/ d.isSynced();
+                                    bool synced = /*tempBool =*/ d.IsSynced();
                                     if (synced && !d.IsCharging())
                                     {
-                                        ConnectionType deviceConn = d.getConnectionType();
+                                        ConnectionType deviceConn = d.GetConnectionType();
                                         //bool exclusive = /*tempBool =*/ d.isExclusive();
                                         if (deviceConn == ConnectionType.BT)
                                         {
@@ -3883,10 +3883,10 @@ namespace DS4Windows
                                 {
                                     actionFound = true;
                                     DS4Device d = ctrl.DS4Controllers[device];
-                                    ConnectionType deviceConn = d.getConnectionType();
-                                    if (deviceConn == ConnectionType.SONYWA && d.isSynced())
+                                    ConnectionType deviceConn = d.GetConnectionType();
+                                    if (deviceConn == ConnectionType.SONYWA && d.IsSynced())
                                     {
-                                        if (d.isDS4Idle())
+                                        if (d.IsDs4Idle())
                                         {
                                             d.DisconnectDongle();
                                             ReleaseActionKeys(action, device);
@@ -4461,7 +4461,7 @@ namespace DS4Windows
                 string r = macroCodeValue.ToString().Substring(1);
                 byte heavy = (byte)(int.Parse(r[0].ToString()) * 100 + int.Parse(r[1].ToString()) * 10 + int.Parse(r[2].ToString()));
                 byte light = (byte)(int.Parse(r[3].ToString()) * 100 + int.Parse(r[4].ToString()) * 10 + int.Parse(r[5].ToString()));
-                d.setRumble(light, heavy);
+                d.SetRumble(light, heavy);
             }
             else
             {

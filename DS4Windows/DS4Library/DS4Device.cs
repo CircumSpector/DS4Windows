@@ -656,14 +656,14 @@ namespace DS4Windows
             return exclusiveStatus > ExclusiveStatus.Shared;
         }
 
-        public bool isDisconnectingStatus()
+        public bool IsDisconnectingStatus()
         {
             return isDisconnecting;
         }
 
         public event EventHandler MacAddressChanged;
 
-        public ConnectionType getConnectionType()
+        public ConnectionType GetConnectionType()
         {
             return conType;
         }
@@ -673,7 +673,7 @@ namespace DS4Windows
             return idleTimeout;
         }
 
-        public void setIdleTimeout(int value)
+        public void SetIdleTimeout(int value)
         {
             if (idleTimeout != value) idleTimeout = value;
         }
@@ -724,7 +724,7 @@ namespace DS4Windows
             return btPollRate;
         }
 
-        public void setBTPollRate(int value)
+        public void SetBtPollRate(int value)
         {
             if (btPollRate != value && value >= 0 && value <= 16) btPollRate = value;
         }
@@ -797,7 +797,7 @@ namespace DS4Windows
                     audio = new DS4Audio(searchDeviceInstance: hidDevice.ParentPath);
                     micAudio = new DS4Audio(DataFlow.Capture,
                         hidDevice.ParentPath);
-                    runCalib = synced = isValidSerial();
+                    runCalib = synced = IsValidSerial();
                 }
             }
             else
@@ -825,7 +825,7 @@ namespace DS4Windows
                 }
 
                 warnInterval = WARN_INTERVAL_BT;
-                synced = isValidSerial();
+                synced = IsValidSerial();
             }
 
             if (runCalib)
@@ -948,7 +948,7 @@ namespace DS4Windows
                 {
                     if (BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
                     {
-                        ds4Output = new Thread(performDs4Output);
+                        ds4Output = new Thread(PerformDs4Output);
                         ds4Output.Priority = ThreadPriority.Normal;
                         ds4Output.Name = "DS4 Output thread: " + MacAddress;
                         ds4Output.IsBackground = true;
@@ -1038,7 +1038,7 @@ namespace DS4Windows
             return hDevice.WriteOutputReportViaInterrupt(outputBuffer, READ_STREAM_TIMEOUT);
         }
 
-        protected bool writeOutput()
+        protected bool WriteOutput()
         {
             if (conType == ConnectionType.BT)
             {
@@ -1054,7 +1054,7 @@ namespace DS4Windows
             return hDevice.WriteOutputReportViaInterrupt(outReportBuffer, READ_STREAM_TIMEOUT);
         }
 
-        private unsafe void performDs4Output()
+        private unsafe void PerformDs4Output()
         {
             try
             {
@@ -1066,7 +1066,7 @@ namespace DS4Windows
                     {
                         lock (outputReport)
                         {
-                            result = writeOutput();
+                            result = WriteOutput();
                         }
 
                         currentRumble = false;
@@ -1130,7 +1130,7 @@ namespace DS4Windows
             return priorInputReport30 != 0xff;
         }
 
-        public bool isSynced()
+        public bool IsSynced()
         {
             return synced;
         }
@@ -1219,7 +1219,7 @@ namespace DS4Windows
                         using (GlobalTracer.Instance.BuildSpan(nameof(hDevice.ReadWithFileStream)).StartActive(true))
                         {
 #endif
-                        res = hDevice.ReadFile(BtInputReportBuffer, btInputReport.Length, out _);
+                        res = hDevice.ReadInputReport(BtInputReportBuffer, btInputReport.Length, out _);
                         Marshal.Copy(BtInputReportBuffer, btInputReport, 0, btInputReport.Length);
 #if WITH_TRACING
                         }
@@ -1330,7 +1330,7 @@ namespace DS4Windows
                             .StartActive(true))
                         {
 #endif
-                        var res = hDevice.ReadFile(InputReportBuffer, inputReport.Length, out _);
+                        var res = hDevice.ReadInputReport(InputReportBuffer, inputReport.Length, out _);
                         Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
                         if (res != HidDevice.ReadStatus.Success)
@@ -1697,7 +1697,7 @@ namespace DS4Windows
                         }
                         else
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (!idleInput) lastActive = utcNow;
                         }
                     }
@@ -1706,7 +1706,7 @@ namespace DS4Windows
                         var shouldDisconnect = false;
                         if (!isRemoved && idleTimeout > 0)
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (idleInput)
                             {
                                 var timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);
@@ -1919,7 +1919,7 @@ namespace DS4Windows
             if (rumbleAutostopTimer.IsRunning)
                 // Workaround to a bug in ViGem driver. Force stop potentially stuck rumble motor on the next output report if there haven't been new rumble events within X seconds
                 if (rumbleAutostopTimer.ElapsedMilliseconds >= rumbleAutostopTime)
-                    setRumble(0, 0);
+                    SetRumble(0, 0);
 
             if (synchronous)
             {
@@ -1970,7 +1970,7 @@ namespace DS4Windows
 
                     try
                     {
-                        if (!writeOutput())
+                        if (!WriteOutput())
                             if (quitOutputThreadOnError)
                             {
                                 var winError = Marshal.GetLastWin32Error();
@@ -2154,7 +2154,7 @@ namespace DS4Windows
             return result;
         }
 
-        public void setRumble(byte rightLightFastMotor, byte leftHeavySlowMotor)
+        public void SetRumble(byte rightLightFastMotor, byte leftHeavySlowMotor)
         {
             testRumble.RumbleState.RumbleMotorStrengthRightLightFast = rightLightFastMotor;
             testRumble.RumbleState.RumbleMotorStrengthLeftHeavySlow = leftHeavySlowMotor;
@@ -2230,7 +2230,7 @@ namespace DS4Windows
         {
         }
 
-        public bool isDS4Idle()
+        public bool IsDs4Idle()
         {
             if (currentState.Square || currentState.Cross || currentState.Circle || currentState.Triangle)
                 return false;
@@ -2284,7 +2284,7 @@ namespace DS4Windows
             Report = null;
         }
 
-        public void queueEvent(Action act)
+        public void QueueEvent(Action act)
         {
             lock (eventQueueLock)
             {
@@ -2293,7 +2293,7 @@ namespace DS4Windows
             }
         }
 
-        public void updateSerial()
+        public void UpdateSerial()
         {
             hDevice.ResetSerial();
             
@@ -2306,12 +2306,12 @@ namespace DS4Windows
             MacAddressChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public bool isValidSerial()
+        public bool IsValidSerial()
         {
             return !MacAddress.Equals(PhysicalAddress.Parse(BLANK_SERIAL));
         }
 
-        public static bool isValidSerial(PhysicalAddress test)
+        public static bool IsValidSerial(PhysicalAddress test)
         {
             return !test.Equals(PhysicalAddress.Parse(BLANK_SERIAL));
         }

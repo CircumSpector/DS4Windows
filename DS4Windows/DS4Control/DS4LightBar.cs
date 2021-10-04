@@ -298,7 +298,7 @@ namespace DS4Windows
             }
             else if (useLightRoutine)
             {
-                if (device.getConnectionType() == ConnectionType.BT)
+                if (device.GetConnectionType() == ConnectionType.BT)
                     color = new DS4Color(32, 64, 64);
                 else
                     color = new DS4Color(0, 0, 0);

@@ -2179,7 +2179,7 @@ namespace DS4Windows
                         //Global.ActiveOutDevType[device] = OutContType.None;
                         var tempDev = control.DS4Controllers[device];
                         if (tempDev != null)
-                            tempDev.queueEvent(() => { control.UnplugOutDev(device, tempDev); });
+                            tempDev.QueueEvent(() => { control.UnplugOutDev(device, tempDev); });
                     }
                 }
 
@@ -3773,7 +3773,7 @@ namespace DS4Windows
                     var oldUseDInputOnly = UseDirectInputOnly[device];
                     var tempDevice = control.DS4Controllers[device];
                     var exists = tempDevice != null;
-                    var synced = exists ? tempDevice.isSynced() : false;
+                    var synced = exists ? tempDevice.IsSynced() : false;
                     var isAlive = exists ? tempDevice.IsAlive() : false;
                     if (DirectInputOnly[device] != oldUseDInputOnly)
                     {
@@ -3800,8 +3800,8 @@ namespace DS4Windows
             private void PostLoadSnippet(int device, ControlService control, bool xinputStatus, bool xinputPlug)
             {
                 var tempDev = control.DS4Controllers[device];
-                if (tempDev != null && tempDev.isSynced())
-                    tempDev.queueEvent(() =>
+                if (tempDev != null && tempDev.IsSynced())
+                    tempDev.QueueEvent(() =>
                     {
                         //tempDev.setIdleTimeout(idleDisconnectTimeout[device]);
                         //tempDev.setBTPollRate(btPollRate[device]);

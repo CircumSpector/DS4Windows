@@ -374,7 +374,7 @@ namespace DS4Windows.InputDevices
 
                     readWaitEv.Set();
 
-                    var res = hDevice.ReadFile(InputReportBuffer, inputReportBuffer.Length, out _);
+                    var res = hDevice.ReadInputReport(InputReportBuffer, inputReportBuffer.Length, out _);
                     Marshal.Copy(InputReportBuffer, inputReportBuffer, 0, inputReportBuffer.Length);
 
                     if (res == HidDevice.ReadStatus.Success)
@@ -596,7 +596,7 @@ namespace DS4Windows.InputDevices
                         }
                         else
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (!idleInput)
                             {
                                 lastActive = utcNow;
@@ -608,7 +608,7 @@ namespace DS4Windows.InputDevices
                         bool shouldDisconnect = false;
                         if (!isRemoved && idleTimeout > 0)
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (idleInput)
                             {
                                 DateTime timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);

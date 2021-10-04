@@ -2,6 +2,7 @@
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using PInvoke;
@@ -22,6 +23,10 @@ namespace DS4Windows
 
         private const string BLANK_SERIAL = "00:00:00:00:00:00";
 
+        private readonly IntPtr _inputOverlapped;
+
+        private readonly ManualResetEvent _inputReportEvent;
+
         //private bool _monitorDeviceEvents;
         private PhysicalAddress serial;
 
@@ -30,6 +35,12 @@ namespace DS4Windows
             DevicePath = devicePath;
             Description = description;
             ParentPath = parentPath;
+
+            _inputReportEvent = new ManualResetEvent(false);
+            _inputOverlapped = Marshal.AllocHGlobal(Marshal.SizeOf<NativeOverlapped>());
+            Marshal.StructureToPtr(
+                new NativeOverlapped { EventHandle = _inputReportEvent.SafeWaitHandle.DangerousGetHandle() },
+                _inputOverlapped, false);
 
             try
             {
@@ -53,8 +64,11 @@ namespace DS4Windows
         protected Kernel32.SafeObjectHandle DeviceHandle { get; private set; }
 
         public bool IsOpen { get; private set; }
+
         public bool IsExclusive { get; private set; }
+
         public bool IsConnected => HidDevices.IsConnected(DevicePath);
+
         public string Description { get; }
 
         public HidDeviceCapabilities Capabilities { get; }
@@ -67,6 +81,9 @@ namespace DS4Windows
 
         public void Dispose()
         {
+            _inputReportEvent.Dispose();
+            Marshal.FreeHGlobal(_inputOverlapped);
+
             CancelIO();
             CloseDevice();
         }
@@ -98,6 +115,8 @@ namespace DS4Windows
         public void CloseDevice()
         {
             if (!IsOpen) return;
+
+            DeviceHandle.Dispose();
 
             IsOpen = false;
         }
@@ -149,6 +168,24 @@ namespace DS4Windows
             return new HidDeviceCapabilities(capabilities);
         }
 
+        public ReadStatus ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
+        {
+            DeviceHandle ??= OpenHandle(DevicePath, true, false);
+
+            int? bytesRead = 0;
+
+            Kernel32.ReadFile(
+                DeviceHandle,
+                inputBuffer,
+                bufferSize,
+                ref bytesRead,
+                _inputOverlapped);
+
+            return Kernel32.GetOverlappedResult(DeviceHandle, _inputOverlapped, out bytesReturned, true)
+                ? ReadStatus.Success
+                : ReadStatus.NoDataRead;
+        }
+
         public ReadStatus ReadFile(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
         {
             DeviceHandle ??= OpenHandle(DevicePath, true, false);
@@ -184,50 +221,6 @@ namespace DS4Windows
             }
         }
 
-        /*
-        public ReadStatus ReadWithFileStream(byte[] inputBuffer, int timeout)
-        {
-            try
-            {
-                //if (safeReadHandle == null)
-                //    safeReadHandle = OpenHandle(_devicePath, true, enumerate: false);
-                //if (fileStream == null && !safeReadHandle.IsInvalid)
-                //    fileStream = new FileStream(safeReadHandle, FileAccess.ReadWrite, inputBuffer.Length, true);
-
-                if (!safeReadHandle.IsInvalid && fileStream.CanRead)
-                {
-                    var readFileTask = new Task<ReadStatus>(() => ReadWithFileStreamTask(inputBuffer));
-                    readFileTask.Start();
-                    var success = readFileTask.Wait(timeout);
-                    if (success)
-                    {
-                        if (readFileTask.Result == ReadStatus.Success)
-                            return ReadStatus.Success;
-                        if (readFileTask.Result == ReadStatus.ReadError)
-                            return ReadStatus.ReadError;
-                        if (readFileTask.Result == ReadStatus.NoDataRead) return ReadStatus.NoDataRead;
-                    }
-                    else
-                    {
-                        return ReadStatus.WaitTimedOut;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                if (e is AggregateException)
-                {
-                    Console.WriteLine(e.Message);
-                    return ReadStatus.WaitFail;
-                }
-
-                return ReadStatus.ReadError;
-            }
-
-            return ReadStatus.ReadError;
-        }
-        */
-
         public bool WriteOutputReportViaControl(byte[] outputBuffer)
         {
             if (DeviceHandle == null) DeviceHandle = OpenHandle(DevicePath, true, false);
@@ -255,64 +248,6 @@ namespace DS4Windows
 
             return true;
         }
-
-        /*
-        public bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
-        {
-            try
-            {
-                //if (safeReadHandle == null)
-                //{
-                //    safeReadHandle = OpenHandle(_devicePath, true, enumerate: false);
-                //}
-                //if (fileStream == null && !safeReadHandle.IsInvalid)
-                //{
-                //    fileStream = new FileStream(safeReadHandle, FileAccess.ReadWrite, outputBuffer.Length, true);
-                //}
-                if (fileStream != null && fileStream.CanWrite && !safeReadHandle.IsInvalid)
-                {
-                    fileStream.Write(outputBuffer, 0, outputBuffer.Length);
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        */
-
-        /*
-        public bool WriteAsyncOutputReportViaInterrupt(byte[] outputBuffer)
-        {
-            try
-            {
-                //if (safeReadHandle == null)
-                //{
-                //    safeReadHandle = OpenHandle(_devicePath, true, enumerate: false);
-                //}
-                //if (fileStream == null && !safeReadHandle.IsInvalid)
-                //{
-                //    fileStream = new FileStream(safeReadHandle, FileAccess.ReadWrite, outputBuffer.Length, true);
-                //}
-
-                if (fileStream != null && fileStream.CanWrite && !safeReadHandle.IsInvalid)
-                {
-                    var writeTask = fileStream.WriteAsync(outputBuffer, 0, outputBuffer.Length);
-                    //fileStream.Write(outputBuffer, 0, outputBuffer.Length);
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        */
 
         private Kernel32.SafeObjectHandle OpenHandle(string devicePathName, bool isExclusive, bool enumerate)
         {
@@ -345,8 +280,8 @@ namespace DS4Windows
             if (serial != null)
                 return serial;
 
-            // Some devices don't have MAC address (especially gamepads with USB only suports in PC). If the serial number reading fails 
-            // then use dummy zero MAC address, because there is a good chance the gamepad stll works in DS4Windows app (the code would throw
+            // Some devices don't have MAC address (especially gamepads with USB only support in PC). If the serial number reading fails 
+            // then use dummy zero MAC address, because there is a good chance the gamepad still works in DS4Windows app (the code would throw
             // an index out of bounds exception anyway without IF-THEN-ELSE checks after trying to read a serial number).
 
             if (Capabilities.InputReportByteLength == 64)

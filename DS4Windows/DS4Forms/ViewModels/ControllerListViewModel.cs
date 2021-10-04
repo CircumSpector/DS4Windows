@@ -442,11 +442,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void SaveLinked(bool status)
         {
-            if (device != null && device.isSynced())
+            if (device != null && device.IsSynced())
             {
                 if (status)
                 {
-                    if (device.isValidSerial())
+                    if (device.IsValidSerial())
                     {
                         Global.Instance.Config.ChangeLinkedProfile(device.MacAddress, Global.Instance.Config.ProfilePath[devIndex]);
                     }
@@ -516,7 +516,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (device.ConnectionType == ConnectionType.BT)
                 {
                     //device.StopUpdate();
-                    device.queueEvent(() =>
+                    device.QueueEvent(() =>
                     {
                         device.DisconnectBT();
                     });
