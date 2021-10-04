@@ -44,7 +44,7 @@ namespace DS4Windows
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                throw new Exception(string.Format("Error querying HID device '{0}'.", devicePath), exception);
+                throw new Exception($"Error querying HID device '{devicePath}'.", exception);
             }
         }
 
