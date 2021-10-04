@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using DS4Windows.InputDevices;
+using PropertyChanged;
 
 namespace DS4Windows
 {
@@ -67,42 +68,30 @@ namespace DS4Windows
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class RequestElevationArgs : EventArgs
     {
         public const int STATUS_SUCCESS = 0;
         public const int STATUS_INIT_FAILURE = -1;
-        private int statusCode = STATUS_INIT_FAILURE;
-        private string instanceId;
-        public int StatusCode
-        {
-            get => statusCode;
-            set => statusCode = value;
-        }
-        public string InstanceId { get => instanceId; }
+
+        public int StatusCode { get; set; } = STATUS_INIT_FAILURE;
+
+        public string InstanceId { get; }
 
         public RequestElevationArgs(string instanceId)
         {
-            this.instanceId = instanceId;
+            InstanceId = instanceId;
         }
     }
 
     public delegate void RequestElevationDelegate(RequestElevationArgs args);
 
+    [AddINotifyPropertyChangedInterface]
     public class CheckVirtualInfo : EventArgs
     {
-        private string deviceInstanceId;
-        public string DeviceInstanceId
-        {
-            get => deviceInstanceId;
-            set => deviceInstanceId = value;
-        }
+        public string DeviceInstanceId { get; set; }
 
-        private string propertyValue;
-        public string PropertyValue { get => propertyValue; set => propertyValue = value; }
-
-        public CheckVirtualInfo() : base()
-        {
-        }
+        public string PropertyValue { get; set; }
     }
 
     public delegate CheckVirtualInfo CheckVirtualDelegate(string deviceInstanceId);
