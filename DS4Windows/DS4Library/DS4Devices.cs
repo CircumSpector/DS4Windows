@@ -475,15 +475,15 @@ namespace DS4Windows
 
         private static void PurgeHiddenExclusiveDevices()
         {
-            int disabledDevCount = DisabledDevices.Count;
+            var disabledDevCount = DisabledDevices.Count;
             if (disabledDevCount > 0)
             {
-                List<HidDevice> disabledDevList = new List<HidDevice>();
+                var disabledDevList = new List<HidDevice>();
                 for (var devEnum = DisabledDevices.GetEnumerator(); devEnum.MoveNext();)
-                //for (int i = 0, arlen = disabledDevCount; i < arlen; i++)
+                    //for (int i = 0, arlen = disabledDevCount; i < arlen; i++)
                 {
                     //HidDevice tempDev = DisabledDevices.ElementAt(i);
-                    HidDevice tempDev = devEnum.Current;
+                    var tempDev = devEnum.Current;
                     if (tempDev != null)
                     {
                         if (tempDev.IsOpen && tempDev.IsConnected)
@@ -493,18 +493,15 @@ namespace DS4Windows
                         else if (tempDev.IsOpen)
                         {
                             if (!tempDev.IsConnected)
-                            {
                                 try
                                 {
                                     tempDev.CloseDevice();
                                 }
-                                catch { }
-                            }
+                                catch
+                                {
+                                }
 
-                            if (DevicePaths.Contains(tempDev.DevicePath))
-                            {
-                                DevicePaths.Remove(tempDev.DevicePath);
-                            }
+                            if (DevicePaths.Contains(tempDev.DevicePath)) DevicePaths.Remove(tempDev.DevicePath);
                         }
                     }
                 }
