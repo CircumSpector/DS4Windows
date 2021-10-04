@@ -222,8 +222,8 @@ namespace DS4Windows.InputDevices
 
         public override event ReportHandler<EventArgs> Report;
         public override event EventHandler<EventArgs> Removal;
-        public override event EventHandler BatteryChanged;
-        public override event EventHandler ChargingChanged;
+        public override event Action<DS4Device> BatteryChanged;
+        public override event Action<DS4Device> ChargingChanged;
 
         private void JoyConDevice_Removal(object sender, EventArgs e)
         {
@@ -440,7 +440,7 @@ namespace DS4Windows.InputDevices
                         if (tempBattery != battery)
                         {
                             battery = tempBattery;
-                            BatteryChanged?.Invoke(this, EventArgs.Empty);
+                            BatteryChanged?.Invoke(this);
                         }
 
                         currentState.Battery = (byte)tempBattery;
@@ -449,7 +449,7 @@ namespace DS4Windows.InputDevices
                         if (tempCharging != charging)
                         {
                             charging = tempCharging;
-                            ChargingChanged?.Invoke(this, EventArgs.Empty);
+                            ChargingChanged?.Invoke(this);
                         }
                     }
                     else

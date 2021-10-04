@@ -683,14 +683,14 @@ namespace DS4Windows
             return featureSet;
         }
 
-        public virtual event EventHandler BatteryChanged;
+        public virtual event Action<DS4Device> BatteryChanged;
 
         public int GetBattery()
         {
             return battery;
         }
 
-        public virtual event EventHandler ChargingChanged;
+        public virtual event Action<DS4Device> ChargingChanged;
 
         public bool IsCharging()
         {
@@ -1486,7 +1486,7 @@ namespace DS4Windows
                         if (tempCharging != charging)
                         {
                             charging = tempCharging;
-                            ChargingChanged?.Invoke(this, EventArgs.Empty);
+                            ChargingChanged?.Invoke(this);
                         }
 
                         maxBatteryValue = charging ? BATTERY_MAX_USB : BATTERY_MAX;
@@ -1495,7 +1495,7 @@ namespace DS4Windows
                         if (tempBattery != battery)
                         {
                             battery = tempBattery;
-                            BatteryChanged?.Invoke(this, EventArgs.Empty);
+                            BatteryChanged?.Invoke(this);
                         }
 
                         currentState.Battery = (byte)battery;

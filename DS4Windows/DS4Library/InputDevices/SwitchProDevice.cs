@@ -205,8 +205,8 @@ namespace DS4Windows.InputDevices
         public override event ReportHandler<EventArgs> Report = null;
         public override event EventHandler<EventArgs> Removal = null;
 
-        public override event EventHandler BatteryChanged;
-        public override event EventHandler ChargingChanged;
+        public override event Action<DS4Device> BatteryChanged;
+        public override event Action<DS4Device> ChargingChanged;
 
         public SwitchProDevice(HidDevice hidDevice,
             string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4) :
@@ -457,7 +457,7 @@ namespace DS4Windows.InputDevices
                         if (tempBattery != battery)
                         {
                             battery = tempBattery;
-                            BatteryChanged?.Invoke(this, EventArgs.Empty);
+                            BatteryChanged?.Invoke(this);
                         }
 
                         currentState.Battery = (byte)tempBattery;
@@ -466,7 +466,7 @@ namespace DS4Windows.InputDevices
                         if (tempCharging != charging)
                         {
                             charging = tempCharging;
-                            ChargingChanged?.Invoke(this, EventArgs.Empty);
+                            ChargingChanged?.Invoke(this);
                         }
                     }
                     else

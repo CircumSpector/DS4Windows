@@ -225,7 +225,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 return temp;
             }
         }
-        public event EventHandler BatteryStateChanged;
+        public event Action<DS4Device> BatteryStateChanged;
 
         public int SelectedIndex
         {
@@ -351,8 +351,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             ProfileList collection)
         {
             this.device = device;
-            device.BatteryChanged += (sender, e) => BatteryStateChanged?.Invoke(this, e);
-            device.ChargingChanged += (sender, e) => BatteryStateChanged?.Invoke(this, e);
+            device.BatteryChanged += (sender) => BatteryStateChanged?.Invoke(sender);
+            device.ChargingChanged += (sender) => BatteryStateChanged?.Invoke(sender);
             device.MacAddressChanged += (sender, e) => IdTextChanged?.Invoke(this, e);
             this.devIndex = devIndex;
             this.selectedProfile = profile;

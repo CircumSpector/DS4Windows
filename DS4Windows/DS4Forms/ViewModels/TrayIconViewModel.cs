@@ -373,7 +373,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             SetupEvents();
         }
 
-        private void UpdateForBattery(object sender, EventArgs e)
+        private void UpdateForBattery(object sender)
         {
             PopulateToolText();
         }

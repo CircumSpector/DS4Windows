@@ -1450,9 +1450,8 @@ namespace DS4Windows
             device.Report += tempEvnt;
         }
 
-        private void CheckQuickCharge(object sender, EventArgs e)
+        private void CheckQuickCharge(DS4Device device)
         {
-            DS4Device device = sender as DS4Device;
             if (device.ConnectionType == ConnectionType.BT && Global.Instance.Config.QuickCharge &&
                 device.Charging)
             {

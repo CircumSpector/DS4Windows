@@ -12,6 +12,7 @@ using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
 {
+    [AddINotifyPropertyChangedInterface]
     public class DualSenseDevice : DS4Device
     {
         public enum HapticIntensity : uint
@@ -63,7 +64,7 @@ namespace DS4Windows.InputDevices
             synced = true;
             DeviceSlotNumberChanged += (sender, e) => { CalculateDeviceSlotMask(); };
 
-            BatteryChanged += (sender, e) => { PreparePlayerLEDBarByte(); };
+            BatteryChanged += (sender) => { PreparePlayerLEDBarByte(); };
         }
 
         public override byte SerialReportID => SERIAL_FEATURE_ID;
@@ -95,8 +96,8 @@ namespace DS4Windows.InputDevices
         public DualSenseControllerOptions NativeOptionsStore { get; private set; }
 
         public override event ReportHandler<EventArgs> Report;
-        public override event EventHandler BatteryChanged;
-        public override event EventHandler ChargingChanged;
+        public override event Action<DS4Device> BatteryChanged;
+        public override event Action<DS4Device> ChargingChanged;
 
         public override void PostInit()
         {
@@ -550,7 +551,7 @@ namespace DS4Windows.InputDevices
                         if (tempCharging != charging)
                         {
                             charging = tempCharging;
-                            ChargingChanged?.Invoke(this, EventArgs.Empty);
+                            ChargingChanged?.Invoke(this);
                         }
 
                         tempByte = inputReport[53 + reportOffset];
@@ -571,7 +572,7 @@ namespace DS4Windows.InputDevices
                         if (tempBattery != battery)
                         {
                             battery = tempBattery;
-                            BatteryChanged?.Invoke(this, EventArgs.Empty);
+                            BatteryChanged?.Invoke(this);
                         }
 
                         currentState.Battery = (byte)battery;
