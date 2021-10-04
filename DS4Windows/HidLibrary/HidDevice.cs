@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.IO;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.Logging;
 using Microsoft.Win32.SafeHandles;
+
 namespace DS4Windows
 {
     public class HidDevice : IDisposable
@@ -20,28 +21,23 @@ namespace DS4Windows
             NotConnected = 5
         }
 
-        private readonly string _description;
-        private readonly string _devicePath;
-        private readonly string _parentPath;
-        private readonly HidDeviceAttributes _deviceAttributes;
-
-        private readonly HidDeviceCapabilities _deviceCapabilities;
-        //private bool _monitorDeviceEvents;
-        private PhysicalAddress serial = null;
         private const string BLANK_SERIAL = "00:00:00:00:00:00";
+
+        //private bool _monitorDeviceEvents;
+        private PhysicalAddress serial;
 
         internal HidDevice(string devicePath, string description = null, string parentPath = null)
         {
-            _devicePath = devicePath;
-            _description = description;
-            _parentPath = parentPath;
+            DevicePath = devicePath;
+            Description = description;
+            ParentPath = parentPath;
 
             try
             {
-                var hidHandle = OpenHandle(_devicePath, false, enumerate: true);
+                var hidHandle = OpenHandle(DevicePath, false, true);
 
-                _deviceAttributes = GetDeviceAttributes(hidHandle);
-                _deviceCapabilities = GetDeviceCapabilities(hidHandle);
+                Attributes = GetDeviceAttributes(hidHandle);
+                Capabilities = GetDeviceCapabilities(hidHandle);
 
                 hidHandle.Close();
             }
@@ -56,20 +52,30 @@ namespace DS4Windows
         public FileStream fileStream { get; private set; }
         public bool IsOpen { get; private set; }
         public bool IsExclusive { get; private set; }
-        public bool IsConnected { get { return HidDevices.IsConnected(_devicePath); } }
-        public string Description { get { return _description; } }
-        public HidDeviceCapabilities Capabilities { get { return _deviceCapabilities; } }
-        public HidDeviceAttributes Attributes { get { return _deviceAttributes; } }
-        public string DevicePath { get { return _devicePath; } }
-        public string ParentPath { get => _parentPath; }
+        public bool IsConnected => HidDevices.IsConnected(DevicePath);
+        public string Description { get; }
+
+        public HidDeviceCapabilities Capabilities { get; }
+
+        public HidDeviceAttributes Attributes { get; }
+
+        public string DevicePath { get; }
+
+        public string ParentPath { get; }
+
+        public void Dispose()
+        {
+            CancelIO();
+            CloseDevice();
+        }
 
         public override string ToString()
         {
             return string.Format("VendorID={0}, ProductID={1}, Version={2}, DevicePath={3}",
-                                _deviceAttributes.VendorHexId,
-                                _deviceAttributes.ProductHexId,
-                                _deviceAttributes.Version,
-                                _devicePath);
+                Attributes.VendorHexId,
+                Attributes.ProductHexId,
+                Attributes.Version,
+                DevicePath);
         }
 
         public void OpenDevice(bool isExclusive)
@@ -78,7 +84,7 @@ namespace DS4Windows
             try
             {
                 if (safeReadHandle == null || safeReadHandle.IsInvalid)
-                    safeReadHandle = OpenHandle(_devicePath, isExclusive, enumerate: false);
+                    safeReadHandle = OpenHandle(DevicePath, isExclusive, false);
             }
             catch (Exception exception)
             {
@@ -93,18 +99,14 @@ namespace DS4Windows
         public void OpenFileStream(int reportSize)
         {
             if (fileStream == null && !safeReadHandle.IsInvalid)
-            {
                 fileStream = new FileStream(safeReadHandle, FileAccess.ReadWrite, reportSize, true);
-            }
         }
 
         public bool IsFileStreamOpen()
         {
-            bool result = false;
+            var result = false;
             if (fileStream != null)
-            {
                 result = !fileStream.SafeFileHandle.IsInvalid && !fileStream.SafeFileHandle.IsClosed;
-            }
 
             return result;
         }
@@ -112,15 +114,9 @@ namespace DS4Windows
         public void CloseDevice()
         {
             if (!IsOpen) return;
-            closeFileStreamIO();
+            CloseFileStreamIo();
 
             IsOpen = false;
-        }
-
-        public void Dispose()
-        {
-            CancelIO();
-            CloseDevice();
         }
 
         public void CancelIO()
@@ -132,17 +128,15 @@ namespace DS4Windows
         public bool ReadInputReport(byte[] data)
         {
             if (safeReadHandle == null)
-                safeReadHandle = OpenHandle(_devicePath, true, enumerate: false);
+                safeReadHandle = OpenHandle(DevicePath, true, false);
             return NativeMethods.HidD_GetInputReport(safeReadHandle, data, data.Length);
         }
 
         public bool WriteFeatureReport(byte[] data)
         {
-            bool result = false;
+            var result = false;
             if (IsOpen && safeReadHandle != null)
-            {
                 result = NativeMethods.HidD_SetFeature(safeReadHandle, data, data.Length);
-            }
 
             return result;
         }
@@ -170,22 +164,23 @@ namespace DS4Windows
             return new HidDeviceCapabilities(capabilities);
         }
 
-        private void closeFileStreamIO()
+        private void CloseFileStreamIo()
         {
             if (fileStream != null)
-            {
                 try
                 {
                     fileStream.Close();
                 }
-                catch (IOException) { }
-                catch (OperationCanceledException) { }
-            }
+                catch (IOException)
+                {
+                }
+                catch (OperationCanceledException)
+                {
+                }
 
             fileStream = null;
             Console.WriteLine("Close fs");
             if (safeReadHandle != null && !safeReadHandle.IsInvalid)
-            {
                 try
                 {
                     if (!safeReadHandle.IsClosed)
@@ -194,18 +189,16 @@ namespace DS4Windows
                         Console.WriteLine("Close sh");
                     }
                 }
-                catch (IOException) { }
-            }
+                catch (IOException)
+                {
+                }
 
             safeReadHandle = null;
         }
 
         public void flush_Queue()
         {
-            if (safeReadHandle != null)
-            {
-                NativeMethods.HidD_FlushQueue(safeReadHandle);
-            }
+            if (safeReadHandle != null) NativeMethods.HidD_FlushQueue(safeReadHandle);
         }
 
         private ReadStatus ReadWithFileStreamTask(byte[] inputBuffer)
@@ -213,13 +206,8 @@ namespace DS4Windows
             try
             {
                 if (fileStream.Read(inputBuffer, 0, inputBuffer.Length) > 0)
-                {
                     return ReadStatus.Success;
-                }
-                else
-                {
-                    return ReadStatus.NoDataRead;
-                }
+                return ReadStatus.NoDataRead;
             }
             catch (Exception)
             {
@@ -229,19 +217,16 @@ namespace DS4Windows
 
         public ReadStatus ReadFile(byte[] inputBuffer)
         {
-            if (safeReadHandle == null)
-                safeReadHandle = OpenHandle(_devicePath, true, enumerate: false);
+            safeReadHandle ??= OpenHandle(DevicePath, true, false);
+
             try
             {
                 uint bytesRead;
-                if (NativeMethods.ReadFile(safeReadHandle.DangerousGetHandle(), inputBuffer, (uint)inputBuffer.Length, out bytesRead, IntPtr.Zero))
-                {
-                    return ReadStatus.Success;
-                }
-                else
-                {
-                    return ReadStatus.NoDataRead;
-                }
+                return NativeMethods.ReadFile(safeReadHandle.DangerousGetHandle(), inputBuffer,
+                    (uint)inputBuffer.Length,
+                    out bytesRead, IntPtr.Zero)
+                    ? ReadStatus.Success
+                    : ReadStatus.NoDataRead;
             }
             catch (Exception)
             {
@@ -254,13 +239,8 @@ namespace DS4Windows
             try
             {
                 if (fileStream.Read(inputBuffer, 0, inputBuffer.Length) > 0)
-                {
                     return ReadStatus.Success;
-                }
-                else
-                {
-                    return ReadStatus.NoDataRead;
-                }
+                return ReadStatus.NoDataRead;
             }
             catch (Exception)
             {
@@ -279,28 +259,22 @@ namespace DS4Windows
 
                 if (!safeReadHandle.IsInvalid && fileStream.CanRead)
                 {
-                    Task<ReadStatus> readFileTask = new Task<ReadStatus>(() => ReadWithFileStreamTask(inputBuffer));
+                    var readFileTask = new Task<ReadStatus>(() => ReadWithFileStreamTask(inputBuffer));
                     readFileTask.Start();
-                    bool success = readFileTask.Wait(timeout);
+                    var success = readFileTask.Wait(timeout);
                     if (success)
                     {
                         if (readFileTask.Result == ReadStatus.Success)
-                        {
                             return ReadStatus.Success;
-                        }
-                        else if (readFileTask.Result == ReadStatus.ReadError)
-                        {
+                        if (readFileTask.Result == ReadStatus.ReadError)
                             return ReadStatus.ReadError;
-                        }
-                        else if (readFileTask.Result == ReadStatus.NoDataRead)
-                        {
-                            return ReadStatus.NoDataRead;
-                        }
+                        if (readFileTask.Result == ReadStatus.NoDataRead) return ReadStatus.NoDataRead;
                     }
                     else
+                    {
                         return ReadStatus.WaitTimedOut;
+                    }
                 }
-
             }
             catch (Exception e)
             {
@@ -309,10 +283,8 @@ namespace DS4Windows
                     Console.WriteLine(e.Message);
                     return ReadStatus.WaitFail;
                 }
-                else
-                {
-                    return ReadStatus.ReadError;
-                }
+
+                return ReadStatus.ReadError;
             }
 
             return ReadStatus.ReadError;
@@ -329,25 +301,17 @@ namespace DS4Windows
 
                 if (!safeReadHandle.IsInvalid && fileStream.CanRead)
                 {
-                    Task<int> readTask = fileStream.ReadAsync(inputBuffer, 0, inputBuffer.Length);
-                    bool success = readTask.Wait(timeout);
+                    var readTask = fileStream.ReadAsync(inputBuffer, 0, inputBuffer.Length);
+                    var success = readTask.Wait(timeout);
                     if (success)
                     {
                         if (readTask.Result > 0)
-                        {
                             return ReadStatus.Success;
-                        }
-                        else
-                        {
-                            return ReadStatus.NoDataRead;
-                        }
+                        return ReadStatus.NoDataRead;
                     }
-                    else
-                    {
-                        return ReadStatus.WaitTimedOut;
-                    }
-                }
 
+                    return ReadStatus.WaitTimedOut;
+                }
             }
             catch (Exception e)
             {
@@ -356,10 +320,8 @@ namespace DS4Windows
                     Console.WriteLine(e.Message);
                     return ReadStatus.WaitFail;
                 }
-                else
-                {
-                    return ReadStatus.ReadError;
-                }
+
+                return ReadStatus.ReadError;
             }
 
             return ReadStatus.ReadError;
@@ -367,15 +329,11 @@ namespace DS4Windows
 
         public bool WriteOutputReportViaControl(byte[] outputBuffer)
         {
-            if (safeReadHandle == null)
-            {
-                safeReadHandle = OpenHandle(_devicePath, true, enumerate: false);
-            }
+            if (safeReadHandle == null) safeReadHandle = OpenHandle(DevicePath, true, false);
 
             if (NativeMethods.HidD_SetOutputReport(safeReadHandle, outputBuffer, outputBuffer.Length))
                 return true;
-            else
-                return false;
+            return false;
         }
 
         private bool WriteOutputReportViaInterruptTask(byte[] outputBuffer)
@@ -409,16 +367,13 @@ namespace DS4Windows
                     fileStream.Write(outputBuffer, 0, outputBuffer.Length);
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
             catch (Exception)
             {
                 return false;
             }
-
         }
 
         public bool WriteAsyncOutputReportViaInterrupt(byte[] outputBuffer)
@@ -436,35 +391,34 @@ namespace DS4Windows
 
                 if (fileStream != null && fileStream.CanWrite && !safeReadHandle.IsInvalid)
                 {
-                    Task writeTask = fileStream.WriteAsync(outputBuffer, 0, outputBuffer.Length);
+                    var writeTask = fileStream.WriteAsync(outputBuffer, 0, outputBuffer.Length);
                     //fileStream.Write(outputBuffer, 0, outputBuffer.Length);
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
             catch (Exception)
             {
                 return false;
             }
-
         }
 
-        private SafeFileHandle OpenHandle(String devicePathName, Boolean isExclusive, bool enumerate)
+        private SafeFileHandle OpenHandle(string devicePathName, bool isExclusive, bool enumerate)
         {
             SafeFileHandle hidHandle;
-            uint access = enumerate ? 0 : NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE;
+            var access = enumerate ? 0 : NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE;
 
             if (isExclusive)
-            {
-                hidHandle = NativeMethods.CreateFile(devicePathName, access, 0, IntPtr.Zero, NativeMethods.OpenExisting, NativeMethods.FILE_FLAG_NO_BUFFERING | NativeMethods.FILE_FLAG_WRITE_THROUGH | NativeMethods.FILE_ATTRIBUTE_TEMPORARY | NativeMethods.FILE_FLAG_OVERLAPPED, 0);
-            }
+                hidHandle = NativeMethods.CreateFile(devicePathName, access, 0, IntPtr.Zero, NativeMethods.OpenExisting,
+                    NativeMethods.FILE_FLAG_NO_BUFFERING | NativeMethods.FILE_FLAG_WRITE_THROUGH |
+                    NativeMethods.FILE_ATTRIBUTE_TEMPORARY | NativeMethods.FILE_FLAG_OVERLAPPED, 0);
             else
-            {
-                hidHandle = NativeMethods.CreateFile(devicePathName, access, NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OpenExisting, NativeMethods.FILE_FLAG_NO_BUFFERING | NativeMethods.FILE_FLAG_WRITE_THROUGH | NativeMethods.FILE_ATTRIBUTE_TEMPORARY | NativeMethods.FILE_FLAG_OVERLAPPED, 0);
-            }
+                hidHandle = NativeMethods.CreateFile(devicePathName, access,
+                    NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero,
+                    NativeMethods.OpenExisting,
+                    NativeMethods.FILE_FLAG_NO_BUFFERING | NativeMethods.FILE_FLAG_WRITE_THROUGH |
+                    NativeMethods.FILE_ATTRIBUTE_TEMPORARY | NativeMethods.FILE_FLAG_OVERLAPPED, 0);
 
             return hidHandle;
         }
@@ -490,17 +444,17 @@ namespace DS4Windows
 
             if (Capabilities.InputReportByteLength == 64)
             {
-                byte[] buffer = new byte[64];
+                var buffer = new byte[64];
                 //buffer[0] = 18;
                 buffer[0] = featureID;
                 if (readFeatureData(buffer))
                     serial = PhysicalAddress.Parse(
                         $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
-                        );
+                    );
             }
             else
             {
-                byte[] buffer = new byte[126];
+                var buffer = new byte[126];
 #if WIN64
                 ulong bufferLen = 126;
 #else
@@ -508,8 +462,9 @@ namespace DS4Windows
 #endif
                 if (NativeMethods.HidD_GetSerialNumberString(safeReadHandle.DangerousGetHandle(), buffer, bufferLen))
                 {
-                    string MACAddr = System.Text.Encoding.Unicode.GetString(buffer).Replace("\0", string.Empty).ToUpper();
-                    MACAddr = $"{MACAddr[0]}{MACAddr[1]}:{MACAddr[2]}{MACAddr[3]}:{MACAddr[4]}{MACAddr[5]}:{MACAddr[6]}{MACAddr[7]}:{MACAddr[8]}{MACAddr[9]}:{MACAddr[10]}{MACAddr[11]}";
+                    var MACAddr = Encoding.Unicode.GetString(buffer).Replace("\0", string.Empty).ToUpper();
+                    MACAddr =
+                        $"{MACAddr[0]}{MACAddr[1]}:{MACAddr[2]}{MACAddr[3]}:{MACAddr[4]}{MACAddr[5]}:{MACAddr[6]}{MACAddr[7]}:{MACAddr[8]}{MACAddr[9]}:{MACAddr[10]}{MACAddr[11]}";
                     serial = PhysicalAddress.Parse(MACAddr);
                 }
             }
@@ -519,7 +474,9 @@ namespace DS4Windows
             // as long the same device is always connected to the same usb port.
             if (serial == null)
             {
-                AppLogger.Instance.LogToGui($"WARNING: Failed to read serial# from a gamepad ({this._deviceAttributes.VendorHexId}/{this._deviceAttributes.ProductHexId}). Generating MAC address from a device path. From now on you should connect this gamepad always into the same USB port or BT pairing host to keep the same device path.", true);
+                AppLogger.Instance.LogToGui(
+                    $"WARNING: Failed to read serial# from a gamepad ({Attributes.VendorHexId}/{Attributes.ProductHexId}). Generating MAC address from a device path. From now on you should connect this gamepad always into the same USB port or BT pairing host to keep the same device path.",
+                    true);
                 serial = GenerateFakeHwSerial();
             }
 
@@ -528,42 +485,47 @@ namespace DS4Windows
 
         public PhysicalAddress GenerateFakeHwSerial()
         {
-            string MACAddr = string.Empty;
+            var MACAddr = string.Empty;
 
             try
             {
                 // Substring: \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030} -> \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001#
-                int endPos = this.DevicePath.LastIndexOf('{');
+                var endPos = DevicePath.LastIndexOf('{');
                 if (endPos < 0)
-                    endPos = this.DevicePath.Length;
+                    endPos = DevicePath.Length;
 
                 // String array: \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001# -> [0]=\\?\hidvid_054c, [1]=pid_09cc, [2]=mi_037, [3]=1f882A25, [4]=0, [5]=0001
-                string[] devPathItems = this.DevicePath.Substring(0, endPos).Replace("#", "").Replace("-", "").Replace("{", "").Replace("}", "").Split('&');
+                var devPathItems = DevicePath.Substring(0, endPos).Replace("#", "").Replace("-", "").Replace("{", "")
+                    .Replace("}", "").Split('&');
 
                 if (devPathItems.Length >= 3)
-                    MACAddr = devPathItems[devPathItems.Length - 3].ToUpper()                   // 1f882A25
-                              + devPathItems[devPathItems.Length - 2].ToUpper()                 // 0
+                    MACAddr = devPathItems[devPathItems.Length - 3].ToUpper() // 1f882A25
+                              + devPathItems[devPathItems.Length - 2].ToUpper() // 0
                               + devPathItems[devPathItems.Length - 1].TrimStart('0').ToUpper(); // 0001 -> 1
                 else if (devPathItems.Length >= 1)
                     // Device and usb hub and port identifiers missing in devicePath string. Fallback to use vendor and product ID values and 
                     // take a number from the last part of the devicePath. Hopefully the last part is a usb port number as it usually should be.
-                    MACAddr = this._deviceAttributes.VendorId.ToString("X4")
-                              + this._deviceAttributes.ProductId.ToString("X4")
+                    MACAddr = Attributes.VendorId.ToString("X4")
+                              + Attributes.ProductId.ToString("X4")
                               + devPathItems[devPathItems.Length - 1].TrimStart('0').ToUpper();
 
                 if (!string.IsNullOrEmpty(MACAddr))
                 {
                     MACAddr = MACAddr.PadRight(12, '0');
-                    MACAddr = $"{MACAddr[0]}{MACAddr[1]}:{MACAddr[2]}{MACAddr[3]}:{MACAddr[4]}{MACAddr[5]}:{MACAddr[6]}{MACAddr[7]}:{MACAddr[8]}{MACAddr[9]}:{MACAddr[10]}{MACAddr[11]}";
+                    MACAddr =
+                        $"{MACAddr[0]}{MACAddr[1]}:{MACAddr[2]}{MACAddr[3]}:{MACAddr[4]}{MACAddr[5]}:{MACAddr[6]}{MACAddr[7]}:{MACAddr[8]}{MACAddr[9]}:{MACAddr[10]}{MACAddr[11]}";
                 }
                 else
                     // Hmm... Shold never come here. Strange format in devicePath because all identifier items of devicePath string are missing.
                     //serial = BLANK_SERIAL;
+                {
                     MACAddr = BLANK_SERIAL;
+                }
             }
             catch (Exception e)
             {
-                AppLogger.Instance.LogToGui($"ERROR: Failed to generate runtime MAC address from device path {this.DevicePath}. {e.Message}", true);
+                AppLogger.Instance.LogToGui(
+                    $"ERROR: Failed to generate runtime MAC address from device path {DevicePath}. {e.Message}", true);
                 //serial = BLANK_SERIAL;
                 MACAddr = BLANK_SERIAL;
             }
