@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Threading;
 using DS4Windows.InputDevices;
 
 namespace DS4Windows
@@ -516,34 +517,31 @@ namespace DS4Windows
         public static void ReEnableDevice(string deviceInstanceId)
         {
             bool success;
-            Guid hidGuid = new Guid();
+            var hidGuid = new Guid();
             NativeMethods.HidD_GetHidGuid(ref hidGuid);
-            IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(ref hidGuid, deviceInstanceId, 0, NativeMethods.DIGCF_PRESENT | NativeMethods.DIGCF_DEVICEINTERFACE);
-            NativeMethods.SP_DEVINFO_DATA deviceInfoData = new NativeMethods.SP_DEVINFO_DATA();
+            var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(ref hidGuid, deviceInstanceId, 0,
+                NativeMethods.DIGCF_PRESENT | NativeMethods.DIGCF_DEVICEINTERFACE);
+            var deviceInfoData = new NativeMethods.SP_DEVINFO_DATA();
             deviceInfoData.cbSize = Marshal.SizeOf(deviceInfoData);
             success = NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, 0, ref deviceInfoData);
             if (!success)
-            {
                 throw new Exception("Error getting device info data, error code = " + Marshal.GetLastWin32Error());
-            }
-            success = NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, 1, ref deviceInfoData); // Checks that we have a unique device
-            if (success)
-            {
-                throw new Exception("Can't find unique device");
-            }
+            success = NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, 1,
+                ref deviceInfoData); // Checks that we have a unique device
+            if (success) throw new Exception("Can't find unique device");
 
-            NativeMethods.SP_PROPCHANGE_PARAMS propChangeParams = new NativeMethods.SP_PROPCHANGE_PARAMS();
+            var propChangeParams = new NativeMethods.SP_PROPCHANGE_PARAMS();
             propChangeParams.classInstallHeader.cbSize = Marshal.SizeOf(propChangeParams.classInstallHeader);
             propChangeParams.classInstallHeader.installFunction = NativeMethods.DIF_PROPERTYCHANGE;
             propChangeParams.stateChange = NativeMethods.DICS_DISABLE;
             propChangeParams.scope = NativeMethods.DICS_FLAG_GLOBAL;
             propChangeParams.hwProfile = 0;
-            success = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData, ref propChangeParams, Marshal.SizeOf(propChangeParams));
+            success = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData,
+                ref propChangeParams, Marshal.SizeOf(propChangeParams));
             if (!success)
-            {
                 throw new Exception("Error setting class install params, error code = " + Marshal.GetLastWin32Error());
-            }
-            success = NativeMethods.SetupDiCallClassInstaller(NativeMethods.DIF_PROPERTYCHANGE, deviceInfoSet, ref deviceInfoData);
+            success = NativeMethods.SetupDiCallClassInstaller(NativeMethods.DIF_PROPERTYCHANGE, deviceInfoSet,
+                ref deviceInfoData);
             // TEST: If previous SetupDiCallClassInstaller fails, just continue
             // otherwise device will likely get permanently disabled.
             /*if (!success)
@@ -555,24 +553,19 @@ namespace DS4Windows
             //System.Threading.Thread.Sleep(50);
             sw.Restart();
             while (sw.ElapsedMilliseconds < 500)
-            {
                 // Use SpinWait to keep control of current thread. Using Sleep could potentially
                 // cause other events to get run out of order
-                System.Threading.Thread.SpinWait(250);
-            }
+                Thread.SpinWait(250);
             sw.Stop();
 
             propChangeParams.stateChange = NativeMethods.DICS_ENABLE;
-            success = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData, ref propChangeParams, Marshal.SizeOf(propChangeParams));
+            success = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData,
+                ref propChangeParams, Marshal.SizeOf(propChangeParams));
             if (!success)
-            {
                 throw new Exception("Error setting class install params, error code = " + Marshal.GetLastWin32Error());
-            }
-            success = NativeMethods.SetupDiCallClassInstaller(NativeMethods.DIF_PROPERTYCHANGE, deviceInfoSet, ref deviceInfoData);
-            if (!success)
-            {
-                throw new Exception("Error enabling device, error code = " + Marshal.GetLastWin32Error());
-            }
+            success = NativeMethods.SetupDiCallClassInstaller(NativeMethods.DIF_PROPERTYCHANGE, deviceInfoSet,
+                ref deviceInfoData);
+            if (!success) throw new Exception("Error enabling device, error code = " + Marshal.GetLastWin32Error());
 
             //System.Threading.Thread.Sleep(50);
             /*sw.Restart();
