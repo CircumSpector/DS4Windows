@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
+using ExtendedXmlSerializer;
 using PropertyChanged;
 #if WITH_TRACING
 using OpenTracing.Util;
@@ -107,8 +109,6 @@ namespace DS4Windows.InputDevices
             gyroMouseSensSettings = new GyroMouseSensDualSense();
             OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
             SetupOptionsEvents();
-
-            var version = GetFirmwareVersion();
 
             ConnectionType = DetermineConnectionType(hDevice);
 
@@ -1391,7 +1391,7 @@ namespace DS4Windows.InputDevices
         ///     Fetches the <see cref="ReportFeatureInVersion"/> from this <see cref="DualSenseDevice"/>.
         /// </summary>
         /// <returns>The <see cref="ReportFeatureInVersion"/>.</returns>
-        protected ReportFeatureInVersion GetFirmwareVersion()
+        protected ReportFeatureInVersion RetrieveFirmwareVersion()
         {
             var buffer = new byte[64];
             buffer[0] = FEATURE_DATE_VERSION;
