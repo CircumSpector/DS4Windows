@@ -9,7 +9,7 @@ namespace DS4Windows.InputDevices
         /// <summary>
         ///     Represents a refined (human-readable) firmware version value for a <see cref="DualSenseDevice"/>.
         /// </summary>
-        public class DualSenseFirmwareVersion
+        public class DualSenseFirmwareVersion : IEquatable<DualSenseFirmwareVersion>
         {
             public DualSenseFirmwareVersion(UInt32 nativeValue)
             {
@@ -29,6 +29,26 @@ namespace DS4Windows.InputDevices
             public override string ToString()
             {
                 return $"{Major}.{Minor}.{Build}";
+            }
+
+            public bool Equals(DualSenseFirmwareVersion other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
+                return Major == other.Major && Minor == other.Minor && Build == other.Build;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((DualSenseFirmwareVersion)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Major, Minor, Build);
             }
         }
 
