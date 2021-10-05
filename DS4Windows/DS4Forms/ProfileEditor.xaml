@@ -127,55 +127,55 @@
                         <Image x:Name="picBoxHover" IsEnabled="False" Source="/DS4Windows;component/Resources/DS4-Config_RS.png" Height="48" Width="48" Canvas.Left="447" Canvas.Top="5" />
                         <Image x:Name="picBoxHover2" IsEnabled="False" Source="/DS4Windows;component/Resources/DS4-Config_RS.png" Height="48" Width="48" Canvas.Left="0" Canvas.Top="0" Stretch="Fill" />
 
-                        <Button Content="Cross" x:Name="crossConBtn" Canvas.Left="330" Canvas.Top="125" Width="26" Height="26" Click="HoverConBtn_Click"  MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="Circle" x:Name="circleConBtn" Canvas.Left="357" Canvas.Top="99" Width="26" Height="26"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="Square" x:Name="squareConBtn" Canvas.Left="300" Canvas.Top="98" Width="26" Height="26"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="Triangle" x:Name="triangleConBtn" Canvas.Left="330" Canvas.Top="74" Width="26" Height="26"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="Cross" x:Name="crossConBtn" Canvas.Left="330" Canvas.Top="125" Width="26" Height="26" Click="HoverConBtn_Click" Style="{StaticResource NoBGHoverBtn}" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="Circle" x:Name="circleConBtn" Canvas.Left="357" Canvas.Top="99" Width="26" Height="26" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="Square" x:Name="squareConBtn" Canvas.Left="300" Canvas.Top="98" Width="26" Height="26" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="Triangle" x:Name="triangleConBtn" Canvas.Left="330" Canvas.Top="74" Width="26" Height="26" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
 
-                        <Button Content="L1" x:Name="l1ConBtn" Canvas.Left="75" Canvas.Top="22" Width="50" Height="18"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="R1" x:Name="r1ConBtn" Canvas.Left="317" Canvas.Top="22" Width="50" Height="18"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="L2" x:Name="l2ConBtn" Canvas.Left="78" Canvas.Top="0" Width="46" Height="20"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="R2" x:Name="r2ConBtn" Canvas.Left="316" Canvas.Top="0" Width="46" Height="20"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="L1" x:Name="l1ConBtn" Canvas.Left="75" Canvas.Top="22" Width="50" Height="18" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="R1" x:Name="r1ConBtn" Canvas.Left="317" Canvas.Top="22" Width="50" Height="18" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="L2" x:Name="l2ConBtn" Canvas.Left="78" Canvas.Top="0" Width="46" Height="20" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="R2" x:Name="r2ConBtn" Canvas.Left="316" Canvas.Top="0" Width="46" Height="20" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
 
-                        <Button Content="Share" x:Name="shareConBtn" Canvas.Left="134" Canvas.Top="63" Width="16" Height="24"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="Options" x:Name="optionsConBtn" Canvas.Left="291" Canvas.Top="63" Width="16" Height="24"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="Guide" x:Name="guideConBtn" Canvas.Left="211" Canvas.Top="144" Width="20" Height="20"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="Mute" x:Name="muteConBtn" Canvas.Left="0" Canvas.Top="0" Width="0" Height="0"  Visibility="Collapsed" />
+                        <Button Content="Share" x:Name="shareConBtn" Canvas.Left="134" Canvas.Top="63" Width="16" Height="24" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="Options" x:Name="optionsConBtn" Canvas.Left="291" Canvas.Top="63" Width="16" Height="24" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="Guide" x:Name="guideConBtn" Canvas.Left="211" Canvas.Top="144" Width="20" Height="20" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="Mute" x:Name="muteConBtn" Canvas.Left="0" Canvas.Top="0" Width="0" Height="0" Style="{StaticResource NoBGHoverBtn}" Visibility="Collapsed" />
 
-                        <Button Content="Left Touch" x:Name="leftTouchConBtn" Canvas.Left="158" Canvas.Top="69" Width="37" Height="51"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="Multi Touch" x:Name="multiTouchConBtn" Canvas.Left="199" Canvas.Top="74" Width="41" Height="45"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="Right Touch" x:Name="rightTouchConBtn" Canvas.Left="251" Canvas.Top="70" Width="32" Height="53"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
-                        <Button Content="Top Touch" x:Name="topTouchConBtn" Canvas.Left="157" Canvas.Top="46" Width="125" Height="23"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="Left Touch" x:Name="leftTouchConBtn" Canvas.Left="158" Canvas.Top="69" Width="37" Height="51" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="Multi Touch" x:Name="multiTouchConBtn" Canvas.Left="199" Canvas.Top="74" Width="41" Height="45" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="Right Touch" x:Name="rightTouchConBtn" Canvas.Left="251" Canvas.Top="70" Width="32" Height="53" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
+                        <Button Content="Top Touch" x:Name="topTouchConBtn" Canvas.Left="157" Canvas.Top="46" Width="125" Height="23" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave" />
 
-                        <Button Content="L3" x:Name="l3ConBtn" Canvas.Left="138" Canvas.Top="147" Width="42" Height="42"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="L3" x:Name="l3ConBtn" Canvas.Left="138" Canvas.Top="147" Width="42" Height="42" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="LSU" x:Name="lsuConBtn" Canvas.Left="150" Canvas.Top="140" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="LSU" x:Name="lsuConBtn" Canvas.Left="150" Canvas.Top="140" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="LSR" x:Name="lsrConBtn" Canvas.Left="172" Canvas.Top="162" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="LSR" x:Name="lsrConBtn" Canvas.Left="172" Canvas.Top="162" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="LSD" x:Name="lsdConBtn" Canvas.Left="150" Canvas.Top="180" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="LSD" x:Name="lsdConBtn" Canvas.Left="150" Canvas.Top="180" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="LSL" x:Name="lslConBtn" Canvas.Left="126" Canvas.Top="162" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
-                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-
-                        <Button Content="R3" x:Name="r3ConBtn" Canvas.Left="262" Canvas.Top="149" Width="42" Height="42"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
-                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="RSU" x:Name="rsuConBtn" Canvas.Left="275" Canvas.Top="142" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
-                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="RSR" x:Name="rsrConBtn" Canvas.Left="298" Canvas.Top="162" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
-                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="RSD" x:Name="rsdConBtn" Canvas.Left="275" Canvas.Top="180" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
-                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="RSL" x:Name="rslConBtn" Canvas.Left="248" Canvas.Top="162" Width="17" Height="15"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="LSL" x:Name="lslConBtn" Canvas.Left="126" Canvas.Top="162" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
 
-                        <Button Content="Up" x:Name="upConBtn" Canvas.Left="88" Canvas.Top="74" Width="20" Height="35"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="R3" x:Name="r3ConBtn" Canvas.Left="262" Canvas.Top="149" Width="42" Height="42" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="Right" x:Name="rightConBtn" Canvas.Left="103" Canvas.Top="103" Width="35" Height="20"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="RSU" x:Name="rsuConBtn" Canvas.Left="275" Canvas.Top="142" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="Down" x:Name="downConBtn" Canvas.Left="88" Canvas.Top="114" Width="20" Height="35"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="RSR" x:Name="rsrConBtn" Canvas.Left="298" Canvas.Top="162" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
-                        <Button Content="Left" x:Name="leftConBtn" Canvas.Left="56" Canvas.Top="103" Width="35" Height="20"  Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                        <Button Content="RSD" x:Name="rsdConBtn" Canvas.Left="275" Canvas.Top="180" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="RSL" x:Name="rslConBtn" Canvas.Left="248" Canvas.Top="162" Width="17" Height="15" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+
+                        <Button Content="Up" x:Name="upConBtn" Canvas.Left="88" Canvas.Top="74" Width="20" Height="35" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="Right" x:Name="rightConBtn" Canvas.Left="103" Canvas.Top="103" Width="35" Height="20" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="Down" x:Name="downConBtn" Canvas.Left="88" Canvas.Top="114" Width="20" Height="35" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
+                                MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
+                        <Button Content="Left" x:Name="leftConBtn" Canvas.Left="56" Canvas.Top="103" Width="35" Height="20" Style="{StaticResource NoBGHoverBtn}" Click="HoverConBtn_Click" MouseEnter="ContBtn_MouseEnter" MouseLeave="ContBtn_MouseLeave"
                                 MouseRightButtonUp="ConBtn_MouseRightButtonUp" />
 
                         <Label x:Name="highlightControlDisplayLb" Content="" Canvas.Left="150" Canvas.Top="208" MinWidth="150"
