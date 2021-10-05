@@ -1316,31 +1316,6 @@ Suspend support not enabled.", true);
             }
         }
 
-        private void ProfEditSBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Control temp = sender as Control;
-            int idx = Convert.ToInt32(temp.Tag);
-            controllerLV.SelectedIndex = idx;
-            CompositeDeviceModel item = conLvViewModel.CurrentItem;
-
-            if (item != null)
-            {
-                ProfileEntity entity = profileListHolder.ProfileListCollection[item.SelectedIndex];
-                ShowProfileEditor(idx, entity);
-                mainTabCon.SelectedIndex = 1;
-            }
-        }
-
-        private void NewProfBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Control temp = sender as Control;
-            int idx = Convert.ToInt32(temp.Tag);
-            controllerLV.SelectedIndex = idx;
-            ShowProfileEditor(idx, null);
-            mainTabCon.SelectedIndex = 1;
-            //controllerLV.Focus();
-        }
-
         // Ex Mode Re-Enable
         private async void HideDS4ContCk_Click(object sender, RoutedEventArgs e)
         {
@@ -1799,6 +1774,44 @@ Suspend support not enabled.", true);
                 }
             }
         }
+
+        #region TODO: workaround until ReactiveUI is introduced
+
+        private void Properties_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            var temp = sender as Control;
+            var idx = Convert.ToInt32(temp.Tag);
+            controllerLV.SelectedIndex = idx;
+            var item = conLvViewModel.CurrentItem;
+
+            if (item != null)
+            {
+                var entity = profileListHolder.ProfileListCollection[item.SelectedIndex];
+                ShowProfileEditor(idx, entity);
+                mainTabCon.SelectedIndex = 1;
+            }
+        }
+
+        private void Properties_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void New_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            var temp = sender as Control;
+            var idx = Convert.ToInt32(temp.Tag);
+            controllerLV.SelectedIndex = idx;
+            ShowProfileEditor(idx);
+            mainTabCon.SelectedIndex = 1;
+        }
+
+        private void New_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        #endregion
     }
 
     public class ImageLocationPaths

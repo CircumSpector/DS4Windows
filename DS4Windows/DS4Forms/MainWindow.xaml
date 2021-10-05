@@ -26,10 +26,18 @@
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
     </Window.Style>
+    
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:ImageLocationPaths x:Key="ImgLocPaths" />
     </Window.Resources>
+
+    <Window.CommandBindings>
+        <!-- TODO: workaround until ReactiveUI is introduced -->
+        <CommandBinding Command="ApplicationCommands.New" Executed="New_OnExecuted" CanExecute="New_OnCanExecute" />
+        <CommandBinding Command="ApplicationCommands.Properties" Executed="Properties_OnExecuted" CanExecute="Properties_OnCanExecute" />
+    </Window.CommandBindings>
+
     <DockPanel>
         <tb:TaskbarIcon x:Name="notifyIcon" IconSource="{Binding IconSource,Mode=OneWay}" ToolTipText="{Binding TooltipText,Mode=OneWay}" MenuActivation="RightClick" TrayRightMouseUp="NotifyIcon_TrayRightMouseUp" TrayMiddleMouseDown="NotifyIcon_TrayMiddleMouseDown" TrayMouseDoubleClick="NotifyIcon_TrayMouseDoubleClick">
             <!--<tb:TaskbarIcon.ContextMenu>
@@ -136,19 +144,37 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Width="{Binding ElementName=editColumn, Path=Width}">
+
+                                                
+                                                <controls:SplitButton x:Name="ProfEditSBtn" Content="{lex:Loc Edit}"
+                                                                      MinWidth="60"
+                                                                      Visibility="{Binding PrimaryDevice, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                                      Tag="{Binding DevIndex, Mode=OneTime}"
+                                                                      Command="Properties"
+                                                                      HorizontalAlignment="Center">
+                                                    <controls:SplitButton.SplitMenu>
+                                                        <ContextMenu MinWidth="{Binding PlacementTarget.ActualWidth, RelativeSource={RelativeSource Self}}">
+                                                            <Button x:Name="newProfBtn" Content="{lex:Loc NewProfile}"
+                                                                    MinWidth="120" Tag="{Binding DevIndex, Mode=OneTime}"
+                                                                    Command="New" />
+                                                        </ContextMenu>
+                                                    </controls:SplitButton.SplitMenu>
+                                                </controls:SplitButton>
+
+                                                <!--
                                                 <xctk:SplitButton x:Name="ProfEditSBtn" Content="{lex:Loc Edit}"
                                                                   Height="20" MinWidth="60"
                                                                   Visibility="{Binding PrimaryDevice, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                                   Tag="{Binding DevIndex, Mode=OneTime}"
                                                                   Click="ProfEditSBtn_Click"
                                                                   HorizontalAlignment="Center">
-                                                    <xctk:SplitButton.Style></xctk:SplitButton.Style>
                                                     <xctk:SplitButton.DropDownContent>
                                                         <Button x:Name="newProfBtn" Content="{lex:Loc NewProfile}"
                                                                 MinWidth="120" Tag="{Binding DevIndex, Mode=OneTime}"
                                                                 Click="NewProfBtn_Click" />
                                                     </xctk:SplitButton.DropDownContent>
                                                 </xctk:SplitButton>
+                                                -->
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
