@@ -107,9 +107,9 @@ namespace DS4Windows.InputDevices
             OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
             SetupOptionsEvents();
 
-            Connectivity = DetermineConnectionType(hDevice);
+            ConnectionType = DetermineConnectionType(hDevice);
 
-            if (Connectivity == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.USB)
             {
                 dataBytes = new InputReportDataBytesUSB();
 
@@ -138,7 +138,7 @@ namespace DS4Windows.InputDevices
 
             // Need to blank LED lights so lightbar will change colors
             // as requested
-            if (Connectivity == ConnectionType.BT) SendInitialBTOutputReport();
+            if (ConnectionType == ConnectionType.BT) SendInitialBTOutputReport();
         }
 
         public static ConnectionType DetermineConnectionType(HidDevice hidDevice)
@@ -176,9 +176,9 @@ namespace DS4Windows.InputDevices
         public override void RefreshCalibration()
         {
             var calibration = new byte[41];
-            calibration[0] = Connectivity == ConnectionType.BT ? (byte)0x05 : (byte)0x05;
+            calibration[0] = ConnectionType == ConnectionType.BT ? (byte)0x05 : (byte)0x05;
 
-            if (Connectivity == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.BT)
             {
                 var found = false;
                 for (var tries = 0; !found && tries < 5; tries++)
@@ -217,7 +217,7 @@ namespace DS4Windows.InputDevices
 
             if (ds4Input == null)
             {
-                if (Connectivity == ConnectionType.BT)
+                if (ConnectionType == ConnectionType.BT)
                 {
                     //ds4Output = new Thread(performDs4Output);
                     //ds4Output.Priority = ThreadPriority.Normal;
@@ -287,7 +287,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = Connectivity != ConnectionType.BT;
+                var syncWriteReport = ConnectionType != ConnectionType.BT;
                 //bool forceWrite = false;
 
                 var maxBatteryValue = 0;
@@ -304,7 +304,7 @@ namespace DS4Windows.InputDevices
                 var crcpos = BT_INPUT_REPORT_CRC32_POS;
                 var crcoffset = 0;
                 long latencySum = 0;
-                var reportOffset = Connectivity == ConnectionType.BT ? 1 : 0;
+                var reportOffset = ConnectionType == ConnectionType.BT ? 1 : 0;
 
                 // Run continuous calibration on Gyro when starting input loop
                 sixAxis.ResetContinuousCalibration();
@@ -335,7 +335,7 @@ namespace DS4Windows.InputDevices
 
                     readWaitEv.Set();
 
-                    if (Connectivity == ConnectionType.BT)
+                    if (ConnectionType == ConnectionType.BT)
                     {
                         timeoutEvent = false;
                         
@@ -445,7 +445,7 @@ namespace DS4Windows.InputDevices
                     lastTimeElapsed = (long)lastTimeElapsedDouble;
                     oldtime = curtime;
 
-                    if (Connectivity == ConnectionType.BT && inputReport[0] != 0x31)
+                    if (ConnectionType == ConnectionType.BT && inputReport[0] != 0x31)
                         // Received incorrect report, skip it
                         continue;
 
@@ -712,7 +712,7 @@ namespace DS4Windows.InputDevices
                     }
                     ///*/
 
-                    if (Connectivity == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -750,7 +750,7 @@ namespace DS4Windows.InputDevices
                         {
                             AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (Connectivity == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.BT)
                                 if (DisconnectBT(true))
                                 {
                                     exitInputThread = true;
@@ -804,16 +804,16 @@ namespace DS4Windows.InputDevices
 
         private void SendEmptyOutputReport()
         {
-            var reportOffset = Connectivity == ConnectionType.BT ? 1 : 0;
+            var reportOffset = ConnectionType == ConnectionType.BT ? 1 : 0;
             Array.Clear(outputReport, 0, outputReport.Length);
 
-            outputReport[0] = Connectivity == ConnectionType.USB ? OUTPUT_REPORT_ID_USB : OUTPUT_REPORT_ID_BT;
+            outputReport[0] = ConnectionType == ConnectionType.USB ? OUTPUT_REPORT_ID_USB : OUTPUT_REPORT_ID_BT;
 
             // Disable haptics and trigger motors
             outputReport[1 + reportOffset] = useRumble ? (byte)0x0F : (byte)0x0C;
             outputReport[2 + reportOffset] = 0x15; // Toggle all LED lights. 0x01 | 0x04 | 0x10
 
-            if (Connectivity == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.BT)
             {
                 outputReport[1] = OUTPUT_REPORT_ID_DATA;
 
@@ -858,7 +858,7 @@ namespace DS4Windows.InputDevices
             var change = false;
             var rumbleSet = CurrentHaptics.IsRumbleSet();
 
-            if (Connectivity == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.USB)
             {
                 outputReport[0] = OUTPUT_REPORT_ID_USB; // Report ID
                 // 0x01 Set the main motors (also requires flag 0x02)
@@ -1206,7 +1206,7 @@ namespace DS4Windows.InputDevices
         private bool WriteReport()
         {
             bool result;
-            if (Connectivity == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.BT)
                 // DualSense seems to only accept output data via the Interrupt endpoint
                 result = hDevice.WriteOutputReportViaInterrupt(outputReport, READ_STREAM_TIMEOUT);
             //result = hDevice.WriteOutputReportViaControl(outputReport);

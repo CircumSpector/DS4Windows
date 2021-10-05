@@ -113,7 +113,6 @@ namespace DS4Windows
         protected DS4Audio audio;
         protected int battery;
         protected byte[] btInputReport;
-        protected IntPtr BtInputReportBuffer;
 
         /// <summary>
         ///     Specify the poll rate interval used for the DS4 hardware when connected via Bluetooth
@@ -121,7 +120,9 @@ namespace DS4Windows
         protected int btPollRate;
 
         protected bool charging;
-        protected ConnectionType Connectivity;
+
+        public ConnectionType ConnectionType { get; protected set; }
+
         protected DS4State currentState = new();
         private uint deltaTimeCurrent;
         protected byte deviceSlotMask = 0x00;
@@ -189,8 +190,6 @@ namespace DS4Windows
 
         public double Latency;
 
-        public PhysicalAddress MacAddress { get; protected set; }
-
         protected DS4Audio micAudio;
 
         //public EventHandler<EventArgs> MotionEvent = null;
@@ -256,13 +255,13 @@ namespace DS4Windows
             displayName = disName;
             this.featureSet = featureSet;
 
-            Connectivity = HidConnectionType(hDevice);
+            ConnectionType = HidConnectionType(hDevice);
             exclusiveStatus = ExclusiveStatus.Shared;
             if (hidDevice.IsExclusive) exclusiveStatus = ExclusiveStatus.Exclusive;
 
             if (FeatureSet != VidPidFeatureSet.DefaultDS4)
                 AppLogger.Instance.LogToGui(
-                    $"The gamepad {displayName} ({Connectivity}) uses custom feature set ({FeatureSet:F})",
+                    $"The gamepad {displayName} ({ConnectionType}) uses custom feature set ({FeatureSet:F})",
                     false);
 
             MacAddress = hDevice.ReadSerial(SerialReportID);
@@ -271,6 +270,8 @@ namespace DS4Windows
             touchpad = new DS4Touchpad();
             sixAxis = new DS4SixAxis();
         }
+
+        public PhysicalAddress MacAddress { get; protected set; }
 
         protected DS4HapticState CurrentHaptics { get; set; } = new();
 
@@ -318,8 +319,6 @@ namespace DS4Windows
             get => isRemoved;
             set => isRemoved = value;
         }
-
-        public ConnectionType ConnectionType => Connectivity;
 
         public int IdleTimeout
         {
@@ -563,7 +562,7 @@ namespace DS4Windows
 
         public ConnectionType GetConnectionType()
         {
-            return Connectivity;
+            return ConnectionType;
         }
 
         public int getIdleTimeout()
@@ -649,42 +648,50 @@ namespace DS4Windows
 
         protected event EventHandler DeviceSlotNumberChanged;
 
+        /// <summary>
+        ///     Initialization actions after constructor call.
+        /// </summary>
         public virtual void PostInit()
         {
-            var hidDevice = hDevice;
             DeviceType = InputDeviceType.DS4;
+
             gyroMouseSensSettings = new GyroMouseSens();
             OptionsStore = nativeOptionsStore = new DS4ControllerOptions();
             SetupOptionsEvents();
 
-            if (Connectivity == ConnectionType.USB || Connectivity == ConnectionType.SONYWA)
+            //
+            // Connected via USB or proprietary wireless adapter which behaves equal to USB
+            // 
+            if (ConnectionType is ConnectionType.USB or ConnectionType.SONYWA)
             {
                 inputReport = new byte[64];
                 InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
+
                 outputReport = new byte[hDevice.Capabilities.OutputReportByteLength];
                 outReportBuffer = new byte[hDevice.Capabilities.OutputReportByteLength];
-                if (Connectivity == ConnectionType.USB)
+
+                if (ConnectionType == ConnectionType.USB)
                 {
                     warnInterval = WARN_INTERVAL_USB;
                     var tempAttr = hDevice.Attributes;
                     if (tempAttr.VendorId == 0x054C && tempAttr.ProductId == 0x09CC)
                     {
-                        audio = new DS4Audio(searchDeviceInstance: hidDevice.ParentPath);
+                        audio = new DS4Audio(searchDeviceInstance: hDevice.ParentPath);
                         micAudio = new DS4Audio(DataFlow.Capture,
-                            hidDevice.ParentPath);
+                            hDevice.ParentPath);
                     }
                     else if (tempAttr.VendorId == DS4Devices.RAZER_VID &&
                              tempAttr.ProductId == 0x1007)
                     {
-                        audio = new DS4Audio(searchDeviceInstance: hidDevice.ParentPath);
+                        audio = new DS4Audio(searchDeviceInstance: hDevice.ParentPath);
                         micAudio = new DS4Audio(DataFlow.Capture,
-                            hidDevice.ParentPath);
+                            hDevice.ParentPath);
                     }
                     else if (featureSet.HasFlag(VidPidFeatureSet.MonitorAudio))
                     {
-                        audio = new DS4Audio(searchDeviceInstance: hidDevice.ParentPath);
+                        audio = new DS4Audio(searchDeviceInstance: hDevice.ParentPath);
                         micAudio = new DS4Audio(DataFlow.Capture,
-                            hidDevice.ParentPath);
+                            hDevice.ParentPath);
                     }
 
                     synced = true;
@@ -692,18 +699,18 @@ namespace DS4Windows
                 else
                 {
                     warnInterval = WARN_INTERVAL_BT;
-                    audio = new DS4Audio(searchDeviceInstance: hidDevice.ParentPath);
+                    audio = new DS4Audio(searchDeviceInstance: hDevice.ParentPath);
                     micAudio = new DS4Audio(DataFlow.Capture,
-                        hidDevice.ParentPath);
+                        hDevice.ParentPath);
                     runCalib = synced = IsValidSerial();
                 }
             }
             else
             {
                 btInputReport = new byte[BT_INPUT_REPORT_LENGTH];
-                BtInputReportBuffer = Marshal.AllocHGlobal(btInputReport.Length);
                 inputReport = new byte[BT_INPUT_REPORT_LENGTH - 2];
-                InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
+                InputReportBuffer = Marshal.AllocHGlobal(btInputReport.Length);
+
                 // If OnlyOutputData0x05 feature is not set then use the default DS4 output buffer size. However, some Razer gamepads use 32 bytes output buffer and output data type 0x05 in BT mode (writeData fails if the code tries to write too many unnecessary bytes)
                 if ((featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 {
@@ -729,7 +736,7 @@ namespace DS4Windows
             if (runCalib)
                 RefreshCalibration();
 
-            if (Connectivity == ConnectionType.BT &&
+            if (ConnectionType == ConnectionType.BT &&
                 !featureSet.HasFlag(VidPidFeatureSet.NoOutputData) &&
                 !featureSet.HasFlag(VidPidFeatureSet.OnlyOutputData0x05))
                 CheckOutputReportTypes();
@@ -795,9 +802,9 @@ namespace DS4Windows
         public virtual void RefreshCalibration()
         {
             var calibration = new byte[41];
-            calibration[0] = Connectivity == ConnectionType.BT ? (byte)0x05 : (byte)0x02;
+            calibration[0] = ConnectionType == ConnectionType.BT ? (byte)0x05 : (byte)0x02;
 
-            if (Connectivity == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.BT)
             {
                 var found = false;
                 for (var tries = 0; !found && tries < 5; tries++)
@@ -821,7 +828,7 @@ namespace DS4Windows
                     if (validCrc) found = true;
                 }
 
-                sixAxis.SetCalibrationData(ref calibration, Connectivity == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, ConnectionType == ConnectionType.USB);
 
                 if (hDevice.Attributes.ProductId == 0x5C4 && hDevice.Attributes.VendorId == 0x054C &&
                     sixAxis.fixupInvertedGyroAxis())
@@ -832,7 +839,7 @@ namespace DS4Windows
             else
             {
                 hDevice.ReadFeatureData(calibration);
-                sixAxis.SetCalibrationData(ref calibration, Connectivity == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, ConnectionType == ConnectionType.USB);
             }
         }
 
@@ -842,7 +849,7 @@ namespace DS4Windows
 
             if (ds4Input == null)
             {
-                if (Connectivity == ConnectionType.BT)
+                if (ConnectionType == ConnectionType.BT)
                 {
                     if (BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
                     {
@@ -922,7 +929,7 @@ namespace DS4Windows
 
         protected bool WriteOutput(byte[] outputBuffer)
         {
-            if (Connectivity == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.BT)
             {
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
@@ -938,7 +945,7 @@ namespace DS4Windows
 
         protected bool WriteOutput()
         {
-            if (Connectivity == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.BT)
             {
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
@@ -1048,7 +1055,7 @@ namespace DS4Windows
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = Connectivity != ConnectionType.BT ||
+                var syncWriteReport = ConnectionType != ConnectionType.BT ||
                                       BTOutputMethod == BTOutputReportMethod.WriteFile;
                 //bool syncWriteReport = true;
                 var forceWrite = false;
@@ -1107,7 +1114,7 @@ namespace DS4Windows
                     // Sony DS4 and compatible gamepads send data packets with 0x11 type code in BT mode. 
                     // Will no longer support any third party fake DS4 that does not behave according to official DS4 specs
                     //if (conType == ConnectionType.BT)
-                    if (Connectivity == ConnectionType.BT && (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
+                    if (ConnectionType == ConnectionType.BT && (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
                     {
                         //HidDevice.ReadStatus res = hDevice.ReadFile(btInputReport);
                         //HidDevice.ReadStatus res = hDevice.ReadAsyncWithFileStream(btInputReport, READ_STREAM_TIMEOUT);
@@ -1117,8 +1124,8 @@ namespace DS4Windows
                         using (GlobalTracer.Instance.BuildSpan(nameof(hDevice.ReadWithFileStream)).StartActive(true))
                         {
 #endif
-                        res = hDevice.ReadInputReport(BtInputReportBuffer, btInputReport.Length, out _);
-                        Marshal.Copy(BtInputReportBuffer, btInputReport, 0, btInputReport.Length);
+                        res = hDevice.ReadInputReport(InputReportBuffer, btInputReport.Length, out _);
+                        Marshal.Copy(InputReportBuffer, btInputReport, 0, btInputReport.Length);
 #if WITH_TRACING
                         }
 #endif
@@ -1203,7 +1210,8 @@ namespace DS4Windows
                                 Console.WriteLine(MacAddress + " " + DateTime.UtcNow.ToString("o") +
                                                   "> disconnect due to read failure: " + winError);
                                 //Log.LogToGui(Mac.ToString() + " disconnected due to read failure: " + winError, true);
-                                AppLogger.Instance.LogToGui(MacAddress + " disconnected due to read failure: " + winError,
+                                AppLogger.Instance.LogToGui(
+                                    MacAddress + " disconnected due to read failure: " + winError,
                                     true);
                             }
 
@@ -1281,7 +1289,7 @@ namespace DS4Windows
                     oldtime = curtime;
 
                     // Not going to do featureSet check anymore
-                    if (Connectivity == ConnectionType.BT && btInputReport[0] != 0x11 &&
+                    if (ConnectionType == ConnectionType.BT && btInputReport[0] != 0x11 &&
                         (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
                         //Received incorrect report, skip it
                         continue;
@@ -1466,7 +1474,7 @@ namespace DS4Windows
                     currentState.TrackPadTouch1.Y =
                         (short)((inputReport[42] << 4) | ((ushort)(inputReport[41] & 0xf0) >> 4));
 
-                    if (Connectivity == ConnectionType.SONYWA)
+                    if (ConnectionType == ConnectionType.SONYWA)
                     {
                         var controllerSynced = inputReport[31] == 0;
                         if (controllerSynced != synced)
@@ -1587,7 +1595,7 @@ namespace DS4Windows
                     ds4InactiveFrame = currentState.FrameCounter == pState.FrameCounter;
                     if (!ds4InactiveFrame) isRemoved = false;
 
-                    if (Connectivity == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -1625,7 +1633,7 @@ namespace DS4Windows
                         {
                             AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (Connectivity == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.BT)
                             {
                                 if (DisconnectBT(true))
                                 {
@@ -1633,7 +1641,7 @@ namespace DS4Windows
                                     return; // all done
                                 }
                             }
-                            else if (Connectivity == ConnectionType.SONYWA)
+                            else if (ConnectionType == ConnectionType.SONYWA)
                             {
                                 DisconnectDongle();
                             }
@@ -1708,7 +1716,7 @@ namespace DS4Windows
 
         private unsafe void PrepareOutputReportInner(ref bool change, ref bool haptime)
         {
-            var usingBT = Connectivity == ConnectionType.BT;
+            var usingBT = ConnectionType == ConnectionType.BT;
 
             if (usingBT && (featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
             {
@@ -1787,7 +1795,7 @@ namespace DS4Windows
             //setHapticState();
 
             var quitOutputThread = false;
-            var usingBT = Connectivity == ConnectionType.BT;
+            var usingBT = ConnectionType == ConnectionType.BT;
 
             // Some gamepads don't support lightbar and rumble, so no need to write out anything (writeOut always fails, so DS4Windows would accidentally force quit the gamepad connection).
             // If noOutputData featureSet flag is set then don't try to write out anything to the gamepad device.
@@ -1951,9 +1959,9 @@ namespace DS4Windows
         public virtual bool DisconnectWireless(bool callRemoval = false)
         {
             var result = false;
-            if (Connectivity == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.BT)
                 result = DisconnectBT(callRemoval);
-            else if (Connectivity == ConnectionType.SONYWA) result = DisconnectDongle(callRemoval);
+            else if (ConnectionType == ConnectionType.SONYWA) result = DisconnectDongle(callRemoval);
 
             return result;
         }
@@ -2194,9 +2202,9 @@ namespace DS4Windows
         public void UpdateSerial()
         {
             hDevice.ResetSerial();
-            
+
             var tempMac = hDevice.ReadSerial(SerialReportID);
-            
+
             if (tempMac.Equals(MacAddress)) return;
 
             MacAddress = tempMac;

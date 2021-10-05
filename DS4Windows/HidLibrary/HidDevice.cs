@@ -84,7 +84,7 @@ namespace DS4Windows
             _inputReportEvent.Dispose();
             Marshal.FreeHGlobal(_inputOverlapped);
 
-            CancelIO();
+            CancelIo();
             CloseDevice();
         }
 
@@ -121,20 +121,11 @@ namespace DS4Windows
             IsOpen = false;
         }
 
-        public void CancelIO()
+        public void CancelIo()
         {
             if (IsOpen)
                 NativeMethods.CancelIoEx(DeviceHandle.DangerousGetHandle(), IntPtr.Zero);
         }
-
-        /*
-        public bool ReadInputReport(byte[] data)
-        {
-            if (safeReadHandle == null)
-                safeReadHandle = OpenHandle(DevicePath, true, false);
-            return NativeMethods.HidD_GetInputReport(safeReadHandle, data, data.Length);
-        }
-        */
 
         public bool WriteFeatureReport(byte[] data)
         {
@@ -144,7 +135,6 @@ namespace DS4Windows
 
             return result;
         }
-
 
         private static HidDeviceAttributes GetDeviceAttributes(Kernel32.SafeObjectHandle hidHandle)
         {
@@ -223,12 +213,10 @@ namespace DS4Windows
 
         public bool WriteOutputReportViaControl(byte[] outputBuffer)
         {
-            if (DeviceHandle == null) DeviceHandle = OpenHandle(DevicePath, true, false);
+            DeviceHandle ??= OpenHandle(DevicePath, true, false);
 
-            if (NativeMethods.HidD_SetOutputReport(DeviceHandle.DangerousGetHandle(), outputBuffer,
-                outputBuffer.Length))
-                return true;
-            return false;
+            return NativeMethods.HidD_SetOutputReport(DeviceHandle.DangerousGetHandle(), outputBuffer,
+                outputBuffer.Length);
         }
 
         public bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)

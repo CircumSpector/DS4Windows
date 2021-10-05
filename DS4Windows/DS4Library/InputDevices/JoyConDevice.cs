@@ -256,7 +256,7 @@ namespace DS4Windows.InputDevices
                 _ => DeviceType
             };
 
-            Connectivity = ConnectionType.BT;
+            ConnectionType = ConnectionType.BT;
             warnInterval = WARN_INTERVAL_BT;
 
             gyroMouseSensSettings = new GyroMouseSens();
@@ -343,7 +343,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = Connectivity != ConnectionType.BT;
+                var syncWriteReport = ConnectionType != ConnectionType.BT;
                 //bool forceWrite = false;
 
                 //int maxBatteryValue = 0;
@@ -651,7 +651,7 @@ namespace DS4Windows.InputDevices
                     var args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
-                    if (Connectivity == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -689,7 +689,7 @@ namespace DS4Windows.InputDevices
                         {
                             AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (Connectivity == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.BT)
                                 if (DisconnectBT(true))
                                 {
                                     timeoutExecuted = true;

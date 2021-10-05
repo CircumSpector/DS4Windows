@@ -245,11 +245,11 @@ namespace DS4Windows.InputDevices
         {
             DeviceType = InputDeviceType.SwitchPro;
             gyroMouseSensSettings = new GyroMouseSens();
-            Connectivity = DetermineConnectionType(hDevice);
+            ConnectionType = DetermineConnectionType(hDevice);
             OptionsStore = nativeOptionsStore = new SwitchProControllerOptions();
             SetupOptionsEvents();
 
-            warnInterval = Connectivity == ConnectionType.BT ? WARN_INTERVAL_BT : WARN_INTERVAL_USB;
+            warnInterval = ConnectionType == ConnectionType.BT ? WARN_INTERVAL_BT : WARN_INTERVAL_USB;
 
             inputReportBuffer = new byte[INPUT_REPORT_LEN];
             outputReportBuffer = new byte[OUTPUT_REPORT_LEN];
@@ -339,7 +339,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                bool syncWriteReport = Connectivity != ConnectionType.BT;
+                bool syncWriteReport = ConnectionType != ConnectionType.BT;
                 //bool forceWrite = false;
                 
                 //int maxBatteryValue = 0;
@@ -581,7 +581,7 @@ namespace DS4Windows.InputDevices
                     SixAxisEventArgs args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
-                    if (Connectivity == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -622,7 +622,7 @@ namespace DS4Windows.InputDevices
                         {
                             AppLogger.Instance.LogToGui(MacAddress.ToString() + " disconnecting due to idle disconnect", false);
 
-                            if (Connectivity == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.BT)
                             {
                                 if (DisconnectBT(true))
                                 {
@@ -668,7 +668,7 @@ namespace DS4Windows.InputDevices
 
         public void SetOperational()
         {
-            if (Connectivity == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.USB)
             {
                 RunUSBSetup();
                 Thread.Sleep(300);
@@ -723,7 +723,7 @@ namespace DS4Windows.InputDevices
             EnableFastPollRate();
 
             // USB Connections seem to need a delay after switching input modes
-            if (Connectivity == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.USB)
             {
                 Thread.Sleep(1000);
             }
@@ -1215,7 +1215,7 @@ namespace DS4Windows.InputDevices
                 byte[] powerChoiceArray = new byte[] { 0x01 };
                 Subcommand(SwitchProSubCmd.SET_LOW_POWER_STATE, powerChoiceArray, 1, checkResponse: true);
 
-                if (Connectivity == ConnectionType.USB)
+                if (ConnectionType == ConnectionType.USB)
                 {
                     byte[] data = new byte[64];
                     data[0] = 0x80; data[1] = 0x05;
