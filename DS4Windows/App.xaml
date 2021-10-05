@@ -6,8 +6,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="DS4Forms/Themes/DefaultTheme.xaml" />
-                <!--<ResourceDictionary Source="DS4Forms/Themes/DarkTheme.xaml" />-->
+                <!-- Must be on first position for theme switching to work! -->
+                <ResourceDictionary Source="pack://application:,,,/AdonisUI;component/ColorSchemes/Light.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/AdonisUI.ClassicTheme;component/Resources.xaml"/>
+                <ResourceDictionary Source="DS4Forms/Themes/Common.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!--<SolidColorBrush x:Key="ForegroundColor" Color="{x:Static SystemColors.ActiveCaptionTextColor}" />-->

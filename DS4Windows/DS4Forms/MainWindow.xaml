@@ -1,21 +1,31 @@
-﻿<Window x:Name="mainDS4Window" x:Class="DS4WinWPF.DS4Forms.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:tb="http://www.hardcodet.net/taskbar"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:lex="http://wpflocalizeextension.codeplex.com"
-        lex:LocalizeDictionary.DesignCulture=""
-        lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
-        lex:ResxLocalizationProvider.DefaultDictionary="Strings"
-        xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
-        xmlns:localConverters="clr-namespace:DS4WinWPF.DS4Forms.Converters"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xml:lang="en-US"
-        mc:Ignorable="d"
-        Title="DS4Windows" Height="500" Width="800" Closing="MainDS4Window_Closing" Closed="MainDS4Window_Closed" StateChanged="MainDS4Window_StateChanged" SizeChanged="MainDS4Window_SizeChanged" LocationChanged="MainDS4Window_LocationChanged" MinWidth="600" MinHeight="250"
-        Style="{DynamicResource WindowStyle}">
+﻿<controls:AdonisWindow x:Name="mainDS4Window" x:Class="DS4WinWPF.DS4Forms.MainWindow"
+                             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                             xmlns:tb="http://www.hardcodet.net/taskbar"
+                             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                             xmlns:lex="http://wpflocalizeextension.codeplex.com"
+                             lex:LocalizeDictionary.DesignCulture=""
+                             lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
+                             lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+                             xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
+                             xmlns:localConverters="clr-namespace:DS4WinWPF.DS4Forms.Converters"
+                             xmlns:system="clr-namespace:System;assembly=mscorlib"
+                             xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+                             xml:lang="en-US"
+                             mc:Ignorable="d"
+                             Title="DS4Windows" 
+                             Height="500" Width="800" 
+                             Closing="MainDS4Window_Closing"
+                             Closed="MainDS4Window_Closed" 
+                             StateChanged="MainDS4Window_StateChanged" 
+                             SizeChanged="MainDS4Window_SizeChanged" 
+                             LocationChanged="MainDS4Window_LocationChanged" 
+                             MinWidth="600" MinHeight="250">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
+    </Window.Style>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:ImageLocationPaths x:Key="ImgLocPaths" />
@@ -461,4 +471,4 @@
 
         </TabControl>
     </DockPanel>
-</Window>
+</controls:AdonisWindow>

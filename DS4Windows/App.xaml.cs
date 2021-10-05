@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -38,10 +39,10 @@ namespace DS4WinWPF
         public static ControlService rootHub;
         public static HttpClient requestClient;
 
-        private static readonly Dictionary<AppThemeChoice, string> themeLocs = new()
+        private static readonly Dictionary<AppThemeChoice, string> ThemeResources = new()
         {
-            [AppThemeChoice.Default] = "DS4Forms/Themes/DefaultTheme.xaml",
-            [AppThemeChoice.Dark] = "DS4Forms/Themes/DarkTheme.xaml"
+            [AppThemeChoice.Default] = "pack://application:,,,/AdonisUI;component/ColorSchemes/Light.xaml",
+            [AppThemeChoice.Dark] = "pack://application:,,,/AdonisUI;component/ColorSchemes/Dark.xaml"
         };
 
         private readonly IHost _host;
@@ -586,11 +587,10 @@ namespace DS4WinWPF
         public void ChangeTheme(AppThemeChoice themeChoice,
             bool fireChanged = true)
         {
-            if (themeLocs.TryGetValue(themeChoice, out var loc))
+            if (ThemeResources.TryGetValue(themeChoice, out var loc))
             {
-                Current.Resources.MergedDictionaries.Clear();
-                Current.Resources.MergedDictionaries.Add(new ResourceDictionary
-                    { Source = new Uri(loc, UriKind.Relative) });
+                Current.Resources.MergedDictionaries[0] = new ResourceDictionary
+                    { Source = new Uri(loc, UriKind.Absolute) };
 
                 if (fireChanged) ThemeChanged?.Invoke(this, EventArgs.Empty);
             }

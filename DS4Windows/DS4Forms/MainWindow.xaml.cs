@@ -17,6 +17,7 @@ using System.Management;
 using NonFormTimer = System.Timers.Timer;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using AdonisUI.Controls;
 using HttpProgress;
 
 using DS4WinWPF.DS4Forms.ViewModels;
@@ -25,6 +26,10 @@ using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
 using Microsoft.Extensions.DependencyInjection;
+using MessageBox = System.Windows.MessageBox;
+using MessageBoxButton = System.Windows.MessageBoxButton;
+using MessageBoxImage = System.Windows.MessageBoxImage;
+using MessageBoxResult = System.Windows.MessageBoxResult;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -32,7 +37,7 @@ namespace DS4WinWPF.DS4Forms
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     [System.Security.SuppressUnmanagedCodeSecurity]
-    public partial class MainWindow : Window
+    public partial class MainWindow : AdonisWindow
     {
         private const int DEFAULT_PROFILE_EDITOR_WIDTH = 1000;
         private const int DEFAULT_PROFILE_EDITOR_HEIGHT = 650;
