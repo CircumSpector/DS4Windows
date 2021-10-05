@@ -234,9 +234,13 @@ namespace DS4Windows.InputDevices
         {
             var result = JoyConSide.None;
             var productId = hDevice.Attributes.ProductId;
-            if (productId == JOYCON_L_PRODUCT_ID)
-                result = JoyConSide.Left;
-            else if (productId == JOYCON_R_PRODUCT_ID) result = JoyConSide.Right;
+            
+            result = productId switch
+            {
+                JOYCON_L_PRODUCT_ID => JoyConSide.Left,
+                JOYCON_R_PRODUCT_ID => JoyConSide.Right,
+                _ => result
+            };
 
             return result;
         }
@@ -244,11 +248,15 @@ namespace DS4Windows.InputDevices
         public override void PostInit()
         {
             SideType = DetermineSideType();
-            if (SideType == JoyConSide.Left)
-                deviceType = InputDeviceType.JoyConL;
-            else if (SideType == JoyConSide.Right) deviceType = InputDeviceType.JoyConR;
 
-            conType = ConnectionType.BT;
+            DeviceType = SideType switch
+            {
+                JoyConSide.Left => InputDeviceType.JoyConL,
+                JoyConSide.Right => InputDeviceType.JoyConR,
+                _ => DeviceType
+            };
+
+            Connectivity = ConnectionType.BT;
             warnInterval = WARN_INTERVAL_BT;
 
             gyroMouseSensSettings = new GyroMouseSens();
@@ -335,7 +343,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = conType != ConnectionType.BT;
+                var syncWriteReport = Connectivity != ConnectionType.BT;
                 //bool forceWrite = false;
 
                 //int maxBatteryValue = 0;
@@ -643,7 +651,7 @@ namespace DS4Windows.InputDevices
                     var args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
-                    if (conType == ConnectionType.USB)
+                    if (Connectivity == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -681,7 +689,7 @@ namespace DS4Windows.InputDevices
                         {
                             AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (conType == ConnectionType.BT)
+                            if (Connectivity == ConnectionType.BT)
                                 if (DisconnectBT(true))
                                 {
                                     timeoutExecuted = true;

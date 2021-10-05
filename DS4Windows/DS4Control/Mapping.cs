@@ -2139,9 +2139,11 @@ namespace DS4Windows
         public static void MapCustom(int device, DS4State cState, DS4State MappedState, DS4StateExposed eState,
             Mouse tp, ControlService ctrl)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance
                 .BuildSpan($"{nameof(Mapping)}::{nameof(MapCustom)}")
                 .StartActive(true);
+#endif
 
             /* TODO: This method is slow sauce. Find ways to speed up action execution */
             double tempMouseDeltaX = 0.0;

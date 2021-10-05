@@ -20,114 +20,12 @@ using OpenTracing.Util;
 
 namespace DS4Windows
 {
-    public enum ConnectionType : byte
-    {
-        BT,
-        SONYWA,
-        USB
-    } // Prioritize Bluetooth when both BT and USB are connected.
-
-    /**
-     * The haptics engine uses a stack of these states representing the light bar and rumble motor settings.
-     * It (will) handle composing them and the details of output report management.
-     */
-    public class DS4ForceFeedbackState : IEquatable<DS4ForceFeedbackState>, ICloneable
-    {
-        public byte RumbleMotorStrengthLeftHeavySlow { get; set; }
-
-        public byte RumbleMotorStrengthRightLightFast { get; set; }
-
-        public bool RumbleMotorsExplicitlyOff { get; set; }
-
-        public object Clone()
-        {
-            return MemberwiseClone();
-        }
-
-        public bool Equals(DS4ForceFeedbackState other)
-        {
-            return RumbleMotorStrengthLeftHeavySlow == other.RumbleMotorStrengthLeftHeavySlow &&
-                   RumbleMotorStrengthRightLightFast == other.RumbleMotorStrengthRightLightFast &&
-                   RumbleMotorsExplicitlyOff == other.RumbleMotorsExplicitlyOff;
-        }
-
-        public bool IsRumbleSet()
-        {
-            const byte zero = 0;
-            return RumbleMotorsExplicitlyOff || RumbleMotorStrengthLeftHeavySlow != zero ||
-                   RumbleMotorStrengthRightLightFast != zero;
-        }
-    }
-
-    public class DS4LightbarState : IEquatable<DS4LightbarState>, ICloneable
-    {
-        public bool LightBarExplicitlyOff;
-
-        public byte LightBarFlashDurationOn, LightBarFlashDurationOff;
-        public DS4Color LightBarColor { get; set; } = new();
-
-        public object Clone()
-        {
-            var state = (DS4LightbarState)MemberwiseClone();
-            state.LightBarColor = (DS4Color)LightBarColor.Clone();
-
-            return state;
-        }
-
-        public bool Equals(DS4LightbarState other)
-        {
-            return LightBarColor.Equals(other.LightBarColor) &&
-                   LightBarExplicitlyOff == other.LightBarExplicitlyOff &&
-                   LightBarFlashDurationOn == other.LightBarFlashDurationOn &&
-                   LightBarFlashDurationOff == other.LightBarFlashDurationOff;
-        }
-
-        public bool IsLightBarSet()
-        {
-            return LightBarExplicitlyOff || LightBarColor.Red != 0 || LightBarColor.Green != 0 ||
-                   LightBarColor.Blue != 0;
-        }
-    }
-
-    public class DS4HapticState : IEquatable<DS4HapticState>, ICloneable
-    {
-        public DS4LightbarState LightbarState { get; set; } = new();
-        public DS4ForceFeedbackState RumbleState { get; set; } = new();
-
-        public object Clone()
-        {
-            var state = (DS4HapticState)MemberwiseClone();
-            state.LightbarState = (DS4LightbarState)LightbarState.Clone();
-            state.RumbleState = (DS4ForceFeedbackState)RumbleState.Clone();
-
-            return state;
-        }
-
-        public bool Equals(DS4HapticState other)
-        {
-            return LightbarState.Equals(other.LightbarState) &&
-                   RumbleState.Equals(other.RumbleState);
-        }
-
-        public bool IsLightBarSet()
-        {
-            return LightbarState.IsLightBarSet();
-        }
-
-        public bool IsRumbleSet()
-        {
-            return RumbleState.IsRumbleSet();
-        }
-    }
-
     /// <summary>
     ///     Represents a Sony DualShock 4 compatible device.
     /// </summary>
     [AddINotifyPropertyChangedInterface]
     public class DS4Device
     {
-        public delegate void BatteryUpdateHandler(object sender, EventArgs e);
-
         public delegate void ReportHandler<TEventArgs>(DS4Device sender, TEventArgs args);
 
         public enum BTOutputReportMethod : uint
@@ -223,14 +121,13 @@ namespace DS4Windows
         protected int btPollRate;
 
         protected bool charging;
-        protected ConnectionType conType;
+        protected ConnectionType Connectivity;
         protected DS4State currentState = new();
         private uint deltaTimeCurrent;
         protected byte deviceSlotMask = 0x00;
 
         protected int deviceSlotNumber = -1;
 
-        protected InputDeviceType deviceType;
         protected string displayName;
         protected bool ds4InactiveFrame = true;
         protected Thread ds4Input, ds4Output;
@@ -359,13 +256,13 @@ namespace DS4Windows
             displayName = disName;
             this.featureSet = featureSet;
 
-            conType = HidConnectionType(hDevice);
+            Connectivity = HidConnectionType(hDevice);
             exclusiveStatus = ExclusiveStatus.Shared;
             if (hidDevice.IsExclusive) exclusiveStatus = ExclusiveStatus.Exclusive;
 
             if (FeatureSet != VidPidFeatureSet.DefaultDS4)
                 AppLogger.Instance.LogToGui(
-                    $"The gamepad {displayName} ({conType}) uses custom feature set ({FeatureSet:F})",
+                    $"The gamepad {displayName} ({Connectivity}) uses custom feature set ({FeatureSet:F})",
                     false);
 
             MacAddress = hDevice.ReadSerial(SerialReportID);
@@ -422,7 +319,7 @@ namespace DS4Windows
             set => isRemoved = value;
         }
 
-        public ConnectionType ConnectionType => conType;
+        public ConnectionType ConnectionType => Connectivity;
 
         public int IdleTimeout
         {
@@ -511,7 +408,8 @@ namespace DS4Windows
         public virtual byte SerialReportID => SERIAL_FEATURE_ID;
         public BTOutputReportMethod BTOutputMethod { get; set; }
 
-        public InputDeviceType DeviceType => deviceType;
+        public InputDeviceType DeviceType { get; protected set; }
+
         public virtual GyroMouseSens GyroMouseSensSettings => gyroMouseSensSettings;
 
         public int DeviceSlotNumber
@@ -665,7 +563,7 @@ namespace DS4Windows
 
         public ConnectionType GetConnectionType()
         {
-            return conType;
+            return Connectivity;
         }
 
         public int getIdleTimeout()
@@ -754,18 +652,18 @@ namespace DS4Windows
         public virtual void PostInit()
         {
             var hidDevice = hDevice;
-            deviceType = InputDeviceType.DS4;
+            DeviceType = InputDeviceType.DS4;
             gyroMouseSensSettings = new GyroMouseSens();
             OptionsStore = nativeOptionsStore = new DS4ControllerOptions();
             SetupOptionsEvents();
 
-            if (conType == ConnectionType.USB || conType == ConnectionType.SONYWA)
+            if (Connectivity == ConnectionType.USB || Connectivity == ConnectionType.SONYWA)
             {
                 inputReport = new byte[64];
                 InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
                 outputReport = new byte[hDevice.Capabilities.OutputReportByteLength];
                 outReportBuffer = new byte[hDevice.Capabilities.OutputReportByteLength];
-                if (conType == ConnectionType.USB)
+                if (Connectivity == ConnectionType.USB)
                 {
                     warnInterval = WARN_INTERVAL_USB;
                     var tempAttr = hDevice.Attributes;
@@ -831,7 +729,7 @@ namespace DS4Windows
             if (runCalib)
                 RefreshCalibration();
 
-            if (conType == ConnectionType.BT &&
+            if (Connectivity == ConnectionType.BT &&
                 !featureSet.HasFlag(VidPidFeatureSet.NoOutputData) &&
                 !featureSet.HasFlag(VidPidFeatureSet.OnlyOutputData0x05))
                 CheckOutputReportTypes();
@@ -897,9 +795,9 @@ namespace DS4Windows
         public virtual void RefreshCalibration()
         {
             var calibration = new byte[41];
-            calibration[0] = conType == ConnectionType.BT ? (byte)0x05 : (byte)0x02;
+            calibration[0] = Connectivity == ConnectionType.BT ? (byte)0x05 : (byte)0x02;
 
-            if (conType == ConnectionType.BT)
+            if (Connectivity == ConnectionType.BT)
             {
                 var found = false;
                 for (var tries = 0; !found && tries < 5; tries++)
@@ -923,7 +821,7 @@ namespace DS4Windows
                     if (validCrc) found = true;
                 }
 
-                sixAxis.SetCalibrationData(ref calibration, conType == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, Connectivity == ConnectionType.USB);
 
                 if (hDevice.Attributes.ProductId == 0x5C4 && hDevice.Attributes.VendorId == 0x054C &&
                     sixAxis.fixupInvertedGyroAxis())
@@ -934,7 +832,7 @@ namespace DS4Windows
             else
             {
                 hDevice.ReadFeatureData(calibration);
-                sixAxis.SetCalibrationData(ref calibration, conType == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, Connectivity == ConnectionType.USB);
             }
         }
 
@@ -944,7 +842,7 @@ namespace DS4Windows
 
             if (ds4Input == null)
             {
-                if (conType == ConnectionType.BT)
+                if (Connectivity == ConnectionType.BT)
                 {
                     if (BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
                     {
@@ -1024,7 +922,7 @@ namespace DS4Windows
 
         protected bool WriteOutput(byte[] outputBuffer)
         {
-            if (conType == ConnectionType.BT)
+            if (Connectivity == ConnectionType.BT)
             {
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
@@ -1040,7 +938,7 @@ namespace DS4Windows
 
         protected bool WriteOutput()
         {
-            if (conType == ConnectionType.BT)
+            if (Connectivity == ConnectionType.BT)
             {
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
@@ -1150,7 +1048,7 @@ namespace DS4Windows
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = conType != ConnectionType.BT ||
+                var syncWriteReport = Connectivity != ConnectionType.BT ||
                                       BTOutputMethod == BTOutputReportMethod.WriteFile;
                 //bool syncWriteReport = true;
                 var forceWrite = false;
@@ -1209,7 +1107,7 @@ namespace DS4Windows
                     // Sony DS4 and compatible gamepads send data packets with 0x11 type code in BT mode. 
                     // Will no longer support any third party fake DS4 that does not behave according to official DS4 specs
                     //if (conType == ConnectionType.BT)
-                    if (conType == ConnectionType.BT && (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
+                    if (Connectivity == ConnectionType.BT && (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
                     {
                         //HidDevice.ReadStatus res = hDevice.ReadFile(btInputReport);
                         //HidDevice.ReadStatus res = hDevice.ReadAsyncWithFileStream(btInputReport, READ_STREAM_TIMEOUT);
@@ -1383,7 +1281,7 @@ namespace DS4Windows
                     oldtime = curtime;
 
                     // Not going to do featureSet check anymore
-                    if (conType == ConnectionType.BT && btInputReport[0] != 0x11 &&
+                    if (Connectivity == ConnectionType.BT && btInputReport[0] != 0x11 &&
                         (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
                         //Received incorrect report, skip it
                         continue;
@@ -1568,7 +1466,7 @@ namespace DS4Windows
                     currentState.TrackPadTouch1.Y =
                         (short)((inputReport[42] << 4) | ((ushort)(inputReport[41] & 0xf0) >> 4));
 
-                    if (conType == ConnectionType.SONYWA)
+                    if (Connectivity == ConnectionType.SONYWA)
                     {
                         var controllerSynced = inputReport[31] == 0;
                         if (controllerSynced != synced)
@@ -1689,7 +1587,7 @@ namespace DS4Windows
                     ds4InactiveFrame = currentState.FrameCounter == pState.FrameCounter;
                     if (!ds4InactiveFrame) isRemoved = false;
 
-                    if (conType == ConnectionType.USB)
+                    if (Connectivity == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -1727,7 +1625,7 @@ namespace DS4Windows
                         {
                             AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (conType == ConnectionType.BT)
+                            if (Connectivity == ConnectionType.BT)
                             {
                                 if (DisconnectBT(true))
                                 {
@@ -1735,7 +1633,7 @@ namespace DS4Windows
                                     return; // all done
                                 }
                             }
-                            else if (conType == ConnectionType.SONYWA)
+                            else if (Connectivity == ConnectionType.SONYWA)
                             {
                                 DisconnectDongle();
                             }
@@ -1810,7 +1708,7 @@ namespace DS4Windows
 
         private unsafe void PrepareOutputReportInner(ref bool change, ref bool haptime)
         {
-            var usingBT = conType == ConnectionType.BT;
+            var usingBT = Connectivity == ConnectionType.BT;
 
             if (usingBT && (featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
             {
@@ -1889,7 +1787,7 @@ namespace DS4Windows
             //setHapticState();
 
             var quitOutputThread = false;
-            var usingBT = conType == ConnectionType.BT;
+            var usingBT = Connectivity == ConnectionType.BT;
 
             // Some gamepads don't support lightbar and rumble, so no need to write out anything (writeOut always fails, so DS4Windows would accidentally force quit the gamepad connection).
             // If noOutputData featureSet flag is set then don't try to write out anything to the gamepad device.
@@ -2053,9 +1951,9 @@ namespace DS4Windows
         public virtual bool DisconnectWireless(bool callRemoval = false)
         {
             var result = false;
-            if (conType == ConnectionType.BT)
+            if (Connectivity == ConnectionType.BT)
                 result = DisconnectBT(callRemoval);
-            else if (conType == ConnectionType.SONYWA) result = DisconnectDongle(callRemoval);
+            else if (Connectivity == ConnectionType.SONYWA) result = DisconnectDongle(callRemoval);
 
             return result;
         }
