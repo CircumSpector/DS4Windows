@@ -15,9 +15,11 @@ namespace DS4Windows
         {
             if (!connected) return;
 
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan($"{nameof(DS4OutDeviceBasic)}::{nameof(ConvertAndSendReport)}")
                 .StartActive(true))
             {
+#endif
                 //cont.ResetReport();
                 ushort tempButtons = 0;
                 DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
@@ -140,7 +142,10 @@ namespace DS4Windows
                 }
 
                 cont.SubmitReport();
+
+#if WITH_TRACING
             }
+#endif
         }
 
         public override void ResetState(bool submit = true)

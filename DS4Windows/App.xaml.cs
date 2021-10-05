@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,10 +15,17 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Forms;
+using DS4WinWPF.DS4Forms.ViewModels;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
-using NLog;
+using Serilog;
 using WPFLocalizeExtension.Engine;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace DS4WinWPF
 {
@@ -32,7 +37,6 @@ namespace DS4WinWPF
     {
         public static ControlService rootHub;
         public static HttpClient requestClient;
-        private static LoggerHolder logHolder;
 
         private static readonly Dictionary<AppThemeChoice, string> themeLocs = new()
         {
@@ -40,80 +44,76 @@ namespace DS4WinWPF
             [AppThemeChoice.Dark] = "DS4Forms/Themes/DarkTheme.xaml"
         };
 
-        private Timer collectTimer;
+        private readonly IHost _host;
 
         private Thread controlThread;
         private bool exitApp;
         private bool exitComThread;
-        private MemoryMappedViewAccessor ipcClassNameMMA;
-
-        private MemoryMappedFile
-            ipcClassNameMMF; // MemoryMappedFile for inter-process communication used to hold className of DS4Form window
-
-        private MemoryMappedViewAccessor ipcResultDataMMA;
-
-        private MemoryMappedFile
-            ipcResultDataMMF; // MemoryMappedFile for inter-process communication used to exchange string result data between cmdline client process and the background running DS4Windows app
-
+        
         private bool runShutdown;
         private bool skipSave;
         private Thread testThread;
         private EventWaitHandle threadComEvent;
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
-
-        [DllImport("user32.dll", EntryPoint = "FindWindow")]
-        private static extern IntPtr FindWindow(string sClass, string sWindow);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, ref COPYDATASTRUCT lParam);
-
-        [DllImport("kernel32", EntryPoint = "OpenEventW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeWaitHandle OpenEvent(uint desiredAccess, bool inheritHandle, string name);
-
-        public event EventHandler ThemeChanged;
-
-        private static EventWaitHandle CreateAndReplaceHandle(SafeWaitHandle replacementHandle)
+        public App()
         {
-            var eventWaitHandle = new EventWaitHandle(default, default);
-
-            var old = eventWaitHandle.SafeWaitHandle;
-            eventWaitHandle.SafeWaitHandle = replacementHandle;
-            old.Dispose();
-
-            return eventWaitHandle;
+            _host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) => { ConfigureServices(context.Configuration, services); })
+                .Build();
         }
 
-        private async void Application_Startup(object sender, StartupEventArgs e)
+        private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .WriteTo.SerilogInMemorySink()
+                .CreateLogger();
+
+            services.AddLogging(builder =>
+            {
+                builder.SetMinimumLevel(LogLevel.Information);
+                builder.AddSerilog(logger, true);
+            });
+
+            services.AddSingleton(new LoggerFactory().AddSerilog(logger));
+
+            services.AddOptions();
+
+            services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
+            services.AddSingleton<AppLogger>();
+            services.AddSingleton<MainWindow>();
+
+            services.AddTransient<MainWindowsViewModel>();
+            services.AddTransient<SettingsViewModel>();
+
+            services.AddTransient<IProfileList, ProfileList>();
+        }
+
+        protected override async void OnStartup(StartupEventArgs e)
+        {
+            await _host.StartAsync();
+
             runShutdown = true;
             skipSave = true;
 
-            var parser = new ArgumentParser();
+            //
+            // TODO: intermediate hack until DI is propagated throughout all classes
+            // 
+            AppLogger.Instance = _host.Services.GetRequiredService<AppLogger>();
+
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+
+            var parser = (CommandLineOptions)_host.Services.GetRequiredService<ICommandLineOptions>();
+
             parser.Parse(e.Args);
+
             CheckOptions(parser);
 
             if (exitApp) return;
 
-            try
-            {
-                Process.GetCurrentProcess().PriorityClass =
-                    ProcessPriorityClass.High;
-            }
-            catch
-            {
-            } // Ignore problems raising the priority.
+            ApplyOptimizations();
 
-            // Force Normal IO Priority
-            var ioPrio = new IntPtr(2);
-            Util.NtSetInformationProcess(Process.GetCurrentProcess().Handle,
-                Util.PROCESS_INFORMATION_CLASS.ProcessIoPriority, ref ioPrio, 4);
-
-            // Force Normal Page Priority
-            var pagePrio = new IntPtr(5);
-            Util.NtSetInformationProcess(Process.GetCurrentProcess().Handle,
-                Util.PROCESS_INFORMATION_CLASS.ProcessPagePriority, ref pagePrio, 4);
+            #region Check for existing instance
 
             try
             {
@@ -137,6 +137,8 @@ namespace DS4WinWPF
                 /* don't care about errors */
             }
 
+            #endregion
+
             // Retrieve info about installed ViGEmBus device if found
             Global.RefreshViGEmBusInfo();
 
@@ -145,6 +147,10 @@ namespace DS4WinWPF
             CreateTempWorkerThread();
 
             CreateControlService(parser);
+
+            //
+            // TODO: I wonder why this was done...
+            // 
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
             Global.Instance.FindConfigLocation();
@@ -159,39 +165,40 @@ namespace DS4WinWPF
             if (firstRun && !CreateConfDirSkeleton())
             {
                 MessageBox.Show($"Cannot create config folder structure in {Global.RuntimeAppDataPath}. Exiting",
-                    "DS4Windows", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Constants.ApplicationName, MessageBoxButton.OK, MessageBoxImage.Error);
                 Current.Shutdown(1);
             }
 
-            logHolder = new LoggerHolder(rootHub);
+            //logHolder = new LoggerHolder(rootHub);
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            var logger = logHolder.Logger;
+
             var version = Global.ExecutableProductVersion;
-            logger.Info($"DS4Windows version {version}");
-            logger.Info($"DS4Windows exe file: {Global.ExecutableFileName}");
-            logger.Info($"DS4Windows Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
-            logger.Info($"OS Version: {Environment.OSVersion}");
-            logger.Info($"OS Product Name: {Util.GetOSProductName()}");
-            logger.Info($"OS Release ID: {Util.GetOSReleaseId()}");
-            logger.Info($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
-            logger.Info("Logger created");
+
+            logger.LogInformation($"{Constants.ApplicationName} version {version}");
+            logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
+            logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
+            logger.LogInformation($"OS Version: {Environment.OSVersion}");
+            logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
+            logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
+            logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
+            logger.LogInformation("Logger created");
 
             var readAppConfig = await Global.Instance.Config.LoadApplicationSettings();
             if (!firstRun && !readAppConfig)
-                logger.Info(
+                logger.LogInformation(
                     $@"{Constants.ProfilesFileName} not read at location ${Global.RuntimeAppDataPath}\{Constants.ProfilesFileName}. Using default app settings");
 
             if (firstRun)
             {
-                logger.Info("No config found. Creating default config");
+                logger.LogInformation("No config found. Creating default config");
                 AttemptSave();
 
                 await Global.Instance.Config.SaveAsNewProfile(0, "Default");
                 for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
                     Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                logger.Info("Default config created");
+                logger.LogInformation("Default config created");
             }
 
             skipSave = false;
@@ -203,9 +210,11 @@ namespace DS4WinWPF
             if (themeChoice != AppThemeChoice.Default) ChangeTheme(Global.Instance.Config.ThemeChoice, false);
 
             Global.Instance.Config.LoadLinkedProfiles();
-            var window = new MainWindow(parser);
+
+            var window = _host.Services.GetRequiredService<MainWindow>();
             MainWindow = window;
             window.Show();
+
             var source = PresentationSource.FromVisual(window) as HwndSource;
             CreateIPCClassNameMMF(source.Handle);
 
@@ -216,18 +225,73 @@ namespace DS4WinWPF
 
             await rootHub.LoadPermanentSlotsConfig();
             window.LateChecks(parser);
+
+            base.OnStartup(e);
+        }
+
+        private static void ApplyOptimizations()
+        {
+            try
+            {
+                Process.GetCurrentProcess().PriorityClass =
+                    ProcessPriorityClass.High;
+            }
+            catch
+            {
+            } // Ignore problems raising the priority.
+
+            // Force Normal IO Priority
+            var ioPrio = new IntPtr(2);
+            Util.NtSetInformationProcess(Process.GetCurrentProcess().Handle,
+                Util.PROCESS_INFORMATION_CLASS.ProcessIoPriority, ref ioPrio, 4);
+
+            // Force Normal Page Priority
+            var pagePrio = new IntPtr(5);
+            Util.NtSetInformationProcess(Process.GetCurrentProcess().Handle,
+                Util.PROCESS_INFORMATION_CLASS.ProcessPagePriority, ref pagePrio, 4);
+        }
+
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            if (runShutdown)
+            {
+                var logger = _host.Services.GetRequiredService<ILogger<App>>();
+                logger.LogInformation("Request App Shutdown");
+                CleanShutdown();
+            }
+
+            using (_host)
+            {
+                await _host.StopAsync();
+            }
+
+            base.OnExit(e);
+        }
+
+        public event EventHandler ThemeChanged;
+
+        private static EventWaitHandle CreateAndReplaceHandle(SafeWaitHandle replacementHandle)
+        {
+            var eventWaitHandle = new EventWaitHandle(default, default);
+
+            var old = eventWaitHandle.SafeWaitHandle;
+            eventWaitHandle.SafeWaitHandle = replacementHandle;
+            old.Dispose();
+
+            return eventWaitHandle;
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+
             if (!Current.Dispatcher.CheckAccess())
             {
-                var logger = logHolder.Logger;
                 var exp = e.ExceptionObject as Exception;
-                logger.Error($"Thread App Crashed with message {exp.Message}");
-                logger.Error(exp.ToString());
-                //LogManager.Flush();
-                //LogManager.Shutdown();
+
+                logger.LogError($"Thread App Crashed with message {exp.Message}");
+                logger.LogError(exp.ToString());
+
                 if (e.IsTerminating)
                     Dispatcher.Invoke(() =>
                     {
@@ -237,12 +301,11 @@ namespace DS4WinWPF
             }
             else
             {
-                var logger = logHolder.Logger;
                 var exp = e.ExceptionObject as Exception;
                 if (e.IsTerminating)
                 {
-                    logger.Error($"Thread Crashed with message {exp.Message}");
-                    logger.Error(exp.ToString());
+                    logger.LogError($"Thread Crashed with message {exp.Message}");
+                    logger.LogError(exp.ToString());
 
                     rootHub?.PrepareAbort();
                     CleanShutdown();
@@ -254,9 +317,9 @@ namespace DS4WinWPF
         {
             //Debug.WriteLine("App Crashed");
             //Debug.WriteLine(e.Exception.StackTrace);
-            var logger = logHolder.Logger;
-            logger.Error($"Thread Crashed with message {e.Exception.Message}");
-            logger.Error(e.Exception.ToString());
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+            logger.LogError($"Thread Crashed with message {e.Exception.Message}");
+            logger.LogError(e.Exception.ToString());
             //LogManager.Flush();
             //LogManager.Shutdown();
         }
@@ -308,12 +371,12 @@ namespace DS4WinWPF
 
                     MessageBox.Show(
                         "Copy complete, please relaunch DS4Windows and remove settings from Program Directory",
-                        "DS4Windows");
+                        Constants.ApplicationName);
                 }
                 else
                 {
                     MessageBox.Show("DS4Windows cannot edit settings here, This will now close",
-                        "DS4Windows");
+                        Constants.ApplicationName);
                 }
 
                 Global.RuntimeAppDataPath = null;
@@ -322,7 +385,7 @@ namespace DS4WinWPF
             }
         }
 
-        private void CheckOptions(ArgumentParser parser)
+        private void CheckOptions(ICommandLineOptions parser)
         {
             if (parser.HasErrors)
             {
@@ -330,7 +393,7 @@ namespace DS4WinWPF
                 exitApp = true;
                 Current.Shutdown(1);
             }
-            else if (parser.Driverinstall)
+            else if (parser.DriverInstall)
             {
                 // Retrieve info about installed ViGEmBus device if found.
                 // Might not be needed here
@@ -345,12 +408,12 @@ namespace DS4WinWPF
             }
             else if (parser.ReenableDevice)
             {
-                DS4Devices.reEnableDevice(parser.DeviceInstanceId);
+                DS4Devices.ReEnableDevice(parser.DeviceInstanceId);
                 runShutdown = false;
                 exitApp = true;
                 Current.Shutdown();
             }
-            else if (parser.Runtask)
+            else if (parser.RunTask)
             {
                 StartupMethods.LaunchOldTask();
                 runShutdown = false;
@@ -360,7 +423,7 @@ namespace DS4WinWPF
             else if (parser.Command)
             {
                 var hWndDS4WindowsForm = IntPtr.Zero;
-                hWndDS4WindowsForm = FindWindow(ReadIPCClassNameMMF(), "DS4Windows");
+                hWndDS4WindowsForm = FindWindow(ReadIPCClassNameMMF(), Constants.ApplicationName);
                 if (hWndDS4WindowsForm != IntPtr.Zero)
                 {
                     var bDoSendMsg = true;
@@ -438,7 +501,7 @@ namespace DS4WinWPF
             }
         }
 
-        private void CreateControlService(ArgumentParser parser)
+        private void CreateControlService(CommandLineOptions parser)
         {
             controlThread = new Thread(() =>
             {
@@ -448,7 +511,6 @@ namespace DS4WinWPF
 
                 ControlService.CurrentInstance = rootHub;
                 requestClient = new HttpClient();
-                collectTimer = new Timer(GarbageTask, null, 30000, 30000);
             });
             controlThread.Priority = ThreadPriority.Normal;
             controlThread.IsBackground = true;
@@ -465,18 +527,12 @@ namespace DS4WinWPF
 
                 ControlService.CurrentInstance = rootHub;
                 requestClient = new HttpClient();
-                collectTimer = new Timer(GarbageTask, null, 30000, 30000);
             });
             controlThread.Priority = ThreadPriority.Normal;
             controlThread.IsBackground = true;
             controlThread.Start();
             while (controlThread.IsAlive)
                 Thread.SpinWait(500);
-        }
-
-        private void GarbageTask(object state)
-        {
-            GC.Collect(0, GCCollectionMode.Forced, false);
         }
 
         private void CreateTempWorkerThread()
@@ -504,127 +560,6 @@ namespace DS4WinWPF
                             MainWindow.WindowState = WindowState.Normal;
                         }));
                 }
-        }
-
-        public void CreateIPCClassNameMMF(IntPtr hWnd)
-        {
-            if (ipcClassNameMMA != null) return; // Already holding a handle to MMF file. No need to re-write the data
-
-            try
-            {
-                var wndClassNameStr = new StringBuilder(128);
-                if (GetClassName(hWnd, wndClassNameStr, wndClassNameStr.Capacity) != 0 && wndClassNameStr.Length > 0)
-                {
-                    var buffer = Encoding.ASCII.GetBytes(wndClassNameStr.ToString());
-
-                    ipcClassNameMMF = MemoryMappedFile.CreateNew("DS4Windows_IPCClassName.dat", 128);
-                    ipcClassNameMMA = ipcClassNameMMF.CreateViewAccessor(0, buffer.Length);
-                    ipcClassNameMMA.WriteArray(0, buffer, 0, buffer.Length);
-                    // The MMF file is alive as long this process holds the file handle open
-                }
-            }
-            catch (Exception)
-            {
-                /* Eat all exceptions because errors here are not fatal for DS4Win */
-            }
-        }
-
-        private string ReadIPCClassNameMMF()
-        {
-            MemoryMappedFile mmf = null;
-            MemoryMappedViewAccessor mma = null;
-
-            try
-            {
-                var buffer = new byte[128];
-                mmf = MemoryMappedFile.OpenExisting("DS4Windows_IPCClassName.dat");
-                mma = mmf.CreateViewAccessor(0, 128);
-                mma.ReadArray(0, buffer, 0, buffer.Length);
-                return Encoding.ASCII.GetString(buffer);
-            }
-            catch (Exception)
-            {
-                // Eat all exceptions
-            }
-            finally
-            {
-                if (mma != null) mma.Dispose();
-                if (mmf != null) mmf.Dispose();
-            }
-
-            return null;
-        }
-
-        private void CreateIPCResultDataMMF()
-        {
-            // Cmdline client process calls this to create the MMF file used in inter-process-communications. The background DS4Windows process 
-            // uses WriteIPCResultDataMMF method to write a command result and the client process reads the result from the same MMF file.
-            if (ipcResultDataMMA != null) return; // Already holding a handle to MMF file. No need to re-write the data
-
-            try
-            {
-                ipcResultDataMMF = MemoryMappedFile.CreateNew("DS4Windows_IPCResultData.dat", 256);
-                ipcResultDataMMA = ipcResultDataMMF.CreateViewAccessor(0, 256);
-                // The MMF file is alive as long this process holds the file handle open
-            }
-            catch (Exception)
-            {
-                /* Eat all exceptions because errors here are not fatal for DS4Win */
-            }
-        }
-
-        private string WaitAndReadIPCResultDataMMF(EventWaitHandle ipcNotifyEvent)
-        {
-            if (ipcResultDataMMA != null)
-                // Wait until the inter-process-communication (IPC) result data is available and read the result
-                try
-                {
-                    // Wait max 10 secs and if the result is still not available then timeout and return "empty" result
-                    if (ipcNotifyEvent == null || ipcNotifyEvent.WaitOne(10000))
-                    {
-                        int strNullCharIdx;
-                        var buffer = new byte[256];
-                        ipcResultDataMMA.ReadArray(0, buffer, 0, buffer.Length);
-                        strNullCharIdx = Array.FindIndex(buffer, byteVal => byteVal == 0);
-                        return Encoding.ASCII.GetString(buffer, 0, strNullCharIdx <= 1 ? 1 : strNullCharIdx);
-                    }
-                }
-                catch (Exception)
-                {
-                    /* Eat all exceptions because errors here are not fatal for DS4Win */
-                }
-
-            return string.Empty;
-        }
-
-        public void WriteIPCResultDataMMF(string dataStr)
-        {
-            // The background DS4Windows process calls this method to write out the result of "-command QueryProfile.device#" command.
-            // The cmdline client process reads the result from the DS4Windows_IPCResultData.dat MMF file and sends the result to console output pipe.
-            MemoryMappedFile mmf = null;
-            MemoryMappedViewAccessor mma = null;
-            EventWaitHandle ipcNotifyEvent = null;
-
-            try
-            {
-                ipcNotifyEvent = EventWaitHandle.OpenExisting("DS4Windows_IPCResultData_ReadyEvent");
-
-                var buffer = Encoding.ASCII.GetBytes(dataStr);
-                mmf = MemoryMappedFile.OpenExisting("DS4Windows_IPCResultData.dat");
-                mma = mmf.CreateViewAccessor(0, 256);
-                mma.WriteArray(0, buffer, 0, buffer.Length >= 256 ? 256 : buffer.Length);
-            }
-            catch (Exception)
-            {
-                // Eat all exceptions
-            }
-            finally
-            {
-                if (mma != null) mma.Dispose();
-                if (mmf != null) mmf.Dispose();
-
-                if (ipcNotifyEvent != null) ipcNotifyEvent.Set();
-            }
         }
 
         private void SetUICulture(string culture)
@@ -660,21 +595,11 @@ namespace DS4WinWPF
                 if (fireChanged) ThemeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-
-        private void Application_Exit(object sender, ExitEventArgs e)
-        {
-            if (runShutdown)
-            {
-                var logger = logHolder.Logger;
-                logger.Info("Request App Shutdown");
-                CleanShutdown();
-            }
-        }
-
+        
         private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
-            var logger = logHolder.Logger;
-            logger.Info("User Session Ending");
+            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+            logger.LogInformation("User Session Ending");
             CleanShutdown();
         }
 
@@ -706,18 +631,7 @@ namespace DS4WinWPF
 
                 if (ipcClassNameMMA != null) ipcClassNameMMA.Dispose();
                 if (ipcClassNameMMF != null) ipcClassNameMMF.Dispose();
-
-                LogManager.Flush();
-                LogManager.Shutdown();
             }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct COPYDATASTRUCT
-        {
-            public IntPtr dwData;
-            public int cbData;
-            public IntPtr lpData;
         }
     }
 }

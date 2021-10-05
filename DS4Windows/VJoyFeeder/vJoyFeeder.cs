@@ -12,7 +12,8 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;    // SuppressUnmanagedCodeSecurity support to optimize for performance instead of code security
+using System.Security;
+using DS4WinWPF.DS4Control.Logging; // SuppressUnmanagedCodeSecurity support to optimize for performance instead of code security
 
 namespace DS4Windows.VJoyFeeder
 {
@@ -653,7 +654,7 @@ namespace DS4Windows.VJoyFeeder
                 if (vJoyInitialized[vJoyID - 1]) return;
 
                 vJoyInitialized[vJoyID - 1] = true;
-                AppLogger.LogToGui("Initializing VJoy virtual joystick driver via vJoyInterface.dll interface", false);
+                AppLogger.Instance.LogToGui("Initializing VJoy virtual joystick driver via vJoyInterface.dll interface", false);
 
                 try
                 {
@@ -664,24 +665,24 @@ namespace DS4Windows.VJoyFeeder
 
                     if (currVJoy.vJoyEnabled() && currVJoy.GetVJDAxisExist(vJoyID, axis))
                     {
-                        AppLogger.LogToGui("Connection to VJoy virtual joystick established", false);
-                        AppLogger.LogToGui($"VJoy driver. Vendor={currVJoy.GetvJoyManufacturerString()}  Product={currVJoy.GetvJoyProductString()}  Version={currVJoy.GetvJoySerialNumberString()}  Device#={vJoyID}  Axis={axis}", false);
+                        AppLogger.Instance.LogToGui("Connection to VJoy virtual joystick established", false);
+                        AppLogger.Instance.LogToGui($"VJoy driver. Vendor={currVJoy.GetvJoyManufacturerString()}  Product={currVJoy.GetvJoyProductString()}  Version={currVJoy.GetvJoySerialNumberString()}  Device#={vJoyID}  Axis={axis}", false);
 
                         // Test if DLL matches the driver
                         UInt32 DllVer = 0, DrvVer = 0;
                         if (!currVJoy.DriverMatch(ref DllVer, ref DrvVer))
-                            AppLogger.LogToGui("WARNING. VJoy version of Driver {DrvVer}) does not match interface DLL Version {DllVer}. This may lead to unexpected problems or crashes. Update VJoy driver and vJoyInterface.dll", false);
+                            AppLogger.Instance.LogToGui("WARNING. VJoy version of Driver {DrvVer}) does not match interface DLL Version {DllVer}. This may lead to unexpected problems or crashes. Update VJoy driver and vJoyInterface.dll", false);
 
                         VjdStat status = currVJoy.GetVJDStatus(vJoyID);
                         if ((status == VjdStat.VJD_STAT_OWN) || ((status == VjdStat.VJD_STAT_FREE) && (!currVJoy.AcquireVJD(vJoyID))))
                         {
                             vJoyAvailable[vJoyID - 1] = false;
-                            AppLogger.LogToGui("ERROR. Failed to acquire vJoy device# {vJoyID}. Use another VJoy device or make sure there are no other VJoy feeder apps using the same device", false);
+                            AppLogger.Instance.LogToGui("ERROR. Failed to acquire vJoy device# {vJoyID}. Use another VJoy device or make sure there are no other VJoy feeder apps using the same device", false);
                         }
                         else
                         {
                             //vJoyObj.GetVJDAxisMax(vJoyID, axis, ref vJoyAxisMaxValue);
-                            //AppLogger.LogToGui($"VJoy axis {axis} max value={vJoyAxisMaxValue}", false);
+                            //AppLogger.Instance.LogToGui($"VJoy axis {axis} max value={vJoyAxisMaxValue}", false);
                             currVJoy.ResetVJD(vJoyID);
                             vJoyAvailable[vJoyID - 1] = true;
                         }
@@ -689,13 +690,13 @@ namespace DS4Windows.VJoyFeeder
                     else
                     {
                         vJoyAvailable[vJoyID - 1] = false;
-                        AppLogger.LogToGui($"ERROR. VJoy device# {vJoyID} or {axis} axis not available. Check vJoy driver installation and configuration", false);
+                        AppLogger.Instance.LogToGui($"ERROR. VJoy device# {vJoyID} or {axis} axis not available. Check vJoy driver installation and configuration", false);
                     }
                 }
                 catch
                 {
                     vJoyAvailable[vJoyID - 1] = false;
-                    AppLogger.LogToGui("ERROR. vJoy initialization failed. Make sure that DS4Windows application can find vJoyInterface.dll library file", false);
+                    AppLogger.Instance.LogToGui("ERROR. vJoy initialization failed. Make sure that DS4Windows application can find vJoyInterface.dll library file", false);
                 }
             }
         }

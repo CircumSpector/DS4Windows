@@ -21,7 +21,10 @@ using HttpProgress;
 
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -56,15 +59,24 @@ namespace DS4WinWPF.DS4Forms
 
         public ProfileList ProfileListHolder { get => profileListHolder; }
 
-        public MainWindow(ArgumentParser parser)
+        private readonly IServiceProvider ServiceProvider;
+
+        public MainWindow(
+            ICommandLineOptions parser, 
+            IServiceProvider serviceProvider,
+            MainWindowsViewModel mainWindowsViewModel,
+            SettingsViewModel settingsViewModel
+            )
         {
+            ServiceProvider = serviceProvider;
+
             InitializeComponent();
 
-            mainWinVM = new MainWindowsViewModel();
+            mainWinVM = mainWindowsViewModel;
             DataContext = mainWinVM;
 
             App root = Application.Current as App;
-            settingsWrapVM = new SettingsViewModel();
+            settingsWrapVM = settingsViewModel;
             settingsTab.DataContext = settingsWrapVM;
             logvm = new LogViewModel(App.rootHub);
             //logListView.ItemsSource = logvm.LogItems;
@@ -72,7 +84,7 @@ namespace DS4WinWPF.DS4Forms
             lastMsgLb.DataContext = lastLogMsg;
 
             profileListHolder.Refresh();
-            profilesListBox.ItemsSource = profileListHolder.ProfileListCol;
+            profilesListBox.ItemsSource = profileListHolder.ProfileListCollection;
 
             StartStopBtn.Content = App.rootHub.running ? Translations.Strings.StopText :
                 Translations.Strings.StartText;
@@ -90,7 +102,7 @@ namespace DS4WinWPF.DS4Forms
             trayIconVM = new TrayIconViewModel(App.rootHub, profileListHolder);
             notifyIcon.DataContext = trayIconVM;
 
-            if (Global.Instance.Config.StartMinimized || parser.Mini)
+            if (Global.Instance.Config.StartMinimized || parser.StartMinimized)
             {
                 WindowState = WindowState.Minimized;
             }
@@ -135,7 +147,7 @@ namespace DS4WinWPF.DS4Forms
             timerThread.Join();
         }
 
-        public void LateChecks(ArgumentParser parser)
+        public void LateChecks(CommandLineOptions parser)
         {
             Task tempTask = Task.Run(async () =>
             {
@@ -220,7 +232,7 @@ namespace DS4WinWPF.DS4Forms
         {
             string version = Global.ExecutableProductVersion;
             string newversion = string.Empty;
-            string versionFilePath = Global.RuntimeAppDataPath + "\\version.txt";
+            string versionFilePath = Path.Combine(Global.RuntimeAppDataPath, "version.txt");
             ulong lastVersionNum = Global.Instance.Config.LastVersionCheckedNumber;
             //ulong lastVersion = Global.CompileVersionNumberFromString("2.1.1");
 
@@ -252,28 +264,28 @@ namespace DS4WinWPF.DS4Forms
 
                     if (launch)
                     {
-                        using (Process p = new Process())
+                        using Process p = new Process();
+
+                        p.StartInfo.FileName = Path.Combine(Global.ExecutableDirectory, "DS4Updater.exe");
+                        bool isAdmin = Global.IsAdministrator;
+                        List<string> argList = new List<string>();
+                        argList.Add("-autolaunch");
+                        
+                        if (!isAdmin)
                         {
-                            p.StartInfo.FileName = System.IO.Path.Combine(Global.ExecutableDirectory, "DS4Updater.exe");
-                            bool isAdmin = Global.IsAdministrator;
-                            List<string> argList = new List<string>();
-                            argList.Add("-autolaunch");
-                            if (!isAdmin)
-                            {
-                                argList.Add("-user");
-                            }
-
-                            // Specify current exe to have DS4Updater launch
-                            argList.Add("--launchExe");
-                            argList.Add(Global.ExecutableFileName);
-
-                            p.StartInfo.Arguments = string.Join(" ", argList);
-                            if (Global.IsAdminNeeded)
-                                p.StartInfo.Verb = "runas";
-
-                            try { launch = p.Start(); }
-                            catch (InvalidOperationException) { }
+                            argList.Add("-user");
                         }
+
+                        // Specify current exe to have DS4Updater launch
+                        argList.Add("--launchExe");
+                        argList.Add(Global.ExecutableFileName);
+
+                        p.StartInfo.Arguments = string.Join(" ", argList);
+                        if (Global.IsAdminNeeded)
+                            p.StartInfo.Verb = "runas";
+
+                        try { launch = p.Start(); }
+                        catch (InvalidOperationException) { }
                     }
 
                     if (launch)
@@ -297,13 +309,13 @@ namespace DS4WinWPF.DS4Forms
                 else
                 {
                     if (versionFileExists)
-                        File.Delete(Global.RuntimeAppDataPath + "\\version.txt");
+                        File.Delete(Path.Combine(Global.RuntimeAppDataPath, "version.txt"));
                 }
             }
             else
             {
                 if (versionFileExists)
-                    File.Delete(Global.RuntimeAppDataPath + "\\version.txt");
+                    File.Delete(Path.Combine(Global.RuntimeAppDataPath, "version.txt"));
 
                 if (showstatus)
                 {
@@ -322,7 +334,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 launch = false;
                 Uri url2 = new Uri($"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
-                string filename = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "DS4Updater.exe");
+                string filename = Path.Combine(Path.GetTempPath(), "DS4Updater.exe");
                 using (var downloadStream = new FileStream(filename, FileMode.Create))
                 {
                     Task<System.Net.Http.HttpResponseMessage> temp =
@@ -365,16 +377,16 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        private void ShowNotification(object sender, DS4Windows.DebugEventArgs e)
+        private void ShowNotification(object sender, LogEntryEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
 
                 if (!IsActive && (Global.Instance.Config.Notifications == 2 ||
-                                  (Global.Instance.Config.Notifications == 1 && e.Warning)))
+                                  (Global.Instance.Config.Notifications == 1 && e.IsWarning)))
                 {
                     notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
-                    e.Data, !e.Warning ? Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info :
+                    e.Data, !e.IsWarning ? Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info :
                     Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Warning);
                 }
             }));
@@ -388,8 +400,10 @@ namespace DS4WinWPF.DS4Forms
             App.rootHub.PreServiceStop += PrepareForServiceStop;
             //root.rootHubtest.RunningChanged += ControlServiceChanged;
             conLvViewModel.ControllerCol.CollectionChanged += ControllerCol_CollectionChanged;
-            AppLogger.TrayIconLog += ShowNotification;
-            AppLogger.GuiLog += UpdateLastStatusMessage;
+            
+            AppLogger.Instance.NewTrayAreaLog += ShowNotification;
+            AppLogger.Instance.NewGuiLog += UpdateLastStatusMessage;
+            
             logvm.LogItems.CollectionChanged += LogItems_CollectionChanged;
             App.rootHub.Debug += UpdateLastStatusMessage;
             trayIconVM.RequestShutdown += TrayIconVM_RequestShutdown;
@@ -432,7 +446,7 @@ namespace DS4WinWPF.DS4Forms
 
             if (!wmiConnected)
             {
-                AppLogger.LogToGui(@"Could not connect to Windows Management Instrumentation service.
+                AppLogger.Instance.LogToGui(@"Could not connect to Windows Management Instrumentation service.
 Suspend support not enabled.", true);
             }
         }
@@ -669,10 +683,10 @@ Suspend support not enabled.", true);
             this.Close();
         }
 
-        private void UpdateLastStatusMessage(object sender, DS4Windows.DebugEventArgs e)
+        private void UpdateLastStatusMessage(object sender, LogEntryEventArgs e)
         {
             lastLogMsg.Message = e.Data;
-            lastLogMsg.Warning = e.Warning;
+            lastLogMsg.Warning = e.IsWarning;
         }
 
         private void ChangeControllerPanel()
@@ -898,7 +912,7 @@ Suspend support not enabled.", true);
             dialog.InitialDirectory = Global.RuntimeAppDataPath;
             if (dialog.ShowDialog() == true)
             {
-                LogWriter logWriter = new LogWriter(dialog.FileName, logvm.LogItems.ToList());
+                LogExporter logWriter = new LogExporter(dialog.FileName, logvm.LogItems.ToList());
                 logWriter.Process();
             }
         }
@@ -1138,7 +1152,7 @@ Suspend support not enabled.", true);
                                     {
                                         if (strData[0] == "loadprofile")
                                         {
-                                            int idx = profileListHolder.ProfileListCol.Select((item, index) => new { item, index }).
+                                            int idx = profileListHolder.ProfileListCollection.Select((item, index) => new { item, index }).
                                                     Where(x => x.item.Name == strData[2]).Select(x => x.index).DefaultIfEmpty(-1).First();
 
                                             if (idx >= 0 && tdevice < conLvViewModel.ControllerCol.Count)
@@ -1219,7 +1233,7 @@ Suspend support not enabled.", true);
                                             else if (propName == "devicepath" && App.rootHub.DS4Controllers[tdevice] != null)
                                                 propValue = App.rootHub.DS4Controllers[tdevice].HidDevice.DevicePath;
                                             else if (propName == "macaddress" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].MacAddress;
+                                                propValue = App.rootHub.DS4Controllers[tdevice].MacAddress.AsFriendlyName();
                                             else if (propName == "displayname" && App.rootHub.DS4Controllers[tdevice] != null)
                                                 propValue = App.rootHub.DS4Controllers[tdevice].DisplayName;
                                             else if (propName == "conntype" && App.rootHub.DS4Controllers[tdevice] != null)
@@ -1306,7 +1320,7 @@ Suspend support not enabled.", true);
 
             if (item != null)
             {
-                ProfileEntity entity = profileListHolder.ProfileListCol[item.SelectedIndex];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[item.SelectedIndex];
                 ShowProfileEditor(idx, entity);
                 mainTabCon.SelectedIndex = 1;
             }
@@ -1488,7 +1502,7 @@ Suspend support not enabled.", true);
                 Stream stream;
                 int idx = profilesListBox.SelectedIndex;
                 var profile = new StreamReader(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                    profileListHolder.ProfileListCol[idx].Name + ".xml")).BaseStream;
+                    profileListHolder.ProfileListCollection[idx].Name + ".xml")).BaseStream;
                 if (dialog.ShowDialog() == true)
                 {
                     if ((stream = dialog.OpenFile()) != null)
@@ -1507,7 +1521,7 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex >= 0)
             {
                 int idx = profilesListBox.SelectedIndex;
-                filename = profileListHolder.ProfileListCol[idx].Name;
+                filename = profileListHolder.ProfileListCollection[idx].Name;
                 dupBox.OldFilename = filename;
                 dupBoxBar.Visibility = Visibility.Visible;
                 dupBox.Save -= DupBox_Save;
@@ -1533,14 +1547,14 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex >= 0)
             {
                 int idx = profilesListBox.SelectedIndex;
-                ProfileEntity entity = profileListHolder.ProfileListCol[idx];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[idx];
                 string filename = entity.Name;
                 if (MessageBox.Show(Properties.Resources.ProfileCannotRestore.Replace("*Profile name*", "\"" + filename + "\""),
                     Properties.Resources.DeleteProfile,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     entity.DeleteFile();
-                    profileListHolder.ProfileListCol.RemoveAt(idx);
+                    profileListHolder.ProfileListCollection.RemoveAt(idx);
                 }
             }
         }
@@ -1605,7 +1619,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                ProfileEntity entity = profileListHolder.ProfileListCol[profilesListBox.SelectedIndex];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
                 ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
             }
         }
@@ -1691,7 +1705,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                ProfileEntity entity = profileListHolder.ProfileListCol[profilesListBox.SelectedIndex];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
                 ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
             }
         }
@@ -1761,7 +1775,7 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex >= 0)
             {
                 int idx = profilesListBox.SelectedIndex;
-                ProfileEntity entity = profileListHolder.ProfileListCol[idx];
+                ProfileEntity entity = profileListHolder.ProfileListCollection[idx];
                 string filename = Path.Combine(Global.RuntimeAppDataPath,
                     "Profiles", $"{entity.Name}.xml");
 

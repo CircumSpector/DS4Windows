@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -198,7 +199,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public DS4Device Device { get => device; set => device = value; }
         public string SelectedProfile { get => selectedProfile; set => selectedProfile = value; }
         public ProfileList ProfileEntities { get => profileListHolder; set => profileListHolder = value; }
-        public ObservableCollection<ProfileEntity> ProfileListCol => profileListHolder.ProfileListCol;
+        public ObservableCollection<ProfileEntity> ProfileListCol => profileListHolder.ProfileListCollection;
 
         public string LightColor
         {
@@ -224,7 +225,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 return temp;
             }
         }
-        public event EventHandler BatteryStateChanged;
+        public event Action<DS4Device> BatteryStateChanged;
 
         public int SelectedIndex
         {
@@ -350,20 +351,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             ProfileList collection)
         {
             this.device = device;
-            device.BatteryChanged += (sender, e) => BatteryStateChanged?.Invoke(this, e);
-            device.ChargingChanged += (sender, e) => BatteryStateChanged?.Invoke(this, e);
+            device.BatteryChanged += (sender) => BatteryStateChanged?.Invoke(sender);
+            device.ChargingChanged += (sender) => BatteryStateChanged?.Invoke(sender);
             device.MacAddressChanged += (sender, e) => IdTextChanged?.Invoke(this, e);
             this.devIndex = devIndex;
             this.selectedProfile = profile;
             profileListHolder = collection;
             if (!string.IsNullOrEmpty(selectedProfile))
             {
-                this.selectedEntity = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == selectedProfile);
+                this.selectedEntity = profileListHolder.ProfileListCollection.SingleOrDefault(x => x.Name == selectedProfile);
             }
 
             if (this.selectedEntity != null)
             {
-                selectedIndex = profileListHolder.ProfileListCol.IndexOf(this.selectedEntity);
+                selectedIndex = profileListHolder.ProfileListCollection.IndexOf(this.selectedEntity);
                 HookEvents(true);
             }
 
@@ -380,7 +381,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             string prof = Global.Instance.Config.ProfilePath[devIndex] = ProfileListCol[selectedIndex].Name;
             if (LinkedProfile)
             {
-                Global.Instance.Config.ChangeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
+                Global.Instance.Config.ChangeLinkedProfile(device.MacAddress, Global.Instance.Config.ProfilePath[devIndex]);
                 Global.Instance.Config.SaveLinkedProfiles();
             }
             else
@@ -391,13 +392,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             //Global.Save();
             await Global.Instance.LoadProfile(devIndex, true, App.rootHub);
             string prolog = string.Format(Properties.Resources.UsingProfile, (devIndex + 1).ToString(), prof, $"{device.Battery}");
-            DS4Windows.AppLogger.LogToGui(prolog, false);
+            AppLogger.Instance.LogToGui(prolog, false);
 
             selectedProfile = prof;
-            this.selectedEntity = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == prof);
+            this.selectedEntity = profileListHolder.ProfileListCollection.SingleOrDefault(x => x.Name == prof);
             if (this.selectedEntity != null)
             {
-                selectedIndex = profileListHolder.ProfileListCol.IndexOf(this.selectedEntity);
+                selectedIndex = profileListHolder.ProfileListCollection.IndexOf(this.selectedEntity);
                 HookEvents(true);
             }
 
@@ -421,10 +422,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void SelectedEntity_ProfileDeleted(object sender, EventArgs e)
         {
             HookEvents(false);
-            ProfileEntity entity = profileListHolder.ProfileListCol.FirstOrDefault();
+            ProfileEntity entity = profileListHolder.ProfileListCollection.FirstOrDefault();
             if (entity != null)
             {
-                SelectedIndex = profileListHolder.ProfileListCol.IndexOf(entity);
+                SelectedIndex = profileListHolder.ProfileListCollection.IndexOf(entity);
             }
         }
 
@@ -441,18 +442,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void SaveLinked(bool status)
         {
-            if (device != null && device.isSynced())
+            if (device != null && device.IsSynced())
             {
                 if (status)
                 {
-                    if (device.isValidSerial())
+                    if (device.IsValidSerial())
                     {
-                        Global.Instance.Config.ChangeLinkedProfile(device.getMacAddress(), Global.Instance.Config.ProfilePath[devIndex]);
+                        Global.Instance.Config.ChangeLinkedProfile(device.MacAddress, Global.Instance.Config.ProfilePath[devIndex]);
                     }
                 }
                 else
                 {
-                    Global.Instance.Config.RemoveLinkedProfile(device.getMacAddress());
+                    Global.Instance.Config.RemoveLinkedProfile(device.MacAddress);
                     Global.Instance.Config.ProfilePath[devIndex] = Global.Instance.Config.OlderProfilePath[devIndex];
                 }
 
@@ -501,10 +502,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ChangeSelectedProfile(string loadprofile)
         {
-            ProfileEntity temp = profileListHolder.ProfileListCol.SingleOrDefault(x => x.Name == loadprofile);
+            ProfileEntity temp = profileListHolder.ProfileListCollection.SingleOrDefault(x => x.Name == loadprofile);
             if (temp != null)
             {
-                SelectedIndex = profileListHolder.ProfileListCol.IndexOf(temp);
+                SelectedIndex = profileListHolder.ProfileListCollection.IndexOf(temp);
             }
         }
 
@@ -515,7 +516,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (device.ConnectionType == ConnectionType.BT)
                 {
                     //device.StopUpdate();
-                    device.queueEvent(() =>
+                    device.QueueEvent(() =>
                     {
                         device.DisconnectBT();
                     });

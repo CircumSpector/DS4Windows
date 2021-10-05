@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using DS4Windows;
@@ -35,7 +36,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public List<DeviceListItem> CurrentInputDevices { get => currentInputDevices; }
 
         // Serial, ControllerOptionsStore instance
-        private Dictionary<string, ControllerOptionsStore> inputDeviceSettings = new Dictionary<string, ControllerOptionsStore>();
+        private Dictionary<PhysicalAddress, ControllerOptionsStore> inputDeviceSettings = new();
         private List<ControllerOptionsStore> controllerOptionsStores = new List<ControllerOptionsStore>();
 
         private int controllerSelectedIndex = -1;
@@ -111,22 +112,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 controllerOptionsStores[controllerSelectedIndex];
 
             int result = 0;
-            switch (currentStore.DeviceType)
+
+            switch (currentStore)
             {
-                case DS4Windows.InputDevices.InputDeviceType.DS4:
+                case DS4ControllerOptions _:
                     result = 1;
                     break;
-                case DS4Windows.InputDevices.InputDeviceType.DualSense:
+                case DualSenseControllerOptions _:
                     result = 2;
                     break;
-                case DS4Windows.InputDevices.InputDeviceType.SwitchPro:
+                case SwitchProControllerOptions _:
                     result = 3;
                     break;
-                case DS4Windows.InputDevices.InputDeviceType.JoyConL:
-                case DS4Windows.InputDevices.InputDeviceType.JoyConR:
+                case JoyConControllerOptions _:
                     result = 4;
-                    break;
-                default:
                     break;
             }
 
@@ -138,22 +137,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             ControllerOptionsStore currentStore =
                 controllerOptionsStores[controllerSelectedIndex];
 
-            switch (currentStore.DeviceType)
+            switch (currentStore)
             {
-                case DS4Windows.InputDevices.InputDeviceType.DS4:
+                case DS4ControllerOptions _:
                     dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, serviceDeviceOpts.Ds4DeviceOpts);
                     break;
-                case DS4Windows.InputDevices.InputDeviceType.DualSense:
+                case DualSenseControllerOptions _:
                     dataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions, serviceDeviceOpts.DualSenseOpts);
                     break;
-                case DS4Windows.InputDevices.InputDeviceType.SwitchPro:
+                case SwitchProControllerOptions _:
                     dataContextObject = new SwitchProControllerOptionsWrapper(CurrentSwitchProOptions, serviceDeviceOpts.SwitchProDeviceOpts);
                     break;
-                case DS4Windows.InputDevices.InputDeviceType.JoyConL:
-                case DS4Windows.InputDevices.InputDeviceType.JoyConR:
+                case JoyConControllerOptions _:
                     dataContextObject = new JoyConControllerOptionsWrapper(CurrentJoyConOptions, serviceDeviceOpts.JoyConDeviceOpts);
-                    break;
-                default:
                     break;
             }
         }
@@ -200,7 +196,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             this.options = options;
             this.parentOptions = parentOpts;
-            parentOptions.EnabledChanged += (sender, e) => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
+            parentOptions.EnabledChanged += () =>
+            {
+                VisibleChanged?.Invoke(this, EventArgs.Empty);
+            };
         }
     }
 
@@ -243,7 +242,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             this.options = options;
             this.parentOptions = parentOpts;
-            parentOptions.EnabledChanged += (sender, e) => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
+            parentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
         }
     }
 
@@ -261,7 +260,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             this.options = options;
             this.parentOptions = parentOpts;
-            parentOptions.EnabledChanged += (sender, e) => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
+            parentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
         }
     }
 
@@ -295,7 +294,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             this.options = options;
             this.parentOptions = parentOpts;
-            parentOptions.EnabledChanged += (sender, e) => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
+            parentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
         }
     }
 

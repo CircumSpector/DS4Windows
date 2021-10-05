@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace DS4WinWPF
+namespace DS4WinWPF.DS4Control.Logging
 {
-    public class LogWriter
+    /// <summary>
+    ///     Helper to transform the UI log into a text file.
+    /// </summary>
+    public class LogExporter
     {
         private readonly string filename;
         private readonly List<LogItem> logCol;
 
-        public LogWriter(string filename, List<LogItem> col)
+        public LogExporter(string filename, List<LogItem> col)
         {
             this.filename = filename;
             logCol = col;
@@ -17,7 +20,7 @@ namespace DS4WinWPF
         public void Process()
         {
             var outputLines = new List<string>();
-            foreach (var item in logCol) outputLines.Add($"{item.Datetime}: {item.Message}");
+            foreach (var item in logCol) outputLines.Add($"{item.Time}: {item.Message}");
 
             try
             {

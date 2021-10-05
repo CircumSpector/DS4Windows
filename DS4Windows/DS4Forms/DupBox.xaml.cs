@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4WinWPF.DS4Forms
 {

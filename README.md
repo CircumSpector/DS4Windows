@@ -8,7 +8,12 @@
 
 ## Downloads
 
-Automated builds by AppVeyor, may or may not work, use at your own risk! No support provided whatsoever!
+Automated builds by AppVeyor.
+
+- ⚠️ May or may not launch/work/crash!
+- ⚠️ Use at your own risk!
+- ⚠️ May damage/corrupt your existing v3.x (or older) installation!
+- ⚠️ No support provided whatsoever!
 
 ### 64-Bit
 

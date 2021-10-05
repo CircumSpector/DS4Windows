@@ -1,27 +1,38 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Data;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4WinWPF
 {
-    public class ProfileList
+    public interface IProfileList
     {
-        private readonly object _proLockobj = new();
+        ObservableCollection<ProfileEntity> ProfileListCollection { get; }
+
+        void Refresh();
+
+        void AddProfileSort(string profileName);
+    }
+
+    public class ProfileList : IProfileList
+    {
+        private readonly object _lockObject = new();
 
         public ProfileList()
         {
-            BindingOperations.EnableCollectionSynchronization(ProfileListCol, _proLockobj);
+            BindingOperations.EnableCollectionSynchronization(ProfileListCollection, _lockObject);
         }
 
-        public ObservableCollection<ProfileEntity> ProfileListCol { get; set; } = new();
+        public ObservableCollection<ProfileEntity> ProfileListCollection { get; set; } = new();
 
         [ConfigurationSystemComponent]
         public void Refresh()
         {
-            ProfileListCol.Clear();
-            var profiles = Directory.GetFiles(Global.RuntimeAppDataPath + @"\Profiles\");
+            ProfileListCollection.Clear();
+            var profiles = Directory.GetFiles(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory));
             foreach (var s in profiles)
                 if (s.EndsWith(".xml"))
                 {
@@ -30,19 +41,19 @@ namespace DS4WinWPF
                         Name = Path.GetFileNameWithoutExtension(s)
                     };
 
-                    ProfileListCol.Add(item);
+                    ProfileListCollection.Add(item);
                 }
         }
 
-        public void AddProfileSort(string profilename)
+        public void AddProfileSort(string profileName)
         {
             var idx = 0;
             var inserted = false;
-            foreach (var entry in ProfileListCol)
+            foreach (var entry in ProfileListCollection)
             {
-                if (entry.Name.CompareTo(profilename) > 0)
+                if (string.Compare(entry.Name, profileName, StringComparison.Ordinal) > 0)
                 {
-                    ProfileListCol.Insert(idx, new ProfileEntity { Name = profilename });
+                    ProfileListCollection.Insert(idx, new ProfileEntity { Name = profileName });
                     inserted = true;
                     break;
                 }
@@ -50,16 +61,16 @@ namespace DS4WinWPF
                 idx++;
             }
 
-            if (!inserted) ProfileListCol.Add(new ProfileEntity { Name = profilename });
+            if (!inserted) ProfileListCollection.Add(new ProfileEntity { Name = profileName });
         }
 
         public void RemoveProfile(string profile)
         {
-            var selectedEntity = ProfileListCol.SingleOrDefault(x => x.Name == profile);
+            var selectedEntity = ProfileListCollection.SingleOrDefault(x => x.Name == profile);
             if (selectedEntity != null)
             {
-                var selectedIndex = ProfileListCol.IndexOf(selectedEntity);
-                ProfileListCol.RemoveAt(selectedIndex);
+                var selectedIndex = ProfileListCollection.IndexOf(selectedEntity);
+                ProfileListCollection.RemoveAt(selectedIndex);
             }
         }
     }

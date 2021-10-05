@@ -76,8 +76,10 @@ namespace DS4Windows
 
         public static void UpdateLightBar(DS4Device device, int deviceNum)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBar)}::{nameof(UpdateLightBar)}")
                 .StartActive(true);
+#endif
 
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight[deviceNum];
@@ -90,7 +92,7 @@ namespace DS4Windows
                 if (lightModeInfo.UseCustomLed)
                 {
                     color = lightModeInfo.LedAsBattery
-                        ? GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.CustomLed, device.getBattery())
+                        ? GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.CustomLed, device.GetBattery())
                         : lightModeInfo.CustomLed;
                 }
                 else
@@ -104,7 +106,7 @@ namespace DS4Windows
                             TimeSpan.FromMilliseconds(10)) //update by the millisecond that way it's a smooth transtion
                         {
                             oldnow[deviceNum] = now;
-                            if (device.isCharging())
+                            if (device.IsCharging())
                                 counters[deviceNum] -= 1.5 * 3 / rainbow;
                             else
                                 counters[deviceNum] += 1.5 * 3 / rainbow;
@@ -119,8 +121,8 @@ namespace DS4Windows
                         if (lightModeInfo.LedAsBattery)
                         {
                             var useSat = (byte)(maxSat == 1.0
-                                ? device.getBattery() * 2.55
-                                : device.getBattery() * 2.55 * maxSat);
+                                ? device.GetBattery() * 2.55
+                                : device.GetBattery() * 2.55 * maxSat);
                             color = HuetoRGB((float)counters[deviceNum] % 360, useSat);
                         }
                         else
@@ -131,7 +133,7 @@ namespace DS4Windows
                     }
                     else if (lightModeInfo.LedAsBattery)
                     {
-                        color = GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.Led, device.getBattery());
+                        color = GetTransitionedColor(lightModeInfo.LowLed, lightModeInfo.Led, device.GetBattery());
                     }
                     else
                     {
@@ -139,7 +141,7 @@ namespace DS4Windows
                     }
                 }
 
-                if (device.getBattery() <= lightModeInfo.FlashAt && !defaultLight && !device.isCharging())
+                if (device.GetBattery() <= lightModeInfo.FlashAt && !defaultLight && !device.IsCharging())
                 {
                     var flashColor = lightModeInfo.FlashLed;
                     if (!(flashColor.Red == 0 &&
@@ -197,7 +199,7 @@ namespace DS4Windows
 
                 var idleDisconnectTimeout = Instance.Config.GetIdleDisconnectTimeout(deviceNum);
                 if (idleDisconnectTimeout > 0 && lightModeInfo.LedAsBattery &&
-                    (!device.isCharging() || device.getBattery() >= 100))
+                    (!device.IsCharging() || device.GetBattery() >= 100))
                 {
                     // Fade lightbar by idle time
                     var timeratio = new TimeSpan(DateTime.UtcNow.Ticks - device.lastActive.Ticks);
@@ -217,7 +219,7 @@ namespace DS4Windows
                     }
                 }
 
-                if (device.isCharging() && device.getBattery() < 100)
+                if (device.IsCharging() && device.GetBattery() < 100)
                     switch (lightModeInfo.ChargingType)
                     {
                         case 1:
@@ -296,7 +298,7 @@ namespace DS4Windows
             }
             else if (useLightRoutine)
             {
-                if (device.getConnectionType() == ConnectionType.BT)
+                if (device.GetConnectionType() == ConnectionType.BT)
                     color = new DS4Color(32, 64, 64);
                 else
                     color = new DS4Color(0, 0, 0);
@@ -346,10 +348,10 @@ namespace DS4Windows
                             lightState.LightBarFlashDurationOn = (byte)(25 - forcedFlash[deviceNum]);
                         lightState.LightBarExplicitlyOff = true;
                     }
-                    else if (device.getBattery() <= lightModeInfo.FlashAt && lightModeInfo.FlashType == 0 &&
-                             !defaultLight && !device.isCharging())
+                    else if (device.GetBattery() <= lightModeInfo.FlashAt && lightModeInfo.FlashType == 0 &&
+                             !defaultLight && !device.IsCharging())
                     {
-                        var level = device.getBattery() / 10;
+                        var level = device.GetBattery() / 10;
                         if (level >= 10)
                             level = 10; // all values of >~100% are rendered the same
 

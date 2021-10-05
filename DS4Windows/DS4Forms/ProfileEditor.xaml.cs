@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using Microsoft.Win32;
@@ -940,14 +941,14 @@ namespace DS4WinWPF.DS4Forms
                     if (!rumbleActive)
                     {
                         profileSettingsVM.HeavyRumbleActive = true;
-                        d.setRumble(d.RightLightFastRumble,
+                        d.SetRumble(d.RightLightFastRumble,
                             (byte)Math.Min(255, 255 * profileSettingsVM.RumbleBoost / 100));
                         heavyRumbleTestBtn.Content = Properties.Resources.StopHText;
                     }
                     else
                     {
                         profileSettingsVM.HeavyRumbleActive = false;
-                        d.setRumble(d.RightLightFastRumble, 0);
+                        d.SetRumble(d.RightLightFastRumble, 0);
                         heavyRumbleTestBtn.Content = Properties.Resources.TestHText;
                     }
                 }
@@ -966,14 +967,14 @@ namespace DS4WinWPF.DS4Forms
                     if (!rumbleActive)
                     {
                         profileSettingsVM.LightRumbleActive = true;
-                        d.setRumble((byte)Math.Min(255, 255 * profileSettingsVM.RumbleBoost / 100),
+                        d.SetRumble((byte)Math.Min(255, 255 * profileSettingsVM.RumbleBoost / 100),
                             d.LeftHeavySlowRumble);
                         lightRumbleTestBtn.Content = Properties.Resources.StopLText;
                     }
                     else
                     {
                         profileSettingsVM.LightRumbleActive = false;
-                        d.setRumble(0, d.LeftHeavySlowRumble);
+                        d.SetRumble(0, d.LeftHeavySlowRumble);
                         lightRumbleTestBtn.Content = Properties.Resources.TestLText;
                     }
                 }

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Xml;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
 
 namespace DS4WinWPF
@@ -44,15 +41,13 @@ namespace DS4WinWPF
             {
                 settings = AutoProfilePrograms.Deserialize(stream);
             }
-            
+
             foreach (var programEntry in settings.ProgramEntries)
             {
                 var autoProfile = new AutoProfileEntity(programEntry.Path, programEntry.Title);
 
-                for (int i = 0; i < programEntry.Controllers.Count; i++)
-                {
+                for (var i = 0; i < programEntry.Controllers.Count; i++)
                     autoProfile.ProfileNames[i] = programEntry.Controllers[i].Profile;
-                }
 
                 autoProfile.Turnoff = programEntry.TurnOff;
 
@@ -67,7 +62,7 @@ namespace DS4WinWPF
 
             foreach (var profileEntity in AutoProfileCollection)
             {
-                var entry = new AutoProfileProgram()
+                var entry = new AutoProfileProgram
                 {
                     Path = profileEntity.Path,
                     Title = profileEntity.Title,
@@ -75,12 +70,10 @@ namespace DS4WinWPF
                 };
 
                 foreach (var profileName in profileEntity.ProfileNames)
-                {
-                    entry.Controllers.Add(new AutoProfileController()
+                    entry.Controllers.Add(new AutoProfileController
                     {
                         Profile = profileName
                     });
-                }
 
                 settings.ProgramEntries.Add(entry);
             }

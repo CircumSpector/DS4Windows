@@ -1,9 +1,12 @@
 ﻿using System;
-using System.Xml;
+using System.Xml.Serialization;
 using DS4Windows.InputDevices;
+using JetBrains.Annotations;
+using PropertyChanged;
 
 namespace DS4Windows
 {
+    [AddINotifyPropertyChangedInterface]
     public class ControlServiceDeviceOptions
     {
         public DS4DeviceOptions Ds4DeviceOpts { get; set; } = new();
@@ -23,113 +26,61 @@ namespace DS4Windows
         public bool VerboseLogMessages { get; set; }
     }
 
+    [XmlRoot(ElementName = "Controller")]
     public abstract class ControllerOptionsStore
     {
-        protected InputDeviceType deviceType;
-
-        public ControllerOptionsStore(InputDeviceType deviceType)
-        {
-            this.deviceType = deviceType;
-        }
-
-        public InputDeviceType DeviceType => deviceType;
-
-        [ConfigurationSystemComponent]
-        public virtual void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-        }
-
-        [ConfigurationSystemComponent]
-        public virtual void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-        }
     }
 
+    [XmlRoot(ElementName = "DS4SupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class DS4DeviceOptions
     {
-        private bool enabled = true;
+        [XmlElement(ElementName = "Enabled")]
+        public bool Enabled { get; set; } = true;
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "DS4SupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class DS4ControllerOptions : ControllerOptionsStore
     {
-        private bool copyCatController;
+        [XmlElement(ElementName = "Copycat")]
+        public bool IsCopyCat { get; set; }
 
-        public DS4ControllerOptions(InputDeviceType deviceType) : base(deviceType)
+        [UsedImplicitly]
+        private void OnIsCopyCatChanged()
         {
+            IsCopyCatChanged?.Invoke();
         }
 
-        public bool IsCopyCat
-        {
-            get => copyCatController;
-            set
-            {
-                if (copyCatController == value) return;
-                copyCatController = value;
-                IsCopyCatChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public event EventHandler IsCopyCatChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("DS4SupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("DS4SupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempRumbleNode = xmlDoc.CreateElement("Copycat");
-            tempRumbleNode.InnerText = copyCatController.ToString();
-            tempOptsNode.AppendChild(tempRumbleNode);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("DS4SupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("Copycat");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) copyCatController = temp;
-            }
-        }
+        public event Action IsCopyCatChanged;
     }
 
+    [XmlRoot(ElementName = "DualSenseSupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class DualSenseDeviceOptions
     {
-        private bool enabled = true;
+        [XmlElement(ElementName = "Enabled")]
+        public bool Enabled { get; set; } = true;
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "DualSenseSupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class DualSenseControllerOptions : ControllerOptionsStore
     {
         public enum LEDBarMode : ushort
@@ -147,190 +98,82 @@ namespace DS4Windows
             Pulse
         }
 
-        private bool enableRumble = true;
+        [XmlElement(ElementName = "EnableRumble")]
+        public bool EnableRumble { get; set; } = true;
 
-        private DualSenseDevice.HapticIntensity hapticIntensity = DualSenseDevice.HapticIntensity.Medium;
+        [XmlElement(ElementName = "RumbleStrength")]
+        public DualSenseDevice.HapticIntensity HapticIntensity { get; set; } = DualSenseDevice.HapticIntensity.Medium;
 
-        private LEDBarMode ledMode = LEDBarMode.MultipleControllers;
+        [XmlElement(ElementName = "LEDBarMode")]
+        public LEDBarMode LedMode { get; set; } = LEDBarMode.MultipleControllers;
 
-        private MuteLEDMode muteLedMode = MuteLEDMode.Off;
+        [XmlElement(ElementName = "MuteLEDMode")]
+        public MuteLEDMode MuteLedMode { get; set; } = MuteLEDMode.Off;
 
-        public DualSenseControllerOptions(InputDeviceType deviceType) :
-            base(deviceType)
+        [UsedImplicitly]
+        private void OnEnableRumbleChanged()
         {
+            EnableRumbleChanged?.Invoke();
         }
 
-        public bool EnableRumble
+        [UsedImplicitly]
+        private void OnHapticIntensityChanged()
         {
-            get => enableRumble;
-            set
-            {
-                if (enableRumble == value) return;
-                enableRumble = value;
-                EnableRumbleChanged?.Invoke(this, EventArgs.Empty);
-            }
+            HapticIntensityChanged?.Invoke();
         }
 
-        public DualSenseDevice.HapticIntensity HapticIntensity
+        [UsedImplicitly]
+        private void OnLedModeChanged()
         {
-            get => hapticIntensity;
-            set
-            {
-                if (hapticIntensity == value) return;
-                hapticIntensity = value;
-                HapticIntensityChanged?.Invoke(this, EventArgs.Empty);
-            }
+            LedModeChanged?.Invoke();
         }
 
-        public LEDBarMode LedMode
+        [UsedImplicitly]
+        private void OnMuteLedModeChanged()
         {
-            get => ledMode;
-            set
-            {
-                if (ledMode == value) return;
-                ledMode = value;
-                LedModeChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MuteLedModeChanged?.Invoke();
         }
 
-        public MuteLEDMode MuteLedMode
-        {
-            get => muteLedMode;
-            set
-            {
-                if (muteLedMode == value) return;
-                muteLedMode = value;
-                MuteLedModeChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public event EventHandler EnableRumbleChanged;
-        public event EventHandler HapticIntensityChanged;
-        public event EventHandler LedModeChanged;
-        public event EventHandler MuteLedModeChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("DualSenseSupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("DualSenseSupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempRumbleNode = xmlDoc.CreateElement("EnableRumble");
-            tempRumbleNode.InnerText = enableRumble.ToString();
-            tempOptsNode.AppendChild(tempRumbleNode);
-
-            XmlNode tempRumbleStrengthNode = xmlDoc.CreateElement("RumbleStrength");
-            tempRumbleStrengthNode.InnerText = hapticIntensity.ToString();
-            tempOptsNode.AppendChild(tempRumbleStrengthNode);
-
-            XmlNode tempLedMode = xmlDoc.CreateElement("LEDBarMode");
-            tempLedMode.InnerText = ledMode.ToString();
-            tempOptsNode.AppendChild(tempLedMode);
-
-            XmlNode tempMuteLedMode = xmlDoc.CreateElement("MuteLEDMode");
-            tempMuteLedMode.InnerText = muteLedMode.ToString();
-            tempOptsNode.AppendChild(tempMuteLedMode);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("DualSenseSupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("EnableRumble");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableRumble = temp;
-
-                var itemStrength = baseNode.SelectSingleNode("RumbleStrength");
-                if (Enum.TryParse(itemStrength?.InnerText ?? "",
-                    out DualSenseDevice.HapticIntensity tempHap))
-                    hapticIntensity = tempHap;
-
-                var itemLedMode = baseNode.SelectSingleNode("LEDBarMode");
-                if (Enum.TryParse(itemLedMode?.InnerText ?? "",
-                    out LEDBarMode tempLED))
-                    ledMode = tempLED;
-
-                var itemMuteLedMode = baseNode.SelectSingleNode("MuteLEDMode");
-                if (Enum.TryParse(itemMuteLedMode?.InnerText ?? "",
-                    out MuteLEDMode tempMuteLED))
-                    muteLedMode = tempMuteLED;
-            }
-        }
+        public event Action EnableRumbleChanged;
+        public event Action HapticIntensityChanged;
+        public event Action LedModeChanged;
+        public event Action MuteLedModeChanged;
     }
 
+    [XmlRoot(ElementName = "SwitchProSupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class SwitchProDeviceOptions
     {
-        private bool enabled = true;
+        [XmlElement(ElementName = "Enabled")]
+        public bool Enabled { get; set; } = true;
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "SwitchProSupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class SwitchProControllerOptions : ControllerOptionsStore
     {
-        private bool enableHomeLED = true;
+        [XmlElement(ElementName = "EnableHomeLED")]
+        public bool EnableHomeLED { get; set; } = true;
 
-        public SwitchProControllerOptions(InputDeviceType deviceType) : base(deviceType)
+        [UsedImplicitly]
+        private void OnEnableHomeLEDChanged()
         {
+            EnableHomeLEDChanged?.Invoke();
         }
 
-        public bool EnableHomeLED
-        {
-            get => enableHomeLED;
-            set
-            {
-                if (enableHomeLED == value) return;
-                enableHomeLED = value;
-                EnableHomeLEDChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public event EventHandler EnableHomeLEDChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("SwitchProSupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("SwitchProSupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
-            tempElement.InnerText = enableHomeLED.ToString();
-            tempOptsNode.AppendChild(tempElement);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("SwitchProSupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableHomeLED = temp;
-            }
-        }
+        public event Action EnableHomeLEDChanged;
     }
 
+    [XmlRoot(ElementName = "JoyConSupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class JoyConDeviceOptions
     {
         public enum JoinedGyroProvider : ushort
@@ -345,93 +188,36 @@ namespace DS4Windows
             Joined
         }
 
-        private bool enabled = true;
+        public bool Enabled { get; set; } = true;
 
-        private JoinedGyroProvider joinGyroProv = JoinedGyroProvider.JoyConR;
+        [XmlElement(ElementName = "LinkMode")]
+        public LinkMode LinkedMode { get; set; } = LinkMode.Joined;
 
-        private LinkMode linkedMode = LinkMode.Joined;
+        [XmlElement(ElementName = "JoinedGyroProvider")]
+        public JoinedGyroProvider JoinGyroProv { get; set; } = JoinedGyroProvider.JoyConR;
 
-        public bool Enabled
+        [UsedImplicitly]
+        private void OnEnabledChanged()
         {
-            get => enabled;
-            set
-            {
-                if (enabled == value) return;
-                enabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
-            }
+            EnabledChanged?.Invoke();
         }
 
-        public LinkMode LinkedMode
-        {
-            get => linkedMode;
-            set
-            {
-                if (linkedMode == value) return;
-                linkedMode = value;
-            }
-        }
-
-        public JoinedGyroProvider JoinGyroProv
-        {
-            get => joinGyroProv;
-            set
-            {
-                if (joinGyroProv == value) return;
-                joinGyroProv = value;
-            }
-        }
-
-        public event EventHandler EnabledChanged;
+        public event Action EnabledChanged;
     }
 
+    [XmlRoot(ElementName = "JoyConSupportSettings")]
+    [AddINotifyPropertyChangedInterface]
     public class JoyConControllerOptions : ControllerOptionsStore
     {
-        private bool enableHomeLED = true;
+        [XmlElement(ElementName = "EnableHomeLED")]
+        public bool EnableHomeLED { get; set; } = true;
 
-        public JoyConControllerOptions(InputDeviceType deviceType) :
-            base(deviceType)
+        [UsedImplicitly]
+        private void OnEnableHomeLEDChanged()
         {
+            EnableHomeLEDChanged?.Invoke();
         }
 
-        public bool EnableHomeLED
-        {
-            get => enableHomeLED;
-            set
-            {
-                if (enableHomeLED == value) return;
-                enableHomeLED = value;
-                EnableHomeLEDChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public event EventHandler EnableHomeLEDChanged;
-
-        [ConfigurationSystemComponent]
-        public override void PersistSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var tempOptsNode = node.SelectSingleNode("JoyConSupportSettings");
-            if (tempOptsNode == null)
-                tempOptsNode = xmlDoc.CreateElement("JoyConSupportSettings");
-            else
-                tempOptsNode.RemoveAll();
-
-            XmlNode tempElement = xmlDoc.CreateElement("EnableHomeLED");
-            tempElement.InnerText = enableHomeLED.ToString();
-            tempOptsNode.AppendChild(tempElement);
-
-            node.AppendChild(tempOptsNode);
-        }
-
-        [ConfigurationSystemComponent]
-        public override void LoadSettings(XmlDocument xmlDoc, XmlNode node)
-        {
-            var baseNode = node.SelectSingleNode("JoyConSupportSettings");
-            if (baseNode != null)
-            {
-                var item = baseNode.SelectSingleNode("EnableHomeLED");
-                if (bool.TryParse(item?.InnerText ?? "", out var temp)) enableHomeLED = temp;
-            }
-        }
+        public event Action EnableHomeLEDChanged;
     }
 }

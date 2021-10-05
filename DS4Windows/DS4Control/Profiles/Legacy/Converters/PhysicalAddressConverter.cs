@@ -1,4 +1,5 @@
 ﻿using System.Net.NetworkInformation;
+using DS4WinWPF.DS4Control.Util;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
@@ -21,7 +22,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
 
         public override string Format(PhysicalAddress instance)
         {
-            return instance.ToString();
+            return instance.AsFriendlyName();
         }
     }
 }

@@ -11,9 +11,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
+using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.Properties;
-using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -44,6 +45,9 @@ namespace DS4Windows
                     new(), new(), new(),
                     new(), new(), new(), new(), new(), new()
                 };
+
+            private readonly Lazy<ControlServiceDeviceOptions> LazyDeviceOptions =
+                new(new ControlServiceDeviceOptions());
 
             protected readonly XmlDocument m_Xdoc = new();
 
@@ -84,7 +88,7 @@ namespace DS4Windows
                 SetupDefaultColors();
             }
 
-            private Dictionary<string, string> LinkedProfiles { get; set; } = new();
+            private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
 
             public IList<int> RumbleAutostopTime { get; } = new List<int>
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
@@ -522,7 +526,7 @@ namespace DS4Windows
 
             public string FakeExeFileName { get; set; } = string.Empty;
 
-            public ControlServiceDeviceOptions DeviceOptions => new();
+            public ControlServiceDeviceOptions DeviceOptions => LazyDeviceOptions.Value;
 
             // Cache whether profile has custom action
             public IList<bool> ContainsCustomAction { get; set; } = new bool[TEST_PROFILE_ITEM_COUNT]
@@ -1411,19 +1415,6 @@ namespace DS4Windows
                 return loaded;
             }
 
-            private void SetNestedProperty(string compoundProperty, object target, object value)
-            {
-                var bits = compoundProperty.Split('.');
-                for (var i = 0; i < bits.Length - 1; i++)
-                {
-                    var propertyToGet = target.GetType().GetProperty(bits[i]);
-                    target = propertyToGet.GetValue(target, null);
-                }
-
-                var propertyToSet = target.GetType().GetProperty(bits.Last());
-                propertyToSet.SetValue(target, value, null);
-            }
-
             /// <summary>
             ///     Persists a <see cref="DS4WindowsProfile" /> on disk.
             /// </summary>
@@ -1450,8 +1441,10 @@ namespace DS4Windows
                     ExecutableProductVersion,
                     CONFIG_VERSION
                 );
-                
+
+#if WITH_TRACING
                 using var scope = GlobalTracer.Instance.BuildSpan(nameof(SaveProfile)).StartActive(true);
+#endif
 
                 try
                 {
@@ -1478,10 +1471,8 @@ namespace DS4Windows
                                 keyType += DS4KeyType.ScanCode;
 
                             if (string.IsNullOrEmpty(keyType))
-                            {
                                 SetNestedProperty(property, profileObject.Controls.KeyTypes, keyType);
-                            }
-                            
+
                             if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
                             {
                                 var ii = dcs.ActionData.ActionMacro;
@@ -1490,25 +1481,22 @@ namespace DS4Windows
                             }
                             else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
                             {
-                                SetNestedProperty(property, profileObject.Controls.Keys, dcs.ActionData.ActionKey.ToString());
+                                SetNestedProperty(property, profileObject.Controls.Keys,
+                                    dcs.ActionData.ActionKey.ToString());
                             }
                             else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
                             {
-                                SetNestedProperty(property, profileObject.Controls.Buttons, GetX360ControlString(dcs.ActionData.ActionButton));
+                                SetNestedProperty(property, profileObject.Controls.Buttons,
+                                    GetX360ControlString(dcs.ActionData.ActionButton));
                             }
                         }
 
                         var hasValue = false;
                         if (!string.IsNullOrEmpty(dcs.Extras))
                             if (dcs.Extras.Split(',').Any(s => s != "0"))
-                            {
                                 hasValue = true;
-                            }
 
-                        if (hasValue)
-                        {
-                            SetNestedProperty(property, profileObject.Controls.Extras, dcs.Extras);
-                        }
+                        if (hasValue) SetNestedProperty(property, profileObject.Controls.Extras, dcs.Extras);
 
                         if (dcs.ShiftActionType != DS4ControlSettings.ActionType.Default && dcs.ShiftTrigger > 0)
                         {
@@ -1528,40 +1516,42 @@ namespace DS4Windows
                                 keyType += DS4KeyType.ScanCode;
 
                             if (keyType != string.Empty)
-                            {
                                 SetNestedProperty(property, profileObject.ShiftControls.KeyTypes, keyType);
-                            }
-                            
+
                             if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
                             {
                                 var ii = dcs.ShiftAction.ActionMacro;
 
                                 SetNestedProperty(property, profileObject.ShiftControls.Macros, string.Join("/", ii));
-                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Macros, dcs.ShiftTrigger.ToString());
+                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Macros,
+                                    dcs.ShiftTrigger.ToString());
                             }
                             else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
                             {
-                                SetNestedProperty(property, profileObject.ShiftControls.Keys, dcs.ShiftAction.ActionKey.ToString());
-                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Keys, dcs.ShiftTrigger.ToString());
+                                SetNestedProperty(property, profileObject.ShiftControls.Keys,
+                                    dcs.ShiftAction.ActionKey.ToString());
+                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Keys,
+                                    dcs.ShiftTrigger.ToString());
                             }
                             else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
                             {
-                                SetNestedProperty(property, profileObject.ShiftControls.Buttons, dcs.ShiftAction.ActionKey.ToString());
-                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Buttons, dcs.ShiftTrigger.ToString());
+                                SetNestedProperty(property, profileObject.ShiftControls.Buttons,
+                                    dcs.ShiftAction.ActionKey.ToString());
+                                SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Buttons,
+                                    dcs.ShiftTrigger.ToString());
                             }
                         }
 
                         hasValue = false;
                         if (!string.IsNullOrEmpty(dcs.ShiftExtras))
                             if (dcs.ShiftExtras.Split(',').Any(s => s != "0"))
-                            {
                                 hasValue = true;
-                            }
 
                         if (hasValue)
                         {
                             SetNestedProperty(property, profileObject.ShiftControls.Extras, dcs.ShiftExtras);
-                            SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Extras, dcs.ShiftTrigger.ToString());
+                            SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Extras,
+                                dcs.ShiftTrigger.ToString());
                         }
                     }
 
@@ -1579,13 +1569,13 @@ namespace DS4Windows
 
             [ConfigurationSystemComponent]
             public async Task<bool> LoadProfile(
-                int device, 
-                bool launchprogram, 
+                int device,
+                bool launchprogram,
                 ControlService control,
-                string profilePath = null, 
-                bool xinputChange = true, 
+                string profilePath = null,
+                bool xinputChange = true,
                 bool postLoad = true
-                )
+            )
             {
                 var loaded = true;
                 var customMapKeyTypes = new Dictionary<DS4Controls, DS4KeyType>();
@@ -1611,34 +1601,15 @@ namespace DS4Windows
                 var xinputPlug = false;
                 var xinputStatus = false;
 
+#if WITH_TRACING
                 using var scope = GlobalTracer.Instance.BuildSpan(nameof(LoadProfile)).StartActive(true);
+#endif
 
                 if (File.Exists(profilepath))
                 {
                     XmlNode Item;
 
-                    var tmpMigration = new ProfileMigration(profilepath);
-                    if (tmpMigration.RequiresMigration())
-                    {
-                        tmpMigration.Migrate();
-                        m_Xdoc.Load(tmpMigration.ProfileReader);
-                        migratePerformed = true;
-                    }
-                    else if (tmpMigration.ProfileReader != null)
-                    {
-                        m_Xdoc.Load(tmpMigration.ProfileReader);
-                        //m_Xdoc.Load(profilepath);
-                    }
-                    else
-                    {
-                        loaded = false;
-                    }
-
-                    if (m_Xdoc.SelectSingleNode(rootname) == null)
-                    {
-                        rootname = "DS4Windows";
-                        missingSetting = true;
-                    }
+                    m_Xdoc.Load(profilepath);
 
                     if (device < MAX_DS4_CONTROLLER_COUNT)
                     {
@@ -1952,14 +1923,12 @@ namespace DS4Windows
                             .ToList();
 
                         foreach (var item in controls)
-                        {
                             if (ushort.TryParse(item.Entity.Value, out wvk) &&
                                 Enum.TryParse(item.Name, out DS4Controls _))
                             {
                                 UpdateDs4ControllerSetting(device, item.Name, false, wvk, "", DS4KeyType.None);
                                 customMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
                             }
-                        }
                     }
 
                     //
@@ -2117,7 +2086,6 @@ namespace DS4Windows
                             .ToList();
 
                         foreach (var item in controls)
-                        {
                             if (ushort.TryParse(item.Entity.Value, out wvk))
                             {
                                 var shiftT = shiftM;
@@ -2131,7 +2099,6 @@ namespace DS4Windows
                                     shiftCustomMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
                                 }
                             }
-                        }
                     }
 
                     //
@@ -2212,7 +2179,7 @@ namespace DS4Windows
                         //Global.ActiveOutDevType[device] = OutContType.None;
                         var tempDev = control.DS4Controllers[device];
                         if (tempDev != null)
-                            tempDev.queueEvent(() => { control.UnplugOutDev(device, tempDev); });
+                            tempDev.QueueEvent(() => { control.UnplugOutDev(device, tempDev); });
                     }
                 }
 
@@ -2269,7 +2236,7 @@ namespace DS4Windows
                 catch (XmlException)
                 {
                     // XML file has become corrupt. Start from scratch
-                    AppLogger.LogToGui(Resources.XMLActionsCorrupt, true);
+                    AppLogger.Instance.LogToGui(Resources.XMLActionsCorrupt, true);
                     m_Xdoc.RemoveAll();
                     PrepareActionsXml(m_Xdoc);
                 }
@@ -2497,7 +2464,7 @@ namespace DS4Windows
                         var profiles = DS4WinWPF.DS4Control.Profiles.Legacy.LinkedProfiles.Deserialize(stream);
 
                         LinkedProfiles = profiles.Assignments.ToDictionary(
-                            x => x.Key.ToString(),
+                            x => x.Key,
                             x => x.Value.ToString()
                         );
                     }
@@ -2508,7 +2475,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    AppLogger.LogToGui("LinkedProfiles.xml can't be found.", false);
+                    AppLogger.Instance.LogToGui("LinkedProfiles.xml can't be found.", false);
                     loaded = false;
                 }
 
@@ -2527,14 +2494,15 @@ namespace DS4Windows
                     var profiles = new LinkedProfiles
                     {
                         //Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => Guid.Parse(x.Value))
-                        Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => x.Value)
+                        Assignments = LinkedProfiles.ToDictionary(x => x.Key, x => x.Value)
                     };
 
                     profiles.Serialize(stream);
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath, false);
+                    AppLogger.Instance.LogToGui("Unauthorized Access - Save failed to path: " + LinkedProfilesPath,
+                        false);
                     saved = false;
                 }
 
@@ -2542,57 +2510,27 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
-            public bool CreateControllerConfigs()
-            {
-                var saved = true;
-                var configXdoc = new XmlDocument();
-                XmlNode Node;
-
-                Node = configXdoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                configXdoc.AppendChild(Node);
-
-                Node = configXdoc.CreateComment(string.Format(" Controller config data. {0} ", DateTime.Now));
-                configXdoc.AppendChild(Node);
-
-                Node = configXdoc.CreateWhitespace("\r\n");
-                configXdoc.AppendChild(Node);
-
-                Node = configXdoc.CreateNode(XmlNodeType.Element, "Controllers", "");
-                configXdoc.AppendChild(Node);
-
-                try
-                {
-                    configXdoc.Save(ControllerConfigsPath);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
-                    saved = false;
-                }
-
-                return saved;
-            }
-
             public bool LoadControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
-                    return LoadControllerConfigsForDevice(device);
+                    return device.LoadOptionsStoreFrom(ControllerConfigsPath);
 
                 for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
                     if (ControlService.CurrentInstance.DS4Controllers[idx] != null)
-                        LoadControllerConfigsForDevice(ControlService.CurrentInstance.DS4Controllers[idx]);
+                        ControlService.CurrentInstance.DS4Controllers[idx].LoadOptionsStoreFrom(ControllerConfigsPath);
 
                 return true;
             }
 
+            [ConfigurationSystemComponent]
             public bool SaveControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
-                    return SaveControllerConfigsForDevice(device);
+                    return device.PersistOptionsStore(ControllerConfigsPath);
 
                 for (var idx = 0; idx < ControlService.MAX_DS4_CONTROLLER_COUNT; idx++)
                     if (ControlService.CurrentInstance.DS4Controllers[idx] != null)
-                        SaveControllerConfigsForDevice(ControlService.CurrentInstance.DS4Controllers[idx]);
+                        ControlService.CurrentInstance.DS4Controllers[idx].PersistOptionsStore(ControllerConfigsPath);
 
                 return true;
             }
@@ -2624,31 +2562,28 @@ namespace DS4Windows
                 return sA;
             }
 
-            public bool ContainsLinkedProfile(string serial)
+            public bool ContainsLinkedProfile(PhysicalAddress serial)
             {
-                var tempSerial = serial.Replace(":", string.Empty);
-                return LinkedProfiles.ContainsKey(tempSerial);
+                return LinkedProfiles.ContainsKey(serial);
             }
 
-            public string GetLinkedProfile(string serial)
+            public string GetLinkedProfile(PhysicalAddress serial)
             {
                 var temp = string.Empty;
-                var tempSerial = serial.Replace(":", string.Empty);
-                if (LinkedProfiles.ContainsKey(tempSerial)) temp = LinkedProfiles[tempSerial];
+
+                if (LinkedProfiles.ContainsKey(serial)) temp = LinkedProfiles[serial];
 
                 return temp;
             }
 
-            public void ChangeLinkedProfile(string serial, string profile)
+            public void ChangeLinkedProfile(PhysicalAddress serial, string profile)
             {
-                var tempSerial = serial.Replace(":", string.Empty);
-                LinkedProfiles[tempSerial] = profile;
+                LinkedProfiles[serial] = profile;
             }
 
-            public void RemoveLinkedProfile(string serial)
+            public void RemoveLinkedProfile(PhysicalAddress serial)
             {
-                var tempSerial = serial.Replace(":", string.Empty);
-                if (LinkedProfiles.ContainsKey(tempSerial)) LinkedProfiles.Remove(tempSerial);
+                if (LinkedProfiles.ContainsKey(serial)) LinkedProfiles.Remove(serial);
             }
 
             public int GetProfileActionIndexOf(int device, string name)
@@ -3434,131 +3369,17 @@ namespace DS4Windows
                 return result;
             }
 
-            [ConfigurationSystemComponent]
-            private bool LoadControllerConfigsForDevice(DS4Device device)
+            private void SetNestedProperty(string compoundProperty, object target, object value)
             {
-                var loaded = false;
-
-                if (device == null) return false;
-                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
-
-                try
+                var bits = compoundProperty.Split('.');
+                for (var i = 0; i < bits.Length - 1; i++)
                 {
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.Load(ControllerConfigsPath);
-
-                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
-                                                       "\"]");
-                    if (node != null)
-                    {
-                        int intValue;
-                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheelCenterPoint.X = intValue;
-                        if (int.TryParse(node["wheelCenterPoint"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheelCenterPoint.Y = intValue;
-                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheel90DegPointLeft.X = intValue;
-                        if (int.TryParse(node["wheel90DegPointLeft"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheel90DegPointLeft.Y = intValue;
-                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[0] ?? "", out intValue))
-                            device.wheel90DegPointRight.X = intValue;
-                        if (int.TryParse(node["wheel90DegPointRight"]?.InnerText.Split(',')[1] ?? "", out intValue))
-                            device.wheel90DegPointRight.Y = intValue;
-
-                        device.OptionsStore.LoadSettings(xmlDoc, node);
-
-                        loaded = true;
-                    }
-                }
-                catch
-                {
-                    AppLogger.LogToGui("ControllerConfigs.xml can't be found.", false);
-                    loaded = false;
+                    var propertyToGet = target.GetType().GetProperty(bits[i]);
+                    target = propertyToGet.GetValue(target, null);
                 }
 
-                return loaded;
-            }
-
-            [ConfigurationSystemComponent]
-            private bool SaveControllerConfigsForDevice(DS4Device device)
-            {
-                var saved = true;
-
-                if (device == null) return false;
-                if (!File.Exists(ControllerConfigsPath)) CreateControllerConfigs();
-
-                try
-                {
-                    //XmlNode node = null;
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.Load(ControllerConfigsPath);
-
-                    var node = xmlDoc.SelectSingleNode("/Controllers/Controller[@Mac=\"" + device.getMacAddress() +
-                                                       "\"]");
-                    var xmlControllersNode = xmlDoc.SelectSingleNode("/Controllers");
-                    if (node == null)
-                    {
-                        var el = xmlDoc.CreateElement("Controller");
-                        node = xmlControllersNode.AppendChild(el);
-                    }
-                    else
-                    {
-                        node.RemoveAll();
-                    }
-
-                    var macAttr = xmlDoc.CreateAttribute("Mac");
-                    macAttr.Value = device.getMacAddress();
-                    node.Attributes.Append(macAttr);
-
-                    var contTypeAttr = xmlDoc.CreateAttribute("ControllerType");
-                    contTypeAttr.Value = device.DeviceType.ToString();
-                    node.Attributes.Append(contTypeAttr);
-
-                    if (!device.wheelCenterPoint.IsEmpty)
-                    {
-                        var wheelCenterEl = xmlDoc.CreateElement("wheelCenterPoint");
-                        wheelCenterEl.InnerText = $"{device.wheelCenterPoint.X},{device.wheelCenterPoint.Y}";
-                        node.AppendChild(wheelCenterEl);
-
-                        var wheel90DegPointLeftEl = xmlDoc.CreateElement("wheel90DegPointLeft");
-                        wheel90DegPointLeftEl.InnerText =
-                            $"{device.wheel90DegPointLeft.X},{device.wheel90DegPointLeft.Y}";
-                        node.AppendChild(wheel90DegPointLeftEl);
-
-                        var wheel90DegPointRightEl = xmlDoc.CreateElement("wheel90DegPointRight");
-                        wheel90DegPointRightEl.InnerText =
-                            $"{device.wheel90DegPointRight.X},{device.wheel90DegPointRight.Y}";
-                        node.AppendChild(wheel90DegPointRightEl);
-                    }
-
-                    device.OptionsStore.PersistSettings(xmlDoc, node);
-
-                    // Remove old elements
-                    xmlDoc.RemoveAll();
-
-                    XmlNode Node;
-                    Node = xmlDoc.CreateXmlDeclaration("1.0", "utf-8", string.Empty);
-                    xmlDoc.AppendChild(Node);
-
-                    Node = xmlDoc.CreateComment(string.Format(" Controller config data. {0} ", DateTime.Now));
-                    xmlDoc.AppendChild(Node);
-
-                    Node = xmlDoc.CreateWhitespace("\r\n");
-                    xmlDoc.AppendChild(Node);
-
-                    // Write old Controllers node back in
-                    xmlDoc.AppendChild(xmlControllersNode);
-
-                    // Save XML to file
-                    xmlDoc.Save(ControllerConfigsPath);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    AppLogger.LogToGui("Unauthorized Access - Save failed to path: " + ControllerConfigsPath, false);
-                    saved = false;
-                }
-
-                return saved;
+                var propertyToSet = target.GetType().GetProperty(bits.Last());
+                propertyToSet.SetValue(target, value, null);
             }
 
             private void SetOutBezierCurveObjArrayItem(IList<BezierCurve> bezierCurveArray, int device,
@@ -3952,7 +3773,7 @@ namespace DS4Windows
                     var oldUseDInputOnly = UseDirectInputOnly[device];
                     var tempDevice = control.DS4Controllers[device];
                     var exists = tempDevice != null;
-                    var synced = exists ? tempDevice.isSynced() : false;
+                    var synced = exists ? tempDevice.IsSynced() : false;
                     var isAlive = exists ? tempDevice.IsAlive() : false;
                     if (DirectInputOnly[device] != oldUseDInputOnly)
                     {
@@ -3979,8 +3800,8 @@ namespace DS4Windows
             private void PostLoadSnippet(int device, ControlService control, bool xinputStatus, bool xinputPlug)
             {
                 var tempDev = control.DS4Controllers[device];
-                if (tempDev != null && tempDev.isSynced())
-                    tempDev.queueEvent(() =>
+                if (tempDev != null && tempDev.IsSynced())
+                    tempDev.QueueEvent(() =>
                     {
                         //tempDev.setIdleTimeout(idleDisconnectTimeout[device]);
                         //tempDev.setBTPollRate(btPollRate[device]);

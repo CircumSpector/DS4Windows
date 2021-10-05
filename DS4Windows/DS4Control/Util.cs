@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading.Tasks;
 using System.IO;
+using DS4WinWPF.DS4Control.Logging;
 using Microsoft.Win32;
 
 namespace DS4Windows
@@ -194,7 +195,7 @@ namespace DS4Windows
             {
                 if (t.IsFaulted)
                 {
-                    AppLogger.LogToGui(t.Exception.ToString(), true);
+                    AppLogger.Instance.LogToGui(t.Exception.ToString(), true);
                 }
             });
         }

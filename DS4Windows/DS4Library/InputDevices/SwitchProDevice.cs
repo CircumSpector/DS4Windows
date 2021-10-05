@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
@@ -203,8 +205,8 @@ namespace DS4Windows.InputDevices
         public override event ReportHandler<EventArgs> Report = null;
         public override event EventHandler<EventArgs> Removal = null;
 
-        public override event EventHandler BatteryChanged;
-        public override event EventHandler ChargingChanged;
+        public override event Action<DS4Device> BatteryChanged;
+        public override event Action<DS4Device> ChargingChanged;
 
         public SwitchProDevice(HidDevice hidDevice,
             string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4) :
@@ -241,29 +243,17 @@ namespace DS4Windows.InputDevices
 
         public override void PostInit()
         {
-            deviceType = InputDeviceType.SwitchPro;
+            DeviceType = InputDeviceType.SwitchPro;
             gyroMouseSensSettings = new GyroMouseSens();
-            conType = DetermineConnectionType(hDevice);
-            OptionsStore = nativeOptionsStore = new SwitchProControllerOptions(deviceType);
+            ConnectionType = DetermineConnectionType(hDevice);
+            OptionsStore = nativeOptionsStore = new SwitchProControllerOptions();
             SetupOptionsEvents();
 
-            if (conType == ConnectionType.BT)
-            {
-                warnInterval = WARN_INTERVAL_BT;
-            }
-            else
-            {
-                warnInterval = WARN_INTERVAL_USB;
-            }
+            warnInterval = ConnectionType == ConnectionType.BT ? WARN_INTERVAL_BT : WARN_INTERVAL_USB;
 
             inputReportBuffer = new byte[INPUT_REPORT_LEN];
             outputReportBuffer = new byte[OUTPUT_REPORT_LEN];
             rumbleReportBuffer = new byte[RUMBLE_REPORT_LEN];
-
-            if (!hDevice.IsFileStreamOpen())
-            {
-                hDevice.OpenFileStream(inputReportBuffer.Length);
-            }
         }
 
         public static ConnectionType DetermineConnectionType(HidDevice hDevice)
@@ -291,7 +281,7 @@ namespace DS4Windows.InputDevices
             }
             catch (System.IO.IOException)
             {
-                AppLogger.LogToGui($"Controller {MacAddress} failed to initialize. Closing device", true);
+                AppLogger.Instance.LogToGui($"Controller {MacAddress} failed to initialize. Closing device", true);
             }
 
             if (!connectionOpened)
@@ -339,7 +329,7 @@ namespace DS4Windows.InputDevices
             unchecked
             {
                 firstActive = DateTime.UtcNow;
-                NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
+                //NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
                 Queue<long> latencyQueue = new Queue<long>(21); // Set capacity at max + 1 to avoid any resizing
                 int tempLatencyCount = 0;
                 long oldtime = 0;
@@ -349,7 +339,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                bool syncWriteReport = conType != ConnectionType.BT;
+                bool syncWriteReport = ConnectionType != ConnectionType.BT;
                 //bool forceWrite = false;
                 
                 //int maxBatteryValue = 0;
@@ -367,15 +357,19 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
+#if WITH_TRACING
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SwitchProDevice)}::{nameof(ReadInput)}")
                         .StartActive(true);
+#endif
 
                     oldCharging = charging;
                     currerror = string.Empty;
 
                     readWaitEv.Set();
 
-                    HidDevice.ReadStatus res = hDevice.ReadWithFileStream(inputReportBuffer);
+                    var res = hDevice.ReadInputReport(InputReportBuffer, inputReportBuffer.Length, out _);
+                    Marshal.Copy(InputReportBuffer, inputReportBuffer, 0, inputReportBuffer.Length);
+
                     if (res == HidDevice.ReadStatus.Success)
                     {
                         if (inputReportBuffer[0] != 0x30)
@@ -453,7 +447,7 @@ namespace DS4Windows.InputDevices
                         if (tempBattery != battery)
                         {
                             battery = tempBattery;
-                            BatteryChanged?.Invoke(this, EventArgs.Empty);
+                            BatteryChanged?.Invoke(this);
                         }
 
                         currentState.Battery = (byte)tempBattery;
@@ -462,7 +456,7 @@ namespace DS4Windows.InputDevices
                         if (tempCharging != charging)
                         {
                             charging = tempCharging;
-                            ChargingChanged?.Invoke(this, EventArgs.Empty);
+                            ChargingChanged?.Invoke(this);
                         }
                     }
                     else
@@ -587,7 +581,7 @@ namespace DS4Windows.InputDevices
                     SixAxisEventArgs args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
-                    if (conType == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -595,7 +589,7 @@ namespace DS4Windows.InputDevices
                         }
                         else
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (!idleInput)
                             {
                                 lastActive = utcNow;
@@ -607,7 +601,7 @@ namespace DS4Windows.InputDevices
                         bool shouldDisconnect = false;
                         if (!isRemoved && idleTimeout > 0)
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (idleInput)
                             {
                                 DateTime timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);
@@ -626,9 +620,9 @@ namespace DS4Windows.InputDevices
 
                         if (shouldDisconnect)
                         {
-                            AppLogger.LogToGui(Mac.ToString() + " disconnecting due to idle disconnect", false);
+                            AppLogger.Instance.LogToGui(MacAddress.ToString() + " disconnecting due to idle disconnect", false);
 
-                            if (conType == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.BT)
                             {
                                 if (DisconnectBT(true))
                                 {
@@ -674,7 +668,7 @@ namespace DS4Windows.InputDevices
 
         public void SetOperational()
         {
-            if (conType == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.USB)
             {
                 RunUSBSetup();
                 Thread.Sleep(300);
@@ -729,7 +723,7 @@ namespace DS4Windows.InputDevices
             EnableFastPollRate();
 
             // USB Connections seem to need a delay after switching input modes
-            if (conType == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.USB)
             {
                 Thread.Sleep(1000);
             }
@@ -784,7 +778,6 @@ namespace DS4Windows.InputDevices
 
             data[0] = 0x80; data[1] = 0x4; // Prevent HID timeout
             result = hDevice.WriteOutputReportViaControl(data);
-            hDevice.fileStream.Flush();
             //result = hidDevice.WriteOutputReportViaInterrupt(command, 500);
         }
 
@@ -824,7 +817,6 @@ namespace DS4Windows.InputDevices
             frameCount = (byte)(++frameCount & 0x0F);
 
             result = hDevice.WriteOutputReportViaInterrupt(tmpRumble, 0);
-            hDevice.fileStream.Flush();
             //res = hidDevice.ReadWithFileStream(tmpReport, 500);
             //res = hidDevice.ReadFile(tmpReport);
         }
@@ -843,20 +835,19 @@ namespace DS4Windows.InputDevices
             commandBuffer[10] = subcommand;
 
             result = hDevice.WriteOutputReportViaInterrupt(commandBuffer, 0);
-            hDevice.fileStream.Flush();
 
             byte[] tmpReport = null;
             if (result && checkResponse)
             {
                 tmpReport = new byte[INPUT_REPORT_LEN];
                 HidDevice.ReadStatus res;
-                res = hDevice.ReadWithFileStream(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
+                res = hDevice.ReadWithTimeout(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
                 int tries = 1;
                 while (res == HidDevice.ReadStatus.Success &&
                     tmpReport[0] != 0x21 && tmpReport[14] != subcommand && tries < 100)
                 {
                     //Console.WriteLine("TRY AGAIN: {0}", tmpReport[0]);
-                    res = hDevice.ReadWithFileStream(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
+                    res = hDevice.ReadWithTimeout(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
                     tries++;
                 }
 
@@ -1145,7 +1136,10 @@ namespace DS4Windows.InputDevices
             uint IOCTL_BTH_DISCONNECT_DEVICE = 0x41000c;
 
             byte[] btAddr = new byte[8];
-            string[] sbytes = Mac.Split(':');
+            //
+            // TODO: can be further simplified
+            // 
+            string[] sbytes = MacAddress.AsFriendlyName().Split(':');
             for (int i = 0; i < 6; i++)
             {
                 // parse hex byte in reverse order
@@ -1221,7 +1215,7 @@ namespace DS4Windows.InputDevices
                 byte[] powerChoiceArray = new byte[] { 0x01 };
                 Subcommand(SwitchProSubCmd.SET_LOW_POWER_STATE, powerChoiceArray, 1, checkResponse: true);
 
-                if (conType == ConnectionType.USB)
+                if (ConnectionType == ConnectionType.USB)
                 {
                     byte[] data = new byte[64];
                     data[0] = 0x80; data[1] = 0x05;

@@ -4,9 +4,11 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Slot")]
     public class Slot
     {
@@ -17,11 +19,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int Idx { get; set; }
     }
 
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "OutputSlots")]
     public class OutputSlots : XmlSerializable<OutputSlots>
     {
         [XmlElement(ElementName = "Slot")] 
-        public List<Slot> Slot { get; set; } = new(Global.MAX_DS4_CONTROLLER_COUNT);
+        public List<Slot> Slot { get; set; } = new();
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }

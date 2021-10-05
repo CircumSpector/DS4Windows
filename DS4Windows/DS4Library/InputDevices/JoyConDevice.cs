@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
@@ -220,8 +222,8 @@ namespace DS4Windows.InputDevices
 
         public override event ReportHandler<EventArgs> Report;
         public override event EventHandler<EventArgs> Removal;
-        public override event EventHandler BatteryChanged;
-        public override event EventHandler ChargingChanged;
+        public override event Action<DS4Device> BatteryChanged;
+        public override event Action<DS4Device> ChargingChanged;
 
         private void JoyConDevice_Removal(object sender, EventArgs e)
         {
@@ -232,9 +234,13 @@ namespace DS4Windows.InputDevices
         {
             var result = JoyConSide.None;
             var productId = hDevice.Attributes.ProductId;
-            if (productId == JOYCON_L_PRODUCT_ID)
-                result = JoyConSide.Left;
-            else if (productId == JOYCON_R_PRODUCT_ID) result = JoyConSide.Right;
+            
+            result = productId switch
+            {
+                JOYCON_L_PRODUCT_ID => JoyConSide.Left,
+                JOYCON_R_PRODUCT_ID => JoyConSide.Right,
+                _ => result
+            };
 
             return result;
         }
@@ -242,22 +248,24 @@ namespace DS4Windows.InputDevices
         public override void PostInit()
         {
             SideType = DetermineSideType();
-            if (SideType == JoyConSide.Left)
-                deviceType = InputDeviceType.JoyConL;
-            else if (SideType == JoyConSide.Right) deviceType = InputDeviceType.JoyConR;
 
-            conType = ConnectionType.BT;
+            DeviceType = SideType switch
+            {
+                JoyConSide.Left => InputDeviceType.JoyConL,
+                JoyConSide.Right => InputDeviceType.JoyConR,
+                _ => DeviceType
+            };
+
+            ConnectionType = ConnectionType.BT;
             warnInterval = WARN_INTERVAL_BT;
 
             gyroMouseSensSettings = new GyroMouseSens();
-            OptionsStore = nativeOptionsStore = new JoyConControllerOptions(deviceType);
+            OptionsStore = nativeOptionsStore = new JoyConControllerOptions();
             SetupOptionsEvents();
 
             inputReportBuffer = new byte[INPUT_REPORT_LEN];
             outputReportBuffer = new byte[OUTPUT_REPORT_LEN];
             rumbleReportBuffer = new byte[RUMBLE_REPORT_LEN];
-
-            if (!hDevice.IsFileStreamOpen()) hDevice.OpenFileStream(inputReportBuffer.Length);
         }
 
         public static ConnectionType DetermineConnectionType(HidDevice hDevice)
@@ -276,7 +284,7 @@ namespace DS4Windows.InputDevices
             }
             catch (IOException)
             {
-                AppLogger.LogToGui($"Controller {MacAddress} failed to initialize. Closing device", true);
+                AppLogger.Instance.LogToGui($"Controller {MacAddress} failed to initialize. Closing device", true);
             }
 
             if (!connectionOpened)
@@ -325,7 +333,7 @@ namespace DS4Windows.InputDevices
             unchecked
             {
                 firstActive = DateTime.UtcNow;
-                NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
+                //NativeMethods.HidD_SetNumInputBuffers(hDevice.safeReadHandle.DangerousGetHandle(), 3);
                 var latencyQueue = new Queue<long>(21); // Set capacity at max + 1 to avoid any resizing
                 var tempLatencyCount = 0;
                 long oldtime = 0;
@@ -335,7 +343,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = conType != ConnectionType.BT;
+                var syncWriteReport = ConnectionType != ConnectionType.BT;
                 //bool forceWrite = false;
 
                 //int maxBatteryValue = 0;
@@ -353,15 +361,19 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
+#if WITH_TRACING
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(JoyConDevice)}::{nameof(ReadInput)}")
                         .StartActive(true);
+#endif
 
                     oldCharging = charging;
                     currerror = string.Empty;
 
                     readWaitEv.Set();
+                    
+                    var res = hDevice.ReadInputReport(InputReportBuffer, inputReportBuffer.Length, out _);
+                    Marshal.Copy(InputReportBuffer, inputReportBuffer, 0, inputReportBuffer.Length);
 
-                    var res = hDevice.ReadWithFileStream(inputReportBuffer);
                     if (res == HidDevice.ReadStatus.Success)
                     {
                         if (inputReportBuffer[0] != 0x30)
@@ -436,7 +448,7 @@ namespace DS4Windows.InputDevices
                         if (tempBattery != battery)
                         {
                             battery = tempBattery;
-                            BatteryChanged?.Invoke(this, EventArgs.Empty);
+                            BatteryChanged?.Invoke(this);
                         }
 
                         currentState.Battery = (byte)tempBattery;
@@ -445,7 +457,7 @@ namespace DS4Windows.InputDevices
                         if (tempCharging != charging)
                         {
                             charging = tempCharging;
-                            ChargingChanged?.Invoke(this, EventArgs.Empty);
+                            ChargingChanged?.Invoke(this);
                         }
                     }
                     else
@@ -639,7 +651,7 @@ namespace DS4Windows.InputDevices
                     var args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
-                    if (conType == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.USB)
                     {
                         if (idleTimeout == 0)
                         {
@@ -647,7 +659,7 @@ namespace DS4Windows.InputDevices
                         }
                         else
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (!idleInput) lastActive = utcNow;
                         }
                     }
@@ -656,7 +668,7 @@ namespace DS4Windows.InputDevices
                         var shouldDisconnect = false;
                         if (!isRemoved && idleTimeout > 0)
                         {
-                            idleInput = isDS4Idle();
+                            idleInput = IsDs4Idle();
                             if (idleInput)
                             {
                                 var timeout = lastActive + TimeSpan.FromSeconds(idleTimeout);
@@ -675,9 +687,9 @@ namespace DS4Windows.InputDevices
 
                         if (shouldDisconnect)
                         {
-                            AppLogger.LogToGui(Mac + " disconnecting due to idle disconnect", false);
+                            AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (conType == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.BT)
                                 if (DisconnectBT(true))
                                 {
                                     timeoutExecuted = true;
@@ -807,7 +819,7 @@ namespace DS4Windows.InputDevices
             FrameCount = (byte)(++FrameCount & 0x0F);
 
             result = hDevice.WriteOutputReportViaInterrupt(tmpRumble, 0);
-            hDevice.fileStream.Flush();
+            
             //res = hidDevice.ReadWithFileStream(tmpReport, 500);
             //res = hidDevice.ReadFile(tmpReport);
         }
@@ -826,20 +838,19 @@ namespace DS4Windows.InputDevices
             commandBuffer[10] = subcommand;
 
             result = hDevice.WriteOutputReportViaInterrupt(commandBuffer, 0);
-            hDevice.fileStream.Flush();
-
+            
             byte[] tmpReport = null;
             if (result && checkResponse)
             {
                 tmpReport = new byte[INPUT_REPORT_LEN];
                 HidDevice.ReadStatus res;
-                res = hDevice.ReadWithFileStream(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
+                res = hDevice.ReadWithTimeout(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
                 var tries = 1;
                 while (res == HidDevice.ReadStatus.Success &&
                        tmpReport[0] != 0x21 && tmpReport[14] != subcommand && tries < 100)
                 {
                     //Console.WriteLine("TRY AGAIN: {0}", tmpReport[0]);
-                    res = hDevice.ReadWithFileStream(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
+                    res = hDevice.ReadWithTimeout(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
                     tries++;
                 }
 
@@ -1227,7 +1238,10 @@ namespace DS4Windows.InputDevices
             uint IOCTL_BTH_DISCONNECT_DEVICE = 0x41000c;
 
             var btAddr = new byte[8];
-            var sbytes = Mac.Split(':');
+            //
+            // TODO: can be further simplified
+            // 
+            var sbytes = MacAddress.AsFriendlyName().Split(':');
             for (var i = 0; i < 6; i++)
                 // parse hex byte in reverse order
                 btAddr[5 - i] = Convert.ToByte(sbytes[i], 16);
@@ -1268,7 +1282,7 @@ namespace DS4Windows.InputDevices
             // code. Would be better placed in DisconnectWireless method
             if (primaryDevice &&
                 tempJointDevice != null)
-                tempJointDevice.queueEvent(() => { tempJointDevice.DisconnectBT(callRemoval); });
+                tempJointDevice.QueueEvent(() => { tempJointDevice.DisconnectBT(callRemoval); });
 
             return success;
         }

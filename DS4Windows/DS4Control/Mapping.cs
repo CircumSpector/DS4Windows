@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using static DS4Windows.Global;
 using System.Drawing;
+using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.Logging;
 using OpenTracing.Util; // Point struct
 using Sensorit.Base;
 
@@ -475,8 +477,10 @@ namespace DS4Windows
 
         public static void Commit(int device)
         {
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan(nameof(Commit)).StartActive(true))
             {
+#endif
                 SyntheticState state = deviceState[device];
                 syncStateLock.EnterWriteLock();
 
@@ -704,13 +708,17 @@ namespace DS4Windows
                 // Send possible virtual events to system. Only used for FakerInput atm.
                 // SendInput version does nothing
                 outputKBMHandler.Sync();
+#if WITH_TRACING
             }
+#endif
         }
 
         public enum Click { None, Left, Middle, Right, Fourth, Fifth, WUP, WDOWN };
         public static void MapClick(int device, Click mouseClick)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(MapClick)).StartActive(true);
+#endif
 
             switch (mouseClick)
             {
@@ -767,15 +775,17 @@ namespace DS4Windows
 
         public static DS4State SetCurveAndDeadzone(int device, DS4State cState, DS4State dState)
         {
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan(nameof(SetCurveAndDeadzone)).StartActive(true))
             {
+#endif
                 double rotation = /*tempDoubleArray[device] =*/ Global.Instance.Config.GetLSRotation(device);
                 if (rotation > 0.0 || rotation < 0.0)
-                    cState.rotateLSCoordinates(rotation);
+                    cState.RotateLSCoordinates(rotation);
 
                 double rotationRS = /*tempDoubleArray[device] =*/ Global.Instance.Config.GetRSRotation(device);
                 if (rotationRS > 0.0 || rotationRS < 0.0)
-                    cState.rotateRSCoordinates(rotationRS);
+                    cState.RotateRSCoordinates(rotationRS);
 
                 StickAntiSnapbackInfo lsAntiSnapback = Global.Instance.Config.GetLSAntiSnapbackInfo(device);
                 StickAntiSnapbackInfo rsAntiSnapback = Global.Instance.Config.GetRSAntiSnapbackInfo(device);
@@ -2013,7 +2023,9 @@ namespace DS4Windows
                 }
 
                 return dState;
+#if WITH_TRACING
             }
+#endif
         }
 
         /* TODO: Possibly remove usage of this version of the method */
@@ -2123,12 +2135,15 @@ namespace DS4Windows
         /// </summary>
         static DS4Controls[] held = new DS4Controls[Global.MAX_DS4_CONTROLLER_COUNT];
 
+        [HighMemoryPressure]
         public static void MapCustom(int device, DS4State cState, DS4State MappedState, DS4StateExposed eState,
             Mouse tp, ControlService ctrl)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance
                 .BuildSpan($"{nameof(Mapping)}::{nameof(MapCustom)}")
                 .StartActive(true);
+#endif
 
             /* TODO: This method is slow sauce. Find ways to speed up action execution */
             double tempMouseDeltaX = 0.0;
@@ -2136,7 +2151,7 @@ namespace DS4Windows
             int mouseDeltaX = 0;
             int mouseDeltaY = 0;
 
-            cState.calculateStickAngles();
+            cState.CalculateStickAngles();
             DS4StateFieldMapping fieldMapping = fieldMappings[device];
             fieldMapping.PopulateFieldMapping(cState, eState, tp);
             DS4StateFieldMapping outputfieldMapping = outputFieldMappings[device];
@@ -3367,8 +3382,10 @@ namespace DS4Windows
         private static async void MapCustomAction(int device, DS4State cState, DS4State MappedState,
             DS4StateExposed eState, Mouse tp, ControlService ctrl, DS4StateFieldMapping fieldMapping, DS4StateFieldMapping outputfieldMapping)
         {
+#if WITH_TRACING
             using (GlobalTracer.Instance.BuildSpan(nameof(MapCustomAction)).StartActive(true))
             {
+#endif
                 /* TODO: This method is slow sauce. Find ways to speed up action execution */
                 try
                 {
@@ -3652,7 +3669,7 @@ namespace DS4Windows
                                         string prolog = string.Format(DS4WinWPF.Properties.Resources.UsingProfile,
                                             (device + 1).ToString(), action.Details, $"{d.Battery}");
 
-                                        AppLogger.LogToGui(prolog, false);
+                                        AppLogger.Instance.LogToGui(prolog, false);
                                         await Global.Instance.LoadTempProfile(device, action.Details, true, ctrl);
                                         //LoadProfile(device, false, ctrl);
 
@@ -3770,10 +3787,10 @@ namespace DS4Windows
                                     actionFound = true;
 
                                     DS4Device d = ctrl.DS4Controllers[device];
-                                    bool synced = /*tempBool =*/ d.isSynced();
-                                    if (synced && !d.isCharging())
+                                    bool synced = /*tempBool =*/ d.IsSynced();
+                                    if (synced && !d.IsCharging())
                                     {
-                                        ConnectionType deviceConn = d.getConnectionType();
+                                        ConnectionType deviceConn = d.GetConnectionType();
                                         //bool exclusive = /*tempBool =*/ d.isExclusive();
                                         if (deviceConn == ConnectionType.BT)
                                         {
@@ -3796,7 +3813,7 @@ namespace DS4Windows
                                         dets = action.Details.Split(',');
                                     if (bool.Parse(dets[1]) && !actionDone[index].dev[device])
                                     {
-                                        AppLogger.LogToTray("Controller " + (device + 1) + ": " +
+                                        AppLogger.Instance.LogToTray("Controller " + (device + 1) + ": " +
                                                             ctrl.GetDS4Battery(device), true);
                                     }
 
@@ -3868,10 +3885,10 @@ namespace DS4Windows
                                 {
                                     actionFound = true;
                                     DS4Device d = ctrl.DS4Controllers[device];
-                                    ConnectionType deviceConn = d.getConnectionType();
-                                    if (deviceConn == ConnectionType.SONYWA && d.isSynced())
+                                    ConnectionType deviceConn = d.GetConnectionType();
+                                    if (deviceConn == ConnectionType.SONYWA && d.IsSynced())
                                     {
-                                        if (d.isDS4Idle())
+                                        if (d.IsDs4Idle())
                                         {
                                             d.DisconnectDongle();
                                             ReleaseActionKeys(action, device);
@@ -4183,7 +4200,7 @@ namespace DS4Windows
                                         ? Global.Instance.Config.ProfilePath[device]
                                         : profileName), $"{d.Battery}");
 
-                                AppLogger.LogToGui(prolog, false);
+                                AppLogger.Instance.LogToGui(prolog, false);
 
                                 untriggeraction[device] = null;
 
@@ -4201,12 +4218,16 @@ namespace DS4Windows
                         actionDone[index].dev[device] = false;
                     }
                 }
+#if WITH_TRACING
             }
+#endif
         }
 
         private static void ReleaseActionKeys(SpecialAction action, int device)
         {
+#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(ReleaseActionKeys)).StartActive(true);
+#endif
 
             //foreach (DS4Controls dc in action.trigger)
             for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
@@ -4442,7 +4463,7 @@ namespace DS4Windows
                 string r = macroCodeValue.ToString().Substring(1);
                 byte heavy = (byte)(int.Parse(r[0].ToString()) * 100 + int.Parse(r[1].ToString()) * 10 + int.Parse(r[2].ToString()));
                 byte light = (byte)(int.Parse(r[3].ToString()) * 100 + int.Parse(r[4].ToString()) * 10 + int.Parse(r[5].ToString()));
-                d.setRumble(light, heavy);
+                d.SetRumble(light, heavy);
             }
             else
             {
@@ -5606,7 +5627,7 @@ namespace DS4Windows
                 latestDebugMsgTime = curTime;
                 if (data != latestDebugData)
                 {
-                    AppLogger.LogToGui(data, false);
+                    AppLogger.Instance.LogToGui(data, false);
                     latestDebugData = data;
                 }
             }
@@ -5701,7 +5722,7 @@ namespace DS4Windows
             // State 0=Normal mode (ie. calibration process is not running), 1=Activating calibration, 2=Calibration process running, 3=Completing calibration, 4=Cancelling calibration
             if (controller.WheelRecalibrateActiveState == 1)
             {
-                AppLogger.LogToGui($"Controller {1 + device} activated re-calibration of SA steering wheel emulation", false);
+                AppLogger.Instance.LogToGui($"Controller {1 + device} activated re-calibration of SA steering wheel emulation", false);
 
                 controller.WheelRecalibrateActiveState = 2;
 
@@ -5723,7 +5744,7 @@ namespace DS4Windows
             }
             else if (controller.WheelRecalibrateActiveState == 3)
             {
-                AppLogger.LogToGui($"Controller {1 + device} completed the calibration of SA steering wheel emulation. center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})", false);
+                AppLogger.Instance.LogToGui($"Controller {1 + device} completed the calibration of SA steering wheel emulation. center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})", false);
 
                 // If any of the calibration points (center, left 90deg, right 90deg) are missing then reset back to default calibration values
                 if (((controller.wheelCalibratedAxisBitmask & DS4Device.WheelCalibrationPoint.All) == DS4Device.WheelCalibrationPoint.All))
@@ -5736,7 +5757,7 @@ namespace DS4Windows
             }
             else if (controller.WheelRecalibrateActiveState == 4)
             {
-                AppLogger.LogToGui($"Controller {1 + device} cancelled the calibration of SA steering wheel emulation.", false);
+                AppLogger.Instance.LogToGui($"Controller {1 + device} cancelled the calibration of SA steering wheel emulation.", false);
 
                 controller.WheelRecalibrateActiveState = 0;
                 controller.wheelPrevRecalibrateTime = DateTime.Now;
@@ -5911,7 +5932,7 @@ namespace DS4Windows
                     // Run if no controller config exists or if an empty wheelCenterPoint is still being used
                     if (!Global.Instance.Config.LoadControllerConfigs(controller) || controller.wheelCenterPoint.IsEmpty)
                     {
-                        AppLogger.LogToGui($"Controller {1 + device} sixaxis steering wheel calibration data missing. It is recommended to run steering wheel calibration process by pressing SASteeringWheelEmulationCalibration special action key. Using estimated values until the controller is calibrated at least once.", false);
+                        AppLogger.Instance.LogToGui($"Controller {1 + device} sixaxis steering wheel calibration data missing. It is recommended to run steering wheel calibration process by pressing SASteeringWheelEmulationCalibration special action key. Using estimated values until the controller is calibrated at least once.", false);
 
                         // Use current controller position as "center point". Assume DS4Windows was started while controller was hold in center position (yes, dangerous assumption but can't do much until controller is calibrated)
                         controller.wheelCenterPoint.X = gyroAccelX;
@@ -5929,7 +5950,7 @@ namespace DS4Windows
                     controller.wheelCircleCenterPointLeft.X = controller.wheelCenterPoint.X;
                     controller.wheelCircleCenterPointLeft.Y = controller.wheel90DegPointLeft.Y;
 
-                    AppLogger.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.Config.GetSASteeringWheelEmulationRange(device)}", false);
+                    AppLogger.Instance.LogToGui($"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Global.Instance.Config.GetSASteeringWheelEmulationRange(device)}", false);
                     controller.wheelPrevRecalibrateTime = DateTime.Now;
                 }
 

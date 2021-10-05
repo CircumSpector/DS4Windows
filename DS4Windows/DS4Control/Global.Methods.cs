@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
+using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4Windows
 {
@@ -97,7 +98,7 @@ namespace DS4Windows
             _config.RumbleAutostopTime[index] = value;
 
             var tempDev = ControlService.CurrentInstance.DS4Controllers[index];
-            if (tempDev != null && tempDev.isSynced())
+            if (tempDev != null && tempDev.IsSynced())
                 tempDev.RumbleAutostopTime = value;
         }
 

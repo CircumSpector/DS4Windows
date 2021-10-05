@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DS4WinWPF
+namespace DS4WinWPF.DS4Control.Logging
 {
     public class StatusLogMsg
     {

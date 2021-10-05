@@ -2,12 +2,15 @@
 using System.Net.NetworkInformation;
 using System.Xml.Serialization;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
-    [XmlRoot(ElementName = "LinkedProfiles")]
+    [AddINotifyPropertyChangedInterface]
+    [XmlRoot(ElementName = "LinkedControllers")]
     public class LinkedProfiles : XmlSerializable<LinkedProfiles>
     {
         [XmlElement(ElementName = "Assignments")]
@@ -20,10 +23,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
-                .EnableReferences()
-                .WithUnknownContent().Continue()
                 .EnableImplicitTyping(typeof(LinkedProfiles))
                 .Type<PhysicalAddress>().Register().Converter().Using(PhysicalAddressConverter.Default)
+                .Type<LinkedProfiles>().AddMigration(new LinkedControllersMigration())
                 .Create();
         }
     }

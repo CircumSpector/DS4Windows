@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
 using ExtendedXmlSerializer;
@@ -33,6 +34,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore"/>.</param>
         /// <param name="device">The zero-based device index to copy.</param>
+        [IntermediateSolution]
         public void CopyFrom(IBackingStore store, int device)
         {
             var light = store.LightbarSettingInfo[device];
@@ -336,6 +338,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         /// <param name="device">The zero-based device index to copy.</param>
+        [IntermediateSolution]
         public void CopyTo(IBackingStore store, int device)
         {
             var lightbarSettings = store.LightbarSettingInfo[device];

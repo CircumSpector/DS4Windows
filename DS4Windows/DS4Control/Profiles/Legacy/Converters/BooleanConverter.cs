@@ -20,7 +20,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
 
         public override string Format(bool instance)
         {
-            return instance ? "True" : "False";
+            return instance ? "true" : "false";
         }
 
         /// <summary>

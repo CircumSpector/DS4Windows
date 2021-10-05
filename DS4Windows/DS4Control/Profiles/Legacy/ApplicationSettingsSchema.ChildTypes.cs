@@ -1,8 +1,10 @@
 ﻿using System.Xml.Serialization;
 using DS4Windows;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Legacy
 {
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "UDPServerSmoothingOptions")]
     public class UDPServerSmoothingOptions
     {
@@ -16,54 +18,20 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public double UdpSmoothBeta { get; set; } = 0.2f;
     }
 
-    [XmlRoot(ElementName = "DS4SupportSettings")]
-    public class DS4SupportSettings
-    {
-        [XmlElement(ElementName = "Enabled")] 
-        public bool Enabled { get; set; } = true;
-    }
-
-    [XmlRoot(ElementName = "DualSenseSupportSettings")]
-    public class DualSenseSupportSettings
-    {
-        [XmlElement(ElementName = "Enabled")] 
-        public bool Enabled { get; set; } = true;
-    }
-
-    [XmlRoot(ElementName = "SwitchProSupportSettings")]
-    public class SwitchProSupportSettings
-    {
-        [XmlElement(ElementName = "Enabled")] 
-        public bool Enabled { get; set; } = true;
-    }
-
-    [XmlRoot(ElementName = "JoyConSupportSettings")]
-    public class JoyConSupportSettings
-    {
-        [XmlElement(ElementName = "Enabled")] 
-        public bool Enabled { get; set; } = true;
-
-        [XmlElement(ElementName = "LinkMode")]
-        public JoyConDeviceOptions.LinkMode LinkMode { get; set; } = JoyConDeviceOptions.LinkMode.Joined;
-
-        [XmlElement(ElementName = "JoinedGyroProvider")]
-        public JoyConDeviceOptions.JoinedGyroProvider JoinedGyroProvider { get; set; } =
-            JoyConDeviceOptions.JoinedGyroProvider.JoyConR;
-    }
-
+    [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "DeviceOptions")]
     public class DeviceOptions
     {
         [XmlElement(ElementName = "DS4SupportSettings")]
-        public DS4SupportSettings DS4SupportSettings { get; set; } = new();
+        public DS4DeviceOptions DS4SupportSettings { get; set; } = new();
 
         [XmlElement(ElementName = "DualSenseSupportSettings")]
-        public DualSenseSupportSettings DualSenseSupportSettings { get; set; } = new();
+        public DualSenseDeviceOptions DualSenseSupportSettings { get; set; } = new();
 
         [XmlElement(ElementName = "SwitchProSupportSettings")]
-        public SwitchProSupportSettings SwitchProSupportSettings { get; set; } = new();
+        public SwitchProDeviceOptions SwitchProSupportSettings { get; set; } = new();
 
         [XmlElement(ElementName = "JoyConSupportSettings")]
-        public JoyConSupportSettings JoyConSupportSettings { get; set; } = new();
+        public JoyConDeviceOptions JoyConSupportSettings { get; set; } = new();
     }
 }
