@@ -52,6 +52,9 @@ namespace DS4Windows.InputDevices
             }
         }
 
+        /// <summary>
+        ///     Source: https://controllers.fandom.com/wiki/Sony_DualSense#Date_and_Version
+        /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         protected struct ReportFeatureInVersion
         {
