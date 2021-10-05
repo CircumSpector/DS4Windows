@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
 using PropertyChanged;
 #if WITH_TRACING
@@ -13,7 +14,7 @@ using OpenTracing.Util;
 namespace DS4Windows.InputDevices
 {
     [AddINotifyPropertyChangedInterface]
-    public class DualSenseDevice : DS4Device
+    public partial class DualSenseDevice : DS4Device
     {
         public enum HapticIntensity : uint
         {
@@ -36,6 +37,9 @@ namespace DS4Windows.InputDevices
         private new const byte USB_OUTPUT_CHANGE_LENGTH = 48;
         private const int OUTPUT_MIN_COUNT_BT = 20;
         private const byte LED_PLAYER_BAR_TOGGLE = 0x10;
+        private const byte FEATURE_DATE_VERSION = 0x20;
+
+        private readonly byte[] outputBTCrc32Head = { 0xA2 };
 
         private byte activePlayerLEDMask;
         private InputReportDataBytes dataBytes;
@@ -50,8 +54,6 @@ namespace DS4Windows.InputDevices
         private TriggerEffectData l2EffectData;
 
         private byte muteLEDByte;
-
-        private readonly byte[] outputBTCrc32Head = { 0xA2 };
         private bool outputDirty;
         private TriggerEffectData r2EffectData;
         private bool timeStampInit;
@@ -64,7 +66,7 @@ namespace DS4Windows.InputDevices
             synced = true;
             DeviceSlotNumberChanged += (sender, e) => { CalculateDeviceSlotMask(); };
 
-            BatteryChanged += (sender) => { PreparePlayerLEDBarByte(); };
+            BatteryChanged += sender => { PreparePlayerLEDBarByte(); };
         }
 
         public override byte SerialReportID => SERIAL_FEATURE_ID;
@@ -105,6 +107,8 @@ namespace DS4Windows.InputDevices
             gyroMouseSensSettings = new GyroMouseSensDualSense();
             OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
             SetupOptionsEvents();
+
+            var version = GetFirmwareVersion();
 
             ConnectionType = DetermineConnectionType(hDevice);
 
@@ -337,7 +341,7 @@ namespace DS4Windows.InputDevices
                     if (ConnectionType == ConnectionType.BT)
                     {
                         timeoutEvent = false;
-                        
+
                         var res = hDevice.ReadInputReport(InputReportBuffer, inputReport.Length, out _);
                         Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
@@ -1381,6 +1385,22 @@ namespace DS4Windows.InputDevices
                 PrepareMuteLEDByte();
                 PreparePlayerLEDBarByte();
             }
+        }
+
+        /// <summary>
+        ///     Fetches the <see cref="ReportFeatureInVersion"/> from this <see cref="DualSenseDevice"/>.
+        /// </summary>
+        /// <returns>The <see cref="ReportFeatureInVersion"/>.</returns>
+        protected ReportFeatureInVersion GetFirmwareVersion()
+        {
+            var buffer = new byte[64];
+            buffer[0] = FEATURE_DATE_VERSION;
+
+            hDevice.ReadFeatureData(buffer);
+
+            var version = buffer.ByteArrayToStructure<ReportFeatureInVersion>();
+
+            return version;
         }
 
         public class GyroMouseSensDualSense : GyroMouseSens
