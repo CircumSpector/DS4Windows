@@ -10,6 +10,7 @@ using System.Text;
 using Sensorit.Base;
 using DS4WinWPF.DS4Control;
 using DS4Windows.DS4Control;
+using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
@@ -1598,13 +1599,13 @@ namespace DS4Windows
 
                 if (deviceOptions.JoyConDeviceOpts.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
                 {
-                    tempPrimaryJoyDev = devices.Where(d =>
-                        (d.DeviceType == InputDevices.InputDeviceType.JoyConL || d.DeviceType == InputDevices.InputDeviceType.JoyConR)
-                         && d.PrimaryDevice && d.JointDeviceSlotNumber == -1).FirstOrDefault() as InputDevices.JoyConDevice;
+                    tempPrimaryJoyDev = devices.FirstOrDefault(d =>
+                        d.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR
+                        && d.PrimaryDevice && d.JointDeviceSlotNumber == -1) as JoyConDevice;
 
-                    tempSecondaryJoyDev = devices.Where(d =>
-                        (d.DeviceType == InputDevices.InputDeviceType.JoyConL || d.DeviceType == InputDevices.InputDeviceType.JoyConR)
-                        && !d.PrimaryDevice && d.JointDeviceSlotNumber == -1).FirstOrDefault() as InputDevices.JoyConDevice;
+                    tempSecondaryJoyDev = devices.FirstOrDefault(d =>
+                        d.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR
+                        && !d.PrimaryDevice && d.JointDeviceSlotNumber == -1) as JoyConDevice;
                 }
 
                 for (var devEnum = devices.GetEnumerator(); devEnum.MoveNext() && loopControllers;)
