@@ -14,6 +14,7 @@
 
             <!--<SolidColorBrush x:Key="ForegroundColor" Color="{x:Static SystemColors.ActiveCaptionTextColor}" />-->
 
+            <!--
             <Style TargetType="{x:Type Button}" x:Key="NoBGHoverBtn">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Template">
@@ -26,12 +27,15 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            -->
 
+            <!--
             <Style TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}">
                 <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
                 <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
                 <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
             </Style>
+            -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

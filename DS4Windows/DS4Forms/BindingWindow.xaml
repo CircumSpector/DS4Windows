@@ -138,36 +138,36 @@
                         <Image x:Name="highlightImg" Width="20" Height="20" Source="/DS4Windows;component/Resources/360 highlight.png" Canvas.Left="622" Canvas.Top="11" IsEnabled="False" />
                         <Label x:Name="highlightLb" Content="A" Background="Black" Foreground="White" IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
 
-                        <!--<Button x:Name="guideBtn2" Width="16" Height="30" Tag="Ni" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="212" Canvas.Top="112"  />-->
-                        <Button x:Name="guideBtn" Width="26" Height="20" Tag="Guide" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="303" Canvas.Top="87" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave"  />
-                        <Button x:Name="aBtn" Width="24" Height="18" Tag="A" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="433" Canvas.Top="114" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="bBtn" Width="24" Height="18" Tag="B" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="470" Canvas.Top="85" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="xBtn" Width="24" Height="18" Tag="X" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="400" Canvas.Top="89" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="yBtn" Width="24" Height="18" Tag="Y" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="437" Canvas.Top="59" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="lbBtn" Width="64" Height="18" Tag="LB" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="27" Canvas.Top="59" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="rbBtn" Width="64" Height="18" Tag="RB" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="536" Canvas.Top="62" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="ltBtn" Width="42" Height="36" Tag="LT" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="48" Canvas.Top="17" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="rtBtn" Width="42" Height="36" Tag="RT" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="544" Canvas.Top="20" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="backBtn" Width="20" Height="20" Tag="Back" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="257" Canvas.Top="86" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="startBtn" Width="20" Height="20" Tag="Start" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="353" Canvas.Top="88" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <!--<Button x:Name="guideBtn2" Width="16" Height="30" Tag="Ni"  Canvas.Left="212" Canvas.Top="112"  />-->
+                        <Button x:Name="guideBtn" Width="26" Height="20" Tag="Guide"  Canvas.Left="303" Canvas.Top="87" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave"  />
+                        <Button x:Name="aBtn" Width="24" Height="18" Tag="A"  Canvas.Left="433" Canvas.Top="114" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="bBtn" Width="24" Height="18" Tag="B"  Canvas.Left="470" Canvas.Top="85" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="xBtn" Width="24" Height="18" Tag="X"  Canvas.Left="400" Canvas.Top="89" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="yBtn" Width="24" Height="18" Tag="Y"  Canvas.Left="437" Canvas.Top="59" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="lbBtn" Width="64" Height="18" Tag="LB"  Canvas.Left="27" Canvas.Top="59" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="rbBtn" Width="64" Height="18" Tag="RB"  Canvas.Left="536" Canvas.Top="62" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="ltBtn" Width="42" Height="36" Tag="LT"  Canvas.Left="48" Canvas.Top="17" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="rtBtn" Width="42" Height="36" Tag="RT"  Canvas.Left="544" Canvas.Top="20" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="backBtn" Width="20" Height="20" Tag="Back"  Canvas.Left="257" Canvas.Top="86" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="startBtn" Width="20" Height="20" Tag="Start"  Canvas.Left="353" Canvas.Top="88" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
 
-                        <Button x:Name="lsbBtn" Width="16" Height="16" Tag="Left Stick" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="174" Canvas.Top="102" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="lsuBtn" Width="47" Height="16" Tag="LS Y-Axis-" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="159" Canvas.Top="81" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="lsrBtn" Width="16" Height="28" Tag="LS X-Axis+" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="197" Canvas.Top="96" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="lsdBtn" Width="28" Height="16" Tag="LS Y-Axis+" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="167" Canvas.Top="122" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="lslBtn" Width="16" Height="28" Tag="LS X-Axis-" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="148" Canvas.Top="95" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="lsbBtn" Width="16" Height="16" Tag="Left Stick"  Canvas.Left="174" Canvas.Top="102" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="lsuBtn" Width="47" Height="16" Tag="LS Y-Axis-"  Canvas.Left="159" Canvas.Top="81" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="lsrBtn" Width="16" Height="28" Tag="LS X-Axis+"  Canvas.Left="197" Canvas.Top="96" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="lsdBtn" Width="28" Height="16" Tag="LS Y-Axis+"  Canvas.Left="167" Canvas.Top="122" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="lslBtn" Width="16" Height="28" Tag="LS X-Axis-"  Canvas.Left="148" Canvas.Top="95" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
 
-                        <Button x:Name="rsbBtn" Width="16" Height="16" Tag="Right Stick" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="370" Canvas.Top="169" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="rsuBtn" Width="26" Height="16" Tag="RS Y-Axis-" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="365" Canvas.Top="149" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="rsrBtn" Width="16" Height="28" Tag="RS X-Axis+" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="392" Canvas.Top="161" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="rsdBtn" Width="28" Height="16" Tag="RS Y-Axis+" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="363" Canvas.Top="189" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="rslBtn" Width="16" Height="16" Tag="RS X-Axis-" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="347" Canvas.Top="167" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="rsbBtn" Width="16" Height="16" Tag="Right Stick"  Canvas.Left="370" Canvas.Top="169" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="rsuBtn" Width="26" Height="16" Tag="RS Y-Axis-"  Canvas.Left="365" Canvas.Top="149" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="rsrBtn" Width="16" Height="28" Tag="RS X-Axis+"  Canvas.Left="392" Canvas.Top="161" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="rsdBtn" Width="28" Height="16" Tag="RS Y-Axis+"  Canvas.Left="363" Canvas.Top="189" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="rslBtn" Width="16" Height="16" Tag="RS X-Axis-"  Canvas.Left="347" Canvas.Top="167" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
 
-                        <Button x:Name="dpadUBtn" Width="16" Height="12" Tag="Dpad Up" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="240" Canvas.Top="136" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="dpadRBtn" Width="16" Height="30" Tag="Dpad Right" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="268" Canvas.Top="150" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="dpadDBtn" Width="16" Height="12" Tag="Dpad Down" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="244" Canvas.Top="187" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="dpadLBtn" Width="16" Height="30" Tag="Dpad Left" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="214" Canvas.Top="148" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
-                        <Button x:Name="touchpadClickBtn" Visibility="Collapsed" Width="126" Height="72" Tag="Touchpad Click" Style="{StaticResource NoBGHoverBtn}" Canvas.Left="256" Canvas.Top="57" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="dpadUBtn" Width="16" Height="12" Tag="Dpad Up"  Canvas.Left="240" Canvas.Top="136" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="dpadRBtn" Width="16" Height="30" Tag="Dpad Right"  Canvas.Left="268" Canvas.Top="150" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="dpadDBtn" Width="16" Height="12" Tag="Dpad Down"  Canvas.Left="244" Canvas.Top="187" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="dpadLBtn" Width="16" Height="30" Tag="Dpad Left"  Canvas.Left="214" Canvas.Top="148" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
+                        <Button x:Name="touchpadClickBtn" Visibility="Collapsed" Width="126" Height="72" Tag="Touchpad Click"  Canvas.Left="256" Canvas.Top="57" MouseEnter="OutConBtn_MouseEnter" MouseLeave="OutConBtn_MouseLeave" />
                     </Canvas>
                 </StackPanel>
             </DockPanel>
