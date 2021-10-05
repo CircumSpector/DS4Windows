@@ -101,7 +101,6 @@ namespace DS4Windows.InputDevices
 
         public override void PostInit()
         {
-            var hidDevice = hDevice;
             DeviceType = InputDeviceType.DualSense;
             gyroMouseSensSettings = new GyroMouseSensDualSense();
             OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
