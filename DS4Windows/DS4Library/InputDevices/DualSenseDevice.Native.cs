@@ -4,12 +4,21 @@ using System.Runtime.InteropServices;
 
 namespace DS4Windows.InputDevices
 {
+    public interface IDualSenseFirmwareVersion
+    {
+        public byte Major { get; }
+
+        public byte Minor { get; }
+
+        public ushort Build { get; }
+    }
+
     public partial class DualSenseDevice
     {
         /// <summary>
         ///     Represents a refined (human-readable) firmware version value for a <see cref="DualSenseDevice"/>.
         /// </summary>
-        public class DualSenseFirmwareVersion : IEquatable<DualSenseFirmwareVersion>
+        protected class DualSenseFirmwareVersion : IDualSenseFirmwareVersion, IEquatable<DualSenseFirmwareVersion>
         {
             public DualSenseFirmwareVersion(UInt32 nativeValue)
             {

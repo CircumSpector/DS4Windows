@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
-using ExtendedXmlSerializer;
 using PropertyChanged;
 #if WITH_TRACING
 using OpenTracing.Util;
@@ -1390,9 +1388,9 @@ namespace DS4Windows.InputDevices
         }
 
         /// <summary>
-        ///     Fetches the <see cref="ReportFeatureInVersion"/> from this <see cref="DualSenseDevice"/>.
+        ///     Fetches the <see cref="ReportFeatureInVersion" /> from this <see cref="DualSenseDevice" />.
         /// </summary>
-        /// <returns>The <see cref="ReportFeatureInVersion"/>.</returns>
+        /// <returns>The <see cref="ReportFeatureInVersion" />.</returns>
         protected ReportFeatureInVersion RetrieveFirmwareVersion()
         {
             var buffer = new byte[64];
