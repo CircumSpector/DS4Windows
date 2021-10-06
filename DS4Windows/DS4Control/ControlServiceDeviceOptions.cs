@@ -83,6 +83,11 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DualSenseControllerOptions : ControllerOptionsStore
     {
+        public DualSenseControllerOptions()
+        {
+
+        }
+
         public enum LEDBarMode : ushort
         {
             Off,
@@ -109,6 +114,8 @@ namespace DS4Windows
 
         [XmlElement(ElementName = "MuteLEDMode")]
         public MuteLEDMode MuteLedMode { get; set; } = MuteLEDMode.Off;
+
+        public bool HasUserConfirmedProblematicFirmware { get; set; } = false;
 
         [UsedImplicitly]
         private void OnEnableRumbleChanged()

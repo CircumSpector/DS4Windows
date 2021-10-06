@@ -482,6 +482,13 @@ namespace DS4Windows
 
                 config = ControllerConfigs.Deserialize(read);
             }
+            catch (FileNotFoundException)
+            {
+                //
+                // Nonexistent, create fresh
+                // 
+                config = new ControllerConfigs();
+            }
             catch (InvalidOperationException)
             {
                 //
@@ -512,7 +519,9 @@ namespace DS4Windows
 
                 var config = ControllerConfigs.Deserialize(stream);
 
-                OptionsStore = config.Controllers[MacAddress];
+                var store = config.Controllers[MacAddress];
+
+                PropertyCopier<ControllerOptionsStore, ControllerOptionsStore>.Copy(store, OptionsStore);
             }
             catch (FileNotFoundException)
             {

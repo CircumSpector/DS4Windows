@@ -116,12 +116,7 @@ namespace DS4Windows.InputDevices
             gyroMouseSensSettings = new GyroMouseSensDualSense();
             OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
             SetupOptionsEvents();
-
-            var firmware = RetrieveFirmwareVersion();
-
-            if (ProblematicFirmwareVersions.Contains(firmware.GetFirmwareVersion()))
-                ProblematicFirmwareVersionDetected?.Invoke(this, firmware.GetFirmwareVersion());
-
+            
             ConnectionType = DetermineConnectionType(hDevice);
 
             if (ConnectionType == ConnectionType.USB)
@@ -230,6 +225,11 @@ namespace DS4Windows.InputDevices
 
         public override void StartUpdate()
         {
+            var firmware = RetrieveFirmwareVersion();
+
+            if (ProblematicFirmwareVersions.Contains(firmware.GetFirmwareVersion()))
+                ProblematicFirmwareVersionDetected?.Invoke(this, firmware.GetFirmwareVersion());
+
             inputReportErrorCount = 0;
 
             if (ds4Input == null)

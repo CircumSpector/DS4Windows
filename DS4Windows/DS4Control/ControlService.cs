@@ -102,7 +102,7 @@ namespace DS4Windows
         void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
         {
             //meta = new DualShockPadMeta();
-            meta.PadId = (byte) padIdx;
+            meta.PadId = (byte)padIdx;
             meta.Model = DsModel.DS4;
 
             var d = DS4Controllers[padIdx];
@@ -247,7 +247,7 @@ namespace DS4Windows
 
             DS4Devices.RequestElevation += DS4Devices_RequestElevation;
             DS4Devices.checkVirtualFunc = CheckForVirtualDevice;
-            DS4Devices.PrepareDS4Init = PrepareDS4DeviceInit;
+            DS4Devices.PrepareDS4Init = PrepareDs4DeviceInit;
             DS4Devices.PostDS4Init = PostDS4DeviceInit;
             DS4Devices.PreparePendingDevice = CheckForSupportedDevice;
             outputslotMan.ViGEmFailure += OutputslotMan_ViGEmFailure;
@@ -386,7 +386,7 @@ namespace DS4Windows
             return result;
         }
 
-        public void PrepareDS4DeviceInit(DS4Device device)
+        public void PrepareDs4DeviceInit(DS4Device device)
         {
             if (!Global.IsWin8OrGreater)
             {
@@ -395,42 +395,44 @@ namespace DS4Windows
 
             if (device is DualSenseDevice dualSenseDevice)
             {
-                dualSenseDevice.ProblematicFirmwareVersionDetected += (ds4Device, version) =>
+                dualSenseDevice.ProblematicFirmwareVersionDetected += async (ds4Device, version) =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    var ds = (DualSenseDevice)ds4Device;
+                    var store = (DualSenseControllerOptions)(ds).OptionsStore;
+
+                    if (store.HasUserConfirmedProblematicFirmware)
+                        return;
+
+                    var messageBox = new MessageBoxModel
                     {
-                        var messageBox = new MessageBoxModel
+                        Text =
+                            $"Hello, Gamer! \r\n\r\nYour DualSense ({dualSenseDevice.MacAddress.AsFriendlyName()}) is running " +
+                            $"outdated Firmware (version {version}) known to cause issues (e.g. excessive battery drainage). "
+                            + "\r\n\r\nPlease plug the controller into a PlayStation 5 and update the firmware. \r\n\r\nThanks for your attention ❤️",
+                        Caption = "Outdated Firmware detected",
+                        Icon = MessageBoxImage.Warning,
+                        Buttons = new[]
                         {
-                            Text =
-                                $"Hello, Gamer! \r\n\r\nYour DualSense ({dualSenseDevice.MacAddress.AsFriendlyName()}) is running " +
-                                $"outdated Firmware (version {version}) known to cause issues (e.g. excessive battery drainage). "
-                                + "\r\n\r\nPlease plug the controller into a PlayStation 5 and update the firmware. \r\n\r\nThanks for your attention ❤️",
-                            Caption = "Outdated Firmware detected",
-                            Icon = MessageBoxImage.Warning,
-                            Buttons = new[]
-                            {
-                                MessageBoxButtons.Yes("Understood")
-                            },
-                            CheckBoxes = new[]
-                            {
-                                new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
-                                {
-                                    IsChecked = false,
-                                    Placement = MessageBoxCheckBoxPlacement.BelowText
-                                }
-                            },
-                            IsSoundEnabled = false
-                        };
-
-                        MessageBox.Show(messageBox);
-
-                        switch (messageBox.Result)
+                            MessageBoxButtons.Yes("Understood")
+                        },
+                        CheckBoxes = new[]
                         {
-                            case MessageBoxResult.Yes:
-                                
-                                break;
-                        }
-                    }));
+                            new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
+                            {
+                                IsChecked = false,
+                                Placement = MessageBoxCheckBoxPlacement.BelowText
+                            }
+                        },
+                        IsSoundEnabled = false
+                    };
+                    
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        MessageBox.Show(Application.Current.MainWindow, messageBox);
+                    });
+
+                    store.HasUserConfirmedProblematicFirmware = messageBox.CheckBoxes.First().IsChecked;
+                    ds.PersistOptionsStore(Global.Instance.Config.ControllerConfigsPath);
                 };
             }
         }
@@ -625,7 +627,7 @@ namespace DS4Windows
                 Monitor.Pulse(busThrLck);
         }
 
-        public void ChangeUDPStatus(bool state, bool openPort=true)
+        public void ChangeUDPStatus(bool state, bool openPort = true)
         {
             if (state && _udpServer == null)
             {
@@ -784,7 +786,7 @@ namespace DS4Windows
                     {
                         vigemTestClient = new ViGEmClient();
                     }
-                    catch {}
+                    catch { }
                 });
                 tempThread.Priority = ThreadPriority.AboveNormal;
                 tempThread.IsBackground = true;
@@ -809,7 +811,7 @@ namespace DS4Windows
 
         public void AssignInitialDevices()
         {
-            foreach(OutSlotDevice slotDevice in outputslotMan.OutputSlots)
+            foreach (OutSlotDevice slotDevice in outputslotMan.OutputSlots)
             {
                 if (slotDevice.CurrentReserveStatus ==
                     OutSlotDevice.ReserveStatus.Permanent)
@@ -1023,7 +1025,7 @@ namespace DS4Windows
                             Xbox360OutDevice tempXbox = EstablishOutDevice(index, OutContType.X360)
                             as Xbox360OutDevice;
                             //outputDevices[index] = tempXbox;
-                            
+
                             // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                             if (Global.Instance.Config.EnableOutputDataToDS4[index])
                             {
@@ -1176,7 +1178,7 @@ namespace DS4Windows
                 if (dev != null && slotDevice != null)
                 {
                     string tempType = dev.GetDeviceType();
-                    LogDebug($"Disassociate {tempType} Controller from{(slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent ? " permanent" : "")} slot #{slotDevice.Index+1} for input {device.DisplayName} controller #{index + 1}", false);
+                    LogDebug($"Disassociate {tempType} Controller from{(slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent ? " permanent" : "")} slot #{slotDevice.Index + 1} for input {device.DisplayName} controller #{index + 1}", false);
 
                     OutContType currentType = ActiveOutDevType[index];
                     outputDevices[index] = null;
@@ -1515,7 +1517,7 @@ namespace DS4Windows
                 DS4Device tempDevice = DS4Controllers[i];
                 if (tempDevice != null)
                 {
-                   tempDevice.PrepareAbort();
+                    tempDevice.PrepareAbort();
                 }
             }
         }
@@ -1875,7 +1877,7 @@ namespace DS4Windows
             }
         }
 
-        public void CheckProfileOptions(int ind, DS4Device device, bool startUp=false)
+        public void CheckProfileOptions(int ind, DS4Device device, bool startUp = false)
         {
             device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.Config.GetEnableOutputDataToDS4(ind));
             if (!Instance.Config.GetEnableOutputDataToDS4(ind))
@@ -2204,7 +2206,7 @@ namespace DS4Windows
                     DS4Controllers[ind] = null;
                     //eventDispatcher.Invoke(() =>
                     //{
-                        slotManager.RemoveController(device, ind);
+                    slotManager.RemoveController(device, ind);
                     //});
 
                     touchPad[ind] = null;
@@ -2403,7 +2405,7 @@ namespace DS4Windows
                 LogDebug(string.Format(DS4WinWPF.Properties.Resources.LatencyOverTen, (ind + 1), device.Latency), true);
                 if (Instance.Config.FlashWhenLate)
                 {
-                    DS4Color color = new DS4Color(50, 0,0);
+                    DS4Color color = new DS4Color(50, 0, 0);
                     DS4LightBar.forcedColor[ind] = color;
                     DS4LightBar.forcedFlash[ind] = 2;
                     DS4LightBar.forcelight[ind] = true;
@@ -2581,7 +2583,7 @@ namespace DS4Windows
                 DS4Device device = DS4Controllers[deviceNum];
                 if (device != null)
                     SetDevRumble(device, heavyMotor, lightMotor, deviceNum);
-                    //device.setRumble((byte)lightBoosted, (byte)heavyBoosted);
+                //device.setRumble((byte)lightBoosted, (byte)heavyBoosted);
             }
         }
 
