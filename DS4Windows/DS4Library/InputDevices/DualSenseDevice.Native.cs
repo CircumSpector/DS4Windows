@@ -20,6 +20,13 @@ namespace DS4Windows.InputDevices
         /// </summary>
         protected class DualSenseFirmwareVersion : IDualSenseFirmwareVersion, IEquatable<DualSenseFirmwareVersion>
         {
+            public DualSenseFirmwareVersion(byte major, byte minor, ushort build)
+            {
+                Major = major;
+                Minor = minor;
+                Build = build;
+            }
+
             public DualSenseFirmwareVersion(UInt32 nativeValue)
             {
                 var fwVersion = BitConverter.GetBytes(nativeValue).Reverse().ToArray();
