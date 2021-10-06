@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using NonFormTimer = System.Timers.Timer;
 using DS4Windows;
 
@@ -224,8 +214,8 @@ namespace DS4WinWPF.DS4Forms
             {
                 // Don't bother waiting for UI thread to grab references
                 //DS4StateExposed tmpexposeState = ControlService.CurrentInstance.ExposedState[deviceNum];
-                DS4State tmpbaseState = ControlService.CurrentInstance.getDS4State(deviceNum);
-                DS4State tmpinterState = ControlService.CurrentInstance.getDS4StateTemp(deviceNum);
+                DS4State tmpbaseState = ControlService.CurrentInstance.GetDs4State(deviceNum);
+                DS4State tmpinterState = ControlService.CurrentInstance.GetDs4StateTemp(deviceNum);
                 long cntCalibrating = ds.SixAxis.CntCalibrating;
 
                 // Wait for controller to be in a wait period

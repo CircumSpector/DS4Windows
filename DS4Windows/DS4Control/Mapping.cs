@@ -2692,7 +2692,7 @@ namespace DS4Windows
                     {
                         if (!(extras[0] == extras[1] && extras[1] == 0))
                         {
-                            ctrl.setRumble((byte)extras[0], (byte)extras[1], device);
+                            ctrl.SetRumble((byte)extras[0], (byte)extras[1], device);
                             extrasRumbleActive[device] = true;
                         }
 
@@ -2731,7 +2731,7 @@ namespace DS4Windows
 
                     if (extrasRumbleActive[device])
                     {
-                        ctrl.setRumble(0, 0, device);
+                        ctrl.SetRumble(0, 0, device);
                         extrasRumbleActive[device] = false;
                     }
 

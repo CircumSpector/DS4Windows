@@ -718,7 +718,7 @@ namespace DS4WinWPF.DS4Forms
         private async void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                App.rootHub.setRumble(0, 0, profileSettingsVM.FuncDevNum);
+                App.rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
             Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
             await Global.Instance.LoadProfile(DeviceNum, false, App.rootHub);
             Closed?.Invoke(this, EventArgs.Empty);
@@ -818,7 +818,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var result = false;
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                App.rootHub.setRumble(0, 0, profileSettingsVM.FuncDevNum);
+                App.rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
 
             var temp = profileNameTxt.Text;
             if (!string.IsNullOrWhiteSpace(temp) &&
@@ -878,7 +878,7 @@ namespace DS4WinWPF.DS4Forms
         public void Close()
         {
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                App.rootHub.setRumble(0, 0, profileSettingsVM.FuncDevNum);
+                App.rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
 
             Closed?.Invoke(this, EventArgs.Empty);
         }

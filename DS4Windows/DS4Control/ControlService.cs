@@ -5,13 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using AdonisUI.Controls;
-using DS4Windows.DS4Control;
 using DS4Windows.InputDevices;
 using DS4Windows.VJoyFeeder;
 using DS4WinWPF;
@@ -20,7 +18,6 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Properties;
-using DS4WinWPF.Translations;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Sensorit.Base;
@@ -30,7 +27,7 @@ using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
 
 namespace DS4Windows
 {
-    public class ControlService
+    public partial class ControlService
     {
         public static ControlService CurrentInstance { get; set; }
 
@@ -206,20 +203,7 @@ namespace DS4Windows
             UDPServerSmoothingMincutoffChanged += ChangeUdpSmoothingAttrs;
             UDPServerSmoothingBetaChanged += ChangeUdpSmoothingAttrs;
         }
-
-        public void RefreshOutputKBMHandler()
-        {
-            if (outputKBMHandler != null)
-            {
-                outputKBMHandler.Disconnect();
-                outputKBMHandler = null;
-            }
-
-            if (outputKBMMapping != null) outputKBMMapping = null;
-
-            InitOutputKBMHandler();
-        }
-
+        
         private void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
         {
             //meta = new DualShockPadMeta();
@@ -292,41 +276,7 @@ namespace DS4Windows
 
             //return meta;
         }
-
-        private void InitOutputKBMHandler()
-        {
-            var attemptVirtualkbmHandler = cmdParser.VirtualKBMHandler;
-            Global.InitOutputKBMHandler(attemptVirtualkbmHandler);
-            if (!outputKBMHandler.Connect() &&
-                attemptVirtualkbmHandler != VirtualKBMFactory.GetFallbackHandlerIdentifier())
-            {
-                outputKBMHandler = VirtualKBMFactory.GetFallbackHandler();
-            }
-            else
-            {
-                // Connection was made. Check if version number should get populated
-                if (outputKBMHandler.GetIdentifier() == FakerInputHandler.IDENTIFIER)
-                    outputKBMHandler.Version = fakerInputVersion;
-            }
-
-            InitOutputKBMMapping(outputKBMHandler.GetIdentifier());
-            outputKBMMapping.PopulateConstants();
-            outputKBMMapping.PopulateMappings();
-        }
-
-        private void OutputslotMan_ViGEmFailure(object sender, EventArgs e)
-        {
-            EventDispatcher.BeginInvoke((Action)(() =>
-            {
-                loopControllers = false;
-                while (inServiceTask)
-                    Thread.SpinWait(1000);
-
-                LogDebug(Strings.ViGEmPluginFailure, true);
-                Stop();
-            }));
-        }
-
+        
         public void PostDS4DeviceInit(DS4Device device)
         {
             if (device.DeviceType == InputDeviceType.JoyConL ||
@@ -492,88 +442,11 @@ namespace DS4Windows
             }
         }
 
-        public void CheckHidHidePresence()
-        {
-            if (hidHideInstalled)
-            {
-                LogDebug("HidHide control device found");
-                using (var hidHideDevice = new HidHideAPIDevice())
-                {
-                    if (!hidHideDevice.IsOpen()) return;
-
-                    var dosPaths = hidHideDevice.GetWhitelist();
-
-                    var maxPathCheckLength = 512;
-                    var sb = new StringBuilder(maxPathCheckLength);
-                    var driveLetter = Path.GetPathRoot(ExecutableLocation).Replace("\\", "");
-                    var _ = NativeMethods.QueryDosDevice(driveLetter, sb, maxPathCheckLength);
-                    //int error = Marshal.GetLastWin32Error();
-
-                    var dosDrivePath = sb.ToString();
-                    // Strip a possible \??\ prefix.
-                    if (dosDrivePath.StartsWith(@"\??\")) dosDrivePath = dosDrivePath.Remove(0, 4);
-
-                    var partial = ExecutableLocation.Replace(driveLetter, "");
-                    // Need to trim starting '\\' from path2 or Path.Combine will
-                    // treat it as an absolute path and only return path2
-                    var realPath = Path.Combine(dosDrivePath, partial.TrimStart('\\'));
-                    var exists = dosPaths.Contains(realPath);
-                    if (!exists)
-                    {
-                        LogDebug("DS4Windows not found in HidHide whitelist. Adding DS4Windows to list");
-                        dosPaths.Add(realPath);
-                        hidHideDevice.SetWhitelist(dosPaths);
-                    }
-                }
-            }
-        }
-
         public async Task LoadPermanentSlotsConfig()
         {
             await OutputSlotPersist.Instance.ReadConfig(OutputslotMan);
         }
-
-        public void UpdateHidHideAttributes()
-        {
-            if (hidHideInstalled)
-            {
-                hidDeviceHidingAffectedDevs.Clear();
-                hidDeviceHidingExemptedDevs.Clear(); // No known equivalent in HidHide
-                hidDeviceHidingForced = false; // No known equivalent in HidHide
-                hidDeviceHidingEnabled = false;
-
-                using (var hidHideDevice = new HidHideAPIDevice())
-                {
-                    if (!hidHideDevice.IsOpen()) return;
-
-                    var active = hidHideDevice.GetActiveState();
-                    var instances = hidHideDevice.GetBlacklist();
-
-                    hidDeviceHidingEnabled = active;
-                    foreach (var instance in instances) hidDeviceHidingAffectedDevs.Add(instance.ToUpper());
-                }
-            }
-        }
-
-        public void UpdateHidHiddenAttributes()
-        {
-            if (hidHideInstalled) UpdateHidHideAttributes();
-        }
-
-        private bool CheckAffected(DS4Device dev)
-        {
-            var result = false;
-            if (dev != null && hidDeviceHidingEnabled)
-            {
-                var deviceInstanceId = DS4Devices.DevicePathToInstanceId(dev.HidDevice.DevicePath);
-                if (hidHideInstalled)
-                    result = CheckHidHideAffectedStatus(deviceInstanceId,
-                        hidDeviceHidingAffectedDevs, hidDeviceHidingExemptedDevs, hidDeviceHidingForced);
-            }
-
-            return result;
-        }
-
+        
         private List<DS4Controls> GetKnownExtraButtons(DS4Device dev)
         {
             var result = new List<DS4Controls>();
@@ -690,49 +563,7 @@ namespace DS4Windows
                     });
             }
         }
-
-        private bool udpChangeStatus;
-        public bool changingUDPPort;
-
-        public async void UseUDPPort()
-        {
-            changingUDPPort = true;
-            var devices = DS4Devices.GetDS4Controllers();
-            foreach (var dev in devices)
-                dev.QueueEvent(() =>
-                {
-                    if (dev.MotionEvent != null) dev.Report -= dev.MotionEvent;
-                });
-
-            await Task.Delay(100);
-
-            var UDP_SERVER_PORT = Instance.Config.UdpServerPort;
-            var UDP_SERVER_LISTEN_ADDRESS = Instance.Config.UdpServerListenAddress;
-
-            try
-            {
-                _udpServer.Start(UDP_SERVER_PORT, UDP_SERVER_LISTEN_ADDRESS);
-                foreach (var dev in devices)
-                    dev.QueueEvent(() =>
-                    {
-                        if (dev.MotionEvent != null) dev.Report += dev.MotionEvent;
-                    });
-                LogDebug($"UDP server listening on address {UDP_SERVER_LISTEN_ADDRESS} port {UDP_SERVER_PORT}");
-            }
-            catch (SocketException ex)
-            {
-                var errMsg =
-                    string.Format(
-                        "Couldn't start UDP server on address {0}:{1}, outside applications won't be able to access pad data ({2})",
-                        UDP_SERVER_LISTEN_ADDRESS, UDP_SERVER_PORT, ex.SocketErrorCode);
-
-                LogDebug(errMsg, true);
-                AppLogger.Instance.LogToTray(errMsg, true, true);
-            }
-
-            changingUDPPort = false;
-        }
-
+        
         private void WarnExclusiveModeFailure(DS4Device device)
         {
             if (DS4Devices.isExclusiveMode && !device.isExclusive())
@@ -744,41 +575,7 @@ namespace DS4Windows
                 AppLogger.Instance.LogToTray(message, true);
             }
         }
-
-        private void StartViGEm()
-        {
-            // Refresh internal ViGEmBus info
-            RefreshViGEmBusInfo();
-            if (IsRunningSupportedViGEmBus)
-            {
-                tempThread = new Thread(() =>
-                {
-                    try
-                    {
-                        vigemTestClient = new ViGEmClient();
-                    }
-                    catch
-                    {
-                    }
-                });
-                tempThread.Priority = ThreadPriority.AboveNormal;
-                tempThread.IsBackground = true;
-                tempThread.Start();
-                while (tempThread.IsAlive) Thread.SpinWait(500);
-            }
-
-            tempThread = null;
-        }
-
-        private void StopViGEm()
-        {
-            if (vigemTestClient != null)
-            {
-                vigemTestClient.Dispose();
-                vigemTestClient = null;
-            }
-        }
-
+        
         public void AssignInitialDevices()
         {
             foreach (var slotDevice in OutputslotMan.OutputSlots)
@@ -1775,34 +1572,7 @@ namespace DS4Windows
 
             return true;
         }
-
-        public void ResetUdpSmoothingFilters(int idx)
-        {
-            if (idx < UdpServer.NUMBER_SLOTS)
-            {
-                var temp = udpEuroPairAccel[idx] = new OneEuroFilter3D();
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
-
-                temp = udpEuroPairGyro[idx] = new OneEuroFilter3D();
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
-            }
-        }
-
-        private void ChangeUdpSmoothingAttrs(object sender, EventArgs e)
-        {
-            for (var i = 0; i < udpEuroPairAccel.Length; i++)
-            {
-                var temp = udpEuroPairAccel[i];
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
-            }
-
-            for (var i = 0; i < udpEuroPairGyro.Length; i++)
-            {
-                var temp = udpEuroPairGyro[i];
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
-            }
-        }
-
+        
         public void CheckProfileOptions(int ind, DS4Device device, bool startUp = false)
         {
             device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.Config.GetEnableOutputDataToDS4(ind));
@@ -2511,7 +2281,7 @@ namespace DS4Windows
         }
 
         // sets the rumble adjusted with rumble boost. General use method
-        public virtual void setRumble(byte heavyMotor, byte lightMotor, int deviceNum)
+        public virtual void SetRumble(byte heavyMotor, byte lightMotor, int deviceNum)
         {
             if (deviceNum < CURRENT_DS4_CONTROLLER_LIMIT)
             {
@@ -2538,17 +2308,17 @@ namespace DS4Windows
             device.SetRumble((byte)lightBoosted, (byte)heavyBoosted);
         }
 
-        public DS4State getDS4State(int ind)
+        public DS4State GetDs4State(int ind)
         {
             return CurrentState[ind];
         }
 
-        public DS4State getDS4StateMapped(int ind)
+        public DS4State GetDs4StateMapped(int ind)
         {
             return MappedState[ind];
         }
 
-        public DS4State getDS4StateTemp(int ind)
+        public DS4State GetDs4StateTemp(int ind)
         {
             return TempState[ind];
         }
