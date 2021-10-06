@@ -11,6 +11,7 @@
                        lex:ResxLocalizationProvider.DefaultDictionary="Strings"
                        mc:Ignorable="d"
                        Title="Controller-specific Options" Height="450" Width="800"
+                       ResizeMode="NoResize"
                        Closed="Window_Closed">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}" />

@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="340">
     <StackPanel Orientation="Horizontal">
-        <Label x:Name="label1" Content="Use language pack:" />
+        <Label x:Name="label1" Content="Use language pack:" VerticalAlignment="Center" />
         <ComboBox x:Name="cbCulture" Width="200" Margin="10,0,0,0"
                   ItemsSource="{Binding LangPackList}" SelectedIndex="{Binding SelectedIndex,FallbackValue=0}" IsEnabled="False">
             <ComboBox.ItemTemplate>
