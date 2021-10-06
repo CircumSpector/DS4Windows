@@ -889,8 +889,7 @@ namespace DS4Windows
 
         public virtual void StopUpdate()
         {
-            if (ds4Input != null &&
-                ds4Input.IsAlive && !ds4Input.ThreadState.HasFlag(ThreadState.Stopped) &&
+            if (ds4Input is { IsAlive: true } && !ds4Input.ThreadState.HasFlag(ThreadState.Stopped) &&
                 !ds4Input.ThreadState.HasFlag(ThreadState.AbortRequested))
                 try
                 {
@@ -946,15 +945,12 @@ namespace DS4Windows
         protected bool WriteOutput()
         {
             if (ConnectionType == ConnectionType.BT)
-            {
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
 
-                if (BTOutputMethod == BTOutputReportMethod.WriteFile)
-                    // Use Interrupt endpoint for almost BT DS4 connected devices now
-                    return hDevice.WriteOutputReportViaInterrupt(outputReport, READ_STREAM_TIMEOUT);
-                return hDevice.WriteOutputReportViaControl(outputReport);
-            }
+                return BTOutputMethod == BTOutputReportMethod.WriteFile
+                    ? hDevice.WriteOutputReportViaInterrupt(outputReport, READ_STREAM_TIMEOUT)
+                    : hDevice.WriteOutputReportViaControl(outputReport);
 
             return hDevice.WriteOutputReportViaInterrupt(outReportBuffer, READ_STREAM_TIMEOUT);
         }
