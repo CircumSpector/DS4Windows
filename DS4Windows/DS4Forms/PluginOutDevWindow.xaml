@@ -1,27 +1,32 @@
-﻿<Window x:Class="DS4WinWPF.DS4Forms.PluginOutDevWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
-        mc:Ignorable="d"
-        Title="PluginOutDevWindow" Height="200" Width="400"
-        Style="{DynamicResource WindowStyle}">
-    <DockPanel LastChildFill="False">
+﻿<controls:AdonisWindow x:Class="DS4WinWPF.DS4Forms.PluginOutDevWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+                       xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+                       mc:Ignorable="d"
+                       ResizeMode="NoResize"
+                       Title="Configure slot" Height="200" Width="180">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}" />
+    </Window.Style>
+    <DockPanel LastChildFill="False" Margin="{adonisUi:Space 1}">
         <TextBlock Text="Device type" DockPanel.Dock="Top" />
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Height="40" HorizontalAlignment="Right">
-            <Button x:Name="acceptBtn" Content="Accept" Click="AcceptBtn_Click" />
-            <Button x:Name="cancelBtn" Content="Cancel" Click="CancelBtn_Click" Margin="20,0,0,0" />
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Height="40" HorizontalAlignment="Right"
+                    Margin="{adonisUi:Space 1}">
+            <Button x:Name="acceptBtn" Content="Accept" Click="AcceptBtn_Click" Margin="{adonisUi:Space 1}" />
+            <Button x:Name="cancelBtn" Content="Cancel" Click="CancelBtn_Click" Margin="{adonisUi:Space 1}" />
         </StackPanel>
 
-        <ComboBox x:Name="devTypeCombo" SelectedIndex="0" DockPanel.Dock="Top">
+        <ComboBox x:Name="devTypeCombo" SelectedIndex="0" DockPanel.Dock="Top" Margin="{adonisUi:Space 1}">
             <ComboBoxItem Tag="0" Content="X360" />
             <ComboBoxItem Tag="1" Content="DS4" />
         </ComboBox>
 
-        <ComboBox x:Name="reserveTypeCombo" SelectedIndex="0" DockPanel.Dock="Top">
+        <ComboBox x:Name="reserveTypeCombo" SelectedIndex="0" DockPanel.Dock="Top" Margin="{adonisUi:Space 1}">
             <ComboBoxItem Content="Dynamic" Tag="0" />
             <ComboBoxItem Content="Permanent" Tag="1" />
         </ComboBox>
     </DockPanel>
-</Window>
+</controls:AdonisWindow>
