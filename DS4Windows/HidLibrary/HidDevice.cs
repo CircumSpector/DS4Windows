@@ -88,6 +88,11 @@ namespace DS4Windows
             CloseDevice();
         }
 
+        public void SetNumInputBuffers(int num)
+        {
+            NativeMethods.HidD_SetNumInputBuffers(DeviceHandle.DangerousGetHandle(), num);
+        }
+
         public override string ToString()
         {
             return
