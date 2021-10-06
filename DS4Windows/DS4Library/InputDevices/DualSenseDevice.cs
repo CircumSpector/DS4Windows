@@ -59,6 +59,11 @@ namespace DS4Windows.InputDevices
         private bool timeStampInit;
         private uint timeStampPrevious;
 
+        protected IList<IDualSenseFirmwareVersion> ProblematicFirmwareVersions => new List<IDualSenseFirmwareVersion>
+        {
+            new DualSenseFirmwareVersion(0, 1, 188)
+        };
+
         public DualSenseDevice(HidDevice hidDevice, string disName,
             VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4) :
             base(hidDevice, disName, featureSet)
@@ -98,8 +103,12 @@ namespace DS4Windows.InputDevices
         public DualSenseControllerOptions NativeOptionsStore { get; private set; }
 
         public override event ReportHandler<EventArgs> Report;
+
         public override event Action<DS4Device> BatteryChanged;
+
         public override event Action<DS4Device> ChargingChanged;
+
+        public event Action<DS4Device, IDualSenseFirmwareVersion> ProblematicFirmwareVersionDetected;
 
         public override void PostInit()
         {
@@ -107,6 +116,11 @@ namespace DS4Windows.InputDevices
             gyroMouseSensSettings = new GyroMouseSensDualSense();
             OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
             SetupOptionsEvents();
+
+            var firmware = RetrieveFirmwareVersion();
+
+            if (ProblematicFirmwareVersions.Contains(firmware.GetFirmwareVersion()))
+                ProblematicFirmwareVersionDetected?.Invoke(this, firmware.GetFirmwareVersion());
 
             ConnectionType = DetermineConnectionType(hDevice);
 
