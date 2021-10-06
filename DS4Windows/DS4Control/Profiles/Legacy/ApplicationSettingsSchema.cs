@@ -145,6 +145,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         [XmlElement(ElementName = "CustomLed8")]
         public CustomLedProxyType CustomLed8 { get; set; } = new();
 
+        /// <summary>
+        ///     If true, Jaeger Tracing will be enabled to start collecting performance metrics.
+        /// </summary>
+        public bool IsTracingEnabled { get; set; }
+
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }
 
