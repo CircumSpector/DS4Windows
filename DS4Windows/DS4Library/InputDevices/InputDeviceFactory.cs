@@ -11,29 +11,27 @@
 
     public abstract class InputDeviceFactory
     {
-        public static DS4Device CreateDevice(InputDeviceType tempType,
-            HidDevice hidDevice, string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4)
+        public static DS4Device CreateDevice(
+            InputDeviceType deviceType,
+            HidDevice hidDevice,
+            string disName,
+            VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4
+        )
         {
-            DS4Device temp = null;
-
-            switch (tempType)
+            switch (deviceType)
             {
                 case InputDeviceType.DS4:
-                    temp = new DS4Device(hidDevice, disName, featureSet);
-                    break;
+                    return new DS4Device(hidDevice, disName, featureSet);
                 case InputDeviceType.SwitchPro:
-                    temp = new SwitchProDevice(hidDevice, disName, featureSet);
-                    break;
+                    return new SwitchProDevice(hidDevice, disName, featureSet);
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
-                    temp = new JoyConDevice(hidDevice, disName, featureSet);
-                    break;
+                    return new JoyConDevice(hidDevice, disName, featureSet);
                 case InputDeviceType.DualSense:
-                    temp = new DualSenseDevice(hidDevice, disName, featureSet);
-                    break;
+                    return new DualSenseDevice(hidDevice, disName, featureSet);
             }
 
-            return temp;
+            return null;
         }
     }
 }
