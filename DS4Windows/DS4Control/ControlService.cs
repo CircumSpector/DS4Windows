@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using AdonisUI.Controls;
 using Sensorit.Base;
 using DS4WinWPF.DS4Control;
 using DS4Windows.DS4Control;
@@ -16,6 +18,9 @@ using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using Nefarius.ViGEm.Client;
 using static DS4Windows.Global;
+using MessageBox = AdonisUI.Controls.MessageBox;
+using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
+using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
 
 namespace DS4Windows
 {
@@ -386,6 +391,47 @@ namespace DS4Windows
             if (!Global.IsWin8OrGreater)
             {
                 device.BTOutputMethod = DS4Device.BTOutputReportMethod.HidD_SetOutputReport;
+            }
+
+            if (device is DualSenseDevice dualSenseDevice)
+            {
+                dualSenseDevice.ProblematicFirmwareVersionDetected += (ds4Device, version) =>
+                {
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    {
+                        var messageBox = new MessageBoxModel
+                        {
+                            Text =
+                                $"Hello, Gamer! \r\n\r\nYour DualSense ({dualSenseDevice.MacAddress.AsFriendlyName()}) is running " +
+                                $"outdated Firmware (version {version}) known to cause issues (e.g. excessive battery drainage). "
+                                + "\r\n\r\nPlease plug the controller into a PlayStation 5 and update the firmware. \r\n\r\nThanks for your attention ❤️",
+                            Caption = "Outdated Firmware detected",
+                            Icon = MessageBoxImage.Warning,
+                            Buttons = new[]
+                            {
+                                MessageBoxButtons.Yes("Understood")
+                            },
+                            CheckBoxes = new[]
+                            {
+                                new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
+                                {
+                                    IsChecked = false,
+                                    Placement = MessageBoxCheckBoxPlacement.BelowText
+                                }
+                            },
+                            IsSoundEnabled = false
+                        };
+
+                        MessageBox.Show(messageBox);
+
+                        switch (messageBox.Result)
+                        {
+                            case MessageBoxResult.Yes:
+                                
+                                break;
+                        }
+                    }));
+                };
             }
         }
 
