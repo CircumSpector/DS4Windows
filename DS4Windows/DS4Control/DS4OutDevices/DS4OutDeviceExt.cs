@@ -7,8 +7,8 @@ namespace DS4Windows
 {
     internal class DS4OutDeviceExt : DS4OutDevice
     {
-        private DS4_REPORT_EX outDS4Report;
         private readonly byte[] rawOutReportEx = new byte[63];
+        private DS4_REPORT_EX outDS4Report;
 
         public DS4OutDeviceExt(ViGEmClient client) : base(client)
         {
@@ -18,11 +18,10 @@ namespace DS4Windows
         {
             if (!connected) return;
 
-#if WITH_TRACING
+
             using (GlobalTracer.Instance.BuildSpan($"{nameof(DS4OutDeviceExt)}::{nameof(ConvertAndSendReport)}")
                 .StartActive(true))
             {
-#endif
                 ushort tempButtons = 0;
                 var tempDPad = DualShock4DPadDirection.None;
                 ushort tempSpecial = 0;
@@ -177,10 +176,7 @@ namespace DS4Windows
                 //Console.WriteLine("TEST: {0}, {1} {2}", outDS4Report.wGyroX, rawOutReportEx[12], rawOutReportEx[13]);
                 //Console.WriteLine("OUTPUT: {0}", string.Join(", ", rawOutReportEx));
                 cont.SubmitRawReport(rawOutReportEx);
-
-#if WITH_TRACING
             }
-#endif
         }
 
         public override void ResetState(bool submit = true)

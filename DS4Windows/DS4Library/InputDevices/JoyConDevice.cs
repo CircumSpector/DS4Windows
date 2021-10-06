@@ -135,6 +135,16 @@ namespace DS4Windows.InputDevices
         private static readonly byte[] commandBuffHeader =
             { 0x0, 0x1, 0x40, 0x40, 0x0, 0x1, 0x40, 0x40 };
 
+        private readonly ushort[] leftStickCalib = new ushort[6];
+        private readonly ushort leftStickOffsetX = 0;
+        private readonly ushort leftStickOffsetY = 0;
+
+        private readonly ReaderWriterLockSlim lockSlim = new();
+
+        private readonly ushort[] rightStickCalib = new ushort[6];
+        private readonly ushort rightStickOffsetX = 0;
+        private readonly ushort rightStickOffsetY = 0;
+
         public double[] accelCoeff = new double[3];
 
         public short[] accelNeutral = new short[3];
@@ -157,21 +167,11 @@ namespace DS4Windows.InputDevices
         private byte[] inputReportBuffer;
         private JoyConDevice jointDevice;
 
-        private readonly ushort[] leftStickCalib = new ushort[6];
-        private readonly ushort leftStickOffsetX = 0;
-        private readonly ushort leftStickOffsetY = 0;
-
         private StickAxisData leftStickXData;
         private StickAxisData leftStickYData;
 
-        private readonly ReaderWriterLockSlim lockSlim = new();
-
         private JoyConControllerOptions nativeOptionsStore;
         private byte[] outputReportBuffer;
-
-        private readonly ushort[] rightStickCalib = new ushort[6];
-        private readonly ushort rightStickOffsetX = 0;
-        private readonly ushort rightStickOffsetY = 0;
         private StickAxisData rightStickXData;
         private StickAxisData rightStickYData;
         private byte[] rumbleReportBuffer;
@@ -234,7 +234,7 @@ namespace DS4Windows.InputDevices
         {
             var result = JoyConSide.None;
             var productId = hDevice.Attributes.ProductId;
-            
+
             result = productId switch
             {
                 JOYCON_L_PRODUCT_ID => JoyConSide.Left,
@@ -362,16 +362,15 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
-#if WITH_TRACING
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(JoyConDevice)}::{nameof(ReadInput)}")
                         .StartActive(true);
-#endif
+
 
                     oldCharging = charging;
                     currerror = string.Empty;
 
                     readWaitEv.Set();
-                    
+
                     var res = hDevice.ReadInputReport(InputReportBuffer, inputReportBuffer.Length, out _);
                     Marshal.Copy(InputReportBuffer, inputReportBuffer, 0, inputReportBuffer.Length);
 
@@ -820,7 +819,7 @@ namespace DS4Windows.InputDevices
             FrameCount = (byte)(++FrameCount & 0x0F);
 
             result = hDevice.WriteOutputReportViaInterrupt(tmpRumble, 0);
-            
+
             //res = hidDevice.ReadWithFileStream(tmpReport, 500);
             //res = hidDevice.ReadFile(tmpReport);
         }
@@ -839,7 +838,7 @@ namespace DS4Windows.InputDevices
             commandBuffer[10] = subcommand;
 
             result = hDevice.WriteOutputReportViaInterrupt(commandBuffer, 0);
-            
+
             byte[] tmpReport = null;
             if (result && checkResponse)
             {

@@ -6,10 +6,8 @@ using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
-using PropertyChanged;
-#if WITH_TRACING
 using OpenTracing.Util;
-#endif
+using PropertyChanged;
 
 namespace DS4Windows.InputDevices
 {
@@ -59,11 +57,6 @@ namespace DS4Windows.InputDevices
         private bool timeStampInit;
         private uint timeStampPrevious;
 
-        protected IList<IDualSenseFirmwareVersion> ProblematicFirmwareVersions => new List<IDualSenseFirmwareVersion>
-        {
-            new DualSenseFirmwareVersion(0, 1, 188)
-        };
-
         public DualSenseDevice(HidDevice hidDevice, string disName,
             VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4) :
             base(hidDevice, disName, featureSet)
@@ -73,6 +66,11 @@ namespace DS4Windows.InputDevices
 
             BatteryChanged += sender => { PreparePlayerLEDBarByte(); };
         }
+
+        protected IList<IDualSenseFirmwareVersion> ProblematicFirmwareVersions => new List<IDualSenseFirmwareVersion>
+        {
+            new DualSenseFirmwareVersion(0, 1, 188)
+        };
 
         public override byte SerialReportID => SERIAL_FEATURE_ID;
 
@@ -116,7 +114,7 @@ namespace DS4Windows.InputDevices
             gyroMouseSensSettings = new GyroMouseSensDualSense();
             OptionsStore = NativeOptionsStore = new DualSenseControllerOptions();
             SetupOptionsEvents();
-            
+
             ConnectionType = DetermineConnectionType(hDevice);
 
             if (ConnectionType == ConnectionType.USB)
@@ -329,10 +327,9 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
-#if WITH_TRACING
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DualSenseDevice)}::{nameof(ReadInput)}")
                         .StartActive(true);
-#endif
+
 
                     oldCharging = charging;
                     currerror = string.Empty;

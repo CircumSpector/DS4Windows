@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-#if WITH_TRACING
 using OpenTracing.Util;
-#endif
 
 namespace DS4Windows
 {
@@ -48,10 +46,9 @@ namespace DS4Windows
 
         public void CopyFrom(SixAxis src)
         {
-#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(CopyFrom)}")
                 .StartActive(true);
-#endif
+
 
             gyroYaw = src.gyroYaw;
             gyroPitch = src.gyroPitch;
@@ -87,10 +84,9 @@ namespace DS4Windows
             int aX, int aY, int aZ,
             double elapsedDelta, SixAxis prevAxis = null)
         {
-#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(Populate)}")
                 .StartActive(true);
-#endif
+
 
             gyroYaw = -X / 256;
             gyroPitch = Y / 256;
@@ -200,16 +196,17 @@ namespace DS4Windows
             new(), new(), new(), new()
         };
 
+        private readonly GyroAverageWindow[] gyro_average_window = new GyroAverageWindow[num_gyro_average_windows];
+        private readonly Stopwatch gyroAverageTimer = new();
+        private readonly SixAxis now;
+        private readonly SixAxis sPrev;
+
         private bool calibrationDone;
         private double gyro_accel_magnitude = 1.0f;
-        private readonly GyroAverageWindow[] gyro_average_window = new GyroAverageWindow[num_gyro_average_windows];
         private int gyro_average_window_front_index;
         private int gyro_offset_x;
         private int gyro_offset_y;
         private int gyro_offset_z;
-        private readonly Stopwatch gyroAverageTimer = new();
-        private readonly SixAxis sPrev;
-        private readonly SixAxis now;
 
         private int temInt;
 
@@ -339,10 +336,9 @@ namespace DS4Windows
         public unsafe void HandleSixAxis(byte* gyro, byte* accel, DS4State state,
             double elapsedDelta)
         {
-#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(HandleSixAxis)}")
                 .StartActive(true);
-#endif
+
 
             unchecked
             {
@@ -356,7 +352,8 @@ namespace DS4Windows
                 //Console.WriteLine("AccelZ: {0}", AccelZ);
 
                 if (calibrationDone)
-                    ApplyCalibrations(ref currentYaw, ref currentPitch, ref currentRoll, ref AccelX, ref AccelY, ref AccelZ);
+                    ApplyCalibrations(ref currentYaw, ref currentPitch, ref currentRoll, ref AccelX, ref AccelY,
+                        ref AccelZ);
 
                 if (gyroAverageTimer.IsRunning)
                     CalcSensorCamples(ref currentYaw, ref currentPitch, ref currentRoll, ref AccelX, ref AccelY,
@@ -483,10 +480,9 @@ namespace DS4Windows
 
         public void AverageGyro(ref int x, ref int y, ref int z, ref double accelMagnitude)
         {
-#if WITH_TRACING
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(AverageGyro)}")
                 .StartActive(true);
-#endif
+
 
             var weight = 0.0;
             var totalX = 0.0;

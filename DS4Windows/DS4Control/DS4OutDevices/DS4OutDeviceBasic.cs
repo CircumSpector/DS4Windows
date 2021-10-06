@@ -1,11 +1,11 @@
-﻿using Nefarius.ViGEm.Client;
+﻿using DS4Windows.VJoyFeeder;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
-using System;
 using OpenTracing.Util;
 
 namespace DS4Windows
 {
-    class DS4OutDeviceBasic : DS4OutDevice
+    internal class DS4OutDeviceBasic : DS4OutDevice
     {
         public DS4OutDeviceBasic(ViGEmClient client) : base(client)
         {
@@ -15,14 +15,13 @@ namespace DS4Windows
         {
             if (!connected) return;
 
-#if WITH_TRACING
+
             using (GlobalTracer.Instance.BuildSpan($"{nameof(DS4OutDeviceBasic)}::{nameof(ConvertAndSendReport)}")
                 .StartActive(true))
             {
-#endif
                 //cont.ResetReport();
                 ushort tempButtons = 0;
-                DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
+                var tempDPad = DualShock4DPadDirection.None;
                 ushort tempSpecial = 0;
                 unchecked
                 {
@@ -69,7 +68,7 @@ namespace DS4Windows
                 cont.LeftTrigger = state.L2;
                 cont.RightTrigger = state.R2;
 
-                SASteeringWheelEmulationAxisType steeringWheelMappedAxis =
+                var steeringWheelMappedAxis =
                     Global.Instance.Config.GetSASteeringWheelEmulationAxis(device);
                 switch (steeringWheelMappedAxis)
                 {
@@ -111,29 +110,29 @@ namespace DS4Windows
                     case SASteeringWheelEmulationAxisType.L2R2:
                         cont.LeftTrigger = cont.RightTrigger = 0;
                         if (state.SASteeringWheelEmulationUnit >= 0)
-                            cont.LeftTrigger = (Byte)state.SASteeringWheelEmulationUnit;
-                        else cont.RightTrigger = (Byte)state.SASteeringWheelEmulationUnit;
+                            cont.LeftTrigger = (byte)state.SASteeringWheelEmulationUnit;
+                        else cont.RightTrigger = (byte)state.SASteeringWheelEmulationUnit;
                         goto case SASteeringWheelEmulationAxisType.None;
 
                     case SASteeringWheelEmulationAxisType.VJoy1X:
                     case SASteeringWheelEmulationAxisType.VJoy2X:
-                        DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
-                            ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) +
-                            1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_X);
+                        vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 +
+                            1, HID_USAGES.HID_USAGE_X);
                         goto case SASteeringWheelEmulationAxisType.None;
 
                     case SASteeringWheelEmulationAxisType.VJoy1Y:
                     case SASteeringWheelEmulationAxisType.VJoy2Y:
-                        DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
-                            ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) +
-                            1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_Y);
+                        vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 +
+                            1, HID_USAGES.HID_USAGE_Y);
                         goto case SASteeringWheelEmulationAxisType.None;
 
                     case SASteeringWheelEmulationAxisType.VJoy1Z:
                     case SASteeringWheelEmulationAxisType.VJoy2Z:
-                        DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
-                            ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) +
-                            1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_Z);
+                        vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 +
+                            1, HID_USAGES.HID_USAGE_Z);
                         goto case SASteeringWheelEmulationAxisType.None;
 
                     default:
@@ -142,19 +141,13 @@ namespace DS4Windows
                 }
 
                 cont.SubmitReport();
-
-#if WITH_TRACING
             }
-#endif
         }
 
         public override void ResetState(bool submit = true)
         {
             cont.ResetReport();
-            if (submit)
-            {
-                cont.SubmitReport();
-            }
+            if (submit) cont.SubmitReport();
         }
     }
 }
