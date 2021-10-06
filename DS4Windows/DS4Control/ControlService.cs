@@ -2260,21 +2260,18 @@ namespace DS4Windows
         }
 
         [LoggingComponent]
-        public virtual void LogDebug(string Data, bool warning = false)
+        public virtual void LogDebug(string data, bool isWarning = false)
         {
             //Console.WriteLine(System.DateTime.Now.ToString("G") + "> " + Data);
-            if (Debug != null)
-            {
-                var args = new LogEntryEventArgs(Data, warning);
-                OnDebug(this, args);
-            }
+            if (Debug == null) return;
+            var args = new LogEntryEventArgs(data, isWarning);
+            OnDebug(this, args);
         }
 
         [LoggingComponent]
         public virtual void OnDebug(object sender, LogEntryEventArgs args)
         {
-            if (Debug != null)
-                Debug(this, args);
+            Debug?.Invoke(this, args);
         }
 
         // sets the rumble adjusted with rumble boost. General use method
