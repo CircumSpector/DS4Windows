@@ -24,7 +24,7 @@ namespace DS4Windows
     ///     Represents a Sony DualShock 4 compatible device.
     /// </summary>
     [AddINotifyPropertyChangedInterface]
-    public class DS4Device
+    public class DS4Device : IDisposable
     {
         public delegate void ReportHandler<TEventArgs>(DS4Device sender, TEventArgs args);
 
@@ -2267,6 +2267,33 @@ namespace DS4Windows
             public double mouseCoefficient = 0.012;
             public double mouseOffset = 0.2;
             public double mouseSmoothOffset = 0.2;
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            if (InputReportBuffer != IntPtr.Zero)
+                Marshal.FreeHGlobal(InputReportBuffer);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                hDevice?.Dispose();
+                readWaitEv?.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~DS4Device()
+        {
+            Dispose(false);
         }
     }
 }
