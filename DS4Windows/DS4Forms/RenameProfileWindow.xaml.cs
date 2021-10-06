@@ -1,12 +1,14 @@
 ﻿using System.Windows;
+using AdonisUI.Controls;
 using DS4WinWPF.DS4Forms.ViewModels;
+using MessageBox = System.Windows.MessageBox;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
     /// Interaction logic for RenameProfileWindow.xaml
     /// </summary>
-    public partial class RenameProfileWindow : Window
+    public partial class RenameProfileWindow : AdonisWindow
     {
         private RenameProfileViewModel renameProfileVM;
         public RenameProfileViewModel RenameProfileVM

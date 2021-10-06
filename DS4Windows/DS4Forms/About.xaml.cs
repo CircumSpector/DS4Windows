@@ -1,12 +1,13 @@
 ﻿using DS4Windows;
 using System.Windows;
+using AdonisUI.Controls;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
     /// Interaction logic for About.xaml
     /// </summary>
-    public partial class About : Window
+    public partial class About : AdonisWindow
     {
         public About()
         {

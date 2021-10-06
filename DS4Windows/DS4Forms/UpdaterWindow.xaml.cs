@@ -1,13 +1,15 @@
 ﻿using DS4WinWPF.DS4Forms.ViewModels;
 using System;
 using System.Windows;
+using AdonisUI.Controls;
+using MessageBoxResult = System.Windows.MessageBoxResult;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
     /// Interaction logic for UpdaterWindow.xaml
     /// </summary>
-    public partial class UpdaterWindow : Window
+    public partial class UpdaterWindow : AdonisWindow
     {
         private MessageBoxResult result = MessageBoxResult.No;
         public MessageBoxResult Result { get => result; }

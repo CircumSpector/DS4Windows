@@ -514,6 +514,10 @@ namespace DS4Windows
 
                 OptionsStore = config.Controllers[MacAddress];
             }
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
             catch (InvalidOperationException)
             {
                 //

@@ -1,24 +1,14 @@
 ﻿using DS4WinWPF.DS4Forms.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using AdonisUI.Controls;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
     /// Interaction logic for ChangelogWindow.xaml
     /// </summary>
-    public partial class ChangelogWindow : Window
+    public partial class ChangelogWindow : AdonisWindow
     {
         private ChangelogViewModel changelogVM;
 

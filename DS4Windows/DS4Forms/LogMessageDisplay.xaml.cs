@@ -1,9 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using AdonisUI.Controls;
 using MarkdownEngine = MdXaml.Markdown;
 
 namespace DS4WinWPF.DS4Forms
@@ -11,7 +11,7 @@ namespace DS4WinWPF.DS4Forms
     /// <summary>
     /// Interaction logic for LogMessageDisplay.xaml
     /// </summary>
-    public partial class LogMessageDisplay : Window
+    public partial class LogMessageDisplay : AdonisWindow
     {
         public LogMessageDisplay()
         {

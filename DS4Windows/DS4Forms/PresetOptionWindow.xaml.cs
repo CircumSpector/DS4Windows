@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using AdonisUI.Controls;
 using DS4WinWPF.DS4Forms.ViewModels;
+using MessageBoxResult = System.Windows.MessageBoxResult;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
     /// Interaction logic for PresetOptionWindow.xaml
     /// </summary>
-    public partial class PresetOptionWindow : Window
+    public partial class PresetOptionWindow : AdonisWindow
     {
         private MessageBoxResult result = MessageBoxResult.Cancel;
         public MessageBoxResult Result { get => result; }

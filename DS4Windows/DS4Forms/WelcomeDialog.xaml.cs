@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
+using AdonisUI.Controls;
 using HttpProgress;
 using NonFormTimer = System.Timers.Timer;
 
@@ -11,7 +12,7 @@ namespace DS4WinWPF.DS4Forms
     /// <summary>
     /// Interaction logic for WelcomeDialog.xaml
     /// </summary>
-    public partial class WelcomeDialog : Window
+    public partial class WelcomeDialog : AdonisWindow
     {
         private const string InstallerDL1_16 =
             "https://github.com/ViGEm/ViGEmBus/releases/download/setup-v1.16.116/ViGEmBus_Setup_1.16.116.exe";
