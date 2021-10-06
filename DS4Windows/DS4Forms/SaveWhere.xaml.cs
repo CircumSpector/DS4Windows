@@ -2,14 +2,16 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using AdonisUI.Controls;
 using DS4Windows;
+using MessageBox = System.Windows.MessageBox;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
     ///     Interaction logic for SaveWhere.xaml
     /// </summary>
-    public partial class SaveWhere : Window
+    public partial class SaveWhere : AdonisWindow
     {
         private bool choiceMade;
         private readonly bool multisaves;
