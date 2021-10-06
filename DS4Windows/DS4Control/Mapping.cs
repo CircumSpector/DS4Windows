@@ -4486,7 +4486,7 @@ namespace DS4Windows
                 horizontalRemainder = 0.0;
 
             //double mouseXTemp = rawMouseX - (Math.IEEERemainder(rawMouseX * 1000.0, 1.0) / 1000.0);
-            var mouseXTemp = rawMouseX - remainderCutoff(rawMouseX * 100.0, 1.0) / 100.0;
+            var mouseXTemp = rawMouseX - RemainderCutoff(rawMouseX * 100.0, 1.0) / 100.0;
             //double mouseXTemp = rawMouseX - (rawMouseX * 1000.0 - (1.0 * (int)(rawMouseX * 1000.0 / 1.0)));
             mouseX = (int)mouseXTemp;
             horizontalRemainder = mouseXTemp - mouseX;
@@ -4499,19 +4499,19 @@ namespace DS4Windows
                 verticalRemainder = 0.0;
 
             //double mouseYTemp = rawMouseY - (Math.IEEERemainder(rawMouseY * 1000.0, 1.0) / 1000.0);
-            var mouseYTemp = rawMouseY - remainderCutoff(rawMouseY * 100.0, 1.0) / 100.0;
+            var mouseYTemp = rawMouseY - RemainderCutoff(rawMouseY * 100.0, 1.0) / 100.0;
             mouseY = (int)mouseYTemp;
             verticalRemainder = mouseYTemp - mouseY;
             //mouseY = (int)rawMouseY;
             //verticalRemainder = rawMouseY - mouseY;
         }
 
-        private static double remainderCutoff(double dividend, double divisor)
+        private static double RemainderCutoff(double dividend, double divisor)
         {
             return dividend - divisor * (int)(dividend / divisor);
         }
 
-        public static bool compare(byte b1, byte b2)
+        private static bool Compare(byte b1, byte b2)
         {
             var result = true;
             if (Math.Abs(b1 - b2) > 10) result = false;
