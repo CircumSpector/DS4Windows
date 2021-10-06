@@ -252,6 +252,7 @@ namespace DS4Windows.InputDevices
             warnInterval = ConnectionType == ConnectionType.BT ? WARN_INTERVAL_BT : WARN_INTERVAL_USB;
 
             inputReportBuffer = new byte[INPUT_REPORT_LEN];
+            InputReportBuffer = Marshal.AllocHGlobal(inputReportBuffer.Length);
             outputReportBuffer = new byte[OUTPUT_REPORT_LEN];
             rumbleReportBuffer = new byte[RUMBLE_REPORT_LEN];
         }

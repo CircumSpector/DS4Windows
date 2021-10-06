@@ -165,6 +165,9 @@ namespace DS4Windows
 
         public ReadStatus ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
         {
+            if (inputBuffer == IntPtr.Zero)
+                throw new ArgumentNullException(nameof(inputBuffer), "Passed uninitialized memory");
+
             DeviceHandle ??= OpenHandle(DevicePath, true, false);
 
             int? bytesRead = 0;

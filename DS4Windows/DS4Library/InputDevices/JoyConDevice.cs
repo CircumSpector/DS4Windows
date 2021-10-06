@@ -264,6 +264,7 @@ namespace DS4Windows.InputDevices
             SetupOptionsEvents();
 
             inputReportBuffer = new byte[INPUT_REPORT_LEN];
+            InputReportBuffer = Marshal.AllocHGlobal(inputReportBuffer.Length);
             outputReportBuffer = new byte[OUTPUT_REPORT_LEN];
             rumbleReportBuffer = new byte[RUMBLE_REPORT_LEN];
         }

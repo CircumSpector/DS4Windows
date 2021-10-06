@@ -117,6 +117,7 @@ namespace DS4Windows.InputDevices
                 dataBytes = new InputReportDataBytesUSB();
 
                 inputReport = new byte[64];
+                InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
                 outputReport = new byte[hDevice.Capabilities.OutputReportByteLength];
                 outReportBuffer = new byte[hDevice.Capabilities.OutputReportByteLength];
 
@@ -128,6 +129,7 @@ namespace DS4Windows.InputDevices
                 //inputReport = new byte[BT_INPUT_REPORT_LENGTH - 2];
                 // Only plan to use one input report array. Avoid copying data
                 inputReport = new byte[BT_INPUT_REPORT_LENGTH];
+                InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
                 // Default DS4 logic while writing data to gamepad
                 outputReport = new byte[BT_OUTPUT_REPORT_LENGTH];
                 outReportBuffer = new byte[BT_OUTPUT_REPORT_LENGTH];
