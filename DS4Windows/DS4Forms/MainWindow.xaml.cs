@@ -27,9 +27,6 @@ using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
 using Microsoft.Extensions.DependencyInjection;
 using MessageBox = System.Windows.MessageBox;
-using MessageBoxButton = System.Windows.MessageBoxButton;
-using MessageBoxImage = System.Windows.MessageBoxImage;
-using MessageBoxResult = System.Windows.MessageBoxResult;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -254,7 +251,7 @@ namespace DS4WinWPF.DS4Forms
             if (!string.IsNullOrWhiteSpace(newversion) && version.CompareTo(newversion) != 0 &&
                 lastVersionNum < newversionNum)
             {
-                MessageBoxResult result = MessageBoxResult.No;
+                System.Windows.MessageBoxResult result = System.Windows.MessageBoxResult.No;
                 Dispatcher.Invoke(() =>
                 {
                     UpdaterWindow updaterWin = new UpdaterWindow(newversion);
@@ -262,7 +259,7 @@ namespace DS4WinWPF.DS4Forms
                     result = updaterWin.Result;
                 });
 
-                if (result == MessageBoxResult.Yes)
+                if (result == System.Windows.MessageBoxResult.Yes)
                 {
                     bool launch = true;
                     launch = RunUpdaterCheck(launch);
@@ -997,12 +994,27 @@ Suspend support not enabled.", true);
             // If this method was called directly without sender object then skip the confirmation dialogbox
             if (sender != null && conLvViewModel.ControllerCol.Count > 0)
             {
-                MessageBoxResult result = MessageBox.Show(Properties.Resources.CloseConfirm, Properties.Resources.Confirm,
-                        MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.No)
+                var messageBox = new MessageBoxModel
                 {
-                    e.Cancel = true;
-                    return;
+                    Text = Properties.Resources.CloseConfirm,
+                    Caption = Properties.Resources.Confirm,
+                    Icon = AdonisUI.Controls.MessageBoxImage.Question,
+                    Buttons = new[]
+                    {
+                        MessageBoxButtons.No(),
+                        MessageBoxButtons.Yes()
+                    },
+                    IsSoundEnabled = false
+                };
+
+                AdonisUI.Controls.MessageBox.Show(messageBox);
+
+                switch (messageBox.Result)
+                {
+                    case AdonisUI.Controls.MessageBoxResult.None:
+                    case AdonisUI.Controls.MessageBoxResult.No:
+                        e.Cancel = true;
+                        break;
                 }
             }
         }
@@ -1531,7 +1543,7 @@ Suspend support not enabled.", true);
                 string filename = entity.Name;
                 if (MessageBox.Show(Properties.Resources.ProfileCannotRestore.Replace("*Profile name*", "\"" + filename + "\""),
                     Properties.Resources.DeleteProfile,
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
                 {
                     entity.DeleteFile();
                     profileListHolder.ProfileListCollection.RemoveAt(idx);
@@ -1716,8 +1728,8 @@ Suspend support not enabled.", true);
         private void FakeExeNameExplainBtn_Click(object sender, RoutedEventArgs e)
         {
             string message = Translations.Strings.CustomExeNameInfo;
-            MessageBox.Show(message, "Custom Exe Name Info", MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            MessageBox.Show(message, "Custom Exe Name Info", System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
         }
 
         private void XinputCheckerBtn_Click(object sender, RoutedEventArgs e)
