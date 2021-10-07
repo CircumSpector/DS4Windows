@@ -17,13 +17,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Persist the current settings to disk.
         /// </summary>
         /// <param name="path">The absolute path to the resulting XML file.</param>
-        Task Save(string path);
+        Task SaveAsync(string path);
 
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
         /// <param name="path">The absolute path to the XML file to read from.</param>
-        Task Load(string path);
+        Task LoadAsync(string path);
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Persist the current settings to disk.
         /// </summary>
         /// <param name="path">The absolute path to the resulting XML file.</param>
-        public async Task Save(string path)
+        public async Task SaveAsync(string path)
         {
             await using var stream = File.Open(path, FileMode.Create);
 
@@ -58,7 +58,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Load the persisted settings from disk.
         /// </summary>
         /// <param name="path">The absolute path to the XML file to read from.</param>
-        public async Task Load(string path)
+        public async Task LoadAsync(string path)
         {
             if (!File.Exists(path))
             {
