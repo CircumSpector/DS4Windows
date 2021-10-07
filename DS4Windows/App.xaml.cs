@@ -207,6 +207,7 @@ namespace DS4WinWPF
             if (!Global.Instance.Config.LoadActions()) Global.Instance.CreateStdActions();
 
             SetUICulture(Global.Instance.Config.UseLang);
+
             var themeChoice = Global.Instance.Config.ThemeChoice;
             if (themeChoice != AppThemeChoice.Default) ChangeTheme(Global.Instance.Config.ThemeChoice, false);
 
@@ -331,15 +332,14 @@ namespace DS4WinWPF
             try
             {
                 Directory.CreateDirectory(Global.RuntimeAppDataPath);
-                Directory.CreateDirectory(Global.RuntimeAppDataPath + @"\Profiles\");
-                Directory.CreateDirectory(Global.RuntimeAppDataPath + @"\Logs\");
+                Directory.CreateDirectory(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory));
+                Directory.CreateDirectory(Path.Combine(Global.RuntimeAppDataPath, @"Logs\"));
                 //Directory.CreateDirectory(DS4Windows.Global.RuntimeAppDataPath + @"\Macros\");
             }
             catch (UnauthorizedAccessException)
             {
                 result = false;
             }
-
 
             return result;
         }
@@ -482,8 +482,8 @@ namespace DS4WinWPF
                     finally
                     {
                         // Release the result MMF file in the client process before releasing the mtx and letting other client process to proceed with the same MMF file
-                        if (ipcResultDataMMA != null) ipcResultDataMMA.Dispose();
-                        if (ipcResultDataMMF != null) ipcResultDataMMF.Dispose();
+                        ipcResultDataMMA?.Dispose();
+                        ipcResultDataMMF?.Dispose();
                         ipcResultDataMMA = null;
                         ipcResultDataMMF = null;
 
@@ -504,6 +504,9 @@ namespace DS4WinWPF
 
         private void CreateControlService(CommandLineOptions parser)
         {
+            //
+            // TODO: Why?!
+            // 
             controlThread = new Thread(() =>
             {
                 if (!Global.IsWin8OrGreater) ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
@@ -522,6 +525,9 @@ namespace DS4WinWPF
 
         private void CreateBaseThread()
         {
+            //
+            // TODO: Why?!
+            // 
             controlThread = new Thread(() =>
             {
                 if (!Global.IsWin8OrGreater) ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
@@ -538,6 +544,9 @@ namespace DS4WinWPF
 
         private void CreateTempWorkerThread()
         {
+            //
+            // TODO: replace with async/await
+            // 
             testThread = new Thread(SingleAppComThread_DoWork);
             testThread.Priority = ThreadPriority.Lowest;
             testThread.IsBackground = true;
@@ -629,8 +638,8 @@ namespace DS4WinWPF
                     threadComEvent.Close();
                 }
 
-                if (ipcClassNameMMA != null) ipcClassNameMMA.Dispose();
-                if (ipcClassNameMMF != null) ipcClassNameMMF.Dispose();
+                ipcClassNameMMA?.Dispose();
+                ipcClassNameMMF?.Dispose();
             }
         }
     }
