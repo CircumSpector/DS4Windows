@@ -46,7 +46,7 @@ namespace DS4WinWPF
 
         private readonly IHost _host;
 
-        private ILogger<App> logger;
+        private ILogger<App> _logger;
 
         private Thread controlThread;
         private bool exitApp;
@@ -103,7 +103,7 @@ namespace DS4WinWPF
             // 
             AppLogger.Instance = _host.Services.GetRequiredService<AppLogger>();
 
-            logger = _host.Services.GetRequiredService<ILogger<App>>();
+            _logger = _host.Services.GetRequiredService<ILogger<App>>();
 
             var parser = (CommandLineOptions)_host.Services.GetRequiredService<ICommandLineOptions>();
 
@@ -180,30 +180,35 @@ namespace DS4WinWPF
 
             var version = Global.ExecutableProductVersion;
 
-            logger.LogInformation($"{Constants.ApplicationName} version {version}");
-            logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
-            logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
-            logger.LogInformation($"OS Version: {Environment.OSVersion}");
-            logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
-            logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
-            logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
-            logger.LogInformation("Logger created");
+            _logger.LogInformation($"{Constants.ApplicationName} version {version}");
+            _logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
+            _logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
+            _logger.LogInformation($"OS Version: {Environment.OSVersion}");
+            _logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
+            _logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
+            _logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
+            _logger.LogInformation("Logger created");
 
             var readAppConfig = await Global.Instance.Config.LoadApplicationSettings();
-            if (!firstRun && !readAppConfig)
-                logger.LogInformation(
-                    $@"{Constants.ProfilesFileName} not read at location ${Global.RuntimeAppDataPath}\{Constants.ProfilesFileName}. Using default app settings");
-
-            if (firstRun)
+            
+            switch (firstRun)
             {
-                logger.LogInformation("No config found. Creating default config");
-                AttemptSave();
+                case false when !readAppConfig:
+                    _logger.LogInformation(
+                        $@"{Constants.ProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesFileName)}. Using default app settings");
+                    break;
+                case true:
+                {
+                    _logger.LogInformation("No config found. Creating default config");
+                    AttemptSave();
 
-                await Global.Instance.Config.SaveAsNewProfile(0, "Default");
-                for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
-                    Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
+                    await Global.Instance.Config.SaveAsNewProfile(0, "Default");
+                    for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
+                        Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                logger.LogInformation("Default config created");
+                    _logger.LogInformation("Default config created");
+                    break;
+                }
             }
 
             skipSave = false;
@@ -261,7 +266,7 @@ namespace DS4WinWPF
         {
             if (runShutdown)
             {
-                logger.LogInformation("Request App Shutdown");
+                _logger.LogInformation("Request App Shutdown");
                 CleanShutdown();
             }
 
@@ -292,7 +297,7 @@ namespace DS4WinWPF
             {
                 var exp = e.ExceptionObject as Exception;
 
-                logger.LogError(exp, $"Thread App Crashed with message {exp.Message}");
+                _logger.LogError(exp, $"Thread App Crashed with message {exp.Message}");
 
                 if (e.IsTerminating)
                     Dispatcher.Invoke(() =>
@@ -306,7 +311,7 @@ namespace DS4WinWPF
                 var exp = e.ExceptionObject as Exception;
                 if (e.IsTerminating)
                 {
-                    logger.LogError(exp, $"Thread Crashed with message {exp.Message}");
+                    _logger.LogError(exp, $"Thread Crashed with message {exp.Message}");
 
                     rootHub?.PrepareAbort();
                     CleanShutdown();
@@ -316,7 +321,7 @@ namespace DS4WinWPF
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            logger.LogError(e.Exception, $"Thread Crashed with message {e.Exception.Message}");
+            _logger.LogError(e.Exception, $"Thread Crashed with message {e.Exception.Message}");
         }
 
         private static bool CreateConfDirSkeleton()
@@ -600,7 +605,7 @@ namespace DS4WinWPF
         
         private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
-            logger.LogInformation("User Session Ending");
+            _logger.LogInformation("User Session Ending");
             CleanShutdown();
         }
 
