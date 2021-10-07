@@ -1058,7 +1058,7 @@ Suspend support not enabled.", true);
                 {
                     if (Global.Instance.RunHotPlug)
                     {
-                        Int32 Type = wParam.ToInt32();
+                        var Type = wParam.ToInt32();
                         if (Type == DBT_DEVICEARRIVAL ||
                             Type == DBT_DEVICEREMOVECOMPLETE)
                         {
@@ -1070,12 +1070,13 @@ Suspend support not enabled.", true);
                             if (!inHotPlug)
                             {
                                 inHotPlug = true;
-                                Task hotplugTask = Task.Run(() => { InnerHotplug2(); });
+                                var hotplugTask = Task.Run(() => { InnerHotplug2(); });
                                 // Log exceptions that might occur
                                 Util.LogAssistBackgroundTask(hotplugTask);
                             }
                         }
                     }
+
                     break;
                 }
                 case WM_COPYDATA:
@@ -1083,26 +1084,26 @@ Suspend support not enabled.", true);
                     // Received InterProcessCommunication (IPC) message. DS4Win command is embedded as a string value in lpData buffer
                     try
                     {
-                        App.COPYDATASTRUCT cds = (App.COPYDATASTRUCT)Marshal.PtrToStructure(lParam, typeof(App.COPYDATASTRUCT));
+                        var cds = (App.COPYDATASTRUCT)Marshal.PtrToStructure(lParam, typeof(App.COPYDATASTRUCT));
                         if (cds.cbData >= 4 && cds.cbData <= 256)
                         {
-                            int tdevice = -1;
+                            var tdevice = -1;
 
-                            byte[] buffer = new byte[cds.cbData];
+                            var buffer = new byte[cds.cbData];
                             Marshal.Copy(cds.lpData, buffer, 0, cds.cbData);
-                            string[] strData = Encoding.ASCII.GetString(buffer).Split('.');
+                            var strData = Encoding.ASCII.GetString(buffer).Split('.');
 
                             if (strData.Length >= 1)
                             {
                                 strData[0] = strData[0].ToLower();
 
                                 if (strData[0] == "start")
-                                { 
-                                    if(!ControlService.CurrentInstance.running) 
+                                {
+                                    if (!ControlService.CurrentInstance.running)
                                         ChangeService();
                                 }
                                 else if (strData[0] == "stop")
-                                {    
+                                {
                                     if (ControlService.CurrentInstance.running)
                                         ChangeService();
                                 }
@@ -1117,8 +1118,8 @@ Suspend support not enabled.", true);
                                         ChangeService();
 
                                     // Call closing method and let it to close editor wnd (if it is open) before proceeding to the actual "app closed" handler
-                                    MainDS4Window_Closing(null, new System.ComponentModel.CancelEventArgs());
-                                    MainDS4Window_Closed(this, new System.EventArgs());
+                                    MainDS4Window_Closing(null, new CancelEventArgs());
+                                    MainDS4Window_Closed(this, new EventArgs());
                                 }
                                 else if (strData[0] == "disconnect")
                                 {
@@ -1128,39 +1129,36 @@ Suspend support not enabled.", true);
                                     {
                                         // Attempt to disconnect all wireless controllers
                                         // Opt to make copy of Dictionary before iterating over contents
-                                        var dictCopy = new Dictionary<int, CompositeDeviceModel>(conLvViewModel.ControllerDict);
-                                        foreach(KeyValuePair<int, CompositeDeviceModel> pair in dictCopy)
-                                        {
-                                            pair.Value.RequestDisconnect();
-                                        }
+                                        var dictCopy =
+                                            new Dictionary<int, CompositeDeviceModel>(conLvViewModel.ControllerDict);
+                                        foreach (var pair in dictCopy) pair.Value.RequestDisconnect();
                                     }
                                     else
                                     {
                                         // Attempt to disconnect one wireless controller
                                         if (int.TryParse(strData[1], out tdevice)) tdevice--;
 
-                                        if (conLvViewModel.ControllerDict.TryGetValue(tdevice, out CompositeDeviceModel model))
-                                        {
+                                        if (conLvViewModel.ControllerDict.TryGetValue(tdevice, out var model))
                                             model.RequestDisconnect();
-                                        }
                                     }
                                 }
-                                else if ((strData[0] == "changeledcolor") && strData.Length >= 5)
+                                else if (strData[0] == "changeledcolor" && strData.Length >= 5)
                                 {
-                                        // Command syntax: changeledcolor.device#.red.gree.blue (ex changeledcolor.1.255.0.0)
-                                   if (int.TryParse(strData[1], out tdevice))
+                                    // Command syntax: changeledcolor.device#.red.gree.blue (ex changeledcolor.1.255.0.0)
+                                    if (int.TryParse(strData[1], out tdevice))
                                         tdevice--;
                                     if (tdevice >= 0 && tdevice < ControlService.MAX_DS4_CONTROLLER_COUNT)
                                     {
-                                        byte.TryParse(strData[2], out byte red);
-                                        byte.TryParse(strData[3], out byte green);
-                                        byte.TryParse(strData[4], out byte blue);
+                                        byte.TryParse(strData[2], out var red);
+                                        byte.TryParse(strData[3], out var green);
+                                        byte.TryParse(strData[4], out var blue);
 
-                                        conLvViewModel.ControllerCol[tdevice].UpdateCustomLightColor(Color.FromRgb(red, green, blue));
+                                        conLvViewModel.ControllerCol[tdevice]
+                                            .UpdateCustomLightColor(Color.FromRgb(red, green, blue));
                                     }
-
                                 }
-                                else if ((strData[0] == "loadprofile" || strData[0] == "loadtempprofile") && strData.Length >= 3)
+                                else if ((strData[0] == "loadprofile" || strData[0] == "loadtempprofile") &&
+                                         strData.Length >= 3)
                                 {
                                     // Command syntax: LoadProfile.device#.profileName (fex LoadProfile.1.GameSnake or LoadTempProfile.1.WebBrowserSet)
                                     if (int.TryParse(strData[1], out tdevice)) tdevice--;
@@ -1171,29 +1169,29 @@ Suspend support not enabled.", true);
                                     {
                                         if (strData[0] == "loadprofile")
                                         {
-                                            int idx = profileListHolder.ProfileListCollection.Select((item, index) => new { item, index }).
-                                                    Where(x => x.item.Name == strData[2]).Select(x => x.index).DefaultIfEmpty(-1).First();
+                                            var idx = profileListHolder.ProfileListCollection
+                                                .Select((item, index) => new { item, index })
+                                                .Where(x => x.item.Name == strData[2]).Select(x => x.index)
+                                                .DefaultIfEmpty(-1).First();
 
                                             if (idx >= 0 && tdevice < conLvViewModel.ControllerCol.Count)
-                                            {
                                                 conLvViewModel.ControllerCol[tdevice].ChangeSelectedProfile(strData[2]);
-                                            }
                                             else
-                                            {
                                                 // Preset profile name for later loading
                                                 Global.Instance.Config.ProfilePath[tdevice] = strData[2];
-                                                //Global.LoadProfile(tdevice, true, ControlService.CurrentInstance);
-                                            }
+                                            //Global.LoadProfile(tdevice, true, ControlService.CurrentInstance);
                                         }
                                         else
                                         {
-                                            Global.Instance.LoadTempProfile(tdevice, strData[2], true, ControlService.CurrentInstance).Wait();
+                                            Global.Instance.LoadTempProfile(tdevice, strData[2], true,
+                                                ControlService.CurrentInstance).Wait();
                                         }
 
-                                        DS4Device device = conLvViewModel.ControllerCol[tdevice].Device;
+                                        var device = conLvViewModel.ControllerCol[tdevice].Device;
                                         if (device != null)
                                         {
-                                            string prolog = string.Format(Properties.Resources.UsingProfile, (tdevice + 1).ToString(), strData[2], $"{device.Battery}");
+                                            var prolog = string.Format(Properties.Resources.UsingProfile,
+                                                (tdevice + 1).ToString(), strData[2], $"{device.Battery}");
                                             ControlService.CurrentInstance.LogDebug(prolog);
                                         }
                                     }
@@ -1210,19 +1208,22 @@ Suspend support not enabled.", true);
                                     if (tdevice >= 0 && tdevice < ControlService.MAX_DS4_CONTROLLER_COUNT)
                                     {
                                         strData[2] = strData[2].ToLower();
-                                        DS4Control.OutSlotDevice slotDevice = ControlService.CurrentInstance.OutputslotMan.OutputSlots[tdevice];
+                                        var slotDevice =
+                                            ControlService.CurrentInstance.OutputslotMan.OutputSlots[tdevice];
                                         if (strData[2] == "unplug")
                                             ControlService.CurrentInstance.DetachUnboundOutDev(slotDevice);
                                         else if (strData[2] == "plugds4")
-                                            ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice, OutContType.DS4);
+                                            ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice,
+                                                OutContType.DS4);
                                         else if (strData[2] == "plugx360")
-                                            ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice, OutContType.X360);
+                                            ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice,
+                                                OutContType.X360);
                                     }
                                 }
                                 else if (strData[0] == "query" && strData.Length >= 3)
                                 {
                                     string propName;
-                                    string propValue = String.Empty;
+                                    var propValue = string.Empty;
 
                                     // Command syntax: QueryProfile.device#.Name (fex "Query.1.ProfileName" would print out the name of the active profile in controller 1)
                                     if (int.TryParse(strData[1], out tdevice))
@@ -1233,51 +1234,95 @@ Suspend support not enabled.", true);
                                         // Name of the property to query from a profile or DS4Windows app engine
                                         propName = strData[2].ToLower();
 
-                                            if (propName == "profilename")
-                                            {
-                                                if (Global.UseTempProfiles[tdevice])
-                                                    propValue = Global.TempProfileNames[tdevice];
-                                                else
-                                                    propValue = Global.Instance.Config.ProfilePath[tdevice];
-                                            }
-                                            else if (propName == "outconttype")
-                                                propValue = Global.Instance.Config.OutputDeviceType[tdevice].ToString();
-                                            else if (propName == "activeoutdevtype")
-                                                propValue = Global.ActiveOutDevType[tdevice].ToString();
-                                            else if (propName == "usedinputonly")
-                                                propValue = Global.UseDirectInputOnly[tdevice].ToString();
+                                        if (propName == "profilename")
+                                        {
+                                            if (Global.UseTempProfiles[tdevice])
+                                                propValue = Global.TempProfileNames[tdevice];
+                                            else
+                                                propValue = Global.Instance.Config.ProfilePath[tdevice];
+                                        }
+                                        else if (propName == "outconttype")
+                                        {
+                                            propValue = Global.Instance.Config.OutputDeviceType[tdevice].ToString();
+                                        }
+                                        else if (propName == "activeoutdevtype")
+                                        {
+                                            propValue = Global.ActiveOutDevType[tdevice].ToString();
+                                        }
+                                        else if (propName == "usedinputonly")
+                                        {
+                                            propValue = Global.UseDirectInputOnly[tdevice].ToString();
+                                        }
 
-                                            else if (propName == "devicevidpid" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = $"VID={App.rootHub.DS4Controllers[tdevice].HidDevice.Attributes.VendorHexId}, PID={App.rootHub.DS4Controllers[tdevice].HidDevice.Attributes.ProductHexId}";
-                                            else if (propName == "devicepath" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].HidDevice.DevicePath;
-                                            else if (propName == "macaddress" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].MacAddress.AsFriendlyName();
-                                            else if (propName == "displayname" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].DisplayName;
-                                            else if (propName == "conntype" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].ConnectionType.ToString();
-                                            else if (propName == "exclusivestatus" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].CurrentExclusiveStatus.ToString();
-                                            else if (propName == "battery" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].Battery.ToString();
-                                            else if (propName == "charging" && App.rootHub.DS4Controllers[tdevice] != null)
-                                                propValue = App.rootHub.DS4Controllers[tdevice].Charging.ToString();
-                                            else if (propName == "outputslottype")
-                                                propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice].CurrentType.ToString();
-                                            else if (propName == "outputslotpermanenttype")
-                                                propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice].PermanentType.ToString();
-                                            else if (propName == "outputslotattachedstatus")
-                                                propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice].CurrentAttachedStatus.ToString();
-                                            else if (propName == "outputslotinputbound")
-                                                propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice].CurrentInputBound.ToString();
+                                        else if (propName == "devicevidpid" &&
+                                                 App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue =
+                                                $"VID={App.rootHub.DS4Controllers[tdevice].HidDevice.Attributes.VendorHexId}, PID={App.rootHub.DS4Controllers[tdevice].HidDevice.Attributes.ProductHexId}";
+                                        }
+                                        else if (propName == "devicepath" &&
+                                                 App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue = App.rootHub.DS4Controllers[tdevice].HidDevice.DevicePath;
+                                        }
+                                        else if (propName == "macaddress" &&
+                                                 App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue = App.rootHub.DS4Controllers[tdevice].MacAddress.AsFriendlyName();
+                                        }
+                                        else if (propName == "displayname" &&
+                                                 App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue = App.rootHub.DS4Controllers[tdevice].DisplayName;
+                                        }
+                                        else if (propName == "conntype" && App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue = App.rootHub.DS4Controllers[tdevice].ConnectionType.ToString();
+                                        }
+                                        else if (propName == "exclusivestatus" &&
+                                                 App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue = App.rootHub.DS4Controllers[tdevice].CurrentExclusiveStatus
+                                                .ToString();
+                                        }
+                                        else if (propName == "battery" && App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue = App.rootHub.DS4Controllers[tdevice].Battery.ToString();
+                                        }
+                                        else if (propName == "charging" && App.rootHub.DS4Controllers[tdevice] != null)
+                                        {
+                                            propValue = App.rootHub.DS4Controllers[tdevice].Charging.ToString();
+                                        }
+                                        else if (propName == "outputslottype")
+                                        {
+                                            propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice].CurrentType
+                                                .ToString();
+                                        }
+                                        else if (propName == "outputslotpermanenttype")
+                                        {
+                                            propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice].PermanentType
+                                                .ToString();
+                                        }
+                                        else if (propName == "outputslotattachedstatus")
+                                        {
+                                            propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice]
+                                                .CurrentAttachedStatus.ToString();
+                                        }
+                                        else if (propName == "outputslotinputbound")
+                                        {
+                                            propValue = App.rootHub.OutputslotMan.OutputSlots[tdevice].CurrentInputBound
+                                                .ToString();
+                                        }
 
-                                            else if (propName == "apprunning")
-                                                propValue = App.rootHub.running.ToString(); // Controller idx value is ignored, but it still needs to be in 1..4 range in a cmdline call
+                                        else if (propName == "apprunning")
+                                        {
+                                            propValue = App.rootHub.running
+                                                .ToString(); // Controller idx value is ignored, but it still needs to be in 1..4 range in a cmdline call
+                                        }
                                     }
 
                                     // Write out the property value to MMF result data file and notify a client process that the data is available
-                                    ((Application.Current) as App).WriteIPCResultDataMMF(propValue);
+                                    (Application.Current as App).WriteIPCResultDataMMF(propValue);
                                 }
                             }
                         }
@@ -1286,9 +1331,9 @@ Suspend support not enabled.", true);
                     {
                         // Eat all exceptions in WM_COPYDATA because exceptions here are not fatal for DS4Windows background app
                     }
+
                     break;
                 }
-                default: break;
             }
 
             return IntPtr.Zero;
