@@ -95,7 +95,7 @@ namespace DS4Windows
 
         public ControlServiceDeviceOptions DeviceOptions { get; }
 
-        private readonly CommandLineOptions cmdParser;
+        private readonly ICommandLineOptions cmdParser;
 
         public event EventHandler ServiceStarted;
         public event EventHandler PreServiceStop;
@@ -119,7 +119,7 @@ namespace DS4Windows
         private readonly Queue<Action> busEvtQueue = new();
         private readonly object busEvtQueueLock = new();
 
-        public ControlService(CommandLineOptions cmdParser)
+        public ControlService(ICommandLineOptions cmdParser)
         {
             this.cmdParser = cmdParser;
 
