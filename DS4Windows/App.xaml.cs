@@ -14,6 +14,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Forms;
 using DS4WinWPF.DS4Forms.ViewModels;
@@ -104,6 +105,7 @@ namespace DS4WinWPF
 
             services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
             services.AddSingleton<ControlService>();
+            services.AddSingleton<IAppSettingsService, AppSettingsService>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
