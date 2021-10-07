@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
+using Nefarius.ViGEm.Client;
 using Serilog;
 using WPFLocalizeExtension.Engine;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -89,6 +90,18 @@ namespace DS4WinWPF
             services.AddTransient<SettingsViewModel>();
 
             services.AddTransient<IProfileList, ProfileList>();
+
+            services.AddSingleton(provider =>
+            {
+                try
+                {
+                    return new ViGEmClient();
+                }
+                catch
+                {
+                    return null;
+                }
+            });
         }
 
         protected override async void OnStartup(StartupEventArgs e)

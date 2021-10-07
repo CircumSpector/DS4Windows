@@ -8,7 +8,35 @@ using Nefarius.ViGEm.Client;
 
 namespace DS4Windows
 {
-    public class OutputSlotManager
+    public interface IOutputSlotManager
+    {
+        event OutputSlotManager.SlotAssignedDelegate SlotAssigned;
+
+        event OutputSlotManager.SlotUnassignedDelegate SlotUnassigned;
+
+        event EventHandler ViGEmFailure;
+
+        IList<OutSlotDevice> OutputSlots { get; }
+
+        void Stop(bool immediate = false);
+
+        OutputDevice AllocateController(OutContType contType, ViGEmClient client);
+
+        void DeferredPlugin(OutputDevice outputDevice, int inIdx, OutputDevice[] outdevs, OutContType contType);
+
+        void DeferredRemoval(OutputDevice outputDevice, int inIdx,
+            OutputDevice[] outdevs, bool immediate = false);
+
+        OutSlotDevice FindOpenSlot();
+
+        OutSlotDevice GetOutSlotDevice(OutputDevice outputDevice);
+
+        OutSlotDevice FindExistUnboundSlotType(OutContType contType);
+
+        void UnplugRemainingControllers(bool immediate = false);
+    }
+
+    public class OutputSlotManager : IOutputSlotManager
     {
         public delegate void SlotAssignedDelegate(OutputSlotManager sender,
             int slotNum, OutSlotDevice outSlotDev);
@@ -129,7 +157,6 @@ namespace DS4Windows
                     SlotAssigned?.Invoke(this, slot, OutputSlots[slot]);
                 }
             }
-            ;
 
             queuedTasks--;
             queueLocker.ExitWriteLock();
