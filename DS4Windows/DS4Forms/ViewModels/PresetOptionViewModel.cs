@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DS4Windows;
 using DS4WinWPF.DS4Control;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 
@@ -53,15 +54,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public List<EnumChoiceSelection<PresetOption.OutputContChoice>> OutputChoices { get => outputChoices; }
 
-        public PresetOptionViewModel()
+        public PresetOptionViewModel(ControlService service)
         {
-            presetList = new List<PresetOption>();
-            presetList.Add(new GamepadPreset());
-            presetList.Add(new GamepadGyroCamera());
-            presetList.Add(new MixedPreset());
-            presetList.Add(new MixedGyroMousePreset());
-            presetList.Add(new KBMPreset());
-            presetList.Add(new KBMGyroMouse());
+            presetList = new List<PresetOption>
+            {
+                new GamepadPreset(service),
+                new GamepadGyroCamera(service),
+                new MixedPreset(service),
+                new MixedGyroMousePreset(service),
+                new KBMPreset(service),
+                new KBMGyroMouse(service)
+            };
 
             PresetIndexChanged += PresetOptionViewModel_PresetIndexChanged;
         }

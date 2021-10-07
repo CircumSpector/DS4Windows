@@ -106,7 +106,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void Service_RunningChanged(object sender, EventArgs e)
         {
-            string temp = controlService.running ? "Stop" : "Start";
+            string temp = controlService.IsRunning ? "Stop" : "Start";
             App.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
                 changeServiceItem.Header = temp;

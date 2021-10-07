@@ -25,8 +25,11 @@ namespace DS4WinWPF
         private AutoProfileEntity tempAutoProfile;
         private bool turnOffTemp;
 
-        public AutoProfileChecker(AutoProfileHolder holder)
+        private readonly ControlService rootHub;
+
+        public AutoProfileChecker(ControlService service, AutoProfileHolder holder)
         {
+            rootHub = service;
             profileHolder = holder;
         }
 
@@ -106,7 +109,7 @@ namespace DS4WinWPF
                     if (turnOffDS4WinApp)
                     {
                         turnOffTemp = true;
-                        if (App.rootHub.running)
+                        if (rootHub.IsRunning)
                         {
                             if (AutoProfileDebugLogLevel > 0)
                                 AppLogger.Instance.LogToGui("DEBUG: Auto-Profile. Turning DS4Windows temporarily off",
@@ -123,7 +126,7 @@ namespace DS4WinWPF
                     if (turnOffTemp && Global.Instance.Config.AutoProfileRevertDefaultProfile)
                     {
                         turnOffTemp = false;
-                        if (!App.rootHub.running)
+                        if (!rootHub.IsRunning)
                         {
                             if (AutoProfileDebugLogLevel > 0)
                                 AppLogger.Instance.LogToGui(
@@ -229,7 +232,7 @@ namespace DS4WinWPF
         private void SetAndWaitServiceStatus(bool serviceRunningStatus)
         {
             // Start or Stop the service only if it is not already in the requested state
-            if (App.rootHub.running != serviceRunningStatus)
+            if (rootHub.IsRunning != serviceRunningStatus)
             {
                 RequestServiceChange?.Invoke(this, serviceRunningStatus);
 
@@ -237,7 +240,7 @@ namespace DS4WinWPF
                 // LoadProfile call fails if a new profile is loaded while DS4Win service is still in stopped state (ie the loaded temp profile doesn't do anything).
                 var sw = new Stopwatch();
                 sw.Start();
-                while (App.rootHub.running != serviceRunningStatus && sw.Elapsed.TotalSeconds < 10)
+                while (rootHub.IsRunning != serviceRunningStatus && sw.Elapsed.TotalSeconds < 10)
                     Thread.SpinWait(1000);
                 Thread.SpinWait(1000);
             }

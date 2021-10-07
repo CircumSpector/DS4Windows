@@ -2054,7 +2054,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroMouseDeadZone[device];
             set
             {
-                Global.Instance.Config.SetGyroMouseDZ(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroMouseDZ(device, value, rootHub);
 
             }
         }
@@ -2064,7 +2064,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroMouseToggle[device];
             set
             {
-                Global.Instance.Config.SetGyroMouseToggle(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroMouseToggle(device, value, rootHub);
             }
         }
 
@@ -2082,7 +2082,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroMouseStickToggle[device];
             set
             {
-                Global.Instance.Config.SetGyroMouseStickToggle(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroMouseStickToggle(device, value, rootHub);
             }
         }
 
@@ -2255,7 +2255,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => Global.Instance.Config.GyroControlsInfo[device].TriggerToggle;
             set
             {
-                Global.Instance.Config.SetGyroControlsToggle(device, value, App.rootHub);
+                Global.Instance.Config.SetGyroControlsToggle(device, value, rootHub);
             }
         }
 
@@ -2348,9 +2348,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => presetMenuUtil;
         }
 
+        private readonly ControlService rootHub;
 
-        public ProfileSettingsViewModel(int device)
+        public ProfileSettingsViewModel(ControlService service, int device)
         {
+            this.rootHub = service;
             this.device = device;
             funcDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;

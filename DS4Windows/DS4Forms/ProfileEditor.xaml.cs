@@ -41,13 +41,17 @@ namespace DS4WinWPF.DS4Forms
         private readonly Dictionary<int, Button> reverseHoverIndexes = new();
         private readonly SpecialActionsListViewModel specialActionsVM;
 
-        public ProfileEditor(int device)
+        private readonly ControlService rootHub;
+
+        public ProfileEditor(ControlService service, int device)
         {
+            rootHub = service;
+
             InitializeComponent();
 
             DeviceNum = device;
             emptyColorGB.Visibility = Visibility.Collapsed;
-            profileSettingsVM = new ProfileSettingsViewModel(device);
+            profileSettingsVM = new ProfileSettingsViewModel(rootHub, device);
             picBoxHover.Visibility = Visibility.Hidden;
             picBoxHover2.Visibility = Visibility.Hidden;
 
@@ -594,7 +598,7 @@ namespace DS4WinWPF.DS4Forms
                 if (device == Global.TEST_PROFILE_INDEX)
                     Global.Instance.Config.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
 
-                await Global.Instance.LoadProfile(device, false, App.rootHub, false);
+                await Global.Instance.LoadProfile(device, false, rootHub, false);
                 profileNameTxt.Text = profile.Name;
                 profileNameTxt.IsEnabled = false;
                 applyBtn.IsEnabled = true;
@@ -602,11 +606,11 @@ namespace DS4WinWPF.DS4Forms
             else
             {
                 currentProfile = null;
-                var presetWin = new PresetOptionWindow();
+                var presetWin = new PresetOptionWindow(rootHub);
                 presetWin.SetupData(DeviceNum);
                 presetWin.ShowDialog();
                 if (presetWin.Result == MessageBoxResult.Cancel)
-                    Global.Instance.LoadBlankDevProfile(device, false, App.rootHub, false);
+                    Global.Instance.LoadBlankDevProfile(device, false, rootHub, false);
             }
 
             ColorByBatteryPerCheck();
@@ -718,16 +722,16 @@ namespace DS4WinWPF.DS4Forms
         private async void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                App.rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
+                rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
             Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
-            await Global.Instance.LoadProfile(DeviceNum, false, App.rootHub);
+            await Global.Instance.LoadProfile(DeviceNum, false, rootHub);
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
         private void HoverConBtn_Click(object sender, RoutedEventArgs e)
         {
             var mpControl = mappingListVM.Mappings[mappingListVM.SelectedIndex];
-            var window = new BindingWindow(DeviceNum, mpControl.Setting);
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting);
             window.Owner = Application.Current.MainWindow;
             window.ShowDialog();
             mpControl.UpdateMappingName();
@@ -797,7 +801,7 @@ namespace DS4WinWPF.DS4Forms
             var idx = gyroOutModeCombo.SelectedIndex;
             if (idx >= 0)
                 if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                    App.rootHub.touchPad[DeviceNum]?.ResetToggleGyroModes();
+                    rootHub.touchPad[DeviceNum]?.ResetToggleGyroModes();
         }
 
         private void SetLateProperties(bool fullSave = true)
@@ -818,7 +822,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var result = false;
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                App.rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
+                rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
 
             var temp = profileNameTxt.Text;
             if (!string.IsNullOrWhiteSpace(temp) &&
@@ -878,7 +882,7 @@ namespace DS4WinWPF.DS4Forms
         public void Close()
         {
             if (profileSettingsVM.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                App.rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
+                rootHub.SetRumble(0, 0, profileSettingsVM.FuncDevNum);
 
             Closed?.Invoke(this, EventArgs.Empty);
         }
@@ -934,7 +938,7 @@ namespace DS4WinWPF.DS4Forms
             var deviceNum = profileSettingsVM.FuncDevNum;
             if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                var d = App.rootHub.DS4Controllers[deviceNum];
+                var d = rootHub.DS4Controllers[deviceNum];
                 if (d != null)
                 {
                     var rumbleActive = profileSettingsVM.HeavyRumbleActive;
@@ -960,7 +964,7 @@ namespace DS4WinWPF.DS4Forms
             var deviceNum = profileSettingsVM.FuncDevNum;
             if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                var d = App.rootHub.DS4Controllers[deviceNum];
+                var d = rootHub.DS4Controllers[deviceNum];
                 if (d != null)
                 {
                     var rumbleActive = profileSettingsVM.LightRumbleActive;
@@ -1014,7 +1018,7 @@ namespace DS4WinWPF.DS4Forms
         private void FrictionUD_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
-                App.rootHub.touchPad[DeviceNum]?.ResetTrackAccel(frictionUD.Value.GetValueOrDefault());
+                rootHub.touchPad[DeviceNum]?.ResetTrackAccel(frictionUD.Value.GetValueOrDefault());
         }
 
         private void RainbowBtn_Click(object sender, RoutedEventArgs e)
@@ -1053,7 +1057,7 @@ namespace DS4WinWPF.DS4Forms
         {
             if (profileSettingsVM.SASteeringWheelEmulationAxisIndex > 0)
             {
-                var d = App.rootHub.DS4Controllers[profileSettingsVM.FuncDevNum];
+                var d = rootHub.DS4Controllers[profileSettingsVM.FuncDevNum];
                 if (d != null)
                 {
                     var origWheelCenterPoint = new System.Drawing.Point(d.wheelCenterPoint.X, d.wheelCenterPoint.Y);
@@ -1143,7 +1147,7 @@ namespace DS4WinWPF.DS4Forms
         {
             baseSpeActPanel.Visibility = Visibility.Collapsed;
             var profList = (Application.Current.MainWindow as MainWindow).ProfileListHolder;
-            var actEditor = new SpecialActionEditor(DeviceNum, profList);
+            var actEditor = new SpecialActionEditor(rootHub, DeviceNum, profList);
             specialActionDockPanel.Children.Add(actEditor);
             actEditor.Visibility = Visibility.Visible;
             actEditor.Cancel += (sender2, args) =>
@@ -1178,7 +1182,7 @@ namespace DS4WinWPF.DS4Forms
                 //SpecialActionItem item = specialActionsVM.ActionCol[currentIndex];
                 baseSpeActPanel.Visibility = Visibility.Collapsed;
                 var profList = (Application.Current.MainWindow as MainWindow).ProfileListHolder;
-                var actEditor = new SpecialActionEditor(DeviceNum, profList, item.SpecialAction);
+                var actEditor = new SpecialActionEditor(rootHub, DeviceNum, profList, item.SpecialAction);
                 specialActionDockPanel.Children.Add(actEditor);
                 actEditor.Visibility = Visibility.Visible;
                 actEditor.Cancel += (sender2, args) =>
@@ -1382,8 +1386,10 @@ namespace DS4WinWPF.DS4Forms
         private void ShowControlBindingWindow()
         {
             var mpControl = mappingListVM.Mappings[mappingListVM.SelectedIndex];
-            var window = new BindingWindow(DeviceNum, mpControl.Setting);
-            window.Owner = Application.Current.MainWindow;
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
+            {
+                Owner = Application.Current.MainWindow
+            };
             window.ShowDialog();
             mpControl.UpdateMappingName();
             UpdateHighlightLabel(mpControl);
@@ -1414,8 +1420,10 @@ namespace DS4WinWPF.DS4Forms
             var btn = sender as Button;
             var control = (DS4Controls)Convert.ToInt32(btn.Tag);
             var mpControl = mappingListVM.ControlMap[control];
-            var window = new BindingWindow(DeviceNum, mpControl.Setting);
-            window.Owner = Application.Current.MainWindow;
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
+            {
+                Owner = Application.Current.MainWindow
+            };
             window.ShowDialog();
             mpControl.UpdateMappingName();
             UpdateHighlightLabel(mpControl);
@@ -1427,8 +1435,10 @@ namespace DS4WinWPF.DS4Forms
             var btn = sender as Button;
             var control = (DS4Controls)Convert.ToInt32(btn.Tag);
             var mpControl = mappingListVM.ControlMap[control];
-            var window = new BindingWindow(DeviceNum, mpControl.Setting);
-            window.Owner = Application.Current.MainWindow;
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
+            {
+                Owner = Application.Current.MainWindow
+            };
             window.ShowDialog();
             mpControl.UpdateMappingName();
             UpdateHighlightLabel(mpControl);
@@ -1471,7 +1481,7 @@ namespace DS4WinWPF.DS4Forms
         {
             sidebarTabControl.SelectedIndex = 0;
 
-            var presetWin = new PresetOptionWindow();
+            var presetWin = new PresetOptionWindow(rootHub);
             presetWin.SetupData(DeviceNum);
             presetWin.ToPresetsScreen();
             presetWin.DelayPresetApply = true;
@@ -1499,8 +1509,10 @@ namespace DS4WinWPF.DS4Forms
 
             //DS4ControlSettings setting = Global.getDS4CSetting(tag, ds4control);
             var mpControl = mappingListVM.ControlMap[ds4control];
-            var window = new BindingWindow(DeviceNum, mpControl.Setting);
-            window.Owner = Application.Current.MainWindow;
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
+            {
+                Owner = Application.Current.MainWindow
+            };
             window.ShowDialog();
             mpControl.UpdateMappingName();
             Global.Instance.Config.CacheProfileCustomsFlags(profileSettingsVM.Device);
@@ -1511,11 +1523,11 @@ namespace DS4WinWPF.DS4Forms
             var deviceNum = profileSettingsVM.FuncDevNum;
             if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                var d = App.rootHub.DS4Controllers[deviceNum];
+                var d = rootHub.DS4Controllers[deviceNum];
                 d.SixAxis.ResetContinuousCalibration();
                 if (d.JointDeviceSlotNumber != DS4Device.DEFAULT_JOINT_SLOT_NUMBER)
                 {
-                    var tempDev = App.rootHub.DS4Controllers[d.JointDeviceSlotNumber];
+                    var tempDev = rootHub.DS4Controllers[d.JointDeviceSlotNumber];
                     tempDev?.SixAxis.ResetContinuousCalibration();
                 }
             }
@@ -1540,8 +1552,10 @@ namespace DS4WinWPF.DS4Forms
             var btn = sender as Button;
             var control = (DS4Controls)Convert.ToInt32(btn.Tag);
             var mpControl = mappingListVM.ControlMap[control];
-            var window = new BindingWindow(DeviceNum, mpControl.Setting);
-            window.Owner = Application.Current.MainWindow;
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
+            {
+                Owner = Application.Current.MainWindow
+            };
             window.ShowDialog();
             mpControl.UpdateMappingName();
             Global.Instance.Config.CacheProfileCustomsFlags(profileSettingsVM.Device);
@@ -1570,8 +1584,10 @@ namespace DS4WinWPF.DS4Forms
 
             //DS4ControlSettings setting = Global.getDS4CSetting(tag, ds4control);
             var mpControl = mappingListVM.ControlMap[ds4control];
-            var window = new BindingWindow(DeviceNum, mpControl.Setting);
-            window.Owner = Application.Current.MainWindow;
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
+            {
+                Owner = Application.Current.MainWindow
+            };
             window.ShowDialog();
             mpControl.UpdateMappingName();
             Global.Instance.Config.CacheProfileCustomsFlags(profileSettingsVM.Device);

@@ -22,7 +22,9 @@ namespace DS4Windows
 
         void Stop(bool immediate = false);
 
-        OutputDevice AllocateController(OutContType contType, ViGEmClient client);
+        void ShutDown();
+
+        OutputDevice AllocateController(OutContType contType);
 
         void DeferredPlugin(OutputDevice outputDevice, int inIdx, OutputDevice[] outdevs, OutContType contType);
 
@@ -56,8 +58,12 @@ namespace DS4Windows
         private readonly ReaderWriterLockSlim queueLocker;
         private readonly Dictionary<OutputDevice, int> revDeviceDict = new();
 
-        public OutputSlotManager()
+        private readonly ViGEmClient client;
+
+        public OutputSlotManager(ViGEmClient client)
         {
+            this.client = client;
+
             OutputSlots = new OutSlotDevice[ControlService.CURRENT_DS4_CONTROLLER_LIMIT];
             for (var i = 0; i < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; i++) OutputSlots[i] = new OutSlotDevice(i);
 
@@ -95,7 +101,7 @@ namespace DS4Windows
             revDeviceDict.Clear();
         }
 
-        public OutputDevice AllocateController(OutContType contType, ViGEmClient client)
+        public OutputDevice AllocateController(OutContType contType)
         {
             OutputDevice outputDevice = null;
             switch (contType)

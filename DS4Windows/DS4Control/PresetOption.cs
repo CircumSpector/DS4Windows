@@ -9,6 +9,13 @@ namespace DS4WinWPF.DS4Control
 {
     public abstract class PresetOption
     {
+        protected readonly ControlService rootHub;
+
+        public PresetOption(ControlService service)
+        {
+            rootHub = service;
+        }
+
         public enum OutputContChoice : ushort
         {
             None,
@@ -35,7 +42,7 @@ namespace DS4WinWPF.DS4Control
 
     public class GamepadPreset : PresetOption
     {
-        public GamepadPreset()
+        public GamepadPreset(ControlService service) : base(service)
         {
             name = Translations.Strings.GamepadPresetName;
             description = Translations.Strings.GamepadPresetDescription;
@@ -47,18 +54,18 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-                Global.Instance.LoadBlankDevProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadBlankDevProfile(idx, false, rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-                Global.Instance.LoadBlankDS4Profile(idx, false, App.rootHub, false);
+                Global.Instance.LoadBlankDS4Profile(idx, false, rootHub, false);
             }
         }
     }
 
     public class GamepadGyroCamera : PresetOption
     {
-        public GamepadGyroCamera()
+        public GamepadGyroCamera(ControlService service) : base(service)
         {
             name = Translations.Strings.GamepadGyroCameraName;
             description = Translations.Strings.GamepadGyroCameraDescription;
@@ -70,18 +77,18 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-                Global.Instance.LoadDefaultGamepadGyroProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadDefaultGamepadGyroProfile(idx, false, rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-                Global.Instance.LoadDefaultDS4GamepadGyroProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadDefaultDS4GamepadGyroProfile(idx, false, rootHub, false);
             }
         }
     }
 
     public class MixedPreset : PresetOption
     {
-        public MixedPreset()
+        public MixedPreset(ControlService service) : base(service)
         {
             name = Translations.Strings.MixedPresetName;
             description = Translations.Strings.MixedPresetDescription;
@@ -93,18 +100,18 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-                Global.Instance.LoadDefaultMixedControlsProfile(idx, false, App.rootHub, false);
+                Global.Instance.LoadDefaultMixedControlsProfile(idx, false, rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-               Global.Instance.LoadDefaultMixedControlsProfile(idx, false, App.rootHub, false);
+               Global.Instance.LoadDefaultMixedControlsProfile(idx, false, rootHub, false);
             }
         }
     }
 
     public class MixedGyroMousePreset : PresetOption
     {
-        public MixedGyroMousePreset()
+        public MixedGyroMousePreset(ControlService service) : base(service)
         {
             name = Translations.Strings.MixedGyroMousePresetName;
             description = Translations.Strings.MixedGyroMousePresetDescription;
@@ -116,18 +123,18 @@ namespace DS4WinWPF.DS4Control
         {
             if (outputCont == OutputContChoice.Xbox360)
             {
-               Global.Instance.LoadDefaultMixedGyroMouseProfile(idx, false, App.rootHub, false);
+               Global.Instance.LoadDefaultMixedGyroMouseProfile(idx, false, rootHub, false);
             }
             else if (outputCont == OutputContChoice.DualShock4)
             {
-               Global.Instance.LoadDefaultDS4MixedGyroMouseProfile(idx, false, App.rootHub, false);
+               Global.Instance.LoadDefaultDS4MixedGyroMouseProfile(idx, false, rootHub, false);
             }
         }
     }
 
     public class KBMPreset : PresetOption
     {
-        public KBMPreset()
+        public KBMPreset(ControlService service) : base(service)
         {
             name = Translations.Strings.KBMPresetName;
             description = Translations.Strings.KBMPresetDescription;
@@ -135,13 +142,13 @@ namespace DS4WinWPF.DS4Control
 
         public override void ApplyPreset(int idx)
         {
-           Global.Instance.LoadDefaultKBMProfile(idx, false, App.rootHub, false);
+           Global.Instance.LoadDefaultKBMProfile(idx, false, rootHub, false);
         }
     }
 
     public class KBMGyroMouse : PresetOption
     {
-        public KBMGyroMouse()
+        public KBMGyroMouse(ControlService service) : base(service)
         {
             name = Translations.Strings.KBMGyroMouseName;
             description = Translations.Strings.KBMGyroMouseDescription;
@@ -149,7 +156,7 @@ namespace DS4WinWPF.DS4Control
 
         public override void ApplyPreset(int idx)
         {
-           Global.Instance.LoadDefaultKBMGyroMouseProfile(idx, false, App.rootHub, false);
+           Global.Instance.LoadDefaultKBMGyroMouseProfile(idx, false, rootHub, false);
         }
     }
 }

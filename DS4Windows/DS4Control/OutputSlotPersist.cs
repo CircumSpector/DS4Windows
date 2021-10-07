@@ -19,7 +19,7 @@ namespace DS4WinWPF.DS4Control
         public static OutputSlotPersist Instance => LazyInstance.Value;
 
         [ConfigurationSystemComponent]
-        public async Task<bool> ReadConfig(OutputSlotManager slotManager)
+        public async Task<bool> ReadConfig(IOutputSlotManager slotManager)
         {
             var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
 
@@ -43,7 +43,7 @@ namespace DS4WinWPF.DS4Control
         }
 
         [ConfigurationSystemComponent]
-        public bool WriteConfig(OutputSlotManager slotManager)
+        public bool WriteConfig(IOutputSlotManager slotManager)
         {
             var result = false;
 

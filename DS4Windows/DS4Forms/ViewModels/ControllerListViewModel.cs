@@ -54,7 +54,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             int idx = 0;
             foreach (DS4Device currentDev in controlService.slotManager.ControllerColl)
             {
-                CompositeDeviceModel temp = new CompositeDeviceModel(currentDev,
+                CompositeDeviceModel temp = new CompositeDeviceModel(service, currentDev,
                     idx, Global.Instance.Config.ProfilePath[idx], profileListHolder);
                 controllerCol.Add(temp);
                 controllerDict.Add(idx, temp);
@@ -95,7 +95,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 // Look if device exists. Also, check if disconnect might be occurring
                 if (!controllerDict.ContainsKey(index) && !device.IsRemoving)
                 {
-                    CompositeDeviceModel temp = new CompositeDeviceModel(device,
+                    CompositeDeviceModel temp = new CompositeDeviceModel(controlService, device,
                         index, Global.Instance.Config.ProfilePath[index], profileListHolder);
                     controllerCol.Add(temp);
                     controllerDict.Add(index, temp);
@@ -145,7 +145,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         //int idx = controllerCol.Count;
                         _colListLocker.EnterWriteLock();
                         int idx = controlService.slotManager.ReverseControllerDict[currentDev];
-                        CompositeDeviceModel temp = new CompositeDeviceModel(currentDev,
+                        CompositeDeviceModel temp = new CompositeDeviceModel(controlService, currentDev,
                             idx, Global.Instance.Config.ProfilePath[idx], profileListHolder);
                         controllerCol.Add(temp);
                         controllerDict.Add(idx, temp);
@@ -347,10 +347,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public delegate void CustomColorHandler(CompositeDeviceModel sender);
         public event CustomColorHandler RequestColorPicker;
 
-        public CompositeDeviceModel(DS4Device device, int devIndex, string profile,
+        private readonly ControlService rootHub;
+
+        public CompositeDeviceModel(ControlService service, DS4Device device, int devIndex, string profile,
             ProfileList collection)
         {
             this.device = device;
+            rootHub = service;
             
             device.BatteryChanged += (sender) => BatteryStateChanged?.Invoke(sender);
             device.ChargingChanged += (sender) => BatteryStateChanged?.Invoke(sender);
@@ -392,7 +395,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
 
             //Global.Save();
-            await Global.Instance.LoadProfile(devIndex, true, App.rootHub);
+            await Global.Instance.LoadProfile(devIndex, true, rootHub);
             string prolog = string.Format(Properties.Resources.UsingProfile, (devIndex + 1).ToString(), prof, $"{device.Battery}");
             AppLogger.Instance.LogToGui(prolog, false);
 
@@ -433,7 +436,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private async void SelectedEntity_ProfileSaved(object sender, EventArgs e)
         {
-            await Global.Instance.LoadProfile(devIndex, false, App.rootHub);
+            await Global.Instance.LoadProfile(devIndex, false, rootHub);
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 

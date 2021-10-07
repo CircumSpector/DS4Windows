@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels;
 
 namespace DS4WinWPF.DS4Forms
@@ -37,9 +38,13 @@ namespace DS4WinWPF.DS4Forms
             Keyboard,
         }
 
-        public BindingWindow(int deviceNum, DS4Windows.DS4ControlSettings settings,
+        private readonly ControlService rootHub;
+
+        public BindingWindow(ControlService service, int deviceNum, DS4Windows.DS4ControlSettings settings,
             ExposeMode expose = ExposeMode.Full)
         {
+            rootHub = service;
+
             InitializeComponent();
 
             this.expose = expose;
@@ -817,7 +822,7 @@ namespace DS4WinWPF.DS4Forms
             int deviceNum = bindingVM.DeviceNum;
             if (deviceNum < DS4Windows.ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Windows.DS4Device d = App.rootHub.DS4Controllers[deviceNum];
+                DS4Windows.DS4Device d = rootHub.DS4Controllers[deviceNum];
                 if (d != null)
                 {
                     if (!bindingVM.RumbleActive)

@@ -46,7 +46,7 @@ namespace DS4Windows
         public DS4Device[] DS4Controllers = new DS4Device[MAX_DS4_CONTROLLER_COUNT];
         public int activeControllers;
         public Mouse[] touchPad = new Mouse[MAX_DS4_CONTROLLER_COUNT];
-        public bool running;
+        public bool IsRunning;
         public bool loopControllers = true;
         public bool inServiceTask;
         private readonly DS4State[] MappedState = new DS4State[MAX_DS4_CONTROLLER_COUNT];
@@ -119,7 +119,10 @@ namespace DS4Windows
         private readonly Queue<Action> busEvtQueue = new();
         private readonly object busEvtQueueLock = new();
 
-        public ControlService(ICommandLineOptions cmdParser)
+        public ControlService(
+            ICommandLineOptions cmdParser, 
+            IOutputSlotManager osl
+            )
         {
             this.cmdParser = cmdParser;
 
@@ -190,7 +193,7 @@ namespace DS4Windows
                 };
             }
 
-            OutputslotMan = new OutputSlotManager();
+            OutputslotMan = osl;
             DeviceOptions = Instance.Config.DeviceOptions;
 
             DS4Devices.RequestElevation += DS4Devices_RequestElevation;
@@ -609,9 +612,7 @@ namespace DS4Windows
 
         private OutputDevice EstablishOutDevice(int index, OutContType contType)
         {
-            OutputDevice temp = null;
-            temp = OutputslotMan.AllocateController(contType, vigemTestClient);
-            return temp;
+            return OutputslotMan.AllocateController(contType);
         }
 
         public void EstablishOutFeedback(int index, OutContType contType,
@@ -1157,7 +1158,7 @@ namespace DS4Windows
                     AppLogger.Instance.LogToTray(e.Message, true);
                 }
 
-                running = true;
+                IsRunning = true;
 
                 if (_udpServer != null)
                 {
@@ -1259,9 +1260,9 @@ namespace DS4Windows
 
         public bool Stop(bool showInLog = true, bool immediateUnplug = false)
         {
-            if (running)
+            if (IsRunning)
             {
-                running = false;
+                IsRunning = false;
                 Instance.RunHotPlug = false;
                 inServiceTask = true;
                 PreServiceStop?.Invoke(this, EventArgs.Empty);
@@ -1355,7 +1356,7 @@ namespace DS4Windows
 
         public async Task<bool> HotPlug()
         {
-            if (!running) return true;
+            if (!IsRunning) return true;
 
             inServiceTask = true;
             loopControllers = true;
@@ -2199,7 +2200,7 @@ namespace DS4Windows
 
         public Dispatcher EventDispatcher { get; private set; }
 
-        public OutputSlotManager OutputslotMan { get; }
+        public IOutputSlotManager OutputslotMan { get; }
 
         protected virtual void CheckForTouchToggle(int deviceID, DS4State cState, DS4State pState)
         {

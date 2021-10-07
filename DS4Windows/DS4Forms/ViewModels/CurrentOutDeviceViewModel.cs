@@ -84,7 +84,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
         public event EventHandler UnpluginEnabledChanged;
 
-        private DS4Windows.OutputSlotManager outSlotManager;
+        private DS4Windows.IOutputSlotManager outSlotManager;
         private List<SlotDeviceEntry> slotDeviceEntries;
 
         public List<SlotDeviceEntry> SlotDeviceEntries { get => slotDeviceEntries; }
@@ -92,7 +92,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private ControlService controlService;
 
         public CurrentOutDeviceViewModel(ControlService controlService,
-            OutputSlotManager outputMan)
+            IOutputSlotManager outputMan)
         {
             outSlotManager = outputMan;
             // Set initial capacity at input controller limit in app

@@ -36,7 +36,7 @@ namespace DS4WinWPF
     [SuppressUnmanagedCodeSecurity]
     public partial class App : Application
     {
-        public static ControlService rootHub;
+        private ControlService rootHub;
         public static HttpClient requestClient;
 
         private static readonly Dictionary<AppThemeChoice, string> ThemeResources = new()
@@ -49,7 +49,6 @@ namespace DS4WinWPF
 
         private ILogger<App> _logger;
 
-        private Thread controlThread;
         private bool exitApp;
         private bool exitComThread;
         
@@ -88,6 +87,7 @@ namespace DS4WinWPF
 
             services.AddTransient<MainWindowsViewModel>();
             services.AddTransient<SettingsViewModel>();
+            services.AddTransient<LogViewModel>();
 
             services.AddTransient<IProfileList, ProfileList>();
 
@@ -102,6 +102,9 @@ namespace DS4WinWPF
                     return null;
                 }
             });
+
+            services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
+            services.AddSingleton<ControlService>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -110,6 +113,11 @@ namespace DS4WinWPF
 
             runShutdown = true;
             skipSave = true;
+
+            //
+            // TODO: why is this here?
+            // 
+            requestClient = new HttpClient();
 
             //
             // TODO: intermediate hack until DI is propagated throughout all classes
@@ -161,7 +169,12 @@ namespace DS4WinWPF
             threadComEvent = new EventWaitHandle(false, EventResetMode.ManualReset, Constants.SingleAppComEventName);
             CreateTempWorkerThread();
 
-            CreateControlService(parser);
+            rootHub = _host.Services.GetRequiredService<ControlService>();
+
+            //
+            // TODO: intermediate hack until DI is propagated throughout all classes
+            // 
+            ControlService.CurrentInstance = rootHub;
 
             //
             // TODO: I wonder why this was done...
@@ -411,7 +424,7 @@ namespace DS4WinWPF
                 // Might not be needed here
                 Global.RefreshViGEmBusInfo();
 
-                CreateBaseThread();
+                //CreateBaseThread();
                 var dialog = new WelcomeDialog(true);
                 dialog.ShowDialog();
                 runShutdown = false;
@@ -513,27 +526,7 @@ namespace DS4WinWPF
             }
         }
 
-        private void CreateControlService(CommandLineOptions parser)
-        {
-            //
-            // TODO: Why?!
-            // 
-            controlThread = new Thread(() =>
-            {
-                if (!Global.IsWin8OrGreater) ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-
-                rootHub = new ControlService(parser);
-
-                ControlService.CurrentInstance = rootHub;
-                requestClient = new HttpClient();
-            });
-            controlThread.Priority = ThreadPriority.Normal;
-            controlThread.IsBackground = true;
-            controlThread.Start();
-            while (controlThread.IsAlive)
-                Thread.SpinWait(500);
-        }
-
+        /*
         private void CreateBaseThread()
         {
             //
@@ -552,6 +545,7 @@ namespace DS4WinWPF
             while (controlThread.IsAlive)
                 Thread.SpinWait(500);
         }
+        */
 
         private void CreateTempWorkerThread()
         {
@@ -629,7 +623,7 @@ namespace DS4WinWPF
             if (rootHub != null)
                 Task.Run(() =>
                 {
-                    if (!rootHub.running) return;
+                    if (!rootHub.IsRunning) return;
 
                     rootHub.Stop(immediateUnplug: true);
                     rootHub.ShutDown();

@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.DS4Forms.ViewModels.SpecialActions;
 using Microsoft.Win32;
@@ -40,9 +32,13 @@ namespace DS4WinWPF.DS4Forms
         public delegate void SaveHandler(object sender, string actionName);
         public event SaveHandler Saved;
 
-        public SpecialActionEditor(int deviceNum, ProfileList profileList,
+        private readonly ControlService rootHub;
+
+        public SpecialActionEditor(ControlService service, int deviceNum, ProfileList profileList,
             DS4Windows.SpecialAction specialAction = null)
         {
+            rootHub = service;
+
             InitializeComponent();
 
             triggerBoxes = new List<CheckBox>()
@@ -456,14 +452,16 @@ namespace DS4WinWPF.DS4Forms
 
         private void LaunchProgBrowseBtn_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
-            dialog.AddExtension = true;
-            dialog.DefaultExt = ".exe";
-            dialog.Filter = "Exe (*.exe)|*.exe|Batch (*.bat,*.cmd)|*.bat;*.cmd|All Files (*.*)|*.*";
-            dialog.Title = "Select Program";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                AddExtension = true,
+                DefaultExt = ".exe",
+                Filter = "Exe (*.exe)|*.exe|Batch (*.bat,*.cmd)|*.bat;*.cmd|All Files (*.*)|*.*",
+                Title = "Select Program",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+            };
 
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             if (dialog.ShowDialog() == true)
             {
                 launchProgVM.Filepath = dialog.FileName;
@@ -473,9 +471,11 @@ namespace DS4WinWPF.DS4Forms
         private void PressKeySelectBtn_Click(object sender, RoutedEventArgs e)
         {
             DS4Windows.DS4ControlSettings settings = pressKeyVM.PrepareSettings();
-            BindingWindow window = new BindingWindow(specialActVM.DeviceNum, settings,
-                BindingWindow.ExposeMode.Keyboard);
-            window.Owner = App.Current.MainWindow;
+            BindingWindow window = new BindingWindow(rootHub, specialActVM.DeviceNum, settings,
+                BindingWindow.ExposeMode.Keyboard)
+            {
+                Owner = App.Current.MainWindow
+            };
             window.ShowDialog();
             pressKeyVM.ReadSettings(settings);
             pressKeyVM.UpdateDescribeText();

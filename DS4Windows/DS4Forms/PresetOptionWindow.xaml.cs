@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using AdonisUI.Controls;
+using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels;
 using MessageBoxResult = System.Windows.MessageBoxResult;
 
@@ -18,11 +19,11 @@ namespace DS4WinWPF.DS4Forms
         private bool delayPresetApply;
         public bool DelayPresetApply { get => delayPresetApply; set => delayPresetApply = value; }
 
-        public PresetOptionWindow()
+        public PresetOptionWindow(ControlService service)
         {
             InitializeComponent();
 
-            presetOptionVM = new PresetOptionViewModel();
+            presetOptionVM = new PresetOptionViewModel(service);
 
             // Hide tab headers. Tab content will still be visible
             IntroTab.Visibility = Visibility.Collapsed;

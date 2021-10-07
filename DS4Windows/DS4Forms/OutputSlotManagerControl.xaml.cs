@@ -31,7 +31,7 @@ namespace DS4WinWPF.DS4Forms
         }
 
         public void SetupDataContext(DS4Windows.ControlService controlService,
-            DS4Windows.OutputSlotManager outputMan)
+            DS4Windows.IOutputSlotManager outputMan)
         {
             this.controlService = controlService;
 
