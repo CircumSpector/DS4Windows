@@ -18,6 +18,8 @@ namespace DS4Windows
 
         IList<OutSlotDevice> OutputSlots { get; }
 
+        bool RunningQueue { get; }
+
         void Stop(bool immediate = false);
 
         OutputDevice AllocateController(OutContType contType, ViGEmClient client);
