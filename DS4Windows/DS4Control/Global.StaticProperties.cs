@@ -51,7 +51,7 @@ namespace DS4Windows
         ///     Absolute path to roaming application directory in current user profile.
         /// </summary>
         public static string RoamingAppDataPath =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DS4Windows");
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Constants.ApplicationName);
 
         /// <summary>
         ///     Is the underlying OS Windows 8 (or newer).

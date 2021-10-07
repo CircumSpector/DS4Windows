@@ -23,6 +23,7 @@ using HttpProgress;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
@@ -68,17 +69,21 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly ControlService rootHub;
 
+        private readonly IAppSettingsService appSettings;
+
         public MainWindow(
             ICommandLineOptions parser, 
             IServiceProvider serviceProvider,
             MainWindowsViewModel mainWindowsViewModel,
             SettingsViewModel settingsViewModel,
             LogViewModel logViewModel,
-            ControlService controlService
+            ControlService controlService,
+            IAppSettingsService appSettings
             )
         {
             ServiceProvider = serviceProvider;
             rootHub = controlService;
+            this.appSettings = appSettings;
 
             InitializeComponent();
 
@@ -98,7 +103,7 @@ namespace DS4WinWPF.DS4Forms
 
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
 
-            conLvViewModel = new ControllerListViewModel(controlService, profileListHolder);
+            conLvViewModel = new ControllerListViewModel(controlService, profileListHolder, appSettings);
             controllerLV.DataContext = conLvViewModel;
             controllerLV.ItemsSource = conLvViewModel.ControllerCol;
             ChangeControllerPanel();

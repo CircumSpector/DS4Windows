@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
@@ -40,9 +41,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Dictionary<int, CompositeDeviceModel> ControllerDict { get => controllerDict; set => controllerDict = value; }
 
+        private readonly IAppSettingsService appSettings;
+
         //public ControllerListViewModel(Tester tester, ProfileList profileListHolder)
-        public ControllerListViewModel(ControlService service, ProfileList profileListHolder)
+        public ControllerListViewModel(ControlService service, ProfileList profileListHolder, IAppSettingsService appSettings)
         {
+            this.appSettings = appSettings;
             this.profileListHolder = profileListHolder;
             this.controlService = service;
             service.ServiceStarted += ControllersChanged;
@@ -177,9 +181,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 _colListLocker.EnterWriteLock();
                 controllerCol.Remove(found);
                 controllerDict.Remove(found.DevIndex);
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    Global.Instance.Config.SaveApplicationSettings();
+                    await appSettings.SaveAsync();
                 });
                 Global.LinkedProfileCheck[found.DevIndex] = false;
                 _colListLocker.ExitWriteLock();

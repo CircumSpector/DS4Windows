@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Windows;
 using AdonisUI.Controls;
+using DS4WinWPF.DS4Control.IoC.Services;
 using HttpProgress;
 using NonFormTimer = System.Timers.Timer;
 
@@ -42,12 +43,16 @@ namespace DS4WinWPF.DS4Forms
         Process monitorProc;
         NonFormTimer monitorTimer;
 
-        public WelcomeDialog(bool loadConfig = false)
+        private readonly IAppSettingsService appSettings;
+
+        public WelcomeDialog(IAppSettingsService appSettings, bool loadConfig = false)
         {
+            this.appSettings = appSettings;
+
             if (loadConfig)
             {
                 DS4Windows.Global.Instance.FindConfigLocation();
-                DS4Windows.Global.Instance.Config.LoadApplicationSettings();
+                appSettings.LoadAsync().Wait();
                 //DS4Windows.Global.SetCulture(DS4Windows.Global.UseLang);
             }
 

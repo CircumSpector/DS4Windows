@@ -45,9 +45,11 @@ namespace DS4WinWPF
             [AppThemeChoice.Dark] = "pack://application:,,,/AdonisUI;component/ColorSchemes/Dark.xaml"
         };
 
-        private readonly IHost _host;
+        private readonly IHost host;
 
-        private ILogger<App> _logger;
+        private ILogger<App> logger;
+
+        private IAppSettingsService appSettings;
 
         private bool exitApp;
         private bool exitComThread;
@@ -59,7 +61,7 @@ namespace DS4WinWPF
 
         public App()
         {
-            _host = Host.CreateDefaultBuilder()
+            host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) => { ConfigureServices(context.Configuration, services); })
                 .Build();
         }
@@ -111,7 +113,7 @@ namespace DS4WinWPF
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            await _host.StartAsync();
+            await host.StartAsync();
 
             runShutdown = true;
             skipSave = true;
@@ -124,11 +126,12 @@ namespace DS4WinWPF
             //
             // TODO: intermediate hack until DI is propagated throughout all classes
             // 
-            AppLogger.Instance = _host.Services.GetRequiredService<AppLogger>();
+            AppLogger.Instance = host.Services.GetRequiredService<AppLogger>();
 
-            _logger = _host.Services.GetRequiredService<ILogger<App>>();
+            logger = host.Services.GetRequiredService<ILogger<App>>();
+            appSettings = host.Services.GetRequiredService<IAppSettingsService>();
 
-            var parser = (CommandLineOptions)_host.Services.GetRequiredService<ICommandLineOptions>();
+            var parser = (CommandLineOptions)host.Services.GetRequiredService<ICommandLineOptions>();
 
             parser.Parse(e.Args);
 
@@ -171,7 +174,7 @@ namespace DS4WinWPF
             threadComEvent = new EventWaitHandle(false, EventResetMode.ManualReset, Constants.SingleAppComEventName);
             CreateTempWorkerThread();
 
-            rootHub = _host.Services.GetRequiredService<ControlService>();
+            rootHub = host.Services.GetRequiredService<ControlService>();
 
             //
             // TODO: intermediate hack until DI is propagated throughout all classes
@@ -208,33 +211,33 @@ namespace DS4WinWPF
 
             var version = Global.ExecutableProductVersion;
 
-            _logger.LogInformation($"{Constants.ApplicationName} version {version}");
-            _logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
-            _logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
-            _logger.LogInformation($"OS Version: {Environment.OSVersion}");
-            _logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
-            _logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
-            _logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
-            _logger.LogInformation("Logger created");
+            logger.LogInformation($"{Constants.ApplicationName} version {version}");
+            logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
+            logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
+            logger.LogInformation($"OS Version: {Environment.OSVersion}");
+            logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
+            logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
+            logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
+            logger.LogInformation("Logger created");
 
-            var readAppConfig = await Global.Instance.Config.LoadApplicationSettings();
+            var readAppConfig = await appSettings.LoadAsync();
             
             switch (firstRun)
             {
                 case false when !readAppConfig:
-                    _logger.LogInformation(
+                    logger.LogInformation(
                         $@"{Constants.ProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesFileName)}. Using default app settings");
                     break;
                 case true:
                 {
-                    _logger.LogInformation("No config found. Creating default config");
+                    logger.LogInformation("No config found. Creating default config");
                     AttemptSave();
 
                     await Global.Instance.Config.SaveAsNewProfile(0, "Default");
                     for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
                         Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                    _logger.LogInformation("Default config created");
+                    logger.LogInformation("Default config created");
                     break;
                 }
             }
@@ -250,7 +253,7 @@ namespace DS4WinWPF
 
             Global.Instance.Config.LoadLinkedProfiles();
 
-            var window = _host.Services.GetRequiredService<MainWindow>();
+            var window = host.Services.GetRequiredService<MainWindow>();
             MainWindow = window;
             window.Show();
 
@@ -294,13 +297,13 @@ namespace DS4WinWPF
         {
             if (runShutdown)
             {
-                _logger.LogInformation("Request App Shutdown");
+                logger.LogInformation("Request App Shutdown");
                 CleanShutdown();
             }
 
-            using (_host)
+            using (host)
             {
-                await _host.StopAsync();
+                await host.StopAsync();
             }
 
             base.OnExit(e);
@@ -325,7 +328,7 @@ namespace DS4WinWPF
             {
                 var exp = e.ExceptionObject as Exception;
 
-                _logger.LogError(exp, $"Thread App Crashed with message {exp.Message}");
+                logger.LogError(exp, $"Thread App Crashed with message {exp.Message}");
 
                 if (e.IsTerminating)
                     Dispatcher.Invoke(() =>
@@ -339,7 +342,7 @@ namespace DS4WinWPF
                 var exp = e.ExceptionObject as Exception;
                 if (e.IsTerminating)
                 {
-                    _logger.LogError(exp, $"Thread Crashed with message {exp.Message}");
+                    logger.LogError(exp, $"Thread Crashed with message {exp.Message}");
 
                     rootHub?.PrepareAbort();
                     CleanShutdown();
@@ -349,7 +352,7 @@ namespace DS4WinWPF
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            _logger.LogError(e.Exception, $"Thread Crashed with message {e.Exception.Message}");
+            logger.LogError(e.Exception, $"Thread Crashed with message {e.Exception.Message}");
         }
 
         private static bool CreateConfDirSkeleton()
@@ -370,9 +373,9 @@ namespace DS4WinWPF
             return result;
         }
 
-        private void AttemptSave()
+        private async void AttemptSave()
         {
-            if (!Global.Instance.Config.SaveApplicationSettings()) //if can't write to file
+            if (!await appSettings.SaveAsync()) //if can't write to file
             {
                 if (MessageBox.Show("Cannot write at current location\nCopy Settings to AppData?", "DS4Windows",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -427,7 +430,7 @@ namespace DS4WinWPF
                 Global.RefreshViGEmBusInfo();
 
                 //CreateBaseThread();
-                var dialog = new WelcomeDialog(true);
+                var dialog = new WelcomeDialog(appSettings, true);
                 dialog.ShowDialog();
                 runShutdown = false;
                 exitApp = true;
@@ -614,11 +617,11 @@ namespace DS4WinWPF
         
         private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
-            _logger.LogInformation("User Session Ending");
+            logger.LogInformation("User Session Ending");
             CleanShutdown();
         }
 
-        private void CleanShutdown()
+        private async void CleanShutdown()
         {
             if (!runShutdown) return;
 
@@ -632,7 +635,7 @@ namespace DS4WinWPF
                 }).Wait();
 
             if (!skipSave)
-                Global.Instance.Config.SaveApplicationSettings();
+                await appSettings.SaveAsync();
 
             exitComThread = true;
             if (threadComEvent != null)

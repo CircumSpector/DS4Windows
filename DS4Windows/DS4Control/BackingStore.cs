@@ -475,10 +475,6 @@ namespace DS4Windows
         Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
             string profilePath = "", bool xinputChange = true, bool postLoad = true);
 
-        Task<bool> LoadApplicationSettings();
-
-        bool SaveApplicationSettings();
-
         bool SaveAction(string name, string controls, int mode, string details, bool edit, string extras = "");
 
         void RemoveAction(string name);
