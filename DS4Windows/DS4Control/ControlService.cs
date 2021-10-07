@@ -920,50 +920,49 @@ namespace DS4Windows
 
         public void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false)
         {
-            if (!UseDirectInputOnly[index])
+            if (UseDirectInputOnly[index]) return;
+
+            //OutContType contType = Global.OutContType[index];
+            var dev = outputDevices[index];
+            var slotDevice = OutputslotMan.GetOutSlotDevice(dev);
+            if (dev != null && slotDevice != null)
             {
-                //OutContType contType = Global.OutContType[index];
-                var dev = outputDevices[index];
-                var slotDevice = OutputslotMan.GetOutSlotDevice(dev);
-                if (dev != null && slotDevice != null)
+                var tempType = dev.GetDeviceType();
+                LogDebug(
+                    $"Disassociate {tempType} Controller from{(slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent ? " permanent" : "")} slot #{slotDevice.Index + 1} for input {device.DisplayName} controller #{index + 1}");
+
+                var currentType = ActiveOutDevType[index];
+                outputDevices[index] = null;
+                ActiveOutDevType[index] = OutContType.None;
+                if (slotDevice.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached &&
+                    slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Dynamic || force)
                 {
-                    var tempType = dev.GetDeviceType();
-                    LogDebug(
-                        $"Disassociate {tempType} Controller from{(slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent ? " permanent" : "")} slot #{slotDevice.Index + 1} for input {device.DisplayName} controller #{index + 1}");
-
-                    var currentType = ActiveOutDevType[index];
-                    outputDevices[index] = null;
-                    ActiveOutDevType[index] = OutContType.None;
-                    if (slotDevice.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached &&
-                        slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Dynamic || force)
-                    {
-                        //slotDevice.CurrentInputBound = OutSlotDevice.InputBound.Unbound;
-                        OutputslotMan.DeferredRemoval(dev, index, outputDevices, immediate);
-                        LogDebug($"Unplugging virtual {tempType} Controller");
-                    }
-                    else if (slotDevice.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached)
-                    {
-                        slotDevice.CurrentInputBound = OutSlotDevice.InputBound.Unbound;
-                        dev.ResetState();
-                        dev.RemoveFeedbacks();
-                        //RemoveOutFeedback(currentType, dev);
-                    }
-                    //dev.Disconnect();
-                    //LogDebug(tempType + " Controller # " + (index + 1) + " unplugged");
+                    //slotDevice.CurrentInputBound = OutSlotDevice.InputBound.Unbound;
+                    OutputslotMan.DeferredRemoval(dev, index, outputDevices, immediate);
+                    LogDebug($"Unplugging virtual {tempType} Controller");
                 }
-
-                UseDirectInputOnly[index] = true;
+                else if (slotDevice.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached)
+                {
+                    slotDevice.CurrentInputBound = OutSlotDevice.InputBound.Unbound;
+                    dev.ResetState();
+                    dev.RemoveFeedbacks();
+                    //RemoveOutFeedback(currentType, dev);
+                }
+                //dev.Disconnect();
+                //LogDebug(tempType + " Controller # " + (index + 1) + " unplugged");
             }
+
+            UseDirectInputOnly[index] = true;
         }
 
-        public async Task<bool> Start(bool showlog = true)
+        public async Task<bool> Start(bool showInLog = true)
         {
             inServiceTask = true;
             StartViGEm();
             if (vigemTestClient != null)
                 //if (x360Bus.Open() && x360Bus.Start())
             {
-                if (showlog)
+                if (showInLog)
                     LogDebug(Resources.Starting);
 
                 LogDebug($"Using output KB+M handler: {outputKBMHandler.GetFullDisplayName()}");
@@ -974,7 +973,7 @@ namespace DS4Windows
                 UpdateHidHiddenAttributes();
 
                 //uiContext = tempui as SynchronizationContext;
-                if (showlog)
+                if (showInLog)
                 {
                     LogDebug(Resources.SearchingController);
                     LogDebug(DS4Devices.isExclusiveMode ? Resources.UsingExclusive : Resources.UsingShared);
@@ -1005,7 +1004,7 @@ namespace DS4Windows
                     for (var devEnum = devices.GetEnumerator(); devEnum.MoveNext() && loopControllers; i++)
                     {
                         var device = devEnum.Current;
-                        if (showlog)
+                        if (showInLog)
                             LogDebug(Resources.FoundController + " " + device.MacAddress + " (" +
                                      device.GetConnectionType() + ") (" +
                                      device.DisplayName + ")");
@@ -1258,7 +1257,7 @@ namespace DS4Windows
             }
         }
 
-        public bool Stop(bool showlog = true, bool immediateUnplug = false)
+        public bool Stop(bool showInLog = true, bool immediateUnplug = false)
         {
             if (running)
             {
@@ -1267,7 +1266,7 @@ namespace DS4Windows
                 inServiceTask = true;
                 PreServiceStop?.Invoke(this, EventArgs.Empty);
 
-                if (showlog)
+                if (showInLog)
                     LogDebug(Resources.StoppingX360);
 
                 LogDebug("Closing connection to ViGEmBus");
@@ -1327,7 +1326,7 @@ namespace DS4Windows
                     inWarnMonitor[i] = false;
                 }
 
-                if (showlog)
+                if (showInLog)
                     LogDebug(Resources.StoppingDS4);
 
                 DS4Devices.StopControllers();
@@ -1335,7 +1334,7 @@ namespace DS4Windows
 
                 if (_udpServer != null) ChangeUDPStatus(false);
 
-                if (showlog)
+                if (showInLog)
                     LogDebug(Resources.StoppedDS4Windows);
 
                 while (OutputslotMan.RunningQueue) Thread.SpinWait(500);
