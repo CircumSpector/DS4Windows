@@ -33,8 +33,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public void CopyFrom(IBackingStore store)
         {
             UseExclusiveMode = store.UseExclusiveMode;
-            StartMinimized = store.StartMinimized;
-            MinimizeToTaskbar = store.MinToTaskBar;
 
             for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
             {
@@ -56,8 +54,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             DownloadLang = store.DownloadLang;
             FlashWhenLate = store.FlashWhenLate;
             FlashWhenLateAt = store.FlashWhenLateAt;
-            AppIcon = store.UseIconChoice;
-            AppTheme = store.ThemeChoice;
 
             UseUDPServer = store.IsUdpServerEnabled;
             UDPServerPort = store.UdpServerPort;
@@ -122,11 +118,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         ///     Injects properties from <see cref="DS4WindowsAppSettings" /> into <see cref="IBackingStore" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
+        [IntermediateSolution]
         public void CopyTo(IBackingStore store)
         {
             store.UseExclusiveMode = UseExclusiveMode;
-            store.StartMinimized = StartMinimized;
-            store.MinToTaskBar = MinimizeToTaskbar;
 
             for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
             {
@@ -162,8 +157,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.DownloadLang = DownloadLang;
             store.FlashWhenLate = FlashWhenLate;
             store.FlashWhenLateAt = FlashWhenLateAt;
-            store.UseIconChoice = AppIcon;
-            store.ThemeChoice = AppTheme;
 
             store.IsUdpServerEnabled = UseUDPServer;
             store.UdpServerPort = Math.Min(Math.Max(UDPServerPort, 1024), 65535);

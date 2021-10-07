@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -61,13 +62,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             ControllerHolder item, string profile);
         public event ProfileSelectedHandler ProfileSelected;
 
+        private readonly IAppSettingsService appSettings;
+
         //public TrayIconViewModel(Tester tester)
-        public TrayIconViewModel(ControlService service, ProfileList profileListHolder)
+        public TrayIconViewModel(IAppSettingsService appSettings, ControlService service, ProfileList profileListHolder)
         {
+            this.appSettings = appSettings;
             this.profileListHolder = profileListHolder;
             this.controlService = service;
             contextMenu = new ContextMenu();
-            iconSource = Global.IconChoiceResources[Global.Instance.Config.UseIconChoice];
+            iconSource = Global.IconChoiceResources[appSettings.Settings.AppIcon];
             changeServiceItem = new MenuItem() { Header = "Start" };
             changeServiceItem.Click += ChangeControlServiceItem_Click;
             changeServiceItem.IsEnabled = false;

@@ -10,6 +10,7 @@ using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
@@ -89,19 +90,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public bool DisconnectBTStop { get => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop; set => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop = value; }
         public bool FlashHighLatency { get => DS4Windows.Global.Instance.Config.FlashWhenLate; set => DS4Windows.Global.Instance.Config.FlashWhenLate = value; }
         public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.Config.FlashWhenLateAt; set => DS4Windows.Global.Instance.Config.FlashWhenLateAt = value; }
-        public bool StartMinimize { get => DS4Windows.Global.Instance.Config.StartMinimized; set => DS4Windows.Global.Instance.Config.StartMinimized = value; }
-        public bool MinimizeToTaskbar { get => DS4Windows.Global.Instance.Config.MinToTaskBar; set => DS4Windows.Global.Instance.Config.MinToTaskBar = value; }
+        public bool StartMinimize { get => appSettings.Settings.StartMinimized; set => appSettings.Settings.StartMinimized = value; }
+        public bool MinimizeToTaskbar { get => appSettings.Settings.MinimizeToTaskbar; set => appSettings.Settings.MinimizeToTaskbar = value; }
         public bool CloseMinimizes { get => DS4Windows.Global.Instance.Config.CloseMini; set => DS4Windows.Global.Instance.Config.CloseMini = value; }
         public bool QuickCharge { get => DS4Windows.Global.Instance.Config.QuickCharge; set => DS4Windows.Global.Instance.Config.QuickCharge = value; }
 
         public int IconChoiceIndex
         {
-            get => (int)DS4Windows.Global.Instance.Config.UseIconChoice;
+            get => (int)appSettings.Settings.AppIcon;
             set
             {
-                int temp = (int)DS4Windows.Global.Instance.Config.UseIconChoice;
+                int temp = (int)appSettings.Settings.AppIcon;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.Config.UseIconChoice = (DS4Windows.TrayIconChoice)value;
+                appSettings.Settings.AppIcon = (DS4Windows.TrayIconChoice)value;
                 IconChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -109,12 +110,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int AppChoiceIndex
         {
-            get => (int)DS4Windows.Global.Instance.Config.ThemeChoice;
+            get => (int)appSettings.Settings.AppTheme;
             set
             {
-                int temp = (int)DS4Windows.Global.Instance.Config.ThemeChoice;
+                int temp = (int)appSettings.Settings.AppTheme;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.Config.ThemeChoice = (DS4Windows.AppThemeChoice)value;
+                appSettings.Settings.AppTheme = (DS4Windows.AppThemeChoice)value;
                 AppChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -301,8 +302,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public bool HidHideInstalled { get => DS4Windows.Global.hidHideInstalled; }
         public event EventHandler HidHideInstalledChanged;
 
-        public SettingsViewModel()
+        private readonly IAppSettingsService appSettings;
+
+        public SettingsViewModel(IAppSettingsService appSettings)
         {
+            this.appSettings = appSettings;
+
             checkEveryUnitIdx = 1;
 
             int checklapse = DS4Windows.Global.Instance.Config.CheckWhen;

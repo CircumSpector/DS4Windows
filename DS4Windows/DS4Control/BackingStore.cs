@@ -27,8 +27,6 @@ namespace DS4Windows
 
         string CustomSteamFolder { get; set; }
 
-        AppThemeChoice ThemeChoice { get; set; }
-
         ControlServiceDeviceOptions DeviceOptions { get; }
 
         IList<OutContType> OutputDeviceType { get; set; }
@@ -47,15 +45,9 @@ namespace DS4Windows
 
         bool CloseMini { get; set; }
 
-        bool StartMinimized { get; set; }
-
-        bool MinToTaskBar { get; set; }
-
         string UseLang { get; set; }
 
         bool DownloadLang { get; set; }
-
-        TrayIconChoice UseIconChoice { get; set; }
 
         bool FlashWhenLate { get; set; }
 

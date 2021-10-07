@@ -248,8 +248,8 @@ namespace DS4WinWPF
 
             SetUICulture(Global.Instance.Config.UseLang);
 
-            var themeChoice = Global.Instance.Config.ThemeChoice;
-            if (themeChoice != AppThemeChoice.Default) ChangeTheme(Global.Instance.Config.ThemeChoice, false);
+            if (appSettings.Settings.AppTheme != AppThemeChoice.Default)
+                ChangeTheme(appSettings.Settings.AppTheme, false);
 
             Global.Instance.Config.LoadLinkedProfiles();
 

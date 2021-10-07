@@ -113,10 +113,10 @@ namespace DS4WinWPF.DS4Forms
             view.SortDescriptions.Add(new SortDescription("DevIndex", ListSortDirection.Ascending));
             view.Refresh();
 
-            trayIconVM = new TrayIconViewModel(rootHub, profileListHolder);
+            trayIconVM = new TrayIconViewModel(appSettings, rootHub, profileListHolder);
             notifyIcon.DataContext = trayIconVM;
 
-            if (Global.Instance.Config.StartMinimized || parser.StartMinimized)
+            if (appSettings.Settings.StartMinimized || parser.StartMinimized)
             {
                 WindowState = WindowState.Minimized;
             }
@@ -466,15 +466,14 @@ Suspend support not enabled.", true);
 
         private void SettingsWrapVM_AppChoiceIndexChanged(object sender, EventArgs e)
         {
-            AppThemeChoice choice = Global.Instance.Config.ThemeChoice;
             App current = App.Current as App;
-            current.ChangeTheme(choice);
+            current.ChangeTheme(appSettings.Settings.AppTheme);
             trayIconVM.PopulateContextMenu();
         }
 
         private void SettingsWrapVM_IconChoiceIndexChanged(object sender, EventArgs e)
         {
-            trayIconVM.IconSource = Global.IconChoiceResources[Global.Instance.Config.UseIconChoice];
+            trayIconVM.IconSource = Global.IconChoiceResources[appSettings.Settings.AppIcon];
         }
 
         private void MainWinVM_FullTabsEnabledChanged(object sender, EventArgs e)
@@ -1623,16 +1622,18 @@ Suspend support not enabled.", true);
 
         public void CheckMinStatus()
         {
-            bool minToTask = Global.Instance.Config.MinToTaskBar;
-            if (WindowState == WindowState.Minimized && !minToTask)
+            bool minToTask = appSettings.Settings.MinimizeToTaskbar;
+
+            switch (WindowState)
             {
-                Hide();
-                showAppInTaskbar = false;
-            }
-            else if (WindowState == WindowState.Normal && !minToTask)
-            {
-                Show();
-                showAppInTaskbar = true;
+                case WindowState.Minimized when !minToTask:
+                    Hide();
+                    showAppInTaskbar = false;
+                    break;
+                case WindowState.Normal when !minToTask:
+                    Show();
+                    showAppInTaskbar = true;
+                    break;
             }
         }
 
