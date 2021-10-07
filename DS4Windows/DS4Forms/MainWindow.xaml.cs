@@ -1873,7 +1873,6 @@ Suspend support not enabled.", true);
             mainTabCon.SelectedIndex = 1;
         }
 
-        [IntermediateSolution]
         private void New_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;

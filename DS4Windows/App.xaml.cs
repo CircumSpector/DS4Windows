@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -46,6 +45,8 @@ namespace DS4WinWPF
         };
 
         private readonly IHost _host;
+
+        private ILogger<App> logger;
 
         private Thread controlThread;
         private bool exitApp;
@@ -102,7 +103,7 @@ namespace DS4WinWPF
             // 
             AppLogger.Instance = _host.Services.GetRequiredService<AppLogger>();
 
-            var logger = _host.Services.GetRequiredService<ILogger<App>>();
+            logger = _host.Services.GetRequiredService<ILogger<App>>();
 
             var parser = (CommandLineOptions)_host.Services.GetRequiredService<ICommandLineOptions>();
 
@@ -158,6 +159,9 @@ namespace DS4WinWPF
             var firstRun = Global.Instance.IsFirstRun;
             if (firstRun)
             {
+                //
+                // TODO: turn into DI
+                // 
                 var savewh =
                     new SaveWhere(Global.Instance.HasMultipleSaveSpots);
                 savewh.ShowDialog();
@@ -257,7 +261,6 @@ namespace DS4WinWPF
         {
             if (runShutdown)
             {
-                var logger = _host.Services.GetRequiredService<ILogger<App>>();
                 logger.LogInformation("Request App Shutdown");
                 CleanShutdown();
             }
@@ -285,14 +288,11 @@ namespace DS4WinWPF
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var logger = _host.Services.GetRequiredService<ILogger<App>>();
-
             if (!Current.Dispatcher.CheckAccess())
             {
                 var exp = e.ExceptionObject as Exception;
 
-                logger.LogError($"Thread App Crashed with message {exp.Message}");
-                logger.LogError(exp.ToString());
+                logger.LogError(exp, $"Thread App Crashed with message {exp.Message}");
 
                 if (e.IsTerminating)
                     Dispatcher.Invoke(() =>
@@ -306,8 +306,7 @@ namespace DS4WinWPF
                 var exp = e.ExceptionObject as Exception;
                 if (e.IsTerminating)
                 {
-                    logger.LogError($"Thread Crashed with message {exp.Message}");
-                    logger.LogError(exp.ToString());
+                    logger.LogError(exp, $"Thread Crashed with message {exp.Message}");
 
                     rootHub?.PrepareAbort();
                     CleanShutdown();
@@ -317,16 +316,10 @@ namespace DS4WinWPF
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            //Debug.WriteLine("App Crashed");
-            //Debug.WriteLine(e.Exception.StackTrace);
-            var logger = _host.Services.GetRequiredService<ILogger<App>>();
-            logger.LogError($"Thread Crashed with message {e.Exception.Message}");
-            logger.LogError(e.Exception.ToString());
-            //LogManager.Flush();
-            //LogManager.Shutdown();
+            logger.LogError(e.Exception, $"Thread Crashed with message {e.Exception.Message}");
         }
 
-        private bool CreateConfDirSkeleton()
+        private static bool CreateConfDirSkeleton()
         {
             var result = true;
             try
@@ -348,7 +341,7 @@ namespace DS4WinWPF
         {
             if (!Global.Instance.Config.SaveApplicationSettings()) //if can't write to file
             {
-                if (MessageBox.Show("Cannot write at current location\nCopy Settings to appdata?", "DS4Windows",
+                if (MessageBox.Show("Cannot write at current location\nCopy Settings to AppData?", "DS4Windows",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     try
@@ -607,40 +600,37 @@ namespace DS4WinWPF
         
         private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
-            var logger = _host.Services.GetRequiredService<ILogger<App>>();
             logger.LogInformation("User Session Ending");
             CleanShutdown();
         }
 
         private void CleanShutdown()
         {
-            if (runShutdown)
-            {
-                if (rootHub != null)
-                    Task.Run(() =>
-                    {
-                        if (rootHub.running)
-                        {
-                            rootHub.Stop(immediateUnplug: true);
-                            rootHub.ShutDown();
-                        }
-                    }).Wait();
+            if (!runShutdown) return;
 
-                if (!skipSave)
-                    Global.Instance.Config.SaveApplicationSettings();
-
-                exitComThread = true;
-                if (threadComEvent != null)
+            if (rootHub != null)
+                Task.Run(() =>
                 {
-                    threadComEvent.Set(); // signal the other instance.
-                    while (testThread.IsAlive)
-                        Thread.SpinWait(500);
-                    threadComEvent.Close();
-                }
+                    if (!rootHub.running) return;
 
-                ipcClassNameMMA?.Dispose();
-                ipcClassNameMMF?.Dispose();
+                    rootHub.Stop(immediateUnplug: true);
+                    rootHub.ShutDown();
+                }).Wait();
+
+            if (!skipSave)
+                Global.Instance.Config.SaveApplicationSettings();
+
+            exitComThread = true;
+            if (threadComEvent != null)
+            {
+                threadComEvent.Set(); // signal the other instance.
+                while (testThread.IsAlive)
+                    Thread.SpinWait(500);
+                threadComEvent.Close();
             }
+
+            ipcClassNameMMA?.Dispose();
+            ipcClassNameMMF?.Dispose();
         }
     }
 }
