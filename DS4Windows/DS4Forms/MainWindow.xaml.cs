@@ -22,6 +22,7 @@ using HttpProgress;
 
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
@@ -1840,6 +1841,7 @@ Suspend support not enabled.", true);
 
         #region TODO: workaround until ReactiveUI is introduced
 
+        [IntermediateSolution]
         private void Properties_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var temp = sender as Control;
@@ -1855,11 +1857,13 @@ Suspend support not enabled.", true);
             }
         }
 
+        [IntermediateSolution]
         private void Properties_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
+        [IntermediateSolution]
         private void New_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var temp = sender as Control;
@@ -1869,6 +1873,7 @@ Suspend support not enabled.", true);
             mainTabCon.SelectedIndex = 1;
         }
 
+        [IntermediateSolution]
         private void New_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
