@@ -106,6 +106,7 @@ namespace DS4WinWPF
             services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
             services.AddSingleton<ControlService>();
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
+            services.AddSingleton<IGlobalStateService, GlobalStateService>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)

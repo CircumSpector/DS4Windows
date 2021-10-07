@@ -213,6 +213,7 @@ namespace DS4Windows
                 TouchpadOutMode.Mouse
             };
 
+            [Obsolete]
             public string ProfilesPath { get; set; } =
                 Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
                     Constants.ProfilesFileName);

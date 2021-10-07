@@ -17,13 +17,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Persist the current settings to disk.
         /// </summary>
         /// <param name="path">The absolute path to the resulting XML file.</param>
-        Task SaveAsync(string path);
+        Task SaveAsync(string path = null);
 
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
         /// <param name="path">The absolute path to the XML file to read from.</param>
-        Task LoadAsync(string path);
+        Task LoadAsync(string path = null);
     }
 
     /// <summary>
@@ -31,11 +31,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class AppSettingsService : IAppSettingsService
     {
+        private readonly IGlobalStateService global;
         private readonly ILogger<AppSettingsService> logger;
 
-        public AppSettingsService(ILogger<AppSettingsService> logger)
+        public AppSettingsService(ILogger<AppSettingsService> logger, IGlobalStateService global)
         {
             this.logger = logger;
+            this.global = global;
         }
 
         /// <summary>
@@ -47,8 +49,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Persist the current settings to disk.
         /// </summary>
         /// <param name="path">The absolute path to the resulting XML file.</param>
-        public async Task SaveAsync(string path)
+        public async Task SaveAsync(string path = null)
         {
+            if (string.IsNullOrEmpty(path))
+                path = global.AppSettingsFilePath;
+
             await using var stream = File.Open(path, FileMode.Create);
 
             await Settings.SerializeAsync(stream);
@@ -58,8 +63,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Load the persisted settings from disk.
         /// </summary>
         /// <param name="path">The absolute path to the XML file to read from.</param>
-        public async Task LoadAsync(string path)
+        public async Task LoadAsync(string path = null)
         {
+            if (string.IsNullOrEmpty(path))
+                path = global.AppSettingsFilePath;
+
             if (!File.Exists(path))
             {
                 logger.LogDebug("File {File} doesn't exist, skipping", path);

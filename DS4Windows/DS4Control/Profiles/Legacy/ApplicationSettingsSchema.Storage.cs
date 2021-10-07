@@ -1,5 +1,6 @@
 ﻿using System;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
@@ -28,6 +29,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         ///     Converts properties from <see cref="IBackingStore" /> to this <see cref="DS4WindowsAppSettings" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
+        [IntermediateSolution]
         public void CopyFrom(IBackingStore store)
         {
             UseExclusiveMode = store.UseExclusiveMode;
