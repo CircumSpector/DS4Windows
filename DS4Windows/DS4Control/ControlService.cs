@@ -958,7 +958,7 @@ namespace DS4Windows
         public async Task<bool> Start(bool showInLog = true)
         {
             inServiceTask = true;
-            StartViGEm();
+            CheckViGEmConnectivity();
             if (vigemTestClient != null)
                 //if (x360Bus.Open() && x360Bus.Start())
             {

@@ -21,7 +21,7 @@ namespace DS4Windows
             }));
         }
 
-        private void StartViGEm()
+        private void CheckViGEmConnectivity()
         {
             // Refresh internal ViGEmBus info
             RefreshViGEmBusInfo();
