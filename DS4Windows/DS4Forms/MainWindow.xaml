@@ -438,15 +438,15 @@
 
                         <StackPanel Margin="{StaticResource spaceMargin}">
                             <CheckBox x:Name="customSteamCk" Content="Use custom Steam Folder"
-                                      Margin="{StaticResource spaceMargin}"
+                                      Margin="{adonisUi:Space 0.5}"
                                       IsChecked="{Binding UseCustomSteamFolder}" />
-                            <TextBox x:Name="customSteamTxt"
+                            <TextBox x:Name="customSteamTxt" Margin="{adonisUi:Space 0.5}"
                                      Text="{Binding CustomSteamFolder, UpdateSourceTrigger=LostFocus}"
                                      IsEnabled="{Binding UseCustomSteamFolder}" />
                         </StackPanel>
 
                         <DockPanel Margin="{StaticResource spaceMargin}">
-                            <Label Content="{lex:Loc CustomExeName}" />
+                            <Label Content="{lex:Loc CustomExeName}" VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}" />
                             <Button x:Name="fakeExeNameExplainBtn" DockPanel.Dock="Right" Margin="{adonisUi:Space 0.5}"
                                     Click="FakeExeNameExplainBtn_Click">
                                 <Image Source="{Binding QuestionMarkSource, Mode=OneTime}"

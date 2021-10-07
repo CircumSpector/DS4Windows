@@ -25,8 +25,10 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Translations;
-using Microsoft.Extensions.DependencyInjection;
-using MessageBox = System.Windows.MessageBox;
+using MessageBox = AdonisUI.Controls.MessageBox;
+using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
+using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
+using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -1392,6 +1394,9 @@ Suspend support not enabled.", true);
         private async void DriverSetupBtn_Click(object sender, RoutedEventArgs e)
         {
             StartStopBtn.IsEnabled = false;
+            //
+            // TODO: async/await candidate
+            // 
             await Task.Run(() =>
             {
                 if (App.rootHub.running)
@@ -1538,12 +1543,13 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                int idx = profilesListBox.SelectedIndex;
-                ProfileEntity entity = profileListHolder.ProfileListCollection[idx];
-                string filename = entity.Name;
-                if (MessageBox.Show(Properties.Resources.ProfileCannotRestore.Replace("*Profile name*", "\"" + filename + "\""),
+                var idx = profilesListBox.SelectedIndex;
+                var entity = profileListHolder.ProfileListCollection[idx];
+                var filename = entity.Name;
+                if (AdonisUI.Controls.MessageBox.Show(
+                    Properties.Resources.ProfileCannotRestore.Replace("*Profile name*", "\"" + filename + "\""),
                     Properties.Resources.DeleteProfile,
-                    System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     entity.DeleteFile();
                     profileListHolder.ProfileListCollection.RemoveAt(idx);
@@ -1727,9 +1733,9 @@ Suspend support not enabled.", true);
 
         private void FakeExeNameExplainBtn_Click(object sender, RoutedEventArgs e)
         {
-            string message = Translations.Strings.CustomExeNameInfo;
-            MessageBox.Show(message, "Custom Exe Name Info", System.Windows.MessageBoxButton.OK,
-                System.Windows.MessageBoxImage.Information);
+            var message = Strings.CustomExeNameInfo;
+            AdonisUI.Controls.MessageBox.Show(message, "Custom Exe Name Info", MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private void XinputCheckerBtn_Click(object sender, RoutedEventArgs e)
