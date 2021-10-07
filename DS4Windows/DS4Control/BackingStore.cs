@@ -51,14 +51,6 @@ namespace DS4Windows
 
         bool MinToTaskBar { get; set; }
 
-        int FormWidth { get; set; }
-
-        int FormHeight { get; set; }
-
-        int FormLocationX { get; set; }
-
-        int FormLocationY { get; set; }
-
         string UseLang { get; set; }
 
         bool DownloadLang { get; set; }

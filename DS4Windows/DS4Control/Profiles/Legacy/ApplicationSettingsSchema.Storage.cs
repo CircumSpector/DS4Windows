@@ -36,11 +36,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             StartMinimized = store.StartMinimized;
             MinimizeToTaskbar = store.MinToTaskBar;
 
-            FormWidth = store.FormWidth;
-            FormHeight = store.FormHeight;
-            FormLocationX = store.FormLocationX;
-            FormLocationY = store.FormLocationY;
-
             for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
             {
                 var value = !Global.LinkedProfileCheck[i] ? store.ProfilePath[i] : store.OlderProfilePath[i];
@@ -132,11 +127,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.UseExclusiveMode = UseExclusiveMode;
             store.StartMinimized = StartMinimized;
             store.MinToTaskBar = MinimizeToTaskbar;
-
-            store.FormWidth = FormWidth;
-            store.FormHeight = FormHeight;
-            store.FormLocationX = Math.Max(FormLocationX, 0);
-            store.FormLocationY = Math.Max(FormLocationY, 0);
 
             for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
             {

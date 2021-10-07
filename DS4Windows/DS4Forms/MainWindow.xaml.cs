@@ -127,11 +127,11 @@ namespace DS4WinWPF.DS4Forms
                 uacImg.Visibility = Visibility.Collapsed;
             }
 
-            this.Width = Global.Instance.Config.FormWidth;
-            this.Height = Global.Instance.Config.FormHeight;
+            this.Width = appSettings.Settings.FormWidth;
+            this.Height = appSettings.Settings.FormHeight;
             WindowStartupLocation = WindowStartupLocation.Manual;
-            Left = Global.Instance.Config.FormLocationX;
-            Top = Global.Instance.Config.FormLocationY;
+            Left = appSettings.Settings.FormLocationX;
+            Top = appSettings.Settings.FormLocationY;
             noContLb.Content = string.Format(Strings.NoControllersConnected,
                 ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
 
@@ -1640,8 +1640,8 @@ Suspend support not enabled.", true);
         {
             if (WindowState != WindowState.Minimized && preserveSize)
             {
-                Global.Instance.Config.FormWidth = Convert.ToInt32(Width);
-                Global.Instance.Config.FormHeight = Convert.ToInt32(Height);
+                appSettings.Settings.FormWidth = Convert.ToInt32(Width);
+                appSettings.Settings.FormHeight = Convert.ToInt32(Height);
             }
         }
 
@@ -1650,8 +1650,8 @@ Suspend support not enabled.", true);
             int left = Convert.ToInt32(Left), top = Convert.ToInt32(Top);
             if (left >= 0 && top >= 0)
             {
-                Global.Instance.Config.FormLocationX = left;
-                Global.Instance.Config.FormLocationY = top;
+                appSettings.Settings.FormLocationX = left;
+                appSettings.Settings.FormLocationY = top;
             }
         }
 
