@@ -18,7 +18,6 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Properties;
-using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Sensorit.Base;
 using static DS4Windows.Global;
@@ -30,8 +29,6 @@ namespace DS4Windows
     public partial class ControlService
     {
         public static ControlService CurrentInstance { get; set; }
-
-        public ViGEmClient vigemTestClient;
 
         // Might be useful for ScpVBus build
         public const int EXPANDED_CONTROLLER_COUNT = 8;
@@ -79,7 +76,6 @@ namespace DS4Windows
             new(), new()
         };
 
-        private Thread tempThread;
         private readonly Thread tempBusThread;
         private Thread eventDispatchThread;
 
@@ -959,9 +955,8 @@ namespace DS4Windows
         public async Task<bool> Start(bool showInLog = true)
         {
             inServiceTask = true;
-            CheckViGEmConnectivity();
-            if (vigemTestClient != null)
-                //if (x360Bus.Open() && x360Bus.Start())
+            
+            if (OutputslotMan.Client != null)
             {
                 if (showInLog)
                     LogDebug(Resources.Starting);
@@ -1343,7 +1338,6 @@ namespace DS4Windows
 
                 if (anyUnplugged) Thread.Sleep(OutputSlotManager.DELAY_TIME);
 
-                StopViGEm();
                 inServiceTask = false;
                 activeControllers = 0;
             }

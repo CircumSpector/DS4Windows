@@ -14,6 +14,8 @@ namespace DS4Windows
 
         event OutputSlotManager.SlotUnassignedDelegate SlotUnassigned;
 
+        ViGEmClient Client { get; }
+
         event EventHandler ViGEmFailure;
 
         IList<OutSlotDevice> OutputSlots { get; }
@@ -58,11 +60,11 @@ namespace DS4Windows
         private readonly ReaderWriterLockSlim queueLocker;
         private readonly Dictionary<OutputDevice, int> revDeviceDict = new();
 
-        private readonly ViGEmClient client;
+        public ViGEmClient Client { get; }
 
         public OutputSlotManager(ViGEmClient client)
         {
-            this.client = client;
+            this.Client = client;
 
             OutputSlots = new OutSlotDevice[ControlService.CURRENT_DS4_CONTROLLER_LIMIT];
             for (var i = 0; i < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; i++) OutputSlots[i] = new OutSlotDevice(i);
@@ -107,10 +109,10 @@ namespace DS4Windows
             switch (contType)
             {
                 case OutContType.X360:
-                    outputDevice = new Xbox360OutDevice(client);
+                    outputDevice = new Xbox360OutDevice(Client);
                     break;
                 case OutContType.DS4:
-                    outputDevice = DS4OutDeviceFactory.CreateDS4Device(client, Global.ViGEmBusVersionInfo);
+                    outputDevice = DS4OutDeviceFactory.CreateDS4Device(Client, Global.ViGEmBusVersionInfo);
                     break;
                 case OutContType.None:
                 default:
