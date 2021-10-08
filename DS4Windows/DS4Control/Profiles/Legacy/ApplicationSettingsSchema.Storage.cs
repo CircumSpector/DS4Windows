@@ -46,10 +46,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             UseLang = store.UseLang;
             DownloadLang = store.DownloadLang;
 
-            UDPServerPort = store.UdpServerPort;
-            UDPServerSmoothingOptions.UdpSmoothMinCutoff = store.UdpSmoothingMincutoff;
-            UDPServerSmoothingOptions.UdpSmoothBeta = store.UdpSmoothingBeta;
-
             UseCustomSteamFolder = store.UseCustomSteamFolder;
             CustomSteamFolder = store.CustomSteamFolder;
 
@@ -136,10 +132,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
-
-            store.UdpServerPort = Math.Min(Math.Max(UDPServerPort, 1024), 65535);
-            store.UdpSmoothingMincutoff = UDPServerSmoothingOptions.UdpSmoothMinCutoff;
-            store.UdpSmoothingBeta = UDPServerSmoothingOptions.UdpSmoothBeta;
 
             store.UseCustomSteamFolder = UseCustomSteamFolder;
             store.CustomSteamFolder = CustomSteamFolder;

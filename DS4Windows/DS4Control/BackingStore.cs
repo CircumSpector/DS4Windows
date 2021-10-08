@@ -15,8 +15,6 @@ namespace DS4Windows
 
         string ControllerConfigsPath { get; set; }
 
-        int UdpServerPort { get; set; }
-
         string CustomSteamFolder { get; set; }
 
         ControlServiceDeviceOptions DeviceOptions { get; }
@@ -158,10 +156,6 @@ namespace DS4Windows
         IList<bool> TouchpadJitterCompensation { get; set; }
 
         IList<bool> TouchClickPassthru { get; set; }
-
-        double UdpSmoothingMincutoff { get; set; }
-
-        double UdpSmoothingBeta { get; set; }
 
         string FakeExeFileName { get; set; }
 

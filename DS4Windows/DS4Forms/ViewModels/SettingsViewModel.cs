@@ -193,7 +193,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string UdpIpAddress { get => appSettings.Settings.UDPServerListenAddress;
             set => appSettings.Settings.UDPServerListenAddress = value; }
-        public int UdpPort { get => DS4Windows.Global.Instance.Config.UdpServerPort; set => DS4Windows.Global.Instance.Config.UdpServerPort = value; }
+        public int UdpPort { get => appSettings.Settings.UDPServerPort; set => appSettings.Settings.UDPServerPort = value; }
 
         public bool UseUdpSmoothing
         {

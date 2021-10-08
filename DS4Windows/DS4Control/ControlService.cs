@@ -495,7 +495,7 @@ namespace DS4Windows
                         // Change thread affinity of object to have normal priority
                         Task.Run(() =>
                         {
-                            var UDP_SERVER_PORT = Instance.Config.UdpServerPort;
+                            var UDP_SERVER_PORT = appSettings.Settings.UDPServerPort;
                             var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
 
                             try
@@ -1164,7 +1164,7 @@ namespace DS4Windows
                 if (_udpServer != null)
                 {
                     //var UDP_SERVER_PORT = 26760;
-                    var UDP_SERVER_PORT = Instance.Config.UdpServerPort;
+                    var UDP_SERVER_PORT = appSettings.Settings.UDPServerPort;
                     var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
 
                     try
