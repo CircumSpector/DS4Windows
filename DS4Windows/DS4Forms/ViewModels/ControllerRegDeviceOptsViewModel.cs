@@ -5,7 +5,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 using LEDBarMode = DS4Windows.DualSenseControllerOptions.LEDBarMode;
 using MuteLEDMode = DS4Windows.DualSenseControllerOptions.MuteLEDMode;

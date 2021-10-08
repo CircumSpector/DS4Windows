@@ -10,7 +10,7 @@ using DS4Windows.DS4Library;
 using DS4Windows.DS4Library.CoreAudio;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Logging;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
 using PropertyChanged;
 using ThreadState = System.Threading.ThreadState;

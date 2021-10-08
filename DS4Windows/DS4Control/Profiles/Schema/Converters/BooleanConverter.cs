@@ -1,6 +1,6 @@
 ﻿using ExtendedXmlSerializer.ContentModel.Conversion;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
+namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
 {
     /// <summary>
     ///     (De-)serializes <see cref="bool"/> values.

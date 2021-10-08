@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using PropertyChanged;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy
+namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     /// <summary>
     ///     Persists and retrieves <see cref="ControllerOptionsStore"/> entries to and from disk (XML).

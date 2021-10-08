@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using AdonisUI.Controls;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 
 namespace DS4WinWPF.DS4Forms
 {

@@ -18,7 +18,7 @@ using DS4WinWPF.DS4Control;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Properties;
 using Nefarius.ViGEm.Client.Targets;

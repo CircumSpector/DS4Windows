@@ -1,7 +1,7 @@
 ﻿using DS4Windows;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy.Converters
+namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
 {
     /// <summary>
     ///     (De-)serializes <see cref="BezierCurve" /> to and from XML.

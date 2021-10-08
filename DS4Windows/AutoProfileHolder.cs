@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Data;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 
 namespace DS4WinWPF
 {

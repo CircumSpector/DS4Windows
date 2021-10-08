@@ -13,10 +13,12 @@ using System.Windows.Input;
 using System.Xml;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Logging;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.Properties;
 
 using OpenTracing.Util;
+using DS4WindowsAppSettings = DS4WinWPF.DS4Control.Profiles.Schema.DS4WindowsAppSettings;
+using DS4WindowsProfile = DS4WinWPF.DS4Control.Profiles.Schema.DS4WindowsProfile;
 
 
 namespace DS4Windows
@@ -2460,7 +2462,7 @@ namespace DS4Windows
                     {
                         using var stream = File.OpenRead(LinkedProfilesPath);
 
-                        var profiles = DS4WinWPF.DS4Control.Profiles.Legacy.LinkedProfiles.Deserialize(stream);
+                        var profiles = DS4WinWPF.DS4Control.Profiles.Schema.LinkedProfiles.Deserialize(stream);
 
                         LinkedProfiles = profiles.Assignments.ToDictionary(
                             x => x.Key,

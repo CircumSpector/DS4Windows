@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Xml.Linq;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy.Migrations
+namespace DS4WinWPF.DS4Control.Profiles.Schema.Migrations
 {
     /// <summary>
     ///     Transparently transforms outdated XML formats into the currently required one.

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
+using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
+using DS4WinWPF.DS4Control.Profiles.Schema.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy
+namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     public partial class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>
     {
@@ -30,9 +30,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         /// <summary>
         ///     Converts properties from <see cref="IBackingStore" /> for a specified device index to this
-        ///     <see cref="DS4WindowsProfile" /> instance.
+        ///     <see cref="Schema.DS4WindowsProfile" /> instance.
         /// </summary>
-        /// <param name="store">The <see cref="IBackingStore"/>.</param>
+        /// <param name="store">The <see cref="IBackingStore" />.</param>
         /// <param name="device">The zero-based device index to copy.</param>
         [IntermediateSolution]
         public void CopyFrom(IBackingStore store, int device)
@@ -142,7 +142,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             SXAntiDeadZone = Convert.ToInt32(store.SXAntiDeadzone[device] * 100.0);
             SZAntiDeadZone = Convert.ToInt32(store.SZAntiDeadzone[device] * 100.0);
 
-            Sensitivity = new SensitivityProxyType()
+            Sensitivity = new SensitivityProxyType
             {
                 LSSens = store.LSSens[device],
                 RSSens = store.RSSens[device],
@@ -213,7 +213,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
             GyroMouseStickSmoothingSettings.UseSmoothing = store.GyroMouseStickInfo[device].UseSmoothing;
             GyroMouseStickSmoothingSettings.SmoothingMethod = store.GyroMouseStickInfo[device].SmoothMethodIdentifier();
-            GyroMouseStickSmoothingSettings.SmoothingWeight = Convert.ToInt32(store.GyroMouseStickInfo[device].SmoothWeight * 100);
+            GyroMouseStickSmoothingSettings.SmoothingWeight =
+                Convert.ToInt32(store.GyroMouseStickInfo[device].SmoothWeight * 100);
             GyroMouseStickSmoothingSettings.SmoothingMinCutoff = store.GyroMouseStickInfo[device].minCutoff;
             GyroMouseStickSmoothingSettings.SmoothingBeta = store.GyroMouseStickInfo[device].beta;
 
@@ -371,15 +372,18 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.R2ModInfo[device].AntiDeadZone = R2AntiDeadZone;
             store.L2ModInfo[device].maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
             store.R2ModInfo[device].maxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
-            store.L2ModInfo[device].maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);;
-            store.R2ModInfo[device].maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);;
+            store.L2ModInfo[device].maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
+            ;
+            store.R2ModInfo[device].maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
+            ;
             store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
             store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
             store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
             store.ButtonMouseInfos[device].buttonSensitivity = ButtonMouseSensitivity;
             store.ButtonMouseInfos[device].mouseVelocityOffset = ButtonMouseOffset;
-            store.ButtonMouseInfos[device].buttonVerticalScale = Math.Min(Math.Max(ButtonMouseVerticalScale, 0), 500) * 0.01;
+            store.ButtonMouseInfos[device].buttonVerticalScale =
+                Math.Min(Math.Max(ButtonMouseVerticalScale, 0), 500) * 0.01;
             lightInfo.Rainbow = Rainbow;
             lightInfo.MaxRainbowSaturation = Math.Max(0, Math.Min(100, MaxSatRainbow)) / 100.0;
             store.LSModInfo[device].DeadZone = Math.Min(Math.Max(LSDeadZone, 0), 127);
@@ -404,18 +408,26 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.LSModInfo[device].YAxisDeadInfo.DeadZone = Math.Min(Math.Max(LSAxialDeadOptions.DeadZoneY, 0), 127);
             store.LSModInfo[device].XAxisDeadInfo.MaxZone = Math.Min(Math.Max(LSAxialDeadOptions.MaxZoneX, 0), 100);
             store.LSModInfo[device].YAxisDeadInfo.MaxZone = Math.Min(Math.Max(LSAxialDeadOptions.MaxZoneY, 0), 100);
-            store.LSModInfo[device].XAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneX, 0), 100);
-            store.LSModInfo[device].YAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneY, 0), 100);
-            store.LSModInfo[device].XAxisDeadInfo.MaxOutput = Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
-            store.LSModInfo[device].YAxisDeadInfo.MaxOutput = Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            store.LSModInfo[device].XAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneX, 0), 100);
+            store.LSModInfo[device].YAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneY, 0), 100);
+            store.LSModInfo[device].XAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
+            store.LSModInfo[device].YAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
             store.RSModInfo[device].XAxisDeadInfo.DeadZone = Math.Min(Math.Max(RSAxialDeadOptions.DeadZoneX, 0), 127);
             store.RSModInfo[device].YAxisDeadInfo.DeadZone = Math.Min(Math.Max(RSAxialDeadOptions.DeadZoneY, 0), 127);
             store.RSModInfo[device].XAxisDeadInfo.MaxZone = Math.Min(Math.Max(RSAxialDeadOptions.MaxZoneX, 0), 100);
             store.RSModInfo[device].YAxisDeadInfo.MaxZone = Math.Min(Math.Max(RSAxialDeadOptions.MaxZoneY, 0), 100);
-            store.RSModInfo[device].XAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneX, 0), 100);
-            store.RSModInfo[device].YAxisDeadInfo.AntiDeadZone = Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneY, 0), 100);
-            store.RSModInfo[device].XAxisDeadInfo.MaxOutput = Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
-            store.RSModInfo[device].YAxisDeadInfo.MaxOutput = Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            store.RSModInfo[device].XAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneX, 0), 100);
+            store.RSModInfo[device].YAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneY, 0), 100);
+            store.RSModInfo[device].XAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
+            store.RSModInfo[device].YAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
             store.SXDeadzone[device] = SXDeadZone;
             store.SZDeadzone[device] = SZDeadZone;
             store.SXMaxzone[device] = Math.Min(Math.Max(SXMaxZone * 0.01, 0.0), 1.0);
@@ -502,7 +514,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingMinCutoff), 100.0);
             store.GyroMouseInfo[device].beta = Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingBeta), 1.0);
 
-            store. GyroMouseHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseHAxis), 1);
+            store.GyroMouseHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseHAxis), 1);
             //store.SetGyroMouseDZ(device, temp, control);
             store.GyroMouseInfo[device].minThreshold = Math.Min(Math.Max(GyroMouseMinThreshold, 1.0), 40.0);
             //SetGyroMouseToggle(device, temp, control);
@@ -561,7 +573,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.SetSZOutCurveMode(device, store.StickOutputCurveId(SZOutputCurveMode));
             store.TrackballMode[device] = TrackballMode;
             store.TrackballFriction[device] = TrackballFriction;
-            
+
             store.TouchPadRelMouse[device].Rotation =
                 Math.Min(Math.Max(TouchRelMouseRotation, -180), 180) * Math.PI / 180.0;
             store.TouchPadRelMouse[device].MinThreshold = Math.Min(Math.Max(TouchRelMouseMinThreshold, 1.0), 40.0);
@@ -575,7 +587,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             //
             // TODO: to be continued
             // 
-            
         }
     }
 }

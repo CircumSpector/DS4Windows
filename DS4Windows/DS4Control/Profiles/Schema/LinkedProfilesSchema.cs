@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Xml.Serialization;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Migrations;
+using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
+using DS4WinWPF.DS4Control.Profiles.Schema.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using PropertyChanged;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy
+namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "LinkedControllers")]

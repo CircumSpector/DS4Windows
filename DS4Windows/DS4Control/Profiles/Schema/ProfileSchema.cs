@@ -2,10 +2,10 @@
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4Windows.InputDevices;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using PropertyChanged;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy
+namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "DS4Windows")]

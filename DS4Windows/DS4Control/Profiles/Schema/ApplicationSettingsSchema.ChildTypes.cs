@@ -2,7 +2,7 @@
 using DS4Windows;
 using PropertyChanged;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy
+namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "UDPServerSmoothingOptions")]

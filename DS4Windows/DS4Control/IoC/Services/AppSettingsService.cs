@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.DS4Control.Util;
 using Microsoft.Extensions.Logging;
+using DS4WindowsAppSettings = DS4WinWPF.DS4Control.Profiles.Schema.DS4WindowsAppSettings;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {

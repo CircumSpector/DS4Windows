@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using ExtendedXmlSerializer;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy
+namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     /// <summary>
     ///     Describes an XML serializable object.

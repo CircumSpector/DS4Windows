@@ -1,23 +1,23 @@
 ﻿using System;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
-using DS4WinWPF.DS4Control.Profiles.Legacy.Converters;
+using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 
-namespace DS4WinWPF.DS4Control.Profiles.Legacy
+namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     /// <summary>
     ///     Represents application-wide settings.
     /// </summary>
-    public partial class DS4WindowsAppSettings : XmlSerializable<DS4WindowsAppSettings>
+    public partial class DS4WindowsAppSettings : XmlSerializable<Schema.DS4WindowsAppSettings>
     {
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .EnableReferences()
                 .WithUnknownContent().Continue()
-                .EnableImplicitTyping(typeof(DS4WindowsAppSettings))
+                .EnableImplicitTyping(typeof(Schema.DS4WindowsAppSettings))
                 .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<CustomLedProxyType>().Register().Converter().Using(CustomLedConverter.Default)
@@ -26,7 +26,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         }
 
         /// <summary>
-        ///     Converts properties from <see cref="IBackingStore" /> to this <see cref="DS4WindowsAppSettings" /> instance.
+        ///     Converts properties from <see cref="IBackingStore" /> to this <see cref="Schema.DS4WindowsAppSettings" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         [IntermediateSolution]
@@ -94,7 +94,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         }
 
         /// <summary>
-        ///     Injects properties from <see cref="DS4WindowsAppSettings" /> into <see cref="IBackingStore" /> instance.
+        ///     Injects properties from <see cref="Schema.DS4WindowsAppSettings" /> into <see cref="IBackingStore" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         [IntermediateSolution]
