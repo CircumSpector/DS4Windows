@@ -994,7 +994,7 @@ Suspend support not enabled.", true);
             {
                 return;
             }
-            else if (Global.Instance.Config.CloseMini)
+            else if (appSettings.Settings.CloseMinimizes)
             {
                 WindowState = WindowState.Minimized;
                 e.Cancel = true;

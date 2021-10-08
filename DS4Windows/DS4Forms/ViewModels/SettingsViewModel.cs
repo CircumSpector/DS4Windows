@@ -88,7 +88,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.Config.FlashWhenLateAt; set => DS4Windows.Global.Instance.Config.FlashWhenLateAt = value; }
         public bool StartMinimize { get => appSettings.Settings.StartMinimized; set => appSettings.Settings.StartMinimized = value; }
         public bool MinimizeToTaskbar { get => appSettings.Settings.MinimizeToTaskbar; set => appSettings.Settings.MinimizeToTaskbar = value; }
-        public bool CloseMinimizes { get => DS4Windows.Global.Instance.Config.CloseMini; set => DS4Windows.Global.Instance.Config.CloseMini = value; }
+        public bool CloseMinimizes { get => appSettings.Settings.CloseMinimizes; set => appSettings.Settings.CloseMinimizes = value; }
         public bool QuickCharge { get => appSettings.Settings.QuickCharge; set => appSettings.Settings.QuickCharge = value; }
 
         public int IconChoiceIndex

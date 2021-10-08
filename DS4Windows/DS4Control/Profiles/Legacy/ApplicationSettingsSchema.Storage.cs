@@ -48,7 +48,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             Notifications = store.Notifications;
             SwipeProfiles = store.SwipeProfiles;
             QuickCharge = store.SwipeProfiles;
-            CloseMinimizes = store.CloseMini;
             UseLang = store.UseLang;
             DownloadLang = store.DownloadLang;
             FlashWhenLateAt = store.FlashWhenLateAt;
@@ -148,7 +147,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             // TODO: replace with Enum
             store.Notifications = Notifications;
             store.SwipeProfiles = SwipeProfiles;
-            store.CloseMini = CloseMinimizes;
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
             store.FlashWhenLateAt = FlashWhenLateAt;
