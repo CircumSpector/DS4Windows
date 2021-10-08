@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
 using DS4Windows;
-using JetBrains.Annotations;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
@@ -11,7 +10,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     public class UDPServerSmoothingOptions
     {
         [XmlElement(ElementName = "UseSmoothing")]
-        public bool UseSmoothing { get; set; } = false;
+        public bool UseSmoothing { get; set; }
 
         [XmlElement(ElementName = "UdpSmoothMinCutoff")]
         public double MinCutoff { get; set; } = 0.4f;
@@ -19,21 +18,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlElement(ElementName = "UdpSmoothBeta")]
         public double Beta { get; set; } = 0.2f;
 
-        public event Action UdpSmoothMinCutoffChanged;
-
-        public event Action UdpSmoothBetaChanged;
-
-        [UsedImplicitly]
         private void OnMinCutoffChanged()
         {
-            UdpSmoothMinCutoffChanged?.Invoke();
+            MinCutoffChanged?.Invoke();
         }
 
-        [UsedImplicitly]
         private void OnBetaChanged()
         {
-            UdpSmoothBetaChanged?.Invoke();
+            BetaChanged?.Invoke();
         }
+
+        public event Action MinCutoffChanged;
+
+        public event Action BetaChanged;
     }
 
     [AddINotifyPropertyChangedInterface]

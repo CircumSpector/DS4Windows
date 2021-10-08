@@ -12,6 +12,7 @@ using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
+using Force.DeepCloner;
 using PropertyChanged;
 using ThreadState = System.Threading.ThreadState;
 
@@ -520,8 +521,23 @@ namespace DS4Windows
                 var config = ControllerConfigs.Deserialize(stream);
 
                 var store = config.Controllers[MacAddress];
-
-                PropertyCopier<ControllerOptionsStore, ControllerOptionsStore>.Copy(store, OptionsStore);
+                
+                switch (store)
+                {
+                    case DS4ControllerOptions options:
+                        options.DeepCloneTo((DS4ControllerOptions)OptionsStore);
+                        break;
+                    case DualSenseControllerOptions options:
+                        options.DeepCloneTo((DualSenseControllerOptions)OptionsStore);
+                        break;
+                    case SwitchProControllerOptions options:
+                        options.DeepCloneTo((SwitchProControllerOptions)OptionsStore);
+                        break;
+                    case JoyConControllerOptions options:
+                        options.DeepCloneTo((JoyConControllerOptions)OptionsStore);
+                        break;
+                }
+            
             }
             catch (FileNotFoundException)
             {

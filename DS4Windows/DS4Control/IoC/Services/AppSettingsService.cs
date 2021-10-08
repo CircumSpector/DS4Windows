@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.Profiles.Schema;
-using DS4WinWPF.DS4Control.Util;
+using Force.DeepCloner;
 using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
@@ -31,6 +31,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         /// <param name="path">The absolute path to the XML file to read from.</param>
         Task<bool> LoadAsync(string path = null);
+
+        event Action UdpSmoothMinCutoffChanged;
+        
+        event Action UdpSmoothBetaChanged;
     }
 
     /// <summary>
@@ -51,6 +55,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Holds global application settings persisted to disk.
         /// </summary>
         public DS4WindowsAppSettings Settings { get; } = new();
+
+        public event Action UdpSmoothMinCutoffChanged;
+
+        public event Action UdpSmoothBetaChanged;
 
         /// <summary>
         ///     Persist the current settings to disk.
@@ -116,9 +124,20 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             await using var stream = File.OpenRead(path);
 
             var settings = await DS4WindowsAppSettings.DeserializeAsync(stream);
+            
+            //
+            // Update all properties without breaking existing references
+            // 
+            settings.DeepCloneTo(Settings);
 
-            PropertyCopier<DS4WindowsAppSettings, DS4WindowsAppSettings>.Copy(settings, Settings);
-
+            //
+            // Proxy through change events
+            // 
+            UdpSmoothMinCutoffChanged?.Invoke();
+            Settings.UDPServerSmoothingOptions.MinCutoffChanged += () => UdpSmoothMinCutoffChanged?.Invoke();
+            UdpSmoothBetaChanged?.Invoke();
+            Settings.UDPServerSmoothingOptions.BetaChanged += () => UdpSmoothBetaChanged?.Invoke();
+            
             return true;
         }
     }
