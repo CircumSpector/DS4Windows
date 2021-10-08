@@ -615,13 +615,13 @@ namespace DS4WinWPF
             }
         }
         
-        private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+        private async void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
             logger.LogInformation("User Session Ending");
             CleanShutdown();
         }
 
-        private async void CleanShutdown()
+        private void CleanShutdown()
         {
             if (!runShutdown) return;
 
@@ -635,7 +635,7 @@ namespace DS4WinWPF
                 }).Wait();
 
             if (!skipSave)
-                await appSettings.SaveAsync();
+                appSettings.Save();
 
             exitComThread = true;
             if (threadComEvent != null)

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
 using Microsoft.Extensions.Logging;
-using DS4WindowsAppSettings = DS4WinWPF.DS4Control.Profiles.Schema.DS4WindowsAppSettings;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
@@ -19,6 +19,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         /// <param name="path">The absolute path to the resulting XML file.</param>
         Task<bool> SaveAsync(string path = null);
+
+        /// <summary>
+        ///     Persist the current settings to disk.
+        /// </summary>
+        /// <param name="path">The absolute path to the resulting XML file.</param>
+        bool Save(string path = null);
 
         /// <summary>
         ///     Load the persisted settings from disk.
@@ -60,6 +66,29 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 await using var stream = File.Open(path, FileMode.Create);
 
                 await Settings.SerializeAsync(stream);
+
+                return true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///     Persist the current settings to disk.
+        /// </summary>
+        /// <param name="path">The absolute path to the resulting XML file.</param>
+        public bool Save(string path = null)
+        {
+            if (string.IsNullOrEmpty(path))
+                path = global.AppSettingsFilePath;
+
+            try
+            {
+                using var stream = File.Open(path, FileMode.Create);
+
+                Settings.Serialize(stream);
 
                 return true;
             }
