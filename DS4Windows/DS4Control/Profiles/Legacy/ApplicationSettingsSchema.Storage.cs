@@ -47,7 +47,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             DownloadLang = store.DownloadLang;
 
             UDPServerPort = store.UdpServerPort;
-            UDPServerSmoothingOptions.UseSmoothing = store.UseUdpSmoothing;
             UDPServerSmoothingOptions.UdpSmoothMinCutoff = store.UdpSmoothingMincutoff;
             UDPServerSmoothingOptions.UdpSmoothBeta = store.UdpSmoothingBeta;
 
@@ -139,7 +138,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.DownloadLang = DownloadLang;
 
             store.UdpServerPort = Math.Min(Math.Max(UDPServerPort, 1024), 65535);
-            store.UseUdpSmoothing = UDPServerSmoothingOptions.UseSmoothing;
             store.UdpSmoothingMincutoff = UDPServerSmoothingOptions.UdpSmoothMinCutoff;
             store.UdpSmoothingBeta = UDPServerSmoothingOptions.UdpSmoothBeta;
 

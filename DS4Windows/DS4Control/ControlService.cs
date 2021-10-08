@@ -1215,7 +1215,7 @@ namespace DS4Windows
                 var stateForUdp = TempState[tempIdx];
 
                 CurrentState[tempIdx].CopyTo(stateForUdp);
-                if (Instance.Config.UseUdpSmoothing)
+                if (appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing)
                 {
                     if (stateForUdp.elapsedTime == 0)
                         // No timestamp was found. Exit out of routine

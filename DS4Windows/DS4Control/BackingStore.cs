@@ -17,8 +17,6 @@ namespace DS4Windows
 
         int UdpServerPort { get; set; }
 
-        bool UseUdpSmoothing { get; set; }
-
         string CustomSteamFolder { get; set; }
 
         ControlServiceDeviceOptions DeviceOptions { get; }

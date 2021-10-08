@@ -197,12 +197,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool UseUdpSmoothing
         {
-            get => DS4Windows.Global.Instance.Config.UseUdpSmoothing;
+            get => appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing;
             set
             {
-                bool temp = DS4Windows.Global.Instance.Config.UseUdpSmoothing;
+                bool temp = appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.Config.UseUdpSmoothing = value;
+                appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing = value;
                 UseUdpSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -210,7 +210,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Visibility UdpServerOneEuroPanelVisibility
         {
-            get => appSettings.Settings.UseUDPServer && DS4Windows.Global.Instance.Config.UseUdpSmoothing ? Visibility.Visible : Visibility.Collapsed;
+            get => appSettings.Settings.UseUDPServer && appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing ? Visibility.Visible : Visibility.Collapsed;
         }
         public event EventHandler UdpServerOneEuroPanelVisibilityChanged;
 
