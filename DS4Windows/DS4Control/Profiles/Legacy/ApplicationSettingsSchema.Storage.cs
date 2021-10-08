@@ -148,7 +148,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             // TODO: replace with Enum
             store.Notifications = Notifications;
             store.SwipeProfiles = SwipeProfiles;
-            store.QuickCharge = QuickCharge;
             store.CloseMini = CloseMinimizes;
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;

@@ -39,8 +39,6 @@ namespace DS4Windows
 
         bool Ds4Mapping { get; set; }
 
-        bool QuickCharge { get; set; }
-
         bool CloseMini { get; set; }
 
         string UseLang { get; set; }

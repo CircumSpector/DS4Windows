@@ -1243,7 +1243,7 @@ namespace DS4Windows
 
         private void CheckQuickCharge(DS4Device device)
         {
-            if (device.ConnectionType == ConnectionType.BT && Instance.Config.QuickCharge &&
+            if (device.ConnectionType == ConnectionType.BT && appSettings.Settings.QuickCharge &&
                 device.Charging)
                 // Set disconnect flag here. Later Hotplug event will check
                 // for presence of flag and remove the device then
