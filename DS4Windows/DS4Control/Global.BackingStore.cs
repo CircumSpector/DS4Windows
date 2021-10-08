@@ -151,15 +151,9 @@ namespace DS4Windows
             /// </summary>
             public bool AutoProfileRevertDefaultProfile { get; set; } = true;
 
-            public int FlashWhenLateAt { get; set; } = 50;
-
             public ulong LastVersionCheckedNumber { get; set; }
 
-            public bool SwipeProfiles { get; set; } = true;
-
             public bool UseExclusiveMode { get; set; } // Re-enable Ex Mode
-
-            public bool IsUdpServerEnabled { get; set; }
 
             public IList<LightbarSettingInfo> LightbarSettingInfo { get; set; } = new List<LightbarSettingInfo>
             {
@@ -468,31 +462,7 @@ namespace DS4Windows
             public IList<bool> DirectInputOnly { get; set; } = new List<bool>
                 { false, false, false, false, false, false, false, false, false };
 
-            public int FormWidth { get; set; } = 782;
-
-            public int FormHeight { get; set; } = 550;
-
-            public int FormLocationX { get; set; }
-
-            public int FormLocationY { get; set; }
-
-            public bool StartMinimized { get; set; }
-
-            public bool MinToTaskBar { get; set; }
-
-            public DateTime LastChecked { get; set; }
-
-            public int CheckWhen { get; set; } = 24;
-
-            public int Notifications { get; set; } = 2;
-
-            public bool DisconnectBluetoothAtStop { get; set; }
-
             public bool Ds4Mapping { get; set; }
-
-            public bool QuickCharge { get; set; }
-
-            public bool CloseMini { get; set; }
 
             public IList<SpecialAction> Actions { get; set; } = new List<SpecialAction>();
 
@@ -503,20 +473,6 @@ namespace DS4Windows
 
             public bool DownloadLang { get; set; } = true;
 
-            public TrayIconChoice UseIconChoice { get; set; }
-
-            public bool FlashWhenLate { get; set; } = true;
-
-            public int UdpServerPort { get; set; } = 26760;
-
-            /// <summary>
-            ///     127.0.0.1=IPAddress.Loopback (default), 0.0.0.0=IPAddress.Any as all interfaces, x.x.x.x = Specific ipv4 interface
-            ///     address or hostname
-            /// </summary>
-            public string UdpServerListenAddress { get; set; } = "127.0.0.1";
-
-            public bool UseUdpSmoothing { get; set; }
-
             public double UdpSmoothingMincutoff { get; set; } = DEFAULT_UDP_SMOOTH_MINCUTOFF;
 
             public double UdpSmoothingBeta { get; set; } = DEFAULT_UDP_SMOOTH_BETA;
@@ -524,8 +480,6 @@ namespace DS4Windows
             public bool UseCustomSteamFolder { get; set; }
 
             public string CustomSteamFolder { get; set; }
-
-            public AppThemeChoice ThemeChoice { get; set; }
 
             public string FakeExeFileName { get; set; } = string.Empty;
 

@@ -20,10 +20,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool MinimizeToTaskbar { get; set; }
 
         [XmlElement(ElementName = "formWidth")]
-        public int FormWidth { get; set; }
+        public int FormWidth { get; set; } = 782;
 
         [XmlElement(ElementName = "formHeight")]
-        public int FormHeight { get; set; }
+        public int FormHeight { get; set; } = 550;
 
         [XmlElement(ElementName = "formLocationX")]
         public int FormLocationX { get; set; }
@@ -59,19 +59,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public DateTime LastChecked { get; set; } = DateTime.MinValue;
 
         [XmlElement(ElementName = "CheckWhen")]
-        public int CheckWhen { get; set; }
+        public int CheckWhen { get; set; } = 24;
 
         [XmlElement(ElementName = "LastVersionChecked")]
         public string LastVersionChecked { get; set; }
 
         [XmlElement(ElementName = "Notifications")]
-        public int Notifications { get; set; }
+        public int Notifications { get; set; } = 2;
 
         [XmlElement(ElementName = "DisconnectBTAtStop")]
         public bool DisconnectBluetoothAtStop { get; set; }
 
         [XmlElement(ElementName = "SwipeProfiles")]
-        public bool SwipeProfiles { get; set; }
+        public bool SwipeProfiles { get; set; } = true;
 
         [XmlElement(ElementName = "QuickCharge")]
         public bool QuickCharge { get; set; }
@@ -89,7 +89,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool FlashWhenLate { get; set; }
 
         [XmlElement(ElementName = "FlashWhenLateAt")]
-        public int FlashWhenLateAt { get; set; }
+        public int FlashWhenLateAt { get; set; } = 50;
 
         [XmlElement(ElementName = "AppIcon")] 
         public TrayIconChoice AppIcon { get; set; } = TrayIconChoice.Default;
