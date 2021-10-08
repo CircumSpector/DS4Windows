@@ -46,7 +46,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             UseLang = store.UseLang;
             DownloadLang = store.DownloadLang;
 
-            UseUDPServer = store.IsUdpServerEnabled;
             UDPServerPort = store.UdpServerPort;
             UDPServerListenAddress = store.UdpServerListenAddress;
             UDPServerSmoothingOptions.UseSmoothing = store.UseUdpSmoothing;
@@ -140,7 +139,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
 
-            store.IsUdpServerEnabled = UseUDPServer;
             store.UdpServerPort = Math.Min(Math.Max(UDPServerPort, 1024), 65535);
             store.UdpServerListenAddress = UDPServerListenAddress;
             store.UseUdpSmoothing = UDPServerSmoothingOptions.UseSmoothing;

@@ -181,11 +181,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public event EventHandler CheckEveryUnitChanged;
         public bool UseUDPServer
         {
-            get => DS4Windows.Global.Instance.Config.IsUdpServerEnabled;
+            get => appSettings.Settings.UseUDPServer;
             set
             {
-                if (DS4Windows.Global.Instance.Config.IsUdpServerEnabled == value) return;
-                DS4Windows.Global.Instance.Config.IsUdpServerEnabled = value;
+                if (appSettings.Settings.UseUDPServer == value) return;
+                appSettings.Settings.UseUDPServer = value;
                 UseUDPServerChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -210,7 +210,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Visibility UdpServerOneEuroPanelVisibility
         {
-            get => DS4Windows.Global.Instance.Config.IsUdpServerEnabled && DS4Windows.Global.Instance.Config.UseUdpSmoothing ? Visibility.Visible : Visibility.Collapsed;
+            get => appSettings.Settings.UseUDPServer && DS4Windows.Global.Instance.Config.UseUdpSmoothing ? Visibility.Visible : Visibility.Collapsed;
         }
         public event EventHandler UdpServerOneEuroPanelVisibilityChanged;
 

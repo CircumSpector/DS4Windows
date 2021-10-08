@@ -223,8 +223,6 @@ namespace DS4Windows
 
         ulong LastVersionCheckedNumber { get; set; }
 
-        bool IsUdpServerEnabled { get; set; }
-
         int StickOutputCurveId(string name);
 
         bool SaTriggerCondValue(string text);

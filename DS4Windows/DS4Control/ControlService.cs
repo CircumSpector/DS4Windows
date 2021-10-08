@@ -981,7 +981,7 @@ namespace DS4Windows
                     LogDebug(DS4Devices.isExclusiveMode ? Resources.UsingExclusive : Resources.UsingShared);
                 }
 
-                if (Instance.Config.IsUdpServerEnabled && _udpServer == null)
+                if (appSettings.Settings.UseUDPServer && _udpServer == null)
                 {
                     ChangeUDPStatus(true, false);
                     while (udpChangeStatus) Thread.SpinWait(500);
