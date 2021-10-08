@@ -10,14 +10,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     /// <summary>
     ///     Represents application-wide settings.
     /// </summary>
-    public partial class DS4WindowsAppSettings : XmlSerializable<Schema.DS4WindowsAppSettings>
+    public partial class DS4WindowsAppSettings : XmlSerializable<DS4WindowsAppSettings>
     {
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .EnableReferences()
                 .WithUnknownContent().Continue()
-                .EnableImplicitTyping(typeof(Schema.DS4WindowsAppSettings))
+                .EnableImplicitTyping(typeof(DS4WindowsAppSettings))
                 .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<CustomLedProxyType>().Register().Converter().Using(CustomLedConverter.Default)
@@ -51,42 +51,42 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             AutoProfileRevertDefaultProfile = store.AutoProfileRevertDefaultProfile;
 
-            CustomLed1 = new CustomLedProxyType()
+            CustomLed1 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[0].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[0].Ds4WinSettings.Led
             };
-            CustomLed2 = new CustomLedProxyType()
+            CustomLed2 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[1].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[1].Ds4WinSettings.Led
             };
-            CustomLed3 = new CustomLedProxyType()
+            CustomLed3 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[2].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[2].Ds4WinSettings.Led
             };
-            CustomLed4 = new CustomLedProxyType()
+            CustomLed4 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[3].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[3].Ds4WinSettings.Led
             };
-            CustomLed5 = new CustomLedProxyType()
+            CustomLed5 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[4].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[4].Ds4WinSettings.Led
             };
-            CustomLed6 = new CustomLedProxyType()
+            CustomLed6 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[5].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[5].Ds4WinSettings.Led
             };
-            CustomLed7 = new CustomLedProxyType()
+            CustomLed7 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[6].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[6].Ds4WinSettings.Led
             };
-            CustomLed8 = new CustomLedProxyType()
+            CustomLed8 = new CustomLedProxyType
             {
                 IsEnabled = store.LightbarSettingInfo[7].Ds4WinSettings.UseCustomLed,
                 CustomColor = store.LightbarSettingInfo[7].Ds4WinSettings.Led
@@ -124,7 +124,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.LastVersionCheckedNumber = string.IsNullOrEmpty(LastVersionChecked)
                 ? 0
                 : Global.CompileVersionNumberFromString(LastVersionChecked);
-            
+
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
 
