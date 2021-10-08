@@ -17,12 +17,6 @@ namespace DS4Windows
 
         int UdpServerPort { get; set; }
 
-        /// <summary>
-        ///     127.0.0.1=IPAddress.Loopback (default), 0.0.0.0=IPAddress.Any as all interfaces, x.x.x.x = Specific ipv4 interface
-        ///     address or hostname
-        /// </summary>
-        string UdpServerListenAddress { get; set; }
-
         bool UseUdpSmoothing { get; set; }
 
         string CustomSteamFolder { get; set; }

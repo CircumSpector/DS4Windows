@@ -24,7 +24,7 @@ namespace DS4Windows
             await Task.Delay(100);
 
             var UDP_SERVER_PORT = Instance.Config.UdpServerPort;
-            var UDP_SERVER_LISTEN_ADDRESS = Instance.Config.UdpServerListenAddress;
+            var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
 
             try
             {

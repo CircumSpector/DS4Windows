@@ -496,7 +496,7 @@ namespace DS4Windows
                         Task.Run(() =>
                         {
                             var UDP_SERVER_PORT = Instance.Config.UdpServerPort;
-                            var UDP_SERVER_LISTEN_ADDRESS = Instance.Config.UdpServerListenAddress;
+                            var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
 
                             try
                             {
@@ -1165,7 +1165,7 @@ namespace DS4Windows
                 {
                     //var UDP_SERVER_PORT = 26760;
                     var UDP_SERVER_PORT = Instance.Config.UdpServerPort;
-                    var UDP_SERVER_LISTEN_ADDRESS = Instance.Config.UdpServerListenAddress;
+                    var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
 
                     try
                     {
