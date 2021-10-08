@@ -43,8 +43,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
             // TODO: improve this conversion mess
             LastVersionChecked = store.LastVersionCheckedNumber.ToString();
-            SwipeProfiles = store.SwipeProfiles;
-            QuickCharge = store.SwipeProfiles;
             UseLang = store.UseLang;
             DownloadLang = store.DownloadLang;
             FlashWhenLateAt = store.FlashWhenLateAt;
@@ -139,8 +137,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.LastVersionCheckedNumber = string.IsNullOrEmpty(LastVersionChecked)
                 ? 0
                 : Global.CompileVersionNumberFromString(LastVersionChecked);
-            // TODO: replace with Enum
-            store.SwipeProfiles = SwipeProfiles;
+            
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
             store.FlashWhenLateAt = FlashWhenLateAt;

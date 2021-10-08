@@ -205,8 +205,6 @@ namespace DS4Windows
 
         bool UseExclusiveMode { get; set; }
 
-        bool SwipeProfiles { get; set; }
-
         int FlashWhenLateAt { get; set; }
 
         bool AutoProfileRevertDefaultProfile { get; set; }

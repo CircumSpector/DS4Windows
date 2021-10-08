@@ -21,8 +21,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
 
 
-        public bool SwipeTouchSwitchProfile { get => DS4Windows.Global.Instance.Config.SwipeProfiles;
-            set => DS4Windows.Global.Instance.Config.SwipeProfiles = value; }
+        public bool SwipeTouchSwitchProfile { get => appSettings.Settings.SwipeProfiles;
+            set => appSettings.Settings.SwipeProfiles = value; }
 
         private bool runAtStartup;
         public bool RunAtStartup
