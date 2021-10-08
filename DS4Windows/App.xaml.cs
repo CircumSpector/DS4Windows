@@ -73,7 +73,7 @@ namespace DS4WinWPF
 
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            var logger = new LoggerConfiguration()
+            var lc = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .WriteTo.SerilogInMemorySink()
                 .CreateLogger();
@@ -81,10 +81,10 @@ namespace DS4WinWPF
             services.AddLogging(builder =>
             {
                 builder.SetMinimumLevel(LogLevel.Information);
-                builder.AddSerilog(logger, true);
+                builder.AddSerilog(lc, true);
             });
 
-            services.AddSingleton(new LoggerFactory().AddSerilog(logger));
+            services.AddSingleton(new LoggerFactory().AddSerilog(lc));
 
             services.AddOptions();
 
