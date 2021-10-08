@@ -140,30 +140,6 @@ namespace DS4Windows
             }
         }
 
-        public double UDPServerSmoothingMincutoff
-        {
-            get => _config.UdpSmoothingMincutoff;
-            set
-            {
-                var temp = _config.UdpSmoothingMincutoff;
-                if (temp == value) return;
-                _config.UdpSmoothingMincutoff = value;
-                UDPServerSmoothingMincutoffChanged?.Invoke(null, EventArgs.Empty);
-            }
-        }
-
-        public double UDPServerSmoothingBeta
-        {
-            get => _config.UdpSmoothingBeta;
-            set
-            {
-                var temp = _config.UdpSmoothingBeta;
-                if (temp == value) return;
-                _config.UdpSmoothingBeta = value;
-                UDPServerSmoothingBetaChanged?.Invoke(null, EventArgs.Empty);
-            }
-        }
-
         /// <summary>
         ///     Fake name used for user copy of DS4Windows.exe
         /// </summary>
@@ -261,10 +237,7 @@ namespace DS4Windows
                 DeviceSerialChange(sender, args);
             }
         }
-        
-        public static event EventHandler UDPServerSmoothingMincutoffChanged;
-        public static event EventHandler UDPServerSmoothingBetaChanged;
-        
+
         private class ViGEmBusInfo
         {
             public string deviceName;

@@ -52,28 +52,29 @@ namespace DS4Windows
 
         public void ResetUdpSmoothingFilters(int idx)
         {
-            if (idx < UdpServer.NUMBER_SLOTS)
-            {
-                var temp = udpEuroPairAccel[idx] = new OneEuroFilter3D();
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
+            if (idx >= UdpServer.NUMBER_SLOTS) return;
 
-                temp = udpEuroPairGyro[idx] = new OneEuroFilter3D();
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
-            }
+            var temp = udpEuroPairAccel[idx] = new OneEuroFilter3D();
+            temp.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
+                appSettings.Settings.UDPServerSmoothingOptions.Beta);
+
+            temp = udpEuroPairGyro[idx] = new OneEuroFilter3D();
+            temp.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
+                appSettings.Settings.UDPServerSmoothingOptions.Beta);
         }
 
-        private void ChangeUdpSmoothingAttrs(object sender, EventArgs e)
+        private void ChangeUdpSmoothingAttrs()
         {
-            for (var i = 0; i < udpEuroPairAccel.Length; i++)
+            foreach (var filter3D in udpEuroPairAccel)
             {
-                var temp = udpEuroPairAccel[i];
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
+                filter3D.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
+                    appSettings.Settings.UDPServerSmoothingOptions.Beta);
             }
 
-            for (var i = 0; i < udpEuroPairGyro.Length; i++)
+            foreach (var filter3D in udpEuroPairGyro)
             {
-                var temp = udpEuroPairGyro[i];
-                temp.SetFilterAttrs(Instance.UDPServerSmoothingMincutoff, Instance.UDPServerSmoothingBeta);
+                filter3D.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
+                    appSettings.Settings.UDPServerSmoothingOptions.Beta);
             }
         }
     }

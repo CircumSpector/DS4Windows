@@ -216,12 +216,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double UdpSmoothMinCutoff
         {
-            get => DS4Windows.Global.Instance.UDPServerSmoothingMincutoff;
+            get => appSettings.Settings.UDPServerSmoothingOptions.MinCutoff;
             set
             {
-                double temp = DS4Windows.Global.Instance.UDPServerSmoothingMincutoff;
+                double temp = appSettings.Settings.UDPServerSmoothingOptions.MinCutoff;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.UDPServerSmoothingMincutoff = value;
+                appSettings.Settings.UDPServerSmoothingOptions.MinCutoff = value;
                 UdpSmoothMinCutoffChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -229,12 +229,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double UdpSmoothBeta
         {
-            get => DS4Windows.Global.Instance.UDPServerSmoothingBeta;
+            get => appSettings.Settings.UDPServerSmoothingOptions.Beta;
             set
             {
-                double temp = DS4Windows.Global.Instance.UDPServerSmoothingBeta;
+                double temp = appSettings.Settings.UDPServerSmoothingOptions.Beta;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.UDPServerSmoothingBeta = value;
+                appSettings.Settings.UDPServerSmoothingOptions.Beta = value;
                 UdpSmoothBetaChanged?.Invoke(this, EventArgs.Empty);
             }
         }

@@ -473,10 +473,6 @@ namespace DS4Windows
 
             public bool DownloadLang { get; set; } = true;
 
-            public double UdpSmoothingMincutoff { get; set; } = DEFAULT_UDP_SMOOTH_MINCUTOFF;
-
-            public double UdpSmoothingBeta { get; set; } = DEFAULT_UDP_SMOOTH_BETA;
-
             public bool UseCustomSteamFolder { get; set; }
 
             public string CustomSteamFolder { get; set; }

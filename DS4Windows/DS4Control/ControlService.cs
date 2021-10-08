@@ -206,8 +206,8 @@ namespace DS4Windows
             DS4Devices.PreparePendingDevice = CheckForSupportedDevice;
             OutputslotMan.ViGEmFailure += OutputslotMan_ViGEmFailure;
 
-            UDPServerSmoothingMincutoffChanged += ChangeUdpSmoothingAttrs;
-            UDPServerSmoothingBetaChanged += ChangeUdpSmoothingAttrs;
+            appSettings.Settings.UDPServerSmoothingOptions.UdpSmoothMinCutoffChanged += ChangeUdpSmoothingAttrs;
+            appSettings.Settings.UDPServerSmoothingOptions.UdpSmoothBetaChanged += ChangeUdpSmoothingAttrs;
         }
         
         private void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
