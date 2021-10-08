@@ -395,8 +395,8 @@ namespace DS4WinWPF.DS4Forms
             Dispatcher.BeginInvoke((Action)(() =>
             {
 
-                if (!IsActive && (Global.Instance.Config.Notifications == 2 ||
-                                  (Global.Instance.Config.Notifications == 1 && e.IsWarning)))
+                if (!IsActive && (appSettings.Settings.Notifications == 2 ||
+                                  (appSettings.Settings.Notifications == 1 && e.IsWarning)))
                 {
                     notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
                     e.Data, !e.IsWarning ? Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info :
@@ -662,7 +662,7 @@ Suspend support not enabled.", true);
 
         private void ShowHotkeyNotification(string message)
         {
-            if (!IsActive && (Global.Instance.Config.Notifications == 2))
+            if (!IsActive && (appSettings.Settings.Notifications == 2))
             {
                 notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
                 message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);

@@ -82,7 +82,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public event EventHandler ShowRunStartPanelChanged;
 
-        public int ShowNotificationsIndex { get => DS4Windows.Global.Instance.Config.Notifications; set => DS4Windows.Global.Instance.Config.Notifications = value; }
+        public int ShowNotificationsIndex { get => appSettings.Settings.Notifications; set => appSettings.Settings.Notifications = value; }
         public bool DisconnectBTStop { get => appSettings.Settings.DisconnectBluetoothAtStop; set => appSettings.Settings.DisconnectBluetoothAtStop = value; }
         public bool FlashHighLatency { get => appSettings.Settings.FlashWhenLate; set => appSettings.Settings.FlashWhenLate = value; }
         public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.Config.FlashWhenLateAt; set => DS4Windows.Global.Instance.Config.FlashWhenLateAt = value; }

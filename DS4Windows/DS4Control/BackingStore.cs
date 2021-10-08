@@ -31,8 +31,6 @@ namespace DS4Windows
 
         IList<OutContType> OutputDeviceType { get; set; }
         
-        int Notifications { get; set; }
-
         bool Ds4Mapping { get; set; }
 
         string UseLang { get; set; }
