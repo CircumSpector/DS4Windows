@@ -1948,7 +1948,7 @@ namespace DS4Windows
 
                 if (inWarnMonitor[ind])
                 {
-                    var flashWhenLateAt = Instance.Config.FlashWhenLateAt;
+                    var flashWhenLateAt = appSettings.Settings.FlashWhenLateAt;
                     if (!lag[ind] && device.Latency >= flashWhenLateAt)
                     {
                         lag[ind] = true;

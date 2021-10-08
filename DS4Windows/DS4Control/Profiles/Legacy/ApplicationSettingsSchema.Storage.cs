@@ -45,7 +45,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             LastVersionChecked = store.LastVersionCheckedNumber.ToString();
             UseLang = store.UseLang;
             DownloadLang = store.DownloadLang;
-            FlashWhenLateAt = store.FlashWhenLateAt;
 
             UseUDPServer = store.IsUdpServerEnabled;
             UDPServerPort = store.UdpServerPort;
@@ -140,7 +139,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
-            store.FlashWhenLateAt = FlashWhenLateAt;
 
             store.IsUdpServerEnabled = UseUDPServer;
             store.UdpServerPort = Math.Min(Math.Max(UDPServerPort, 1024), 65535);
