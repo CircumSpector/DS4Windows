@@ -17,8 +17,6 @@ namespace DS4Windows
 
         string CustomSteamFolder { get; set; }
 
-        ControlServiceDeviceOptions DeviceOptions { get; }
-
         IList<OutContType> OutputDeviceType { get; set; }
         
         bool Ds4Mapping { get; set; }

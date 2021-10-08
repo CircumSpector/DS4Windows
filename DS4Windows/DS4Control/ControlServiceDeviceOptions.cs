@@ -6,26 +6,6 @@ using PropertyChanged;
 
 namespace DS4Windows
 {
-    [AddINotifyPropertyChangedInterface]
-    public class ControlServiceDeviceOptions
-    {
-        public DS4DeviceOptions Ds4DeviceOpts { get; set; } = new();
-
-        public DualSenseDeviceOptions DualSenseOpts { get; set; } = new();
-
-        public SwitchProDeviceOptions SwitchProDeviceOpts { get; set; } = new();
-
-        public JoyConDeviceOptions JoyConDeviceOpts { get; set; } = new();
-
-        /// <summary>
-        ///     If enabled then DS4Windows shows additional log messages when a gamepad is connected (may be useful to diagnose
-        ///     connection problems).
-        ///     This option is not persistent (ie. not saved into config files), so if enabled then it is reset back to FALSE when
-        ///     DS4Windows is restarted.
-        /// </summary>
-        public bool VerboseLogMessages { get; set; }
-    }
-
     [XmlRoot(ElementName = "Controller")]
     public abstract class ControllerOptionsStore
     {

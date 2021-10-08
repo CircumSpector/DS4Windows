@@ -51,11 +51,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
             AutoProfileRevertDefaultProfile = store.AutoProfileRevertDefaultProfile;
 
-            DeviceOptions.DS4SupportSettings = store.DeviceOptions.Ds4DeviceOpts;
-            DeviceOptions.DualSenseSupportSettings = store.DeviceOptions.DualSenseOpts;
-            DeviceOptions.SwitchProSupportSettings = store.DeviceOptions.SwitchProDeviceOpts;
-            DeviceOptions.JoyConSupportSettings = store.DeviceOptions.JoyConDeviceOpts;
-
             CustomLed1 = new CustomLedProxyType()
             {
                 IsEnabled = store.LightbarSettingInfo[0].Ds4WinSettings.UseCustomLed,
@@ -137,11 +132,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.CustomSteamFolder = CustomSteamFolder;
 
             store.AutoProfileRevertDefaultProfile = AutoProfileRevertDefaultProfile;
-
-            store.DeviceOptions.Ds4DeviceOpts = DeviceOptions.DS4SupportSettings;
-            store.DeviceOptions.DualSenseOpts = DeviceOptions.DualSenseSupportSettings;
-            store.DeviceOptions.SwitchProDeviceOpts = DeviceOptions.SwitchProSupportSettings;
-            store.DeviceOptions.JoyConDeviceOpts = DeviceOptions.JoyConSupportSettings;
 
             store.LightbarSettingInfo[0].Ds4WinSettings.UseCustomLed = CustomLed1.IsEnabled;
             store.LightbarSettingInfo[0].Ds4WinSettings.Led = CustomLed1.CustomColor;

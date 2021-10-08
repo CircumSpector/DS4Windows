@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using AdonisUI.Controls;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -13,7 +14,7 @@ namespace DS4WinWPF.DS4Forms
     {
         private ControllerRegDeviceOptsViewModel deviceOptsVM;
 
-        public ControllerRegisterOptionsWindow(ControlServiceDeviceOptions deviceOptions, ControlService service)
+        public ControllerRegisterOptionsWindow(DeviceOptions deviceOptions, ControlService service)
         {
             InitializeComponent();
 

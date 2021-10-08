@@ -49,9 +49,6 @@ namespace DS4Windows
                     new(), new(), new(), new(), new(), new()
                 };
 
-            private readonly Lazy<ControlServiceDeviceOptions> LazyDeviceOptions =
-                new(new ControlServiceDeviceOptions());
-
             protected readonly XmlDocument m_Xdoc = new();
 
             private readonly int[] profileActionCount = new int[TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -529,8 +526,6 @@ namespace DS4Windows
             public AppThemeChoice ThemeChoice { get; set; }
 
             public string FakeExeFileName { get; set; } = string.Empty;
-
-            public ControlServiceDeviceOptions DeviceOptions => LazyDeviceOptions.Value;
 
             // Cache whether profile has custom action
             public IList<bool> ContainsCustomAction { get; set; } = new bool[TEST_PROFILE_ITEM_COUNT]

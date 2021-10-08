@@ -209,11 +209,11 @@ namespace DS4Windows
         }
 
         // Enumerates ds4 controllers in the system
-        public static void FindControllers()
+        public static void FindControllers(bool logVerbose = false)
         {
             lock (Devices)
             {
-                IEnumerable<HidDevice> hDevices = HidDevices.EnumerateDS4(knownDevices);
+                IEnumerable<HidDevice> hDevices = HidDevices.EnumerateDS4(knownDevices, logVerbose);
                 hDevices = hDevices.Where(d =>
                 {
                     VidPidInfo metainfo = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&

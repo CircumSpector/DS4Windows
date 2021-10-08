@@ -33,5 +33,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
 
         [XmlElement(ElementName = "JoyConSupportSettings")]
         public JoyConDeviceOptions JoyConSupportSettings { get; set; } = new();
+
+        /// <summary>
+        ///     If enabled then DS4Windows shows additional log messages when a gamepad is connected (may be useful to diagnose
+        ///     connection problems).
+        ///     This option is not persistent (ie. not saved into config files), so if enabled then it is reset back to FALSE when
+        ///     DS4Windows is restarted.
+        /// </summary>
+        [XmlIgnore]
+        public bool VerboseLogMessages { get; set; }
     }
 }

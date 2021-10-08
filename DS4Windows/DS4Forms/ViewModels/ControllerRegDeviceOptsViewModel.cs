@@ -5,6 +5,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Legacy;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 using LEDBarMode = DS4Windows.DualSenseControllerOptions.LEDBarMode;
 using MuteLEDMode = DS4Windows.DualSenseControllerOptions.MuteLEDMode;
@@ -15,20 +16,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class ControllerRegDeviceOptsViewModel
     {
-        private ControlServiceDeviceOptions serviceDeviceOpts;
+        private DeviceOptions serviceDeviceOpts;
 
-        public bool EnableDS4 { get => serviceDeviceOpts.Ds4DeviceOpts.Enabled; }
+        public bool EnableDS4 { get => serviceDeviceOpts.DS4SupportSettings.Enabled; }
 
-        public bool EnableDualSense { get => serviceDeviceOpts.DualSenseOpts.Enabled; }
+        public bool EnableDualSense { get => serviceDeviceOpts.DualSenseSupportSettings.Enabled; }
 
-        public bool EnableSwitchPro { get => serviceDeviceOpts.SwitchProDeviceOpts.Enabled; }
+        public bool EnableSwitchPro { get => serviceDeviceOpts.SwitchProSupportSettings.Enabled; }
 
-        public bool EnableJoyCon { get => serviceDeviceOpts.JoyConDeviceOpts.Enabled; }
+        public bool EnableJoyCon { get => serviceDeviceOpts.JoyConSupportSettings.Enabled; }
 
-        public DS4DeviceOptions DS4DeviceOpts { get => serviceDeviceOpts.Ds4DeviceOpts; }
-        public DualSenseDeviceOptions DSDeviceOpts { get => serviceDeviceOpts.DualSenseOpts; }
-        public SwitchProDeviceOptions SwitchProDeviceOpts { get => serviceDeviceOpts.SwitchProDeviceOpts; }
-        public JoyConDeviceOptions JoyConDeviceOpts { get => serviceDeviceOpts.JoyConDeviceOpts; }
+        public DS4DeviceOptions DS4DeviceOpts { get => serviceDeviceOpts.DS4SupportSettings; }
+        public DualSenseDeviceOptions DSDeviceOpts { get => serviceDeviceOpts.DualSenseSupportSettings; }
+        public SwitchProDeviceOptions SwitchProDeviceOpts { get => serviceDeviceOpts.SwitchProSupportSettings; }
+        public JoyConDeviceOptions JoyConDeviceOpts { get => serviceDeviceOpts.JoyConSupportSettings; }
 
         public bool VerboseLogMessages { get => serviceDeviceOpts.VerboseLogMessages; set => serviceDeviceOpts.VerboseLogMessages = value; }
 
@@ -85,7 +86,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
         public event EventHandler CurrentTabSelectedIndexChanged;
 
-        public ControllerRegDeviceOptsViewModel(ControlServiceDeviceOptions serviceDeviceOpts,
+        public ControllerRegDeviceOptsViewModel(DeviceOptions serviceDeviceOpts,
             ControlService service)
         {
             this.serviceDeviceOpts = serviceDeviceOpts;
@@ -140,16 +141,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             switch (currentStore)
             {
                 case DS4ControllerOptions _:
-                    dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, serviceDeviceOpts.Ds4DeviceOpts);
+                    dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, serviceDeviceOpts.DS4SupportSettings);
                     break;
                 case DualSenseControllerOptions _:
-                    dataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions, serviceDeviceOpts.DualSenseOpts);
+                    dataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions, serviceDeviceOpts.DualSenseSupportSettings);
                     break;
                 case SwitchProControllerOptions _:
-                    dataContextObject = new SwitchProControllerOptionsWrapper(CurrentSwitchProOptions, serviceDeviceOpts.SwitchProDeviceOpts);
+                    dataContextObject = new SwitchProControllerOptionsWrapper(CurrentSwitchProOptions, serviceDeviceOpts.SwitchProSupportSettings);
                     break;
                 case JoyConControllerOptions _:
-                    dataContextObject = new JoyConControllerOptionsWrapper(CurrentJoyConOptions, serviceDeviceOpts.JoyConDeviceOpts);
+                    dataContextObject = new JoyConControllerOptionsWrapper(CurrentJoyConOptions, serviceDeviceOpts.JoyConSupportSettings);
                     break;
             }
         }
