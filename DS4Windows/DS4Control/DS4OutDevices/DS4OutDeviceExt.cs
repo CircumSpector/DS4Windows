@@ -16,7 +16,7 @@ namespace DS4Windows
 
         public override unsafe void ConvertAndSendReport(DS4State state, int device)
         {
-            if (!connected) return;
+            if (!IsConnected) return;
 
 
             using (GlobalTracer.Instance.BuildSpan($"{nameof(DS4OutDeviceExt)}::{nameof(ConvertAndSendReport)}")

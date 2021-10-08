@@ -24,7 +24,7 @@ namespace DS4Windows
         public override void Connect()
         {
             cont.Connect();
-            connected = true;
+            IsConnected = true;
         }
 
         public override void Disconnect()
@@ -33,7 +33,7 @@ namespace DS4Windows
 
             forceFeedbacksDict.Clear();
 
-            connected = false;
+            IsConnected = false;
             cont.Disconnect();
             //cont.Dispose();
             cont = null;

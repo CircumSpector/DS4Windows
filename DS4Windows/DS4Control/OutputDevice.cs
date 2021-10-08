@@ -4,7 +4,7 @@ namespace DS4Windows
 {
     public abstract class OutputDevice
     {
-        protected bool connected;
+        protected bool IsConnected;
 
         public abstract void ConvertAndSendReport(DS4State state, int device);
         public abstract void Connect();

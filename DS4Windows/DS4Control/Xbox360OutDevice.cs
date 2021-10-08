@@ -31,7 +31,7 @@ namespace DS4Windows
 
         public override void ConvertAndSendReport(DS4State state, int device)
         {
-            if (!connected) return;
+            if (!IsConnected) return;
 
 
             using (GlobalTracer.Instance.BuildSpan($"{nameof(Xbox360OutDevice)}::{nameof(ConvertAndSendReport)}")
@@ -157,7 +157,7 @@ namespace DS4Windows
         public override void Connect()
         {
             cont.Connect();
-            connected = true;
+            IsConnected = true;
         }
 
         public override void Disconnect()
@@ -166,7 +166,7 @@ namespace DS4Windows
 
             forceFeedbacksDict.Clear();
 
-            connected = false;
+            IsConnected = false;
             cont.Disconnect();
             cont = null;
         }

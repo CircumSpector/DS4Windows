@@ -13,7 +13,7 @@ namespace DS4Windows
 
         public override void ConvertAndSendReport(DS4State state, int device)
         {
-            if (!connected) return;
+            if (!IsConnected) return;
 
 
             using (GlobalTracer.Instance.BuildSpan($"{nameof(DS4OutDeviceBasic)}::{nameof(ConvertAndSendReport)}")

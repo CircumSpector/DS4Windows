@@ -71,8 +71,13 @@ namespace DS4WinWPF
                 .Build();
         }
 
+        /// <summary>
+        ///     Define all services here. Services are objects that are loosely coupled to each other through injected interfaces.
+        /// </summary>
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
+            #region Logging
+
             var lc = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .WriteTo.SerilogInMemorySink()
@@ -85,6 +90,8 @@ namespace DS4WinWPF
             });
 
             services.AddSingleton(new LoggerFactory().AddSerilog(lc));
+
+            #endregion
 
             services.AddOptions();
 
@@ -106,6 +113,9 @@ namespace DS4WinWPF
                 }
                 catch
                 {
+                    //
+                    // Can happen when driver is missing
+                    // 
                     return null;
                 }
             });
