@@ -1639,21 +1639,20 @@ Suspend support not enabled.", true);
 
         private void MainDS4Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (WindowState != WindowState.Minimized && preserveSize)
-            {
-                appSettings.Settings.FormWidth = Convert.ToInt32(Width);
-                appSettings.Settings.FormHeight = Convert.ToInt32(Height);
-            }
+            if (WindowState == WindowState.Minimized || !preserveSize) return;
+
+            appSettings.Settings.FormWidth = Convert.ToInt32(Width);
+            appSettings.Settings.FormHeight = Convert.ToInt32(Height);
         }
 
         private void MainDS4Window_LocationChanged(object sender, EventArgs e)
         {
             int left = Convert.ToInt32(Left), top = Convert.ToInt32(Top);
-            if (left >= 0 && top >= 0)
-            {
-                appSettings.Settings.FormLocationX = left;
-                appSettings.Settings.FormLocationY = top;
-            }
+            
+            if (left < 0 || top < 0) return;
+
+            appSettings.Settings.FormLocationX = left;
+            appSettings.Settings.FormLocationY = top;
         }
 
         private void NotifyIcon_TrayMiddleMouseDown(object sender, RoutedEventArgs e)
@@ -1670,11 +1669,10 @@ Suspend support not enabled.", true);
 
         private void EditProfBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (profilesListBox.SelectedIndex >= 0)
-            {
-                ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
-                ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
-            }
+            if (profilesListBox.SelectedIndex < 0) return;
+
+            ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
+            ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
         }
 
         private void ProfileEditor_Closed(object sender, EventArgs e)
@@ -1706,32 +1704,32 @@ Suspend support not enabled.", true);
 
         private async void ShowProfileEditor(int device, ProfileEntity entity = null)
         {
-            if (editor == null)
+            if (editor != null) return;
+
+            profOptsToolbar.Visibility = Visibility.Collapsed;
+            profilesListBox.Visibility = Visibility.Collapsed;
+            mainWinVM.FullTabsEnabled = false;
+
+            preserveSize = false;
+            oldSize.Width = Width;
+            oldSize.Height = Height;
+
+            if (this.Width < DEFAULT_PROFILE_EDITOR_WIDTH)
             {
-                profOptsToolbar.Visibility = Visibility.Collapsed;
-                profilesListBox.Visibility = Visibility.Collapsed;
-                mainWinVM.FullTabsEnabled = false;
-
-                preserveSize = false;
-                oldSize.Width = Width;
-                oldSize.Height = Height;
-                if (this.Width < DEFAULT_PROFILE_EDITOR_WIDTH)
-                {
-                    this.Width = DEFAULT_PROFILE_EDITOR_WIDTH;
-                }
-
-                if (this.Height < DEFAULT_PROFILE_EDITOR_HEIGHT)
-                {
-                    this.Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
-                }
-
-                editor = new ProfileEditor(rootHub, device);
-                editor.CreatedProfile += Editor_CreatedProfile;
-                editor.Closed += ProfileEditor_Closed;
-                profDockPanel.Children.Add(editor);
-                await editor.Reload(device, entity);
+                this.Width = DEFAULT_PROFILE_EDITOR_WIDTH;
             }
-            
+
+            if (this.Height < DEFAULT_PROFILE_EDITOR_HEIGHT)
+            {
+                this.Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
+            }
+
+            editor = new ProfileEditor(rootHub, device);
+            editor.CreatedProfile += Editor_CreatedProfile;
+            editor.Closed += ProfileEditor_Closed;
+            profDockPanel.Children.Add(editor);
+
+            await editor.Reload(device, entity);
         }
 
         private void Editor_CreatedProfile(ProfileEditor sender, string profile)
@@ -1756,11 +1754,10 @@ Suspend support not enabled.", true);
 
         private void ProfilesListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (profilesListBox.SelectedIndex >= 0)
-            {
-                ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
-                ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
-            }
+            if (profilesListBox.SelectedIndex < 0) return;
+
+            ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
+            ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
         }
 
         private void Html5GameBtn_Click(object sender, RoutedEventArgs e)
@@ -1774,16 +1771,15 @@ Suspend support not enabled.", true);
             string path = System.IO.Path.Combine(driveLetter, "Program Files",
                 "Nefarius Software Solutions e.U", "HidHideClient", "HidHideClient.exe");
 
-            if (File.Exists(path))
+            if (!File.Exists(path)) return;
+
+            try
             {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo(path);
-                    startInfo.UseShellExecute = true;
-                    using (Process proc = Process.Start(startInfo)) { }
-                }
-                catch { }
+                ProcessStartInfo startInfo = new ProcessStartInfo(path);
+                startInfo.UseShellExecute = true;
+                using (Process proc = Process.Start(startInfo)) { }
             }
+            catch { }
         }
 
         private void FakeExeNameExplainBtn_Click(object sender, RoutedEventArgs e)

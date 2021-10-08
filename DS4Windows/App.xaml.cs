@@ -652,7 +652,7 @@ namespace DS4WinWPF
             }
         }
         
-        private async void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+        private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
             logger.LogInformation("User Session Ending");
             CleanShutdown();
