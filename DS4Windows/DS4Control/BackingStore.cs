@@ -35,8 +35,6 @@ namespace DS4Windows
 
         DateTime LastChecked { get; set; }
 
-        bool DisconnectBluetoothAtStop { get; set; }
-
         int Notifications { get; set; }
 
         bool Ds4Mapping { get; set; }

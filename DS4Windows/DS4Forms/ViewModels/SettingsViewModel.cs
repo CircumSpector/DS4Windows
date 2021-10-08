@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Interop;
@@ -87,7 +83,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public event EventHandler ShowRunStartPanelChanged;
 
         public int ShowNotificationsIndex { get => DS4Windows.Global.Instance.Config.Notifications; set => DS4Windows.Global.Instance.Config.Notifications = value; }
-        public bool DisconnectBTStop { get => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop; set => DS4Windows.Global.Instance.Config.DisconnectBluetoothAtStop = value; }
+        public bool DisconnectBTStop { get => appSettings.Settings.DisconnectBluetoothAtStop; set => appSettings.Settings.DisconnectBluetoothAtStop = value; }
         public bool FlashHighLatency { get => DS4Windows.Global.Instance.Config.FlashWhenLate; set => DS4Windows.Global.Instance.Config.FlashWhenLate = value; }
         public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.Config.FlashWhenLateAt; set => DS4Windows.Global.Instance.Config.FlashWhenLateAt = value; }
         public bool StartMinimize { get => appSettings.Settings.StartMinimized; set => appSettings.Settings.StartMinimized = value; }

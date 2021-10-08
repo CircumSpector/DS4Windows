@@ -68,7 +68,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
         public int Notifications { get; set; }
 
         [XmlElement(ElementName = "DisconnectBTAtStop")]
-        public bool DisconnectBTAtStop { get; set; }
+        public bool DisconnectBluetoothAtStop { get; set; }
 
         [XmlElement(ElementName = "SwipeProfiles")]
         public bool SwipeProfiles { get; set; }

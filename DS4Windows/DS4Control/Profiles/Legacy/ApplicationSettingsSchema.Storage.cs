@@ -46,7 +46,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             // TODO: improve this conversion mess
             LastVersionChecked = store.LastVersionCheckedNumber.ToString();
             Notifications = store.Notifications;
-            DisconnectBTAtStop = store.DisconnectBluetoothAtStop;
             SwipeProfiles = store.SwipeProfiles;
             QuickCharge = store.SwipeProfiles;
             CloseMinimizes = store.CloseMini;
@@ -149,7 +148,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 : Global.CompileVersionNumberFromString(LastVersionChecked);
             // TODO: replace with Enum
             store.Notifications = Notifications;
-            store.DisconnectBluetoothAtStop = DisconnectBTAtStop;
             store.SwipeProfiles = SwipeProfiles;
             store.QuickCharge = QuickCharge;
             store.CloseMini = CloseMinimizes;

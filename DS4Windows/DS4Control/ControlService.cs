@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,7 @@ using DS4Windows.VJoyFeeder;
 using DS4WinWPF;
 using DS4WinWPF.DS4Control;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.Properties;
@@ -115,11 +117,15 @@ namespace DS4Windows
         private readonly Queue<Action> busEvtQueue = new();
         private readonly object busEvtQueueLock = new();
 
+        private readonly IAppSettingsService appSettings;
+
         public ControlService(
             ICommandLineOptions cmdParser, 
-            IOutputSlotManager osl
+            IOutputSlotManager osl,
+            IAppSettingsService appSettings
             )
         {
+            this.appSettings = appSettings;
             this.cmdParser = cmdParser;
 
             Crc32Algorithm.InitializeTable(DS4Device.DefaultPolynomial);
@@ -1274,7 +1280,7 @@ namespace DS4Windows
                     
                     if (tempDevice == null) continue;
 
-                    if (Instance.Config.DisconnectBluetoothAtStop && !tempDevice.IsCharging() || suspending)
+                    if (appSettings.Settings.DisconnectBluetoothAtStop && !tempDevice.IsCharging() || suspending)
                     {
                         if (tempDevice.GetConnectionType() == ConnectionType.BT)
                         {
