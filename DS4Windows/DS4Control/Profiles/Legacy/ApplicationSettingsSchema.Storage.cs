@@ -41,8 +41,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 GetType().GetProperty($"Controller{i + 1}")?.SetValue(this, value);
             }
 
-            LastChecked = store.LastChecked;
-            CheckWhen = store.CheckWhen;
             // TODO: improve this conversion mess
             LastVersionChecked = store.LastVersionCheckedNumber.ToString();
             Notifications = store.Notifications;
@@ -139,8 +137,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
                 }
             }
 
-            store.LastChecked = LastChecked;
-            store.CheckWhen = CheckWhen;
             store.LastVersionCheckedNumber = string.IsNullOrEmpty(LastVersionChecked)
                 ? 0
                 : Global.CompileVersionNumberFromString(LastVersionChecked);

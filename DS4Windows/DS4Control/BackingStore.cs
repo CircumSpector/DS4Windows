@@ -30,11 +30,7 @@ namespace DS4Windows
         ControlServiceDeviceOptions DeviceOptions { get; }
 
         IList<OutContType> OutputDeviceType { get; set; }
-
-        int CheckWhen { get; set; }
-
-        DateTime LastChecked { get; set; }
-
+        
         int Notifications { get; set; }
 
         bool Ds4Mapping { get; set; }

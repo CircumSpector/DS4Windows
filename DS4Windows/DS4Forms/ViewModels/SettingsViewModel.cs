@@ -119,10 +119,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool CheckForUpdates
         {
-            get => DS4Windows.Global.Instance.Config.CheckWhen > 0;
+            get => appSettings.Settings.CheckWhen > 0;
             set
             {
-                DS4Windows.Global.Instance.Config.CheckWhen = value ? 24 : 0;
+                appSettings.Settings.CheckWhen = value ? 24 : 0;
                 CheckForNoUpdatesWhen();
             }
         }
@@ -132,7 +132,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int temp = DS4Windows.Global.Instance.Config.CheckWhen;
+                int temp = appSettings.Settings.CheckWhen;
                 if (temp > 23)
                 {
                     temp = temp / 24;
@@ -144,19 +144,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 int temp;
                 if (checkEveryUnitIdx == 0 && value < 24)
                 {
-                    temp = DS4Windows.Global.Instance.Config.CheckWhen;
+                    temp = appSettings.Settings.CheckWhen;
                     if (temp != value)
                     {
-                        DS4Windows.Global.Instance.Config.CheckWhen = value;
+                        appSettings.Settings.CheckWhen = value;
                         CheckForNoUpdatesWhen();
                     }
                 }
                 else if (checkEveryUnitIdx == 1)
                 {
-                    temp = DS4Windows.Global.Instance.Config.CheckWhen / 24;
+                    temp = appSettings.Settings.CheckWhen / 24;
                     if (temp != value)
                     {
-                        DS4Windows.Global.Instance.Config.CheckWhen = value * 24;
+                        appSettings.Settings.CheckWhen = value * 24;
                         CheckForNoUpdatesWhen();
                     }
                 }
@@ -306,7 +306,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             checkEveryUnitIdx = 1;
 
-            int checklapse = DS4Windows.Global.Instance.Config.CheckWhen;
+            int checklapse = appSettings.Settings.CheckWhen;
             if (checklapse < 24 && checklapse > 0)
             {
                 checkEveryUnitIdx = 0;
@@ -506,7 +506,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void CheckForNoUpdatesWhen()
         {
-            if (DS4Windows.Global.Instance.Config.CheckWhen == 0)
+            if (appSettings.Settings.CheckWhen == 0)
             {
                 checkEveryUnitIdx = 1;
             }

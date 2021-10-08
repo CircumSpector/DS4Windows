@@ -182,13 +182,13 @@ namespace DS4WinWPF.DS4Forms
 
             tempTask = Task.Delay(100).ContinueWith((t) =>
             {
-                int checkwhen = Global.Instance.Config.CheckWhen;
-                if (checkwhen > 0 && DateTime.Now >= Global.Instance.Config.LastChecked + TimeSpan.FromHours(checkwhen))
+                int checkwhen = appSettings.Settings.CheckWhen;
+                if (checkwhen > 0 && DateTime.Now >= appSettings.Settings.LastChecked + TimeSpan.FromHours(checkwhen))
                 {
                     DownloadUpstreamVersionInfo();
                     Check_Version();
 
-                    Global.Instance.Config.LastChecked = DateTime.Now;
+                    appSettings.Settings.LastChecked = DateTime.Now;
                 }
             });
             Util.LogAssistBackgroundTask(tempTask);
