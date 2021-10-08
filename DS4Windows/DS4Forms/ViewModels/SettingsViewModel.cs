@@ -84,7 +84,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ShowNotificationsIndex { get => DS4Windows.Global.Instance.Config.Notifications; set => DS4Windows.Global.Instance.Config.Notifications = value; }
         public bool DisconnectBTStop { get => appSettings.Settings.DisconnectBluetoothAtStop; set => appSettings.Settings.DisconnectBluetoothAtStop = value; }
-        public bool FlashHighLatency { get => DS4Windows.Global.Instance.Config.FlashWhenLate; set => DS4Windows.Global.Instance.Config.FlashWhenLate = value; }
+        public bool FlashHighLatency { get => appSettings.Settings.FlashWhenLate; set => appSettings.Settings.FlashWhenLate = value; }
         public int FlashHighLatencyAt { get => DS4Windows.Global.Instance.Config.FlashWhenLateAt; set => DS4Windows.Global.Instance.Config.FlashWhenLateAt = value; }
         public bool StartMinimize { get => appSettings.Settings.StartMinimized; set => appSettings.Settings.StartMinimized = value; }
         public bool MinimizeToTaskbar { get => appSettings.Settings.MinimizeToTaskbar; set => appSettings.Settings.MinimizeToTaskbar = value; }

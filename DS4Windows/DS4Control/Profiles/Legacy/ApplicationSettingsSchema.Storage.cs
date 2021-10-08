@@ -51,7 +51,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             CloseMinimizes = store.CloseMini;
             UseLang = store.UseLang;
             DownloadLang = store.DownloadLang;
-            FlashWhenLate = store.FlashWhenLate;
             FlashWhenLateAt = store.FlashWhenLateAt;
 
             UseUDPServer = store.IsUdpServerEnabled;
@@ -153,7 +152,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Legacy
             store.CloseMini = CloseMinimizes;
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
-            store.FlashWhenLate = FlashWhenLate;
             store.FlashWhenLateAt = FlashWhenLateAt;
 
             store.IsUdpServerEnabled = UseUDPServer;

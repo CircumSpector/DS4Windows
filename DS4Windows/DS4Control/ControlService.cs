@@ -2104,7 +2104,7 @@ namespace DS4Windows
             {
                 lag[ind] = true;
                 LogDebug(string.Format(Resources.LatencyOverTen, ind + 1, device.Latency), true);
-                if (Instance.Config.FlashWhenLate)
+                if (appSettings.Settings.FlashWhenLate)
                 {
                     var color = new DS4Color(50, 0, 0);
                     DS4LightBar.forcedColor[ind] = color;

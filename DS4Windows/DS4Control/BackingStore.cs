@@ -47,8 +47,6 @@ namespace DS4Windows
 
         bool DownloadLang { get; set; }
 
-        bool FlashWhenLate { get; set; }
-
         bool UseCustomSteamFolder { get; set; }
 
         IList<string> LaunchProgram { get; set; }
