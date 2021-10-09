@@ -58,7 +58,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             int idx = 0;
             foreach (DS4Device currentDev in controlService.slotManager.ControllerColl)
             {
-                CompositeDeviceModel temp = new CompositeDeviceModel(service, currentDev,
+                CompositeDeviceModel temp = new CompositeDeviceModel(appSettings, service, currentDev,
                     idx, Global.Instance.Config.ProfilePath[idx], profileListHolder);
                 controllerCol.Add(temp);
                 controllerDict.Add(idx, temp);
@@ -99,7 +99,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 // Look if device exists. Also, check if disconnect might be occurring
                 if (!controllerDict.ContainsKey(index) && !device.IsRemoving)
                 {
-                    CompositeDeviceModel temp = new CompositeDeviceModel(controlService, device,
+                    CompositeDeviceModel temp = new CompositeDeviceModel(appSettings, controlService, device,
                         index, Global.Instance.Config.ProfilePath[index], profileListHolder);
                     controllerCol.Add(temp);
                     controllerDict.Add(index, temp);
@@ -149,7 +149,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         //int idx = controllerCol.Count;
                         _colListLocker.EnterWriteLock();
                         int idx = controlService.slotManager.ReverseControllerDict[currentDev];
-                        CompositeDeviceModel temp = new CompositeDeviceModel(controlService, currentDev,
+                        CompositeDeviceModel temp = new CompositeDeviceModel(appSettings, controlService, currentDev,
                             idx, Global.Instance.Config.ProfilePath[idx], profileListHolder);
                         controllerCol.Add(temp);
                         controllerDict.Add(idx, temp);
@@ -210,16 +210,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 DS4Color color;
-                color = Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed
-                    ? Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed
-                    : Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.Led;
+                color = appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed
+                    ? appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed
+                    : appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.Led;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
 
         public event EventHandler LightColorChanged;
 
-        public Color CustomLightColor => Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed.ToColor();
+        public Color CustomLightColor => appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed.ToColor();
 
         public string BatteryState
         {
@@ -353,9 +353,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly ControlService rootHub;
 
-        public CompositeDeviceModel(ControlService service, DS4Device device, int devIndex, string profile,
+        private readonly IAppSettingsService appSettings;
+
+        public CompositeDeviceModel(IAppSettingsService appSettings, ControlService service, DS4Device device, int devIndex, string profile,
             ProfileList collection)
         {
+            this.appSettings = appSettings;
             this.device = device;
             rootHub = service;
             
@@ -377,7 +380,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 HookEvents(true);
             }
 
-            useCustomColor = Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed;
+            useCustomColor = appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed;
         }
 
         public async Task ChangeSelectedProfile()
@@ -484,7 +487,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             useCustomColor = false;
             RefreshLightContext();
-            Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed = false;
+            appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed = false;
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -492,7 +495,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             useCustomColor = true;
             RefreshLightContext();
-            Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed = true;
+            appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed = true;
             LightColorChanged?.Invoke(this, EventArgs.Empty);
             RequestColorPicker?.Invoke(this);
         }
@@ -505,7 +508,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateCustomLightColor(Color color)
         {
-            Global.Instance.Config.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed = new DS4Color(color);
+            appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed = new DS4Color(color);
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 

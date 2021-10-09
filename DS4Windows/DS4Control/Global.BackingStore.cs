@@ -1385,16 +1385,15 @@ namespace DS4Windows
                 );
 
                 var profileObject = new DS4WindowsProfile(
+                    ControlService.CurrentInstance.GetAppSettings(),
                     this,
                     device,
                     ExecutableProductVersion,
                     CONFIG_VERSION
                 );
-
-
+                
                 using var scope = GlobalTracer.Instance.BuildSpan(nameof(SaveProfile)).StartActive(true);
-
-
+                
                 try
                 {
                     foreach (var dcs in Ds4Settings[device])
@@ -1581,7 +1580,7 @@ namespace DS4Windows
                     {
                         profile = await DS4WindowsProfile.DeserializeAsync(stream);
 
-                        profile.CopyTo(this, device);
+                        profile.CopyTo(control.GetAppSettings(), this, device);
                     }
 
 

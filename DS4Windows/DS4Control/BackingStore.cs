@@ -171,8 +171,6 @@ namespace DS4Windows
 
         IList<IList<int>> TouchDisInvertTriggers { get; set; }
 
-        IList<LightbarSettingInfo> LightbarSettingInfo { get; set; }
-
         IList<int> SASteeringWheelEmulationRange { get; set; }
 
         IList<bool> SATriggerCondition { get; set; }

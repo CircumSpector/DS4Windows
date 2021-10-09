@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using DS4WinWPF.DS4Control.Profiles.Schema.Migrations;
 using ExtendedXmlSerializer;
@@ -35,9 +36,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         /// <param name="device">The zero-based device index to copy.</param>
         [IntermediateSolution]
-        public void CopyFrom(IBackingStore store, int device)
+        public void CopyFrom(IAppSettingsService appSettings, IBackingStore store, int device)
         {
-            var light = store.LightbarSettingInfo[device];
+            var light = appSettings.Settings.LightbarSettingInfo[device];
 
             TouchToggle = store.EnableTouchToggle[device];
             IdleDisconnectTimeout = store.IdleDisconnectTimeout[device];
@@ -45,7 +46,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             Color = light.Ds4WinSettings.Led;
             RumbleBoost = store.RumbleBoost[device];
             RumbleAutostopTime = store.RumbleAutostopTime[device];
-            LightbarMode = store.LightbarSettingInfo[device].Mode;
+            LightbarMode = appSettings.Settings.LightbarSettingInfo[device].Mode;
             LedAsBatteryIndicator = light.Ds4WinSettings.LedAsBattery;
             FlashType = light.Ds4WinSettings.FlashType;
             FlashBatteryAt = light.Ds4WinSettings.FlashAt;
@@ -340,9 +341,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         /// <param name="device">The zero-based device index to copy.</param>
         [IntermediateSolution]
-        public void CopyTo(IBackingStore store, int device)
+        public void CopyTo(IAppSettingsService appSettings, IBackingStore store, int device)
         {
-            var lightbarSettings = store.LightbarSettingInfo[device];
+            var lightbarSettings = appSettings.Settings.LightbarSettingInfo[device];
             var lightInfo = lightbarSettings.Ds4WinSettings;
 
             store.EnableTouchToggle[device] = TouchToggle;

@@ -50,7 +50,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public int FormLocationY { get; set; }
 
         [XmlIgnore]
-        private IReadOnlyList<LightbarSettingInfo> LightbarSettingInfo => lightbarSettings.ToImmutableList();
+        public IReadOnlyList<LightbarSettingInfo> LightbarSettingInfo => lightbarSettings.ToImmutableList();
 
         [XmlElement(ElementName = "Controller1")]
         public string Controller1 { get; set; } = string.Empty;

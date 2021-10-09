@@ -118,6 +118,12 @@ namespace DS4Windows
 
         private readonly IAppSettingsService appSettings;
 
+        [IntermediateSolution]
+        public IAppSettingsService GetAppSettings()
+        {
+            return appSettings;
+        }
+
         public ControlService(
             ICommandLineOptions cmdParser, 
             IOutputSlotManager osl,

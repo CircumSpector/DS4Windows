@@ -1724,7 +1724,7 @@ Suspend support not enabled.", true);
                 this.Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
             }
 
-            editor = new ProfileEditor(rootHub, device);
+            editor = new ProfileEditor(appSettings, rootHub, device);
             editor.CreatedProfile += Editor_CreatedProfile;
             editor.Closed += ProfileEditor_Closed;
             profDockPanel.Children.Add(editor);

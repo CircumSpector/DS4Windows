@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using Microsoft.Win32;
@@ -43,15 +44,18 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly ControlService rootHub;
 
-        public ProfileEditor(ControlService service, int device)
+        private readonly IAppSettingsService appSettings;
+
+        public ProfileEditor(IAppSettingsService appSettings, ControlService service, int device)
         {
+            this.appSettings = appSettings;
             rootHub = service;
 
             InitializeComponent();
 
             DeviceNum = device;
             emptyColorGB.Visibility = Visibility.Collapsed;
-            profileSettingsVM = new ProfileSettingsViewModel(rootHub, device);
+            profileSettingsVM = new ProfileSettingsViewModel(appSettings, rootHub, device);
             picBoxHover.Visibility = Visibility.Hidden;
             picBoxHover2.Visibility = Visibility.Hidden;
 

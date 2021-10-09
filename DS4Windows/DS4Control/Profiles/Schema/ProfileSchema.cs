@@ -2,6 +2,8 @@
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using PropertyChanged;
 
@@ -465,12 +467,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         {
         }
 
-        public DS4WindowsProfile(IBackingStore store, int device, string appVersion, int configVersion)
+        [IntermediateSolution]
+        public DS4WindowsProfile(
+            IAppSettingsService appSettings,
+            IBackingStore store,
+            int device,
+            string appVersion,
+            int configVersion
+        )
         {
             AppVersion = appVersion;
             ConfigVersion = configVersion;
 
-            CopyFrom(store, device);
+            CopyFrom(appSettings, store, device);
         }
     }
 }

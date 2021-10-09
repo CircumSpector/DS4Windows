@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using Color = System.Windows.Media.Color;
 
@@ -31,7 +32,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch(Global.Instance.Config.LightbarSettingInfo[device].Mode)
+                switch(appSettings.Settings.LightbarSettingInfo[device].Mode)
                 {
                     case LightbarMode.DS4Win:
                         index = 0; break;
@@ -54,7 +55,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                Global.Instance.Config.LightbarSettingInfo[device].Mode = temp;
+                appSettings.Settings.LightbarSettingInfo[device].Mode = temp;
                 LightbarModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -65,7 +66,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 System.Windows.Media.Brush tempBrush;
-                var color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
                 if (!RainbowExists)
                 {
                     lightbarColBrush.Color = new System.Windows.Media.Color()
@@ -87,14 +88,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
         public event EventHandler LightbarBrushChanged;
 
-        public System.Windows.Media.Color MainColor => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.ToColor();
+        public System.Windows.Media.Color MainColor => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.ToColor();
         public event EventHandler MainColorChanged;
 
         public string MainColorString
         {
             get
             {
-                var color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
@@ -102,10 +103,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int MainColorR
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Red;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Red;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Red = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Red = (byte)value;
                 MainColorRChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -113,16 +114,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MainColorRString
         {
-            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Red.ToString("X2")}FF0000";
+            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Red.ToString("X2")}FF0000";
         }
         public event EventHandler MainColorRStringChanged;
 
         public int MainColorG
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Green;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Green;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Green = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Green = (byte)value;
                 MainColorGChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -130,16 +131,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MainColorGString
         {
-            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Green.ToString("X2")}00FF00";
+            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Green.ToString("X2")}00FF00";
         }
         public event EventHandler MainColorGStringChanged;
 
         public int MainColorB
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue = (byte)value;
                 MainColorBChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -147,7 +148,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MainColorBString
         {
-            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue.ToString("X2")}0000FF";
+            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue.ToString("X2")}0000FF";
         }
         public event EventHandler MainColorBStringChanged;
 
@@ -155,7 +156,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                var color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed;
+                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
@@ -163,10 +164,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LowColorR
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red = (byte)value;
                 LowColorRChanged?.Invoke(this, EventArgs.Empty);
                 LowColorRStringChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -175,16 +176,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LowColorRString
         {
-            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red.ToString("X2")}FF0000";
+            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red.ToString("X2")}FF0000";
         }
         public event EventHandler LowColorRStringChanged;
 
         public int LowColorG
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green = (byte)value;
                 LowColorGChanged?.Invoke(this, EventArgs.Empty);
                 LowColorGStringChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -193,16 +194,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LowColorGString
         {
-            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green.ToString("X2")}00FF00";
+            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green.ToString("X2")}00FF00";
         }
         public event EventHandler LowColorGStringChanged;
 
         public int LowColorB
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue = (byte)value;
                 LowColorBChanged?.Invoke(this, EventArgs.Empty);
                 LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -211,33 +212,33 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LowColorBString
         {
-            get => $"#{ Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue.ToString("X2")}0000FF";
+            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue.ToString("X2")}0000FF";
         }
         public event EventHandler LowColorBStringChanged;
 
-        public System.Windows.Media.Color LowColorMedia => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed.ToColor();
+        public System.Windows.Media.Color LowColorMedia => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.ToColor();
 
         public int FlashTypeIndex
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashType; //Global.Instance.FlashType[device];
-            set => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashType = (byte)value;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashType; //Global.Instance.FlashType[device];
+            set => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashType = (byte)value;
         }
 
         public int FlashAt
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashAt; //Global.Instance.FlashAt[device];
-            set => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashAt = value;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashAt; //Global.Instance.FlashAt[device];
+            set => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashAt = value;
         }
 
         public string FlashColor
         {
             get
             {
-                var color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashLed;
+                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed;
 
                 if (color.Red == 0 && color.Green == 0 && color.Blue == 0)
-                    color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashLed =
-                        Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                    color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed =
+                        appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
 
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
@@ -249,10 +250,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                var color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashLed;
+                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed;
                 if (color.Red == 0 && color.Green == 0 && color.Blue == 0)
-                    color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashLed =
-                        Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                    color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed =
+                        appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
 
                 return color.ToColor();
             }
@@ -260,20 +261,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ChargingType
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.ChargingType;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingType;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.ChargingType = value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingType = value;
                 ChargingColorVisibleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public bool ColorBatteryPercent
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LedAsBattery;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LedAsBattery;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LedAsBattery = value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LedAsBattery = value;
             }
         }
 
@@ -281,27 +282,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                var color = Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed;
+                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
 
         public event EventHandler ChargingColorChanged;
 
-        public System.Windows.Media.Color ChargingColorMedia => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed.ToColor();
+        public System.Windows.Media.Color ChargingColorMedia => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed.ToColor();
 
         public Visibility ChargingColorVisible
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.ChargingType == 3 ? Visibility.Visible : Visibility.Hidden;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingType == 3 ? Visibility.Visible : Visibility.Hidden;
         }
         public event EventHandler ChargingColorVisibleChanged;
 
         public double Rainbow
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Rainbow;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Rainbow;
             set
             {
-                Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Rainbow = value;
+                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Rainbow = value;
                 RainbowChanged?.Invoke(this, EventArgs.Empty);
                 RainbowExistsChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -310,15 +311,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool RainbowExists
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Rainbow != 0.0;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Rainbow != 0.0;
         }
 
         public event EventHandler RainbowExistsChanged;
 
         public double MaxSatRainbow
         {
-            get => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.MaxRainbowSaturation * 100.0;
-            set => Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.MaxRainbowSaturation = value / 100.0;
+            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.MaxRainbowSaturation * 100.0;
+            set => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.MaxRainbowSaturation = value / 100.0;
         }
 
         public int RumbleBoost
@@ -2350,8 +2351,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly ControlService rootHub;
 
-        public ProfileSettingsViewModel(ControlService service, int device)
+        private readonly IAppSettingsService appSettings;
+
+        public ProfileSettingsViewModel(IAppSettingsService appSettings, ControlService service, int device)
         {
+            this.appSettings = appSettings;
             this.rootHub = service;
             this.device = device;
             funcDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
@@ -2496,19 +2500,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateFlashColor(System.Windows.Media.Color color)
         {
-            Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.FlashLed = new DS4Color(color);
+            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed = new DS4Color(color);
             FlashColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateMainColor(System.Windows.Media.Color color)
         {
-            Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.Led = new DS4Color(color);
+            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led = new DS4Color(color);
             MainColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateLowColor(System.Windows.Media.Color color)
         {
-            Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.LowLed = new DS4Color(color);
+            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed = new DS4Color(color);
             
             LowColorChanged?.Invoke(this, EventArgs.Empty);
             LowColorRChanged?.Invoke(this, EventArgs.Empty);
@@ -2553,7 +2557,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateChargingColor(System.Windows.Media.Color color)
         {
-            Global.Instance.Config.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed = new DS4Color(color);
+            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed = new DS4Color(color);
             
             ChargingColorChanged?.Invoke(this, EventArgs.Empty);
         }
