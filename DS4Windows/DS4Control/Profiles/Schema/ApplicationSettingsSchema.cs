@@ -173,6 +173,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public bool HasUserConfirmedSteamWarning { get; set; }
 
+        public bool HasUserConfirmedArchitectureWarning { get; set; }
+
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }
 

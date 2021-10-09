@@ -292,7 +292,52 @@ namespace DS4WinWPF
 
             CheckIsSteamRunning();
 
+            CheckAppArchitecture();
+
             base.OnStartup(e);
+        }
+
+        [MissingLocalization]
+        private void CheckAppArchitecture()
+        {
+            if (appSettings.Settings.HasUserConfirmedArchitectureWarning)
+                return;
+
+            if (!Environment.Is64BitOperatingSystem || Environment.Is64BitProcess) return;
+
+            var messageBox = new MessageBoxModel
+            {
+                Text =
+                    "Hello, Gamer!" +
+                    "\r\n\r\nYou're running the 32-Bit edition on a 64-Bit system. "
+                    + $"\r\n\r\nIf this isn't by intention you've probably downloaded the wrong build of"
+                    + $" {Constants.ApplicationName}."
+                    + $"\r\n\r\nIt is highly recommended to run the 64-Bit (x64) edition on a 64-Bit operating system "
+                    + "or you will most likely encounter unsolvable issues."
+                    + "\r\n\r\nThanks for your attention ❤️",
+                Caption = "Architecture mismatch detected",
+                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Buttons = new[]
+                {
+                    MessageBoxButtons.Yes("Understood")
+                },
+                CheckBoxes = new[]
+                {
+                    new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
+                    {
+                        IsChecked = false,
+                        Placement = MessageBoxCheckBoxPlacement.BelowText
+                    }
+                },
+                IsSoundEnabled = false
+            };
+
+            Current.Dispatcher.InvokeAsync(() =>
+            {
+                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
+
+                appSettings.Settings.HasUserConfirmedArchitectureWarning = messageBox.CheckBoxes.First().IsChecked;
+            });
         }
 
         [MissingLocalization]
