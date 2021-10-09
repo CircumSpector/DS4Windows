@@ -6,6 +6,9 @@ using Nefarius.ViGEm.Client;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
+    //
+    // TODO: to be continued
+    // 
     public sealed class OutputSlotService
     {
         private readonly IList<OutSlotDevice> outputSlots =
