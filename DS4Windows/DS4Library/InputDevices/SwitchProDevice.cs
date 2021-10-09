@@ -324,8 +324,8 @@ namespace DS4Windows.InputDevices
                 while (!exitInputThread)
                 {
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SwitchProDevice)}::{nameof(ReadInput)}")
+                        .IgnoreActiveSpan()
                         .StartActive(true);
-
 
                     oldCharging = charging;
                     currerror = string.Empty;

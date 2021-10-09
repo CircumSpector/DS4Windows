@@ -328,6 +328,7 @@ namespace DS4Windows.InputDevices
                 while (!exitInputThread)
                 {
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DualSenseDevice)}::{nameof(ReadInput)}")
+                        .IgnoreActiveSpan()
                         .StartActive(true);
 
 

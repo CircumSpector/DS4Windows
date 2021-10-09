@@ -363,8 +363,8 @@ namespace DS4Windows.InputDevices
                 while (!exitInputThread)
                 {
                     using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(JoyConDevice)}::{nameof(ReadInput)}")
+                        .IgnoreActiveSpan()
                         .StartActive(true);
-
 
                     oldCharging = charging;
                     currerror = string.Empty;
