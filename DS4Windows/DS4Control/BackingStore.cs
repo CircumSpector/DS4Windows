@@ -19,8 +19,6 @@ namespace DS4Windows
         
         bool Ds4Mapping { get; set; }
 
-        string UseLang { get; set; }
-
         IList<string> LaunchProgram { get; set; }
 
         IList<string> ProfilePath { get; set; }

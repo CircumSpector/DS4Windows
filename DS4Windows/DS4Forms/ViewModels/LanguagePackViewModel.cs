@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -71,9 +72,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 LangPackItem item = langPackList[selectedIndex];
                 string newValue = item.Name;
-                if (newValue != Global.Instance.Config.UseLang)
+                if (newValue != AppSettingsService.Instance.Settings.UseLang)
                 {
-                    Global.Instance.Config.UseLang = newValue;
+                    AppSettingsService.Instance.Settings.UseLang = newValue;
                     //Global.Save();
                     result = true;
                 }

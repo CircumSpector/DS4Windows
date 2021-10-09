@@ -115,7 +115,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             // TODO: improve this conversion mess
             LastVersionChecked = store.LastVersionCheckedNumber.ToString();
-            UseLang = store.UseLang;
         }
 
         /// <summary>
@@ -147,8 +146,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.LastVersionCheckedNumber = string.IsNullOrEmpty(LastVersionChecked)
                 ? 0
                 : Global.CompileVersionNumberFromString(LastVersionChecked);
-
-            store.UseLang = UseLang;
         }
     }
 }

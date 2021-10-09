@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Windows.Documents;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using HttpProgress;
 using MarkdownEngine = MdXaml.Markdown;
 
@@ -90,7 +91,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             var flow = new FlowDocument();
             foreach (var versionInfo in tempInfo.Changelog.Versions)
             {
-                var tmpLog = versionInfo.ApplicableInfo(Global.Instance.Config.UseLang);
+                var tmpLog = versionInfo.ApplicableInfo(AppSettingsService.Instance.Settings.UseLang);
                 if (tmpLog != null)
                 {
                     var tmpPar = new Paragraph();

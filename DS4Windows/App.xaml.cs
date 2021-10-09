@@ -267,7 +267,7 @@ namespace DS4WinWPF
 
             if (!Global.Instance.Config.LoadActions()) Global.Instance.CreateStdActions();
 
-            SetUICulture(Global.Instance.Config.UseLang);
+            SetUICulture(appSettings.Settings.UseLang);
 
             if (appSettings.Settings.AppTheme != AppThemeChoice.Default)
                 ChangeTheme(appSettings.Settings.AppTheme, false);

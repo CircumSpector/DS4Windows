@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Documents;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using HttpProgress;
 using MarkdownEngine = MdXaml.Markdown;
 
@@ -93,7 +94,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var versionNumber = versionInfo.VersionNumberInfo.GetVersionNumber();
                 if (versionNumber > Global.ExecutableVersionLong)
                 {
-                    var tmpLog = versionInfo.ApplicableInfo(Global.Instance.Config.UseLang);
+                    var tmpLog = versionInfo.ApplicableInfo(AppSettingsService.Instance.Settings.UseLang);
                     if (tmpLog != null)
                     {
                         var tmpPar = new Paragraph();
