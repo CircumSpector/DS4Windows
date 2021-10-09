@@ -32,8 +32,14 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="path">The absolute path to the XML file to read from.</param>
         Task<bool> LoadAsync(string path = null);
 
+        /// <summary>
+        ///     Load the persisted settings from disk.
+        /// </summary>
+        /// <param name="path">The absolute path to the XML file to read from.</param>
+        bool Load(string path = null);
+
         event Action UdpSmoothMinCutoffChanged;
-        
+
         event Action UdpSmoothBetaChanged;
     }
 
@@ -124,7 +130,41 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             await using var stream = File.OpenRead(path);
 
             var settings = await DS4WindowsAppSettings.DeserializeAsync(stream);
-            
+
+            PostLoadActions(settings);
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Load the persisted settings from disk.
+        /// </summary>
+        /// <param name="path">The absolute path to the XML file to read from.</param>
+        public bool Load(string path = null)
+        {
+            if (string.IsNullOrEmpty(path))
+                path = global.AppSettingsFilePath;
+
+            if (!File.Exists(path))
+            {
+                logger.LogDebug("File {File} doesn't exist, skipping", path);
+                return false;
+            }
+
+            using var stream = File.OpenRead(path);
+
+            var settings = DS4WindowsAppSettings.Deserialize(stream);
+
+            PostLoadActions(settings);
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Updates <see cref="Settings"/> and re-hooks changed events.
+        /// </summary>
+        private void PostLoadActions(DS4WindowsAppSettings settings)
+        {
             //
             // Update all properties without breaking existing references
             // 
@@ -137,8 +177,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             Settings.UDPServerSmoothingOptions.MinCutoffChanged += () => UdpSmoothMinCutoffChanged?.Invoke();
             UdpSmoothBetaChanged?.Invoke();
             Settings.UDPServerSmoothingOptions.BetaChanged += () => UdpSmoothBetaChanged?.Invoke();
-            
-            return true;
         }
     }
 }

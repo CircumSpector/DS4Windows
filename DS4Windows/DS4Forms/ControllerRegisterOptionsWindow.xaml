@@ -23,18 +23,18 @@
         <DockPanel>
             <StackPanel DockPanel.Dock="Top" Margin="{adonisUi:Space 1}">
                 <CheckBox Margin="{adonisUi:Space 0.5, 1}" Content="DS4 Controller Support"
-                          IsChecked="{Binding DS4DeviceOpts.Enabled}" />
+                          IsChecked="{Binding AppSettings.Settings.DeviceOptions.DS4SupportSettings.Enabled}" />
                 <CheckBox Margin="{adonisUi:Space 0.5, 1}" Content="DualSense Controller Support"
-                          IsChecked="{Binding DSDeviceOpts.Enabled}" />
+                          IsChecked="{Binding AppSettings.Settings.DeviceOptions.DualSenseSupportSettings.Enabled}" />
                 <CheckBox Margin="{adonisUi:Space 0.5, 1}" Content="Switch Pro Controller Support"
-                          IsChecked="{Binding SwitchProDeviceOpts.Enabled}" />
+                          IsChecked="{Binding AppSettings.Settings.DeviceOptions.SwitchProSupportSettings.Enabled}" />
                 <CheckBox Margin="{adonisUi:Space 0.5, 1}" Content="JoyCon Controller Support"
-                          IsChecked="{Binding JoyConDeviceOpts.Enabled}" />
+                          IsChecked="{Binding AppSettings.Settings.DeviceOptions.JoyConSupportSettings.Enabled}" />
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Top" Margin="{adonisUi:Space 1}">
                 <CheckBox Margin="{adonisUi:Space 0.5, 1}" Content="Enable verbose log"
-                          IsChecked="{Binding VerboseLogMessages}"
+                          IsChecked="{Binding AppSettings.Settings.DeviceOptions.VerboseLogMessages}"
                           ToolTip="Show additional log messages when a gamepad is connected" />
             </StackPanel>
 

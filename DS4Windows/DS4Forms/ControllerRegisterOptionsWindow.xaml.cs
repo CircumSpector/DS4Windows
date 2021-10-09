@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using AdonisUI.Controls;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Profiles.Schema;
+using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -14,11 +14,11 @@ namespace DS4WinWPF.DS4Forms
     {
         private ControllerRegDeviceOptsViewModel deviceOptsVM;
 
-        public ControllerRegisterOptionsWindow(DeviceOptions deviceOptions, ControlService service)
+        public ControllerRegisterOptionsWindow(IAppSettingsService appSettings, ControlService service)
         {
             InitializeComponent();
 
-            deviceOptsVM = new ControllerRegDeviceOptsViewModel(deviceOptions, service);
+            deviceOptsVM = new ControllerRegDeviceOptsViewModel(appSettings, service);
 
             devOptionsDockPanel.DataContext = deviceOptsVM;
             deviceOptsVM.ControllerSelectedIndexChanged += ChangeActiveDeviceTab;

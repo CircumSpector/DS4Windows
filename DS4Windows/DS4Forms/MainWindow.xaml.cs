@@ -1813,9 +1813,11 @@ Suspend support not enabled.", true);
         private void DeviceOptionSettingsBtn_Click(object sender, RoutedEventArgs e)
         {
             ControllerRegisterOptionsWindow optsWindow =
-                new ControllerRegisterOptionsWindow(ControlService.CurrentInstance.DeviceOptions, ControlService.CurrentInstance);
+                new ControllerRegisterOptionsWindow(appSettings, ControlService.CurrentInstance)
+                {
+                    Owner = this
+                };
 
-            optsWindow.Owner = this;
             optsWindow.Show();
         }
 

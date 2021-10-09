@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Profiles.Schema;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 using LEDBarMode = DS4Windows.DualSenseControllerOptions.LEDBarMode;
 using MuteLEDMode = DS4Windows.DualSenseControllerOptions.MuteLEDMode;
@@ -16,23 +13,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class ControllerRegDeviceOptsViewModel
     {
-        private DeviceOptions serviceDeviceOpts;
-
-        public bool EnableDS4 { get => serviceDeviceOpts.DS4SupportSettings.Enabled; }
-
-        public bool EnableDualSense { get => serviceDeviceOpts.DualSenseSupportSettings.Enabled; }
-
-        public bool EnableSwitchPro { get => serviceDeviceOpts.SwitchProSupportSettings.Enabled; }
-
-        public bool EnableJoyCon { get => serviceDeviceOpts.JoyConSupportSettings.Enabled; }
-
-        public DS4DeviceOptions DS4DeviceOpts { get => serviceDeviceOpts.DS4SupportSettings; }
-        public DualSenseDeviceOptions DSDeviceOpts { get => serviceDeviceOpts.DualSenseSupportSettings; }
-        public SwitchProDeviceOptions SwitchProDeviceOpts { get => serviceDeviceOpts.SwitchProSupportSettings; }
-        public JoyConDeviceOptions JoyConDeviceOpts { get => serviceDeviceOpts.JoyConSupportSettings; }
-
-        public bool VerboseLogMessages { get => serviceDeviceOpts.VerboseLogMessages; set => serviceDeviceOpts.VerboseLogMessages = value; }
-
         private List<DeviceListItem> currentInputDevices = new List<DeviceListItem>();
         public List<DeviceListItem> CurrentInputDevices { get => currentInputDevices; }
 
@@ -86,10 +66,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
         public event EventHandler CurrentTabSelectedIndexChanged;
 
-        public ControllerRegDeviceOptsViewModel(DeviceOptions serviceDeviceOpts,
+        public IAppSettingsService AppSettings { get; }
+
+        public ControllerRegDeviceOptsViewModel(IAppSettingsService appSettings,
             ControlService service)
         {
-            this.serviceDeviceOpts = serviceDeviceOpts;
+            AppSettings = appSettings;
 
             int idx = 0;
             foreach(DS4Device device in service.DS4Controllers)
@@ -141,16 +123,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             switch (currentStore)
             {
                 case DS4ControllerOptions _:
-                    dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, serviceDeviceOpts.DS4SupportSettings);
+                    dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, AppSettings.Settings.DeviceOptions.DS4SupportSettings);
                     break;
                 case DualSenseControllerOptions _:
-                    dataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions, serviceDeviceOpts.DualSenseSupportSettings);
+                    dataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions, AppSettings.Settings.DeviceOptions.DualSenseSupportSettings);
                     break;
                 case SwitchProControllerOptions _:
-                    dataContextObject = new SwitchProControllerOptionsWrapper(CurrentSwitchProOptions, serviceDeviceOpts.SwitchProSupportSettings);
+                    dataContextObject = new SwitchProControllerOptionsWrapper(CurrentSwitchProOptions, AppSettings.Settings.DeviceOptions.SwitchProSupportSettings);
                     break;
                 case JoyConControllerOptions _:
-                    dataContextObject = new JoyConControllerOptionsWrapper(CurrentJoyConOptions, serviceDeviceOpts.JoyConSupportSettings);
+                    dataContextObject = new JoyConControllerOptionsWrapper(CurrentJoyConOptions, AppSettings.Settings.DeviceOptions.JoyConSupportSettings);
                     break;
             }
         }
