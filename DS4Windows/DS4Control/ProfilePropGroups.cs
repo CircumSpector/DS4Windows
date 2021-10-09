@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Sensorit.Base;
 
 namespace DS4Windows
@@ -562,6 +563,9 @@ namespace DS4Windows
         Passthru,
     }
 
+    /// <summary>
+    ///     Lightbar-specific properties like colors etc.
+    /// </summary>
     public class LightbarDS4WinInfo
     {
         public bool UseCustomLed { get; set; }
@@ -572,11 +576,11 @@ namespace DS4Windows
 
         public DS4Color Led { get; set; }
 
-        public DS4Color LowLed { get; set; }
+        public DS4Color LowLed { get; set; } = new(Color.Black);
 
-        public DS4Color ChargingLed { get; set; }
+        public DS4Color ChargingLed { get; set; } = new(Color.Black);
 
-        public DS4Color FlashLed { get; set; }
+        public DS4Color FlashLed { get; set; } = new(Color.Black);
 
         public double Rainbow { get; set; }
 
@@ -589,6 +593,9 @@ namespace DS4Windows
         public int ChargingType { get; set; }
     }
 
+    /// <summary>
+    ///     Lightbar behaviour settings.
+    /// </summary>
     public class LightbarSettingInfo
     {
         private LightbarMode mode = LightbarMode.DS4Win;

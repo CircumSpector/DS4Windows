@@ -83,8 +83,6 @@ namespace DS4Windows
                     EstablishDefaultSpecialActions(i);
                     CacheExtraProfileInfo(i);
                 }
-
-                SetupDefaultColors();
             }
 
             private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
@@ -149,15 +147,6 @@ namespace DS4Windows
             public bool AutoProfileRevertDefaultProfile { get; set; } = true;
 
             public ulong LastVersionCheckedNumber { get; set; }
-
-            public IList<LightbarSettingInfo> LightbarSettingInfo { get; set; } = new List<LightbarSettingInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
 
             public IList<bool> SAMouseStickTriggerCond { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
@@ -612,26 +601,6 @@ namespace DS4Windows
                 _szOutCurveMode[index] = value;
             }
 
-            public DS4Color GetMainColor(int index)
-            {
-                return LightbarSettingInfo[index].Ds4WinSettings.Led;
-            }
-
-            public DS4Color GetLowColor(int index)
-            {
-                return LightbarSettingInfo[index].Ds4WinSettings.LowLed;
-            }
-
-            public DS4Color GetChargingColor(int index)
-            {
-                return LightbarSettingInfo[index].Ds4WinSettings.ChargingLed;
-            }
-
-            public DS4Color GetFlashColor(int index)
-            {
-                return LightbarSettingInfo[index].Ds4WinSettings.FlashLed;
-            }
-
             public string GetSATriggers(int index)
             {
                 return SATriggers[index];
@@ -675,11 +644,6 @@ namespace DS4Windows
             public GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)
             {
                 return GyroSwipeInfo[device];
-            }
-
-            public LightbarSettingInfo GetLightbarSettingsInfo(int index)
-            {
-                return LightbarSettingInfo[index];
             }
 
             public bool GetDirectInputOnly(int index)
@@ -3340,19 +3304,6 @@ namespace DS4Windows
                 }
             }
 
-            private void SetupDefaultColors()
-            {
-                LightbarSettingInfo[0].Ds4WinSettings.Led = new DS4Color(Color.Blue);
-                LightbarSettingInfo[1].Ds4WinSettings.Led = new DS4Color(Color.Red);
-                LightbarSettingInfo[2].Ds4WinSettings.Led = new DS4Color(Color.Green);
-                LightbarSettingInfo[3].Ds4WinSettings.Led = new DS4Color(Color.Pink);
-                LightbarSettingInfo[4].Ds4WinSettings.Led = new DS4Color(Color.Blue);
-                LightbarSettingInfo[5].Ds4WinSettings.Led = new DS4Color(Color.Red);
-                LightbarSettingInfo[6].Ds4WinSettings.Led = new DS4Color(Color.Green);
-                LightbarSettingInfo[7].Ds4WinSettings.Led = new DS4Color(Color.Pink);
-                LightbarSettingInfo[8].Ds4WinSettings.Led = new DS4Color(Color.White);
-            }
-
             private int AxisOutputCurveId(string name)
             {
                 return StickOutputCurveId(name);
@@ -3574,58 +3525,7 @@ namespace DS4Windows
                 RSOutputSettings[device].ResetSettings();
                 L2OutputSettings[device].ResetSettings();
                 R2OutputSettings[device].ResetSettings();
-
-                var lightbarSettings = LightbarSettingInfo[device];
-                var lightInfo = lightbarSettings.Ds4WinSettings;
-                lightbarSettings.Mode = LightbarMode.DS4Win;
-                lightInfo.LowLed = new DS4Color(Color.Black);
-                //m_LowLeds[device] = new DS4Color(Color.Black);
-
-                var tempColor = Color.Blue;
-                switch (device)
-                {
-                    case 0:
-                        tempColor = Color.Blue;
-                        break;
-                    case 1:
-                        tempColor = Color.Red;
-                        break;
-                    case 2:
-                        tempColor = Color.Green;
-                        break;
-                    case 3:
-                        tempColor = Color.Pink;
-                        break;
-                    case 4:
-                        tempColor = Color.Blue;
-                        break;
-                    case 5:
-                        tempColor = Color.Red;
-                        break;
-                    case 6:
-                        tempColor = Color.Green;
-                        break;
-                    case 7:
-                        tempColor = Color.Pink;
-                        break;
-                    case 8:
-                        tempColor = Color.White;
-                        break;
-                    default:
-                        tempColor = Color.Blue;
-                        break;
-                }
-
-                lightInfo.Led = new DS4Color(tempColor);
-                lightInfo.ChargingLed = new DS4Color(Color.Black);
-                lightInfo.FlashLed = new DS4Color(Color.Black);
-                lightInfo.FlashAt = 0;
-                lightInfo.FlashType = 0;
-                lightInfo.ChargingType = 0;
-                lightInfo.Rainbow = 0;
-                lightInfo.MaxRainbowSaturation = 1.0;
-                lightInfo.LedAsBattery = false;
-
+                
                 LaunchProgram[device] = string.Empty;
                 DirectInputOnly[device] = false;
                 StartTouchpadOff[device] = false;

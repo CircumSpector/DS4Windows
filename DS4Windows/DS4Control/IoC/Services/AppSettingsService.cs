@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using Force.DeepCloner;
 using Microsoft.Extensions.Logging;
@@ -55,6 +58,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class AppSettingsService : IAppSettingsService
     {
+        /// <summary>
+        ///     WARNING: only use as an intermediate solution where DI isn't yet applied!
+        /// </summary>
+        [IntermediateSolution]
+        public static IAppSettingsService Instance { get; private set; }
+
         private readonly IGlobalStateService global;
         private readonly ILogger<AppSettingsService> logger;
 
@@ -62,6 +71,26 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             this.logger = logger;
             this.global = global;
+
+            SetupDefaultColors();
+
+            Instance = this;
+        }
+
+        /// <summary>
+        ///     Set a different primary color for every controller slot by default.
+        /// </summary>
+        private void SetupDefaultColors()
+        {
+            Settings.LightbarSettingInfo[0].Ds4WinSettings.Led = new DS4Color(Color.Blue);
+            Settings.LightbarSettingInfo[1].Ds4WinSettings.Led = new DS4Color(Color.Red);
+            Settings.LightbarSettingInfo[2].Ds4WinSettings.Led = new DS4Color(Color.Green);
+            Settings.LightbarSettingInfo[3].Ds4WinSettings.Led = new DS4Color(Color.Pink);
+            Settings.LightbarSettingInfo[4].Ds4WinSettings.Led = new DS4Color(Color.Blue);
+            Settings.LightbarSettingInfo[5].Ds4WinSettings.Led = new DS4Color(Color.Red);
+            Settings.LightbarSettingInfo[6].Ds4WinSettings.Led = new DS4Color(Color.Green);
+            Settings.LightbarSettingInfo[7].Ds4WinSettings.Led = new DS4Color(Color.Pink);
+            Settings.LightbarSettingInfo[8].Ds4WinSettings.Led = new DS4Color(Color.White);
         }
 
         /// <summary>

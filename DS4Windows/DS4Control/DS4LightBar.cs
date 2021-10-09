@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using DS4WinWPF.DS4Control.IoC.Services;
 using OpenTracing.Util;
 using static System.Math;
 using static DS4Windows.Global;
@@ -83,7 +84,7 @@ namespace DS4Windows
 
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight[deviceNum];
-            var lightbarSettingInfo = Instance.Config.GetLightbarSettingsInfo(deviceNum);
+            var lightbarSettingInfo = AppSettingsService.Instance.Settings.LightbarSettingInfo[deviceNum];
             var lightModeInfo = lightbarSettingInfo.Ds4WinSettings;
             var useLightRoutine = lightbarSettingInfo.Mode == LightbarMode.DS4Win;
             //bool useLightRoutine = false;
@@ -137,7 +138,7 @@ namespace DS4Windows
                     }
                     else
                     {
-                        color = Instance.Config.GetMainColor(deviceNum);
+                        color = AppSettingsService.Instance.Settings.LightbarSettingInfo[deviceNum].Ds4WinSettings.Led;
                     }
                 }
 

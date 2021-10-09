@@ -1043,7 +1043,7 @@ namespace DS4Windows
 
                         if (profileLoaded || useAutoProfile)
                         {
-                            device.LightBarColor = Instance.Config.GetMainColor(i);
+                            device.LightBarColor = appSettings.Settings.LightbarSettingInfo[i].Ds4WinSettings.Led;
 
                             if (!Instance.Config.GetDirectInputOnly(i) && device.IsSynced())
                             {
@@ -1460,7 +1460,7 @@ namespace DS4Windows
 
                         if (profileLoaded || useAutoProfile)
                         {
-                            device.LightBarColor = Instance.Config.GetMainColor(Index);
+                            device.LightBarColor = appSettings.Settings.LightbarSettingInfo[Index].Ds4WinSettings.Led;
 
                             if (!Instance.Config.GetDirectInputOnly(Index) && device.IsSynced())
                             {
@@ -1554,7 +1554,7 @@ namespace DS4Windows
 
             device.RumbleAutostopTime = Instance.Config.GetRumbleAutostopTime(ind);
             device.SetRumble(0, 0);
-            device.LightBarColor = Instance.Config.GetMainColor(ind);
+            device.LightBarColor = appSettings.Settings.LightbarSettingInfo[ind].Ds4WinSettings.Led;
 
             if (!startUp) CheckLaunchProfileOption(ind, device);
         }
@@ -2073,7 +2073,7 @@ namespace DS4Windows
                 LogDebug(Resources.LatencyNotOverTen.Replace("*number*", (ind + 1).ToString()));
                 DS4LightBar.forcelight[ind] = false;
                 DS4LightBar.forcedFlash[ind] = 0;
-                device.LightBarColor = Instance.Config.GetMainColor(ind);
+                device.LightBarColor = appSettings.Settings.LightbarSettingInfo[ind].Ds4WinSettings.Led;
             }
         }
 

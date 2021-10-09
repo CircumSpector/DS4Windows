@@ -219,14 +219,6 @@ namespace DS4Windows
 
         int GetProfileActionIndexOf(int device, string name);
 
-        DS4Color GetMainColor(int index);
-
-        DS4Color GetLowColor(int index);
-
-        DS4Color GetChargingColor(int index);
-
-        DS4Color GetFlashColor(int index);
-
         int GetLsOutCurveMode(int index);
 
         void SetLsOutCurveMode(int index, int value);
@@ -268,8 +260,6 @@ namespace DS4Windows
         bool GetSATriggerCondition(int index);
 
         string GetSATriggers(int index);
-
-        LightbarSettingInfo GetLightbarSettingsInfo(int index);
 
         bool GetDirectInputOnly(int index);
 

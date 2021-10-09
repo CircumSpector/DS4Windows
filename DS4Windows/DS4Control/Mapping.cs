@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Properties;
 using OpenTracing.Util;
@@ -5719,7 +5720,7 @@ namespace DS4Windows
             {
                 // Re-calibration completed or cancelled. Set lightbar color back to normal color
                 DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcedColor[device] = Instance.Config.GetMainColor(device);
+                DS4LightBar.forcedColor[device] = AppSettingsService.Instance.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
                 DS4LightBar.forcelight[device] = false;
                 DS4LightBar.UpdateLightBar(controller, device);
             }
