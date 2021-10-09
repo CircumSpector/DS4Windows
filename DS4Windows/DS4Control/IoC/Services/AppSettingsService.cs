@@ -74,10 +74,19 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public event Action SettingsRefreshed;
 
+        /// <summary>
+        ///     Fired when UDP Smoothing Setting changed.
+        /// </summary>
         public event Action UdpSmoothMinCutoffChanged;
 
+        /// <summary>
+        ///     Fired when UDP Smoothing Setting changed.
+        /// </summary>
         public event Action UdpSmoothBetaChanged;
 
+        /// <summary>
+        ///     Fired when tracing to enabled or disabled.
+        /// </summary>
         public event Action<bool> IsTracingEnabledChanged;
 
         /// <summary>
