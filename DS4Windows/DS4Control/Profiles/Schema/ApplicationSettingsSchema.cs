@@ -171,6 +171,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// </summary>
         public bool IsTracingEnabled { get; set; }
 
+        public bool HasUserConfirmedSteamWarning { get; set; }
+
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }
 

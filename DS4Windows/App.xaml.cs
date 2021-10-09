@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -24,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
 using Serilog;
@@ -156,7 +158,7 @@ namespace DS4WinWPF
             CheckOptions(parser);
 
             if (exitApp) return;
-
+            
             ApplyOptimizations();
 
             #region Check for existing instance
@@ -288,7 +290,68 @@ namespace DS4WinWPF
             await rootHub.LoadPermanentSlotsConfig();
             window.LateChecks(parser);
 
+            CheckIsSteamRunning();
+
             base.OnStartup(e);
+        }
+
+        [MissingLocalization]
+        private void CheckIsSteamRunning()
+        {
+            if (appSettings.Settings.HasUserConfirmedSteamWarning)
+                return;
+
+            using var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Valve\\Steam\\ActiveProcess");
+
+            if (key?.GetValue("pid") is not int pid || pid == 0) return;
+
+            var messageBox = new MessageBoxModel
+            {
+                Text =
+                    "Hello, Gamer!" +
+                    "\r\n\r\nIt has been detected that Steam is running. "
+                    + $"\r\n\r\nSteam itself offers native support for many game controllers {Constants.ApplicationName} "
+                    + "supports, as well as the virtual controllers produced in the process. "
+                    + $"\r\n\r\nSteam can detect {Constants.ApplicationName} running and alters its behaviour to "
+                    + "to not interfere, but depending on your Steam and DS4Windows settings you can still suffer "
+                    +  "from remapping conflicts between the two. "
+                    + "\r\n\r\nIt is highly recommended that you seek aid in the online documentation for more details, "+
+                    "should you encounter issues."
+                    + "\r\n\r\nThanks for your attention ❤️",
+                Caption = "Steam is running",
+                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Buttons = new[]
+                {
+                    MessageBoxButtons.Custom("Show me what to do"),
+                    MessageBoxButtons.Yes("Understood")
+                },
+                CheckBoxes = new[]
+                {
+                    new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
+                    {
+                        IsChecked = false,
+                        Placement = MessageBoxCheckBoxPlacement.BelowText
+                    }
+                },
+                IsSoundEnabled = false
+            };
+
+            Current.Dispatcher.InvokeAsync(() =>
+            {
+                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
+
+                appSettings.Settings.HasUserConfirmedSteamWarning = messageBox.CheckBoxes.First().IsChecked;
+
+                if (messageBox.Result == AdonisUI.Controls.MessageBoxResult.Custom)
+                {
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = Constants.SteamTroubleshootingUri,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
+                }
+            });
         }
 
         private void RootHubOnDebug(object? sender, LogEntryEventArgs e)

@@ -37,5 +37,7 @@ namespace DS4Windows
         public static CultureInfo StorageCulture = new("en-US");
 
         public const string ChangelogUri = "https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/Changelog.min.json";
+
+        public const string SteamTroubleshootingUri = "https://docs.ds4windows.app/troubleshooting/steam-related/";
     }
 }
