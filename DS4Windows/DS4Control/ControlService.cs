@@ -339,6 +339,7 @@ namespace DS4Windows
             return false;
         }
 
+        [MissingLocalization]
         public void PrepareDs4DeviceInit(DS4Device device)
         {
             if (!IsWin8OrGreater) device.BTOutputMethod = DS4Device.BTOutputReportMethod.HidD_SetOutputReport;

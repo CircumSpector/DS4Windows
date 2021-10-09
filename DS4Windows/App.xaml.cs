@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using AdonisUI.Controls;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Forms;
@@ -234,38 +235,11 @@ namespace DS4WinWPF
             logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
             logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
             logger.LogInformation("Logger created");
-
+            
             //
             // Notify user if tracing is enabled
             // 
-            appSettings.Settings.IsTracingEnabledChanged += b =>
-            {
-                if (!b)
-                    return;
-
-                var messageBox = new MessageBoxModel
-                {
-                    Text =
-                        "Hello, Gamer!" +
-                        "\r\n\r\nYou have enabled Tracing in the application settings. This is an advanced feature useful for diagnosing "
-                        + "issues with lag or stutter and general remapping performance. "
-                        +"\r\n\r\nTracing is a very memory-hungry operation and requires additional software to be useful. "
-                        +"Do not leave Tracing enabled if you simply wanna play your games, it's for diagnostics only."
-                        +"\r\n\r\nThanks for your attention ❤️",
-                    Caption = "Performance Tracing is enabled",
-                    Icon = AdonisUI.Controls.MessageBoxImage.Warning,
-                    Buttons = new[]
-                    {
-                        MessageBoxButtons.Yes("Understood")
-                    },
-                    IsSoundEnabled = false
-                };
-
-                Current.Dispatcher.InvokeAsync(() =>
-                {
-                    AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
-                });
-            };
+            appSettings.IsTracingEnabledChanged += SettingsOnIsTracingEnabledChanged;
 
             var readAppConfig = await appSettings.LoadAsync();
             
@@ -316,6 +290,36 @@ namespace DS4WinWPF
             window.LateChecks(parser);
 
             base.OnStartup(e);
+        }
+
+        [MissingLocalization]
+        private void SettingsOnIsTracingEnabledChanged(bool obj)
+        {
+            if (!obj)
+                return;
+
+            var messageBox = new MessageBoxModel
+            {
+                Text =
+                    "Hello, Gamer!" +
+                    "\r\n\r\nYou have enabled Tracing in the application settings. This is an advanced feature useful for diagnosing "
+                    + "issues with lag or stutter and general remapping performance. "
+                    +"\r\n\r\nTracing is a very memory-hungry operation and requires additional software to be useful. "
+                    +"Do not leave Tracing enabled if you simply wanna play your games, it's for diagnostics only."
+                    +"\r\n\r\nThanks for your attention ❤️",
+                Caption = "Performance Tracing is enabled",
+                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Buttons = new[]
+                {
+                    MessageBoxButtons.Yes("Understood")
+                },
+                IsSoundEnabled = false
+            };
+
+            Current.Dispatcher.InvokeAsync(() =>
+            {
+                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
+            });
         }
 
         private static void ApplyOptimizations()

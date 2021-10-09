@@ -46,6 +46,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         event Action UdpSmoothMinCutoffChanged;
 
         event Action UdpSmoothBetaChanged;
+
+        event Action<bool> IsTracingEnabledChanged;
     }
 
     /// <summary>
@@ -75,6 +77,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         public event Action UdpSmoothMinCutoffChanged;
 
         public event Action UdpSmoothBetaChanged;
+
+        public event Action<bool> IsTracingEnabledChanged;
 
         /// <summary>
         ///     Persist the current settings to disk.
@@ -181,12 +185,16 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             settings.DeepCloneTo(Settings);
 
             //
-            // Proxy through change events
+            // Proxy through and invoke change events
             // 
             UdpSmoothMinCutoffChanged?.Invoke();
             Settings.UDPServerSmoothingOptions.MinCutoffChanged += () => UdpSmoothMinCutoffChanged?.Invoke();
+
             UdpSmoothBetaChanged?.Invoke();
             Settings.UDPServerSmoothingOptions.BetaChanged += () => UdpSmoothBetaChanged?.Invoke();
+
+            IsTracingEnabledChanged?.Invoke(Settings.IsTracingEnabled);
+            Settings.IsTracingEnabledChanged += b => IsTracingEnabledChanged?.Invoke(b);
 
             //
             // Always call last
