@@ -238,7 +238,7 @@ namespace DS4WinWPF
             //
             // Notify user if tracing is enabled
             // 
-            //appSettings.IsTracingEnabledChanged += SettingsOnIsTracingEnabledChanged;
+            appSettings.IsTracingEnabledChanged += SettingsOnIsTracingEnabledChanged;
 
             var readAppConfig = await appSettings.LoadAsync();
             
