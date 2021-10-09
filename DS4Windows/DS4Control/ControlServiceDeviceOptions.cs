@@ -63,11 +63,6 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DualSenseControllerOptions : ControllerOptionsStore
     {
-        public DualSenseControllerOptions()
-        {
-
-        }
-
         public enum LEDBarMode : ushort
         {
             Off,
