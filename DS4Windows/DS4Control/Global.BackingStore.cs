@@ -27,9 +27,6 @@ namespace DS4Windows
     {
         private class BackingStore : IBackingStore
         {
-            public const double DEFAULT_UDP_SMOOTH_MINCUTOFF = 0.4;
-            public const double DEFAULT_UDP_SMOOTH_BETA = 0.2;
-
             private readonly int[] _l2OutCurveMode = new int[TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
             private readonly int[] _lsOutCurveMode = new int[TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -468,8 +465,6 @@ namespace DS4Windows
                 { null, null, null, null, null, null, null, null, null };
 
             public string UseLang { get; set; } = string.Empty;
-
-            public bool DownloadLang { get; set; } = true;
 
             public string FakeExeFileName { get; set; } = string.Empty;
 
