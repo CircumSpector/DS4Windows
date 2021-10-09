@@ -856,6 +856,15 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I have understood and will not open a bug report about it.
+        /// </summary>
+        public static string NotAMoronConfirmationCheckbox {
+            get {
+                return ResourceManager.GetString("NotAMoronConfirmationCheckbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose the type of output virtual controller (Applies on profile save).
         /// </summary>
         public static string OutContNotice {

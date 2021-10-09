@@ -544,4 +544,7 @@ Example: whyme_DS4Windows</value>
   <data name="DS4LightbarPassthruDisabled" xml:space="preserve">
     <value>Feature currently disabled in app due to driver issues. Hopefully issues get fixed in a future update.</value>
   </data>
+  <data name="NotAMoronConfirmationCheckbox" xml:space="preserve">
+    <value>I have understood and will not open a bug report about it</value>
+  </data>
 </root>

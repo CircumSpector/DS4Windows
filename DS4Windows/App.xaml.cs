@@ -323,7 +323,7 @@ namespace DS4WinWPF
                 },
                 CheckBoxes = new[]
                 {
-                    new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
+                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
                     {
                         IsChecked = false,
                         Placement = MessageBoxCheckBoxPlacement.BelowText
@@ -372,7 +372,7 @@ namespace DS4WinWPF
                 },
                 CheckBoxes = new[]
                 {
-                    new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
+                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
                     {
                         IsChecked = false,
                         Placement = MessageBoxCheckBoxPlacement.BelowText

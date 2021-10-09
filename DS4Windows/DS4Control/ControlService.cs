@@ -440,7 +440,7 @@ namespace DS4Windows
                         },
                         CheckBoxes = new[]
                         {
-                            new MessageBoxCheckBoxModel("I have understood and will not open a bug report about it")
+                            new MessageBoxCheckBoxModel(DS4WinWPF.Translations.Strings.NotAMoronConfirmationCheckbox)
                             {
                                 IsChecked = false,
                                 Placement = MessageBoxCheckBoxPlacement.BelowText

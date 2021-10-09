@@ -435,4 +435,7 @@ Beispiel: whyme_DS4Windows</value>
   <data name="RealWorldCalibration" xml:space="preserve">
     <value>Echtwelt-Kalibrierung</value>
   </data>
+  <data name="NotAMoronConfirmationCheckbox" xml:space="preserve">
+    <value>Ich habe verstanden und werde die Autoren nicht belästigen</value>
+  </data>
 </root>
