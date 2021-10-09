@@ -141,6 +141,7 @@ namespace DS4WinWPF
 
             logger = host.Services.GetRequiredService<ILogger<App>>();
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
+            var appLogger = host.Services.GetRequiredService<AppLogger>();
 
             var parser = (CommandLineOptions)host.Services.GetRequiredService<ICommandLineOptions>();
 
