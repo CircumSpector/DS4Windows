@@ -90,7 +90,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             Settings.LightbarSettingInfo[5].Ds4WinSettings.Led = new DS4Color(Color.Red);
             Settings.LightbarSettingInfo[6].Ds4WinSettings.Led = new DS4Color(Color.Green);
             Settings.LightbarSettingInfo[7].Ds4WinSettings.Led = new DS4Color(Color.Pink);
-            Settings.LightbarSettingInfo[8].Ds4WinSettings.Led = new DS4Color(Color.White);
         }
 
         /// <summary>
