@@ -4,6 +4,9 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
 {
+    /// <summary>
+    ///     Type used to transparently deserialize legacy XML structure.
+    /// </summary>
     public sealed class CustomLedProxyType
     {
         public bool IsEnabled { get; set; }
@@ -12,7 +15,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
     }
 
     /// <summary>
-    ///     (de-)serializes <see cref="CustomLedProxyType"/> types.
+    ///     (De-)serializes <see cref="CustomLedProxyType"/> types.
     /// </summary>
     internal sealed class CustomLedConverter : ConverterBase<CustomLedProxyType>
     {

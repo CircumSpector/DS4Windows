@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
@@ -10,6 +13,21 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     [XmlRoot(ElementName = "Profile")]
     public partial class DS4WindowsAppSettings
     {
+        private readonly IList<LightbarSettingInfo> lightbarSettings =
+            new List<LightbarSettingInfo>(Enumerable.Range(0, 8).Select(i => new LightbarSettingInfo()));
+
+        public DS4WindowsAppSettings()
+        {
+        }
+
+        public DS4WindowsAppSettings(IBackingStore store, string appVersion, int configVersion)
+        {
+            AppVersion = appVersion;
+            ConfigVersion = configVersion;
+
+            CopyFrom(store);
+        }
+
         [XmlElement(ElementName = "useExclusiveMode")]
         public bool UseExclusiveMode { get; set; }
 
@@ -30,6 +48,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         [XmlElement(ElementName = "formLocationY")]
         public int FormLocationY { get; set; }
+
+        [XmlIgnore]
+        private IReadOnlyList<LightbarSettingInfo> LightbarSettingInfo => lightbarSettings.ToImmutableList();
 
         [XmlElement(ElementName = "Controller1")]
         public string Controller1 { get; set; } = string.Empty;
@@ -79,7 +100,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlElement(ElementName = "CloseMinimizes")]
         public bool CloseMinimizes { get; set; }
 
-        [XmlElement(ElementName = "UseLang")]
+        [XmlElement(ElementName = "UseLang")] 
         public string UseLang { get; set; }
 
         [XmlElement(ElementName = "DownloadLang")]
@@ -146,7 +167,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public CustomLedProxyType CustomLed8 { get; set; } = new();
 
         /// <summary>
-        ///     If true, Jaeger Tracing will be enabled to start collecting performance metrics.
+        ///     If true, Tracing will be enabled to start collecting performance metrics.
         /// </summary>
         public bool IsTracingEnabled { get; set; }
 
@@ -155,17 +176,5 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         [XmlAttribute(AttributeName = "config_version")]
         public int ConfigVersion { get; set; }
-
-        public DS4WindowsAppSettings()
-        {
-        }
-
-        public DS4WindowsAppSettings(IBackingStore store, string appVersion, int configVersion)
-        {
-            AppVersion = appVersion;
-            ConfigVersion = configVersion;
-
-            CopyFrom(store);
-        }
     }
 }
