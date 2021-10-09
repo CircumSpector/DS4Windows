@@ -136,9 +136,9 @@ namespace DS4WinWPF.DS4Forms
                 ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
 
             autoProfileHolder = autoProfControl.AutoProfileHolder;
-            autoProfControl.SetupDataContext(profileListHolder);
+            autoProfControl.SetupDataContext(appSettings, profileListHolder);
 
-            autoprofileChecker = new AutoProfileChecker(controlService, autoProfileHolder);
+            autoprofileChecker = new AutoProfileChecker(appSettings, controlService, autoProfileHolder);
 
             slotManControl.SetupDataContext(controlService: rootHub,
                 rootHub.OutputslotMan);

@@ -116,8 +116,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             // TODO: improve this conversion mess
             LastVersionChecked = store.LastVersionCheckedNumber.ToString();
             UseLang = store.UseLang;
-
-            AutoProfileRevertDefaultProfile = store.AutoProfileRevertDefaultProfile;
         }
 
         /// <summary>
@@ -151,8 +149,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 : Global.CompileVersionNumberFromString(LastVersionChecked);
 
             store.UseLang = UseLang;
-
-            store.AutoProfileRevertDefaultProfile = AutoProfileRevertDefaultProfile;
         }
     }
 }

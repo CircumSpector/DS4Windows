@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.ComponentModel;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using Ookii.Dialogs.Wpf;
 using DS4WinWPF.DS4Forms.ViewModels;
 using Microsoft.Win32;
@@ -61,9 +62,9 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        public void SetupDataContext(ProfileList profileList)
+        public void SetupDataContext(IAppSettingsService appSettings, ProfileList profileList)
         {
-            autoProfVM = new AutoProfilesViewModel(autoProfileHolder, profileList);
+            autoProfVM = new AutoProfilesViewModel(appSettings, autoProfileHolder, profileList);
             programListLV.DataContext = autoProfVM;
             programListLV.ItemsSource = autoProfVM.ProgramColl;
             

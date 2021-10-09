@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging; // StopWatch
 // Sleep
 
@@ -27,8 +28,11 @@ namespace DS4WinWPF
 
         private readonly ControlService rootHub;
 
-        public AutoProfileChecker(ControlService service, AutoProfileHolder holder)
+        private readonly IAppSettingsService appSettings;
+
+        public AutoProfileChecker(IAppSettingsService appSettings, ControlService service, AutoProfileHolder holder)
         {
+            this.appSettings = appSettings;
             rootHub = service;
             profileHolder = holder;
         }
@@ -123,7 +127,7 @@ namespace DS4WinWPF
                 }
                 else if (tempAutoProfile != null)
                 {
-                    if (turnOffTemp && Global.Instance.Config.AutoProfileRevertDefaultProfile)
+                    if (turnOffTemp && appSettings.Settings.AutoProfileRevertDefaultProfile)
                     {
                         turnOffTemp = false;
                         if (!rootHub.IsRunning)
@@ -141,7 +145,7 @@ namespace DS4WinWPF
                     for (var j = 0; j < ControlService.CURRENT_DS4_CONTROLLER_LIMIT; j++)
                         if (Global.UseTempProfiles[j])
                         {
-                            if (Global.Instance.Config.AutoProfileRevertDefaultProfile)
+                            if (appSettings.Settings.AutoProfileRevertDefaultProfile)
                             {
                                 if (AutoProfileDebugLogLevel > 0)
                                     AppLogger.Instance.LogToGui(

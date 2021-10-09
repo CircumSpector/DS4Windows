@@ -179,8 +179,6 @@ namespace DS4Windows
 
         IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
 
-        bool AutoProfileRevertDefaultProfile { get; set; }
-
         IList<GyroOutMode> GyroOutputMode { get; set; }
 
         IList<bool> GyroMouseStickTriggerTurns { get; set; }

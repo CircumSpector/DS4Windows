@@ -13,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -26,8 +27,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private readonly HashSet<string> existingapps;
         private ProgramItem selectedItem;
 
-        public AutoProfilesViewModel(AutoProfileHolder autoProfileHolder, ProfileList profileList)
+        private readonly IAppSettingsService appSettings;
+
+        public AutoProfilesViewModel(IAppSettingsService appSettings, AutoProfileHolder autoProfileHolder, ProfileList profileList)
         {
+            this.appSettings = appSettings;
             ProgramColl = new ObservableCollection<ProgramItem>();
             existingapps = new HashSet<string>();
             AutoProfileHolder = autoProfileHolder;
@@ -57,8 +61,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool RevertDefaultProfileOnUnknown
         {
-            get => Global.Instance.Config.AutoProfileRevertDefaultProfile;
-            set => Global.Instance.Config.AutoProfileRevertDefaultProfile = value;
+            get => appSettings.Settings.AutoProfileRevertDefaultProfile;
+            set => appSettings.Settings.AutoProfileRevertDefaultProfile = value;
         }
 
         public bool UsingExpandedControllers => ControlService.USING_MAX_CONTROLLERS;
