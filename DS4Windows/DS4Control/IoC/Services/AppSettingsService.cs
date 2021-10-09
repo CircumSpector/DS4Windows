@@ -92,8 +92,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             try
             {
                 await using var stream = File.Open(path, FileMode.Create);
-
-                await Settings.SerializeAsync(stream);
+                
+                await Settings.PreSerialization().SerializeAsync(stream);
 
                 return true;
             }
@@ -116,7 +116,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             {
                 using var stream = File.Open(path, FileMode.Create);
 
-                Settings.Serialize(stream);
+                Settings.PreSerialization().Serialize(stream);
 
                 return true;
             }
@@ -168,7 +168,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             using var stream = File.OpenRead(path);
 
             var settings = DS4WindowsAppSettings.Deserialize(stream);
-
+            
             PostLoadActions(settings);
 
             return true;
@@ -179,6 +179,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         private void PostLoadActions(DS4WindowsAppSettings settings)
         {
+            settings.PostDeserialization();
+
             //
             // Update all properties without breaking existing references
             // 
