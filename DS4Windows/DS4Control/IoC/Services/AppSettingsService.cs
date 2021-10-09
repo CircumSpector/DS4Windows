@@ -38,6 +38,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="path">The absolute path to the XML file to read from.</param>
         bool Load(string path = null);
 
+        /// <summary>
+        ///     Fired when the <see cref="Settings"/> have been reloaded from disk.
+        /// </summary>
+        event Action SettingsRefreshed;
+
         event Action UdpSmoothMinCutoffChanged;
 
         event Action UdpSmoothBetaChanged;
@@ -61,6 +66,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Holds global application settings persisted to disk.
         /// </summary>
         public DS4WindowsAppSettings Settings { get; } = new();
+
+        /// <summary>
+        ///     Fired when the <see cref="Settings"/> have been reloaded from disk.
+        /// </summary>
+        public event Action SettingsRefreshed;
 
         public event Action UdpSmoothMinCutoffChanged;
 
@@ -177,6 +187,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             Settings.UDPServerSmoothingOptions.MinCutoffChanged += () => UdpSmoothMinCutoffChanged?.Invoke();
             UdpSmoothBetaChanged?.Invoke();
             Settings.UDPServerSmoothingOptions.BetaChanged += () => UdpSmoothBetaChanged?.Invoke();
+
+            //
+            // Always call last
+            // 
+            SettingsRefreshed?.Invoke();
         }
     }
 }
