@@ -21,8 +21,6 @@ namespace DS4Windows
 
         string UseLang { get; set; }
 
-        bool DownloadLang { get; set; }
-
         IList<string> LaunchProgram { get; set; }
 
         IList<string> ProfilePath { get; set; }
