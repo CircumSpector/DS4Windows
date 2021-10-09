@@ -14,7 +14,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     public partial class DS4WindowsAppSettings
     {
         private readonly IList<LightbarSettingInfo> lightbarSettings =
-            new List<LightbarSettingInfo>(Enumerable.Range(0, 8).Select(i => new LightbarSettingInfo()));
+            new List<LightbarSettingInfo>(Enumerable.Range(0, 9).Select(i => new LightbarSettingInfo()));
 
         public DS4WindowsAppSettings()
         {
