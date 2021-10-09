@@ -2283,10 +2283,7 @@ namespace DS4Windows
         [LoggingComponent]
         public virtual void LogDebug(string data, bool isWarning = false)
         {
-            //Console.WriteLine(System.DateTime.Now.ToString("G") + "> " + Data);
-            if (Debug == null) return;
-            var args = new LogEntryEventArgs(data, isWarning);
-            OnDebug(this, args);
+            OnDebug(this, new LogEntryEventArgs(data, isWarning));
         }
 
         [LoggingComponent]

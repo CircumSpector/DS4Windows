@@ -81,12 +81,18 @@ namespace DS4WinWPF
 
             var lc = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
-                .WriteTo.SerilogInMemorySink()
+#if DEBUG
+                .MinimumLevel.Debug()
+#endif
                 .CreateLogger();
 
             services.AddLogging(builder =>
             {
+#if DEBUG
+                builder.SetMinimumLevel(LogLevel.Debug);
+#else
                 builder.SetMinimumLevel(LogLevel.Information);
+#endif
                 builder.AddSerilog(lc, true);
             });
 
@@ -188,6 +194,8 @@ namespace DS4WinWPF
 
             rootHub = host.Services.GetRequiredService<ControlService>();
 
+            rootHub.Debug += RootHubOnDebug; 
+
             //
             // TODO: I wonder why this was done...
             // 
@@ -281,6 +289,11 @@ namespace DS4WinWPF
             window.LateChecks(parser);
 
             base.OnStartup(e);
+        }
+
+        private void RootHubOnDebug(object? sender, LogEntryEventArgs e)
+        {
+            logger.LogDebug(e.Data);
         }
 
         [MissingLocalization]
