@@ -32,8 +32,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [IntermediateSolution]
         public void CopyFrom(IBackingStore store)
         {
-            UseExclusiveMode = store.UseExclusiveMode;
-
             for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
             {
                 var value = !Global.LinkedProfileCheck[i] ? store.ProfilePath[i] : store.OlderProfilePath[i];
@@ -100,8 +98,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [IntermediateSolution]
         public void CopyTo(IBackingStore store)
         {
-            store.UseExclusiveMode = UseExclusiveMode;
-
             for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
             {
                 var value = (string)GetType().GetProperty($"Controller{i + 1}")?.GetValue(this, null);

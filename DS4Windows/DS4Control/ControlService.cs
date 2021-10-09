@@ -913,7 +913,7 @@ namespace DS4Windows
                 LogDebug($"Using output KB+M handler: {outputKBMHandler.GetFullDisplayName()}");
                 LogDebug($"Connection to ViGEmBus {ViGEmBusVersion} established");
 
-                DS4Devices.isExclusiveMode = Instance.Config.UseExclusiveMode; //Re-enable Exclusive Mode
+                DS4Devices.isExclusiveMode = appSettings.Settings.UseExclusiveMode; //Re-enable Exclusive Mode
 
                 UpdateHidHiddenAttributes();
 

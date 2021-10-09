@@ -187,8 +187,6 @@ namespace DS4Windows
 
         IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
 
-        bool UseExclusiveMode { get; set; }
-
         bool AutoProfileRevertDefaultProfile { get; set; }
 
         IList<GyroOutMode> GyroOutputMode { get; set; }

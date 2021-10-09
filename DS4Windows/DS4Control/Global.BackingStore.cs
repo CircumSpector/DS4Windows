@@ -153,8 +153,6 @@ namespace DS4Windows
 
             public ulong LastVersionCheckedNumber { get; set; }
 
-            public bool UseExclusiveMode { get; set; } // Re-enable Ex Mode
-
             public IList<LightbarSettingInfo> LightbarSettingInfo { get; set; } = new List<LightbarSettingInfo>
             {
                 new(), new(),
