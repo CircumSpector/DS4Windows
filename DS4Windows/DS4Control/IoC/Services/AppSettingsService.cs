@@ -42,7 +42,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         bool Load(string path = null);
 
         /// <summary>
-        ///     Fired when the <see cref="Settings"/> have been reloaded from disk.
+        ///     Fired when the <see cref="Settings" /> have been reloaded from disk.
         /// </summary>
         event Action SettingsRefreshed;
 
@@ -67,12 +67,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class AppSettingsService : IAppSettingsService
     {
-        /// <summary>
-        ///     WARNING: only use as an intermediate solution where DI isn't yet applied!
-        /// </summary>
-        [IntermediateSolution]
-        public static IAppSettingsService Instance { get; private set; }
-
         private readonly IGlobalStateService global;
         private readonly ILogger<AppSettingsService> logger;
 
@@ -87,19 +81,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Set a different primary color for every controller slot by default.
+        ///     WARNING: only use as an intermediate solution where DI isn't yet applied!
         /// </summary>
-        private void SetupDefaultColors()
-        {
-            Settings.LightbarSettingInfo[0].Ds4WinSettings.Led = new DS4Color(Color.Blue);
-            Settings.LightbarSettingInfo[1].Ds4WinSettings.Led = new DS4Color(Color.Red);
-            Settings.LightbarSettingInfo[2].Ds4WinSettings.Led = new DS4Color(Color.Green);
-            Settings.LightbarSettingInfo[3].Ds4WinSettings.Led = new DS4Color(Color.Pink);
-            Settings.LightbarSettingInfo[4].Ds4WinSettings.Led = new DS4Color(Color.Blue);
-            Settings.LightbarSettingInfo[5].Ds4WinSettings.Led = new DS4Color(Color.Red);
-            Settings.LightbarSettingInfo[6].Ds4WinSettings.Led = new DS4Color(Color.Green);
-            Settings.LightbarSettingInfo[7].Ds4WinSettings.Led = new DS4Color(Color.Pink);
-        }
+        [IntermediateSolution]
+        public static IAppSettingsService Instance { get; private set; }
 
         /// <summary>
         ///     Holds global application settings persisted to disk.
@@ -107,7 +92,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         public DS4WindowsAppSettings Settings { get; } = new();
 
         /// <summary>
-        ///     Fired when the <see cref="Settings"/> have been reloaded from disk.
+        ///     Fired when the <see cref="Settings" /> have been reloaded from disk.
         /// </summary>
         public event Action SettingsRefreshed;
 
@@ -138,7 +123,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             try
             {
                 await using var stream = File.Open(path, FileMode.Create);
-                
+
                 await Settings.PreSerialization().SerializeAsync(stream);
 
                 return true;
@@ -214,14 +199,29 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             using var stream = File.OpenRead(path);
 
             var settings = DS4WindowsAppSettings.Deserialize(stream);
-            
+
             PostLoadActions(settings);
 
             return true;
         }
 
         /// <summary>
-        ///     Updates <see cref="Settings"/> and re-hooks changed events.
+        ///     Set a different primary color for every controller slot by default.
+        /// </summary>
+        private void SetupDefaultColors()
+        {
+            Settings.LightbarSettingInfo[0].Ds4WinSettings.Led = new DS4Color(Color.Blue);
+            Settings.LightbarSettingInfo[1].Ds4WinSettings.Led = new DS4Color(Color.Red);
+            Settings.LightbarSettingInfo[2].Ds4WinSettings.Led = new DS4Color(Color.Green);
+            Settings.LightbarSettingInfo[3].Ds4WinSettings.Led = new DS4Color(Color.Pink);
+            Settings.LightbarSettingInfo[4].Ds4WinSettings.Led = new DS4Color(Color.Blue);
+            Settings.LightbarSettingInfo[5].Ds4WinSettings.Led = new DS4Color(Color.Red);
+            Settings.LightbarSettingInfo[6].Ds4WinSettings.Led = new DS4Color(Color.Green);
+            Settings.LightbarSettingInfo[7].Ds4WinSettings.Led = new DS4Color(Color.Pink);
+        }
+
+        /// <summary>
+        ///     Updates <see cref="Settings" /> and re-hooks changed events.
         /// </summary>
         private void PostLoadActions(DS4WindowsAppSettings settings)
         {
