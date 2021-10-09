@@ -29,6 +29,66 @@ using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
 
 namespace DS4Windows
 {
+    public interface IControlService
+    {
+        event EventHandler<LogEntryEventArgs> Debug;
+        event EventHandler ServiceStarted;
+        event EventHandler PreServiceStop;
+        event EventHandler ServiceStopped;
+        event EventHandler RunningChanged;
+        event ControlService.HotplugControllerHandler HotplugController;
+        Dispatcher EventDispatcher { get; }
+        IOutputSlotManager OutputslotMan { get; }
+        IAppSettingsService GetAppSettings();
+        void PostDs4DeviceInit(DS4Device device);
+        bool CheckForSupportedDevice(HidDevice device, VidPidInfo metaInfo);
+        void PrepareDs4DeviceInit(DS4Device device);
+        CheckVirtualInfo CheckForVirtualDevice(string deviceInstanceId);
+        void ShutDown();
+        Task LoadPermanentSlotsConfig();
+        void ChangeMotionEventStatus(bool state);
+        void AssignInitialDevices();
+
+        void EstablishOutFeedback(int index, OutContType contType,
+            OutputDevice outDevice, DS4Device device);
+
+        void RemoveOutFeedback(OutContType contType, OutputDevice outDevice, int inIdx);
+        void AttachNewUnboundOutDev(OutContType contType);
+        void AttachUnboundOutDev(OutSlotDevice slotDevice, OutContType contType);
+        void DetachUnboundOutDev(OutSlotDevice slotDevice);
+        void PluginOutDev(int index, DS4Device device);
+        void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false);
+        Task<bool> Start(bool showInLog = true);
+        void PrepareAbort();
+        bool Stop(bool showInLog = true, bool immediateUnplug = false);
+        Task<bool> HotPlug();
+        void CheckProfileOptions(int ind, DS4Device device, bool startUp = false);
+        void TouchPadOn(int ind, DS4Device device);
+        string GetDs4Battery(int index);
+        string getDS4Status(int index);
+        void LagFlashWarning(DS4Device device, int ind, bool on);
+        DS4Controls GetActiveInputControl(int ind);
+        void StartTPOff(int deviceID);
+        string TouchpadSlide(int ind);
+        void LogDebug(string data, bool isWarning = false);
+        void OnDebug(object sender, LogEntryEventArgs args);
+        void SetRumble(byte heavyMotor, byte lightMotor, int deviceNum);
+
+        void SetDevRumble(DS4Device device,
+            byte heavyMotor, byte lightMotor, int deviceNum);
+
+        DS4State GetDs4State(int ind);
+        DS4State GetDs4StateMapped(int ind);
+        DS4State GetDs4StateTemp(int ind);
+        void UseUDPPort();
+        void ResetUdpSmoothingFilters(int idx);
+        void ChangeUDPStatus(bool state, bool openPort = true);
+        void RefreshOutputKBMHandler();
+        void CheckHidHidePresence();
+        void UpdateHidHideAttributes();
+        void UpdateHidHiddenAttributes();
+    }
+
     public partial class ControlService
     {
         /// <summary>
