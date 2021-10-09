@@ -32,10 +32,15 @@ namespace DS4WinWPF.DS4Control.Logging
         public AppLogger(ILogger<AppLogger> logger)
         {
             this.logger = logger;
+
+            Instance = this;
         }
 
+        /// <summary>
+        ///     TODO: intermediate hack until DI is propagated throughout all classes
+        /// </summary>
         [IntermediateSolution]
-        public static AppLogger Instance { get; set; }
+        public static AppLogger Instance { get; private set; }
 
         public event EventHandler<LogEntryEventArgs> NewTrayAreaLog;
 

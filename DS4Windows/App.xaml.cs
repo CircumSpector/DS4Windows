@@ -139,11 +139,6 @@ namespace DS4WinWPF
             // 
             requestClient = new HttpClient();
 
-            //
-            // TODO: intermediate hack until DI is propagated throughout all classes
-            // 
-            AppLogger.Instance = host.Services.GetRequiredService<AppLogger>();
-
             logger = host.Services.GetRequiredService<ILogger<App>>();
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
 
