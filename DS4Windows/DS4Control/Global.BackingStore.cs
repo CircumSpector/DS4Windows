@@ -471,10 +471,6 @@ namespace DS4Windows
 
             public bool DownloadLang { get; set; } = true;
 
-            public bool UseCustomSteamFolder { get; set; }
-
-            public string CustomSteamFolder { get; set; }
-
             public string FakeExeFileName { get; set; } = string.Empty;
 
             // Cache whether profile has custom action

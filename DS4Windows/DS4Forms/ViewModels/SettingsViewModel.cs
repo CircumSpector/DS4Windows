@@ -240,31 +240,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
         public event EventHandler UdpSmoothBetaChanged;
 
-        public bool UseCustomSteamFolder
-        {
-            get => DS4Windows.Global.Instance.Config.UseCustomSteamFolder;
-            set
-            {
-                DS4Windows.Global.Instance.Config.UseCustomSteamFolder = value;
-                UseCustomSteamFolderChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler UseCustomSteamFolderChanged;
-
-        public string CustomSteamFolder
-        {
-            get => DS4Windows.Global.Instance.Config.CustomSteamFolder;
-            set
-            {
-                string temp = DS4Windows.Global.Instance.Config.CustomSteamFolder;
-                if (temp == value) return;
-                if (Directory.Exists(value) || value == string.Empty)
-                {
-                    DS4Windows.Global.Instance.Config.CustomSteamFolder = value;
-                }
-            }
-        }
-
         private bool viewEnabled = true;
         public bool ViewEnabled
         {

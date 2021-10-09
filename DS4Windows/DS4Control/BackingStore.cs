@@ -15,8 +15,6 @@ namespace DS4Windows
 
         string ControllerConfigsPath { get; set; }
 
-        string CustomSteamFolder { get; set; }
-
         IList<OutContType> OutputDeviceType { get; set; }
         
         bool Ds4Mapping { get; set; }
@@ -24,8 +22,6 @@ namespace DS4Windows
         string UseLang { get; set; }
 
         bool DownloadLang { get; set; }
-
-        bool UseCustomSteamFolder { get; set; }
 
         IList<string> LaunchProgram { get; set; }
 

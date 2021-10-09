@@ -42,9 +42,6 @@ namespace DS4WinWPF.DS4Forms
 
             //LoadP();
 
-            if (Global.Instance.Config.UseCustomSteamFolder &&
-                Directory.Exists(Global.Instance.Config.CustomSteamFolder))
-                steamgamesdir = Global.Instance.Config.CustomSteamFolder;
             else if (Directory.Exists(steamCommx86Loc))
                 steamgamesdir = steamCommx86Loc;
             else if (Directory.Exists(steamCommLoc))

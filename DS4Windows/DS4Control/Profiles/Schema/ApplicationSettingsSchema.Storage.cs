@@ -118,9 +118,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             UseLang = store.UseLang;
             DownloadLang = store.DownloadLang;
 
-            UseCustomSteamFolder = store.UseCustomSteamFolder;
-            CustomSteamFolder = store.CustomSteamFolder;
-
             AutoProfileRevertDefaultProfile = store.AutoProfileRevertDefaultProfile;
         }
 
@@ -156,9 +153,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             store.UseLang = UseLang;
             store.DownloadLang = DownloadLang;
-
-            store.UseCustomSteamFolder = UseCustomSteamFolder;
-            store.CustomSteamFolder = CustomSteamFolder;
 
             store.AutoProfileRevertDefaultProfile = AutoProfileRevertDefaultProfile;
         }
