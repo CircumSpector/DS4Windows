@@ -358,7 +358,7 @@ namespace DS4WinWPF
                     + $"\r\n\r\nSteam itself offers native support for many game controllers {Constants.ApplicationName} "
                     + "supports, as well as the virtual controllers produced in the process. "
                     + $"\r\n\r\nSteam can detect {Constants.ApplicationName} running and alters its behaviour to "
-                    + "to not interfere, but depending on your Steam and DS4Windows settings you can still suffer "
+                    + "not interfere, but depending on your Steam and DS4Windows settings you can still suffer "
                     +  "from remapping conflicts between the two. "
                     + "\r\n\r\nIt is highly recommended that you seek aid in the online documentation for more details, "+
                     "should you encounter issues."
