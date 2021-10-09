@@ -92,8 +92,6 @@ namespace DS4Windows
         private bool hidDeviceHidingForced;
         private bool hidDeviceHidingEnabled;
 
-        public DeviceOptions DeviceOptions { get; }
-
         private readonly ICommandLineOptions cmdParser;
 
         public event EventHandler ServiceStarted;
@@ -197,7 +195,6 @@ namespace DS4Windows
             }
 
             OutputslotMan = osl;
-            DeviceOptions = appSettings.Settings.DeviceOptions;
 
             DS4Devices.RequestElevation += DS4Devices_RequestElevation;
             DS4Devices.checkVirtualFunc = CheckForVirtualDevice;
@@ -287,7 +284,7 @@ namespace DS4Windows
         {
             if (device.DeviceType is not (InputDeviceType.JoyConL or InputDeviceType.JoyConR)) return;
 
-            if (DeviceOptions.JoyConSupportSettings.LinkedMode != JoyConDeviceOptions.LinkMode.Joined) return;
+            if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode != JoyConDeviceOptions.LinkMode.Joined) return;
 
             var tempJoyDev = device as JoyConDevice;
             tempJoyDev.PerformStateMerge = true;
@@ -295,13 +292,13 @@ namespace DS4Windows
             if (device.DeviceType == InputDeviceType.JoyConL)
             {
                 tempJoyDev.PrimaryDevice = true;
-                tempJoyDev.OutputMapGyro = DeviceOptions.JoyConSupportSettings.JoinGyroProv ==
+                tempJoyDev.OutputMapGyro = appSettings.Settings.DeviceOptions.JoyConSupportSettings.JoinGyroProv ==
                                            JoyConDeviceOptions.JoinedGyroProvider.JoyConL;
             }
             else
             {
                 tempJoyDev.PrimaryDevice = false;
-                tempJoyDev.OutputMapGyro = DeviceOptions.JoyConSupportSettings.JoinGyroProv ==
+                tempJoyDev.OutputMapGyro = appSettings.Settings.DeviceOptions.JoyConSupportSettings.JoinGyroProv ==
                                            JoyConDeviceOptions.JoinedGyroProvider.JoyConR;
             }
         }
@@ -326,25 +323,20 @@ namespace DS4Windows
 
         public bool CheckForSupportedDevice(HidDevice device, VidPidInfo metaInfo)
         {
-            var result = false;
             switch (metaInfo.InputDevType)
             {
                 case InputDeviceType.DS4:
-                    result = DeviceOptions.DS4SupportSettings.Enabled;
-                    break;
+                    return appSettings.Settings.DeviceOptions.DS4SupportSettings.Enabled;
                 case InputDeviceType.DualSense:
-                    result = DeviceOptions.DualSenseSupportSettings.Enabled;
-                    break;
+                    return appSettings.Settings.DeviceOptions.DualSenseSupportSettings.Enabled;
                 case InputDeviceType.SwitchPro:
-                    result = DeviceOptions.SwitchProSupportSettings.Enabled;
-                    break;
+                    return appSettings.Settings.DeviceOptions.SwitchProSupportSettings.Enabled;
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
-                    result = DeviceOptions.JoyConSupportSettings.Enabled;
-                    break;
+                    return appSettings.Settings.DeviceOptions.JoyConSupportSettings.Enabled;
             }
 
-            return result;
+            return false;
         }
 
         public void PrepareDs4DeviceInit(DS4Device device)
@@ -1028,7 +1020,7 @@ namespace DS4Windows
 
                         PrepareDs4DeviceSettingHooks(device);
 
-                        if (DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
+                        if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
                             if (device.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR && device.PerformStateMerge)
                             {
                                 if (tempPrimaryJoyDev == null)
@@ -1377,7 +1369,7 @@ namespace DS4Windows
             JoyConDevice tempPrimaryJoyDev = null;
             JoyConDevice tempSecondaryJoyDev = null;
 
-            if (DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
+            if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
             {
                 tempPrimaryJoyDev = devices.FirstOrDefault(d =>
                     d.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR
@@ -1432,7 +1424,7 @@ namespace DS4Windows
 
                         PrepareDs4DeviceSettingHooks(device);
 
-                        if (DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
+                        if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
                             if (device.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR && device.PerformStateMerge)
                             {
                                 switch (device.PrimaryDevice)
