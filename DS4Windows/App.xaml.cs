@@ -188,11 +188,6 @@ namespace DS4WinWPF
             rootHub = host.Services.GetRequiredService<ControlService>();
 
             //
-            // TODO: intermediate hack until DI is propagated throughout all classes
-            // 
-            ControlService.CurrentInstance = rootHub;
-
-            //
             // TODO: I wonder why this was done...
             // 
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
@@ -419,6 +414,7 @@ namespace DS4WinWPF
             return result;
         }
 
+        [MissingLocalization]
         private async void AttemptSave()
         {
             if (!await appSettings.SaveAsync()) //if can't write to file

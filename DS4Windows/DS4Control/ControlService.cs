@@ -31,7 +31,11 @@ namespace DS4Windows
 {
     public partial class ControlService
     {
-        public static ControlService CurrentInstance { get; set; }
+        /// <summary>
+        ///     TODO: temporary!
+        /// </summary>
+        [IntermediateSolution]
+        public static ControlService CurrentInstance { get; private set; }
 
         // Might be useful for ScpVBus build
         public const int EXPANDED_CONTROLLER_COUNT = 8;
@@ -211,6 +215,8 @@ namespace DS4Windows
 
             appSettings.UdpSmoothMinCutoffChanged += ChangeUdpSmoothingAttrs;
             appSettings.UdpSmoothBetaChanged += ChangeUdpSmoothingAttrs;
+
+            CurrentInstance = this;
         }
         
         private void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
