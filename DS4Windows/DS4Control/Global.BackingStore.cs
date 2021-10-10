@@ -18,7 +18,6 @@ using DS4WinWPF.Properties;
 
 using OpenTracing.Util;
 using DS4WindowsAppSettings = DS4WinWPF.DS4Control.Profiles.Schema.DS4WindowsAppSettings;
-using DS4WindowsProfile = DS4WinWPF.DS4Control.Profiles.Schema.DS4WindowsProfile;
 
 
 namespace DS4Windows
@@ -1320,7 +1319,7 @@ namespace DS4Windows
             }
 
             /// <summary>
-            ///     Persists a <see cref="DS4WindowsProfile" /> on disk.
+            ///     Persists a <see cref="DS4WindowsProfileV3" /> on disk.
             /// </summary>
             /// <param name="device">The index of the device to store the profile for.</param>
             /// <param name="proName">The profile name (without extension or root path).</param>
@@ -1339,7 +1338,7 @@ namespace DS4Windows
                     $"{proName}{XML_EXTENSION}"
                 );
 
-                var profileObject = new DS4WindowsProfile(
+                var profileObject = new DS4WindowsProfileV3(
                     ControlService.CurrentInstance.GetAppSettings(),
                     this,
                     device,
@@ -1526,14 +1525,14 @@ namespace DS4Windows
                     ResetProfile(device);
                     ResetMouseProperties(device, control);
 
-                    DS4WindowsProfile profile = null;
+                    DS4WindowsProfileV3 profile = null;
 
                     //
                     // TODO: unfinished
                     // 
                     await using (var stream = File.OpenRead(profilepath))
                     {
-                        profile = await DS4WindowsProfile.DeserializeAsync(stream);
+                        profile = await DS4WindowsProfileV3.DeserializeAsync(stream);
 
                         profile.CopyTo(control.GetAppSettings(), this, device);
                     }

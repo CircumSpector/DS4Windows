@@ -11,14 +11,14 @@ using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
-    public partial class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>
+    public partial class DS4WindowsProfileV3 : XmlSerializable<DS4WindowsProfileV3>
     {
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .EnableReferences()
                 .EnableMemberExceptionHandling()
-                .EnableImplicitTyping(typeof(DS4WindowsProfile))
+                .EnableImplicitTyping(typeof(DS4WindowsProfileV3))
                 .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                 .Type<SensitivityProxyType>().Register().Converter().Using(SensitivityConverter.Default)
                 .Type<List<int>>().Register().Converter().Using(IntegerListConverterConverter.Default)
@@ -31,7 +31,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         /// <summary>
         ///     Converts properties from <see cref="IBackingStore" /> for a specified device index to this
-        ///     <see cref="Schema.DS4WindowsProfile" /> instance.
+        ///     <see cref="DS4WindowsProfileV3" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         /// <param name="device">The zero-based device index to copy.</param>
@@ -335,7 +335,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         }
 
         /// <summary>
-        ///     Injects properties from <see cref="DS4WindowsProfile" /> for a specified device index into
+        ///     Injects properties from <see cref="DS4WindowsProfileV3" /> for a specified device index into
         ///     <see cref="IBackingStore" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>

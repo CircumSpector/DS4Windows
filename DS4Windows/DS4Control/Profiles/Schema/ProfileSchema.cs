@@ -11,7 +11,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "DS4Windows")]
-    public partial class DS4WindowsProfile
+    public partial class DS4WindowsProfileV3
     {
         [XmlElement(ElementName = "touchToggle")]
         public bool TouchToggle { get; set; } = true;
@@ -463,12 +463,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlAttribute(AttributeName = "config_version")]
         public int ConfigVersion { get; set; }
 
-        public DS4WindowsProfile()
+        public DS4WindowsProfileV3()
         {
         }
 
         [IntermediateSolution]
-        public DS4WindowsProfile(
+        public DS4WindowsProfileV3(
             IAppSettingsService appSettings,
             IBackingStore store,
             int device,
