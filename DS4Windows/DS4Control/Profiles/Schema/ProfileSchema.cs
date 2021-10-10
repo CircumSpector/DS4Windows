@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+﻿using System;
+using System.Collections.Generic;
 using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
@@ -9,6 +9,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     /// </summary>
     public partial class DS4WindowsProfile
     {
+        /// <summary>
+        ///     Auto-generated unique ID for this profile.
+        /// </summary>
+        public Guid Id { get; } = Guid.NewGuid();
+
+        /// <summary>
+        ///     Friendly name of this profile.
+        /// </summary>
+        public string DisplayName { get; set; }
+
         public ButtonMouseInfo ButtonMouseInfo { get; set; } = new();
 
         public GyroControlsInfo GyroControlsInfo { get; set; } = new();
