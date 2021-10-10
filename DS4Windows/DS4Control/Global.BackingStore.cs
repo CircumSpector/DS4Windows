@@ -2366,7 +2366,7 @@ namespace DS4Windows
 
                         var profiles = DS4WinWPF.DS4Control.Profiles.Schema.LinkedProfiles.Deserialize(stream);
 
-                        LinkedProfiles = profiles.Assignments.ToDictionary(
+                        LinkedProfiles = profiles.LegacyAssignments.ToDictionary(
                             x => x.Key,
                             x => x.Value.ToString()
                         );
@@ -2397,7 +2397,7 @@ namespace DS4Windows
                     var profiles = new LinkedProfiles
                     {
                         //Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => Guid.Parse(x.Value))
-                        Assignments = LinkedProfiles.ToDictionary(x => x.Key, x => x.Value)
+                        LegacyAssignments = LinkedProfiles.ToDictionary(x => x.Key, x => x.Value)
                     };
 
                     profiles.Serialize(stream);

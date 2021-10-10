@@ -15,7 +15,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     {
         [XmlElement(ElementName = "Assignments")]
         //public Dictionary<PhysicalAddress, Guid> Assignments { get; set; } = new();
-        public Dictionary<PhysicalAddress, string> Assignments { get; set; } = new();
+        public Dictionary<PhysicalAddress, string> LegacyAssignments { get; set; } = new();
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }
