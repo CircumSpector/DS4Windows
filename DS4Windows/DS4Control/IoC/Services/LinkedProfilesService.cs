@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
+    //
+    // TODO: to be continued
+    // 
     public sealed class LinkedProfilesService
     {
         private readonly IGlobalStateService global;
