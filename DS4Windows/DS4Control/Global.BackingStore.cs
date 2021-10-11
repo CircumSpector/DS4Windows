@@ -2363,7 +2363,7 @@ namespace DS4Windows
                     {
                         using var stream = File.OpenRead(LinkedProfilesPath);
 
-                        var profiles = DS4WinWPF.DS4Control.Profiles.Schema.LinkedProfiles.Deserialize(stream);
+                        var profiles = DS4WinWPF.DS4Control.Profiles.Schema.LinkedProfilesV3.Deserialize(stream);
 
                         LinkedProfiles = profiles.LegacyAssignments.ToDictionary(
                             x => x.Key,
@@ -2393,7 +2393,7 @@ namespace DS4Windows
                 {
                     using var stream = File.Open(LinkedProfilesPath, FileMode.Create);
 
-                    var profiles = new LinkedProfiles
+                    var profiles = new LinkedProfilesV3
                     {
                         //Assignments = LinkedProfiles.ToDictionary(x => PhysicalAddress.Parse(x.Key), x => Guid.Parse(x.Value))
                         LegacyAssignments = LinkedProfiles.ToDictionary(x => x.Key, x => x.Value)

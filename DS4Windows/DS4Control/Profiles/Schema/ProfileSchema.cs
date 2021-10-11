@@ -173,5 +173,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public OutContType OutputDeviceType { get; set; } = OutContType.X360;
 
         public bool Ds4Mapping { get; set; } = false;
+
+        public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
     }
 }
