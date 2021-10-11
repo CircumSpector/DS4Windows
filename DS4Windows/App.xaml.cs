@@ -133,6 +133,7 @@ namespace DS4WinWPF
             services.AddSingleton<ControlService>();
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
+            services.AddSingleton<IProfilesService, ProfilesService>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -150,6 +151,11 @@ namespace DS4WinWPF
             logger = host.Services.GetRequiredService<ILogger<App>>();
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
             var appLogger = host.Services.GetRequiredService<AppLogger>();
+
+            var profileService = host.Services.GetRequiredService<IProfilesService>();
+
+            profileService.SaveProfiles();
+            profileService.LoadProfiles();
 
             var parser = (CommandLineOptions)host.Services.GetRequiredService<ICommandLineOptions>();
 

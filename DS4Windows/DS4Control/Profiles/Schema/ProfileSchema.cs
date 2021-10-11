@@ -1,29 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     /// <summary>
     ///     "New" controller profile definition.
     /// </summary>
-    public partial class DS4WindowsProfile
+    public class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>
     {
+        private const string FILE_EXTENSION = ".xml";
+
         /// <summary>
         ///     Auto-generated unique ID for this profile.
         /// </summary>
-        public Guid Id { get; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
-        ///     Friendly name of this profile.
+        ///     Sanitized XML file name derived from <see cref="DisplayName" />.
         /// </summary>
-        public string DisplayName { get; set; }
+        [XmlIgnore]
+        public string FileName
+        {
+            get
+            {
+                var fileName = DisplayName;
+
+                //
+                // Strip extension, if included in name
+                // 
+                if (fileName.EndsWith(FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                    fileName = fileName.Remove(fileName.LastIndexOf(FILE_EXTENSION,
+                        StringComparison.OrdinalIgnoreCase));
+
+                //
+                // Strip invalid characters
+                // 
+                fileName = new string(fileName.Where(m => !Path.GetInvalidFileNameChars().Contains(m)).ToArray());
+
+                //
+                // Add extension
+                // 
+                return $"{fileName}{FILE_EXTENSION}";
+            }
+        }
+
+        /// <summary>
+        ///     Friendly, user-changeable name of this profile.
+        /// </summary>
+        public string DisplayName { get; set; } = "Default";
+
+        public bool EnableTouchToggle { get; set; } = true;
 
         public ButtonMouseInfo ButtonMouseInfo { get; set; } = new();
 
         public GyroControlsInfo GyroControlsInfo { get; set; } = new();
-
-        public bool EnableTouchToggle = true;
 
         public int IdleDisconnectTimeout { get; set; } = 0;
 
@@ -46,7 +83,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public StickDeadZoneInfo RSModInfo { get; set; } = new();
 
         public TriggerDeadZoneZInfo L2ModInfo { get; set; } = new();
-        
+
         public TriggerDeadZoneZInfo R2ModInfo { get; set; } = new();
 
         public double LSRotation { get; set; } = 0.0;
@@ -54,11 +91,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public double RSRotation { get; set; } = 0.0;
 
         public double SXDeadzone { get; set; } = 0.25;
-        
+
         public double SZDeadzone { get; set; } = 0.25;
 
         public double SXMaxzone { get; set; } = 1.0;
-        
+
         public double SZMaxzone { get; set; } = 1.0;
 
         public double SXAntiDeadzone { get; set; } = 0.0;
@@ -70,11 +107,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public double R2Sens { get; set; } = 1;
 
         public double LSSens { get; set; } = 1;
-        
+
         public double RSSens { get; set; } = 1;
-        
+
         public double SXSens { get; set; } = 1;
-        
+
         public double SZSens { get; set; } = 1;
 
         public byte TapSensitivity { get; set; } = 0;
@@ -88,11 +125,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public int BluetoothPollRate { get; set; } = 4;
 
         public StickOutputSetting LSOutputSettings { get; set; } = new();
-        
+
         public StickOutputSetting RSOutputSettings { get; set; } = new();
-        
+
         public StickOutputSetting L2OutputSettings { get; set; } = new();
-        
+
         public StickOutputSetting R2OutputSettings { get; set; } = new();
 
         public string LaunchProgram { get; set; }
@@ -118,7 +155,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public GyroDirectionalSwipeInfo GyroSwipeInfo { get; set; } = new();
 
         public bool GyroMouseStickToggle { get; set; } = false;
-        
+
         public bool GyroMouseStickTriggerTurns { get; set; } = true;
 
         public SASteeringWheelEmulationAxisType SASteeringWheelEmulationAxis { get; set; } =
@@ -130,7 +167,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public SteeringWheelSmoothingInfo WheelSmoothInfo { get; set; } = new();
 
-        public IList<int> TouchDisInvertTriggers { get; set; } = new List<int>() { -1 };
+        public IList<int> TouchDisInvertTriggers { get; set; } = new List<int> { -1 };
 
         public int GyroSensitivity { get; set; } = 100;
 
@@ -151,15 +188,15 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public StickAntiSnapbackInfo LSAntiSnapbackInfo { get; set; } = new();
 
         public BezierCurve LSOutCurve { get; set; } = new();
-        
+
         public BezierCurve RSOutCurve { get; set; } = new();
-        
+
         public BezierCurve L2OutCurve { get; set; } = new();
-        
+
         public BezierCurve R2OutCurve { get; set; } = new();
-        
+
         public BezierCurve SXOutCurve { get; set; } = new();
-        
+
         public BezierCurve SZOutCurve { get; set; } = new();
 
         public bool TrackballMode { get; set; } = false;
@@ -175,5 +212,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool Ds4Mapping { get; set; } = false;
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
+
+        public override IExtendedXmlSerializer GetSerializer()
+        {
+            return new ConfigurationContainer()
+                .EnableReferences()
+                .EnableMemberExceptionHandling()
+                .EnableImplicitTyping(typeof(DS4WindowsProfile))
+                .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
+                .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
+                .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
+                .Type<double>().Register().Converter().Using(DoubleConverter.Default)
+                .Type<Guid>().Register().Converter().Using(GuidConverter.Default)
+                .Create();
+        }
     }
 }

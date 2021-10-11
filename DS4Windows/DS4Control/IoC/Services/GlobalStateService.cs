@@ -18,9 +18,14 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         string RoamingAppDataPath { get; }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.LinkedProfilesFileName"/>
+        ///     Absolute path to <see cref="Constants.LinkedProfilesFileName" />
         /// </summary>
         string LinkedProfilesPath { get; }
+
+        /// <summary>
+        ///     Absolute path to <see cref="Constants.ProfilesSubDirectory" />
+        /// </summary>
+        string ProfilesDirectory { get; }
     }
 
     public sealed class GlobalStateService : IGlobalStateService
@@ -28,7 +33,23 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly string appDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.ProfilesFileName"/>
+        ///     Absolute path to <see cref="Constants.ProfilesSubDirectory" />
+        /// </summary>
+        public string ProfilesDirectory
+        {
+            get
+            {
+                var programFolderFile = Path.Combine(appDirectory
+                    , Constants.ProfilesSubDirectory);
+
+                return File.Exists(programFolderFile)
+                    ? programFolderFile
+                    : Path.Combine(RoamingAppDataPath, Constants.ProfilesSubDirectory);
+            }
+        }
+
+        /// <summary>
+        ///     Absolute path to <see cref="Constants.ProfilesFileName" />
         /// </summary>
         public string AppSettingsFilePath
         {
@@ -44,7 +65,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.LinkedProfilesFileName"/>
+        ///     Absolute path to <see cref="Constants.LinkedProfilesFileName" />
         /// </summary>
         public string LinkedProfilesPath
         {

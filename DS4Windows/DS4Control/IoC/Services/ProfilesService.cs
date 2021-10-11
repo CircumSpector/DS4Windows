@@ -11,7 +11,46 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
-    public sealed class ProfilesService
+    public interface IProfilesService
+    {
+        /// <summary>
+        ///     A collection of all the available profiles.
+        /// </summary>
+        IReadOnlyCollection<DS4WindowsProfile> AvailableProfiles { get; }
+
+        /// <summary>
+        ///     A collection of currently active profiles per controller slot.
+        /// </summary>
+        IReadOnlyCollection<DS4WindowsProfile> ControllerSlotProfiles { get; }
+
+        /// <summary>
+        ///     The profile copy that is currently being edited.
+        /// </summary>
+        DS4WindowsProfile CurrentlyEditedProfile { get; set; }
+
+        /// <summary>
+        ///     A collection of profile IDs linked to a particular controller ID (MAC address).
+        /// </summary>
+        IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles { get; }
+
+        void LoadProfiles(string directory = null);
+
+        void SaveProfiles(string directory = null);
+
+        /// <summary>
+        ///     Persist the current settings to disk.
+        /// </summary>
+        /// <param name="path">The absolute path to the resulting XML file.</param>
+        bool SaveLinkedProfiles(string path = null);
+
+        /// <summary>
+        ///     Load the persisted settings from disk.
+        /// </summary>
+        /// <param name="path">The absolute path to the XML file to read from.</param>
+        bool LoadLinkedProfiles(string path = null);
+    }
+
+    public sealed class ProfilesService : IProfilesService
     {
         private readonly IList<DS4WindowsProfile> availableProfiles = new List<DS4WindowsProfile>
         {
@@ -42,6 +81,53 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             this.global = global;
 
             Instance = this;
+        }
+
+        public void LoadProfiles(string directory = null)
+        {
+            if (string.IsNullOrEmpty(directory))
+                directory = global.ProfilesDirectory;
+
+            var profiles = Directory.GetFiles(directory, "*.xml", SearchOption.TopDirectoryOnly).ToList();
+            
+            foreach (var file in profiles)
+            {
+                using var stream = File.OpenRead(file);
+
+                DS4WindowsProfile profile = new();
+
+                try
+                {
+                    profile = DS4WindowsProfile.Deserialize(stream);
+                }
+                catch (InvalidOperationException)
+                {
+                    //
+                    // TODO: indicator of old profile format, convert later
+                    // 
+                    continue;
+                }
+            }
+        }
+
+        public void SaveProfiles(string directory = null)
+        {
+            if (string.IsNullOrEmpty(directory))
+                directory = global.ProfilesDirectory;
+
+            //
+            // Does nothing if the path already exists
+            // 
+            Directory.CreateDirectory(directory);
+
+            foreach (var profile in availableProfiles)
+            {
+                var profilePath = Path.Combine(directory, profile.FileName);
+
+                using var stream = File.Open(profilePath, FileMode.Create);
+
+                profile.Serialize(stream);
+            }
         }
 
         /// <summary>
