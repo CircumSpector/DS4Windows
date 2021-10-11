@@ -149,6 +149,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 // 
                 catch (InvalidOperationException)
                 {
+                    if (!convertLegacyIfFound)
+                        continue;
+
                     stream.Seek(0, SeekOrigin.Begin);
 
                     var profile = new DS4WindowsProfile();
