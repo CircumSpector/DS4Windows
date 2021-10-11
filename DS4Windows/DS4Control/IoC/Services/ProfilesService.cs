@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -16,7 +17,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of all the available profiles.
         /// </summary>
-        IReadOnlyCollection<DS4WindowsProfile> AvailableProfiles { get; }
+        IReadOnlyDictionary<Guid, DS4WindowsProfile> AvailableProfiles { get; }
 
         /// <summary>
         ///     A collection of currently active profiles per controller slot.
@@ -33,9 +34,26 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles { get; }
 
-        void LoadProfiles(string directory = null);
+        /// <summary>
+        ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
+        /// </summary>
+        void LoadAvailableProfiles();
 
-        void SaveProfiles(string directory = null);
+        /// <summary>
+        ///     Persists all <see cref="AvailableProfiles" /> to profile files in profile directory.
+        /// </summary>
+        void SaveAvailableProfiles();
+
+        /// <summary>
+        ///     Adds a pre-existing or new <see cref="DS4WindowsProfile" /> to <see cref="AvailableProfiles" /> and persists it to
+        ///     disk.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
+        void CreateProfile(DS4WindowsProfile profile = default);
+
+        void DeleteProfile(DS4WindowsProfile profile);
+
+        void DeleteProfile(Guid guid);
 
         /// <summary>
         ///     Persist the current settings to disk.
@@ -50,15 +68,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         bool LoadLinkedProfiles(string path = null);
     }
 
+    /// <summary>
+    ///     Handles managing profiles.
+    /// </summary>
     public sealed class ProfilesService : IProfilesService
     {
-        private readonly IList<DS4WindowsProfile> availableProfiles = new List<DS4WindowsProfile>
-        {
-            //
-            // Always start with at least one default profile
-            // 
-            new()
-        };
+        private readonly IDictionary<Guid, DS4WindowsProfile> availableProfiles =
+            new ConcurrentDictionary<Guid, DS4WindowsProfile>();
 
         private readonly IList<DS4WindowsProfile> controllerSlotProfiles = new List<DS4WindowsProfile>(Enumerable
             .Range(0, 8)
@@ -68,12 +84,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         private readonly IGlobalStateService global;
 
-        private readonly ILogger<ProfilesService> logger;
-
         private readonly IDictionary<PhysicalAddress, Guid> linkedProfiles = new Dictionary<PhysicalAddress, Guid>();
 
-        [IntermediateSolution]
-        public static ProfilesService Instance { get; private set; }
+        private readonly ILogger<ProfilesService> logger;
 
         public ProfilesService(ILogger<ProfilesService> logger, IGlobalStateService global)
         {
@@ -83,51 +96,74 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             Instance = this;
         }
 
-        public void LoadProfiles(string directory = null)
+        [IntermediateSolution] public static ProfilesService Instance { get; private set; }
+
+        public void DeleteProfile(DS4WindowsProfile profile)
         {
-            if (string.IsNullOrEmpty(directory))
-                directory = global.ProfilesDirectory;
+            if (profile is null)
+                throw new ArgumentNullException(nameof(profile));
+
+            var profilePath = profile.GetAbsoluteFilePath(global.ProfilesDirectory);
+
+            //
+            // Does nothing if it doesn't exist anymore for whatever reason
+            // 
+            File.Delete(profilePath);
+
+            availableProfiles.Remove(profile.Id);
+        }
+
+        public void DeleteProfile(Guid guid)
+        {
+            DeleteProfile(availableProfiles[guid]);
+        }
+
+        /// <summary>
+        ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
+        /// </summary>
+        public void LoadAvailableProfiles()
+        {
+            var directory = global.ProfilesDirectory;
 
             var profiles = Directory.GetFiles(directory, "*.xml", SearchOption.TopDirectoryOnly).ToList();
-            
+
+            if (!profiles.Any())
+                return;
+
+            availableProfiles.Clear();
+
             foreach (var file in profiles)
             {
                 using var stream = File.OpenRead(file);
 
-                DS4WindowsProfile profile = new();
-
                 try
                 {
-                    profile = DS4WindowsProfile.Deserialize(stream);
+                    var profile = DS4WindowsProfile.Deserialize(stream);
+
+                    availableProfiles.Add(profile.Id, profile);
                 }
                 catch (InvalidOperationException)
                 {
                     //
-                    // TODO: indicator of old profile format, convert later
+                    // TODO: indicator of old profile format, convert and insert
                     // 
-                    continue;
                 }
             }
         }
 
-        public void SaveProfiles(string directory = null)
+        /// <summary>
+        ///     Persists all <see cref="AvailableProfiles" /> to profile files in profile directory.
+        /// </summary>
+        public void SaveAvailableProfiles()
         {
-            if (string.IsNullOrEmpty(directory))
-                directory = global.ProfilesDirectory;
+            var directory = global.ProfilesDirectory;
 
             //
             // Does nothing if the path already exists
             // 
             Directory.CreateDirectory(directory);
 
-            foreach (var profile in availableProfiles)
-            {
-                var profilePath = Path.Combine(directory, profile.FileName);
-
-                using var stream = File.Open(profilePath, FileMode.Create);
-
-                profile.Serialize(stream);
-            }
+            foreach (var (id, profile) in availableProfiles) PersistProfile(profile, directory);
         }
 
         /// <summary>
@@ -149,7 +185,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 };
 
                 store.Serialize(stream);
-                
+
                 return true;
             }
             catch (UnauthorizedAccessException)
@@ -179,10 +215,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             linkedProfiles.Clear();
 
-            foreach (var (physicalAddress, guid) in store.Assignments)
-            {
-                linkedProfiles.Add(physicalAddress, guid);
-            }
+            foreach (var (physicalAddress, guid) in store.Assignments) linkedProfiles.Add(physicalAddress, guid);
 
             return true;
         }
@@ -208,11 +241,35 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of all the available profiles.
         /// </summary>
-        public IReadOnlyCollection<DS4WindowsProfile> AvailableProfiles => availableProfiles.ToImmutableList();
+        public IReadOnlyDictionary<Guid, DS4WindowsProfile> AvailableProfiles =>
+            availableProfiles.ToImmutableDictionary(pair => pair.Key, pair => pair.Value);
 
         /// <summary>
         ///     A collection of profile IDs linked to a particular controller ID (MAC address).
         /// </summary>
         public IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles => linkedProfiles.ToImmutableDictionary();
+
+        /// <summary>
+        ///     Adds a pre-existing or new <see cref="DS4WindowsProfile" /> to <see cref="AvailableProfiles" /> and persists it to
+        ///     disk.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
+        public void CreateProfile(DS4WindowsProfile profile = default)
+        {
+            profile ??= new DS4WindowsProfile();
+
+            availableProfiles.Add(profile.Id, profile);
+
+            PersistProfile(profile, global.ProfilesDirectory);
+        }
+
+        private static void PersistProfile(DS4WindowsProfile profile, string directory)
+        {
+            var profilePath = profile.GetAbsoluteFilePath(directory);
+
+            using var stream = File.Open(profilePath, FileMode.Create);
+
+            profile.Serialize(stream);
+        }
     }
 }

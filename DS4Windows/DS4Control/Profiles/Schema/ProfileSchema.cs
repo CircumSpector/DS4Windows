@@ -7,13 +7,15 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     /// <summary>
     ///     "New" controller profile definition.
     /// </summary>
-    public class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>
+    [AddINotifyPropertyChangedInterface]
+    public class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>, IEquatable<DS4WindowsProfile>
     {
         private const string FILE_EXTENSION = ".xml";
 
@@ -213,6 +215,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
 
+        public string GetAbsoluteFilePath(string parentDirectory)
+        {
+            return Path.Combine(parentDirectory, FileName);
+        }
+
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
@@ -225,6 +232,26 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 .Type<double>().Register().Converter().Using(DoubleConverter.Default)
                 .Type<Guid>().Register().Converter().Using(GuidConverter.Default)
                 .Create();
+        }
+
+        public bool Equals(DS4WindowsProfile other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Id.Equals(other.Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DS4WindowsProfile)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
         }
     }
 }

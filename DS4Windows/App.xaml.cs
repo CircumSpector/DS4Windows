@@ -154,8 +154,8 @@ namespace DS4WinWPF
 
             var profileService = host.Services.GetRequiredService<IProfilesService>();
 
-            profileService.SaveProfiles();
-            profileService.LoadProfiles();
+            profileService.SaveAvailableProfiles();
+            profileService.LoadAvailableProfiles();
 
             var parser = (CommandLineOptions)host.Services.GetRequiredService<ICommandLineOptions>();
 
