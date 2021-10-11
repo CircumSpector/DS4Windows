@@ -130,9 +130,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public StickOutputSetting RSOutputSettings { get; set; } = new();
 
-        public StickOutputSetting L2OutputSettings { get; set; } = new();
+        public TriggerOutputSettings L2OutputSettings { get; set; } = new();
 
-        public StickOutputSetting R2OutputSettings { get; set; } = new();
+        public TriggerOutputSettings R2OutputSettings { get; set; } = new();
 
         public string LaunchProgram { get; set; }
 
@@ -159,6 +159,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool GyroMouseStickToggle { get; set; } = false;
 
         public bool GyroMouseStickTriggerTurns { get; set; } = true;
+
+        public int GyroMouseStickHorizontalAxis { get; set; }
 
         public SASteeringWheelEmulationAxisType SASteeringWheelEmulationAxis { get; set; } =
             SASteeringWheelEmulationAxisType.None;
@@ -188,6 +190,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public SquareStickInfo SquStickInfo { get; set; } = new();
 
         public StickAntiSnapbackInfo LSAntiSnapbackInfo { get; set; } = new();
+        
+        public StickAntiSnapbackInfo RSAntiSnapbackInfo { get; set; } = new();
 
         public BezierCurve LSOutCurve { get; set; } = new();
 
@@ -214,7 +218,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool Ds4Mapping { get; set; } = false;
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
-
+        
         public string GetAbsoluteFilePath(string parentDirectory)
         {
             return Path.Combine(parentDirectory, FileName);

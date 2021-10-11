@@ -37,7 +37,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
         /// </summary>
-        void LoadAvailableProfiles();
+        /// <param name="convertLegacyIfFound">If true, in-place conversion of existing legacy profile formats will be attempted.</param>
+        void LoadAvailableProfiles(bool convertLegacyIfFound = true);
 
         /// <summary>
         ///     Persists all <see cref="AvailableProfiles" /> to profile files in profile directory.
@@ -121,7 +122,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
         /// </summary>
-        public void LoadAvailableProfiles()
+        /// <param name="convertLegacyIfFound">If true, in-place conversion of existing legacy profile formats will be attempted.</param>
+        public void LoadAvailableProfiles(bool convertLegacyIfFound = true)
         {
             var directory = global.ProfilesDirectory;
 
@@ -142,11 +144,25 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
                     availableProfiles.Add(profile.Id, profile);
                 }
+                //
+                // Most probably old format detected, attempt conversion
+                // 
                 catch (InvalidOperationException)
                 {
-                    //
-                    // TODO: indicator of old profile format, convert and insert
-                    // 
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    var profile = new DS4WindowsProfile();
+                    
+                    var profileV3 = DS4WindowsProfileV3.Deserialize(stream);
+
+                    profileV3.ConvertTo(profile);
+                    profile.DisplayName = Path.GetFileNameWithoutExtension(file).Trim();
+
+                    availableProfiles.Add(profile.Id, profile);
+
+                    stream.Dispose();
+                    File.Delete(file);
+                    PersistProfile(profile, directory);
                 }
             }
         }

@@ -589,5 +589,252 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             // TODO: to be continued
             // 
         }
+
+        /// <summary>
+        ///     Converts a <see cref="DS4WindowsProfileV3"/> to <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="profile">The receiving <see cref="DS4WindowsProfile"/>.</param>
+        public void ConvertTo(DS4WindowsProfile profile)
+        {
+            var lightbarSettings = profile.LightbarSettingInfo;
+            var lightInfo = lightbarSettings.Ds4WinSettings;
+
+            profile.EnableTouchToggle = TouchToggle;
+            profile.IdleDisconnectTimeout = IdleDisconnectTimeout;
+            profile.EnableOutputDataToDS4 = OutputDataToDS4;
+            lightbarSettings.Mode = LightbarMode;
+            lightInfo.Led = Color;
+            profile.RumbleBoost = RumbleBoost;
+            profile.RumbleAutostopTime = RumbleAutostopTime;
+            lightInfo.LedAsBattery = LedAsBatteryIndicator;
+            lightInfo.FlashType = FlashType;
+            lightInfo.FlashAt = FlashBatteryAt;
+            profile.TouchSensitivity = TouchSensitivity;
+            lightInfo.LowLed = LowColor;
+            lightInfo.ChargingLed = ChargingColor;
+            lightInfo.FlashLed = FlashColor;
+            profile.TouchpadJitterCompensation = TouchpadJitterCompensation;
+            profile.LowerRCOn = LowerRCOn;
+            profile.TapSensitivity = TapSensitivity;
+            profile.DoubleTap = DoubleTap;
+            profile.ScrollSensitivity = ScrollSensitivity;
+            profile.TouchPadInvert = Math.Min(Math.Max(TouchpadInvert, 0), 3);
+            profile.TouchClickPassthru = TouchpadClickPassthru;
+            profile.L2ModInfo.deadZone = LeftTriggerMiddle;
+            profile.R2ModInfo.deadZone = RightTriggerMiddle;
+            profile.L2ModInfo.AntiDeadZone = L2AntiDeadZone;
+            profile.R2ModInfo.AntiDeadZone = R2AntiDeadZone;
+            profile.L2ModInfo.maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
+            profile.R2ModInfo.maxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
+            profile.L2ModInfo.maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
+            profile.R2ModInfo.maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
+            profile.LSRotation = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
+            profile.RSRotation = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
+            profile.LSModInfo.Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
+            profile.RSModInfo.Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
+            profile.ButtonMouseInfo.buttonSensitivity = ButtonMouseSensitivity;
+            profile.ButtonMouseInfo.mouseVelocityOffset = ButtonMouseOffset;
+            profile.ButtonMouseInfo.buttonVerticalScale =
+                Math.Min(Math.Max(ButtonMouseVerticalScale, 0), 500) * 0.01;
+            lightInfo.Rainbow = Rainbow;
+            lightInfo.MaxRainbowSaturation = Math.Max(0, Math.Min(100, MaxSatRainbow)) / 100.0;
+            profile.LSModInfo.DeadZone = Math.Min(Math.Max(LSDeadZone, 0), 127);
+            profile.RSModInfo.DeadZone = Math.Min(Math.Max(RSDeadZone, 0), 127);
+            profile.LSModInfo.AntiDeadZone = LSAntiDeadZone;
+            profile.RSModInfo.AntiDeadZone = RSAntiDeadZone;
+            profile.LSModInfo.MaxZone = Math.Min(Math.Max(LSMaxZone, 0), 100);
+            profile.RSModInfo.MaxZone = Math.Min(Math.Max(RSMaxZone, 0), 100);
+            profile.LSModInfo.VerticalScale = Math.Min(Math.Max(LSVerticalScale, 0.0), 200.0);
+            profile.RSModInfo.VerticalScale = Math.Min(Math.Max(RSVerticalScale, 0.0), 200.0);
+            profile.LSModInfo.MaxOutput = Math.Min(Math.Max(LSMaxOutput, 0.0), 100.0);
+            profile.RSModInfo.MaxOutput = Math.Min(Math.Max(RSMaxOutput, 0.0), 100.0);
+            profile.LSModInfo.MaxOutputForce = LSMaxOutputForce;
+            profile.RSModInfo.MaxOutputForce = RSMaxOutputForce;
+            profile.LSModInfo.OuterBindDeadZone = Math.Min(Math.Max(LSOuterBindDead, 0), 100);
+            profile.RSModInfo.OuterBindDeadZone = Math.Min(Math.Max(RSOuterBindDead, 0), 100);
+            profile.LSModInfo.OuterBindInvert = LSOuterBindInvert;
+            profile.RSModInfo.OuterBindInvert = RSOuterBindInvert;
+            profile.LSModInfo.DZType = LSDeadZoneType;
+            profile.RSModInfo.DZType = RSDeadZoneType;
+            profile.LSModInfo.XAxisDeadInfo.DeadZone = Math.Min(Math.Max(LSAxialDeadOptions.DeadZoneX, 0), 127);
+            profile.LSModInfo.YAxisDeadInfo.DeadZone = Math.Min(Math.Max(LSAxialDeadOptions.DeadZoneY, 0), 127);
+            profile.LSModInfo.XAxisDeadInfo.MaxZone = Math.Min(Math.Max(LSAxialDeadOptions.MaxZoneX, 0), 100);
+            profile.LSModInfo.YAxisDeadInfo.MaxZone = Math.Min(Math.Max(LSAxialDeadOptions.MaxZoneY, 0), 100);
+            profile.LSModInfo.XAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneX, 0), 100);
+            profile.LSModInfo.YAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(LSAxialDeadOptions.AntiDeadZoneY, 0), 100);
+            profile.LSModInfo.XAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
+            profile.LSModInfo.YAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(LSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            profile.RSModInfo.XAxisDeadInfo.DeadZone = Math.Min(Math.Max(RSAxialDeadOptions.DeadZoneX, 0), 127);
+            profile.RSModInfo.YAxisDeadInfo.DeadZone = Math.Min(Math.Max(RSAxialDeadOptions.DeadZoneY, 0), 127);
+            profile.RSModInfo.XAxisDeadInfo.MaxZone = Math.Min(Math.Max(RSAxialDeadOptions.MaxZoneX, 0), 100);
+            profile.RSModInfo.YAxisDeadInfo.MaxZone = Math.Min(Math.Max(RSAxialDeadOptions.MaxZoneY, 0), 100);
+            profile.RSModInfo.XAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneX, 0), 100);
+            profile.RSModInfo.YAxisDeadInfo.AntiDeadZone =
+                Math.Min(Math.Max(RSAxialDeadOptions.AntiDeadZoneY, 0), 100);
+            profile.RSModInfo.XAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
+            profile.RSModInfo.YAxisDeadInfo.MaxOutput =
+                Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            profile.SXDeadzone = SXDeadZone;
+            profile.SZDeadzone = SZDeadZone;
+            profile.SXMaxzone = Math.Min(Math.Max(SXMaxZone * 0.01, 0.0), 1.0);
+            profile.SZMaxzone = Math.Min(Math.Max(SZMaxZone * 0.01, 0.0), 1.0);
+            profile.SXAntiDeadzone = Math.Min(Math.Max(SXAntiDeadZone * 0.01, 0.0), 1.0);
+            profile.SZAntiDeadzone = Math.Min(Math.Max(SZAntiDeadZone * 0.01, 0.0), 1.0);
+
+            profile.LSSens = Sensitivity.LSSens;
+            profile.RSSens = Sensitivity.RSSens;
+            profile.L2Sens = Sensitivity.L2Sens;
+            profile.R2Sens = Sensitivity.R2Sens;
+            profile.SXSens = Sensitivity.SXSens;
+            profile.SZSens = Sensitivity.SZSens;
+
+            lightInfo.ChargingType = ChargingType;
+            profile.ButtonMouseInfo.mouseAccel = MouseAcceleration;
+            //ShiftModifier
+            profile.LaunchProgram = LaunchProgram;
+            profile.DirectInputOnly = DinputOnly;
+            profile.StartTouchpadOff = StartTouchpadOff;
+
+            profile.SATriggers = SATriggers;
+            //store.SATriggerCondition = store.SaTriggerCondValue(SATriggerCond);
+            profile.SASteeringWheelEmulationAxis = SASteeringWheelEmulationAxis;
+            profile.SASteeringWheelEmulationRange = SASteeringWheelEmulationRange;
+
+            profile.WheelSmoothInfo.Enabled = SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing;
+            profile.WheelSmoothInfo.MinCutoff = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff;
+            profile.WheelSmoothInfo.Beta = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothBeta;
+
+            profile.SAWheelFuzzValues = SASteeringWheelFuzz is >= 0 and <= 100 ? SASteeringWheelFuzz : 0;
+
+            profile.GyroOutputMode = GyroOutputMode;
+
+            profile.GyroControlsInfo.Triggers = GyroControlsSettings.Triggers;
+            //store.GyroControlsInfo.TriggerCond = store.SaTriggerCondValue(GyroControlsSettings.TriggerCond);
+            profile.GyroControlsInfo.TriggerTurns = GyroControlsSettings.TriggerTurns;
+            profile.GyroControlsInfo.TriggerToggle = GyroControlsSettings.Toggle;
+
+            profile.SAMouseStickTriggers = GyroMouseStickTriggers;
+            //store.SAMouseStickTriggerCond = store.SaTriggerCondValue(GyroMouseStickTriggerCond);
+            profile.GyroMouseStickTriggerTurns = GyroMouseStickTriggerTurns;
+            profile.GyroMouseStickHorizontalAxis = Math.Min(Math.Max(0, GyroMouseStickHAxis), 1);
+            profile.GyroMouseStickInfo.DeadZone = GyroMouseStickDeadZone;
+            profile.GyroMouseStickInfo.MaxZone = Math.Max(GyroMouseStickMaxZone, 1);
+            profile.GyroMouseStickInfo.outputStick = GyroMouseStickOutputStick;
+            profile.GyroMouseStickInfo.outputStickDir = GyroMouseStickOutputStickAxes;
+            profile.GyroMouseStickInfo.AntiDeadX = GyroMouseStickAntiDeadX;
+            profile.GyroMouseStickInfo.AntiDeadY = GyroMouseStickAntiDeadY;
+            profile.GyroMouseStickInfo.Inverted = GyroMouseStickInvert;
+            //store.SetGyroMouseStickToggle(device, GyroMouseStickToggle, control)
+            profile.GyroMouseStickInfo.MaxOutput = Math.Min(Math.Max(GyroMouseStickMaxOutput, 0.0), 100.0);
+            profile.GyroMouseStickInfo.MaxOutputEnabled = GyroMouseStickMaxOutputEnabled;
+            profile.GyroMouseStickInfo.VertScale = GyroMouseStickVerticalScale;
+            profile.GyroMouseStickInfo.UseSmoothing = GyroMouseStickSmoothingSettings.UseSmoothing;
+            profile.GyroMouseStickInfo.DetermineSmoothMethod(GyroMouseStickSmoothingSettings.SmoothingMethod);
+            profile.GyroMouseStickInfo.SmoothWeight = Math.Min(
+                Math.Max(0.0, Convert.ToDouble(GyroMouseStickSmoothingSettings.SmoothingWeight * 0.01)), 1.0);
+            profile.GyroMouseStickInfo.minCutoff =
+                Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingMinCutoff), 100.0);
+            profile.GyroMouseStickInfo.beta =
+                Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingBeta), 1.0);
+
+            profile.GyroSwipeInfo.deadzoneX = GyroSwipeSettings.DeadZoneX;
+            profile.GyroSwipeInfo.deadzoneY = GyroSwipeSettings.DeadZoneY;
+            profile.GyroSwipeInfo.triggers = GyroSwipeSettings.Triggers;
+            //store.GyroSwipeInfo.triggerCond = store.SaTriggerCondValue(GyroSwipeSettings.TriggerCond);
+            profile.GyroSwipeInfo.triggerTurns = GyroSwipeSettings.TriggerTurns;
+            profile.GyroSwipeInfo.xAxis = GyroSwipeSettings.XAxis;
+            profile.GyroSwipeInfo.delayTime = GyroSwipeSettings.DelayTime;
+
+            profile.TouchOutMode = TouchpadOutputMode;
+            profile.TouchDisInvertTriggers = TouchDisInvTriggers;
+            profile.GyroSensitivity = GyroSensitivity;
+            profile.GyroSensVerticalScale = GyroSensVerticalScale;
+            profile.GyroInvert = GyroInvert;
+            profile.GyroTriggerTurns = GyroTriggerTurns;
+
+            profile.GyroMouseInfo.enableSmoothing = GyroMouseSmoothingSettings.UseSmoothing;
+            profile.GyroMouseInfo.DetermineSmoothMethod(GyroMouseSmoothingSettings.SmoothingMethod);
+            profile.GyroMouseInfo.smoothingWeight =
+                Math.Min(Math.Max(0.0, Convert.ToDouble(GyroMouseSmoothingSettings.SmoothingWeight * 0.01)), 1.0);
+            profile.GyroMouseInfo.minCutoff =
+                Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingMinCutoff), 100.0);
+            profile.GyroMouseInfo.beta = Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingBeta), 1.0);
+
+            profile.GyroMouseHorizontalAxis = Math.Min(Math.Max(0, GyroMouseHAxis), 1);
+            //store.SetGyroMouseDZ(device, temp, control);
+            profile.GyroMouseInfo.minThreshold = Math.Min(Math.Max(GyroMouseMinThreshold, 1.0), 40.0);
+            //SetGyroMouseToggle(device, temp, control);
+            profile.BluetoothPollRate = BTPollRate is >= 0 and <= 16 ? BTPollRate : 4;
+
+            //store.LSOutCurve = LSOutputCurveCustom;
+            //store.SetLsOutCurveMode(device, store.StickOutputCurveId(LSOutputCurveMode));
+            //store.RSOutCurve = RSOutputCurveCustom;
+            //store.SetRsOutCurveMode(device, store.StickOutputCurveId(RSOutputCurveMode));
+
+            profile.SquStickInfo.LSMode = LSSquareStick;
+            profile.SquStickInfo.LSRoundness = SquareStickRoundness;
+            profile.SquStickInfo.RSRoundness = SquareRStickRoundness;
+            profile.SquStickInfo.RSMode = RSSquareStick;
+            profile.LSAntiSnapbackInfo.Enabled = LSAntiSnapback;
+            profile.RSAntiSnapbackInfo.Enabled = RSAntiSnapback;
+            profile.LSAntiSnapbackInfo.Delta = LSAntiSnapbackDelta;
+            profile.RSAntiSnapbackInfo.Delta = RSAntiSnapbackDelta;
+            profile.LSAntiSnapbackInfo.Timeout = LSAntiSnapbackTimeout;
+            profile.RSAntiSnapbackInfo.Timeout = RSAntiSnapbackTimeout;
+            profile.LSOutputSettings.Mode = LSOutputMode;
+            profile.RSOutputSettings.Mode = RSOutputMode;
+
+            profile.LSOutputSettings.OutputSettings.flickSettings.realWorldCalibration =
+                LSOutputSettings.FlickStickSettings.RealWorldCalibration;
+            profile.LSOutputSettings.OutputSettings.flickSettings.flickThreshold =
+                LSOutputSettings.FlickStickSettings.FlickThreshold;
+            profile.LSOutputSettings.OutputSettings.flickSettings.flickTime =
+                LSOutputSettings.FlickStickSettings.FlickTime;
+            profile.LSOutputSettings.OutputSettings.flickSettings.minAngleThreshold =
+                LSOutputSettings.FlickStickSettings.MinAngleThreshold;
+            profile.RSOutputSettings.OutputSettings.flickSettings.realWorldCalibration =
+                RSOutputSettings.FlickStickSettings.RealWorldCalibration;
+            profile.RSOutputSettings.OutputSettings.flickSettings.flickThreshold =
+                RSOutputSettings.FlickStickSettings.FlickThreshold;
+            profile.RSOutputSettings.OutputSettings.flickSettings.flickTime =
+                RSOutputSettings.FlickStickSettings.FlickTime;
+            profile.RSOutputSettings.OutputSettings.flickSettings.minAngleThreshold =
+                RSOutputSettings.FlickStickSettings.MinAngleThreshold;
+
+            profile.L2OutCurve = L2OutputCurveCustom;
+            //store.SetL2OutCurveMode(device, store.StickOutputCurveId(L2OutputCurveMode));
+            profile.L2OutputSettings.TwoStageMode = L2TwoStageMode;
+            profile.L2OutputSettings.hipFireMS = Math.Min(Math.Max(0, L2HipFireTime), 5000);
+            profile.L2OutputSettings.TriggerEffect = L2TriggerEffect;
+
+            profile.R2OutCurve = R2OutputCurveCustom;
+            //store.SetR2OutCurveMode(device, store.StickOutputCurveId(R2OutputCurveMode));
+            profile.R2OutputSettings.TwoStageMode = R2TwoStageMode;
+            profile.R2OutputSettings.TriggerEffect = R2TriggerEffect;
+            profile.R2OutputSettings.hipFireMS = Math.Min(Math.Max(0, R2HipFireTime), 5000);
+
+            profile.SXOutCurve = SXOutputCurveCustom;
+            //store.SetSXOutCurveMode(device, store.StickOutputCurveId(SXOutputCurveMode));
+            profile.SZOutCurve = SZOutputCurveCustom;
+            //store.SetSZOutCurveMode(device, store.StickOutputCurveId(SZOutputCurveMode));
+            profile.TrackballMode = TrackballMode;
+            profile.TrackballFriction = TrackballFriction;
+
+            profile.TouchPadRelMouse.Rotation =
+                Math.Min(Math.Max(TouchRelMouseRotation, -180), 180) * Math.PI / 180.0;
+            profile.TouchPadRelMouse.MinThreshold = Math.Min(Math.Max(TouchRelMouseMinThreshold, 1.0), 40.0);
+
+            profile.TouchPadAbsMouse.MaxZoneX = TouchpadAbsMouseSettings.MaxZoneX;
+            profile.TouchPadAbsMouse.MaxZoneY = TouchpadAbsMouseSettings.MaxZoneY;
+            profile.TouchPadAbsMouse.SnapToCenter = TouchpadAbsMouseSettings.SnapToCenter;
+
+            profile.OutputDeviceType = OutputContDevice;
+        }
     }
 }

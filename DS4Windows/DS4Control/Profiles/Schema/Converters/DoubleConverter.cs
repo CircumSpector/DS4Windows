@@ -27,10 +27,17 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
 
         public override double Parse(string data)
         {
-            //
-            // Take wrong culture into consideration
-            // 
-            return double.Parse(ReplaceLastOccurrence(data, ",", "."), Constants.StorageCulture);
+            try
+            {
+                //
+                // Take wrong culture into consideration
+                // 
+                return double.Parse(ReplaceLastOccurrence(data, ",", "."), Constants.StorageCulture);
+            }
+            catch
+            {
+                return 0.0;
+            }
         }
 
         public override string Format(double instance)
