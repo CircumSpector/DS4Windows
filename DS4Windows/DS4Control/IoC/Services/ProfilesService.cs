@@ -197,7 +197,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
             Directory.CreateDirectory(directory);
 
-            foreach (var (id, profile) in availableProfiles) PersistProfile(profile, directory);
+            foreach (var (_, profile) in availableProfiles) PersistProfile(profile, directory);
         }
 
         /// <summary>
