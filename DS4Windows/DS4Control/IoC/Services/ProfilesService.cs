@@ -136,6 +136,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             foreach (var file in profiles)
             {
+                logger.LogDebug("Processing profile {Profile}", file);
+
                 using var stream = File.OpenRead(file);
 
                 try
@@ -152,20 +154,33 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                     if (!convertLegacyIfFound)
                         continue;
 
-                    stream.Seek(0, SeekOrigin.Begin);
+                    logger.LogInformation("Legacy profile {Profile} found, attempting conversion",
+                        file);
 
-                    var profile = new DS4WindowsProfile();
-                    
-                    var profileV3 = DS4WindowsProfileV3.Deserialize(stream);
+                    try
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
 
-                    profileV3.ConvertTo(profile);
-                    profile.DisplayName = Path.GetFileNameWithoutExtension(file).Trim();
+                        var profile = new DS4WindowsProfile();
 
-                    availableProfiles.Add(profile.Id, profile);
+                        var profileV3 = DS4WindowsProfileV3.Deserialize(stream);
 
-                    stream.Dispose();
-                    File.Delete(file);
-                    PersistProfile(profile, directory);
+                        profileV3.ConvertTo(profile);
+                        //
+                        // We don't have this property in the old profiles so make one up
+                        // 
+                        profile.DisplayName = Path.GetFileNameWithoutExtension(file).Trim();
+
+                        availableProfiles.Add(profile.Id, profile);
+
+                        stream.Dispose();
+                        File.Delete(file);
+                        PersistProfile(profile, directory);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Failed to attempt legacy profile conversion");
+                    }
                 }
             }
         }
