@@ -59,14 +59,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Persist the current settings to disk.
         /// </summary>
-        /// <param name="path">The absolute path to the resulting XML file.</param>
-        bool SaveLinkedProfiles(string path = null);
+        bool SaveLinkedProfiles();
 
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
-        /// <param name="path">The absolute path to the XML file to read from.</param>
-        bool LoadLinkedProfiles(string path = null);
+        bool LoadLinkedProfiles();
     }
 
     /// <summary>
@@ -203,11 +201,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Persist the current settings to disk.
         /// </summary>
-        /// <param name="path">The absolute path to the resulting XML file.</param>
-        public bool SaveLinkedProfiles(string path = null)
+        public bool SaveLinkedProfiles()
         {
-            if (string.IsNullOrEmpty(path))
-                path = global.LinkedProfilesPath;
+            var path = global.LinkedProfilesPath;
 
             try
             {
@@ -231,11 +227,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
-        /// <param name="path">The absolute path to the XML file to read from.</param>
-        public bool LoadLinkedProfiles(string path = null)
+        public bool LoadLinkedProfiles()
         {
-            if (string.IsNullOrEmpty(path))
-                path = global.LinkedProfilesPath;
+            var path = global.LinkedProfilesPath;
 
             if (!File.Exists(path))
             {
