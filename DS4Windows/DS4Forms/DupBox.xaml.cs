@@ -4,6 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
+using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
+using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
+using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
+using MessageBox = AdonisUI.Controls.MessageBox;
 
 namespace DS4WinWPF.DS4Forms
 {

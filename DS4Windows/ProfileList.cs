@@ -6,6 +6,7 @@ using System.Windows.Data;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 
+
 namespace DS4WinWPF
 {
     public interface IProfileList
