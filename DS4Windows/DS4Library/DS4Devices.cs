@@ -45,30 +45,44 @@ namespace DS4Windows
 
         private static readonly VidPidInfo[] knownDevices =
         {
-            new(SONY_VID, 0xBA0, "Sony WA", InputDeviceType.DS4, VidPidFeatureSet.MonitorAudio),
+            new(SONY_VID, 0xBA0, "Sony WA",
+                InputDeviceType.DS4,
+                VidPidFeatureSet.MonitorAudio
+            ),
             new(SONY_VID, 0x5C4, "DS4 v.1"),
-            new(SONY_VID, 0x09CC, "DS4 v.2", InputDeviceType.DS4, VidPidFeatureSet.MonitorAudio),
-            new(SONY_VID, 0x0CE6, "DualSense", InputDeviceType.DualSense, VidPidFeatureSet.DefaultDS4,
-                DualSenseDevice.DetermineConnectionType),
+            new(SONY_VID, 0x09CC, "DS4 v.2",
+                InputDeviceType.DS4,
+                VidPidFeatureSet.MonitorAudio
+            ),
+            new(SONY_VID, 0x0CE6, "DualSense",
+                InputDeviceType.DualSense,
+                VidPidFeatureSet.DefaultDS4,
+                DualSenseDevice.DetermineConnectionType
+            ),
             new(RAZER_VID, 0x1000, "Razer Raiju PS4"),
-            new(NACON_VID, 0x0D01, "Nacon Revol Pro v.1", InputDeviceType.DS4,
-                VidPidFeatureSet
-                    .NoGyroCalib), // Nacon Revolution Pro v1 and v2 doesn't support DS4 gyro calibration routines
-            new(NACON_VID, 0x0D02, "Nacon Revol Pro v.2", InputDeviceType.DS4,
-                VidPidFeatureSet.NoGyroCalib | VidPidFeatureSet.MonitorAudio),
-            new(HORI_VID, 0x00EE, "Hori PS4 Mini", InputDeviceType.DS4,
-                VidPidFeatureSet.NoOutputData | VidPidFeatureSet.NoBatteryReading |
-                VidPidFeatureSet.NoGyroCalib), // Hori PS4 Mini Wired Gamepad
+            new(NACON_VID, 0x0D01, "Nacon Revol Pro v.1",
+                InputDeviceType.DS4,
+                VidPidFeatureSet.NoGyroCalib
+            ), // Nacon Revolution Pro v1 and v2 doesn't support DS4 gyro calibration routines
+            new(NACON_VID, 0x0D02, "Nacon Revol Pro v.2",
+                InputDeviceType.DS4,
+                VidPidFeatureSet.NoGyroCalib | VidPidFeatureSet.MonitorAudio
+            ),
+            new(HORI_VID, 0x00EE, "Hori PS4 Mini",
+                InputDeviceType.DS4,
+                VidPidFeatureSet.NoOutputData | VidPidFeatureSet.NoBatteryReading | VidPidFeatureSet.NoGyroCalib
+            ), // Hori PS4 Mini Wired Gamepad
             new(0x7545, 0x0104, "Armor 3 LU Cobra"), // Armor 3 Level Up Cobra
             new(0x2E95, 0x7725, "Scuf Vantage"), // Scuf Vantage gamepad
             new(0x11C0, 0x4001, "PS4 Fun"), // PS4 Fun Controller
             new(0x0C12, 0x0E20, "Brook Mars Controller"), // Brook Mars controller (wired) with DS4 mode
             new(RAZER_VID, 0x1007, "Razer Raiju TE"), // Razer Raiju Tournament Edition (wired)
-            new(RAZER_VID, 0x100A, "Razer Raiju TE BT", InputDeviceType.DS4,
+            new(RAZER_VID, 0x100A, "Razer Raiju TE BT",
+                InputDeviceType.DS4,
                 VidPidFeatureSet.OnlyInputData0x01 | VidPidFeatureSet.OnlyOutputData0x05 |
                 VidPidFeatureSet.NoBatteryReading |
-                VidPidFeatureSet
-                    .NoGyroCalib), // Razer Raiju Tournament Edition (BT). Incoming report data is in "ds4 USB format" (32 bytes) in BT. Also, WriteOutput uses "usb" data packet type in BT.
+                VidPidFeatureSet.NoGyroCalib
+            ), // Razer Raiju Tournament Edition (BT). Incoming report data is in "ds4 USB format" (32 bytes) in BT. Also, WriteOutput uses "usb" data packet type in BT.
             new(RAZER_VID, 0x1004, "Razer Raiju UE USB"), // Razer Raiju Ultimate Edition (wired)
             new(RAZER_VID, 0x1009, "Razer Raiju UE BT", InputDeviceType.DS4,
                 VidPidFeatureSet.OnlyInputData0x01 | VidPidFeatureSet.OnlyOutputData0x05 |
