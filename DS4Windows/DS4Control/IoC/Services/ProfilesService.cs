@@ -64,6 +64,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/> to look for.</param>
         void DeleteProfile(Guid guid);
 
+        void RenameProfile(DS4WindowsProfile profile, string displayName);
+        
+        void RenameProfile(Guid guid, string displayName);
+
         /// <summary>
         ///     Persist the current settings to disk.
         /// </summary>
@@ -134,6 +138,18 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         public void DeleteProfile(Guid guid)
         {
             DeleteProfile(availableProfiles[guid]);
+        }
+
+        public void RenameProfile(DS4WindowsProfile profile, string displayName)
+        {
+            profile.DisplayName = displayName;
+
+            PersistProfile(profile, global.ProfilesDirectory);
+        }
+
+        public void RenameProfile(Guid guid, string displayName)
+        {
+            RenameProfile(availableProfiles[guid], displayName);
         }
 
         /// <summary>
@@ -214,7 +230,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
             Directory.CreateDirectory(directory);
 
-            foreach (var (_, profile) in availableProfiles) PersistProfile(profile, directory);
+            foreach (var (_, profile) in availableProfiles)
+            {
+                PersistProfile(profile, directory);
+            }
         }
 
         /// <summary>
@@ -323,9 +342,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to persist.</param>
         /// <param name="directory">The parent directory where the file will be generated (or overwritten, if existent).</param>
-        private static void PersistProfile(DS4WindowsProfile profile, string directory)
+        private void PersistProfile(DS4WindowsProfile profile, string directory)
         {
             var profilePath = profile.GetAbsoluteFilePath(directory);
+
+            logger.LogDebug("Persisting profile {Profile} to file {File}",
+                profile, profilePath);
 
             using var stream = File.Open(profilePath, FileMode.Create);
 

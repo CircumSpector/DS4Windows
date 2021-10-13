@@ -257,5 +257,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         {
             return Id.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"{DisplayName} ({Id})";
+        }
     }
 }
