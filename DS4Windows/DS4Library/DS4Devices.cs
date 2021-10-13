@@ -154,16 +154,16 @@ namespace DS4Windows
             return deviceInstanceId;
         }
 
-        private static bool IsRealDS4(HidDevice hDevice)
+        private static bool IsRealDs4(HidDevice hDevice)
         {
             // Assume true by default
             var result = true;
             var deviceInstanceId = DevicePathToInstanceId(hDevice.DevicePath);
-            if (!string.IsNullOrEmpty(deviceInstanceId))
-            {
-                var info = checkVirtualFunc(deviceInstanceId);
-                result = string.IsNullOrEmpty(info.PropertyValue);
-            }
+
+            if (string.IsNullOrEmpty(deviceInstanceId)) return result;
+
+            var info = checkVirtualFunc(deviceInstanceId);
+            result = string.IsNullOrEmpty(info.PropertyValue);
 
             return result;
             //string temp = Global.GetDeviceProperty(deviceInstanceId,
@@ -181,12 +181,12 @@ namespace DS4Windows
                 var hDevices = HidDevices.EnumerateDS4(knownDevices, logVerbose);
                 hDevices = hDevices.Where(d =>
                 {
-                    var metainfo = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
+                    var info = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
                                                             x.Pid == d.Attributes.ProductId);
-                    return PreparePendingDevice(d, metainfo);
+                    return PreparePendingDevice(d, info);
                 });
 
-                if (checkVirtualFunc != null) hDevices = hDevices.Where(dev => IsRealDS4(dev)).Select(dev => dev);
+                if (checkVirtualFunc != null) hDevices = hDevices.Where(IsRealDs4).Select(dev => dev);
 
                 //hDevices = from dev in hDevices where IsRealDS4(dev) select dev;
                 // Sort Bluetooth first in case USB is also connected on the same controller.
@@ -194,28 +194,28 @@ namespace DS4Windows
                 {
                     // Need VidPidInfo instance to get CheckConnectionDelegate and
                     // check the connection type
-                    var metainfo = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
+                    var info = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
                                                             x.Pid == d.Attributes.ProductId);
 
                     //return DS4Device.HidConnectionType(d);
-                    return metainfo.CheckConnection(d);
+                    return info.CheckConnection(d);
                 });
 
                 var tempList = hDevices.ToList();
                 PurgeHiddenExclusiveDevices();
                 tempList.AddRange(DisabledDevices);
                 var devCount = tempList.Count();
-                var devicePlural = "device" + (devCount == 0 || devCount > 1 ? "s" : "");
+                var devicePlural = "device" + (devCount is 0 or > 1 ? "s" : "");
                 //Log.LogToGui("Found " + devCount + " possible " + devicePlural + ". Examining " + devicePlural + ".", false);
 
                 for (var i = 0; i < devCount; i++)
                     //foreach (HidDevice hDevice in hDevices)
                 {
                     var hDevice = tempList[i];
-                    var metainfo = knownDevices.Single(x => x.Vid == hDevice.Attributes.VendorId &&
+                    var info = knownDevices.Single(x => x.Vid == hDevice.Attributes.VendorId &&
                                                             x.Pid == hDevice.Attributes.ProductId);
 
-                    if (!metainfo.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice) &&
+                    if (!info.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice) &&
                         hDevice.Description == "HID-compliant vendor-defined device")
                         continue; // ignore the Nacon Revolution Pro programming interface
                     if (DevicePaths.Contains(hDevice.DevicePath))
@@ -256,72 +256,77 @@ namespace DS4Windows
                             hDevice.OpenDevice(false);
                     }
 
-                    if (hDevice.IsOpen)
+                    if (!hDevice.IsOpen) continue;
+
+                    //string serial = hDevice.ReadSerial();
+                    var serial = PhysicalAddress.Parse(DS4Device.BLANK_SERIAL);
+
+                    switch (info.InputDevType)
                     {
-                        //string serial = hDevice.ReadSerial();
-                        var serial = PhysicalAddress.Parse(DS4Device.BLANK_SERIAL);
-                        if (metainfo.InputDevType == InputDeviceType.DualSense)
+                        case InputDeviceType.DualSense:
                             serial = hDevice.ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
-                        else if (metainfo.InputDevType == InputDeviceType.DS4 &&
-                                 metainfo.CheckConnection(hDevice) == ConnectionType.SONYWA)
+                            break;
+                        case InputDeviceType.DS4 when info.CheckConnection(hDevice) == ConnectionType.SONYWA:
                             serial = hDevice.GenerateFakeHwSerial();
-                        else
+                            break;
+                        default:
                             serial = hDevice.ReadSerial();
+                            break;
+                    }
 
-                        var validSerial = !serial.Equals(PhysicalAddress.Parse(DS4Device.BLANK_SERIAL));
-                        var newdev = true;
-                        if (validSerial && deviceSerials.Contains(serial))
+                    var validSerial = !serial.Equals(PhysicalAddress.Parse(DS4Device.BLANK_SERIAL));
+                    var newDevice = true;
+
+                    if (validSerial && deviceSerials.Contains(serial))
+                    {
+                        // Check if Quick Charge flag is engaged
+                        if (serialDevices.TryGetValue(serial, out var tempDev) &&
+                            tempDev.ReadyQuickChargeDisconnect)
                         {
-                            // Check if Quick Charge flag is engaged
-                            if (serialDevices.TryGetValue(serial, out var tempDev) &&
-                                tempDev.ReadyQuickChargeDisconnect)
-                            {
-                                // Need to disconnect callback here to avoid deadlock
-                                tempDev.Removal -= On_Removal;
-                                // Call inner removal process here instead
-                                InnerRemoveDevice(tempDev);
-                                // Disconnect wireless device
-                                tempDev.DisconnectWireless();
-                            }
-                            // happens when the BT endpoint already is open and the USB is plugged into the same host
-                            else if (isExclusiveMode && hDevice.IsExclusive &&
-                                     !DisabledDevices.Contains(hDevice))
-                            {
-                                // Grab reference to exclusively opened HidDevice so device
-                                // stays hidden to other processes
-                                DisabledDevices.Add(hDevice);
-                                //DevicePaths.Add(hDevice.DevicePath);
-                                newdev = false;
-                            }
-                            else
-                            {
-                                // Using shared mode. Serial already exists. Ignore device
-                                newdev = false;
-                            }
+                            // Need to disconnect callback here to avoid deadlock
+                            tempDev.Removal -= On_Removal;
+                            // Call inner removal process here instead
+                            InnerRemoveDevice(tempDev);
+                            // Disconnect wireless device
+                            tempDev.DisconnectWireless();
                         }
-
-                        if (newdev)
+                        // happens when the BT endpoint already is open and the USB is plugged into the same host
+                        else if (isExclusiveMode && hDevice.IsExclusive &&
+                                 !DisabledDevices.Contains(hDevice))
                         {
-                            var ds4Device = InputDeviceFactory.CreateDevice(metainfo.InputDevType, hDevice,
-                                metainfo.Name, metainfo.FeatureSet);
-                            //DS4Device ds4Device = new DS4Device(hDevice, metainfo.name, metainfo.featureSet);
-                            if (ds4Device == null)
-                                // No compatible device type was found. Skip
-                                continue;
-
-                            PrepareDS4Init?.Invoke(ds4Device);
-                            ds4Device.PostInit();
-                            PostDS4Init?.Invoke(ds4Device);
-                            //ds4Device.Removal += On_Removal;
-                            if (!ds4Device.ExitOutputThread)
-                            {
-                                Devices.Add(hDevice.DevicePath, ds4Device);
-                                DevicePaths.Add(hDevice.DevicePath);
-                                deviceSerials.Add(serial);
-                                serialDevices.Add(serial, ds4Device);
-                            }
+                            // Grab reference to exclusively opened HidDevice so device
+                            // stays hidden to other processes
+                            DisabledDevices.Add(hDevice);
+                            //DevicePaths.Add(hDevice.DevicePath);
+                            newDevice = false;
+                        }
+                        else
+                        {
+                            // Using shared mode. Serial already exists. Ignore device
+                            newDevice = false;
                         }
                     }
+
+                    if (!newDevice) continue;
+
+                    var ds4Device = InputDeviceFactory.CreateDevice(info.InputDevType, hDevice,
+                        info.Name, info.FeatureSet);
+                    //DS4Device ds4Device = new DS4Device(hDevice, metainfo.name, metainfo.featureSet);
+                    if (ds4Device == null)
+                        // No compatible device type was found. Skip
+                        continue;
+
+                    PrepareDS4Init?.Invoke(ds4Device);
+                    ds4Device.PostInit();
+                    PostDS4Init?.Invoke(ds4Device);
+                    //ds4Device.Removal += On_Removal;
+                    
+                    if (ds4Device.ExitOutputThread) continue;
+
+                    Devices.Add(hDevice.DevicePath, ds4Device);
+                    DevicePaths.Add(hDevice.DevicePath);
+                    deviceSerials.Add(serial);
+                    serialDevices.Add(serial, ds4Device);
                 }
             }
         }
