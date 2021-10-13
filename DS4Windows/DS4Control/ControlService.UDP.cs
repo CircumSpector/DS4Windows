@@ -12,7 +12,7 @@ namespace DS4Windows
         public async void UseUDPPort()
         {
             changingUDPPort = true;
-            var devices = DS4Devices.GetDS4Controllers();
+            var devices = DS4Devices.GetDs4Controllers();
             foreach (var dev in devices)
                 dev.QueueEvent(() =>
                 {

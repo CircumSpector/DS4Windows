@@ -171,7 +171,9 @@ namespace DS4Windows
             //return string.IsNullOrEmpty(temp);
         }
 
-        // Enumerates ds4 controllers in the system
+        /// <summary>
+        ///     Enumerates DS4(-compatible) controllers in the system.
+        /// </summary>
         public static void FindControllers(bool logVerbose = false)
         {
             lock (Devices)
@@ -324,8 +326,10 @@ namespace DS4Windows
             }
         }
 
-        // Returns DS4 controllers that were found and are running
-        public static IEnumerable<DS4Device> GetDS4Controllers()
+        /// <summary>
+        ///     Returns DS4 controllers that were found and are running.
+        /// </summary>
+        public static IEnumerable<DS4Device> GetDs4Controllers()
         {
             lock (Devices)
             {
@@ -339,15 +343,9 @@ namespace DS4Windows
         {
             lock (Devices)
             {
-                IEnumerable<DS4Device> devices = Devices.Values.ToArray();
-                //foreach (DS4Device device in devices)
-                //for (int i = 0, devCount = devices.Count(); i < devCount; i++)
-                for (var devEnum = devices.GetEnumerator(); devEnum.MoveNext();)
+                foreach (var device in Devices.Values.ToList())
                 {
-                    var device = devEnum.Current;
-                    //DS4Device device = devices.ElementAt(i);
                     device.StopUpdate();
-                    //device.runRemoval();
                     device.HidDevice.CloseDevice();
                 }
 
@@ -376,15 +374,14 @@ namespace DS4Windows
 
         private static void InnerRemoveDevice(DS4Device device)
         {
-            if (device != null)
-            {
-                device.HidDevice.CloseDevice();
-                Devices.Remove(device.HidDevice.DevicePath);
-                DevicePaths.Remove(device.HidDevice.DevicePath);
-                deviceSerials.Remove(device.MacAddress);
-                serialDevices.Remove(device.MacAddress);
-                //purgeHiddenExclusiveDevices();
-            }
+            if (device == null) return;
+
+            device.HidDevice.CloseDevice();
+            Devices.Remove(device.HidDevice.DevicePath);
+            DevicePaths.Remove(device.HidDevice.DevicePath);
+            deviceSerials.Remove(device.MacAddress);
+            serialDevices.Remove(device.MacAddress);
+            //purgeHiddenExclusiveDevices();
         }
 
         public static void UpdateSerial(object sender, EventArgs e)
@@ -392,26 +389,26 @@ namespace DS4Windows
             lock (Devices)
             {
                 var device = (DS4Device)sender;
-                if (device != null)
-                {
-                    var devPath = device.HidDevice.DevicePath;
-                    var serial = device.MacAddress;
-                    if (Devices.ContainsKey(devPath))
-                    {
-                        deviceSerials.Remove(serial);
-                        serialDevices.Remove(serial);
-                        device.UpdateSerial();
-                        serial = device.MacAddress;
-                        if (DS4Device.IsValidSerial(serial))
-                        {
-                            deviceSerials.Add(serial);
-                            serialDevices.Add(serial, device);
-                        }
+                if (device == null) return;
 
-                        if (device.ShouldRunCalib())
-                            device.RefreshCalibration();
-                    }
+                var devPath = device.HidDevice.DevicePath;
+                var serial = device.MacAddress;
+
+                if (!Devices.ContainsKey(devPath)) return;
+
+                deviceSerials.Remove(serial);
+                serialDevices.Remove(serial);
+                device.UpdateSerial();
+                serial = device.MacAddress;
+
+                if (DS4Device.IsValidSerial(serial))
+                {
+                    deviceSerials.Add(serial);
+                    serialDevices.Add(serial, device);
                 }
+
+                if (device.ShouldRunCalib())
+                    device.RefreshCalibration();
             }
         }
 

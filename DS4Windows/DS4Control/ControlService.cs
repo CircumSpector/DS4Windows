@@ -552,7 +552,7 @@ namespace DS4Windows
 
         public void ChangeMotionEventStatus(bool state)
         {
-            var devices = DS4Devices.GetDS4Controllers();
+            var devices = DS4Devices.GetDs4Controllers();
             if (state)
             {
                 var i = 0;
@@ -1035,10 +1035,10 @@ namespace DS4Windows
 
                     IList<DS4Device> devices;
 
-                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4Devices.GetDS4Controllers))
+                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4Devices.GetDs4Controllers))
                         .StartActive(true))
                     {
-                        devices = DS4Devices.GetDS4Controllers().ToList();
+                        devices = DS4Devices.GetDs4Controllers().ToList();
                     }
 
                     var numControllers = devices.Count;
@@ -1449,7 +1449,7 @@ namespace DS4Windows
                 DS4Devices.FindControllers(appSettings.Settings.DeviceOptions.VerboseLogMessages);
             });
 
-            var devices = DS4Devices.GetDS4Controllers();
+            var devices = DS4Devices.GetDs4Controllers();
             var numControllers = new List<DS4Device>(devices).Count;
             activeControllers = numControllers;
             //foreach (DS4Device device in devices)
