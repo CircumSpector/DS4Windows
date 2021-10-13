@@ -26,19 +26,19 @@ namespace DS4Windows
         private static readonly Dictionary<string, DS4Device> Devices = new();
 
         // (MacAddress, DS4Device)
-        private static readonly Dictionary<PhysicalAddress, DS4Device> serialDevices = new();
-        private static readonly HashSet<PhysicalAddress> deviceSerials = new();
+        private static readonly Dictionary<PhysicalAddress, DS4Device> SerialDevices = new();
+        private static readonly HashSet<PhysicalAddress> DeviceSerials = new();
 
         private static readonly HashSet<string> DevicePaths = new();
 
         // Keep instance of opened exclusive mode devices not in use (Charging while using BT connection)
         private static readonly List<HidDevice> DisabledDevices = new();
-        private static readonly Stopwatch sw = new();
-        public static CheckVirtualDelegate checkVirtualFunc = null;
-        public static PrepareInitDelegate PrepareDS4Init = null;
-        public static PrepareInitDelegate PostDS4Init = null;
+        private static readonly Stopwatch Sw = new();
+        public static CheckVirtualDelegate CheckVirtualFunc = null;
+        public static PrepareInitDelegate PrepareDs4Init = null;
+        public static PrepareInitDelegate PostDs4Init = null;
         public static CheckPendingDevice PreparePendingDevice = null;
-        public static bool isExclusiveMode = false;
+        public static bool IsExclusiveMode = false;
 
         // https://support.steampowered.com/kb_article.php?ref=5199-TOKV-4426&l=english web site has a list of other PS4 compatible device VID/PID values and brand names. 
         // However, not all those are guaranteed to work with DS4Windows app so support is added case by case when users of DS4Windows app tests non-official DS4 gamepads.
@@ -162,7 +162,7 @@ namespace DS4Windows
 
             if (string.IsNullOrEmpty(deviceInstanceId)) return result;
 
-            var info = checkVirtualFunc(deviceInstanceId);
+            var info = CheckVirtualFunc(deviceInstanceId);
             result = string.IsNullOrEmpty(info.PropertyValue);
 
             return result;
@@ -186,7 +186,7 @@ namespace DS4Windows
                     return PreparePendingDevice(d, info);
                 });
 
-                if (checkVirtualFunc != null) hDevices = hDevices.Where(IsRealDs4).Select(dev => dev);
+                if (CheckVirtualFunc != null) hDevices = hDevices.Where(IsRealDs4).Select(dev => dev);
 
                 //hDevices = from dev in hDevices where IsRealDS4(dev) select dev;
                 // Sort Bluetooth first in case USB is also connected on the same controller.
@@ -223,8 +223,8 @@ namespace DS4Windows
 
                     if (!hDevice.IsOpen)
                     {
-                        hDevice.OpenDevice(isExclusiveMode);
-                        if (!hDevice.IsOpen && isExclusiveMode)
+                        hDevice.OpenDevice(IsExclusiveMode);
+                        if (!hDevice.IsOpen && IsExclusiveMode)
                             try
                             {
                                 // Check if running with elevated permissions
@@ -239,12 +239,12 @@ namespace DS4Windows
                                         new RequestElevationArgs(DevicePathToInstanceId(hDevice.DevicePath));
                                     RequestElevation?.Invoke(eleArgs);
                                     if (eleArgs.StatusCode == RequestElevationArgs.STATUS_SUCCESS)
-                                        hDevice.OpenDevice(isExclusiveMode);
+                                        hDevice.OpenDevice(IsExclusiveMode);
                                 }
                                 else
                                 {
                                     ReEnableDevice(DevicePathToInstanceId(hDevice.DevicePath));
-                                    hDevice.OpenDevice(isExclusiveMode);
+                                    hDevice.OpenDevice(IsExclusiveMode);
                                 }
                             }
                             catch (Exception)
@@ -252,7 +252,7 @@ namespace DS4Windows
                             }
 
                         // TODO in exclusive mode, try to hold both open when both are connected
-                        if (isExclusiveMode && !hDevice.IsOpen)
+                        if (IsExclusiveMode && !hDevice.IsOpen)
                             hDevice.OpenDevice(false);
                     }
 
@@ -277,10 +277,10 @@ namespace DS4Windows
                     var validSerial = !serial.Equals(PhysicalAddress.Parse(DS4Device.BLANK_SERIAL));
                     var newDevice = true;
 
-                    if (validSerial && deviceSerials.Contains(serial))
+                    if (validSerial && DeviceSerials.Contains(serial))
                     {
                         // Check if Quick Charge flag is engaged
-                        if (serialDevices.TryGetValue(serial, out var tempDev) &&
+                        if (SerialDevices.TryGetValue(serial, out var tempDev) &&
                             tempDev.ReadyQuickChargeDisconnect)
                         {
                             // Need to disconnect callback here to avoid deadlock
@@ -291,7 +291,7 @@ namespace DS4Windows
                             tempDev.DisconnectWireless();
                         }
                         // happens when the BT endpoint already is open and the USB is plugged into the same host
-                        else if (isExclusiveMode && hDevice.IsExclusive &&
+                        else if (IsExclusiveMode && hDevice.IsExclusive &&
                                  !DisabledDevices.Contains(hDevice))
                         {
                             // Grab reference to exclusively opened HidDevice so device
@@ -316,17 +316,17 @@ namespace DS4Windows
                         // No compatible device type was found. Skip
                         continue;
 
-                    PrepareDS4Init?.Invoke(ds4Device);
+                    PrepareDs4Init?.Invoke(ds4Device);
                     ds4Device.PostInit();
-                    PostDS4Init?.Invoke(ds4Device);
+                    PostDs4Init?.Invoke(ds4Device);
                     //ds4Device.Removal += On_Removal;
                     
                     if (ds4Device.ExitOutputThread) continue;
 
                     Devices.Add(hDevice.DevicePath, ds4Device);
                     DevicePaths.Add(hDevice.DevicePath);
-                    deviceSerials.Add(serial);
-                    serialDevices.Add(serial, ds4Device);
+                    DeviceSerials.Add(serial);
+                    SerialDevices.Add(serial, ds4Device);
                 }
             }
         }
@@ -356,9 +356,9 @@ namespace DS4Windows
 
                 Devices.Clear();
                 DevicePaths.Clear();
-                deviceSerials.Clear();
+                DeviceSerials.Clear();
                 DisabledDevices.Clear();
-                serialDevices.Clear();
+                SerialDevices.Clear();
             }
         }
 
@@ -384,8 +384,8 @@ namespace DS4Windows
             device.HidDevice.CloseDevice();
             Devices.Remove(device.HidDevice.DevicePath);
             DevicePaths.Remove(device.HidDevice.DevicePath);
-            deviceSerials.Remove(device.MacAddress);
-            serialDevices.Remove(device.MacAddress);
+            DeviceSerials.Remove(device.MacAddress);
+            SerialDevices.Remove(device.MacAddress);
             //purgeHiddenExclusiveDevices();
         }
 
@@ -401,15 +401,15 @@ namespace DS4Windows
 
                 if (!Devices.ContainsKey(devPath)) return;
 
-                deviceSerials.Remove(serial);
-                serialDevices.Remove(serial);
+                DeviceSerials.Remove(serial);
+                SerialDevices.Remove(serial);
                 device.UpdateSerial();
                 serial = device.MacAddress;
 
                 if (DS4Device.IsValidSerial(serial))
                 {
-                    deviceSerials.Add(serial);
-                    serialDevices.Add(serial, device);
+                    DeviceSerials.Add(serial);
+                    SerialDevices.Add(serial, device);
                 }
 
                 if (device.ShouldRunCalib())
@@ -492,12 +492,12 @@ namespace DS4Windows
             */
 
             //System.Threading.Thread.Sleep(50);
-            sw.Restart();
-            while (sw.ElapsedMilliseconds < 500)
+            Sw.Restart();
+            while (Sw.ElapsedMilliseconds < 500)
                 // Use SpinWait to keep control of current thread. Using Sleep could potentially
                 // cause other events to get run out of order
                 Thread.SpinWait(250);
-            sw.Stop();
+            Sw.Stop();
 
             propChangeParams.stateChange = NativeMethods.DICS_ENABLE;
             success = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData,

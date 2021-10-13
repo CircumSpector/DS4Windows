@@ -268,9 +268,9 @@ namespace DS4Windows
             OutputslotMan = osl;
 
             DS4Devices.RequestElevation += DS4Devices_RequestElevation;
-            DS4Devices.checkVirtualFunc = CheckForVirtualDevice;
-            DS4Devices.PrepareDS4Init = PrepareDs4DeviceInit;
-            DS4Devices.PostDS4Init = PostDs4DeviceInit;
+            DS4Devices.CheckVirtualFunc = CheckForVirtualDevice;
+            DS4Devices.PrepareDs4Init = PrepareDs4DeviceInit;
+            DS4Devices.PostDs4Init = PostDs4DeviceInit;
             DS4Devices.PreparePendingDevice = CheckForSupportedDevice;
             OutputslotMan.ViGEmFailure += OutputslotMan_ViGEmFailure;
 
@@ -474,7 +474,7 @@ namespace DS4Windows
 
         public void ShutDown()
         {
-            DS4Devices.checkVirtualFunc = null;
+            DS4Devices.CheckVirtualFunc = null;
             OutputslotMan.ShutDown();
             OutputSlotPersist.Instance.WriteConfig(OutputslotMan);
 
@@ -583,7 +583,7 @@ namespace DS4Windows
 
         private void WarnExclusiveModeFailure(DS4Device device)
         {
-            if (DS4Devices.isExclusiveMode && !device.isExclusive())
+            if (DS4Devices.IsExclusiveMode && !device.isExclusive())
             {
                 var message = Resources.CouldNotOpenDS4.Replace("*Mac address*", device.MacAddress.AsFriendlyName()) +
                               " " +
@@ -989,7 +989,7 @@ namespace DS4Windows
                 LogDebug($"Using output KB+M handler: {outputKBMHandler.GetFullDisplayName()}");
                 LogDebug($"Connection to ViGEmBus {ViGEmBusVersion} established");
 
-                DS4Devices.isExclusiveMode = appSettings.Settings.UseExclusiveMode; //Re-enable Exclusive Mode
+                DS4Devices.IsExclusiveMode = appSettings.Settings.UseExclusiveMode; //Re-enable Exclusive Mode
 
                 using (GlobalTracer.Instance.BuildSpan(nameof(UpdateHidHiddenAttributes))
                     .StartActive(true))
@@ -1001,7 +1001,7 @@ namespace DS4Windows
                 if (showInLog)
                 {
                     LogDebug(Resources.SearchingController);
-                    LogDebug(DS4Devices.isExclusiveMode ? Resources.UsingExclusive : Resources.UsingShared);
+                    LogDebug(DS4Devices.IsExclusiveMode ? Resources.UsingExclusive : Resources.UsingShared);
                 }
 
                 using (GlobalTracer.Instance.BuildSpan(nameof(ChangeUDPStatus))
