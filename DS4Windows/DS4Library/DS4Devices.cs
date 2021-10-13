@@ -219,7 +219,7 @@ namespace DS4Windows
         {
             lock (devices)
             {
-                var hDevices = HidDevices.EnumerateDS4(KnownDevices, logVerbose);
+                var hDevices = HidDevices.EnumerateDs4(KnownDevices, logVerbose);
                 hDevices = hDevices.Where(d =>
                 {
                     var info = KnownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
