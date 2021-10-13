@@ -17,6 +17,15 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     [AddINotifyPropertyChangedInterface]
     public class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>, IEquatable<DS4WindowsProfile>
     {
+        public DS4WindowsProfile()
+        {
+        }
+
+        public DS4WindowsProfile(int index) : this()
+        {
+            Index = index;
+        }
+
         private const string FILE_EXTENSION = ".xml";
 
         /// <summary>
@@ -52,6 +61,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 return $"{fileName}{FILE_EXTENSION}";
             }
         }
+
+        /// <summary>
+        ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup.
+        /// </summary>
+        [XmlIgnore]
+        public int? Index { get; set; } = null;
 
         /// <summary>
         ///     Friendly, user-changeable name of this profile.

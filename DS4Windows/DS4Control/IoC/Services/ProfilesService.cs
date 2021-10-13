@@ -99,7 +99,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         private readonly IList<DS4WindowsProfile> controllerSlotProfiles = new List<DS4WindowsProfile>(Enumerable
             .Range(0, 8)
-            .Select(i => new DS4WindowsProfile()));
+            .Select(i => new DS4WindowsProfile(i)));
 
         private readonly DS4WindowsProfile currentlyEditedProfile = new();
 
