@@ -1033,15 +1033,15 @@ namespace DS4Windows
 
                     }
 
-                    IEnumerable<DS4Device> devices;
+                    IList<DS4Device> devices;
 
                     using (GlobalTracer.Instance.BuildSpan(nameof(DS4Devices.GetDS4Controllers))
                         .StartActive(true))
                     {
-                        devices = DS4Devices.GetDS4Controllers();
+                        devices = DS4Devices.GetDS4Controllers().ToList();
                     }
 
-                    var numControllers = new List<DS4Device>(devices).Count;
+                    var numControllers = devices.Count;
                     activeControllers = numControllers;
                     //int ind = 0;
                     DS4LightBar.defaultLight = false;
