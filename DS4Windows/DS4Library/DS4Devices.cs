@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4Windows
 {
+    /// <summary>
+    ///     Compatible input device discovery and enumeration service.
+    /// </summary>
     public interface IDS4Devices
     {
         event CheckVirtualDelegate CheckVirtualFunc;
@@ -38,6 +41,9 @@ namespace DS4Windows
         bool IsExclusiveMode { get; set; }
     }
 
+    /// <summary>
+    ///     Compatible input device discovery and enumeration service.
+    /// </summary>
     public class DS4Devices : IDS4Devices
     {
         internal const int SONY_VID = 0x054C;
@@ -282,8 +288,9 @@ namespace DS4Windows
                                     hDevice.OpenDevice(IsExclusiveMode);
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                logger.LogWarning(ex, "Elevated action failed");
                             }
 
                         // TODO in exclusive mode, try to hold both open when both are connected
@@ -455,39 +462,43 @@ namespace DS4Windows
         private void PurgeHiddenExclusiveDevices()
         {
             var disabledDevCount = disabledDevices.Count;
-            if (disabledDevCount > 0)
-            {
-                var disabledDevList = new List<HidDevice>();
-                for (var devEnum = disabledDevices.GetEnumerator(); devEnum.MoveNext();)
-                    //for (int i = 0, arlen = disabledDevCount; i < arlen; i++)
-                {
-                    //HidDevice tempDev = DisabledDevices.ElementAt(i);
-                    var tempDev = devEnum.Current;
-                    if (tempDev != null)
-                    {
-                        if (tempDev.IsOpen && tempDev.IsConnected)
-                        {
-                            disabledDevList.Add(tempDev);
-                        }
-                        else if (tempDev.IsOpen)
-                        {
-                            if (!tempDev.IsConnected)
-                                try
-                                {
-                                    tempDev.CloseDevice();
-                                }
-                                catch
-                                {
-                                }
+            
+            if (disabledDevCount <= 0) return;
 
-                            if (devicePaths.Contains(tempDev.DevicePath)) devicePaths.Remove(tempDev.DevicePath);
-                        }
+            var disabledDevList = new List<HidDevice>();
+            for (var devEnum = disabledDevices.GetEnumerator(); devEnum.MoveNext();)
+                //for (int i = 0, arlen = disabledDevCount; i < arlen; i++)
+            {
+                //HidDevice tempDev = DisabledDevices.ElementAt(i);
+                var tempDev = devEnum.Current;
+                
+                if (tempDev == null) continue;
+
+                switch (tempDev.IsOpen)
+                {
+                    case true when tempDev.IsConnected:
+                        disabledDevList.Add(tempDev);
+                        break;
+                    case true:
+                    {
+                        if (!tempDev.IsConnected)
+                            try
+                            {
+                                tempDev.CloseDevice();
+                            }
+                            catch(Exception ex)
+                            {
+                                logger.LogWarning(ex, "Closing device failed");
+                            }
+
+                        if (devicePaths.Contains(tempDev.DevicePath)) devicePaths.Remove(tempDev.DevicePath);
+                        break;
                     }
                 }
-
-                disabledDevices.Clear();
-                disabledDevices.AddRange(disabledDevList);
             }
+
+            disabledDevices.Clear();
+            disabledDevices.AddRange(disabledDevList);
         }
 
         public void ReEnableDevice(string deviceInstanceId)
