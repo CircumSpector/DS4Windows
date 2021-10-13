@@ -64,8 +64,18 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/> to look for.</param>
         void DeleteProfile(Guid guid);
 
+        /// <summary>
+        ///     Renames a <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to rename.</param>
+        /// <param name="displayName">The new name.</param>
         void RenameProfile(DS4WindowsProfile profile, string displayName);
-        
+
+        /// <summary>
+        ///     Renames a <see cref="DS4WindowsProfile"/> identified by <see cref="Guid"/>.
+        /// </summary>
+        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/>.</param>
+        /// <param name="displayName">The new name.</param>
         void RenameProfile(Guid guid, string displayName);
 
         /// <summary>
@@ -140,6 +150,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             DeleteProfile(availableProfiles[guid]);
         }
 
+        /// <summary>
+        ///     Renames a <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to rename.</param>
+        /// <param name="displayName">The new name.</param>
         public void RenameProfile(DS4WindowsProfile profile, string displayName)
         {
             //
@@ -155,6 +170,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             PersistProfile(profile, global.ProfilesDirectory);
         }
 
+        /// <summary>
+        ///     Renames a <see cref="DS4WindowsProfile"/> identified by <see cref="Guid"/>.
+        /// </summary>
+        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/>.</param>
+        /// <param name="displayName">The new name.</param>
         public void RenameProfile(Guid guid, string displayName)
         {
             RenameProfile(availableProfiles[guid], displayName);
