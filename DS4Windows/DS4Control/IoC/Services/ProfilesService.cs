@@ -52,8 +52,16 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
         void CreateProfile(DS4WindowsProfile profile = default);
 
+        /// <summary>
+        ///     Delete a profile from <see cref="AvailableProfiles"/> and from disk.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to delete.</param>
         void DeleteProfile(DS4WindowsProfile profile);
 
+        /// <summary>
+        ///     Delete a profile from <see cref="AvailableProfiles"/> identified by <see cref="Guid"/>.
+        /// </summary>
+        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/> to look for.</param>
         void DeleteProfile(Guid guid);
 
         /// <summary>
@@ -95,8 +103,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             Instance = this;
         }
 
+        /// <summary>
+        ///     WARNING: intermediate solution!
+        /// </summary>
         [IntermediateSolution] public static ProfilesService Instance { get; private set; }
 
+        /// <summary>
+        ///     Delete a profile from <see cref="AvailableProfiles"/> and from disk.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to delete.</param>
         public void DeleteProfile(DS4WindowsProfile profile)
         {
             if (profile is null)
@@ -112,6 +127,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             availableProfiles.Remove(profile.Id);
         }
 
+        /// <summary>
+        ///     Delete a profile from <see cref="AvailableProfiles"/> identified by <see cref="Guid"/>.
+        /// </summary>
+        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/> to look for.</param>
         public void DeleteProfile(Guid guid)
         {
             DeleteProfile(availableProfiles[guid]);
@@ -237,13 +256,21 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 return false;
             }
 
-            using var stream = File.OpenRead(path);
+            try
+            {
+                using var stream = File.OpenRead(path);
 
-            var store = Profiles.Schema.LinkedProfiles.Deserialize(stream);
+                var store = Profiles.Schema.LinkedProfiles.Deserialize(stream);
 
-            linkedProfiles.Clear();
+                linkedProfiles.Clear();
 
-            foreach (var (physicalAddress, guid) in store.Assignments) linkedProfiles.Add(physicalAddress, guid);
+                foreach (var (physicalAddress, guid) in store.Assignments) linkedProfiles.Add(physicalAddress, guid);
+            }
+            catch (InvalidOperationException)
+            {
+                logger.LogWarning("Incompatible file {LinkedProfiles} found, couldn't read", path);
+                return false;
+            }
 
             return true;
         }
@@ -291,6 +318,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             PersistProfile(profile, global.ProfilesDirectory);
         }
 
+        /// <summary>
+        ///     Persist the <see cref="DS4WindowsProfile" /> to disk as XML file.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to persist.</param>
+        /// <param name="directory">The parent directory where the file will be generated (or overwritten, if existent).</param>
         private static void PersistProfile(DS4WindowsProfile profile, string directory)
         {
             var profilePath = profile.GetAbsoluteFilePath(directory);

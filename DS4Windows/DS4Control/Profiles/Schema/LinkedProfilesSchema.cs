@@ -25,6 +25,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             return new ConfigurationContainer()
                 .EnableImplicitTyping(typeof(LinkedProfiles))
                 .Type<PhysicalAddress>().Register().Converter().Using(PhysicalAddressConverter.Default)
+                .Type<Guid>().Register().Converter().Using(GuidConverter.Default)
                 .Create();
         }
     }
