@@ -2016,11 +2016,6 @@ namespace DS4Windows
         public bool[] inWarnMonitor = new bool[MAX_DS4_CONTROLLER_COUNT]
             { false, false, false, false, false, false, false, false };
 
-        private byte[] currentBattery = new byte[MAX_DS4_CONTROLLER_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0 };
-
-        private bool[] charging = new bool[MAX_DS4_CONTROLLER_COUNT]
-            { false, false, false, false, false, false, false, false };
-
         private readonly string[] tempStrings = new string[MAX_DS4_CONTROLLER_COUNT]
         {
             string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
