@@ -1248,18 +1248,18 @@ namespace DS4Windows
                 if (_udpServer != null)
                 {
                     //var UDP_SERVER_PORT = 26760;
-                    var UDP_SERVER_PORT = appSettings.Settings.UDPServerPort;
-                    var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
+                    var udpServerPort = appSettings.Settings.UDPServerPort;
+                    var udpServerListenAddress = appSettings.Settings.UDPServerListenAddress;
 
                     try
                     {
-                        _udpServer.Start(UDP_SERVER_PORT, UDP_SERVER_LISTEN_ADDRESS);
-                        LogDebug($"UDP server listening on address {UDP_SERVER_LISTEN_ADDRESS} port {UDP_SERVER_PORT}");
+                        _udpServer.Start(udpServerPort, udpServerListenAddress);
+                        LogDebug($"UDP server listening on address {udpServerListenAddress} port {udpServerPort}");
                     }
                     catch (SocketException ex)
                     {
                         var errMsg =
-                            $"Couldn't start UDP server on address {UDP_SERVER_LISTEN_ADDRESS}:{UDP_SERVER_PORT}, outside applications won't be able to access pad data ({ex.SocketErrorCode})";
+                            $"Couldn't start UDP server on address {udpServerListenAddress}:{udpServerPort}, outside applications won't be able to access pad data ({ex.SocketErrorCode})";
 
                         LogDebug(errMsg, true);
                         AppLogger.Instance.LogToTray(errMsg, true, true);
