@@ -16,6 +16,10 @@ using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using Microsoft.Win32;
 using NonFormTimer = System.Timers.Timer;
+using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
+using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
+using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
+using MessageBox = AdonisUI.Controls.MessageBox;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -613,7 +617,7 @@ namespace DS4WinWPF.DS4Forms
                 var presetWin = new PresetOptionWindow(rootHub);
                 presetWin.SetupData(DeviceNum);
                 presetWin.ShowDialog();
-                if (presetWin.Result == MessageBoxResult.Cancel)
+                if (presetWin.Result == System.Windows.MessageBoxResult.Cancel)
                     Global.Instance.LoadBlankDevProfile(device, false, rootHub, false);
             }
 
@@ -1491,7 +1495,7 @@ namespace DS4WinWPF.DS4Forms
             presetWin.DelayPresetApply = true;
             presetWin.ShowDialog();
 
-            if (presetWin.Result == MessageBoxResult.OK)
+            if (presetWin.Result == System.Windows.MessageBoxResult.OK)
             {
                 StopEditorBindings();
                 presetWin.ApplyPreset();
