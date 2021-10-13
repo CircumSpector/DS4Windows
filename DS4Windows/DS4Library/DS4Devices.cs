@@ -43,7 +43,7 @@ namespace DS4Windows
         // https://support.steampowered.com/kb_article.php?ref=5199-TOKV-4426&l=english web site has a list of other PS4 compatible device VID/PID values and brand names. 
         // However, not all those are guaranteed to work with DS4Windows app so support is added case by case when users of DS4Windows app tests non-official DS4 gamepads.
 
-        private static readonly VidPidInfo[] knownDevices =
+        private static readonly VidPidInfo[] KnownDevices =
         {
             new(SONY_VID, 0xBA0, "Sony WA",
                 InputDeviceType.DS4,
@@ -178,10 +178,10 @@ namespace DS4Windows
         {
             lock (Devices)
             {
-                var hDevices = HidDevices.EnumerateDS4(knownDevices, logVerbose);
+                var hDevices = HidDevices.EnumerateDS4(KnownDevices, logVerbose);
                 hDevices = hDevices.Where(d =>
                 {
-                    var info = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
+                    var info = KnownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
                                                             x.Pid == d.Attributes.ProductId);
                     return PreparePendingDevice(d, info);
                 });
@@ -194,7 +194,7 @@ namespace DS4Windows
                 {
                     // Need VidPidInfo instance to get CheckConnectionDelegate and
                     // check the connection type
-                    var info = knownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
+                    var info = KnownDevices.Single(x => x.Vid == d.Attributes.VendorId &&
                                                             x.Pid == d.Attributes.ProductId);
 
                     //return DS4Device.HidConnectionType(d);
@@ -212,7 +212,7 @@ namespace DS4Windows
                     //foreach (HidDevice hDevice in hDevices)
                 {
                     var hDevice = tempList[i];
-                    var info = knownDevices.Single(x => x.Vid == hDevice.Attributes.VendorId &&
+                    var info = KnownDevices.Single(x => x.Vid == hDevice.Attributes.VendorId &&
                                                             x.Pid == hDevice.Attributes.ProductId);
 
                     if (!info.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice) &&
