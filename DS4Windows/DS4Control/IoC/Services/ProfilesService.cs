@@ -142,8 +142,16 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         public void RenameProfile(DS4WindowsProfile profile, string displayName)
         {
+            //
+            // File name is derived from old name, so delete the file to clean up
+            // 
+            File.Delete(profile.GetAbsoluteFilePath(global.ProfilesDirectory));
+
             profile.DisplayName = displayName;
 
+            //
+            // Will generate new file name
+            // 
             PersistProfile(profile, global.ProfilesDirectory);
         }
 
