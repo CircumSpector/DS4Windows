@@ -181,6 +181,8 @@ namespace DS4Windows
         private readonly Queue<Action> busEvtQueue = new();
         private readonly object busEvtQueueLock = new();
 
+        private readonly IDS4Devices ds4devices;
+
         private readonly IAppSettingsService appSettings;
 
         [IntermediateSolution]
@@ -192,9 +194,11 @@ namespace DS4Windows
         public ControlService(
             ICommandLineOptions cmdParser,
             IOutputSlotManager osl,
-            IAppSettingsService appSettings
+            IAppSettingsService appSettings,
+            IDS4Devices devices
             )
         {
+            this.ds4devices = devices;
             this.appSettings = appSettings;
             this.cmdParser = cmdParser;
 
@@ -267,11 +271,11 @@ namespace DS4Windows
 
             OutputslotMan = osl;
 
-            DS4Devices.RequestElevation += DS4Devices_RequestElevation;
-            DS4Devices.CheckVirtualFunc = CheckForVirtualDevice;
-            DS4Devices.PrepareDs4Init = PrepareDs4DeviceInit;
-            DS4Devices.PostDs4Init = PostDs4DeviceInit;
-            DS4Devices.PreparePendingDevice = CheckForSupportedDevice;
+            devices.RequestElevation += DS4Devices_RequestElevation;
+            devices.CheckVirtualFunc += CheckForVirtualDevice;
+            devices.PrepareDs4Init += PrepareDs4DeviceInit;
+            devices.PostDs4Init += PostDs4DeviceInit;
+            devices.PreparePendingDevice += CheckForSupportedDevice;
             OutputslotMan.ViGEmFailure += OutputslotMan_ViGEmFailure;
 
             appSettings.UdpSmoothMinCutoffChanged += ChangeUdpSmoothingAttrs;
@@ -474,7 +478,7 @@ namespace DS4Windows
 
         public void ShutDown()
         {
-            DS4Devices.CheckVirtualFunc = null;
+            ds4devices.CheckVirtualFunc -= CheckForVirtualDevice;
             OutputslotMan.ShutDown();
             OutputSlotPersist.Instance.WriteConfig(OutputslotMan);
 
@@ -552,7 +556,7 @@ namespace DS4Windows
 
         public void ChangeMotionEventStatus(bool state)
         {
-            var devices = DS4Devices.GetDs4Controllers();
+            var devices = ds4devices.GetDs4Controllers();
             if (state)
             {
                 var i = 0;
@@ -583,7 +587,7 @@ namespace DS4Windows
 
         private void WarnExclusiveModeFailure(DS4Device device)
         {
-            if (DS4Devices.IsExclusiveMode && !device.isExclusive())
+            if (ds4devices.IsExclusiveMode && !device.isExclusive())
             {
                 var message = Resources.CouldNotOpenDS4.Replace("*Mac address*", device.MacAddress.AsFriendlyName()) +
                               " " +
@@ -989,7 +993,7 @@ namespace DS4Windows
                 LogDebug($"Using output KB+M handler: {outputKBMHandler.GetFullDisplayName()}");
                 LogDebug($"Connection to ViGEmBus {ViGEmBusVersion} established");
 
-                DS4Devices.IsExclusiveMode = appSettings.Settings.UseExclusiveMode; //Re-enable Exclusive Mode
+                ds4devices.IsExclusiveMode = appSettings.Settings.UseExclusiveMode; //Re-enable Exclusive Mode
 
                 using (GlobalTracer.Instance.BuildSpan(nameof(UpdateHidHiddenAttributes))
                     .StartActive(true))
@@ -1001,7 +1005,7 @@ namespace DS4Windows
                 if (showInLog)
                 {
                     LogDebug(Resources.SearchingController);
-                    LogDebug(DS4Devices.IsExclusiveMode ? Resources.UsingExclusive : Resources.UsingShared);
+                    LogDebug(ds4devices.IsExclusiveMode ? Resources.UsingExclusive : Resources.UsingShared);
                 }
 
                 using (GlobalTracer.Instance.BuildSpan(nameof(ChangeUDPStatus))
@@ -1028,7 +1032,7 @@ namespace DS4Windows
                     {
                         EventDispatcher.Invoke(() =>
                     {
-                        DS4Devices.FindControllers(appSettings.Settings.DeviceOptions.VerboseLogMessages);
+                        ds4devices.FindControllers(appSettings.Settings.DeviceOptions.VerboseLogMessages);
                     });
 
                     }
@@ -1038,7 +1042,7 @@ namespace DS4Windows
                     using (GlobalTracer.Instance.BuildSpan(nameof(DS4Devices.GetDs4Controllers))
                         .StartActive(true))
                     {
-                        devices = DS4Devices.GetDs4Controllers().ToList();
+                        devices = ds4devices.GetDs4Controllers().ToList();
                     }
 
                     var numControllers = devices.Count;
@@ -1130,9 +1134,9 @@ namespace DS4Windows
                             }
 
                             device.Removal += On_DS4Removal;
-                            device.Removal += DS4Devices.On_Removal;
+                            device.Removal += ds4devices.On_Removal;
                             device.SyncChange += On_SyncChange;
-                            device.SyncChange += DS4Devices.UpdateSerial;
+                            device.SyncChange += ds4devices.UpdateSerial;
                             device.SerialChange += On_SerialChange;
                             device.ChargingChanged += CheckQuickCharge;
 
@@ -1389,7 +1393,7 @@ namespace DS4Windows
                         DS4LightBar.UpdateLightBar(DS4Controllers[i], i);
                         tempDevice.IsRemoved = true;
                         tempDevice.StopUpdate();
-                        DS4Devices.RemoveDevice(tempDevice);
+                        ds4devices.RemoveDevice(tempDevice);
                         Thread.Sleep(50);
                     }
 
@@ -1415,7 +1419,7 @@ namespace DS4Windows
                 if (showInLog)
                     LogDebug(Resources.StoppingDS4);
 
-                DS4Devices.StopControllers();
+                ds4devices.StopControllers();
                 slotManager.ClearControllerList();
 
                 if (_udpServer != null) ChangeUDPStatus(false);
@@ -1446,11 +1450,11 @@ namespace DS4Windows
             loopControllers = true;
             EventDispatcher.Invoke(() =>
             {
-                DS4Devices.FindControllers(appSettings.Settings.DeviceOptions.VerboseLogMessages);
+                ds4devices.FindControllers(appSettings.Settings.DeviceOptions.VerboseLogMessages);
             });
 
-            var devices = DS4Devices.GetDs4Controllers();
-            var numControllers = new List<DS4Device>(devices).Count;
+            var devices = ds4devices.GetDs4Controllers().ToList();
+            var numControllers = devices.Count;
             activeControllers = numControllers;
             //foreach (DS4Device device in devices)
             //for (int i = 0, devlen = devices.Count(); i < devlen; i++)
@@ -1564,9 +1568,9 @@ namespace DS4Windows
 
                         slotManager.AddController(device, Index);
                         device.Removal += On_DS4Removal;
-                        device.Removal += DS4Devices.On_Removal;
+                        device.Removal += ds4devices.On_Removal;
                         device.SyncChange += On_SyncChange;
-                        device.SyncChange += DS4Devices.UpdateSerial;
+                        device.SyncChange += ds4devices.UpdateSerial;
                         device.SerialChange += On_SerialChange;
                         device.ChargingChanged += CheckQuickCharge;
 

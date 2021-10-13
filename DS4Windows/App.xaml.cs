@@ -59,6 +59,8 @@ namespace DS4WinWPF
 
         private IAppSettingsService appSettings;
 
+        private IDS4Devices devices;
+
         private bool exitApp;
         private bool exitComThread;
         
@@ -134,6 +136,7 @@ namespace DS4WinWPF
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
             services.AddSingleton<IProfilesService, ProfilesService>();
+            services.AddSingleton<IDS4Devices, DS4Devices>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -151,6 +154,7 @@ namespace DS4WinWPF
             logger = host.Services.GetRequiredService<ILogger<App>>();
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
             var appLogger = host.Services.GetRequiredService<AppLogger>();
+            devices = host.Services.GetRequiredService<IDS4Devices>();
 
             var profileService = host.Services.GetRequiredService<IProfilesService>();
 
@@ -608,7 +612,7 @@ namespace DS4WinWPF
             }
             else if (parser.ReenableDevice)
             {
-                DS4Devices.ReEnableDevice(parser.DeviceInstanceId);
+                devices.ReEnableDevice(parser.DeviceInstanceId);
                 runShutdown = false;
                 exitApp = true;
                 Current.Shutdown();

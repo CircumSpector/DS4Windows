@@ -7,10 +7,38 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using DS4Windows.InputDevices;
+using Microsoft.Extensions.Logging;
 
 namespace DS4Windows
 {
-    public class DS4Devices
+    public interface IDS4Devices
+    {
+        event CheckVirtualDelegate CheckVirtualFunc;
+        event PrepareInitDelegate PrepareDs4Init;
+        event PrepareInitDelegate PostDs4Init;
+        event CheckPendingDevice PreparePendingDevice;
+        event RequestElevationDelegate RequestElevation;
+
+        /// <summary>
+        ///     Enumerates DS4(-compatible) controllers in the system.
+        /// </summary>
+        void FindControllers(bool logVerbose = false);
+
+        /// <summary>
+        ///     Returns DS4 controllers that were found and are running.
+        /// </summary>
+        IEnumerable<DS4Device> GetDs4Controllers();
+
+        void StopControllers();
+        void On_Removal(object sender, EventArgs e);
+        void RemoveDevice(DS4Device device);
+        void UpdateSerial(object sender, EventArgs e);
+        void ReEnableDevice(string deviceInstanceId);
+
+        bool IsExclusiveMode { get; set; }
+    }
+
+    public class DS4Devices : IDS4Devices
     {
         internal const int SONY_VID = 0x054C;
         internal const int RAZER_VID = 0x1532;
@@ -23,22 +51,29 @@ namespace DS4Windows
         internal const int JOYCON_R_PRODUCT_ID = 0x2007;
 
         // (HID device path, DS4Device)
-        private static readonly Dictionary<string, DS4Device> Devices = new();
+        private readonly Dictionary<string, DS4Device> devices = new();
 
         // (MacAddress, DS4Device)
-        private static readonly Dictionary<PhysicalAddress, DS4Device> SerialDevices = new();
-        private static readonly HashSet<PhysicalAddress> DeviceSerials = new();
+        private readonly Dictionary<PhysicalAddress, DS4Device> serialDevices = new();
+        private readonly HashSet<PhysicalAddress> deviceSerials = new();
 
-        private static readonly HashSet<string> DevicePaths = new();
+        private readonly HashSet<string> devicePaths = new();
 
         // Keep instance of opened exclusive mode devices not in use (Charging while using BT connection)
-        private static readonly List<HidDevice> DisabledDevices = new();
-        private static readonly Stopwatch Sw = new();
-        public static CheckVirtualDelegate CheckVirtualFunc = null;
-        public static PrepareInitDelegate PrepareDs4Init = null;
-        public static PrepareInitDelegate PostDs4Init = null;
-        public static CheckPendingDevice PreparePendingDevice = null;
-        public static bool IsExclusiveMode = false;
+        private readonly List<HidDevice> disabledDevices = new();
+        private readonly Stopwatch sw = new();
+        public event CheckVirtualDelegate CheckVirtualFunc = null;
+        public event PrepareInitDelegate PrepareDs4Init = null;
+        public event PrepareInitDelegate PostDs4Init = null;
+        public event CheckPendingDevice PreparePendingDevice = null;
+        public bool IsExclusiveMode { get; set; } = false;
+
+        private readonly ILogger<DS4Devices> logger;
+
+        public DS4Devices(ILogger<DS4Devices> logger)
+        {
+            this.logger = logger;
+        }
 
         // https://support.steampowered.com/kb_article.php?ref=5199-TOKV-4426&l=english web site has a list of other PS4 compatible device VID/PID values and brand names. 
         // However, not all those are guaranteed to work with DS4Windows app so support is added case by case when users of DS4Windows app tests non-official DS4 gamepads.
@@ -129,32 +164,32 @@ namespace DS4Windows
                     .VendorDefinedDevice) // Sony DualShock 3 using DsHidMini driver. DsHidMini uses vendor-defined HID device type when it's emulating DS3 using DS4 button layout
         };
 
-        public static event RequestElevationDelegate RequestElevation;
+        public event RequestElevationDelegate RequestElevation;
 
         public static string DevicePathToInstanceId(string devicePath)
         {
             var deviceInstanceId = devicePath;
-            if (!string.IsNullOrEmpty(deviceInstanceId))
+
+            if (string.IsNullOrEmpty(deviceInstanceId)) return deviceInstanceId;
+
+            var searchIdx = deviceInstanceId.LastIndexOf("?\\", StringComparison.Ordinal);
+            if (searchIdx + 2 <= deviceInstanceId.Length)
             {
-                var searchIdx = deviceInstanceId.LastIndexOf("?\\", StringComparison.Ordinal);
-                if (searchIdx + 2 <= deviceInstanceId.Length)
-                {
-                    deviceInstanceId = deviceInstanceId.Remove(0, searchIdx + 2);
-                    deviceInstanceId = deviceInstanceId.Remove(deviceInstanceId.LastIndexOf('{'));
-                    deviceInstanceId = deviceInstanceId.Replace('#', '\\');
-                    if (deviceInstanceId.EndsWith("\\"))
-                        deviceInstanceId = deviceInstanceId.Remove(deviceInstanceId.Length - 1);
-                }
-                else
-                {
-                    deviceInstanceId = string.Empty;
-                }
+                deviceInstanceId = deviceInstanceId.Remove(0, searchIdx + 2);
+                deviceInstanceId = deviceInstanceId.Remove(deviceInstanceId.LastIndexOf('{'));
+                deviceInstanceId = deviceInstanceId.Replace('#', '\\');
+                if (deviceInstanceId.EndsWith("\\"))
+                    deviceInstanceId = deviceInstanceId.Remove(deviceInstanceId.Length - 1);
+            }
+            else
+            {
+                deviceInstanceId = string.Empty;
             }
 
             return deviceInstanceId;
         }
 
-        private static bool IsRealDs4(HidDevice hDevice)
+        private bool IsRealDs4(HidDevice hDevice)
         {
             // Assume true by default
             var result = true;
@@ -174,9 +209,9 @@ namespace DS4Windows
         /// <summary>
         ///     Enumerates DS4(-compatible) controllers in the system.
         /// </summary>
-        public static void FindControllers(bool logVerbose = false)
+        public void FindControllers(bool logVerbose = false)
         {
-            lock (Devices)
+            lock (devices)
             {
                 var hDevices = HidDevices.EnumerateDS4(KnownDevices, logVerbose);
                 hDevices = hDevices.Where(d =>
@@ -203,7 +238,7 @@ namespace DS4Windows
 
                 var tempList = hDevices.ToList();
                 PurgeHiddenExclusiveDevices();
-                tempList.AddRange(DisabledDevices);
+                tempList.AddRange(disabledDevices);
                 var devCount = tempList.Count();
                 var devicePlural = "device" + (devCount is 0 or > 1 ? "s" : "");
                 //Log.LogToGui("Found " + devCount + " possible " + devicePlural + ". Examining " + devicePlural + ".", false);
@@ -218,7 +253,7 @@ namespace DS4Windows
                     if (!info.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice) &&
                         hDevice.Description == "HID-compliant vendor-defined device")
                         continue; // ignore the Nacon Revolution Pro programming interface
-                    if (DevicePaths.Contains(hDevice.DevicePath))
+                    if (devicePaths.Contains(hDevice.DevicePath))
                         continue; // BT/USB endpoint already open once
 
                     if (!hDevice.IsOpen)
@@ -277,10 +312,10 @@ namespace DS4Windows
                     var validSerial = !serial.Equals(PhysicalAddress.Parse(DS4Device.BLANK_SERIAL));
                     var newDevice = true;
 
-                    if (validSerial && DeviceSerials.Contains(serial))
+                    if (validSerial && deviceSerials.Contains(serial))
                     {
                         // Check if Quick Charge flag is engaged
-                        if (SerialDevices.TryGetValue(serial, out var tempDev) &&
+                        if (serialDevices.TryGetValue(serial, out var tempDev) &&
                             tempDev.ReadyQuickChargeDisconnect)
                         {
                             // Need to disconnect callback here to avoid deadlock
@@ -292,11 +327,11 @@ namespace DS4Windows
                         }
                         // happens when the BT endpoint already is open and the USB is plugged into the same host
                         else if (IsExclusiveMode && hDevice.IsExclusive &&
-                                 !DisabledDevices.Contains(hDevice))
+                                 !disabledDevices.Contains(hDevice))
                         {
                             // Grab reference to exclusively opened HidDevice so device
                             // stays hidden to other processes
-                            DisabledDevices.Add(hDevice);
+                            disabledDevices.Add(hDevice);
                             //DevicePaths.Add(hDevice.DevicePath);
                             newDevice = false;
                         }
@@ -323,10 +358,10 @@ namespace DS4Windows
                     
                     if (ds4Device.ExitOutputThread) continue;
 
-                    Devices.Add(hDevice.DevicePath, ds4Device);
-                    DevicePaths.Add(hDevice.DevicePath);
-                    DeviceSerials.Add(serial);
-                    SerialDevices.Add(serial, ds4Device);
+                    devices.Add(hDevice.DevicePath, ds4Device);
+                    devicePaths.Add(hDevice.DevicePath);
+                    deviceSerials.Add(serial);
+                    serialDevices.Add(serial, ds4Device);
                 }
             }
         }
@@ -334,64 +369,64 @@ namespace DS4Windows
         /// <summary>
         ///     Returns DS4 controllers that were found and are running.
         /// </summary>
-        public static IEnumerable<DS4Device> GetDs4Controllers()
+        public IEnumerable<DS4Device> GetDs4Controllers()
         {
-            lock (Devices)
+            lock (devices)
             {
-                var controllers = new DS4Device[Devices.Count];
-                Devices.Values.CopyTo(controllers, 0);
+                var controllers = new DS4Device[devices.Count];
+                devices.Values.CopyTo(controllers, 0);
                 return controllers;
             }
         }
 
-        public static void StopControllers()
+        public void StopControllers()
         {
-            lock (Devices)
+            lock (devices)
             {
-                foreach (var device in Devices.Values.ToList())
+                foreach (var device in devices.Values.ToList())
                 {
                     device.StopUpdate();
                     device.HidDevice.CloseDevice();
                 }
 
-                Devices.Clear();
-                DevicePaths.Clear();
-                DeviceSerials.Clear();
-                DisabledDevices.Clear();
-                SerialDevices.Clear();
+                devices.Clear();
+                devicePaths.Clear();
+                deviceSerials.Clear();
+                disabledDevices.Clear();
+                serialDevices.Clear();
             }
         }
 
         // Called when devices is disconnected, timed out or has input reading failure
-        public static void On_Removal(object sender, EventArgs e)
+        public void On_Removal(object sender, EventArgs e)
         {
             var device = (DS4Device)sender;
             RemoveDevice(device);
         }
 
-        public static void RemoveDevice(DS4Device device)
+        public void RemoveDevice(DS4Device device)
         {
-            lock (Devices)
+            lock (devices)
             {
                 InnerRemoveDevice(device);
             }
         }
 
-        private static void InnerRemoveDevice(DS4Device device)
+        private void InnerRemoveDevice(DS4Device device)
         {
             if (device == null) return;
 
             device.HidDevice.CloseDevice();
-            Devices.Remove(device.HidDevice.DevicePath);
-            DevicePaths.Remove(device.HidDevice.DevicePath);
-            DeviceSerials.Remove(device.MacAddress);
-            SerialDevices.Remove(device.MacAddress);
+            devices.Remove(device.HidDevice.DevicePath);
+            devicePaths.Remove(device.HidDevice.DevicePath);
+            deviceSerials.Remove(device.MacAddress);
+            serialDevices.Remove(device.MacAddress);
             //purgeHiddenExclusiveDevices();
         }
 
-        public static void UpdateSerial(object sender, EventArgs e)
+        public void UpdateSerial(object sender, EventArgs e)
         {
-            lock (Devices)
+            lock (devices)
             {
                 var device = (DS4Device)sender;
                 if (device == null) return;
@@ -399,17 +434,17 @@ namespace DS4Windows
                 var devPath = device.HidDevice.DevicePath;
                 var serial = device.MacAddress;
 
-                if (!Devices.ContainsKey(devPath)) return;
+                if (!devices.ContainsKey(devPath)) return;
 
-                DeviceSerials.Remove(serial);
-                SerialDevices.Remove(serial);
+                deviceSerials.Remove(serial);
+                serialDevices.Remove(serial);
                 device.UpdateSerial();
                 serial = device.MacAddress;
 
                 if (DS4Device.IsValidSerial(serial))
                 {
-                    DeviceSerials.Add(serial);
-                    SerialDevices.Add(serial, device);
+                    deviceSerials.Add(serial);
+                    serialDevices.Add(serial, device);
                 }
 
                 if (device.ShouldRunCalib())
@@ -417,13 +452,13 @@ namespace DS4Windows
             }
         }
 
-        private static void PurgeHiddenExclusiveDevices()
+        private void PurgeHiddenExclusiveDevices()
         {
-            var disabledDevCount = DisabledDevices.Count;
+            var disabledDevCount = disabledDevices.Count;
             if (disabledDevCount > 0)
             {
                 var disabledDevList = new List<HidDevice>();
-                for (var devEnum = DisabledDevices.GetEnumerator(); devEnum.MoveNext();)
+                for (var devEnum = disabledDevices.GetEnumerator(); devEnum.MoveNext();)
                     //for (int i = 0, arlen = disabledDevCount; i < arlen; i++)
                 {
                     //HidDevice tempDev = DisabledDevices.ElementAt(i);
@@ -445,17 +480,17 @@ namespace DS4Windows
                                 {
                                 }
 
-                            if (DevicePaths.Contains(tempDev.DevicePath)) DevicePaths.Remove(tempDev.DevicePath);
+                            if (devicePaths.Contains(tempDev.DevicePath)) devicePaths.Remove(tempDev.DevicePath);
                         }
                     }
                 }
 
-                DisabledDevices.Clear();
-                DisabledDevices.AddRange(disabledDevList);
+                disabledDevices.Clear();
+                disabledDevices.AddRange(disabledDevList);
             }
         }
 
-        public static void ReEnableDevice(string deviceInstanceId)
+        public void ReEnableDevice(string deviceInstanceId)
         {
             bool success;
             var hidGuid = new Guid();
@@ -492,12 +527,12 @@ namespace DS4Windows
             */
 
             //System.Threading.Thread.Sleep(50);
-            Sw.Restart();
-            while (Sw.ElapsedMilliseconds < 500)
+            sw.Restart();
+            while (sw.ElapsedMilliseconds < 500)
                 // Use SpinWait to keep control of current thread. Using Sleep could potentially
                 // cause other events to get run out of order
                 Thread.SpinWait(250);
-            Sw.Stop();
+            sw.Stop();
 
             propChangeParams.stateChange = NativeMethods.DICS_ENABLE;
             success = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData,

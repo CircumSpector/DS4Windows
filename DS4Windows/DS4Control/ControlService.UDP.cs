@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.Logging;
 
@@ -12,7 +13,7 @@ namespace DS4Windows
         public async void UseUDPPort()
         {
             changingUDPPort = true;
-            var devices = DS4Devices.GetDs4Controllers();
+            var devices = ds4devices.GetDs4Controllers().ToList();
             foreach (var dev in devices)
                 dev.QueueEvent(() =>
                 {
@@ -21,25 +22,23 @@ namespace DS4Windows
 
             await Task.Delay(100);
 
-            var UDP_SERVER_PORT = appSettings.Settings.UDPServerPort;
-            var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
+            var udpServerPort = appSettings.Settings.UDPServerPort;
+            var udpServerListenAddress = appSettings.Settings.UDPServerListenAddress;
 
             try
             {
-                _udpServer.Start(UDP_SERVER_PORT, UDP_SERVER_LISTEN_ADDRESS);
+                _udpServer.Start(udpServerPort, udpServerListenAddress);
                 foreach (var dev in devices)
                     dev.QueueEvent(() =>
                     {
                         if (dev.MotionEvent != null) dev.Report += dev.MotionEvent;
                     });
-                LogDebug($"UDP server listening on address {UDP_SERVER_LISTEN_ADDRESS} port {UDP_SERVER_PORT}");
+                LogDebug($"UDP server listening on address {udpServerListenAddress} port {udpServerPort}");
             }
             catch (SocketException ex)
             {
                 var errMsg =
-                    string.Format(
-                        "Couldn't start UDP server on address {0}:{1}, outside applications won't be able to access pad data ({2})",
-                        UDP_SERVER_LISTEN_ADDRESS, UDP_SERVER_PORT, ex.SocketErrorCode);
+                    $"Couldn't start UDP server on address {udpServerListenAddress}:{udpServerPort}, outside applications won't be able to access pad data ({ex.SocketErrorCode})";
 
                 LogDebug(errMsg, true);
                 AppLogger.Instance.LogToTray(errMsg, true, true);
@@ -88,21 +87,19 @@ namespace DS4Windows
                         // Change thread affinity of object to have normal priority
                         Task.Run(() =>
                         {
-                            var UDP_SERVER_PORT = appSettings.Settings.UDPServerPort;
-                            var UDP_SERVER_LISTEN_ADDRESS = appSettings.Settings.UDPServerListenAddress;
+                            var udpServerPort = appSettings.Settings.UDPServerPort;
+                            var udpServerListenAddress = appSettings.Settings.UDPServerListenAddress;
 
                             try
                             {
-                                _udpServer.Start(UDP_SERVER_PORT, UDP_SERVER_LISTEN_ADDRESS);
+                                _udpServer.Start(udpServerPort, udpServerListenAddress);
                                 LogDebug(
-                                    $"UDP server listening on address {UDP_SERVER_LISTEN_ADDRESS} port {UDP_SERVER_PORT}");
+                                    $"UDP server listening on address {udpServerListenAddress} port {udpServerPort}");
                             }
                             catch (SocketException ex)
                             {
                                 var errMsg =
-                                    string.Format(
-                                        "Couldn't start UDP server on address {0}:{1}, outside applications won't be able to access pad data ({2})",
-                                        UDP_SERVER_LISTEN_ADDRESS, UDP_SERVER_PORT, ex.SocketErrorCode);
+                                    $"Couldn't start UDP server on address {udpServerListenAddress}:{udpServerPort}, outside applications won't be able to access pad data ({ex.SocketErrorCode})";
 
                                 LogDebug(errMsg, true);
                                 AppLogger.Instance.LogToTray(errMsg, true, true);
