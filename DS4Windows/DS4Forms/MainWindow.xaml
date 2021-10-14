@@ -79,8 +79,12 @@
             <!-- Controllers Tab -->
             <TabItem Header="{lex:Loc Controllers}" IsEnabled="{Binding FullTabsEnabled,Mode=OneWay}">
                 <Grid>
+
+                    <!-- Default info message when no controllers are found -->
                     <Label x:Name="noContLb" Visibility="Hidden" Content="{lex:Loc NoControllersConnected}"
                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+
+                    <!-- Controllers details list -->
                     <ListView x:Name="controllerLV" ItemsSource="{Binding ControllerCol}" SelectionMode="Single"
                               SelectedIndex="{Binding CurrentIndex, Mode=OneWayToSource}" Margin="0">
                         <ListView.View>
