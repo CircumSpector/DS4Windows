@@ -23,3 +23,34 @@ Automated builds by AppVeyor.
 ### 32-Bit
 
 - [DS4Windows-x86.zip](https://ci.appveyor.com/api/projects/nefarius/ds4windows/artifacts/DS4Windows-x86.zip?job=Platform%3A%x86)
+
+## 3rd party credits
+
+This application benefits from these awesome projects (appearance in no special order):
+
+- [Adonis UI](https://benruehl.github.io/adonis-ui/)
+  - Lightweight UI toolkit for WPF applications offering classic but enhanced windows visuals
+- [DeepCloner](https://github.com/force-net/DeepCloner)
+  - Fast object cloner for .NET
+- [WpfExToolkit](https://github.com/dotnetprojects/WpfExtendedToolkit)
+  - A fork of [wpftoolkit.codeplex.com](https://wpftoolkit.codeplex.com/) and now [github.com/xceedsoftware/wpftoolkit](https://github.com/xceedsoftware/wpftoolkit)
+- [Extended Xml Serializer](https://extendedxmlserializer.github.io/)
+  - A configurable and eXtensible Xml serializer for .NET
+- [Fody](https://github.com/Fody/Fody)
+  - Extensible tool for weaving .net assemblies
+- [H.NotifyIcon.WPF - NotifyIcon for .Net Core 3.1 and .Net 5 WPF](https://github.com/HavenDV/H.NotifyIcon.WPF)
+  - NotifyIcon for .Net Core 3.1 and .Net 5 WPF
+- [Jaeger Tracing](https://github.com/jaegertracing/jaeger-client-csharp)
+  - C# client (tracer) for Jaeger
+- [MdXaml](https://github.com/whistyun/MdXaml)
+  - Markdown for WPF - alternate version of Markdown.Xaml
+- [Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf)
+  - Awesome dialogs for Windows Desktop applications built with Microsoft .NET (WPF)
+- [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
+  - Injects INotifyPropertyChanged code into properties at compile time
+- [Serilog](https://serilog.net/)
+  - Flexible, structured events — log file convenience
+- [Task Scheduler Managed Wrapper](https://github.com/dahall/taskscheduler)
+  - Provides a .NET wrapper for the Windows Task Scheduler. It aggregates the multiple versions, provides an editor and allows for localization
+- [WPFLocalizeExtension](https://github.com/XAMLMarkupExtensions/WPFLocalizeExtension)
+  - LocalizationExtension is a the easy way to localize any type of DependencyProperties or native Properties on DependencyObjects
