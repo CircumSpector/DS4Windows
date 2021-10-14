@@ -54,6 +54,7 @@
             </tb:TaskbarIcon.ContextMenu>-->
         </tb:TaskbarIcon>
 
+        <!-- Bottom Status bar --> 
         <StackPanel DockPanel.Dock="Bottom" Height="30" VerticalAlignment="Bottom">
             <DockPanel Height="30">
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
@@ -71,7 +72,11 @@
                        Foreground="{Binding Color}" Margin="4,0,2,0" />
             </DockPanel>
         </StackPanel>
+
+        <!-- Main Tab Control -->
         <TabControl x:Name="mainTabCon" DockPanel.Dock="Top" SelectionChanged="MainTabCon_SelectionChanged">
+
+            <!-- Controllers Tab -->
             <TabItem Header="{lex:Loc Controllers}" IsEnabled="{Binding FullTabsEnabled,Mode=OneWay}">
                 <Grid>
                     <Label x:Name="noContLb" Visibility="Hidden" Content="{lex:Loc NoControllersConnected}"
@@ -226,6 +231,7 @@
                 </Grid>
             </TabItem>
 
+            <!-- Profiles Tab -->
             <TabItem x:Name="profilesTab" Header="{lex:Loc Profiles}">
                 <DockPanel x:Name="profDockPanel">
                     <ToolBar x:Name="profOptsToolbar" Height="30" DockPanel.Dock="Top" Background="{x:Null}">
@@ -307,9 +313,13 @@
                     </ListBox>
                 </DockPanel>
             </TabItem>
+
+            <!-- Auto Profiles Tab -->
             <TabItem Header="{lex:Loc AutoProfiles}" IsEnabled="{Binding FullTabsEnabled,Mode=OneWay}">
                 <local:AutoProfiles x:Name="autoProfControl" />
             </TabItem>
+
+            <!-- Output Slots Tab -->
             <TabItem Header="Output Slots" IsEnabled="{Binding FullTabsEnabled,Mode=OneWay}">
                 <local:OutputSlotManagerControl x:Name="slotManControl" />
             </TabItem>
@@ -562,6 +572,7 @@
 
             </TabItem>
 
+            <!-- Log Tab -->
             <TabItem Header="{lex:Loc Log}">
                 <DockPanel>
                     <DockPanel Height="20" DockPanel.Dock="Bottom" Margin="4,8">
