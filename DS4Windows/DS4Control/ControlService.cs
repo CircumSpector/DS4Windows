@@ -185,6 +185,8 @@ namespace DS4Windows
 
         private readonly IAppSettingsService appSettings;
 
+        private readonly IProfilesService profilesService;
+
         [IntermediateSolution]
         public IAppSettingsService GetAppSettings()
         {
@@ -195,12 +197,14 @@ namespace DS4Windows
             ICommandLineOptions cmdParser,
             IOutputSlotManager osl,
             IAppSettingsService appSettings,
-            IDS4Devices devices
-            )
+            IDS4Devices devices,
+            IProfilesService profilesService
+        )
         {
             this.ds4devices = devices;
             this.appSettings = appSettings;
             this.cmdParser = cmdParser;
+            this.profilesService = profilesService;
 
             Crc32Algorithm.InitializeTable(DS4Device.DefaultPolynomial);
             InitOutputKBMHandler();
@@ -417,7 +421,7 @@ namespace DS4Windows
         }
 
         [MissingLocalization]
-        public void PrepareDs4DeviceInit(DS4Device device)
+        private void PrepareDs4DeviceInit(DS4Device device)
         {
             if (!IsWin8OrGreater) device.BTOutputMethod = DS4Device.BTOutputReportMethod.HidD_SetOutputReport;
 
