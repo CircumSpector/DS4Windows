@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4WinWPF.DS4Control.IoC.Services;
@@ -65,10 +66,17 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         }
 
         /// <summary>
-        ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup.
+        ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup. This value is assigned
+        ///     at runtime and not persisted.
         /// </summary>
         [XmlIgnore]
         public int? Index { get; set; }
+
+        /// <summary>
+        ///     The controller ID this profile is currently attached to. This value is assigned at runtime and not persisted.
+        /// </summary>
+        [XmlIgnore]
+        public PhysicalAddress DeviceId { get; set; }
 
         /// <summary>
         ///     If true, is the default profile. There can only be one.
@@ -77,7 +85,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool IsDefaultProfile => Equals(Id, ProfilesService.DefaultProfileId);
 
         /// <summary>
-        ///     If true, this profile is linked to the current slots device' MAC/ID.
+        ///     If true, this profile is linked to the current slots device' MAC/ID. This value is assigned at runtime and not
+        ///     persisted.
         /// </summary>
         [XmlIgnore]
         public bool IsLinkedProfile { get; set; }

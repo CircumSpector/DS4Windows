@@ -411,6 +411,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 if (linkedProfileId != DefaultProfileId)
                 {
                     availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
+                    controllerSlotProfiles[slot].DeviceId = address;
                     HookChangeEvents(controllerSlotProfiles[slot]);
                     return;
                 }
@@ -420,6 +421,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             var profile = GetProfileFor(slot, profileId);
 
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
+            controllerSlotProfiles[slot].DeviceId = address;
             HookChangeEvents(controllerSlotProfiles[slot]);
         }
 
@@ -507,9 +509,27 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="profile">The <see cref="DS4WindowsProfile"/>.</param>
         private void HookChangeEvents(DS4WindowsProfile profile)
         {
+            // ReSharper disable once SuspiciousTypeConversion.Global
             ((INotifyPropertyChanged)profile).PropertyChanged += (sender, args) =>
             {
-                var t = 0;
+                if (sender is not DS4WindowsProfile p)
+                {
+                    logger.LogWarning("Failed to react to property change in profile");
+                    return;
+                }
+
+                switch (args.PropertyName)
+                {
+                    //
+                    // Automatically refresh linked profiles when this property changes
+                    // 
+                    case nameof(p.IsLinkedProfile):
+                        if (p.IsLinkedProfile)
+                            linkedProfiles[p.DeviceId] = p.Id;
+                        else if (linkedProfiles.ContainsKey(p.DeviceId))
+                            linkedProfiles.Remove(p.DeviceId);
+                        break;
+                }
             };
         }
     }
