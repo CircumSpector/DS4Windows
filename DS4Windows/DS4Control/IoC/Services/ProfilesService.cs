@@ -87,6 +87,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Load the persisted settings from disk.
         /// </summary>
         bool LoadLinkedProfiles();
+
+        /// <summary>
+        ///     Populates <see cref="ControllerSlotProfiles"/> with the profiles defined in configuration.
+        /// </summary>
+        void RefreshControllerSlots();
+
+        void ControllerArrived(int slot, PhysicalAddress address);
+
+        void ControllerDeparted(int slot, PhysicalAddress address);
     }
 
     /// <summary>
@@ -109,10 +118,17 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         private readonly ILogger<ProfilesService> logger;
 
-        public ProfilesService(ILogger<ProfilesService> logger, IGlobalStateService global)
+        private readonly IAppSettingsService appSettings;
+
+        public ProfilesService(
+            ILogger<ProfilesService> logger,
+            IGlobalStateService global,
+            IAppSettingsService appSettings
+        )
         {
             this.logger = logger;
             this.global = global;
+            this.appSettings = appSettings;
 
             Instance = this;
         }
@@ -320,6 +336,52 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             }
 
             return true;
+        }
+
+        /// <summary>
+        ///     Populates <see cref="ControllerSlotProfiles"/> with the profiles defined in configuration.
+        /// </summary>
+        public void RefreshControllerSlots()
+        {
+            //
+            // Get all the necessary info restored from disk
+            // 
+            appSettings.Load();
+            LoadAvailableProfiles();
+            LoadLinkedProfiles();
+
+
+        }
+
+        public void ControllerArrived(int slot, PhysicalAddress address)
+        {
+            if (slot < 0 || slot >= availableProfiles.Count)
+                throw new ArgumentOutOfRangeException(nameof(slot));
+
+            //
+            // Finding a MAC-coupled profile wins over slot from application settings
+            // 
+            if (linkedProfiles.ContainsKey(address))
+            {
+                var linkedProfileId = linkedProfiles[address];
+                availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
+                return;
+            }
+
+            var profileId = appSettings.Settings.Profiles[slot];
+            var profile = profileId.HasValue ? availableProfiles[profileId.Value] : new DS4WindowsProfile(slot);
+
+            profile.DeepCloneTo(controllerSlotProfiles[slot]);
+        }
+
+        public void ControllerDeparted(int slot, PhysicalAddress address)
+        {
+            if (slot < 0 || slot >= availableProfiles.Count)
+                throw new ArgumentOutOfRangeException(nameof(slot));
+
+            //
+            // TODO: implement
+            // 
         }
 
         /// <summary>

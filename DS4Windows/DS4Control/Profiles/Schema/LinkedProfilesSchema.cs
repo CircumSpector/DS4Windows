@@ -35,7 +35,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     public class LinkedProfilesV3 : XmlSerializable<LinkedProfilesV3>
     {
         [XmlElement(ElementName = "Assignments")]
-        //public Dictionary<PhysicalAddress, Guid> Assignments { get; set; } = new();
         public Dictionary<PhysicalAddress, string> LegacyAssignments { get; set; } = new();
 
         [XmlAttribute(AttributeName = "app_version")]
