@@ -243,51 +243,47 @@ namespace DS4WinWPF.DS4Forms
 
         private void Check_Version(bool showstatus = false)
         {
-            string version = Global.ExecutableProductVersion;
-            string newversion = string.Empty;
-            string versionFilePath = Path.Combine(Global.RuntimeAppDataPath, "version.txt");
-            ulong lastVersionNum = Global.Instance.Config.LastVersionCheckedNumber;
+            var version = Global.ExecutableProductVersion;
+            var newversion = string.Empty;
+            var versionFilePath = Path.Combine(Global.RuntimeAppDataPath, "version.txt");
+            var lastVersionNum = Global.Instance.Config.LastVersionCheckedNumber;
             //ulong lastVersion = Global.CompileVersionNumberFromString("2.1.1");
 
-            bool versionFileExists = File.Exists(versionFilePath);
+            var versionFileExists = File.Exists(versionFilePath);
             if (versionFileExists)
-            {
                 newversion = File.ReadAllText(versionFilePath).Trim();
-                //newversion = "2.1.3";
-            }
+            //newversion = "2.1.3";
 
-            ulong newversionNum = !string.IsNullOrEmpty(newversion) ?
-                Global.CompileVersionNumberFromString(newversion) : 0;
+            var newversionNum = !string.IsNullOrEmpty(newversion)
+                ? Global.CompileVersionNumberFromString(newversion)
+                : 0;
 
             if (!string.IsNullOrWhiteSpace(newversion) && version.CompareTo(newversion) != 0 &&
                 lastVersionNum < newversionNum)
             {
-                System.Windows.MessageBoxResult result = System.Windows.MessageBoxResult.No;
+                var result = System.Windows.MessageBoxResult.No;
                 Dispatcher.Invoke(() =>
                 {
-                    UpdaterWindow updaterWin = new UpdaterWindow(newversion);
+                    var updaterWin = new UpdaterWindow(newversion);
                     updaterWin.ShowDialog();
                     result = updaterWin.Result;
                 });
 
                 if (result == System.Windows.MessageBoxResult.Yes)
                 {
-                    bool launch = true;
+                    var launch = true;
                     launch = RunUpdaterCheck(launch);
 
                     if (launch)
                     {
-                        using Process p = new Process();
+                        using var p = new Process();
 
                         p.StartInfo.FileName = Path.Combine(Global.ExecutableDirectory, "DS4Updater.exe");
-                        bool isAdmin = Global.IsAdministrator;
-                        List<string> argList = new List<string>();
+                        var isAdmin = Global.IsAdministrator;
+                        var argList = new List<string>();
                         argList.Add("-autolaunch");
-                        
-                        if (!isAdmin)
-                        {
-                            argList.Add("-user");
-                        }
+
+                        if (!isAdmin) argList.Add("-user");
 
                         // Specify current exe to have DS4Updater launch
                         argList.Add("--launchExe");
@@ -297,27 +293,29 @@ namespace DS4WinWPF.DS4Forms
                         if (Global.IsAdminNeeded)
                             p.StartInfo.Verb = "runas";
 
-                        try { launch = p.Start(); }
-                        catch (InvalidOperationException) { }
+                        try
+                        {
+                            launch = p.Start();
+                        }
+                        catch (InvalidOperationException)
+                        {
+                        }
                     }
 
                     if (launch)
-                    {
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
                             contextclose = true;
                             Close();
                         }));
-                    }
                     else
-                    {
                         Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show(Properties.Resources.PleaseDownloadUpdater);
-                            Util.StartProcessHelper($"https://github.com/Ryochan7/DS4Updater/releases/tag/v{version}/{mainWinVM.updaterExe}");
+                            Util.StartProcessHelper(
+                                $"https://github.com/Ryochan7/DS4Updater/releases/tag/v{version}/{mainWinVM.updaterExe}");
                         });
-                        //Process.Start($"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
-                    }
+                    //Process.Start($"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
                 }
                 else
                 {
@@ -331,26 +329,26 @@ namespace DS4WinWPF.DS4Forms
                     File.Delete(Path.Combine(Global.RuntimeAppDataPath, "version.txt"));
 
                 if (showstatus)
-                {
                     Dispatcher.Invoke(() => MessageBox.Show(Properties.Resources.UpToDate, "DS4Windows Updater"));
-                }
             }
         }
 
         private bool RunUpdaterCheck(bool launch)
         {
-            string destPath = Global.ExecutableDirectory + "\\DS4Updater.exe";
-            bool updaterExists = File.Exists(destPath);
-            string version = DownloadUpstreamUpdaterVersion();
+            var destPath = Global.ExecutableDirectory + "\\DS4Updater.exe";
+            var updaterExists = File.Exists(destPath);
+            var version = DownloadUpstreamUpdaterVersion();
             if (!updaterExists ||
-                (!string.IsNullOrEmpty(version) && FileVersionInfo.GetVersionInfo(destPath).FileVersion.CompareTo(version) != 0))
+                !string.IsNullOrEmpty(version) &&
+                FileVersionInfo.GetVersionInfo(destPath).FileVersion.CompareTo(version) != 0)
             {
                 launch = false;
-                Uri url2 = new Uri($"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
-                string filename = Path.Combine(Path.GetTempPath(), "DS4Updater.exe");
+                var url2 = new Uri(
+                    $"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
+                var filename = Path.Combine(Path.GetTempPath(), "DS4Updater.exe");
                 using (var downloadStream = new FileStream(filename, FileMode.Create))
                 {
-                    Task<System.Net.Http.HttpResponseMessage> temp =
+                    var temp =
                         App.requestClient.GetAsync(url2.ToString(), downloadStream);
                     temp.Wait();
                     if (temp.Result.IsSuccessStatusCode) launch = true;
@@ -360,7 +358,7 @@ namespace DS4WinWPF.DS4Forms
                 {
                     if (Global.IsAdminNeeded)
                     {
-                        int copyStatus = Util.ElevatedCopyUpdater(filename);
+                        var copyStatus = Util.ElevatedCopyUpdater(filename);
                         if (copyStatus != 0) launch = false;
                     }
                     else
@@ -966,11 +964,6 @@ Suspend support not enabled.", true);
             }
         }
 
-        private void CustomColorPick_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
-        {
-
-        }
-
         private void LightColorBtn_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -982,7 +975,7 @@ Suspend support not enabled.", true);
             button.ContextMenu.IsOpen = true;
         }
 
-        private void MainDS4Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainDS4Window_Closing(object sender, CancelEventArgs e)
         {
             if (editor != null)
             {
@@ -990,11 +983,13 @@ Suspend support not enabled.", true);
                 e.Cancel = true;
                 return;
             }
-            else if (contextclose)
+
+            if (contextclose)
             {
                 return;
             }
-            else if (appSettings.Settings.CloseMinimizes)
+
+            if (appSettings.Settings.CloseMinimizes)
             {
                 WindowState = WindowState.Minimized;
                 e.Cancel = true;
@@ -1008,7 +1003,7 @@ Suspend support not enabled.", true);
                 {
                     Text = Properties.Resources.CloseConfirm,
                     Caption = Properties.Resources.Confirm,
-                    Icon = AdonisUI.Controls.MessageBoxImage.Question,
+                    Icon = MessageBoxImage.Question,
                     Buttons = new[]
                     {
                         MessageBoxButtons.No(),
@@ -1017,12 +1012,12 @@ Suspend support not enabled.", true);
                     IsSoundEnabled = false
                 };
 
-                AdonisUI.Controls.MessageBox.Show(messageBox);
+                MessageBox.Show(messageBox);
 
                 switch (messageBox.Result)
                 {
-                    case AdonisUI.Controls.MessageBoxResult.None:
-                    case AdonisUI.Controls.MessageBoxResult.No:
+                    case MessageBoxResult.None:
+                    case MessageBoxResult.No:
                         e.Cancel = true;
                         break;
                 }
