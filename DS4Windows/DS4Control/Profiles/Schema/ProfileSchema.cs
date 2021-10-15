@@ -69,6 +69,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlIgnore]
         public int? Index { get; set; } = null;
 
+        /// <summary>
+        ///     If true, is the default profile. There can only be one.
+        /// </summary>
         [XmlIgnore] 
         public bool IsDefaultProfile => Equals(Id, ProfilesService.DefaultProfileId);
 
