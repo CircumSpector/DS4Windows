@@ -88,6 +88,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         bool LoadLinkedProfiles();
 
+        /// <summary>
+        ///     Performs all tasks necessary to get the service ready to operate.
+        /// </summary>
         void Initialize();
 
         /// <summary>
@@ -348,7 +351,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Populates <see cref="ControllerSlotProfiles" /> with the profiles defined in configuration.
+        ///     Performs all tasks necessary to get the service ready to operate.
         /// </summary>
         public void Initialize()
         {
