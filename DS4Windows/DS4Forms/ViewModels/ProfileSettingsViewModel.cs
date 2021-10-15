@@ -512,13 +512,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool DInputOnly
         {
-            get => Global.Instance.Config.DirectInputOnly[device];
+            get => Global.Instance.Config.DisableVirtualController[device];
             set
             {
-                bool temp = Global.Instance.Config.DirectInputOnly[device];
+                bool temp = Global.Instance.Config.DisableVirtualController[device];
                 if (temp == value) return;
 
-                Global.Instance.Config.DirectInputOnly[device] = value;
+                Global.Instance.Config.DisableVirtualController[device] = value;
                 DInputOnlyChanged?.Invoke(this, EventArgs.Empty);
             }
         }

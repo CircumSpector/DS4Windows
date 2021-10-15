@@ -218,7 +218,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public string LaunchProgram { get; set; } = string.Empty;
 
         [XmlElement(ElementName = "DinputOnly")]
-        public bool DinputOnly { get; set; }
+        public bool DisableVirtualController { get; set; }
 
         [XmlElement(ElementName = "StartTouchpadOff")]
         public bool StartTouchpadOff { get; set; }

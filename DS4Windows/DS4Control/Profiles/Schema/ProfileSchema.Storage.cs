@@ -159,7 +159,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             ButtonMouseVerticalScale = Convert.ToInt32(store.ButtonMouseInfos[device].buttonVerticalScale * 100);
 
             LaunchProgram = store.LaunchProgram[device];
-            DinputOnly = store.DirectInputOnly[device];
+            DisableVirtualController = store.DisableVirtualController[device];
             StartTouchpadOff = store.StartTouchpadOff[device];
             TouchpadOutputMode = store.TouchOutMode[device];
             SATriggers = store.SATriggers[device];
@@ -447,7 +447,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.ButtonMouseInfos[device].mouseAccel = MouseAcceleration;
             //ShiftModifier
             store.LaunchProgram[device] = LaunchProgram;
-            store.DirectInputOnly[device] = DinputOnly;
+            store.DisableVirtualController[device] = DisableVirtualController;
             store.StartTouchpadOff[device] = StartTouchpadOff;
 
             store.SATriggers[device] = SATriggers;
@@ -698,7 +698,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.ButtonMouseInfo.mouseAccel = MouseAcceleration;
             //ShiftModifier
             profile.LaunchProgram = LaunchProgram;
-            profile.DirectInputOnly = DinputOnly;
+            profile.DirectInputOnly = DisableVirtualController;
             profile.StartTouchpadOff = StartTouchpadOff;
 
             profile.SATriggers = SATriggers;
