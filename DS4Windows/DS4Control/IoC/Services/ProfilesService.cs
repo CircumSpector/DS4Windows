@@ -88,10 +88,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         bool LoadLinkedProfiles();
 
-        /// <summary>
-        ///     Populates <see cref="ControllerSlotProfiles"/> with the profiles defined in configuration.
-        /// </summary>
-        void RefreshControllerSlots();
+        void Initialize();
 
         void ControllerArrived(int slot, PhysicalAddress address);
 
@@ -108,7 +105,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         private readonly IList<DS4WindowsProfile> controllerSlotProfiles = new List<DS4WindowsProfile>(Enumerable
             .Range(0, 8)
-            .Select(i => new DS4WindowsProfile(i)));
+            .Select(i => new DS4WindowsProfile(i)
+            {
+                //
+                // Force same GUID to avoid multiple "Default" profiles
+                // 
+                Id = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1")
+            }));
 
         private readonly DS4WindowsProfile currentlyEditedProfile = new();
 
@@ -341,7 +344,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Populates <see cref="ControllerSlotProfiles"/> with the profiles defined in configuration.
         /// </summary>
-        public void RefreshControllerSlots()
+        public void Initialize()
         {
             //
             // Get all the necessary info restored from disk
@@ -349,8 +352,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             appSettings.Load();
             LoadAvailableProfiles();
             LoadLinkedProfiles();
-
-
         }
 
         public void ControllerArrived(int slot, PhysicalAddress address)

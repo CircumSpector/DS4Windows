@@ -1061,6 +1061,9 @@ namespace DS4Windows
                     using (GlobalTracer.Instance.BuildSpan("Detected devices enumeration")
                         .StartActive(true))
                     {
+                        //
+                        // TODO: GetEnumerator leaks memory
+                        // 
                         for (var devEnum = devices.GetEnumerator(); devEnum.MoveNext() && loopControllers; i++)
                         {
                             var device = devEnum.Current;
@@ -1149,7 +1152,11 @@ namespace DS4Windows
                             var profileLoaded = false;
                             var useAutoProfile = UseTempProfiles[i];
 
-                            using (GlobalTracer.Instance.BuildSpan("Check linked profile")
+                            profilesService.ControllerArrived(i, device.MacAddress);
+
+                            #region Legacy
+
+                            using (GlobalTracer.Instance.BuildSpan("Load profile")
                                 .StartActive(true))
                             {
                                 if (!useAutoProfile)
@@ -1170,6 +1177,8 @@ namespace DS4Windows
                                     profileLoaded = await Instance.LoadProfile(i, false, this, false, false);
                                 }
                             }
+
+                            #endregion
 
                             if (profileLoaded || useAutoProfile)
                             {

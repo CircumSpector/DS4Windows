@@ -158,6 +158,8 @@ namespace DS4WinWPF
 
             var profileService = host.Services.GetRequiredService<IProfilesService>();
 
+            profileService.Initialize();
+
             //profileService.SaveAvailableProfiles();
             //profileService.LoadAvailableProfiles();
 
