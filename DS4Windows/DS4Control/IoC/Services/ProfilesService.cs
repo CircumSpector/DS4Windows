@@ -90,6 +90,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         void Initialize();
 
+        /// <summary>
+        ///     Called upon arrival of new controller device. Loads an ID/MAC-linked profile (if any), the profile stored in the
+        ///     application settings or the default shipped profile to the provided slot.
+        /// </summary>
+        /// <param name="slot">The zero-based slot index.</param>
+        /// <param name="address">The <see cref="PhysicalAddress"/> from the arrived device.</param>
         void ControllerArrived(int slot, PhysicalAddress address);
 
         void ControllerDeparted(int slot, PhysicalAddress address);
@@ -354,6 +360,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             LoadLinkedProfiles();
         }
 
+        /// <summary>
+        ///     Called upon arrival of new controller device. Loads an ID/MAC-linked profile (if any), the profile stored in the
+        ///     application settings or the default shipped profile to the provided slot.
+        /// </summary>
+        /// <param name="slot">The zero-based slot index.</param>
+        /// <param name="address">The <see cref="PhysicalAddress"/> from the arrived device.</param>
         public void ControllerArrived(int slot, PhysicalAddress address)
         {
             if (slot < 0 || slot >= availableProfiles.Count)
