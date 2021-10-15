@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -372,6 +373,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 var profile = GetProfileFor(slot, profileId);
 
                 profile.DeepCloneTo(controllerSlotProfiles[slot]);
+                HookChangeEvents(controllerSlotProfiles[slot]);
             }
         }
 
@@ -409,6 +411,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 if (linkedProfileId != DefaultProfileId)
                 {
                     availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
+                    HookChangeEvents(controllerSlotProfiles[slot]);
                     return;
                 }
             }
@@ -417,6 +420,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             var profile = GetProfileFor(slot, profileId);
 
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
+            HookChangeEvents(controllerSlotProfiles[slot]);
         }
 
         public void ControllerDeparted(int slot, PhysicalAddress address)
@@ -495,6 +499,18 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             using var stream = File.Open(profilePath, FileMode.Create);
 
             profile.Serialize(stream);
+        }
+
+        /// <summary>
+        ///     Register property changed event handlers for a given <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="profile">The <see cref="DS4WindowsProfile"/>.</param>
+        private void HookChangeEvents(DS4WindowsProfile profile)
+        {
+            ((INotifyPropertyChanged)profile).PropertyChanged += (sender, args) =>
+            {
+                var t = 0;
+            };
         }
     }
 }

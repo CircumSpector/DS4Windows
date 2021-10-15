@@ -8,6 +8,7 @@ using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using JetBrains.Annotations;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
@@ -18,6 +19,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     [AddINotifyPropertyChangedInterface]
     public class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>, IEquatable<DS4WindowsProfile>
     {
+        private const string FILE_EXTENSION = ".xml";
+
         public DS4WindowsProfile()
         {
         }
@@ -26,8 +29,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         {
             Index = index;
         }
-
-        private const string FILE_EXTENSION = ".xml";
 
         /// <summary>
         ///     Auto-generated unique ID for this profile.
@@ -67,13 +68,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup.
         /// </summary>
         [XmlIgnore]
-        public int? Index { get; set; } = null;
+        public int? Index { get; set; }
 
         /// <summary>
         ///     If true, is the default profile. There can only be one.
         /// </summary>
-        [XmlIgnore] 
+        [XmlIgnore]
         public bool IsDefaultProfile => Equals(Id, ProfilesService.DefaultProfileId);
+
+        /// <summary>
+        ///     If true, this profile is linked to the current slots device' MAC/ID.
+        /// </summary>
+        [XmlIgnore]
+        public bool IsLinkedProfile { get; set; }
 
         /// <summary>
         ///     Friendly, user-changeable name of this profile.
@@ -212,7 +219,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public SquareStickInfo SquStickInfo { get; set; } = new();
 
         public StickAntiSnapbackInfo LSAntiSnapbackInfo { get; set; } = new();
-        
+
         public StickAntiSnapbackInfo RSAntiSnapbackInfo { get; set; } = new();
 
         public BezierCurve LSOutCurve { get; set; } = new();
@@ -240,7 +247,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool Ds4Mapping { get; set; } = false;
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
-        
+
+        public bool Equals(DS4WindowsProfile other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Id.Equals(other.Id);
+        }
+
         public string GetAbsoluteFilePath(string parentDirectory)
         {
             return Path.Combine(parentDirectory, FileName);
@@ -260,18 +274,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 .Create();
         }
 
-        public bool Equals(DS4WindowsProfile other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Id.Equals(other.Id);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((DS4WindowsProfile)obj);
         }
 
