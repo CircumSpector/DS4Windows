@@ -1455,6 +1455,9 @@ namespace DS4Windows
             return true;
         }
 
+        /// <summary>
+        ///     Gets called when devices got "hot-plugged" (meaning inserted or removed during the lifetime of the application).
+        /// </summary>
         public async Task<bool> HotPlug()
         {
             if (!IsRunning) return true;
@@ -1485,6 +1488,9 @@ namespace DS4Windows
                     && !d.PrimaryDevice && d.JointDeviceSlotNumber == -1) as JoyConDevice;
             }
 
+            //
+            // TODO: GetEnumerator leaks memory
+            // 
             for (var devEnum = devices.GetEnumerator(); devEnum.MoveNext() && loopControllers;)
             {
                 var device = devEnum.Current;
@@ -1496,7 +1502,7 @@ namespace DS4Windows
                 {
                     for (int Index = 0, arlength = DS4Controllers.Length; Index < arlength; Index++)
                         if (DS4Controllers[Index] != null &&
-                            DS4Controllers[Index].MacAddress == device.MacAddress)
+                            Equals(DS4Controllers[Index].MacAddress, device.MacAddress))
                         {
                             device.CheckControllerNumDeviceSettings(numControllers);
                             return true;
@@ -1506,10 +1512,10 @@ namespace DS4Windows
                 })())
                     continue;
 
-                for (int Index = 0, controllerCount = DS4Controllers.Length;
-                    Index < controllerCount && Index < CURRENT_DS4_CONTROLLER_LIMIT;
-                    Index++)
-                    if (DS4Controllers[Index] == null)
+                for (int index = 0, controllerCount = DS4Controllers.Length;
+                    index < controllerCount && index < CURRENT_DS4_CONTROLLER_LIMIT;
+                    index++)
+                    if (DS4Controllers[index] == null)
                     {
                         //LogDebug(DS4WinWPF.Properties.Resources.FoundController + device.getMacAddress() + " (" + device.getConnectionType() + ")");
                         LogDebug(Resources.FoundController + " " + device.MacAddress + " (" +
@@ -1520,6 +1526,9 @@ namespace DS4Windows
                             //device.CurrentExclusiveStatus = DS4Device.ExclusiveStatus.HidGuardAffected;
                             ChangeExclusiveStatus(device);
 
+                        //
+                        // TODO: oh dear...
+                        // 
                         var task = new Task(() =>
                         {
                             Thread.Sleep(5);
@@ -1571,15 +1580,15 @@ namespace DS4Windows
                                 }
                             }
 
-                        DS4Controllers[Index] = device;
-                        device.DeviceSlotNumber = Index;
+                        DS4Controllers[index] = device;
+                        device.DeviceSlotNumber = index;
 
-                        Instance.Config.RefreshExtrasButtons(Index, GetKnownExtraButtons(device));
+                        Instance.Config.RefreshExtrasButtons(index, GetKnownExtraButtons(device));
                         Instance.Config.LoadControllerConfigs(device);
                         device.LoadStoreSettings();
                         device.CheckControllerNumDeviceSettings(numControllers);
 
-                        slotManager.AddController(device, Index);
+                        slotManager.AddController(device, index);
                         device.Removal += On_DS4Removal;
                         device.Removal += ds4devices.On_Removal;
                         device.SyncChange += On_SyncChange;
@@ -1587,35 +1596,39 @@ namespace DS4Windows
                         device.SerialChange += On_SerialChange;
                         device.ChargingChanged += CheckQuickCharge;
 
-                        touchPad[Index] = new Mouse(Index, device);
+                        touchPad[index] = new Mouse(index, device);
+                        
                         var profileLoaded = false;
-                        var useAutoProfile = UseTempProfiles[Index];
+                        var useAutoProfile = UseTempProfiles[index];
+
+                        profilesService.ControllerArrived(index, device.MacAddress);
+
                         if (!useAutoProfile)
                         {
                             if (device.IsValidSerial() && Instance.Config.ContainsLinkedProfile(device.MacAddress))
                             {
-                                Instance.Config.ProfilePath[Index] =
+                                Instance.Config.ProfilePath[index] =
                                     Instance.Config.GetLinkedProfile(device.MacAddress);
-                                LinkedProfileCheck[Index] = true;
+                                LinkedProfileCheck[index] = true;
                             }
                             else
                             {
-                                Instance.Config.ProfilePath[Index] = Instance.Config.OlderProfilePath[Index];
-                                LinkedProfileCheck[Index] = false;
+                                Instance.Config.ProfilePath[index] = Instance.Config.OlderProfilePath[index];
+                                LinkedProfileCheck[index] = false;
                             }
 
-                            profileLoaded = await Instance.LoadProfile(Index, false, this, false, false);
+                            profileLoaded = await Instance.LoadProfile(index, false, this, false, false);
                         }
 
                         if (profileLoaded || useAutoProfile)
                         {
-                            device.LightBarColor = appSettings.Settings.LightbarSettingInfo[Index].Ds4WinSettings.Led;
+                            device.LightBarColor = appSettings.Settings.LightbarSettingInfo[index].Ds4WinSettings.Led;
 
-                            if (!Instance.Config.GetDirectInputOnly(Index) && device.IsSynced())
+                            if (!Instance.Config.GetDirectInputOnly(index) && device.IsSynced())
                             {
                                 if (device.PrimaryDevice)
                                 {
-                                    PluginOutDev(Index, device);
+                                    PluginOutDev(index, device);
                                 }
                                 else if (device.JointDeviceSlotNumber != DS4Device.DEFAULT_JOINT_SLOT_NUMBER)
                                 {
@@ -1624,21 +1637,21 @@ namespace DS4Windows
                                     if (tempOutDev != null)
                                     {
                                         var tempConType = ActiveOutDevType[otherIdx];
-                                        EstablishOutFeedback(Index, tempConType, tempOutDev, device);
-                                        outputDevices[Index] = tempOutDev;
-                                        ActiveOutDevType[Index] = tempConType;
+                                        EstablishOutFeedback(index, tempConType, tempOutDev, device);
+                                        outputDevices[index] = tempOutDev;
+                                        ActiveOutDevType[index] = tempConType;
                                     }
                                 }
                             }
                             else
                             {
-                                UseDirectInputOnly[Index] = true;
-                                ActiveOutDevType[Index] = OutContType.None;
+                                UseDirectInputOnly[index] = true;
+                                ActiveOutDevType[index] = OutContType.None;
                             }
 
                             if (device.PrimaryDevice && device.OutputMapGyro)
                             {
-                                TouchPadOn(Index, device);
+                                TouchPadOn(index, device);
                             }
                             else if (device.JointDeviceSlotNumber != DS4Device.DEFAULT_JOINT_SLOT_NUMBER)
                             {
@@ -1646,25 +1659,25 @@ namespace DS4Windows
                                 var tempDev = DS4Controllers[otherIdx];
                                 if (tempDev != null)
                                 {
-                                    var mappedIdx = tempDev.PrimaryDevice ? otherIdx : Index;
+                                    var mappedIdx = tempDev.PrimaryDevice ? otherIdx : index;
                                     var gyroDev = device.OutputMapGyro ? device :
                                         tempDev.OutputMapGyro ? tempDev : null;
                                     if (gyroDev != null) TouchPadOn(mappedIdx, gyroDev);
                                 }
                             }
 
-                            CheckProfileOptions(Index, device);
-                            SetupInitialHookEvents(Index, device);
+                            CheckProfileOptions(index, device);
+                            SetupInitialHookEvents(index, device);
                         }
 
-                        var tempIdx = Index;
+                        var tempIdx = index;
                         device.Report += (sender, e) => { On_Report(sender, e, tempIdx); };
 
-                        if (_udpServer != null && Index < UdpServer.NUMBER_SLOTS && device.PrimaryDevice)
+                        if (_udpServer != null && index < UdpServer.NUMBER_SLOTS && device.PrimaryDevice)
                             PrepareDevUDPMotion(device, tempIdx);
 
                         device.StartUpdate();
-                        HotplugController?.Invoke(this, device, Index);
+                        HotplugController?.Invoke(this, device, index);
                         break;
                     }
             }
