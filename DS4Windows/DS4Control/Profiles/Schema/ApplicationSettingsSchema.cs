@@ -171,8 +171,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// </summary>
         public bool IsTracingEnabled { get; set; }
 
+        /// <summary>
+        ///     If true, will suppress the Steam warning dialog at startup.
+        /// </summary>
         public bool HasUserConfirmedSteamWarning { get; set; }
 
+        /// <summary>
+        ///     If true, will suppress the warning about mismatching architecture at startup.
+        /// </summary>
         public bool HasUserConfirmedArchitectureWarning { get; set; }
 
         [XmlAttribute(AttributeName = "app_version")]
