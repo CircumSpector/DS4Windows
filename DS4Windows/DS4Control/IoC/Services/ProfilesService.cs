@@ -53,28 +53,28 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         void CreateProfile(DS4WindowsProfile profile = default);
 
         /// <summary>
-        ///     Delete a profile from <see cref="AvailableProfiles"/> and from disk.
+        ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
         /// </summary>
-        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to delete.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to delete.</param>
         void DeleteProfile(DS4WindowsProfile profile);
 
         /// <summary>
-        ///     Delete a profile from <see cref="AvailableProfiles"/> identified by <see cref="Guid"/>.
+        ///     Delete a profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
         /// </summary>
-        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/> to look for.</param>
+        /// <param name="guid">The <see cref="Guid" /> of the <see cref="DS4WindowsProfile" /> to look for.</param>
         void DeleteProfile(Guid guid);
 
         /// <summary>
-        ///     Renames a <see cref="DS4WindowsProfile"/>.
+        ///     Renames a <see cref="DS4WindowsProfile" />.
         /// </summary>
-        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to rename.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to rename.</param>
         /// <param name="displayName">The new name.</param>
         void RenameProfile(DS4WindowsProfile profile, string displayName);
 
         /// <summary>
-        ///     Renames a <see cref="DS4WindowsProfile"/> identified by <see cref="Guid"/>.
+        ///     Renames a <see cref="DS4WindowsProfile" /> identified by <see cref="Guid" />.
         /// </summary>
-        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/>.</param>
+        /// <param name="guid">The <see cref="Guid" /> of the <see cref="DS4WindowsProfile" />.</param>
         /// <param name="displayName">The new name.</param>
         void RenameProfile(Guid guid, string displayName);
 
@@ -95,7 +95,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     application settings or the default shipped profile to the provided slot.
         /// </summary>
         /// <param name="slot">The zero-based slot index.</param>
-        /// <param name="address">The <see cref="PhysicalAddress"/> from the arrived device.</param>
+        /// <param name="address">The <see cref="PhysicalAddress" /> from the arrived device.</param>
         void ControllerArrived(int slot, PhysicalAddress address);
 
         void ControllerDeparted(int slot, PhysicalAddress address);
@@ -106,6 +106,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class ProfilesService : IProfilesService
     {
+        private static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
+
+        private readonly IAppSettingsService appSettings;
+
         private readonly IDictionary<Guid, DS4WindowsProfile> availableProfiles =
             new ConcurrentDictionary<Guid, DS4WindowsProfile>();
 
@@ -116,7 +120,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 //
                 // Force same GUID to avoid multiple "Default" profiles
                 // 
-                Id = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1")
+                Id = DefaultProfileId
             }));
 
         private readonly DS4WindowsProfile currentlyEditedProfile = new();
@@ -126,8 +130,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly IDictionary<PhysicalAddress, Guid> linkedProfiles = new Dictionary<PhysicalAddress, Guid>();
 
         private readonly ILogger<ProfilesService> logger;
-
-        private readonly IAppSettingsService appSettings;
 
         public ProfilesService(
             ILogger<ProfilesService> logger,
@@ -145,12 +147,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     WARNING: intermediate solution!
         /// </summary>
-        [IntermediateSolution] public static ProfilesService Instance { get; private set; }
+        [IntermediateSolution]
+        public static ProfilesService Instance { get; private set; }
 
         /// <summary>
-        ///     Delete a profile from <see cref="AvailableProfiles"/> and from disk.
+        ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
         /// </summary>
-        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to delete.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to delete.</param>
         public void DeleteProfile(DS4WindowsProfile profile)
         {
             if (profile is null)
@@ -167,18 +170,18 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Delete a profile from <see cref="AvailableProfiles"/> identified by <see cref="Guid"/>.
+        ///     Delete a profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
         /// </summary>
-        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/> to look for.</param>
+        /// <param name="guid">The <see cref="Guid" /> of the <see cref="DS4WindowsProfile" /> to look for.</param>
         public void DeleteProfile(Guid guid)
         {
             DeleteProfile(availableProfiles[guid]);
         }
 
         /// <summary>
-        ///     Renames a <see cref="DS4WindowsProfile"/>.
+        ///     Renames a <see cref="DS4WindowsProfile" />.
         /// </summary>
-        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to rename.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to rename.</param>
         /// <param name="displayName">The new name.</param>
         public void RenameProfile(DS4WindowsProfile profile, string displayName)
         {
@@ -196,9 +199,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Renames a <see cref="DS4WindowsProfile"/> identified by <see cref="Guid"/>.
+        ///     Renames a <see cref="DS4WindowsProfile" /> identified by <see cref="Guid" />.
         /// </summary>
-        /// <param name="guid">The <see cref="Guid"/> of the <see cref="DS4WindowsProfile"/>.</param>
+        /// <param name="guid">The <see cref="Guid" /> of the <see cref="DS4WindowsProfile" />.</param>
         /// <param name="displayName">The new name.</param>
         public void RenameProfile(Guid guid, string displayName)
         {
@@ -283,10 +286,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
             Directory.CreateDirectory(directory);
 
-            foreach (var (_, profile) in availableProfiles)
-            {
-                PersistProfile(profile, directory);
-            }
+            foreach (var (_, profile) in availableProfiles) PersistProfile(profile, directory);
         }
 
         /// <summary>
@@ -348,7 +348,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Populates <see cref="ControllerSlotProfiles"/> with the profiles defined in configuration.
+        ///     Populates <see cref="ControllerSlotProfiles" /> with the profiles defined in configuration.
         /// </summary>
         public void Initialize()
         {
@@ -365,7 +365,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     application settings or the default shipped profile to the provided slot.
         /// </summary>
         /// <param name="slot">The zero-based slot index.</param>
-        /// <param name="address">The <see cref="PhysicalAddress"/> from the arrived device.</param>
+        /// <param name="address">The <see cref="PhysicalAddress" /> from the arrived device.</param>
         public void ControllerArrived(int slot, PhysicalAddress address)
         {
             if (slot < 0 || slot >= availableProfiles.Count)
@@ -382,7 +382,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             }
 
             var profileId = appSettings.Settings.Profiles[slot];
-            var profile = profileId.HasValue ? availableProfiles[profileId.Value] : new DS4WindowsProfile(slot);
+            var profile = profileId.HasValue
+                ? availableProfiles[profileId.Value] // customized profile found
+                : new DS4WindowsProfile(slot) { Id = DefaultProfileId }; // provide default profile
 
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
         }
