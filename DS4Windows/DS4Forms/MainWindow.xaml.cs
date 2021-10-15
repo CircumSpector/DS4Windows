@@ -1078,7 +1078,7 @@ Suspend support not enabled.", true);
                             if (!inHotPlug)
                             {
                                 inHotPlug = true;
-                                var hotplugTask = Task.Run(() => { InnerHotplug2(); });
+                                var hotplugTask = Task.Run(HandleDeviceArrivalRemoval);
                                 // Log exceptions that might occur
                                 Util.LogAssistBackgroundTask(hotplugTask);
                             }
@@ -1347,21 +1347,30 @@ Suspend support not enabled.", true);
             return IntPtr.Zero;
         }
 
-        private async void InnerHotplug2()
+        private async void HandleDeviceArrivalRemoval()
         {
             inHotPlug = true;
 
-            bool loopHotplug = false;
+            var loopHotplug = false;
             lock (hotplugCounterLock)
             {
                 loopHotplug = hotplugCounter > 0;
             }
 
             ControlService.CurrentInstance.UpdateHidHiddenAttributes();
-            while (loopHotplug == true)
+
+            //
+            // TODO: WTF?!
+            // 
+            while (loopHotplug)
             {
+                //
+                // TODO: WTF?!
+                // 
                 Thread.Sleep(HOTPLUG_CHECK_DELAY);
+
                 await ControlService.CurrentInstance.HotPlug();
+
                 lock (hotplugCounterLock)
                 {
                     hotplugCounter--;
@@ -1374,9 +1383,12 @@ Suspend support not enabled.", true);
 
         private void HookWindowMessages(HwndSource source)
         {
-            Guid hidGuid = new Guid();
+            var hidGuid = new Guid();
+
             NativeMethods.HidD_GetHidGuid(ref hidGuid);
-            bool result = Util.RegisterNotify(source.Handle, hidGuid, ref regHandle);
+
+            var result = Util.RegisterNotify(source.Handle, hidGuid, ref regHandle);
+
             if (!result)
             {
                 Application.Current.Shutdown();
@@ -1890,31 +1902,38 @@ Suspend support not enabled.", true);
 
     public class ImageLocationPaths
     {
-        public string NewProfile { get => $"/DS4Windows;component/Resources/{App.Current.FindResource("NewProfileImg")}"; }
+        public string NewProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("NewProfileImg")}";
+
         public event EventHandler NewProfileChanged;
 
-        public string EditProfile { get => $"/DS4Windows;component/Resources/{App.Current.FindResource("EditImg")}"; }
+        public string EditProfile => $"/DS4Windows;component/Resources/{Application.Current.FindResource("EditImg")}";
         public event EventHandler EditProfileChanged;
 
-        public string DeleteProfile { get => $"/DS4Windows;component/Resources/{App.Current.FindResource("DeleteImg")}"; }
+        public string DeleteProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("DeleteImg")}";
+
         public event EventHandler DeleteProfileChanged;
 
-        public string DuplicateProfile { get => $"/DS4Windows;component/Resources/{App.Current.FindResource("CopyImg")}"; }
+        public string DuplicateProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("CopyImg")}";
+
         public event EventHandler DuplicateProfileChanged;
 
-        public string ExportProfile { get => $"/DS4Windows;component/Resources/{App.Current.FindResource("ExportImg")}"; }
+        public string ExportProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("ExportImg")}";
+
         public event EventHandler ExportProfileChanged;
 
-        public string ImportProfile { get => $"/DS4Windows;component/Resources/{App.Current.FindResource("ImportImg")}"; }
+        public string ImportProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("ImportImg")}";
+
         public event EventHandler ImportProfileChanged;
 
         public ImageLocationPaths()
         {
-            App current = App.Current as App;
-            if (current != null)
-            {
-                current.ThemeChanged += Current_ThemeChanged;
-            }
+            var current = Application.Current as App;
+            if (current != null) current.ThemeChanged += Current_ThemeChanged;
         }
 
         private void Current_ThemeChanged(object sender, EventArgs e)
