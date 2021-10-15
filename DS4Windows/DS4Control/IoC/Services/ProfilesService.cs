@@ -94,6 +94,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         void Initialize();
 
+        /// <summary>
+        ///     Performs tasks prior to app shutdown.
+        /// </summary>
         void Shutdown();
 
         /// <summary>
@@ -377,6 +380,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             }
         }
 
+        /// <summary>
+        ///     Performs tasks prior to app shutdown.
+        /// </summary>
         public void Shutdown()
         {
             appSettings.Settings.Profiles.Clear();
