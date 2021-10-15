@@ -61,6 +61,8 @@ namespace DS4WinWPF
 
         private IDS4Devices devices;
 
+        private IProfilesService profileService;
+
         private bool exitApp;
         private bool exitComThread;
         
@@ -156,7 +158,7 @@ namespace DS4WinWPF
             var appLogger = host.Services.GetRequiredService<AppLogger>();
             devices = host.Services.GetRequiredService<IDS4Devices>();
 
-            var profileService = host.Services.GetRequiredService<IProfilesService>();
+            profileService = host.Services.GetRequiredService<IProfilesService>();
 
             profileService.Initialize();
 
@@ -799,6 +801,8 @@ namespace DS4WinWPF
 
         private void CleanShutdown()
         {
+            profileService?.Shutdown();
+
             if (!runShutdown) return;
 
             if (rootHub != null)

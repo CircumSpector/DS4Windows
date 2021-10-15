@@ -93,6 +93,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         void Initialize();
 
+        void Shutdown();
+
         /// <summary>
         ///     Called upon arrival of new controller device. Loads an ID/MAC-linked profile (if any), the profile stored in the
         ///     application settings or the default shipped profile to the provided slot.
@@ -361,6 +363,26 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             appSettings.Load();
             LoadAvailableProfiles();
             LoadLinkedProfiles();
+
+            //
+            // Populate slots from application configuration, if existent
+            // 
+            foreach (var (slot, profileId) in appSettings.Settings.Profiles)
+            {
+                var profile = GetProfileFor(slot, profileId);
+
+                profile.DeepCloneTo(controllerSlotProfiles[slot]);
+            }
+        }
+
+        public void Shutdown()
+        {
+            appSettings.Settings.Profiles.Clear();
+
+            var index = 0;
+
+            foreach (var controllerSlotProfile in controllerSlotProfiles)
+                appSettings.Settings.Profiles.Add(index++, controllerSlotProfile.Id);
         }
 
         /// <summary>
@@ -392,9 +414,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             }
 
             var profileId = appSettings.Settings.Profiles[slot];
-            var profile = profileId.HasValue
-                ? availableProfiles[profileId.Value] // customized profile found
-                : new DS4WindowsProfile(slot) { Id = DefaultProfileId }; // provide default profile
+            var profile = GetProfileFor(slot, profileId);
 
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
         }
@@ -450,6 +470,14 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             availableProfiles.Add(profile.Id, profile);
 
             PersistProfile(profile, global.ProfilesDirectory);
+        }
+
+        private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
+        {
+            return profileId.HasValue &&
+                   availableProfiles.TryGetValue(profileId.Value, out var value)
+                ? value // customized profile found
+                : new DS4WindowsProfile(slot) { Id = DefaultProfileId }; // provide default profile
         }
 
         /// <summary>
