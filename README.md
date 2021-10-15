@@ -11,6 +11,7 @@
 
 Automated builds by AppVeyor.
 
+- ⚠️ Might crash your system (BSOD)!
 - ⚠️ May or may not launch/work/crash!
 - ⚠️ Use at your own risk!
 - ⚠️ May damage/corrupt your existing v3.x (or older) installation!
