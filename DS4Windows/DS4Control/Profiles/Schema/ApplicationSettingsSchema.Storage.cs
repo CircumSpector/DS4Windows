@@ -22,6 +22,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<CustomLedProxyType>().Register().Converter().Using(CustomLedConverter.Default)
                 .Type<DateTime>().Register().Converter().Using(DateTimeConverter.Default)
+                .Type<Version>().Register().Converter().Using(VersionConverter.Default)
                 .Create();
         }
 
@@ -112,9 +113,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
                 GetType().GetProperty($"Controller{i + 1}")?.SetValue(this, value);
             }
-
-            // TODO: improve this conversion mess
-            LastVersionChecked = store.LastVersionCheckedNumber.ToString();
         }
 
         /// <summary>
@@ -142,10 +140,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                     store.OlderProfilePath[i] = store.ProfilePath[i];
                 }
             }
-
-            store.LastVersionCheckedNumber = string.IsNullOrEmpty(LastVersionChecked)
-                ? 0
-                : Global.CompileVersionNumberFromString(LastVersionChecked);
         }
     }
 }

@@ -83,7 +83,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public int CheckWhen { get; set; } = 24;
 
         [XmlElement(ElementName = "LastVersionChecked")]
-        public string LastVersionChecked { get; set; }
+        public Version LastVersionChecked { get; set; }
 
         [XmlElement(ElementName = "Notifications")]
         public int Notifications { get; set; } = 2;
