@@ -109,7 +109,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class ProfilesService : IProfilesService
     {
-        private static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
+        public static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
 
         private readonly IAppSettingsService appSettings;
 
@@ -380,8 +380,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             if (linkedProfiles.ContainsKey(address))
             {
                 var linkedProfileId = linkedProfiles[address];
-                availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
-                return;
+
+                //
+                // Skip over as no custom profile was loaded from disk
+                // 
+                if (linkedProfileId != DefaultProfileId)
+                {
+                    availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
+                    return;
+                }
             }
 
             var profileId = appSettings.Settings.Profiles[slot];

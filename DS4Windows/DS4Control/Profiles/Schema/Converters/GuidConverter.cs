@@ -1,4 +1,5 @@
 ﻿using System;
+using DS4WinWPF.DS4Control.IoC.Services;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
@@ -16,7 +17,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
         
         public override Guid Parse(string data)
         {
-            return Guid.Parse(data);
+            //
+            // Trick to loop over legacy format, just report back the default profile ID
+            // 
+            return Guid.TryParse(data, out var guid) ? guid : ProfilesService.DefaultProfileId;
         }
 
         public override string Format(Guid instance)

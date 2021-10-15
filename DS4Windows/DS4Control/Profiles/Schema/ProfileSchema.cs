@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
@@ -67,6 +68,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// </summary>
         [XmlIgnore]
         public int? Index { get; set; } = null;
+
+        [XmlIgnore] 
+        public bool IsDefaultProfile => Equals(Id, ProfilesService.DefaultProfileId);
 
         /// <summary>
         ///     Friendly, user-changeable name of this profile.
