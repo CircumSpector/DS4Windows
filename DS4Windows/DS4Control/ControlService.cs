@@ -1220,8 +1220,6 @@ namespace DS4Windows
                             {
                                 device.StartUpdate();
                             }
-                            //string filename = ProfilePath[ind];
-                            //ind++;
 
                             if (i >= CURRENT_DS4_CONTROLLER_LIMIT) // out of Xinput devices!
                                 break;
@@ -1238,7 +1236,6 @@ namespace DS4Windows
 
                 if (_udpServer != null)
                 {
-                    //var UDP_SERVER_PORT = 26760;
                     var udpServerPort = appSettings.Settings.UDPServerPort;
                     var udpServerListenAddress = appSettings.Settings.UDPServerListenAddress;
 
