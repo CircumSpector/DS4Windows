@@ -5,12 +5,16 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
+using DS4WinWPF.Properties;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -127,20 +131,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void ControllersChanged(object sender, EventArgs e)
         {
             //IEnumerable<DS4Device> devices = DS4Windows.DS4Devices.getDS4Controllers();
-            using (ReadLocker locker = new ReadLocker(controlService.slotManager.CollectionLocker))
+            using (var locker = new ReadLocker(controlService.slotManager.CollectionLocker))
             {
-                foreach (DS4Device currentDev in controlService.slotManager.ControllerColl)
+                foreach (var currentDev in controlService.slotManager.ControllerColl)
                 {
-                    bool found = false;
+                    var found = false;
                     _colListLocker.EnterReadLock();
-                    foreach (CompositeDeviceModel temp in controllerCol)
-                    {
+                    foreach (var temp in controllerCol)
                         if (temp.Device == currentDev)
                         {
                             found = true;
                             break;
                         }
-                    }
+
                     _colListLocker.ExitReadLock();
 
                     // Check for new device. Also, check if disconnect might be occurring
@@ -148,8 +151,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     {
                         //int idx = controllerCol.Count;
                         _colListLocker.EnterWriteLock();
-                        int idx = controlService.slotManager.ReverseControllerDict[currentDev];
-                        CompositeDeviceModel temp = new CompositeDeviceModel(appSettings, controlService, currentDev,
+                        var idx = controlService.slotManager.ReverseControllerDict[currentDev];
+                        var temp = new CompositeDeviceModel(appSettings, controlService, currentDev,
                             idx, Global.Instance.Config.ProfilePath[idx], profileListHolder);
                         controllerCol.Add(temp);
                         controllerDict.Add(idx, temp);
@@ -163,17 +166,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void Controller_Removal(object sender, EventArgs e)
         {
-            DS4Device currentDev = sender as DS4Device;
+            var currentDev = sender as DS4Device;
             CompositeDeviceModel found = null;
             _colListLocker.EnterReadLock();
-            foreach (CompositeDeviceModel temp in controllerCol)
-            {
+            foreach (var temp in controllerCol)
                 if (temp.Device == currentDev)
                 {
                     found = temp;
                     break;
                 }
-            }
+
             _colListLocker.ExitReadLock();
 
             if (found != null)
@@ -181,10 +183,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 _colListLocker.EnterWriteLock();
                 controllerCol.Remove(found);
                 controllerDict.Remove(found.DevIndex);
-                System.Windows.Application.Current.Dispatcher.Invoke(async () =>
-                {
-                    await appSettings.SaveAsync();
-                });
+                Application.Current.Dispatcher.Invoke(async () => { await appSettings.SaveAsync(); });
 
                 _colListLocker.ExitWriteLock();
             }
@@ -209,8 +208,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                DS4Color color;
-                color = appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed
+                var color = appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.UseCustomLed
                     ? appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed
                     : appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.Led;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
@@ -221,14 +219,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public Color CustomLightColor => appSettings.Settings.LightbarSettingInfo[devIndex].Ds4WinSettings.CustomLed.ToColor();
 
-        public string BatteryState
-        {
-            get
-            {
-                string temp = $"{device.Battery}%{(device.Charging ? "+" : "")}";
-                return temp;
-            }
-        }
+        public string BatteryState => $"{device.Battery}%{(device.Charging ? "+" : "")}";
+
         public event Action<DS4Device> BatteryStateChanged;
 
         public int SelectedIndex
@@ -247,8 +239,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                string imgName = (string)App.Current.FindResource(device.ConnectionType == ConnectionType.USB ? "UsbImg" : "BtImg");
-                string source = $"/DS4Windows;component/Resources/{imgName}";
+                var imgName =
+                    (string)Application.Current.FindResource(device.ConnectionType == ConnectionType.USB
+                        ? "UsbImg"
+                        : "BtImg");
+                var source = $"/DS4Windows;component/Resources/{imgName}";
                 return source;
             }
         }
@@ -284,17 +279,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(devIndex).IsLinkedProfile = value;
         }
 
-        public int DevIndex { get => devIndex; }
-        public int DisplayDevIndex { get => devIndex + 1; }
+        public int DevIndex => devIndex;
 
-        public string TooltipIDText
-        {
-            get
-            {
-                string temp = string.Format(Properties.Resources.InputDelay, device.Latency);
-                return temp;
-            }
-        }
+        public int DisplayDevIndex => devIndex + 1;
+
+        public string TooltipIDText => string.Format(Resources.InputDelay, device.Latency);
 
         public event EventHandler TooltipIDTextChanged;
 
@@ -304,10 +293,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private ContextMenu lightContext;
         public ContextMenu LightContext { get => lightContext; set => lightContext = value; }
 
-        public string IdText
-        {
-            get => $"{device.DisplayName} ({device.MacAddress})";
-        }
+        public string IdText => $"{device.DisplayName} ({device.MacAddress.AsFriendlyName()})";
+
         public event EventHandler IdTextChanged;
 
         public string IsExclusiveText
@@ -334,10 +321,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public bool PrimaryDevice
-        {
-            get => device.PrimaryDevice;
-        }
+        public bool PrimaryDevice => device.PrimaryDevice;
 
         public delegate void CustomColorHandler(CompositeDeviceModel sender);
         public event CustomColorHandler RequestColorPicker;
@@ -464,17 +448,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
+        [MissingLocalization]
         public void AddLightContextItems()
         {
-            MenuItem thing = new MenuItem() { Header = "Use Profile Color", IsChecked = !useCustomColor };
+            var thing = new MenuItem { Header = "Use Profile Color", IsChecked = !useCustomColor };
             thing.Click += ProfileColorMenuClick;
             lightContext.Items.Add(thing);
-            thing = new MenuItem() { Header = "Use Custom Color", IsChecked = useCustomColor };
+            thing = new MenuItem { Header = "Use Custom Color", IsChecked = useCustomColor };
             thing.Click += CustomColorItemClick;
             lightContext.Items.Add(thing);
         }
 
-        private void ProfileColorMenuClick(object sender, System.Windows.RoutedEventArgs e)
+        private void ProfileColorMenuClick(object sender, RoutedEventArgs e)
         {
             useCustomColor = false;
             RefreshLightContext();
@@ -482,7 +467,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             LightColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void CustomColorItemClick(object sender, System.Windows.RoutedEventArgs e)
+        private void CustomColorItemClick(object sender, RoutedEventArgs e)
         {
             useCustomColor = true;
             RefreshLightContext();
