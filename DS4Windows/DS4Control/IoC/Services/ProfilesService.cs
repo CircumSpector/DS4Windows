@@ -518,6 +518,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             }
         }
 
+        /// <summary>
+        ///     Resolve the profile from <see cref="AvailableProfiles"/> identified by <see cref="Guid"/>.
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <param name="profileId"></param>
+        /// <returns></returns>
         private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
         {
             return profileId.HasValue &&

@@ -77,7 +77,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public string Controller8 { get; set; } = string.Empty;
 
         [XmlElement(ElementName = "LastChecked")]
-        public DateTime LastChecked { get; set; } = DateTime.MinValue;
+        public DateTime? LastChecked { get; set; }
 
         [XmlElement(ElementName = "CheckWhen")]
         public int CheckWhen { get; set; } = 24;
