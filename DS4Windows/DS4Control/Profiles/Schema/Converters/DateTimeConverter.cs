@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using DS4Windows;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
 {
     /// <summary>
-    ///     (De-)serializes <see cref="DateTime"/> types.
+    ///     (De-)serializes <see cref="DateTime" /> types.
     /// </summary>
     internal sealed class DateTimeConverter : ConverterBase<DateTime>
     {
@@ -15,10 +16,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
 
         public static DateTimeConverter Default { get; } = new();
 
-
         public override DateTime Parse(string data)
         {
-            return DateTime.Parse(data, Constants.StorageCulture);
+            return DateTime.TryParse(data, Constants.StorageCulture, DateTimeStyles.None, out var value)
+                ? value
+                : DateTime.MinValue;
         }
 
         public override string Format(DateTime instance)
