@@ -175,7 +175,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public string LaunchProgram { get; set; }
 
-        public bool DirectInputOnly { get; set; } = false;
+        public bool DisableVirtualController { get; set; } = false;
 
         public bool StartTouchpadOff { get; set; } = false;
 

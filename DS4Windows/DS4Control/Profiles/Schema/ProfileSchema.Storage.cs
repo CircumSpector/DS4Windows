@@ -698,7 +698,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.ButtonMouseInfo.mouseAccel = MouseAcceleration;
             //ShiftModifier
             profile.LaunchProgram = LaunchProgram;
-            profile.DirectInputOnly = DisableVirtualController;
+            profile.DisableVirtualController = DisableVirtualController;
             profile.StartTouchpadOff = StartTouchpadOff;
 
             profile.SATriggers = SATriggers;
