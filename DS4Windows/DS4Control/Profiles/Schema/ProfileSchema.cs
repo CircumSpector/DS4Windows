@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -11,6 +12,9 @@ using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using JetBrains.Annotations;
 using PropertyChanged;
+using BooleanConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.BooleanConverter;
+using DoubleConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.DoubleConverter;
+using GuidConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.GuidConverter;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
@@ -256,6 +260,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool Ds4Mapping { get; set; } = false;
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
+
+        public DS4WindowsProfile WithChangeNotification([CanBeNull] PropertyChangedEventHandler handler)
+        {
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            ((INotifyPropertyChanged)this).PropertyChanged += (sender, args) => { handler?.Invoke(sender, args); };
+
+            return this;
+        }
 
         public bool Equals(DS4WindowsProfile other)
         {
