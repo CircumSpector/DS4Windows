@@ -301,6 +301,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        ///     Register a <see cref="ProfilePropertyChangedEventHandler"/> for this <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="handler">The <see cref="ProfilePropertyChangedEventHandler"/>.</param>
+        /// <returns>This instance of <see cref="DS4WindowsProfile"/>.</returns>
         public DS4WindowsProfile WithChangeNotification([CanBeNull] ProfilePropertyChangedEventHandler handler)
         {
             ProfilePropertyChanged += (sender, args) => { handler?.Invoke(sender, args); };
@@ -308,6 +313,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             return this;
         }
 
+        /// <summary>
+        ///     Builds an absolute file system path to this <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="parentDirectory">The parent directory.</param>
+        /// <returns>The resulting absolute path.</returns>
         public string GetAbsoluteFilePath(string parentDirectory)
         {
             return Path.Combine(parentDirectory, FileName);
