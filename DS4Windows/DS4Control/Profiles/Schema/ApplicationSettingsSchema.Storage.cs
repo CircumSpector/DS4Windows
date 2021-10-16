@@ -107,12 +107,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [IntermediateSolution]
         public void CopyFrom(IBackingStore store)
         {
-            for (var i = 0; i < Global.MAX_DS4_CONTROLLER_COUNT; i++)
-            {
-                var value = !Global.LinkedProfileCheck[i] ? store.ProfilePath[i] : store.OlderProfilePath[i];
-
-                GetType().GetProperty($"Controller{i + 1}")?.SetValue(this, value);
-            }
         }
 
         /// <summary>

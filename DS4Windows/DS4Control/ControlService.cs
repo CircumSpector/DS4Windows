@@ -1149,36 +1149,10 @@ namespace DS4Windows
 
                             touchPad[i] = new Mouse(i, device);
 
-                            var profileLoaded = false;
+                            var profileLoaded = true;
                             var useAutoProfile = UseTempProfiles[i];
 
                             profilesService.ControllerArrived(i, device.MacAddress);
-
-                            #region Legacy
-
-                            using (GlobalTracer.Instance.BuildSpan("Load profile")
-                                .StartActive(true))
-                            {
-                                if (!useAutoProfile)
-                                {
-                                    if (device.IsValidSerial() &&
-                                        Instance.Config.ContainsLinkedProfile(device.MacAddress))
-                                    {
-                                        Instance.Config.ProfilePath[i] =
-                                            Instance.Config.GetLinkedProfile(device.MacAddress);
-                                        LinkedProfileCheck[i] = true;
-                                    }
-                                    else
-                                    {
-                                        Instance.Config.ProfilePath[i] = Instance.Config.OlderProfilePath[i];
-                                        LinkedProfileCheck[i] = false;
-                                    }
-
-                                    profileLoaded = await Instance.LoadProfile(i, false, this, false, false);
-                                }
-                            }
-
-                            #endregion
 
                             if (profileLoaded || useAutoProfile)
                             {
@@ -1598,27 +1572,10 @@ namespace DS4Windows
 
                         touchPad[index] = new Mouse(index, device);
                         
-                        var profileLoaded = false;
+                        var profileLoaded = true;
                         var useAutoProfile = UseTempProfiles[index];
 
                         profilesService.ControllerArrived(index, device.MacAddress);
-
-                        if (!useAutoProfile)
-                        {
-                            if (device.IsValidSerial() && Instance.Config.ContainsLinkedProfile(device.MacAddress))
-                            {
-                                Instance.Config.ProfilePath[index] =
-                                    Instance.Config.GetLinkedProfile(device.MacAddress);
-                                LinkedProfileCheck[index] = true;
-                            }
-                            else
-                            {
-                                Instance.Config.ProfilePath[index] = Instance.Config.OlderProfilePath[index];
-                                LinkedProfileCheck[index] = false;
-                            }
-
-                            profileLoaded = await Instance.LoadProfile(index, false, this, false, false);
-                        }
 
                         if (profileLoaded || useAutoProfile)
                         {

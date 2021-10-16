@@ -185,7 +185,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     await appSettings.SaveAsync();
                 });
-                Global.LinkedProfileCheck[found.DevIndex] = false;
+
                 _colListLocker.ExitWriteLock();
             }
         }
@@ -280,17 +280,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LinkedProfile
         {
-            get
-            {
-                return Global.LinkedProfileCheck[devIndex];
-            }
-            set
-            {
-                bool temp = Global.LinkedProfileCheck[devIndex];
-                if (temp == value) return;
-                Global.LinkedProfileCheck[devIndex] = value;
-                SaveLinked(value);
-            }
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(devIndex).IsLinkedProfile;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(devIndex).IsLinkedProfile = value;
         }
 
         public int DevIndex { get => devIndex; }
