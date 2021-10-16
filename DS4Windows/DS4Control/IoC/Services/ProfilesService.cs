@@ -2,11 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
@@ -430,36 +428,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             controllerSlotProfiles[slot].DeviceId = address;
         }
 
-        private void PropertyChangedHandler(object? sender, ProfilePropertyChangedEventArgs e)
-        {
-            if (sender is not DS4WindowsProfile p)
-            {
-                logger.LogWarning("Failed to react to property change in profile");
-                return;
-            }
-
-            switch (e.PropertyName)
-            {
-                //
-                // Automatically refresh linked profiles when this property changes
-                // 
-                case nameof(p.IsLinkedProfile):
-                    if (p.IsLinkedProfile)
-                        linkedProfiles[p.DeviceId] = p.Id;
-                    else if (linkedProfiles.ContainsKey(p.DeviceId))
-                        linkedProfiles.Remove(p.DeviceId);
-                    break;
-                //
-                // Display name changed, remove old file and persist new one
-                // 
-                case nameof(p.DisplayName):
-                    var oldName = (string)e.Before;
-                    File.Delete(Path.Combine(global.ProfilesDirectory, DS4WindowsProfile.GetValidFileName(oldName)));
-                    PersistProfile(p, global.ProfilesDirectory);
-                    break;
-            }
-        }
-
         public void ControllerDeparted(int slot, PhysicalAddress address)
         {
             if (slot < 0 || slot >= availableProfiles.Count)
@@ -511,6 +479,36 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             availableProfiles.Add(profile.Id, profile);
 
             PersistProfile(profile, global.ProfilesDirectory);
+        }
+
+        private void PropertyChangedHandler(object? sender, ProfilePropertyChangedEventArgs e)
+        {
+            if (sender is not DS4WindowsProfile p)
+            {
+                logger.LogWarning("Failed to react to property change in profile");
+                return;
+            }
+
+            switch (e.PropertyName)
+            {
+                //
+                // Automatically refresh linked profiles when this property changes
+                // 
+                case nameof(p.IsLinkedProfile):
+                    if (p.IsLinkedProfile)
+                        linkedProfiles[p.DeviceId] = p.Id;
+                    else if (linkedProfiles.ContainsKey(p.DeviceId))
+                        linkedProfiles.Remove(p.DeviceId);
+                    break;
+                //
+                // Display name changed, remove old file and persist new one
+                // 
+                case nameof(p.DisplayName):
+                    var oldName = (string)e.Before;
+                    File.Delete(Path.Combine(global.ProfilesDirectory, DS4WindowsProfile.GetValidFileName(oldName)));
+                    PersistProfile(p, global.ProfilesDirectory);
+                    break;
+            }
         }
 
         private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
