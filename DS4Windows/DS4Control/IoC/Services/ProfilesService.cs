@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
@@ -242,7 +243,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 {
                     var profile = DS4WindowsProfile.Deserialize(stream);
 
-                    availableProfiles.Add(profile.Id, profile);
+                    availableProfiles.Add(profile.Id, profile.WithChangeNotification(PropertyChangedHandler));
                 }
                 //
                 // Most probably old format detected, attempt conversion
@@ -269,7 +270,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                         // 
                         profile.DisplayName = Path.GetFileNameWithoutExtension(file).Trim();
 
-                        availableProfiles.Add(profile.Id, profile);
+                        availableProfiles.Add(profile.Id, profile.WithChangeNotification(PropertyChangedHandler));
 
                         stream.Dispose();
                         File.Delete(file);
@@ -376,7 +377,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 var profile = GetProfileFor(slot, profileId);
 
                 profile.DeepCloneTo(controllerSlotProfiles[slot]);
-                HookChangeEvents(controllerSlotProfiles[slot]);
+                controllerSlotProfiles[slot].WithChangeNotification(PropertyChangedHandler);
             }
         }
 
@@ -418,7 +419,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 {
                     availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
                     controllerSlotProfiles[slot].DeviceId = address;
-                    HookChangeEvents(controllerSlotProfiles[slot]);
                     return;
                 }
             }
@@ -428,7 +428,36 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
             controllerSlotProfiles[slot].DeviceId = address;
-            HookChangeEvents(controllerSlotProfiles[slot]);
+        }
+
+        private void PropertyChangedHandler(object? sender, ProfilePropertyChangedEventArgs e)
+        {
+            if (sender is not DS4WindowsProfile p)
+            {
+                logger.LogWarning("Failed to react to property change in profile");
+                return;
+            }
+
+            switch (e.PropertyName)
+            {
+                //
+                // Automatically refresh linked profiles when this property changes
+                // 
+                case nameof(p.IsLinkedProfile):
+                    if (p.IsLinkedProfile)
+                        linkedProfiles[p.DeviceId] = p.Id;
+                    else if (linkedProfiles.ContainsKey(p.DeviceId))
+                        linkedProfiles.Remove(p.DeviceId);
+                    break;
+                //
+                // Display name changed, remove old file and persist new one
+                // 
+                case nameof(p.DisplayName):
+                    var oldName = (string)e.Before;
+                    File.Delete(Path.Combine(global.ProfilesDirectory, DS4WindowsProfile.GetValidFileName(oldName)));
+                    PersistProfile(p, global.ProfilesDirectory);
+                    break;
+            }
         }
 
         public void ControllerDeparted(int slot, PhysicalAddress address)
@@ -507,36 +536,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             using var stream = File.Open(profilePath, FileMode.Create);
 
             profile.Serialize(stream);
-        }
-
-        /// <summary>
-        ///     Register property changed event handlers for a given <see cref="DS4WindowsProfile"/>.
-        /// </summary>
-        /// <param name="profile">The <see cref="DS4WindowsProfile"/>.</param>
-        private void HookChangeEvents(DS4WindowsProfile profile)
-        {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            ((INotifyPropertyChanged)profile).PropertyChanged += (sender, args) =>
-            {
-                if (sender is not DS4WindowsProfile p)
-                {
-                    logger.LogWarning("Failed to react to property change in profile");
-                    return;
-                }
-
-                switch (args.PropertyName)
-                {
-                    //
-                    // Automatically refresh linked profiles when this property changes
-                    // 
-                    case nameof(p.IsLinkedProfile):
-                        if (p.IsLinkedProfile)
-                            linkedProfiles[p.DeviceId] = p.Id;
-                        else if (linkedProfiles.ContainsKey(p.DeviceId))
-                            linkedProfiles.Remove(p.DeviceId);
-                        break;
-                }
-            };
         }
     }
 }

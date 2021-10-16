@@ -1154,8 +1154,9 @@ namespace DS4Windows
 
                             profilesService.ControllerArrived(i, device.MacAddress);
 
-                            profilesService.ControllerSlotProfiles.ElementAt(i).IsLinkedProfile = true;
-                            profilesService.ControllerSlotProfiles.ElementAt(i).IsLinkedProfile = false;
+                            //profilesService.ControllerSlotProfiles.ElementAt(i).IsLinkedProfile = true;
+                            //profilesService.ControllerSlotProfiles.ElementAt(i).IsLinkedProfile = false;
+                            //profilesService.AvailableProfiles.ElementAt(4).Value.DisplayName = "Hi";
 
                             #region Legacy
 

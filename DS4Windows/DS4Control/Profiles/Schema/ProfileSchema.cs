@@ -11,19 +11,39 @@ using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using JetBrains.Annotations;
-using PropertyChanged;
 using BooleanConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.BooleanConverter;
 using DoubleConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.DoubleConverter;
 using GuidConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.GuidConverter;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
+    public class ProfilePropertyChangedEventArgs : EventArgs
+    {
+        public ProfilePropertyChangedEventArgs(string propertyName, object before, object after)
+        {
+            PropertyName = propertyName;
+            Before = before;
+            After = after;
+        }
+
+        public string PropertyName { get; }
+
+        public object Before { get; }
+
+        public object After { get; }
+    }
+
     /// <summary>
     ///     "New" controller profile definition.
     /// </summary>
-    [AddINotifyPropertyChangedInterface]
-    public class DS4WindowsProfile : XmlSerializable<DS4WindowsProfile>, IEquatable<DS4WindowsProfile>
+    public class DS4WindowsProfile :
+        XmlSerializable<DS4WindowsProfile>,
+        IEquatable<DS4WindowsProfile>,
+        INotifyPropertyChanged
     {
+        public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
+            ProfilePropertyChangedEventArgs e);
+
         private const string FILE_EXTENSION = ".xml";
 
         public DS4WindowsProfile()
@@ -44,30 +64,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     Sanitized XML file name derived from <see cref="DisplayName" />.
         /// </summary>
         [XmlIgnore]
-        public string FileName
-        {
-            get
-            {
-                var fileName = DisplayName;
-
-                //
-                // Strip extension, if included in name
-                // 
-                if (fileName.EndsWith(FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
-                    fileName = fileName.Remove(fileName.LastIndexOf(FILE_EXTENSION,
-                        StringComparison.OrdinalIgnoreCase));
-
-                //
-                // Strip invalid characters
-                // 
-                fileName = new string(fileName.Where(m => !Path.GetInvalidFileNameChars().Contains(m)).ToArray());
-
-                //
-                // Add extension
-                // 
-                return $"{fileName}{FILE_EXTENSION}";
-            }
-        }
+        public string FileName => GetValidFileName(DisplayName);
 
         /// <summary>
         ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup. This value is assigned
@@ -261,19 +258,54 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
 
-        public DS4WindowsProfile WithChangeNotification([CanBeNull] PropertyChangedEventHandler handler)
-        {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            ((INotifyPropertyChanged)this).PropertyChanged += (sender, args) => { handler?.Invoke(sender, args); };
-
-            return this;
-        }
-
         public bool Equals(DS4WindowsProfile other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Id.Equals(other.Id);
+        }
+
+        [CanBeNull] public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        ///     Returns a file name from a friendly profile display name.
+        /// </summary>
+        /// <param name="profileName">The profile name.</param>
+        /// <returns>The file system file name with extension.</returns>
+        public static string GetValidFileName(string profileName)
+        {
+            //
+            // Strip extension, if included in name
+            // 
+            if (profileName.EndsWith(FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                profileName = profileName.Remove(profileName.LastIndexOf(FILE_EXTENSION,
+                    StringComparison.OrdinalIgnoreCase));
+
+            //
+            // Strip invalid characters
+            // 
+            profileName = new string(profileName.Where(m => !Path.GetInvalidFileNameChars().Contains(m)).ToArray());
+
+            //
+            // Add extension
+            // 
+            return $"{profileName}{FILE_EXTENSION}";
+        }
+
+        [CanBeNull] public event ProfilePropertyChangedEventHandler ProfilePropertyChanged;
+
+        [UsedImplicitly]
+        public void OnPropertyChanged(string propertyName, object before, object after)
+        {
+            ProfilePropertyChanged?.Invoke(this, new ProfilePropertyChangedEventArgs(propertyName, before, after));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public DS4WindowsProfile WithChangeNotification([CanBeNull] ProfilePropertyChangedEventHandler handler)
+        {
+            ProfilePropertyChanged += (sender, args) => { handler?.Invoke(sender, args); };
+
+            return this;
         }
 
         public string GetAbsoluteFilePath(string parentDirectory)
