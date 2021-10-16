@@ -3608,7 +3608,7 @@ namespace DS4Windows
 
                 if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
                 {
-                    var oldUseDInputOnly = UseDirectInputOnly[device];
+                    var oldUseDInputOnly = Global.DisableVirtualController[device];
                     var tempDevice = control.DS4Controllers[device];
                     var exists = tempDevice != null;
                     var synced = exists ? tempDevice.IsSynced() : false;

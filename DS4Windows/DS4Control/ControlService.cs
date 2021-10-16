@@ -796,7 +796,7 @@ namespace DS4Windows
             if (!Instance.Config.GetDirectInputOnly(index))
                 slotDevice = OutputslotMan.FindExistUnboundSlotType(contType);
 
-            if (UseDirectInputOnly[index])
+            if (DisableVirtualController[index])
             {
                 var success = false;
                 if (contType == OutContType.X360)
@@ -941,13 +941,13 @@ namespace DS4Windows
                     //LogDebug("DS4 Controller #" + (index + 1) + " connected");
                 }
 
-                if (success) UseDirectInputOnly[index] = false;
+                if (success) DisableVirtualController[index] = false;
             }
         }
 
         public void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false)
         {
-            if (UseDirectInputOnly[index]) return;
+            if (DisableVirtualController[index]) return;
 
             //OutContType contType = Global.OutContType[index];
             var dev = outputDevices[index];
@@ -979,7 +979,7 @@ namespace DS4Windows
                 //LogDebug(tempType + " Controller # " + (index + 1) + " unplugged");
             }
 
-            UseDirectInputOnly[index] = true;
+            DisableVirtualController[index] = true;
         }
 
         public async Task<bool> Start(bool showInLog = true)
@@ -1183,7 +1183,7 @@ namespace DS4Windows
                                     }
                                     else
                                     {
-                                        UseDirectInputOnly[i] = true;
+                                        DisableVirtualController[i] = true;
                                         ActiveOutDevType[i] = OutContType.None;
                                     }
                                 }
@@ -1396,7 +1396,7 @@ namespace DS4Windows
                     //outputDevices[i] = null;
                     //UseDirectInputOnly[i] = true;
                     //Global.ActiveOutDevType[i] = OutContType.None;
-                    UseDirectInputOnly[i] = true;
+                    DisableVirtualController[i] = true;
                     DS4Controllers[i] = null;
                     touchPad[i] = null;
                     lag[i] = false;
@@ -1602,7 +1602,7 @@ namespace DS4Windows
                             }
                             else
                             {
-                                UseDirectInputOnly[index] = true;
+                                DisableVirtualController[index] = true;
                                 ActiveOutDevType[index] = OutContType.None;
                             }
 
@@ -1889,7 +1889,7 @@ namespace DS4Windows
 
                 if (!synced)
                 {
-                    if (!UseDirectInputOnly[ind])
+                    if (!DisableVirtualController[ind])
                     {
                         ActiveOutDevType[ind] = OutContType.None;
                         UnplugOutDev(ind, device);
@@ -1935,7 +1935,7 @@ namespace DS4Windows
                 {
                     CurrentState[ind].Battery =
                         PreviousState[ind].Battery = 0; // Reset for the next connection's initial status change.
-                    if (!UseDirectInputOnly[ind])
+                    if (!DisableVirtualController[ind])
                     {
                         UnplugOutDev(ind, device);
                     }
@@ -1981,7 +1981,7 @@ namespace DS4Windows
                     touchPad[ind] = null;
                     lag[ind] = false;
                     inWarnMonitor[ind] = false;
-                    UseDirectInputOnly[ind] = true;
+                    DisableVirtualController[ind] = true;
                     ActiveOutDevType[ind] = OutContType.None;
                     /* Leave up to Auto Profile system to change the following flags? */
                     //Global.UseTempProfiles[ind] = false;
@@ -2104,7 +2104,7 @@ namespace DS4Windows
                     cState = tempMapState;
                 }
 
-                if (!UseDirectInputOnly[ind])
+                if (!DisableVirtualController[ind])
                 {
                     outputDevices[ind]?.ConvertAndSendReport(cState, ind);
                     //testNewReport(ref x360reports[ind], cState, ind);
