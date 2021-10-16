@@ -241,6 +241,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 {
                     var profile = DS4WindowsProfile.Deserialize(stream);
 
+                    if (availableProfiles.ContainsKey(profile.Id))
+                    {
+                        logger.LogWarning("Profile \"{Name}\" with ID {Id} already loaded, skipping",
+                            profile.DisplayName, profile.Id);
+                        continue;
+                    }
+
                     availableProfiles.Add(profile.Id, profile.WithChangeNotification(PropertyChangedHandler));
                 }
                 //
