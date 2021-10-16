@@ -31,8 +31,8 @@ This application benefits from these awesome projects (appearance in no special 
 
 - [Adonis UI](https://benruehl.github.io/adonis-ui/)
   - Lightweight UI toolkit for WPF applications offering classic but enhanced windows visuals
-- [DeepCloner](https://github.com/force-net/DeepCloner)
-  - Fast object cloner for .NET
+- [FastDeepCloner](https://github.com/AlenToma/FastDeepCloner)
+  - FastDeepCloner, This is a C# based .NET cross platform library that is used to deep clone objects, whether they are serializable or not. It intends to be much faster than the normal binary serialization method of deep cloning objects
 - [WpfExToolkit](https://github.com/dotnetprojects/WpfExtendedToolkit)
   - A fork of [wpftoolkit.codeplex.com](https://wpftoolkit.codeplex.com/) and now [github.com/xceedsoftware/wpftoolkit](https://github.com/xceedsoftware/wpftoolkit)
 - [Extended Xml Serializer](https://extendedxmlserializer.github.io/)
