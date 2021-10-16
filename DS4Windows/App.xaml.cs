@@ -28,6 +28,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
+using OpenTracing.Util;
 using Serilog;
 using WPFLocalizeExtension.Engine;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -403,12 +404,7 @@ namespace DS4WinWPF
 
                 if (messageBox.Result == AdonisUI.Controls.MessageBoxResult.Custom)
                 {
-                    var psi = new ProcessStartInfo
-                    {
-                        FileName = Constants.SteamTroubleshootingUri,
-                        UseShellExecute = true
-                    };
-                    Process.Start(psi);
+                    Util.StartProcessHelper(Constants.SteamTroubleshootingUri);
                 }
             });
         }
@@ -437,6 +433,8 @@ namespace DS4WinWPF
                 Icon = AdonisUI.Controls.MessageBoxImage.Warning,
                 Buttons = new[]
                 {
+                    MessageBoxButtons.Custom("Tell me more"),
+                    MessageBoxButtons.No("Uh, turn it off, please!"),
                     MessageBoxButtons.Yes("Understood")
                 },
                 IsSoundEnabled = false
@@ -445,6 +443,16 @@ namespace DS4WinWPF
             Current.Dispatcher.InvokeAsync(() =>
             {
                 AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
+
+                switch (messageBox.Result)
+                {
+                    case AdonisUI.Controls.MessageBoxResult.Custom:
+                        Util.StartProcessHelper(Constants.TracingGuideUri);
+                        break;
+                    case AdonisUI.Controls.MessageBoxResult.No:
+                        appSettings.Settings.IsTracingEnabled = false;
+                        break;
+                }
             });
         }
 

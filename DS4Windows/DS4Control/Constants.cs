@@ -39,5 +39,7 @@ namespace DS4Windows
         public const string ChangelogUri = "https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/Changelog.min.json";
 
         public const string SteamTroubleshootingUri = "https://docs.ds4windows.app/troubleshooting/steam-related/";
+        
+        public const string TracingGuideUri = "https://docs.ds4windows.app/troubleshooting/tracing-guide/";
     }
 }
