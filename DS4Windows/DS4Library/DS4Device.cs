@@ -12,7 +12,6 @@ using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
-using Force.DeepCloner;
 using PropertyChanged;
 using ThreadState = System.Threading.ThreadState;
 

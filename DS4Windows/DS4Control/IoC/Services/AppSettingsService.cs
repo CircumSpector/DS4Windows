@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
-using Force.DeepCloner;
+using DS4WinWPF.DS4Control.Util;
 using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services

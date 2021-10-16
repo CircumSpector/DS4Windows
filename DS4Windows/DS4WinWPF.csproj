@@ -72,9 +72,9 @@
     <PackageReference Include="AdonisUI.ClassicTheme.NET5" Version="1.17.1" />
     <PackageReference Include="AdonisUI.NET5" Version="1.17.1" />
     <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
-    <PackageReference Include="DeepCloner" Version="0.10.2" />
     <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="4.6.97" />
     <PackageReference Include="ExtendedXmlSerializer" Version="3.7.5" />
+    <PackageReference Include="FastDeepCloner" Version="1.3.5" />
     <PackageReference Include="Fody" Version="6.5.3" ExcludeAssets="runtime">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
