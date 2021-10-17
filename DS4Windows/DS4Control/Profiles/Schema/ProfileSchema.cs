@@ -55,10 +55,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             Index = index;
         }
 
-        /// <summary>
-        ///     Auto-generated unique ID for this profile.
-        /// </summary>
-        public Guid Id { get; set; } = Guid.NewGuid();
+        #region Non-persisted properties
 
         /// <summary>
         ///     Sanitized XML file name derived from <see cref="DisplayName" />.
@@ -92,6 +89,21 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlIgnore]
         public bool IsLinkedProfile { get; set; }
 
+        /// <summary>
+        ///     State information if an output device is active.
+        /// </summary>
+        [XmlIgnore]
+        public bool IsOutputDeviceEnabled { get; set; }
+
+        #endregion
+
+        #region Persisted properties
+
+        /// <summary>
+        ///     Auto-generated unique ID for this profile.
+        /// </summary>
+        public Guid Id { get; set; } = Guid.NewGuid();
+        
         /// <summary>
         ///     Friendly, user-changeable name of this profile.
         /// </summary>
@@ -257,6 +269,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool Ds4Mapping { get; set; } = false;
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
+
+        #endregion
 
         public bool Equals(DS4WindowsProfile other)
         {
