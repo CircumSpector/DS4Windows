@@ -796,7 +796,7 @@ namespace DS4Windows
             if (!Instance.Config.GetDirectInputOnly(index))
                 slotDevice = OutputslotMan.FindExistUnboundSlotType(contType);
 
-            if (DisableVirtualController[index])
+            if (DIOnly[index])
             {
                 var success = false;
                 if (contType == OutContType.X360)
@@ -941,13 +941,13 @@ namespace DS4Windows
                     //LogDebug("DS4 Controller #" + (index + 1) + " connected");
                 }
 
-                if (success) DisableVirtualController[index] = false;
+                if (success) DIOnly[index] = false;
             }
         }
 
         public void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false)
         {
-            if (DisableVirtualController[index]) return;
+            if (DIOnly[index]) return;
 
             //OutContType contType = Global.OutContType[index];
             var dev = outputDevices[index];
@@ -979,7 +979,7 @@ namespace DS4Windows
                 //LogDebug(tempType + " Controller # " + (index + 1) + " unplugged");
             }
 
-            DisableVirtualController[index] = true;
+            DIOnly[index] = true;
         }
 
         public async Task<bool> Start(bool showInLog = true)
@@ -1183,7 +1183,7 @@ namespace DS4Windows
                                     }
                                     else
                                     {
-                                        DisableVirtualController[i] = true;
+                                        DIOnly[i] = true;
                                         ActiveOutDevType[i] = OutContType.None;
                                     }
                                 }
@@ -1393,7 +1393,7 @@ namespace DS4Windows
                     //outputDevices[i] = null;
                     //UseDirectInputOnly[i] = true;
                     //Global.ActiveOutDevType[i] = OutContType.None;
-                    DisableVirtualController[i] = true;
+                    DIOnly[i] = true;
                     DS4Controllers[i] = null;
                     touchPad[i] = null;
                     lag[i] = false;
@@ -1599,7 +1599,7 @@ namespace DS4Windows
                             }
                             else
                             {
-                                DisableVirtualController[index] = true;
+                                DIOnly[index] = true;
                                 ActiveOutDevType[index] = OutContType.None;
                             }
 
@@ -1886,7 +1886,7 @@ namespace DS4Windows
 
                 if (!synced)
                 {
-                    if (!DisableVirtualController[ind])
+                    if (!DIOnly[ind])
                     {
                         ActiveOutDevType[ind] = OutContType.None;
                         UnplugOutDev(ind, device);
@@ -1932,7 +1932,7 @@ namespace DS4Windows
                 {
                     CurrentState[ind].Battery =
                         PreviousState[ind].Battery = 0; // Reset for the next connection's initial status change.
-                    if (!DisableVirtualController[ind])
+                    if (!DIOnly[ind])
                     {
                         UnplugOutDev(ind, device);
                     }
@@ -1978,7 +1978,7 @@ namespace DS4Windows
                     touchPad[ind] = null;
                     lag[ind] = false;
                     inWarnMonitor[ind] = false;
-                    DisableVirtualController[ind] = true;
+                    DIOnly[ind] = true;
                     ActiveOutDevType[ind] = OutContType.None;
                     /* Leave up to Auto Profile system to change the following flags? */
                     //Global.UseTempProfiles[ind] = false;
@@ -2101,7 +2101,7 @@ namespace DS4Windows
                     cState = tempMapState;
                 }
 
-                if (!DisableVirtualController[ind])
+                if (!DIOnly[ind])
                 {
                     outputDevices[ind]?.ConvertAndSendReport(cState, ind);
                     //testNewReport(ref x360reports[ind], cState, ind);

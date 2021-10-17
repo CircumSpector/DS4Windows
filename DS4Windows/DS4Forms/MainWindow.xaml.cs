@@ -1260,7 +1260,7 @@ Suspend support not enabled.", true);
                                         }
                                         else if (propName == "usedinputonly")
                                         {
-                                            propValue = Global.DisableVirtualController[tdevice].ToString();
+                                            propValue = Global.DIOnly[tdevice].ToString();
                                         }
 
                                         else if (propName == "devicevidpid" &&

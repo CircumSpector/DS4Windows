@@ -157,8 +157,6 @@ namespace DS4Windows
 
         IList<int> GyroSensVerticalScale { get; set; }
 
-        IList<bool> DisableVirtualController { get; set; }
-
         IList<TouchpadOutMode> TouchOutMode { get; set; }
 
         IList<IList<int>> TouchDisInvertTriggers { get; set; }

@@ -442,9 +442,6 @@ namespace DS4Windows
                 string.Empty, string.Empty
             };
 
-            public IList<bool> DisableVirtualController { get; set; } = new List<bool>
-                { false, false, false, false, false, false, false, false, false };
-
             public bool Ds4Mapping { get; set; }
 
             public IList<SpecialAction> Actions { get; set; } = new List<SpecialAction>();
@@ -647,7 +644,7 @@ namespace DS4Windows
 
             public bool GetDirectInputOnly(int index)
             {
-                return DisableVirtualController[index];
+                return DIOnly[index];
             }
 
             public bool IsUsingTouchpadForControls(int index)
@@ -3009,7 +3006,7 @@ namespace DS4Windows
                 r2Info.deadZone = (byte)(0.20 * 255);
 
                 // Flag to unplug virtual controller
-                DisableVirtualController[device] = true;
+                DIOnly[device] = true;
 
                 var setting = GetDs4ControllerSetting(device, DS4Controls.LYNeg);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.W), "", DS4KeyType.None);
@@ -3118,7 +3115,7 @@ namespace DS4Windows
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 // Flag to unplug virtual controller
-                DisableVirtualController[device] = true;
+                DIOnly[device] = true;
 
                 var setting = GetDs4ControllerSetting(device, DS4Controls.LYNeg);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.W), "", DS4KeyType.None);
@@ -3526,7 +3523,7 @@ namespace DS4Windows
                 R2OutputSettings[device].ResetSettings();
                 
                 LaunchProgram[device] = string.Empty;
-                DisableVirtualController[device] = false;
+                DIOnly[device] = false;
                 StartTouchpadOff[device] = false;
                 TouchOutMode[device] = TouchpadOutMode.Mouse;
                 SATriggers[device] = "-1";
@@ -3608,14 +3605,14 @@ namespace DS4Windows
 
                 if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
                 {
-                    var oldUseDInputOnly = Global.DisableVirtualController[device];
+                    var oldUseDInputOnly = Global.DIOnly[device];
                     var tempDevice = control.DS4Controllers[device];
                     var exists = tempDevice != null;
                     var synced = exists ? tempDevice.IsSynced() : false;
                     var isAlive = exists ? tempDevice.IsAlive() : false;
-                    if (DisableVirtualController[device] != oldUseDInputOnly)
+                    if (DIOnly[device] != oldUseDInputOnly)
                     {
-                        if (DisableVirtualController[device])
+                        if (DIOnly[device])
                         {
                             xinputPlug = false;
                             xinputStatus = true;
@@ -3626,7 +3623,7 @@ namespace DS4Windows
                             xinputStatus = true;
                         }
                     }
-                    else if (!DisableVirtualController[device] &&
+                    else if (!DIOnly[device] &&
                              oldContType != OutputDeviceType[device])
                     {
                         xinputPlug = true;

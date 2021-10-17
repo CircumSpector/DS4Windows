@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -512,15 +513,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool DInputOnly
         {
-            get => Global.Instance.Config.DisableVirtualController[device];
-            set
-            {
-                bool temp = Global.Instance.Config.DisableVirtualController[device];
-                if (temp == value) return;
-
-                Global.Instance.Config.DisableVirtualController[device] = value;
-                DInputOnlyChanged?.Invoke(this, EventArgs.Empty);
-            }
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DisableVirtualController;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DisableVirtualController = value;
         }
         public EventHandler DInputOnlyChanged;
 
