@@ -5,13 +5,6 @@ using System.Net.NetworkInformation;
 using System.Xml;
 using DS4Windows.DS4Control;
 
-using Jaeger;
-using Jaeger.Samplers;
-using Jaeger.Senders;
-using Jaeger.Senders.Thrift;
-using Microsoft.Extensions.Logging.Abstractions;
-using OpenTracing.Util;
-
 
 namespace DS4Windows
 {
@@ -74,26 +67,6 @@ namespace DS4Windows
         };
 
         private readonly BackingStore _config = new();
-
-        private Global()
-        {
-
-            /*
-            // This is necessary to pick the correct sender, otherwise a NoopSender is used!
-            Configuration.SenderConfiguration.DefaultSenderResolver = new SenderResolver(new NullLoggerFactory())
-                .RegisterSenderFactory<ThriftSenderFactory>();
-
-            // This will log to a default localhost installation of Jaeger.
-            var tracer = new Tracer.Builder(Constants.ApplicationName)
-                .WithLoggerFactory(new NullLoggerFactory())
-                .WithSampler(new ConstSampler(true))
-                .Build();
-
-            // Allows code that can't use DI to also access the tracer.
-            GlobalTracer.Register(tracer);
-            */
-
-        }
 
         /// <summary>
         ///     Singleton instance of <see cref="Global" />.
