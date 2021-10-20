@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Xml.Serialization;
 using DS4Windows;
-using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
