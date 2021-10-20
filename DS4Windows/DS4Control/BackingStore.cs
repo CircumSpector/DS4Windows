@@ -257,8 +257,6 @@ namespace DS4Windows
 
         string GetSATriggers(int index);
 
-        bool GetDirectInputOnly(int index);
-
         bool IsUsingTouchpadForControls(int index);
 
         bool IsUsingSAForControls(int index);

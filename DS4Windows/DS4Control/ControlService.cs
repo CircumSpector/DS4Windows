@@ -790,16 +790,19 @@ namespace DS4Windows
 
         public void PluginOutDev(int index, DS4Device device)
         {
-            var contType = Instance.Config.OutputDeviceType[index];
+            var profile = profilesService.ControllerSlotProfiles.ElementAt(index);
 
-            OutSlotDevice slotDevice = null;
-            if (!Instance.Config.GetDirectInputOnly(index))
-                slotDevice = OutputslotMan.FindExistUnboundSlotType(contType);
+            if (profile.DisableVirtualController)
+                return;
 
-            if (DIOnly[index])
+            var contType = profile.OutputDeviceType;
+
+            var slotDevice = OutputslotMan.FindExistUnboundSlotType(contType);
+            
+            var success = false;
+            switch (contType)
             {
-                var success = false;
-                if (contType == OutContType.X360)
+                case OutContType.X360:
                 {
                     ActiveOutDevType[index] = OutContType.X360;
 
@@ -813,7 +816,7 @@ namespace DS4Windows
                             //outputDevices[index] = tempXbox;
 
                             // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                            if (Instance.Config.EnableOutputDataToDS4[index])
+                            if (profile.EnableOutputDataToDS4)
                             {
                                 EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
 
@@ -843,7 +846,7 @@ namespace DS4Windows
                         var tempXbox = slotDevice.OutputDevice as Xbox360OutDevice;
 
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                        if (Instance.Config.EnableOutputDataToDS4[index])
+                        if (profile.EnableOutputDataToDS4)
                         {
                             EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
 
@@ -867,8 +870,9 @@ namespace DS4Windows
 
                     //tempXbox.Connect();
                     //LogDebug("X360 Controller #" + (index + 1) + " connected");
+                    break;
                 }
-                else if (contType == OutContType.DS4)
+                case OutContType.DS4:
                 {
                     ActiveOutDevType[index] = OutContType.DS4;
                     if (slotDevice == null)
@@ -880,7 +884,7 @@ namespace DS4Windows
                                 as DS4OutDevice;
 
                             // Enable ViGem feedback callback handler only if DS4 lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                            if (Instance.Config.EnableOutputDataToDS4[index])
+                            if (profile.EnableOutputDataToDS4)
                             {
                                 EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
 
@@ -910,7 +914,7 @@ namespace DS4Windows
                         var tempDS4 = slotDevice.OutputDevice as DS4OutDevice;
 
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
-                        if (Instance.Config.EnableOutputDataToDS4[index])
+                        if (profile.EnableOutputDataToDS4)
                         {
                             EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
 
@@ -939,10 +943,12 @@ namespace DS4Windows
 
                     //tempDS4.Connect();
                     //LogDebug("DS4 Controller #" + (index + 1) + " connected");
+                    break;
                 }
-
-                if (success) DIOnly[index] = false;
             }
+
+            if (success)
+                profile.IsOutputDeviceEnabled = true;
         }
 
         public void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false)
@@ -1154,6 +1160,8 @@ namespace DS4Windows
 
                             profilesService.ControllerArrived(i, device.MacAddress);
 
+                            var profile = profilesService.ControllerSlotProfiles.ElementAt(i);
+
                             if (profileLoaded || useAutoProfile)
                             {
                                 using (GlobalTracer.Instance.BuildSpan("Plugin Output Device")
@@ -1162,7 +1170,7 @@ namespace DS4Windows
                                     device.LightBarColor =
                                         appSettings.Settings.LightbarSettingInfo[i].Ds4WinSettings.Led;
 
-                                    if (!Instance.Config.GetDirectInputOnly(i) && device.IsSynced())
+                                    if (!profile.DisableVirtualController && device.IsSynced())
                                     {
                                         if (device.PrimaryDevice)
                                         {
@@ -1183,7 +1191,7 @@ namespace DS4Windows
                                     }
                                     else
                                     {
-                                        DIOnly[i] = true;
+                                        profile.IsOutputDeviceEnabled = false;
                                         ActiveOutDevType[i] = OutContType.None;
                                     }
                                 }
@@ -1574,11 +1582,13 @@ namespace DS4Windows
 
                         profilesService.ControllerArrived(index, device.MacAddress);
 
+                        var profile = profilesService.ControllerSlotProfiles.ElementAt(index);
+
                         if (profileLoaded || useAutoProfile)
                         {
                             device.LightBarColor = appSettings.Settings.LightbarSettingInfo[index].Ds4WinSettings.Led;
 
-                            if (!Instance.Config.GetDirectInputOnly(index) && device.IsSynced())
+                            if (!profile.DisableVirtualController && device.IsSynced())
                             {
                                 if (device.PrimaryDevice)
                                 {
@@ -1599,7 +1609,7 @@ namespace DS4Windows
                             }
                             else
                             {
-                                DIOnly[index] = true;
+                                profile.IsOutputDeviceEnabled = false;
                                 ActiveOutDevType[index] = OutContType.None;
                             }
 
@@ -1880,30 +1890,29 @@ namespace DS4Windows
                     ind = i;
             }
 
-            if (ind >= 0)
+            var profile = profilesService.ControllerSlotProfiles.ElementAt(ind);
+
+            if (ind < 0) return;
+
+            var synced = device.IsSynced();
+
+            if (!synced)
             {
-                var synced = device.IsSynced();
+                if (!profile.IsOutputDeviceEnabled) return;
 
-                if (!synced)
-                {
-                    if (!DIOnly[ind])
-                    {
-                        ActiveOutDevType[ind] = OutContType.None;
-                        UnplugOutDev(ind, device);
-                    }
-                }
-                else
-                {
-                    if (!Instance.Config.GetDirectInputOnly(ind))
-                    {
-                        touchPad[ind].ReplaceOneEuroFilterPair();
-                        touchPad[ind].ReplaceOneEuroFilterPair();
+                ActiveOutDevType[ind] = OutContType.None;
+                UnplugOutDev(ind, device);
+            }
+            else
+            {
+                if (profile.DisableVirtualController) return;
 
-                        touchPad[ind].Cursor.ReplaceOneEuroFilterPair();
-                        touchPad[ind].Cursor.SetupLateOneEuroFilters();
-                        PluginOutDev(ind, device);
-                    }
-                }
+                touchPad[ind].ReplaceOneEuroFilterPair();
+                touchPad[ind].ReplaceOneEuroFilterPair();
+
+                touchPad[ind].Cursor.ReplaceOneEuroFilterPair();
+                touchPad[ind].Cursor.SetupLateOneEuroFilters();
+                PluginOutDev(ind, device);
             }
         }
 

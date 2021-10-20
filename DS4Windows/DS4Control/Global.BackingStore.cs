@@ -642,11 +642,6 @@ namespace DS4Windows
                 return GyroSwipeInfo[device];
             }
 
-            public bool GetDirectInputOnly(int index)
-            {
-                return DIOnly[index];
-            }
-
             public bool IsUsingTouchpadForControls(int index)
             {
                 return TouchOutMode[index] == TouchpadOutMode.Controls;
