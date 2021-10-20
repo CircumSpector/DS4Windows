@@ -10,22 +10,22 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Controller")]
-    public class AutoProfileController
+    public class AutoProfileControllerV3
     {
         public string Profile { get; set; } = "(none)";
     }
 
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Program")]
-    public class AutoProfileProgram
+    public class AutoProfileProgramV3
     {
         [XmlElement(ElementName = "Controller")] 
-        public List<AutoProfileController> Controllers { get; set; } = new();
+        public List<AutoProfileControllerV3> Controllers { get; set; } = new();
 
-        [XmlElement(ElementName = "TurnOff")] 
+        [XmlElement(ElementName = "TurnOff")]
         public bool TurnOff { get; set; }
 
-        [XmlAttribute(AttributeName = "path")] 
+        [XmlAttribute(AttributeName = "path")]
         public string Path { get; set; }
 
         [XmlAttribute(AttributeName = "title")]
@@ -34,19 +34,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Programs")]
-    public class AutoProfilePrograms : XmlSerializable<AutoProfilePrograms>
+    public class AutoProfileProgramsV3 : XmlSerializable<AutoProfileProgramsV3>
     {
         [XmlElement(ElementName = "Program")] 
-        public List<AutoProfileProgram> ProgramEntries { get; set; } = new();
+        public List<AutoProfileProgramV3> ProgramEntries { get; set; } = new();
 
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .UseOptimizedNamespaces()
                 .EnableMemberExceptionHandling()
-                .EnableImplicitTyping(typeof(AutoProfilePrograms), typeof(AutoProfileProgram), typeof(AutoProfileController))
+                .EnableImplicitTyping(typeof(AutoProfileProgramsV3), typeof(AutoProfileProgramV3), typeof(AutoProfileControllerV3))
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
-                .Type<AutoProfilePrograms>().AddMigration(new AutoProfilesMigration())
+                .Type<AutoProfileProgramsV3>().AddMigration(new AutoProfilesMigration())
                 .Create();
         }
     }

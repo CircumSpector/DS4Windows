@@ -35,11 +35,11 @@ namespace DS4WinWPF
             if (!File.Exists(settingsPath))
                 return;
 
-            AutoProfilePrograms settings;
+            AutoProfileProgramsV3 settings;
 
             using (var stream = File.OpenRead(settingsPath))
             {
-                settings = AutoProfilePrograms.Deserialize(stream);
+                settings = AutoProfileProgramsV3.Deserialize(stream);
             }
 
             foreach (var programEntry in settings.ProgramEntries)
@@ -58,11 +58,11 @@ namespace DS4WinWPF
         [ConfigurationSystemComponent]
         public bool Save(string profile)
         {
-            var settings = new AutoProfilePrograms();
+            var settings = new AutoProfileProgramsV3();
 
             foreach (var profileEntity in AutoProfileCollection)
             {
-                var entry = new AutoProfileProgram
+                var entry = new AutoProfileProgramV3
                 {
                     Path = profileEntity.Path,
                     Title = profileEntity.Title,
@@ -70,7 +70,7 @@ namespace DS4WinWPF
                 };
 
                 foreach (var profileName in profileEntity.ProfileNames)
-                    entry.Controllers.Add(new AutoProfileController
+                    entry.Controllers.Add(new AutoProfileControllerV3
                     {
                         Profile = profileName
                     });
