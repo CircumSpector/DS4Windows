@@ -44,9 +44,6 @@ namespace DS4Windows
         public static bool[] TempProfileDistance = new bool[TEST_PROFILE_ITEM_COUNT]
             { false, false, false, false, false, false, false, false, false };
 
-        public static bool[] DIOnly = new bool[TEST_PROFILE_ITEM_COUNT]
-            { true, true, true, true, true, true, true, true, true };
-
         public static bool[] TouchpadActive = new bool[TEST_PROFILE_ITEM_COUNT]
             { true, true, true, true, true, true, true, true, true };
 

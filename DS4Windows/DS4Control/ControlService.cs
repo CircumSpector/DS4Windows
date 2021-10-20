@@ -953,7 +953,8 @@ namespace DS4Windows
 
         public void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false)
         {
-            if (DIOnly[index]) return;
+            if (profilesService.ControllerSlotProfiles.ElementAt(index).DisableVirtualController)
+                return;
 
             //OutContType contType = Global.OutContType[index];
             var dev = outputDevices[index];
@@ -985,7 +986,7 @@ namespace DS4Windows
                 //LogDebug(tempType + " Controller # " + (index + 1) + " unplugged");
             }
 
-            DIOnly[index] = true;
+            profilesService.ControllerSlotProfiles.ElementAt(index).IsOutputDeviceEnabled = false;
         }
 
         public async Task<bool> Start(bool showInLog = true)
@@ -1356,6 +1357,7 @@ namespace DS4Windows
                 var anyUnplugged = false;
                 for (int i = 0, controllerCount = DS4Controllers.Length; i < controllerCount; i++)
                 {
+                    var profile = profilesService.ControllerSlotProfiles.ElementAt(i);
                     var tempDevice = DS4Controllers[i];
 
                     if (tempDevice == null) continue;
@@ -1401,7 +1403,7 @@ namespace DS4Windows
                     //outputDevices[i] = null;
                     //UseDirectInputOnly[i] = true;
                     //Global.ActiveOutDevType[i] = OutContType.None;
-                    DIOnly[i] = true;
+                    profile.IsOutputDeviceEnabled = false;
                     DS4Controllers[i] = null;
                     touchPad[i] = null;
                     lag[i] = false;
@@ -1925,47 +1927,49 @@ namespace DS4Windows
                 if (DS4Controllers[i] != null && device.MacAddress == DS4Controllers[i].MacAddress)
                     ind = i;
 
-            if (ind != -1)
+            if (ind == -1) return;
+
+            var profile = profilesService.ControllerSlotProfiles.ElementAt(ind);
+
+            var removingStatus = false;
+            lock (device.removeLocker)
             {
-                var removingStatus = false;
-                lock (device.removeLocker)
+                if (!device.IsRemoving)
                 {
-                    if (!device.IsRemoving)
-                    {
-                        removingStatus = true;
-                        device.IsRemoving = true;
-                    }
+                    removingStatus = true;
+                    device.IsRemoving = true;
                 }
+            }
 
-                if (removingStatus)
+            if (!removingStatus) return;
+
+            CurrentState[ind].Battery =
+                PreviousState[ind].Battery = 0; // Reset for the next connection's initial status change.
+            if (profile.IsOutputDeviceEnabled)
+            {
+                UnplugOutDev(ind, device);
+            }
+            else if (!device.PrimaryDevice)
+            {
+                var outDev = outputDevices[ind];
+                if (outDev != null)
                 {
-                    CurrentState[ind].Battery =
-                        PreviousState[ind].Battery = 0; // Reset for the next connection's initial status change.
-                    if (!DIOnly[ind])
-                    {
-                        UnplugOutDev(ind, device);
-                    }
-                    else if (!device.PrimaryDevice)
-                    {
-                        var outDev = outputDevices[ind];
-                        if (outDev != null)
-                        {
-                            outDev.RemoveFeedback(ind);
-                            outputDevices[ind] = null;
-                        }
-                    }
+                    outDev.RemoveFeedback(ind);
+                    outputDevices[ind] = null;
+                }
+            }
 
-                    // Use Task to reset device synth state and commit it
-                    Task.Run(() => { Mapping.Commit(ind); }).Wait();
+            // Use Task to reset device synth state and commit it
+            Task.Run(() => { Mapping.Commit(ind); }).Wait();
 
-                    var removed = Resources.ControllerWasRemoved.Replace("*Mac address*", (ind + 1).ToString());
-                    if (device.GetBattery() <= 20 &&
-                        device.GetConnectionType() == ConnectionType.BT && !device.IsCharging())
-                        removed += ". " + Resources.ChargeController;
+            var removed = Resources.ControllerWasRemoved.Replace("*Mac address*", (ind + 1).ToString());
+            if (device.GetBattery() <= 20 &&
+                device.GetConnectionType() == ConnectionType.BT && !device.IsCharging())
+                removed += ". " + Resources.ChargeController;
 
-                    LogDebug(removed);
-                    AppLogger.Instance.LogToTray(removed);
-                    /*Stopwatch sw = new Stopwatch();
+            LogDebug(removed);
+            AppLogger.Instance.LogToTray(removed);
+            /*Stopwatch sw = new Stopwatch();
                     sw.Start();
                     while (sw.ElapsedMilliseconds < XINPUT_UNPLUG_SETTLE_TIME)
                     {
@@ -1976,27 +1980,25 @@ namespace DS4Windows
                     sw.Stop();
                     */
 
-                    device.IsRemoved = true;
-                    device.Synced = false;
-                    DS4Controllers[ind] = null;
-                    //eventDispatcher.Invoke(() =>
-                    //{
-                    slotManager.RemoveController(device, ind);
-                    //});
+            device.IsRemoved = true;
+            device.Synced = false;
+            DS4Controllers[ind] = null;
+            //eventDispatcher.Invoke(() =>
+            //{
+            slotManager.RemoveController(device, ind);
+            //});
 
-                    touchPad[ind] = null;
-                    lag[ind] = false;
-                    inWarnMonitor[ind] = false;
-                    DIOnly[ind] = true;
-                    ActiveOutDevType[ind] = OutContType.None;
-                    /* Leave up to Auto Profile system to change the following flags? */
-                    //Global.UseTempProfiles[ind] = false;
-                    //Global.TempProfileNames[ind] = string.Empty;
-                    //Global.TempProfileDistance[ind] = false;
+            touchPad[ind] = null;
+            lag[ind] = false;
+            inWarnMonitor[ind] = false;
+            profile.IsOutputDeviceEnabled = false;
+            ActiveOutDevType[ind] = OutContType.None;
+            /* Leave up to Auto Profile system to change the following flags? */
+            //Global.UseTempProfiles[ind] = false;
+            //Global.TempProfileNames[ind] = string.Empty;
+            //Global.TempProfileDistance[ind] = false;
 
-                    //Thread.Sleep(XINPUT_UNPLUG_SETTLE_TIME);
-                }
-            }
+            //Thread.Sleep(XINPUT_UNPLUG_SETTLE_TIME);
         }
 
         public bool[] lag = new bool[MAX_DS4_CONTROLLER_COUNT]
@@ -2016,110 +2018,112 @@ namespace DS4Windows
         [HighMemoryPressure]
         protected virtual void On_Report(DS4Device device, EventArgs e, int ind)
         {
-            if (ind != -1)
+            if (ind == -1) return;
+
+            var profile = profilesService.ControllerSlotProfiles.ElementAt(ind);
+
+            var devError = tempStrings[ind] = device.error;
+            if (!string.IsNullOrEmpty(devError)) LogDebug(devError);
+
+            if (inWarnMonitor[ind])
             {
-                var devError = tempStrings[ind] = device.error;
-                if (!string.IsNullOrEmpty(devError)) LogDebug(devError);
-
-                if (inWarnMonitor[ind])
+                var flashWhenLateAt = appSettings.Settings.FlashWhenLateAt;
+                if (!lag[ind] && device.Latency >= flashWhenLateAt)
                 {
-                    var flashWhenLateAt = appSettings.Settings.FlashWhenLateAt;
-                    if (!lag[ind] && device.Latency >= flashWhenLateAt)
+                    lag[ind] = true;
+                    LagFlashWarning(device, ind, true);
+                }
+                else if (lag[ind] && device.Latency < flashWhenLateAt)
+                {
+                    lag[ind] = false;
+                    LagFlashWarning(device, ind, false);
+                }
+            }
+            else
+            {
+                if (DateTime.UtcNow - device.firstActive > TimeSpan.FromSeconds(5)) inWarnMonitor[ind] = true;
+            }
+
+            DS4State cState;
+            if (!device.PerformStateMerge)
+            {
+                cState = CurrentState[ind];
+                device.GetRawCurrentState(cState);
+            }
+            else
+            {
+                cState = device.JointState;
+                device.MergeStateData(cState);
+                // Need to copy state object info for use in UDP server
+                cState.CopyTo(CurrentState[ind]);
+            }
+
+            var pState = device.GetPreviousStateReference();
+            //device.getPreviousState(PreviousState[ind]);
+            //DS4State pState = PreviousState[ind];
+
+            if (device.firstReport && device.IsSynced())
+            {
+                // Only send Log message when device is considered a primary device
+                if (device.PrimaryDevice)
+                {
+                    if (File.Exists(Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
+                        Instance.Config.ProfilePath[ind] + ".xml")))
                     {
-                        lag[ind] = true;
-                        LagFlashWarning(device, ind, true);
+                        var prolog = string.Format(Resources.UsingProfile, (ind + 1).ToString(),
+                            Instance.Config.ProfilePath[ind], $"{device.Battery}");
+                        LogDebug(prolog);
+                        AppLogger.Instance.LogToTray(prolog);
                     }
-                    else if (lag[ind] && device.Latency < flashWhenLateAt)
+                    else
                     {
-                        lag[ind] = false;
-                        LagFlashWarning(device, ind, false);
+                        var prolog = string.Format(Resources.NotUsingProfile, (ind + 1).ToString(),
+                            $"{device.Battery}");
+                        LogDebug(prolog);
+                        AppLogger.Instance.LogToTray(prolog);
                     }
                 }
-                else
-                {
-                    if (DateTime.UtcNow - device.firstActive > TimeSpan.FromSeconds(5)) inWarnMonitor[ind] = true;
-                }
 
-                DS4State cState;
-                if (!device.PerformStateMerge)
-                {
-                    cState = CurrentState[ind];
-                    device.GetRawCurrentState(cState);
-                }
-                else
-                {
-                    cState = device.JointState;
-                    device.MergeStateData(cState);
-                    // Need to copy state object info for use in UDP server
-                    cState.CopyTo(CurrentState[ind]);
-                }
+                device.firstReport = false;
+            }
 
-                var pState = device.GetPreviousStateReference();
-                //device.getPreviousState(PreviousState[ind]);
-                //DS4State pState = PreviousState[ind];
+            if (!device.PrimaryDevice)
+                // Skip mapping routine if part of a joined device
+                return;
 
-                if (device.firstReport && device.IsSynced())
-                {
-                    // Only send Log message when device is considered a primary device
-                    if (device.PrimaryDevice)
-                    {
-                        if (File.Exists(Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                            Instance.Config.ProfilePath[ind] + ".xml")))
-                        {
-                            var prolog = string.Format(Resources.UsingProfile, (ind + 1).ToString(),
-                                Instance.Config.ProfilePath[ind], $"{device.Battery}");
-                            LogDebug(prolog);
-                            AppLogger.Instance.LogToTray(prolog);
-                        }
-                        else
-                        {
-                            var prolog = string.Format(Resources.NotUsingProfile, (ind + 1).ToString(),
-                                $"{device.Battery}");
-                            LogDebug(prolog);
-                            AppLogger.Instance.LogToTray(prolog);
-                        }
-                    }
+            if (Instance.Config.GetEnableTouchToggle(ind)) CheckForTouchToggle(ind, cState, pState);
 
-                    device.firstReport = false;
-                }
+            cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 
-                if (!device.PrimaryDevice)
-                    // Skip mapping routine if part of a joined device
-                    return;
+            if (!recordingMacro && (UseTempProfiles[ind] ||
+                                    Instance.Config.ContainsCustomAction[ind] ||
+                                    Instance.Config.ContainsCustomExtras[ind] ||
+                                    Instance.Config.GetProfileActionCount(ind) > 0))
+            {
+                var tempMapState = MappedState[ind];
+                Mapping.MapCustom(ind, cState, tempMapState, ExposedState[ind], touchPad[ind], this);
 
-                if (Instance.Config.GetEnableTouchToggle(ind)) CheckForTouchToggle(ind, cState, pState);
+                // Copy current Touchpad and Gyro data
+                // Might change to use new DS4State.CopyExtrasTo method
+                tempMapState.Motion = cState.Motion;
+                tempMapState.ds4Timestamp = cState.ds4Timestamp;
+                tempMapState.FrameCounter = cState.FrameCounter;
+                tempMapState.TouchPacketCounter = cState.TouchPacketCounter;
+                tempMapState.TrackPadTouch0 = cState.TrackPadTouch0;
+                tempMapState.TrackPadTouch1 = cState.TrackPadTouch1;
+                cState = tempMapState;
+            }
 
-                cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
+            if (profile.IsOutputDeviceEnabled)
+            {
+                outputDevices[ind]?.ConvertAndSendReport(cState, ind);
+                //testNewReport(ref x360reports[ind], cState, ind);
+                //x360controls[ind]?.SendReport(x360reports[ind]);
 
-                if (!recordingMacro && (UseTempProfiles[ind] ||
-                                        Instance.Config.ContainsCustomAction[ind] ||
-                                        Instance.Config.ContainsCustomExtras[ind] ||
-                                        Instance.Config.GetProfileActionCount(ind) > 0))
-                {
-                    var tempMapState = MappedState[ind];
-                    Mapping.MapCustom(ind, cState, tempMapState, ExposedState[ind], touchPad[ind], this);
-
-                    // Copy current Touchpad and Gyro data
-                    // Might change to use new DS4State.CopyExtrasTo method
-                    tempMapState.Motion = cState.Motion;
-                    tempMapState.ds4Timestamp = cState.ds4Timestamp;
-                    tempMapState.FrameCounter = cState.FrameCounter;
-                    tempMapState.TouchPacketCounter = cState.TouchPacketCounter;
-                    tempMapState.TrackPadTouch0 = cState.TrackPadTouch0;
-                    tempMapState.TrackPadTouch1 = cState.TrackPadTouch1;
-                    cState = tempMapState;
-                }
-
-                if (!DIOnly[ind])
-                {
-                    outputDevices[ind]?.ConvertAndSendReport(cState, ind);
-                    //testNewReport(ref x360reports[ind], cState, ind);
-                    //x360controls[ind]?.SendReport(x360reports[ind]);
-
-                    //x360Bus.Parse(cState, processingData[ind].Report, ind);
-                    // We push the translated Xinput state, and simultaneously we
-                    // pull back any possible rumble data coming from Xinput consumers.
-                    /*if (x360Bus.Report(processingData[ind].Report, processingData[ind].Rumble))
+                //x360Bus.Parse(cState, processingData[ind].Report, ind);
+                // We push the translated Xinput state, and simultaneously we
+                // pull back any possible rumble data coming from Xinput consumers.
+                /*if (x360Bus.Report(processingData[ind].Report, processingData[ind].Rumble))
                     {
                         byte Big = processingData[ind].Rumble[3];
                         byte Small = processingData[ind].Rumble[4];
@@ -2130,47 +2134,46 @@ namespace DS4Windows
                         }
                     }
                     */
-                }
-                else
-                {
-                    // UseDInputOnly profile may re-map sixaxis gyro sensor values as a VJoy joystick axis (steering wheel emulation mode using VJoy output device). Handle this option because VJoy output works even in USeDInputOnly mode.
-                    // If steering wheel emulation uses LS/RS/R2/L2 output axies then the profile should NOT use UseDInputOnly option at all because those require a virtual output device.
-                    var steeringWheelMappedAxis = Instance.Config.GetSASteeringWheelEmulationAxis(ind);
-                    switch (steeringWheelMappedAxis)
-                    {
-                        case SASteeringWheelEmulationAxisType.None: break;
-
-                        case SASteeringWheelEmulationAxisType.VJoy1X:
-                        case SASteeringWheelEmulationAxisType.VJoy2X:
-                            vJoyFeeder.FeedAxisValue(cState.SASteeringWheelEmulationUnit,
-                                ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
-                                HID_USAGES.HID_USAGE_X);
-                            break;
-
-                        case SASteeringWheelEmulationAxisType.VJoy1Y:
-                        case SASteeringWheelEmulationAxisType.VJoy2Y:
-                            vJoyFeeder.FeedAxisValue(cState.SASteeringWheelEmulationUnit,
-                                ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
-                                HID_USAGES.HID_USAGE_Y);
-                            break;
-
-                        case SASteeringWheelEmulationAxisType.VJoy1Z:
-                        case SASteeringWheelEmulationAxisType.VJoy2Z:
-                            vJoyFeeder.FeedAxisValue(cState.SASteeringWheelEmulationUnit,
-                                ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
-                                HID_USAGES.HID_USAGE_Z);
-                            break;
-                    }
-                }
-
-                // Output any synthetic events.
-                Mapping.Commit(ind);
-
-                // Update the Lightbar color
-                DS4LightBar.UpdateLightBar(device, ind);
-
-                if (device.PerformStateMerge) device.PreserveMergedStateData();
             }
+            else
+            {
+                // UseDInputOnly profile may re-map sixaxis gyro sensor values as a VJoy joystick axis (steering wheel emulation mode using VJoy output device). Handle this option because VJoy output works even in USeDInputOnly mode.
+                // If steering wheel emulation uses LS/RS/R2/L2 output axies then the profile should NOT use UseDInputOnly option at all because those require a virtual output device.
+                var steeringWheelMappedAxis = Instance.Config.GetSASteeringWheelEmulationAxis(ind);
+                switch (steeringWheelMappedAxis)
+                {
+                    case SASteeringWheelEmulationAxisType.None: break;
+
+                    case SASteeringWheelEmulationAxisType.VJoy1X:
+                    case SASteeringWheelEmulationAxisType.VJoy2X:
+                        vJoyFeeder.FeedAxisValue(cState.SASteeringWheelEmulationUnit,
+                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                            HID_USAGES.HID_USAGE_X);
+                        break;
+
+                    case SASteeringWheelEmulationAxisType.VJoy1Y:
+                    case SASteeringWheelEmulationAxisType.VJoy2Y:
+                        vJoyFeeder.FeedAxisValue(cState.SASteeringWheelEmulationUnit,
+                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                            HID_USAGES.HID_USAGE_Y);
+                        break;
+
+                    case SASteeringWheelEmulationAxisType.VJoy1Z:
+                    case SASteeringWheelEmulationAxisType.VJoy2Z:
+                        vJoyFeeder.FeedAxisValue(cState.SASteeringWheelEmulationUnit,
+                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                            HID_USAGES.HID_USAGE_Z);
+                        break;
+                }
+            }
+
+            // Output any synthetic events.
+            Mapping.Commit(ind);
+
+            // Update the Lightbar color
+            DS4LightBar.UpdateLightBar(device, ind);
+
+            if (device.PerformStateMerge) device.PreserveMergedStateData();
         }
 
         public void LagFlashWarning(DS4Device device, int ind, bool on)

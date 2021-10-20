@@ -1258,10 +1258,12 @@ Suspend support not enabled.", true);
                                         {
                                             propValue = Global.ActiveOutDevType[tdevice].ToString();
                                         }
+                                        /*
                                         else if (propName == "usedinputonly")
                                         {
                                             propValue = Global.DIOnly[tdevice].ToString();
                                         }
+                                        */
 
                                         else if (propName == "devicevidpid" &&
                                                  rootHub.DS4Controllers[tdevice] != null)
