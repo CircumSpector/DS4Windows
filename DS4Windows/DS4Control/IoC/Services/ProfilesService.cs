@@ -114,8 +114,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class ProfilesService : IProfilesService
     {
-        public static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
-
         private readonly IAppSettingsService appSettings;
 
         private readonly IDictionary<Guid, DS4WindowsProfile> availableProfiles =
@@ -128,7 +126,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 //
                 // Force same GUID to avoid multiple "Default" profiles
                 // 
-                Id = DefaultProfileId
+                Id = DS4WindowsProfile.DefaultProfileId
             }));
 
         private readonly DS4WindowsProfile currentlyEditedProfile = new();
@@ -420,7 +418,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 //
                 // Skip over as no custom profile was loaded from disk
                 // 
-                if (linkedProfileId != DefaultProfileId)
+                if (linkedProfileId != DS4WindowsProfile.DefaultProfileId)
                 {
                     availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
                     controllerSlotProfiles[slot].DeviceId = address;
@@ -529,7 +527,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             return profileId.HasValue &&
                    availableProfiles.TryGetValue(profileId.Value, out var value)
                 ? value // customized profile found
-                : new DS4WindowsProfile(slot) { Id = DefaultProfileId }; // provide default profile
+                : new DS4WindowsProfile(slot) { Id = DS4WindowsProfile.DefaultProfileId }; // provide default profile
         }
 
         /// <summary>

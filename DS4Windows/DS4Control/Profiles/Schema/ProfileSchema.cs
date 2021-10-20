@@ -41,6 +41,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         IEquatable<DS4WindowsProfile>,
         INotifyPropertyChanged
     {
+        /// <summary>
+        ///     The <see cref="Guid"/> identifying the default (always available) profile that is always ensured to exist.
+        /// </summary>
+        public static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
+        
+        /// <summary>
+        ///     The <see cref="Guid"/> identifying a profile that indicates "no change" (for auto switching profiles).
+        /// </summary>
+        public static readonly Guid EmptyProfileId = Guid.Parse("D1D90BED-9D50-41D1-BAA7-049823FDBC25");
+
         public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
             ProfilePropertyChangedEventArgs e);
 
@@ -80,7 +90,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     If true, is the default profile. There can only be one.
         /// </summary>
         [XmlIgnore]
-        public bool IsDefaultProfile => Equals(Id, ProfilesService.DefaultProfileId);
+        public bool IsDefaultProfile => Equals(Id, DefaultProfileId);
+
+        /// <summary>
+        ///     If true, is an empty profile and should not be switched to.
+        /// </summary>
+        [XmlIgnore] 
+        public bool IsEmptyProfile => Equals(Id, EmptyProfileId);
 
         /// <summary>
         ///     If true, this profile is linked to the current slots device' MAC/ID. This value is assigned at runtime and not
