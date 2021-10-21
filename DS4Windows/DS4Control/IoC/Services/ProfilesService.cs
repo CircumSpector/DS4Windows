@@ -113,8 +113,14 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         void ControllerDeparted(int slot, PhysicalAddress address);
 
+        /// <summary>
+        ///     Persist the current settings to disk.
+        /// </summary>
         void SaveAutoSwitchingProfiles();
 
+        /// <summary>
+        ///     Load the persisted settings from disk.
+        /// </summary>
         void LoadAutoSwitchingProfiles();
 
         void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile);
@@ -457,6 +463,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
         }
 
+        /// <summary>
+        ///     Persist the current settings to disk.
+        /// </summary>
         public void SaveAutoSwitchingProfiles()
         {
             var path = global.AutoSwitchingProfilesPath;
@@ -471,6 +480,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             store.Serialize(stream);
         }
 
+        /// <summary>
+        ///     Load the persisted settings from disk.
+        /// </summary>
         public void LoadAutoSwitchingProfiles()
         {
             var path = global.AutoSwitchingProfilesPath;
