@@ -19,6 +19,7 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Forms;
 using DS4WinWPF.DS4Forms.ViewModels;
 using Microsoft.Extensions.Configuration;
@@ -163,8 +164,22 @@ namespace DS4WinWPF
 
             profileService.Initialize();
 
+            /*
+            profileService.AddAutoSwitchingProfile(new AutoSwitchingProfileEntry
+            {
+                Path = @"C:\Windows\notepad.exe",
+                ControllerSlotProfileId = new Dictionary<int, Guid?>
+                {
+                    { 0, DS4WindowsProfile.DefaultProfileId }
+                }
+            });
+
+            profileService.SaveAutoSwitchingProfiles();
+            */
+
             //profileService.SaveAvailableProfiles();
             //profileService.LoadAvailableProfiles();
+            //
 
             var parser = (CommandLineOptions)host.Services.GetRequiredService<ICommandLineOptions>();
 

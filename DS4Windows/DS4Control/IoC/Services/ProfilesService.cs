@@ -35,6 +35,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles { get; }
 
         /// <summary>
+        ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
+        /// </summary>
+        IReadOnlyCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; }
+
+        /// <summary>
         ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
         /// </summary>
         /// <param name="convertLegacyIfFound">If true, in-place conversion of existing legacy profile formats will be attempted.</param>
@@ -107,6 +112,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         void ControllerArrived(int slot, PhysicalAddress address);
 
         void ControllerDeparted(int slot, PhysicalAddress address);
+
+        void SaveAutoSwitchingProfiles();
+
+        void LoadAutoSwitchingProfiles();
+
+        void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile);
     }
 
     /// <summary>
@@ -115,6 +126,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     public sealed class ProfilesService : IProfilesService
     {
         private readonly IAppSettingsService appSettings;
+
+        private readonly IList<AutoSwitchingProfileEntry> autoSwitchingProfiles = new List<AutoSwitchingProfileEntry>();
 
         private readonly IDictionary<Guid, DS4WindowsProfile> availableProfiles =
             new ConcurrentDictionary<Guid, DS4WindowsProfile>();
@@ -371,6 +384,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             appSettings.Load();
             LoadAvailableProfiles();
             LoadLinkedProfiles();
+            LoadAutoSwitchingProfiles();
 
             //
             // Populate slots from application configuration, if existent
@@ -443,6 +457,51 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
         }
 
+        public void SaveAutoSwitchingProfiles()
+        {
+            var path = global.AutoSwitchingProfilesPath;
+
+            using var stream = File.Open(path, FileMode.Create);
+
+            var store = new AutoSwitchingProfiles
+            {
+                AutoSwitchingProfileEntries = (List<AutoSwitchingProfileEntry>)autoSwitchingProfiles
+            };
+
+            store.Serialize(stream);
+        }
+
+        public void LoadAutoSwitchingProfiles()
+        {
+            var path = global.AutoSwitchingProfilesPath;
+
+            if (!File.Exists(path))
+            {
+                logger.LogDebug("File {File} doesn't exist, skipping", path);
+                return;
+            }
+
+            try
+            {
+                using var stream = File.OpenRead(path);
+
+                var store = Profiles.Schema.AutoSwitchingProfiles.Deserialize(stream);
+
+                autoSwitchingProfiles.Clear();
+
+                ((List<AutoSwitchingProfileEntry>)autoSwitchingProfiles).AddRange(store.AutoSwitchingProfileEntries);
+            }
+            catch (InvalidOperationException)
+            {
+                logger.LogWarning("Incompatible file {AutoSwitchingProfiles} found, couldn't read", path);
+            }
+        }
+
+        public void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile)
+        {
+            autoSwitchingProfiles.Add(profile);
+        }
+
         /// <summary>
         ///     The profile copy that is currently being edited.
         /// </summary>
@@ -471,6 +530,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     A collection of profile IDs linked to a particular controller ID (MAC address).
         /// </summary>
         public IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles => linkedProfiles.ToImmutableDictionary();
+
+        /// <summary>
+        ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
+        /// </summary>
+        public IReadOnlyCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles =>
+            autoSwitchingProfiles.ToImmutableList();
 
         /// <summary>
         ///     Adds a pre-existing or new <see cref="DS4WindowsProfile" /> to <see cref="AvailableProfiles" /> and persists it to
@@ -517,11 +582,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Resolve the profile from <see cref="AvailableProfiles"/> identified by <see cref="Guid"/>.
+        ///     Resolve the profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
         /// </summary>
-        /// <param name="slot"></param>
-        /// <param name="profileId"></param>
-        /// <returns></returns>
         private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
         {
             return profileId.HasValue &&

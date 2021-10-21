@@ -26,6 +26,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     Absolute path to <see cref="Constants.ProfilesSubDirectory" />
         /// </summary>
         string ProfilesDirectory { get; }
+
+        /// <summary>
+        ///     Absolute path to <see cref="Constants.AutoProfilesFileName" />
+        /// </summary>
+        string AutoSwitchingProfilesPath { get; }
     }
 
     public sealed class GlobalStateService : IGlobalStateService
@@ -77,6 +82,22 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 return File.Exists(programFolderFile)
                     ? programFolderFile
                     : Path.Combine(RoamingAppDataPath, Constants.LinkedProfilesFileName);
+            }
+        }
+
+        /// <summary>
+        ///     Absolute path to <see cref="Constants.AutoProfilesFileName" />
+        /// </summary>
+        public string AutoSwitchingProfilesPath
+        {
+            get
+            {
+                var programFolderFile = Path.Combine(appDirectory
+                    , Constants.AutoProfilesFileName);
+
+                return File.Exists(programFolderFile)
+                    ? programFolderFile
+                    : Path.Combine(RoamingAppDataPath, Constants.AutoProfilesFileName);
             }
         }
 

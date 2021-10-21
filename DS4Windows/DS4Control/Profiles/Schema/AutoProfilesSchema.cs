@@ -32,16 +32,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class AutoSwitchingProfile : XmlSerializable<AutoProfileProgramsV3>
+    public class AutoSwitchingProfiles : XmlSerializable<AutoSwitchingProfiles>
     {
-        public List<AutoSwitchingProfileEntry> ProgramEntries { get; set; } = new();
+        public List<AutoSwitchingProfileEntry> AutoSwitchingProfileEntries { get; set; } = new();
 
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .UseOptimizedNamespaces()
                 .EnableMemberExceptionHandling()
-                .EnableImplicitTyping(typeof(AutoSwitchingProfile))
+                .EnableImplicitTyping(typeof(AutoSwitchingProfiles), typeof(AutoSwitchingProfileEntry))
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Create();
         }

@@ -330,17 +330,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [UsedImplicitly]
         public void OnPropertyChanged(string propertyName, object before, object after)
         {
-            switch (propertyName)
-            {
-                //
-                // Update name if this is declared an empty profile
-                // 
-                case nameof(Id):
-                    if (Equals((Guid)after, EmptyProfileId))
-                        DisplayName = "(none)";
-                    break;
-            }
-
             ProfilePropertyChanged?.Invoke(this, new ProfilePropertyChangedEventArgs(propertyName, before, after));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
