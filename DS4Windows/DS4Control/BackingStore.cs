@@ -120,8 +120,6 @@ namespace DS4Windows
 
         IList<int> IdleDisconnectTimeout { get; set; }
 
-        IList<bool> TouchpadJitterCompensation { get; set; }
-
         IList<bool> TouchClickPassthru { get; set; }
 
         string FakeExeFileName { get; set; }
@@ -249,8 +247,6 @@ namespace DS4Windows
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
 
         byte GetTapSensitivity(int index);
-
-        bool GetTouchPadJitterCompensation(int index);
 
         int GetTouchPadInvert(int index);
         TriggerDeadZoneZInfo GetL2ModInfo(int index);

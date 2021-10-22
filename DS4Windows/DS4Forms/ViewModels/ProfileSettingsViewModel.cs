@@ -1659,8 +1659,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         
         public bool TouchJitter
         {
-            get => Global.Instance.Config.TouchpadJitterCompensation[device];
-            set => Global.Instance.Config.TouchpadJitterCompensation[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchpadJitterCompensation;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchpadJitterCompensation = value;
         }
 
         private int[] touchpadInvertToValue = new int[4] { 0, 2, 1, 3 };

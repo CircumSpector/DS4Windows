@@ -187,9 +187,6 @@ namespace DS4Windows
 
             public IList<int> IdleDisconnectTimeout { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            public IList<bool> TouchpadJitterCompensation { get; set; } = new List<bool>
-                { true, true, true, true, true, true, true, true, true };
-
             public IList<bool> TouchClickPassthru { get; set; } = new List<bool>
                 { false, false, false, false, false, false, false, false, false };
 
@@ -628,11 +625,6 @@ namespace DS4Windows
             public byte GetTapSensitivity(int index)
             {
                 return TapSensitivity[index];
-            }
-
-            public bool GetTouchPadJitterCompensation(int index)
-            {
-                return TouchpadJitterCompensation[index];
             }
 
             public int GetTouchPadInvert(int index)
@@ -3392,7 +3384,6 @@ namespace DS4Windows
             private void ResetProfile(int device)
             {
                 IdleDisconnectTimeout[device] = 0;
-                TouchpadJitterCompensation[device] = true;
                 TouchClickPassthru[device] = false;
 
                 LSModInfo[device].Reset();

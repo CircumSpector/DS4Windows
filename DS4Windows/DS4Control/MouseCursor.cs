@@ -355,7 +355,7 @@ namespace DS4Windows
             var signX = Math.Sign(dx);
             var signY = Math.Sign(dy);
             var coefficient = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).TouchSensitivity * 0.01;
-            var jitterCompenstation = Global.Instance.Config.GetTouchPadJitterCompensation(deviceNumber);
+            var jitterCompenstation = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).TouchpadJitterCompensation;
 
             var xMotion = dx != 0 ? coefficient * dx + normX * (TOUCHPAD_MOUSE_OFFSET * signX) : 0.0;
 
