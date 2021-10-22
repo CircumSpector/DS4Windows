@@ -432,9 +432,6 @@ namespace DS4Windows
 
             public IList<int> GyroInvert { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            public IList<bool> GyroTriggerTurns { get; set; } = new List<bool>
-                { true, true, true, true, true, true, true, true, true };
-
             public IList<GyroMouseInfo> GyroMouseInfo { get; set; } = new List<GyroMouseInfo>
             {
                 new(), new(),
@@ -638,11 +635,6 @@ namespace DS4Windows
             public int GetGyroInvert(int index)
             {
                 return GyroInvert[index];
-            }
-
-            public bool GetGyroTriggerTurns(int index)
-            {
-                return GyroTriggerTurns[index];
             }
 
             public int GetGyroMouseHorizontalAxis(int index)
@@ -2777,7 +2769,7 @@ namespace DS4Windows
                 GyroOutputMode[device] = GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
-                GyroTriggerTurns[device] = false;
+                //GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
@@ -2816,7 +2808,7 @@ namespace DS4Windows
                 GyroOutputMode[device] = GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
-                GyroTriggerTurns[device] = false;
+                //GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
@@ -3050,7 +3042,7 @@ namespace DS4Windows
                 GyroOutputMode[device] = GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
-                GyroTriggerTurns[device] = false;
+                //GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
@@ -3473,7 +3465,7 @@ namespace DS4Windows
                 GyroSensitivity[device] = 100;
                 GyroSensVerticalScale[device] = 100;
                 GyroInvert[device] = 0;
-                GyroTriggerTurns[device] = true;
+                //GyroTriggerTurns[device] = true;
                 GyroMouseInfo[device].Reset();
 
                 GyroMouseHorizontalAxis[device] = 0;

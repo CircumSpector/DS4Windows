@@ -170,7 +170,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroSensitivity = store.GyroSensitivity[device];
             GyroSensVerticalScale = store.GyroSensVerticalScale[device];
             GyroInvert = store.GyroInvert[device];
-            GyroTriggerTurns = store.GyroTriggerTurns[device];
 
             GyroMouseSmoothingSettings.UseSmoothing = store.GyroMouseInfo[device].enableSmoothing;
             GyroMouseSmoothingSettings.SmoothingMethod = store.GyroMouseInfo[device].SmoothMethodIdentifier();
@@ -477,7 +476,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.GyroSensitivity[device] = GyroSensitivity;
             store.GyroSensVerticalScale[device] = GyroSensVerticalScale;
             store.GyroInvert[device] = GyroInvert;
-            store.GyroTriggerTurns[device] = GyroTriggerTurns;
 
             store.GyroMouseInfo[device].enableSmoothing = GyroMouseSmoothingSettings.UseSmoothing;
             store.GyroMouseInfo[device].DetermineSmoothMethod(GyroMouseSmoothingSettings.SmoothingMethod);

@@ -1770,8 +1770,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseTurns
         {
-            get => Global.Instance.Config.GyroTriggerTurns[device];
-            set => Global.Instance.Config.GyroTriggerTurns[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroTriggerTurns;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroTriggerTurns = value;
         }
 
         public int GyroSensitivity

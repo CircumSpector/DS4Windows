@@ -186,7 +186,7 @@ namespace DS4Windows
             {
                 s = dev.GetCurrentStateReference();
 
-                useReverseRatchet = Global.Instance.Config.GetGyroTriggerTurns(deviceNum);
+                useReverseRatchet = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroTriggerTurns;
                 var i = 0;
                 var ss = Global.Instance.Config.GetSATriggers(deviceNum).Split(',');
                 var andCond = Global.Instance.Config.GetSATriggerCondition(deviceNum);

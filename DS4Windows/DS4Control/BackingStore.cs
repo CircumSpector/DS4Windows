@@ -96,8 +96,6 @@ namespace DS4Windows
 
         IList<int> GyroInvert { get; set; }
 
-        IList<bool> GyroTriggerTurns { get; set; }
-
         IList<GyroMouseInfo> GyroMouseInfo { get; set; }
 
         IList<int> GyroMouseHorizontalAxis { get; set; }
@@ -251,8 +249,6 @@ namespace DS4Windows
         int GetGyroSensVerticalScale(int index);
 
         int GetGyroInvert(int index);
-
-        bool GetGyroTriggerTurns(int index);
 
         int GetGyroMouseHorizontalAxis(int index);
         
