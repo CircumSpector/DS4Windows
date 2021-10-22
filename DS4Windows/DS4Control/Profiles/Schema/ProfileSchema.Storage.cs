@@ -44,7 +44,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             IdleDisconnectTimeout = store.IdleDisconnectTimeout[device];
             OutputDataToDS4 = store.EnableOutputDataToDS4[device];
             Color = light.Ds4WinSettings.Led;
-            RumbleBoost = store.RumbleBoost[device];
             RumbleAutostopTime = store.RumbleAutostopTime[device];
             LightbarMode = appSettings.Settings.LightbarSettingInfo[device].Mode;
             LedAsBatteryIndicator = light.Ds4WinSettings.LedAsBattery;
@@ -344,7 +343,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.EnableOutputDataToDS4[device] = OutputDataToDS4;
             lightbarSettings.Mode = LightbarMode;
             lightInfo.Led = Color;
-            store.RumbleBoost[device] = RumbleBoost;
             store.RumbleAutostopTime[device] = RumbleAutostopTime;
             lightInfo.LedAsBattery = LedAsBatteryIndicator;
             lightInfo.FlashType = FlashType;

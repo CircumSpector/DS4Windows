@@ -325,8 +325,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int RumbleBoost
         {
-            get => Global.Instance.Config.RumbleBoost[device];
-            set => Global.Instance.Config.RumbleBoost[device] = (byte)value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RumbleBoost;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RumbleBoost = (byte)value;
         }
 
         public int RumbleAutostopTime

@@ -46,8 +46,6 @@ namespace DS4Windows
 
         IList<bool> DistanceProfiles { get; set; }
 
-        IList<byte> RumbleBoost { get; set; }
-
         IList<int> RumbleAutostopTime { get; }
 
         IList<byte> TouchSensitivity { get; set; }
