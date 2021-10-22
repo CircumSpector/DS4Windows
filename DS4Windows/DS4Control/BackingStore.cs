@@ -120,8 +120,6 @@ namespace DS4Windows
 
         IList<int> GyroMouseDeadZone { get; set; }
 
-        IList<bool> GyroMouseToggle { get; set; }
-
         IList<int> IdleDisconnectTimeout { get; set; }
 
         IList<bool> TouchpadJitterCompensation { get; set; }

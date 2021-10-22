@@ -181,7 +181,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroMouseHAxis = store.GyroMouseHorizontalAxis[device];
             GyroMouseDeadZone = store.GyroMouseDeadZone[device];
             GyroMouseMinThreshold = store.GyroMouseInfo[device].minThreshold;
-            GyroMouseToggle = store.GyroMouseToggle[device];
             GyroOutputMode = store.GyroOutputMode[device];
             GyroMouseStickTriggers = store.SAMouseStickTriggers[device];
             GyroMouseStickTriggerCond = store.SaTriggerCondString(store.SAMouseStickTriggerCond[device]);

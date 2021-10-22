@@ -307,12 +307,6 @@ namespace DS4Windows
                 MouseCursor.GYRO_MOUSE_DEADZONE
             };
 
-            public IList<bool> GyroMouseToggle { get; set; } = new List<bool>
-            {
-                false, false, false,
-                false, false, false, false, false, false
-            };
-
             public IList<SquareStickInfo> SquStickInfo { get; set; } = new List<SquareStickInfo>
             {
                 new(), new(),
@@ -880,16 +874,18 @@ namespace DS4Windows
                     control.touchPad[index].CursorGyroDead = value;
             }
 
+            [Obsolete]
             public void SetGyroControlsToggle(int index, bool value, ControlService control)
             {
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(index).GyroControlsInfo.TriggerToggle = value;
+                //ProfilesService.Instance.ControllerSlotProfiles.ElementAt(index).GyroControlsInfo.TriggerToggle = value;
                 if (index < ControlService.CURRENT_DS4_CONTROLLER_LIMIT && control.touchPad[index] != null)
                     control.touchPad[index].ToggleGyroControls = value;
             }
 
+            [Obsolete]
             public void SetGyroMouseToggle(int index, bool value, ControlService control)
             {
-                GyroMouseToggle[index] = value;
+                //GyroMouseToggle[index] = value;
                 if (index < ControlService.CURRENT_DS4_CONTROLLER_LIMIT && control.touchPad[index] != null)
                     control.touchPad[index].ToggleGyroMouse = value;
             }
@@ -3461,7 +3457,7 @@ namespace DS4Windows
                 GyroMouseInfo[device].Reset();
 
                 GyroMouseHorizontalAxis[device] = 0;
-                GyroMouseToggle[device] = false;
+                //GyroMouseToggle[device] = false;
                 SquStickInfo[device].LSMode = false;
                 SquStickInfo[device].RSMode = false;
                 SquStickInfo[device].LSRoundness = 5.0;
