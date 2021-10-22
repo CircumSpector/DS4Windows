@@ -164,8 +164,6 @@ namespace DS4Windows
 
         IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
 
-        IList<bool> GyroMouseStickToggle { get; set; }
-
         IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
 
         IList<int> SAWheelFuzzValues { get; set; }

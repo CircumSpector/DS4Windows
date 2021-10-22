@@ -195,7 +195,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroMouseStickAntiDeadX = store.GyroMouseStickInfo[device].AntiDeadX;
             GyroMouseStickAntiDeadY = store.GyroMouseStickInfo[device].AntiDeadY;
             GyroMouseStickInvert = store.GyroMouseStickInfo[device].Inverted;
-            GyroMouseStickToggle = store.GyroMouseStickToggle[device];
             GyroMouseStickMaxOutput = store.GyroMouseStickInfo[device].MaxOutput;
             GyroMouseStickMaxOutputEnabled = store.GyroMouseStickInfo[device].MaxOutputEnabled;
             GyroMouseStickVerticalScale = store.GyroMouseStickInfo[device].VertScale;

@@ -88,12 +88,6 @@ namespace DS4Windows
 
             private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
 
-            public IList<bool> GyroMouseStickToggle { get; set; } = new List<bool>
-            {
-                false, false, false,
-                false, false, false, false, false, false
-            };
-
             public IList<bool> GyroMouseStickTriggerTurns { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
@@ -916,9 +910,10 @@ namespace DS4Windows
                     control.touchPad[index].ToggleGyroMouse = value;
             }
 
+            [Obsolete]
             public void SetGyroMouseStickToggle(int index, bool value, ControlService control)
             {
-                GyroMouseStickToggle[index] = value;
+                //GyroMouseStickToggle[index] = value;
                 if (index < ControlService.CURRENT_DS4_CONTROLLER_LIMIT && control.touchPad[index] != null)
                     control.touchPad[index].ToggleGyroStick = value;
             }
@@ -3469,7 +3464,6 @@ namespace DS4Windows
                 GyroMouseStickInfo[device].Reset();
                 GyroSwipeInfo[device].Reset();
 
-                GyroMouseStickToggle[device] = false;
                 GyroMouseStickTriggerTurns[device] = true;
                 SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
                 SASteeringWheelEmulationRange[device] = 360;

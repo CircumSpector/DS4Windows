@@ -2068,11 +2068,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseStickToggle
         {
-            get => Global.Instance.Config.GyroMouseStickToggle[device];
-            set
-            {
-                Global.Instance.Config.SetGyroMouseStickToggle(device, value, rootHub);
-            }
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroMouseStickToggle;
+            set => Global.Instance.Config.SetGyroMouseStickToggle(device, value, rootHub);
         }
 
         public int GyroMouseStickDeadZone
