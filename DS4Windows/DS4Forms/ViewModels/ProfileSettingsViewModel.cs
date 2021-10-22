@@ -1716,8 +1716,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchTrackball
         {
-            get => Global.Instance.Config.TrackballMode[device];
-            set => Global.Instance.Config.TrackballMode[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TrackballMode;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TrackballMode = value;
         }
 
         public double TouchTrackballFriction

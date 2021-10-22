@@ -100,8 +100,6 @@ namespace DS4Windows
 
         IList<int> GyroMouseStickHorizontalAxis { get; set; }
 
-        IList<bool> TrackballMode { get; set; }
-
         IList<double> TrackballFriction { get; set; }
 
         IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; }
@@ -292,8 +290,6 @@ namespace DS4Windows
         StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
 
         StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device);
-
-        bool GetTrackballMode(int index);
 
         double GetTrackballFriction(int index);
 

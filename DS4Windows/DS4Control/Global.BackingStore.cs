@@ -423,10 +423,7 @@ namespace DS4Windows
             public IList<int> GyroMouseHorizontalAxis { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
             public IList<int> GyroMouseStickHorizontalAxis { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-            public IList<bool> TrackballMode { get; set; } = new List<bool>
-                { false, false, false, false, false, false, false, false, false };
-
+            
             public IList<double> TrackballFriction { get; set; } = new List<double>
                 { 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 };
 
@@ -744,11 +741,6 @@ namespace DS4Windows
             public StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device)
             {
                 return RSAntiSnapbackInfo[device];
-            }
-
-            public bool GetTrackballMode(int index)
-            {
-                return TrackballMode[index];
             }
 
             public double GetTrackballFriction(int index)
@@ -3450,7 +3442,7 @@ namespace DS4Windows
                 SetR2OutCurveMode(device, 0);
                 SetSXOutCurveMode(device, 0);
                 SetSZOutCurveMode(device, 0);
-                TrackballMode[device] = false;
+                //TrackballMode[device] = false;
                 TrackballFriction[device] = 10.0;
                 TouchPadAbsMouse[device].Reset();
                 TouchPadRelMouse[device].Reset();

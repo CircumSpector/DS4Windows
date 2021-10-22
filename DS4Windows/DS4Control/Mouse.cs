@@ -343,7 +343,7 @@ namespace DS4Windows
                         if (getDS4ControlsByName(disArray[i]) == false)
                             tempBool = false;
 
-                    if (Global.Instance.Config.GetTrackballMode(deviceNum))
+                    if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TrackballMode)
                     {
                         var iIndex = trackballBufferTail;
                         // Establish 4 ms as the base
@@ -361,7 +361,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (Global.Instance.Config.GetTrackballMode(deviceNum))
+                    if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TrackballMode)
                     {
                         var iIndex = trackballBufferTail;
                         trackballXBuffer[iIndex] = 0;
@@ -491,7 +491,7 @@ namespace DS4Windows
                         if (getDS4ControlsByName(disArray[i]) == false)
                             tempBool = false;
 
-                    if (Global.Instance.Config.GetTrackballMode(deviceNum))
+                    if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TrackballMode)
                     {
                         if (!trackballActive)
                         {

@@ -298,7 +298,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             SZOutputCurveMode = store.AxisOutputCurveString(store.GetSZOutCurveMode(device));
             SZOutputCurveCustom = store.SZOutBezierCurveObj[device];
 
-            TrackballMode = store.TrackballMode[device];
             TrackballFriction = store.TrackballFriction[device];
 
             TouchRelMouseRotation = Convert.ToInt32(store.TouchPadRelMouse[device].Rotation * 180.0 / Math.PI);
@@ -530,7 +529,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.SetSXOutCurveMode(device, store.StickOutputCurveId(SXOutputCurveMode));
             store.SZOutBezierCurveObj[device] = SZOutputCurveCustom;
             store.SetSZOutCurveMode(device, store.StickOutputCurveId(SZOutputCurveMode));
-            store.TrackballMode[device] = TrackballMode;
             store.TrackballFriction[device] = TrackballFriction;
 
             store.TouchPadRelMouse[device].Rotation =
