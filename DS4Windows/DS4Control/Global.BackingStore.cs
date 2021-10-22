@@ -155,9 +155,6 @@ namespace DS4Windows
             public IList<string> SATriggers { get; set; } = new List<string>
                 { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
 
-            public IList<bool> StartTouchpadOff { get; set; } = new List<bool>
-                { false, false, false, false, false, false, false, false, false };
-
             public IList<IList<int>> TouchDisInvertTriggers { get; set; } = new List<IList<int>>
             {
                 new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 },
@@ -3416,7 +3413,6 @@ namespace DS4Windows
                 R2OutputSettings[device].ResetSettings();
                 
                 LaunchProgram[device] = string.Empty;
-                StartTouchpadOff[device] = false;
                 TouchOutMode[device] = TouchpadOutMode.Mouse;
                 SATriggers[device] = "-1";
                 SATriggerCondition[device] = true;

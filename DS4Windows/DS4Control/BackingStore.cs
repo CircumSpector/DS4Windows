@@ -140,8 +140,6 @@ namespace DS4Windows
 
         IList<string> SATriggers { get; set; }
 
-        IList<bool> StartTouchpadOff { get; set; }
-
         IList<bool> SAMouseStickTriggerCond { get; set; }
 
         IList<string> SAMouseStickTriggers { get; set; }

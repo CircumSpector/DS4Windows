@@ -1693,8 +1693,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool StartTouchpadOff
         {
-            get => Global.Instance.Config.StartTouchpadOff[device];
-            set => Global.Instance.Config.StartTouchpadOff[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).StartTouchpadOff;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).StartTouchpadOff = value;
         }
 
         public double TouchRelMouseRotation

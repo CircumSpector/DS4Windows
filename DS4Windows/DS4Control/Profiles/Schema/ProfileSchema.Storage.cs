@@ -150,7 +150,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             */
 
             LaunchProgram = store.LaunchProgram[device];
-            StartTouchpadOff = store.StartTouchpadOff[device];
+            //StartTouchpadOff = store.StartTouchpadOff[device];
             TouchpadOutputMode = store.TouchOutMode[device];
             SATriggers = store.SATriggers[device];
             SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
@@ -414,7 +414,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.ButtonMouseInfos[device].mouseAccel = MouseAcceleration;
             //ShiftModifier
             store.LaunchProgram[device] = LaunchProgram;
-            store.StartTouchpadOff[device] = StartTouchpadOff;
 
             store.SATriggers[device] = SATriggers;
             store.SATriggerCondition[device] = store.SaTriggerCondValue(SATriggerCond);
