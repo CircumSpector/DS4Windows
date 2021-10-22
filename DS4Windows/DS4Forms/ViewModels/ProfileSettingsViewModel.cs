@@ -1687,8 +1687,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchpadClickPassthru
         {
-            get => Global.Instance.Config.TouchClickPassthru[device];
-            set => Global.Instance.Config.TouchClickPassthru[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchClickPassthru;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchClickPassthru = value;
         }
 
         public bool StartTouchpadOff

@@ -987,7 +987,7 @@ namespace DS4Windows
             var tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             if (tempMode != TouchpadOutMode.Passthru)
             {
-                var touchClickPass = Global.Instance.Config.TouchClickPassthru[deviceNum];
+                var touchClickPass = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TouchClickPassthru;
                 if (!touchClickPass)
                     // Reset output Touchpad click button
                     s.OutputTouchButton = false;

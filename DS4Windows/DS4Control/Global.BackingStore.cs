@@ -187,9 +187,6 @@ namespace DS4Windows
 
             public IList<int> IdleDisconnectTimeout { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            public IList<bool> TouchClickPassthru { get; set; } = new List<bool>
-                { false, false, false, false, false, false, false, false, false };
-
             public IList<string> ProfilePath { get; set; } = new List<string>
             {
                 string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
@@ -3384,7 +3381,6 @@ namespace DS4Windows
             private void ResetProfile(int device)
             {
                 IdleDisconnectTimeout[device] = 0;
-                TouchClickPassthru[device] = false;
 
                 LSModInfo[device].Reset();
                 RSModInfo[device].Reset();

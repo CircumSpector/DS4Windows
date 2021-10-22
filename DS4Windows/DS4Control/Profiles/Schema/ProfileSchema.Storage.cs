@@ -58,7 +58,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             RightTriggerMiddle = store.R2ModInfo[device].deadZone;
 
             TouchpadInvert = store.TouchPadInvert[device];
-            TouchpadClickPassthru = store.TouchClickPassthru[device];
 
             L2AntiDeadZone = store.L2ModInfo[device].AntiDeadZone;
             R2AntiDeadZone = store.R2ModInfo[device].AntiDeadZone;
@@ -334,7 +333,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.TapSensitivity[device] = TapSensitivity;
             store.ScrollSensitivity[device] = ScrollSensitivity;
             store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);
-            store.TouchClickPassthru[device] = TouchpadClickPassthru;
             store.L2ModInfo[device].deadZone = LeftTriggerMiddle;
             store.R2ModInfo[device].deadZone = RightTriggerMiddle;
             store.L2ModInfo[device].AntiDeadZone = L2AntiDeadZone;
@@ -342,9 +340,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.L2ModInfo[device].maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
             store.R2ModInfo[device].maxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
             store.L2ModInfo[device].maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
-            ;
             store.R2ModInfo[device].maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
-            ;
             store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
             store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);

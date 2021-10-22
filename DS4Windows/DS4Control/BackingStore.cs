@@ -120,8 +120,6 @@ namespace DS4Windows
 
         IList<int> IdleDisconnectTimeout { get; set; }
 
-        IList<bool> TouchClickPassthru { get; set; }
-
         string FakeExeFileName { get; set; }
 
         IList<bool> ContainsCustomAction { get; set; }
