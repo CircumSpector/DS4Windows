@@ -176,11 +176,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroInvert = store.GyroInvert[device];
             GyroTriggerTurns = store.GyroTriggerTurns[device];
 
-            GyroControlsSettings.Triggers = store.GyroControlsInfo[device].Triggers;
-            GyroControlsSettings.TriggerCond = store.SaTriggerCondString(store.GyroControlsInfo[device].TriggerCond);
-            GyroControlsSettings.TriggerTurns = store.GyroControlsInfo[device].TriggerTurns;
-            GyroControlsSettings.Toggle = store.GyroControlsInfo[device].TriggerToggle;
-
             GyroMouseSmoothingSettings.UseSmoothing = store.GyroMouseInfo[device].enableSmoothing;
             GyroMouseSmoothingSettings.SmoothingMethod = store.GyroMouseInfo[device].SmoothMethodIdentifier();
             GyroMouseSmoothingSettings.SmoothingWeight =
@@ -450,11 +445,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.SAWheelFuzzValues[device] = SASteeringWheelFuzz is >= 0 and <= 100 ? SASteeringWheelFuzz : 0;
 
             store.GyroOutputMode[device] = GyroOutputMode;
-
-            store.GyroControlsInfo[device].Triggers = GyroControlsSettings.Triggers;
-            store.GyroControlsInfo[device].TriggerCond = store.SaTriggerCondValue(GyroControlsSettings.TriggerCond);
-            store.GyroControlsInfo[device].TriggerTurns = GyroControlsSettings.TriggerTurns;
-            store.GyroControlsInfo[device].TriggerToggle = GyroControlsSettings.Toggle;
 
             store.SAMouseStickTriggers[device] = GyroMouseStickTriggers;
             store.SAMouseStickTriggerCond[device] = store.SaTriggerCondValue(GyroMouseStickTriggerCond);

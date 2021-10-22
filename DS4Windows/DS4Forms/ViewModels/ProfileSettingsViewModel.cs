@@ -2232,19 +2232,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroControlsTurns
         {
-            get => Global.Instance.Config.GyroControlsInfo[device].TriggerTurns;
-            set => Global.Instance.Config.GyroControlsInfo[device].TriggerTurns = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns = value;
         }
 
         public int GyroControlsEvalCondIndex
         {
-            get => Global.Instance.Config.GyroControlsInfo[device].TriggerCond ? 0 : 1;
-            set => Global.Instance.Config.GyroControlsInfo[device].TriggerCond = value == 0 ? true : false;
+            get =>ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerCond ? 0 : 1;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerCond = value == 0 ? true : false;
         }
 
         public bool GyroControlsToggle
         {
-            get => Global.Instance.Config.GyroControlsInfo[device].TriggerToggle;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerToggle;
             set
             {
                 Global.Instance.Config.SetGyroControlsToggle(device, value, rootHub);
@@ -2885,13 +2885,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.Config.GyroControlsInfo[device].Triggers = string.Join(",", triggerList.ToArray());
+            ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.Triggers = string.Join(",", triggerList.ToArray());
             GyroControlsTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroControlsTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.Config.GyroControlsInfo[device].Triggers.Split(',');
+            string[] triggers = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.Triggers.Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)

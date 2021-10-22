@@ -178,8 +178,6 @@ namespace DS4Windows
 
         IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
 
-        IList<GyroControlsInfo> GyroControlsInfo { get; set; }
-
         IList<int> SAWheelFuzzValues { get; set; }
 
         ulong LastVersionCheckedNumber { get; set; }
@@ -279,8 +277,6 @@ namespace DS4Windows
         byte GetTouchSensitivity(int index);
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
-
-        GyroControlsInfo GetGyroControlsInfo(int index);
 
         byte GetTapSensitivity(int index);
 

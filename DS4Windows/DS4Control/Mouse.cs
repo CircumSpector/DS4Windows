@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using DS4WinWPF.DS4Control.IoC.Services;
 using OpenTracing.Util;
 
 //using System.Diagnostics;
@@ -134,7 +136,7 @@ namespace DS4Windows
             {
                 s = dev.GetCurrentStateReference();
 
-                var controlsMapInfo = Global.Instance.Config.GetGyroControlsInfo(deviceNum);
+                var controlsMapInfo = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroControlsInfo;
                 useReverseRatchet = controlsMapInfo.TriggerTurns;
                 var i = 0;
                 var ss = controlsMapInfo.Triggers.Split(',');

@@ -12,8 +12,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
+using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Properties;
 
 using OpenTracing.Util;
@@ -85,13 +87,6 @@ namespace DS4Windows
             }
 
             private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
-            
-            public IList<GyroControlsInfo> GyroControlsInfo { get; set; } = new List<GyroControlsInfo>
-            {
-                new(), new(), new(),
-                new(), new(), new(),
-                new(), new(), new()
-            };
 
             public IList<bool> GyroMouseStickToggle { get; set; } = new List<bool>
             {
@@ -681,11 +676,6 @@ namespace DS4Windows
                 return GyroMouseHorizontalAxis[index];
             }
 
-            public GyroControlsInfo GetGyroControlsInfo(int index)
-            {
-                return GyroControlsInfo[index];
-            }
-
             public byte GetTapSensitivity(int index)
             {
                 return TapSensitivity[index];
@@ -954,7 +944,7 @@ namespace DS4Windows
 
             public void SetGyroControlsToggle(int index, bool value, ControlService control)
             {
-                GyroControlsInfo[index].TriggerToggle = value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(index).GyroControlsInfo.TriggerToggle = value;
                 if (index < ControlService.CURRENT_DS4_CONTROLLER_LIMIT && control.touchPad[index] != null)
                     control.touchPad[index].ToggleGyroControls = value;
             }
@@ -3467,7 +3457,6 @@ namespace DS4Windows
             private void ResetProfile(int device)
             {
                 ButtonMouseInfos[device].Reset();
-                GyroControlsInfo[device].Reset();
 
                 EnableTouchToggle[device] = true;
                 IdleDisconnectTimeout[device] = 0;
