@@ -2059,11 +2059,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseStickTurns
         {
-            get => Global.Instance.Config.GyroMouseStickTriggerTurns[device];
-            set
-            {
-                Global.Instance.Config.GyroMouseStickTriggerTurns[device] = value;
-            }
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroMouseStickTriggerTurns;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroMouseStickTriggerTurns = value;
         }
 
         public bool GyroMouseStickToggle

@@ -158,8 +158,6 @@ namespace DS4Windows
 
         IList<GyroOutMode> GyroOutputMode { get; set; }
 
-        IList<bool> GyroMouseStickTriggerTurns { get; set; }
-
         IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
 
         IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
@@ -221,8 +219,6 @@ namespace DS4Windows
         string GetSAMouseStickTriggers(int device);
 
         bool GetSAMouseStickTriggerCond(int device);
-
-        bool GetGyroMouseStickTriggerTurns(int device);
 
         int GetGyroMouseStickHorizontalAxis(int index);
 

@@ -235,7 +235,7 @@ namespace DS4Windows
             {
                 s = dev.GetCurrentStateReference();
 
-                useReverseRatchet = Global.Instance.Config.GetGyroMouseStickTriggerTurns(deviceNum);
+                useReverseRatchet = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroMouseStickTriggerTurns;
                 var i = 0;
                 var ss = Global.Instance.Config.GetSAMouseStickTriggers(deviceNum).Split(',');
                 var andCond = Global.Instance.Config.GetSAMouseStickTriggerCond(deviceNum);

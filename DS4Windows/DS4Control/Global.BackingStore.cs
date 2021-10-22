@@ -88,9 +88,6 @@ namespace DS4Windows
 
             private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
 
-            public IList<bool> GyroMouseStickTriggerTurns { get; set; } = new List<bool>
-                { true, true, true, true, true, true, true, true, true };
-
             public IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; } = new List<GyroMouseStickInfo>
             {
                 new(),
@@ -580,11 +577,6 @@ namespace DS4Windows
             public bool GetSAMouseStickTriggerCond(int device)
             {
                 return SAMouseStickTriggerCond[device];
-            }
-
-            public bool GetGyroMouseStickTriggerTurns(int device)
-            {
-                return GyroMouseStickTriggerTurns[device];
             }
 
             public int GetGyroMouseStickHorizontalAxis(int index)
@@ -2693,7 +2685,7 @@ namespace DS4Windows
                 GyroOutputMode[device] = GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
                 SAMouseStickTriggerCond[device] = true;
-                GyroMouseStickTriggerTurns[device] = false;
+                //GyroMouseStickTriggerTurns[device] = false;
                 GyroMouseStickInfo[device].UseSmoothing = true;
                 GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
@@ -2727,7 +2719,7 @@ namespace DS4Windows
                 GyroOutputMode[device] = GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
                 SAMouseStickTriggerCond[device] = true;
-                GyroMouseStickTriggerTurns[device] = false;
+                //GyroMouseStickTriggerTurns[device] = false;
                 GyroMouseStickInfo[device].UseSmoothing = true;
                 GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
@@ -3456,7 +3448,7 @@ namespace DS4Windows
                 GyroMouseStickInfo[device].Reset();
                 GyroSwipeInfo[device].Reset();
 
-                GyroMouseStickTriggerTurns[device] = true;
+                //GyroMouseStickTriggerTurns[device] = true;
                 SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
                 SASteeringWheelEmulationRange[device] = 360;
                 SAWheelFuzzValues[device] = 0;
