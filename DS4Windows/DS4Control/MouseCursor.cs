@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using DS4WinWPF.DS4Control.IoC.Services;
 using OpenTracing.Util;
 
 namespace DS4Windows
@@ -352,7 +354,7 @@ namespace DS4Windows
             var normY = Math.Abs(Math.Sin(tempAngle));
             var signX = Math.Sign(dx);
             var signY = Math.Sign(dy);
-            var coefficient = Global.Instance.Config.GetTouchSensitivity(deviceNumber) * 0.01;
+            var coefficient = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).TouchSensitivity * 0.01;
             var jitterCompenstation = Global.Instance.Config.GetTouchPadJitterCompensation(deviceNumber);
 
             var xMotion = dx != 0 ? coefficient * dx + normX * (TOUCHPAD_MOUSE_OFFSET * signX) : 0.0;

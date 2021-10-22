@@ -44,8 +44,6 @@ namespace DS4Windows
 
         IList<bool> DistanceProfiles { get; set; }
 
-        IList<byte> TouchSensitivity { get; set; }
-
         IList<StickDeadZoneInfo> LSModInfo { get; set; }
 
         IList<StickDeadZoneInfo> RSModInfo { get; set; }
@@ -271,8 +269,6 @@ namespace DS4Windows
         int GetIdleDisconnectTimeout(int index);
 
         bool GetEnableOutputDataToDS4(int index);
-
-        byte GetTouchSensitivity(int index);
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
 

@@ -48,7 +48,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             LedAsBatteryIndicator = light.Ds4WinSettings.LedAsBattery;
             FlashType = light.Ds4WinSettings.FlashType;
             FlashBatteryAt = light.Ds4WinSettings.FlashAt;
-            TouchSensitivity = store.TouchSensitivity[device];
 
             LowColor = light.Ds4WinSettings.LowLed;
             ChargingColor = light.Ds4WinSettings.ChargingLed;
@@ -340,7 +339,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             lightInfo.LedAsBattery = LedAsBatteryIndicator;
             lightInfo.FlashType = FlashType;
             lightInfo.FlashAt = FlashBatteryAt;
-            store.TouchSensitivity[device] = TouchSensitivity;
             lightInfo.LowLed = LowColor;
             lightInfo.ChargingLed = ChargingColor;
             lightInfo.FlashLed = FlashColor;

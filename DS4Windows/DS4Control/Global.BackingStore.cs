@@ -226,9 +226,6 @@ namespace DS4Windows
             // Cache properties instead of performing a string comparison every frame
             public IList<bool> DistanceProfiles { get; set; } = new List<bool>
                 { false, false, false, false, false, false, false, false, false };
-            
-            public IList<byte> TouchSensitivity { get; set; } =
-                new List<byte> { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 
             public IList<StickDeadZoneInfo> LSModInfo { get; set; } = new List<StickDeadZoneInfo>
             {
@@ -836,11 +833,6 @@ namespace DS4Windows
             public bool GetEnableOutputDataToDS4(int index)
             {
                 return EnableOutputDataToDS4[index];
-            }
-
-            public byte GetTouchSensitivity(int index)
-            {
-                return TouchSensitivity[index];
             }
 
             public ControlSettingsGroup GetControlSettingsGroup(int deviceNum)
@@ -3457,8 +3449,6 @@ namespace DS4Windows
                 TouchpadJitterCompensation[device] = true;
                 LowerRCOn[device] = false;
                 TouchClickPassthru[device] = false;
-
-                TouchSensitivity[device] = 100;
 
                 LSModInfo[device].Reset();
                 RSModInfo[device].Reset();

@@ -1575,10 +1575,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchSenExists
         {
-            get => Global.Instance.Config.TouchSensitivity[device] != 0;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity != 0;
             set
             {
-                Global.Instance.Config.TouchSensitivity[device] = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity = value ? (byte)100 : (byte)0;
                 TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1587,12 +1587,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchSens
         {
-            get => Global.Instance.Config.TouchSensitivity[device];
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity;
             set
             {
-                int temp = Global.Instance.Config.TouchSensitivity[device];
+                int temp =ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity;
                 if (temp == value) return;
-                Global.Instance.Config.TouchSensitivity[device] = (byte)value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity = (byte)value;
                 if (value == 0) TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
