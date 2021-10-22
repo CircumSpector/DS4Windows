@@ -1250,10 +1250,12 @@ Suspend support not enabled.", true);
                                             else
                                                 propValue = Global.Instance.Config.ProfilePath[tdevice];
                                         }
+                                        /*
                                         else if (propName == "outconttype")
                                         {
                                             propValue = Global.Instance.Config.OutputDeviceType[tdevice].ToString();
                                         }
+                                        */
                                         else if (propName == "activeoutdevtype")
                                         {
                                             propValue = Global.ActiveOutDevType[tdevice].ToString();

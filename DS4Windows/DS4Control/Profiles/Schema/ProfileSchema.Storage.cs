@@ -325,12 +325,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             TouchpadAbsMouseSettings.MaxZoneX = store.TouchPadAbsMouse[device].MaxZoneX;
             TouchpadAbsMouseSettings.MaxZoneY = store.TouchPadAbsMouse[device].MaxZoneY;
             TouchpadAbsMouseSettings.SnapToCenter = store.TouchPadAbsMouse[device].SnapToCenter;
-
-            OutputContDevice = store.OutputDeviceType[device];
-
-            //
-            // TODO: to be continued
-            // 
         }
 
         /// <summary>
@@ -580,12 +574,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.TouchPadAbsMouse[device].MaxZoneX = TouchpadAbsMouseSettings.MaxZoneX;
             store.TouchPadAbsMouse[device].MaxZoneY = TouchpadAbsMouseSettings.MaxZoneY;
             store.TouchPadAbsMouse[device].SnapToCenter = TouchpadAbsMouseSettings.SnapToCenter;
-
-            store.OutputDeviceType[device] = OutputContDevice;
-
-            //
-            // TODO: to be continued
-            // 
         }
 
         /// <summary>

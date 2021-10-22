@@ -560,7 +560,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int type = 0;
-                switch (Global.Instance.Config.OutputDeviceType[device])
+                switch (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType)
                 {
                     case OutContType.X360:
                         type = 0;
@@ -651,10 +651,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
         public event EventHandler GyroOutModeIndexChanged;
 
-        public OutContType ContType
-        {
-            get => Global.Instance.Config.OutputDeviceType[device];
-        }
+        public OutContType ContType => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType;
 
         public int SASteeringWheelEmulationAxisIndex
         {
@@ -2991,7 +2988,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public void UpdateLateProperties()
         {
             tempControllerIndex = ControllerTypeIndex;
-            Global.OutDevTypeTemp[device] = Global.Instance.Config.OutputDeviceType[device];
+            Global.OutDevTypeTemp[device] = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType;
             tempBtPollRate = Global.Instance.Config.BluetoothPollRate[device];
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;

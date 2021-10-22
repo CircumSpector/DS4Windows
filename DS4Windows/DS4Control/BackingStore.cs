@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
@@ -15,8 +14,6 @@ namespace DS4Windows
 
         string ControllerConfigsPath { get; set; }
 
-        IList<OutContType> OutputDeviceType { get; set; }
-        
         bool Ds4Mapping { get; set; }
 
         IList<string> LaunchProgram { get; set; }
