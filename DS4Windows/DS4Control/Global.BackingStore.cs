@@ -199,9 +199,6 @@ namespace DS4Windows
 
             public IList<int> IdleDisconnectTimeout { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            public IList<bool> EnableOutputDataToDS4 { get; set; } = new List<bool>
-                { true, true, true, true, true, true, true, true, true };
-
             public IList<bool> TouchpadJitterCompensation { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
@@ -828,11 +825,6 @@ namespace DS4Windows
             public int GetIdleDisconnectTimeout(int index)
             {
                 return IdleDisconnectTimeout[index];
-            }
-
-            public bool GetEnableOutputDataToDS4(int index)
-            {
-                return EnableOutputDataToDS4[index];
             }
 
             public ControlSettingsGroup GetControlSettingsGroup(int deviceNum)
@@ -3445,7 +3437,6 @@ namespace DS4Windows
             {
                 EnableTouchToggle[device] = true;
                 IdleDisconnectTimeout[device] = 0;
-                EnableOutputDataToDS4[device] = true;
                 TouchpadJitterCompensation[device] = true;
                 LowerRCOn[device] = false;
                 TouchClickPassthru[device] = false;

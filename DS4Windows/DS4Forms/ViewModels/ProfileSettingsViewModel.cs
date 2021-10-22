@@ -451,8 +451,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool EnableOutputDataToDS4
         {
-            get => Global.Instance.Config.EnableOutputDataToDS4[device];
-            set => Global.Instance.Config.EnableOutputDataToDS4[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableOutputDataToDS4;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableOutputDataToDS4 = value;
         }
 
         public bool LaunchProgramExists

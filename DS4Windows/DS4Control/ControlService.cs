@@ -1655,8 +1655,8 @@ namespace DS4Windows
 
         public void CheckProfileOptions(int ind, DS4Device device, bool startUp = false)
         {
-            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !Instance.Config.GetEnableOutputDataToDS4(ind));
-            if (!Instance.Config.GetEnableOutputDataToDS4(ind))
+            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !profilesService.ControllerSlotProfiles.ElementAt(ind).EnableOutputDataToDS4);
+            if (!profilesService.ControllerSlotProfiles.ElementAt(ind).EnableOutputDataToDS4)
                 LogDebug(
                     "Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 

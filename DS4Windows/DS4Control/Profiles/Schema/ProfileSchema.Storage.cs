@@ -42,7 +42,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             TouchToggle = store.EnableTouchToggle[device];
             IdleDisconnectTimeout = store.IdleDisconnectTimeout[device];
-            OutputDataToDS4 = store.EnableOutputDataToDS4[device];
             Color = light.Ds4WinSettings.Led;
             LightbarMode = appSettings.Settings.LightbarSettingInfo[device].Mode;
             LedAsBatteryIndicator = light.Ds4WinSettings.LedAsBattery;
@@ -333,7 +332,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             store.EnableTouchToggle[device] = TouchToggle;
             store.IdleDisconnectTimeout[device] = IdleDisconnectTimeout;
-            store.EnableOutputDataToDS4[device] = OutputDataToDS4;
             lightbarSettings.Mode = LightbarMode;
             lightInfo.Led = Color;
             lightInfo.LedAsBattery = LedAsBatteryIndicator;
