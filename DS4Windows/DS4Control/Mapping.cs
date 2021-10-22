@@ -2707,7 +2707,7 @@ namespace DS4Windows
 
                         if (extras[7] == 1)
                         {
-                            var tempMouseInfo = Instance.Config.ButtonMouseInfos[device];
+                            var tempMouseInfo = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo;
                             if (tempMouseInfo.tempButtonSensitivity == -1)
                             {
                                 tempMouseInfo.tempButtonSensitivity = extras[8];
@@ -2723,7 +2723,7 @@ namespace DS4Windows
                 {
                     DS4LightBar.forcelight[device] = false;
                     DS4LightBar.forcedFlash[device] = 0;
-                    var tempMouseInfo = Instance.Config.ButtonMouseInfos[device];
+                    var tempMouseInfo = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo;
                     if (tempMouseInfo.tempButtonSensitivity != -1)
                     {
                         tempMouseInfo.SetActiveButtonSensitivity(tempMouseInfo.buttonSensitivity);
@@ -4238,7 +4238,7 @@ namespace DS4Windows
                 deadzoneR = 3;
 
             var value = 0.0;
-            var buttonMouseInfo = Instance.Config.ButtonMouseInfos[device];
+            var buttonMouseInfo = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo;
             var speed = buttonMouseInfo.activeButtonSensitivity;
             const double root = 1.002;
             const double divide = 10000d;

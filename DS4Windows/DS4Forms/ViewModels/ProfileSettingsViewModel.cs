@@ -368,12 +368,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseSensitivity
         {
-            get => Global.Instance.Config.ButtonMouseInfos[device].buttonSensitivity;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
             set
             {
-                int temp = Global.Instance.Config.ButtonMouseInfos[device].buttonSensitivity;
+                int temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
                 if (temp == value) return;
-                Global.Instance.Config.ButtonMouseInfos[device].ButtonSensitivity = value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.ButtonSensitivity = value;
                 ButtonMouseSensitivityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -381,13 +381,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseVerticalScale
         {
-            get => Convert.ToInt32(Global.Instance.Config.ButtonMouseInfos[device].buttonVerticalScale * 100.0);
+            get => Convert.ToInt32(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale * 100.0);
             set
             {
-                double temp = Global.Instance.Config.ButtonMouseInfos[device].buttonVerticalScale;
+                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale;
                 double attemptValue = value * 0.01;
                 if (temp == attemptValue) return;
-                Global.Instance.Config.ButtonMouseInfos[device].buttonVerticalScale = attemptValue;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale = attemptValue;
                 ButtonMouseVerticalScaleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -395,17 +395,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private double RawButtonMouseOffset
         {
-            get => Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset;
         }
 
         public double ButtonMouseOffset
         {
-            get => Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset * 100.0;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
             set
             {
-                double temp = Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset * 100.0;
+                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
                 if (temp == value) return;
-                Global.Instance.Config.ButtonMouseInfos[device].mouseVelocityOffset = value * 0.01;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset = value * 0.01;
                 ButtonMouseOffsetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -439,8 +439,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool MouseAcceleration
         {
-            get => Global.Instance.Config.ButtonMouseInfos[device].mouseAccel;
-            set => Global.Instance.Config.ButtonMouseInfos[device].mouseAccel = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel = value;
         }
 
         public bool EnableTouchpadToggle

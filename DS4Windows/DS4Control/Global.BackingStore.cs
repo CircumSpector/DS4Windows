@@ -194,14 +194,6 @@ namespace DS4Windows
             public string ControllerConfigsPath { get; set; } =
                 Path.Combine(RuntimeAppDataPath, Constants.ControllerConfigsFileName);
 
-            // ninth (fifth in old builds) value used for options, not last controller
-            public IList<ButtonMouseInfo> ButtonMouseInfos { get; set; } = new List<ButtonMouseInfo>
-            {
-                new(), new(), new(),
-                new(), new(), new(),
-                new(), new(), new()
-            };
-
             public IList<bool> EnableTouchToggle { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
@@ -2062,8 +2054,11 @@ namespace DS4Windows
                 if (loaded)
                 {
                     CacheProfileCustomsFlags(device);
+                    /*
+                     TODO: port
                     ButtonMouseInfos[device].activeButtonSensitivity =
                         ButtonMouseInfos[device].buttonSensitivity;
+                    */
 
                     //if (device < Global.MAX_DS4_CONTROLLER_COUNT && control.touchPad[device] != null)
                     //{
@@ -3456,8 +3451,6 @@ namespace DS4Windows
 
             private void ResetProfile(int device)
             {
-                ButtonMouseInfos[device].Reset();
-
                 EnableTouchToggle[device] = true;
                 IdleDisconnectTimeout[device] = 0;
                 EnableOutputDataToDS4[device] = true;

@@ -75,9 +75,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             L2MaxOutput = store.L2ModInfo[device].maxOutput;
             R2MaxOutput = store.R2ModInfo[device].maxOutput;
 
-            ButtonMouseSensitivity = store.ButtonMouseInfos[device].buttonSensitivity;
-            ButtonMouseOffset = store.ButtonMouseInfos[device].mouseVelocityOffset;
-
             Rainbow = light.Ds4WinSettings.Rainbow;
             MaxSatRainbow = Convert.ToInt32(light.Ds4WinSettings.MaxRainbowSaturation * 100.0);
 
@@ -153,8 +150,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             ChargingType = light.Ds4WinSettings.ChargingType;
 
+            /*
+             TODO: port
             MouseAcceleration = store.ButtonMouseInfos[device].mouseAccel;
             ButtonMouseVerticalScale = Convert.ToInt32(store.ButtonMouseInfos[device].buttonVerticalScale * 100);
+            */
 
             LaunchProgram = store.LaunchProgram[device];
             StartTouchpadOff = store.StartTouchpadOff[device];
@@ -365,10 +365,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
             store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
+            /*
+             TODO: port math
             store.ButtonMouseInfos[device].buttonSensitivity = ButtonMouseSensitivity;
             store.ButtonMouseInfos[device].mouseVelocityOffset = ButtonMouseOffset;
             store.ButtonMouseInfos[device].buttonVerticalScale =
                 Math.Min(Math.Max(ButtonMouseVerticalScale, 0), 500) * 0.01;
+            */
             lightInfo.Rainbow = Rainbow;
             lightInfo.MaxRainbowSaturation = Math.Max(0, Math.Min(100, MaxSatRainbow)) / 100.0;
             store.LSModInfo[device].DeadZone = Math.Min(Math.Max(LSDeadZone, 0), 127);
@@ -428,7 +431,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.SZSens[device] = Sensitivity.SZSens;
 
             lightInfo.ChargingType = ChargingType;
-            store.ButtonMouseInfos[device].mouseAccel = MouseAcceleration;
+            //store.ButtonMouseInfos[device].mouseAccel = MouseAcceleration;
             //ShiftModifier
             store.LaunchProgram[device] = LaunchProgram;
             store.StartTouchpadOff[device] = StartTouchpadOff;

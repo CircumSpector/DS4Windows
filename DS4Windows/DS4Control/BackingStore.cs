@@ -40,8 +40,6 @@ namespace DS4Windows
 
         IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; }
 
-        IList<ButtonMouseInfo> ButtonMouseInfos { get; set; }
-
         IList<string> OlderProfilePath { get; set; }
 
         IList<bool> DistanceProfiles { get; set; }
