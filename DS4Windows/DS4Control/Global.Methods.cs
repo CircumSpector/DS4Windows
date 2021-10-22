@@ -96,16 +96,6 @@ namespace DS4Windows
             }
         }
 
-        [Obsolete]
-        public void SetRumbleAutostopTime(int index, int value)
-        {
-            ProfilesService.Instance.ControllerSlotProfiles.ElementAt(index).RumbleAutostopTime = value;
-
-            var tempDev = ControlService.CurrentInstance.DS4Controllers[index];
-            if (tempDev != null && tempDev.IsSynced())
-                tempDev.RumbleAutostopTime = value;
-        }
-
         public bool GetTouchActive(int index)
         {
             return TouchpadActive[index];
