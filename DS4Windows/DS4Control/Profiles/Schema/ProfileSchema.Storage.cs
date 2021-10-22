@@ -40,7 +40,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         {
             var light = appSettings.Settings.LightbarSettingInfo[device];
 
-            TouchToggle = store.EnableTouchToggle[device];
             IdleDisconnectTimeout = store.IdleDisconnectTimeout[device];
             Color = light.Ds4WinSettings.Led;
             LightbarMode = appSettings.Settings.LightbarSettingInfo[device].Mode;
@@ -330,7 +329,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             var lightbarSettings = appSettings.Settings.LightbarSettingInfo[device];
             var lightInfo = lightbarSettings.Ds4WinSettings;
 
-            store.EnableTouchToggle[device] = TouchToggle;
             store.IdleDisconnectTimeout[device] = IdleDisconnectTimeout;
             lightbarSettings.Mode = LightbarMode;
             lightInfo.Led = Color;

@@ -2091,7 +2091,7 @@ namespace DS4Windows
                 // Skip mapping routine if part of a joined device
                 return;
 
-            if (Instance.Config.GetEnableTouchToggle(ind)) CheckForTouchToggle(ind, cState, pState);
+            if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(ind).EnableTouchToggle) CheckForTouchToggle(ind, cState, pState);
 
             cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 

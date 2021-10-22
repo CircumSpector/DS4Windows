@@ -194,9 +194,6 @@ namespace DS4Windows
             public string ControllerConfigsPath { get; set; } =
                 Path.Combine(RuntimeAppDataPath, Constants.ControllerConfigsFileName);
 
-            public IList<bool> EnableTouchToggle { get; set; } = new List<bool>
-                { true, true, true, true, true, true, true, true, true };
-
             public IList<int> IdleDisconnectTimeout { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
             public IList<bool> TouchpadJitterCompensation { get; set; } = new List<bool>
@@ -815,11 +812,6 @@ namespace DS4Windows
             public int GetProfileActionCount(int index)
             {
                 return profileActionCount[index];
-            }
-
-            public bool GetEnableTouchToggle(int index)
-            {
-                return EnableTouchToggle[index];
             }
 
             public int GetIdleDisconnectTimeout(int index)
@@ -3435,7 +3427,6 @@ namespace DS4Windows
 
             private void ResetProfile(int device)
             {
-                EnableTouchToggle[device] = true;
                 IdleDisconnectTimeout[device] = 0;
                 TouchpadJitterCompensation[device] = true;
                 LowerRCOn[device] = false;

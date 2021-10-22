@@ -126,8 +126,6 @@ namespace DS4Windows
 
         IList<bool> GyroMouseToggle { get; set; }
 
-        IList<bool> EnableTouchToggle { get; set; }
-
         IList<int> IdleDisconnectTimeout { get; set; }
 
         IList<bool> TouchpadJitterCompensation { get; set; }
@@ -262,8 +260,6 @@ namespace DS4Windows
 
         int GetGyroMouseHorizontalAxis(int index);
         
-        bool GetEnableTouchToggle(int index);
-
         int GetIdleDisconnectTimeout(int index);
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);

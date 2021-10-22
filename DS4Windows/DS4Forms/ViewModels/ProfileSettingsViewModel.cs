@@ -445,8 +445,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool EnableTouchpadToggle
         {
-            get => Global.Instance.Config.EnableTouchToggle[device];
-            set => Global.Instance.Config.EnableTouchToggle[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableTouchToggle;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableTouchToggle = value;
         }
 
         public bool EnableOutputDataToDS4
