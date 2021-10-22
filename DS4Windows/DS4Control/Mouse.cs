@@ -641,7 +641,7 @@ namespace DS4Windows
             }
             else
             {
-                if (Global.Instance.Config.LowerRCOn[deviceNum] && arg.touches[0].hwX > 1920 * 3 / 4 &&
+                if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).LowerRCOn && arg.touches[0].hwX > 1920 * 3 / 4 &&
                     arg.touches[0].hwY > 960 * 3 / 4)
                     Mapping.MapClick(deviceNum, Mapping.Click.Right);
 

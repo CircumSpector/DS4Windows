@@ -190,9 +190,6 @@ namespace DS4Windows
             public IList<bool> TouchpadJitterCompensation { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
-            public IList<bool> LowerRCOn { get; set; } = new List<bool>
-                { false, false, false, false, false, false, false, false, false };
-
             public IList<bool> TouchClickPassthru { get; set; } = new List<bool>
                 { false, false, false, false, false, false, false, false, false };
 
@@ -3396,7 +3393,6 @@ namespace DS4Windows
             {
                 IdleDisconnectTimeout[device] = 0;
                 TouchpadJitterCompensation[device] = true;
-                LowerRCOn[device] = false;
                 TouchClickPassthru[device] = false;
 
                 LSModInfo[device].Reset();

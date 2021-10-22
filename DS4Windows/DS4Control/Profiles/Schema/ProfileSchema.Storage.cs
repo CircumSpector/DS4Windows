@@ -52,7 +52,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             FlashColor = light.Ds4WinSettings.FlashLed;
 
             TouchpadJitterCompensation = store.TouchpadJitterCompensation[device];
-            LowerRCOn = store.LowerRCOn[device];
             TapSensitivity = store.TapSensitivity[device];
             ScrollSensitivity = store.ScrollSensitivity[device];
 
@@ -334,7 +333,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             lightInfo.ChargingLed = ChargingColor;
             lightInfo.FlashLed = FlashColor;
             store.TouchpadJitterCompensation[device] = TouchpadJitterCompensation;
-            store.LowerRCOn[device] = LowerRCOn;
             store.TapSensitivity[device] = TapSensitivity;
             store.ScrollSensitivity[device] = ScrollSensitivity;
             store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);

@@ -76,8 +76,6 @@ namespace DS4Windows
 
         IList<double> RSSens { get; set; }
 
-        IList<bool> LowerRCOn { get; set; }
-
         IList<double> LSRotation { get; set; }
 
         IList<double> RSRotation { get; set; }

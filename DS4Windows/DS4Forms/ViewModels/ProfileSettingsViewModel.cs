@@ -1681,29 +1681,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LowerRightTouchRMB
         {
-            get => Global.Instance.Config.LowerRCOn[device];
-            set
-            {
-                Global.Instance.Config.LowerRCOn[device] = value;
-            }
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LowerRCOn;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LowerRCOn = value;
         }
 
         public bool TouchpadClickPassthru
         {
             get => Global.Instance.Config.TouchClickPassthru[device];
-            set
-            {
-                Global.Instance.Config.TouchClickPassthru[device] = value;
-            }
+            set => Global.Instance.Config.TouchClickPassthru[device] = value;
         }
 
         public bool StartTouchpadOff
         {
             get => Global.Instance.Config.StartTouchpadOff[device];
-            set
-            {
-                Global.Instance.Config.StartTouchpadOff[device] = value;
-            }
+            set => Global.Instance.Config.StartTouchpadOff[device] = value;
         }
 
         public double TouchRelMouseRotation
