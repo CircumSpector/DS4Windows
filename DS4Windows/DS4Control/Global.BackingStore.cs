@@ -85,10 +85,7 @@ namespace DS4Windows
             }
 
             private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
-
-            public IList<int> RumbleAutostopTime { get; } = new List<int>
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Value in milliseconds (0=autustop timer disabled)
-
+            
             public IList<GyroControlsInfo> GyroControlsInfo { get; set; } = new List<GyroControlsInfo>
             {
                 new(), new(), new(),
@@ -242,10 +239,7 @@ namespace DS4Windows
             // Cache properties instead of performing a string comparison every frame
             public IList<bool> DistanceProfiles { get; set; } = new List<bool>
                 { false, false, false, false, false, false, false, false, false };
-
-            public IList<byte> RumbleBoost { get; set; } =
-                new List<byte> { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-
+            
             public IList<byte> TouchSensitivity { get; set; } =
                 new List<byte> { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 
@@ -845,16 +839,6 @@ namespace DS4Windows
             public int GetProfileActionCount(int index)
             {
                 return profileActionCount[index];
-            }
-
-            public byte GetRumbleBoost(int index)
-            {
-                return RumbleBoost[index];
-            }
-
-            public int GetRumbleAutostopTime(int index)
-            {
-                return RumbleAutostopTime[index];
             }
 
             public bool GetEnableTouchToggle(int index)
@@ -3492,8 +3476,6 @@ namespace DS4Windows
                 LowerRCOn[device] = false;
                 TouchClickPassthru[device] = false;
 
-                RumbleBoost[device] = 100;
-                RumbleAutostopTime[device] = 0;
                 TouchSensitivity[device] = 100;
 
                 LSModInfo[device].Reset();

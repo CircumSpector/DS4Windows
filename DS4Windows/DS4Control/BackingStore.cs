@@ -46,8 +46,6 @@ namespace DS4Windows
 
         IList<bool> DistanceProfiles { get; set; }
 
-        IList<int> RumbleAutostopTime { get; }
-
         IList<byte> TouchSensitivity { get; set; }
 
         IList<StickDeadZoneInfo> LSModInfo { get; set; }
@@ -271,11 +269,7 @@ namespace DS4Windows
         bool GetGyroTriggerTurns(int index);
 
         int GetGyroMouseHorizontalAxis(int index);
-
-        byte GetRumbleBoost(int index);
-
-        int GetRumbleAutostopTime(int index);
-
+        
         bool GetEnableTouchToggle(int index);
 
         int GetIdleDisconnectTimeout(int index);

@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4Windows
 {
@@ -93,9 +96,10 @@ namespace DS4Windows
             }
         }
 
+        [Obsolete]
         public void SetRumbleAutostopTime(int index, int value)
         {
-            _config.RumbleAutostopTime[index] = value;
+            ProfilesService.Instance.ControllerSlotProfiles.ElementAt(index).RumbleAutostopTime = value;
 
             var tempDev = ControlService.CurrentInstance.DS4Controllers[index];
             if (tempDev != null && tempDev.IsSynced())

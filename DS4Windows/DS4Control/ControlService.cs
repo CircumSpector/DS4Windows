@@ -1680,7 +1680,7 @@ namespace DS4Windows
             device.PrepareTriggerEffect(TriggerId.RightTrigger, Instance.Config.R2OutputSettings[ind].TriggerEffect,
                 Instance.Config.R2OutputSettings[ind].TrigEffectSettings);
 
-            device.RumbleAutostopTime = Instance.Config.GetRumbleAutostopTime(ind);
+            device.RumbleAutostopTime = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(ind).RumbleAutostopTime;
             device.SetRumble(0, 0);
             device.LightBarColor = appSettings.Settings.LightbarSettingInfo[ind].Ds4WinSettings.Led;
 
@@ -2366,7 +2366,7 @@ namespace DS4Windows
         public void SetDevRumble(DS4Device device,
             byte heavyMotor, byte lightMotor, int deviceNum)
         {
-            var boost = Instance.Config.GetRumbleBoost(deviceNum);
+            var boost = profilesService.ControllerSlotProfiles.ElementAt(deviceNum).RumbleAutostopTime;
             var lightBoosted = lightMotor * (uint)boost / 100;
             if (lightBoosted > 255)
                 lightBoosted = 255;
