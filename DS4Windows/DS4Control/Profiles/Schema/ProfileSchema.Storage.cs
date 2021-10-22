@@ -54,7 +54,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             TouchpadJitterCompensation = store.TouchpadJitterCompensation[device];
             LowerRCOn = store.LowerRCOn[device];
             TapSensitivity = store.TapSensitivity[device];
-            DoubleTap = store.DoubleTap[device];
             ScrollSensitivity = store.ScrollSensitivity[device];
 
             LeftTriggerMiddle = store.L2ModInfo[device].deadZone;
@@ -341,7 +340,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.TouchpadJitterCompensation[device] = TouchpadJitterCompensation;
             store.LowerRCOn[device] = LowerRCOn;
             store.TapSensitivity[device] = TapSensitivity;
-            store.DoubleTap[device] = DoubleTap;
             store.ScrollSensitivity[device] = ScrollSensitivity;
             store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);
             store.TouchClickPassthru[device] = TouchpadClickPassthru;

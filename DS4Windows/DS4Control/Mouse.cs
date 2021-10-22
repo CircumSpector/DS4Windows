@@ -431,7 +431,7 @@ namespace DS4Windows
             firstTouch.Populate(arg.touches[0].hwX, arg.touches[0].hwY, arg.touches[0].touchID,
                 arg.touches[0].previousTouch);
 
-            if (mouseMode && Global.Instance.Config.GetDoubleTap(deviceNum))
+            if (mouseMode && ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).DoubleTap)
             {
                 var test = arg.timeStamp;
                 if (test <= firstTap +
@@ -468,7 +468,7 @@ namespace DS4Windows
                     if (Math.Abs(firstTouch.hwX - arg.touches[0].hwX) < 10 &&
                         Math.Abs(firstTouch.hwY - arg.touches[0].hwY) < 10)
                     {
-                        if (Global.Instance.Config.GetDoubleTap(deviceNum))
+                        if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).DoubleTap)
                         {
                             tappedOnce = true;
                             firstTap = arg.timeStamp;

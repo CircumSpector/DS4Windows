@@ -301,9 +301,6 @@ namespace DS4Windows
 
             public IList<byte> TapSensitivity { get; set; } = new List<byte> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            public IList<bool> DoubleTap { get; set; } = new List<bool>
-                { false, false, false, false, false, false, false, false, false };
-
             public IList<int> ScrollSensitivity { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
             public IList<int> TouchPadInvert { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -662,11 +659,6 @@ namespace DS4Windows
             public byte GetTapSensitivity(int index)
             {
                 return TapSensitivity[index];
-            }
-
-            public bool GetDoubleTap(int index)
-            {
-                return DoubleTap[index];
             }
 
             public bool GetTouchPadJitterCompensation(int index)
@@ -3456,7 +3448,6 @@ namespace DS4Windows
                 LSSens[device] = RSSens[device] = 1;
                 SXSens[device] = SZSens[device] = 1;
                 TapSensitivity[device] = 0;
-                DoubleTap[device] = false;
                 ScrollSensitivity[device] = 0;
                 TouchPadInvert[device] = 0;
                 BluetoothPollRate[device] = 4;

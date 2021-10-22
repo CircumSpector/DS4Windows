@@ -114,8 +114,6 @@ namespace DS4Windows
 
         IList<byte> TapSensitivity { get; set; }
 
-        IList<bool> DoubleTap { get; set; }
-
         IList<int> ScrollSensitivity { get; set; }
 
         IList<int> TouchPadInvert { get; set; }
@@ -265,8 +263,6 @@ namespace DS4Windows
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
 
         byte GetTapSensitivity(int index);
-
-        bool GetDoubleTap(int index);
 
         bool GetTouchPadJitterCompensation(int index);
 

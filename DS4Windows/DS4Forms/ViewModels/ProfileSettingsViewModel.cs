@@ -1653,11 +1653,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchDoubleTap
         {
-            get => Global.Instance.Config.DoubleTap[device];
-            set
-            {
-                Global.Instance.Config.DoubleTap[device] = value;
-            }
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DoubleTap;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DoubleTap = value;
         }
         
         public bool TouchJitter
