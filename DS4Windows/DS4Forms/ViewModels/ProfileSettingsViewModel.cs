@@ -2041,11 +2041,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int GyroMouseDeadZone
         {
             get => Global.Instance.Config.GyroMouseDeadZone[device];
-            set
-            {
-                Global.Instance.Config.SetGyroMouseDZ(device, value, rootHub);
-
-            }
+            set => Global.Instance.Config.SetGyroMouseDZ(device, value, rootHub);
         }
 
         public bool GyroMouseToggle
@@ -2081,21 +2077,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int GyroMouseStickOutputStick
         {
             get => (int)Global.Instance.Config.GyroMouseStickInfo[device].outputStick;
-            set
-            {
+            set =>
                 Global.Instance.Config.GyroMouseStickInfo[device].outputStick =
                     (GyroMouseStickInfo.OutputStick)value;
-            }
         }
 
         public int GyroMouseStickOutputAxes
         {
             get => (int)Global.Instance.Config.GyroMouseStickInfo[device].outputStickDir;
-            set
-            {
+            set =>
                 Global.Instance.Config.GyroMouseStickInfo[device].outputStickDir =
                     (GyroMouseStickInfo.OutputStickAxes)value;
-            }
         }
 
         public double GyroMouseStickAntiDeadX
@@ -2204,9 +2196,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
         public event EventHandler TouchDisInvertStringChanged;
-
-
+        
         private string gyroControlsTrigDisplay = "Always On";
+
         public string GyroControlsTrigDisplay
         {
             get => gyroControlsTrigDisplay;
@@ -2233,10 +2225,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public bool GyroControlsToggle
         {
             get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerToggle;
-            set
-            {
-                Global.Instance.Config.SetGyroControlsToggle(device, value, rootHub);
-            }
+            set => Global.Instance.Config.SetGyroControlsToggle(device, value, rootHub);
         }
 
 
@@ -2298,35 +2287,23 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int GyroSwipeDeadZoneX
         {
             get => Global.Instance.Config.GyroSwipeInfo[device].deadzoneX;
-            set
-            {
-                Global.Instance.Config.GyroSwipeInfo[device].deadzoneX = value;
-            }
+            set => Global.Instance.Config.GyroSwipeInfo[device].deadzoneX = value;
         }
 
         public int GyroSwipeDeadZoneY
         {
             get => Global.Instance.Config.GyroSwipeInfo[device].deadzoneY;
-            set
-            {
-                Global.Instance.Config.GyroSwipeInfo[device].deadzoneY = value;
-            }
+            set => Global.Instance.Config.GyroSwipeInfo[device].deadzoneY = value;
         }
 
         public int GyroSwipeDelayTime
         {
             get => Global.Instance.Config.GyroSwipeInfo[device].delayTime;
-            set
-            {
-                Global.Instance.Config.GyroSwipeInfo[device].delayTime = value;
-            }
+            set => Global.Instance.Config.GyroSwipeInfo[device].delayTime = value;
         }
 
         private PresetMenuHelper presetMenuUtil;
-        public PresetMenuHelper PresetMenuUtil
-        {
-            get => presetMenuUtil;
-        }
+        public PresetMenuHelper PresetMenuUtil => presetMenuUtil;
 
         private readonly ControlService rootHub;
 
