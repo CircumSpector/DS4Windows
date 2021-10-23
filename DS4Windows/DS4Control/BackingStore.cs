@@ -72,8 +72,6 @@ namespace DS4Windows
 
         IList<int> GyroMouseDeadZone { get; set; }
 
-        IList<int> IdleDisconnectTimeout { get; set; }
-
         string FakeExeFileName { get; set; }
 
         IList<bool> ContainsCustomAction { get; set; }
@@ -157,8 +155,6 @@ namespace DS4Windows
         bool IsUsingSAForControls(int index);
 
         public string AxisOutputCurveString(int id);
-
-        int GetIdleDisconnectTimeout(int index);
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
 

@@ -40,7 +40,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         {
             var light = appSettings.Settings.LightbarSettingInfo[device];
 
-            IdleDisconnectTimeout = store.IdleDisconnectTimeout[device];
+            //IdleDisconnectTimeout = store.IdleDisconnectTimeout[device];
             Color = light.Ds4WinSettings.Led;
             LightbarMode = appSettings.Settings.LightbarSettingInfo[device].Mode;
             LedAsBatteryIndicator = light.Ds4WinSettings.LedAsBattery;
@@ -323,7 +323,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             var lightbarSettings = appSettings.Settings.LightbarSettingInfo[device];
             var lightInfo = lightbarSettings.Ds4WinSettings;
 
-            store.IdleDisconnectTimeout[device] = IdleDisconnectTimeout;
+            //store.IdleDisconnectTimeout[device] = IdleDisconnectTimeout;
             lightbarSettings.Mode = LightbarMode;
             lightInfo.Led = Color;
             lightInfo.LedAsBattery = LedAsBatteryIndicator;

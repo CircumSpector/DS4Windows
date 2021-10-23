@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using DS4WinWPF.DS4Control.IoC.Services;
 using OpenTracing.Util;
 using static System.Math;
@@ -198,7 +199,7 @@ namespace DS4Windows
                     }
                 }
 
-                var idleDisconnectTimeout = Instance.Config.GetIdleDisconnectTimeout(deviceNum);
+                var idleDisconnectTimeout = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).IdleDisconnectTimeout;
                 if (idleDisconnectTimeout > 0 && lightModeInfo.LedAsBattery &&
                     (!device.IsCharging() || device.GetBattery() >= 100))
                 {

@@ -145,8 +145,6 @@ namespace DS4Windows
             public string ControllerConfigsPath { get; set; } =
                 Path.Combine(RuntimeAppDataPath, Constants.ControllerConfigsFileName);
 
-            public IList<int> IdleDisconnectTimeout { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
             public IList<string> ProfilePath { get; set; } = new List<string>
             {
                 string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
@@ -501,12 +499,7 @@ namespace DS4Windows
             {
                 return profileActionCount[index];
             }
-
-            public int GetIdleDisconnectTimeout(int index)
-            {
-                return IdleDisconnectTimeout[index];
-            }
-
+            
             public ControlSettingsGroup GetControlSettingsGroup(int deviceNum)
             {
                 return ds4controlSettings[deviceNum];
@@ -3119,7 +3112,7 @@ namespace DS4Windows
 
             private void ResetProfile(int device)
             {
-                IdleDisconnectTimeout[device] = 0;
+                //IdleDisconnectTimeout[device] = 0;
 
                 LSModInfo[device].Reset();
                 RSModInfo[device].Reset();

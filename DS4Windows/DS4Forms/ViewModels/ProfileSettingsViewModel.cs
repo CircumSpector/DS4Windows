@@ -520,12 +520,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool IdleDisconnectExists
         {
-            get => Global.Instance.Config.IdleDisconnectTimeout[device] != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout != 0;
             set
             {
                 // If enabling Idle Disconnect, set default time.
                 // Otherwise, set time to 0 to mean disabled
-                Global.Instance.Config.IdleDisconnectTimeout[device] = value ?
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout = value ?
                     Global.DEFAULT_ENABLE_IDLE_DISCONN_MINS * 60 : 0;
 
                 IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
@@ -536,12 +536,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int IdleDisconnect
         {
-            get => Global.Instance.Config.IdleDisconnectTimeout[device] / 60;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout / 60;
             set
             {
-                int temp = Global.Instance.Config.IdleDisconnectTimeout[device] / 60;
+                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout / 60;
                 if (temp == value) return;
-                Global.Instance.Config.IdleDisconnectTimeout[device] = value * 60;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout = value * 60;
                 IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
                 IdleDisconnectExistsChanged?.Invoke(this, EventArgs.Empty);
             }
