@@ -1722,8 +1722,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double TouchTrackballFriction
         {
-            get => Global.Instance.Config.TrackballFriction[device];
-            set => Global.Instance.Config.TrackballFriction[device] = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballFriction;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballFriction = value;
         }
 
         public int TouchAbsMouseMaxZoneX

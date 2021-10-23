@@ -1662,7 +1662,7 @@ namespace DS4Windows
 
             device.SetIdleTimeout(Instance.Config.GetIdleDisconnectTimeout(ind));
             device.SetBtPollRate(profilesService.ActiveProfiles.ElementAt(ind).BluetoothPollRate);
-            touchPad[ind].ResetTrackAccel(Instance.Config.GetTrackballFriction(ind));
+            touchPad[ind].ResetTrackAccel(ProfilesService.Instance.ActiveProfiles.ElementAt(ind).TrackballFriction);
             touchPad[ind].ResetToggleGyroModes();
 
             // Reset current flick stick progress from previous profile

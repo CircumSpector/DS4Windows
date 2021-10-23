@@ -340,9 +340,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<double> TrackballFriction { get; set; } = new List<double>
-                { 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 };
-
             public IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; } =
                 new List<TouchPadAbsMouseSettings>
                 {
@@ -533,12 +530,7 @@ namespace DS4Windows
             {
                 return RSAntiSnapbackInfo[device];
             }
-
-            public double GetTrackballFriction(int index)
-            {
-                return TrackballFriction[index];
-            }
-
+            
             public int GetProfileActionCount(int index)
             {
                 return profileActionCount[index];
@@ -3227,7 +3219,7 @@ namespace DS4Windows
                 SetSXOutCurveMode(device, 0);
                 SetSZOutCurveMode(device, 0);
                 //TrackballMode[device] = false;
-                TrackballFriction[device] = 10.0;
+                //TrackballFriction[device] = 10.0;
                 TouchPadAbsMouse[device].Reset();
                 TouchPadRelMouse[device].Reset();
                 OutputDeviceType[device] = OutContType.X360;

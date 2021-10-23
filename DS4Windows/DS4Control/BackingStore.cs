@@ -66,8 +66,6 @@ namespace DS4Windows
 
         IList<GyroMouseInfo> GyroMouseInfo { get; set; }
         
-        IList<double> TrackballFriction { get; set; }
-
         IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; }
 
         IList<TouchPadRelMouseSettings> TouchPadRelMouse { get; set; }
@@ -187,9 +185,7 @@ namespace DS4Windows
         StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
 
         StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device);
-
-        double GetTrackballFriction(int index);
-
+        
         int GetProfileActionCount(int index);
 
         void EstablishDefaultSpecialActions(int idx);
