@@ -139,6 +139,7 @@ namespace DS4Windows
 
             public string ActionsPath { get; set; } = Path.Combine(RuntimeAppDataPath, Constants.ActionsFileName);
 
+            [Obsolete]
             public string LinkedProfilesPath { get; set; } =
                 Path.Combine(RuntimeAppDataPath, Constants.LinkedProfilesFileName);
 
