@@ -97,15 +97,7 @@ namespace DS4Windows
                 new(), new(),
                 new()
             };
-
-            public IList<GyroOutMode> GyroOutputMode { get; set; } = new List<GyroOutMode>
-            {
-                GyroOutMode.Controls, GyroOutMode.Controls,
-                GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls,
-                GyroOutMode.Controls,
-                GyroOutMode.Controls, GyroOutMode.Controls, GyroOutMode.Controls
-            };
-
+            
             public IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; } =
                 new List<GyroDirectionalSwipeInfo>
                 {
@@ -441,12 +433,7 @@ namespace DS4Windows
             {
                 return SATriggerCondition[index];
             }
-
-            public GyroOutMode GetGyroOutMode(int device)
-            {
-                return GyroOutputMode[device];
-            }
-
+            
             public string GetSAMouseStickTriggers(int device)
             {
                 return SAMouseStickTriggers[device];
@@ -469,7 +456,7 @@ namespace DS4Windows
 
             public bool IsUsingSAForControls(int index)
             {
-                return GyroOutputMode[index] == GyroOutMode.Controls;
+                return ProfilesService.Instance.ActiveProfiles.ElementAt(index).GyroOutputMode == GyroOutMode.Controls;
             }
             
             public TriggerDeadZoneZInfo GetL2ModInfo(int index)
@@ -546,7 +533,7 @@ namespace DS4Windows
 
                 if (!customAct)
                 {
-                    customAct = GyroOutputMode[device] == GyroOutMode.MouseJoystick;
+                    customAct = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode == GyroOutMode.MouseJoystick;
                     customAct = customAct ||
                                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis >= SASteeringWheelEmulationAxisType.VJoy1X;
                     customAct = customAct || LSOutputSettings[device].Mode != StickMode.Controls;
@@ -1253,11 +1240,11 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/UseSAforMouse");
                         if (bool.TryParse(Item?.InnerText ?? "", out var temp))
                             if (temp)
-                                GyroOutputMode[device] = GyroOutMode.Mouse;
+                                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
                     }
                     catch
                     {
-                        GyroOutputMode[device] = GyroOutMode.Controls;
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Controls;
                     }
 
                     try
@@ -2423,7 +2410,7 @@ namespace DS4Windows
                 ContainsCustomAction[device] = false;
                 ContainsCustomExtras[device] = false;
 
-                GyroOutputMode[device] = GyroOutMode.MouseJoystick;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
                 //SAMouseStickTriggerCond[device] = true;
                 //GyroMouseStickTriggerTurns[device] = false;
@@ -2457,7 +2444,7 @@ namespace DS4Windows
                 var r2Info = R2ModInfo[device];
                 r2Info.deadZone = (byte)(0.00 * 255);
 
-                GyroOutputMode[device] = GyroOutMode.MouseJoystick;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
                 //SAMouseStickTriggerCond[device] = true;
                 //GyroMouseStickTriggerTurns[device] = false;
@@ -2499,7 +2486,7 @@ namespace DS4Windows
                 ContainsCustomAction[device] = false;
                 ContainsCustomExtras[device] = false;
 
-                GyroOutputMode[device] = GyroOutMode.Mouse;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
@@ -2538,7 +2525,7 @@ namespace DS4Windows
                 var r2Info = R2ModInfo[device];
                 r2Info.deadZone = (byte)(0.00 * 255);
 
-                GyroOutputMode[device] = GyroOutMode.Mouse;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
@@ -2772,7 +2759,7 @@ namespace DS4Windows
                 var r2Info = R2ModInfo[device];
                 r2Info.deadZone = (byte)(0.20 * 255);
 
-                GyroOutputMode[device] = GyroOutMode.Mouse;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
                 SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
@@ -3006,8 +2993,8 @@ namespace DS4Windows
 
             private void PortOldGyroSettings(int device)
             {
-                if (GyroOutputMode[device] == GyroOutMode.None)
-                    GyroOutputMode[device] = GyroOutMode.Controls;
+                if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode == GyroOutMode.None)
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Controls;
             }
 
             private string GetGyroOutModeString(GyroOutMode mode)
@@ -3170,7 +3157,7 @@ namespace DS4Windows
                 TouchOutMode[device] = TouchpadOutMode.Mouse;
                 SATriggers[device] = "-1";
                 SATriggerCondition[device] = true;
-                GyroOutputMode[device] = GyroOutMode.Controls;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Controls;
                 SAMouseStickTriggers[device] = "-1";
                 //SAMouseStickTriggerCond[device] = true;
 

@@ -2107,7 +2107,7 @@ namespace DS4Windows
                     ref tempMouseDeltaY, ctrl);
             }
 
-            var imuOutMode = Instance.Config.GetGyroOutMode(device);
+            var imuOutMode = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode;
             if (imuOutMode == GyroOutMode.DirectionalSwipe)
             {
                 DS4ControlSettings gyroSwipeXDcs = null;

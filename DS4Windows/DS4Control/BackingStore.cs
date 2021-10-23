@@ -90,8 +90,6 @@ namespace DS4Windows
 
         IList<string> SAMouseStickTriggers { get; set; }
 
-        IList<GyroOutMode> GyroOutputMode { get; set; }
-
         IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
 
         IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
@@ -145,8 +143,6 @@ namespace DS4Windows
         int GetSZOutCurveMode(int index);
 
         void SetSZOutCurveMode(int index, int value);
-
-        GyroOutMode GetGyroOutMode(int device);
 
         string GetSAMouseStickTriggers(int device);
 

@@ -131,7 +131,7 @@ namespace DS4Windows
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixAxisMoved)).StartActive(true);
 
 
-            var outMode = Global.Instance.Config.GetGyroOutMode(deviceNum);
+            var outMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroOutputMode;
             if (outMode == GyroOutMode.Controls)
             {
                 s = dev.GetCurrentStateReference();

@@ -609,7 +609,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.Config.GyroOutputMode[device])
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode)
                 {
                     case GyroOutMode.Controls:
                         index = 0; break;
@@ -643,9 +643,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                GyroOutMode current = Global.Instance.Config.GyroOutputMode[device];
+                GyroOutMode current = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode;
                 if (temp == current) return;
-                Global.Instance.Config.GyroOutputMode[device] = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = temp;
                 GyroOutModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }

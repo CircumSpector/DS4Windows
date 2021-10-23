@@ -181,7 +181,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //GyroMouseHAxis = store.GyroMouseHorizontalAxis[device];
             GyroMouseDeadZone = store.GyroMouseDeadZone[device];
             GyroMouseMinThreshold = store.GyroMouseInfo[device].minThreshold;
-            GyroOutputMode = store.GyroOutputMode[device];
+            //GyroOutputMode = store.GyroOutputMode[device];
             GyroMouseStickTriggers = store.SAMouseStickTriggers[device];
             //GyroMouseStickTriggerCond = store.SaTriggerCondString(store.SAMouseStickTriggerCond[device]);
             //GyroMouseStickHAxis = store.GyroMouseStickHorizontalAxis[device];
@@ -432,7 +432,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             //store.SAWheelFuzzValues[device] = SASteeringWheelFuzz is >= 0 and <= 100 ? SASteeringWheelFuzz : 0;
 
-            store.GyroOutputMode[device] = GyroOutputMode;
+            //store.GyroOutputMode[device] = GyroOutputMode;
 
             store.SAMouseStickTriggers[device] = GyroMouseStickTriggers;
             //store.SAMouseStickTriggerCond[device] = store.SaTriggerCondValue(GyroMouseStickTriggerCond);
