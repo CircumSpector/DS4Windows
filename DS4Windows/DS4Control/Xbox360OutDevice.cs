@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DS4Windows.VJoyFeeder;
+using DS4WinWPF.DS4Control.IoC.Services;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
@@ -63,7 +65,7 @@ namespace DS4Windows
                 cont.LeftTrigger = state.L2;
                 cont.RightTrigger = state.R2;
 
-                var steeringWheelMappedAxis = Global.Instance.Config.GetSASteeringWheelEmulationAxis(device);
+                var steeringWheelMappedAxis = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
                 switch (steeringWheelMappedAxis)
                 {
                     case SASteeringWheelEmulationAxisType.None:

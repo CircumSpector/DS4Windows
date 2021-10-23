@@ -655,13 +655,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int SASteeringWheelEmulationAxisIndex
         {
-            get => (int)Global.Instance.Config.SASteeringWheelEmulationAxis[device];
+            get => (int)ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
             set
             {
-                int temp = (int)Global.Instance.Config.SASteeringWheelEmulationAxis[device];
+                int temp = (int)ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
                 if (temp == value) return;
 
-                Global.Instance.Config.SASteeringWheelEmulationAxis[device] = (SASteeringWheelEmulationAxisType)value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis = (SASteeringWheelEmulationAxisType)value;
                 SASteeringWheelEmulationAxisIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }

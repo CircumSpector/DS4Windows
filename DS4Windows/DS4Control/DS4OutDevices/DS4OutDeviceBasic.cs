@@ -1,4 +1,6 @@
-﻿using DS4Windows.VJoyFeeder;
+﻿using System.Linq;
+using DS4Windows.VJoyFeeder;
+using DS4WinWPF.DS4Control.IoC.Services;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using OpenTracing.Util;
@@ -69,7 +71,7 @@ namespace DS4Windows
                 cont.RightTrigger = state.R2;
 
                 var steeringWheelMappedAxis =
-                    Global.Instance.Config.GetSASteeringWheelEmulationAxis(device);
+                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
                 switch (steeringWheelMappedAxis)
                 {
                     case SASteeringWheelEmulationAxisType.None:

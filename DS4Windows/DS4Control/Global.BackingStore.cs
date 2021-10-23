@@ -127,16 +127,6 @@ namespace DS4Windows
             public IList<string> SAMouseStickTriggers { get; set; } = new List<string>
                 { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
 
-            public IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; } =
-                new List<SASteeringWheelEmulationAxisType>
-                {
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None, SASteeringWheelEmulationAxisType.None,
-                    SASteeringWheelEmulationAxisType.None
-                };
-
             public IList<bool> SATriggerCondition { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
@@ -515,11 +505,6 @@ namespace DS4Windows
             {
                 return GyroOutputMode[index] == GyroOutMode.Controls;
             }
-
-            public SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index)
-            {
-                return SASteeringWheelEmulationAxis[index];
-            }
             
             public int GetGyroMouseHorizontalAxis(int index)
             {
@@ -622,7 +607,7 @@ namespace DS4Windows
                 {
                     customAct = GyroOutputMode[device] == GyroOutMode.MouseJoystick;
                     customAct = customAct ||
-                                SASteeringWheelEmulationAxis[device] >= SASteeringWheelEmulationAxisType.VJoy1X;
+                                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis >= SASteeringWheelEmulationAxisType.VJoy1X;
                     customAct = customAct || LSOutputSettings[device].Mode != StickMode.Controls;
                     customAct = customAct || RSOutputSettings[device].Mode != StickMode.Controls;
                     ContainsCustomAction[device] = customAct;
@@ -3252,7 +3237,7 @@ namespace DS4Windows
                 GyroSwipeInfo[device].Reset();
 
                 //GyroMouseStickTriggerTurns[device] = true;
-                SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
+                //SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
                 //SASteeringWheelEmulationRange[device] = 360;
                 //SAWheelFuzzValues[device] = 0;
                 WheelSmoothInfo[device].Reset();

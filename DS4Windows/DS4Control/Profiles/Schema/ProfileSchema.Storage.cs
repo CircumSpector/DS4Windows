@@ -157,7 +157,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             TouchpadOutputMode = store.TouchOutMode[device];
             SATriggers = store.SATriggers[device];
             SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
-            SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
+            //SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
             //SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
             //SASteeringWheelFuzz = store.SAWheelFuzzValues[device];
 
@@ -423,7 +423,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             store.SATriggers[device] = SATriggers;
             store.SATriggerCondition[device] = store.SaTriggerCondValue(SATriggerCond);
-            store.SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxis;
+            //store.SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxis;
             //store.SASteeringWheelEmulationRange[device] = SASteeringWheelEmulationRange;
 
             store.WheelSmoothInfo[device].Enabled = SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing;

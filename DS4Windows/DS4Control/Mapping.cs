@@ -2236,7 +2236,7 @@ namespace DS4Windows
                 if (macroControl[25]) MappedState.OutputTouchButton = true;
             }
 
-            if (Instance.Config.GetSASteeringWheelEmulationAxis(device) !=
+            if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis !=
                 SASteeringWheelEmulationAxisType.None)
                 MappedState.SASteeringWheelEmulationUnit = Scale360degreeGyroAxis(device, eState, ctrl);
 
@@ -5972,7 +5972,7 @@ namespace DS4Windows
                     outputAxisZero = 0;
                 }
 
-                switch (Instance.Config.GetSASteeringWheelEmulationAxis(device))
+                switch (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis)
                 {
                     case SASteeringWheelEmulationAxisType.LX:
                     case SASteeringWheelEmulationAxisType.LY:

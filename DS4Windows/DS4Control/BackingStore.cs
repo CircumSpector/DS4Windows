@@ -104,8 +104,6 @@ namespace DS4Windows
 
         IList<string> SAMouseStickTriggers { get; set; }
 
-        IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
-
         IList<GyroOutMode> GyroOutputMode { get; set; }
 
         IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
@@ -179,8 +177,6 @@ namespace DS4Windows
         bool IsUsingTouchpadForControls(int index);
 
         bool IsUsingSAForControls(int index);
-
-        SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index);
 
         public string AxisOutputCurveString(int id);
 

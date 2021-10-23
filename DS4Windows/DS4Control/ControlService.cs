@@ -2139,7 +2139,7 @@ namespace DS4Windows
             {
                 // UseDInputOnly profile may re-map sixaxis gyro sensor values as a VJoy joystick axis (steering wheel emulation mode using VJoy output device). Handle this option because VJoy output works even in USeDInputOnly mode.
                 // If steering wheel emulation uses LS/RS/R2/L2 output axies then the profile should NOT use UseDInputOnly option at all because those require a virtual output device.
-                var steeringWheelMappedAxis = Instance.Config.GetSASteeringWheelEmulationAxis(ind);
+                var steeringWheelMappedAxis =ProfilesService.Instance.ControllerSlotProfiles.ElementAt(ind).SASteeringWheelEmulationAxis;
                 switch (steeringWheelMappedAxis)
                 {
                     case SASteeringWheelEmulationAxisType.None: break;
