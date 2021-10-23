@@ -637,12 +637,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
             profile.RSModInfo.YAxisDeadInfo.MaxOutput =
                 Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
-            profile.SXDeadzone = SXDeadZone;
-            profile.SZDeadzone = SZDeadZone;
-            profile.SXMaxzone = Math.Min(Math.Max(SXMaxZone * 0.01, 0.0), 1.0);
-            profile.SZMaxzone = Math.Min(Math.Max(SZMaxZone * 0.01, 0.0), 1.0);
-            profile.SXAntiDeadzone = Math.Min(Math.Max(SXAntiDeadZone * 0.01, 0.0), 1.0);
-            profile.SZAntiDeadzone = Math.Min(Math.Max(SZAntiDeadZone * 0.01, 0.0), 1.0);
+            profile.SXDeadZone = SXDeadZone;
+            profile.SZDeadZone = SZDeadZone;
+            profile.SXMaxZone = Math.Min(Math.Max(SXMaxZone * 0.01, 0.0), 1.0);
+            profile.SZMaxZone = Math.Min(Math.Max(SZMaxZone * 0.01, 0.0), 1.0);
+            profile.SXAntiDeadZone = Math.Min(Math.Max(SXAntiDeadZone * 0.01, 0.0), 1.0);
+            profile.SZAntiDeadZone = Math.Min(Math.Max(SZAntiDeadZone * 0.01, 0.0), 1.0);
 
             profile.LSSens = Sensitivity.LSSens;
             profile.RSSens = Sensitivity.RSSens;

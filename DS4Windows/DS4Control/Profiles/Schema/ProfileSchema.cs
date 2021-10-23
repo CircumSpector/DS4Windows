@@ -162,17 +162,17 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public double RSRotation { get; set; } = 0.0;
 
-        public double SXDeadzone { get; set; } = 0.25;
+        public double SXDeadZone { get; set; } = 0.25;
 
-        public double SZDeadzone { get; set; } = 0.25;
+        public double SZDeadZone { get; set; } = 0.25;
 
-        public double SXMaxzone { get; set; } = 1.0;
+        public double SXMaxZone { get; set; } = 1.0;
 
-        public double SZMaxzone { get; set; } = 1.0;
+        public double SZMaxZone { get; set; } = 1.0;
 
-        public double SXAntiDeadzone { get; set; } = 0.0;
+        public double SXAntiDeadZone { get; set; } = 0.0;
 
-        public double SZAntiDeadzone { get; set; } = 0.0;
+        public double SZAntiDeadZone { get; set; } = 0.0;
 
         public double L2Sens { get; set; } = 1;
 

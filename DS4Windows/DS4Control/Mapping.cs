@@ -1581,12 +1581,12 @@ namespace DS4Windows
                 var saControls = Instance.Config.IsUsingSAForControls(device);
                 if (saControls && dState.Motion.outputGyroControls)
                 {
-                    var SXD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone);
-                    var SZD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone);
-                    var SXMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxzone;
-                    var SZMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxzone;
-                    var sxAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadzone;
-                    var szAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadzone;
+                    var SXD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone);
+                    var SZD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone);
+                    var SXMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxZone;
+                    var SZMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxZone;
+                    var sxAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone;
+                    var szAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadZone;
                     var sxsens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens;
                     var szsens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens;
                     var result = 0;
@@ -5389,8 +5389,8 @@ namespace DS4Windows
             }
             else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
             {
-                var SXD = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone;
-                var SZD = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone;
+                var SXD = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone;
+                var SZD = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone;
                 var saControls = Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
@@ -5889,7 +5889,7 @@ namespace DS4Windows
 
                 // Apply deadzone (SA X-deadzone value). This code assumes that 20deg is the max deadzone anyone ever might wanna use (in practice effective deadzone 
                 // is probably just few degrees by using SXDeadZone values 0.01...0.05)
-                var sxDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone;
+                var sxDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone;
                 if (sxDead > 0)
                 {
                     var sxDeadInt = Convert.ToInt32(20.0 * C_WHEEL_ANGLE_PRECISION * sxDead);
@@ -5954,7 +5954,7 @@ namespace DS4Windows
                 //LogToGuiSACalibrationDebugMsg($"DBG gyro=({gyroAccelX}, {gyroAccelZ})  output=({exposedState.OutputAccelX}, {exposedState.OutputAccelZ})  PitRolYaw=({currentDeviceState.Motion.gyroPitch}, {currentDeviceState.Motion.gyroRoll}, {currentDeviceState.Motion.gyroYaw})  VelPitRolYaw=({currentDeviceState.Motion.angVelPitch}, {currentDeviceState.Motion.angVelRoll}, {currentDeviceState.Motion.angVelYaw})  angle={result / (1.0 * C_WHEEL_ANGLE_PRECISION)}  fullTurns={controller.wheelFullTurnCount}", false);
 
                 // Apply anti-deadzone (SA X-antideadzone value)
-                var sxAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadzone;
+                var sxAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone;
 
                 int outputAxisMax, outputAxisMin, outputAxisZero;
                 if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType == OutContType.DS4)

@@ -1427,12 +1427,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SXDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone;
             set
             {
-                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone;
+                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone = value;
                 SXDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1440,12 +1440,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SZDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone;
             set
             {
-                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone;
+                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone = value;
                 SZDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1453,26 +1453,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SXMaxZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxzone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxZone = value;
         }
 
         public double SZMaxZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxzone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxZone = value;
         }
 
         public double SXAntiDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadzone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone = value;
         }
 
         public double SZAntiDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadzone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadZone = value;
         }
 
         public double SXSens
