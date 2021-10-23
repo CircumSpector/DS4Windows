@@ -214,14 +214,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<byte> TapSensitivity { get; set; } = new List<byte> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-            public IList<int> ScrollSensitivity { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-            public IList<int> TouchPadInvert { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-            public IList<int> BluetoothPollRate { get; set; } = new List<int> { 4, 4, 4, 4, 4, 4, 4, 4, 4 };
-
             public IList<int> GyroMouseDeadZone { get; set; } = new List<int>
             {
                 MouseCursor.GYRO_MOUSE_DEADZONE, MouseCursor.GYRO_MOUSE_DEADZONE,
@@ -511,16 +503,6 @@ namespace DS4Windows
                 return GyroMouseHorizontalAxis[index];
             }
 
-            public byte GetTapSensitivity(int index)
-            {
-                return TapSensitivity[index];
-            }
-
-            public int GetTouchPadInvert(int index)
-            {
-                return TouchPadInvert[index];
-            }
-
             public TriggerDeadZoneZInfo GetL2ModInfo(int index)
             {
                 return L2ModInfo[index];
@@ -549,11 +531,6 @@ namespace DS4Windows
             public StickDeadZoneInfo GetRSDeadInfo(int index)
             {
                 return RSModInfo[index];
-            }
-
-            public int GetBluetoothPollRate(int index)
-            {
-                return BluetoothPollRate[index];
             }
 
             public SquareStickInfo GetSquareStickInfo(int device)
@@ -3215,10 +3192,10 @@ namespace DS4Windows
                 L2ModInfo[device].Reset();
                 R2ModInfo[device].Reset();
 
-                TapSensitivity[device] = 0;
-                ScrollSensitivity[device] = 0;
-                TouchPadInvert[device] = 0;
-                BluetoothPollRate[device] = 4;
+                //TapSensitivity[device] = 0;
+                //ScrollSensitivity[device] = 0;
+                //TouchPadInvert[device] = 0;
+                //BluetoothPollRate[device] = 4;
 
                 LSOutputSettings[device].ResetSettings();
                 RSOutputSettings[device].ResetSettings();

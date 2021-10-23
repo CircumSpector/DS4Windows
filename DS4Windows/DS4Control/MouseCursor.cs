@@ -409,7 +409,7 @@ namespace DS4Windows
 
             if (disableInvert == false)
             {
-                var touchpadInvert = tempInt = Global.Instance.Config.GetTouchPadInvert(deviceNumber);
+                var touchpadInvert = tempInt = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).TouchPadInvert;
                 if ((touchpadInvert & 0x02) == 2)
                     xAction *= -1;
 

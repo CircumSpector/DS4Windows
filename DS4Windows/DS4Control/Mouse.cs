@@ -435,7 +435,7 @@ namespace DS4Windows
             {
                 var test = arg.timeStamp;
                 if (test <= firstTap +
-                    TimeSpan.FromMilliseconds(Global.Instance.Config.TapSensitivity[deviceNum] * 1.5) &&
+                    TimeSpan.FromMilliseconds(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TapSensitivity * 1.5) &&
                     !arg.touchButtonPressed)
                     secondtouchbegin = true;
             }
@@ -453,7 +453,7 @@ namespace DS4Windows
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
-            var tapSensitivity = Global.Instance.Config.GetTapSensitivity(deviceNum);
+            var tapSensitivity = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TapSensitivity;
             if (tapSensitivity != 0 && Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
@@ -1027,7 +1027,7 @@ namespace DS4Windows
                 {
                     var tester = DateTime.Now;
                     if (tester > TimeofEnd +
-                        TimeSpan.FromMilliseconds(Global.Instance.Config.TapSensitivity[deviceNum] * 1.5))
+                        TimeSpan.FromMilliseconds(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TapSensitivity * 1.5))
                     {
                         Mapping.MapClick(deviceNum, Mapping.Click.Left);
                         tappedOnce = false;

@@ -1601,10 +1601,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchScrollExists
         {
-            get => Global.Instance.Config.ScrollSensitivity[device] != 0;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity != 0;
             set
             {
-                Global.Instance.Config.ScrollSensitivity[device] = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity = value ? (byte)100 : (byte)0;
                 TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1613,12 +1613,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchScroll
         {
-            get => Global.Instance.Config.ScrollSensitivity[device];
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity;
             set
             {
-                int temp = Global.Instance.Config.ScrollSensitivity[device];
+                int temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity;
                 if (temp == value) return;
-                Global.Instance.Config.ScrollSensitivity[device] = value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity = value;
                 if (value == 0) TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1627,10 +1627,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchTapExists
         {
-            get => Global.Instance.Config.TapSensitivity[device] != 0;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity != 0;
             set
             {
-                Global.Instance.Config.TapSensitivity[device] = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity = value ? (byte)100 : (byte)0;
                 TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1639,12 +1639,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchTap
         {
-            get => Global.Instance.Config.TapSensitivity[device];
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity;
             set
             {
-                int temp = Global.Instance.Config.TapSensitivity[device];
+                int temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity;
                 if (temp == value) return;
-                Global.Instance.Config.TapSensitivity[device] = (byte)value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity = (byte)value;
                 if (value == 0) TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1668,14 +1668,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int invert = Global.Instance.Config.TouchPadInvert[device];
+                int invert = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchPadInvert;
                 int index = Array.IndexOf(touchpadInvertToValue, invert);
                 return index;
             }
             set
             {
                 int invert = touchpadInvertToValue[value];
-                Global.Instance.Config.TouchPadInvert[device] = invert;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchPadInvert = invert;
             }
         }
 
@@ -2308,7 +2308,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             funcDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
             Global.OutDevTypeTemp[device] = OutContType.X360;
-            tempBtPollRate = Global.Instance.Config.BluetoothPollRate[device];
+            tempBtPollRate = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).BluetoothPollRate;
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
@@ -2945,7 +2945,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             tempControllerIndex = ControllerTypeIndex;
             Global.OutDevTypeTemp[device] = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType;
-            tempBtPollRate = Global.Instance.Config.BluetoothPollRate[device];
+            tempBtPollRate = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).BluetoothPollRate;
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
             gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();

@@ -1661,7 +1661,7 @@ namespace DS4Windows
                     "Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 
             device.SetIdleTimeout(Instance.Config.GetIdleDisconnectTimeout(ind));
-            device.SetBtPollRate(Instance.Config.GetBluetoothPollRate(ind));
+            device.SetBtPollRate(profilesService.ControllerSlotProfiles.ElementAt(ind).BluetoothPollRate);
             touchPad[ind].ResetTrackAccel(Instance.Config.GetTrackballFriction(ind));
             touchPad[ind].ResetToggleGyroModes();
 
@@ -1680,7 +1680,7 @@ namespace DS4Windows
             device.PrepareTriggerEffect(TriggerId.RightTrigger, Instance.Config.R2OutputSettings[ind].TriggerEffect,
                 Instance.Config.R2OutputSettings[ind].TrigEffectSettings);
 
-            device.RumbleAutostopTime = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(ind).RumbleAutostopTime;
+            device.RumbleAutostopTime = profilesService.ControllerSlotProfiles.ElementAt(ind).RumbleAutostopTime;
             device.SetRumble(0, 0);
             device.LightBarColor = appSettings.Settings.LightbarSettingInfo[ind].Ds4WinSettings.Led;
 

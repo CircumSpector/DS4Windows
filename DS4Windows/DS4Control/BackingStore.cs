@@ -76,14 +76,6 @@ namespace DS4Windows
 
         IList<TouchPadRelMouseSettings> TouchPadRelMouse { get; set; }
 
-        IList<byte> TapSensitivity { get; set; }
-
-        IList<int> ScrollSensitivity { get; set; }
-
-        IList<int> TouchPadInvert { get; set; }
-
-        IList<int> BluetoothPollRate { get; set; }
-
         IList<int> GyroMouseDeadZone { get; set; }
 
         IList<int> IdleDisconnectTimeout { get; set; }
@@ -186,9 +178,6 @@ namespace DS4Windows
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
 
-        byte GetTapSensitivity(int index);
-
-        int GetTouchPadInvert(int index);
         TriggerDeadZoneZInfo GetL2ModInfo(int index);
 
         TriggerDeadZoneZInfo GetR2ModInfo(int index);
@@ -200,8 +189,6 @@ namespace DS4Windows
         StickDeadZoneInfo GetLSDeadInfo(int index);
 
         StickDeadZoneInfo GetRSDeadInfo(int index);
-
-        int GetBluetoothPollRate(int index);
 
         SquareStickInfo GetSquareStickInfo(int device);
 

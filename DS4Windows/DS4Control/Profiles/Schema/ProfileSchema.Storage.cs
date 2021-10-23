@@ -51,13 +51,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             ChargingColor = light.Ds4WinSettings.ChargingLed;
             FlashColor = light.Ds4WinSettings.FlashLed;
 
-            TapSensitivity = store.TapSensitivity[device];
-            ScrollSensitivity = store.ScrollSensitivity[device];
+            //TapSensitivity = store.TapSensitivity[device];
+            //ScrollSensitivity = store.ScrollSensitivity[device];
 
             LeftTriggerMiddle = store.L2ModInfo[device].deadZone;
             RightTriggerMiddle = store.R2ModInfo[device].deadZone;
 
-            TouchpadInvert = store.TouchPadInvert[device];
+            //TouchpadInvert = store.TouchPadInvert[device];
 
             L2AntiDeadZone = store.L2ModInfo[device].AntiDeadZone;
             R2AntiDeadZone = store.R2ModInfo[device].AntiDeadZone;
@@ -212,7 +212,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroSwipeSettings.DelayTime = store.GyroSwipeInfo[device].delayTime;
 
             ProfileActions = string.Join("/", store.ProfileActions[device]);
-            BTPollRate = store.BluetoothPollRate[device];
+            //BTPollRate = store.BluetoothPollRate[device];
 
             LSOutputCurveMode = store.StickOutputCurveString(store.GetLsOutCurveMode(device));
             LSOutputCurveCustom = store.LSOutBezierCurveObj[device];
@@ -332,9 +332,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             lightInfo.LowLed = LowColor;
             lightInfo.ChargingLed = ChargingColor;
             lightInfo.FlashLed = FlashColor;
-            store.TapSensitivity[device] = TapSensitivity;
-            store.ScrollSensitivity[device] = ScrollSensitivity;
-            store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);
+            //store.TapSensitivity[device] = TapSensitivity;
+            //store.ScrollSensitivity[device] = ScrollSensitivity;
+            //store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);
             store.L2ModInfo[device].deadZone = LeftTriggerMiddle;
             store.R2ModInfo[device].deadZone = RightTriggerMiddle;
             store.L2ModInfo[device].AntiDeadZone = L2AntiDeadZone;
@@ -483,7 +483,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.SetGyroMouseDZ(device, temp, control);
             store.GyroMouseInfo[device].minThreshold = Math.Min(Math.Max(GyroMouseMinThreshold, 1.0), 40.0);
             //SetGyroMouseToggle(device, temp, control);
-            store.BluetoothPollRate[device] = BTPollRate is >= 0 and <= 16 ? BTPollRate : 4;
+            //store.BluetoothPollRate[device] = BTPollRate is >= 0 and <= 16 ? BTPollRate : 4;
 
             store.LSOutBezierCurveObj[device] = LSOutputCurveCustom;
             store.SetLsOutCurveMode(device, store.StickOutputCurveId(LSOutputCurveMode));
