@@ -82,8 +82,6 @@ namespace DS4Windows
 
         IList<bool> SATriggerCondition { get; set; }
 
-        IList<string> SATriggers { get; set; }
-
         IList<string> SAMouseStickTriggers { get; set; }
 
         IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
@@ -147,8 +145,6 @@ namespace DS4Windows
         GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device);
 
         bool GetSATriggerCondition(int index);
-
-        string GetSATriggers(int index);
 
         bool IsUsingTouchpadForControls(int index);
 

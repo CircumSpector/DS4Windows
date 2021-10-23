@@ -2615,13 +2615,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.Config.SATriggers[device] = string.Join(",", triggerList.ToArray());
+            ProfilesService.Instance.ActiveProfiles.ElementAt(device).SATriggers = string.Join(",", triggerList.ToArray());
             GyroMouseTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroMouseTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.Config.SATriggers[device].Split(',');
+            string[] triggers = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SATriggers.Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)

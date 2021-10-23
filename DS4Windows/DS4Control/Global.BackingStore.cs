@@ -122,9 +122,6 @@ namespace DS4Windows
             public IList<bool> SATriggerCondition { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
-            public IList<string> SATriggers { get; set; } = new List<string>
-                { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
-
             public IList<IList<int>> TouchDisInvertTriggers { get; set; } = new List<IList<int>>
             {
                 new int[1] { -1 }, new int[1] { -1 }, new int[1] { -1 },
@@ -415,12 +412,7 @@ namespace DS4Windows
                     SetOutBezierCurveObjArrayItem(SZOutBezierCurveObj, index, value, BezierCurve.AxisType.SA);
                 _szOutCurveMode[index] = value;
             }
-
-            public string GetSATriggers(int index)
-            {
-                return SATriggers[index];
-            }
-
+            
             public bool GetSATriggerCondition(int index)
             {
                 return SATriggerCondition[index];
@@ -2474,7 +2466,7 @@ namespace DS4Windows
                 ContainsCustomExtras[device] = false;
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
-                SATriggers[device] = "4";
+                //SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
@@ -2513,7 +2505,7 @@ namespace DS4Windows
                 r2Info.deadZone = (byte)(0.00 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
-                SATriggers[device] = "4";
+                //SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
@@ -2747,7 +2739,7 @@ namespace DS4Windows
                 r2Info.deadZone = (byte)(0.20 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
-                SATriggers[device] = "4";
+                //SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
                 GyroMouseInfo[device].enableSmoothing = true;
@@ -3142,7 +3134,7 @@ namespace DS4Windows
                 
                 LaunchProgram[device] = string.Empty;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;
-                SATriggers[device] = "-1";
+                //SATriggers[device] = "-1";
                 SATriggerCondition[device] = true;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Controls;
                 SAMouseStickTriggers[device] = "-1";

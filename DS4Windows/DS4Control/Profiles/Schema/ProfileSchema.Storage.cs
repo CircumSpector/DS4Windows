@@ -155,7 +155,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             LaunchProgram = store.LaunchProgram[device];
             //StartTouchpadOff = store.StartTouchpadOff[device];
             //TouchpadOutputMode = store.TouchOutMode[device];
-            SATriggers = store.SATriggers[device];
+            //SATriggers = store.SATriggers[device];
             SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
             //SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
             //SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
@@ -421,7 +421,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //ShiftModifier
             store.LaunchProgram[device] = LaunchProgram;
 
-            store.SATriggers[device] = SATriggers;
+            //store.SATriggers[device] = SATriggers;
             store.SATriggerCondition[device] = store.SaTriggerCondValue(SATriggerCond);
             //store.SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxis;
             //store.SASteeringWheelEmulationRange[device] = SASteeringWheelEmulationRange;

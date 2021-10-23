@@ -188,7 +188,7 @@ namespace DS4Windows
 
                 useReverseRatchet = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroTriggerTurns;
                 var i = 0;
-                var ss = Global.Instance.Config.GetSATriggers(deviceNum).Split(',');
+                var ss = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).SATriggers.Split(',');
                 var andCond = Global.Instance.Config.GetSATriggerCondition(deviceNum);
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
