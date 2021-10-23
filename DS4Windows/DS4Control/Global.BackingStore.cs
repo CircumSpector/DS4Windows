@@ -354,20 +354,6 @@ namespace DS4Windows
                     new(), new(), new(), new(), new()
                 };
 
-            // Used to hold the controller type desired in a profile
-            public IList<OutContType> OutputDeviceType { get; set; } = new List<OutContType>
-            {
-                OutContType.X360,
-                OutContType.X360,
-                OutContType.X360,
-                OutContType.X360,
-                OutContType.X360,
-                OutContType.X360,
-                OutContType.X360,
-                OutContType.X360,
-                OutContType.X360
-            };
-
             public void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
             {
                 ds4controlSettings[deviceNum].ResetExtraButtons();
@@ -2369,7 +2355,7 @@ namespace DS4Windows
                 var r2Info = R2ModInfo[device];
                 r2Info.deadZone = (byte)(0.00 * 255);
 
-                OutputDeviceType[device] = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2478,7 +2464,7 @@ namespace DS4Windows
                 GyroMouseStickInfo[device].UseSmoothing = true;
                 GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
-                OutputDeviceType[device] = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2559,7 +2545,7 @@ namespace DS4Windows
                 GyroMouseInfo[device].enableSmoothing = true;
                 GyroMouseInfo[device].smoothingMethod = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
-                OutputDeviceType[device] = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2586,7 +2572,7 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
 
-                OutputDeviceType[device] = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -3222,7 +3208,7 @@ namespace DS4Windows
                 //TrackballFriction[device] = 10.0;
                 TouchPadAbsMouse[device].Reset();
                 TouchPadRelMouse[device].Reset();
-                OutputDeviceType[device] = OutContType.X360;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.X360;
                 Ds4Mapping = false;
             }
 
@@ -3316,7 +3302,7 @@ namespace DS4Windows
                                     control.UnplugOutDev(device, tempDev);
                                 }
 
-                                var tempContType = OutputDeviceType[device];
+                                var tempContType = ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType;
                                 control.PluginOutDev(device, tempDev);
                                 //Global.UseDirectInputOnly[device] = false;
                             }
