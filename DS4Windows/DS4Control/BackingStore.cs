@@ -52,32 +52,6 @@ namespace DS4Windows
 
         IList<TriggerDeadZoneZInfo> R2ModInfo { get; set; }
 
-        IList<double> L2Sens { get; set; }
-
-        IList<double> R2Sens { get; set; }
-
-        IList<double> SXSens { get; set; }
-
-        IList<double> SZSens { get; set; }
-
-        IList<double> SXDeadzone { get; set; }
-
-        IList<double> SXMaxzone { get; set; }
-
-        IList<double> SXAntiDeadzone { get; set; }
-
-        IList<double> SZDeadzone { get; set; }
-
-        IList<double> SZAntiDeadzone { get; set; }
-
-        IList<double> SZMaxzone { get; set; }
-
-        IList<double> LSSens { get; set; }
-
-        IList<double> RSSens { get; set; }
-
-        IList<double> RSRotation { get; set; }
-
         IList<BezierCurve> LSOutBezierCurveObj { get; set; }
 
         IList<BezierCurve> RSOutBezierCurveObj { get; set; }
@@ -241,10 +215,6 @@ namespace DS4Windows
 
         TriggerDeadZoneZInfo GetR2ModInfo(int index);
 
-        double GetSXDeadZone(int index);
-
-        double GetSZDeadZone(int index);
-
         int GetLSDeadZone(int index);
 
         int GetRSDeadZone(int index);
@@ -252,28 +222,6 @@ namespace DS4Windows
         StickDeadZoneInfo GetLSDeadInfo(int index);
 
         StickDeadZoneInfo GetRSDeadInfo(int index);
-
-        double GetSXAntiDeadZone(int index);
-
-        double GetSZAntiDeadZone(int index);
-
-        double GetSXMaxZone(int index);
-
-        double GetSZMaxZone(int index);
-
-        double GetRSRotation(int index);
-
-        double GetL2Sens(int index);
-
-        double GetR2Sens(int index);
-
-        double GetSXSens(int index);
-
-        double GetSZSens(int index);
-
-        double GetLSSens(int index);
-
-        double GetRSSens(int index);
 
         int GetBluetoothPollRate(int index);
 

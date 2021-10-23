@@ -233,45 +233,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<double> RSRotation { get; set; } =
-                new List<double> { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-            public IList<double> SXDeadzone { get; set; } = new List<double>
-                { 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25 };
-
-            public IList<double> SZDeadzone { get; set; } = new List<double>
-                { 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25 };
-
-            public IList<double> SXMaxzone { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
-            public IList<double> SZMaxzone { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
-            public IList<double> SXAntiDeadzone { get; set; } =
-                new List<double> { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-            public IList<double> SZAntiDeadzone { get; set; } =
-                new List<double> { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-            public IList<double> L2Sens { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
-            public IList<double> R2Sens { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
-            public IList<double> LSSens { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
-            public IList<double> RSSens { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
-            public IList<double> SXSens { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
-            public IList<double> SZSens { get; set; } =
-                new List<double> { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-
             public IList<byte> TapSensitivity { get; set; } = new List<byte> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
             public IList<int> ScrollSensitivity { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -622,16 +583,6 @@ namespace DS4Windows
                 return R2ModInfo[index];
             }
 
-            public double GetSXDeadZone(int index)
-            {
-                return SXDeadzone[index];
-            }
-
-            public double GetSZDeadZone(int index)
-            {
-                return SZDeadzone[index];
-            }
-
             public int GetLSDeadZone(int index)
             {
                 return LSModInfo[index].DeadZone;
@@ -650,61 +601,6 @@ namespace DS4Windows
             public StickDeadZoneInfo GetRSDeadInfo(int index)
             {
                 return RSModInfo[index];
-            }
-
-            public double GetSXAntiDeadZone(int index)
-            {
-                return SXAntiDeadzone[index];
-            }
-
-            public double GetSZAntiDeadZone(int index)
-            {
-                return SZAntiDeadzone[index];
-            }
-
-            public double GetSXMaxZone(int index)
-            {
-                return SXMaxzone[index];
-            }
-
-            public double GetSZMaxZone(int index)
-            {
-                return SZMaxzone[index];
-            }
-
-            public double GetRSRotation(int index)
-            {
-                return RSRotation[index];
-            }
-
-            public double GetL2Sens(int index)
-            {
-                return L2Sens[index];
-            }
-
-            public double GetR2Sens(int index)
-            {
-                return R2Sens[index];
-            }
-
-            public double GetSXSens(int index)
-            {
-                return SXSens[index];
-            }
-
-            public double GetSZSens(int index)
-            {
-                return SZSens[index];
-            }
-
-            public double GetLSSens(int index)
-            {
-                return LSSens[index];
-            }
-
-            public double GetRSSens(int index)
-            {
-                return RSSens[index];
             }
 
             public int GetBluetoothPollRate(int index)
@@ -3371,13 +3267,6 @@ namespace DS4Windows
                 L2ModInfo[device].Reset();
                 R2ModInfo[device].Reset();
 
-                RSRotation[device] = 0.0;
-                SXDeadzone[device] = SZDeadzone[device] = 0.25;
-                SXMaxzone[device] = SZMaxzone[device] = 1.0;
-                SXAntiDeadzone[device] = SZAntiDeadzone[device] = 0.0;
-                L2Sens[device] = R2Sens[device] = 1;
-                LSSens[device] = RSSens[device] = 1;
-                SXSens[device] = SZSens[device] = 1;
                 TapSensitivity[device] = 0;
                 ScrollSensitivity[device] = 0;
                 TouchPadInvert[device] = 0;

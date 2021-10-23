@@ -111,7 +111,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             RSAxialDeadOptions.MaxOutputY = store.RSModInfo[device].YAxisDeadInfo.MaxOutput;
 
             //LSRotation = Convert.ToInt32(store.LSRotation[device] * 180.0 / Math.PI);
-            RSRotation = Convert.ToInt32(store.RSRotation[device] * 180.0 / Math.PI);
+            //RSRotation = Convert.ToInt32(store.RSRotation[device] * 180.0 / Math.PI);
 
             LSFuzz = store.LSModInfo[device].Fuzz;
             RSFuzz = store.RSModInfo[device].Fuzz;
@@ -122,6 +122,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             LSOuterBindInvert = store.LSModInfo[device].OuterBindInvert;
             RSOuterBindInvert = store.RSModInfo[device].OuterBindInvert;
 
+            /*
+             TODO: migrate
             SXDeadZone = store.SXDeadzone[device];
             SZDeadZone = store.SZDeadzone[device];
 
@@ -140,6 +142,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 SXSens = store.SXSens[device],
                 SZSens = store.SZSens[device]
             };
+            */
 
             ChargingType = light.Ds4WinSettings.ChargingType;
 
@@ -341,7 +344,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.L2ModInfo[device].maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
             store.R2ModInfo[device].maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
             //store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
-            store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
+            //store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
             store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
             /*
@@ -395,6 +398,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
             store.RSModInfo[device].YAxisDeadInfo.MaxOutput =
                 Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            /*
+             * TODO: migrate
+             
             store.SXDeadzone[device] = SXDeadZone;
             store.SZDeadzone[device] = SZDeadZone;
             store.SXMaxzone[device] = Math.Min(Math.Max(SXMaxZone * 0.01, 0.0), 1.0);
@@ -408,6 +414,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.R2Sens[device] = Sensitivity.R2Sens;
             store.SXSens[device] = Sensitivity.SXSens;
             store.SZSens[device] = Sensitivity.SZSens;
+            */
 
             lightInfo.ChargingType = ChargingType;
             //store.ButtonMouseInfos[device].mouseAccel = MouseAcceleration;

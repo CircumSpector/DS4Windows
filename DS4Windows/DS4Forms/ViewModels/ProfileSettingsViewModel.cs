@@ -899,14 +899,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSSens
         {
-            get => Global.Instance.Config.LSSens[device];
-            set => Global.Instance.Config.LSSens[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSSens;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSSens = value;
         }
 
         public double RSSens
         {
-            get => Global.Instance.Config.RSSens[device];
-            set => Global.Instance.Config.RSSens[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSSens;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSSens = value;
         }
 
         public bool LSSquareStick
@@ -961,8 +961,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double RSRotation
         {
-            get => Global.Instance.Config.RSRotation[device] * 180.0 / Math.PI;
-            set => Global.Instance.Config.RSRotation[device] = value * Math.PI / 180.0;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSRotation * 180.0 / Math.PI;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSRotation = value * Math.PI / 180.0;
         }
 
         public bool LSCustomCurveSelected
@@ -1282,14 +1282,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double L2Sens
         {
-            get => Global.Instance.Config.L2Sens[device];
-            set => Global.Instance.Config.L2Sens[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).L2Sens;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).L2Sens = value;
         }
 
         public double R2Sens
         {
-            get => Global.Instance.Config.R2Sens[device];
-            set => Global.Instance.Config.R2Sens[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).R2Sens;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).R2Sens = value;
         }
 
         public int L2OutputCurveIndex
@@ -1427,12 +1427,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SXDeadZone
         {
-            get => Global.Instance.Config.SXDeadzone[device];
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone;
             set
             {
-                double temp = Global.Instance.Config.SXDeadzone[device];
+                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone;
                 if (temp == value) return;
-                Global.Instance.Config.SXDeadzone[device] = value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone = value;
                 SXDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1440,12 +1440,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SZDeadZone
         {
-            get => Global.Instance.Config.SZDeadzone[device];
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone;
             set
             {
-                double temp = Global.Instance.Config.SZDeadzone[device];
+                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone;
                 if (temp == value) return;
-                Global.Instance.Config.SZDeadzone[device] = value;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone = value;
                 SZDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1453,38 +1453,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SXMaxZone
         {
-            get => Global.Instance.Config.SXMaxzone[device];
-            set => Global.Instance.Config.SXMaxzone[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXMaxzone;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXMaxzone = value;
         }
 
         public double SZMaxZone
         {
-            get => Global.Instance.Config.SZMaxzone[device];
-            set => Global.Instance.Config.SZMaxzone[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZMaxzone;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZMaxzone = value;
         }
 
         public double SXAntiDeadZone
         {
-            get => Global.Instance.Config.SXAntiDeadzone[device];
-            set => Global.Instance.Config.SXAntiDeadzone[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXAntiDeadzone;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXAntiDeadzone = value;
         }
 
         public double SZAntiDeadZone
         {
-            get => Global.Instance.Config.SZAntiDeadzone[device];
-            set => Global.Instance.Config.SZAntiDeadzone[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZAntiDeadzone;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZAntiDeadzone = value;
         }
 
         public double SXSens
         {
-            get => Global.Instance.Config.SXSens[device];
-            set => Global.Instance.Config.SXSens[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens = value;
         }
 
         public double SZSens
         {
-            get => Global.Instance.Config.SZSens[device];
-            set => Global.Instance.Config.SZSens[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens = value;
         }
 
         public int SXOutputCurveIndex

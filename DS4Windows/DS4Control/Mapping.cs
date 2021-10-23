@@ -598,7 +598,7 @@ namespace DS4Windows
                 if (rotation > 0.0 || rotation < 0.0)
                     cState.RotateLSCoordinates(rotation);
 
-                var rotationRS = /*tempDoubleArray[device] =*/ Instance.Config.GetRSRotation(device);
+                var rotationRS = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSRotation;
                 if (rotationRS > 0.0 || rotationRS < 0.0)
                     cState.RotateRSCoordinates(rotationRS);
 
@@ -1180,7 +1180,7 @@ namespace DS4Windows
                 // Only apply deprecated Sensitivity modifier for Radial DZ
                 if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
                 {
-                    var lsSens = Instance.Config.GetLSSens(device);
+                    var lsSens = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSSens;
                     if (lsSens != 1.0)
                     {
                         dState.LX = (byte)Clamp(0, lsSens * (dState.LX - 128.0) + 128.0, 255);
@@ -1191,7 +1191,7 @@ namespace DS4Windows
                 // Only apply deprecated Sensitivity modifier for Radial DZ
                 if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
                 {
-                    var rsSens = Instance.Config.GetRSSens(device);
+                    var rsSens = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSSens;
                     if (rsSens != 1.0)
                     {
                         dState.RX = (byte)Clamp(0, rsSens * (dState.RX - 128.0) + 128.0, 255);
@@ -1199,11 +1199,11 @@ namespace DS4Windows
                     }
                 }
 
-                var l2Sens = Instance.Config.GetL2Sens(device);
+                var l2Sens = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).L2Sens;
                 if (l2Sens != 1.0)
                     dState.L2 = (byte)Clamp(0, l2Sens * dState.L2, 255);
 
-                var r2Sens = Instance.Config.GetR2Sens(device);
+                var r2Sens = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).R2Sens;
                 if (r2Sens != 1.0)
                     dState.R2 = (byte)Clamp(0, r2Sens * dState.R2, 255);
 
@@ -1581,14 +1581,14 @@ namespace DS4Windows
                 var saControls = Instance.Config.IsUsingSAForControls(device);
                 if (saControls && dState.Motion.outputGyroControls)
                 {
-                    var SXD = (int)(128d * Instance.Config.GetSXDeadZone(device));
-                    var SZD = (int)(128d * Instance.Config.GetSZDeadZone(device));
-                    var SXMax = Instance.Config.GetSXMaxZone(device);
-                    var SZMax = Instance.Config.GetSZMaxZone(device);
-                    var sxAntiDead = Instance.Config.GetSXAntiDeadZone(device);
-                    var szAntiDead = Instance.Config.GetSZAntiDeadZone(device);
-                    var sxsens = Instance.Config.GetSXSens(device);
-                    var szsens = Instance.Config.GetSZSens(device);
+                    var SXD = (int)(128d * ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone);
+                    var SZD = (int)(128d * ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone);
+                    var SXMax = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXMaxzone;
+                    var SZMax = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZMaxzone;
+                    var sxAntiDead = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXAntiDeadzone;
+                    var szAntiDead = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZAntiDeadzone;
+                    var sxsens = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens;
+                    var szsens = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens;
                     var result = 0;
 
                     int gyroX = cState.Motion.accelX, gyroZ = cState.Motion.accelZ;
@@ -4760,16 +4760,28 @@ namespace DS4Windows
                 switch (control)
                 {
                     case DS4Controls.GyroXPos:
-                        result = saControls ? Instance.Config.SXSens[device] * -eState.AccelX > 67 : false;
+                        result = saControls
+                            ? ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens *
+                            -eState.AccelX > 67
+                            : false;
                         break;
                     case DS4Controls.GyroXNeg:
-                        result = saControls ? Instance.Config.SXSens[device] * -eState.AccelX < -67 : false;
+                        result = saControls
+                            ? ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens *
+                            -eState.AccelX < -67
+                            : false;
                         break;
                     case DS4Controls.GyroZPos:
-                        result = saControls ? Instance.Config.SZSens[device] * eState.AccelZ > 67 : false;
+                        result = saControls
+                            ? ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens * eState.AccelZ >
+                              67
+                            : false;
                         break;
                     case DS4Controls.GyroZNeg:
-                        result = saControls ? Instance.Config.SZSens[device] * eState.AccelZ < -67 : false;
+                        result = saControls
+                            ? ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens * eState.AccelZ <
+                              -67
+                            : false;
                         break;
                 }
             }
@@ -5377,8 +5389,8 @@ namespace DS4Windows
             }
             else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
             {
-                var SXD = Instance.Config.GetSXDeadZone(device);
-                var SZD = Instance.Config.GetSZDeadZone(device);
+                var SXD = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone;
+                var SZD = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone;
                 var saControls = Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
@@ -5388,8 +5400,8 @@ namespace DS4Windows
                         if (saControls && -eState.AccelX > SXD * 10)
                         {
                             if (alt)
-                                result = (byte)Math.Min(255, 127 + Instance.Config.SXSens[device] * -eState.AccelX);
-                            else result = (byte)Math.Max(0, 127 - Instance.Config.SXSens[device] * -eState.AccelX);
+                                result = (byte)Math.Min(255, 127 + ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens * -eState.AccelX);
+                            else result = (byte)Math.Max(0, 127 - ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens * -eState.AccelX);
                         }
                         else
                         {
@@ -5402,8 +5414,8 @@ namespace DS4Windows
                     {
                         if (saControls && -eState.AccelX < -SXD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + Instance.Config.SXSens[device] * eState.AccelX);
-                            else result = (byte)Math.Max(0, 127 - Instance.Config.SXSens[device] * eState.AccelX);
+                            if (alt) result = (byte)Math.Min(255, 127 + ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens * eState.AccelX);
+                            else result = (byte)Math.Max(0, 127 - ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens * eState.AccelX);
                         }
                         else
                         {
@@ -5416,8 +5428,14 @@ namespace DS4Windows
                     {
                         if (saControls && eState.AccelZ > SZD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + Instance.Config.SZSens[device] * eState.AccelZ);
-                            else result = (byte)Math.Max(0, 127 - Instance.Config.SZSens[device] * eState.AccelZ);
+                            if (alt)
+                                result = (byte)Math.Min(255,
+                                    127 + ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens *
+                                    eState.AccelZ);
+                            else
+                                result = (byte)Math.Max(0,
+                                    127 - ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens *
+                                    eState.AccelZ);
                         }
                         else
                         {
@@ -5431,8 +5449,13 @@ namespace DS4Windows
                         if (saControls && eState.AccelZ < -SZD * 10)
                         {
                             if (alt)
-                                result = (byte)Math.Min(255, 127 + Instance.Config.SZSens[device] * -eState.AccelZ);
-                            else result = (byte)Math.Max(0, 127 - Instance.Config.SZSens[device] * -eState.AccelZ);
+                                result = (byte)Math.Min(255,
+                                    127 + ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens *
+                                    -eState.AccelZ);
+                            else
+                                result = (byte)Math.Max(0,
+                                    127 - ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens *
+                                    -eState.AccelZ);
                         }
                         else
                         {
@@ -5866,7 +5889,7 @@ namespace DS4Windows
 
                 // Apply deadzone (SA X-deadzone value). This code assumes that 20deg is the max deadzone anyone ever might wanna use (in practice effective deadzone 
                 // is probably just few degrees by using SXDeadZone values 0.01...0.05)
-                var sxDead = Instance.Config.GetSXDeadZone(device);
+                var sxDead = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone;
                 if (sxDead > 0)
                 {
                     var sxDeadInt = Convert.ToInt32(20.0 * C_WHEEL_ANGLE_PRECISION * sxDead);
@@ -5931,7 +5954,7 @@ namespace DS4Windows
                 //LogToGuiSACalibrationDebugMsg($"DBG gyro=({gyroAccelX}, {gyroAccelZ})  output=({exposedState.OutputAccelX}, {exposedState.OutputAccelZ})  PitRolYaw=({currentDeviceState.Motion.gyroPitch}, {currentDeviceState.Motion.gyroRoll}, {currentDeviceState.Motion.gyroYaw})  VelPitRolYaw=({currentDeviceState.Motion.angVelPitch}, {currentDeviceState.Motion.angVelRoll}, {currentDeviceState.Motion.angVelYaw})  angle={result / (1.0 * C_WHEEL_ANGLE_PRECISION)}  fullTurns={controller.wheelFullTurnCount}", false);
 
                 // Apply anti-deadzone (SA X-antideadzone value)
-                var sxAntiDead = Instance.Config.GetSXAntiDeadZone(device);
+                var sxAntiDead = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXAntiDeadzone;
 
                 int outputAxisMax, outputAxisMin, outputAxisZero;
                 if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType == OutContType.DS4)
