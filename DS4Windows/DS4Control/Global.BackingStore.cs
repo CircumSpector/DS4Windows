@@ -143,9 +143,6 @@ namespace DS4Windows
                     SASteeringWheelEmulationAxisType.None
                 };
 
-            public IList<int> SASteeringWheelEmulationRange { get; set; } =
-                new List<int> { 360, 360, 360, 360, 360, 360, 360, 360, 360 };
-
             public IList<bool> SATriggerCondition { get; set; } = new List<bool>
                 { true, true, true, true, true, true, true, true, true };
 
@@ -529,12 +526,7 @@ namespace DS4Windows
             {
                 return SASteeringWheelEmulationAxis[index];
             }
-
-            public int GetSASteeringWheelEmulationRange(int index)
-            {
-                return SASteeringWheelEmulationRange[index];
-            }
-
+            
             public int GetGyroMouseHorizontalAxis(int index)
             {
                 return GyroMouseHorizontalAxis[index];
@@ -3267,7 +3259,7 @@ namespace DS4Windows
 
                 //GyroMouseStickTriggerTurns[device] = true;
                 SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
-                SASteeringWheelEmulationRange[device] = 360;
+                //SASteeringWheelEmulationRange[device] = 360;
                 SAWheelFuzzValues[device] = 0;
                 WheelSmoothInfo[device].Reset();
                 TouchDisInvertTriggers[device] = new int[1] { -1 };

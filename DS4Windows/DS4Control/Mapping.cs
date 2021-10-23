@@ -5859,12 +5859,12 @@ namespace DS4Windows
                     controller.wheelCircleCenterPointLeft.Y = controller.wheel90DegPointLeft.Y;
 
                     AppLogger.Instance.LogToGui(
-                        $"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={Instance.Config.GetSASteeringWheelEmulationRange(device)}",
+                        $"Controller {1 + device} steering wheel emulation calibration values. Center=({controller.wheelCenterPoint.X}, {controller.wheelCenterPoint.Y})  90L=({controller.wheel90DegPointLeft.X}, {controller.wheel90DegPointLeft.Y})  90R=({controller.wheel90DegPointRight.X}, {controller.wheel90DegPointRight.Y})  Range={ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange}",
                         false);
                     controller.wheelPrevRecalibrateTime = DateTime.Now;
                 }
 
-                var maxRangeRight = Instance.Config.GetSASteeringWheelEmulationRange(device) / 2 *
+                var maxRangeRight = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange / 2 *
                                     C_WHEEL_ANGLE_PRECISION;
                 var maxRangeLeft = -maxRangeRight;
 

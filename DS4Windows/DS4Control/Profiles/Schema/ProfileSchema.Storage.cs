@@ -158,7 +158,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             SATriggers = store.SATriggers[device];
             SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
             SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
-            SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
+            //SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
             SASteeringWheelFuzz = store.SAWheelFuzzValues[device];
 
             SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing = store.WheelSmoothInfo[device].Enabled;
@@ -424,7 +424,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.SATriggers[device] = SATriggers;
             store.SATriggerCondition[device] = store.SaTriggerCondValue(SATriggerCond);
             store.SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxis;
-            store.SASteeringWheelEmulationRange[device] = SASteeringWheelEmulationRange;
+            //store.SASteeringWheelEmulationRange[device] = SASteeringWheelEmulationRange;
 
             store.WheelSmoothInfo[device].Enabled = SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing;
             store.WheelSmoothInfo[device].MinCutoff = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff;

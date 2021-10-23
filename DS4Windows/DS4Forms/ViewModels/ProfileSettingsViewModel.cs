@@ -674,7 +674,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 360;
-                switch(Global.Instance.Config.SASteeringWheelEmulationRange[device])
+                switch(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange)
                 {
                     case 90:
                         index = 0; break;
@@ -702,14 +702,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 int temp = saSteeringRangeValues[value];
-                Global.Instance.Config.SASteeringWheelEmulationRange[device] = temp;
+                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange = temp;
             }
         }
 
         public int SASteeringWheelEmulationRange
         {
-            get => Global.Instance.Config.SASteeringWheelEmulationRange[device];
-            set => Global.Instance.Config.SASteeringWheelEmulationRange[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange = value;
         }
 
         public int SASteeringWheelFuzz

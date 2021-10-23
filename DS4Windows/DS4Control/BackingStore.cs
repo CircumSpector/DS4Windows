@@ -98,8 +98,6 @@ namespace DS4Windows
 
         IList<IList<int>> TouchDisInvertTriggers { get; set; }
 
-        IList<int> SASteeringWheelEmulationRange { get; set; }
-
         IList<bool> SATriggerCondition { get; set; }
 
         IList<string> SATriggers { get; set; }
@@ -187,8 +185,6 @@ namespace DS4Windows
         SASteeringWheelEmulationAxisType GetSASteeringWheelEmulationAxis(int index);
 
         public string AxisOutputCurveString(int id);
-
-        int GetSASteeringWheelEmulationRange(int index);
 
         int GetGyroMouseHorizontalAxis(int index);
         
