@@ -138,8 +138,6 @@ namespace DS4Windows
 
         IList<string> SATriggers { get; set; }
 
-        IList<bool> SAMouseStickTriggerCond { get; set; }
-
         IList<string> SAMouseStickTriggers { get; set; }
 
         IList<SASteeringWheelEmulationAxisType> SASteeringWheelEmulationAxis { get; set; }
@@ -205,8 +203,6 @@ namespace DS4Windows
         GyroOutMode GetGyroOutMode(int device);
 
         string GetSAMouseStickTriggers(int device);
-
-        bool GetSAMouseStickTriggerCond(int device);
 
         int GetGyroMouseStickHorizontalAxis(int index);
 

@@ -2120,7 +2120,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickEvalCondIndex
         {
-            get => Global.Instance.Config.GetSAMouseStickTriggerCond(device) ? 0 : 1;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SAMouseStickTriggerCond ? 0 : 1;
             set => Global.Instance.Config.SetSaMouseStickTriggerCond(device, value == 0 ? "and" : "or");
         }
 

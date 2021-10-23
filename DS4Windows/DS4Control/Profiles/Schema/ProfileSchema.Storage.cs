@@ -180,7 +180,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroMouseMinThreshold = store.GyroMouseInfo[device].minThreshold;
             GyroOutputMode = store.GyroOutputMode[device];
             GyroMouseStickTriggers = store.SAMouseStickTriggers[device];
-            GyroMouseStickTriggerCond = store.SaTriggerCondString(store.SAMouseStickTriggerCond[device]);
+            //GyroMouseStickTriggerCond = store.SaTriggerCondString(store.SAMouseStickTriggerCond[device]);
             GyroMouseStickHAxis = store.GyroMouseStickHorizontalAxis[device];
             GyroMouseStickDeadZone = store.GyroMouseStickInfo[device].DeadZone;
             GyroMouseStickMaxZone = store.GyroMouseStickInfo[device].MaxZone;
@@ -428,7 +428,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.GyroOutputMode[device] = GyroOutputMode;
 
             store.SAMouseStickTriggers[device] = GyroMouseStickTriggers;
-            store.SAMouseStickTriggerCond[device] = store.SaTriggerCondValue(GyroMouseStickTriggerCond);
+            //store.SAMouseStickTriggerCond[device] = store.SaTriggerCondValue(GyroMouseStickTriggerCond);
             store.GyroMouseStickHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseStickHAxis), 1);
             store.GyroMouseStickInfo[device].DeadZone = GyroMouseStickDeadZone;
             store.GyroMouseStickInfo[device].MaxZone = Math.Max(GyroMouseStickMaxZone, 1);

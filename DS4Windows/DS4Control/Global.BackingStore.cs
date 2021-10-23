@@ -130,9 +130,6 @@ namespace DS4Windows
 
             public ulong LastVersionCheckedNumber { get; set; }
 
-            public IList<bool> SAMouseStickTriggerCond { get; set; } = new List<bool>
-                { true, true, true, true, true, true, true, true, true };
-
             public IList<string> SAMouseStickTriggers { get; set; } = new List<string>
                 { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
 
@@ -553,11 +550,6 @@ namespace DS4Windows
                 return SAMouseStickTriggers[device];
             }
 
-            public bool GetSAMouseStickTriggerCond(int device)
-            {
-                return SAMouseStickTriggerCond[device];
-            }
-
             public int GetGyroMouseStickHorizontalAxis(int index)
             {
                 return GyroMouseStickHorizontalAxis[index];
@@ -837,9 +829,10 @@ namespace DS4Windows
                 SATriggerCondition[index] = SaTriggerCondValue(text);
             }
 
+            [Obsolete]
             public void SetSaMouseStickTriggerCond(int index, string text)
             {
-                SAMouseStickTriggerCond[index] = SaTriggerCondValue(text);
+                //SAMouseStickTriggerCond[index] = SaTriggerCondValue(text);
             }
 
             public void SetGyroMouseDZ(int index, int value, ControlService control)
@@ -2655,7 +2648,7 @@ namespace DS4Windows
 
                 GyroOutputMode[device] = GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
-                SAMouseStickTriggerCond[device] = true;
+                //SAMouseStickTriggerCond[device] = true;
                 //GyroMouseStickTriggerTurns[device] = false;
                 GyroMouseStickInfo[device].UseSmoothing = true;
                 GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
@@ -2689,7 +2682,7 @@ namespace DS4Windows
 
                 GyroOutputMode[device] = GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
-                SAMouseStickTriggerCond[device] = true;
+                //SAMouseStickTriggerCond[device] = true;
                 //GyroMouseStickTriggerTurns[device] = false;
                 GyroMouseStickInfo[device].UseSmoothing = true;
                 GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
@@ -3410,7 +3403,7 @@ namespace DS4Windows
                 SATriggerCondition[device] = true;
                 GyroOutputMode[device] = GyroOutMode.Controls;
                 SAMouseStickTriggers[device] = "-1";
-                SAMouseStickTriggerCond[device] = true;
+                //SAMouseStickTriggerCond[device] = true;
 
                 GyroMouseStickInfo[device].Reset();
                 GyroSwipeInfo[device].Reset();
