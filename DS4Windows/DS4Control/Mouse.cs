@@ -182,7 +182,7 @@ namespace DS4Windows
                 else
                     s.Motion.outputGyroControls = false;
             }
-            else if (outMode == GyroOutMode.Mouse && Global.Instance.Config.GetGyroSensitivity(deviceNum) > 0)
+            else if (outMode == GyroOutMode.Mouse && ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroSensitivity > 0)
             {
                 s = dev.GetCurrentStateReference();
 

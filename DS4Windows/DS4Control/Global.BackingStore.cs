@@ -358,14 +358,6 @@ namespace DS4Windows
             public IList<bool> ContainsCustomExtras { get; set; } = new bool[TEST_PROFILE_ITEM_COUNT]
                 { false, false, false, false, false, false, false, false, false };
 
-            public IList<int> GyroSensitivity { get; set; } = new int[TEST_PROFILE_ITEM_COUNT]
-                { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-
-            public IList<int> GyroSensVerticalScale { get; set; } = new int[TEST_PROFILE_ITEM_COUNT]
-                { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-
-            public IList<int> GyroInvert { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
             public IList<GyroMouseInfo> GyroMouseInfo { get; set; } = new List<GyroMouseInfo>
             {
                 new(), new(),
@@ -541,21 +533,6 @@ namespace DS4Windows
             public int GetSASteeringWheelEmulationRange(int index)
             {
                 return SASteeringWheelEmulationRange[index];
-            }
-
-            public int GetGyroSensitivity(int index)
-            {
-                return GyroSensitivity[index];
-            }
-
-            public int GetGyroSensVerticalScale(int index)
-            {
-                return GyroSensVerticalScale[index];
-            }
-
-            public int GetGyroInvert(int index)
-            {
-                return GyroInvert[index];
             }
 
             public int GetGyroMouseHorizontalAxis(int index)
@@ -3294,9 +3271,9 @@ namespace DS4Windows
                 SAWheelFuzzValues[device] = 0;
                 WheelSmoothInfo[device].Reset();
                 TouchDisInvertTriggers[device] = new int[1] { -1 };
-                GyroSensitivity[device] = 100;
-                GyroSensVerticalScale[device] = 100;
-                GyroInvert[device] = 0;
+                //GyroSensitivity[device] = 100;
+                //GyroSensVerticalScale[device] = 100;
+                //GyroInvert[device] = 0;
                 //GyroTriggerTurns[device] = true;
                 GyroMouseInfo[device].Reset();
 

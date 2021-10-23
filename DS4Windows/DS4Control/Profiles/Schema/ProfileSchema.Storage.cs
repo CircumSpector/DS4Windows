@@ -167,9 +167,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             TouchDisInvTriggers = store.TouchDisInvertTriggers[device].ToList();
 
-            GyroSensitivity = store.GyroSensitivity[device];
-            GyroSensVerticalScale = store.GyroSensVerticalScale[device];
-            GyroInvert = store.GyroInvert[device];
+            //GyroSensitivity = store.GyroSensitivity[device];
+            //GyroSensVerticalScale = store.GyroSensVerticalScale[device];
+            //GyroInvert = store.GyroInvert[device];
 
             GyroMouseSmoothingSettings.UseSmoothing = store.GyroMouseInfo[device].enableSmoothing;
             GyroMouseSmoothingSettings.SmoothingMethod = store.GyroMouseInfo[device].SmoothMethodIdentifier();
@@ -467,9 +467,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             store.TouchOutMode[device] = TouchpadOutputMode;
             store.TouchDisInvertTriggers[device] = TouchDisInvTriggers;
-            store.GyroSensitivity[device] = GyroSensitivity;
-            store.GyroSensVerticalScale[device] = GyroSensVerticalScale;
-            store.GyroInvert[device] = GyroInvert;
+            //store.GyroSensitivity[device] = GyroSensitivity;
+            //store.GyroSensVerticalScale[device] = GyroSensVerticalScale;
+            //store.GyroInvert[device] = GyroInvert;
 
             store.GyroMouseInfo[device].enableSmoothing = GyroMouseSmoothingSettings.UseSmoothing;
             store.GyroMouseInfo[device].DetermineSmoothMethod(GyroMouseSmoothingSettings.SmoothingMethod);

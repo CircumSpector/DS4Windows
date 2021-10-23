@@ -1767,14 +1767,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroSensitivity
         {
-            get => Global.Instance.Config.GyroSensitivity[device];
-            set => Global.Instance.Config.GyroSensitivity[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensitivity;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensitivity = value;
         }
 
         public int GyroVertScale
         {
-            get => Global.Instance.Config.GyroSensVerticalScale[device];
-            set => Global.Instance.Config.GyroSensVerticalScale[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensVerticalScale;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensVerticalScale = value;
         }
 
         public int GyroMouseEvalCondIndex
@@ -1802,32 +1802,32 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseInvertX
         {
-            get => (Global.Instance.Config.GyroInvert[device] & 2) == 2;
+            get => (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert & 2) == 2;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroInvert[device] |= 2;
+                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert |= 2;
                 }
                 else
                 {
-                    Global.Instance.Config.GyroInvert[device] &= ~2;
+                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert &= ~2;
                 }
             }
         }
 
         public bool GyroMouseInvertY
         {
-            get => (Global.Instance.Config.GyroInvert[device] & 1) == 1;
+            get => (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert & 1) == 1;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroInvert[device] |= 1;
+                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert |= 1;
                 }
                 else
                 {
-                    Global.Instance.Config.GyroInvert[device] &= ~1;
+                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert &= ~1;
                 }
             }
         }

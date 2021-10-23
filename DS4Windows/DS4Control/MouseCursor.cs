@@ -95,7 +95,7 @@ namespace DS4Windows
             gyroSmooth = tempInfo.enableSmoothing;
             var gyroSmoothWeight = 0.0;
 
-            coefficient = Global.Instance.Config.GetGyroSensitivity(deviceNumber) * 0.01 *
+            coefficient = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).GyroSensitivity * 0.01 *
                           gyroMouseSensSettings.mouseCoefficient;
             var offset = gyroMouseSensSettings.mouseOffset;
             if (gyroSmooth) offset = gyroMouseSensSettings.mouseSmoothOffset;
@@ -128,7 +128,7 @@ namespace DS4Windows
                   + normX * (offset * signX)
                 : 0;
 
-            verticalScale = Global.Instance.Config.GetGyroSensVerticalScale(deviceNumber) * 0.01;
+            verticalScale = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).GyroSensVerticalScale * 0.01;
             var yMotion = deltaY != 0
                 ? coefficient * verticalScale * (deltaY * tempDouble)
                   + normY * (offset * signY)
@@ -209,7 +209,7 @@ namespace DS4Windows
                 }
             }
 
-            var gyroInvert = Global.Instance.Config.GetGyroInvert(deviceNumber);
+            var gyroInvert = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).GyroInvert;
             if ((gyroInvert & 0x02) == 2)
                 xAction *= -1;
 

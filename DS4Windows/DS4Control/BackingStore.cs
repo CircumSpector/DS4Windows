@@ -64,8 +64,6 @@ namespace DS4Windows
 
         IList<BezierCurve> SZOutBezierCurveObj { get; set; }
 
-        IList<int> GyroInvert { get; set; }
-
         IList<GyroMouseInfo> GyroMouseInfo { get; set; }
 
         IList<int> GyroMouseHorizontalAxis { get; set; }
@@ -95,10 +93,6 @@ namespace DS4Windows
         IList<bool> ContainsCustomAction { get; set; }
 
         IList<bool> ContainsCustomExtras { get; set; }
-
-        IList<int> GyroSensitivity { get; set; }
-
-        IList<int> GyroSensVerticalScale { get; set; }
 
         IList<TouchpadOutMode> TouchOutMode { get; set; }
 
@@ -195,12 +189,6 @@ namespace DS4Windows
         public string AxisOutputCurveString(int id);
 
         int GetSASteeringWheelEmulationRange(int index);
-
-        int GetGyroSensitivity(int index);
-
-        int GetGyroSensVerticalScale(int index);
-
-        int GetGyroInvert(int index);
 
         int GetGyroMouseHorizontalAxis(int index);
         
