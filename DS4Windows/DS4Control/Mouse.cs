@@ -711,7 +711,7 @@ namespace DS4Windows
 
 
             int deltaX = 0, deltaY = 0;
-            deltaX = Global.Instance.Config.GetGyroMouseStickHorizontalAxis(0) == 0
+            deltaX = ProfilesService.Instance.ActiveProfiles.ElementAt(0).GyroMouseStickHorizontalAxis == 0
                 ? arg.sixAxis.gyroYawFull
                 : arg.sixAxis.gyroRollFull;
             deltaY = -arg.sixAxis.gyroPitchFull;

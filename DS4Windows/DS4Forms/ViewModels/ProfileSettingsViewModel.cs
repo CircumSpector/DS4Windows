@@ -1785,8 +1785,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseXAxis
         {
-            get => Global.Instance.Config.GyroMouseHorizontalAxis[device];
-            set => Global.Instance.Config.GyroMouseHorizontalAxis[device] = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseHorizontalAxis;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseHorizontalAxis = value;
         }
 
         public double GyroMouseMinThreshold
@@ -2126,8 +2126,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickXAxis
         {
-            get => Global.Instance.Config.GyroMouseStickHorizontalAxis[device];
-            set => Global.Instance.Config.GyroMouseStickHorizontalAxis[device] = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickHorizontalAxis;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickHorizontalAxis = value;
         }
 
         public bool GyroMouseStickInvertX

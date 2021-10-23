@@ -340,10 +340,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<int> GyroMouseHorizontalAxis { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-            public IList<int> GyroMouseStickHorizontalAxis { get; set; } = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            
             public IList<double> TrackballFriction { get; set; } = new List<double>
                 { 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 };
 
@@ -473,11 +469,6 @@ namespace DS4Windows
                 return SAMouseStickTriggers[device];
             }
 
-            public int GetGyroMouseStickHorizontalAxis(int index)
-            {
-                return GyroMouseStickHorizontalAxis[index];
-            }
-
             public GyroMouseStickInfo GetGyroMouseStickInfo(int device)
             {
                 return GyroMouseStickInfo[device];
@@ -498,11 +489,6 @@ namespace DS4Windows
                 return GyroOutputMode[index] == GyroOutMode.Controls;
             }
             
-            public int GetGyroMouseHorizontalAxis(int index)
-            {
-                return GyroMouseHorizontalAxis[index];
-            }
-
             public TriggerDeadZoneZInfo GetL2ModInfo(int index)
             {
                 return L2ModInfo[index];
@@ -3225,7 +3211,7 @@ namespace DS4Windows
                 //GyroTriggerTurns[device] = true;
                 GyroMouseInfo[device].Reset();
 
-                GyroMouseHorizontalAxis[device] = 0;
+                //GyroMouseHorizontalAxis[device] = 0;
                 //GyroMouseToggle[device] = false;
                 SquStickInfo[device].LSMode = false;
                 SquStickInfo[device].RSMode = false;

@@ -65,11 +65,7 @@ namespace DS4Windows
         IList<BezierCurve> SZOutBezierCurveObj { get; set; }
 
         IList<GyroMouseInfo> GyroMouseInfo { get; set; }
-
-        IList<int> GyroMouseHorizontalAxis { get; set; }
-
-        IList<int> GyroMouseStickHorizontalAxis { get; set; }
-
+        
         IList<double> TrackballFriction { get; set; }
 
         IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; }
@@ -156,8 +152,6 @@ namespace DS4Windows
 
         string GetSAMouseStickTriggers(int device);
 
-        int GetGyroMouseStickHorizontalAxis(int index);
-
         GyroMouseStickInfo GetGyroMouseStickInfo(int device);
 
         GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device);
@@ -172,8 +166,6 @@ namespace DS4Windows
 
         public string AxisOutputCurveString(int id);
 
-        int GetGyroMouseHorizontalAxis(int index);
-        
         int GetIdleDisconnectTimeout(int index);
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
