@@ -955,8 +955,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSRotation
         {
-            get => Global.Instance.Config.LSRotation[device] * 180.0 / Math.PI;
-            set => Global.Instance.Config.LSRotation[device] = value * Math.PI / 180.0;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSRotation * 180.0 / Math.PI;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSRotation = value * Math.PI / 180.0;
         }
 
         public double RSRotation

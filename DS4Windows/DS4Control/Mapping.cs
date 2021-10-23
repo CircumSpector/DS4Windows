@@ -594,7 +594,7 @@ namespace DS4Windows
         {
             using (GlobalTracer.Instance.BuildSpan(nameof(SetCurveAndDeadzone)).StartActive(true))
             {
-                var rotation = /*tempDoubleArray[device] =*/ Instance.Config.GetLSRotation(device);
+                var rotation = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSRotation;
                 if (rotation > 0.0 || rotation < 0.0)
                     cState.RotateLSCoordinates(rotation);
 

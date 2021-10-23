@@ -233,9 +233,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<double> LSRotation { get; set; } =
-                new List<double> { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
             public IList<double> RSRotation { get; set; } =
                 new List<double> { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
@@ -673,11 +670,6 @@ namespace DS4Windows
             public double GetSZMaxZone(int index)
             {
                 return SZMaxzone[index];
-            }
-
-            public double GetLSRotation(int index)
-            {
-                return LSRotation[index];
             }
 
             public double GetRSRotation(int index)
@@ -3379,7 +3371,6 @@ namespace DS4Windows
                 L2ModInfo[device].Reset();
                 R2ModInfo[device].Reset();
 
-                LSRotation[device] = 0.0;
                 RSRotation[device] = 0.0;
                 SXDeadzone[device] = SZDeadzone[device] = 0.25;
                 SXMaxzone[device] = SZMaxzone[device] = 1.0;

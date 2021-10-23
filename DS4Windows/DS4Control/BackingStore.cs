@@ -76,8 +76,6 @@ namespace DS4Windows
 
         IList<double> RSSens { get; set; }
 
-        IList<double> LSRotation { get; set; }
-
         IList<double> RSRotation { get; set; }
 
         IList<BezierCurve> LSOutBezierCurveObj { get; set; }
@@ -262,8 +260,6 @@ namespace DS4Windows
         double GetSXMaxZone(int index);
 
         double GetSZMaxZone(int index);
-
-        double GetLSRotation(int index);
 
         double GetRSRotation(int index);
 

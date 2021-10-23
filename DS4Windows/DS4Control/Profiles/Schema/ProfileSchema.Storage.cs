@@ -110,7 +110,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             RSAxialDeadOptions.MaxOutputX = store.RSModInfo[device].XAxisDeadInfo.MaxOutput;
             RSAxialDeadOptions.MaxOutputY = store.RSModInfo[device].YAxisDeadInfo.MaxOutput;
 
-            LSRotation = Convert.ToInt32(store.LSRotation[device] * 180.0 / Math.PI);
+            //LSRotation = Convert.ToInt32(store.LSRotation[device] * 180.0 / Math.PI);
             RSRotation = Convert.ToInt32(store.RSRotation[device] * 180.0 / Math.PI);
 
             LSFuzz = store.LSModInfo[device].Fuzz;
@@ -340,7 +340,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.R2ModInfo[device].maxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
             store.L2ModInfo[device].maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
             store.R2ModInfo[device].maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
-            store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
+            //store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
             store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
             store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
