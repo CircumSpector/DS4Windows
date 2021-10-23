@@ -22,7 +22,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of currently active profiles per controller slot.
         /// </summary>
-        IReadOnlyCollection<DS4WindowsProfile> ControllerSlotProfiles { get; }
+        IReadOnlyCollection<DS4WindowsProfile> ActiveProfiles { get; }
 
         /// <summary>
         ///     The profile copy that is currently being edited.
@@ -529,7 +529,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of currently active profiles per controller slot.
         /// </summary>
-        public IReadOnlyCollection<DS4WindowsProfile> ControllerSlotProfiles =>
+        public IReadOnlyCollection<DS4WindowsProfile> ActiveProfiles =>
             controllerSlotProfiles.ToImmutableList();
 
         /// <summary>

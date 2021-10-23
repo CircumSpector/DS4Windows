@@ -73,7 +73,7 @@ namespace DS4Windows
                 outDS4Report.bTriggerL = state.L2;
                 outDS4Report.bTriggerR = state.R2;
 
-                var steeringWheelMappedAxis = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
+                var steeringWheelMappedAxis = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
                 switch (steeringWheelMappedAxis)
                 {
                     case SASteeringWheelEmulationAxisType.None:

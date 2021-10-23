@@ -275,8 +275,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LinkedProfile
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(devIndex).IsLinkedProfile;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(devIndex).IsLinkedProfile = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(devIndex).IsLinkedProfile;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(devIndex).IsLinkedProfile = value;
         }
 
         public int DevIndex => devIndex;

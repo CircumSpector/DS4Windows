@@ -325,15 +325,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int RumbleBoost
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RumbleBoost;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RumbleBoost = (byte)value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleBoost;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleBoost = (byte)value;
         }
 
         public int RumbleAutostopTime
         {
             // RumbleAutostopTime value is in milliseconds in XML config file, but GUI uses just seconds
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RumbleAutostopTime / 1000;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RumbleAutostopTime = value * 1000;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleAutostopTime / 1000;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleAutostopTime = value * 1000;
         }
 
         private bool heavyRumbleActive;
@@ -368,12 +368,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseSensitivity
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
             set
             {
-                int temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
+                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.ButtonSensitivity = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.ButtonSensitivity = value;
                 ButtonMouseSensitivityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -381,13 +381,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseVerticalScale
         {
-            get => Convert.ToInt32(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale * 100.0);
+            get => Convert.ToInt32(ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale * 100.0);
             set
             {
-                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale;
+                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale;
                 double attemptValue = value * 0.01;
                 if (temp == attemptValue) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale = attemptValue;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale = attemptValue;
                 ButtonMouseVerticalScaleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -395,17 +395,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private double RawButtonMouseOffset
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset;
         }
 
         public double ButtonMouseOffset
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
             set
             {
-                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
+                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
                 if (temp == value) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset = value * 0.01;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset = value * 0.01;
                 ButtonMouseOffsetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -439,20 +439,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool MouseAcceleration
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel = value;
         }
 
         public bool EnableTouchpadToggle
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableTouchToggle;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableTouchToggle = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableTouchToggle;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableTouchToggle = value;
         }
 
         public bool EnableOutputDataToDS4
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableOutputDataToDS4;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).EnableOutputDataToDS4 = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableOutputDataToDS4;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableOutputDataToDS4 = value;
         }
 
         public bool LaunchProgramExists
@@ -513,8 +513,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool DInputOnly
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DisableVirtualController;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DisableVirtualController = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DisableVirtualController;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DisableVirtualController = value;
         }
         public EventHandler DInputOnlyChanged;
 
@@ -560,7 +560,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int type = 0;
-                switch (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType)
                 {
                     case OutContType.X360:
                         type = 0;
@@ -651,17 +651,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
         public event EventHandler GyroOutModeIndexChanged;
 
-        public OutContType ContType => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType;
+        public OutContType ContType => ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType;
 
         public int SASteeringWheelEmulationAxisIndex
         {
-            get => (int)ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
+            get => (int)ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
             set
             {
-                int temp = (int)ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
+                int temp = (int)ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
                 if (temp == value) return;
 
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis = (SASteeringWheelEmulationAxisType)value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis = (SASteeringWheelEmulationAxisType)value;
                 SASteeringWheelEmulationAxisIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -674,7 +674,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 360;
-                switch(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange)
+                switch(ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange)
                 {
                     case 90:
                         index = 0; break;
@@ -702,20 +702,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 int temp = saSteeringRangeValues[value];
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange = temp;
             }
         }
 
         public int SASteeringWheelEmulationRange
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationRange = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange = value;
         }
 
         public int SASteeringWheelFuzz
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SAWheelFuzzValues;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SAWheelFuzzValues = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SAWheelFuzzValues;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SAWheelFuzzValues = value;
         }
 
         public bool SASteeringWheelUseSmoothing
@@ -899,14 +899,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSSens
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSSens;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSSens = value;
         }
 
         public double RSSens
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSSens;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSSens = value;
         }
 
         public bool LSSquareStick
@@ -955,14 +955,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSRotation
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSRotation * 180.0 / Math.PI;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LSRotation = value * Math.PI / 180.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSRotation * 180.0 / Math.PI;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSRotation = value * Math.PI / 180.0;
         }
 
         public double RSRotation
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSRotation * 180.0 / Math.PI;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).RSRotation = value * Math.PI / 180.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSRotation * 180.0 / Math.PI;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSRotation = value * Math.PI / 180.0;
         }
 
         public bool LSCustomCurveSelected
@@ -1282,14 +1282,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double L2Sens
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).L2Sens;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).L2Sens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2Sens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2Sens = value;
         }
 
         public double R2Sens
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).R2Sens;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).R2Sens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2Sens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2Sens = value;
         }
 
         public int L2OutputCurveIndex
@@ -1427,12 +1427,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SXDeadZone
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone;
             set
             {
-                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone;
+                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone;
                 if (temp == value) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXDeadzone = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadzone = value;
                 SXDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1440,12 +1440,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SZDeadZone
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone;
             set
             {
-                double temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone;
+                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone;
                 if (temp == value) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZDeadzone = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadzone = value;
                 SZDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1453,38 +1453,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double SXMaxZone
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXMaxzone;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXMaxzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxzone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxzone = value;
         }
 
         public double SZMaxZone
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZMaxzone;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZMaxzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxzone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxzone = value;
         }
 
         public double SXAntiDeadZone
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXAntiDeadzone;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXAntiDeadzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadzone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadzone = value;
         }
 
         public double SZAntiDeadZone
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZAntiDeadzone;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZAntiDeadzone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadzone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadzone = value;
         }
 
         public double SXSens
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SXSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens = value;
         }
 
         public double SZSens
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SZSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens = value;
         }
 
         public int SXOutputCurveIndex
@@ -1575,10 +1575,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchSenExists
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity != 0;
             set
             {
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity = value ? (byte)100 : (byte)0;
                 TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1587,12 +1587,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchSens
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity;
             set
             {
-                int temp =ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity;
+                int temp =ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchSensitivity = (byte)value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity = (byte)value;
                 if (value == 0) TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1601,10 +1601,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchScrollExists
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity != 0;
             set
             {
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity = value ? (byte)100 : (byte)0;
                 TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1613,12 +1613,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchScroll
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity;
             set
             {
-                int temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity;
+                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).ScrollSensitivity = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity = value;
                 if (value == 0) TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1627,10 +1627,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchTapExists
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity != 0;
             set
             {
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity = value ? (byte)100 : (byte)0;
                 TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1639,12 +1639,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchTap
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity;
             set
             {
-                int temp = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity;
+                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TapSensitivity = (byte)value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity = (byte)value;
                 if (value == 0) TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -1653,14 +1653,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchDoubleTap
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DoubleTap;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).DoubleTap = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DoubleTap;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DoubleTap = value;
         }
         
         public bool TouchJitter
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchpadJitterCompensation;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchpadJitterCompensation = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchpadJitterCompensation;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchpadJitterCompensation = value;
         }
 
         private int[] touchpadInvertToValue = new int[4] { 0, 2, 1, 3 };
@@ -1668,33 +1668,33 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int invert = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchPadInvert;
+                int invert = ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchPadInvert;
                 int index = Array.IndexOf(touchpadInvertToValue, invert);
                 return index;
             }
             set
             {
                 int invert = touchpadInvertToValue[value];
-                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchPadInvert = invert;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchPadInvert = invert;
             }
         }
 
         public bool LowerRightTouchRMB
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LowerRCOn;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).LowerRCOn = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LowerRCOn;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LowerRCOn = value;
         }
 
         public bool TouchpadClickPassthru
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchClickPassthru;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TouchClickPassthru = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchClickPassthru;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchClickPassthru = value;
         }
 
         public bool StartTouchpadOff
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).StartTouchpadOff;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).StartTouchpadOff = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).StartTouchpadOff;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).StartTouchpadOff = value;
         }
 
         public double TouchRelMouseRotation
@@ -1716,8 +1716,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool TouchTrackball
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TrackballMode;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).TrackballMode = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballMode;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballMode = value;
         }
 
         public double TouchTrackballFriction
@@ -1761,20 +1761,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseTurns
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroTriggerTurns;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroTriggerTurns = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroTriggerTurns;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroTriggerTurns = value;
         }
 
         public int GyroSensitivity
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensitivity;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensitivity = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensitivity;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensitivity = value;
         }
 
         public int GyroVertScale
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensVerticalScale;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroSensVerticalScale = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensVerticalScale;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensVerticalScale = value;
         }
 
         public int GyroMouseEvalCondIndex
@@ -1802,32 +1802,32 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseInvertX
         {
-            get => (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert & 2) == 2;
+            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert & 2) == 2;
             set
             {
                 if (value)
                 {
-                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert |= 2;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert |= 2;
                 }
                 else
                 {
-                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert &= ~2;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert &= ~2;
                 }
             }
         }
 
         public bool GyroMouseInvertY
         {
-            get => (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert & 1) == 1;
+            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert & 1) == 1;
             set
             {
                 if (value)
                 {
-                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert |= 1;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert |= 1;
                 }
                 else
                 {
-                    ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroInvert &= ~1;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert &= ~1;
                 }
             }
         }
@@ -2037,19 +2037,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseToggle
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroMouseToggle;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseToggle;
             set => Global.Instance.Config.SetGyroMouseToggle(device, value, rootHub);
         }
 
         public bool GyroMouseStickTurns
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroMouseStickTriggerTurns;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroMouseStickTriggerTurns = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickTriggerTurns;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickTriggerTurns = value;
         }
 
         public bool GyroMouseStickToggle
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroMouseStickToggle;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickToggle;
             set => Global.Instance.Config.SetGyroMouseStickToggle(device, value, rootHub);
         }
 
@@ -2120,7 +2120,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickEvalCondIndex
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SAMouseStickTriggerCond ? 0 : 1;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SAMouseStickTriggerCond ? 0 : 1;
             set => Global.Instance.Config.SetSaMouseStickTriggerCond(device, value == 0 ? "and" : "or");
         }
 
@@ -2203,19 +2203,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroControlsTurns
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns = value;
         }
 
         public int GyroControlsEvalCondIndex
         {
-            get =>ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerCond ? 0 : 1;
-            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerCond = value == 0 ? true : false;
+            get =>ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerCond ? 0 : 1;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerCond = value == 0 ? true : false;
         }
 
         public bool GyroControlsToggle
         {
-            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.TriggerToggle;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerToggle;
             set => Global.Instance.Config.SetGyroControlsToggle(device, value, rootHub);
         }
 
@@ -2308,7 +2308,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             funcDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
             Global.OutDevTypeTemp[device] = OutContType.X360;
-            tempBtPollRate = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).BluetoothPollRate;
+            tempBtPollRate = ProfilesService.Instance.ActiveProfiles.ElementAt(device).BluetoothPollRate;
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
@@ -2841,13 +2841,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.Triggers = string.Join(",", triggerList.ToArray());
+            ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.Triggers = string.Join(",", triggerList.ToArray());
             GyroControlsTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroControlsTrig(ContextMenu menu)
         {
-            string[] triggers = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).GyroControlsInfo.Triggers.Split(',');
+            string[] triggers = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.Triggers.Split(',');
             int itemCount = menu.Items.Count;
             List<string> triggerName = new List<string>();
             foreach (string trig in triggers)
@@ -2944,8 +2944,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public void UpdateLateProperties()
         {
             tempControllerIndex = ControllerTypeIndex;
-            Global.OutDevTypeTemp[device] = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).OutputDeviceType;
-            tempBtPollRate = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).BluetoothPollRate;
+            Global.OutDevTypeTemp[device] = ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType;
+            tempBtPollRate = ProfilesService.Instance.ActiveProfiles.ElementAt(device).BluetoothPollRate;
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
             gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();

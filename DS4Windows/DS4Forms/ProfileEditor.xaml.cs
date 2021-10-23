@@ -815,8 +815,8 @@ namespace DS4WinWPF.DS4Forms
 
         private void SetLateProperties(bool fullSave = true)
         {
-            ProfilesService.Instance.ControllerSlotProfiles.ElementAt(DeviceNum).BluetoothPollRate = profileSettingsVM.TempBTPollRateIndex;
-            ProfilesService.Instance.ControllerSlotProfiles.ElementAt(DeviceNum).OutputDeviceType = profileSettingsVM.TempConType;
+            ProfilesService.Instance.ActiveProfiles.ElementAt(DeviceNum).BluetoothPollRate = profileSettingsVM.TempBTPollRateIndex;
+            ProfilesService.Instance.ActiveProfiles.ElementAt(DeviceNum).OutputDeviceType = profileSettingsVM.TempConType;
             if (fullSave) Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
         }
 

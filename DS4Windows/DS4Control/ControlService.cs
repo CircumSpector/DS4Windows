@@ -790,7 +790,7 @@ namespace DS4Windows
 
         public void PluginOutDev(int index, DS4Device device)
         {
-            var profile = profilesService.ControllerSlotProfiles.ElementAt(index);
+            var profile = profilesService.ActiveProfiles.ElementAt(index);
 
             if (profile.DisableVirtualController)
                 return;
@@ -953,7 +953,7 @@ namespace DS4Windows
 
         public void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false)
         {
-            if (profilesService.ControllerSlotProfiles.ElementAt(index).DisableVirtualController)
+            if (profilesService.ActiveProfiles.ElementAt(index).DisableVirtualController)
                 return;
 
             //OutContType contType = Global.OutContType[index];
@@ -986,7 +986,7 @@ namespace DS4Windows
                 //LogDebug(tempType + " Controller # " + (index + 1) + " unplugged");
             }
 
-            profilesService.ControllerSlotProfiles.ElementAt(index).IsOutputDeviceEnabled = false;
+            profilesService.ActiveProfiles.ElementAt(index).IsOutputDeviceEnabled = false;
         }
 
         public async Task<bool> Start(bool showInLog = true)
@@ -1161,7 +1161,7 @@ namespace DS4Windows
 
                             profilesService.ControllerArrived(i, device.MacAddress);
 
-                            var profile = profilesService.ControllerSlotProfiles.ElementAt(i);
+                            var profile = profilesService.ActiveProfiles.ElementAt(i);
 
                             if (profileLoaded || useAutoProfile)
                             {
@@ -1357,7 +1357,7 @@ namespace DS4Windows
                 var anyUnplugged = false;
                 for (int i = 0, controllerCount = DS4Controllers.Length; i < controllerCount; i++)
                 {
-                    var profile = profilesService.ControllerSlotProfiles.ElementAt(i);
+                    var profile = profilesService.ActiveProfiles.ElementAt(i);
                     var tempDevice = DS4Controllers[i];
 
                     if (tempDevice == null) continue;
@@ -1584,7 +1584,7 @@ namespace DS4Windows
 
                         profilesService.ControllerArrived(index, device.MacAddress);
 
-                        var profile = profilesService.ControllerSlotProfiles.ElementAt(index);
+                        var profile = profilesService.ActiveProfiles.ElementAt(index);
 
                         if (profileLoaded || useAutoProfile)
                         {
@@ -1655,13 +1655,13 @@ namespace DS4Windows
 
         public void CheckProfileOptions(int ind, DS4Device device, bool startUp = false)
         {
-            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !profilesService.ControllerSlotProfiles.ElementAt(ind).EnableOutputDataToDS4);
-            if (!profilesService.ControllerSlotProfiles.ElementAt(ind).EnableOutputDataToDS4)
+            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !profilesService.ActiveProfiles.ElementAt(ind).EnableOutputDataToDS4);
+            if (!profilesService.ActiveProfiles.ElementAt(ind).EnableOutputDataToDS4)
                 LogDebug(
                     "Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
 
             device.SetIdleTimeout(Instance.Config.GetIdleDisconnectTimeout(ind));
-            device.SetBtPollRate(profilesService.ControllerSlotProfiles.ElementAt(ind).BluetoothPollRate);
+            device.SetBtPollRate(profilesService.ActiveProfiles.ElementAt(ind).BluetoothPollRate);
             touchPad[ind].ResetTrackAccel(Instance.Config.GetTrackballFriction(ind));
             touchPad[ind].ResetToggleGyroModes();
 
@@ -1680,7 +1680,7 @@ namespace DS4Windows
             device.PrepareTriggerEffect(TriggerId.RightTrigger, Instance.Config.R2OutputSettings[ind].TriggerEffect,
                 Instance.Config.R2OutputSettings[ind].TrigEffectSettings);
 
-            device.RumbleAutostopTime = profilesService.ControllerSlotProfiles.ElementAt(ind).RumbleAutostopTime;
+            device.RumbleAutostopTime = profilesService.ActiveProfiles.ElementAt(ind).RumbleAutostopTime;
             device.SetRumble(0, 0);
             device.LightBarColor = appSettings.Settings.LightbarSettingInfo[ind].Ds4WinSettings.Led;
 
@@ -1892,7 +1892,7 @@ namespace DS4Windows
                     ind = i;
             }
 
-            var profile = profilesService.ControllerSlotProfiles.ElementAt(ind);
+            var profile = profilesService.ActiveProfiles.ElementAt(ind);
 
             if (ind < 0) return;
 
@@ -1929,7 +1929,7 @@ namespace DS4Windows
 
             if (ind == -1) return;
 
-            var profile = profilesService.ControllerSlotProfiles.ElementAt(ind);
+            var profile = profilesService.ActiveProfiles.ElementAt(ind);
 
             var removingStatus = false;
             lock (device.removeLocker)
@@ -2020,7 +2020,7 @@ namespace DS4Windows
         {
             if (ind == -1) return;
 
-            var profile = profilesService.ControllerSlotProfiles.ElementAt(ind);
+            var profile = profilesService.ActiveProfiles.ElementAt(ind);
 
             var devError = tempStrings[ind] = device.error;
             if (!string.IsNullOrEmpty(devError)) LogDebug(devError);
@@ -2091,7 +2091,7 @@ namespace DS4Windows
                 // Skip mapping routine if part of a joined device
                 return;
 
-            if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(ind).EnableTouchToggle) CheckForTouchToggle(ind, cState, pState);
+            if (ProfilesService.Instance.ActiveProfiles.ElementAt(ind).EnableTouchToggle) CheckForTouchToggle(ind, cState, pState);
 
             cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 
@@ -2139,7 +2139,7 @@ namespace DS4Windows
             {
                 // UseDInputOnly profile may re-map sixaxis gyro sensor values as a VJoy joystick axis (steering wheel emulation mode using VJoy output device). Handle this option because VJoy output works even in USeDInputOnly mode.
                 // If steering wheel emulation uses LS/RS/R2/L2 output axies then the profile should NOT use UseDInputOnly option at all because those require a virtual output device.
-                var steeringWheelMappedAxis =ProfilesService.Instance.ControllerSlotProfiles.ElementAt(ind).SASteeringWheelEmulationAxis;
+                var steeringWheelMappedAxis =ProfilesService.Instance.ActiveProfiles.ElementAt(ind).SASteeringWheelEmulationAxis;
                 switch (steeringWheelMappedAxis)
                 {
                     case SASteeringWheelEmulationAxisType.None: break;
@@ -2366,7 +2366,7 @@ namespace DS4Windows
         public void SetDevRumble(DS4Device device,
             byte heavyMotor, byte lightMotor, int deviceNum)
         {
-            var boost = profilesService.ControllerSlotProfiles.ElementAt(deviceNum).RumbleAutostopTime;
+            var boost = profilesService.ActiveProfiles.ElementAt(deviceNum).RumbleAutostopTime;
             var lightBoosted = lightMotor * (uint)boost / 100;
             if (lightBoosted > 255)
                 lightBoosted = 255;

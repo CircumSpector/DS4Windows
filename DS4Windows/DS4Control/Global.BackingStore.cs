@@ -584,7 +584,7 @@ namespace DS4Windows
                 {
                     customAct = GyroOutputMode[device] == GyroOutMode.MouseJoystick;
                     customAct = customAct ||
-                                ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis >= SASteeringWheelEmulationAxisType.VJoy1X;
+                                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis >= SASteeringWheelEmulationAxisType.VJoy1X;
                     customAct = customAct || LSOutputSettings[device].Mode != StickMode.Controls;
                     customAct = customAct || RSOutputSettings[device].Mode != StickMode.Controls;
                     ContainsCustomAction[device] = customAct;

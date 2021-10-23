@@ -65,7 +65,7 @@ namespace DS4Windows
                 cont.LeftTrigger = state.L2;
                 cont.RightTrigger = state.R2;
 
-                var steeringWheelMappedAxis = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
+                var steeringWheelMappedAxis = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
                 switch (steeringWheelMappedAxis)
                 {
                     case SASteeringWheelEmulationAxisType.None:

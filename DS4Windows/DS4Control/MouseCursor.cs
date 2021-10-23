@@ -95,7 +95,7 @@ namespace DS4Windows
             gyroSmooth = tempInfo.enableSmoothing;
             var gyroSmoothWeight = 0.0;
 
-            coefficient = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).GyroSensitivity * 0.01 *
+            coefficient = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroSensitivity * 0.01 *
                           gyroMouseSensSettings.mouseCoefficient;
             var offset = gyroMouseSensSettings.mouseOffset;
             if (gyroSmooth) offset = gyroMouseSensSettings.mouseSmoothOffset;
@@ -128,7 +128,7 @@ namespace DS4Windows
                   + normX * (offset * signX)
                 : 0;
 
-            verticalScale = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).GyroSensVerticalScale * 0.01;
+            verticalScale = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroSensVerticalScale * 0.01;
             var yMotion = deltaY != 0
                 ? coefficient * verticalScale * (deltaY * tempDouble)
                   + normY * (offset * signY)
@@ -209,7 +209,7 @@ namespace DS4Windows
                 }
             }
 
-            var gyroInvert = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).GyroInvert;
+            var gyroInvert = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroInvert;
             if ((gyroInvert & 0x02) == 2)
                 xAction *= -1;
 
@@ -354,8 +354,8 @@ namespace DS4Windows
             var normY = Math.Abs(Math.Sin(tempAngle));
             var signX = Math.Sign(dx);
             var signY = Math.Sign(dy);
-            var coefficient = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).TouchSensitivity * 0.01;
-            var jitterCompenstation = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).TouchpadJitterCompensation;
+            var coefficient = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchSensitivity * 0.01;
+            var jitterCompenstation = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchpadJitterCompensation;
 
             var xMotion = dx != 0 ? coefficient * dx + normX * (TOUCHPAD_MOUSE_OFFSET * signX) : 0.0;
 
@@ -409,7 +409,7 @@ namespace DS4Windows
 
             if (disableInvert == false)
             {
-                var touchpadInvert = tempInt = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNumber).TouchPadInvert;
+                var touchpadInvert = tempInt = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchPadInvert;
                 if ((touchpadInvert & 0x02) == 2)
                     xAction *= -1;
 

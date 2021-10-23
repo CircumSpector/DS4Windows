@@ -136,7 +136,7 @@ namespace DS4Windows
             {
                 s = dev.GetCurrentStateReference();
 
-                var controlsMapInfo = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroControlsInfo;
+                var controlsMapInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroControlsInfo;
                 useReverseRatchet = controlsMapInfo.TriggerTurns;
                 var i = 0;
                 var ss = controlsMapInfo.Triggers.Split(',');
@@ -182,11 +182,11 @@ namespace DS4Windows
                 else
                     s.Motion.outputGyroControls = false;
             }
-            else if (outMode == GyroOutMode.Mouse && ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroSensitivity > 0)
+            else if (outMode == GyroOutMode.Mouse && ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroSensitivity > 0)
             {
                 s = dev.GetCurrentStateReference();
 
-                useReverseRatchet = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroTriggerTurns;
+                useReverseRatchet = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroTriggerTurns;
                 var i = 0;
                 var ss = Global.Instance.Config.GetSATriggers(deviceNum).Split(',');
                 var andCond = Global.Instance.Config.GetSATriggerCondition(deviceNum);
@@ -235,10 +235,10 @@ namespace DS4Windows
             {
                 s = dev.GetCurrentStateReference();
 
-                useReverseRatchet = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).GyroMouseStickTriggerTurns;
+                useReverseRatchet = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickTriggerTurns;
                 var i = 0;
                 var ss = Global.Instance.Config.GetSAMouseStickTriggers(deviceNum).Split(',');
-                var andCond = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).SAMouseStickTriggerCond;
+                var andCond = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).SAMouseStickTriggerCond;
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {
@@ -343,7 +343,7 @@ namespace DS4Windows
                         if (getDS4ControlsByName(disArray[i]) == false)
                             tempBool = false;
 
-                    if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TrackballMode)
+                    if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TrackballMode)
                     {
                         var iIndex = trackballBufferTail;
                         // Establish 4 ms as the base
@@ -361,7 +361,7 @@ namespace DS4Windows
                 }
                 else
                 {
-                    if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TrackballMode)
+                    if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TrackballMode)
                     {
                         var iIndex = trackballBufferTail;
                         trackballXBuffer[iIndex] = 0;
@@ -431,11 +431,11 @@ namespace DS4Windows
             firstTouch.Populate(arg.touches[0].hwX, arg.touches[0].hwY, arg.touches[0].touchID,
                 arg.touches[0].previousTouch);
 
-            if (mouseMode && ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).DoubleTap)
+            if (mouseMode && ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).DoubleTap)
             {
                 var test = arg.timeStamp;
                 if (test <= firstTap +
-                    TimeSpan.FromMilliseconds(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TapSensitivity * 1.5) &&
+                    TimeSpan.FromMilliseconds(ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TapSensitivity * 1.5) &&
                     !arg.touchButtonPressed)
                     secondtouchbegin = true;
             }
@@ -453,7 +453,7 @@ namespace DS4Windows
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
-            var tapSensitivity = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TapSensitivity;
+            var tapSensitivity = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TapSensitivity;
             if (tapSensitivity != 0 && Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
@@ -468,7 +468,7 @@ namespace DS4Windows
                     if (Math.Abs(firstTouch.hwX - arg.touches[0].hwX) < 10 &&
                         Math.Abs(firstTouch.hwY - arg.touches[0].hwY) < 10)
                     {
-                        if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).DoubleTap)
+                        if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).DoubleTap)
                         {
                             tappedOnce = true;
                             firstTap = arg.timeStamp;
@@ -491,7 +491,7 @@ namespace DS4Windows
                         if (getDS4ControlsByName(disArray[i]) == false)
                             tempBool = false;
 
-                    if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TrackballMode)
+                    if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TrackballMode)
                     {
                         if (!trackballActive)
                         {
@@ -641,7 +641,7 @@ namespace DS4Windows
             }
             else
             {
-                if (ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).LowerRCOn && arg.touches[0].hwX > 1920 * 3 / 4 &&
+                if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).LowerRCOn && arg.touches[0].hwX > 1920 * 3 / 4 &&
                     arg.touches[0].hwY > 960 * 3 / 4)
                     Mapping.MapClick(deviceNum, Mapping.Click.Right);
 
@@ -987,7 +987,7 @@ namespace DS4Windows
             var tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
             if (tempMode != TouchpadOutMode.Passthru)
             {
-                var touchClickPass = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TouchClickPassthru;
+                var touchClickPass = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchClickPassthru;
                 if (!touchClickPass)
                     // Reset output Touchpad click button
                     s.OutputTouchButton = false;
@@ -1027,7 +1027,7 @@ namespace DS4Windows
                 {
                     var tester = DateTime.Now;
                     if (tester > TimeofEnd +
-                        TimeSpan.FromMilliseconds(ProfilesService.Instance.ControllerSlotProfiles.ElementAt(deviceNum).TapSensitivity * 1.5))
+                        TimeSpan.FromMilliseconds(ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TapSensitivity * 1.5))
                     {
                         Mapping.MapClick(deviceNum, Mapping.Click.Left);
                         tappedOnce = false;
