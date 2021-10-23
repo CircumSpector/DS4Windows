@@ -116,12 +116,6 @@ namespace DS4Windows
                     new()
                 };
 
-            public IList<int> SAWheelFuzzValues { get; set; } = new List<int>
-            {
-                new(), new(), new(),
-                new(), new(), new(), new(), new(), new()
-            };
-
             /// <summary>
             ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
             ///     active when a foreground process is unknown (ie. no matching auto-profile rule)
@@ -3260,7 +3254,7 @@ namespace DS4Windows
                 //GyroMouseStickTriggerTurns[device] = true;
                 SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
                 //SASteeringWheelEmulationRange[device] = 360;
-                SAWheelFuzzValues[device] = 0;
+                //SAWheelFuzzValues[device] = 0;
                 WheelSmoothInfo[device].Reset();
                 TouchDisInvertTriggers[device] = new int[1] { -1 };
                 //GyroSensitivity[device] = 100;

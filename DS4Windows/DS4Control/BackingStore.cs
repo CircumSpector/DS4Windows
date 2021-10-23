@@ -112,8 +112,6 @@ namespace DS4Windows
 
         IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
 
-        IList<int> SAWheelFuzzValues { get; set; }
-
         ulong LastVersionCheckedNumber { get; set; }
 
         int StickOutputCurveId(string name);

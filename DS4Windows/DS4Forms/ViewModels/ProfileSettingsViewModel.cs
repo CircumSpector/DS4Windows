@@ -714,8 +714,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int SASteeringWheelFuzz
         {
-            get => Global.Instance.Config.SAWheelFuzzValues[device];
-            set => Global.Instance.Config.SAWheelFuzzValues[device] = value;
+            get => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SAWheelFuzzValues;
+            set => ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SAWheelFuzzValues = value;
         }
 
         public bool SASteeringWheelUseSmoothing

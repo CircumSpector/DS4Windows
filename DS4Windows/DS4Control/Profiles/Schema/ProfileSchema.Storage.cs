@@ -159,7 +159,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
             SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
             //SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
-            SASteeringWheelFuzz = store.SAWheelFuzzValues[device];
+            //SASteeringWheelFuzz = store.SAWheelFuzzValues[device];
 
             SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing = store.WheelSmoothInfo[device].Enabled;
             SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff = store.WheelSmoothInfo[device].MinCutoff;
@@ -430,7 +430,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.WheelSmoothInfo[device].MinCutoff = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff;
             store.WheelSmoothInfo[device].Beta = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothBeta;
 
-            store.SAWheelFuzzValues[device] = SASteeringWheelFuzz is >= 0 and <= 100 ? SASteeringWheelFuzz : 0;
+            //store.SAWheelFuzzValues[device] = SASteeringWheelFuzz is >= 0 and <= 100 ? SASteeringWheelFuzz : 0;
 
             store.GyroOutputMode[device] = GyroOutputMode;
 

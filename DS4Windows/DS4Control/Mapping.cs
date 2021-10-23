@@ -5873,7 +5873,7 @@ namespace DS4Windows
                 //gyroAccelX = (int)(wheel360FilterX.Filter(gyroAccelX, currentRate));
                 //gyroAccelZ = (int)(wheel360FilterZ.Filter(gyroAccelZ, currentRate));
 
-                var wheelFuzz = Instance.Config.SAWheelFuzzValues[device];
+                var wheelFuzz = ProfilesService.Instance.ControllerSlotProfiles.ElementAt(device).SAWheelFuzzValues;
                 if (wheelFuzz != 0)
                 {
                     //int currentValueX = gyroAccelX;
