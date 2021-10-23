@@ -154,7 +154,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             LaunchProgram = store.LaunchProgram[device];
             //StartTouchpadOff = store.StartTouchpadOff[device];
-            TouchpadOutputMode = store.TouchOutMode[device];
+            //TouchpadOutputMode = store.TouchOutMode[device];
             SATriggers = store.SATriggers[device];
             SATriggerCond = store.SaTriggerCondString(store.SATriggerCondition[device]);
             //SASteeringWheelEmulationAxis = store.SASteeringWheelEmulationAxis[device];
@@ -465,7 +465,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.GyroSwipeInfo[device].xAxis = GyroSwipeSettings.XAxis;
             store.GyroSwipeInfo[device].delayTime = GyroSwipeSettings.DelayTime;
 
-            store.TouchOutMode[device] = TouchpadOutputMode;
+            //store.TouchOutMode[device] = TouchpadOutputMode;
             store.TouchDisInvertTriggers[device] = TouchDisInvTriggers;
             //store.GyroSensitivity[device] = GyroSensitivity;
             //store.GyroSensVerticalScale[device] = GyroSensVerticalScale;

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -136,8 +138,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             // Temporarily use Passthru mode for Touchpad. Store old TouchOutMode.
             // Don't conflict Touchpad Click with default output Mouse button controls
-            oldTouchpadMode = Global.Instance.Config.TouchOutMode[deviceNum];
-            Global.Instance.Config.TouchOutMode[deviceNum] = TouchpadOutMode.Passthru;
+            oldTouchpadMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode = TouchpadOutMode.Passthru;
         }
 
         private void CreateKeyDownOverrides()
@@ -381,7 +383,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// </summary>
         public void RevertControlsSettings()
         {
-            Global.Instance.Config.TouchOutMode[deviceNum] = oldTouchpadMode;
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode = oldTouchpadMode;
             oldTouchpadMode = TouchpadOutMode.None;
         }
     }

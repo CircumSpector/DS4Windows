@@ -1536,7 +1536,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 int index = 0;
-                switch (Global.Instance.Config.TouchOutMode[device])
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode)
                 {
                     case TouchpadOutMode.Mouse:
                         index = 0; break;
@@ -1565,9 +1565,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     default: break;
                 }
 
-                TouchpadOutMode current = Global.Instance.Config.TouchOutMode[device];
+                TouchpadOutMode current = ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode;
                 if (temp == current) return;
-                Global.Instance.Config.TouchOutMode[device] = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = temp;
                 TouchpadOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }

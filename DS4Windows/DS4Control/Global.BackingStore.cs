@@ -132,13 +132,6 @@ namespace DS4Windows
                 new int[1] { -1 }
             };
 
-            public IList<TouchpadOutMode> TouchOutMode { get; set; } = new List<TouchpadOutMode>
-            {
-                TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
-                TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse, TouchpadOutMode.Mouse,
-                TouchpadOutMode.Mouse
-            };
-
             [Obsolete]
             public string ProfilesPath { get; set; } =
                 Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
@@ -451,7 +444,7 @@ namespace DS4Windows
 
             public bool IsUsingTouchpadForControls(int index)
             {
-                return TouchOutMode[index] == TouchpadOutMode.Controls;
+                return ProfilesService.Instance.ActiveProfiles.ElementAt(index).TouchOutMode == TouchpadOutMode.Controls;
             }
 
             public bool IsUsingSAForControls(int index)
@@ -1227,11 +1220,11 @@ namespace DS4Windows
                             Item = m_Xdoc.SelectSingleNode("/" + rootname + "/UseTPforControls");
                             if (bool.TryParse(Item?.InnerText ?? "", out var temp))
                                 if (temp)
-                                    TouchOutMode[device] = TouchpadOutMode.Controls;
+                                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Controls;
                         }
                         catch
                         {
-                            TouchOutMode[device] = TouchpadOutMode.Mouse;
+                            ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;
                         }
 
                     // Fallback lookup if GyroOutMode is not set
@@ -1267,11 +1260,11 @@ namespace DS4Windows
                             Item = m_Xdoc.SelectSingleNode("/" + rootname + "/TouchpadOutputMode");
                             var tempMode = Item.InnerText;
                             Enum.TryParse(tempMode, out TouchpadOutMode value);
-                            TouchOutMode[device] = value;
+                            ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = value;
                         }
                         catch
                         {
-                            TouchOutMode[device] = TouchpadOutMode.Mouse;
+                            ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;
                             missingSetting = true;
                         }
 
@@ -3154,7 +3147,7 @@ namespace DS4Windows
                 R2OutputSettings[device].ResetSettings();
                 
                 LaunchProgram[device] = string.Empty;
-                TouchOutMode[device] = TouchpadOutMode.Mouse;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;
                 SATriggers[device] = "-1";
                 SATriggerCondition[device] = true;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Controls;

@@ -332,7 +332,7 @@ namespace DS4Windows
 
             s = dev.GetCurrentStateReference();
 
-            var tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
+            var tempMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
             if (tempMode == TouchpadOutMode.Mouse)
             {
                 if (Global.Instance.GetTouchActive(deviceNum))
@@ -409,7 +409,7 @@ namespace DS4Windows
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesBegan)).StartActive(true);
 
 
-            var tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
+            var tempMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
             var mouseMode = tempMode == TouchpadOutMode.Mouse;
             if (mouseMode)
             {
@@ -454,7 +454,7 @@ namespace DS4Windows
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
             var tapSensitivity = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TapSensitivity;
-            if (tapSensitivity != 0 && Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+            if (tapSensitivity != 0 && ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode == TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
                 {
@@ -482,7 +482,7 @@ namespace DS4Windows
             }
             else
             {
-                var tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
+                var tempMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
                 if (tempMode == TouchpadOutMode.Mouse)
                 {
                     var disArray = Global.Instance.Config.TouchDisInvertTriggers[deviceNum];
@@ -572,7 +572,7 @@ namespace DS4Windows
             s = dev.GetCurrentStateReference();
 
             if (trackballActive)
-                if (Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+                if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode == TouchpadOutMode.Mouse)
                 {
                     var disArray = Global.Instance.Config.TouchDisInvertTriggers[deviceNum];
                     tempBool = true;
@@ -984,7 +984,7 @@ namespace DS4Windows
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SynthesizeMouseButtons)).StartActive(true);
 
 
-            var tempMode = Global.Instance.Config.TouchOutMode[deviceNum];
+            var tempMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
             if (tempMode != TouchpadOutMode.Passthru)
             {
                 var touchClickPass = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchClickPassthru;
@@ -1021,7 +1021,7 @@ namespace DS4Windows
                 multiDown)
                 Mapping.MapClick(deviceNum, Mapping.Click.Right);
 
-            if (Global.Instance.Config.TouchOutMode[deviceNum] == TouchpadOutMode.Mouse)
+            if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode == TouchpadOutMode.Mouse)
             {
                 if (tappedOnce)
                 {

@@ -80,8 +80,6 @@ namespace DS4Windows
 
         IList<bool> ContainsCustomExtras { get; set; }
 
-        IList<TouchpadOutMode> TouchOutMode { get; set; }
-
         IList<IList<int>> TouchDisInvertTriggers { get; set; }
 
         IList<bool> SATriggerCondition { get; set; }
