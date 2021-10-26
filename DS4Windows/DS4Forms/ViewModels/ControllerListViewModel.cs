@@ -252,20 +252,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                string imgName = (string)App.Current.FindResource("CancelImg");
-                string source = $"/DS4Windows;component/Resources/{imgName}";
-                switch(device.CurrentExclusiveStatus)
+                var imgName = (string)Application.Current.FindResource("CancelImg");
+                var source = $"/DS4Windows;component/Resources/{imgName}";
+                switch (device.CurrentExclusiveStatus)
                 {
                     case DS4Device.ExclusiveStatus.Exclusive:
-                        imgName = (string)App.Current.FindResource("CheckedImg");
+                        imgName = (string)Application.Current.FindResource("CheckedImg");
                         source = $"/DS4Windows;component/Resources/{imgName}";
                         break;
                     case DS4Device.ExclusiveStatus.HidHideAffected:
                     case DS4Device.ExclusiveStatus.HidGuardAffected:
-                        imgName = (string)App.Current.FindResource("KeyImageImg");
+                        imgName = (string)Application.Current.FindResource("KeyImageImg");
                         source = $"/DS4Windows;component/Resources/{imgName}";
-                        break;
-                    default:
                         break;
                 }
 
