@@ -9,8 +9,6 @@
 
 ## Disclaimers
 
-Automated builds by AppVeyor.
-
 - ⚠️ Might crash your system (BSOD)!
 - ⚠️ May or may not launch/work/crash!
 - ⚠️ Use at your own risk!
