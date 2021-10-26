@@ -9,6 +9,7 @@ using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4WinWPF
 {
+    [Obsolete]
     public interface IProfileList
     {
         ObservableCollection<ProfileEntity> ProfileListCollection { get; }
@@ -18,6 +19,7 @@ namespace DS4WinWPF
         void AddProfileSort(string profileName);
     }
 
+    [Obsolete]
     public class ProfileList : IProfileList
     {
         private readonly object _lockObject = new();

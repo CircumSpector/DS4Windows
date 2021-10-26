@@ -6,6 +6,7 @@ using DS4WinWPF.DS4Control.Attributes;
 
 namespace DS4WinWPF
 {
+    [Obsolete]
     public class ProfileEntity
     {
         private string name;
