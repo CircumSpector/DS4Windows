@@ -35,11 +35,20 @@ namespace DS4WinWPF
             if (!File.Exists(settingsPath))
                 return;
 
-            AutoProfileProgramsV3 settings;
+            var settings = new AutoProfileProgramsV3();
 
-            using (var stream = File.OpenRead(settingsPath))
+            try
             {
-                settings = AutoProfileProgramsV3.Deserialize(stream);
+                using (var stream = File.OpenRead(settingsPath))
+                {
+                    settings = AutoProfileProgramsV3.Deserialize(stream);
+                }
+            }
+            catch
+            {
+                //
+                // TODO: migrate
+                // 
             }
 
             foreach (var programEntry in settings.ProgramEntries)

@@ -71,9 +71,9 @@ namespace DS4Windows
 
             public BackingStore()
             {
-                ds4controlSettings = new ControlSettingsGroup[TEST_PROFILE_ITEM_COUNT];
+                ds4controlSettings = new ControlSettingsGroup[TEST_PROFILE_ITEM_COUNT - 1];
 
-                for (var i = 0; i < TEST_PROFILE_ITEM_COUNT; i++)
+                for (var i = 0; i < TEST_PROFILE_ITEM_COUNT - 1; i++)
                 {
                     foreach (DS4Controls dc in Enum.GetValues(typeof(DS4Controls)))
                         if (dc != DS4Controls.None)
