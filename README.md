@@ -7,7 +7,7 @@
 
 ⚠️ **DO NOT USE UNSUPERVISED** ⚠️
 
-## Downloads
+## Disclaimers
 
 Automated builds by AppVeyor.
 
@@ -16,14 +16,6 @@ Automated builds by AppVeyor.
 - ⚠️ Use at your own risk!
 - ⚠️ May damage/corrupt your existing v3.x (or older) installation!
 - ⚠️ No support provided whatsoever!
-
-### 64-Bit
-
-- [DS4Windows-x64.zip](https://ci.appveyor.com/api/projects/nefarius/ds4windows/artifacts/DS4Windows-x64.zip?job=Platform%3A%20x64)
-
-### 32-Bit
-
-- [DS4Windows-x86.zip](https://ci.appveyor.com/api/projects/nefarius/ds4windows/artifacts/DS4Windows-x86.zip?job=Platform%3A%x86)
 
 ## 3rd party credits
 
