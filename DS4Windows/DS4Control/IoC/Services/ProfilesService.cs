@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -22,7 +23,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of currently active profiles per controller slot.
         /// </summary>
-        IReadOnlyCollection<DS4WindowsProfile> ActiveProfiles { get; }
+        ReadOnlyObservableCollection<DS4WindowsProfile> ActiveProfiles { get; }
 
         /// <summary>
         ///     The profile copy that is currently being edited.
@@ -37,7 +38,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
         /// </summary>
-        IReadOnlyCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; }
+        ReadOnlyObservableCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; }
 
         /// <summary>
         ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
@@ -133,20 +134,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     {
         private readonly IAppSettingsService appSettings;
 
-        private readonly IList<AutoSwitchingProfileEntry> autoSwitchingProfiles = new List<AutoSwitchingProfileEntry>();
+        private readonly ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
 
         private readonly IDictionary<Guid, DS4WindowsProfile> availableProfiles =
             new ConcurrentDictionary<Guid, DS4WindowsProfile>();
 
-        private readonly IList<DS4WindowsProfile> controllerSlotProfiles = new List<DS4WindowsProfile>(Enumerable
-            .Range(0, 8)
-            .Select(i => new DS4WindowsProfile(i)
-            {
-                //
-                // Force same GUID to avoid multiple "Default" profiles
-                // 
-                Id = DS4WindowsProfile.DefaultProfileId
-            }));
+        private readonly ObservableCollection<DS4WindowsProfile> controllerSlotProfiles;
 
         private readonly DS4WindowsProfile currentlyEditedProfile = new();
 
@@ -166,6 +159,22 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             this.global = global;
             this.appSettings = appSettings;
 
+            controllerSlotProfiles = new ObservableCollection<DS4WindowsProfile>(Enumerable
+                .Range(0, 8)
+                .Select(i => new DS4WindowsProfile(i)
+                {
+                    //
+                    // Force same GUID to avoid multiple "Default" profiles
+                    // 
+                    Id = DS4WindowsProfile.DefaultProfileId
+                }));
+
+            ActiveProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(controllerSlotProfiles);
+
+            autoSwitchingProfiles = new ObservableCollection<AutoSwitchingProfileEntry>();
+
+            AutoSwitchingProfiles = new ReadOnlyObservableCollection<AutoSwitchingProfileEntry>(autoSwitchingProfiles);
+
             Instance = this;
         }
 
@@ -174,6 +183,39 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         [IntermediateSolution]
         public static ProfilesService Instance { get; private set; }
+
+        /// <summary>
+        ///     The profile copy that is currently being edited.
+        /// </summary>
+        public DS4WindowsProfile CurrentlyEditedProfile
+        {
+            //
+            // Use cloning here to not change the active copy of the profile until the user decides to apply the changes
+            // 
+            get => currentlyEditedProfile.DeepClone();
+            set => value.DeepCloneTo(currentlyEditedProfile);
+        }
+
+        /// <summary>
+        ///     A collection of currently active profiles per controller slot.
+        /// </summary>
+        public ReadOnlyObservableCollection<DS4WindowsProfile> ActiveProfiles { get; }
+
+        /// <summary>
+        ///     A collection of all the available profiles.
+        /// </summary>
+        public IReadOnlyDictionary<Guid, DS4WindowsProfile> AvailableProfiles =>
+            availableProfiles.ToImmutableDictionary(pair => pair.Key, pair => pair.Value);
+
+        /// <summary>
+        ///     A collection of profile IDs linked to a particular controller ID (MAC address).
+        /// </summary>
+        public IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles => linkedProfiles.ToImmutableDictionary();
+        
+        /// <summary>
+        ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
+        /// </summary>
+        public ReadOnlyObservableCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; }
 
         /// <summary>
         ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
@@ -474,7 +516,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             var store = new AutoSwitchingProfiles
             {
-                AutoSwitchingProfileEntries = (List<AutoSwitchingProfileEntry>)autoSwitchingProfiles
+                AutoSwitchingProfileEntries = autoSwitchingProfiles.ToList()
             };
 
             store.Serialize(stream);
@@ -500,8 +542,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 var store = Profiles.Schema.AutoSwitchingProfiles.Deserialize(stream);
 
                 autoSwitchingProfiles.Clear();
-
-                ((List<AutoSwitchingProfileEntry>)autoSwitchingProfiles).AddRange(store.AutoSwitchingProfileEntries);
+                
+                store.AutoSwitchingProfileEntries.ForEach(autoSwitchingProfiles.Add);
             }
             catch (InvalidOperationException)
             {
@@ -513,42 +555,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             autoSwitchingProfiles.Add(profile);
         }
-
-        /// <summary>
-        ///     The profile copy that is currently being edited.
-        /// </summary>
-        public DS4WindowsProfile CurrentlyEditedProfile
-        {
-            //
-            // Use cloning here to not change the active copy of the profile until the user decides to apply the changes
-            // 
-            get => currentlyEditedProfile.DeepClone();
-            set => value.DeepCloneTo(currentlyEditedProfile);
-        }
-
-        /// <summary>
-        ///     A collection of currently active profiles per controller slot.
-        /// </summary>
-        public IReadOnlyCollection<DS4WindowsProfile> ActiveProfiles =>
-            controllerSlotProfiles.ToImmutableList();
-
-        /// <summary>
-        ///     A collection of all the available profiles.
-        /// </summary>
-        public IReadOnlyDictionary<Guid, DS4WindowsProfile> AvailableProfiles =>
-            availableProfiles.ToImmutableDictionary(pair => pair.Key, pair => pair.Value);
-
-        /// <summary>
-        ///     A collection of profile IDs linked to a particular controller ID (MAC address).
-        /// </summary>
-        public IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles => linkedProfiles.ToImmutableDictionary();
-
-        /// <summary>
-        ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
-        /// </summary>
-        public IReadOnlyCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles =>
-            autoSwitchingProfiles.ToImmutableList();
-
+        
         /// <summary>
         ///     Adds a pre-existing or new <see cref="DS4WindowsProfile" /> to <see cref="AvailableProfiles" /> and persists it to
         ///     disk.
