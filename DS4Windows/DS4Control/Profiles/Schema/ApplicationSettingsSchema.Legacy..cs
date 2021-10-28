@@ -11,16 +11,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "Profile")]
-    public partial class DS4WindowsAppSettings
+    public partial class DS4WindowsAppSettingsV3
     {
         private readonly IList<LightbarSettingInfo> lightbarSettings =
             new List<LightbarSettingInfo>(Enumerable.Range(0, 9).Select(i => new LightbarSettingInfo()));
 
-        public DS4WindowsAppSettings()
+        public DS4WindowsAppSettingsV3()
         {
         }
 
-        public DS4WindowsAppSettings(IBackingStore store, string appVersion, int configVersion)
+        public DS4WindowsAppSettingsV3(IBackingStore store, string appVersion, int configVersion)
         {
             AppVersion = appVersion;
             ConfigVersion = configVersion;

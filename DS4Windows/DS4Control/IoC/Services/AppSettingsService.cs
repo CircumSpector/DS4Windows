@@ -15,7 +15,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Holds global application settings persisted to disk.
         /// </summary>
-        DS4WindowsAppSettings Settings { get; }
+        DS4WindowsAppSettingsV3 Settings { get; }
 
         /// <summary>
         ///     Persist the current settings to disk.
@@ -89,7 +89,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Holds global application settings persisted to disk.
         /// </summary>
-        public DS4WindowsAppSettings Settings { get; } = new();
+        public DS4WindowsAppSettingsV3 Settings { get; } = new();
 
         /// <summary>
         ///     Fired when the <see cref="Settings" /> have been reloaded from disk.
@@ -174,7 +174,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             await using var stream = File.OpenRead(path);
 
-            var settings = await DS4WindowsAppSettings.DeserializeAsync(stream);
+            var settings = await DS4WindowsAppSettingsV3.DeserializeAsync(stream);
 
             PostLoadActions(settings);
 
@@ -198,7 +198,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             using var stream = File.OpenRead(path);
 
-            var settings = DS4WindowsAppSettings.Deserialize(stream);
+            var settings = DS4WindowsAppSettingsV3.Deserialize(stream);
 
             PostLoadActions(settings);
 
@@ -223,7 +223,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Updates <see cref="Settings" /> and re-hooks changed events.
         /// </summary>
-        private void PostLoadActions(DS4WindowsAppSettings settings)
+        private void PostLoadActions(DS4WindowsAppSettingsV3 settings)
         {
             settings.PostDeserialization();
 

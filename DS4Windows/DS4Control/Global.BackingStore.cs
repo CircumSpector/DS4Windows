@@ -19,7 +19,6 @@ using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Properties;
 
 using OpenTracing.Util;
-using DS4WindowsAppSettings = DS4WinWPF.DS4Control.Profiles.Schema.DS4WindowsAppSettings;
 
 
 namespace DS4Windows
@@ -861,7 +860,7 @@ namespace DS4Windows
             }
 
             /// <summary>
-            ///     Persists <see cref="DS4WindowsAppSettings" /> on disk.
+            ///     Persists <see cref="DS4WindowsAppSettingsV3" /> on disk.
             /// </summary>
             /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
@@ -869,7 +868,7 @@ namespace DS4Windows
             {
                 var saved = true;
 
-                var settings = new DS4WindowsAppSettings(this, ExecutableProductVersion, APP_CONFIG_VERSION);
+                var settings = new DS4WindowsAppSettingsV3(this, ExecutableProductVersion, APP_CONFIG_VERSION);
 
                 try
                 {
@@ -899,7 +898,7 @@ namespace DS4Windows
             }
 
             /// <summary>
-            ///     Restores <see cref="DS4WindowsAppSettings" /> from disk.
+            ///     Restores <see cref="DS4WindowsAppSettingsV3" /> from disk.
             /// </summary>
             /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
@@ -911,7 +910,7 @@ namespace DS4Windows
                 {
                     await using (var stream = File.OpenRead(ProfilesPath))
                     {
-                        (await DS4WindowsAppSettings.DeserializeAsync(stream)).CopyTo(this);
+                        (await DS4WindowsAppSettingsV3.DeserializeAsync(stream)).CopyTo(this);
                     }
 
                     if (loaded)

@@ -10,14 +10,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     /// <summary>
     ///     Represents application-wide settings.
     /// </summary>
-    public partial class DS4WindowsAppSettings : XmlSerializable<DS4WindowsAppSettings>
+    public partial class DS4WindowsAppSettingsV3 : XmlSerializable<DS4WindowsAppSettingsV3>
     {
         public override IExtendedXmlSerializer GetSerializer()
         {
             return new ConfigurationContainer()
                 .EnableReferences()
                 .WithUnknownContent().Continue()
-                .EnableImplicitTyping(typeof(DS4WindowsAppSettings))
+                .EnableImplicitTyping(typeof(DS4WindowsAppSettingsV3))
                 .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
                 .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
                 .Type<CustomLedProxyType>().Register().Converter().Using(CustomLedConverter.Default)
@@ -29,7 +29,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <summary>
         ///     Actions necessary prior to serialization (like type conversions).
         /// </summary>
-        public DS4WindowsAppSettings PreSerialization()
+        public DS4WindowsAppSettingsV3 PreSerialization()
         {
             CustomLed1 = new CustomLedProxyType
             {
@@ -78,7 +78,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <summary>
         ///     Actions necessary after deserialization (like type conversions).
         /// </summary>
-        public DS4WindowsAppSettings PostDeserialization()
+        public DS4WindowsAppSettingsV3 PostDeserialization()
         {
             LightbarSettingInfo[0].Ds4WinSettings.UseCustomLed = CustomLed1.IsEnabled;
             LightbarSettingInfo[0].Ds4WinSettings.Led = CustomLed1.CustomColor;
@@ -101,7 +101,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         }
 
         /// <summary>
-        ///     Converts properties from <see cref="IBackingStore" /> to this <see cref="Schema.DS4WindowsAppSettings" /> instance.
+        ///     Converts properties from <see cref="IBackingStore" /> to this <see cref="DS4WindowsAppSettingsV3" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         [IntermediateSolution]
@@ -110,7 +110,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         }
 
         /// <summary>
-        ///     Injects properties from <see cref="Schema.DS4WindowsAppSettings" /> into <see cref="IBackingStore" /> instance.
+        ///     Injects properties from <see cref="DS4WindowsAppSettingsV3" /> into <see cref="IBackingStore" /> instance.
         /// </summary>
         /// <param name="store">The <see cref="IBackingStore" />.</param>
         [IntermediateSolution]

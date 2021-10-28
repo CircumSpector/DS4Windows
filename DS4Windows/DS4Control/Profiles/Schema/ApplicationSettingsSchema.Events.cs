@@ -9,7 +9,7 @@ using OpenTracing.Util;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
-    public partial class DS4WindowsAppSettings
+    public partial class DS4WindowsAppSettingsV3
     {
         public event Action<bool> IsTracingEnabledChanged;
 

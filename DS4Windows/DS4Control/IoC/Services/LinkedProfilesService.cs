@@ -94,7 +94,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             await using var stream = File.OpenRead(path);
 
-            var settings = await DS4WindowsAppSettings.DeserializeAsync(stream);
+            var settings = await DS4WindowsAppSettingsV3.DeserializeAsync(stream);
 
             return true;
         }
@@ -116,7 +116,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             using var stream = File.OpenRead(path);
 
-            var settings = DS4WindowsAppSettings.Deserialize(stream);
+            var settings = DS4WindowsAppSettingsV3.Deserialize(stream);
 
             return true;
         }
