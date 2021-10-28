@@ -4,16 +4,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Xml.Serialization;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
-using ExtendedXmlSerializer;
-using ExtendedXmlSerializer.Configuration;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using BooleanConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.BooleanConverter;
-using DoubleConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.DoubleConverter;
-using GuidConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.GuidConverter;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
@@ -53,6 +46,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public DS4WindowsProfile()
         {
+            Id = DefaultProfileId;
         }
 
         public DS4WindowsProfile(int index) : this()
@@ -107,7 +101,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <summary>
         ///     Auto-generated unique ID for this profile.
         /// </summary>
-        public Guid Id { get; set; } = Guid.NewGuid();
+        [JsonProperty]
+        public Guid Id { get; private set; } = Guid.NewGuid();
         
         /// <summary>
         ///     Friendly, user-changeable name of this profile.
