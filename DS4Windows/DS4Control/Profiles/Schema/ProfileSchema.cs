@@ -10,6 +10,7 @@ using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using BooleanConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.BooleanConverter;
 using DoubleConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.DoubleConverter;
 using GuidConverter = DS4WinWPF.DS4Control.Profiles.Schema.Converters.GuidConverter;
@@ -36,7 +37,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     ///     "New" controller profile definition.
     /// </summary>
     public class DS4WindowsProfile :
-        XmlSerializable<DS4WindowsProfile>,
+        JsonSerializable<DS4WindowsProfile>,
         IEquatable<DS4WindowsProfile>,
         INotifyPropertyChanged
     {
@@ -45,17 +46,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// </summary>
         public static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
         
-        /*
-        /// <summary>
-        ///     The <see cref="Guid"/> identifying a profile that indicates "no change" (for auto switching profiles).
-        /// </summary>
-        public static readonly Guid EmptyProfileId = Guid.Parse("D1D90BED-9D50-41D1-BAA7-049823FDBC25");
-        */
-
         public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
             ProfilePropertyChangedEventArgs e);
 
-        private const string FILE_EXTENSION = ".xml";
+        private const string FILE_EXTENSION = ".json";
 
         public DS4WindowsProfile()
         {
@@ -71,47 +65,39 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <summary>
         ///     Sanitized XML file name derived from <see cref="DisplayName" />.
         /// </summary>
-        [XmlIgnore]
+        [JsonIgnore]
         public string FileName => GetValidFileName(DisplayName);
 
         /// <summary>
         ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup. This value is assigned
         ///     at runtime and not persisted.
         /// </summary>
-        [XmlIgnore]
+        [JsonIgnore]
         public int? Index { get; set; }
 
         /// <summary>
         ///     The controller ID this profile is currently attached to. This value is assigned at runtime and not persisted.
         /// </summary>
-        [XmlIgnore]
+        [JsonIgnore]
         public PhysicalAddress DeviceId { get; set; }
 
         /// <summary>
         ///     If true, is the default profile. There can only be one.
         /// </summary>
-        [XmlIgnore]
+        [JsonIgnore]
         public bool IsDefaultProfile => Equals(Id, DefaultProfileId);
-
-        /*
-        /// <summary>
-        ///     If true, is an empty profile and should not be switched to.
-        /// </summary>
-        [XmlIgnore] 
-        public bool IsEmptyProfile => Equals(Id, EmptyProfileId);
-        */
 
         /// <summary>
         ///     If true, this profile is linked to the current slots device' MAC/ID. This value is assigned at runtime and not
         ///     persisted.
         /// </summary>
-        [XmlIgnore]
+        [JsonIgnore]
         public bool IsLinkedProfile { get; set; }
 
         /// <summary>
         ///     State information if an output device is active.
         /// </summary>
-        [XmlIgnore]
+        [JsonIgnore]
         public bool IsOutputDeviceEnabled { get; set; }
 
         #endregion
@@ -354,20 +340,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public string GetAbsoluteFilePath(string parentDirectory)
         {
             return Path.Combine(parentDirectory, FileName);
-        }
-
-        public override IExtendedXmlSerializer GetSerializer()
-        {
-            return new ConfigurationContainer()
-                .EnableReferences()
-                .EnableMemberExceptionHandling()
-                .EnableImplicitTyping(typeof(DS4WindowsProfile))
-                .Type<DS4Color>().Register().Converter().Using(DS4ColorConverter.Default)
-                .Type<bool>().Register().Converter().Using(BooleanConverter.Default)
-                .Type<BezierCurve>().Register().Converter().Using(BezierCurveConverter.Default)
-                .Type<double>().Register().Converter().Using(DoubleConverter.Default)
-                .Type<Guid>().Register().Converter().Using(GuidConverter.Default)
-                .Create();
         }
 
         public override bool Equals(object obj)
