@@ -15,31 +15,27 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Holds global application settings persisted to disk.
         /// </summary>
-        DS4WindowsAppSettingsV3 Settings { get; }
+        DS4WindowsAppSettings Settings { get; }
 
         /// <summary>
         ///     Persist the current settings to disk.
         /// </summary>
-        /// <param name="path">The absolute path to the resulting XML file.</param>
-        Task<bool> SaveAsync(string path = null);
+        Task<bool> SaveAsync();
 
         /// <summary>
         ///     Persist the current settings to disk.
         /// </summary>
-        /// <param name="path">The absolute path to the resulting XML file.</param>
-        bool Save(string path = null);
+        bool Save();
 
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
-        /// <param name="path">The absolute path to the XML file to read from.</param>
-        Task<bool> LoadAsync(string path = null);
+        Task<bool> LoadAsync();
 
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
-        /// <param name="path">The absolute path to the XML file to read from.</param>
-        bool Load(string path = null);
+        bool Load();
 
         /// <summary>
         ///     Fired when the <see cref="Settings" /> have been reloaded from disk.
@@ -70,6 +66,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly IGlobalStateService global;
         private readonly ILogger<AppSettingsService> logger;
 
+        private const string APPLICATION_SETTINGS_FILE_NAME = "ApplicationSettings.json";
+
         public AppSettingsService(ILogger<AppSettingsService> logger, IGlobalStateService global)
         {
             this.logger = logger;
@@ -89,7 +87,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Holds global application settings persisted to disk.
         /// </summary>
-        public DS4WindowsAppSettingsV3 Settings { get; } = new();
+        public DS4WindowsAppSettings Settings { get; } = new();
 
         /// <summary>
         ///     Fired when the <see cref="Settings" /> have been reloaded from disk.
@@ -114,17 +112,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Persist the current settings to disk.
         /// </summary>
-        /// <param name="path">The absolute path to the resulting XML file.</param>
-        public async Task<bool> SaveAsync(string path = null)
+        public async Task<bool> SaveAsync()
         {
-            if (string.IsNullOrEmpty(path))
-                path = global.AppSettingsFilePath;
+            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
 
             try
             {
                 await using var stream = File.Open(path, FileMode.Create);
 
-                await Settings.PreSerialization().SerializeAsync(stream);
+                await Settings.SerializeAsync(stream);
 
                 return true;
             }
@@ -137,17 +133,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Persist the current settings to disk.
         /// </summary>
-        /// <param name="path">The absolute path to the resulting XML file.</param>
-        public bool Save(string path = null)
+        public bool Save()
         {
-            if (string.IsNullOrEmpty(path))
-                path = global.AppSettingsFilePath;
+            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
 
             try
             {
                 using var stream = File.Open(path, FileMode.Create);
 
-                Settings.PreSerialization().Serialize(stream);
+                Settings.Serialize(stream);
 
                 return true;
             }
@@ -160,11 +154,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
-        /// <param name="path">The absolute path to the XML file to read from.</param>
-        public async Task<bool> LoadAsync(string path = null)
+        public async Task<bool> LoadAsync()
         {
-            if (string.IsNullOrEmpty(path))
-                path = global.AppSettingsFilePath;
+            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
 
             if (!File.Exists(path))
             {
@@ -174,7 +166,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             await using var stream = File.OpenRead(path);
 
-            var settings = await DS4WindowsAppSettingsV3.DeserializeAsync(stream);
+            var settings = await DS4WindowsAppSettings.DeserializeAsync(stream);
 
             PostLoadActions(settings);
 
@@ -184,11 +176,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Load the persisted settings from disk.
         /// </summary>
-        /// <param name="path">The absolute path to the XML file to read from.</param>
-        public bool Load(string path = null)
+        public bool Load()
         {
-            if (string.IsNullOrEmpty(path))
-                path = global.AppSettingsFilePath;
+            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
 
             if (!File.Exists(path))
             {
@@ -198,7 +188,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             using var stream = File.OpenRead(path);
 
-            var settings = DS4WindowsAppSettingsV3.Deserialize(stream);
+            var settings = DS4WindowsAppSettings.Deserialize(stream);
 
             PostLoadActions(settings);
 
@@ -223,10 +213,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Updates <see cref="Settings" /> and re-hooks changed events.
         /// </summary>
-        private void PostLoadActions(DS4WindowsAppSettingsV3 settings)
+        private void PostLoadActions(DS4WindowsAppSettings settings)
         {
-            settings.PostDeserialization();
-
             //
             // Update all properties without breaking existing references
             // 

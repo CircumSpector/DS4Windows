@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using DS4Windows;
+using Newtonsoft.Json;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
@@ -10,7 +11,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     public class UDPServerSmoothingOptions
     {
         [XmlElement(ElementName = "UseSmoothing")]
-        public bool UseSmoothing { get; set; }
+        public bool UseSmoothing { get; set; } = false;
 
         [XmlElement(ElementName = "UdpSmoothMinCutoff")]
         public double MinCutoff { get; set; } = 0.4f;
@@ -56,6 +57,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     DS4Windows is restarted.
         /// </summary>
         [XmlIgnore]
+        [JsonIgnore]
         public bool VerboseLogMessages { get; set; }
     }
 }

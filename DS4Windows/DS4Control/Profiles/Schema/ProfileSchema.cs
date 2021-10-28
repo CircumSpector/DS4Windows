@@ -42,7 +42,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
             ProfilePropertyChangedEventArgs e);
 
-        private const string FILE_EXTENSION = ".json";
+        public const string FileExtension = ".json";
 
         public DS4WindowsProfile()
         {
@@ -291,8 +291,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //
             // Strip extension, if included in name
             // 
-            if (profileName.EndsWith(FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
-                profileName = profileName.Remove(profileName.LastIndexOf(FILE_EXTENSION,
+            if (profileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
+                profileName = profileName.Remove(profileName.LastIndexOf(FileExtension,
                     StringComparison.OrdinalIgnoreCase));
 
             //
@@ -303,7 +303,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //
             // Add extension
             // 
-            return $"{profileName}{FILE_EXTENSION}";
+            return $"{profileName}{FileExtension}";
         }
 
         [CanBeNull] public event ProfilePropertyChangedEventHandler ProfilePropertyChanged;

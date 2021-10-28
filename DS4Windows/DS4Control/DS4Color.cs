@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Media;
+using Newtonsoft.Json;
 
 namespace DS4Windows
 {
@@ -36,6 +37,7 @@ namespace DS4Windows
 
         public byte Blue { get; set; }
 
+        [JsonIgnore]
         public System.Drawing.Color ToColorA
         {
             get

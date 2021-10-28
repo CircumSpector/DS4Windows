@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
+using Jaeger;
+using Jaeger.Samplers;
+using Jaeger.Senders;
+using Jaeger.Senders.Thrift;
+using JetBrains.Annotations;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
+using OpenTracing.Util;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
@@ -46,7 +54,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public bool CloseMinimizes { get; set; }
 
-        public string UseLang { get; set; }
+        public string UseLang { get; set; } = CultureInfo.CurrentCulture.Name;
 
         public bool DownloadLang { get; set; }
 
@@ -58,11 +66,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public AppThemeChoice AppTheme { get; set; } = AppThemeChoice.Default;
 
-        public bool UseUDPServer { get; set; }
+        public bool UseUDPServer { get; set; } = false;
 
-        public int UDPServerPort { get; set; }
+        public int UDPServerPort { get; set; } = 26760;
 
-        public string UDPServerListenAddress { get; set; }
+        public string UDPServerListenAddress { get; set; } = "127.0.0.1";
 
         public UDPServerSmoothingOptions UDPServerSmoothingOptions { get; set; } = new();
 
@@ -74,21 +82,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public DeviceOptions DeviceOptions { get; set; } = new();
 
-        public CustomLedProxyType CustomLed1 { get; set; } = new();
-
-        public CustomLedProxyType CustomLed2 { get; set; } = new();
-
-        public CustomLedProxyType CustomLed3 { get; set; } = new();
-
-        public CustomLedProxyType CustomLed4 { get; set; } = new();
-
-        public CustomLedProxyType CustomLed5 { get; set; } = new();
-
-        public CustomLedProxyType CustomLed6 { get; set; } = new();
-
-        public CustomLedProxyType CustomLed7 { get; set; } = new();
-
-        public CustomLedProxyType CustomLed8 { get; set; } = new();
+        /// <summary>
+        ///     Gets custom LED/Lightbar overrides per controller slot.
+        /// </summary>
+        public Dictionary<int, CustomLedProxyType> CustomLedOverrides { get; set; } = new(Enumerable
+            .Range(0, 8)
+            .Select(i => new KeyValuePair<int, CustomLedProxyType>(i, new CustomLedProxyType())));
 
         /// <summary>
         ///     If true, Tracing will be enabled to start collecting performance metrics.
@@ -111,5 +110,32 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
             .Range(0, 8)
             .Select(i => new KeyValuePair<int, Guid?>(i, null)));
+
+        public event Action<bool> IsTracingEnabledChanged;
+
+        [UsedImplicitly]
+        private void OnIsTracingEnabledChanged(object oldValue, object newValue)
+        {
+            //
+            // Automatically register tracer, if configuration value instructs to
+            // 
+            if ((bool)newValue && !GlobalTracer.IsRegistered())
+            {
+                // This is necessary to pick the correct sender, otherwise a NoopSender is used!
+                Configuration.SenderConfiguration.DefaultSenderResolver = new SenderResolver(new NullLoggerFactory())
+                    .RegisterSenderFactory<ThriftSenderFactory>();
+
+                // This will log to a default localhost installation of Jaeger.
+                var tracer = new Tracer.Builder(DS4Windows.Constants.ApplicationName)
+                    .WithLoggerFactory(new NullLoggerFactory())
+                    .WithSampler(new ConstSampler(true))
+                    .Build();
+
+                // Allows code that can't use DI to also access the tracer.
+                GlobalTracer.Register(tracer);
+            }
+
+            IsTracingEnabledChanged?.Invoke((bool)newValue);
+        }
     }
 }

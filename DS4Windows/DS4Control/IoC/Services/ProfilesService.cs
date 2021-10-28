@@ -148,6 +148,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly IDictionary<PhysicalAddress, Guid> linkedProfiles = new Dictionary<PhysicalAddress, Guid>();
 
         private readonly ILogger<ProfilesService> logger;
+        
+        private const string LINKED_PROFILES_FILE_NAME = "LinkedProfiles.json";
+        
+        private const string AUTO_PROFILES_FILE_NAME = "AutoSwitchingProfiles.json";
 
         public ProfilesService(
             ILogger<ProfilesService> logger,
@@ -277,7 +281,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             var directory = global.ProfilesDirectory;
 
-            var profiles = Directory.GetFiles(directory, "*.xml", SearchOption.TopDirectoryOnly).ToList();
+            var profiles = Directory
+                .GetFiles(directory, $"*{DS4WindowsProfile.FileExtension}", SearchOption.TopDirectoryOnly).ToList();
 
             if (!profiles.Any())
                 return;
@@ -362,7 +367,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public bool SaveLinkedProfiles()
         {
-            var path = global.LinkedProfilesPath;
+            var path = Path.Combine(global.RoamingAppDataPath, LINKED_PROFILES_FILE_NAME);
 
             try
             {
@@ -388,7 +393,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public bool LoadLinkedProfiles()
         {
-            var path = global.LinkedProfilesPath;
+            var path = Path.Combine(global.RoamingAppDataPath, LINKED_PROFILES_FILE_NAME);
 
             if (!File.Exists(path))
             {
@@ -504,7 +509,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public void SaveAutoSwitchingProfiles()
         {
-            var path = global.AutoSwitchingProfilesPath;
+            var path = Path.Combine(global.RoamingAppDataPath, AUTO_PROFILES_FILE_NAME);
 
             using var stream = File.Open(path, FileMode.Create);
 
@@ -521,7 +526,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public void LoadAutoSwitchingProfiles()
         {
-            var path = global.AutoSwitchingProfilesPath;
+            var path = Path.Combine(global.RoamingAppDataPath, AUTO_PROFILES_FILE_NAME);
 
             if (!File.Exists(path))
             {
