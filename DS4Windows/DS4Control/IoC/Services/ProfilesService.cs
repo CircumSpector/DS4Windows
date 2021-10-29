@@ -43,8 +43,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
         /// </summary>
-        /// <param name="convertLegacyIfFound">If true, in-place conversion of existing legacy profile formats will be attempted.</param>
-        void LoadAvailableProfiles(bool convertLegacyIfFound = true);
+        void LoadAvailableProfiles();
 
         /// <summary>
         ///     Persists all <see cref="AvailableProfiles" /> to profile files in profile directory.
@@ -132,6 +131,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class ProfilesService : IProfilesService
     {
+        private const string LINKED_PROFILES_FILE_NAME = "LinkedProfiles.json";
+
+        private const string AUTO_PROFILES_FILE_NAME = "AutoSwitchingProfiles.json";
         private readonly IAppSettingsService appSettings;
 
         private readonly ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
@@ -148,10 +150,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly IDictionary<PhysicalAddress, Guid> linkedProfiles = new Dictionary<PhysicalAddress, Guid>();
 
         private readonly ILogger<ProfilesService> logger;
-        
-        private const string LINKED_PROFILES_FILE_NAME = "LinkedProfiles.json";
-        
-        private const string AUTO_PROFILES_FILE_NAME = "AutoSwitchingProfiles.json";
 
         public ProfilesService(
             ILogger<ProfilesService> logger,
@@ -209,7 +207,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ///     A collection of profile IDs linked to a particular controller ID (MAC address).
         /// </summary>
         public IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles => linkedProfiles.ToImmutableDictionary();
-        
+
         /// <summary>
         ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
         /// </summary>
@@ -276,8 +274,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
         /// </summary>
-        /// <param name="convertLegacyIfFound">If true, in-place conversion of existing legacy profile formats will be attempted.</param>
-        public void LoadAvailableProfiles(bool convertLegacyIfFound = true)
+        public void LoadAvailableProfiles()
         {
             var directory = global.ProfilesDirectory;
 
@@ -295,55 +292,23 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
                 using var stream = File.OpenRead(file);
 
-                try
+                var profile = DS4WindowsProfile.Deserialize(stream);
+
+                if (profile is null)
                 {
-                    var profile = DS4WindowsProfile.Deserialize(stream);
-
-                    if (availableProfiles.ContainsKey(profile.Id))
-                    {
-                        logger.LogWarning("Profile \"{Name}\" with ID {Id} already loaded, skipping",
-                            profile.DisplayName, profile.Id);
-                        continue;
-                    }
-
-                    availableProfiles.Add(profile.Id, profile.WithChangeNotification(PropertyChangedHandler));
-                }
-                //
-                // Most probably old format detected, attempt conversion
-                // 
-                catch (InvalidOperationException)
-                {
-                    if (!convertLegacyIfFound)
-                        continue;
-
-                    logger.LogInformation("Legacy profile {Profile} found, attempting conversion",
+                    logger.LogWarning("Profile {Path} couldn't be deserialized, skipping",
                         file);
-
-                    try
-                    {
-                        stream.Seek(0, SeekOrigin.Begin);
-
-                        var profile = new DS4WindowsProfile();
-
-                        var profileV3 = DS4WindowsProfileV3.Deserialize(stream);
-
-                        profileV3.ConvertTo(profile);
-                        //
-                        // We don't have this property in the old profiles so make one up
-                        // 
-                        profile.DisplayName = Path.GetFileNameWithoutExtension(file).Trim();
-
-                        availableProfiles.Add(profile.Id, profile.WithChangeNotification(PropertyChangedHandler));
-
-                        stream.Dispose();
-                        File.Delete(file);
-                        PersistProfile(profile, directory);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "Failed to attempt legacy profile conversion");
-                    }
+                    continue;
                 }
+
+                if (availableProfiles.ContainsKey(profile.Id))
+                {
+                    logger.LogWarning("Profile \"{Name}\" with ID {Id} already loaded, skipping",
+                        profile.DisplayName, profile.Id);
+                    continue;
+                }
+
+                availableProfiles.Add(profile.Id, profile.WithChangeNotification(PropertyChangedHandler));
             }
         }
 
@@ -541,7 +506,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 var store = Profiles.Schema.AutoSwitchingProfiles.Deserialize(stream);
 
                 autoSwitchingProfiles.Clear();
-                
+
                 store.AutoSwitchingProfileEntries.ForEach(autoSwitchingProfiles.Add);
             }
             catch (InvalidOperationException)
@@ -554,7 +519,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             autoSwitchingProfiles.Add(profile);
         }
-        
+
         /// <summary>
         ///     Adds a pre-existing or new <see cref="DS4WindowsProfile" /> to <see cref="AvailableProfiles" /> and persists it to
         ///     disk.

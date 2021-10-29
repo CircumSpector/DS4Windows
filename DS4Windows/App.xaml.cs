@@ -164,6 +164,8 @@ namespace DS4WinWPF
 
             profileService.Initialize();
 
+            profileService.CreateProfile();
+
             /*
             profileService.AddAutoSwitchingProfile(new AutoSwitchingProfileEntry
             {
