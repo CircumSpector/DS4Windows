@@ -136,7 +136,7 @@ namespace DS4WinWPF
             });
 
             services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
-            services.AddSingleton<IControlService, ControlService>();
+            services.AddSingleton</*IControlService, */ControlService>();
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
             services.AddSingleton<IProfilesService, ProfilesService>();
@@ -157,7 +157,7 @@ namespace DS4WinWPF
 
             logger = host.Services.GetRequiredService<ILogger<App>>();
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
-            var appLogger = host.Services.GetRequiredService<AppLogger>();
+            var appLogger = host.Services.GetRequiredService<IAppLogger>();
             devices = host.Services.GetRequiredService<IDS4Devices>();
 
             profileService = host.Services.GetRequiredService<IProfilesService>();
