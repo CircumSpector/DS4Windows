@@ -16,9 +16,10 @@
         RightTrigger = Trigger1
     }
 
-    public struct TriggerEffectSettings
+    public class TriggerEffectSettings
     {
-        public byte MaxValue;
-        public byte StartValue;
+        public byte MaxValue { get; set; }
+
+        public byte StartValue { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using DS4Windows.InputDevices;
 using Newtonsoft.Json;
 using Sensorit.Base;
 
@@ -879,14 +880,11 @@ namespace DS4Windows
                 TriggerEffectChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
         public event EventHandler TriggerEffectChanged;
 
-        public InputDevices.TriggerEffectSettings effectSettings =
-            new InputDevices.TriggerEffectSettings();
-
-        [JsonIgnore]
-        public ref InputDevices.TriggerEffectSettings TrigEffectSettings => ref effectSettings;
-
+        public TriggerEffectSettings EffectSettings { get; set; } = new();
+        
         public void ResetSettings()
         {
             //mode = TriggerMode.Normal;
