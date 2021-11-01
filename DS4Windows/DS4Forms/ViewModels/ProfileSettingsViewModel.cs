@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -9,252 +10,300 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
 using DS4Windows;
+using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
+using Microsoft.Win32;
+using Brush = System.Windows.Media.Brush;
 using Color = System.Windows.Media.Color;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public class ProfileSettingsViewModel
+    public partial class ProfileSettingsViewModel
     {
-        private int device;
-        public int Device { get => device; }
+        private readonly IAppSettingsService appSettings;
 
-        private int funcDevNum;
-        public int FuncDevNum { get => funcDevNum; }
+        private readonly ControlService rootHub;
+        public EventHandler DInputOnlyChanged;
 
-        private ImageBrush lightbarImgBrush = new ImageBrush();
-        private SolidColorBrush lightbarColBrush = new SolidColorBrush();
+        private string gyroControlsTrigDisplay = "Always On";
+
+        private int gyroMouseSmoothMethodIndex;
+
+
+        private int gyroMouseStickSmoothMethodIndex;
+
+        private string gyroMouseStickTrigDisplay = "Always On";
+
+
+        private string gyroMouseTrigDisplay = "Always On";
+
+        private string gyroSwipeTrigDisplay = "Always On";
+
+        private bool heavyRumbleActive;
+        private readonly SolidColorBrush lightbarColBrush = new();
+
+        private readonly ImageBrush lightbarImgBrush = new();
+
+        private bool lightRumbleActive;
+
+        private double mouseOffsetSpeed;
+
+        private int outputMouseSpeed;
+
+        private readonly int[] saSteeringRangeValues =
+            new int[9] { 90, 180, 270, 360, 450, 720, 900, 1080, 1440 };
+
+        private int tempControllerIndex;
+
+        private string touchDisInvertString = "None";
+
+        private readonly int[] touchpadInvertToValue = new int[4] { 0, 2, 1, 3 };
+
+        private List<TriggerModeChoice> triggerModeChoices = new()
+        {
+            new TriggerModeChoice("Normal", TriggerMode.Normal)
+        };
+
+        public ProfileSettingsViewModel(IAppSettingsService appSettings, ControlService service, int device)
+        {
+            this.appSettings = appSettings;
+            rootHub = service;
+            Device = device;
+            FuncDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
+            tempControllerIndex = ControllerTypeIndex;
+            Global.OutDevTypeTemp[device] = OutContType.X360;
+            TempBTPollRateIndex = ProfilesService.Instance.ActiveProfiles.ElementAt(device).BluetoothPollRate;
+
+            outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
+            mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
+
+            /*ImageSourceConverter sourceConverter = new ImageSourceConverter();
+            ImageSource temp = sourceConverter.
+                ConvertFromString($"{Global.Instance.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png") as ImageSource;
+            lightbarImgBrush.ImageSource = temp.Clone();
+            */
+            var tempResourceUri = new Uri($"{Global.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png");
+            var tempBitmap = new BitmapImage();
+            tempBitmap.BeginInit();
+            // Needed for some systems not using the System default color profile
+            tempBitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+            tempBitmap.UriSource = tempResourceUri;
+            tempBitmap.EndInit();
+            lightbarImgBrush.ImageSource = tempBitmap.Clone();
+
+            PresetMenuUtil = new PresetMenuHelper(device);
+            gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();
+            gyroMouseStickSmoothMethodIndex = FindGyroMouseStickSmoothMethodIndex();
+
+            SetupEvents();
+        }
+
+        public int Device { get; }
+
+        public int FuncDevNum { get; }
 
         public int LightbarModeIndex
         {
             get
             {
-                int index = 0;
-                switch(appSettings.Settings.LightbarSettingInfo[device].Mode)
+                var index = 0;
+                switch (appSettings.Settings.LightbarSettingInfo[Device].Mode)
                 {
                     case LightbarMode.DS4Win:
-                        index = 0; break;
+                        index = 0;
+                        break;
                     case LightbarMode.Passthru:
-                        index = 1; break;
-                    default: break;
+                        index = 1;
+                        break;
                 }
 
                 return index;
             }
             set
             {
-                LightbarMode temp = LightbarMode.DS4Win;
-                switch(value)
+                var temp = LightbarMode.DS4Win;
+                switch (value)
                 {
                     case 0:
-                        temp = LightbarMode.DS4Win; break;
+                        temp = LightbarMode.DS4Win;
+                        break;
                     case 1:
-                        temp = LightbarMode.Passthru; break;
-                    default: break;
+                        temp = LightbarMode.Passthru;
+                        break;
                 }
 
-                appSettings.Settings.LightbarSettingInfo[device].Mode = temp;
+                appSettings.Settings.LightbarSettingInfo[Device].Mode = temp;
                 LightbarModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LightbarModeIndexChanged;
 
-        public System.Windows.Media.Brush LightbarBrush
+        public Brush LightbarBrush
         {
             get
             {
-                System.Windows.Media.Brush tempBrush;
-                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                Brush tempBrush;
+                var color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led;
                 if (!RainbowExists)
                 {
-                    lightbarColBrush.Color = new System.Windows.Media.Color()
+                    lightbarColBrush.Color = new Color
                     {
                         A = 255,
                         R = color.Red,
                         G = color.Green,
                         B = color.Blue
                     };
-                    tempBrush = lightbarColBrush as System.Windows.Media.Brush;
+                    tempBrush = lightbarColBrush;
                 }
                 else
                 {
-                    tempBrush = lightbarImgBrush as System.Windows.Media.Brush;
+                    tempBrush = lightbarImgBrush;
                 }
 
                 return tempBrush;
             }
         }
-        public event EventHandler LightbarBrushChanged;
 
-        public System.Windows.Media.Color MainColor => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.ToColor();
-        public event EventHandler MainColorChanged;
+        public Color MainColor => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.ToColor();
 
         public string MainColorString
         {
             get
             {
-                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                var color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
-        public event EventHandler MainColorStringChanged;
 
         public int MainColorR
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Red;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Red;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Red = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Red = (byte)value;
                 MainColorRChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler MainColorRChanged;
 
-        public string MainColorRString
-        {
-            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Red.ToString("X2")}FF0000";
-        }
-        public event EventHandler MainColorRStringChanged;
+        public string MainColorRString =>
+            $"#{appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Red.ToString("X2")}FF0000";
 
         public int MainColorG
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Green;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Green;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Green = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Green = (byte)value;
                 MainColorGChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler MainColorGChanged;
 
-        public string MainColorGString
-        {
-            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Green.ToString("X2")}00FF00";
-        }
-        public event EventHandler MainColorGStringChanged;
+        public string MainColorGString =>
+            $"#{appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Green.ToString("X2")}00FF00";
 
         public int MainColorB
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Blue;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Blue = (byte)value;
                 MainColorBChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler MainColorBChanged;
 
-        public string MainColorBString
-        {
-            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led.Blue.ToString("X2")}0000FF";
-        }
-        public event EventHandler MainColorBStringChanged;
+        public string MainColorBString =>
+            $"#{appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Blue.ToString("X2")}0000FF";
 
         public string LowColor
         {
             get
             {
-                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed;
+                var color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
-        public event EventHandler LowColorChanged;
 
         public int LowColorR
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Red;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Red = (byte)value;
                 LowColorRChanged?.Invoke(this, EventArgs.Empty);
                 LowColorRStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LowColorRChanged;
 
-        public string LowColorRString
-        {
-            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Red.ToString("X2")}FF0000";
-        }
-        public event EventHandler LowColorRStringChanged;
+        public string LowColorRString =>
+            $"#{appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Red.ToString("X2")}FF0000";
 
         public int LowColorG
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Green;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Green = (byte)value;
                 LowColorGChanged?.Invoke(this, EventArgs.Empty);
                 LowColorGStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LowColorGChanged;
 
-        public string LowColorGString
-        {
-            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Green.ToString("X2")}00FF00";
-        }
-        public event EventHandler LowColorGStringChanged;
+        public string LowColorGString =>
+            $"#{appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Green.ToString("X2")}00FF00";
 
         public int LowColorB
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Blue;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue = (byte)value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Blue = (byte)value;
                 LowColorBChanged?.Invoke(this, EventArgs.Empty);
                 LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LowColorBChanged;
 
-        public string LowColorBString
-        {
-            get => $"#{ appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.Blue.ToString("X2")}0000FF";
-        }
-        public event EventHandler LowColorBStringChanged;
+        public string LowColorBString =>
+            $"#{appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Blue.ToString("X2")}0000FF";
 
-        public System.Windows.Media.Color LowColorMedia => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed.ToColor();
+        public Color LowColorMedia => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.ToColor();
 
         public int FlashTypeIndex
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashType; //Global.Instance.FlashType[device];
-            set => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashType = (byte)value;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings
+                .FlashType; //Global.Instance.FlashType[device];
+            set => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashType = (byte)value;
         }
 
         public int FlashAt
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashAt; //Global.Instance.FlashAt[device];
-            set => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashAt = value;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings
+                .FlashAt; //Global.Instance.FlashAt[device];
+            set => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashAt = value;
         }
 
         public string FlashColor
         {
             get
             {
-                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed;
+                var color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashLed;
 
                 if (color.Red == 0 && color.Green == 0 && color.Blue == 0)
-                    color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed =
-                        appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                    color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashLed =
+                        appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led;
 
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
 
-        public event EventHandler FlashColorChanged;
-
         public Color FlashColorMedia
         {
             get
             {
-                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed;
+                var color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashLed;
                 if (color.Red == 0 && color.Green == 0 && color.Blue == 0)
-                    color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed =
-                        appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                    color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashLed =
+                        appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led;
 
                 return color.ToColor();
             }
@@ -262,81 +311,69 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ChargingType
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingType;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingType;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingType = value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingType = value;
                 ChargingColorVisibleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public bool ColorBatteryPercent
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LedAsBattery;
-            set
-            {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LedAsBattery = value;
-            }
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LedAsBattery;
+            set => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LedAsBattery = value;
         }
 
         public string ChargingColor
         {
             get
             {
-                var color = appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed;
+                var color = appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingLed;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
 
-        public event EventHandler ChargingColorChanged;
+        public Color ChargingColorMedia =>
+            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingLed.ToColor();
 
-        public System.Windows.Media.Color ChargingColorMedia => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed.ToColor();
-
-        public Visibility ChargingColorVisible
-        {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingType == 3 ? Visibility.Visible : Visibility.Hidden;
-        }
-        public event EventHandler ChargingColorVisibleChanged;
+        public Visibility ChargingColorVisible =>
+            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingType == 3
+                ? Visibility.Visible
+                : Visibility.Hidden;
 
         public double Rainbow
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Rainbow;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Rainbow;
             set
             {
-                appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Rainbow = value;
+                appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Rainbow = value;
                 RainbowChanged?.Invoke(this, EventArgs.Empty);
                 RainbowExistsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler RainbowChanged;
 
-        public bool RainbowExists
-        {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Rainbow != 0.0;
-        }
-
-        public event EventHandler RainbowExistsChanged;
+        public bool RainbowExists => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Rainbow != 0.0;
 
         public double MaxSatRainbow
         {
-            get => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.MaxRainbowSaturation * 100.0;
-            set => appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.MaxRainbowSaturation = value / 100.0;
+            get => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.MaxRainbowSaturation * 100.0;
+            set => appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.MaxRainbowSaturation = value / 100.0;
         }
 
         public int RumbleBoost
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleBoost;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleBoost = (byte)value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RumbleBoost;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RumbleBoost = (byte)value;
         }
 
         public int RumbleAutostopTime
         {
             // RumbleAutostopTime value is in milliseconds in XML config file, but GUI uses just seconds
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleAutostopTime / 1000;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RumbleAutostopTime = value * 1000;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RumbleAutostopTime / 1000;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RumbleAutostopTime = value * 1000;
         }
 
-        private bool heavyRumbleActive;
         public bool HeavyRumbleActive
         {
             get => heavyRumbleActive;
@@ -346,9 +383,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 HeavyRumbleActiveChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler HeavyRumbleActiveChanged;
 
-        private bool lightRumbleActive;
         public bool LightRumbleActive
         {
             get => lightRumbleActive;
@@ -358,7 +393,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 LightRumbleActiveChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LightRumbleActiveChanged;
 
         public bool UseControllerReadout
         {
@@ -368,50 +402,51 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseSensitivity
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.buttonSensitivity;
             set
             {
-                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonSensitivity;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.buttonSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.ButtonSensitivity = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.ButtonSensitivity = value;
                 ButtonMouseSensitivityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ButtonMouseSensitivityChanged;
 
         public int ButtonMouseVerticalScale
         {
-            get => Convert.ToInt32(ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale * 100.0);
+            get => Convert.ToInt32(ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo
+                .buttonVerticalScale * 100.0);
             set
             {
-                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale;
-                double attemptValue = value * 0.01;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo
+                    .buttonVerticalScale;
+                var attemptValue = value * 0.01;
                 if (temp == attemptValue) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.buttonVerticalScale = attemptValue;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.buttonVerticalScale =
+                    attemptValue;
                 ButtonMouseVerticalScaleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ButtonMouseVerticalScaleChanged;
 
-        private double RawButtonMouseOffset
-        {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset;
-        }
+        private double RawButtonMouseOffset => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo
+            .mouseVelocityOffset;
 
         public double ButtonMouseOffset
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseVelocityOffset *
+                   100.0;
             set
             {
-                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset * 100.0;
+                var temp =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseVelocityOffset *
+                    100.0;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseVelocityOffset = value * 0.01;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseVelocityOffset =
+                    value * 0.01;
                 ButtonMouseOffsetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ButtonMouseOffsetChanged;
 
-        private int outputMouseSpeed;
         public int OutputMouseSpeed
         {
             get => outputMouseSpeed;
@@ -422,9 +457,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 OutputMouseSpeedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler OutputMouseSpeedChanged;
 
-        private double mouseOffsetSpeed;
         public double MouseOffsetSpeed
         {
             get => mouseOffsetSpeed;
@@ -435,132 +468,110 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 MouseOffsetSpeedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler MouseOffsetSpeedChanged;
 
         public bool MouseAcceleration
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo.mouseAccel = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseAccel;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseAccel = value;
         }
 
         public bool EnableTouchpadToggle
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableTouchToggle;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableTouchToggle = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).EnableTouchToggle;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).EnableTouchToggle = value;
         }
 
         public bool EnableOutputDataToDS4
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableOutputDataToDS4;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).EnableOutputDataToDS4 = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).EnableOutputDataToDS4;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).EnableOutputDataToDS4 = value;
         }
 
         public bool LaunchProgramExists
         {
-            get => !string.IsNullOrEmpty(Global.Instance.Config.LaunchProgram[device]);
+            get => !string.IsNullOrEmpty(Global.Instance.Config.LaunchProgram[Device]);
             set
             {
                 if (!value) ResetLauchProgram();
             }
         }
-        public event EventHandler LaunchProgramExistsChanged;
 
-        public string LaunchProgram
-        {
-            get => Global.Instance.Config.LaunchProgram[device];
-        }
-        public event EventHandler LaunchProgramChanged;
+        public string LaunchProgram => Global.Instance.Config.LaunchProgram[Device];
 
         public string LaunchProgramName
         {
             get
             {
-                string temp = Global.Instance.Config.LaunchProgram[device];
+                var temp = Global.Instance.Config.LaunchProgram[Device];
                 if (!string.IsNullOrEmpty(temp))
-                {
                     temp = Path.GetFileNameWithoutExtension(temp);
-                }
                 else
-                {
                     temp = "Browse";
-                }
 
                 return temp;
             }
         }
-        public event EventHandler LaunchProgramNameChanged;
 
         public ImageSource LaunchProgramIcon
         {
             get
             {
                 ImageSource exeicon = null;
-                string path = Global.Instance.Config.LaunchProgram[device];
+                var path = Global.Instance.Config.LaunchProgram[Device];
                 if (File.Exists(path) && Path.GetExtension(path).ToLower() == ".exe")
-                {
-                    using (Icon ico = Icon.ExtractAssociatedIcon(path))
+                    using (var ico = Icon.ExtractAssociatedIcon(path))
                     {
                         exeicon = Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty,
                             BitmapSizeOptions.FromEmptyOptions());
                         exeicon.Freeze();
                     }
-                }
 
                 return exeicon;
             }
         }
-        public event EventHandler LaunchProgramIconChanged;
 
         public bool DInputOnly
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DisableVirtualController;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DisableVirtualController = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).DisableVirtualController;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).DisableVirtualController = value;
         }
-        public EventHandler DInputOnlyChanged;
 
         public bool IdleDisconnectExists
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).IdleDisconnectTimeout != 0;
             set
             {
                 // If enabling Idle Disconnect, set default time.
                 // Otherwise, set time to 0 to mean disabled
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout = value ?
-                    Global.DEFAULT_ENABLE_IDLE_DISCONN_MINS * 60 : 0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).IdleDisconnectTimeout =
+                    value ? Global.DEFAULT_ENABLE_IDLE_DISCONN_MINS * 60 : 0;
 
                 IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
                 IdleDisconnectExistsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler IdleDisconnectExistsChanged;
 
         public int IdleDisconnect
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout / 60;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).IdleDisconnectTimeout / 60;
             set
             {
-                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout / 60;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).IdleDisconnectTimeout / 60;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).IdleDisconnectTimeout = value * 60;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).IdleDisconnectTimeout = value * 60;
                 IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
                 IdleDisconnectExistsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler IdleDisconnectChanged;
 
-        private int tempBtPollRate;
-        public int TempBTPollRateIndex
-        {
-            get => tempBtPollRate;
-            set => tempBtPollRate = value;
-        }
+        public int TempBTPollRateIndex { get; set; }
 
         public int ControllerTypeIndex
         {
             get
             {
-                int type = 0;
-                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType)
+                var type = 0;
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).OutputDeviceType)
                 {
                     case OutContType.X360:
                         type = 0;
@@ -569,21 +580,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     case OutContType.DS4:
                         type = 1;
                         break;
-
-                    default: break;
                 }
 
                 return type;
             }
         }
 
-        private int tempControllerIndex;
         public int TempControllerIndex
         {
-            get => tempControllerIndex; set
+            get => tempControllerIndex;
+            set
             {
                 tempControllerIndex = value;
-                Global.OutDevTypeTemp[device] = TempConType;
+                Global.OutDevTypeTemp[Device] = TempConType;
             }
         }
 
@@ -591,15 +600,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                OutContType result = OutContType.None;
+                var result = OutContType.None;
                 switch (tempControllerIndex)
                 {
                     case 0:
-                        result = OutContType.X360; break;
+                        result = OutContType.X360;
+                        break;
                     case 1:
-                        result = OutContType.DS4; break;
-                    default: result = OutContType.X360; break;
+                        result = OutContType.DS4;
+                        break;
+                    default:
+                        result = OutContType.X360;
+                        break;
                 }
+
                 return result;
             }
         }
@@ -608,258 +622,266 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int index = 0;
-                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode)
+                var index = 0;
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroOutputMode)
                 {
                     case GyroOutMode.Controls:
-                        index = 0; break;
+                        index = 0;
+                        break;
                     case GyroOutMode.Mouse:
-                        index = 1; break;
+                        index = 1;
+                        break;
                     case GyroOutMode.MouseJoystick:
-                        index = 2; break;
+                        index = 2;
+                        break;
                     case GyroOutMode.DirectionalSwipe:
-                        index = 3; break;
+                        index = 3;
+                        break;
                     case GyroOutMode.Passthru:
-                        index = 4; break;
-                    default: break;
+                        index = 4;
+                        break;
                 }
 
                 return index;
             }
             set
             {
-                GyroOutMode temp = GyroOutMode.Controls;
-                switch(value)
+                var temp = GyroOutMode.Controls;
+                switch (value)
                 {
                     case 0: break;
                     case 1:
-                        temp = GyroOutMode.Mouse; break;
+                        temp = GyroOutMode.Mouse;
+                        break;
                     case 2:
-                        temp = GyroOutMode.MouseJoystick; break;
+                        temp = GyroOutMode.MouseJoystick;
+                        break;
                     case 3:
-                        temp = GyroOutMode.DirectionalSwipe; break;
+                        temp = GyroOutMode.DirectionalSwipe;
+                        break;
                     case 4:
-                        temp = GyroOutMode.Passthru; break;
-                    default: break;
+                        temp = GyroOutMode.Passthru;
+                        break;
                 }
 
-                GyroOutMode current = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode;
+                var current = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroOutputMode;
                 if (temp == current) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroOutputMode = temp;
                 GyroOutModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroOutModeIndexChanged;
 
-        public OutContType ContType => ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType;
+        public OutContType ContType => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).OutputDeviceType;
 
         public int SASteeringWheelEmulationAxisIndex
         {
-            get => (int)ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
+            get => (int)ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SASteeringWheelEmulationAxis;
             set
             {
-                int temp = (int)ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
+                var temp = (int)ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SASteeringWheelEmulationAxis;
                 if (temp == value) return;
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis = (SASteeringWheelEmulationAxisType)value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SASteeringWheelEmulationAxis =
+                    (SASteeringWheelEmulationAxisType)value;
                 SASteeringWheelEmulationAxisIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler SASteeringWheelEmulationAxisIndexChanged;
 
-        private int[] saSteeringRangeValues =
-            new int[9] { 90, 180, 270, 360, 450, 720, 900, 1080, 1440 };
         public int SASteeringWheelEmulationRangeIndex
         {
             get
             {
-                int index = 360;
-                switch(ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange)
+                var index = 360;
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SASteeringWheelEmulationRange)
                 {
                     case 90:
-                        index = 0; break;
+                        index = 0;
+                        break;
                     case 180:
-                        index = 1; break;
+                        index = 1;
+                        break;
                     case 270:
-                        index = 2; break;
+                        index = 2;
+                        break;
                     case 360:
-                        index = 3; break;
+                        index = 3;
+                        break;
                     case 450:
-                        index = 4; break;
+                        index = 4;
+                        break;
                     case 720:
-                        index = 5; break;
+                        index = 5;
+                        break;
                     case 900:
-                        index = 6; break;
+                        index = 6;
+                        break;
                     case 1080:
-                        index = 7; break;
+                        index = 7;
+                        break;
                     case 1440:
-                        index = 8; break;
-                    default: break;
+                        index = 8;
+                        break;
                 }
 
                 return index;
             }
             set
             {
-                int temp = saSteeringRangeValues[value];
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange = temp;
+                var temp = saSteeringRangeValues[value];
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SASteeringWheelEmulationRange = temp;
             }
         }
 
         public int SASteeringWheelEmulationRange
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationRange = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SASteeringWheelEmulationRange;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SASteeringWheelEmulationRange = value;
         }
 
         public int SASteeringWheelFuzz
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SAWheelFuzzValues;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SAWheelFuzzValues = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SAWheelFuzzValues;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SAWheelFuzzValues = value;
         }
 
         public bool SASteeringWheelUseSmoothing
         {
-            get => Global.Instance.Config.WheelSmoothInfo[device].Enabled;
+            get => Global.Instance.Config.WheelSmoothInfo[Device].Enabled;
             set
             {
-                bool temp = Global.Instance.Config.WheelSmoothInfo[device].Enabled;
+                var temp = Global.Instance.Config.WheelSmoothInfo[Device].Enabled;
                 if (temp == value) return;
-                Global.Instance.Config.WheelSmoothInfo[device].Enabled = value;
+                Global.Instance.Config.WheelSmoothInfo[Device].Enabled = value;
                 SASteeringWheelUseSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler SASteeringWheelUseSmoothingChanged;
 
         public double SASteeringWheelSmoothMinCutoff
         {
-            get => Global.Instance.Config.WheelSmoothInfo[device].MinCutoff;
-            set => Global.Instance.Config.WheelSmoothInfo[device].MinCutoff = value;
+            get => Global.Instance.Config.WheelSmoothInfo[Device].MinCutoff;
+            set => Global.Instance.Config.WheelSmoothInfo[Device].MinCutoff = value;
         }
 
         public double SASteeringWheelSmoothBeta
         {
-            get => Global.Instance.Config.WheelSmoothInfo[device].Beta;
-            set => Global.Instance.Config.WheelSmoothInfo[device].Beta = value;
+            get => Global.Instance.Config.WheelSmoothInfo[Device].Beta;
+            set => Global.Instance.Config.WheelSmoothInfo[Device].Beta = value;
         }
 
         public double LSDeadZone
         {
-            get => Math.Round(Global.Instance.Config.LSModInfo[device].DeadZone / 127d, 2);
+            get => Math.Round(Global.Instance.Config.LSModInfo[Device].DeadZone / 127d, 2);
             set
             {
-                double temp = Math.Round(Global.Instance.Config.LSModInfo[device].DeadZone / 127d, 2);
+                var temp = Math.Round(Global.Instance.Config.LSModInfo[Device].DeadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.Config.LSModInfo[device].DeadZone = (int)Math.Round(value * 127d);
+                Global.Instance.Config.LSModInfo[Device].DeadZone = (int)Math.Round(value * 127d);
                 LSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LSDeadZoneChanged;
 
         public double RSDeadZone
         {
-            get => Math.Round(Global.Instance.Config.RSModInfo[device].DeadZone / 127d, 2);
+            get => Math.Round(Global.Instance.Config.RSModInfo[Device].DeadZone / 127d, 2);
             set
             {
-                double temp = Math.Round(Global.Instance.Config.RSModInfo[device].DeadZone / 127d, 2);
+                var temp = Math.Round(Global.Instance.Config.RSModInfo[Device].DeadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.Config.RSModInfo[device].DeadZone = (int)Math.Round(value * 127d);
+                Global.Instance.Config.RSModInfo[Device].DeadZone = (int)Math.Round(value * 127d);
                 RSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler RSDeadZoneChanged;
 
         public double LSMaxZone
         {
-            get => Global.Instance.Config.LSModInfo[device].MaxZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].MaxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.LSModInfo[Device].MaxZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[Device].MaxZone = (int)(value * 100.0);
         }
 
         public double RSMaxZone
         {
-            get => Global.Instance.Config.RSModInfo[device].MaxZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].MaxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.RSModInfo[Device].MaxZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[Device].MaxZone = (int)(value * 100.0);
         }
 
         public double LSAntiDeadZone
         {
-            get => Global.Instance.Config.LSModInfo[device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].AntiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.LSModInfo[Device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[Device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double RSAntiDeadZone
         {
-            get => Global.Instance.Config.RSModInfo[device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].AntiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.RSModInfo[Device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[Device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double LSVerticalScale
         {
-            get => Global.Instance.Config.LSModInfo[device].VerticalScale / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].VerticalScale = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[Device].VerticalScale / 100.0;
+            set => Global.Instance.Config.LSModInfo[Device].VerticalScale = value * 100.0;
         }
 
         public double LSMaxOutput
         {
-            get => Global.Instance.Config.LSModInfo[device].MaxOutput / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].MaxOutput = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[Device].MaxOutput / 100.0;
+            set => Global.Instance.Config.LSModInfo[Device].MaxOutput = value * 100.0;
         }
 
         public bool LSMaxOutputForce
         {
-            get => Global.Instance.Config.LSModInfo[device].MaxOutputForce;
-            set => Global.Instance.Config.LSModInfo[device].MaxOutputForce = value;
+            get => Global.Instance.Config.LSModInfo[Device].MaxOutputForce;
+            set => Global.Instance.Config.LSModInfo[Device].MaxOutputForce = value;
         }
 
         public double RSVerticalScale
         {
-            get => Global.Instance.Config.RSModInfo[device].VerticalScale / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].VerticalScale = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[Device].VerticalScale / 100.0;
+            set => Global.Instance.Config.RSModInfo[Device].VerticalScale = value * 100.0;
         }
 
         public double RSMaxOutput
         {
-            get => Global.Instance.Config.RSModInfo[device].MaxOutput / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].MaxOutput = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[Device].MaxOutput / 100.0;
+            set => Global.Instance.Config.RSModInfo[Device].MaxOutput = value * 100.0;
         }
 
         public bool RSMaxOutputForce
         {
-            get => Global.Instance.Config.RSModInfo[device].MaxOutputForce;
-            set => Global.Instance.Config.RSModInfo[device].MaxOutputForce = value;
+            get => Global.Instance.Config.RSModInfo[Device].MaxOutputForce;
+            set => Global.Instance.Config.RSModInfo[Device].MaxOutputForce = value;
         }
 
         public int LSDeadTypeIndex
         {
             get
             {
-                int index = 0;
-                switch(Global.Instance.Config.LSModInfo[device].DZType)
+                var index = 0;
+                switch (Global.Instance.Config.LSModInfo[Device].DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
                     case StickDeadZoneInfo.DeadZoneType.Axial:
-                        index = 1; break;
-                    default: break;
+                        index = 1;
+                        break;
                 }
 
                 return index;
             }
             set
             {
-                StickDeadZoneInfo.DeadZoneType temp = StickDeadZoneInfo.DeadZoneType.Radial;
-                switch(value)
+                var temp = StickDeadZoneInfo.DeadZoneType.Radial;
+                switch (value)
                 {
                     case 0: break;
                     case 1:
                         temp = StickDeadZoneInfo.DeadZoneType.Axial;
                         break;
-                    default: break;
                 }
 
-                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.LSModInfo[device].DZType;
+                var current = Global.Instance.Config.LSModInfo[Device].DZType;
                 if (temp == current) return;
-                Global.Instance.Config.LSModInfo[device].DZType = temp;
+                Global.Instance.Config.LSModInfo[Device].DZType = temp;
             }
         }
 
@@ -867,220 +889,217 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                int index = 0;
-                switch (Global.Instance.Config.RSModInfo[device].DZType)
+                var index = 0;
+                switch (Global.Instance.Config.RSModInfo[Device].DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
                     case StickDeadZoneInfo.DeadZoneType.Axial:
-                        index = 1; break;
-                    default: break;
+                        index = 1;
+                        break;
                 }
 
                 return index;
             }
             set
             {
-                StickDeadZoneInfo.DeadZoneType temp = StickDeadZoneInfo.DeadZoneType.Radial;
+                var temp = StickDeadZoneInfo.DeadZoneType.Radial;
                 switch (value)
                 {
                     case 0: break;
                     case 1:
                         temp = StickDeadZoneInfo.DeadZoneType.Axial;
                         break;
-                    default: break;
                 }
 
-                StickDeadZoneInfo.DeadZoneType current = Global.Instance.Config.RSModInfo[device].DZType;
+                var current = Global.Instance.Config.RSModInfo[Device].DZType;
                 if (temp == current) return;
-                Global.Instance.Config.RSModInfo[device].DZType = temp;
+                Global.Instance.Config.RSModInfo[Device].DZType = temp;
             }
         }
 
         public double LSSens
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSSens;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSSens = value;
         }
 
         public double RSSens
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSSens;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSSens = value;
         }
 
         public bool LSSquareStick
         {
-            get => Global.Instance.Config.SquStickInfo[device].LSMode;
-            set => Global.Instance.Config.SquStickInfo[device].LSMode = value;
+            get => Global.Instance.Config.SquStickInfo[Device].LSMode;
+            set => Global.Instance.Config.SquStickInfo[Device].LSMode = value;
         }
 
         public bool RSSquareStick
         {
-            get => Global.Instance.Config.SquStickInfo[device].RSMode;
-            set => Global.Instance.Config.SquStickInfo[device].RSMode = value;
+            get => Global.Instance.Config.SquStickInfo[Device].RSMode;
+            set => Global.Instance.Config.SquStickInfo[Device].RSMode = value;
         }
 
         public double LSSquareRoundness
         {
-            get => Global.Instance.Config.SquStickInfo[device].LSRoundness;
-            set => Global.Instance.Config.SquStickInfo[device].LSRoundness = value;
+            get => Global.Instance.Config.SquStickInfo[Device].LSRoundness;
+            set => Global.Instance.Config.SquStickInfo[Device].LSRoundness = value;
         }
 
         public double RSSquareRoundness
         {
-            get => Global.Instance.Config.SquStickInfo[device].RSRoundness;
-            set => Global.Instance.Config.SquStickInfo[device].RSRoundness = value;
+            get => Global.Instance.Config.SquStickInfo[Device].RSRoundness;
+            set => Global.Instance.Config.SquStickInfo[Device].RSRoundness = value;
         }
 
         public int LSOutputCurveIndex
         {
-            get => Global.Instance.Config.GetLsOutCurveMode(device);
+            get => Global.Instance.Config.GetLsOutCurveMode(Device);
             set
             {
-                Global.Instance.Config.SetLsOutCurveMode(device, value);
+                Global.Instance.Config.SetLsOutCurveMode(Device, value);
                 LSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int RSOutputCurveIndex
         {
-            get => Global.Instance.Config.GetRsOutCurveMode(device);
+            get => Global.Instance.Config.GetRsOutCurveMode(Device);
             set
             {
-                Global.Instance.Config.SetRsOutCurveMode(device, value);
+                Global.Instance.Config.SetRsOutCurveMode(Device, value);
                 RSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double LSRotation
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSRotation * 180.0 / Math.PI;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSRotation = value * Math.PI / 180.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSRotation * 180.0 / Math.PI;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSRotation = value * Math.PI / 180.0;
         }
 
         public double RSRotation
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSRotation * 180.0 / Math.PI;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSRotation = value * Math.PI / 180.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSRotation * 180.0 / Math.PI;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSRotation = value * Math.PI / 180.0;
         }
 
-        public bool LSCustomCurveSelected
-        {
-            get => Global.Instance.Config.GetLsOutCurveMode(device) == 6;
-        }
-        public event EventHandler LSCustomCurveSelectedChanged;
+        public bool LSCustomCurveSelected => Global.Instance.Config.GetLsOutCurveMode(Device) == 6;
 
-        public bool RSCustomCurveSelected
-        {
-            get => Global.Instance.Config.GetRsOutCurveMode(device) == 6;
-        }
-        public event EventHandler RSCustomCurveSelectedChanged;
+        public bool RSCustomCurveSelected => Global.Instance.Config.GetRsOutCurveMode(Device) == 6;
 
         public string LSCustomCurve
         {
-            get => Global.Instance.Config.LSOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.Config.LSOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
+            get => Global.Instance.Config.LSOutBezierCurveObj[Device].CustomDefinition;
+            set => Global.Instance.Config.LSOutBezierCurveObj[Device]
+                .InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
         }
 
         public string RSCustomCurve
         {
-            get => Global.Instance.Config.RSOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.Config.RSOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
+            get => Global.Instance.Config.RSOutBezierCurveObj[Device].CustomDefinition;
+            set => Global.Instance.Config.RSOutBezierCurveObj[Device]
+                .InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
         }
 
         public int LSFuzz
         {
-            get => Global.Instance.Config.LSModInfo[device].Fuzz;
-            set => Global.Instance.Config.LSModInfo[device].Fuzz = value;
+            get => Global.Instance.Config.LSModInfo[Device].Fuzz;
+            set => Global.Instance.Config.LSModInfo[Device].Fuzz = value;
         }
 
         public int RSFuzz
         {
-            get => Global.Instance.Config.RSModInfo[device].Fuzz;
-            set => Global.Instance.Config.RSModInfo[device].Fuzz = value;
+            get => Global.Instance.Config.RSModInfo[Device].Fuzz;
+            set => Global.Instance.Config.RSModInfo[Device].Fuzz = value;
         }
 
         public bool LSAntiSnapback
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[device].Enabled;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[device].Enabled = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[Device].Enabled;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[Device].Enabled = value;
         }
 
         public bool RSAntiSnapback
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[device].Enabled;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[device].Enabled = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[Device].Enabled;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[Device].Enabled = value;
         }
 
         public double LSAntiSnapbackDelta
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[device].Delta;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[device].Delta = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[Device].Delta;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[Device].Delta = value;
         }
 
         public double RSAntiSnapbackDelta
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[device].Delta;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[device].Delta = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[Device].Delta;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[Device].Delta = value;
         }
+
         public int LSAntiSnapbackTimeout
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[device].Timeout;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[device].Timeout = value;
+            get => Global.Instance.Config.LSAntiSnapbackInfo[Device].Timeout;
+            set => Global.Instance.Config.LSAntiSnapbackInfo[Device].Timeout = value;
         }
 
         public int RSAntiSnapbackTimeout
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[device].Timeout;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[device].Timeout = value;
+            get => Global.Instance.Config.RSAntiSnapbackInfo[Device].Timeout;
+            set => Global.Instance.Config.RSAntiSnapbackInfo[Device].Timeout = value;
         }
 
         public bool LSOuterBindInvert
         {
-            get => Global.Instance.Config.LSModInfo[device].OuterBindInvert;
-            set => Global.Instance.Config.LSModInfo[device].OuterBindInvert = value;
+            get => Global.Instance.Config.LSModInfo[Device].OuterBindInvert;
+            set => Global.Instance.Config.LSModInfo[Device].OuterBindInvert = value;
         }
 
         public bool RSOuterBindInvert
         {
-            get => Global.Instance.Config.RSModInfo[device].OuterBindInvert;
-            set => Global.Instance.Config.RSModInfo[device].OuterBindInvert = value;
+            get => Global.Instance.Config.RSModInfo[Device].OuterBindInvert;
+            set => Global.Instance.Config.RSModInfo[Device].OuterBindInvert = value;
         }
 
         public double LSOuterBindDead
         {
-            get => Global.Instance.Config.LSModInfo[device].OuterBindDeadZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[device].OuterBindDeadZone = value * 100.0;
+            get => Global.Instance.Config.LSModInfo[Device].OuterBindDeadZone / 100.0;
+            set => Global.Instance.Config.LSModInfo[Device].OuterBindDeadZone = value * 100.0;
         }
 
         public double RSOuterBindDead
         {
-            get => Global.Instance.Config.RSModInfo[device].OuterBindDeadZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[device].OuterBindDeadZone = value * 100.0;
+            get => Global.Instance.Config.RSModInfo[Device].OuterBindDeadZone / 100.0;
+            set => Global.Instance.Config.RSModInfo[Device].OuterBindDeadZone = value * 100.0;
         }
 
         public int LSOutputIndex
         {
             get
             {
-                int index = 0;
-                switch (Global.Instance.Config.LSOutputSettings[device].Mode)
+                var index = 0;
+                switch (Global.Instance.Config.LSOutputSettings[Device].Mode)
                 {
                     case StickMode.None:
-                        index = 0; break;
+                        index = 0;
+                        break;
                     case StickMode.Controls:
-                        index = 1; break;
+                        index = 1;
+                        break;
                     case StickMode.FlickStick:
-                        index = 2; break;
-                    default: break;
+                        index = 2;
+                        break;
                 }
+
                 return index;
             }
             set
             {
-                StickMode temp = StickMode.None;
-                switch(value)
+                var temp = StickMode.None;
+                switch (value)
                 {
                     case 0:
                         temp = StickMode.None;
@@ -1091,74 +1110,63 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     case 2:
                         temp = StickMode.FlickStick;
                         break;
-                    default:
-                        break;
                 }
 
-                StickMode current = Global.Instance.Config.LSOutputSettings[device].Mode;
+                var current = Global.Instance.Config.LSOutputSettings[Device].Mode;
                 if (temp == current) return;
-                Global.Instance.Config.LSOutputSettings[device].Mode = temp;
+                Global.Instance.Config.LSOutputSettings[Device].Mode = temp;
                 LSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler LSOutputIndexChanged;
 
         public double LSFlickRWC
         {
-            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration;
-            set
-            {
-                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration = value;
-            }
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration =
+                value;
         }
 
         public double LSFlickThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickThreshold;
-            set
-            {
-                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickThreshold = value;
-            }
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold = value;
         }
 
         public double LSFlickTime
         {
-            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickTime;
-            set
-            {
-                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.flickTime = value;
-            }
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickTime;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickTime = value;
         }
 
         public double LSMinAngleThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold;
-            set
-            {
-                Global.Instance.Config.LSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold = value;
-            }
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold =
+                value;
         }
 
         public int RSOutputIndex
         {
             get
             {
-                int index = 0;
-                switch (Global.Instance.Config.RSOutputSettings[device].Mode)
+                var index = 0;
+                switch (Global.Instance.Config.RSOutputSettings[Device].Mode)
                 {
                     case StickMode.None:
                         break;
                     case StickMode.Controls:
-                        index = 1; break;
+                        index = 1;
+                        break;
                     case StickMode.FlickStick:
-                        index = 2; break;
-                    default: break;
+                        index = 2;
+                        break;
                 }
+
                 return index;
             }
             set
             {
-                StickMode temp = StickMode.None;
+                var temp = StickMode.None;
                 switch (value)
                 {
                     case 0:
@@ -1170,694 +1178,642 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     case 2:
                         temp = StickMode.FlickStick;
                         break;
-                    default:
-                        break;
                 }
 
-                StickMode current = Global.Instance.Config.RSOutputSettings[device].Mode;
+                var current = Global.Instance.Config.RSOutputSettings[Device].Mode;
                 if (temp == current) return;
-                Global.Instance.Config.RSOutputSettings[device].Mode = temp;
+                Global.Instance.Config.RSOutputSettings[Device].Mode = temp;
                 RSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler RSOutputIndexChanged;
 
         public double RSFlickRWC
         {
-            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration;
-            set
-            {
-                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.realWorldCalibration = value;
-            }
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration =
+                value;
         }
 
         public double RSFlickThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickThreshold;
-            set
-            {
-                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickThreshold = value;
-            }
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold = value;
         }
 
         public double RSFlickTime
         {
-            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickTime;
-            set
-            {
-                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.flickTime = value;
-            }
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickTime;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickTime = value;
         }
 
         public double RSMinAngleThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold;
-            set
-            {
-                Global.Instance.Config.RSOutputSettings[device].OutputSettings.flickSettings.minAngleThreshold = value;
-            }
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold =
+                value;
         }
 
         public double L2DeadZone
         {
-            get => Global.Instance.Config.L2ModInfo[device].deadZone / 255.0;
+            get => Global.Instance.Config.L2ModInfo[Device].deadZone / 255.0;
             set
             {
-                double temp = Global.Instance.Config.L2ModInfo[device].deadZone / 255.0;
+                var temp = Global.Instance.Config.L2ModInfo[Device].deadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.Config.L2ModInfo[device].deadZone = (byte)(value * 255.0);
+                Global.Instance.Config.L2ModInfo[Device].deadZone = (byte)(value * 255.0);
                 L2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler L2DeadZoneChanged;
 
         public double R2DeadZone
         {
-            get => Global.Instance.Config.R2ModInfo[device].deadZone / 255.0;
+            get => Global.Instance.Config.R2ModInfo[Device].deadZone / 255.0;
             set
             {
-                double temp = Global.Instance.Config.R2ModInfo[device].deadZone / 255.0;
+                var temp = Global.Instance.Config.R2ModInfo[Device].deadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.Config.R2ModInfo[device].deadZone = (byte)(value * 255.0);
+                Global.Instance.Config.R2ModInfo[Device].deadZone = (byte)(value * 255.0);
                 R2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler R2DeadZoneChanged;
 
         public double L2MaxZone
         {
-            get => Global.Instance.Config.L2ModInfo[device].MaxZone / 100.0;
-            set => Global.Instance.Config.L2ModInfo[device].MaxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.L2ModInfo[Device].MaxZone / 100.0;
+            set => Global.Instance.Config.L2ModInfo[Device].MaxZone = (int)(value * 100.0);
         }
 
         public double R2MaxZone
         {
-            get => Global.Instance.Config.R2ModInfo[device].MaxZone / 100.0;
-            set => Global.Instance.Config.R2ModInfo[device].MaxZone = (int)(value * 100.0);
+            get => Global.Instance.Config.R2ModInfo[Device].MaxZone / 100.0;
+            set => Global.Instance.Config.R2ModInfo[Device].MaxZone = (int)(value * 100.0);
         }
 
         public double L2AntiDeadZone
         {
-            get => Global.Instance.Config.L2ModInfo[device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.L2ModInfo[device].AntiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.L2ModInfo[Device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.L2ModInfo[Device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double R2AntiDeadZone
         {
-            get => Global.Instance.Config.R2ModInfo[device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.R2ModInfo[device].AntiDeadZone = (int)(value * 100.0);
+            get => Global.Instance.Config.R2ModInfo[Device].AntiDeadZone / 100.0;
+            set => Global.Instance.Config.R2ModInfo[Device].AntiDeadZone = (int)(value * 100.0);
         }
 
         public double L2MaxOutput
         {
-            get => Global.Instance.Config.L2ModInfo[device].MaxOutput / 100.0;
-            set => Global.Instance.Config.L2ModInfo[device].MaxOutput = value * 100.0;
+            get => Global.Instance.Config.L2ModInfo[Device].MaxOutput / 100.0;
+            set => Global.Instance.Config.L2ModInfo[Device].MaxOutput = value * 100.0;
         }
 
         public double R2MaxOutput
         {
-            get => Global.Instance.Config.R2ModInfo[device].MaxOutput / 100.0;
-            set => Global.Instance.Config.R2ModInfo[device].MaxOutput = value * 100.0;
+            get => Global.Instance.Config.R2ModInfo[Device].MaxOutput / 100.0;
+            set => Global.Instance.Config.R2ModInfo[Device].MaxOutput = value * 100.0;
         }
 
         public double L2Sens
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2Sens;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2Sens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2Sens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2Sens = value;
         }
 
         public double R2Sens
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2Sens;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2Sens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2Sens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2Sens = value;
         }
 
         public int L2OutputCurveIndex
         {
-            get => Global.Instance.Config.GetL2OutCurveMode(device);
+            get => Global.Instance.Config.GetL2OutCurveMode(Device);
             set
             {
-                Global.Instance.Config.SetL2OutCurveMode(device, value);
+                Global.Instance.Config.SetL2OutCurveMode(Device, value);
                 L2CustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int R2OutputCurveIndex
         {
-            get => Global.Instance.Config.GetR2OutCurveMode(device);
+            get => Global.Instance.Config.GetR2OutCurveMode(Device);
             set
             {
-                Global.Instance.Config.SetR2OutCurveMode(device, value);
+                Global.Instance.Config.SetR2OutCurveMode(Device, value);
                 R2CustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        public bool L2CustomCurveSelected
-        {
-            get => Global.Instance.Config.GetL2OutCurveMode(device) == 6;
-        }
-        public event EventHandler L2CustomCurveSelectedChanged;
+        public bool L2CustomCurveSelected => Global.Instance.Config.GetL2OutCurveMode(Device) == 6;
 
-        public bool R2CustomCurveSelected
-        {
-            get => Global.Instance.Config.GetR2OutCurveMode(device) == 6;
-        }
-        public event EventHandler R2CustomCurveSelectedChanged;
+        public bool R2CustomCurveSelected => Global.Instance.Config.GetR2OutCurveMode(Device) == 6;
 
         public string L2CustomCurve
         {
-            get => Global.Instance.Config.L2OutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.Config.L2OutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
+            get => Global.Instance.Config.L2OutBezierCurveObj[Device].CustomDefinition;
+            set => Global.Instance.Config.L2OutBezierCurveObj[Device]
+                .InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
         }
 
         public string R2CustomCurve
         {
-            get => Global.Instance.Config.R2OutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.Config.R2OutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
+            get => Global.Instance.Config.R2OutBezierCurveObj[Device].CustomDefinition;
+            set => Global.Instance.Config.R2OutBezierCurveObj[Device]
+                .InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
         }
 
-        private List<TriggerModeChoice> triggerModeChoices = new List<TriggerModeChoice>()
-        {
-            new TriggerModeChoice("Normal", TriggerMode.Normal),
-        };
-
-        private List<TwoStageChoice> twoStageModeChoices = new List<TwoStageChoice>()
+        public List<TwoStageChoice> TwoStageModeChoices { get; } = new()
         {
             new TwoStageChoice("Disabled", TwoStageTriggerMode.Disabled),
             new TwoStageChoice("Normal", TwoStageTriggerMode.Normal),
             new TwoStageChoice("Exclusive", TwoStageTriggerMode.ExclusiveButtons),
             new TwoStageChoice("Hair Trigger", TwoStageTriggerMode.HairTrigger),
             new TwoStageChoice("Hip Fire", TwoStageTriggerMode.HipFire),
-            new TwoStageChoice("Hip Fire Exclusive", TwoStageTriggerMode.HipFireExclusiveButtons),
+            new TwoStageChoice("Hip Fire Exclusive", TwoStageTriggerMode.HipFireExclusiveButtons)
         };
-        public List<TwoStageChoice> TwoStageModeChoices { get => twoStageModeChoices; }
 
         public TwoStageTriggerMode L2TriggerMode
         {
-            get => Global.Instance.Config.L2OutputSettings[device].twoStageMode;
+            get => Global.Instance.Config.L2OutputSettings[Device].twoStageMode;
             set
             {
-                TwoStageTriggerMode temp = Global.Instance.Config.L2OutputSettings[device].TwoStageMode;
+                var temp = Global.Instance.Config.L2OutputSettings[Device].TwoStageMode;
                 if (temp == value) return;
 
-                Global.Instance.Config.L2OutputSettings[device].TwoStageMode = value;
+                Global.Instance.Config.L2OutputSettings[Device].TwoStageMode = value;
                 L2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler L2TriggerModeChanged;
 
         public TwoStageTriggerMode R2TriggerMode
         {
-            get => Global.Instance.Config.R2OutputSettings[device].TwoStageMode;
+            get => Global.Instance.Config.R2OutputSettings[Device].TwoStageMode;
             set
             {
-                TwoStageTriggerMode temp = Global.Instance.Config.R2OutputSettings[device].TwoStageMode;
+                var temp = Global.Instance.Config.R2OutputSettings[Device].TwoStageMode;
                 if (temp == value) return;
 
-                Global.Instance.Config.R2OutputSettings[device].twoStageMode = value;
+                Global.Instance.Config.R2OutputSettings[Device].twoStageMode = value;
                 R2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler R2TriggerModeChanged;
 
         public int L2HipFireTime
         {
-            get => Global.Instance.Config.L2OutputSettings[device].hipFireMS;
-            set => Global.Instance.Config.L2OutputSettings[device].hipFireMS = value;
+            get => Global.Instance.Config.L2OutputSettings[Device].hipFireMS;
+            set => Global.Instance.Config.L2OutputSettings[Device].hipFireMS = value;
         }
 
         public int R2HipFireTime
         {
-            get => Global.Instance.Config.R2OutputSettings[device].hipFireMS;
-            set => Global.Instance.Config.R2OutputSettings[device].hipFireMS = value;
+            get => Global.Instance.Config.R2OutputSettings[Device].hipFireMS;
+            set => Global.Instance.Config.R2OutputSettings[Device].hipFireMS = value;
         }
 
-        private List<TriggerEffectChoice> triggerEffectChoices = new List<TriggerEffectChoice>()
+        public List<TriggerEffectChoice> TriggerEffectChoices { get; } = new()
         {
-            new TriggerEffectChoice("None", DS4Windows.InputDevices.TriggerEffects.None),
-            new TriggerEffectChoice("Full Click", DS4Windows.InputDevices.TriggerEffects.FullClick),
-            new TriggerEffectChoice("Rigid", DS4Windows.InputDevices.TriggerEffects.Rigid),
-            new TriggerEffectChoice("Pulse", DS4Windows.InputDevices.TriggerEffects.Pulse),
+            new TriggerEffectChoice("None", TriggerEffects.None),
+            new TriggerEffectChoice("Full Click", TriggerEffects.FullClick),
+            new TriggerEffectChoice("Rigid", TriggerEffects.Rigid),
+            new TriggerEffectChoice("Pulse", TriggerEffects.Pulse)
         };
-        public List<TriggerEffectChoice> TriggerEffectChoices { get => triggerEffectChoices; }
 
-        public DS4Windows.InputDevices.TriggerEffects L2TriggerEffect
+        public TriggerEffects L2TriggerEffect
         {
-            get => Global.Instance.Config.L2OutputSettings[device].triggerEffect;
+            get => Global.Instance.Config.L2OutputSettings[Device].triggerEffect;
             set
             {
-                DS4Windows.InputDevices.TriggerEffects temp = Global.Instance.Config.L2OutputSettings[device].TriggerEffect;
+                var temp = Global.Instance.Config.L2OutputSettings[Device].TriggerEffect;
                 if (temp == value) return;
 
-                Global.Instance.Config.L2OutputSettings[device].TriggerEffect = value;
+                Global.Instance.Config.L2OutputSettings[Device].TriggerEffect = value;
             }
         }
 
-        public DS4Windows.InputDevices.TriggerEffects R2TriggerEffect
+        public TriggerEffects R2TriggerEffect
         {
-            get => Global.Instance.Config.R2OutputSettings[device].triggerEffect;
+            get => Global.Instance.Config.R2OutputSettings[Device].triggerEffect;
             set
             {
-                DS4Windows.InputDevices.TriggerEffects temp = Global.Instance.Config.R2OutputSettings[device].TriggerEffect;
+                var temp = Global.Instance.Config.R2OutputSettings[Device].TriggerEffect;
                 if (temp == value) return;
 
-                Global.Instance.Config.R2OutputSettings[device].TriggerEffect = value;
+                Global.Instance.Config.R2OutputSettings[Device].TriggerEffect = value;
             }
         }
 
         public double SXDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXDeadZone;
             set
             {
-                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXDeadZone;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXDeadZone = value;
                 SXDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler SXDeadZoneChanged;
 
         public double SZDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZDeadZone;
             set
             {
-                double temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZDeadZone;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZDeadZone = value;
                 SZDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler SZDeadZoneChanged;
 
         public double SXMaxZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxZone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxZone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXMaxZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXMaxZone = value;
         }
 
         public double SZMaxZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxZone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxZone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZMaxZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZMaxZone = value;
         }
 
         public double SXAntiDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXAntiDeadZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXAntiDeadZone = value;
         }
 
         public double SZAntiDeadZone
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadZone;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadZone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZAntiDeadZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZAntiDeadZone = value;
         }
 
         public double SXSens
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SXSens = value;
         }
 
         public double SZSens
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZSens;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SZSens = value;
         }
 
         public int SXOutputCurveIndex
         {
-            get => Global.Instance.Config.GetSXOutCurveMode(device);
+            get => Global.Instance.Config.GetSXOutCurveMode(Device);
             set
             {
-                Global.Instance.Config.SetSXOutCurveMode(device, value);
+                Global.Instance.Config.SetSXOutCurveMode(Device, value);
                 SXCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int SZOutputCurveIndex
         {
-            get => Global.Instance.Config.GetSZOutCurveMode(device);
+            get => Global.Instance.Config.GetSZOutCurveMode(Device);
             set
             {
-                Global.Instance.Config.SetSZOutCurveMode(device, value);
+                Global.Instance.Config.SetSZOutCurveMode(Device, value);
                 SZCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        public bool SXCustomCurveSelected
-        {
-            get => Global.Instance.Config.GetSXOutCurveMode(device) == 6;
-        }
-        public event EventHandler SXCustomCurveSelectedChanged;
+        public bool SXCustomCurveSelected => Global.Instance.Config.GetSXOutCurveMode(Device) == 6;
 
-        public bool SZCustomCurveSelected
-        {
-            get => Global.Instance.Config.GetSZOutCurveMode(device) == 6;
-        }
-        public event EventHandler SZCustomCurveSelectedChanged;
+        public bool SZCustomCurveSelected => Global.Instance.Config.GetSZOutCurveMode(Device) == 6;
 
         public string SXCustomCurve
         {
-            get => Global.Instance.Config.SXOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.Config.SXOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.SA, true);
+            get => Global.Instance.Config.SXOutBezierCurveObj[Device].CustomDefinition;
+            set => Global.Instance.Config.SXOutBezierCurveObj[Device]
+                .InitBezierCurve(value, BezierCurve.AxisType.SA, true);
         }
 
         public string SZCustomCurve
         {
-            get => Global.Instance.Config.SZOutBezierCurveObj[device].CustomDefinition;
-            set => Global.Instance.Config.SZOutBezierCurveObj[device].InitBezierCurve(value, BezierCurve.AxisType.SA, true);
+            get => Global.Instance.Config.SZOutBezierCurveObj[Device].CustomDefinition;
+            set => Global.Instance.Config.SZOutBezierCurveObj[Device]
+                .InitBezierCurve(value, BezierCurve.AxisType.SA, true);
         }
 
         public int TouchpadOutputIndex
         {
             get
             {
-                int index = 0;
-                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode)
+                var index = 0;
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchOutMode)
                 {
                     case TouchpadOutMode.Mouse:
-                        index = 0; break;
+                        index = 0;
+                        break;
                     case TouchpadOutMode.Controls:
-                        index = 1; break;
+                        index = 1;
+                        break;
                     case TouchpadOutMode.AbsoluteMouse:
-                        index = 2; break;
+                        index = 2;
+                        break;
                     case TouchpadOutMode.Passthru:
-                        index = 3; break;
-                    default: break;
+                        index = 3;
+                        break;
                 }
+
                 return index;
             }
             set
             {
-                TouchpadOutMode temp = TouchpadOutMode.Mouse;
+                var temp = TouchpadOutMode.Mouse;
                 switch (value)
                 {
                     case 0: break;
                     case 1:
-                        temp = TouchpadOutMode.Controls; break;
+                        temp = TouchpadOutMode.Controls;
+                        break;
                     case 2:
-                        temp = TouchpadOutMode.AbsoluteMouse; break;
+                        temp = TouchpadOutMode.AbsoluteMouse;
+                        break;
                     case 3:
-                        temp = TouchpadOutMode.Passthru; break;
-                    default: break;
+                        temp = TouchpadOutMode.Passthru;
+                        break;
                 }
 
-                TouchpadOutMode current = ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode;
+                var current = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchOutMode;
                 if (temp == current) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchOutMode = temp;
                 TouchpadOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchpadOutputIndexChanged;
 
         public bool TouchSenExists
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchSensitivity != 0;
             set
             {
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchSensitivity =
+                    value ? (byte)100 : (byte)0;
                 TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchSenExistsChanged;
 
         public int TouchSens
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchSensitivity;
             set
             {
-                int temp =ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity;
+                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchSensitivity = (byte)value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchSensitivity = (byte)value;
                 if (value == 0) TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchSensChanged;
 
         public bool TouchScrollExists
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ScrollSensitivity != 0;
             set
             {
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ScrollSensitivity = value ? 100 : 0;
                 TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchScrollExistsChanged;
 
         public int TouchScroll
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ScrollSensitivity;
             set
             {
-                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ScrollSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).ScrollSensitivity = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ScrollSensitivity = value;
                 if (value == 0) TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchScrollChanged;
 
         public bool TouchTapExists
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity != 0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TapSensitivity != 0;
             set
             {
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity = value ? (byte)100 : (byte)0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TapSensitivity = value ? (byte)100 : (byte)0;
                 TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchTapExistsChanged;
 
         public int TouchTap
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TapSensitivity;
             set
             {
-                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity;
+                int temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TapSensitivity;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TapSensitivity = (byte)value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TapSensitivity = (byte)value;
                 if (value == 0) TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
                 TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchTapChanged;
 
         public bool TouchDoubleTap
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DoubleTap;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).DoubleTap = value;
-        }
-        
-        public bool TouchJitter
-        {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchpadJitterCompensation;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchpadJitterCompensation = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).DoubleTap;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).DoubleTap = value;
         }
 
-        private int[] touchpadInvertToValue = new int[4] { 0, 2, 1, 3 };
+        public bool TouchJitter
+        {
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchpadJitterCompensation;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchpadJitterCompensation = value;
+        }
+
         public int TouchInvertIndex
         {
             get
             {
-                int invert = ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchPadInvert;
-                int index = Array.IndexOf(touchpadInvertToValue, invert);
+                var invert = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadInvert;
+                var index = Array.IndexOf(touchpadInvertToValue, invert);
                 return index;
             }
             set
             {
-                int invert = touchpadInvertToValue[value];
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchPadInvert = invert;
+                var invert = touchpadInvertToValue[value];
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadInvert = invert;
             }
         }
 
         public bool LowerRightTouchRMB
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LowerRCOn;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).LowerRCOn = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LowerRCOn;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LowerRCOn = value;
         }
 
         public bool TouchpadClickPassthru
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchClickPassthru;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchClickPassthru = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchClickPassthru;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchClickPassthru = value;
         }
 
         public bool StartTouchpadOff
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).StartTouchpadOff;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).StartTouchpadOff = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).StartTouchpadOff;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).StartTouchpadOff = value;
         }
 
         public double TouchRelMouseRotation
         {
-            get => Global.Instance.Config.TouchPadRelMouse[device].Rotation * 180.0 / Math.PI;
-            set => Global.Instance.Config.TouchPadRelMouse[device].Rotation = value * Math.PI / 180.0;
+            get => Global.Instance.Config.TouchPadRelMouse[Device].Rotation * 180.0 / Math.PI;
+            set => Global.Instance.Config.TouchPadRelMouse[Device].Rotation = value * Math.PI / 180.0;
         }
 
         public double TouchRelMouseMinThreshold
         {
-            get => Global.Instance.Config.TouchPadRelMouse[device].MinThreshold;
+            get => Global.Instance.Config.TouchPadRelMouse[Device].MinThreshold;
             set
             {
-                double temp = Global.Instance.Config.TouchPadRelMouse[device].MinThreshold;
+                var temp = Global.Instance.Config.TouchPadRelMouse[Device].MinThreshold;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadRelMouse[device].MinThreshold = value;
+                Global.Instance.Config.TouchPadRelMouse[Device].MinThreshold = value;
             }
         }
 
         public bool TouchTrackball
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballMode;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballMode = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TrackballMode;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TrackballMode = value;
         }
 
         public double TouchTrackballFriction
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballFriction;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).TrackballFriction = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TrackballFriction;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TrackballFriction = value;
         }
 
         public int TouchAbsMouseMaxZoneX
         {
-            get => Global.Instance.Config.TouchPadAbsMouse[device].MaxZoneX;
+            get => Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneX;
             set
             {
-                int temp = Global.Instance.Config.TouchPadAbsMouse[device].MaxZoneX;
+                var temp = Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneX;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadAbsMouse[device].MaxZoneX = value;
+                Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneX = value;
             }
         }
 
         public int TouchAbsMouseMaxZoneY
         {
-            get => Global.Instance.Config.TouchPadAbsMouse[device].MaxZoneY;
+            get => Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneY;
             set
             {
-                int temp = Global.Instance.Config.TouchPadAbsMouse[device].MaxZoneY;
+                var temp = Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneY;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadAbsMouse[device].MaxZoneY = value;
+                Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneY = value;
             }
         }
 
         public bool TouchAbsMouseSnapCenter
         {
-            get => Global.Instance.Config.TouchPadAbsMouse[device].SnapToCenter;
+            get => Global.Instance.Config.TouchPadAbsMouse[Device].SnapToCenter;
             set
             {
-                bool temp = Global.Instance.Config.TouchPadAbsMouse[device].SnapToCenter;
+                var temp = Global.Instance.Config.TouchPadAbsMouse[Device].SnapToCenter;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadAbsMouse[device].SnapToCenter = value;
+                Global.Instance.Config.TouchPadAbsMouse[Device].SnapToCenter = value;
             }
         }
 
         public bool GyroMouseTurns
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroTriggerTurns;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroTriggerTurns = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroTriggerTurns;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroTriggerTurns = value;
         }
 
         public int GyroSensitivity
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensitivity;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensitivity = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSensitivity;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSensitivity = value;
         }
 
         public int GyroVertScale
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensVerticalScale;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroSensVerticalScale = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSensVerticalScale;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSensVerticalScale = value;
         }
 
         public int GyroMouseEvalCondIndex
         {
-            get => Global.Instance.Config.GetSATriggerCondition(device) ? 0 : 1;
-            set => Global.Instance.Config.SetSaTriggerCond(device, value == 0 ? "and" : "or");
+            get => Global.Instance.Config.GetSATriggerCondition(Device) ? 0 : 1;
+            set => Global.Instance.Config.SetSaTriggerCond(Device, value == 0 ? "and" : "or");
         }
 
         public int GyroMouseXAxis
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseHorizontalAxis;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseHorizontalAxis = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseHorizontalAxis;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseHorizontalAxis = value;
         }
 
         public double GyroMouseMinThreshold
         {
-            get => Global.Instance.Config.GyroMouseInfo[device].minThreshold;
+            get => Global.Instance.Config.GyroMouseInfo[Device].minThreshold;
             set
             {
-                double temp = Global.Instance.Config.GyroMouseInfo[device].minThreshold;
+                var temp = Global.Instance.Config.GyroMouseInfo[Device].minThreshold;
                 if (temp == value) return;
-                Global.Instance.Config.GyroMouseInfo[device].minThreshold = value;
+                Global.Instance.Config.GyroMouseInfo[Device].minThreshold = value;
             }
         }
 
         public bool GyroMouseInvertX
         {
-            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert & 2) == 2;
+            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroInvert & 2) == 2;
             set
             {
                 if (value)
-                {
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert |= 2;
-                }
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroInvert |= 2;
                 else
-                {
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert &= ~2;
-                }
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroInvert &= ~2;
             }
         }
 
         public bool GyroMouseInvertY
         {
-            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert & 1) == 1;
+            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroInvert & 1) == 1;
             set
             {
                 if (value)
-                {
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert |= 1;
-                }
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroInvert |= 1;
                 else
-                {
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroInvert &= ~1;
-                }
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroInvert &= ~1;
             }
         }
 
         public bool GyroMouseSmooth
         {
-            get => Global.Instance.Config.GyroMouseInfo[device].enableSmoothing;
+            get => Global.Instance.Config.GyroMouseInfo[Device].enableSmoothing;
             set
             {
-                GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[device];
+                var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
                 if (tempInfo.enableSmoothing == value) return;
 
-                Global.Instance.Config.GyroMouseInfo[device].enableSmoothing = value;
+                Global.Instance.Config.GyroMouseInfo[Device].enableSmoothing = value;
                 GyroMouseSmoothChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroMouseSmoothChanged;
 
-        private int gyroMouseSmoothMethodIndex;
         public int GyroMouseSmoothMethodIndex
         {
-            get
-            {
-                return gyroMouseSmoothMethodIndex;
-            }
+            get => gyroMouseSmoothMethodIndex;
             set
             {
                 if (gyroMouseSmoothMethodIndex == value) return;
 
-                GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[device];
+                var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
                 switch (value)
                 {
                     case 0:
@@ -1868,89 +1824,72 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         tempInfo.ResetSmoothingMethods();
                         tempInfo.smoothingMethod = GyroMouseInfo.SmoothingMethod.WeightedAverage;
                         break;
-                    default:
-                        break;
                 }
 
                 gyroMouseSmoothMethodIndex = value;
                 GyroMouseSmoothMethodIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroMouseSmoothMethodIndexChanged;
 
         public Visibility GyroMouseWeightAvgPanelVisibility
         {
             get
             {
-                Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseInfo[device].smoothingMethod)
+                var result = Visibility.Collapsed;
+                switch (Global.Instance.Config.GyroMouseInfo[Device].smoothingMethod)
                 {
                     case GyroMouseInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
-                        break;
-                    default:
                         break;
                 }
 
                 return result;
             }
-
         }
-        public event EventHandler GyroMouseWeightAvgPanelVisibilityChanged;
 
         public Visibility GyroMouseOneEuroPanelVisibility
         {
             get
             {
-                Visibility result = Visibility.Collapsed;
-                switch(Global.Instance.Config.GyroMouseInfo[device].smoothingMethod)
+                var result = Visibility.Collapsed;
+                switch (Global.Instance.Config.GyroMouseInfo[Device].smoothingMethod)
                 {
                     case GyroMouseInfo.SmoothingMethod.OneEuro:
                     case GyroMouseInfo.SmoothingMethod.None:
                         result = Visibility.Visible;
                         break;
-                    default:
-                        break;
                 }
 
                 return result;
             }
-
         }
-        public event EventHandler GyroMouseOneEuroPanelVisibilityChanged;
 
         public double GyroMouseSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseInfo[device].smoothingWeight;
-            set => Global.Instance.Config.GyroMouseInfo[device].smoothingWeight = value;
+            get => Global.Instance.Config.GyroMouseInfo[Device].smoothingWeight;
+            set => Global.Instance.Config.GyroMouseInfo[Device].smoothingWeight = value;
         }
 
         public double GyroMouseOneEuroMinCutoff
         {
-            get => Global.Instance.Config.GyroMouseInfo[device].MinCutoff;
-            set => Global.Instance.Config.GyroMouseInfo[device].MinCutoff = value;
+            get => Global.Instance.Config.GyroMouseInfo[Device].MinCutoff;
+            set => Global.Instance.Config.GyroMouseInfo[Device].MinCutoff = value;
         }
 
         public double GyroMouseOneEuroBeta
         {
-            get => Global.Instance.Config.GyroMouseInfo[device].Beta;
-            set => Global.Instance.Config.GyroMouseInfo[device].Beta = value;
+            get => Global.Instance.Config.GyroMouseInfo[Device].Beta;
+            set => Global.Instance.Config.GyroMouseInfo[Device].Beta = value;
         }
 
-
-
-        private int gyroMouseStickSmoothMethodIndex;
         public int GyroMouseStickSmoothMethodIndex
         {
-            get
-            {
-                return gyroMouseStickSmoothMethodIndex;
-            }
+            get => gyroMouseStickSmoothMethodIndex;
             set
             {
                 if (gyroMouseStickSmoothMethodIndex == value) return;
 
-                GyroMouseStickInfo tempInfo = Global.Instance.Config.GyroMouseStickInfo[device];
+                var tempInfo = Global.Instance.Config.GyroMouseStickInfo[Device];
                 switch (value)
                 {
                     case 0:
@@ -1961,222 +1900,211 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         tempInfo.ResetSmoothingMethods();
                         tempInfo.Smoothing = GyroMouseStickInfo.SmoothingMethod.WeightedAverage;
                         break;
-                    default:
-                        break;
                 }
 
                 gyroMouseStickSmoothMethodIndex = value;
                 GyroMouseStickSmoothMethodIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroMouseStickSmoothMethodIndexChanged;
 
         public Visibility GyroMouseStickWeightAvgPanelVisibility
         {
             get
             {
-                Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseStickInfo[device].Smoothing)
+                var result = Visibility.Collapsed;
+                switch (Global.Instance.Config.GyroMouseStickInfo[Device].Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
-                        break;
-                    default:
                         break;
                 }
 
                 return result;
             }
         }
-        public event EventHandler GyroMouseStickWeightAvgPanelVisibilityChanged;
 
         public Visibility GyroMouseStickOneEuroPanelVisibility
         {
             get
             {
-                Visibility result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseStickInfo[device].Smoothing)
+                var result = Visibility.Collapsed;
+                switch (Global.Instance.Config.GyroMouseStickInfo[Device].Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.OneEuro:
                     case GyroMouseStickInfo.SmoothingMethod.None:
                         result = Visibility.Visible;
-                        break;
-                    default:
                         break;
                 }
 
                 return result;
             }
         }
-        public event EventHandler GyroMouseStickOneEuroPanelVisibilityChanged;
 
         public double GyroMouseStickSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight = value;
         }
 
         public double GyroMouseStickOneEuroMinCutoff
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].MinCutoff;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].MinCutoff = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].MinCutoff;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].MinCutoff = value;
         }
 
         public double GyroMouseStickOneEuroBeta
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].Beta;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].Beta = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].Beta;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].Beta = value;
         }
 
 
         public int GyroMouseDeadZone
         {
-            get => Global.Instance.Config.GyroMouseDeadZone[device];
-            set => Global.Instance.Config.SetGyroMouseDZ(device, value, rootHub);
+            get => Global.Instance.Config.GyroMouseDeadZone[Device];
+            set => Global.Instance.Config.SetGyroMouseDZ(Device, value, rootHub);
         }
 
         public bool GyroMouseToggle
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseToggle;
-            set => Global.Instance.Config.SetGyroMouseToggle(device, value, rootHub);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseToggle;
+            set => Global.Instance.Config.SetGyroMouseToggle(Device, value, rootHub);
         }
 
         public bool GyroMouseStickTurns
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickTriggerTurns;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickTriggerTurns = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickTriggerTurns;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickTriggerTurns = value;
         }
 
         public bool GyroMouseStickToggle
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickToggle;
-            set => Global.Instance.Config.SetGyroMouseStickToggle(device, value, rootHub);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickToggle;
+            set => Global.Instance.Config.SetGyroMouseStickToggle(Device, value, rootHub);
         }
 
         public int GyroMouseStickDeadZone
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].DeadZone;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].DeadZone = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].DeadZone;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].DeadZone = value;
         }
 
         public int GyroMouseStickMaxZone
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].MaxZone;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].MaxZone = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].MaxZone;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].MaxZone = value;
         }
 
         public int GyroMouseStickOutputStick
         {
-            get => (int)Global.Instance.Config.GyroMouseStickInfo[device].outputStick;
+            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].outputStick;
             set =>
-                Global.Instance.Config.GyroMouseStickInfo[device].outputStick =
+                Global.Instance.Config.GyroMouseStickInfo[Device].outputStick =
                     (GyroMouseStickInfo.OutputStick)value;
         }
 
         public int GyroMouseStickOutputAxes
         {
-            get => (int)Global.Instance.Config.GyroMouseStickInfo[device].outputStickDir;
+            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].outputStickDir;
             set =>
-                Global.Instance.Config.GyroMouseStickInfo[device].outputStickDir =
+                Global.Instance.Config.GyroMouseStickInfo[Device].outputStickDir =
                     (GyroMouseStickInfo.OutputStickAxes)value;
         }
 
         public double GyroMouseStickAntiDeadX
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadX * 100.0;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadX = value * 0.01;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadX * 100.0;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadX = value * 0.01;
         }
 
         public double GyroMouseStickAntiDeadY
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadY * 100.0;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].AntiDeadY = value * 0.01;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadY * 100.0;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadY = value * 0.01;
         }
 
         public int GyroMouseStickVertScale
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].VertScale;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].VertScale = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].VertScale;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].VertScale = value;
         }
 
         public bool GyroMouseStickMaxOutputEnabled
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].MaxOutputEnabled;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutputEnabled;
             set
             {
-                bool temp = Global.Instance.Config.GyroMouseStickInfo[device].MaxOutputEnabled;
+                var temp = Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutputEnabled;
                 if (temp == value) return;
-                Global.Instance.Config.GyroMouseStickInfo[device].MaxOutputEnabled = value;
+                Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutputEnabled = value;
                 GyroMouseStickMaxOutputChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroMouseStickMaxOutputChanged;
 
         public double GyroMouseStickMaxOutput
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].MaxOutput;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].MaxOutput = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutput;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutput = value;
         }
 
         public int GyroMouseStickEvalCondIndex
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).SAMouseStickTriggerCond ? 0 : 1;
-            set => Global.Instance.Config.SetSaMouseStickTriggerCond(device, value == 0 ? "and" : "or");
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SAMouseStickTriggerCond ? 0 : 1;
+            set => Global.Instance.Config.SetSaMouseStickTriggerCond(Device, value == 0 ? "and" : "or");
         }
 
         public int GyroMouseStickXAxis
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickHorizontalAxis;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickHorizontalAxis = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickHorizontalAxis;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickHorizontalAxis = value;
         }
 
         public bool GyroMouseStickInvertX
         {
-            get => (Global.Instance.Config.GyroMouseStickInfo[device].Inverted & 1) == 1;
+            get => (Global.Instance.Config.GyroMouseStickInfo[Device].Inverted & 1) == 1;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted |= 1;
+                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted |= 1;
                 }
                 else
                 {
-                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].Inverted;
-                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted = (uint)(temp & ~1);
+                    var temp = Global.Instance.Config.GyroMouseStickInfo[Device].Inverted;
+                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted = (uint)(temp & ~1);
                 }
             }
         }
 
         public bool GyroMouseStickInvertY
         {
-            get => (Global.Instance.Config.GyroMouseStickInfo[device].Inverted & 2) == 2;
+            get => (Global.Instance.Config.GyroMouseStickInfo[Device].Inverted & 2) == 2;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted |= 2;
+                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted |= 2;
                 }
                 else
                 {
-                    uint temp = Global.Instance.Config.GyroMouseStickInfo[device].Inverted;
-                    Global.Instance.Config.GyroMouseStickInfo[device].Inverted = (uint)(temp & ~2);
+                    var temp = Global.Instance.Config.GyroMouseStickInfo[Device].Inverted;
+                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted = (uint)(temp & ~2);
                 }
             }
         }
 
         public bool GyroMouseStickSmooth
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].UseSmoothing;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].UseSmoothing = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].UseSmoothing;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].UseSmoothing = value;
         }
 
         public double GyroMousetickSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight;
-            set => Global.Instance.Config.GyroMouseStickInfo[device].SmoothWeight = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight = value;
         }
-        
-        private string touchDisInvertString = "None";
+
         public string TouchDisInvertString
         {
             get => touchDisInvertString;
@@ -2186,9 +2114,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 TouchDisInvertStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler TouchDisInvertStringChanged;
-        
-        private string gyroControlsTrigDisplay = "Always On";
 
         public string GyroControlsTrigDisplay
         {
@@ -2199,28 +2124,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 GyroControlsTrigDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroControlsTrigDisplayChanged;
 
         public bool GyroControlsTurns
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerTurns = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroControlsInfo.TriggerTurns;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroControlsInfo.TriggerTurns = value;
         }
 
         public int GyroControlsEvalCondIndex
         {
-            get =>ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerCond ? 0 : 1;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerCond = value == 0 ? true : false;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroControlsInfo.TriggerCond ? 0 : 1;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroControlsInfo.TriggerCond =
+                value == 0 ? true : false;
         }
 
         public bool GyroControlsToggle
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.TriggerToggle;
-            set => Global.Instance.Config.SetGyroControlsToggle(device, value, rootHub);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroControlsInfo.TriggerToggle;
+            set => Global.Instance.Config.SetGyroControlsToggle(Device, value, rootHub);
         }
 
-
-        private string gyroMouseTrigDisplay = "Always On";
         public string GyroMouseTrigDisplay
         {
             get => gyroMouseTrigDisplay;
@@ -2230,9 +2153,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 GyroMouseTrigDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroMouseTrigDisplayChanged;
 
-        private string gyroMouseStickTrigDisplay = "Always On";
         public string GyroMouseStickTrigDisplay
         {
             get => gyroMouseStickTrigDisplay;
@@ -2243,9 +2164,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public event EventHandler GyroMouseStickTrigDisplayChanged;
-
-        private string gyroSwipeTrigDisplay = "Always On";
         public string GyroSwipeTrigDisplay
         {
             get => gyroSwipeTrigDisplay;
@@ -2255,106 +2173,140 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 GyroSwipeTrigDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler GyroSwipeTrigDisplayChanged;
 
         public bool GyroSwipeTurns
         {
-            get => Global.Instance.Config.GyroSwipeInfo[device].triggerTurns;
-            set => Global.Instance.Config.GyroSwipeInfo[device].triggerTurns = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].triggerTurns;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].triggerTurns = value;
         }
 
         public int GyroSwipeEvalCondIndex
         {
-            get => Global.Instance.Config.GyroSwipeInfo[device].triggerCond ? 0 : 1;
-            set => Global.Instance.Config.GyroSwipeInfo[device].triggerCond =  value == 0 ? true : false;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].triggerCond ? 0 : 1;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].triggerCond = value == 0 ? true : false;
         }
 
         public int GyroSwipeXAxis
         {
-            get => (int)Global.Instance.Config.GyroSwipeInfo[device].xAxis;
-            set => Global.Instance.Config.GyroSwipeInfo[device].xAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
+            get => (int)Global.Instance.Config.GyroSwipeInfo[Device].xAxis;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].xAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
         }
 
         public int GyroSwipeDeadZoneX
         {
-            get => Global.Instance.Config.GyroSwipeInfo[device].deadzoneX;
-            set => Global.Instance.Config.GyroSwipeInfo[device].deadzoneX = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneX;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneX = value;
         }
 
         public int GyroSwipeDeadZoneY
         {
-            get => Global.Instance.Config.GyroSwipeInfo[device].deadzoneY;
-            set => Global.Instance.Config.GyroSwipeInfo[device].deadzoneY = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneY;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneY = value;
         }
 
         public int GyroSwipeDelayTime
         {
-            get => Global.Instance.Config.GyroSwipeInfo[device].delayTime;
-            set => Global.Instance.Config.GyroSwipeInfo[device].delayTime = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].delayTime;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].delayTime = value;
         }
 
-        private PresetMenuHelper presetMenuUtil;
-        public PresetMenuHelper PresetMenuUtil => presetMenuUtil;
+        public PresetMenuHelper PresetMenuUtil { get; }
 
-        private readonly ControlService rootHub;
+        public event EventHandler LightbarModeIndexChanged;
+        public event EventHandler LightbarBrushChanged;
+        public event EventHandler MainColorChanged;
+        public event EventHandler MainColorStringChanged;
+        public event EventHandler MainColorRChanged;
+        public event EventHandler MainColorRStringChanged;
+        public event EventHandler MainColorGChanged;
+        public event EventHandler MainColorGStringChanged;
+        public event EventHandler MainColorBChanged;
+        public event EventHandler MainColorBStringChanged;
+        public event EventHandler LowColorChanged;
+        public event EventHandler LowColorRChanged;
+        public event EventHandler LowColorRStringChanged;
+        public event EventHandler LowColorGChanged;
+        public event EventHandler LowColorGStringChanged;
+        public event EventHandler LowColorBChanged;
+        public event EventHandler LowColorBStringChanged;
 
-        private readonly IAppSettingsService appSettings;
+        public event EventHandler FlashColorChanged;
 
-        public ProfileSettingsViewModel(IAppSettingsService appSettings, ControlService service, int device)
-        {
-            this.appSettings = appSettings;
-            this.rootHub = service;
-            this.device = device;
-            funcDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
-            tempControllerIndex = ControllerTypeIndex;
-            Global.OutDevTypeTemp[device] = OutContType.X360;
-            tempBtPollRate = ProfilesService.Instance.ActiveProfiles.ElementAt(device).BluetoothPollRate;
+        public event EventHandler ChargingColorChanged;
+        public event EventHandler ChargingColorVisibleChanged;
+        public event EventHandler RainbowChanged;
 
-            outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
-            mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
+        public event EventHandler RainbowExistsChanged;
+        public event EventHandler HeavyRumbleActiveChanged;
+        public event EventHandler LightRumbleActiveChanged;
+        public event EventHandler ButtonMouseSensitivityChanged;
+        public event EventHandler ButtonMouseVerticalScaleChanged;
+        public event EventHandler ButtonMouseOffsetChanged;
+        public event EventHandler OutputMouseSpeedChanged;
+        public event EventHandler MouseOffsetSpeedChanged;
+        public event EventHandler LaunchProgramExistsChanged;
+        public event EventHandler LaunchProgramChanged;
+        public event EventHandler LaunchProgramNameChanged;
+        public event EventHandler LaunchProgramIconChanged;
+        public event EventHandler IdleDisconnectExistsChanged;
+        public event EventHandler IdleDisconnectChanged;
+        public event EventHandler GyroOutModeIndexChanged;
+        public event EventHandler SASteeringWheelEmulationAxisIndexChanged;
+        public event EventHandler SASteeringWheelUseSmoothingChanged;
+        public event EventHandler LSDeadZoneChanged;
+        public event EventHandler RSDeadZoneChanged;
+        public event EventHandler LSCustomCurveSelectedChanged;
+        public event EventHandler RSCustomCurveSelectedChanged;
+        public event EventHandler LSOutputIndexChanged;
+        public event EventHandler RSOutputIndexChanged;
+        public event EventHandler L2DeadZoneChanged;
+        public event EventHandler R2DeadZoneChanged;
+        public event EventHandler L2CustomCurveSelectedChanged;
+        public event EventHandler R2CustomCurveSelectedChanged;
+        public event EventHandler L2TriggerModeChanged;
+        public event EventHandler R2TriggerModeChanged;
+        public event EventHandler SXDeadZoneChanged;
+        public event EventHandler SZDeadZoneChanged;
+        public event EventHandler SXCustomCurveSelectedChanged;
+        public event EventHandler SZCustomCurveSelectedChanged;
+        public event EventHandler TouchpadOutputIndexChanged;
+        public event EventHandler TouchSenExistsChanged;
+        public event EventHandler TouchSensChanged;
+        public event EventHandler TouchScrollExistsChanged;
+        public event EventHandler TouchScrollChanged;
+        public event EventHandler TouchTapExistsChanged;
+        public event EventHandler TouchTapChanged;
+        public event EventHandler GyroMouseSmoothChanged;
+        public event EventHandler GyroMouseSmoothMethodIndexChanged;
+        public event EventHandler GyroMouseWeightAvgPanelVisibilityChanged;
+        public event EventHandler GyroMouseOneEuroPanelVisibilityChanged;
+        public event EventHandler GyroMouseStickSmoothMethodIndexChanged;
+        public event EventHandler GyroMouseStickWeightAvgPanelVisibilityChanged;
+        public event EventHandler GyroMouseStickOneEuroPanelVisibilityChanged;
+        public event EventHandler GyroMouseStickMaxOutputChanged;
+        public event EventHandler TouchDisInvertStringChanged;
+        public event EventHandler GyroControlsTrigDisplayChanged;
+        public event EventHandler GyroMouseTrigDisplayChanged;
 
-            /*ImageSourceConverter sourceConverter = new ImageSourceConverter();
-            ImageSource temp = sourceConverter.
-                ConvertFromString($"{Global.Instance.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png") as ImageSource;
-            lightbarImgBrush.ImageSource = temp.Clone();
-            */
-            Uri tempResourceUri = new Uri($"{Global.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png");
-            BitmapImage tempBitmap = new BitmapImage();
-            tempBitmap.BeginInit();
-            // Needed for some systems not using the System default color profile
-            tempBitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-            tempBitmap.UriSource = tempResourceUri;
-            tempBitmap.EndInit();
-            lightbarImgBrush.ImageSource = tempBitmap.Clone();
-
-            presetMenuUtil = new PresetMenuHelper(device);
-            gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();
-            gyroMouseStickSmoothMethodIndex = FindGyroMouseStickSmoothMethodIndex();
-
-            SetupEvents();
-        }
+        public event EventHandler GyroMouseStickTrigDisplayChanged;
+        public event EventHandler GyroSwipeTrigDisplayChanged;
 
         private int FindGyroMouseSmoothMethodIndex()
         {
-            int result = 0;
-            GyroMouseInfo tempInfo = Global.Instance.Config.GyroMouseInfo[device];
+            var result = 0;
+            var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
             if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro ||
                 tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.None)
-            {
                 result = 0;
-            }
-            else if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.WeightedAverage)
-            {
-                result = 1;
-            }
+            else if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.WeightedAverage) result = 1;
 
             return result;
         }
 
         private int FindGyroMouseStickSmoothMethodIndex()
         {
-            int result = 0;
-            GyroMouseStickInfo tempInfo = Global.Instance.Config.GyroMouseStickInfo[device];
+            var result = 0;
+            var tempInfo = Global.Instance.Config.GyroMouseStickInfo[Device];
             switch (tempInfo.Smoothing)
             {
                 case GyroMouseStickInfo.SmoothingMethod.OneEuro:
@@ -2364,8 +2316,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
                     result = 1;
                     break;
-                default:
-                    break;
             }
 
             return result;
@@ -2373,7 +2323,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void CalcProfileFlags(object sender, EventArgs e)
         {
-            Global.Instance.Config.CacheProfileCustomsFlags(device);
+            Global.Instance.Config.CacheProfileCustomsFlags(Device);
         }
 
         private void SetupEvents()
@@ -2398,10 +2348,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
             };
 
-            RainbowChanged += (sender, args) =>
-            {
-                LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
-            };
+            RainbowChanged += (sender, args) => { LightbarBrushChanged?.Invoke(this, EventArgs.Empty); };
 
             ButtonMouseSensitivityChanged += (sender, args) =>
             {
@@ -2445,22 +2392,22 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void UpdateFlashColor(System.Windows.Media.Color color)
+        public void UpdateFlashColor(Color color)
         {
-            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.FlashLed = new DS4Color(color);
+            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashLed = new DS4Color(color);
             FlashColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void UpdateMainColor(System.Windows.Media.Color color)
+        public void UpdateMainColor(Color color)
         {
-            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led = new DS4Color(color);
+            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led = new DS4Color(color);
             MainColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void UpdateLowColor(System.Windows.Media.Color color)
+        public void UpdateLowColor(Color color)
         {
-            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.LowLed = new DS4Color(color);
-            
+            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed = new DS4Color(color);
+
             LowColorChanged?.Invoke(this, EventArgs.Empty);
             LowColorRChanged?.Invoke(this, EventArgs.Empty);
             LowColorGChanged?.Invoke(this, EventArgs.Empty);
@@ -2470,48 +2417,48 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void UpdateForcedColor(System.Windows.Media.Color color)
+        public void UpdateForcedColor(Color color)
         {
-            if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
+            if (Device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color(color);
-                DS4LightBar.forcedColor[device] = dcolor;
-                DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcelight[device] = true;
+                var dcolor = new DS4Color(color);
+                DS4LightBar.forcedColor[Device] = dcolor;
+                DS4LightBar.forcedFlash[Device] = 0;
+                DS4LightBar.forcelight[Device] = true;
             }
         }
 
-        public void StartForcedColor(System.Windows.Media.Color color)
+        public void StartForcedColor(Color color)
         {
-            if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
+            if (Device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color(color);
-                DS4LightBar.forcedColor[device] = dcolor;
-                DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcelight[device] = true;
+                var dcolor = new DS4Color(color);
+                DS4LightBar.forcedColor[Device] = dcolor;
+                DS4LightBar.forcedFlash[Device] = 0;
+                DS4LightBar.forcelight[Device] = true;
             }
         }
 
         public void EndForcedColor()
         {
-            if (device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
+            if (Device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4LightBar.forcedColor[device] = new DS4Color(0, 0, 0);
-                DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcelight[device] = false;
+                DS4LightBar.forcedColor[Device] = new DS4Color(0, 0, 0);
+                DS4LightBar.forcedFlash[Device] = 0;
+                DS4LightBar.forcelight[Device] = false;
             }
         }
 
-        public void UpdateChargingColor(System.Windows.Media.Color color)
+        public void UpdateChargingColor(Color color)
         {
-            appSettings.Settings.LightbarSettingInfo[device].Ds4WinSettings.ChargingLed = new DS4Color(color);
-            
+            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingLed = new DS4Color(color);
+
             ChargingColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateLaunchProgram(string path)
         {
-            Global.Instance.Config.LaunchProgram[device] = path;
+            Global.Instance.Config.LaunchProgram[Device] = path;
             LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);
@@ -2520,7 +2467,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ResetLauchProgram()
         {
-            Global.Instance.Config.LaunchProgram[device] = string.Empty;
+            Global.Instance.Config.LaunchProgram[Device] = string.Empty;
             LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
             LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);
@@ -2529,18 +2476,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateTouchDisInvert(ContextMenu menu)
         {
-            int index = 0;
-            List<int> triggerList = new List<int>();
-            List<string> triggerName = new List<string>();
-            
-            foreach(MenuItem item in menu.Items)
+            var index = 0;
+            var triggerList = new List<int>();
+            var triggerName = new List<string>();
+
+            foreach (MenuItem item in menu.Items)
             {
                 if (item.IsChecked)
                 {
                     triggerList.Add(index);
                     triggerName.Add(item.Header.ToString());
                 }
-                
+
                 index++;
             }
 
@@ -2550,13 +2497,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 triggerName.Add("None");
             }
 
-            Global.Instance.Config.TouchDisInvertTriggers[device] = triggerList.ToArray();
+            Global.Instance.Config.TouchDisInvertTriggers[Device] = triggerList.ToArray();
             TouchDisInvertString = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateTouchDisInver(ContextMenu menu)
         {
-            var triggers = Global.Instance.Config.TouchDisInvertTriggers[device];
+            var triggers = Global.Instance.Config.TouchDisInvertTriggers[Device];
             var itemCount = menu.Items.Count;
             var triggerName = new List<string>();
             foreach (var trigid in triggers)
@@ -2579,17 +2526,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateGyroMouseTrig(ContextMenu menu, bool alwaysOnChecked)
         {
-            int index = 0;
-            List<int> triggerList = new List<int>();
-            List<string> triggerName = new List<string>();
+            var index = 0;
+            var triggerList = new List<int>();
+            var triggerName = new List<string>();
 
-            int itemCount = menu.Items.Count;
-            MenuItem alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
+            var itemCount = menu.Items.Count;
+            var alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
             if (alwaysOnChecked)
             {
-                for (int i = 0; i < itemCount - 1; i++)
+                for (var i = 0; i < itemCount - 1; i++)
                 {
-                    MenuItem item = menu.Items[i] as MenuItem;
+                    var item = menu.Items[i] as MenuItem;
                     item.IsChecked = false;
                 }
             }
@@ -2615,27 +2562,28 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            ProfilesService.Instance.ActiveProfiles.ElementAt(device).SATriggers = string.Join(",", triggerList.ToArray());
+            ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SATriggers =
+                string.Join(",", triggerList.ToArray());
             GyroMouseTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroMouseTrig(ContextMenu menu)
         {
-            string[] triggers = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SATriggers.Split(',');
-            int itemCount = menu.Items.Count;
-            List<string> triggerName = new List<string>();
-            foreach (string trig in triggers)
+            var triggers = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SATriggers.Split(',');
+            var itemCount = menu.Items.Count;
+            var triggerName = new List<string>();
+            foreach (var trig in triggers)
             {
-                bool valid = int.TryParse(trig, out int trigid);
+                var valid = int.TryParse(trig, out var trigid);
                 if (valid && trigid >= 0 && trigid < itemCount - 1)
                 {
-                    MenuItem current = menu.Items[trigid] as MenuItem;
+                    var current = menu.Items[trigid] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add(current.Header.ToString());
                 }
                 else if (valid && trigid == -1)
                 {
-                    MenuItem current = menu.Items[itemCount - 1] as MenuItem;
+                    var current = menu.Items[itemCount - 1] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add("Always On");
                     break;
@@ -2644,7 +2592,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             if (triggerName.Count == 0)
             {
-                MenuItem current = menu.Items[itemCount - 1] as MenuItem;
+                var current = menu.Items[itemCount - 1] as MenuItem;
                 current.IsChecked = true;
                 triggerName.Add("Always On");
             }
@@ -2654,17 +2602,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateGyroMouseStickTrig(ContextMenu menu, bool alwaysOnChecked)
         {
-            int index = 0;
-            List<int> triggerList = new List<int>();
-            List<string> triggerName = new List<string>();
+            var index = 0;
+            var triggerList = new List<int>();
+            var triggerName = new List<string>();
 
-            int itemCount = menu.Items.Count;
-            MenuItem alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
+            var itemCount = menu.Items.Count;
+            var alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
             if (alwaysOnChecked)
             {
-                for (int i = 0; i < itemCount - 1; i++)
+                for (var i = 0; i < itemCount - 1; i++)
                 {
-                    MenuItem item = menu.Items[i] as MenuItem;
+                    var item = menu.Items[i] as MenuItem;
                     item.IsChecked = false;
                 }
             }
@@ -2690,27 +2638,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.Config.SAMouseStickTriggers[device] = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.SAMouseStickTriggers[Device] = string.Join(",", triggerList.ToArray());
             GyroMouseStickTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroMouseStickTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.Config.SAMouseStickTriggers[device].Split(',');
-            int itemCount = menu.Items.Count;
-            List<string> triggerName = new List<string>();
-            foreach (string trig in triggers)
+            var triggers = Global.Instance.Config.SAMouseStickTriggers[Device].Split(',');
+            var itemCount = menu.Items.Count;
+            var triggerName = new List<string>();
+            foreach (var trig in triggers)
             {
-                bool valid = int.TryParse(trig, out int trigid);
+                var valid = int.TryParse(trig, out var trigid);
                 if (valid && trigid >= 0 && trigid < itemCount - 1)
                 {
-                    MenuItem current = menu.Items[trigid] as MenuItem;
+                    var current = menu.Items[trigid] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add(current.Header.ToString());
                 }
                 else if (valid && trigid == -1)
                 {
-                    MenuItem current = menu.Items[itemCount-1] as MenuItem;
+                    var current = menu.Items[itemCount - 1] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add("Always On");
                     break;
@@ -2719,7 +2667,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             if (triggerName.Count == 0)
             {
-                MenuItem current = menu.Items[itemCount - 1] as MenuItem;
+                var current = menu.Items[itemCount - 1] as MenuItem;
                 current.IsChecked = true;
                 triggerName.Add("Always On");
             }
@@ -2729,17 +2677,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateGyroSwipeTrig(ContextMenu menu, bool alwaysOnChecked)
         {
-            int index = 0;
-            List<int> triggerList = new List<int>();
-            List<string> triggerName = new List<string>();
+            var index = 0;
+            var triggerList = new List<int>();
+            var triggerName = new List<string>();
 
-            int itemCount = menu.Items.Count;
-            MenuItem alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
+            var itemCount = menu.Items.Count;
+            var alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
             if (alwaysOnChecked)
             {
-                for (int i = 0; i < itemCount - 1; i++)
+                for (var i = 0; i < itemCount - 1; i++)
                 {
-                    MenuItem item = menu.Items[i] as MenuItem;
+                    var item = menu.Items[i] as MenuItem;
                     item.IsChecked = false;
                 }
             }
@@ -2765,27 +2713,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.Config.GyroSwipeInfo[device].triggers = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.GyroSwipeInfo[Device].triggers = string.Join(",", triggerList.ToArray());
             GyroSwipeTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroSwipeTrig(ContextMenu menu)
         {
-            string[] triggers = Global.Instance.Config.GyroSwipeInfo[device].triggers.Split(',');
-            int itemCount = menu.Items.Count;
-            List<string> triggerName = new List<string>();
-            foreach (string trig in triggers)
+            var triggers = Global.Instance.Config.GyroSwipeInfo[Device].triggers.Split(',');
+            var itemCount = menu.Items.Count;
+            var triggerName = new List<string>();
+            foreach (var trig in triggers)
             {
-                bool valid = int.TryParse(trig, out int trigid);
+                var valid = int.TryParse(trig, out var trigid);
                 if (valid && trigid >= 0 && trigid < itemCount - 1)
                 {
-                    MenuItem current = menu.Items[trigid] as MenuItem;
+                    var current = menu.Items[trigid] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add(current.Header.ToString());
                 }
                 else if (valid && trigid == -1)
                 {
-                    MenuItem current = menu.Items[itemCount - 1] as MenuItem;
+                    var current = menu.Items[itemCount - 1] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add("Always On");
                     break;
@@ -2794,7 +2742,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             if (triggerName.Count == 0)
             {
-                MenuItem current = menu.Items[itemCount - 1] as MenuItem;
+                var current = menu.Items[itemCount - 1] as MenuItem;
                 current.IsChecked = true;
                 triggerName.Add("Always On");
             }
@@ -2805,17 +2753,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateGyroControlsTrig(ContextMenu menu, bool alwaysOnChecked)
         {
-            int index = 0;
-            List<int> triggerList = new List<int>();
-            List<string> triggerName = new List<string>();
+            var index = 0;
+            var triggerList = new List<int>();
+            var triggerName = new List<string>();
 
-            int itemCount = menu.Items.Count;
-            MenuItem alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
+            var itemCount = menu.Items.Count;
+            var alwaysOnItem = menu.Items[itemCount - 1] as MenuItem;
             if (alwaysOnChecked)
             {
-                for (int i = 0; i < itemCount - 1; i++)
+                for (var i = 0; i < itemCount - 1; i++)
                 {
-                    MenuItem item = menu.Items[i] as MenuItem;
+                    var item = menu.Items[i] as MenuItem;
                     item.IsChecked = false;
                 }
             }
@@ -2841,27 +2789,29 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.Triggers = string.Join(",", triggerList.ToArray());
+            ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroControlsInfo.Triggers =
+                string.Join(",", triggerList.ToArray());
             GyroControlsTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroControlsTrig(ContextMenu menu)
         {
-            string[] triggers = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroControlsInfo.Triggers.Split(',');
-            int itemCount = menu.Items.Count;
-            List<string> triggerName = new List<string>();
-            foreach (string trig in triggers)
+            var triggers = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroControlsInfo.Triggers
+                .Split(',');
+            var itemCount = menu.Items.Count;
+            var triggerName = new List<string>();
+            foreach (var trig in triggers)
             {
-                bool valid = int.TryParse(trig, out int trigid);
+                var valid = int.TryParse(trig, out var trigid);
                 if (valid && trigid >= 0 && trigid < itemCount - 1)
                 {
-                    MenuItem current = menu.Items[trigid] as MenuItem;
+                    var current = menu.Items[trigid] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add(current.Header.ToString());
                 }
                 else if (valid && trigid == -1)
                 {
-                    MenuItem current = menu.Items[itemCount - 1] as MenuItem;
+                    var current = menu.Items[itemCount - 1] as MenuItem;
                     current.IsChecked = true;
                     triggerName.Add("Always On");
                     break;
@@ -2870,7 +2820,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             if (triggerName.Count == 0)
             {
-                MenuItem current = menu.Items[itemCount - 1] as MenuItem;
+                var current = menu.Items[itemCount - 1] as MenuItem;
                 current.IsChecked = true;
                 triggerName.Add("Always On");
             }
@@ -2880,7 +2830,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private int CalculateOutputMouseSpeed(int mouseSpeed)
         {
-            int result = mouseSpeed * Mapping.MOUSESPEEDFACTOR;
+            var result = mouseSpeed * Mapping.MOUSESPEEDFACTOR;
             return result;
         }
 
@@ -2888,64 +2838,73 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             // Custom curve editor web link clicked. Open the bezier curve editor web app usign the default browser app and pass on current custom definition as a query string parameter.
             // The Process.Start command using HTML page doesn't support query parameters, so if there is a custom curve definition then lookup the default browser executable name from a sysreg.
-            string defaultBrowserCmd = String.Empty;
+            var defaultBrowserCmd = string.Empty;
             try
             {
-                if (!String.IsNullOrEmpty(customDefinition))
+                if (!string.IsNullOrEmpty(customDefinition))
                 {
-                    string progId = String.Empty;
-                    using (RegistryKey userChoiceKey = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\http\\UserChoice"))
+                    var progId = string.Empty;
+                    using (var userChoiceKey = Registry.CurrentUser.OpenSubKey(
+                        "Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\http\\UserChoice"))
                     {
                         progId = userChoiceKey?.GetValue("Progid")?.ToString();
                     }
 
-                    if (!String.IsNullOrEmpty(progId))
+                    if (!string.IsNullOrEmpty(progId))
                     {
-                        using (RegistryKey browserPathCmdKey = Registry.ClassesRoot.OpenSubKey($"{progId}\\shell\\open\\command"))
+                        using (var browserPathCmdKey =
+                            Registry.ClassesRoot.OpenSubKey($"{progId}\\shell\\open\\command"))
                         {
                             defaultBrowserCmd = browserPathCmdKey?.GetValue(null).ToString().ToLower();
                         }
 
-                        if (!String.IsNullOrEmpty(defaultBrowserCmd))
+                        if (!string.IsNullOrEmpty(defaultBrowserCmd))
                         {
-                            int iStartPos = (defaultBrowserCmd[0] == '"' ? 1 : 0);
-                            defaultBrowserCmd = defaultBrowserCmd.Substring(iStartPos, defaultBrowserCmd.LastIndexOf(".exe") + 4 - iStartPos);
+                            var iStartPos = defaultBrowserCmd[0] == '"' ? 1 : 0;
+                            defaultBrowserCmd = defaultBrowserCmd.Substring(iStartPos,
+                                defaultBrowserCmd.LastIndexOf(".exe") + 4 - iStartPos);
                             if (Path.GetFileName(defaultBrowserCmd) == "launchwinapp.exe")
-                                defaultBrowserCmd = String.Empty;
+                                defaultBrowserCmd = string.Empty;
                         }
 
                         // Fallback to IE executable if the default browser HTML shell association is for some reason missing or is not set
-                        if (String.IsNullOrEmpty(defaultBrowserCmd))
+                        if (string.IsNullOrEmpty(defaultBrowserCmd))
                             defaultBrowserCmd = "C:\\Program Files\\Internet Explorer\\iexplore.exe";
 
                         if (!File.Exists(defaultBrowserCmd))
-                            defaultBrowserCmd = String.Empty;
+                            defaultBrowserCmd = string.Empty;
                     }
                 }
 
                 // Launch custom bezier editor webapp using a default browser executable command or via a default shell command. The default shell exeution doesn't support query parameters.
-                if (!String.IsNullOrEmpty(defaultBrowserCmd))
-                    System.Diagnostics.Process.Start(defaultBrowserCmd, $"\"file:///{Global.ExecutableDirectory}\\BezierCurveEditor\\index.html?curve={customDefinition.Replace(" ", "")}\"");
+                if (!string.IsNullOrEmpty(defaultBrowserCmd))
+                {
+                    Process.Start(defaultBrowserCmd,
+                        $"\"file:///{Global.ExecutableDirectory}\\BezierCurveEditor\\index.html?curve={customDefinition.Replace(" ", "")}\"");
+                }
                 else
                 {
-                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo($"{Global.ExecutableDirectory}\\BezierCurveEditor\\index.html");
+                    var startInfo =
+                        new ProcessStartInfo($"{Global.ExecutableDirectory}\\BezierCurveEditor\\index.html");
                     startInfo.UseShellExecute = true;
-                    using (System.Diagnostics.Process temp = System.Diagnostics.Process.Start(startInfo))
+                    using (var temp = Process.Start(startInfo))
                     {
                     }
                 }
             }
             catch (Exception ex)
             {
-                AppLogger.Instance.LogToGui($"ERROR. Failed to open {Global.ExecutableDirectory}\\BezierCurveEditor\\index.html web app. Check that the web file exits or launch it outside of DS4Windows application. {ex.Message}", true);
+                AppLogger.Instance.LogToGui(
+                    $"ERROR. Failed to open {Global.ExecutableDirectory}\\BezierCurveEditor\\index.html web app. Check that the web file exits or launch it outside of DS4Windows application. {ex.Message}",
+                    true);
             }
         }
 
         public void UpdateLateProperties()
         {
             tempControllerIndex = ControllerTypeIndex;
-            Global.OutDevTypeTemp[device] = ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType;
-            tempBtPollRate = ProfilesService.Instance.ActiveProfiles.ElementAt(device).BluetoothPollRate;
+            Global.OutDevTypeTemp[Device] = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).OutputDeviceType;
+            TempBTPollRateIndex = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).BluetoothPollRate;
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
             gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();
@@ -2961,45 +2920,32 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             LeftStick,
             RightStick,
             DPad,
-            FaceButtons,
+            FaceButtons
         }
 
-        private Dictionary<ControlSelection, string> presetInputLabelDict =
-            new Dictionary<ControlSelection, string>()
-            {
-                [ControlSelection.None] = "None",
-                [ControlSelection.DPad] = "DPad",
-                [ControlSelection.LeftStick] = "Left Stick",
-                [ControlSelection.RightStick] = "Right Stick",
-                [ControlSelection.FaceButtons] = "Face Buttons",
-            };
-
-        public Dictionary<ControlSelection, string> PresetInputLabelDict
-        {
-            get => presetInputLabelDict;
-        }
-
-        public string PresetInputLabel
-        {
-            get => presetInputLabelDict[highlightControl];
-        }
-
-        private ControlSelection highlightControl = ControlSelection.None;
-
-        public ControlSelection HighlightControl {
-            get => highlightControl;
-        }
-
-        private int deviceNum;
+        private readonly int deviceNum;
 
         public PresetMenuHelper(int device)
         {
             deviceNum = device;
         }
 
+        public Dictionary<ControlSelection, string> PresetInputLabelDict { get; } = new()
+        {
+            [ControlSelection.None] = "None",
+            [ControlSelection.DPad] = "DPad",
+            [ControlSelection.LeftStick] = "Left Stick",
+            [ControlSelection.RightStick] = "Right Stick",
+            [ControlSelection.FaceButtons] = "Face Buttons"
+        };
+
+        public string PresetInputLabel => PresetInputLabelDict[HighlightControl];
+
+        public ControlSelection HighlightControl { get; private set; } = ControlSelection.None;
+
         public ControlSelection PresetTagIndex(DS4Controls control)
         {
-            ControlSelection controlInput = ControlSelection.None;
+            var controlInput = ControlSelection.None;
             switch (control)
             {
                 case DS4Controls.DpadUp:
@@ -3028,8 +2974,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 case DS4Controls.Square:
                     controlInput = ControlSelection.FaceButtons;
                     break;
-                default:
-                    break;
             }
 
 
@@ -3038,201 +2982,182 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void SetHighlightControl(DS4Controls control)
         {
-            ControlSelection controlInput = PresetTagIndex(control);
-            highlightControl = controlInput;
+            var controlInput = PresetTagIndex(control);
+            HighlightControl = controlInput;
         }
 
         public List<DS4Controls> ModifySettingWithPreset(int baseTag, int subTag)
         {
-            List<object> actionBtns = new List<object>(5);
-            List<DS4Controls> inputControls = new List<DS4Controls>(5);
+            var actionBtns = new List<object>(5);
+            var inputControls = new List<DS4Controls>(5);
             if (baseTag == 0)
-            {
                 actionBtns.AddRange(new object[5]
                 {
-                    null, null, null, null, null,
+                    null, null, null, null, null
                 });
-            }
             else if (baseTag == 1)
-            {
-                switch(subTag)
+                switch (subTag)
                 {
                     case 0:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.DpadUp, X360Controls.DpadDown,
-                            X360Controls.DpadLeft, X360Controls.DpadRight, X360Controls.Unbound,
+                            X360Controls.DpadLeft, X360Controls.DpadRight, X360Controls.Unbound
                         });
                         break;
                     case 1:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.DpadDown, X360Controls.DpadUp,
-                            X360Controls.DpadRight, X360Controls.DpadLeft, X360Controls.Unbound,
+                            X360Controls.DpadRight, X360Controls.DpadLeft, X360Controls.Unbound
                         });
                         break;
                     case 2:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.DpadUp, X360Controls.DpadDown,
-                            X360Controls.DpadRight, X360Controls.DpadLeft, X360Controls.Unbound,
+                            X360Controls.DpadRight, X360Controls.DpadLeft, X360Controls.Unbound
                         });
                         break;
                     case 3:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.DpadDown, X360Controls.DpadUp,
-                            X360Controls.DpadLeft, X360Controls.DpadRight, X360Controls.Unbound,
+                            X360Controls.DpadLeft, X360Controls.DpadRight, X360Controls.Unbound
                         });
                         break;
                     case 4:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.DpadRight, X360Controls.DpadLeft,
-                            X360Controls.DpadUp, X360Controls.DpadDown, X360Controls.Unbound,
+                            X360Controls.DpadUp, X360Controls.DpadDown, X360Controls.Unbound
                         });
                         break;
                     case 5:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.DpadLeft, X360Controls.DpadRight,
-                            X360Controls.DpadDown, X360Controls.DpadUp, X360Controls.Unbound,
+                            X360Controls.DpadDown, X360Controls.DpadUp, X360Controls.Unbound
                         });
                         break;
-                    default:
-                        break;
                 }
-            }
             else if (baseTag == 2)
-            {
                 switch (subTag)
                 {
                     case 0:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.LYNeg, X360Controls.LYPos,
-                            X360Controls.LXNeg, X360Controls.LXPos, X360Controls.LS,
+                            X360Controls.LXNeg, X360Controls.LXPos, X360Controls.LS
                         });
                         break;
                     case 1:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.LYPos, X360Controls.LYNeg,
-                            X360Controls.LXPos, X360Controls.LXNeg, X360Controls.LS,
+                            X360Controls.LXPos, X360Controls.LXNeg, X360Controls.LS
                         });
                         break;
                     case 2:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.LYNeg, X360Controls.LYPos,
-                            X360Controls.LXPos, X360Controls.LXNeg, X360Controls.LS,
+                            X360Controls.LXPos, X360Controls.LXNeg, X360Controls.LS
                         });
                         break;
                     case 3:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.LYPos, X360Controls.LYNeg,
-                            X360Controls.LXNeg, X360Controls.LXPos, X360Controls.LS,
+                            X360Controls.LXNeg, X360Controls.LXPos, X360Controls.LS
                         });
                         break;
                     case 4:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.LXPos, X360Controls.LXNeg,
-                            X360Controls.LYNeg, X360Controls.LYPos, X360Controls.LS,
+                            X360Controls.LYNeg, X360Controls.LYPos, X360Controls.LS
                         });
                         break;
                     case 5:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.LXNeg, X360Controls.LXPos,
-                            X360Controls.LYPos, X360Controls.LYNeg, X360Controls.LS,
+                            X360Controls.LYPos, X360Controls.LYNeg, X360Controls.LS
                         });
                         break;
-                    default:
-                        break;
                 }
-            }
             else if (baseTag == 3)
-            {
                 switch (subTag)
                 {
                     case 0:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.RYNeg, X360Controls.RYPos,
-                            X360Controls.RXNeg, X360Controls.RXPos, X360Controls.RS,
+                            X360Controls.RXNeg, X360Controls.RXPos, X360Controls.RS
                         });
                         break;
                     case 1:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.RYPos, X360Controls.RYNeg,
-                            X360Controls.RXPos, X360Controls.RXNeg, X360Controls.RS,
+                            X360Controls.RXPos, X360Controls.RXNeg, X360Controls.RS
                         });
                         break;
                     case 2:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.RYNeg, X360Controls.RYPos,
-                            X360Controls.RXPos, X360Controls.RXNeg, X360Controls.RS,
+                            X360Controls.RXPos, X360Controls.RXNeg, X360Controls.RS
                         });
                         break;
                     case 3:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.RYPos, X360Controls.RYNeg,
-                            X360Controls.RXNeg, X360Controls.RXPos, X360Controls.RS,
+                            X360Controls.RXNeg, X360Controls.RXPos, X360Controls.RS
                         });
                         break;
                     case 4:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.RXPos, X360Controls.RXNeg,
-                            X360Controls.RYNeg, X360Controls.RYPos, X360Controls.RS,
+                            X360Controls.RYNeg, X360Controls.RYPos, X360Controls.RS
                         });
                         break;
                     case 5:
                         actionBtns.AddRange(new object[5]
                         {
                             X360Controls.RXNeg, X360Controls.RXPos,
-                            X360Controls.RYPos, X360Controls.RYNeg, X360Controls.RS,
+                            X360Controls.RYPos, X360Controls.RYNeg, X360Controls.RS
                         });
                         break;
-                    default:
-                        break;
                 }
-            }
             else if (baseTag == 4)
-            {
-                switch(subTag)
+                switch (subTag)
                 {
                     case 0:
                         // North, South, West, East
                         actionBtns.AddRange(new object[5]
                         {
-                            X360Controls.Y, X360Controls.A, X360Controls.X, X360Controls.B, X360Controls.Unbound,
+                            X360Controls.Y, X360Controls.A, X360Controls.X, X360Controls.B, X360Controls.Unbound
                         });
                         break;
                     case 1:
                         actionBtns.AddRange(new object[5]
                         {
-                            X360Controls.B, X360Controls.X, X360Controls.Y, X360Controls.A, X360Controls.Unbound,
+                            X360Controls.B, X360Controls.X, X360Controls.Y, X360Controls.A, X360Controls.Unbound
                         });
                         break;
                     case 2:
                         actionBtns.AddRange(new object[5]
                         {
-                            X360Controls.X, X360Controls.B, X360Controls.A, X360Controls.Y, X360Controls.Unbound,
+                            X360Controls.X, X360Controls.B, X360Controls.A, X360Controls.Y, X360Controls.Unbound
                         });
                         break;
-                    default:
-                        break;
                 }
-            }
             else if (baseTag == 5)
-            {
-                switch(subTag)
+                switch (subTag)
                 {
                     case 0:
                         // North, South, West, East
@@ -3240,7 +3165,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             KeyInterop.VirtualKeyFromKey(Key.W), KeyInterop.VirtualKeyFromKey(Key.S),
                             KeyInterop.VirtualKeyFromKey(Key.A), KeyInterop.VirtualKeyFromKey(Key.D),
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 1:
@@ -3248,7 +3173,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             KeyInterop.VirtualKeyFromKey(Key.D), KeyInterop.VirtualKeyFromKey(Key.A),
                             KeyInterop.VirtualKeyFromKey(Key.W), KeyInterop.VirtualKeyFromKey(Key.S),
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 2:
@@ -3256,16 +3181,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             KeyInterop.VirtualKeyFromKey(Key.A), KeyInterop.VirtualKeyFromKey(Key.D),
                             KeyInterop.VirtualKeyFromKey(Key.S), KeyInterop.VirtualKeyFromKey(Key.W),
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
-                    default:
-                        break;
                 }
-            }
             else if (baseTag == 6)
-            {
-                switch(subTag)
+                switch (subTag)
                 {
                     case 0:
                         // North, South, West, East
@@ -3273,7 +3194,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             KeyInterop.VirtualKeyFromKey(Key.Up), KeyInterop.VirtualKeyFromKey(Key.Down),
                             KeyInterop.VirtualKeyFromKey(Key.Left), KeyInterop.VirtualKeyFromKey(Key.Right),
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 1:
@@ -3281,7 +3202,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             KeyInterop.VirtualKeyFromKey(Key.Right), KeyInterop.VirtualKeyFromKey(Key.Left),
                             KeyInterop.VirtualKeyFromKey(Key.Up), KeyInterop.VirtualKeyFromKey(Key.Down),
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 2:
@@ -3289,15 +3210,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             KeyInterop.VirtualKeyFromKey(Key.Left), KeyInterop.VirtualKeyFromKey(Key.Right),
                             KeyInterop.VirtualKeyFromKey(Key.Down), KeyInterop.VirtualKeyFromKey(Key.Up),
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
-                    default:
-                        break;
                 }
-            }
             else if (baseTag == 7)
-            {
                 switch (subTag)
                 {
                     case 0:
@@ -3305,7 +3222,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             X360Controls.MouseUp, X360Controls.MouseDown,
                             X360Controls.MouseLeft, X360Controls.MouseRight,
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 1:
@@ -3313,7 +3230,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             X360Controls.MouseDown, X360Controls.MouseUp,
                             X360Controls.MouseRight, X360Controls.MouseLeft,
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 2:
@@ -3321,7 +3238,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             X360Controls.MouseUp, X360Controls.MouseDown,
                             X360Controls.MouseRight, X360Controls.MouseLeft,
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 3:
@@ -3329,7 +3246,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             X360Controls.MouseDown, X360Controls.MouseUp,
                             X360Controls.MouseLeft, X360Controls.MouseRight,
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 4:
@@ -3337,7 +3254,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             X360Controls.MouseRight, X360Controls.MouseLeft,
                             X360Controls.MouseUp, X360Controls.MouseDown,
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
                     case 5:
@@ -3345,52 +3262,47 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         {
                             X360Controls.MouseLeft, X360Controls.MouseRight,
                             X360Controls.MouseDown, X360Controls.MouseUp,
-                            X360Controls.Unbound,
+                            X360Controls.Unbound
                         });
                         break;
-                    default:
-                        break;
                 }
-            }
             else if (baseTag == 8)
-            {
                 actionBtns.AddRange(new object[5]
                 {
                     X360Controls.Unbound, X360Controls.Unbound,
                     X360Controls.Unbound, X360Controls.Unbound,
-                    X360Controls.Unbound,
+                    X360Controls.Unbound
                 });
-            }
 
 
-            switch (highlightControl)
+            switch (HighlightControl)
             {
                 case ControlSelection.DPad:
                     inputControls.AddRange(new DS4Controls[4]
                     {
                         DS4Controls.DpadUp, DS4Controls.DpadDown,
-                        DS4Controls.DpadLeft, DS4Controls.DpadRight,
+                        DS4Controls.DpadLeft, DS4Controls.DpadRight
                     });
                     break;
                 case ControlSelection.LeftStick:
                     inputControls.AddRange(new DS4Controls[5]
                     {
                         DS4Controls.LYNeg, DS4Controls.LYPos,
-                        DS4Controls.LXNeg, DS4Controls.LXPos, DS4Controls.L3,
+                        DS4Controls.LXNeg, DS4Controls.LXPos, DS4Controls.L3
                     });
                     break;
                 case ControlSelection.RightStick:
                     inputControls.AddRange(new DS4Controls[5]
                     {
                         DS4Controls.RYNeg, DS4Controls.RYPos,
-                        DS4Controls.RXNeg, DS4Controls.RXPos, DS4Controls.R3,
+                        DS4Controls.RXNeg, DS4Controls.RXPos, DS4Controls.R3
                     });
                     break;
                 case ControlSelection.FaceButtons:
                     inputControls.AddRange(new DS4Controls[4]
                     {
                         DS4Controls.Triangle, DS4Controls.Cross,
-                        DS4Controls.Square, DS4Controls.Circle,
+                        DS4Controls.Square, DS4Controls.Circle
                     });
                     break;
                 case ControlSelection.None:
@@ -3398,15 +3310,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     break;
             }
 
-            int idx = 0;
-            foreach(DS4Controls dsControl in inputControls)
+            var idx = 0;
+            foreach (var dsControl in inputControls)
             {
-                DS4ControlSettings setting = Global.Instance.Config.GetDs4ControllerSetting(deviceNum, dsControl);
+                var setting = Global.Instance.Config.GetDs4ControllerSetting(deviceNum, dsControl);
                 setting.Reset();
                 if (idx < actionBtns.Count && actionBtns[idx] != null)
                 {
-                    object outAct = actionBtns[idx];
-                    X360Controls defaultControl = Global.DefaultButtonMapping[(int)dsControl];
+                    var outAct = actionBtns[idx];
+                    var defaultControl = Global.DefaultButtonMapping[(int)dsControl];
                     if (!(outAct is X360Controls) || defaultControl != (X360Controls)outAct)
                     {
                         setting.UpdateSettings(false, outAct, null, DS4KeyType.None);
@@ -3423,53 +3335,51 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
     public class TriggerModeChoice
     {
-        private string displayName;
-        public string DisplayName { get => displayName; set => displayName = value; }
-
         public TriggerMode mode;
-        public TriggerMode Mode { get => mode; set => mode = value; }
 
         public TriggerModeChoice(string name, TriggerMode mode)
         {
-            this.displayName = name;
+            DisplayName = name;
             this.mode = mode;
+        }
+
+        public string DisplayName { get; set; }
+
+        public TriggerMode Mode
+        {
+            get => mode;
+            set => mode = value;
         }
 
         public override string ToString()
         {
-            return displayName;
+            return DisplayName;
         }
     }
 
     public class TwoStageChoice
     {
-        private string displayName;
-        public string DisplayName { get => displayName; set => displayName = value; }
-
-
-        private TwoStageTriggerMode mode;
-        public TwoStageTriggerMode Mode { get => mode; set => mode = value; }
-
         public TwoStageChoice(string name, TwoStageTriggerMode mode)
         {
-            this.displayName = name;
-            this.mode = mode;
+            DisplayName = name;
+            Mode = mode;
         }
+
+        public string DisplayName { get; set; }
+
+        public TwoStageTriggerMode Mode { get; set; }
     }
 
     public class TriggerEffectChoice
     {
-        private string displayName;
-        public string DisplayName { get => displayName; set => displayName = value; }
-
-
-        private DS4Windows.InputDevices.TriggerEffects mode;
-        public DS4Windows.InputDevices.TriggerEffects Mode { get => mode; set => mode = value; }
-
-        public TriggerEffectChoice(string name, DS4Windows.InputDevices.TriggerEffects mode)
+        public TriggerEffectChoice(string name, TriggerEffects mode)
         {
-            this.displayName = name;
-            this.mode = mode;
+            DisplayName = name;
+            Mode = mode;
         }
+
+        public string DisplayName { get; set; }
+
+        public TriggerEffects Mode { get; set; }
     }
 }
