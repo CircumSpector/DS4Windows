@@ -1,78 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Management;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using Microsoft.Win32;
 using System.Windows.Interop;
-using System.Diagnostics;
-using System.IO;
-using System.Management;
-using NonFormTimer = System.Timers.Timer;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
+using System.Windows.Media;
 using AdonisUI.Controls;
-using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
+using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
+using Hardcodet.Wpf.TaskbarNotification;
+using Microsoft.Win32;
 using MessageBox = AdonisUI.Controls.MessageBox;
 using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
 using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
 using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
+using NonFormTimer = System.Timers.Timer;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    [System.Security.SuppressUnmanagedCodeSecurity]
+    [SuppressUnmanagedCodeSecurity]
     public partial class MainWindow : AdonisWindow
     {
         private const int DEFAULT_PROFILE_EDITOR_WIDTH = 1000;
         private const int DEFAULT_PROFILE_EDITOR_HEIGHT = 650;
-
-        private MainWindowsViewModel mainWinVM;
-        private StatusLogMsg lastLogMsg = new StatusLogMsg();
-        private ProfileList profileListHolder = new ProfileList();
-        private LogViewModel logvm;
-        private ControllerListViewModel conLvViewModel;
-        private TrayIconViewModel trayIconVM;
-        private SettingsViewModel settingsWrapVM;
-        private IntPtr regHandle = new IntPtr();
-        private bool showAppInTaskbar = false;
-        private ManagementEventWatcher managementEvWatcher;
-        private bool wasrunning = false;
-        private AutoProfileHolder autoProfileHolder;
-        private NonFormTimer hotkeysTimer;
-        private NonFormTimer autoProfilesTimer;
-        private AutoProfileChecker autoprofileChecker;
-        private ProfileEditor editor;
-        private bool preserveSize = true;
-        private Size oldSize;
-        private bool contextclose;
-
-        public ProfileList ProfileListHolder { get => profileListHolder; }
-
-        private readonly IServiceProvider ServiceProvider;
-
-        private readonly ControlService rootHub;
+        private const int DBT_DEVNODES_CHANGED = 0x0007;
+        private const int DBT_DEVICEARRIVAL = 0x8000;
+        private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
+        public const int WM_COPYDATA = 0x004A;
+        private const int HOTPLUG_CHECK_DELAY = 2000;
 
         private readonly IAppSettingsService appSettings;
 
         private readonly IProfilesService profilesService;
 
+        private readonly ControlService rootHub;
+
+        private readonly IServiceProvider ServiceProvider;
+        private readonly AutoProfileChecker autoprofileChecker;
+        private readonly AutoProfileHolder autoProfileHolder;
+        private NonFormTimer autoProfilesTimer;
+        private readonly ControllerListViewModel conLvViewModel;
+        private bool contextclose;
+        private ProfileEditor editor;
+        private NonFormTimer hotkeysTimer;
+        private int hotplugCounter;
+        private readonly object hotplugCounterLock = new();
+
+        private bool inHotPlug;
+        private readonly StatusLogMsg lastLogMsg = new();
+        private readonly LogViewModel logvm;
+
+        private readonly MainWindowsViewModel mainWinVM;
+        private ManagementEventWatcher managementEvWatcher;
+        private Size oldSize;
+        private bool preserveSize = true;
+        private IntPtr regHandle;
+        private readonly SettingsViewModel settingsWrapVM;
+        private bool showAppInTaskbar;
+        private readonly TrayIconViewModel trayIconVM;
+        private bool wasrunning;
+
         public MainWindow(
-            ICommandLineOptions parser, 
+            ICommandLineOptions parser,
             IServiceProvider serviceProvider,
             MainWindowsViewModel mainWindowsViewModel,
             SettingsViewModel settingsViewModel,
@@ -80,7 +90,7 @@ namespace DS4WinWPF.DS4Forms
             ControlService controlService,
             IAppSettingsService appSettings,
             IProfilesService profilesService
-            )
+        )
         {
             ServiceProvider = serviceProvider;
             rootHub = controlService;
@@ -92,7 +102,7 @@ namespace DS4WinWPF.DS4Forms
             mainWinVM = mainWindowsViewModel;
             DataContext = mainWinVM;
 
-            App root = Application.Current as App;
+            var root = Application.Current as App;
             settingsWrapVM = settingsViewModel;
             settingsTab.DataContext = settingsWrapVM;
             logvm = logViewModel;
@@ -100,41 +110,35 @@ namespace DS4WinWPF.DS4Forms
             logListView.DataContext = logvm;
             lastMsgLb.DataContext = lastLogMsg;
 
-            profileListHolder.Refresh();
-            profilesListBox.ItemsSource = profileListHolder.ProfileListCollection;
+            ProfileListHolder.Refresh();
+            profilesListBox.ItemsSource = ProfileListHolder.ProfileListCollection;
 
 
             profilesListBox.ItemsSource = profilesService.AvailableProfiles;
-            
+
 
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
 
-            conLvViewModel = new ControllerListViewModel(controlService, profileListHolder, appSettings);
+            conLvViewModel = new ControllerListViewModel(controlService, ProfileListHolder, appSettings);
             controllerLV.DataContext = conLvViewModel;
             controllerLV.ItemsSource = conLvViewModel.ControllerCol;
             ChangeControllerPanel();
             // Sort device by input slot number
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(controllerLV.ItemsSource);
+            var view = (CollectionView)CollectionViewSource.GetDefaultView(controllerLV.ItemsSource);
             view.SortDescriptions.Clear();
             view.SortDescriptions.Add(new SortDescription("DevIndex", ListSortDirection.Ascending));
             view.Refresh();
 
-            trayIconVM = new TrayIconViewModel(appSettings, rootHub, profileListHolder);
+            trayIconVM = new TrayIconViewModel(appSettings, rootHub, ProfileListHolder);
             notifyIcon.DataContext = trayIconVM;
 
-            if (appSettings.Settings.StartMinimized || parser.StartMinimized)
-            {
-                WindowState = WindowState.Minimized;
-            }
+            if (appSettings.Settings.StartMinimized || parser.StartMinimized) WindowState = WindowState.Minimized;
 
-            bool isElevated = Global.IsAdministrator;
-            if (isElevated)
-            {
-                uacImg.Visibility = Visibility.Collapsed;
-            }
+            var isElevated = Global.IsAdministrator;
+            if (isElevated) uacImg.Visibility = Visibility.Collapsed;
 
-            this.Width = appSettings.Settings.FormWidth;
-            this.Height = appSettings.Settings.FormHeight;
+            Width = appSettings.Settings.FormWidth;
+            Height = appSettings.Settings.FormHeight;
             WindowStartupLocation = WindowStartupLocation.Manual;
             Left = appSettings.Settings.FormLocationX;
             Top = appSettings.Settings.FormLocationY;
@@ -142,16 +146,16 @@ namespace DS4WinWPF.DS4Forms
                 ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
 
             autoProfileHolder = autoProfControl.AutoProfileHolder;
-            autoProfControl.SetupDataContext(appSettings, profileListHolder);
+            autoProfControl.SetupDataContext(appSettings, ProfileListHolder);
 
             autoprofileChecker = new AutoProfileChecker(appSettings, controlService, autoProfileHolder);
 
-            slotManControl.SetupDataContext(controlService: rootHub,
+            slotManControl.SetupDataContext(rootHub,
                 rootHub.OutputslotMan);
 
             SetupEvents();
 
-            Thread timerThread = new Thread(() =>
+            var timerThread = new Thread(() =>
             {
                 hotkeysTimer = new NonFormTimer();
                 hotkeysTimer.Interval = 20;
@@ -167,17 +171,16 @@ namespace DS4WinWPF.DS4Forms
             timerThread.Join();
         }
 
+        public ProfileList ProfileListHolder { get; } = new();
+
         public void LateChecks(CommandLineOptions parser)
         {
-            Task tempTask = Task.Run(async () =>
+            var tempTask = Task.Run(async () =>
             {
                 CheckDrivers();
                 if (!parser.Stop)
                 {
-                    await Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        StartStopBtn.IsEnabled = false;
-                    }));
+                    await Dispatcher.BeginInvoke((Action)(() => { StartStopBtn.IsEnabled = false; }));
                     Thread.Sleep(1000);
                     await rootHub.Start();
                 }
@@ -205,50 +208,43 @@ namespace DS4WinWPF.DS4Forms
             Util.LogAssistBackgroundTask(tempTask);
             */
         }
-        
+
         private void TrayIconVM_RequestMinimize(object sender, EventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            WindowState = WindowState.Minimized;
         }
 
         private void TrayIconVM_ProfileSelected(TrayIconViewModel sender,
             ControllerHolder item, string profile)
         {
-            int idx = item.Index;
-            CompositeDeviceModel devitem = conLvViewModel.ControllerDict[idx];
-            if (devitem != null)
-            {
-                devitem.ChangeSelectedProfile(profile);
-            }
+            var idx = item.Index;
+            var devitem = conLvViewModel.ControllerDict[idx];
+            if (devitem != null) devitem.ChangeSelectedProfile(profile);
         }
 
         private void ShowNotification(object sender, LogEntryEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-
                 if (!IsActive && (appSettings.Settings.Notifications == 2 ||
-                                  (appSettings.Settings.Notifications == 1 && e.IsWarning)))
-                {
+                                  appSettings.Settings.Notifications == 1 && e.IsWarning))
                     notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
-                    e.Data, !e.IsWarning ? Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info :
-                    Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Warning);
-                }
+                        e.Data, !e.IsWarning ? BalloonIcon.Info : BalloonIcon.Warning);
             }));
         }
 
         private void SetupEvents()
         {
-            App root = Application.Current as App;
+            var root = Application.Current as App;
             rootHub.ServiceStarted += ControlServiceStarted;
             rootHub.RunningChanged += ControlServiceChanged;
             rootHub.PreServiceStop += PrepareForServiceStop;
             //root.rootHubtest.RunningChanged += ControlServiceChanged;
             conLvViewModel.ControllerCol.CollectionChanged += ControllerCol_CollectionChanged;
-            
+
             AppLogger.Instance.NewTrayAreaLog += ShowNotification;
             AppLogger.Instance.NewGuiLog += UpdateLastStatusMessage;
-            
+
             logvm.LogItems.CollectionChanged += LogItems_CollectionChanged;
             rootHub.Debug += UpdateLastStatusMessage;
             trayIconVM.RequestShutdown += TrayIconVM_RequestShutdown;
@@ -265,17 +261,21 @@ namespace DS4WinWPF.DS4Forms
             //autoProfControl.AutoProfVM.AutoProfileSystemChange += AutoProfVM_AutoProfileSystemChange;
             mainWinVM.FullTabsEnabledChanged += MainWinVM_FullTabsEnabledChanged;
 
-            bool wmiConnected = false;
-            WqlEventQuery q = new WqlEventQuery();
-            ManagementScope scope = new ManagementScope("root\\CIMV2");
+            var wmiConnected = false;
+            var q = new WqlEventQuery();
+            var scope = new ManagementScope("root\\CIMV2");
             q.EventClassName = "Win32_PowerManagementEvent";
 
             try
             {
                 scope.Connect();
             }
-            catch (COMException) { }
-            catch (ManagementException) { }
+            catch (COMException)
+            {
+            }
+            catch (ManagementException)
+            {
+            }
 
             if (scope.IsConnected)
             {
@@ -286,19 +286,20 @@ namespace DS4WinWPF.DS4Forms
                 {
                     managementEvWatcher.Start();
                 }
-                catch (ManagementException) { wmiConnected = false; }
+                catch (ManagementException)
+                {
+                    wmiConnected = false;
+                }
             }
 
             if (!wmiConnected)
-            {
                 AppLogger.Instance.LogToGui(@"Could not connect to Windows Management Instrumentation service.
 Suspend support not enabled.", true);
-            }
         }
 
         private void SettingsWrapVM_AppChoiceIndexChanged(object sender, EventArgs e)
         {
-            App current = App.Current as App;
+            var current = Application.Current as App;
             current.ChangeTheme(appSettings.Settings.AppTheme);
             trayIconVM.PopulateContextMenu();
         }
@@ -319,37 +320,26 @@ Suspend support not enabled.", true);
         }
 
         private void LogItems_CollectionChanged(object sender,
-            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-            {
+            if (e.Action == NotifyCollectionChangedAction.Add)
                 Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    int count = logListView.Items.Count;
-                    if (count > 0)
-                    {
-                        logListView.ScrollIntoView(logvm.LogItems[count - 1]);
-                    }
+                    var count = logListView.Items.Count;
+                    if (count > 0) logListView.ScrollIntoView(logvm.LogItems[count - 1]);
                 }));
-            }
         }
 
         private void ControlServiceStarted(object sender, EventArgs e)
         {
-            if (appSettings.Settings.SwipeProfiles)
-            {
-                ChangeHotkeysStatus(true);
-            }
+            if (appSettings.Settings.SwipeProfiles) ChangeHotkeysStatus(true);
 
             CheckAutoProfileStatus();
         }
 
         private void AutoprofileChecker_RequestServiceChange(AutoProfileChecker sender, bool state)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                ChangeService();
-            }));
+            Dispatcher.BeginInvoke((Action)(() => { ChangeService(); }));
         }
 
         private void AutoProfVM_AutoProfileSystemChange(AutoProfilesViewModel sender, bool state)
@@ -367,19 +357,19 @@ Suspend support not enabled.", true);
         }
 
         private void AutoProfileColl_CollectionChanged(object sender,
-            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            NotifyCollectionChangedEventArgs e)
         {
             CheckAutoProfileStatus();
         }
 
         private void AutoProfControl_AutoDebugChanged(object sender, EventArgs e)
         {
-            autoprofileChecker.AutoProfileDebugLogLevel = autoProfControl.AutoDebug == true ? 1 : 0;
+            autoprofileChecker.AutoProfileDebugLogLevel = autoProfControl.AutoDebug ? 1 : 0;
         }
 
         private async void PowerEventArrive(object sender, EventArrivedEventArgs e)
         {
-            short evType = Convert.ToInt16(e.NewEvent.GetPropertyValue("EventType"));
+            var evType = Convert.ToInt16(e.NewEvent.GetPropertyValue("EventType"));
             switch (evType)
             {
                 // Wakeup from Suspend
@@ -391,10 +381,7 @@ Suspend support not enabled.", true);
                     {
                         wasrunning = false;
                         Thread.Sleep(16000);
-                        await Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            StartStopBtn.IsEnabled = false;
-                        }));
+                        await Dispatcher.BeginInvoke((Action)(() => { StartStopBtn.IsEnabled = false; }));
 
                         await rootHub.Start();
                     }
@@ -407,18 +394,13 @@ Suspend support not enabled.", true);
 
                     if (rootHub.IsRunning)
                     {
-                        await Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            StartStopBtn.IsEnabled = false;
-                        }));
+                        await Dispatcher.BeginInvoke((Action)(() => { StartStopBtn.IsEnabled = false; }));
 
                         rootHub.Stop(immediateUnplug: true);
                         wasrunning = true;
                     }
 
                     break;
-
-                default: break;
             }
         }
 
@@ -436,87 +418,64 @@ Suspend support not enabled.", true);
             }
         }
 
-        private void HotkeysTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void HotkeysTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             hotkeysTimer.Stop();
 
             if (appSettings.Settings.SwipeProfiles)
-            {
-                foreach (CompositeDeviceModel item in conLvViewModel.ControllerCol)
-                //for (int i = 0; i < 4; i++)
+                foreach (var item in conLvViewModel.ControllerCol)
+                    //for (int i = 0; i < 4; i++)
                 {
-                    string slide = rootHub.TouchpadSlide(item.DevIndex);
+                    var slide = rootHub.TouchpadSlide(item.DevIndex);
                     if (slide == "left")
-                    {
                         //int ind = i;
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
                             if (item.SelectedIndex <= 0)
-                            {
                                 item.SelectedIndex = item.ProfileListCol.Count - 1;
-                            }
                             else
-                            {
                                 item.SelectedIndex--;
-                            }
                         }));
-                    }
                     else if (slide == "right")
-                    {
                         //int ind = i;
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
-                            if (item.SelectedIndex == (item.ProfileListCol.Count - 1))
-                            {
+                            if (item.SelectedIndex == item.ProfileListCol.Count - 1)
                                 item.SelectedIndex = 0;
-                            }
                             else
-                            {
                                 item.SelectedIndex++;
-                            }
                         }));
-                    }
 
                     if (slide.Contains("t"))
-                    {
                         //int ind = i;
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
-                            string temp = string.Format(Properties.Resources.UsingProfile, (item.DevIndex + 1).ToString(), item.SelectedProfile, $"{item.Device.Battery}");
+                            var temp = string.Format(Properties.Resources.UsingProfile, (item.DevIndex + 1).ToString(),
+                                item.SelectedProfile, $"{item.Device.Battery}");
                             ShowHotkeyNotification(temp);
                         }));
-                    }
                 }
-            }
 
             hotkeysTimer.Start();
         }
 
         private void ShowHotkeyNotification(string message)
         {
-            if (!IsActive && (appSettings.Settings.Notifications == 2))
-            {
+            if (!IsActive && appSettings.Settings.Notifications == 2)
                 notifyIcon.ShowBalloonTip(TrayIconViewModel.ballonTitle,
-                message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
-            }
+                    message, BalloonIcon.Info);
         }
 
         private void PrepareForServiceStop(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                trayIconVM.ClearContextMenu();
-            }));
+            Dispatcher.BeginInvoke((Action)(() => { trayIconVM.ClearContextMenu(); }));
 
             ChangeHotkeysStatus(false);
         }
 
         private void TrayIconVM_RequestOpen(object sender, EventArgs e)
         {
-            if (!showAppInTaskbar)
-            {
-                Show();
-            }
+            if (!showAppInTaskbar) Show();
 
             WindowState = WindowState.Normal;
         }
@@ -524,7 +483,7 @@ Suspend support not enabled.", true);
         private void TrayIconVM_RequestShutdown(object sender, EventArgs e)
         {
             contextclose = true;
-            this.Close();
+            Close();
         }
 
         private void UpdateLastStatusMessage(object sender, LogEntryEventArgs e)
@@ -565,39 +524,30 @@ Suspend support not enabled.", true);
 
         private void CheckAutoProfileStatus()
         {
-            int pathCount = autoProfileHolder.AutoProfileCollection.Count;
-            bool timerEnabled = autoprofileChecker.Running;
+            var pathCount = autoProfileHolder.AutoProfileCollection.Count;
+            var timerEnabled = autoprofileChecker.Running;
             if (pathCount > 0 && !timerEnabled)
-            {
                 ChangeAutoProfilesStatus(true);
-            }
-            else if (pathCount == 0 && timerEnabled)
-            {
-                ChangeAutoProfilesStatus(false);
-            }
+            else if (pathCount == 0 && timerEnabled) ChangeAutoProfilesStatus(false);
         }
 
-        private async void AutoProfilesTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private async void AutoProfilesTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             autoProfilesTimer.Stop();
             //Console.WriteLine("Event triggered");
             await autoprofileChecker.Process();
 
-            if (autoprofileChecker.Running)
-            {
-                autoProfilesTimer.Start();
-            }
+            if (autoprofileChecker.Running) autoProfilesTimer.Start();
         }
 
         private void ControllerCol_CollectionChanged(object sender,
-            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
                 ChangeControllerPanel();
-                System.Collections.IList newitems = e.NewItems;
+                var newitems = e.NewItems;
                 if (newitems != null)
-                {
                     foreach (CompositeDeviceModel item in newitems)
                     {
                         item.LightContext = new ContextMenu();
@@ -607,7 +557,6 @@ Suspend support not enabled.", true);
                         //item.LightContext.Items.Add(new MenuItem() { Header = "Use Profile Color", IsChecked = !item.UseCustomColor });
                         //item.LightContext.Items.Add(new MenuItem() { Header = "Use Custom Color", IsChecked = item.UseCustomColor });
                     }
-                }
 
                 if (rootHub.IsRunning)
                     trayIconVM.PopulateContextMenu();
@@ -616,38 +565,28 @@ Suspend support not enabled.", true);
 
         private void Item_RequestColorPicker(CompositeDeviceModel sender)
         {
-            ColorPickerWindow dialog = new ColorPickerWindow();
+            var dialog = new ColorPickerWindow();
             dialog.Owner = this;
             dialog.colorPicker.SelectedColor = sender.CustomLightColor;
-            dialog.ColorChanged += (sender2, color) =>
-            {
-                sender.UpdateCustomLightColor(color);
-            };
+            dialog.ColorChanged += (sender2, color) => { sender.UpdateCustomLightColor(color); };
             dialog.ShowDialog();
         }
 
         private void DS4Device_SyncChange(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                trayIconVM.PopulateContextMenu();
-            }));
+            Dispatcher.BeginInvoke((Action)(() => { trayIconVM.PopulateContextMenu(); }));
         }
 
         private void ControlServiceChanged(object sender, EventArgs e)
         {
             //Tester service = sender as Tester;
-            ControlService service = sender as ControlService;
+            var service = sender as ControlService;
             Dispatcher.BeginInvoke((Action)(() =>
             {
                 if (service.IsRunning)
-                {
-                    StartStopBtn.Content = Translations.Strings.StopText;
-                }
+                    StartStopBtn.Content = Strings.StopText;
                 else
-                {
-                    StartStopBtn.Content = Translations.Strings.StartText;
-                }
+                    StartStopBtn.Content = Strings.StartText;
 
                 StartStopBtn.IsEnabled = true;
                 slotManControl.IsEnabled = service.IsRunning;
@@ -656,7 +595,7 @@ Suspend support not enabled.", true);
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
         {
-            About aboutWin = new About();
+            var aboutWin = new About();
             aboutWin.Owner = this;
             aboutWin.ShowDialog();
         }
@@ -687,11 +626,11 @@ Suspend support not enabled.", true);
 
         private void LogListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            int idx = logListView.SelectedIndex;
+            var idx = logListView.SelectedIndex;
             if (idx > -1)
             {
-                LogItem temp = logvm.LogItems[idx];
-                LogMessageDisplay msgBox = new LogMessageDisplay(temp.Message);
+                var temp = logvm.LogItems[idx];
+                var msgBox = new LogMessageDisplay(temp.Message);
                 msgBox.Owner = this;
                 msgBox.ShowDialog();
                 //MessageBox.Show(temp.Message, "Log");
@@ -706,13 +645,9 @@ Suspend support not enabled.", true);
         private void MainTabCon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (mainTabCon.SelectedIndex == 4)
-            {
                 lastMsgLb.Visibility = Visibility.Hidden;
-            }
             else
-            {
                 lastMsgLb.Visibility = Visibility.Visible;
-            }
         }
 
         private void ProfilesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -728,26 +663,23 @@ Suspend support not enabled.", true);
 
         private void RunAtStartCk_Click(object sender, RoutedEventArgs e)
         {
-            settingsWrapVM.ShowRunStartPanel = runAtStartCk.IsChecked == true ? Visibility.Visible :
-                Visibility.Collapsed;
+            settingsWrapVM.ShowRunStartPanel =
+                runAtStartCk.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ContStatusImg_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Image img = sender as Image;
-            int tag = Convert.ToInt32(img.Tag);
+            var img = sender as Image;
+            var tag = Convert.ToInt32(img.Tag);
             conLvViewModel.CurrentIndex = tag;
-            CompositeDeviceModel item = conLvViewModel.CurrentItem;
+            var item = conLvViewModel.CurrentItem;
             //CompositeDeviceModel item = conLvViewModel.ControllerDict[tag];
-            if (item != null)
-            {
-                item.RequestDisconnect();
-            }
+            if (item != null) item.RequestDisconnect();
         }
 
         private void ExportLogBtn_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
+            var dialog = new SaveFileDialog();
             dialog.AddExtension = true;
             dialog.DefaultExt = ".txt";
             dialog.Filter = "Text Documents (*.txt)|*.txt";
@@ -756,24 +688,24 @@ Suspend support not enabled.", true);
             dialog.InitialDirectory = Global.RuntimeAppDataPath;
             if (dialog.ShowDialog() == true)
             {
-                LogExporter logWriter = new LogExporter(dialog.FileName, logvm.LogItems.ToList());
+                var logWriter = new LogExporter(dialog.FileName, logvm.LogItems.ToList());
                 logWriter.Process();
             }
         }
 
         private void IdColumnTxtB_ToolTipOpening(object sender, ToolTipEventArgs e)
         {
-            TextBlock statusBk = sender as TextBlock;
-            int idx = Convert.ToInt32(statusBk.Tag);
+            var statusBk = sender as TextBlock;
+            var idx = Convert.ToInt32(statusBk.Tag);
             if (idx >= 0)
             {
-                CompositeDeviceModel item = conLvViewModel.ControllerDict[idx];
+                var item = conLvViewModel.ControllerDict[idx];
                 item.RequestUpdatedTooltipID();
             }
         }
 
         /// <summary>
-        /// Clear and re-populate tray context menu
+        ///     Clear and re-populate tray context menu
         /// </summary>
         private void NotifyIcon_TrayRightMouseUp(object sender, RoutedEventArgs e)
         {
@@ -781,15 +713,15 @@ Suspend support not enabled.", true);
         }
 
         /// <summary>
-        /// Change profile based on selection
+        ///     Change profile based on selection
         /// </summary>
         private async void SelectProfCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox box = sender as ComboBox;
-            int idx = Convert.ToInt32(box.Tag);
+            var box = sender as ComboBox;
+            var idx = Convert.ToInt32(box.Tag);
             if (idx > -1 && conLvViewModel.ControllerDict.ContainsKey(idx))
             {
-                CompositeDeviceModel item = conLvViewModel.ControllerDict[idx];
+                var item = conLvViewModel.ControllerDict[idx];
                 if (item.SelectedIndex > -1)
                 {
                     await item.ChangeSelectedProfile();
@@ -800,9 +732,9 @@ Suspend support not enabled.", true);
 
         private void LightColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
-            int idx = Convert.ToInt32(button.Tag);
-            CompositeDeviceModel item = conLvViewModel.ControllerDict[idx];
+            var button = sender as Button;
+            var idx = Convert.ToInt32(button.Tag);
+            var item = conLvViewModel.ControllerDict[idx];
             //(button.ContextMenu.Items[0] as MenuItem).IsChecked = conLvViewModel.ControllerCol[idx].UseCustomColor;
             //(button.ContextMenu.Items[1] as MenuItem).IsChecked = !conLvViewModel.ControllerCol[idx].UseCustomColor;
             button.ContextMenu = item.LightContext;
@@ -818,10 +750,7 @@ Suspend support not enabled.", true);
                 return;
             }
 
-            if (contextclose)
-            {
-                return;
-            }
+            if (contextclose) return;
 
             if (appSettings.Settings.CloseMinimizes)
             {
@@ -871,19 +800,10 @@ Suspend support not enabled.", true);
         {
             base.OnSourceInitialized(e);
 
-            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+            var source = PresentationSource.FromVisual(this) as HwndSource;
             HookWindowMessages(source);
             source.AddHook(WndProc);
         }
-
-        private bool inHotPlug = false;
-        private int hotplugCounter = 0;
-        private object hotplugCounterLock = new object();
-        private const int DBT_DEVNODES_CHANGED = 0x0007;
-        private const int DBT_DEVICEARRIVAL = 0x8000;
-        private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
-        public const int WM_COPYDATA = 0x004A;
-        private const int HOTPLUG_CHECK_DELAY = 2000;
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam,
             IntPtr lParam, ref bool handled)
@@ -1006,7 +926,7 @@ Suspend support not enabled.", true);
                                     {
                                         if (strData[0] == "loadprofile")
                                         {
-                                            var idx = profileListHolder.ProfileListCollection
+                                            var idx = ProfileListHolder.ProfileListCollection
                                                 .Select((item, index) => new { item, index })
                                                 .Where(x => x.item.Name == strData[2]).Select(x => x.index)
                                                 .DefaultIfEmpty(-1).First();
@@ -1222,10 +1142,7 @@ Suspend support not enabled.", true);
 
             var result = Util.RegisterNotify(source.Handle, hidGuid, ref regHandle);
 
-            if (!result)
-            {
-                Application.Current.Shutdown();
-            }
+            if (!result) Application.Current.Shutdown();
         }
 
         // Ex Mode Re-Enable
@@ -1234,7 +1151,7 @@ Suspend support not enabled.", true);
             StartStopBtn.IsEnabled = false;
             //bool checkStatus = hideDS4ContCk.IsChecked == true;
             hideDS4ContCk.IsEnabled = false;
-            Task serviceTask = Task.Run(async () =>
+            var serviceTask = Task.Run(async () =>
             {
                 rootHub.Stop();
                 await rootHub.Start();
@@ -1247,24 +1164,19 @@ Suspend support not enabled.", true);
             hideDS4ContCk.IsEnabled = true;
             StartStopBtn.IsEnabled = true;
         }
+
         private async void UseUdpServerCk_Click(object sender, RoutedEventArgs e)
         {
-            bool status = useUdpServerCk.IsChecked == true;
+            var status = useUdpServerCk.IsChecked == true;
             if (!status)
             {
                 rootHub.ChangeMotionEventStatus(status);
-                await Task.Delay(100).ContinueWith((t) =>
-                {
-                    rootHub.ChangeUDPStatus(status);
-                });
+                await Task.Delay(100).ContinueWith(t => { rootHub.ChangeUDPStatus(status); });
             }
             else
             {
                 ControlService.CurrentInstance.ChangeUDPStatus(status);
-                await Task.Delay(100).ContinueWith((t) =>
-                {
-                    rootHub.ChangeMotionEventStatus(status);
-                });
+                await Task.Delay(100).ContinueWith(t => { rootHub.ChangeMotionEventStatus(status); });
             }
         }
 
@@ -1272,16 +1184,18 @@ Suspend support not enabled.", true);
         {
             var startInfo =
                 new ProcessStartInfo(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory))
-                    {
-                        UseShellExecute = true
-                    };
+                {
+                    UseShellExecute = true
+                };
             try
             {
-                using (Process temp = Process.Start(startInfo))
+                using (var temp = Process.Start(startInfo))
                 {
                 }
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         private void ControlPanelBtn_Click(object sender, RoutedEventArgs e)
@@ -1302,14 +1216,14 @@ Suspend support not enabled.", true);
             });
 
             StartStopBtn.IsEnabled = true;
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            var startInfo = new ProcessStartInfo();
             startInfo.FileName = Global.ExecutableLocation;
             startInfo.Arguments = "-driverinstall";
             startInfo.Verb = "runas";
             startInfo.UseShellExecute = true;
             try
             {
-                using (Process temp = Process.Start(startInfo))
+                using (var temp = Process.Start(startInfo))
                 {
                     temp.WaitForExit();
                     Global.RefreshHidHideInfo();
@@ -1319,7 +1233,9 @@ Suspend support not enabled.", true);
                     settingsWrapVM.DriverCheckRefresh();
                 }
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         private void CheckUpdatesBtn_Click(object sender, RoutedEventArgs e)
@@ -1357,7 +1273,7 @@ Suspend support not enabled.", true);
 
         private void ImportProfBtn_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            var dialog = new OpenFileDialog
             {
                 AddExtension = true,
                 DefaultExt = ".xml",
@@ -1371,14 +1287,14 @@ Suspend support not enabled.", true);
 
             if (dialog.ShowDialog() == true)
             {
-                string[] files = dialog.FileNames;
+                var files = dialog.FileNames;
                 for (int i = 0, arlen = files.Length; i < arlen; i++)
                 {
-                    string profilename = System.IO.Path.GetFileName(files[i]);
-                    string basename = System.IO.Path.GetFileNameWithoutExtension(files[i]);
+                    var profilename = Path.GetFileName(files[i]);
+                    var basename = Path.GetFileNameWithoutExtension(files[i]);
                     File.Copy(dialog.FileNames[i],
                         Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory, profilename), true);
-                    profileListHolder.AddProfileSort(basename);
+                    ProfileListHolder.AddProfileSort(basename);
                 }
             }
         }
@@ -1387,7 +1303,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                SaveFileDialog dialog = new SaveFileDialog
+                var dialog = new SaveFileDialog
                 {
                     AddExtension = true,
                     DefaultExt = ".xml",
@@ -1395,28 +1311,26 @@ Suspend support not enabled.", true);
                     Title = "Select Profile to Export File"
                 };
                 Stream stream;
-                int idx = profilesListBox.SelectedIndex;
+                var idx = profilesListBox.SelectedIndex;
                 var profile = new StreamReader(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                    profileListHolder.ProfileListCollection[idx].Name + ".xml")).BaseStream;
+                    ProfileListHolder.ProfileListCollection[idx].Name + ".xml")).BaseStream;
                 if (dialog.ShowDialog() == true)
-                {
                     if ((stream = dialog.OpenFile()) != null)
                     {
                         profile.CopyTo(stream);
                         profile.Close();
                         stream.Close();
                     }
-                }
             }
         }
 
         private void DupProfBtn_Click(object sender, RoutedEventArgs e)
         {
-            string filename = "";
+            var filename = "";
             if (profilesListBox.SelectedIndex >= 0)
             {
-                int idx = profilesListBox.SelectedIndex;
-                filename = profileListHolder.ProfileListCollection[idx].Name;
+                var idx = profilesListBox.SelectedIndex;
+                filename = ProfileListHolder.ProfileListCollection[idx].Name;
                 dupBox.OldFilename = filename;
                 dupBoxBar.Visibility = Visibility.Visible;
                 dupBox.Save -= DupBox_Save;
@@ -1433,7 +1347,7 @@ Suspend support not enabled.", true);
 
         private void DupBox_Save(DupBox sender, string profilename)
         {
-            profileListHolder.AddProfileSort(profilename);
+            ProfileListHolder.AddProfileSort(profilename);
             dupBoxBar.Visibility = Visibility.Collapsed;
         }
 
@@ -1442,15 +1356,15 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex >= 0)
             {
                 var idx = profilesListBox.SelectedIndex;
-                var entity = profileListHolder.ProfileListCollection[idx];
+                var entity = ProfileListHolder.ProfileListCollection[idx];
                 var filename = entity.Name;
-                if (AdonisUI.Controls.MessageBox.Show(
+                if (MessageBox.Show(
                     Properties.Resources.ProfileCannotRestore.Replace("*Profile name*", "\"" + filename + "\""),
                     Properties.Resources.DeleteProfile,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     entity.DeleteFile();
-                    profileListHolder.ProfileListCollection.RemoveAt(idx);
+                    ProfileListHolder.ProfileListCollection.RemoveAt(idx);
                 }
             }
         }
@@ -1467,7 +1381,7 @@ Suspend support not enabled.", true);
 
         public void CheckMinStatus()
         {
-            bool minToTask = appSettings.Settings.MinimizeToTaskbar;
+            var minToTask = appSettings.Settings.MinimizeToTaskbar;
 
             switch (WindowState)
             {
@@ -1493,7 +1407,7 @@ Suspend support not enabled.", true);
         private void MainDS4Window_LocationChanged(object sender, EventArgs e)
         {
             int left = Convert.ToInt32(Left), top = Convert.ToInt32(Top);
-            
+
             if (left < 0 || top < 0) return;
 
             appSettings.Settings.FormLocationX = left;
@@ -1508,7 +1422,7 @@ Suspend support not enabled.", true);
 
         private void SwipeTouchCk_Click(object sender, RoutedEventArgs e)
         {
-            bool status = swipeTouchCk.IsChecked == true;
+            var status = swipeTouchCk.IsChecked == true;
             ChangeHotkeysStatus(status);
         }
 
@@ -1516,7 +1430,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex < 0) return;
 
-            ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
+            var entity = ProfileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
             ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
         }
 
@@ -1528,8 +1442,8 @@ Suspend support not enabled.", true);
             preserveSize = true;
             if (!editor.Keepsize)
             {
-                this.Width = oldSize.Width;
-                this.Height = oldSize.Height;
+                Width = oldSize.Width;
+                Height = oldSize.Height;
             }
             else
             {
@@ -1544,7 +1458,7 @@ Suspend support not enabled.", true);
 
         private void NewProfListBtn_Click(object sender, RoutedEventArgs e)
         {
-            ShowProfileEditor(Global.TEST_PROFILE_INDEX, null);
+            ShowProfileEditor(Global.TEST_PROFILE_INDEX);
         }
 
         private async void ShowProfileEditor(int device, ProfileEntity entity = null)
@@ -1559,15 +1473,9 @@ Suspend support not enabled.", true);
             oldSize.Width = Width;
             oldSize.Height = Height;
 
-            if (this.Width < DEFAULT_PROFILE_EDITOR_WIDTH)
-            {
-                this.Width = DEFAULT_PROFILE_EDITOR_WIDTH;
-            }
+            if (Width < DEFAULT_PROFILE_EDITOR_WIDTH) Width = DEFAULT_PROFILE_EDITOR_WIDTH;
 
-            if (this.Height < DEFAULT_PROFILE_EDITOR_HEIGHT)
-            {
-                this.Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
-            }
+            if (Height < DEFAULT_PROFILE_EDITOR_HEIGHT) Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
 
             editor = new ProfileEditor(appSettings, rootHub, device);
             editor.CreatedProfile += Editor_CreatedProfile;
@@ -1579,20 +1487,15 @@ Suspend support not enabled.", true);
 
         private void Editor_CreatedProfile(ProfileEditor sender, string profile)
         {
-            profileListHolder.AddProfileSort(profile);
-            int devnum = sender.DeviceNum;
-            if (devnum >= 0 && devnum+1 <= conLvViewModel.ControllerCol.Count)
-            {
+            ProfileListHolder.AddProfileSort(profile);
+            var devnum = sender.DeviceNum;
+            if (devnum >= 0 && devnum + 1 <= conLvViewModel.ControllerCol.Count)
                 conLvViewModel.ControllerCol[devnum].ChangeSelectedProfile(profile);
-            }
         }
 
         private void NotifyIcon_TrayMouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            if (!showAppInTaskbar)
-            {
-                Show();
-            }
+            if (!showAppInTaskbar) Show();
 
             WindowState = WindowState.Normal;
         }
@@ -1601,7 +1504,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex < 0) return;
 
-            ProfileEntity entity = profileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
+            var entity = ProfileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
             ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
         }
 
@@ -1612,52 +1515,58 @@ Suspend support not enabled.", true);
 
         private void HidHideBtn_Click(object sender, RoutedEventArgs e)
         {
-            string driveLetter = System.IO.Path.GetPathRoot(Global.ExecutableDirectory);
-            string path = System.IO.Path.Combine(driveLetter, "Program Files",
+            var driveLetter = Path.GetPathRoot(Global.ExecutableDirectory);
+            var path = Path.Combine(driveLetter, "Program Files",
                 "Nefarius Software Solutions e.U", "HidHideClient", "HidHideClient.exe");
 
             if (!File.Exists(path)) return;
 
             try
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo(path);
+                var startInfo = new ProcessStartInfo(path);
                 startInfo.UseShellExecute = true;
-                using (Process proc = Process.Start(startInfo)) { }
+                using (var proc = Process.Start(startInfo))
+                {
+                }
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         private void FakeExeNameExplainBtn_Click(object sender, RoutedEventArgs e)
         {
             var message = Strings.CustomExeNameInfo;
-            AdonisUI.Controls.MessageBox.Show(message, "Custom Exe Name Info", MessageBoxButton.OK,
+            MessageBox.Show(message, "Custom Exe Name Info", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
         private void XinputCheckerBtn_Click(object sender, RoutedEventArgs e)
         {
-            string path = System.IO.Path.Combine(Global.ExecutableDirectory, "Tools",
+            var path = Path.Combine(Global.ExecutableDirectory, "Tools",
                 "XInputChecker", "XInputChecker.exe");
 
             if (File.Exists(path))
-            {
                 try
                 {
-                    using (Process proc = Process.Start(path)) { }
+                    using (var proc = Process.Start(path))
+                    {
+                    }
                 }
-                catch { }
-            }
+                catch
+                {
+                }
         }
 
         private void ChecklogViewBtn_Click(object sender, RoutedEventArgs e)
         {
-            ChangelogWindow changelogWin = new ChangelogWindow();
+            var changelogWin = new ChangelogWindow();
             changelogWin.ShowDialog();
         }
 
         private void DeviceOptionSettingsBtn_Click(object sender, RoutedEventArgs e)
         {
-            ControllerRegisterOptionsWindow optsWindow =
+            var optsWindow =
                 new ControllerRegisterOptionsWindow(appSettings, ControlService.CurrentInstance)
                 {
                     Owner = this
@@ -1670,18 +1579,18 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex >= 0)
             {
-                int idx = profilesListBox.SelectedIndex;
-                ProfileEntity entity = profileListHolder.ProfileListCollection[idx];
-                string filename = Path.Combine(Global.RuntimeAppDataPath,
+                var idx = profilesListBox.SelectedIndex;
+                var entity = ProfileListHolder.ProfileListCollection[idx];
+                var filename = Path.Combine(Global.RuntimeAppDataPath,
                     "Profiles", $"{entity.Name}.xml");
 
                 // Disallow renaming Default profile
                 if (entity.Name != "Default" &&
                     File.Exists(filename))
                 {
-                    RenameProfileWindow renameWin = new RenameProfileWindow();
+                    var renameWin = new RenameProfileWindow();
                     renameWin.ChangeProfileName(entity.Name);
-                    bool? result = renameWin.ShowDialog();
+                    var result = renameWin.ShowDialog();
                     if (result.HasValue && result.Value)
                     {
                         entity.RenameProfile(renameWin.RenameProfileVM.ProfileName);
@@ -1703,7 +1612,7 @@ Suspend support not enabled.", true);
 
             if (item != null)
             {
-                var entity = profileListHolder.ProfileListCollection[item.SelectedIndex];
+                var entity = ProfileListHolder.ProfileListCollection[item.SelectedIndex];
                 ShowProfileEditor(idx, entity);
                 mainTabCon.SelectedIndex = 1;
             }
@@ -1735,39 +1644,39 @@ Suspend support not enabled.", true);
 
     public class ImageLocationPaths
     {
-        public string NewProfile =>
-            $"/DS4Windows;component/Resources/{Application.Current.FindResource("NewProfileImg")}";
-
-        public event EventHandler NewProfileChanged;
-
-        public string EditProfile => $"/DS4Windows;component/Resources/{Application.Current.FindResource("EditImg")}";
-        public event EventHandler EditProfileChanged;
-
-        public string DeleteProfile =>
-            $"/DS4Windows;component/Resources/{Application.Current.FindResource("DeleteImg")}";
-
-        public event EventHandler DeleteProfileChanged;
-
-        public string DuplicateProfile =>
-            $"/DS4Windows;component/Resources/{Application.Current.FindResource("CopyImg")}";
-
-        public event EventHandler DuplicateProfileChanged;
-
-        public string ExportProfile =>
-            $"/DS4Windows;component/Resources/{Application.Current.FindResource("ExportImg")}";
-
-        public event EventHandler ExportProfileChanged;
-
-        public string ImportProfile =>
-            $"/DS4Windows;component/Resources/{Application.Current.FindResource("ImportImg")}";
-
-        public event EventHandler ImportProfileChanged;
-
         public ImageLocationPaths()
         {
             var current = Application.Current as App;
             if (current != null) current.ThemeChanged += Current_ThemeChanged;
         }
+
+        public string NewProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("NewProfileImg")}";
+
+        public string EditProfile => $"/DS4Windows;component/Resources/{Application.Current.FindResource("EditImg")}";
+
+        public string DeleteProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("DeleteImg")}";
+
+        public string DuplicateProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("CopyImg")}";
+
+        public string ExportProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("ExportImg")}";
+
+        public string ImportProfile =>
+            $"/DS4Windows;component/Resources/{Application.Current.FindResource("ImportImg")}";
+
+        public event EventHandler NewProfileChanged;
+        public event EventHandler EditProfileChanged;
+
+        public event EventHandler DeleteProfileChanged;
+
+        public event EventHandler DuplicateProfileChanged;
+
+        public event EventHandler ExportProfileChanged;
+
+        public event EventHandler ImportProfileChanged;
 
         private void Current_ThemeChanged(object sender, EventArgs e)
         {
