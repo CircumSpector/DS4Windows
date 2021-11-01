@@ -1472,14 +1472,14 @@ namespace DS4Windows.InputDevices
                                 triggerPressedStrength = triggerActuationFrequency = 0;
                         break;
                     case TriggerEffects.FullClick:
-                        var tempStartResValue = Math.Max((int)effectSettings.maxValue, 0);
+                        var tempStartResValue = Math.Max((int)effectSettings.MaxValue, 0);
                         //Debug.WriteLine(tempStartResValue);
                         triggerMotorMode = 0x02;
                         //triggerStartResistance = 0x94;
                         triggerStartResistance = (byte)(0x94 * (tempStartResValue / 255.0));
                         //triggerEffectForce = 0xB4;
                         triggerEffectForce =
-                            (byte)((0xB4 - triggerStartResistance) * (effectSettings.maxValue / 255.0) +
+                            (byte)((0xB4 - triggerStartResistance) * (effectSettings.MaxValue / 255.0) +
                                    triggerStartResistance);
                         //Debug.WriteLine(triggerEffectForce);
                         triggerRangeForce = 0xFF;

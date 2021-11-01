@@ -18,7 +18,7 @@
 
     public struct TriggerEffectSettings
     {
-        public byte maxValue;
-        public byte startValue;
+        public byte MaxValue;
+        public byte StartValue;
     }
 }
