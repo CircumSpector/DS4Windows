@@ -22,10 +22,18 @@ namespace DS4WinWPF.DS4Control.Logging
         public bool IsTemporary { get; protected set; }
     }
 
+    public interface IAppLogger
+    {
+        event EventHandler<LogEntryEventArgs> NewTrayAreaLog;
+        event EventHandler<LogEntryEventArgs> NewGuiLog;
+        void LogToGui(string data, bool warning, bool temporary = false);
+        void LogToTray(string data, bool warning = false, bool ignoreSettings = false);
+    }
+
     /// <summary>
     ///     Utility class to send log messages visible in UI or tray area.
     /// </summary>
-    public class AppLogger
+    public class AppLogger : IAppLogger
     {
         private readonly ILogger<AppLogger> logger;
 
