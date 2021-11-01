@@ -54,11 +54,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //TapSensitivity = store.TapSensitivity[device];
             //ScrollSensitivity = store.ScrollSensitivity[device];
 
-            LeftTriggerMiddle = store.L2ModInfo[device].DeadZone;
-            RightTriggerMiddle = store.R2ModInfo[device].DeadZone;
+            //LeftTriggerMiddle = store.L2ModInfo[device].DeadZone;
+            //RightTriggerMiddle = store.R2ModInfo[device].DeadZone;
 
             //TouchpadInvert = store.TouchPadInvert[device];
 
+            /*
             L2AntiDeadZone = store.L2ModInfo[device].AntiDeadZone;
             R2AntiDeadZone = store.R2ModInfo[device].AntiDeadZone;
 
@@ -67,6 +68,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             L2MaxOutput = store.L2ModInfo[device].MaxOutput;
             R2MaxOutput = store.R2ModInfo[device].MaxOutput;
+            */
 
             Rainbow = light.Ds4WinSettings.Rainbow;
             MaxSatRainbow = Convert.ToInt32(light.Ds4WinSettings.MaxRainbowSaturation * 100.0);
@@ -337,6 +339,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.TapSensitivity[device] = TapSensitivity;
             //store.ScrollSensitivity[device] = ScrollSensitivity;
             //store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);
+            /*
             store.L2ModInfo[device].DeadZone = LeftTriggerMiddle;
             store.R2ModInfo[device].DeadZone = RightTriggerMiddle;
             store.L2ModInfo[device].AntiDeadZone = L2AntiDeadZone;
@@ -345,6 +348,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.R2ModInfo[device].MaxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
             store.L2ModInfo[device].MaxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
             store.R2ModInfo[device].MaxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
+            */
             //store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
             //store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             //store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);

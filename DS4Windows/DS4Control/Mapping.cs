@@ -1085,7 +1085,7 @@ namespace DS4Windows
                 int l2Maxzone = getL2Maxzone(device);
                 */
 
-                var l2ModInfo = Instance.Config.GetL2ModInfo(device);
+                var l2ModInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
                 var l2Deadzone = l2ModInfo.DeadZone;
                 var l2AntiDeadzone = l2ModInfo.AntiDeadZone;
                 var l2Maxzone = l2ModInfo.MaxZone;
@@ -1133,7 +1133,7 @@ namespace DS4Windows
                 int r2AntiDeadzone = getR2AntiDeadzone(device);
                 int r2Maxzone = getR2Maxzone(device);
                 */
-                var r2ModInfo = Instance.Config.GetR2ModInfo(device);
+                var r2ModInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 var r2Deadzone = r2ModInfo.DeadZone;
                 var r2AntiDeadzone = r2ModInfo.AntiDeadZone;
                 var r2Maxzone = r2ModInfo.MaxZone;

@@ -158,24 +158,6 @@ namespace DS4Windows
             public IList<bool> DistanceProfiles { get; set; } = new List<bool>
                 { false, false, false, false, false, false, false, false, false };
 
-            public IList<TriggerDeadZoneZInfo> L2ModInfo { get; set; } = new List<TriggerDeadZoneZInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
-            public IList<TriggerDeadZoneZInfo> R2ModInfo { get; set; } = new List<TriggerDeadZoneZInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
             public IList<int> GyroMouseDeadZone { get; set; } = new List<int>
             {
                 MouseCursor.GYRO_MOUSE_DEADZONE, MouseCursor.GYRO_MOUSE_DEADZONE,
@@ -413,16 +395,6 @@ namespace DS4Windows
             public bool IsUsingSAForControls(int index)
             {
                 return ProfilesService.Instance.ActiveProfiles.ElementAt(index).GyroOutputMode == GyroOutMode.Controls;
-            }
-            
-            public TriggerDeadZoneZInfo GetL2ModInfo(int index)
-            {
-                return L2ModInfo[index];
-            }
-
-            public TriggerDeadZoneZInfo GetR2ModInfo(int index)
-            {
-                return R2ModInfo[index];
             }
 
             public StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device)
@@ -2262,10 +2234,10 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 100;
 
-                var l2Info = L2ModInfo[device];
+                var l2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
                 l2Info.DeadZone = (byte)(0.00 * 255);
 
-                var r2Info = R2ModInfo[device];
+                var r2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 r2Info.DeadZone = (byte)(0.00 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
@@ -2364,10 +2336,10 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 100;
 
-                var l2Info = L2ModInfo[device];
+                var l2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
                 l2Info.DeadZone = (byte)(0.00 * 255);
 
-                var r2Info = R2ModInfo[device];
+                var r2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 r2Info.DeadZone = (byte)(0.00 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.MouseJoystick;
@@ -2445,10 +2417,10 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 100;
 
-                var l2Info = L2ModInfo[device];
+                var l2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
                 l2Info.DeadZone = (byte)(0.00 * 255);
 
-                var r2Info = R2ModInfo[device];
+                var r2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 r2Info.DeadZone = (byte)(0.00 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
@@ -2575,10 +2547,10 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
 
-                var l2Info = L2ModInfo[device];
+                var l2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
                 l2Info.DeadZone = (byte)(0.20 * 255);
 
-                var r2Info = R2ModInfo[device];
+                var r2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 r2Info.DeadZone = (byte)(0.20 * 255);
 
                 // Flag to unplug virtual controller
@@ -2679,10 +2651,10 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
 
-                var l2Info = L2ModInfo[device];
+                var l2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
                 l2Info.DeadZone = (byte)(0.20 * 255);
 
-                var r2Info = R2ModInfo[device];
+                var r2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 r2Info.DeadZone = (byte)(0.20 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
@@ -3066,8 +3038,8 @@ namespace DS4Windows
                 //l2ModInfo[device].antiDeadZone = r2ModInfo[device].antiDeadZone = 0;
                 //l2ModInfo[device].maxZone = r2ModInfo[device].maxZone = 100;
                 //l2ModInfo[device].maxOutput = r2ModInfo[device].maxOutput = 100.0;
-                L2ModInfo[device].Reset();
-                R2ModInfo[device].Reset();
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo.Reset();
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo.Reset();
 
                 //TapSensitivity[device] = 0;
                 //ScrollSensitivity[device] = 0;

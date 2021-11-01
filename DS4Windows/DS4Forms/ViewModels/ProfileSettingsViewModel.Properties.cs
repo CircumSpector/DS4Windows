@@ -1132,62 +1132,62 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double L2DeadZone
         {
-            get => Global.Instance.Config.L2ModInfo[Device].DeadZone / 255.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.DeadZone / 255.0;
             set
             {
-                var temp = Global.Instance.Config.L2ModInfo[Device].DeadZone / 255.0;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.DeadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.Config.L2ModInfo[Device].DeadZone = (byte)(value * 255.0);
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.DeadZone = (byte)(value * 255.0);
                 L2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double R2DeadZone
         {
-            get => Global.Instance.Config.R2ModInfo[Device].DeadZone / 255.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.DeadZone / 255.0;
             set
             {
-                var temp = Global.Instance.Config.R2ModInfo[Device].DeadZone / 255.0;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.DeadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.Config.R2ModInfo[Device].DeadZone = (byte)(value * 255.0);
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.DeadZone = (byte)(value * 255.0);
                 R2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double L2MaxZone
         {
-            get => Global.Instance.Config.L2ModInfo[Device].MaxZone / 100.0;
-            set => Global.Instance.Config.L2ModInfo[Device].MaxZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.MaxZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double R2MaxZone
         {
-            get => Global.Instance.Config.R2ModInfo[Device].MaxZone / 100.0;
-            set => Global.Instance.Config.R2ModInfo[Device].MaxZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.MaxZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double L2AntiDeadZone
         {
-            get => Global.Instance.Config.L2ModInfo[Device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.L2ModInfo[Device].AntiDeadZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.AntiDeadZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double R2AntiDeadZone
         {
-            get => Global.Instance.Config.R2ModInfo[Device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.R2ModInfo[Device].AntiDeadZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.AntiDeadZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double L2MaxOutput
         {
-            get => Global.Instance.Config.L2ModInfo[Device].MaxOutput / 100.0;
-            set => Global.Instance.Config.L2ModInfo[Device].MaxOutput = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.MaxOutput / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2ModInfo.MaxOutput = value * 100.0;
         }
 
         public double R2MaxOutput
         {
-            get => Global.Instance.Config.R2ModInfo[Device].MaxOutput / 100.0;
-            set => Global.Instance.Config.R2ModInfo[Device].MaxOutput = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.MaxOutput / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2ModInfo.MaxOutput = value * 100.0;
         }
 
         public double L2Sens

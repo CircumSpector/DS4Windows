@@ -1673,10 +1673,12 @@ namespace DS4Windows
             Mapping.flickMappingData[ind].Reset();
 
             Instance.Config.L2OutputSettings[ind].EffectSettings.MaxValue =
-                (byte)(Math.Max(Instance.Config.L2ModInfo[ind].MaxOutput, Instance.Config.L2ModInfo[ind].MaxZone) /
+                (byte)(Math.Max(ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2ModInfo.MaxOutput,
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2ModInfo.MaxZone) /
                     100.0 * 255);
             Instance.Config.R2OutputSettings[ind].EffectSettings.MaxValue =
-                (byte)(Math.Max(Instance.Config.R2ModInfo[ind].MaxOutput, Instance.Config.R2ModInfo[ind].MaxZone) /
+                (byte)(Math.Max(ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2ModInfo.MaxOutput,
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2ModInfo.MaxZone) /
                     100.0 * 255);
 
             device.PrepareTriggerEffect(TriggerId.LeftTrigger, Instance.Config.L2OutputSettings[ind].TriggerEffect,
@@ -1758,14 +1760,14 @@ namespace DS4Windows
 
             var tempIdx = ind;
             Instance.Config.L2OutputSettings[ind].ResetEvents();
-            Instance.Config.L2ModInfo[ind].ResetEvents();
+            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2ModInfo.ResetEvents();
             Instance.Config.L2OutputSettings[ind].TriggerEffectChanged += (sender, e) =>
             {
                 device.PrepareTriggerEffect(TriggerId.LeftTrigger,
                     Instance.Config.L2OutputSettings[tempIdx].TriggerEffect,
                     Instance.Config.L2OutputSettings[tempIdx].EffectSettings);
             };
-            Instance.Config.L2ModInfo[ind].MaxOutputChanged += (sender, e) =>
+            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2ModInfo.MaxOutputChanged += (sender, e) =>
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.L2OutputSettings[tempIdx].EffectSettings.MaxValue =
@@ -1776,7 +1778,7 @@ namespace DS4Windows
                     Instance.Config.L2OutputSettings[tempIdx].TriggerEffect,
                     Instance.Config.L2OutputSettings[tempIdx].EffectSettings);
             };
-            Instance.Config.L2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2ModInfo.MaxZoneChanged += (sender, e) =>
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.L2OutputSettings[tempIdx].EffectSettings.MaxValue =
@@ -1795,7 +1797,7 @@ namespace DS4Windows
                     Instance.Config.R2OutputSettings[tempIdx].TriggerEffect,
                     Instance.Config.R2OutputSettings[tempIdx].EffectSettings);
             };
-            Instance.Config.R2ModInfo[ind].MaxOutputChanged += (sender, e) =>
+            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2ModInfo.MaxOutputChanged += (sender, e) =>
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.R2OutputSettings[tempIdx].EffectSettings.MaxValue =
@@ -1806,7 +1808,7 @@ namespace DS4Windows
                     Instance.Config.R2OutputSettings[tempIdx].TriggerEffect,
                     Instance.Config.R2OutputSettings[tempIdx].EffectSettings);
             };
-            Instance.Config.R2ModInfo[ind].MaxZoneChanged += (sender, e) =>
+            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2ModInfo.MaxZoneChanged += (sender, e) =>
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.R2OutputSettings[tempIdx].EffectSettings.MaxValue =

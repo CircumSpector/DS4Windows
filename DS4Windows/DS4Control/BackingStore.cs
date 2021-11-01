@@ -41,11 +41,7 @@ namespace DS4Windows
         IList<string> OlderProfilePath { get; set; }
 
         IList<bool> DistanceProfiles { get; set; }
-
-        IList<TriggerDeadZoneZInfo> L2ModInfo { get; set; }
-
-        IList<TriggerDeadZoneZInfo> R2ModInfo { get; set; }
-
+        
         IList<BezierCurve> LSOutBezierCurveObj { get; set; }
 
         IList<BezierCurve> RSOutBezierCurveObj { get; set; }
@@ -147,10 +143,6 @@ namespace DS4Windows
         public string AxisOutputCurveString(int id);
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
-
-        TriggerDeadZoneZInfo GetL2ModInfo(int index);
-
-        TriggerDeadZoneZInfo GetR2ModInfo(int index);
 
         StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
 
