@@ -599,13 +599,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.Config.GyroSwipeInfo[Device].triggers = string.Join(",", triggerList.ToArray());
+            Global.Instance.Config.GyroSwipeInfo[Device].Triggers = string.Join(",", triggerList.ToArray());
             GyroSwipeTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroSwipeTrig(ContextMenu menu)
         {
-            var triggers = Global.Instance.Config.GyroSwipeInfo[Device].triggers.Split(',');
+            var triggers = Global.Instance.Config.GyroSwipeInfo[Device].Triggers.Split(',');
             var itemCount = menu.Items.Count;
             var triggerName = new List<string>();
             foreach (var trig in triggers)

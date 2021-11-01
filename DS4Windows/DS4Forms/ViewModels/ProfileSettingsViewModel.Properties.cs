@@ -2093,38 +2093,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroSwipeTurns
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].triggerTurns;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].triggerTurns = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].TriggerTurns;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].TriggerTurns = value;
         }
 
         public int GyroSwipeEvalCondIndex
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].triggerCond ? 0 : 1;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].triggerCond = value == 0 ? true : false;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].TriggerCondition ? 0 : 1;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].TriggerCondition = value == 0 ? true : false;
         }
 
         public int GyroSwipeXAxis
         {
-            get => (int)Global.Instance.Config.GyroSwipeInfo[Device].xAxis;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].xAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
+            get => (int)Global.Instance.Config.GyroSwipeInfo[Device].XAxis;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].XAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
         }
 
         public int GyroSwipeDeadZoneX
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneX;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneX = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneX;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneX = value;
         }
 
         public int GyroSwipeDeadZoneY
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneY;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].deadzoneY = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneY;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneY = value;
         }
 
         public int GyroSwipeDelayTime
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].delayTime;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].delayTime = value;
+            get => Global.Instance.Config.GyroSwipeInfo[Device].DelayTime;
+            set => Global.Instance.Config.GyroSwipeInfo[Device].DelayTime = value;
         }
     }
 }

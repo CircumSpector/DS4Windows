@@ -285,10 +285,10 @@ namespace DS4Windows
                 s = dev.GetCurrentStateReference();
 
                 var swipeMapInfo = Global.Instance.Config.GetGyroSwipeInfo(deviceNum);
-                useReverseRatchet = swipeMapInfo.triggerTurns;
+                useReverseRatchet = swipeMapInfo.TriggerTurns;
                 var i = 0;
-                var ss = swipeMapInfo.triggers.Split(',');
-                var andCond = swipeMapInfo.triggerCond;
+                var ss = swipeMapInfo.Triggers.Split(',');
+                var andCond = swipeMapInfo.TriggerCondition;
                 triggeractivated = andCond ? true : false;
                 if (!string.IsNullOrEmpty(ss[0]))
                 {
@@ -858,14 +858,14 @@ namespace DS4Windows
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixDirectionalSwipe)).StartActive(true);
 
 
-            var velX = swipeInfo.xAxis == GyroDirectionalSwipeInfo.XAxisSwipe.Yaw
+            var velX = swipeInfo.XAxis == GyroDirectionalSwipeInfo.XAxisSwipe.Yaw
                 ? arg.sixAxis.angVelYaw
                 : arg.sixAxis.angVelRoll;
             var velY = arg.sixAxis.angVelPitch;
-            var delayTime = swipeInfo.delayTime;
+            var delayTime = swipeInfo.DelayTime;
 
-            var deadzoneX = Math.Abs(swipeInfo.deadzoneX);
-            var deadzoneY = Math.Abs(swipeInfo.deadzoneY);
+            var deadzoneX = Math.Abs(swipeInfo.DeadZoneX);
+            var deadzoneY = Math.Abs(swipeInfo.DeadZoneY);
 
             gyroSwipe.swipeLeft = gyroSwipe.swipeRight = false;
             if (Math.Abs(velX) > deadzoneX)

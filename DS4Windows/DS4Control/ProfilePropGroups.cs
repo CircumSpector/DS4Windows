@@ -453,30 +453,30 @@ namespace DS4Windows
             Roll,
         }
 
-        public const string DEFAULT_TRIGGERS = "-1";
-        public const int DEFAULT_GYRO_DIR_SPEED = 80; // degrees per second
-        public const bool DEFAULT_TRIGGER_COND = true;
-        public const bool DEFAULT_TRIGGER_TURNS = true;
-        public const XAxisSwipe DEFAULT_X_AXIS = XAxisSwipe.Yaw;
-        public const int DEFAULT_DELAY_TIME = 0;
+        public const string DefaultTriggers = "-1";
+        public const int DefaultGyroDirSpeed = 80; // degrees per second
+        public const bool DefaultTriggerCond = true;
+        public const bool DefaultTriggerTurns = true;
+        public const XAxisSwipe DefaultXAxis = XAxisSwipe.Yaw;
+        public const int DefaultDelayTime = 0;
 
-        public int deadzoneX = DEFAULT_GYRO_DIR_SPEED;
-        public int deadzoneY = DEFAULT_GYRO_DIR_SPEED;
-        public string triggers = DEFAULT_TRIGGERS;
-        public bool triggerCond = DEFAULT_TRIGGER_COND;
-        public bool triggerTurns = DEFAULT_TRIGGER_TURNS;
-        public XAxisSwipe xAxis = DEFAULT_X_AXIS;
-        public int delayTime = DEFAULT_DELAY_TIME;
+        public int DeadZoneX { get; set; } = DefaultGyroDirSpeed;
+        public int DeadZoneY { get; set; }= DefaultGyroDirSpeed;
+        public string Triggers { get; set; } = DefaultTriggers;
+        public bool TriggerCondition { get; set; } = DefaultTriggerCond;
+        public bool TriggerTurns { get; set; } = DefaultTriggerTurns;
+        public XAxisSwipe XAxis { get; set; } = DefaultXAxis;
+        public int DelayTime { get; set; } = DefaultDelayTime;
 
         public void Reset()
         {
-            deadzoneX = DEFAULT_GYRO_DIR_SPEED;
-            deadzoneY = DEFAULT_GYRO_DIR_SPEED;
-            triggers = DEFAULT_TRIGGERS;
-            triggerCond = DEFAULT_TRIGGER_COND;
-            triggerTurns = DEFAULT_TRIGGER_TURNS;
-            xAxis = DEFAULT_X_AXIS;
-            delayTime = DEFAULT_DELAY_TIME;
+            DeadZoneX = DefaultGyroDirSpeed;
+            DeadZoneY = DefaultGyroDirSpeed;
+            Triggers = DefaultTriggers;
+            TriggerCondition = DefaultTriggerCond;
+            TriggerTurns = DefaultTriggerTurns;
+            XAxis = DefaultXAxis;
+            DelayTime = DefaultDelayTime;
         }
     }
 

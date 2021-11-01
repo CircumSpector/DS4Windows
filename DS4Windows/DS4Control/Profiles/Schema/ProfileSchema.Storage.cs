@@ -203,13 +203,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroMouseStickSmoothingSettings.SmoothingMinCutoff = store.GyroMouseStickInfo[device].minCutoff;
             GyroMouseStickSmoothingSettings.SmoothingBeta = store.GyroMouseStickInfo[device].beta;
 
-            GyroSwipeSettings.DeadZoneX = store.GyroSwipeInfo[device].deadzoneX;
-            GyroSwipeSettings.DeadZoneY = store.GyroSwipeInfo[device].deadzoneY;
-            GyroSwipeSettings.Triggers = store.GyroSwipeInfo[device].triggers;
-            GyroSwipeSettings.TriggerCond = store.SaTriggerCondString(store.GyroSwipeInfo[device].triggerCond);
-            GyroSwipeSettings.TriggerTurns = store.GyroSwipeInfo[device].triggerTurns;
-            GyroSwipeSettings.XAxis = store.GyroSwipeInfo[device].xAxis;
-            GyroSwipeSettings.DelayTime = store.GyroSwipeInfo[device].delayTime;
+            GyroSwipeSettings.DeadZoneX = store.GyroSwipeInfo[device].DeadZoneX;
+            GyroSwipeSettings.DeadZoneY = store.GyroSwipeInfo[device].DeadZoneY;
+            GyroSwipeSettings.Triggers = store.GyroSwipeInfo[device].Triggers;
+            GyroSwipeSettings.TriggerCond = store.SaTriggerCondString(store.GyroSwipeInfo[device].TriggerCondition);
+            GyroSwipeSettings.TriggerTurns = store.GyroSwipeInfo[device].TriggerTurns;
+            GyroSwipeSettings.XAxis = store.GyroSwipeInfo[device].XAxis;
+            GyroSwipeSettings.DelayTime = store.GyroSwipeInfo[device].DelayTime;
 
             ProfileActions = string.Join("/", store.ProfileActions[device]);
             //BTPollRate = store.BluetoothPollRate[device];
@@ -457,13 +457,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.GyroMouseStickInfo[device].beta =
                 Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingBeta), 1.0);
 
-            store.GyroSwipeInfo[device].deadzoneX = GyroSwipeSettings.DeadZoneX;
-            store.GyroSwipeInfo[device].deadzoneY = GyroSwipeSettings.DeadZoneY;
-            store.GyroSwipeInfo[device].triggers = GyroSwipeSettings.Triggers;
-            store.GyroSwipeInfo[device].triggerCond = store.SaTriggerCondValue(GyroSwipeSettings.TriggerCond);
-            store.GyroSwipeInfo[device].triggerTurns = GyroSwipeSettings.TriggerTurns;
-            store.GyroSwipeInfo[device].xAxis = GyroSwipeSettings.XAxis;
-            store.GyroSwipeInfo[device].delayTime = GyroSwipeSettings.DelayTime;
+            store.GyroSwipeInfo[device].DeadZoneX = GyroSwipeSettings.DeadZoneX;
+            store.GyroSwipeInfo[device].DeadZoneY = GyroSwipeSettings.DeadZoneY;
+            store.GyroSwipeInfo[device].Triggers = GyroSwipeSettings.Triggers;
+            store.GyroSwipeInfo[device].TriggerCondition = store.SaTriggerCondValue(GyroSwipeSettings.TriggerCond);
+            store.GyroSwipeInfo[device].TriggerTurns = GyroSwipeSettings.TriggerTurns;
+            store.GyroSwipeInfo[device].XAxis = GyroSwipeSettings.XAxis;
+            store.GyroSwipeInfo[device].DelayTime = GyroSwipeSettings.DelayTime;
 
             //store.TouchOutMode[device] = TouchpadOutputMode;
             store.TouchDisInvertTriggers[device] = TouchDisInvTriggers;
@@ -700,13 +700,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.GyroMouseStickInfo.beta =
                 Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingBeta), 1.0);
 
-            profile.GyroSwipeInfo.deadzoneX = GyroSwipeSettings.DeadZoneX;
-            profile.GyroSwipeInfo.deadzoneY = GyroSwipeSettings.DeadZoneY;
-            profile.GyroSwipeInfo.triggers = GyroSwipeSettings.Triggers;
+            profile.GyroSwipeInfo.DeadZoneX = GyroSwipeSettings.DeadZoneX;
+            profile.GyroSwipeInfo.DeadZoneY = GyroSwipeSettings.DeadZoneY;
+            profile.GyroSwipeInfo.Triggers = GyroSwipeSettings.Triggers;
             //store.GyroSwipeInfo.triggerCond = store.SaTriggerCondValue(GyroSwipeSettings.TriggerCond);
-            profile.GyroSwipeInfo.triggerTurns = GyroSwipeSettings.TriggerTurns;
-            profile.GyroSwipeInfo.xAxis = GyroSwipeSettings.XAxis;
-            profile.GyroSwipeInfo.delayTime = GyroSwipeSettings.DelayTime;
+            profile.GyroSwipeInfo.TriggerTurns = GyroSwipeSettings.TriggerTurns;
+            profile.GyroSwipeInfo.XAxis = GyroSwipeSettings.XAxis;
+            profile.GyroSwipeInfo.DelayTime = GyroSwipeSettings.DelayTime;
 
             profile.TouchOutMode = TouchpadOutputMode;
             profile.TouchDisInvertTriggers = TouchDisInvTriggers;
