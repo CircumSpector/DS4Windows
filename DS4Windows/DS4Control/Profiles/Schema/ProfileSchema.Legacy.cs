@@ -173,10 +173,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public int RSFuzz { get; set; }
 
         [XmlElement(ElementName = "LSOuterBindDead")]
-        public double LSOuterBindDead { get; set; } = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
+        public double LSOuterBindDead { get; set; } = StickDeadZoneInfo.DefaultOuterBindDead;
 
         [XmlElement(ElementName = "RSOuterBindDead")]
-        public double RSOuterBindDead { get; set; } = StickDeadZoneInfo.DEFAULT_OUTER_BIND_DEAD;
+        public double RSOuterBindDead { get; set; } = StickDeadZoneInfo.DefaultOuterBindDead;
 
         [XmlElement(ElementName = "LSOuterBindInvert")]
         public bool LSOuterBindInvert { get; set; }

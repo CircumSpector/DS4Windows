@@ -3112,7 +3112,7 @@ namespace DS4Windows
                 LSModInfo[device].AntiDeadZone = RSModInfo[device].AntiDeadZone = 20;
                 LSModInfo[device].MaxZone = RSModInfo[device].MaxZone = 100;
                 LSModInfo[device].MaxOutput = RSModInfo[device].MaxOutput = 100.0;
-                LSModInfo[device].Fuzz = RSModInfo[device].Fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
+                LSModInfo[device].Fuzz = RSModInfo[device].Fuzz = StickDeadZoneInfo.DefaultFuzz;
 
                 //l2ModInfo[device].deadZone = r2ModInfo[device].deadZone = 0;
                 //l2ModInfo[device].antiDeadZone = r2ModInfo[device].antiDeadZone = 0;

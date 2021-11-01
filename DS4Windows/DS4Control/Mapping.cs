@@ -634,7 +634,7 @@ namespace DS4Windows
                     var lsVerticalScale = lsMod.VerticalScale;
                     var interpret = lsAntiDead > 0 || lsMaxZone != 100 || lsMaxOutput != 100.0 ||
                                     lsMod.MaxOutputForce ||
-                                    lsVerticalScale != StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE;
+                                    lsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale;
 
                     if (lsDeadzone > 0 || interpret)
                     {
@@ -684,7 +684,7 @@ namespace DS4Windows
                                 tempOutputY = (currentY - 128.0) / maxZoneY;
                             }
 
-                            if (lsVerticalScale != StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE)
+                            if (lsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale)
                                 tempOutputY = Math.Min(Math.Max(tempOutputY * verticalScale, 0.0), 1.0);
 
                             if (lsMaxOutput != 100.0 || lsMod.MaxOutputForce)
@@ -861,7 +861,7 @@ namespace DS4Windows
                     var rsVerticalScale = rsMod.VerticalScale;
                     var interpret = rsAntiDead > 0 || rsMaxZone != 100 || rsMaxOutput != 100.0 ||
                                     rsMod.MaxOutputForce ||
-                                    rsVerticalScale != StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE;
+                                    rsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale;
 
                     if (rsDeadzone > 0 || interpret)
                     {
@@ -913,7 +913,7 @@ namespace DS4Windows
                                 tempOutputY = (currentY - 128.0) / maxZoneY;
                             }
 
-                            if (rsVerticalScale != StickDeadZoneInfo.DEFAULT_VERTICAL_SCALE)
+                            if (rsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale)
                                 tempOutputY = Math.Min(Math.Max(tempOutputY * verticalScale, 0.0), 1.0);
 
                             if (rsMaxOutput != 100.0 || rsMod.MaxOutputForce)
