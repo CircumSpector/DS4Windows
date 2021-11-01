@@ -28,14 +28,6 @@ namespace DS4Windows
 
         IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; }
 
-        IList<StickOutputSetting> LSOutputSettings { get; set; }
-
-        IList<StickOutputSetting> RSOutputSettings { get; set; }
-
-        IList<TriggerOutputSettings> L2OutputSettings { get; set; }
-
-        IList<TriggerOutputSettings> R2OutputSettings { get; set; }
-
         IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; }
 
         IList<string> OlderProfilePath { get; set; }

@@ -1888,7 +1888,7 @@ namespace DS4Windows
 
             // Process LS
             var controlSetGroup = Instance.Config.GetControlSettingsGroup(device);
-            var stickSettings = Instance.Config.LSOutputSettings[device];
+            var stickSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSOutputSettings;
             if (stickSettings.Mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.LS.GetEnumerator(); settingEnum.MoveNext();)
@@ -1922,7 +1922,7 @@ namespace DS4Windows
             }
 
             // Process RS
-            stickSettings = Instance.Config.RSOutputSettings[device];
+            stickSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSOutputSettings;
             if (stickSettings.Mode == StickMode.Controls)
             {
                 for (var settingEnum = controlSetGroup.RS.GetEnumerator(); settingEnum.MoveNext();)
@@ -1956,7 +1956,7 @@ namespace DS4Windows
             }
 
             // Process L2
-            var l2TriggerSettings = Instance.Config.L2OutputSettings[device];
+            var l2TriggerSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2OutputSettings;
             var dcsTemp = controlSetGroup.L2;
             if (l2TriggerSettings.TwoStageMode == TwoStageTriggerMode.Disabled)
             {
@@ -2023,7 +2023,7 @@ namespace DS4Windows
             }
 
             // Process R2
-            var r2TriggerSettings = Instance.Config.R2OutputSettings[device];
+            var r2TriggerSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2OutputSettings;
             dcsTemp = controlSetGroup.R2;
             if (r2TriggerSettings.TwoStageMode == TwoStageTriggerMode.Disabled)
             {

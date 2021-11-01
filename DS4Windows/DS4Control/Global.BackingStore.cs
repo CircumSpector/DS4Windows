@@ -185,34 +185,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<StickOutputSetting> LSOutputSettings { get; set; } = new List<StickOutputSetting>
-            {
-                new(), new(), new(),
-                new(), new(), new(),
-                new(), new(), new()
-            };
-
-            public IList<StickOutputSetting> RSOutputSettings { get; set; } = new List<StickOutputSetting>
-            {
-                new(), new(), new(),
-                new(), new(), new(),
-                new(), new(), new()
-            };
-
-            public IList<TriggerOutputSettings> L2OutputSettings { get; set; } = new List<TriggerOutputSettings>
-            {
-                new(), new(), new(),
-                new(), new(), new(),
-                new(), new(), new()
-            };
-
-            public IList<TriggerOutputSettings> R2OutputSettings { get; set; } = new List<TriggerOutputSettings>
-            {
-                new(), new(), new(),
-                new(), new(), new(),
-                new(), new(), new()
-            };
-
             public IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; } =
                 new List<SteeringWheelSmoothingInfo>
                 {
@@ -434,8 +406,8 @@ namespace DS4Windows
                     customAct = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode == GyroOutMode.MouseJoystick;
                     customAct = customAct ||
                                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis >= SASteeringWheelEmulationAxisType.VJoy1X;
-                    customAct = customAct || LSOutputSettings[device].Mode != StickMode.Controls;
-                    customAct = customAct || RSOutputSettings[device].Mode != StickMode.Controls;
+                    customAct = customAct || ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSOutputSettings.Mode != StickMode.Controls;
+                    customAct = customAct || ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSOutputSettings.Mode != StickMode.Controls;
                     ContainsCustomAction[device] = customAct;
                 }
             }
@@ -1208,7 +1180,8 @@ namespace DS4Windows
 
                     // Note! xxOutputCurveCustom property needs to be read before xxOutputCurveMode property in case the curveMode is value 6
 
-
+                    /*
+                     TODO: migrate
                     try
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/L2HipFireDelay");
@@ -1228,6 +1201,7 @@ namespace DS4Windows
                     catch
                     {
                     }
+                    */
 
                     /*
                     // Only change xinput devices under certain conditions. Avoid
@@ -3046,10 +3020,12 @@ namespace DS4Windows
                 //TouchPadInvert[device] = 0;
                 //BluetoothPollRate[device] = 4;
 
+                /*
                 LSOutputSettings[device].ResetSettings();
                 RSOutputSettings[device].ResetSettings();
                 L2OutputSettings[device].ResetSettings();
                 R2OutputSettings[device].ResetSettings();
+                */
                 
                 LaunchProgram[device] = string.Empty;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;

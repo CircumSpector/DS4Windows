@@ -998,7 +998,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (Global.Instance.Config.LSOutputSettings[Device].Mode)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.Mode)
                 {
                     case StickMode.None:
                         index = 0;
@@ -1029,36 +1029,36 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = Global.Instance.Config.LSOutputSettings[Device].Mode;
+                var current = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.Mode;
                 if (temp == current) return;
-                Global.Instance.Config.LSOutputSettings[Device].Mode = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.Mode = temp;
                 LSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double LSFlickRWC
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration =
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
                 value;
         }
 
         public double LSFlickThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold = value;
         }
 
         public double LSFlickTime
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.FlickTime;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.FlickTime = value;
         }
 
         public double LSMinAngleThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold =
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
                 value;
         }
 
@@ -1067,7 +1067,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (Global.Instance.Config.RSOutputSettings[Device].Mode)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.Mode)
                 {
                     case StickMode.None:
                         break;
@@ -1097,36 +1097,36 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = Global.Instance.Config.RSOutputSettings[Device].Mode;
+                var current = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.Mode;
                 if (temp == current) return;
-                Global.Instance.Config.RSOutputSettings[Device].Mode = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.Mode = temp;
                 RSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double RSFlickRWC
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration =
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
                 value;
         }
 
         public double RSFlickThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold = value;
         }
 
         public double RSFlickTime
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.FlickTime;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.FlickTime = value;
         }
 
         public double RSMinAngleThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold =
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
                 value;
         }
 
@@ -1252,40 +1252,40 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TwoStageTriggerMode L2TriggerMode
         {
-            get => Global.Instance.Config.L2OutputSettings[Device].TwoStageMode;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.TwoStageMode;
             set
             {
-                var temp = Global.Instance.Config.L2OutputSettings[Device].TwoStageMode;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.TwoStageMode;
                 if (temp == value) return;
 
-                Global.Instance.Config.L2OutputSettings[Device].TwoStageMode = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.TwoStageMode = value;
                 L2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public TwoStageTriggerMode R2TriggerMode
         {
-            get => Global.Instance.Config.R2OutputSettings[Device].TwoStageMode;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.TwoStageMode;
             set
             {
-                var temp = Global.Instance.Config.R2OutputSettings[Device].TwoStageMode;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.TwoStageMode;
                 if (temp == value) return;
 
-                Global.Instance.Config.R2OutputSettings[Device].TwoStageMode = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.TwoStageMode = value;
                 R2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int L2HipFireTime
         {
-            get => Global.Instance.Config.L2OutputSettings[Device].HipFireMs;
-            set => Global.Instance.Config.L2OutputSettings[Device].HipFireMs = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.HipFireMs;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.HipFireMs = value;
         }
 
         public int R2HipFireTime
         {
-            get => Global.Instance.Config.R2OutputSettings[Device].HipFireMs;
-            set => Global.Instance.Config.R2OutputSettings[Device].HipFireMs = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.HipFireMs;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.HipFireMs = value;
         }
 
         public List<TriggerEffectChoice> TriggerEffectChoices { get; } = new()
@@ -1298,25 +1298,25 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TriggerEffects L2TriggerEffect
         {
-            get => Global.Instance.Config.L2OutputSettings[Device].TriggerEffect;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.TriggerEffect;
             set
             {
-                var temp = Global.Instance.Config.L2OutputSettings[Device].TriggerEffect;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.TriggerEffect;
                 if (temp == value) return;
 
-                Global.Instance.Config.L2OutputSettings[Device].TriggerEffect = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).L2OutputSettings.TriggerEffect = value;
             }
         }
 
         public TriggerEffects R2TriggerEffect
         {
-            get => Global.Instance.Config.R2OutputSettings[Device].TriggerEffect;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.TriggerEffect;
             set
             {
-                var temp = Global.Instance.Config.R2OutputSettings[Device].TriggerEffect;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.TriggerEffect;
                 if (temp == value) return;
 
-                Global.Instance.Config.R2OutputSettings[Device].TriggerEffect = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).R2OutputSettings.TriggerEffect = value;
             }
         }
 

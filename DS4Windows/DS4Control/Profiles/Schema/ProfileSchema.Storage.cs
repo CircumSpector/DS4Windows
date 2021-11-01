@@ -239,6 +239,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             LSAntiSnapbackTimeout = store.LSAntiSnapbackInfo[device].Timeout;
             RSAntiSnapbackTimeout = store.RSAntiSnapbackInfo[device].Timeout;
 
+            /*
             LSOutputMode = store.LSOutputSettings[device].Mode;
             RSOutputMode = store.RSOutputSettings[device].Mode;
 
@@ -283,10 +284,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 .OutputSettings
                 .FlickSettings
                 .MinAngleThreshold;
+            */
 
             L2OutputCurveMode = store.AxisOutputCurveString(store.GetL2OutCurveMode(device));
             L2OutputCurveCustom = store.L2OutBezierCurveObj[device];
 
+            /*
             L2TwoStageMode = store.L2OutputSettings[device].TwoStageMode;
             R2TwoStageMode = store.R2OutputSettings[device].TwoStageMode;
 
@@ -295,6 +298,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             L2TriggerEffect = store.L2OutputSettings[device].TriggerEffect;
             R2TriggerEffect = store.R2OutputSettings[device].TriggerEffect;
+            */
 
             R2OutputCurveMode = store.AxisOutputCurveString(store.GetR2OutCurveMode(device));
             R2OutputCurveCustom = store.R2OutBezierCurveObj[device];
@@ -509,6 +513,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.RSAntiSnapbackInfo[device].Delta = RSAntiSnapbackDelta;
             store.LSAntiSnapbackInfo[device].Timeout = LSAntiSnapbackTimeout;
             store.RSAntiSnapbackInfo[device].Timeout = RSAntiSnapbackTimeout;
+            /*
             store.LSOutputSettings[device].Mode = LSOutputMode;
             store.RSOutputSettings[device].Mode = RSOutputMode;
 
@@ -528,18 +533,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 RSOutputSettings.FlickStickSettings.FlickTime;
             store.RSOutputSettings[device].OutputSettings.FlickSettings.MinAngleThreshold =
                 RSOutputSettings.FlickStickSettings.MinAngleThreshold;
+            */
 
             store.L2OutBezierCurveObj[device] = L2OutputCurveCustom;
             store.SetL2OutCurveMode(device, store.StickOutputCurveId(L2OutputCurveMode));
-            store.L2OutputSettings[device].TwoStageMode = L2TwoStageMode;
-            store.L2OutputSettings[device].HipFireMs = Math.Min(Math.Max(0, L2HipFireTime), 5000);
-            store.L2OutputSettings[device].TriggerEffect = L2TriggerEffect;
+            //store.L2OutputSettings[device].TwoStageMode = L2TwoStageMode;
+            //store.L2OutputSettings[device].HipFireMs = Math.Min(Math.Max(0, L2HipFireTime), 5000);
+            //store.L2OutputSettings[device].TriggerEffect = L2TriggerEffect;
 
             store.R2OutBezierCurveObj[device] = R2OutputCurveCustom;
             store.SetR2OutCurveMode(device, store.StickOutputCurveId(R2OutputCurveMode));
-            store.R2OutputSettings[device].TwoStageMode = R2TwoStageMode;
-            store.R2OutputSettings[device].TriggerEffect = R2TriggerEffect;
-            store.R2OutputSettings[device].HipFireMs = Math.Min(Math.Max(0, R2HipFireTime), 5000);
+            //store.R2OutputSettings[device].TwoStageMode = R2TwoStageMode;
+            //store.R2OutputSettings[device].TriggerEffect = R2TriggerEffect;
+            //store.R2OutputSettings[device].HipFireMs = Math.Min(Math.Max(0, R2HipFireTime), 5000);
 
             store.SXOutBezierCurveObj[device] = SXOutputCurveCustom;
             store.SetSXOutCurveMode(device, store.StickOutputCurveId(SXOutputCurveMode));
