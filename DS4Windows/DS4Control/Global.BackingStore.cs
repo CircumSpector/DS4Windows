@@ -185,16 +185,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; } =
-                new List<SteeringWheelSmoothingInfo>
-                {
-                    new(), new(),
-                    new(), new(),
-                    new(), new(),
-                    new(), new(),
-                    new()
-                };
-
             public IList<BezierCurve> LSOutBezierCurveObj { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
@@ -3042,7 +3032,7 @@ namespace DS4Windows
                 //SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;
                 //SASteeringWheelEmulationRange[device] = 360;
                 //SAWheelFuzzValues[device] = 0;
-                WheelSmoothInfo[device].Reset();
+                //WheelSmoothInfo[device].Reset();
                 TouchDisInvertTriggers[device] = new int[1] { -1 };
                 //GyroSensitivity[device] = 100;
                 //GyroSensVerticalScale[device] = 100;

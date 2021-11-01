@@ -5943,7 +5943,7 @@ namespace DS4Windows
                 }
 
                 result = ClampInt(maxRangeLeft, result, maxRangeRight);
-                if (Instance.Config.WheelSmoothInfo[device].Enabled)
+                if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).WheelSmoothInfo.Enabled)
                 {
                     var currentRate = 1.0 / currentDeviceState.elapsedTime; // Need to express poll time in Hz
                     var wheelFilter = wheelFilters[device];

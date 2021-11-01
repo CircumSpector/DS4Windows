@@ -28,8 +28,6 @@ namespace DS4Windows
 
         IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; }
 
-        IList<SteeringWheelSmoothingInfo> WheelSmoothInfo { get; set; }
-
         IList<string> OlderProfilePath { get; set; }
 
         IList<bool> DistanceProfiles { get; set; }

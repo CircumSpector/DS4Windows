@@ -1746,7 +1746,7 @@ namespace DS4Windows
 
             // Carry over initial profile wheel smoothing values to filter instances.
             // Set up event hooks to keep values in sync
-            var wheelSmoothInfo = Instance.Config.WheelSmoothInfo[ind];
+            var wheelSmoothInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(ind).WheelSmoothInfo;
             wheelSmoothInfo.SetFilterAttrs(tempFilter);
             wheelSmoothInfo.SetRefreshEvents(tempFilter);
 

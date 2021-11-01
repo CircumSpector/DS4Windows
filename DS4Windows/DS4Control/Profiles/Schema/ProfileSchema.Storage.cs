@@ -165,9 +165,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //SASteeringWheelEmulationRange = store.SASteeringWheelEmulationRange[device];
             //SASteeringWheelFuzz = store.SAWheelFuzzValues[device];
 
+            /*
             SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing = store.WheelSmoothInfo[device].Enabled;
             SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff = store.WheelSmoothInfo[device].MinCutoff;
             SASteeringWheelSmoothingOptions.SASteeringWheelSmoothBeta = store.WheelSmoothInfo[device].Beta;
+            */
 
             TouchDisInvTriggers = store.TouchDisInvertTriggers[device].ToList();
 
@@ -439,9 +441,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxis;
             //store.SASteeringWheelEmulationRange[device] = SASteeringWheelEmulationRange;
 
+            /*
             store.WheelSmoothInfo[device].Enabled = SASteeringWheelSmoothingOptions.SASteeringWheelUseSmoothing;
             store.WheelSmoothInfo[device].MinCutoff = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothMinCutoff;
             store.WheelSmoothInfo[device].Beta = SASteeringWheelSmoothingOptions.SASteeringWheelSmoothBeta;
+            */
 
             //store.SAWheelFuzzValues[device] = SASteeringWheelFuzz is >= 0 and <= 100 ? SASteeringWheelFuzz : 0;
 

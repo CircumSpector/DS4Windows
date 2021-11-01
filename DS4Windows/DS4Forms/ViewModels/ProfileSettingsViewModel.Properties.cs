@@ -663,26 +663,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool SASteeringWheelUseSmoothing
         {
-            get => Global.Instance.Config.WheelSmoothInfo[Device].Enabled;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).WheelSmoothInfo.Enabled;
             set
             {
-                var temp = Global.Instance.Config.WheelSmoothInfo[Device].Enabled;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).WheelSmoothInfo.Enabled;
                 if (temp == value) return;
-                Global.Instance.Config.WheelSmoothInfo[Device].Enabled = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).WheelSmoothInfo.Enabled = value;
                 SASteeringWheelUseSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double SASteeringWheelSmoothMinCutoff
         {
-            get => Global.Instance.Config.WheelSmoothInfo[Device].MinCutoff;
-            set => Global.Instance.Config.WheelSmoothInfo[Device].MinCutoff = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).WheelSmoothInfo.MinCutoff;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).WheelSmoothInfo.MinCutoff = value;
         }
 
         public double SASteeringWheelSmoothBeta
         {
-            get => Global.Instance.Config.WheelSmoothInfo[Device].Beta;
-            set => Global.Instance.Config.WheelSmoothInfo[Device].Beta = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).WheelSmoothInfo.Beta;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).WheelSmoothInfo.Beta = value;
         }
 
         public double LSDeadZone
