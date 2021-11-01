@@ -849,26 +849,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSSquareStick
         {
-            get => Global.Instance.Config.SquStickInfo[Device].LSMode;
-            set => Global.Instance.Config.SquStickInfo[Device].LSMode = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.LSMode;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.LSMode = value;
         }
 
         public bool RSSquareStick
         {
-            get => Global.Instance.Config.SquStickInfo[Device].RSMode;
-            set => Global.Instance.Config.SquStickInfo[Device].RSMode = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.RSMode;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.RSMode = value;
         }
 
         public double LSSquareRoundness
         {
-            get => Global.Instance.Config.SquStickInfo[Device].LSRoundness;
-            set => Global.Instance.Config.SquStickInfo[Device].LSRoundness = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.LSRoundness;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.LSRoundness = value;
         }
 
         public double RSSquareRoundness
         {
-            get => Global.Instance.Config.SquStickInfo[Device].RSRoundness;
-            set => Global.Instance.Config.SquStickInfo[Device].RSRoundness = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.RSRoundness;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).SquStickInfo.RSRoundness = value;
         }
 
         public int LSOutputCurveIndex

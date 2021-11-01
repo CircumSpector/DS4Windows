@@ -1207,7 +1207,7 @@ namespace DS4Windows
                 if (r2Sens != 1.0)
                     dState.R2 = (byte)Clamp(0, r2Sens * dState.R2, 255);
 
-                var squStk = Instance.Config.GetSquareStickInfo(device);
+                var squStk = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SquStickInfo;
                 if (squStk.LSMode && (dState.LX != 128 || dState.LY != 128))
                 {
                     var capX = dState.LX >= 128 ? 127.0 : 128.0;

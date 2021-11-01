@@ -203,15 +203,6 @@ namespace DS4Windows
                 MouseCursor.GYRO_MOUSE_DEADZONE
             };
 
-            public IList<SquareStickInfo> SquStickInfo { get; set; } = new List<SquareStickInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
             public IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; } = new List<StickAntiSnapbackInfo>
             {
                 new(), new(),
@@ -471,12 +462,7 @@ namespace DS4Windows
             {
                 return RSModInfo[index];
             }
-
-            public SquareStickInfo GetSquareStickInfo(int device)
-            {
-                return SquStickInfo[device];
-            }
-
+            
             public StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device)
             {
                 return LSAntiSnapbackInfo[device];
@@ -3156,10 +3142,10 @@ namespace DS4Windows
 
                 //GyroMouseHorizontalAxis[device] = 0;
                 //GyroMouseToggle[device] = false;
-                SquStickInfo[device].LSMode = false;
-                SquStickInfo[device].RSMode = false;
-                SquStickInfo[device].LSRoundness = 5.0;
-                SquStickInfo[device].RSRoundness = 5.0;
+                //SquStickInfo[device].LSMode = false;
+                //SquStickInfo[device].RSMode = false;
+                //SquStickInfo[device].LSRoundness = 5.0;
+                //SquStickInfo[device].RSRoundness = 5.0;
                 LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DefaultTimeout;
                 LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DefaultDelta;
                 LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DefaultEnabled;

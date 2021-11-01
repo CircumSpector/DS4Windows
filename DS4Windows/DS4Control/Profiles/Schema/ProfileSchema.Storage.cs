@@ -220,11 +220,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             RSOutputCurveMode = store.StickOutputCurveString(store.GetRsOutCurveMode(device));
             RSOutputCurveCustom = store.RSOutBezierCurveObj[device];
 
-            LSSquareStick = store.SquStickInfo[device].LSMode;
-            RSSquareStick = store.SquStickInfo[device].RSMode;
+            //LSSquareStick = store.SquStickInfo[device].LSMode;
+            //RSSquareStick = store.SquStickInfo[device].RSMode;
 
-            SquareStickRoundness = store.SquStickInfo[device].LSRoundness;
-            SquareRStickRoundness = store.SquStickInfo[device].RSRoundness;
+            //SquareStickRoundness = store.SquStickInfo[device].LSRoundness;
+            //SquareRStickRoundness = store.SquStickInfo[device].RSRoundness;
 
             LSAntiSnapback = store.LSAntiSnapbackInfo[device].Enabled;
             RSAntiSnapback = store.RSAntiSnapbackInfo[device].Enabled;
@@ -490,10 +490,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.RSOutBezierCurveObj[device] = RSOutputCurveCustom;
             store.SetRsOutCurveMode(device, store.StickOutputCurveId(RSOutputCurveMode));
 
-            store.SquStickInfo[device].LSMode = LSSquareStick;
-            store.SquStickInfo[device].LSRoundness = SquareStickRoundness;
-            store.SquStickInfo[device].RSRoundness = SquareRStickRoundness;
-            store.SquStickInfo[device].RSMode = RSSquareStick;
+            //store.SquStickInfo[device].LSMode = LSSquareStick;
+            //store.SquStickInfo[device].LSRoundness = SquareStickRoundness;
+            //store.SquStickInfo[device].RSRoundness = SquareRStickRoundness;
+            //store.SquStickInfo[device].RSMode = RSSquareStick;
             store.LSAntiSnapbackInfo[device].Enabled = LSAntiSnapback;
             store.RSAntiSnapbackInfo[device].Enabled = RSAntiSnapback;
             store.LSAntiSnapbackInfo[device].Delta = LSAntiSnapbackDelta;

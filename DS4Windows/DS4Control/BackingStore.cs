@@ -22,8 +22,6 @@ namespace DS4Windows
 
         IList<string>[] ProfileActions { get; set; }
 
-        IList<SquareStickInfo> SquStickInfo { get; set; }
-
         IList<SpecialAction> Actions { get; set; }
 
         IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; }
@@ -165,8 +163,6 @@ namespace DS4Windows
         StickDeadZoneInfo GetLSDeadInfo(int index);
 
         StickDeadZoneInfo GetRSDeadInfo(int index);
-
-        SquareStickInfo GetSquareStickInfo(int device);
 
         StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
 
