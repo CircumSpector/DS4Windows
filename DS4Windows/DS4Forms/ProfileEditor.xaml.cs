@@ -401,39 +401,39 @@ namespace DS4WinWPF.DS4Forms
 
         private void RemoveHoverBtnText()
         {
-            crossConBtn.Content = "";
-            circleConBtn.Content = "";
-            squareConBtn.Content = "";
-            triangleConBtn.Content = "";
-            l1ConBtn.Content = "";
-            r1ConBtn.Content = "";
-            l2ConBtn.Content = "";
-            r2ConBtn.Content = "";
-            shareConBtn.Content = "";
-            optionsConBtn.Content = "";
-            guideConBtn.Content = "";
-            muteConBtn.Content = "";
-            leftTouchConBtn.Content = "";
-            multiTouchConBtn.Content = "";
-            rightTouchConBtn.Content = "";
-            topTouchConBtn.Content = "";
+            crossConBtn.Content = string.Empty;
+            circleConBtn.Content = string.Empty;
+            squareConBtn.Content = string.Empty;
+            triangleConBtn.Content = string.Empty;
+            l1ConBtn.Content = string.Empty;
+            r1ConBtn.Content = string.Empty;
+            l2ConBtn.Content = string.Empty;
+            r2ConBtn.Content = string.Empty;
+            shareConBtn.Content = string.Empty;
+            optionsConBtn.Content = string.Empty;
+            guideConBtn.Content = string.Empty;
+            muteConBtn.Content = string.Empty;
+            leftTouchConBtn.Content = string.Empty;
+            multiTouchConBtn.Content = string.Empty;
+            rightTouchConBtn.Content = string.Empty;
+            topTouchConBtn.Content = string.Empty;
 
-            l3ConBtn.Content = "";
-            lsuConBtn.Content = "";
-            lsrConBtn.Content = "";
-            lsdConBtn.Content = "";
-            lslConBtn.Content = "";
+            l3ConBtn.Content = string.Empty;
+            lsuConBtn.Content = string.Empty;
+            lsrConBtn.Content = string.Empty;
+            lsdConBtn.Content = string.Empty;
+            lslConBtn.Content = string.Empty;
 
-            r3ConBtn.Content = "";
-            rsuConBtn.Content = "";
-            rsrConBtn.Content = "";
-            rsdConBtn.Content = "";
-            rslConBtn.Content = "";
+            r3ConBtn.Content = string.Empty;
+            rsuConBtn.Content = string.Empty;
+            rsrConBtn.Content = string.Empty;
+            rsdConBtn.Content = string.Empty;
+            rslConBtn.Content = string.Empty;
 
-            upConBtn.Content = "";
-            rightConBtn.Content = "";
-            downConBtn.Content = "";
-            leftConBtn.Content = "";
+            upConBtn.Content = string.Empty;
+            rightConBtn.Content = string.Empty;
+            downConBtn.Content = string.Empty;
+            leftConBtn.Content = string.Empty;
         }
 
         private void PopulateHoverImages()
@@ -1238,7 +1238,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void Ds4LightbarColorBtn_MouseLeave(object sender, MouseEventArgs e)
         {
-            highlightControlDisplayLb.Content = "";
+            highlightControlDisplayLb.Content = string.Empty;
         }
 
         private void Ds4LightbarColorBtn_Click(object sender, RoutedEventArgs e)
@@ -1482,7 +1482,7 @@ namespace DS4WinWPF.DS4Forms
                 }
 
                 Global.Instance.Config.CacheProfileCustomsFlags(profileSettingsVM.Device);
-                highlightControlDisplayLb.Content = "";
+                highlightControlDisplayLb.Content = string.Empty;
             }
         }
 
