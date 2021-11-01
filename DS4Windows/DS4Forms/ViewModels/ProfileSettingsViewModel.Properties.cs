@@ -332,33 +332,33 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int ButtonMouseVerticalScale
         {
             get => Convert.ToInt32(ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo
-                .buttonVerticalScale * 100.0);
+                .ButtonVerticalScale * 100.0);
             set
             {
                 var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo
-                    .buttonVerticalScale;
+                    .ButtonVerticalScale;
                 var attemptValue = value * 0.01;
                 if (temp == attemptValue) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.buttonVerticalScale =
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.ButtonVerticalScale =
                     attemptValue;
                 ButtonMouseVerticalScaleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         private double RawButtonMouseOffset => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo
-            .mouseVelocityOffset;
+            .MouseVelocityOffset;
 
         public double ButtonMouseOffset
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseVelocityOffset *
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.MouseVelocityOffset *
                    100.0;
             set
             {
                 var temp =
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseVelocityOffset *
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.MouseVelocityOffset *
                     100.0;
                 if (temp == value) return;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseVelocityOffset =
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.MouseVelocityOffset =
                     value * 0.01;
                 ButtonMouseOffsetChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -388,8 +388,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool MouseAcceleration
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseAccel;
-            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.mouseAccel = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.MouseAcceleration;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.MouseAcceleration = value;
         }
 
         public bool EnableTouchpadToggle

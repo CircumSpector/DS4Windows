@@ -590,8 +590,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.LSModInfo.Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
             profile.RSModInfo.Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
             profile.ButtonMouseInfo.buttonSensitivity = ButtonMouseSensitivity;
-            profile.ButtonMouseInfo.mouseVelocityOffset = ButtonMouseOffset;
-            profile.ButtonMouseInfo.buttonVerticalScale =
+            profile.ButtonMouseInfo.MouseVelocityOffset = ButtonMouseOffset;
+            profile.ButtonMouseInfo.ButtonVerticalScale =
                 Math.Min(Math.Max(ButtonMouseVerticalScale, 0), 500) * 0.01;
             lightInfo.Rainbow = Rainbow;
             lightInfo.MaxRainbowSaturation = Math.Max(0, Math.Min(100, MaxSatRainbow)) / 100.0;
@@ -652,7 +652,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.SZSens = Sensitivity.SZSens;
 
             lightInfo.ChargingType = ChargingType;
-            profile.ButtonMouseInfo.mouseAccel = MouseAcceleration;
+            profile.ButtonMouseInfo.MouseAcceleration = MouseAcceleration;
             //ShiftModifier
             profile.LaunchProgram = LaunchProgram;
             profile.DisableVirtualController = DisableVirtualController;

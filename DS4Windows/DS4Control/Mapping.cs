@@ -2708,9 +2708,9 @@ namespace DS4Windows
                         if (extras[7] == 1)
                         {
                             var tempMouseInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo;
-                            if (tempMouseInfo.tempButtonSensitivity == -1)
+                            if (tempMouseInfo.TempButtonSensitivity == -1)
                             {
-                                tempMouseInfo.tempButtonSensitivity = extras[8];
+                                tempMouseInfo.TempButtonSensitivity = extras[8];
                                 tempMouseInfo.SetActiveButtonSensitivity(extras[8]);
                             }
                         }
@@ -2724,10 +2724,10 @@ namespace DS4Windows
                     DS4LightBar.forcelight[device] = false;
                     DS4LightBar.forcedFlash[device] = 0;
                     var tempMouseInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo;
-                    if (tempMouseInfo.tempButtonSensitivity != -1)
+                    if (tempMouseInfo.TempButtonSensitivity != -1)
                     {
                         tempMouseInfo.SetActiveButtonSensitivity(tempMouseInfo.buttonSensitivity);
-                        tempMouseInfo.tempButtonSensitivity = -1;
+                        tempMouseInfo.TempButtonSensitivity = -1;
                     }
 
                     if (extrasRumbleActive[device])
@@ -4239,7 +4239,7 @@ namespace DS4Windows
 
             var value = 0.0;
             var buttonMouseInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo;
-            var speed = buttonMouseInfo.activeButtonSensitivity;
+            var speed = buttonMouseInfo.ActiveButtonSensitivity;
             const double root = 1.002;
             const double divide = 10000d;
 
@@ -4255,7 +4255,7 @@ namespace DS4Windows
             if (mnum == 0 || mnum == 1)
             {
                 verticalDir = true;
-                mouseVerticalScale = buttonMouseInfo.buttonVerticalScale;
+                mouseVerticalScale = buttonMouseInfo.ButtonVerticalScale;
             }
 
             if (controlType == DS4StateFieldMapping.ControlType.Button)
@@ -4268,7 +4268,7 @@ namespace DS4Windows
             {
                 var timeDelta = timeElapsed * 0.001;
                 var mouseVelocity = speed * MOUSESPEEDFACTOR;
-                var mouseOffset = buttonMouseInfo.mouseVelocityOffset * mouseVelocity;
+                var mouseOffset = buttonMouseInfo.MouseVelocityOffset * mouseVelocity;
                 if (verticalDir) mouseVelocity = (int)(mouseVelocity * mouseVerticalScale);
 
                 //double mouseOffset = MOUSESTICKANTIOFFSET * mouseVelocity;
@@ -4451,7 +4451,7 @@ namespace DS4Windows
                 }
             }
 
-            if (buttonMouseInfo.mouseAccel)
+            if (buttonMouseInfo.MouseAcceleration)
             {
                 if (value > 0)
                 {
