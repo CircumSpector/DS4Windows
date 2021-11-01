@@ -262,20 +262,21 @@ namespace DS4Windows
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class GyroMouseStickInfo
     {
         public enum SmoothingMethod : byte
         {
             None,
             OneEuro,
-            WeightedAverage,
+            WeightedAverage
         }
 
         public enum OutputStick : byte
         {
             None,
             LeftStick,
-            RightStick,
+            RightStick
         }
 
         public enum OutputStickAxes : byte
@@ -293,60 +294,69 @@ namespace DS4Windows
         public const OutputStickAxes DefaultOutputStickAxes = OutputStickAxes.XY;
 
         public int DeadZone { get; set; }
+
         public int MaxZone { get; set; }
+
         public double AntiDeadX { get; set; }
+
         public double AntiDeadY { get; set; }
+
         public int VerticalScale { get; set; }
+
         public bool MaxOutputEnabled { get; set; }
+
         public double MaxOutput { get; set; } = 100.0;
+
         // Flags representing invert axis choices
         public uint Inverted { get; set; }
+        
         public bool UseSmoothing { get; set; }
+        
         public double SmoothWeight { get; set; }
+        
         public SmoothingMethod Smoothing { get; set; }
-        public double minCutoff = DefaultMinCutoff;
-        public double beta = DefaultBeta;
-        public OutputStick outputStick = DefaultOutputStick;
-        public OutputStickAxes outputStickDir = DefaultOutputStickAxes;
+        
+        public double MinCutoff { get; set; } = DefaultMinCutoff;
+        
+        public double Beta { get; set; } = DefaultBeta;
+        
+        public OutputStick OutStick { get; set; } = DefaultOutputStick;
+        
+        public OutputStickAxes OutputStickDir { get; set; } = DefaultOutputStickAxes;
 
         public delegate void GyroMouseStickInfoEventHandler(GyroMouseStickInfo sender,
             EventArgs args);
 
-        public double MinCutoff
+        [UsedImplicitly]
+        private void OnMinCutoffChanged()
         {
-            get => minCutoff;
-            set
-            {
-                if (minCutoff == value) return;
-                minCutoff = value;
-                MinCutoffChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MinCutoffChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event GyroMouseStickInfoEventHandler MinCutoffChanged;
 
-        public double Beta
+        private void OnBetaChanged()
         {
-            get => beta;
-            set
-            {
-                if (beta == value) return;
-                beta = value;
-                BetaChanged?.Invoke(this, EventArgs.Empty);
-            }
+            BetaChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event GyroMouseStickInfoEventHandler BetaChanged;
 
         public void Reset()
         {
-            DeadZone = 30; MaxZone = 830;
-            AntiDeadX = 0.4; AntiDeadY = 0.4;
-            Inverted = 0; VerticalScale = 100;
-            MaxOutputEnabled = false; MaxOutput = 100.0;
-            outputStick = DefaultOutputStick;
-            outputStickDir = DefaultOutputStickAxes;
+            DeadZone = 30;
+            MaxZone = 830;
+            AntiDeadX = 0.4;
+            AntiDeadY = 0.4;
+            Inverted = 0;
+            VerticalScale = 100;
+            MaxOutputEnabled = false;
+            MaxOutput = 100.0;
+            OutStick = DefaultOutputStick;
+            OutputStickDir = DefaultOutputStickAxes;
 
-            minCutoff = DefaultMinCutoff;
-            beta = DefaultBeta;
+            MinCutoff = DefaultMinCutoff;
+            Beta = DefaultBeta;
             Smoothing = SmoothingMethod.None;
             UseSmoothing = false;
             SmoothWeight = 0.5;
@@ -383,7 +393,7 @@ namespace DS4Windows
 
         public string SmoothMethodIdentifier()
         {
-            string result = "none";
+            var result = "none";
             switch (Smoothing)
             {
                 case SmoothingMethod.WeightedAverage:
@@ -392,8 +402,6 @@ namespace DS4Windows
                 case SmoothingMethod.OneEuro:
                     result = "one-euro";
                     break;
-                default:
-                    break;
             }
 
             return result;
@@ -401,15 +409,9 @@ namespace DS4Windows
 
         public void SetRefreshEvents(OneEuroFilter euroFilter)
         {
-            BetaChanged += (sender, args) =>
-            {
-                euroFilter.Beta = beta;
-            };
+            BetaChanged += (sender, args) => { euroFilter.Beta = Beta; };
 
-            MinCutoffChanged += (sender, args) =>
-            {
-                euroFilter.MinCutoff = minCutoff;
-            };
+            MinCutoffChanged += (sender, args) => { euroFilter.MinCutoff = MinCutoff; };
         }
 
         public void RemoveRefreshEvents()
@@ -420,14 +422,14 @@ namespace DS4Windows
 
         public bool OutputHorizontal()
         {
-            return outputStickDir == OutputStickAxes.XY ||
-                outputStickDir == OutputStickAxes.X;
+            return OutputStickDir == OutputStickAxes.XY ||
+                   OutputStickDir == OutputStickAxes.X;
         }
 
         public bool OutputVertical()
         {
-            return outputStickDir == OutputStickAxes.XY ||
-                outputStickDir == OutputStickAxes.Y;
+            return OutputStickDir == OutputStickAxes.XY ||
+                   OutputStickDir == OutputStickAxes.Y;
         }
     }
 
@@ -436,7 +438,7 @@ namespace DS4Windows
         public enum XAxisSwipe : ushort
         {
             Yaw,
-            Roll,
+            Roll
         }
 
         public const string DefaultTriggers = "-1";
@@ -447,11 +449,17 @@ namespace DS4Windows
         public const int DefaultDelayTime = 0;
 
         public int DeadZoneX { get; set; } = DefaultGyroDirSpeed;
-        public int DeadZoneY { get; set; }= DefaultGyroDirSpeed;
+
+        public int DeadZoneY { get; set; } = DefaultGyroDirSpeed;
+
         public string Triggers { get; set; } = DefaultTriggers;
+
         public bool TriggerCondition { get; set; } = DefaultTriggerCond;
+
         public bool TriggerTurns { get; set; } = DefaultTriggerTurns;
+
         public XAxisSwipe XAxis { get; set; } = DefaultXAxis;
+
         public int DelayTime { get; set; } = DefaultDelayTime;
 
         public void Reset()
@@ -474,8 +482,11 @@ namespace DS4Windows
         public const bool DefaultTriggerToggle = false;
 
         public string Triggers { get; set; } = DefaultTriggers;
+
         public bool TriggerCond { get; set; } = DefaultTriggerCond;
+
         public bool TriggerTurns { get; set; } = DefaultTriggerTurns;
+
         public bool TriggerToggle { get; set; } = DefaultTriggerToggle;
 
         public void Reset()
@@ -487,6 +498,7 @@ namespace DS4Windows
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class ButtonMouseInfo
     {
         //public const double MOUSESTICKANTIOFFSET = 0.0128;
@@ -495,24 +507,25 @@ namespace DS4Windows
         public const double DefaultButtonVerticalScale = 1.0;
         public const int DefaultTempSens = -1;
 
-        public int buttonSensitivity = DefaultButtonSens;
-        public int ButtonSensitivity
-        {
-            get => buttonSensitivity;
-            set
-            {
-                if (buttonSensitivity == value) return;
-                buttonSensitivity = value;
-                ButtonMouseInfoChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler ButtonMouseInfoChanged;
+        public int ButtonSensitivity { get; set; } = DefaultButtonSens;
 
         public bool MouseAcceleration { get; set; }
+
         public int ActiveButtonSensitivity { get; set; } = DefaultButtonSens;
+
         public int TempButtonSensitivity { get; set; } = DefaultTempSens;
+
         public double MouseVelocityOffset { get; set; } = MouseStickAntiOffset;
+
         public double ButtonVerticalScale { get; set; } = DefaultButtonVerticalScale;
+
+        [UsedImplicitly]
+        private void OnButtonSensitivityChanged()
+        {
+            ButtonMouseInfoChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler ButtonMouseInfoChanged;
 
         public ButtonMouseInfo()
         {
@@ -521,10 +534,7 @@ namespace DS4Windows
 
         private void ButtonMouseInfo_ButtonMouseInfoChanged(object sender, EventArgs e)
         {
-            if (TempButtonSensitivity == DefaultTempSens)
-            {
-                ActiveButtonSensitivity = buttonSensitivity;
-            }
+            if (TempButtonSensitivity == DefaultTempSens) ActiveButtonSensitivity = ButtonSensitivity;
         }
 
         public void SetActiveButtonSensitivity(int sens)
@@ -534,7 +544,7 @@ namespace DS4Windows
 
         public void Reset()
         {
-            buttonSensitivity = DefaultButtonSens;
+            ButtonSensitivity = DefaultButtonSens;
             MouseAcceleration = false;
             ActiveButtonSensitivity = DefaultButtonSens;
             TempButtonSensitivity = DefaultTempSens;
@@ -583,44 +593,36 @@ namespace DS4Windows
     /// <summary>
     ///     Lightbar behaviour settings.
     /// </summary>
+    [AddINotifyPropertyChangedInterface]
     public class LightbarSettingInfo
     {
-        private LightbarMode mode = LightbarMode.DS4Win;
+        public LightbarMode Mode { get; set; } = LightbarMode.DS4Win;
 
         public LightbarDS4WinInfo Ds4WinSettings { get; } = new();
 
-        public LightbarMode Mode
-        {
-            get => mode;
-            set
-            {
-                if (mode == value) return;
-                mode = value;
-                ModeChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
         public event EventHandler ModeChanged;
+
+        [UsedImplicitly]
+        private void OnModeChanged()
+        {
+            ModeChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class SteeringWheelSmoothingInfo
     {
-        private double minCutoff = OneEuroFilterPair.DEFAULT_WHEEL_CUTOFF;
+        public double MinCutoff { get; set; }= OneEuroFilterPair.DEFAULT_WHEEL_CUTOFF;
         private double beta = OneEuroFilterPair.DEFAULT_WHEEL_BETA;
         public bool enabled = false;
 
         public delegate void SmoothingInfoEventHandler(SteeringWheelSmoothingInfo sender, EventArgs args);
 
-        public double MinCutoff
+        private void OnMinCutoffChanged()
         {
-            get => minCutoff;
-            set
-            {
-                if (minCutoff == value) return;
-                minCutoff = value;
-                MinCutoffChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MinCutoffChanged?.Invoke(this, EventArgs.Empty);
         }
+        
         public event SmoothingInfoEventHandler MinCutoffChanged;
 
         public double Beta
@@ -650,7 +652,7 @@ namespace DS4Windows
 
         public void SetFilterAttrs(OneEuroFilter euroFilter)
         {
-            euroFilter.MinCutoff = minCutoff;
+            euroFilter.MinCutoff = MinCutoff;
             euroFilter.Beta = beta;
         }
 
@@ -663,7 +665,7 @@ namespace DS4Windows
 
             MinCutoffChanged += (sender, args) =>
             {
-                euroFilter.MinCutoff = minCutoff;
+                euroFilter.MinCutoff = MinCutoff;
             };
         }
     }

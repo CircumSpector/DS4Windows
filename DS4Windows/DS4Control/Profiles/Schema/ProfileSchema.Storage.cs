@@ -187,8 +187,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //GyroMouseStickHAxis = store.GyroMouseStickHorizontalAxis[device];
             GyroMouseStickDeadZone = store.GyroMouseStickInfo[device].DeadZone;
             GyroMouseStickMaxZone = store.GyroMouseStickInfo[device].MaxZone;
-            GyroMouseStickOutputStick = store.GyroMouseStickInfo[device].outputStick;
-            GyroMouseStickOutputStickAxes = store.GyroMouseStickInfo[device].outputStickDir;
+            GyroMouseStickOutputStick = store.GyroMouseStickInfo[device].OutStick;
+            GyroMouseStickOutputStickAxes = store.GyroMouseStickInfo[device].OutputStickDir;
             GyroMouseStickAntiDeadX = store.GyroMouseStickInfo[device].AntiDeadX;
             GyroMouseStickAntiDeadY = store.GyroMouseStickInfo[device].AntiDeadY;
             GyroMouseStickInvert = store.GyroMouseStickInfo[device].Inverted;
@@ -200,8 +200,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroMouseStickSmoothingSettings.SmoothingMethod = store.GyroMouseStickInfo[device].SmoothMethodIdentifier();
             GyroMouseStickSmoothingSettings.SmoothingWeight =
                 Convert.ToInt32(store.GyroMouseStickInfo[device].SmoothWeight * 100);
-            GyroMouseStickSmoothingSettings.SmoothingMinCutoff = store.GyroMouseStickInfo[device].minCutoff;
-            GyroMouseStickSmoothingSettings.SmoothingBeta = store.GyroMouseStickInfo[device].beta;
+            GyroMouseStickSmoothingSettings.SmoothingMinCutoff = store.GyroMouseStickInfo[device].MinCutoff;
+            GyroMouseStickSmoothingSettings.SmoothingBeta = store.GyroMouseStickInfo[device].Beta;
 
             GyroSwipeSettings.DeadZoneX = store.GyroSwipeInfo[device].DeadZoneX;
             GyroSwipeSettings.DeadZoneY = store.GyroSwipeInfo[device].DeadZoneY;
@@ -439,8 +439,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.GyroMouseStickHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseStickHAxis), 1);
             store.GyroMouseStickInfo[device].DeadZone = GyroMouseStickDeadZone;
             store.GyroMouseStickInfo[device].MaxZone = Math.Max(GyroMouseStickMaxZone, 1);
-            store.GyroMouseStickInfo[device].outputStick = GyroMouseStickOutputStick;
-            store.GyroMouseStickInfo[device].outputStickDir = GyroMouseStickOutputStickAxes;
+            store.GyroMouseStickInfo[device].OutStick = GyroMouseStickOutputStick;
+            store.GyroMouseStickInfo[device].OutputStickDir = GyroMouseStickOutputStickAxes;
             store.GyroMouseStickInfo[device].AntiDeadX = GyroMouseStickAntiDeadX;
             store.GyroMouseStickInfo[device].AntiDeadY = GyroMouseStickAntiDeadY;
             store.GyroMouseStickInfo[device].Inverted = GyroMouseStickInvert;
@@ -452,9 +452,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.GyroMouseStickInfo[device].DetermineSmoothMethod(GyroMouseStickSmoothingSettings.SmoothingMethod);
             store.GyroMouseStickInfo[device].SmoothWeight = Math.Min(
                 Math.Max(0.0, Convert.ToDouble(GyroMouseStickSmoothingSettings.SmoothingWeight * 0.01)), 1.0);
-            store.GyroMouseStickInfo[device].minCutoff =
+            store.GyroMouseStickInfo[device].MinCutoff =
                 Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingMinCutoff), 100.0);
-            store.GyroMouseStickInfo[device].beta =
+            store.GyroMouseStickInfo[device].Beta =
                 Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingBeta), 1.0);
 
             store.GyroSwipeInfo[device].DeadZoneX = GyroSwipeSettings.DeadZoneX;
@@ -589,7 +589,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.RSRotation = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
             profile.LSModInfo.Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
             profile.RSModInfo.Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
-            profile.ButtonMouseInfo.buttonSensitivity = ButtonMouseSensitivity;
+            profile.ButtonMouseInfo.ButtonSensitivity = ButtonMouseSensitivity;
             profile.ButtonMouseInfo.MouseVelocityOffset = ButtonMouseOffset;
             profile.ButtonMouseInfo.ButtonVerticalScale =
                 Math.Min(Math.Max(ButtonMouseVerticalScale, 0), 500) * 0.01;
@@ -682,8 +682,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.GyroMouseStickHorizontalAxis = Math.Min(Math.Max(0, GyroMouseStickHAxis), 1);
             profile.GyroMouseStickInfo.DeadZone = GyroMouseStickDeadZone;
             profile.GyroMouseStickInfo.MaxZone = Math.Max(GyroMouseStickMaxZone, 1);
-            profile.GyroMouseStickInfo.outputStick = GyroMouseStickOutputStick;
-            profile.GyroMouseStickInfo.outputStickDir = GyroMouseStickOutputStickAxes;
+            profile.GyroMouseStickInfo.OutStick = GyroMouseStickOutputStick;
+            profile.GyroMouseStickInfo.OutputStickDir = GyroMouseStickOutputStickAxes;
             profile.GyroMouseStickInfo.AntiDeadX = GyroMouseStickAntiDeadX;
             profile.GyroMouseStickInfo.AntiDeadY = GyroMouseStickAntiDeadY;
             profile.GyroMouseStickInfo.Inverted = GyroMouseStickInvert;
@@ -695,9 +695,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.GyroMouseStickInfo.DetermineSmoothMethod(GyroMouseStickSmoothingSettings.SmoothingMethod);
             profile.GyroMouseStickInfo.SmoothWeight = Math.Min(
                 Math.Max(0.0, Convert.ToDouble(GyroMouseStickSmoothingSettings.SmoothingWeight * 0.01)), 1.0);
-            profile.GyroMouseStickInfo.minCutoff =
+            profile.GyroMouseStickInfo.MinCutoff =
                 Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingMinCutoff), 100.0);
-            profile.GyroMouseStickInfo.beta =
+            profile.GyroMouseStickInfo.Beta =
                 Math.Min(Math.Max(0.0, GyroMouseStickSmoothingSettings.SmoothingBeta), 1.0);
 
             profile.GyroSwipeInfo.DeadZoneX = GyroSwipeSettings.DeadZoneX;

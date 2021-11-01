@@ -319,10 +319,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseSensitivity
         {
-            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.buttonSensitivity;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.ButtonSensitivity;
             set
             {
-                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.buttonSensitivity;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.ButtonSensitivity;
                 if (temp == value) return;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(Device).ButtonMouseInfo.ButtonSensitivity = value;
                 ButtonMouseSensitivityChanged?.Invoke(this, EventArgs.Empty);
@@ -1914,17 +1914,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickOutputStick
         {
-            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].outputStick;
+            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].OutStick;
             set =>
-                Global.Instance.Config.GyroMouseStickInfo[Device].outputStick =
+                Global.Instance.Config.GyroMouseStickInfo[Device].OutStick =
                     (GyroMouseStickInfo.OutputStick)value;
         }
 
         public int GyroMouseStickOutputAxes
         {
-            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].outputStickDir;
+            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].OutputStickDir;
             set =>
-                Global.Instance.Config.GyroMouseStickInfo[Device].outputStickDir =
+                Global.Instance.Config.GyroMouseStickInfo[Device].OutputStickDir =
                     (GyroMouseStickInfo.OutputStickAxes)value;
         }
 

@@ -2243,12 +2243,12 @@ namespace DS4Windows
             if (imuOutMode == GyroOutMode.MouseJoystick)
             {
                 var msinfo = Instance.Config.GetGyroMouseStickInfo(device);
-                if (msinfo.outputStick != GyroMouseStickInfo.OutputStick.None)
+                if (msinfo.OutStick != GyroMouseStickInfo.OutputStick.None)
                 {
                     ref var gyroTempX = ref gyroStickX[device];
                     if (msinfo.OutputHorizontal() && gyroTempX != 128)
                     {
-                        var outputStickXVal = msinfo.outputStick == GyroMouseStickInfo.OutputStick.RightStick
+                        var outputStickXVal = msinfo.OutStick == GyroMouseStickInfo.OutputStick.RightStick
                             ? MappedState.RX
                             : MappedState.LX;
                         byte tempAxisVal = 128;
@@ -2260,10 +2260,10 @@ namespace DS4Windows
                         else
                             tempAxisVal = gyroTempX;
 
-                        if (msinfo.outputStick ==
+                        if (msinfo.OutStick ==
                             GyroMouseStickInfo.OutputStick.RightStick)
                             MappedState.RX = tempAxisVal;
-                        else if (msinfo.outputStick ==
+                        else if (msinfo.OutStick ==
                                  GyroMouseStickInfo.OutputStick.LeftStick)
                             MappedState.LX = tempAxisVal;
                     }
@@ -2271,7 +2271,7 @@ namespace DS4Windows
                     ref var gyroTempY = ref gyroStickY[device];
                     if (msinfo.OutputVertical() && gyroTempY != 128)
                     {
-                        var outputStickYVal = msinfo.outputStick == GyroMouseStickInfo.OutputStick.RightStick
+                        var outputStickYVal = msinfo.OutStick == GyroMouseStickInfo.OutputStick.RightStick
                             ? MappedState.RY
                             : MappedState.LY;
                         byte tempAxisVal = 128;
@@ -2283,10 +2283,10 @@ namespace DS4Windows
                         else
                             tempAxisVal = gyroTempY;
 
-                        if (msinfo.outputStick ==
+                        if (msinfo.OutStick ==
                             GyroMouseStickInfo.OutputStick.RightStick)
                             MappedState.RY = tempAxisVal;
-                        else if (msinfo.outputStick ==
+                        else if (msinfo.OutStick ==
                                  GyroMouseStickInfo.OutputStick.LeftStick)
                             MappedState.LY = tempAxisVal;
                     }
@@ -2726,7 +2726,7 @@ namespace DS4Windows
                     var tempMouseInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo;
                     if (tempMouseInfo.TempButtonSensitivity != -1)
                     {
-                        tempMouseInfo.SetActiveButtonSensitivity(tempMouseInfo.buttonSensitivity);
+                        tempMouseInfo.SetActiveButtonSensitivity(tempMouseInfo.ButtonSensitivity);
                         tempMouseInfo.TempButtonSensitivity = -1;
                     }
 
