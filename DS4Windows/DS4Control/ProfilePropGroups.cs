@@ -39,16 +39,27 @@ namespace DS4Windows
 
         // DeadZone value from 0-127 (old bad convention)
         public int DeadZone { get; set; }
+        
         public int AntiDeadZone { get; set; }
+        
         public int MaxZone { get; set; } = DefaultMaxZone;
+        
         public double MaxOutput { get; set; } = DefaultMaxOutput;
+        
         public bool MaxOutputForce { get; set; } = DefaultMaxOutputForce;
+        
         public int Fuzz { get; set; } = DefaultFuzz;
+        
         public double VerticalScale { get; set; } = DefaultVerticalScale;
+        
         public DeadZoneType DZType { get; set; } = DefaultDeadZoneType;
+        
         public double OuterBindDeadZone { get; set; } = DefaultOuterBindDead;
+        
         public bool OuterBindInvert { get; set; } = DefaultOuterBindInvert;
+        
         public AxisDeadZoneInfo XAxisDeadInfo { get; set; } = new();
+        
         public AxisDeadZoneInfo YAxisDeadInfo { get; set; } = new();
 
         public void Reset()
@@ -555,8 +566,17 @@ namespace DS4Windows
 
     public enum LightbarMode : uint
     {
+        /// <summary>
+        ///     Unknown state.
+        /// </summary>
         None,
+        /// <summary>
+        ///     Application is in control of Lightbar appearance.
+        /// </summary>
         DS4Win,
+        /// <summary>
+        ///     Game is in control of Lightbar appearance.
+        /// </summary>
         Passthru
     }
 
@@ -569,7 +589,7 @@ namespace DS4Windows
 
         public bool LedAsBattery { get; set; }
 
-        public DS4Color CustomLed { get; set; } = new(0, 0, 255);
+        public DS4Color CustomLed { get; set; } = new(Color.Blue);
 
         public DS4Color Led { get; set; }
 
@@ -583,7 +603,10 @@ namespace DS4Windows
 
         public double MaxRainbowSaturation { get; set; } = 1.0;
 
-        public int FlashAt { get; set; } // Battery % when flashing occurs. <0 means disabled
+        /// <summary>
+        ///     Battery % when flashing occurs. Smaller 0 means disabled.
+        /// </summary>
+        public int FlashAt { get; set; }
 
         public byte FlashType { get; set; }
 
