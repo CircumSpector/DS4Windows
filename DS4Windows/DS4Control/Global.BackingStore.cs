@@ -167,22 +167,22 @@ namespace DS4Windows
                 MouseCursor.GYRO_MOUSE_DEADZONE
             };
 
-            public IList<BezierCurve> LSOutBezierCurve { get; set; } = new List<BezierCurve>
+            public IList<BezierCurve> LSOutCurve { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
-            public IList<BezierCurve> RSOutBezierCurve { get; set; } = new List<BezierCurve>
+            public IList<BezierCurve> RSOutCurve { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
-            public IList<BezierCurve> L2OutBezierCurve { get; set; } = new List<BezierCurve>
+            public IList<BezierCurve> L2OutCurve { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
-            public IList<BezierCurve> R2OutBezierCurve { get; set; } = new List<BezierCurve>
+            public IList<BezierCurve> R2OutCurve { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
-            public IList<BezierCurve> SXOutBezierCurve { get; set; } = new List<BezierCurve>
+            public IList<BezierCurve> SXOutCurve { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
-            public IList<BezierCurve> SZOutBezierCurve { get; set; } = new List<BezierCurve>
+            public IList<BezierCurve> SZOutCurve { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
             public IList<string> LaunchProgram { get; set; } = new List<string>
@@ -224,7 +224,7 @@ namespace DS4Windows
             public void SetLsOutCurveMode(int index, int value)
             {
                 if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(LSOutBezierCurve, index, value, BezierCurve.AxisType.LSRS);
+                    SetOutBezierCurveObjArrayItem(LSOutCurve, index, value, BezierCurve.AxisType.LSRS);
                 _lsOutCurveMode[index] = value;
             }
 
@@ -236,7 +236,7 @@ namespace DS4Windows
             public void SetRsOutCurveMode(int index, int value)
             {
                 if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(RSOutBezierCurve, index, value, BezierCurve.AxisType.LSRS);
+                    SetOutBezierCurveObjArrayItem(RSOutCurve, index, value, BezierCurve.AxisType.LSRS);
                 _rsOutCurveMode[index] = value;
             }
 
@@ -248,7 +248,7 @@ namespace DS4Windows
             public void SetL2OutCurveMode(int index, int value)
             {
                 if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(L2OutBezierCurve, index, value, BezierCurve.AxisType.L2R2);
+                    SetOutBezierCurveObjArrayItem(L2OutCurve, index, value, BezierCurve.AxisType.L2R2);
                 _l2OutCurveMode[index] = value;
             }
 
@@ -260,7 +260,7 @@ namespace DS4Windows
             public void SetR2OutCurveMode(int index, int value)
             {
                 if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(R2OutBezierCurve, index, value, BezierCurve.AxisType.L2R2);
+                    SetOutBezierCurveObjArrayItem(R2OutCurve, index, value, BezierCurve.AxisType.L2R2);
                 _r2OutCurveMode[index] = value;
             }
 
@@ -272,7 +272,7 @@ namespace DS4Windows
             public void SetSXOutCurveMode(int index, int value)
             {
                 if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(SXOutBezierCurve, index, value, BezierCurve.AxisType.SA);
+                    SetOutBezierCurveObjArrayItem(SXOutCurve, index, value, BezierCurve.AxisType.SA);
                 _sxOutCurveMode[index] = value;
             }
 
@@ -284,7 +284,7 @@ namespace DS4Windows
             public void SetSZOutCurveMode(int index, int value)
             {
                 if (value >= 1)
-                    SetOutBezierCurveObjArrayItem(SZOutBezierCurve, index, value, BezierCurve.AxisType.SA);
+                    SetOutBezierCurveObjArrayItem(SZOutCurve, index, value, BezierCurve.AxisType.SA);
                 _szOutCurveMode[index] = value;
             }
             

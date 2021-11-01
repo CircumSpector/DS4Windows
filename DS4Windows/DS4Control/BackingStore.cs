@@ -28,17 +28,17 @@ namespace DS4Windows
 
         IList<bool> DistanceProfiles { get; set; }
         
-        IList<BezierCurve> LSOutBezierCurve { get; set; }
+        IList<BezierCurve> LSOutCurve { get; set; }
 
-        IList<BezierCurve> RSOutBezierCurve { get; set; }
+        IList<BezierCurve> RSOutCurve { get; set; }
 
-        IList<BezierCurve> L2OutBezierCurve { get; set; }
+        IList<BezierCurve> L2OutCurve { get; set; }
 
-        IList<BezierCurve> R2OutBezierCurve { get; set; }
+        IList<BezierCurve> R2OutCurve { get; set; }
 
-        IList<BezierCurve> SXOutBezierCurve { get; set; }
+        IList<BezierCurve> SXOutCurve { get; set; }
 
-        IList<BezierCurve> SZOutBezierCurve { get; set; }
+        IList<BezierCurve> SZOutCurve { get; set; }
 
         IList<int> GyroMouseDeadZone { get; set; }
 
