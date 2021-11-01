@@ -1330,8 +1330,8 @@ namespace DS4Windows
                             var tempOutY = (byte)(tempRatioY * maxY + 128.0);
 
                             // Perform curve based on byte values from vector
-                            var tempX = Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
-                            var tempY = Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
+                            var tempX = Instance.Config.LSOutBezierCurve[device].arrayBezierLUT[tempOutX];
+                            var tempY = Instance.Config.LSOutBezierCurve[device].arrayBezierLUT[tempOutY];
 
                             // Calculate new ratio
                             var tempRatioOutX = (tempX - 128.0) / maxX;
@@ -1344,8 +1344,8 @@ namespace DS4Windows
                         }
                         else if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
                         {
-                            dState.LX = Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[dState.LX];
-                            dState.LY = Instance.Config.LSOutBezierCurveObj[device].arrayBezierLUT[dState.LY];
+                            dState.LX = Instance.Config.LSOutBezierCurve[device].arrayBezierLUT[dState.LX];
+                            dState.LY = Instance.Config.LSOutBezierCurve[device].arrayBezierLUT[dState.LY];
                         }
                     }
                 }
@@ -1472,8 +1472,8 @@ namespace DS4Windows
                             var tempOutY = (byte)(tempRatioY * maxY + 128.0);
 
                             // Perform curve based on byte values from vector
-                            var tempX = Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[tempOutX];
-                            var tempY = Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[tempOutY];
+                            var tempX = Instance.Config.RSOutBezierCurve[device].arrayBezierLUT[tempOutX];
+                            var tempY = Instance.Config.RSOutBezierCurve[device].arrayBezierLUT[tempOutY];
 
                             // Calculate new ratio
                             var tempRatioOutX = (tempX - 128.0) / maxX;
@@ -1485,8 +1485,8 @@ namespace DS4Windows
                         }
                         else if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
                         {
-                            dState.RX = Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[dState.RX];
-                            dState.RY = Instance.Config.RSOutBezierCurveObj[device].arrayBezierLUT[dState.RY];
+                            dState.RX = Instance.Config.RSOutBezierCurve[device].arrayBezierLUT[dState.RX];
+                            dState.RY = Instance.Config.RSOutBezierCurve[device].arrayBezierLUT[dState.RY];
                         }
                     }
                 }
@@ -1530,7 +1530,7 @@ namespace DS4Windows
                     }
                     else if (l2OutCurveMode == 6)
                     {
-                        dState.L2 = Instance.Config.L2OutBezierCurveObj[device].arrayBezierLUT[dState.L2];
+                        dState.L2 = Instance.Config.L2OutBezierCurve[device].arrayBezierLUT[dState.L2];
                     }
                 }
 
@@ -1573,7 +1573,7 @@ namespace DS4Windows
                     }
                     else if (r2OutCurveMode == 6)
                     {
-                        dState.R2 = Instance.Config.R2OutBezierCurveObj[device].arrayBezierLUT[dState.R2];
+                        dState.R2 = Instance.Config.R2OutBezierCurve[device].arrayBezierLUT[dState.R2];
                     }
                 }
 
@@ -1685,7 +1685,7 @@ namespace DS4Windows
                         else if (sxOutCurveMode == 6)
                         {
                             var signSA = Math.Sign(dState.Motion.outputAccelX);
-                            dState.Motion.outputAccelX = Instance.Config.SXOutBezierCurveObj[device]
+                            dState.Motion.outputAccelX = Instance.Config.SXOutBezierCurve[device]
                                 .arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
                         }
                     }
@@ -1737,7 +1737,7 @@ namespace DS4Windows
                         else if (szOutCurveMode == 6)
                         {
                             var signSA = Math.Sign(dState.Motion.outputAccelZ);
-                            dState.Motion.outputAccelZ = Instance.Config.SZOutBezierCurveObj[device]
+                            dState.Motion.outputAccelZ = Instance.Config.SZOutBezierCurve[device]
                                 .arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
                         }
                     }

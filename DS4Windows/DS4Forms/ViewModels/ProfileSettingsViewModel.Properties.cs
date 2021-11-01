@@ -909,15 +909,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string LSCustomCurve
         {
-            get => Global.Instance.Config.LSOutBezierCurveObj[Device].CustomDefinition;
-            set => Global.Instance.Config.LSOutBezierCurveObj[Device]
+            get => Global.Instance.Config.LSOutBezierCurve[Device].CustomDefinition;
+            set => Global.Instance.Config.LSOutBezierCurve[Device]
                 .InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
         }
 
         public string RSCustomCurve
         {
-            get => Global.Instance.Config.RSOutBezierCurveObj[Device].CustomDefinition;
-            set => Global.Instance.Config.RSOutBezierCurveObj[Device]
+            get => Global.Instance.Config.RSOutBezierCurve[Device].CustomDefinition;
+            set => Global.Instance.Config.RSOutBezierCurve[Device]
                 .InitBezierCurve(value, BezierCurve.AxisType.LSRS, true);
         }
 
@@ -1228,15 +1228,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string L2CustomCurve
         {
-            get => Global.Instance.Config.L2OutBezierCurveObj[Device].CustomDefinition;
-            set => Global.Instance.Config.L2OutBezierCurveObj[Device]
+            get => Global.Instance.Config.L2OutBezierCurve[Device].CustomDefinition;
+            set => Global.Instance.Config.L2OutBezierCurve[Device]
                 .InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
         }
 
         public string R2CustomCurve
         {
-            get => Global.Instance.Config.R2OutBezierCurveObj[Device].CustomDefinition;
-            set => Global.Instance.Config.R2OutBezierCurveObj[Device]
+            get => Global.Instance.Config.R2OutBezierCurve[Device].CustomDefinition;
+            set => Global.Instance.Config.R2OutBezierCurve[Device]
                 .InitBezierCurve(value, BezierCurve.AxisType.L2R2, true);
         }
 
@@ -1406,15 +1406,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string SXCustomCurve
         {
-            get => Global.Instance.Config.SXOutBezierCurveObj[Device].CustomDefinition;
-            set => Global.Instance.Config.SXOutBezierCurveObj[Device]
+            get => Global.Instance.Config.SXOutBezierCurve[Device].CustomDefinition;
+            set => Global.Instance.Config.SXOutBezierCurve[Device]
                 .InitBezierCurve(value, BezierCurve.AxisType.SA, true);
         }
 
         public string SZCustomCurve
         {
-            get => Global.Instance.Config.SZOutBezierCurveObj[Device].CustomDefinition;
-            set => Global.Instance.Config.SZOutBezierCurveObj[Device]
+            get => Global.Instance.Config.SZOutBezierCurve[Device].CustomDefinition;
+            set => Global.Instance.Config.SZOutBezierCurve[Device]
                 .InitBezierCurve(value, BezierCurve.AxisType.SA, true);
         }
 

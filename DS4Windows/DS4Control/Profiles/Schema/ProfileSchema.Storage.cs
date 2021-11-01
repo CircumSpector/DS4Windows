@@ -223,10 +223,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //BTPollRate = store.BluetoothPollRate[device];
 
             LSOutputCurveMode = store.StickOutputCurveString(store.GetLsOutCurveMode(device));
-            LSOutputCurveCustom = store.LSOutBezierCurveObj[device];
+            LSOutputCurveCustom = store.LSOutBezierCurve[device];
 
             RSOutputCurveMode = store.StickOutputCurveString(store.GetRsOutCurveMode(device));
-            RSOutputCurveCustom = store.RSOutBezierCurveObj[device];
+            RSOutputCurveCustom = store.RSOutBezierCurve[device];
 
             //LSSquareStick = store.SquStickInfo[device].LSMode;
             //RSSquareStick = store.SquStickInfo[device].RSMode;
@@ -293,7 +293,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             */
 
             L2OutputCurveMode = store.AxisOutputCurveString(store.GetL2OutCurveMode(device));
-            L2OutputCurveCustom = store.L2OutBezierCurveObj[device];
+            L2OutputCurveCustom = store.L2OutBezierCurve[device];
 
             /*
             L2TwoStageMode = store.L2OutputSettings[device].TwoStageMode;
@@ -307,13 +307,13 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             */
 
             R2OutputCurveMode = store.AxisOutputCurveString(store.GetR2OutCurveMode(device));
-            R2OutputCurveCustom = store.R2OutBezierCurveObj[device];
+            R2OutputCurveCustom = store.R2OutBezierCurve[device];
 
             SXOutputCurveMode = store.AxisOutputCurveString(store.GetSXOutCurveMode(device));
-            SXOutputCurveCustom = store.SXOutBezierCurveObj[device];
+            SXOutputCurveCustom = store.SXOutBezierCurve[device];
 
             SZOutputCurveMode = store.AxisOutputCurveString(store.GetSZOutCurveMode(device));
-            SZOutputCurveCustom = store.SZOutBezierCurveObj[device];
+            SZOutputCurveCustom = store.SZOutBezierCurve[device];
 
             //TrackballFriction = store.TrackballFriction[device];
 
@@ -510,9 +510,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //SetGyroMouseToggle(device, temp, control);
             //store.BluetoothPollRate[device] = BTPollRate is >= 0 and <= 16 ? BTPollRate : 4;
 
-            store.LSOutBezierCurveObj[device] = LSOutputCurveCustom;
+            store.LSOutBezierCurve[device] = LSOutputCurveCustom;
             store.SetLsOutCurveMode(device, store.StickOutputCurveId(LSOutputCurveMode));
-            store.RSOutBezierCurveObj[device] = RSOutputCurveCustom;
+            store.RSOutBezierCurve[device] = RSOutputCurveCustom;
             store.SetRsOutCurveMode(device, store.StickOutputCurveId(RSOutputCurveMode));
 
             //store.SquStickInfo[device].LSMode = LSSquareStick;
@@ -549,21 +549,21 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 RSOutputSettings.FlickStickSettings.MinAngleThreshold;
             */
 
-            store.L2OutBezierCurveObj[device] = L2OutputCurveCustom;
+            store.L2OutBezierCurve[device] = L2OutputCurveCustom;
             store.SetL2OutCurveMode(device, store.StickOutputCurveId(L2OutputCurveMode));
             //store.L2OutputSettings[device].TwoStageMode = L2TwoStageMode;
             //store.L2OutputSettings[device].HipFireMs = Math.Min(Math.Max(0, L2HipFireTime), 5000);
             //store.L2OutputSettings[device].TriggerEffect = L2TriggerEffect;
 
-            store.R2OutBezierCurveObj[device] = R2OutputCurveCustom;
+            store.R2OutBezierCurve[device] = R2OutputCurveCustom;
             store.SetR2OutCurveMode(device, store.StickOutputCurveId(R2OutputCurveMode));
             //store.R2OutputSettings[device].TwoStageMode = R2TwoStageMode;
             //store.R2OutputSettings[device].TriggerEffect = R2TriggerEffect;
             //store.R2OutputSettings[device].HipFireMs = Math.Min(Math.Max(0, R2HipFireTime), 5000);
 
-            store.SXOutBezierCurveObj[device] = SXOutputCurveCustom;
+            store.SXOutBezierCurve[device] = SXOutputCurveCustom;
             store.SetSXOutCurveMode(device, store.StickOutputCurveId(SXOutputCurveMode));
-            store.SZOutBezierCurveObj[device] = SZOutputCurveCustom;
+            store.SZOutBezierCurve[device] = SZOutputCurveCustom;
             store.SetSZOutCurveMode(device, store.StickOutputCurveId(SZOutputCurveMode));
             //store.TrackballFriction[device] = TrackballFriction;
 
