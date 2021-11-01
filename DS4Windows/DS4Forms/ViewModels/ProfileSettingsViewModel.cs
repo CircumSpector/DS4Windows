@@ -180,7 +180,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private int FindGyroMouseSmoothMethodIndex()
         {
             var result = 0;
-            var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
+            var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo;
             if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.OneEuro ||
                 tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.None)
                 result = 0;

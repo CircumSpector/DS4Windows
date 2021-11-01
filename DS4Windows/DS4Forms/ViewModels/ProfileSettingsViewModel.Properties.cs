@@ -1677,12 +1677,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseMinThreshold
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].MinThreshold;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.MinThreshold;
             set
             {
-                var temp = Global.Instance.Config.GyroMouseInfo[Device].MinThreshold;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.MinThreshold;
                 if (temp == value) return;
-                Global.Instance.Config.GyroMouseInfo[Device].MinThreshold = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.MinThreshold = value;
             }
         }
 
@@ -1712,13 +1712,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseSmooth
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].EnableSmoothing;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.EnableSmoothing;
             set
             {
-                var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
+                var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo;
                 if (tempInfo.EnableSmoothing == value) return;
 
-                Global.Instance.Config.GyroMouseInfo[Device].EnableSmoothing = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.EnableSmoothing = value;
                 GyroMouseSmoothChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1730,7 +1730,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (gyroMouseSmoothMethodIndex == value) return;
 
-                var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
+                var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo;
                 switch (value)
                 {
                     case 0:
@@ -1753,7 +1753,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseInfo[Device].Smoothing)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.Smoothing)
                 {
                     case GyroMouseInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -1769,7 +1769,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseInfo[Device].Smoothing)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.Smoothing)
                 {
                     case GyroMouseInfo.SmoothingMethod.OneEuro:
                     case GyroMouseInfo.SmoothingMethod.None:
@@ -1783,20 +1783,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].SmoothingWeight;
-            set => Global.Instance.Config.GyroMouseInfo[Device].SmoothingWeight = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.SmoothingWeight;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.SmoothingWeight = value;
         }
 
         public double GyroMouseOneEuroMinCutoff
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].MinCutoff;
-            set => Global.Instance.Config.GyroMouseInfo[Device].MinCutoff = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.MinCutoff;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.MinCutoff = value;
         }
 
         public double GyroMouseOneEuroBeta
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].Beta;
-            set => Global.Instance.Config.GyroMouseInfo[Device].Beta = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.Beta;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo.Beta = value;
         }
 
         public int GyroMouseStickSmoothMethodIndex

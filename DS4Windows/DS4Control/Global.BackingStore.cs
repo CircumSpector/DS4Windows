@@ -210,15 +210,6 @@ namespace DS4Windows
             public IList<bool> ContainsCustomExtras { get; set; } = new bool[TEST_PROFILE_ITEM_COUNT]
                 { false, false, false, false, false, false, false, false, false };
 
-            public IList<GyroMouseInfo> GyroMouseInfo { get; set; } = new List<GyroMouseInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
             public void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
             {
                 ds4controlSettings[deviceNum].ResetExtraButtons();
@@ -2310,8 +2301,8 @@ namespace DS4Windows
                 //SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
-                GyroMouseInfo[device].EnableSmoothing = true;
-                GyroMouseInfo[device].Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.EnableSmoothing = true;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.10 * 127);
@@ -2349,8 +2340,8 @@ namespace DS4Windows
                 //SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
-                GyroMouseInfo[device].EnableSmoothing = true;
-                GyroMouseInfo[device].Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.EnableSmoothing = true;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
@@ -2583,8 +2574,8 @@ namespace DS4Windows
                 //SATriggers[device] = "4";
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
-                GyroMouseInfo[device].EnableSmoothing = true;
-                GyroMouseInfo[device].Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.EnableSmoothing = true;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 // Flag to unplug virtual controller
                 //DIOnly[device] = true;
@@ -2996,7 +2987,7 @@ namespace DS4Windows
                 //GyroSensVerticalScale[device] = 100;
                 //GyroInvert[device] = 0;
                 //GyroTriggerTurns[device] = true;
-                GyroMouseInfo[device].Reset();
+                //GyroMouseInfo[device].Reset();
 
                 //GyroMouseHorizontalAxis[device] = 0;
                 //GyroMouseToggle[device] = false;

@@ -40,8 +40,6 @@ namespace DS4Windows
 
         IList<BezierCurve> SZOutBezierCurveObj { get; set; }
 
-        IList<GyroMouseInfo> GyroMouseInfo { get; set; }
-
         IList<int> GyroMouseDeadZone { get; set; }
 
         string FakeExeFileName { get; set; }

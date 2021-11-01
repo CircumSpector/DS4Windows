@@ -177,16 +177,18 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //GyroSensVerticalScale = store.GyroSensVerticalScale[device];
             //GyroInvert = store.GyroInvert[device];
 
+            /*
             GyroMouseSmoothingSettings.UseSmoothing = store.GyroMouseInfo[device].EnableSmoothing;
             GyroMouseSmoothingSettings.SmoothingMethod = store.GyroMouseInfo[device].SmoothMethodIdentifier();
             GyroMouseSmoothingSettings.SmoothingWeight =
                 Convert.ToInt32(store.GyroMouseInfo[device].SmoothingWeight * 100);
             GyroMouseSmoothingSettings.SmoothingMinCutoff = store.GyroMouseInfo[device].MinCutoff;
             GyroMouseSmoothingSettings.SmoothingBeta = store.GyroMouseInfo[device].Beta;
+            */
 
             //GyroMouseHAxis = store.GyroMouseHorizontalAxis[device];
             GyroMouseDeadZone = store.GyroMouseDeadZone[device];
-            GyroMouseMinThreshold = store.GyroMouseInfo[device].MinThreshold;
+            //GyroMouseMinThreshold = store.GyroMouseInfo[device].MinThreshold;
             //GyroOutputMode = store.GyroOutputMode[device];
             GyroMouseStickTriggers = store.SAMouseStickTriggers[device];
             //GyroMouseStickTriggerCond = store.SaTriggerCondString(store.SAMouseStickTriggerCond[device]);
@@ -492,6 +494,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.GyroSensVerticalScale[device] = GyroSensVerticalScale;
             //store.GyroInvert[device] = GyroInvert;
 
+            /*
             store.GyroMouseInfo[device].EnableSmoothing = GyroMouseSmoothingSettings.UseSmoothing;
             store.GyroMouseInfo[device].DetermineSmoothMethod(GyroMouseSmoothingSettings.SmoothingMethod);
             store.GyroMouseInfo[device].SmoothingWeight =
@@ -499,10 +502,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.GyroMouseInfo[device].MinCutoff =
                 Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingMinCutoff), 100.0);
             store.GyroMouseInfo[device].Beta = Math.Min(Math.Max(0.0, GyroMouseSmoothingSettings.SmoothingBeta), 1.0);
+            */
 
             //store.GyroMouseHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseHAxis), 1);
             //store.SetGyroMouseDZ(device, temp, control);
-            store.GyroMouseInfo[device].MinThreshold = Math.Min(Math.Max(GyroMouseMinThreshold, 1.0), 40.0);
+            //store.GyroMouseInfo[device].MinThreshold = Math.Min(Math.Max(GyroMouseMinThreshold, 1.0), 40.0);
             //SetGyroMouseToggle(device, temp, control);
             //store.BluetoothPollRate[device] = BTPollRate is >= 0 and <= 16 ? BTPollRate : 4;
 
