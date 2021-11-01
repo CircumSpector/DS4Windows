@@ -232,6 +232,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //SquareStickRoundness = store.SquStickInfo[device].LSRoundness;
             //SquareRStickRoundness = store.SquStickInfo[device].RSRoundness;
 
+            /*
             LSAntiSnapback = store.LSAntiSnapbackInfo[device].Enabled;
             RSAntiSnapback = store.RSAntiSnapbackInfo[device].Enabled;
 
@@ -240,6 +241,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             LSAntiSnapbackTimeout = store.LSAntiSnapbackInfo[device].Timeout;
             RSAntiSnapbackTimeout = store.RSAntiSnapbackInfo[device].Timeout;
+            */
 
             /*
             LSOutputMode = store.LSOutputSettings[device].Mode;
@@ -511,12 +513,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.SquStickInfo[device].LSRoundness = SquareStickRoundness;
             //store.SquStickInfo[device].RSRoundness = SquareRStickRoundness;
             //store.SquStickInfo[device].RSMode = RSSquareStick;
+            /*
             store.LSAntiSnapbackInfo[device].Enabled = LSAntiSnapback;
             store.RSAntiSnapbackInfo[device].Enabled = RSAntiSnapback;
             store.LSAntiSnapbackInfo[device].Delta = LSAntiSnapbackDelta;
             store.RSAntiSnapbackInfo[device].Delta = RSAntiSnapbackDelta;
             store.LSAntiSnapbackInfo[device].Timeout = LSAntiSnapbackTimeout;
             store.RSAntiSnapbackInfo[device].Timeout = RSAntiSnapbackTimeout;
+            */
             /*
             store.LSOutputSettings[device].Mode = LSOutputMode;
             store.RSOutputSettings[device].Mode = RSOutputMode;

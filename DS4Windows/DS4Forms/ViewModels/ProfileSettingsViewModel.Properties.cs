@@ -935,38 +935,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSAntiSnapback
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[Device].Enabled;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[Device].Enabled = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSAntiSnapbackInfo.Enabled;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSAntiSnapbackInfo.Enabled = value;
         }
 
         public bool RSAntiSnapback
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[Device].Enabled;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[Device].Enabled = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSAntiSnapbackInfo.Enabled;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSAntiSnapbackInfo.Enabled = value;
         }
 
         public double LSAntiSnapbackDelta
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[Device].Delta;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[Device].Delta = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSAntiSnapbackInfo.Delta;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSAntiSnapbackInfo.Delta = value;
         }
 
         public double RSAntiSnapbackDelta
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[Device].Delta;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[Device].Delta = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSAntiSnapbackInfo.Delta;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSAntiSnapbackInfo.Delta = value;
         }
 
         public int LSAntiSnapbackTimeout
         {
-            get => Global.Instance.Config.LSAntiSnapbackInfo[Device].Timeout;
-            set => Global.Instance.Config.LSAntiSnapbackInfo[Device].Timeout = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSAntiSnapbackInfo.Timeout;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSAntiSnapbackInfo.Timeout = value;
         }
 
         public int RSAntiSnapbackTimeout
         {
-            get => Global.Instance.Config.RSAntiSnapbackInfo[Device].Timeout;
-            set => Global.Instance.Config.RSAntiSnapbackInfo[Device].Timeout = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSAntiSnapbackInfo.Timeout;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSAntiSnapbackInfo.Timeout = value;
         }
 
         public bool LSOuterBindInvert

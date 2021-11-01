@@ -167,24 +167,6 @@ namespace DS4Windows
                 MouseCursor.GYRO_MOUSE_DEADZONE
             };
 
-            public IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; } = new List<StickAntiSnapbackInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
-            public IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; } = new List<StickAntiSnapbackInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
             public IList<BezierCurve> LSOutBezierCurveObj { get; set; } = new List<BezierCurve>
                 { new(), new(), new(), new(), new(), new(), new(), new(), new() };
 
@@ -359,16 +341,6 @@ namespace DS4Windows
                 return ProfilesService.Instance.ActiveProfiles.ElementAt(index).GyroOutputMode == GyroOutMode.Controls;
             }
 
-            public StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device)
-            {
-                return LSAntiSnapbackInfo[device];
-            }
-
-            public StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device)
-            {
-                return RSAntiSnapbackInfo[device];
-            }
-            
             public int GetProfileActionCount(int index)
             {
                 return profileActionCount[index];
@@ -3046,9 +3018,9 @@ namespace DS4Windows
                 //SquStickInfo[device].RSMode = false;
                 //SquStickInfo[device].LSRoundness = 5.0;
                 //SquStickInfo[device].RSRoundness = 5.0;
-                LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DefaultTimeout;
-                LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DefaultDelta;
-                LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DefaultEnabled;
+                //LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DefaultTimeout;
+                //LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DefaultDelta;
+                //LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DefaultEnabled;
                 SetLsOutCurveMode(device, 0);
                 SetRsOutCurveMode(device, 0);
                 SetL2OutCurveMode(device, 0);

@@ -24,10 +24,6 @@ namespace DS4Windows
 
         IList<SpecialAction> Actions { get; set; }
 
-        IList<StickAntiSnapbackInfo> LSAntiSnapbackInfo { get; set; }
-
-        IList<StickAntiSnapbackInfo> RSAntiSnapbackInfo { get; set; }
-
         IList<string> OlderProfilePath { get; set; }
 
         IList<bool> DistanceProfiles { get; set; }
@@ -134,10 +130,6 @@ namespace DS4Windows
 
         ControlSettingsGroup GetControlSettingsGroup(int deviceNum);
 
-        StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
-
-        StickAntiSnapbackInfo GetRSAntiSnapbackInfo(int device);
-        
         int GetProfileActionCount(int index);
 
         void EstablishDefaultSpecialActions(int idx);

@@ -602,8 +602,8 @@ namespace DS4Windows
                 if (rotationRS > 0.0 || rotationRS < 0.0)
                     cState.RotateRSCoordinates(rotationRS);
 
-                var lsAntiSnapback = Instance.Config.GetLSAntiSnapbackInfo(device);
-                var rsAntiSnapback = Instance.Config.GetRSAntiSnapbackInfo(device);
+                var lsAntiSnapback = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSAntiSnapbackInfo;
+                var rsAntiSnapback = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSAntiSnapbackInfo;
 
                 if (lsAntiSnapback.Enabled)
                     CalcAntiSnapbackStick(device, 0, lsAntiSnapback.Delta, lsAntiSnapback.Timeout, cState.LX, cState.LY,
