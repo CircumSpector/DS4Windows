@@ -71,6 +71,8 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly IAppSettingsService appSettings;
 
+        private readonly IProfilesService profilesService;
+
         public MainWindow(
             ICommandLineOptions parser, 
             IServiceProvider serviceProvider,
@@ -78,12 +80,14 @@ namespace DS4WinWPF.DS4Forms
             SettingsViewModel settingsViewModel,
             LogViewModel logViewModel,
             ControlService controlService,
-            IAppSettingsService appSettings
+            IAppSettingsService appSettings,
+            IProfilesService profilesService
             )
         {
             ServiceProvider = serviceProvider;
             rootHub = controlService;
             this.appSettings = appSettings;
+            this.profilesService = profilesService;
 
             InitializeComponent();
 
@@ -100,6 +104,10 @@ namespace DS4WinWPF.DS4Forms
 
             profileListHolder.Refresh();
             profilesListBox.ItemsSource = profileListHolder.ProfileListCollection;
+
+
+            //profilesListBox.ItemsSource = profilesService.AvailableProfiles;
+            
 
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
 
