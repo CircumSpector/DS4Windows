@@ -1038,27 +1038,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSFlickRWC
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration =
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration =
                 value;
         }
 
         public double LSFlickThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold = value;
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold = value;
         }
 
         public double LSFlickTime
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickTime;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickTime = value;
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime = value;
         }
 
         public double LSMinAngleThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold =
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold =
                 value;
         }
 
@@ -1106,27 +1106,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double RSFlickRWC
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration =
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.RealWorldCalibration =
                 value;
         }
 
         public double RSFlickThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold = value;
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickThreshold = value;
         }
 
         public double RSFlickTime
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickTime;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickTime = value;
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.FlickTime = value;
         }
 
         public double RSMinAngleThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold =
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.MinAngleThreshold =
                 value;
         }
 
@@ -1252,7 +1252,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TwoStageTriggerMode L2TriggerMode
         {
-            get => Global.Instance.Config.L2OutputSettings[Device].twoStageMode;
+            get => Global.Instance.Config.L2OutputSettings[Device].TwoStageMode;
             set
             {
                 var temp = Global.Instance.Config.L2OutputSettings[Device].TwoStageMode;
@@ -1271,7 +1271,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = Global.Instance.Config.R2OutputSettings[Device].TwoStageMode;
                 if (temp == value) return;
 
-                Global.Instance.Config.R2OutputSettings[Device].twoStageMode = value;
+                Global.Instance.Config.R2OutputSettings[Device].TwoStageMode = value;
                 R2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1298,7 +1298,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TriggerEffects L2TriggerEffect
         {
-            get => Global.Instance.Config.L2OutputSettings[Device].triggerEffect;
+            get => Global.Instance.Config.L2OutputSettings[Device].TriggerEffect;
             set
             {
                 var temp = Global.Instance.Config.L2OutputSettings[Device].TriggerEffect;
@@ -1310,7 +1310,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TriggerEffects R2TriggerEffect
         {
-            get => Global.Instance.Config.R2OutputSettings[Device].triggerEffect;
+            get => Global.Instance.Config.R2OutputSettings[Device].TriggerEffect;
             set
             {
                 var temp = Global.Instance.Config.R2OutputSettings[Device].TriggerEffect;

@@ -37,30 +37,10 @@ namespace DS4Windows
         public const double DefaultOuterBindDead = 75.0;
         public const bool DefaultOuterBindInvert = false;
 
-        public class AxisDeadZoneInfo
-        {
-            // DeadZone value from 0-127 (old bad convention)
-            public int DeadZone { get; set; } = DefaultDeadZone;
-
-            public int AntiDeadZone { get; set; } = DefaultAntiDeadZone;
-
-            public int MaxZone { get; set; } = DefaultMaxZone;
-
-            public double MaxOutput { get; set; } = DefaultMaxOutput;
-
-            public void Reset()
-            {
-                DeadZone = DefaultDeadZone;
-                AntiDeadZone = DefaultAntiDeadZone;
-                MaxZone = DefaultMaxZone;
-                MaxOutput = DefaultMaxOutput;
-            }
-        }
-
         // DeadZone value from 0-127 (old bad convention)
         public int DeadZone { get; set; }
         public int AntiDeadZone { get; set; }
-        public int MaxZone  { get; set; } = DefaultMaxZone;
+        public int MaxZone { get; set; } = DefaultMaxZone;
         public double MaxOutput { get; set; } = DefaultMaxOutput;
         public bool MaxOutputForce { get; set; } = DefaultMaxOutputForce;
         public int Fuzz { get; set; } = DefaultFuzz;
@@ -87,6 +67,26 @@ namespace DS4Windows
             XAxisDeadInfo.Reset();
             YAxisDeadInfo.Reset();
         }
+
+        public class AxisDeadZoneInfo
+        {
+            // DeadZone value from 0-127 (old bad convention)
+            public int DeadZone { get; set; } = DefaultDeadZone;
+
+            public int AntiDeadZone { get; set; } = DefaultAntiDeadZone;
+
+            public int MaxZone { get; set; } = DefaultMaxZone;
+
+            public double MaxOutput { get; set; } = DefaultMaxOutput;
+
+            public void Reset()
+            {
+                DeadZone = DefaultDeadZone;
+                AntiDeadZone = DefaultAntiDeadZone;
+                MaxZone = DefaultMaxZone;
+                MaxOutput = DefaultMaxOutput;
+            }
+        }
     }
 
     public class StickAntiSnapbackInfo
@@ -108,6 +108,12 @@ namespace DS4Windows
         // Trigger deadzone is expressed in axis units (bad old convention)
         public byte DeadZone { get; set; }
 
+        public int AntiDeadZone { get; set; }
+
+        public int MaxZone { get; set; } = 100;
+
+        public double MaxOutput { get; set; } = 100.0;
+
         [UsedImplicitly]
         private void OnDeadZoneChanged()
         {
@@ -116,10 +122,6 @@ namespace DS4Windows
 
         public event EventHandler DeadZoneChanged;
 
-        public int AntiDeadZone { get; set; }
-
-        public int MaxZone { get; set; } = 100;
-
         [UsedImplicitly]
         private void OnMaxZoneChanged()
         {
@@ -127,8 +129,6 @@ namespace DS4Windows
         }
 
         public event EventHandler MaxZoneChanged;
-        
-        public double MaxOutput { get; set; } = 100.0;
 
         [UsedImplicitly]
         private void OnMaxOutputChanged()
@@ -157,6 +157,8 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class GyroMouseInfo
     {
+        public delegate void GyroMouseInfoEventHandler(GyroMouseInfo sender, EventArgs args);
+
         public enum SmoothingMethod : byte
         {
             None,
@@ -180,8 +182,6 @@ namespace DS4Windows
         public double Beta { get; set; } = DefaultBeta;
 
         public double MinThreshold { get; set; } = DefaultMinThreshold;
-
-        public delegate void GyroMouseInfoEventHandler(GyroMouseInfo sender, EventArgs args);
 
         [UsedImplicitly]
         private void OnMinCutoffChanged()
@@ -265,12 +265,8 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class GyroMouseStickInfo
     {
-        public enum SmoothingMethod : byte
-        {
-            None,
-            OneEuro,
-            WeightedAverage
-        }
+        public delegate void GyroMouseStickInfoEventHandler(GyroMouseStickInfo sender,
+            EventArgs args);
 
         public enum OutputStick : byte
         {
@@ -285,6 +281,13 @@ namespace DS4Windows
             XY,
             X,
             Y
+        }
+
+        public enum SmoothingMethod : byte
+        {
+            None,
+            OneEuro,
+            WeightedAverage
         }
 
         public const double DefaultMinCutoff = 0.4;
@@ -309,23 +312,20 @@ namespace DS4Windows
 
         // Flags representing invert axis choices
         public uint Inverted { get; set; }
-        
-        public bool UseSmoothing { get; set; }
-        
-        public double SmoothWeight { get; set; }
-        
-        public SmoothingMethod Smoothing { get; set; }
-        
-        public double MinCutoff { get; set; } = DefaultMinCutoff;
-        
-        public double Beta { get; set; } = DefaultBeta;
-        
-        public OutputStick OutStick { get; set; } = DefaultOutputStick;
-        
-        public OutputStickAxes OutputStickDir { get; set; } = DefaultOutputStickAxes;
 
-        public delegate void GyroMouseStickInfoEventHandler(GyroMouseStickInfo sender,
-            EventArgs args);
+        public bool UseSmoothing { get; set; }
+
+        public double SmoothWeight { get; set; }
+
+        public SmoothingMethod Smoothing { get; set; }
+
+        public double MinCutoff { get; set; } = DefaultMinCutoff;
+
+        public double Beta { get; set; } = DefaultBeta;
+
+        public OutputStick OutStick { get; set; } = DefaultOutputStick;
+
+        public OutputStickAxes OutputStickDir { get; set; } = DefaultOutputStickAxes;
 
         [UsedImplicitly]
         private void OnMinCutoffChanged()
@@ -507,6 +507,11 @@ namespace DS4Windows
         public const double DefaultButtonVerticalScale = 1.0;
         public const int DefaultTempSens = -1;
 
+        public ButtonMouseInfo()
+        {
+            ButtonMouseInfoChanged += ButtonMouseInfo_ButtonMouseInfoChanged;
+        }
+
         public int ButtonSensitivity { get; set; } = DefaultButtonSens;
 
         public bool MouseAcceleration { get; set; }
@@ -526,11 +531,6 @@ namespace DS4Windows
         }
 
         public event EventHandler ButtonMouseInfoChanged;
-
-        public ButtonMouseInfo()
-        {
-            ButtonMouseInfoChanged += ButtonMouseInfo_ButtonMouseInfoChanged;
-        }
 
         private void ButtonMouseInfo_ButtonMouseInfoChanged(object sender, EventArgs e)
         {
@@ -557,7 +557,7 @@ namespace DS4Windows
     {
         None,
         DS4Win,
-        Passthru,
+        Passthru
     }
 
     /// <summary>
@@ -612,61 +612,48 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class SteeringWheelSmoothingInfo
     {
-        public double MinCutoff { get; set; }= OneEuroFilterPair.DEFAULT_WHEEL_CUTOFF;
-        private double beta = OneEuroFilterPair.DEFAULT_WHEEL_BETA;
-        public bool enabled = false;
-
         public delegate void SmoothingInfoEventHandler(SteeringWheelSmoothingInfo sender, EventArgs args);
 
+        public double MinCutoff { get; set; } = OneEuroFilterPair.DEFAULT_WHEEL_CUTOFF;
+
+        public double Beta { get; set; } = OneEuroFilterPair.DEFAULT_WHEEL_BETA;
+
+        public bool Enabled { get; set; }
+
+        [UsedImplicitly]
         private void OnMinCutoffChanged()
         {
             MinCutoffChanged?.Invoke(this, EventArgs.Empty);
         }
-        
+
         public event SmoothingInfoEventHandler MinCutoffChanged;
 
-        public double Beta
+        [UsedImplicitly]
+        private void OnBetaChanged()
         {
-            get => beta;
-            set
-            {
-                if (beta == value) return;
-                beta = value;
-                BetaChanged?.Invoke(this, EventArgs.Empty);
-            }
+            BetaChanged?.Invoke(this, EventArgs.Empty);
         }
-        public event SmoothingInfoEventHandler BetaChanged;
 
-        public bool Enabled
-        {
-            get => enabled;
-            set => enabled = value;
-        }
+        public event SmoothingInfoEventHandler BetaChanged;
 
         public void Reset()
         {
             MinCutoff = OneEuroFilterPair.DEFAULT_WHEEL_CUTOFF;
             Beta = OneEuroFilterPair.DEFAULT_WHEEL_BETA;
-            enabled = false;
+            Enabled = false;
         }
 
         public void SetFilterAttrs(OneEuroFilter euroFilter)
         {
             euroFilter.MinCutoff = MinCutoff;
-            euroFilter.Beta = beta;
+            euroFilter.Beta = Beta;
         }
 
         public void SetRefreshEvents(OneEuroFilter euroFilter)
         {
-            BetaChanged += (sender, args) =>
-            {
-                euroFilter.Beta = beta;
-            };
+            BetaChanged += (sender, args) => { euroFilter.Beta = Beta; };
 
-            MinCutoffChanged += (sender, args) =>
-            {
-                euroFilter.MinCutoff = MinCutoff;
-            };
+            MinCutoffChanged += (sender, args) => { euroFilter.MinCutoff = MinCutoff; };
         }
     }
 
@@ -677,6 +664,7 @@ namespace DS4Windows
         public const double DefaultMinThreshold = 1.0;
 
         public double Rotation { get; set; } = DefaultAngRad;
+
         public double MinThreshold { get; set; } = DefaultMinThreshold;
 
         public void Reset()
@@ -693,7 +681,9 @@ namespace DS4Windows
         public const bool DefaultSnapCenter = false;
 
         public int MaxZoneX { get; set; } = DefaultMaxZoneX;
+
         public int MaxZoneY { get; set; } = DefaultMaxZoneY;
+
         public bool SnapToCenter { get; set; } = DefaultSnapCenter;
 
         public void Reset()
@@ -708,13 +698,13 @@ namespace DS4Windows
     {
         None,
         Controls,
-        FlickStick,
+        FlickStick
     }
 
     public enum TriggerMode : uint
     {
         Normal,
-        TwoStage,
+        TwoStage
     }
 
     public enum TwoStageTriggerMode : uint
@@ -724,76 +714,66 @@ namespace DS4Windows
         ExclusiveButtons,
         HairTrigger,
         HipFire,
-        HipFireExclusiveButtons,
+        HipFireExclusiveButtons
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class FlickStickSettings
     {
+        public delegate void FlickStickSettingsEventHandler(FlickStickSettings sender,
+            EventArgs args);
+
         public const double DefaultFlickThreshold = 0.9;
-        public const double DefaultFlickTime = 0.1;  // In seconds
+        public const double DefaultFlickTime = 0.1; // In seconds
         public const double DefaultRealWorldCalibration = 5.3;
         public const double DefaultMinAngleThreshold = 0.0;
-
         public const double DefaultMinCutoff = 0.4;
         public const double DefaultBeta = 0.4;
 
-        public double flickThreshold = DefaultFlickThreshold;
-        public double flickTime = DefaultFlickTime; // In seconds
-        public double realWorldCalibration = DefaultRealWorldCalibration;
-        public double minAngleThreshold = DefaultMinAngleThreshold;
+        public double FlickThreshold { get; set; } = DefaultFlickThreshold;
 
-        public double minCutoff = DefaultMinCutoff;
-        public double beta = DefaultBeta;
+        public double FlickTime { get; set; } = DefaultFlickTime; // In seconds
 
-        public delegate void FlickStickSettingsEventHandler(FlickStickSettings sender,
-           EventArgs args);
+        public double RealWorldCalibration { get; set; } = DefaultRealWorldCalibration;
 
-        public double MinCutoff
+        public double MinAngleThreshold { get; set; } = DefaultMinAngleThreshold;
+
+        public double MinCutoff { get; set; } = DefaultMinCutoff;
+
+        public double Beta { get; set; } = DefaultBeta;
+
+        [UsedImplicitly]
+        private void OnMinCutoffChanged()
         {
-            get => minCutoff;
-            set
-            {
-                if (minCutoff == value) return;
-                minCutoff = value;
-                MinCutoffChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MinCutoffChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event FlickStickSettingsEventHandler MinCutoffChanged;
 
-        public double Beta
+        [UsedImplicitly]
+        private void OnBetaChanged()
         {
-            get => beta;
-            set
-            {
-                if (beta == value) return;
-                beta = value;
-                BetaChanged?.Invoke(this, EventArgs.Empty);
-            }
+            BetaChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event FlickStickSettingsEventHandler BetaChanged;
 
         public void Reset()
         {
-            flickThreshold = DefaultFlickThreshold;
-            flickTime = DefaultFlickTime;
-            realWorldCalibration = DefaultRealWorldCalibration;
-            minAngleThreshold = DefaultMinAngleThreshold;
+            FlickThreshold = DefaultFlickThreshold;
+            FlickTime = DefaultFlickTime;
+            RealWorldCalibration = DefaultRealWorldCalibration;
+            MinAngleThreshold = DefaultMinAngleThreshold;
 
-            minCutoff = DefaultMinCutoff;
-            beta = DefaultBeta;
+            MinCutoff = DefaultMinCutoff;
+            Beta = DefaultBeta;
         }
 
         public void SetRefreshEvents(OneEuroFilter euroFilter)
         {
-            BetaChanged += (sender, args) =>
-            {
-                euroFilter.Beta = beta;
-            };
+            BetaChanged += (sender, args) => { euroFilter.Beta = Beta; };
 
-            MinCutoffChanged += (sender, args) =>
-            {
-                euroFilter.MinCutoff = minCutoff;
-            };
+            MinCutoffChanged += (sender, args) => { euroFilter.MinCutoff = MinCutoff; };
         }
 
         public void RemoveRefreshEvents()
@@ -831,53 +811,43 @@ namespace DS4Windows
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class TriggerOutputSettings
     {
         private const TwoStageTriggerMode DEFAULT_TRIG_MODE = TwoStageTriggerMode.Disabled;
         private const int DEFAULT_HIP_TIME = 100;
         private const TriggerEffects DEFAULT_TRIGGER_EFFECT = TriggerEffects.None;
 
-        //public TriggerMode mode = TriggerMode.Normal;
-        public TwoStageTriggerMode twoStageMode = DEFAULT_TRIG_MODE;
+        public TwoStageTriggerMode TwoStageMode { get; set; } = DEFAULT_TRIG_MODE;
+        
+        public TriggerEffectSettings EffectSettings { get; set; } = new();
+        
+        public int HipFireMs { get; set; } = DEFAULT_HIP_TIME;
+        
+        public TriggerEffects TriggerEffect { get; set; } = DEFAULT_TRIGGER_EFFECT;
 
-        public TwoStageTriggerMode TwoStageMode
+        [UsedImplicitly]
+        private void OnTwoStageModeChanged()
         {
-            get => twoStageMode;
-            set
-            {
-                if (twoStageMode == value) return;
-                twoStageMode = value;
-                TwoStageModeChanged?.Invoke(this, EventArgs.Empty);
-            }
+            TwoStageModeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler TwoStageModeChanged;
 
-        public int HipFireMs { get; set; } = DEFAULT_HIP_TIME;
-
-        public TriggerEffects triggerEffect = DEFAULT_TRIGGER_EFFECT;
-
-        public TriggerEffects TriggerEffect
+        [UsedImplicitly]
+        private void OnTriggerEffectChanged()
         {
-            get => triggerEffect;
-            set
-            {
-                if (triggerEffect == value) return;
-                triggerEffect = value;
-                TriggerEffectChanged?.Invoke(this, EventArgs.Empty);
-            }
+            TriggerEffectChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler TriggerEffectChanged;
 
-        public TriggerEffectSettings EffectSettings { get; set; } = new();
-
         public void ResetSettings()
         {
             //mode = TriggerMode.Normal;
-            twoStageMode = DEFAULT_TRIG_MODE;
+            TwoStageMode = DEFAULT_TRIG_MODE;
             HipFireMs = DEFAULT_HIP_TIME;
-            triggerEffect = DEFAULT_TRIGGER_EFFECT;
+            TriggerEffect = DEFAULT_TRIGGER_EFFECT;
             TwoStageModeChanged?.Invoke(this, EventArgs.Empty);
             TriggerEffectChanged?.Invoke(this, EventArgs.Empty);
         }

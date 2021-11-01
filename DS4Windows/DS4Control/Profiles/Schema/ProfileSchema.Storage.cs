@@ -242,55 +242,55 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 .LSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .realWorldCalibration;
+                .RealWorldCalibration;
             LSOutputSettings.FlickStickSettings.FlickThreshold = store
                 .LSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .flickThreshold;
+                .FlickThreshold;
             LSOutputSettings.FlickStickSettings.FlickTime = store
                 .LSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .flickTime;
+                .FlickTime;
             LSOutputSettings.FlickStickSettings.MinAngleThreshold = store
                 .LSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .minAngleThreshold;
+                .MinAngleThreshold;
 
             RSOutputSettings.FlickStickSettings.RealWorldCalibration = store
                 .RSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .realWorldCalibration;
+                .RealWorldCalibration;
             RSOutputSettings.FlickStickSettings.FlickThreshold = store
                 .RSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .flickThreshold;
+                .FlickThreshold;
             RSOutputSettings.FlickStickSettings.FlickTime = store
                 .RSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .flickTime;
+                .FlickTime;
             RSOutputSettings.FlickStickSettings.MinAngleThreshold = store
                 .RSOutputSettings[device]
                 .OutputSettings
                 .FlickSettings
-                .minAngleThreshold;
+                .MinAngleThreshold;
 
             L2OutputCurveMode = store.AxisOutputCurveString(store.GetL2OutCurveMode(device));
             L2OutputCurveCustom = store.L2OutBezierCurveObj[device];
 
-            L2TwoStageMode = store.L2OutputSettings[device].twoStageMode;
-            R2TwoStageMode = store.R2OutputSettings[device].twoStageMode;
+            L2TwoStageMode = store.L2OutputSettings[device].TwoStageMode;
+            R2TwoStageMode = store.R2OutputSettings[device].TwoStageMode;
 
             L2HipFireTime = store.L2OutputSettings[device].HipFireMs;
             R2HipFireTime = store.R2OutputSettings[device].HipFireMs;
 
-            L2TriggerEffect = store.L2OutputSettings[device].triggerEffect;
-            R2TriggerEffect = store.R2OutputSettings[device].triggerEffect;
+            L2TriggerEffect = store.L2OutputSettings[device].TriggerEffect;
+            R2TriggerEffect = store.R2OutputSettings[device].TriggerEffect;
 
             R2OutputCurveMode = store.AxisOutputCurveString(store.GetR2OutCurveMode(device));
             R2OutputCurveCustom = store.R2OutBezierCurveObj[device];
@@ -503,21 +503,21 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.LSOutputSettings[device].Mode = LSOutputMode;
             store.RSOutputSettings[device].Mode = RSOutputMode;
 
-            store.LSOutputSettings[device].OutputSettings.FlickSettings.realWorldCalibration =
+            store.LSOutputSettings[device].OutputSettings.FlickSettings.RealWorldCalibration =
                 LSOutputSettings.FlickStickSettings.RealWorldCalibration;
-            store.LSOutputSettings[device].OutputSettings.FlickSettings.flickThreshold =
+            store.LSOutputSettings[device].OutputSettings.FlickSettings.FlickThreshold =
                 LSOutputSettings.FlickStickSettings.FlickThreshold;
-            store.LSOutputSettings[device].OutputSettings.FlickSettings.flickTime =
+            store.LSOutputSettings[device].OutputSettings.FlickSettings.FlickTime =
                 LSOutputSettings.FlickStickSettings.FlickTime;
-            store.LSOutputSettings[device].OutputSettings.FlickSettings.minAngleThreshold =
+            store.LSOutputSettings[device].OutputSettings.FlickSettings.MinAngleThreshold =
                 LSOutputSettings.FlickStickSettings.MinAngleThreshold;
-            store.RSOutputSettings[device].OutputSettings.FlickSettings.realWorldCalibration =
+            store.RSOutputSettings[device].OutputSettings.FlickSettings.RealWorldCalibration =
                 RSOutputSettings.FlickStickSettings.RealWorldCalibration;
-            store.RSOutputSettings[device].OutputSettings.FlickSettings.flickThreshold =
+            store.RSOutputSettings[device].OutputSettings.FlickSettings.FlickThreshold =
                 RSOutputSettings.FlickStickSettings.FlickThreshold;
-            store.RSOutputSettings[device].OutputSettings.FlickSettings.flickTime =
+            store.RSOutputSettings[device].OutputSettings.FlickSettings.FlickTime =
                 RSOutputSettings.FlickStickSettings.FlickTime;
-            store.RSOutputSettings[device].OutputSettings.FlickSettings.minAngleThreshold =
+            store.RSOutputSettings[device].OutputSettings.FlickSettings.MinAngleThreshold =
                 RSOutputSettings.FlickStickSettings.MinAngleThreshold;
 
             store.L2OutBezierCurveObj[device] = L2OutputCurveCustom;
@@ -747,21 +747,21 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.LSOutputSettings.Mode = LSOutputMode;
             profile.RSOutputSettings.Mode = RSOutputMode;
 
-            profile.LSOutputSettings.OutputSettings.FlickSettings.realWorldCalibration =
+            profile.LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
                 LSOutputSettings.FlickStickSettings.RealWorldCalibration;
-            profile.LSOutputSettings.OutputSettings.FlickSettings.flickThreshold =
+            profile.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold =
                 LSOutputSettings.FlickStickSettings.FlickThreshold;
-            profile.LSOutputSettings.OutputSettings.FlickSettings.flickTime =
+            profile.LSOutputSettings.OutputSettings.FlickSettings.FlickTime =
                 LSOutputSettings.FlickStickSettings.FlickTime;
-            profile.LSOutputSettings.OutputSettings.FlickSettings.minAngleThreshold =
+            profile.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
                 LSOutputSettings.FlickStickSettings.MinAngleThreshold;
-            profile.RSOutputSettings.OutputSettings.FlickSettings.realWorldCalibration =
+            profile.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
                 RSOutputSettings.FlickStickSettings.RealWorldCalibration;
-            profile.RSOutputSettings.OutputSettings.FlickSettings.flickThreshold =
+            profile.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold =
                 RSOutputSettings.FlickStickSettings.FlickThreshold;
-            profile.RSOutputSettings.OutputSettings.FlickSettings.flickTime =
+            profile.RSOutputSettings.OutputSettings.FlickSettings.FlickTime =
                 RSOutputSettings.FlickStickSettings.FlickTime;
-            profile.RSOutputSettings.OutputSettings.FlickSettings.minAngleThreshold =
+            profile.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
                 RSOutputSettings.FlickStickSettings.MinAngleThreshold;
 
             profile.L2OutCurve = L2OutputCurveCustom;

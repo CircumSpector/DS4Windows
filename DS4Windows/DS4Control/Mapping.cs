@@ -1958,7 +1958,7 @@ namespace DS4Windows
             // Process L2
             var l2TriggerSettings = Instance.Config.L2OutputSettings[device];
             var dcsTemp = controlSetGroup.L2;
-            if (l2TriggerSettings.twoStageMode == TwoStageTriggerMode.Disabled)
+            if (l2TriggerSettings.TwoStageMode == TwoStageTriggerMode.Disabled)
             {
                 ProcessControlSettingAction(dcsTemp, device, cState, MappedState, eState,
                     tp, fieldMapping, outputfieldMapping, deviceState, ref tempMouseDeltaX,
@@ -2025,7 +2025,7 @@ namespace DS4Windows
             // Process R2
             var r2TriggerSettings = Instance.Config.R2OutputSettings[device];
             dcsTemp = controlSetGroup.R2;
-            if (r2TriggerSettings.twoStageMode == TwoStageTriggerMode.Disabled)
+            if (r2TriggerSettings.TwoStageMode == TwoStageTriggerMode.Disabled)
             {
                 ProcessControlSettingAction(dcsTemp, device, cState, MappedState, eState,
                     tp, fieldMapping, outputfieldMapping, deviceState, ref tempMouseDeltaX,
@@ -2314,7 +2314,7 @@ namespace DS4Windows
             DS4ControlSettings dcsFullPull = null;
             var triggerData = twoStageData;
 
-            switch (outputSettings.twoStageMode)
+            switch (outputSettings.TwoStageMode)
             {
                 case TwoStageTriggerMode.Normal:
                     if (triggerValue == 255) dcsFullPull = inputFullPull;
@@ -2514,20 +2514,20 @@ namespace DS4Windows
             tempFlickData.flickAngleRemainder = 0.0;
             //Console.WriteLine(lsangle);
             //if (angleChange != 0.0)
-            if (flickSettings.minAngleThreshold == 0.0 && lsangle != 0.0)
+            if (flickSettings.MinAngleThreshold == 0.0 && lsangle != 0.0)
                 //if (Math.Abs(lsangle) >= 0.5)
             {
                 tempFlickData.flickAngleRemainder = 0.0;
                 //flickAngleRemainder = lsangle - (int)lsangle;
                 //lsangle = (int)lsangle;
-                tempMouseDeltaX += lsangle * flickSettings.realWorldCalibration;
+                tempMouseDeltaX += lsangle * flickSettings.RealWorldCalibration;
             }
-            else if (Math.Abs(lsangle) >= flickSettings.minAngleThreshold)
+            else if (Math.Abs(lsangle) >= flickSettings.MinAngleThreshold)
             {
                 tempFlickData.flickAngleRemainder = 0.0;
                 //flickAngleRemainder = lsangle - (int)lsangle;
                 //lsangle = (int)lsangle;
-                tempMouseDeltaX += lsangle * flickSettings.realWorldCalibration;
+                tempMouseDeltaX += lsangle * flickSettings.RealWorldCalibration;
             }
             else
             {
@@ -2557,7 +2557,7 @@ namespace DS4Windows
 
             var lastLength = lastTestX * lastTestX + lastTestY * lastTestY;
             var length = currentTestX * currentTestX + currentTestY * currentTestY;
-            var testLength = flickSettings.flickThreshold * flickSettings.flickThreshold;
+            var testLength = flickSettings.FlickThreshold * flickSettings.FlickThreshold;
 
             if (length >= testLength)
             {
@@ -2593,7 +2593,7 @@ namespace DS4Windows
 
             // Continue Flick motion
             var lastFlickProgress = flickData.flickProgress;
-            var flickTime = flickSettings.flickTime;
+            var flickTime = flickSettings.FlickTime;
             if (lastFlickProgress < flickTime)
             {
                 flickData.flickProgress = Math.Min(flickData.flickProgress + cState.elapsedTime, flickTime);
@@ -5943,7 +5943,7 @@ namespace DS4Windows
                 }
 
                 result = ClampInt(maxRangeLeft, result, maxRangeRight);
-                if (Instance.Config.WheelSmoothInfo[device].enabled)
+                if (Instance.Config.WheelSmoothInfo[device].Enabled)
                 {
                     var currentRate = 1.0 / currentDeviceState.elapsedTime; // Need to express poll time in Hz
                     var wheelFilter = wheelFilters[device];
