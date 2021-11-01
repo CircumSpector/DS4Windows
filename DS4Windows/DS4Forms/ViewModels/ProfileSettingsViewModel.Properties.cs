@@ -1942,8 +1942,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickVertScale
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].VertScale;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].VertScale = value;
+            get => Global.Instance.Config.GyroMouseStickInfo[Device].VerticalScale;
+            set => Global.Instance.Config.GyroMouseStickInfo[Device].VerticalScale = value;
         }
 
         public bool GyroMouseStickMaxOutputEnabled

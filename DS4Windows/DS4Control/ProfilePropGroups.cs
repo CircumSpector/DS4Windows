@@ -86,13 +86,13 @@ namespace DS4Windows
 
     public class StickAntiSnapbackInfo
     {
-        public const double DEFAULT_DELTA = 135;
-        public const int DEFAULT_TIMEOUT = 50;
-        public const bool DEFAULT_ENABLED = false;
+        public const double DefaultDelta = 135;
+        public const int DefaultTimeout = 50;
+        public const bool DefaultEnabled = false;
 
-        public bool Enabled { get; set; } = DEFAULT_ENABLED;
-        public double Delta { get; set; } = DEFAULT_DELTA;
-        public int Timeout { get; set; } = DEFAULT_TIMEOUT;
+        public bool Enabled { get; set; } = DefaultEnabled;
+        public double Delta { get; set; } = DefaultDelta;
+        public int Timeout { get; set; } = DefaultTimeout;
     }
 
     public class TriggerDeadZoneZInfo
@@ -165,18 +165,18 @@ namespace DS4Windows
             WeightedAverage,
         }
 
-        public const double DEFAULT_MINCUTOFF = 1.0;
-        public const double DEFAULT_BETA = 0.7;
-        public const string DEFAULT_SMOOTH_TECHNIQUE = "one-euro";
-        public const double DEFAULT_MIN_THRESHOLD = 1.0;
+        public const double DefaultMinCutoff = 1.0;
+        public const double DefaultBeta = 0.7;
+        public const string DefaultSmoothTechnique = "one-euro";
+        public const double DefaultMinThreshold = 1.0;
 
         public bool enableSmoothing = false;
         public double smoothingWeight = 0.5;
         public SmoothingMethod smoothingMethod;
 
-        public double minCutoff = DEFAULT_MINCUTOFF;
-        public double beta = DEFAULT_BETA;
-        public double minThreshold = DEFAULT_MIN_THRESHOLD;
+        public double minCutoff = DefaultMinCutoff;
+        public double beta = DefaultBeta;
+        public double minThreshold = DefaultMinThreshold;
 
         public delegate void GyroMouseInfoEventHandler(GyroMouseInfo sender, EventArgs args);
 
@@ -206,12 +206,12 @@ namespace DS4Windows
 
         public void Reset()
         {
-            minCutoff = DEFAULT_MINCUTOFF;
-            beta = DEFAULT_BETA;
+            minCutoff = DefaultMinCutoff;
+            beta = DefaultBeta;
             enableSmoothing = false;
             smoothingMethod = SmoothingMethod.None;
             smoothingWeight = 0.5;
-            minThreshold = DEFAULT_MIN_THRESHOLD;
+            minThreshold = DefaultMinThreshold;
         }
 
         public void ResetSmoothing()
@@ -302,17 +302,17 @@ namespace DS4Windows
             Y
         }
 
-        public const double DEFAULT_MINCUTOFF = 0.4;
-        public const double DEFAULT_BETA = 0.7;
-        public const string DEFAULT_SMOOTH_TECHNIQUE = "one-euro";
-        public const OutputStick DEFAULT_OUTPUT_STICK = OutputStick.RightStick;
-        public const OutputStickAxes DEFAULT_OUTPUT_STICK_AXES = OutputStickAxes.XY;
+        public const double DefaultMinCutoff = 0.4;
+        public const double DefaultBeta = 0.7;
+        public const string DefaultSmoothTechnique = "one-euro";
+        public const OutputStick DefaultOutputStick = OutputStick.RightStick;
+        public const OutputStickAxes DefaultOutputStickAxes = OutputStickAxes.XY;
 
         public int DeadZone { get; set; }
         public int MaxZone { get; set; }
         public double AntiDeadX { get; set; }
         public double AntiDeadY { get; set; }
-        public int VertScale { get; set; }
+        public int VerticalScale { get; set; }
         public bool MaxOutputEnabled { get; set; }
         public double MaxOutput { get; set; } = 100.0;
         // Flags representing invert axis choices
@@ -320,14 +320,13 @@ namespace DS4Windows
         public bool UseSmoothing { get; set; }
         public double SmoothWeight { get; set; }
         public SmoothingMethod Smoothing { get; set; }
-        public double minCutoff = DEFAULT_MINCUTOFF;
-        public double beta = DEFAULT_BETA;
-        public OutputStick outputStick = DEFAULT_OUTPUT_STICK;
-        public OutputStickAxes outputStickDir = DEFAULT_OUTPUT_STICK_AXES;
+        public double minCutoff = DefaultMinCutoff;
+        public double beta = DefaultBeta;
+        public OutputStick outputStick = DefaultOutputStick;
+        public OutputStickAxes outputStickDir = DefaultOutputStickAxes;
 
         public delegate void GyroMouseStickInfoEventHandler(GyroMouseStickInfo sender,
             EventArgs args);
-
 
         public double MinCutoff
         {
@@ -357,13 +356,13 @@ namespace DS4Windows
         {
             DeadZone = 30; MaxZone = 830;
             AntiDeadX = 0.4; AntiDeadY = 0.4;
-            Inverted = 0; VertScale = 100;
+            Inverted = 0; VerticalScale = 100;
             MaxOutputEnabled = false; MaxOutput = 100.0;
-            outputStick = DEFAULT_OUTPUT_STICK;
-            outputStickDir = DEFAULT_OUTPUT_STICK_AXES;
+            outputStick = DefaultOutputStick;
+            outputStickDir = DefaultOutputStickAxes;
 
-            minCutoff = DEFAULT_MINCUTOFF;
-            beta = DEFAULT_BETA;
+            minCutoff = DefaultMinCutoff;
+            beta = DefaultBeta;
             Smoothing = SmoothingMethod.None;
             UseSmoothing = false;
             SmoothWeight = 0.5;
@@ -507,12 +506,12 @@ namespace DS4Windows
     public class ButtonMouseInfo
     {
         //public const double MOUSESTICKANTIOFFSET = 0.0128;
-        public const double MOUSESTICKANTIOFFSET = 0.008;
-        public const int DEFAULT_BUTTON_SENS = 25;
-        public const double DEFAULT_BUTTON_VERTICAL_SCALE = 1.0;
-        public const int DEFAULT_TEMP_SENS = -1;
+        public const double MouseStickAntiOffset = 0.008;
+        public const int DefaultButtonSens = 25;
+        public const double DefaultButtonVerticalScale = 1.0;
+        public const int DefaultTempSens = -1;
 
-        public int buttonSensitivity = DEFAULT_BUTTON_SENS;
+        public int buttonSensitivity = DefaultButtonSens;
         public int ButtonSensitivity
         {
             get => buttonSensitivity;
@@ -526,10 +525,10 @@ namespace DS4Windows
         public event EventHandler ButtonMouseInfoChanged;
 
         public bool MouseAcceleration { get; set; }
-        public int ActiveButtonSensitivity { get; set; } = DEFAULT_BUTTON_SENS;
-        public int TempButtonSensitivity { get; set; } = DEFAULT_TEMP_SENS;
-        public double MouseVelocityOffset { get; set; } = MOUSESTICKANTIOFFSET;
-        public double ButtonVerticalScale { get; set; } = DEFAULT_BUTTON_VERTICAL_SCALE;
+        public int ActiveButtonSensitivity { get; set; } = DefaultButtonSens;
+        public int TempButtonSensitivity { get; set; } = DefaultTempSens;
+        public double MouseVelocityOffset { get; set; } = MouseStickAntiOffset;
+        public double ButtonVerticalScale { get; set; } = DefaultButtonVerticalScale;
 
         public ButtonMouseInfo()
         {
@@ -538,7 +537,7 @@ namespace DS4Windows
 
         private void ButtonMouseInfo_ButtonMouseInfoChanged(object sender, EventArgs e)
         {
-            if (TempButtonSensitivity == DEFAULT_TEMP_SENS)
+            if (TempButtonSensitivity == DefaultTempSens)
             {
                 ActiveButtonSensitivity = buttonSensitivity;
             }
@@ -551,12 +550,12 @@ namespace DS4Windows
 
         public void Reset()
         {
-            buttonSensitivity = DEFAULT_BUTTON_SENS;
+            buttonSensitivity = DefaultButtonSens;
             MouseAcceleration = false;
-            ActiveButtonSensitivity = DEFAULT_BUTTON_SENS;
-            TempButtonSensitivity = DEFAULT_TEMP_SENS;
-            MouseVelocityOffset = MOUSESTICKANTIOFFSET;
-            ButtonVerticalScale = DEFAULT_BUTTON_VERTICAL_SCALE;
+            ActiveButtonSensitivity = DefaultButtonSens;
+            TempButtonSensitivity = DefaultTempSens;
+            MouseVelocityOffset = MouseStickAntiOffset;
+            ButtonVerticalScale = DefaultButtonVerticalScale;
         }
     }
 
@@ -684,7 +683,6 @@ namespace DS4Windows
             };
         }
     }
-
 
     public class TouchPadRelMouseSettings
     {

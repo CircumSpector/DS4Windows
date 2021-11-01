@@ -53,8 +53,8 @@ namespace DS4Windows
         {
             deviceNumber = deviceNum;
             gyroMouseSensSettings = gyroMouseSens;
-            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseInfo.DEFAULT_MINCUTOFF;
-            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseInfo.DEFAULT_BETA;
+            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseInfo.DefaultMinCutoff;
+            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseInfo.DefaultBeta;
             Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.Axis1Filter);
             Global.Instance.Config.GyroMouseInfo[deviceNum].SetRefreshEvents(filterPair.Axis2Filter);
         }

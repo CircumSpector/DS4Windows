@@ -194,7 +194,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroMouseStickInvert = store.GyroMouseStickInfo[device].Inverted;
             GyroMouseStickMaxOutput = store.GyroMouseStickInfo[device].MaxOutput;
             GyroMouseStickMaxOutputEnabled = store.GyroMouseStickInfo[device].MaxOutputEnabled;
-            GyroMouseStickVerticalScale = store.GyroMouseStickInfo[device].VertScale;
+            GyroMouseStickVerticalScale = store.GyroMouseStickInfo[device].VerticalScale;
 
             GyroMouseStickSmoothingSettings.UseSmoothing = store.GyroMouseStickInfo[device].UseSmoothing;
             GyroMouseStickSmoothingSettings.SmoothingMethod = store.GyroMouseStickInfo[device].SmoothMethodIdentifier();
@@ -447,7 +447,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.SetGyroMouseStickToggle(device, GyroMouseStickToggle, control)
             store.GyroMouseStickInfo[device].MaxOutput = Math.Min(Math.Max(GyroMouseStickMaxOutput, 0.0), 100.0);
             store.GyroMouseStickInfo[device].MaxOutputEnabled = GyroMouseStickMaxOutputEnabled;
-            store.GyroMouseStickInfo[device].VertScale = GyroMouseStickVerticalScale;
+            store.GyroMouseStickInfo[device].VerticalScale = GyroMouseStickVerticalScale;
             store.GyroMouseStickInfo[device].UseSmoothing = GyroMouseStickSmoothingSettings.UseSmoothing;
             store.GyroMouseStickInfo[device].DetermineSmoothMethod(GyroMouseStickSmoothingSettings.SmoothingMethod);
             store.GyroMouseStickInfo[device].SmoothWeight = Math.Min(
@@ -690,7 +690,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.SetGyroMouseStickToggle(device, GyroMouseStickToggle, control)
             profile.GyroMouseStickInfo.MaxOutput = Math.Min(Math.Max(GyroMouseStickMaxOutput, 0.0), 100.0);
             profile.GyroMouseStickInfo.MaxOutputEnabled = GyroMouseStickMaxOutputEnabled;
-            profile.GyroMouseStickInfo.VertScale = GyroMouseStickVerticalScale;
+            profile.GyroMouseStickInfo.VerticalScale = GyroMouseStickVerticalScale;
             profile.GyroMouseStickInfo.UseSmoothing = GyroMouseStickSmoothingSettings.UseSmoothing;
             profile.GyroMouseStickInfo.DetermineSmoothMethod(GyroMouseStickSmoothingSettings.SmoothingMethod);
             profile.GyroMouseStickInfo.SmoothWeight = Math.Min(

@@ -3160,9 +3160,9 @@ namespace DS4Windows
                 SquStickInfo[device].RSMode = false;
                 SquStickInfo[device].LSRoundness = 5.0;
                 SquStickInfo[device].RSRoundness = 5.0;
-                LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DEFAULT_TIMEOUT;
-                LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DEFAULT_DELTA;
-                LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DEFAULT_ENABLED;
+                LSAntiSnapbackInfo[device].Timeout = StickAntiSnapbackInfo.DefaultTimeout;
+                LSAntiSnapbackInfo[device].Delta = StickAntiSnapbackInfo.DefaultDelta;
+                LSAntiSnapbackInfo[device].Enabled = StickAntiSnapbackInfo.DefaultEnabled;
                 SetLsOutCurveMode(device, 0);
                 SetRsOutCurveMode(device, 0);
                 SetL2OutCurveMode(device, 0);

@@ -82,8 +82,8 @@ namespace DS4Windows
             trackballAccel = TRACKBALL_RADIUS * TRACKBALL_INIT_FICTION / TRACKBALL_INERTIA;
             firstTouch = new Touch(0, 0, 0);
 
-            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
-            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseStickInfo.DEFAULT_BETA;
+            filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseStickInfo.DefaultMinCutoff;
+            filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseStickInfo.DefaultBeta;
             Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis1Filter);
             Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis2Filter);
         }
@@ -804,9 +804,9 @@ namespace DS4Windows
                 maxDirY = deltaY >= 0 ? 127 : -128;
             }
 
-            if (msinfo.VertScale != 100)
+            if (msinfo.VerticalScale != 100)
             {
-                var verticalScale = msinfo.VertScale * 0.01;
+                var verticalScale = msinfo.VerticalScale * 0.01;
                 deltaY = (int)(deltaY * verticalScale);
                 deltaY = deltaY < 0 && deltaY < maxValY ? maxValY :
                     deltaY > 0 && deltaY > maxValY ? maxValY : deltaY;

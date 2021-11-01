@@ -368,7 +368,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool RSAntiSnapback { get; set; }
 
         [XmlElement(ElementName = "LSAntiSnapbackDelta")]
-        public double LSAntiSnapbackDelta { get; set; } = StickAntiSnapbackInfo.DEFAULT_DELTA;
+        public double LSAntiSnapbackDelta { get; set; } = StickAntiSnapbackInfo.DefaultDelta;
 
         [XmlElement(ElementName = "RSAntiSnapbackDelta")]
         public double RSAntiSnapbackDelta { get; set; }

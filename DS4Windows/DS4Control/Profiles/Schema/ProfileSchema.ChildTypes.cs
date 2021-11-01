@@ -107,10 +107,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public double SmoothingWeight { get; set; } = 0.5;
 
         [XmlElement(ElementName = "SmoothingMinCutoff")]
-        public double SmoothingMinCutoff { get; set; } = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
+        public double SmoothingMinCutoff { get; set; } = GyroMouseStickInfo.DefaultMinCutoff;
 
         [XmlElement(ElementName = "SmoothingBeta")]
-        public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DEFAULT_BETA;
+        public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DefaultBeta;
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -127,10 +127,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public double SmoothingWeight { get; set; } = 0.5;
 
         [XmlElement(ElementName = "SmoothingMinCutoff")]
-        public double SmoothingMinCutoff { get; set; } = GyroMouseStickInfo.DEFAULT_MINCUTOFF;
+        public double SmoothingMinCutoff { get; set; } = GyroMouseStickInfo.DefaultMinCutoff;
 
         [XmlElement(ElementName = "SmoothingBeta")]
-        public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DEFAULT_BETA;
+        public double SmoothingBeta { get; set; } = GyroMouseStickInfo.DefaultBeta;
     }
 
     [AddINotifyPropertyChangedInterface]
