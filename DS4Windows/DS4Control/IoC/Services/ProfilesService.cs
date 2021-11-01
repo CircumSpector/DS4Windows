@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -18,7 +17,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of all the available profiles.
         /// </summary>
-        IReadOnlyDictionary<Guid, DS4WindowsProfile> AvailableProfiles { get; }
+        ReadOnlyObservableCollection<DS4WindowsProfile> AvailableProfiles { get; }
 
         /// <summary>
         ///     A collection of currently active profiles per controller slot.
@@ -138,8 +137,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         private readonly ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
 
-        private readonly IDictionary<Guid, DS4WindowsProfile> availableProfiles =
-            new ConcurrentDictionary<Guid, DS4WindowsProfile>();
+        private readonly ObservableCollection<DS4WindowsProfile> availableProfiles;
 
         private readonly ObservableCollection<DS4WindowsProfile> controllerSlotProfiles;
 
@@ -161,6 +159,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             this.global = global;
             this.appSettings = appSettings;
 
+            availableProfiles = new ObservableCollection<DS4WindowsProfile>();
+
+            AvailableProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(availableProfiles);
+
             controllerSlotProfiles = new ObservableCollection<DS4WindowsProfile>(Enumerable
                 .Range(0, 8)
                 .Select(i => new DS4WindowsProfile(i)));
@@ -171,6 +173,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             AutoSwitchingProfiles = new ReadOnlyObservableCollection<AutoSwitchingProfileEntry>(autoSwitchingProfiles);
 
+            //
+            // TODO: evil!
+            // 
             Instance = this;
         }
 
@@ -200,8 +205,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     A collection of all the available profiles.
         /// </summary>
-        public IReadOnlyDictionary<Guid, DS4WindowsProfile> AvailableProfiles =>
-            availableProfiles.ToImmutableDictionary(pair => pair.Key, pair => pair.Value);
+        public ReadOnlyObservableCollection<DS4WindowsProfile> AvailableProfiles { get; }
 
         /// <summary>
         ///     A collection of profile IDs linked to a particular controller ID (MAC address).
@@ -229,7 +233,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
             File.Delete(profilePath);
 
-            availableProfiles.Remove(profile.Id);
+            availableProfiles.Remove(profile);
         }
 
         /// <summary>
@@ -238,7 +242,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="guid">The <see cref="Guid" /> of the <see cref="DS4WindowsProfile" /> to look for.</param>
         public void DeleteProfile(Guid guid)
         {
-            DeleteProfile(availableProfiles[guid]);
+            DeleteProfile(availableProfiles.First(p => Equals(p.Id, guid)));
         }
 
         /// <summary>
@@ -268,7 +272,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="displayName">The new name.</param>
         public void RenameProfile(Guid guid, string displayName)
         {
-            RenameProfile(availableProfiles[guid], displayName);
+            RenameProfile(availableProfiles.First(p => Equals(p.Id, guid)), displayName);
         }
 
         /// <summary>
@@ -301,14 +305,14 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                     continue;
                 }
 
-                if (availableProfiles.ContainsKey(profile.Id))
+                if (availableProfiles.Any(p => Equals(p.Id, profile.Id)))
                 {
                     logger.LogWarning("Profile \"{Name}\" with ID {Id} already loaded, skipping",
                         profile.DisplayName, profile.Id);
                     continue;
                 }
 
-                availableProfiles.Add(profile.Id, profile.WithChangeNotification(PropertyChangedHandler));
+                availableProfiles.Add(profile.WithChangeNotification(PropertyChangedHandler));
             }
         }
 
@@ -324,7 +328,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
             Directory.CreateDirectory(directory);
 
-            foreach (var (_, profile) in availableProfiles) PersistProfile(profile, directory);
+            foreach (var profile in availableProfiles) PersistProfile(profile, directory);
         }
 
         /// <summary>
@@ -446,7 +450,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 // 
                 if (linkedProfileId != DS4WindowsProfile.DefaultProfileId)
                 {
-                    availableProfiles[linkedProfileId].DeepCloneTo(controllerSlotProfiles[slot]);
+                    availableProfiles.First(p => Equals(p.Id, linkedProfileId)) .DeepCloneTo(controllerSlotProfiles[slot]);
                     controllerSlotProfiles[slot].DeviceId = address;
                     return;
                 }
@@ -529,7 +533,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             profile ??= new DS4WindowsProfile();
 
-            availableProfiles.Add(profile.Id, profile);
+            availableProfiles.Add(profile);
 
             PersistProfile(profile, global.ProfilesDirectory);
         }
@@ -569,10 +573,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
         {
-            return profileId.HasValue &&
-                   availableProfiles.TryGetValue(profileId.Value, out var value)
-                ? value // customized profile found
-                : new DS4WindowsProfile(slot); // provide default profile
+            return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ?? new DS4WindowsProfile(slot);
         }
 
         /// <summary>
