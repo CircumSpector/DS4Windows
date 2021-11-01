@@ -1677,12 +1677,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseMinThreshold
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].minThreshold;
+            get => Global.Instance.Config.GyroMouseInfo[Device].MinThreshold;
             set
             {
-                var temp = Global.Instance.Config.GyroMouseInfo[Device].minThreshold;
+                var temp = Global.Instance.Config.GyroMouseInfo[Device].MinThreshold;
                 if (temp == value) return;
-                Global.Instance.Config.GyroMouseInfo[Device].minThreshold = value;
+                Global.Instance.Config.GyroMouseInfo[Device].MinThreshold = value;
             }
         }
 
@@ -1712,13 +1712,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseSmooth
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].enableSmoothing;
+            get => Global.Instance.Config.GyroMouseInfo[Device].EnableSmoothing;
             set
             {
                 var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
-                if (tempInfo.enableSmoothing == value) return;
+                if (tempInfo.EnableSmoothing == value) return;
 
-                Global.Instance.Config.GyroMouseInfo[Device].enableSmoothing = value;
+                Global.Instance.Config.GyroMouseInfo[Device].EnableSmoothing = value;
                 GyroMouseSmoothChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -1735,11 +1735,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     case 0:
                         tempInfo.ResetSmoothingMethods();
-                        tempInfo.smoothingMethod = GyroMouseInfo.SmoothingMethod.OneEuro;
+                        tempInfo.Smoothing = GyroMouseInfo.SmoothingMethod.OneEuro;
                         break;
                     case 1:
                         tempInfo.ResetSmoothingMethods();
-                        tempInfo.smoothingMethod = GyroMouseInfo.SmoothingMethod.WeightedAverage;
+                        tempInfo.Smoothing = GyroMouseInfo.SmoothingMethod.WeightedAverage;
                         break;
                 }
 
@@ -1753,7 +1753,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseInfo[Device].smoothingMethod)
+                switch (Global.Instance.Config.GyroMouseInfo[Device].Smoothing)
                 {
                     case GyroMouseInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -1769,7 +1769,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseInfo[Device].smoothingMethod)
+                switch (Global.Instance.Config.GyroMouseInfo[Device].Smoothing)
                 {
                     case GyroMouseInfo.SmoothingMethod.OneEuro:
                     case GyroMouseInfo.SmoothingMethod.None:
@@ -1783,8 +1783,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseInfo[Device].smoothingWeight;
-            set => Global.Instance.Config.GyroMouseInfo[Device].smoothingWeight = value;
+            get => Global.Instance.Config.GyroMouseInfo[Device].SmoothingWeight;
+            set => Global.Instance.Config.GyroMouseInfo[Device].SmoothingWeight = value;
         }
 
         public double GyroMouseOneEuroMinCutoff

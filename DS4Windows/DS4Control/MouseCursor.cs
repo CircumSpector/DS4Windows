@@ -92,7 +92,7 @@ namespace DS4Windows
             tempDouble = arg.sixAxis.elapsed * 200.0; // Base default speed on 5 ms
 
             var tempInfo = Global.Instance.Config.GyroMouseInfo[deviceNumber];
-            gyroSmooth = tempInfo.enableSmoothing;
+            gyroSmooth = tempInfo.EnableSmoothing;
             var gyroSmoothWeight = 0.0;
 
             coefficient = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroSensitivity * 0.01 *
@@ -148,7 +148,7 @@ namespace DS4Windows
 
             if (gyroSmooth)
             {
-                if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro)
+                if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.OneEuro)
                 {
                     var currentRate = 1.0 / arg.sixAxis.elapsed;
                     xMotion = filterPair.Axis1Filter.Filter(xMotion, currentRate);
@@ -187,14 +187,14 @@ namespace DS4Windows
             xAction = (int)xMotion;
             yAction = (int)yMotion;
 
-            if (tempInfo.minThreshold == 1.0)
+            if (tempInfo.MinThreshold == 1.0)
             {
                 hRemainder = xMotion - xAction;
                 vRemainder = yMotion - yAction;
             }
             else
             {
-                if (distSqu >= tempInfo.minThreshold * tempInfo.minThreshold)
+                if (distSqu >= tempInfo.MinThreshold * tempInfo.MinThreshold)
                 {
                     hRemainder = xMotion - xAction;
                     vRemainder = yMotion - yAction;
@@ -232,7 +232,7 @@ namespace DS4Windows
             smoothBufferTail = iIndex + 1;
 
             var tempInfo = Global.Instance.Config.GyroMouseInfo[deviceNumber];
-            if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro)
+            if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.OneEuro)
             {
                 var currentRate = 1.0 / arg.sixAxis.elapsed;
                 filterPair.Axis1Filter.Filter(0.0, currentRate);

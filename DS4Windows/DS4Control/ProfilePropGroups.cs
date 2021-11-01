@@ -154,13 +154,14 @@ namespace DS4Windows
         }
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class GyroMouseInfo
     {
         public enum SmoothingMethod : byte
         {
             None,
             OneEuro,
-            WeightedAverage,
+            WeightedAverage
         }
 
         public const double DefaultMinCutoff = 1.0;
@@ -168,59 +169,55 @@ namespace DS4Windows
         public const string DefaultSmoothTechnique = "one-euro";
         public const double DefaultMinThreshold = 1.0;
 
-        public bool enableSmoothing = false;
-        public double smoothingWeight = 0.5;
-        public SmoothingMethod smoothingMethod;
+        public bool EnableSmoothing { get; set; }
 
-        public double minCutoff = DefaultMinCutoff;
-        public double beta = DefaultBeta;
-        public double minThreshold = DefaultMinThreshold;
+        public double SmoothingWeight { get; set; } = 0.5;
+
+        public SmoothingMethod Smoothing { get; set; }
+
+        public double MinCutoff { get; set; } = DefaultMinCutoff;
+
+        public double Beta { get; set; } = DefaultBeta;
+
+        public double MinThreshold { get; set; } = DefaultMinThreshold;
 
         public delegate void GyroMouseInfoEventHandler(GyroMouseInfo sender, EventArgs args);
 
-        public double MinCutoff
+        [UsedImplicitly]
+        private void OnMinCutoffChanged()
         {
-            get => minCutoff;
-            set
-            {
-                if (minCutoff == value) return;
-                minCutoff = value;
-                MinCutoffChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MinCutoffChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event GyroMouseInfoEventHandler MinCutoffChanged;
 
-        public double Beta
+        [UsedImplicitly]
+        private void OnBetaChanged()
         {
-            get => beta;
-            set
-            {
-                if (beta == value) return;
-                beta = value;
-                BetaChanged?.Invoke(this, EventArgs.Empty);
-            }
+            BetaChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event GyroMouseInfoEventHandler BetaChanged;
 
         public void Reset()
         {
-            minCutoff = DefaultMinCutoff;
-            beta = DefaultBeta;
-            enableSmoothing = false;
-            smoothingMethod = SmoothingMethod.None;
-            smoothingWeight = 0.5;
-            minThreshold = DefaultMinThreshold;
+            MinCutoff = DefaultMinCutoff;
+            Beta = DefaultBeta;
+            EnableSmoothing = false;
+            Smoothing = SmoothingMethod.None;
+            SmoothingWeight = 0.5;
+            MinThreshold = DefaultMinThreshold;
         }
 
         public void ResetSmoothing()
         {
-            enableSmoothing = false;
+            EnableSmoothing = false;
             ResetSmoothingMethods();
         }
 
         public void ResetSmoothingMethods()
         {
-            smoothingMethod = SmoothingMethod.None;
+            Smoothing = SmoothingMethod.None;
         }
 
         public void DetermineSmoothMethod(string identier)
@@ -230,43 +227,32 @@ namespace DS4Windows
             switch (identier)
             {
                 case "weighted-average":
-                    smoothingMethod = SmoothingMethod.WeightedAverage;
+                    Smoothing = SmoothingMethod.WeightedAverage;
                     break;
                 case "one-euro":
-                    smoothingMethod = SmoothingMethod.OneEuro;
+                    Smoothing = SmoothingMethod.OneEuro;
                     break;
                 default:
-                    smoothingMethod = SmoothingMethod.None;
+                    Smoothing = SmoothingMethod.None;
                     break;
             }
         }
 
         public string SmoothMethodIdentifier()
         {
-            string result = "none";
-            if (smoothingMethod == SmoothingMethod.OneEuro)
-            {
+            var result = "none";
+            if (Smoothing == SmoothingMethod.OneEuro)
                 result = "one-euro";
-            }
-            else if (smoothingMethod == SmoothingMethod.WeightedAverage)
-            {
-                result = "weighted-average";
-            }
+            else if (Smoothing == SmoothingMethod.WeightedAverage) result = "weighted-average";
 
             return result;
         }
 
         public void SetRefreshEvents(OneEuroFilter euroFilter)
         {
-            BetaChanged += (sender, args) =>
-            {
-                euroFilter.Beta = beta;
-            };
+            BetaChanged += (sender, args) => { euroFilter.Beta = Beta; };
 
-            MinCutoffChanged += (sender, args) =>
-            {
-                euroFilter.MinCutoff = minCutoff;
-            };
+            MinCutoffChanged += (sender, args) => { euroFilter.MinCutoff = MinCutoff; };
         }
 
         public void RemoveRefreshEvents()

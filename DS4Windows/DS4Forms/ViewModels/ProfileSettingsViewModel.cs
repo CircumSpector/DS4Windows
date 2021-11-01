@@ -181,10 +181,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             var result = 0;
             var tempInfo = Global.Instance.Config.GyroMouseInfo[Device];
-            if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.OneEuro ||
-                tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.None)
+            if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.OneEuro ||
+                tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.None)
                 result = 0;
-            else if (tempInfo.smoothingMethod == GyroMouseInfo.SmoothingMethod.WeightedAverage) result = 1;
+            else if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.WeightedAverage) result = 1;
 
             return result;
         }
