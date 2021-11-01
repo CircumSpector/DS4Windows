@@ -1088,7 +1088,7 @@ namespace DS4Windows
                 var l2ModInfo = Instance.Config.GetL2ModInfo(device);
                 var l2Deadzone = l2ModInfo.DeadZone;
                 var l2AntiDeadzone = l2ModInfo.AntiDeadZone;
-                var l2Maxzone = l2ModInfo.maxZone;
+                var l2Maxzone = l2ModInfo.MaxZone;
                 var l2MaxOutput = l2ModInfo.maxOutput;
                 if (l2Deadzone > 0 || l2AntiDeadzone > 0 || l2Maxzone != 100 || l2MaxOutput != 100.0)
                 {
@@ -1136,7 +1136,7 @@ namespace DS4Windows
                 var r2ModInfo = Instance.Config.GetR2ModInfo(device);
                 var r2Deadzone = r2ModInfo.DeadZone;
                 var r2AntiDeadzone = r2ModInfo.AntiDeadZone;
-                var r2Maxzone = r2ModInfo.maxZone;
+                var r2Maxzone = r2ModInfo.MaxZone;
                 var r2MaxOutput = r2ModInfo.maxOutput;
                 if (r2Deadzone > 0 || r2AntiDeadzone > 0 || r2Maxzone != 100 || r2MaxOutput != 100.0)
                 {

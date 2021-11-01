@@ -62,8 +62,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             L2AntiDeadZone = store.L2ModInfo[device].AntiDeadZone;
             R2AntiDeadZone = store.R2ModInfo[device].AntiDeadZone;
 
-            L2MaxZone = store.L2ModInfo[device].maxZone;
-            R2MaxZone = store.R2ModInfo[device].maxZone;
+            L2MaxZone = store.L2ModInfo[device].MaxZone;
+            R2MaxZone = store.R2ModInfo[device].MaxZone;
 
             L2MaxOutput = store.L2ModInfo[device].maxOutput;
             R2MaxOutput = store.R2ModInfo[device].maxOutput;
@@ -339,8 +339,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.R2ModInfo[device].DeadZone = RightTriggerMiddle;
             store.L2ModInfo[device].AntiDeadZone = L2AntiDeadZone;
             store.R2ModInfo[device].AntiDeadZone = R2AntiDeadZone;
-            store.L2ModInfo[device].maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
-            store.R2ModInfo[device].maxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
+            store.L2ModInfo[device].MaxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
+            store.R2ModInfo[device].MaxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
             store.L2ModInfo[device].maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
             store.R2ModInfo[device].maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
             //store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
@@ -581,8 +581,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.R2ModInfo.DeadZone = RightTriggerMiddle;
             profile.L2ModInfo.AntiDeadZone = L2AntiDeadZone;
             profile.R2ModInfo.AntiDeadZone = R2AntiDeadZone;
-            profile.L2ModInfo.maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
-            profile.R2ModInfo.maxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
+            profile.L2ModInfo.MaxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
+            profile.R2ModInfo.MaxZone = Math.Min(Math.Max(R2MaxZone, 0), 100);
             profile.L2ModInfo.maxOutput = Math.Min(Math.Max(L2MaxOutput, 0.0), 100.0);
             profile.R2ModInfo.maxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
             profile.LSRotation = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;

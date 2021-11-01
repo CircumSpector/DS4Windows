@@ -117,17 +117,15 @@ namespace DS4Windows
         public event EventHandler DeadZoneChanged;
 
         public int AntiDeadZone { get; set; }
-        public int maxZone = 100;
-        public int MaxZone
+
+        public int MaxZone { get; set; } = 100;
+
+        [UsedImplicitly]
+        private void OnMaxZoneChanged()
         {
-            get => maxZone;
-            set
-            {
-                if (maxZone == value) return;
-                maxZone = value;
-                MaxZoneChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MaxZoneChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event EventHandler MaxZoneChanged;
 
         public double maxOutput = 100.0;
