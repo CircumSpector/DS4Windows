@@ -127,19 +127,15 @@ namespace DS4Windows
         }
 
         public event EventHandler MaxZoneChanged;
+        
+        public double MaxOutput { get; set; } = 100.0;
 
-        public double maxOutput = 100.0;
-
-        public double MaxOutput
+        [UsedImplicitly]
+        private void OnMaxOutputChanged()
         {
-            get => maxOutput;
-            set
-            {
-                if (maxOutput == value) return;
-                maxOutput = value;
-                MaxOutputChanged?.Invoke(this, EventArgs.Empty);
-            }
+            MaxOutputChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event EventHandler MaxOutputChanged;
 
         public void Reset()

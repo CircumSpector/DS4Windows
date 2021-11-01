@@ -1673,10 +1673,10 @@ namespace DS4Windows
             Mapping.flickMappingData[ind].Reset();
 
             Instance.Config.L2OutputSettings[ind].EffectSettings.MaxValue =
-                (byte)(Math.Max(Instance.Config.L2ModInfo[ind].maxOutput, Instance.Config.L2ModInfo[ind].MaxZone) /
+                (byte)(Math.Max(Instance.Config.L2ModInfo[ind].MaxOutput, Instance.Config.L2ModInfo[ind].MaxZone) /
                     100.0 * 255);
             Instance.Config.R2OutputSettings[ind].EffectSettings.MaxValue =
-                (byte)(Math.Max(Instance.Config.R2ModInfo[ind].maxOutput, Instance.Config.R2ModInfo[ind].MaxZone) /
+                (byte)(Math.Max(Instance.Config.R2ModInfo[ind].MaxOutput, Instance.Config.R2ModInfo[ind].MaxZone) /
                     100.0 * 255);
 
             device.PrepareTriggerEffect(TriggerId.LeftTrigger, Instance.Config.L2OutputSettings[ind].TriggerEffect,
@@ -1769,7 +1769,7 @@ namespace DS4Windows
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.L2OutputSettings[tempIdx].EffectSettings.MaxValue =
-                    (byte)(Math.Max(tempInfo.maxOutput, tempInfo.MaxZone) / 100.0 * 255.0);
+                    (byte)(Math.Max(tempInfo.MaxOutput, tempInfo.MaxZone) / 100.0 * 255.0);
 
                 // Refresh trigger effect
                 device.PrepareTriggerEffect(TriggerId.LeftTrigger,
@@ -1780,7 +1780,7 @@ namespace DS4Windows
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.L2OutputSettings[tempIdx].EffectSettings.MaxValue =
-                    (byte)(Math.Max(tempInfo.maxOutput, tempInfo.MaxZone) / 100.0 * 255.0);
+                    (byte)(Math.Max(tempInfo.MaxOutput, tempInfo.MaxZone) / 100.0 * 255.0);
 
                 // Refresh trigger effect
                 device.PrepareTriggerEffect(TriggerId.LeftTrigger,
@@ -1799,7 +1799,7 @@ namespace DS4Windows
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.R2OutputSettings[tempIdx].EffectSettings.MaxValue =
-                    (byte)(tempInfo.maxOutput / 100.0 * 255.0);
+                    (byte)(tempInfo.MaxOutput / 100.0 * 255.0);
 
                 // Refresh trigger effect
                 device.PrepareTriggerEffect(TriggerId.RightTrigger,
@@ -1810,7 +1810,7 @@ namespace DS4Windows
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
                 Instance.Config.R2OutputSettings[tempIdx].EffectSettings.MaxValue =
-                    (byte)(tempInfo.maxOutput / 100.0 * 255.0);
+                    (byte)(tempInfo.MaxOutput / 100.0 * 255.0);
 
                 // Refresh trigger effect
                 device.PrepareTriggerEffect(TriggerId.RightTrigger,
