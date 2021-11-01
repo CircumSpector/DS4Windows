@@ -2,48 +2,47 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
-using AdonisUI.Controls;
+using System.Windows;
 using DS4Windows;
 using HttpProgress;
+using MessageBox = AdonisUI.Controls.MessageBox;
 
 namespace DS4WinWPF.DS4Forms
 {
     public partial class MainWindow
     {
-         private void DownloadUpstreamVersionInfo()
+        private void DownloadUpstreamVersionInfo()
         {
             // Sorry other devs, gonna have to find your own server
-            Uri url = new Uri("https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/newest.txt");
-            string filename = Global.RuntimeAppDataPath + "\\version.txt";
-            bool success = false;
+            var url = new Uri("https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/newest.txt");
+            var filename = Global.RuntimeAppDataPath + "\\version.txt";
+            var success = false;
             using (var downloadStream = new FileStream(filename, FileMode.Create))
             {
-                Task<System.Net.Http.HttpResponseMessage> temp = App.requestClient.GetAsync(url.ToString(), downloadStream);
+                var temp = App.requestClient.GetAsync(url.ToString(), downloadStream);
                 try
                 {
                     temp.Wait();
                     if (temp.Result.IsSuccessStatusCode) success = true;
                 }
-                catch (AggregateException) { }
+                catch (AggregateException)
+                {
+                }
             }
 
-            if (!success && File.Exists(filename))
-            {
-                File.Delete(filename);
-            }
+            if (!success && File.Exists(filename)) File.Delete(filename);
         }
 
         private string DownloadUpstreamUpdaterVersion()
         {
-            string result = string.Empty;
+            var result = string.Empty;
             // Sorry other devs, gonna have to find your own server
-            Uri url = new Uri("https://raw.githubusercontent.com/Ryochan7/DS4Updater/master/Updater2/newest.txt");
-            string filename = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "DS4Updater_version.txt");
-            bool readFile = false;
+            var url = new Uri("https://raw.githubusercontent.com/Ryochan7/DS4Updater/master/Updater2/newest.txt");
+            var filename = Path.Combine(Path.GetTempPath(), "DS4Updater_version.txt");
+            var readFile = false;
             using (var downloadStream = new FileStream(filename, FileMode.Create))
             {
-                Task<System.Net.Http.HttpResponseMessage> temp = App.requestClient.GetAsync(url.ToString(), downloadStream);
+                var temp = App.requestClient.GetAsync(url.ToString(), downloadStream);
                 temp.Wait();
 
                 if (temp.Result.IsSuccessStatusCode) readFile = true;
@@ -78,7 +77,7 @@ namespace DS4WinWPF.DS4Forms
             if (!string.IsNullOrWhiteSpace(newversion) && version.CompareTo(newversion) != 0 &&
                 lastVersionNum < newversionNum)
             {
-                var result = System.Windows.MessageBoxResult.No;
+                var result = MessageBoxResult.No;
                 Dispatcher.Invoke(() =>
                 {
                     var updaterWin = new UpdaterWindow(newversion);
@@ -86,7 +85,7 @@ namespace DS4WinWPF.DS4Forms
                     result = updaterWin.Result;
                 });
 
-                if (result == System.Windows.MessageBoxResult.Yes)
+                if (result == MessageBoxResult.Yes)
                 {
                     var launch = true;
                     launch = RunUpdaterCheck(launch);
