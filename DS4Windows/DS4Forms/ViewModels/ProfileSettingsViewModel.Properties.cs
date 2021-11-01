@@ -1132,24 +1132,24 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double L2DeadZone
         {
-            get => Global.Instance.Config.L2ModInfo[Device].deadZone / 255.0;
+            get => Global.Instance.Config.L2ModInfo[Device].DeadZone / 255.0;
             set
             {
-                var temp = Global.Instance.Config.L2ModInfo[Device].deadZone / 255.0;
+                var temp = Global.Instance.Config.L2ModInfo[Device].DeadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.Config.L2ModInfo[Device].deadZone = (byte)(value * 255.0);
+                Global.Instance.Config.L2ModInfo[Device].DeadZone = (byte)(value * 255.0);
                 L2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double R2DeadZone
         {
-            get => Global.Instance.Config.R2ModInfo[Device].deadZone / 255.0;
+            get => Global.Instance.Config.R2ModInfo[Device].DeadZone / 255.0;
             set
             {
-                var temp = Global.Instance.Config.R2ModInfo[Device].deadZone / 255.0;
+                var temp = Global.Instance.Config.R2ModInfo[Device].DeadZone / 255.0;
                 if (temp == value) return;
-                Global.Instance.Config.R2ModInfo[Device].deadZone = (byte)(value * 255.0);
+                Global.Instance.Config.R2ModInfo[Device].DeadZone = (byte)(value * 255.0);
                 R2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }

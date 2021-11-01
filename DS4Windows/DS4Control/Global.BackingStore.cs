@@ -2315,10 +2315,10 @@ namespace DS4Windows
                 rsInfo.MaxZone = 100;
 
                 var l2Info = L2ModInfo[device];
-                l2Info.deadZone = (byte)(0.00 * 255);
+                l2Info.DeadZone = (byte)(0.00 * 255);
 
                 var r2Info = R2ModInfo[device];
-                r2Info.deadZone = (byte)(0.00 * 255);
+                r2Info.DeadZone = (byte)(0.00 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
@@ -2417,10 +2417,10 @@ namespace DS4Windows
                 rsInfo.MaxZone = 100;
 
                 var l2Info = L2ModInfo[device];
-                l2Info.deadZone = (byte)(0.00 * 255);
+                l2Info.DeadZone = (byte)(0.00 * 255);
 
                 var r2Info = R2ModInfo[device];
-                r2Info.deadZone = (byte)(0.00 * 255);
+                r2Info.DeadZone = (byte)(0.00 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.MouseJoystick;
                 SAMouseStickTriggers[device] = "4";
@@ -2498,10 +2498,10 @@ namespace DS4Windows
                 rsInfo.MaxZone = 100;
 
                 var l2Info = L2ModInfo[device];
-                l2Info.deadZone = (byte)(0.00 * 255);
+                l2Info.DeadZone = (byte)(0.00 * 255);
 
                 var r2Info = R2ModInfo[device];
-                r2Info.deadZone = (byte)(0.00 * 255);
+                r2Info.DeadZone = (byte)(0.00 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
                 //SATriggers[device] = "4";
@@ -2628,10 +2628,10 @@ namespace DS4Windows
                 rsInfo.MaxZone = 90;
 
                 var l2Info = L2ModInfo[device];
-                l2Info.deadZone = (byte)(0.20 * 255);
+                l2Info.DeadZone = (byte)(0.20 * 255);
 
                 var r2Info = R2ModInfo[device];
-                r2Info.deadZone = (byte)(0.20 * 255);
+                r2Info.DeadZone = (byte)(0.20 * 255);
 
                 // Flag to unplug virtual controller
                 //DIOnly[device] = true;
@@ -2732,10 +2732,10 @@ namespace DS4Windows
                 rsInfo.MaxZone = 90;
 
                 var l2Info = L2ModInfo[device];
-                l2Info.deadZone = (byte)(0.20 * 255);
+                l2Info.DeadZone = (byte)(0.20 * 255);
 
                 var r2Info = R2ModInfo[device];
-                r2Info.deadZone = (byte)(0.20 * 255);
+                r2Info.DeadZone = (byte)(0.20 * 255);
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
                 //SATriggers[device] = "4";

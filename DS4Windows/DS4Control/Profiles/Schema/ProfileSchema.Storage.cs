@@ -54,8 +54,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //TapSensitivity = store.TapSensitivity[device];
             //ScrollSensitivity = store.ScrollSensitivity[device];
 
-            LeftTriggerMiddle = store.L2ModInfo[device].deadZone;
-            RightTriggerMiddle = store.R2ModInfo[device].deadZone;
+            LeftTriggerMiddle = store.L2ModInfo[device].DeadZone;
+            RightTriggerMiddle = store.R2ModInfo[device].DeadZone;
 
             //TouchpadInvert = store.TouchPadInvert[device];
 
@@ -335,8 +335,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             //store.TapSensitivity[device] = TapSensitivity;
             //store.ScrollSensitivity[device] = ScrollSensitivity;
             //store.TouchPadInvert[device] = Math.Min(Math.Max(TouchpadInvert, 0), 3);
-            store.L2ModInfo[device].deadZone = LeftTriggerMiddle;
-            store.R2ModInfo[device].deadZone = RightTriggerMiddle;
+            store.L2ModInfo[device].DeadZone = LeftTriggerMiddle;
+            store.R2ModInfo[device].DeadZone = RightTriggerMiddle;
             store.L2ModInfo[device].AntiDeadZone = L2AntiDeadZone;
             store.R2ModInfo[device].AntiDeadZone = R2AntiDeadZone;
             store.L2ModInfo[device].maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);
@@ -577,8 +577,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             profile.ScrollSensitivity = ScrollSensitivity;
             profile.TouchPadInvert = Math.Min(Math.Max(TouchpadInvert, 0), 3);
             profile.TouchClickPassthru = TouchpadClickPassthru;
-            profile.L2ModInfo.deadZone = LeftTriggerMiddle;
-            profile.R2ModInfo.deadZone = RightTriggerMiddle;
+            profile.L2ModInfo.DeadZone = LeftTriggerMiddle;
+            profile.R2ModInfo.DeadZone = RightTriggerMiddle;
             profile.L2ModInfo.AntiDeadZone = L2AntiDeadZone;
             profile.R2ModInfo.AntiDeadZone = R2AntiDeadZone;
             profile.L2ModInfo.maxZone = Math.Min(Math.Max(L2MaxZone, 0), 100);

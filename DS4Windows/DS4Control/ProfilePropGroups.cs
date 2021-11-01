@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using DS4Windows.InputDevices;
-using Newtonsoft.Json;
+using JetBrains.Annotations;
+using PropertyChanged;
 using Sensorit.Base;
 
 namespace DS4Windows
@@ -9,8 +10,11 @@ namespace DS4Windows
     public class SquareStickInfo
     {
         public bool LSMode { get; set; }
+
         public bool RSMode { get; set; }
+
         public double LSRoundness { get; set; } = 5.0;
+
         public double RSRoundness { get; set; } = 5.0;
     }
 
@@ -92,25 +96,24 @@ namespace DS4Windows
         public const bool DefaultEnabled = false;
 
         public bool Enabled { get; set; } = DefaultEnabled;
+
         public double Delta { get; set; } = DefaultDelta;
+
         public int Timeout { get; set; } = DefaultTimeout;
     }
 
+    [AddINotifyPropertyChangedInterface]
     public class TriggerDeadZoneZInfo
     {
         // Trigger deadzone is expressed in axis units (bad old convention)
-        public byte deadZone;
+        public byte DeadZone { get; set; }
 
-        public byte DeadZone
+        [UsedImplicitly]
+        private void OnDeadZoneChanged()
         {
-            get => deadZone;
-            set
-            {
-                if (deadZone == value) return;
-                deadZone = value;
-                DeadZoneChanged?.Invoke(this, EventArgs.Empty);
-            }
+            DeadZoneChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public event EventHandler DeadZoneChanged;
 
         public int AntiDeadZone { get; set; }
@@ -143,7 +146,7 @@ namespace DS4Windows
 
         public void Reset()
         {
-            deadZone = 0;
+            DeadZone = 0;
             AntiDeadZone = 0;
             MaxZone = 100;
             MaxOutput = 100.0;
