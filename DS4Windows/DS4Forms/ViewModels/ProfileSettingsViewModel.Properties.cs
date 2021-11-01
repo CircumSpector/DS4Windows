@@ -687,86 +687,86 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSDeadZone
         {
-            get => Math.Round(Global.Instance.Config.LSModInfo[Device].DeadZone / 127d, 2);
+            get => Math.Round(ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.DeadZone / 127d, 2);
             set
             {
-                var temp = Math.Round(Global.Instance.Config.LSModInfo[Device].DeadZone / 127d, 2);
+                var temp = Math.Round(ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.DeadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.Config.LSModInfo[Device].DeadZone = (int)Math.Round(value * 127d);
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.DeadZone = (int)Math.Round(value * 127d);
                 LSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double RSDeadZone
         {
-            get => Math.Round(Global.Instance.Config.RSModInfo[Device].DeadZone / 127d, 2);
+            get => Math.Round(ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.DeadZone / 127d, 2);
             set
             {
-                var temp = Math.Round(Global.Instance.Config.RSModInfo[Device].DeadZone / 127d, 2);
+                var temp = Math.Round(ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.DeadZone / 127d, 2);
                 if (temp == value) return;
-                Global.Instance.Config.RSModInfo[Device].DeadZone = (int)Math.Round(value * 127d);
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.DeadZone = (int)Math.Round(value * 127d);
                 RSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double LSMaxZone
         {
-            get => Global.Instance.Config.LSModInfo[Device].MaxZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[Device].MaxZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.MaxZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double RSMaxZone
         {
-            get => Global.Instance.Config.RSModInfo[Device].MaxZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[Device].MaxZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.MaxZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double LSAntiDeadZone
         {
-            get => Global.Instance.Config.LSModInfo[Device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[Device].AntiDeadZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.AntiDeadZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double RSAntiDeadZone
         {
-            get => Global.Instance.Config.RSModInfo[Device].AntiDeadZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[Device].AntiDeadZone = (int)(value * 100.0);
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.AntiDeadZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double LSVerticalScale
         {
-            get => Global.Instance.Config.LSModInfo[Device].VerticalScale / 100.0;
-            set => Global.Instance.Config.LSModInfo[Device].VerticalScale = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.VerticalScale / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.VerticalScale = value * 100.0;
         }
 
         public double LSMaxOutput
         {
-            get => Global.Instance.Config.LSModInfo[Device].MaxOutput / 100.0;
-            set => Global.Instance.Config.LSModInfo[Device].MaxOutput = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.MaxOutput / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.MaxOutput = value * 100.0;
         }
 
         public bool LSMaxOutputForce
         {
-            get => Global.Instance.Config.LSModInfo[Device].MaxOutputForce;
-            set => Global.Instance.Config.LSModInfo[Device].MaxOutputForce = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.MaxOutputForce;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.MaxOutputForce = value;
         }
 
         public double RSVerticalScale
         {
-            get => Global.Instance.Config.RSModInfo[Device].VerticalScale / 100.0;
-            set => Global.Instance.Config.RSModInfo[Device].VerticalScale = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.VerticalScale / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.VerticalScale = value * 100.0;
         }
 
         public double RSMaxOutput
         {
-            get => Global.Instance.Config.RSModInfo[Device].MaxOutput / 100.0;
-            set => Global.Instance.Config.RSModInfo[Device].MaxOutput = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.MaxOutput / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.MaxOutput = value * 100.0;
         }
 
         public bool RSMaxOutputForce
         {
-            get => Global.Instance.Config.RSModInfo[Device].MaxOutputForce;
-            set => Global.Instance.Config.RSModInfo[Device].MaxOutputForce = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.MaxOutputForce;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.MaxOutputForce = value;
         }
 
         public int LSDeadTypeIndex
@@ -774,7 +774,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (Global.Instance.Config.LSModInfo[Device].DZType)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -796,9 +796,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = Global.Instance.Config.LSModInfo[Device].DZType;
+                var current = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.DZType;
                 if (temp == current) return;
-                Global.Instance.Config.LSModInfo[Device].DZType = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.DZType = temp;
             }
         }
 
@@ -807,7 +807,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (Global.Instance.Config.RSModInfo[Device].DZType)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -829,9 +829,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = Global.Instance.Config.RSModInfo[Device].DZType;
+                var current = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.DZType;
                 if (temp == current) return;
-                Global.Instance.Config.RSModInfo[Device].DZType = temp;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.DZType = temp;
             }
         }
 
@@ -923,14 +923,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LSFuzz
         {
-            get => Global.Instance.Config.LSModInfo[Device].Fuzz;
-            set => Global.Instance.Config.LSModInfo[Device].Fuzz = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.Fuzz;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.Fuzz = value;
         }
 
         public int RSFuzz
         {
-            get => Global.Instance.Config.RSModInfo[Device].Fuzz;
-            set => Global.Instance.Config.RSModInfo[Device].Fuzz = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.Fuzz;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.Fuzz = value;
         }
 
         public bool LSAntiSnapback
@@ -971,26 +971,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool LSOuterBindInvert
         {
-            get => Global.Instance.Config.LSModInfo[Device].OuterBindInvert;
-            set => Global.Instance.Config.LSModInfo[Device].OuterBindInvert = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.OuterBindInvert;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.OuterBindInvert = value;
         }
 
         public bool RSOuterBindInvert
         {
-            get => Global.Instance.Config.RSModInfo[Device].OuterBindInvert;
-            set => Global.Instance.Config.RSModInfo[Device].OuterBindInvert = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.OuterBindInvert;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.OuterBindInvert = value;
         }
 
         public double LSOuterBindDead
         {
-            get => Global.Instance.Config.LSModInfo[Device].OuterBindDeadZone / 100.0;
-            set => Global.Instance.Config.LSModInfo[Device].OuterBindDeadZone = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.OuterBindDeadZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).LSModInfo.OuterBindDeadZone = value * 100.0;
         }
 
         public double RSOuterBindDead
         {
-            get => Global.Instance.Config.RSModInfo[Device].OuterBindDeadZone / 100.0;
-            set => Global.Instance.Config.RSModInfo[Device].OuterBindDeadZone = value * 100.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.OuterBindDeadZone / 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).RSModInfo.OuterBindDeadZone = value * 100.0;
         }
 
         public int LSOutputIndex

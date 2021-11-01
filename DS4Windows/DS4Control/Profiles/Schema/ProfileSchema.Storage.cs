@@ -71,6 +71,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             Rainbow = light.Ds4WinSettings.Rainbow;
             MaxSatRainbow = Convert.ToInt32(light.Ds4WinSettings.MaxRainbowSaturation * 100.0);
 
+            /*
             LSDeadZone = store.LSModInfo[device].DeadZone;
             RSDeadZone = store.RSModInfo[device].DeadZone;
 
@@ -121,6 +122,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             LSOuterBindInvert = store.LSModInfo[device].OuterBindInvert;
             RSOuterBindInvert = store.RSModInfo[device].OuterBindInvert;
+            */
 
             /*
              TODO: migrate
@@ -345,8 +347,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.R2ModInfo[device].MaxOutput = Math.Min(Math.Max(R2MaxOutput, 0.0), 100.0);
             //store.LSRotation[device] = Math.Min(Math.Max(LSRotation, -180), 180) * Math.PI / 180.0;
             //store.RSRotation[device] = Math.Min(Math.Max(RSRotation, -180), 180) * Math.PI / 180.0;
-            store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
-            store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
+            //store.LSModInfo[device].Fuzz = Math.Min(Math.Max(LSFuzz, 0), 100);
+            //store.RSModInfo[device].Fuzz = Math.Min(Math.Max(RSFuzz, 0), 100);
             /*
              TODO: port math
             store.ButtonMouseInfos[device].buttonSensitivity = ButtonMouseSensitivity;
@@ -356,6 +358,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             */
             lightInfo.Rainbow = Rainbow;
             lightInfo.MaxRainbowSaturation = Math.Max(0, Math.Min(100, MaxSatRainbow)) / 100.0;
+            /*
             store.LSModInfo[device].DeadZone = Math.Min(Math.Max(LSDeadZone, 0), 127);
             store.RSModInfo[device].DeadZone = Math.Min(Math.Max(RSDeadZone, 0), 127);
             store.LSModInfo[device].AntiDeadZone = LSAntiDeadZone;
@@ -398,6 +401,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputX, 0.0), 100.0);
             store.RSModInfo[device].YAxisDeadInfo.MaxOutput =
                 Math.Min(Math.Max(RSAxialDeadOptions.MaxOutputY, 0.0), 100.0);
+            */
+
             /*
              * TODO: migrate
              

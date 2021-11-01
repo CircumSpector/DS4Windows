@@ -42,10 +42,6 @@ namespace DS4Windows
 
         IList<bool> DistanceProfiles { get; set; }
 
-        IList<StickDeadZoneInfo> LSModInfo { get; set; }
-
-        IList<StickDeadZoneInfo> RSModInfo { get; set; }
-
         IList<TriggerDeadZoneZInfo> L2ModInfo { get; set; }
 
         IList<TriggerDeadZoneZInfo> R2ModInfo { get; set; }
@@ -155,14 +151,6 @@ namespace DS4Windows
         TriggerDeadZoneZInfo GetL2ModInfo(int index);
 
         TriggerDeadZoneZInfo GetR2ModInfo(int index);
-
-        int GetLSDeadZone(int index);
-
-        int GetRSDeadZone(int index);
-
-        StickDeadZoneInfo GetLSDeadInfo(int index);
-
-        StickDeadZoneInfo GetRSDeadInfo(int index);
 
         StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device);
 

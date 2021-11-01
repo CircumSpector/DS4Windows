@@ -613,8 +613,8 @@ namespace DS4Windows
                     CalcAntiSnapbackStick(device, 1, rsAntiSnapback.Delta, rsAntiSnapback.Timeout, cState.RX, cState.RY,
                         out cState.RX, out cState.RY);
 
-                var lsMod = Instance.Config.GetLSDeadInfo(device);
-                var rsMod = Instance.Config.GetRSDeadInfo(device);
+                var lsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
+                var rsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
 
                 if (lsMod.Fuzz > 0)
                     CalcStickAxisFuzz(device, 0, lsMod.Fuzz, cState.LX, cState.LY, out cState.LX, out cState.LY);
@@ -4232,9 +4232,9 @@ namespace DS4Windows
 
             var deadzoneL = 0;
             var deadzoneR = 0;
-            if (Instance.Config.GetLSDeadZone(device) == 0)
+            if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.DeadZone == 0)
                 deadzoneL = 3;
-            if (Instance.Config.GetRSDeadZone(device) == 0)
+            if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.DeadZone == 0)
                 deadzoneR = 3;
 
             var value = 0.0;

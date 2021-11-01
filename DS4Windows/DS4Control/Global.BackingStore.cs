@@ -158,24 +158,6 @@ namespace DS4Windows
             public IList<bool> DistanceProfiles { get; set; } = new List<bool>
                 { false, false, false, false, false, false, false, false, false };
 
-            public IList<StickDeadZoneInfo> LSModInfo { get; set; } = new List<StickDeadZoneInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
-            public IList<StickDeadZoneInfo> RSModInfo { get; set; } = new List<StickDeadZoneInfo>
-            {
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
-
             public IList<TriggerDeadZoneZInfo> L2ModInfo { get; set; } = new List<TriggerDeadZoneZInfo>
             {
                 new(), new(),
@@ -443,26 +425,6 @@ namespace DS4Windows
                 return R2ModInfo[index];
             }
 
-            public int GetLSDeadZone(int index)
-            {
-                return LSModInfo[index].DeadZone;
-            }
-
-            public int GetRSDeadZone(int index)
-            {
-                return RSModInfo[index].DeadZone;
-            }
-
-            public StickDeadZoneInfo GetLSDeadInfo(int index)
-            {
-                return LSModInfo[index];
-            }
-
-            public StickDeadZoneInfo GetRSDeadInfo(int index)
-            {
-                return RSModInfo[index];
-            }
-            
             public StickAntiSnapbackInfo GetLSAntiSnapbackInfo(int device)
             {
                 return LSAntiSnapbackInfo[device];
@@ -2290,12 +2252,12 @@ namespace DS4Windows
             {
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
-                var lsInfo = LSModInfo[device];
+                var lsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
                 lsInfo.DeadZone = (int)(0.00 * 127);
                 lsInfo.AntiDeadZone = 0;
                 lsInfo.MaxZone = 100;
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.00 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 100;
@@ -2392,12 +2354,12 @@ namespace DS4Windows
             {
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
-                var lsInfo = LSModInfo[device];
+                var lsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
                 lsInfo.DeadZone = (int)(0.00 * 127);
                 lsInfo.AntiDeadZone = 0;
                 lsInfo.MaxZone = 100;
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.00 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 100;
@@ -2457,7 +2419,7 @@ namespace DS4Windows
                 GyroMouseInfo[device].EnableSmoothing = true;
                 GyroMouseInfo[device].Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.10 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
@@ -2473,12 +2435,12 @@ namespace DS4Windows
             {
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
-                var lsInfo = LSModInfo[device];
+                var lsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
                 lsInfo.DeadZone = (int)(0.00 * 127);
                 lsInfo.AntiDeadZone = 0;
                 lsInfo.MaxZone = 100;
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.10 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 100;
@@ -2518,7 +2480,7 @@ namespace DS4Windows
                 setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.035 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
@@ -2567,7 +2529,7 @@ namespace DS4Windows
                 setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.035 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
@@ -2605,10 +2567,10 @@ namespace DS4Windows
                 ContainsCustomAction[device] = false;
                 ContainsCustomExtras[device] = false;
 
-                var lsInfo = LSModInfo[device];
+                var lsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
                 lsInfo.AntiDeadZone = 0;
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.035 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
@@ -2709,10 +2671,10 @@ namespace DS4Windows
                 ContainsCustomAction[device] = false;
                 ContainsCustomExtras[device] = false;
 
-                var lsInfo = LSModInfo[device];
+                var lsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
                 lsInfo.AntiDeadZone = 0;
 
-                var rsInfo = RSModInfo[device];
+                var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.105 * 127);
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
@@ -3092,13 +3054,13 @@ namespace DS4Windows
             {
                 //IdleDisconnectTimeout[device] = 0;
 
-                LSModInfo[device].Reset();
-                RSModInfo[device].Reset();
-                LSModInfo[device].DeadZone = RSModInfo[device].DeadZone = 10;
-                LSModInfo[device].AntiDeadZone = RSModInfo[device].AntiDeadZone = 20;
-                LSModInfo[device].MaxZone = RSModInfo[device].MaxZone = 100;
-                LSModInfo[device].MaxOutput = RSModInfo[device].MaxOutput = 100.0;
-                LSModInfo[device].Fuzz = RSModInfo[device].Fuzz = StickDeadZoneInfo.DefaultFuzz;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.Reset();
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.Reset();
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.DeadZone = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.DeadZone = 10;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.AntiDeadZone = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.AntiDeadZone = 20;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.MaxZone = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.MaxZone = 100;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.MaxOutput = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.MaxOutput = 100.0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.Fuzz = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.Fuzz = StickDeadZoneInfo.DefaultFuzz;
 
                 //l2ModInfo[device].deadZone = r2ModInfo[device].deadZone = 0;
                 //l2ModInfo[device].antiDeadZone = r2ModInfo[device].antiDeadZone = 0;
