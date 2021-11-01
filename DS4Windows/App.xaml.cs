@@ -136,7 +136,7 @@ namespace DS4WinWPF
             });
 
             services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
-            services.AddSingleton<ControlService>();
+            services.AddSingleton<IControlService, ControlService>();
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
             services.AddSingleton<IProfilesService, ProfilesService>();

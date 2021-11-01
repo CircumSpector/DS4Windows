@@ -43,7 +43,6 @@ namespace DS4Windows
         IAppSettingsService GetAppSettings();
         void PostDs4DeviceInit(DS4Device device);
         bool CheckForSupportedDevice(HidDevice device, VidPidInfo metaInfo);
-        void PrepareDs4DeviceInit(DS4Device device);
         CheckVirtualInfo CheckForVirtualDevice(string deviceInstanceId);
         void ShutDown();
         Task LoadPermanentSlotsConfig();
@@ -62,7 +61,12 @@ namespace DS4Windows
         Task<bool> Start(bool showInLog = true);
         void PrepareAbort();
         bool Stop(bool showInLog = true, bool immediateUnplug = false);
+
+        /// <summary>
+        ///     Gets called when devices got "hot-plugged" (meaning inserted or removed during the lifetime of the application).
+        /// </summary>
         Task<bool> HotPlug();
+
         void CheckProfileOptions(int ind, DS4Device device, bool startUp = false);
         void TouchPadOn(int ind, DS4Device device);
         string GetDs4Battery(int index);
@@ -81,16 +85,16 @@ namespace DS4Windows
         DS4State GetDs4State(int ind);
         DS4State GetDs4StateMapped(int ind);
         DS4State GetDs4StateTemp(int ind);
-        void UseUDPPort();
-        void ResetUdpSmoothingFilters(int idx);
-        void ChangeUDPStatus(bool state, bool openPort = true);
         void RefreshOutputKBMHandler();
         void CheckHidHidePresence();
         void UpdateHidHideAttributes();
         void UpdateHidHiddenAttributes();
+        void UseUDPPort();
+        void ResetUdpSmoothingFilters(int idx);
+        void ChangeUDPStatus(bool state, bool openPort = true);
     }
 
-    public partial class ControlService
+    public partial class ControlService : IControlService
     {
         /// <summary>
         ///     TODO: temporary!
