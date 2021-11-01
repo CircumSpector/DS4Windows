@@ -1585,18 +1585,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double TouchRelMouseRotation
         {
-            get => Global.Instance.Config.TouchPadRelMouse[Device].Rotation * 180.0 / Math.PI;
-            set => Global.Instance.Config.TouchPadRelMouse[Device].Rotation = value * Math.PI / 180.0;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadRelMouse.Rotation * 180.0 / Math.PI;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadRelMouse.Rotation = value * Math.PI / 180.0;
         }
 
         public double TouchRelMouseMinThreshold
         {
-            get => Global.Instance.Config.TouchPadRelMouse[Device].MinThreshold;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadRelMouse.MinThreshold;
             set
             {
-                var temp = Global.Instance.Config.TouchPadRelMouse[Device].MinThreshold;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadRelMouse.MinThreshold;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadRelMouse[Device].MinThreshold = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadRelMouse.MinThreshold = value;
             }
         }
 
@@ -1614,34 +1614,34 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int TouchAbsMouseMaxZoneX
         {
-            get => Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneX;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.MaxZoneX;
             set
             {
-                var temp = Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneX;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.MaxZoneX;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneX = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.MaxZoneX = value;
             }
         }
 
         public int TouchAbsMouseMaxZoneY
         {
-            get => Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneY;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.MaxZoneY;
             set
             {
-                var temp = Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneY;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.MaxZoneY;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadAbsMouse[Device].MaxZoneY = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.MaxZoneY = value;
             }
         }
 
         public bool TouchAbsMouseSnapCenter
         {
-            get => Global.Instance.Config.TouchPadAbsMouse[Device].SnapToCenter;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.SnapToCenter;
             set
             {
-                var temp = Global.Instance.Config.TouchPadAbsMouse[Device].SnapToCenter;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.SnapToCenter;
                 if (temp == value) return;
-                Global.Instance.Config.TouchPadAbsMouse[Device].SnapToCenter = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).TouchPadAbsMouse.SnapToCenter = value;
             }
         }
 

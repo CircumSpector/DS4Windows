@@ -41,10 +41,6 @@ namespace DS4Windows
         IList<BezierCurve> SZOutBezierCurveObj { get; set; }
 
         IList<GyroMouseInfo> GyroMouseInfo { get; set; }
-        
-        IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; }
-
-        IList<TouchPadRelMouseSettings> TouchPadRelMouse { get; set; }
 
         IList<int> GyroMouseDeadZone { get; set; }
 

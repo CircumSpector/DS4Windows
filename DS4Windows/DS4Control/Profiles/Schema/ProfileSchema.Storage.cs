@@ -315,12 +315,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
             //TrackballFriction = store.TrackballFriction[device];
 
+            /*
             TouchRelMouseRotation = Convert.ToInt32(store.TouchPadRelMouse[device].Rotation * 180.0 / Math.PI);
             TouchRelMouseMinThreshold = store.TouchPadRelMouse[device].MinThreshold;
 
             TouchpadAbsMouseSettings.MaxZoneX = store.TouchPadAbsMouse[device].MaxZoneX;
             TouchpadAbsMouseSettings.MaxZoneY = store.TouchPadAbsMouse[device].MaxZoneY;
             TouchpadAbsMouseSettings.SnapToCenter = store.TouchPadAbsMouse[device].SnapToCenter;
+            */
         }
 
         /// <summary>
@@ -561,6 +563,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.SetSZOutCurveMode(device, store.StickOutputCurveId(SZOutputCurveMode));
             //store.TrackballFriction[device] = TrackballFriction;
 
+            /*
             store.TouchPadRelMouse[device].Rotation =
                 Math.Min(Math.Max(TouchRelMouseRotation, -180), 180) * Math.PI / 180.0;
             store.TouchPadRelMouse[device].MinThreshold = Math.Min(Math.Max(TouchRelMouseMinThreshold, 1.0), 40.0);
@@ -568,6 +571,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.TouchPadAbsMouse[device].MaxZoneX = TouchpadAbsMouseSettings.MaxZoneX;
             store.TouchPadAbsMouse[device].MaxZoneY = TouchpadAbsMouseSettings.MaxZoneY;
             store.TouchPadAbsMouse[device].SnapToCenter = TouchpadAbsMouseSettings.SnapToCenter;
+            */
         }
 
         /// <summary>

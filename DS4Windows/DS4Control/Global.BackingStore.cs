@@ -219,20 +219,6 @@ namespace DS4Windows
                 new()
             };
 
-            public IList<TouchPadAbsMouseSettings> TouchPadAbsMouse { get; set; } =
-                new List<TouchPadAbsMouseSettings>
-                {
-                    new(), new(), new(),
-                    new(), new(), new(), new(), new(), new()
-                };
-
-            public IList<TouchPadRelMouseSettings> TouchPadRelMouse { get; set; } =
-                new List<TouchPadRelMouseSettings>
-                {
-                    new(), new(), new(), new(),
-                    new(), new(), new(), new(), new()
-                };
-
             public void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
             {
                 ds4controlSettings[deviceNum].ResetExtraButtons();
@@ -3029,8 +3015,8 @@ namespace DS4Windows
                 SetSZOutCurveMode(device, 0);
                 //TrackballMode[device] = false;
                 //TrackballFriction[device] = 10.0;
-                TouchPadAbsMouse[device].Reset();
-                TouchPadRelMouse[device].Reset();
+                //TouchPadAbsMouse[device].Reset();
+                //TouchPadRelMouse[device].Reset();
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.X360;
                 Ds4Mapping = false;
             }

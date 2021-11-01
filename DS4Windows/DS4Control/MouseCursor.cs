@@ -304,7 +304,7 @@ namespace DS4Windows
                 currentY = arg.touches[0].hwY;
             }
 
-            var absSettings = Global.Instance.Config.TouchPadAbsMouse[deviceNumber];
+            var absSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchPadAbsMouse;
 
             var minX = (int)(DS4Touchpad.RES_HALFED_X - absSettings.MaxZoneX * 0.01 * DS4Touchpad.RES_HALFED_X);
             var minY = (int)(DS4Touchpad.RES_HALFED_Y - absSettings.MaxZoneY * 0.01 * DS4Touchpad.RES_HALFED_Y);
@@ -336,7 +336,7 @@ namespace DS4Windows
             using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchMoveCursor)).StartActive(true);
 
 
-            var relMouseSettings = Global.Instance.Config.TouchPadRelMouse[deviceNumber];
+            var relMouseSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchPadRelMouse;
             if (relMouseSettings.Rotation != 0.0)
             {
                 //double rotation = 5.0 * Math.PI / 180.0;
