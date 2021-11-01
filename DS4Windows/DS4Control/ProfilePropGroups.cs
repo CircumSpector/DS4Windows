@@ -850,10 +850,11 @@ namespace DS4Windows
     {
         private const TwoStageTriggerMode DEFAULT_TRIG_MODE = TwoStageTriggerMode.Disabled;
         private const int DEFAULT_HIP_TIME = 100;
-        private const InputDevices.TriggerEffects DEFAULT_TRIGGER_EFFECT = InputDevices.TriggerEffects.None;
+        private const TriggerEffects DEFAULT_TRIGGER_EFFECT = TriggerEffects.None;
 
         //public TriggerMode mode = TriggerMode.Normal;
         public TwoStageTriggerMode twoStageMode = DEFAULT_TRIG_MODE;
+
         public TwoStageTriggerMode TwoStageMode
         {
             get => twoStageMode;
@@ -864,13 +865,14 @@ namespace DS4Windows
                 TwoStageModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
         public event EventHandler TwoStageModeChanged;
 
         public int HipFireMs { get; set; } = DEFAULT_HIP_TIME;
 
-        public InputDevices.TriggerEffects triggerEffect = DEFAULT_TRIGGER_EFFECT;
+        public TriggerEffects triggerEffect = DEFAULT_TRIGGER_EFFECT;
 
-        public InputDevices.TriggerEffects TriggerEffect
+        public TriggerEffects TriggerEffect
         {
             get => triggerEffect;
             set
@@ -884,7 +886,7 @@ namespace DS4Windows
         public event EventHandler TriggerEffectChanged;
 
         public TriggerEffectSettings EffectSettings { get; set; } = new();
-        
+
         public void ResetSettings()
         {
             //mode = TriggerMode.Normal;
