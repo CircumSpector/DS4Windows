@@ -310,7 +310,7 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Label
-                                    Content="{Binding Name, Mode=OneWay, Converter={StaticResource escapeAccessConvert}}"
+                                    Content="{Binding DisplayName, Mode=OneWay, Converter={StaticResource escapeAccessConvert}}"
                                     Padding="0" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>

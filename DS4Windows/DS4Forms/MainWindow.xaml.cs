@@ -106,7 +106,7 @@ namespace DS4WinWPF.DS4Forms
             profilesListBox.ItemsSource = profileListHolder.ProfileListCollection;
 
 
-            //profilesListBox.ItemsSource = profilesService.AvailableProfiles;
+            profilesListBox.ItemsSource = profilesService.AvailableProfiles;
             
 
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
