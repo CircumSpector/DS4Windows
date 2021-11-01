@@ -1293,7 +1293,7 @@ namespace DS4Windows
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/L2HipFireDelay");
                         if (int.TryParse(Item?.InnerText, out var temp))
-                            L2OutputSettings[device].hipFireMS = Math.Max(Math.Min(0, temp), 5000);
+                            L2OutputSettings[device].HipFireMs = Math.Max(Math.Min(0, temp), 5000);
                     }
                     catch
                     {
@@ -1303,7 +1303,7 @@ namespace DS4Windows
                     {
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/R2HipFireDelay");
                         if (int.TryParse(Item?.InnerText, out var temp))
-                            R2OutputSettings[device].hipFireMS = Math.Max(Math.Min(0, temp), 5000);
+                            R2OutputSettings[device].HipFireMs = Math.Max(Math.Min(0, temp), 5000);
                     }
                     catch
                     {

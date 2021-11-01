@@ -1916,7 +1916,7 @@ namespace DS4Windows
                         var pState = d.GetPreviousStateReference();
 
                         ProcessFlickStick(device, cRawState, cRawState.LX, cRawState.LY, pState.LX, pState.LY, ctrl,
-                            stickSettings.OutputSettings.flickSettings, ref tempMouseDeltaX);
+                            stickSettings.OutputSettings.FlickSettings, ref tempMouseDeltaX);
                         break;
                 }
             }
@@ -1950,7 +1950,7 @@ namespace DS4Windows
                         var pState = d.GetPreviousStateReference();
 
                         ProcessFlickStick(device, cRawState, cRawState.RX, cRawState.RY, pState.RX, pState.RY, ctrl,
-                            stickSettings.OutputSettings.flickSettings, ref tempMouseDeltaX);
+                            stickSettings.OutputSettings.FlickSettings, ref tempMouseDeltaX);
                         break;
                 }
             }
@@ -2386,7 +2386,7 @@ namespace DS4Windows
                     else if (triggerValue != 0 && !triggerData.outputActive)
                     {
                         var outputActive = triggerData.checkTime +
-                            TimeSpan.FromMilliseconds(outputSettings.hipFireMS) < DateTime.Now;
+                            TimeSpan.FromMilliseconds(outputSettings.HipFireMs) < DateTime.Now;
                         if (outputActive)
                         {
                             triggerData.outputActive = true;
@@ -2446,7 +2446,7 @@ namespace DS4Windows
                     else if (triggerValue != 0 && !triggerData.outputActive)
                     {
                         var outputActive =
-                            triggerData.checkTime + TimeSpan.FromMilliseconds(outputSettings.hipFireMS) <
+                            triggerData.checkTime + TimeSpan.FromMilliseconds(outputSettings.HipFireMs) <
                             DateTime.Now;
                         if (outputActive)
                         {

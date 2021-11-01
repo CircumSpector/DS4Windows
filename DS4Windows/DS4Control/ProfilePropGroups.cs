@@ -685,35 +685,35 @@ namespace DS4Windows
 
     public class TouchPadRelMouseSettings
     {
-        public const double DEFAULT_ANG_DEGREE = 0.0;
-        public const double DEFAULT_ANG_RAD = DEFAULT_ANG_DEGREE * Math.PI / 180.0;
-        public const double DEFAULT_MIN_THRESHOLD = 1.0;
+        public const double DefaultAngDegree = 0.0;
+        public const double DefaultAngRad = DefaultAngDegree * Math.PI / 180.0;
+        public const double DefaultMinThreshold = 1.0;
 
-        public double Rotation { get; set; } = DEFAULT_ANG_RAD;
-        public double MinThreshold { get; set; } = DEFAULT_MIN_THRESHOLD;
+        public double Rotation { get; set; } = DefaultAngRad;
+        public double MinThreshold { get; set; } = DefaultMinThreshold;
 
         public void Reset()
         {
-            Rotation = DEFAULT_ANG_RAD;
-            MinThreshold = DEFAULT_MIN_THRESHOLD;
+            Rotation = DefaultAngRad;
+            MinThreshold = DefaultMinThreshold;
         }
     }
 
     public class TouchPadAbsMouseSettings
     {
-        public const int DEFAULT_MAXZONE_X = 90;
-        public const int DEFAULT_MAXZONE_Y = 90;
-        public const bool DEFAULT_SNAP_CENTER = false;
+        public const int DefaultMaxZoneX = 90;
+        public const int DefaultMaxZoneY = 90;
+        public const bool DefaultSnapCenter = false;
 
-        public int MaxZoneX { get; set; } = DEFAULT_MAXZONE_X;
-        public int MaxZoneY { get; set; } = DEFAULT_MAXZONE_Y;
-        public bool SnapToCenter { get; set; } = DEFAULT_SNAP_CENTER;
+        public int MaxZoneX { get; set; } = DefaultMaxZoneX;
+        public int MaxZoneY { get; set; } = DefaultMaxZoneY;
+        public bool SnapToCenter { get; set; } = DefaultSnapCenter;
 
         public void Reset()
         {
-            MaxZoneX = DEFAULT_MAXZONE_X;
-            MaxZoneY = DEFAULT_MAXZONE_Y;
-            SnapToCenter = DEFAULT_SNAP_CENTER;
+            MaxZoneX = DefaultMaxZoneX;
+            MaxZoneY = DefaultMaxZoneY;
+            SnapToCenter = DefaultSnapCenter;
         }
     }
 
@@ -742,21 +742,21 @@ namespace DS4Windows
 
     public class FlickStickSettings
     {
-        public const double DEFAULT_FLICK_THRESHOLD = 0.9;
-        public const double DEFAULT_FLICK_TIME = 0.1;  // In seconds
-        public const double DEFAULT_REAL_WORLD_CALIBRATION = 5.3;
-        public const double DEFAULT_MIN_ANGLE_THRESHOLD = 0.0;
+        public const double DefaultFlickThreshold = 0.9;
+        public const double DefaultFlickTime = 0.1;  // In seconds
+        public const double DefaultRealWorldCalibration = 5.3;
+        public const double DefaultMinAngleThreshold = 0.0;
 
-        public const double DEFAULT_MINCUTOFF = 0.4;
-        public const double DEFAULT_BETA = 0.4;
+        public const double DefaultMinCutoff = 0.4;
+        public const double DefaultBeta = 0.4;
 
-        public double flickThreshold = DEFAULT_FLICK_THRESHOLD;
-        public double flickTime = DEFAULT_FLICK_TIME; // In seconds
-        public double realWorldCalibration = DEFAULT_REAL_WORLD_CALIBRATION;
-        public double minAngleThreshold = DEFAULT_MIN_ANGLE_THRESHOLD;
+        public double flickThreshold = DefaultFlickThreshold;
+        public double flickTime = DefaultFlickTime; // In seconds
+        public double realWorldCalibration = DefaultRealWorldCalibration;
+        public double minAngleThreshold = DefaultMinAngleThreshold;
 
-        public double minCutoff = DEFAULT_MINCUTOFF;
-        public double beta = DEFAULT_BETA;
+        public double minCutoff = DefaultMinCutoff;
+        public double beta = DefaultBeta;
 
         public delegate void FlickStickSettingsEventHandler(FlickStickSettings sender,
            EventArgs args);
@@ -787,13 +787,13 @@ namespace DS4Windows
 
         public void Reset()
         {
-            flickThreshold = DEFAULT_FLICK_THRESHOLD;
-            flickTime = DEFAULT_FLICK_TIME;
-            realWorldCalibration = DEFAULT_REAL_WORLD_CALIBRATION;
-            minAngleThreshold = DEFAULT_MIN_ANGLE_THRESHOLD;
+            flickThreshold = DefaultFlickThreshold;
+            flickTime = DefaultFlickTime;
+            realWorldCalibration = DefaultRealWorldCalibration;
+            minAngleThreshold = DefaultMinAngleThreshold;
 
-            minCutoff = DEFAULT_MINCUTOFF;
-            beta = DEFAULT_BETA;
+            minCutoff = DefaultMinCutoff;
+            beta = DefaultBeta;
         }
 
         public void SetRefreshEvents(OneEuroFilter euroFilter)
@@ -825,20 +825,22 @@ namespace DS4Windows
 
     public class StickModeSettings
     {
-        public FlickStickSettings flickSettings = new FlickStickSettings();
-        public StickControlSettings controlSettings = new StickControlSettings();
+        public FlickStickSettings FlickSettings { get; set; } = new();
+
+        public StickControlSettings ControlSettings { get; set; } = new();
     }
 
     public class StickOutputSetting
     {
         public StickMode Mode { get; set; } = StickMode.Controls;
+
         public StickModeSettings OutputSettings { get; set; } = new();
 
         public void ResetSettings()
         {
             Mode = StickMode.Controls;
-            OutputSettings.controlSettings.Reset();
-            OutputSettings.flickSettings.Reset();
+            OutputSettings.ControlSettings.Reset();
+            OutputSettings.FlickSettings.Reset();
         }
     }
 
@@ -862,8 +864,10 @@ namespace DS4Windows
         }
         public event EventHandler TwoStageModeChanged;
 
-        public int hipFireMS = DEFAULT_HIP_TIME;
+        public int HipFireMs { get; set; } = DEFAULT_HIP_TIME;
+
         public InputDevices.TriggerEffects triggerEffect = DEFAULT_TRIGGER_EFFECT;
+
         public InputDevices.TriggerEffects TriggerEffect
         {
             get => triggerEffect;
@@ -880,16 +884,13 @@ namespace DS4Windows
             new InputDevices.TriggerEffectSettings();
 
         [JsonIgnore]
-        public ref InputDevices.TriggerEffectSettings TrigEffectSettings
-        {
-            get => ref effectSettings;
-        }
+        public ref InputDevices.TriggerEffectSettings TrigEffectSettings => ref effectSettings;
 
         public void ResetSettings()
         {
             //mode = TriggerMode.Normal;
             twoStageMode = DEFAULT_TRIG_MODE;
-            hipFireMS = DEFAULT_HIP_TIME;
+            HipFireMs = DEFAULT_HIP_TIME;
             triggerEffect = DEFAULT_TRIGGER_EFFECT;
             TwoStageModeChanged?.Invoke(this, EventArgs.Empty);
             TriggerEffectChanged?.Invoke(this, EventArgs.Empty);

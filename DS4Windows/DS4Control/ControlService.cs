@@ -1748,11 +1748,11 @@ namespace DS4Windows
             wheelSmoothInfo.SetFilterAttrs(tempFilter);
             wheelSmoothInfo.SetRefreshEvents(tempFilter);
 
-            var flickStickSettings = Instance.Config.LSOutputSettings[ind].OutputSettings.flickSettings;
+            var flickStickSettings = Instance.Config.LSOutputSettings[ind].OutputSettings.FlickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
-            flickStickSettings = Instance.Config.RSOutputSettings[ind].OutputSettings.flickSettings;
+            flickStickSettings = Instance.Config.RSOutputSettings[ind].OutputSettings.FlickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 

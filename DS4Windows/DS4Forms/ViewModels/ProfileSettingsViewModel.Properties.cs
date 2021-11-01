@@ -1038,27 +1038,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSFlickRWC
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration =
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration =
                 value;
         }
 
         public double LSFlickThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold = value;
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold = value;
         }
 
         public double LSFlickTime
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickTime;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.flickTime = value;
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickTime;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.flickTime = value;
         }
 
         public double LSMinAngleThreshold
         {
-            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold;
-            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold =
+            get => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold;
+            set => Global.Instance.Config.LSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold =
                 value;
         }
 
@@ -1106,27 +1106,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double RSFlickRWC
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.realWorldCalibration =
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.realWorldCalibration =
                 value;
         }
 
         public double RSFlickThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickThreshold = value;
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickThreshold = value;
         }
 
         public double RSFlickTime
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickTime;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.flickTime = value;
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickTime;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.flickTime = value;
         }
 
         public double RSMinAngleThreshold
         {
-            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold;
-            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.flickSettings.minAngleThreshold =
+            get => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold;
+            set => Global.Instance.Config.RSOutputSettings[Device].OutputSettings.FlickSettings.minAngleThreshold =
                 value;
         }
 
@@ -1278,14 +1278,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int L2HipFireTime
         {
-            get => Global.Instance.Config.L2OutputSettings[Device].hipFireMS;
-            set => Global.Instance.Config.L2OutputSettings[Device].hipFireMS = value;
+            get => Global.Instance.Config.L2OutputSettings[Device].HipFireMs;
+            set => Global.Instance.Config.L2OutputSettings[Device].HipFireMs = value;
         }
 
         public int R2HipFireTime
         {
-            get => Global.Instance.Config.R2OutputSettings[Device].hipFireMS;
-            set => Global.Instance.Config.R2OutputSettings[Device].hipFireMS = value;
+            get => Global.Instance.Config.R2OutputSettings[Device].HipFireMs;
+            set => Global.Instance.Config.R2OutputSettings[Device].HipFireMs = value;
         }
 
         public List<TriggerEffectChoice> TriggerEffectChoices { get; } = new()
