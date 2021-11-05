@@ -1806,7 +1806,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (gyroMouseStickSmoothMethodIndex == value) return;
 
-                var tempInfo = Global.Instance.Config.GyroMouseStickInfo[Device];
+                var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo;
                 switch (value)
                 {
                     case 0:
@@ -1829,7 +1829,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseStickInfo[Device].Smoothing)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -1845,7 +1845,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (Global.Instance.Config.GyroMouseStickInfo[Device].Smoothing)
+                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.OneEuro:
                     case GyroMouseStickInfo.SmoothingMethod.None:
@@ -1859,20 +1859,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseStickSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.SmoothWeight;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.SmoothWeight = value;
         }
 
         public double GyroMouseStickOneEuroMinCutoff
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].MinCutoff;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].MinCutoff = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MinCutoff;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MinCutoff = value;
         }
 
         public double GyroMouseStickOneEuroBeta
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].Beta;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].Beta = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Beta;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Beta = value;
         }
 
 
@@ -1902,66 +1902,66 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseStickDeadZone
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].DeadZone;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].DeadZone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.DeadZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.DeadZone = value;
         }
 
         public int GyroMouseStickMaxZone
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].MaxZone;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].MaxZone = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MaxZone;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MaxZone = value;
         }
 
         public int GyroMouseStickOutputStick
         {
-            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].OutStick;
+            get => (int)ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.OutStick;
             set =>
-                Global.Instance.Config.GyroMouseStickInfo[Device].OutStick =
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.OutStick =
                     (GyroMouseStickInfo.OutputStick)value;
         }
 
         public int GyroMouseStickOutputAxes
         {
-            get => (int)Global.Instance.Config.GyroMouseStickInfo[Device].OutputStickDir;
+            get => (int)ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.OutputStickDir;
             set =>
-                Global.Instance.Config.GyroMouseStickInfo[Device].OutputStickDir =
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.OutputStickDir =
                     (GyroMouseStickInfo.OutputStickAxes)value;
         }
 
         public double GyroMouseStickAntiDeadX
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadX * 100.0;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadX = value * 0.01;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.AntiDeadX * 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.AntiDeadX = value * 0.01;
         }
 
         public double GyroMouseStickAntiDeadY
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadY * 100.0;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].AntiDeadY = value * 0.01;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.AntiDeadY * 100.0;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.AntiDeadY = value * 0.01;
         }
 
         public int GyroMouseStickVertScale
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].VerticalScale;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].VerticalScale = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.VerticalScale;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.VerticalScale = value;
         }
 
         public bool GyroMouseStickMaxOutputEnabled
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutputEnabled;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MaxOutputEnabled;
             set
             {
-                var temp = Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutputEnabled;
+                var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MaxOutputEnabled;
                 if (temp == value) return;
-                Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutputEnabled = value;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MaxOutputEnabled = value;
                 GyroMouseStickMaxOutputChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public double GyroMouseStickMaxOutput
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutput;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].MaxOutput = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MaxOutput;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.MaxOutput = value;
         }
 
         public int GyroMouseStickEvalCondIndex
@@ -1978,48 +1978,48 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseStickInvertX
         {
-            get => (Global.Instance.Config.GyroMouseStickInfo[Device].Inverted & 1) == 1;
+            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted & 1) == 1;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted |= 1;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted |= 1;
                 }
                 else
                 {
-                    var temp = Global.Instance.Config.GyroMouseStickInfo[Device].Inverted;
-                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted = (uint)(temp & ~1);
+                    var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted = (uint)(temp & ~1);
                 }
             }
         }
 
         public bool GyroMouseStickInvertY
         {
-            get => (Global.Instance.Config.GyroMouseStickInfo[Device].Inverted & 2) == 2;
+            get => (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted & 2) == 2;
             set
             {
                 if (value)
                 {
-                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted |= 2;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted |= 2;
                 }
                 else
                 {
-                    var temp = Global.Instance.Config.GyroMouseStickInfo[Device].Inverted;
-                    Global.Instance.Config.GyroMouseStickInfo[Device].Inverted = (uint)(temp & ~2);
+                    var temp = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted;
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.Inverted = (uint)(temp & ~2);
                 }
             }
         }
 
         public bool GyroMouseStickSmooth
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].UseSmoothing;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].UseSmoothing = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.UseSmoothing;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.UseSmoothing = value;
         }
 
         public double GyroMousetickSmoothWeight
         {
-            get => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight;
-            set => Global.Instance.Config.GyroMouseStickInfo[Device].SmoothWeight = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.SmoothWeight;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo.SmoothWeight = value;
         }
 
         public string TouchDisInvertString
@@ -2093,38 +2093,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroSwipeTurns
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].TriggerTurns;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].TriggerTurns = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.TriggerTurns;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.TriggerTurns = value;
         }
 
         public int GyroSwipeEvalCondIndex
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].TriggerCondition ? 0 : 1;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].TriggerCondition = value == 0 ? true : false;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.TriggerCondition ? 0 : 1;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.TriggerCondition = value == 0 ? true : false;
         }
 
         public int GyroSwipeXAxis
         {
-            get => (int)Global.Instance.Config.GyroSwipeInfo[Device].XAxis;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].XAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
+            get => (int)ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.XAxis;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.XAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
         }
 
         public int GyroSwipeDeadZoneX
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneX;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneX = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.DeadZoneX;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.DeadZoneX = value;
         }
 
         public int GyroSwipeDeadZoneY
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneY;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].DeadZoneY = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.DeadZoneY;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.DeadZoneY = value;
         }
 
         public int GyroSwipeDelayTime
         {
-            get => Global.Instance.Config.GyroSwipeInfo[Device].DelayTime;
-            set => Global.Instance.Config.GyroSwipeInfo[Device].DelayTime = value;
+            get => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.DelayTime;
+            set => ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.DelayTime = value;
         }
     }
 }

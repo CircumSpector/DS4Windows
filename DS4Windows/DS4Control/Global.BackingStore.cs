@@ -86,27 +86,7 @@ namespace DS4Windows
             }
 
             private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
-
-            public IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; } = new List<GyroMouseStickInfo>
-            {
-                new(),
-                new(),
-                new(), new(),
-                new(), new(),
-                new(), new(),
-                new()
-            };
             
-            public IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; } =
-                new List<GyroDirectionalSwipeInfo>
-                {
-                    new(), new(),
-                    new(), new(),
-                    new(), new(),
-                    new(), new(),
-                    new()
-                };
-
             /// <summary>
             ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
             ///     active when a foreground process is unknown (ie. no matching auto-profile rule)
@@ -296,16 +276,6 @@ namespace DS4Windows
             public string GetSAMouseStickTriggers(int device)
             {
                 return SAMouseStickTriggers[device];
-            }
-
-            public GyroMouseStickInfo GetGyroMouseStickInfo(int device)
-            {
-                return GyroMouseStickInfo[device];
-            }
-
-            public GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device)
-            {
-                return GyroSwipeInfo[device];
             }
 
             public bool IsUsingTouchpadForControls(int index)
@@ -2225,8 +2195,8 @@ namespace DS4Windows
                 SAMouseStickTriggers[device] = "4";
                 //SAMouseStickTriggerCond[device] = true;
                 //GyroMouseStickTriggerTurns[device] = false;
-                GyroMouseStickInfo[device].UseSmoothing = true;
-                GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
+                //GyroMouseStickInfo[device].UseSmoothing = true;
+                //GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2259,8 +2229,8 @@ namespace DS4Windows
                 SAMouseStickTriggers[device] = "4";
                 //SAMouseStickTriggerCond[device] = true;
                 //GyroMouseStickTriggerTurns[device] = false;
-                GyroMouseStickInfo[device].UseSmoothing = true;
-                GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
+                //GyroMouseStickInfo[device].UseSmoothing = true;
+                //GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
@@ -2974,8 +2944,8 @@ namespace DS4Windows
                 SAMouseStickTriggers[device] = "-1";
                 //SAMouseStickTriggerCond[device] = true;
 
-                GyroMouseStickInfo[device].Reset();
-                GyroSwipeInfo[device].Reset();
+                //GyroMouseStickInfo[device].Reset();
+                //GyroSwipeInfo[device].Reset();
 
                 //GyroMouseStickTriggerTurns[device] = true;
                 //SASteeringWheelEmulationAxis[device] = SASteeringWheelEmulationAxisType.None;

@@ -84,8 +84,8 @@ namespace DS4Windows
 
             filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseStickInfo.DefaultMinCutoff;
             filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseStickInfo.DefaultBeta;
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis1Filter);
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis2Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis1Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         public int CursorGyroDead
@@ -284,7 +284,7 @@ namespace DS4Windows
             {
                 s = dev.GetCurrentStateReference();
 
-                var swipeMapInfo = Global.Instance.Config.GetGyroSwipeInfo(deviceNum);
+                var swipeMapInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroSwipeInfo;
                 useReverseRatchet = swipeMapInfo.TriggerTurns;
                 var i = 0;
                 var ss = swipeMapInfo.Triggers.Split(',');
@@ -672,18 +672,18 @@ namespace DS4Windows
 
         public void ReplaceOneEuroFilterPair()
         {
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].RemoveRefreshEvents();
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.RemoveRefreshEvents();
             filterPair = new OneEuroFilterPair();
         }
 
         public void SetupLateOneEuroFilters()
         {
             filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff =
-                Global.Instance.Config.GyroMouseStickInfo[deviceNum].MinCutoff;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.MinCutoff;
             filterPair.Axis1Filter.Beta =
-                filterPair.Axis2Filter.Beta = Global.Instance.Config.GyroMouseStickInfo[deviceNum].Beta;
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis1Filter);
-            Global.Instance.Config.GyroMouseStickInfo[deviceNum].SetRefreshEvents(filterPair.Axis2Filter);
+                filterPair.Axis2Filter.Beta = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.Beta;
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis1Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         private void SixMouseReset(SixAxisEventArgs args)
@@ -696,7 +696,7 @@ namespace DS4Windows
             ySmoothBuffer[iIndex] = 0;
             smoothBufferTail = iIndex + 1;
 
-            var msinfo = Global.Instance.Config.GetGyroMouseStickInfo(deviceNum);
+            var msinfo = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo;
             if (msinfo.Smoothing == GyroMouseStickInfo.SmoothingMethod.OneEuro)
             {
                 var currentRate = 1.0 / args.sixAxis.elapsed;
@@ -719,7 +719,7 @@ namespace DS4Windows
             var maxDirX = deltaX >= 0 ? 127 : -128;
             var maxDirY = deltaY >= 0 ? 127 : -128;
 
-            var msinfo = Global.Instance.Config.GetGyroMouseStickInfo(deviceNum);
+            var msinfo = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo;
 
             var tempDouble = arg.sixAxis.elapsed * 250.0; // Base default speed on 4 ms
             var tempAngle = Math.Atan2(-deltaY, deltaX);

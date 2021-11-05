@@ -193,6 +193,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroMouseStickTriggers = store.SAMouseStickTriggers[device];
             //GyroMouseStickTriggerCond = store.SaTriggerCondString(store.SAMouseStickTriggerCond[device]);
             //GyroMouseStickHAxis = store.GyroMouseStickHorizontalAxis[device];
+            
+            /*
             GyroMouseStickDeadZone = store.GyroMouseStickInfo[device].DeadZone;
             GyroMouseStickMaxZone = store.GyroMouseStickInfo[device].MaxZone;
             GyroMouseStickOutputStick = store.GyroMouseStickInfo[device].OutStick;
@@ -218,6 +220,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             GyroSwipeSettings.TriggerTurns = store.GyroSwipeInfo[device].TriggerTurns;
             GyroSwipeSettings.XAxis = store.GyroSwipeInfo[device].XAxis;
             GyroSwipeSettings.DelayTime = store.GyroSwipeInfo[device].DelayTime;
+            */
 
             ProfileActions = string.Join("/", store.ProfileActions[device]);
             //BTPollRate = store.BluetoothPollRate[device];
@@ -460,6 +463,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.SAMouseStickTriggers[device] = GyroMouseStickTriggers;
             //store.SAMouseStickTriggerCond[device] = store.SaTriggerCondValue(GyroMouseStickTriggerCond);
             //store.GyroMouseStickHorizontalAxis[device] = Math.Min(Math.Max(0, GyroMouseStickHAxis), 1);
+            
+            /*
             store.GyroMouseStickInfo[device].DeadZone = GyroMouseStickDeadZone;
             store.GyroMouseStickInfo[device].MaxZone = Math.Max(GyroMouseStickMaxZone, 1);
             store.GyroMouseStickInfo[device].OutStick = GyroMouseStickOutputStick;
@@ -487,6 +492,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             store.GyroSwipeInfo[device].TriggerTurns = GyroSwipeSettings.TriggerTurns;
             store.GyroSwipeInfo[device].XAxis = GyroSwipeSettings.XAxis;
             store.GyroSwipeInfo[device].DelayTime = GyroSwipeSettings.DelayTime;
+            */
 
             //store.TouchOutMode[device] = TouchpadOutputMode;
             store.TouchDisInvertTriggers[device] = TouchDisInvTriggers;

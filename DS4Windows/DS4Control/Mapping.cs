@@ -2242,7 +2242,7 @@ namespace DS4Windows
 
             if (imuOutMode == GyroOutMode.MouseJoystick)
             {
-                var msinfo = Instance.Config.GetGyroMouseStickInfo(device);
+                var msinfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseStickInfo;
                 if (msinfo.OutStick != GyroMouseStickInfo.OutputStick.None)
                 {
                     ref var gyroTempX = ref gyroStickX[device];

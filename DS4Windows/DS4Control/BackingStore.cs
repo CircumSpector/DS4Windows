@@ -54,10 +54,6 @@ namespace DS4Windows
 
         IList<string> SAMouseStickTriggers { get; set; }
 
-        IList<GyroMouseStickInfo> GyroMouseStickInfo { get; set; }
-
-        IList<GyroDirectionalSwipeInfo> GyroSwipeInfo { get; set; }
-
         ulong LastVersionCheckedNumber { get; set; }
 
         int StickOutputCurveId(string name);
@@ -109,10 +105,6 @@ namespace DS4Windows
         void SetSZOutCurveMode(int index, int value);
 
         string GetSAMouseStickTriggers(int device);
-
-        GyroMouseStickInfo GetGyroMouseStickInfo(int device);
-
-        GyroDirectionalSwipeInfo GetGyroSwipeInfo(int device);
 
         bool GetSATriggerCondition(int index);
 

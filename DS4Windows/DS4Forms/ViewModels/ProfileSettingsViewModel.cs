@@ -192,7 +192,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private int FindGyroMouseStickSmoothMethodIndex()
         {
             var result = 0;
-            var tempInfo = Global.Instance.Config.GyroMouseStickInfo[Device];
+            var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo;
             switch (tempInfo.Smoothing)
             {
                 case GyroMouseStickInfo.SmoothingMethod.OneEuro:
@@ -599,13 +599,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            Global.Instance.Config.GyroSwipeInfo[Device].Triggers = string.Join(",", triggerList.ToArray());
+            ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.Triggers = string.Join(",", triggerList.ToArray());
             GyroSwipeTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
         public void PopulateGyroSwipeTrig(ContextMenu menu)
         {
-            var triggers = Global.Instance.Config.GyroSwipeInfo[Device].Triggers.Split(',');
+            var triggers = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.Triggers.Split(',');
             var itemCount = menu.Items.Count;
             var triggerName = new List<string>();
             foreach (var trig in triggers)
