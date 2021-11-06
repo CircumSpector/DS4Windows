@@ -1882,28 +1882,9 @@ namespace DS4Windows
                 return sA;
             }
 
-            public bool ContainsLinkedProfile(PhysicalAddress serial)
-            {
-                return LinkedProfiles.ContainsKey(serial);
-            }
-
-            public string GetLinkedProfile(PhysicalAddress serial)
-            {
-                var temp = string.Empty;
-
-                if (LinkedProfiles.ContainsKey(serial)) temp = LinkedProfiles[serial];
-
-                return temp;
-            }
-
             public void ChangeLinkedProfile(PhysicalAddress serial, string profile)
             {
                 LinkedProfiles[serial] = profile;
-            }
-
-            public void RemoveLinkedProfile(PhysicalAddress serial)
-            {
-                if (LinkedProfiles.ContainsKey(serial)) LinkedProfiles.Remove(serial);
             }
 
             public int GetProfileActionIndexOf(int device, string name)

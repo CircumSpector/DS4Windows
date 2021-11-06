@@ -70,10 +70,6 @@ namespace DS4Windows
 
         SpecialAction GetProfileAction(int device, string name);
 
-        bool ContainsLinkedProfile(PhysicalAddress serial);
-
-        string GetLinkedProfile(PhysicalAddress serial);
-
         void ChangeLinkedProfile(PhysicalAddress serial, string profile);
 
         void RemoveLinkedProfile(PhysicalAddress serial);

@@ -425,27 +425,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             TooltipIDTextChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void SaveLinked(bool status)
-        {
-            if (device != null && device.IsSynced())
-            {
-                if (status)
-                {
-                    if (device.IsValidSerial())
-                    {
-                        Global.Instance.Config.ChangeLinkedProfile(device.MacAddress, Global.Instance.Config.ProfilePath[devIndex]);
-                    }
-                }
-                else
-                {
-                    Global.Instance.Config.RemoveLinkedProfile(device.MacAddress);
-                    Global.Instance.Config.ProfilePath[devIndex] = Global.Instance.Config.OlderProfilePath[devIndex];
-                }
-
-                Global.Instance.Config.SaveLinkedProfiles();
-            }
-        }
-
         [MissingLocalization]
         public void AddLightContextItems()
         {
