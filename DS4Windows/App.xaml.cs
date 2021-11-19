@@ -166,7 +166,7 @@ namespace DS4WinWPF
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Logger logger = logHolder.Logger;
             string version = DS4Windows.Global.exeversion;
-            logger.Info($"DS4Windows version {version}");
+            logger.Info($"DS4Windows version {version} (Custom Build Patch 1)");
             logger.Info($"DS4Windows exe file: {DS4Windows.Global.exeFileName}");
             logger.Info($"DS4Windows Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
             logger.Info($"OS Version: {Environment.OSVersion}");
