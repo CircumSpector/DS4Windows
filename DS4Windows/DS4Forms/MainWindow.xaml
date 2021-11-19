@@ -14,7 +14,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xml:lang="en-US"
         mc:Ignorable="d"
-        Title="DS4Windows" Height="500" Width="800" Closing="MainDS4Window_Closing" Closed="MainDS4Window_Closed" StateChanged="MainDS4Window_StateChanged" SizeChanged="MainDS4Window_SizeChanged" LocationChanged="MainDS4Window_LocationChanged" MinWidth="600" MinHeight="250"
+        Title="DS4Windows v3.0.18 (CS Patch 1)" Height="500" Width="800" Closing="MainDS4Window_Closing" Closed="MainDS4Window_Closed" StateChanged="MainDS4Window_StateChanged" SizeChanged="MainDS4Window_SizeChanged" LocationChanged="MainDS4Window_LocationChanged" MinWidth="600" MinHeight="250"
         Style="{DynamicResource WindowStyle}">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
