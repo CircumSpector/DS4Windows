@@ -559,4 +559,7 @@ THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!</value>
   <data name="AboutTabTitle" xml:space="preserve">
     <value>About This Version</value>
   </data>
+  <data name="DS4WSite" xml:space="preserve">
+    <value>DS4Windows Website</value>
+  </data>
 </root>
