@@ -1698,6 +1698,9 @@ Suspend support not enabled.", true);
             Util.StartProcessHelper("https://docs.ds4windows.app/about/latest-version/");
         }
 
+        private void DS4WSiteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Util.StartProcessHelper("https://docs.ds4windows.app/");
         }
 
         private void HidHideBtn_Click(object sender, RoutedEventArgs e)
