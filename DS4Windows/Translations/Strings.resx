@@ -544,4 +544,19 @@ Example: whyme_DS4Windows</value>
   <data name="DS4LightbarPassthruDisabled" xml:space="preserve">
     <value>Feature currently disabled in app due to driver issues. Hopefully issues get fixed in a future update.</value>
   </data>
+  <data name="AboutTabDS4WinLatest" xml:space="preserve">
+    <value>Click here to check for updates, read the changelog and for more info regarding the current state of the DS4Windows project</value>
+  </data>
+  <data name="AboutTabTextBody" xml:space="preserve">
+    <value>This is a patched version of DS4Windows v3.0.18 being distributed by the CircumSpector Team. The purpose of these patched builds is to deliver bug fixes and new features while a proper "main" DS4Windows version cannot be released.
+
+THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!</value>
+    <comment>Use Shift + Enter to enter a line break</comment>
+  </data>
+  <data name="AboutTabTexTitle" xml:space="preserve">
+    <value>CircumSpector's Custom Build of DS4Windows</value>
+  </data>
+  <data name="AboutTabTitle" xml:space="preserve">
+    <value>About This Version</value>
+  </data>
 </root>
