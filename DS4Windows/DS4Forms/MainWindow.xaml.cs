@@ -1695,7 +1695,9 @@ Suspend support not enabled.", true);
 
         private void DS4WinLatestBtn_Click(object sender, RoutedEventArgs e)
         {
-            Util.StartProcessHelper("https://docs.ds4windows.app/about/latest-version");
+            Util.StartProcessHelper("https://docs.ds4windows.app/about/latest-version/");
+        }
+
         }
 
         private void HidHideBtn_Click(object sender, RoutedEventArgs e)
