@@ -1693,6 +1693,11 @@ Suspend support not enabled.", true);
             Util.StartProcessHelper("https://gamepad-tester.com/");
         }
 
+        private void DS4WinLatestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Util.StartProcessHelper("https://docs.ds4windows.app/about/latest-version");
+        }
+
         private void HidHideBtn_Click(object sender, RoutedEventArgs e)
         {
             string driveLetter = System.IO.Path.GetPathRoot(Global.exedirpath);
