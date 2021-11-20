@@ -219,6 +219,12 @@ namespace DS4WinWPF
             window.CheckMinStatus();
             rootHub.LogDebug($"Running as {(DS4Windows.Global.IsAdministrator() ? "Admin" : "User")}");
 
+            if (DS4Windows.Global.hidguardInstalled)
+            {
+                rootHub.LogDebug(DS4WinWPF.Translations.Strings.HidGuardianDetectedMainMsg);
+                rootHub.LogDebug(DS4WinWPF.Translations.Strings.HidGuardianDetectedAuxMsg);
+            }
+
             if (DS4Windows.Global.hidHideInstalled)
             {
                 rootHub.CheckHidHidePresence();

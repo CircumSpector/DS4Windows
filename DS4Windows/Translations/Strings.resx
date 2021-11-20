@@ -562,4 +562,11 @@ THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!</value>
   <data name="DS4WSite" xml:space="preserve">
     <value>DS4Windows Website</value>
   </data>
+  <data name="HidGuardianDetectedAuxMsg" xml:space="preserve">
+    <value>IMPORTANT: Double click this message to expand it, then read it until the end.
+1) DO NOT REMOVE ANY DRIVERS BY FORCE, as this can break your system. 2) It was detected that you have the HidGuardian driver installed, which can cause controllers to not be detected by DS4Windows and other apps. For info about this driver and how to safely proceed in case you need to uninstall it, read the HidGuardian SECTION in the following page: https://docs.ds4windows.app/troubleshooting/ds4w-controller-detection</value>
+  </data>
+  <data name="HidGuardianDetectedMainMsg" xml:space="preserve">
+    <value>Warning: connected DS4 controllers might be hidden from DS4Windows. Check the message below for more info.</value>
+  </data>
 </root>

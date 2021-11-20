@@ -516,6 +516,7 @@ namespace DS4Windows
                 BLANK_VIGEMBUS_VERSION);
         public static Version minSupportedViGEmBusVersionInfo = new Version(MIN_SUPPORTED_VIGEMBUS_VERSION);
         public static bool hidHideInstalled = IsHidHideInstalled();
+        public static bool hidguardInstalled = IsHidGuardianInstalled();
         public static bool fakerInputInstalled = IsFakerInputInstalled();
         public const string BLANK_FAKERINPUT_VERSION = "0.0.0.0";
         public static string fakerInputVersion = FakerInputVersion();
@@ -1047,6 +1048,11 @@ namespace DS4Windows
             string tempDeviceInstanceId = deviceInstanceId.ToUpper();
             result = affectedDevs.Contains(tempDeviceInstanceId);
             return result;
+        }
+
+        public static bool IsHidGuardianInstalled()
+        {
+            return CheckForSysDevice(@"Root\HidGuardian");
         }
 
         public static bool IsHidHideInstalled()
