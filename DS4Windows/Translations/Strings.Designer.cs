@@ -61,6 +61,44 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click here to check for updates, read the changelog and for more info regarding the current state of the DS4Windows project.
+        /// </summary>
+        public static string AboutTabDS4WinLatest {
+            get {
+                return ResourceManager.GetString("AboutTabDS4WinLatest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is a patched version of DS4Windows v3.0.18 being distributed by the CircumSpector Team. The purpose of these patched builds is to deliver bug fixes and new features while a proper &quot;main&quot; DS4Windows version cannot be released.
+        ///
+        ///THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!.
+        /// </summary>
+        public static string AboutTabTextBody {
+            get {
+                return ResourceManager.GetString("AboutTabTextBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CircumSpector&apos;s Custom Build of DS4Windows.
+        /// </summary>
+        public static string AboutTabTexTitle {
+            get {
+                return ResourceManager.GetString("AboutTabTexTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About This Version.
+        /// </summary>
+        public static string AboutTabTitle {
+            get {
+                return ResourceManager.GetString("AboutTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Accel.
         /// </summary>
         public static string Accel {
@@ -459,6 +497,15 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DS4Windows Website.
+        /// </summary>
+        public static string DS4WSite {
+            get {
+                return ResourceManager.GetString("DS4WSite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate.
         /// </summary>
         public static string Duplicate {
@@ -636,6 +683,25 @@ namespace DS4WinWPF.Translations {
         public static string HidGuardianAccess {
             get {
                 return ResourceManager.GetString("HidGuardianAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IMPORTANT: Double click this message to expand it, then read it until the end.
+        ///1) DO NOT REMOVE ANY DRIVERS BY FORCE, as this can break your system. 2) It was detected that you have the HidGuardian driver installed, which can cause controllers to not be detected by DS4Windows and other apps. For info about this driver and how to safely proceed in case you need to uninstall it, read the HidGuardian SECTION in the following page: https://docs.ds4windows.app/troubleshooting/ds4w-controller-detection.
+        /// </summary>
+        public static string HidGuardianDetectedAuxMsg {
+            get {
+                return ResourceManager.GetString("HidGuardianDetectedAuxMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: connected DS4 controllers might be hidden from DS4Windows. Check the message below for more info..
+        /// </summary>
+        public static string HidGuardianDetectedMainMsg {
+            get {
+                return ResourceManager.GetString("HidGuardianDetectedMainMsg", resourceCulture);
             }
         }
         
