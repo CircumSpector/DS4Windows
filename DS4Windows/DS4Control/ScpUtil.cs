@@ -7350,29 +7350,8 @@ namespace DS4Windows
         public void LoadBlankProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
-            bool xinputPlug = false;
-            bool xinputStatus = false;
+            PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
-            OutContType oldContType = Global.activeOutDevType[device];
-
-            // Make sure to reset currently set profile values before parsing
-            ResetProfile(device);
-            ResetMouseProperties(device, control);
-
-            // Only change xinput devices under certain conditions. Avoid
-            // performing this upon program startup before loading devices.
-            if (xinputChange)
-            {
-                CheckOldDevicestatus(device, control, oldContType,
-                    out xinputPlug, out xinputStatus);
-            }
-
-            foreach (DS4ControlSettings dcs in ds4settings[device])
-                dcs.Reset();
-
-            profileActions[device].Clear();
-            containsCustomAction[device] = false;
-            containsCustomExtras[device] = false;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
@@ -7385,29 +7364,7 @@ namespace DS4Windows
         public void LoadDefaultGamepadGyroProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
-            bool xinputPlug = false;
-            bool xinputStatus = false;
-
-            OutContType oldContType = Global.activeOutDevType[device];
-
-            // Make sure to reset currently set profile values before parsing
-            ResetProfile(device);
-            ResetMouseProperties(device, control);
-
-            // Only change xinput devices under certain conditions. Avoid
-            // performing this upon program startup before loading devices.
-            if (xinputChange)
-            {
-                CheckOldDevicestatus(device, control, oldContType,
-                    out xinputPlug, out xinputStatus);
-            }
-
-            foreach (DS4ControlSettings dcs in ds4settings[device])
-                dcs.Reset();
-
-            profileActions[device].Clear();
-            containsCustomAction[device] = false;
-            containsCustomExtras[device] = false;
+            PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
             gyroOutMode[device] = GyroOutMode.MouseJoystick;
             sAMouseStickTriggers[device] = "4";
@@ -7466,29 +7423,7 @@ namespace DS4Windows
         public void LoadDefaultMixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
-            bool xinputPlug = false;
-            bool xinputStatus = false;
-
-            OutContType oldContType = Global.activeOutDevType[device];
-
-            // Make sure to reset currently set profile values before parsing
-            ResetProfile(device);
-            ResetMouseProperties(device, control);
-
-            // Only change xinput devices under certain conditions. Avoid
-            // performing this upon program startup before loading devices.
-            if (xinputChange)
-            {
-                CheckOldDevicestatus(device, control, oldContType,
-                    out xinputPlug, out xinputStatus);
-            }
-
-            foreach (DS4ControlSettings dcs in ds4settings[device])
-                dcs.Reset();
-
-            profileActions[device].Clear();
-            containsCustomAction[device] = false;
-            containsCustomExtras[device] = false;
+            PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
             gyroOutMode[device] = GyroOutMode.Mouse;
             sATriggers[device] = "4";
@@ -7581,29 +7516,7 @@ namespace DS4Windows
         public void LoadDefaultMixedControlsProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
-            bool xinputPlug = false;
-            bool xinputStatus = false;
-
-            OutContType oldContType = Global.activeOutDevType[device];
-
-            // Make sure to reset currently set profile values before parsing
-            ResetProfile(device);
-            ResetMouseProperties(device, control);
-
-            // Only change xinput devices under certain conditions. Avoid
-            // performing this upon program startup before loading devices.
-            if (xinputChange)
-            {
-                CheckOldDevicestatus(device, control, oldContType,
-                    out xinputPlug, out xinputStatus);
-            }
-
-            foreach (DS4ControlSettings dcs in ds4settings[device])
-                dcs.Reset();
-
-            profileActions[device].Clear();
-            containsCustomAction[device] = false;
-            containsCustomExtras[device] = false;
+            PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
             DS4ControlSettings setting = GetDS4CSetting(device, DS4Controls.RYNeg);
             setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
@@ -7630,29 +7543,7 @@ namespace DS4Windows
         public void LoadDefaultKBMProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
-            bool xinputPlug = false;
-            bool xinputStatus = false;
-
-            OutContType oldContType = Global.activeOutDevType[device];
-
-            // Make sure to reset currently set profile values before parsing
-            ResetProfile(device);
-            ResetMouseProperties(device, control);
-
-            // Only change xinput devices under certain conditions. Avoid
-            // performing this upon program startup before loading devices.
-            if (xinputChange)
-            {
-                CheckOldDevicestatus(device, control, oldContType,
-                    out xinputPlug, out xinputStatus);
-            }
-
-            foreach (DS4ControlSettings dcs in ds4settings[device])
-                dcs.Reset();
-
-            profileActions[device].Clear();
-            containsCustomAction[device] = false;
-            containsCustomExtras[device] = false;
+            PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
             StickDeadZoneInfo lsInfo = lsModInfo[device];
             lsInfo.antiDeadZone = 0;
@@ -7736,29 +7627,7 @@ namespace DS4Windows
         public void LoadDefaultKBMGyroMouseProfile(int device, bool launchprogram, ControlService control,
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
-            bool xinputPlug = false;
-            bool xinputStatus = false;
-
-            OutContType oldContType = Global.activeOutDevType[device];
-
-            // Make sure to reset currently set profile values before parsing
-            ResetProfile(device);
-            ResetMouseProperties(device, control);
-
-            // Only change xinput devices under certain conditions. Avoid
-            // performing this upon program startup before loading devices.
-            if (xinputChange)
-            {
-                CheckOldDevicestatus(device, control, oldContType,
-                    out xinputPlug, out xinputStatus);
-            }
-
-            foreach (DS4ControlSettings dcs in ds4settings[device])
-                dcs.Reset();
-
-            profileActions[device].Clear();
-            containsCustomAction[device] = false;
-            containsCustomExtras[device] = false;
+            PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
             StickDeadZoneInfo lsInfo = lsModInfo[device];
             lsInfo.antiDeadZone = 0;
