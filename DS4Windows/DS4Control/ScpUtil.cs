@@ -7402,21 +7402,7 @@ namespace DS4Windows
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
-            StickDeadZoneInfo lsInfo = lsModInfo[device];
-            lsInfo.deadZone = (int)(0.00 * 127);
-            lsInfo.antiDeadZone = 0;
-            lsInfo.maxZone = 100;
-
-            StickDeadZoneInfo rsInfo = rsModInfo[device];
-            rsInfo.deadZone = (int)(0.00 * 127);
-            rsInfo.antiDeadZone = 0;
-            rsInfo.maxZone = 100;
-
-            TriggerDeadZoneZInfo l2Info = l2ModInfo[device];
-            l2Info.deadZone = (byte)(0.00 * 255);
-
-            TriggerDeadZoneZInfo r2Info = r2ModInfo[device];
-            r2Info.deadZone = (byte)(0.00 * 255);
+            LoadStdDS4GamepadSettings(device);
 
             gyroOutMode[device] = GyroOutMode.MouseJoystick;
             sAMouseStickTriggers[device] = "4";
@@ -7424,8 +7410,6 @@ namespace DS4Windows
             gyroMouseStickTriggerTurns[device] = false;
             gyroMStickInfo[device].useSmoothing = true;
             gyroMStickInfo[device].smoothingMethod = GyroMouseStickInfo.SmoothingMethod.OneEuro;
-
-            outputDevType[device] = OutContType.DS4;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
@@ -7466,21 +7450,7 @@ namespace DS4Windows
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
-            StickDeadZoneInfo lsInfo = lsModInfo[device];
-            lsInfo.deadZone = (int)(0.00 * 127);
-            lsInfo.antiDeadZone = 0;
-            lsInfo.maxZone = 100;
-
-            StickDeadZoneInfo rsInfo = rsModInfo[device];
-            rsInfo.deadZone = (int)(0.10 * 127);
-            rsInfo.antiDeadZone = 0;
-            rsInfo.maxZone = 100;
-
-            TriggerDeadZoneZInfo l2Info = l2ModInfo[device];
-            l2Info.deadZone = (byte)(0.00 * 255);
-
-            TriggerDeadZoneZInfo r2Info = r2ModInfo[device];
-            r2Info.deadZone = (byte)(0.00 * 255);
+            LoadStdDS4GamepadSettings(device);
 
             gyroOutMode[device] = GyroOutMode.Mouse;
             sATriggers[device] = "4";
@@ -7488,8 +7458,6 @@ namespace DS4Windows
             gyroTriggerTurns[device] = false;
             gyroMouseInfo[device].enableSmoothing = true;
             gyroMouseInfo[device].smoothingMethod = GyroMouseInfo.SmoothingMethod.OneEuro;
-
-            outputDevType[device] = OutContType.DS4;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
