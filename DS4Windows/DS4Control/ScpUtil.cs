@@ -7295,7 +7295,7 @@ namespace DS4Windows
             LightbarSettingInfo lightbarSettings = lightbarSettingInfo[device];
             LightbarDS4WinInfo lightInfo = lightbarSettings.ds4winSettings;
             lightbarSettings.Mode = LightbarMode.DS4Win;
-            lightInfo.m_Led = new DS4Color(Color.DarkCyan);
+            lightInfo.m_Led = new DS4Color(Color.MediumSpringGreen);
 
             outputDevType[device] = OutContType.X360;
         }
