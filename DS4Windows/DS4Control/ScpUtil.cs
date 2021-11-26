@@ -7352,23 +7352,7 @@ namespace DS4Windows
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
-            StickDeadZoneInfo lsInfo = lsModInfo[device];
-            lsInfo.deadZone = (int)(0.00 * 127);
-            lsInfo.antiDeadZone = 0;
-            lsInfo.maxZone = 100;
-
-            StickDeadZoneInfo rsInfo = rsModInfo[device];
-            rsInfo.deadZone = (int)(0.00 * 127);
-            rsInfo.antiDeadZone = 0;
-            rsInfo.maxZone = 100;
-
-            TriggerDeadZoneZInfo l2Info = l2ModInfo[device];
-            l2Info.deadZone = (byte)(0.00 * 255);
-
-            TriggerDeadZoneZInfo r2Info = r2ModInfo[device];
-            r2Info.deadZone = (byte)(0.00 * 255);
-
-            outputDevType[device] = OutContType.DS4;
+            LoadStdDS4GamepadSettings(device);
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
