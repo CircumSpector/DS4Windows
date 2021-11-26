@@ -186,10 +186,11 @@ namespace DS4WinWPF
                 logger.Info("No config found. Creating default config");
                 AttemptSave();
 
-                DS4Windows.Global.SaveAsNewProfile(0, "Default");
+                string defaultprofname = "Default";
+                DS4Windows.Global.SaveAsNewProfile(0, defaultprofname);
                 for (int i = 0; i < DS4Windows.ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
                 {
-                    DS4Windows.Global.ProfilePath[i] = DS4Windows.Global.OlderProfilePath[i] = "Default";
+                    DS4Windows.Global.ProfilePath[i] = DS4Windows.Global.OlderProfilePath[i] = defaultprofname;
                 }
 
                 logger.Info("Default config created");
