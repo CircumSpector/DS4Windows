@@ -7489,8 +7489,7 @@ namespace DS4Windows
             setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
             StickDeadZoneInfo rsInfo = rsModInfo[device];
-            rsInfo.deadZone = (int)(0.035 * 127);
-            rsInfo.antiDeadZone = 0;
+            rsInfo.deadZone = (int)(0.05 * 127);
             rsInfo.maxZone = 90;
 
             // If a device exists, make sure to transfer relevant profile device
@@ -7516,7 +7515,7 @@ namespace DS4Windows
             setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
             StickDeadZoneInfo rsInfo = rsModInfo[device];
-            rsInfo.deadZone = (int)(0.035 * 127);
+            rsInfo.deadZone = (int)(0.05 * 127);
             rsInfo.antiDeadZone = 0;
             rsInfo.maxZone = 90;
 
@@ -7534,10 +7533,11 @@ namespace DS4Windows
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
             StickDeadZoneInfo lsInfo = lsModInfo[device];
+            lsInfo.deadZone = (int)(0.105 * 127);
             lsInfo.antiDeadZone = 0;
 
             StickDeadZoneInfo rsInfo = rsModInfo[device];
-            rsInfo.deadZone = (int)(0.035 * 127);
+            rsInfo.deadZone = (int)(0.05 * 127);
             rsInfo.antiDeadZone = 0;
             rsInfo.maxZone = 90;
 
@@ -7618,6 +7618,7 @@ namespace DS4Windows
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
             StickDeadZoneInfo lsInfo = lsModInfo[device];
+            lsInfo.deadZone = (int)(0.105 * 127);
             lsInfo.antiDeadZone = 0;
 
             StickDeadZoneInfo rsInfo = rsModInfo[device];
