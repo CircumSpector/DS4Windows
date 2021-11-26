@@ -3401,6 +3401,9 @@ namespace DS4Windows
         {
             bool Saved = true;
             ResetProfile(device);
+
+            LoadBlankProfile(device, false, DS4WinWPF.App.rootHub);
+
             Saved = SaveProfile(device, proName);
             return Saved;
         }
