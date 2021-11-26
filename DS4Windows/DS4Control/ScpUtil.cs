@@ -7472,6 +7472,8 @@ namespace DS4Windows
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
+            LoadStdDS4GamepadSettings(device);
+
             DS4ControlSettings setting = GetDS4CSetting(device, DS4Controls.RYNeg);
             setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
             setting = GetDS4CSetting(device, DS4Controls.RYPos);
@@ -7485,8 +7487,6 @@ namespace DS4Windows
             rsInfo.deadZone = (int)(0.035 * 127);
             rsInfo.antiDeadZone = 0;
             rsInfo.maxZone = 90;
-
-            outputDevType[device] = OutContType.DS4;
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
