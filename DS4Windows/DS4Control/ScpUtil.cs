@@ -7367,6 +7367,7 @@ namespace DS4Windows
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
 
+            LoadStdXboxGamepadSettings(device);
 
             // If a device exists, make sure to transfer relevant profile device
             // options to device instance
@@ -7380,6 +7381,8 @@ namespace DS4Windows
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
+
+            LoadStdXboxGamepadSettings(device);
 
             gyroOutMode[device] = GyroOutMode.MouseJoystick;
             sAMouseStickTriggers[device] = "4";
@@ -7423,6 +7426,8 @@ namespace DS4Windows
             string propath = "", bool xinputChange = true, bool postLoad = true)
         {
             PrepareBlankingProfile(device, control, out bool xinputPlug, out bool xinputStatus, xinputChange);
+
+            LoadStdXboxGamepadSettings(device);
 
             gyroOutMode[device] = GyroOutMode.Mouse;
             sATriggers[device] = "4";
