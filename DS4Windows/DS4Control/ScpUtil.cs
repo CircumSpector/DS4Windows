@@ -7164,7 +7164,7 @@ namespace DS4Windows
             buttonMouseInfos[device].Reset();
             gyroControlsInf[device].Reset();
 
-            enableTouchToggle[device] = true;
+            enableTouchToggle[device] = false;
             idleDisconnectTimeout[device] = 0;
             enableOutputDataToDS4[device] = true;
             touchpadJitterCompensation[device] = true;
@@ -7172,15 +7172,15 @@ namespace DS4Windows
             touchClickPassthru[device] = false;
 
             rumble[device] = 100;
-            rumbleAutostopTime[device] = 0;
+            rumbleAutostopTime[device] = 10000;
             touchSensitivity[device] = 100;
 
             lsModInfo[device].Reset();
             rsModInfo[device].Reset();
-            lsModInfo[device].deadZone = rsModInfo[device].deadZone = 10;
-            lsModInfo[device].antiDeadZone = rsModInfo[device].antiDeadZone = 20;
-            lsModInfo[device].maxZone = rsModInfo[device].maxZone = 100;
-            lsModInfo[device].maxOutput = rsModInfo[device].maxOutput = 100.0;
+            //lsModInfo[device].deadZone = rsModInfo[device].deadZone = 13;
+            //lsModInfo[device].antiDeadZone = rsModInfo[device].antiDeadZone = 20;
+            //lsModInfo[device].maxZone = rsModInfo[device].maxZone = 100;
+            //lsModInfo[device].maxOutput = rsModInfo[device].maxOutput = 100.0;
             lsModInfo[device].fuzz = rsModInfo[device].fuzz = StickDeadZoneInfo.DEFAULT_FUZZ;
 
             //l2ModInfo[device].deadZone = r2ModInfo[device].deadZone = 0;
@@ -7212,7 +7212,7 @@ namespace DS4Windows
             LightbarSettingInfo lightbarSettings = lightbarSettingInfo[device];
             LightbarDS4WinInfo lightInfo = lightbarSettings.ds4winSettings;
             lightbarSettings.Mode = LightbarMode.DS4Win;
-            lightInfo.m_LowLed = new DS4Color(Color.Black);
+            //lightInfo.m_LowLed = new DS4Color(Color.Black);
             //m_LowLeds[device] = new DS4Color(Color.Black);
 
             Color tempColor = Color.Blue;
@@ -7242,8 +7242,9 @@ namespace DS4Windows
 
             launchProgram[device] = string.Empty;
             dinputOnly[device] = false;
+
             startTouchpadOff[device] = false;
-            touchOutMode[device] = TouchpadOutMode.Mouse;
+            touchOutMode[device] = TouchpadOutMode.Controls;
             sATriggers[device] = "-1";
             sATriggerCond[device] = true;
             gyroOutMode[device] = GyroOutMode.Controls;
