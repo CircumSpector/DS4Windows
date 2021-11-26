@@ -7299,11 +7299,11 @@ namespace DS4Windows
 
             outputDevType[device] = OutContType.X360;
         }
+
         private void LoadStdDS4GamepadSettings(int device)
         {
             TriggerDeadZoneZInfo l2Info = l2ModInfo[device];
             l2Info.deadZone = (byte)(0.00 * 255);
-
             TriggerDeadZoneZInfo r2Info = r2ModInfo[device];
             r2Info.deadZone = (byte)(0.00 * 255);
 
