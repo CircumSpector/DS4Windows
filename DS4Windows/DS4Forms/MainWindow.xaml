@@ -456,7 +456,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Header="1">
+                    <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
 
                         <StackPanel  VerticalAlignment="Center">
                             <TextBlock HorizontalAlignment="Center" Text="{lex:Loc AboutPatchTextTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
