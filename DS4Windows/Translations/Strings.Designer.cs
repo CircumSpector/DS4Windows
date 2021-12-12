@@ -488,15 +488,6 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feature currently disabled in app due to driver issues. Hopefully issues get fixed in a future update..
-        /// </summary>
-        public static string DS4LightbarPassthruDisabled {
-            get {
-                return ResourceManager.GetString("DS4LightbarPassthruDisabled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to DS4Windows Website.
         /// </summary>
         public static string DS4WSite {
@@ -792,6 +783,25 @@ namespace DS4WinWPF.Translations {
         public static string LeftStick {
             get {
                 return ResourceManager.GetString("LeftStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is a currently unfixable issue which may cause this mode to not work properly depending on the game/app being used. If the Lightbar color is behaving erratically it&apos;s recommended that the user switches back to the &quot;Normal&quot; Lightbar mode..
+        /// </summary>
+        public static string LightbarPassthruIssueWarning {
+            get {
+                return ResourceManager.GetString("LightbarPassthruIssueWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In Lightbar Passthru mode, games and other apps with native DS4 support are allowed to directly control the lightbar when DS4 emulation is being used. Keep in mind that most games/apps do not support this feature.
+        ///.
+        /// </summary>
+        public static string LightbarPassthruModeDescrip {
+            get {
+                return ResourceManager.GetString("LightbarPassthruModeDescrip", resourceCulture);
             }
         }
         
@@ -1350,6 +1360,15 @@ namespace DS4WinWPF.Translations {
         public static string UpgradeNetCaption {
             get {
                 return ResourceManager.GetString("UpgradeNetCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verify on the Log that you are using ViGEmBus 1.17.333.0 or newer before using this mode..
+        /// </summary>
+        public static string VigemMinVersionWarning {
+            get {
+                return ResourceManager.GetString("VigemMinVersionWarning", resourceCulture);
             }
         }
         

@@ -1090,7 +1090,10 @@
 
                         <TabItem Header="Passthru" Visibility="Collapsed">
                             <StackPanel>
-                                <TextBlock Foreground="Red" Text="{lex:Loc DS4LightbarPassthruDisabled}" TextWrapping="Wrap">
+                                <TextBlock Text="{lex:Loc LightbarPassthruModeDescrip}" TextWrapping="Wrap" Margin="0,10,0,0">
+                                </TextBlock>
+                                <TextBlock Foreground="Red" Text="{lex:Loc VigemMinVersionWarning}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                <TextBlock Foreground="Red" Text="{lex:Loc LightbarPassthruIssueWarning}" TextWrapping="Wrap">
                                 </TextBlock>
                             </StackPanel>
                         </TabItem>
@@ -1273,8 +1276,7 @@
                         </TabItem>
                         <TabItem Header="Passthru" Visibility="Collapsed">
                             <StackPanel>
-                                <TextBlock Foreground="Red">
-                                    Only works with ViGEmBus 1.17.333.0 and newer
+                                <TextBlock Foreground="Red" Text="{lex:Loc VigemMinVersionWarning}" TextWrapping="Wrap">
                                 </TextBlock>
                             </StackPanel>
                         </TabItem>
@@ -1810,8 +1812,7 @@
 
                             <TabItem Header="Passthru" Visibility="Collapsed">
                                 <StackPanel x:Name="passthruPanel">
-                                    <TextBlock Foreground="Red">
-                                Only works with ViGEmBus 1.17.333.0 and newer
+                                    <TextBlock Foreground="Red" Text="{lex:Loc VigemMinVersionWarning}" TextWrapping="Wrap">
                                     </TextBlock>
 
                                     <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
