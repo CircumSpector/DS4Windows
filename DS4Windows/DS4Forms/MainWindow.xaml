@@ -480,6 +480,21 @@
 
                     </GroupBox>
 
+                    <GroupBox Grid.Row="1" Grid.Column="1">
+
+                        <StackPanel VerticalAlignment="Center">
+
+                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc DoubleInputInfoTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
+                            <Image Source="/Resources/ExCheck.png" Height="80" Width="180"/>
+                            <Button x:Name="DoubleInputInfoBtn" BorderThickness="0" Margin="10,10,0,0" Background="{x:Null}" BorderBrush="{x:Null}"
+                                                Style="{StaticResource NoBGHoverBtn}" Click="DoubleInputInfoBtn_Click" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                <TextBlock Text="{lex:Loc DoubleInputInfoBody}" TextWrapping="Wrap" TextDecorations="Underline" Foreground="{DynamicResource AccentColor}" Cursor="Hand" TextAlignment="Center" />
+                            </Button>
+
+                        </StackPanel>
+
+                    </GroupBox>
+
                 </Grid>
             </TabItem>
         </TabControl>

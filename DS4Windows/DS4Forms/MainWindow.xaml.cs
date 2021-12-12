@@ -1693,6 +1693,11 @@ Suspend support not enabled.", true);
             Util.StartProcessHelper("https://gamepad-tester.com/");
         }
 
+        private void DoubleInputInfoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Util.StartProcessHelper("https://docs.ds4windows.app/guides/solving-double-input/");
+        }
+
         private void DS4WinLatestBtn_Click(object sender, RoutedEventArgs e)
         {
             Util.StartProcessHelper("https://docs.ds4windows.app/about/latest-version/");

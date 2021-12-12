@@ -585,6 +585,12 @@ THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!</value>
   <data name="VigemMinVersionWarning" xml:space="preserve">
     <value>Verify on the Log that you are using ViGEmBus 1.17.333.0 or newer before using this mode.</value>
   </data>
+  <data name="DoubleInputInfoBody" xml:space="preserve">
+    <value>Check the dedicated Double Input page for more info.</value>
+  </data>
+  <data name="DoubleInputInfoTitle" xml:space="preserve">
+    <value>Have you prevented the "Double Input" issue?</value>
+  </data>
   <data name="VDS4WarningBody" xml:space="preserve">
     <value>Rumble and the Lightbar Passthru mode have been re-enabled when using a profile with DS4 emulation, but they may not function correctly.
 If infinite rumble occurs then the user must set the rumble strength to 0% in the profile settings to disable it.</value>

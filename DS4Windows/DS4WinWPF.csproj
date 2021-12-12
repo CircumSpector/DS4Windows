@@ -88,6 +88,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\ExCheck.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\social\bittube.png" />
 	<Resource Include="Resources\social\GitHub-Mark-Light-64px.png" />
     <Resource Include="Resources\social\GitHub-Mark-64px.png" />
@@ -272,6 +275,10 @@
 
   <ItemGroup>
     <Folder Remove="extras\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\ExCheck.png" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

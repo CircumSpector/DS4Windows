@@ -461,6 +461,24 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check the dedicated Double Input page for more info..
+        /// </summary>
+        public static string DoubleInputInfoBody {
+            get {
+                return ResourceManager.GetString("DoubleInputInfoBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Have you prevented the &quot;Double Input&quot; issue?.
+        /// </summary>
+        public static string DoubleInputInfoTitle {
+            get {
+                return ResourceManager.GetString("DoubleInputInfoTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller/Driver Setup.
         /// </summary>
         public static string DriverSetup {
