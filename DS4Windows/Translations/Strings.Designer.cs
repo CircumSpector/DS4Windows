@@ -651,6 +651,15 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to General mouse settings.
+        /// </summary>
+        public static string GeneralMouseSettings {
+            get {
+                return ResourceManager.GetString("GeneralMouseSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gyro.
         /// </summary>
         public static string Gyro {
@@ -946,6 +955,15 @@ namespace DS4WinWPF.Translations {
         public static string Path {
             get {
                 return ResourceManager.GetString("Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Physical controller settings.
+        /// </summary>
+        public static string PhysicalContSettings {
+            get {
+                return ResourceManager.GetString("PhysicalContSettings", resourceCulture);
             }
         }
         
@@ -1360,6 +1378,15 @@ namespace DS4WinWPF.Translations {
         public static string UpgradeNetCaption {
             get {
                 return ResourceManager.GetString("UpgradeNetCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If the emulated controller is set to &quot;DualShock 4&quot; then the user may SUFFER FROM NON-STOPPING RUMBLE depending on the game/app being used. This issue is currently unfixable. If infinite rumble happens then set rumble strength to 0% to prevent it (default is 100%)..
+        /// </summary>
+        public static string VDS4RumbleWarning {
+            get {
+                return ResourceManager.GetString("VDS4RumbleWarning", resourceCulture);
             }
         }
         

@@ -569,9 +569,19 @@ THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!</value>
   <data name="LightbarPassthruIssueWarning" xml:space="preserve">
     <value>There is a currently unfixable issue which may cause this mode to not work properly depending on the game/app being used. If the Lightbar color is behaving erratically it's recommended that the user switches back to the "Normal" Lightbar mode.</value>
   </data>
+  <data name="VDS4RumbleWarning" xml:space="preserve">
+    <value>If the emulated controller is set to "DualShock 4" then the user may SUFFER FROM NON-STOPPING RUMBLE depending on the game/app being used. This issue is currently unfixable. If infinite rumble happens then set rumble strength to 0% to prevent it (default is 100%).</value>
+  </data>
+  <data name="GeneralMouseSettings" xml:space="preserve">
+    <value>General mouse settings</value>
+  </data>
   <data name="LightbarPassthruModeDescrip" xml:space="preserve">
     <value>In Lightbar Passthru mode, games and other apps with native DS4 support are allowed to directly control the lightbar when DS4 emulation is being used. Keep in mind that most games/apps do not support this feature.
 </value>
+  </data>
+  <data name="PhysicalContSettings" xml:space="preserve">
+    <value>Physical controller settings</value>
+  </data>
   <data name="VigemMinVersionWarning" xml:space="preserve">
     <value>Verify on the Log that you are using ViGEmBus 1.17.333.0 or newer before using this mode.</value>
   </data>
