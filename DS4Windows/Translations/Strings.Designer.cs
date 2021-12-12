@@ -1391,6 +1391,25 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rumble and the Lightbar Passthru mode have been re-enabled when using a profile with DS4 emulation, but they may not function correctly.
+        ///If infinite rumble occurs then the user must set the rumble strength to 0% in the profile settings to disable it..
+        /// </summary>
+        public static string VDS4WarningBody {
+            get {
+                return ResourceManager.GetString("VDS4WarningBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DS4 Emulation Warning.
+        /// </summary>
+        public static string VDS4WarningTitle {
+            get {
+                return ResourceManager.GetString("VDS4WarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Verify on the Log that you are using ViGEmBus 1.17.333.0 or newer before using this mode..
         /// </summary>
         public static string VigemMinVersionWarning {

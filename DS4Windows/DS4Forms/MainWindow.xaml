@@ -469,6 +469,17 @@
 
                     </GroupBox>
 
+                    <GroupBox Grid.Row="1" Grid.Column="0">
+
+                        <StackPanel VerticalAlignment="Center">
+
+                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc VDS4WarningTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
+                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc VDS4WarningBody}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="20,10,20,0" TextAlignment="Center"/>
+
+                        </StackPanel>
+
+                    </GroupBox>
+
                 </Grid>
             </TabItem>
         </TabControl>
