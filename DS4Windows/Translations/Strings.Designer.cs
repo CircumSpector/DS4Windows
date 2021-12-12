@@ -61,40 +61,31 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click here to check for updates, read the changelog and for more info regarding the current state of the DS4Windows project.
-        /// </summary>
-        public static string AboutTabDS4WinLatest {
-            get {
-                return ResourceManager.GetString("AboutTabDS4WinLatest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This is a patched version of DS4Windows v3.0.18 being distributed by the CircumSpector Team. The purpose of these patched builds is to deliver bug fixes and new features while a proper &quot;main&quot; DS4Windows version cannot be released.
         ///
         ///THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!.
         /// </summary>
-        public static string AboutTabTextBody {
+        public static string AboutPatchTextBody {
             get {
-                return ResourceManager.GetString("AboutTabTextBody", resourceCulture);
+                return ResourceManager.GetString("AboutPatchTextBody", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to CircumSpector&apos;s Custom Build of DS4Windows.
         /// </summary>
-        public static string AboutTabTexTitle {
+        public static string AboutPatchTextTitle {
             get {
-                return ResourceManager.GetString("AboutTabTexTitle", resourceCulture);
+                return ResourceManager.GetString("AboutPatchTextTitle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to About This Version.
+        ///   Looks up a localized string similar to Click here to check for updates, read the changelog and for more info regarding the current state of the DS4Windows project.
         /// </summary>
-        public static string AboutTabTitle {
+        public static string AboutTabDS4WinLatest {
             get {
-                return ResourceManager.GetString("AboutTabTitle", resourceCulture);
+                return ResourceManager.GetString("AboutTabDS4WinLatest", resourceCulture);
             }
         }
         
@@ -747,6 +738,15 @@ namespace DS4WinWPF.Translations {
         public static string Import {
             get {
                 return ResourceManager.GetString("Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Info Board.
+        /// </summary>
+        public static string InfoBoardTabTitle {
+            get {
+                return ResourceManager.GetString("InfoBoardTabTitle", resourceCulture);
             }
         }
         

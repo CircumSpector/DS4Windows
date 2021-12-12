@@ -544,17 +544,17 @@ Example: whyme_DS4Windows</value>
   <data name="AboutTabDS4WinLatest" xml:space="preserve">
     <value>Click here to check for updates, read the changelog and for more info regarding the current state of the DS4Windows project</value>
   </data>
-  <data name="AboutTabTextBody" xml:space="preserve">
+  <data name="AboutPatchTextBody" xml:space="preserve">
     <value>This is a patched version of DS4Windows v3.0.18 being distributed by the CircumSpector Team. The purpose of these patched builds is to deliver bug fixes and new features while a proper "main" DS4Windows version cannot be released.
 
 THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!</value>
     <comment>Use Shift + Enter to enter a line break</comment>
   </data>
-  <data name="AboutTabTexTitle" xml:space="preserve">
+  <data name="AboutPatchTextTitle" xml:space="preserve">
     <value>CircumSpector's Custom Build of DS4Windows</value>
   </data>
-  <data name="AboutTabTitle" xml:space="preserve">
-    <value>About This Version</value>
+  <data name="InfoBoardTabTitle" xml:space="preserve">
+    <value>Info Board</value>
   </data>
   <data name="DS4WSite" xml:space="preserve">
     <value>DS4Windows Website</value>
