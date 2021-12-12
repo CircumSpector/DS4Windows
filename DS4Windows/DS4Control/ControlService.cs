@@ -2472,6 +2472,14 @@ namespace DS4Windows
             }
         }
 
+        public virtual void StartTPOn(int deviceID)
+        {
+            if (deviceID < CURRENT_DS4_CONTROLLER_LIMIT)
+            {
+                TouchActive[deviceID] = true;
+            }
+        }
+
         public virtual string TouchpadSlide(int ind)
         {
             DS4State cState = CurrentState[ind];

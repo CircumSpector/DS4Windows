@@ -4897,7 +4897,8 @@ namespace DS4Windows
                 {
                     Item = m_Xdoc.SelectSingleNode("/" + rootname + "/StartTouchpadOff");
                     bool.TryParse(Item.InnerText, out startTouchpadOff[device]);
-                    if (startTouchpadOff[device] == true) control.StartTPOff(device);
+                    if (startTouchpadOff[device] == true && enableTouchToggle[device] == true) control.StartTPOff(device);
+                    else control.StartTPOn(device);
                 }
                 catch { startTouchpadOff[device] = false; missingSetting = true; }
 
