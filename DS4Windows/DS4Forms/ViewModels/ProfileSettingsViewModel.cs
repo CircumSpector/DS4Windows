@@ -25,13 +25,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private string gyroControlsTrigDisplay = "Always On";
 
         private int gyroMouseSmoothMethodIndex;
-
-
+        
         private int gyroMouseStickSmoothMethodIndex;
 
         private string gyroMouseStickTrigDisplay = "Always On";
-
-
+        
         private string gyroMouseTrigDisplay = "Always On";
 
         private string gyroSwipeTrigDisplay = "Always On";
@@ -675,8 +673,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             GyroSwipeTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
-
-
+        
         public void UpdateGyroControlsTrig(ContextMenu menu, bool alwaysOnChecked)
         {
             var index = 0;

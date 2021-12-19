@@ -52,6 +52,9 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly IAppSettingsService appSettings;
 
+        /// <summary>
+        ///     The currently edited <see cref="DS4WindowsProfile"/>.
+        /// </summary>
         private readonly DS4WindowsProfile currentProfile;
 
         public ProfileEditor(DS4WindowsProfile profile, IAppSettingsService appSettings, ControlService service)
