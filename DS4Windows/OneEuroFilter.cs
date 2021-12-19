@@ -1,54 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 
 namespace Sensorit.Base
 {
     public class OneEuroFilter
     {
+        protected double Dcutoff;
+        protected LowpassFilter DxFilt;
+
+        protected bool FirstTime;
+        protected LowpassFilter XFilt;
+
         public OneEuroFilter(double minCutoff, double beta)
         {
-            firstTime = true;
-            this.minCutoff = minCutoff;
-            this.beta = beta;
+            FirstTime = true;
+            MinCutoff = minCutoff;
+            Beta = beta;
 
-            xFilt = new LowpassFilter();
-            dxFilt = new LowpassFilter();
-            dcutoff = 1;
+            XFilt = new LowpassFilter();
+            DxFilt = new LowpassFilter();
+            Dcutoff = 1;
         }
 
-        protected bool firstTime;
-        protected double minCutoff;
-        protected double beta;
-        protected LowpassFilter xFilt;
-        protected LowpassFilter dxFilt;
-        protected double dcutoff;
+        public double MinCutoff { get; set; }
 
-        public double MinCutoff
-        {
-            get { return minCutoff; }
-            set { minCutoff = value; }
-        }
-
-        public double Beta
-        {
-            get { return beta; }
-            set { beta = value; }
-        }
+        public double Beta { get; set; }
 
         public double Filter(double x, double rate)
         {
-            double dx = firstTime ? 0 : (x - xFilt.Last()) * rate;
-            if (firstTime)
-            {
-                firstTime = false;
-            }
+            var dx = FirstTime ? 0 : (x - XFilt.Last()) * rate;
+            if (FirstTime) FirstTime = false;
 
-            var edx = dxFilt.Filter(dx, Alpha(rate, dcutoff));
-            var cutoff = minCutoff + beta * Math.Abs(edx);
+            var edx = DxFilt.Filter(dx, Alpha(rate, Dcutoff));
+            var cutoff = MinCutoff + Beta * Math.Abs(edx);
 
-            return xFilt.Filter(x, Alpha(rate, cutoff));
+            return XFilt.Filter(x, Alpha(rate, cutoff));
         }
 
         protected double Alpha(double rate, double cutoff)
@@ -61,31 +46,33 @@ namespace Sensorit.Base
 
     public class LowpassFilter
     {
+        protected bool FirstTime;
+        protected double HatXPrev;
+
         public LowpassFilter()
         {
-            firstTime = true;
+            FirstTime = true;
         }
-
-        protected bool firstTime;
-        protected double hatXPrev;
 
         public double Last()
         {
-            return hatXPrev;
+            return HatXPrev;
         }
 
         public double Filter(double x, double alpha)
         {
             double hatX = 0;
-            if (firstTime)
+            if (FirstTime)
             {
-                firstTime = false;
+                FirstTime = false;
                 hatX = x;
             }
             else
-                hatX = alpha * x + (1 - alpha) * hatXPrev;
+            {
+                hatX = alpha * x + (1 - alpha) * HatXPrev;
+            }
 
-            hatXPrev = hatX;
+            HatXPrev = hatX;
 
             return hatX;
         }
