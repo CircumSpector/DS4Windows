@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using DS4Windows;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using Microsoft.Win32;
 using Color = System.Windows.Media.Color;
 
@@ -60,6 +61,47 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             new TriggerModeChoice("Normal", TriggerMode.Normal)
         };
 
+        /// <summary>
+        ///     The <see cref="DS4WindowsProfile"/> this <see cref="ProfileSettingsViewModel"/> is editing.
+        /// </summary>
+        private readonly DS4WindowsProfile currentProfile;
+
+        public ProfileSettingsViewModel(DS4WindowsProfile profile, IAppSettingsService appSettings, ControlService service)
+        {
+            currentProfile = profile;
+            this.appSettings = appSettings;
+            rootHub = service;
+            //Device = device;
+            //FuncDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
+            tempControllerIndex = ControllerTypeIndex;
+            //Global.OutDevTypeTemp[device] = OutContType.X360;
+            TempBTPollRateIndex = currentProfile.BluetoothPollRate;
+
+            outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
+            mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
+
+            /*ImageSourceConverter sourceConverter = new ImageSourceConverter();
+            ImageSource temp = sourceConverter.
+                ConvertFromString($"{Global.Instance.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png") as ImageSource;
+            lightbarImgBrush.ImageSource = temp.Clone();
+            */
+            var tempResourceUri = new Uri($"{Global.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png");
+            var tempBitmap = new BitmapImage();
+            tempBitmap.BeginInit();
+            // Needed for some systems not using the System default color profile
+            tempBitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+            tempBitmap.UriSource = tempResourceUri;
+            tempBitmap.EndInit();
+            lightbarImgBrush.ImageSource = tempBitmap.Clone();
+
+            //PresetMenuUtil = new PresetMenuHelper(device);
+            gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();
+            gyroMouseStickSmoothMethodIndex = FindGyroMouseStickSmoothMethodIndex();
+
+            SetupEvents();
+        }
+
+        [Obsolete]
         public ProfileSettingsViewModel(IAppSettingsService appSettings, ControlService service, int device)
         {
             this.appSettings = appSettings;

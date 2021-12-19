@@ -1123,12 +1123,16 @@ Suspend support not enabled.", true);
 
             if (Height < DEFAULT_PROFILE_EDITOR_HEIGHT) Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
 
-            editor = new ProfileEditor(appSettings, rootHub, device);
+            editor = device == 8
+                ? new ProfileEditor(profilesService.CurrentlyEditedProfile, appSettings, rootHub)
+                : new ProfileEditor(appSettings, rootHub, device);
+
             editor.CreatedProfile += Editor_CreatedProfile;
             editor.Closed += ProfileEditor_Closed;
             profDockPanel.Children.Add(editor);
 
-            await editor.Reload(device, entity);
+            // TODO: fix this method
+            //await editor.Reload(device, entity);
         }
 
         private void Editor_CreatedProfile(ProfileEditor sender, string profile)

@@ -7,17 +7,12 @@ using MessageBoxResult = System.Windows.MessageBoxResult;
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for PresetOptionWindow.xaml
+    ///     Interaction logic for PresetOptionWindow.xaml
     /// </summary>
     public partial class PresetOptionWindow : AdonisWindow
     {
-        private MessageBoxResult result = MessageBoxResult.Cancel;
-        public MessageBoxResult Result { get => result; }
-
         private int deviceIndex;
-        private PresetOptionViewModel presetOptionVM;
-        private bool delayPresetApply;
-        public bool DelayPresetApply { get => delayPresetApply; set => delayPresetApply = value; }
+        private readonly PresetOptionViewModel presetOptionVM;
 
         public PresetOptionWindow(ControlService service)
         {
@@ -29,6 +24,10 @@ namespace DS4WinWPF.DS4Forms
             IntroTab.Visibility = Visibility.Collapsed;
             PresetListTab.Visibility = Visibility.Collapsed;
         }
+
+        public MessageBoxResult Result { get; private set; } = MessageBoxResult.Cancel;
+
+        public bool DelayPresetApply { get; set; }
 
         public void SetupData(int index)
         {
@@ -64,12 +63,9 @@ namespace DS4WinWPF.DS4Forms
 
         private void PresetApplyBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (!delayPresetApply)
-            {
-                presetOptionVM.ApplyPreset(deviceIndex);
-            }
+            if (!DelayPresetApply) presetOptionVM.ApplyPreset(deviceIndex);
 
-            result = MessageBoxResult.OK;
+            Result = MessageBoxResult.OK;
             Close();
         }
     }

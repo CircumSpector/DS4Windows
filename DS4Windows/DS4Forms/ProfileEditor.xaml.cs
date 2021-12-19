@@ -13,6 +13,7 @@ using System.Windows.Media;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using Microsoft.Win32;
@@ -32,7 +33,7 @@ namespace DS4WinWPF.DS4Forms
         public delegate void CreatedProfileHandler(ProfileEditor sender, string profile);
 
         private bool controllerReadingsTabActive;
-        private ProfileEntity currentProfile;
+        private ProfileEntity currentProfileOLD;
 
         private readonly Dictionary<Button, ImageBrush> hoverImages =
             new();
@@ -51,6 +52,43 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly IAppSettingsService appSettings;
 
+        private readonly DS4WindowsProfile currentProfile;
+
+        public ProfileEditor(DS4WindowsProfile profile, IAppSettingsService appSettings, ControlService service)
+        {
+            currentProfile = profile;
+            this.appSettings = appSettings;
+            rootHub = service;
+
+            InitializeComponent();
+
+            //DeviceNum = device;
+            emptyColorGB.Visibility = Visibility.Collapsed;
+            profileSettingsVM = new ProfileSettingsViewModel(profile, appSettings, rootHub);
+            picBoxHover.Visibility = Visibility.Hidden;
+            picBoxHover2.Visibility = Visibility.Hidden;
+
+            mappingListVM = new MappingListViewModel(DeviceNum, profileSettingsVM.ContType);
+            //specialActionsVM = new SpecialActionsListViewModel(device);
+
+            RemoveHoverBtnText();
+            PopulateHoverImages();
+            PopulateHoverLocations();
+            PopulateHoverIndexes();
+            PopulateReverseHoverIndexes();
+
+            AssignTiltAssociation();
+            AssignSwipeAssociation();
+            AssignTriggerFullPullAssociation();
+            AssignStickOuterBindAssociation();
+            AssignGyroSwipeAssociation();
+
+            inputTimer = new NonFormTimer(100);
+            inputTimer.Elapsed += InputDS4;
+            SetupEvents();
+        }
+
+        [Obsolete]
         public ProfileEditor(IAppSettingsService appSettings, ControlService service, int device)
         {
             this.appSettings = appSettings;
@@ -603,7 +641,7 @@ namespace DS4WinWPF.DS4Forms
             DeviceNum = device;
             if (profile != null)
             {
-                currentProfile = profile;
+                currentProfileOLD = profile;
                 if (device == Global.TEST_PROFILE_INDEX)
                     Global.Instance.Config.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
 
@@ -614,7 +652,7 @@ namespace DS4WinWPF.DS4Forms
             }
             else
             {
-                currentProfile = null;
+                currentProfileOLD = null;
                 var presetWin = new PresetOptionWindow(rootHub);
                 presetWin.SetupData(DeviceNum);
                 presetWin.ShowDialog();
@@ -641,7 +679,7 @@ namespace DS4WinWPF.DS4Forms
             axialLSStickControl.UseDevice(ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo);
             axialRSStickControl.UseDevice(ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo);
 
-            specialActionsVM.LoadActions(currentProfile == null);
+            specialActionsVM.LoadActions(currentProfileOLD == null);
             mappingListVM.UpdateMappings();
             profileSettingsVM.UpdateLateProperties();
             profileSettingsVM.PopulateTouchDisInver(touchDisInvertBtn.ContextMenu);
@@ -707,7 +745,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void RefreshEditorBindings()
         {
-            specialActionsVM.LoadActions(currentProfile == null);
+            specialActionsVM.LoadActions(currentProfileOLD == null);
             mappingListVM.UpdateMappings();
             profileSettingsVM.UpdateLateProperties();
             profileSettingsVM.PopulateTouchDisInver(touchDisInvertBtn.ContextMenu);
@@ -841,18 +879,18 @@ namespace DS4WinWPF.DS4Forms
                 Global.Instance.Config.ProfilePath[DeviceNum] =
                     Global.Instance.Config.OlderProfilePath[DeviceNum] = temp;
 
-                if (currentProfile != null)
-                    if (temp != currentProfile.Name)
+                if (currentProfileOLD != null)
+                    if (temp != currentProfileOLD.Name)
                     {
                         //File.Delete(DS4Windows.Global.RuntimeAppDataPath + @"\Profiles\" + currentProfile.Name + ".xml");
-                        currentProfile.DeleteFile();
-                        currentProfile.Name = temp;
+                        currentProfileOLD.DeleteFile();
+                        currentProfileOLD.Name = temp;
                     }
 
-                if (currentProfile != null)
+                if (currentProfileOLD != null)
                 {
-                    await currentProfile.SaveProfileAsync(DeviceNum);
-                    currentProfile.FireSaved();
+                    await currentProfileOLD.SaveProfileAsync(DeviceNum);
+                    currentProfileOLD.FireSaved();
                     result = true;
                 }
                 else

@@ -488,7 +488,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var type = 0;
-                switch (ProfilesService.Instance.ActiveProfiles.ElementAt(Device).OutputDeviceType)
+                switch (currentProfile.OutputDeviceType)
                 {
                     case OutContType.X360:
                         type = 0;
