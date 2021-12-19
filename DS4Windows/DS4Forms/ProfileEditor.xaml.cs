@@ -84,7 +84,7 @@ namespace DS4WinWPF.DS4Forms
             SetupEvents();
         }
 
-        public bool Keepsize { get; private set; }
+        public bool KeepSize { get; private set; }
 
         public int DeviceNum { get; private set; }
 
@@ -882,7 +882,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void KeepSizeBtn_Click(object sender, RoutedEventArgs e)
         {
-            Keepsize = true;
+            KeepSize = true;
             var c = new ImageSourceConverter();
             sizeImage.Source =
                 c.ConvertFromString($"{Global.ASSEMBLY_RESOURCE_PREFIX}component/Resources/checked.png") as ImageSource;

@@ -1086,7 +1086,7 @@ Suspend support not enabled.", true);
             profOptsToolbar.Visibility = Visibility.Visible;
             profilesListBox.Visibility = Visibility.Visible;
             preserveSize = true;
-            if (!editor.Keepsize)
+            if (!editor.KeepSize)
             {
                 Width = oldSize.Width;
                 Height = oldSize.Height;
