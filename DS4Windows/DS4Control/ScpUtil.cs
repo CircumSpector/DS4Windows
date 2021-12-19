@@ -7248,7 +7248,7 @@ namespace DS4Windows
             dinputOnly[device] = false;
 
             startTouchpadOff[device] = false;
-            touchOutMode[device] = TouchpadOutMode.Controls;
+            touchOutMode[device] = TouchpadOutMode.Mouse;
             sATriggers[device] = "-1";
             sATriggerCond[device] = true;
             gyroOutMode[device] = GyroOutMode.Controls;
@@ -7296,11 +7296,12 @@ namespace DS4Windows
 
         private void LoadStdXboxGamepadSettings(int device)
         {
+            /*
             LightbarSettingInfo lightbarSettings = lightbarSettingInfo[device];
             LightbarDS4WinInfo lightInfo = lightbarSettings.ds4winSettings;
             lightbarSettings.Mode = LightbarMode.DS4Win;
             lightInfo.m_Led = new DS4Color(Color.MediumSpringGreen);
-
+            */
             outputDevType[device] = OutContType.X360;
         }
 
@@ -7311,6 +7312,7 @@ namespace DS4Windows
             TriggerDeadZoneZInfo r2Info = r2ModInfo[device];
             r2Info.deadZone = (byte)(0.00 * 255);
 
+            /*
             LightbarSettingInfo lightbarSettings = lightbarSettingInfo[device];
             LightbarDS4WinInfo lightInfo = lightbarSettings.ds4winSettings;
             lightbarSettings.Mode = LightbarMode.DS4Win;
@@ -7318,6 +7320,7 @@ namespace DS4Windows
 
             touchOutMode[device] = TouchpadOutMode.Passthru;
             gyroOutMode[device] = GyroOutMode.Passthru;
+            */
 
             rumble[device] = 0;
 
