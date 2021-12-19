@@ -2,25 +2,44 @@
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using DS4Windows;
+using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
-using LEDBarMode = DS4Windows.DualSenseControllerOptions.LEDBarMode;
-using MuteLEDMode = DS4Windows.DualSenseControllerOptions.MuteLEDMode;
-using LinkMode = DS4Windows.JoyConDeviceOptions.LinkMode;
-using JoinedGyroProvider = DS4Windows.JoyConDeviceOptions.JoinedGyroProvider;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class ControllerRegDeviceOptsViewModel
     {
-        private List<DeviceListItem> currentInputDevices = new List<DeviceListItem>();
-        public List<DeviceListItem> CurrentInputDevices { get => currentInputDevices; }
-
-        // Serial, ControllerOptionsStore instance
-        private Dictionary<PhysicalAddress, ControllerOptionsStore> inputDeviceSettings = new();
-        private List<ControllerOptionsStore> controllerOptionsStores = new List<ControllerOptionsStore>();
+        private readonly List<ControllerOptionsStore> controllerOptionsStores = new();
 
         private int controllerSelectedIndex = -1;
+
+        private int currentTabSelectedIndex;
+
+        // Serial, ControllerOptionsStore instance
+        private readonly Dictionary<PhysicalAddress, ControllerOptionsStore> inputDeviceSettings = new();
+
+        public ControllerRegDeviceOptsViewModel(IAppSettingsService appSettings,
+            ControlService service)
+        {
+            AppSettings = appSettings;
+
+            var idx = 0;
+            foreach (var device in service.DS4Controllers)
+            {
+                if (device != null)
+                {
+                    CurrentInputDevices.Add(new DeviceListItem(device));
+                    inputDeviceSettings.Add(device.MacAddress, device.OptionsStore);
+                    controllerOptionsStores.Add(device.OptionsStore);
+                }
+
+                idx++;
+            }
+        }
+
+        public List<DeviceListItem> CurrentInputDevices { get; } = new();
+
         public int ControllerSelectedIndex
         {
             get => controllerSelectedIndex;
@@ -31,29 +50,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 ControllerSelectedIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ControllerSelectedIndexChanged;
 
-        public DS4ControllerOptions CurrentDS4Options
-        {
-            get => controllerOptionsStores[controllerSelectedIndex] as DS4ControllerOptions;
-        }
+        public DS4ControllerOptions CurrentDS4Options =>
+            controllerOptionsStores[controllerSelectedIndex] as DS4ControllerOptions;
 
-        public DualSenseControllerOptions CurrentDSOptions
-        {
-            get => controllerOptionsStores[controllerSelectedIndex] as DualSenseControllerOptions;
-        }
+        public DualSenseControllerOptions CurrentDSOptions =>
+            controllerOptionsStores[controllerSelectedIndex] as DualSenseControllerOptions;
 
-        public SwitchProControllerOptions CurrentSwitchProOptions
-        {
-            get => controllerOptionsStores[controllerSelectedIndex] as SwitchProControllerOptions;
-        }
+        public SwitchProControllerOptions CurrentSwitchProOptions =>
+            controllerOptionsStores[controllerSelectedIndex] as SwitchProControllerOptions;
 
-        public JoyConControllerOptions CurrentJoyConOptions
-        {
-            get => controllerOptionsStores[controllerSelectedIndex] as JoyConControllerOptions;
-        }
+        public JoyConControllerOptions CurrentJoyConOptions =>
+            controllerOptionsStores[controllerSelectedIndex] as JoyConControllerOptions;
 
-        private int currentTabSelectedIndex = 0;
         public int CurrentTabSelectedIndex
         {
             get => currentTabSelectedIndex;
@@ -64,37 +73,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 CurrentTabSelectedIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler CurrentTabSelectedIndexChanged;
 
         public IAppSettingsService AppSettings { get; }
+        public object DataContextObject { get; private set; }
 
-        public ControllerRegDeviceOptsViewModel(IAppSettingsService appSettings,
-            ControlService service)
-        {
-            AppSettings = appSettings;
-
-            int idx = 0;
-            foreach(DS4Device device in service.DS4Controllers)
-            {
-                if (device != null)
-                {
-                    currentInputDevices.Add(new DeviceListItem(device));
-                    inputDeviceSettings.Add(device.MacAddress, device.OptionsStore);
-                    controllerOptionsStores.Add(device.OptionsStore);
-                }
-                idx++;
-            }
-        }
-
-        private object dataContextObject = null;
-        public object DataContextObject { get => dataContextObject; }
+        public event EventHandler ControllerSelectedIndexChanged;
+        public event EventHandler CurrentTabSelectedIndexChanged;
 
         public int FindTabOptionsIndex()
         {
-            ControllerOptionsStore currentStore =
+            var currentStore =
                 controllerOptionsStores[controllerSelectedIndex];
 
-            int result = 0;
+            var result = 0;
 
             switch (currentStore)
             {
@@ -117,192 +108,182 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void FindFittingDataContext()
         {
-            ControllerOptionsStore currentStore =
+            var currentStore =
                 controllerOptionsStores[controllerSelectedIndex];
 
             switch (currentStore)
             {
                 case DS4ControllerOptions _:
-                    dataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options, AppSettings.Settings.DeviceOptions.DS4SupportSettings);
+                    DataContextObject = new DS4ControllerOptionsWrapper(CurrentDS4Options,
+                        AppSettings.Settings.DeviceOptions.DS4SupportSettings);
                     break;
                 case DualSenseControllerOptions _:
-                    dataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions, AppSettings.Settings.DeviceOptions.DualSenseSupportSettings);
+                    DataContextObject = new DualSenseControllerOptionsWrapper(CurrentDSOptions,
+                        AppSettings.Settings.DeviceOptions.DualSenseSupportSettings);
                     break;
                 case SwitchProControllerOptions _:
-                    dataContextObject = new SwitchProControllerOptionsWrapper(CurrentSwitchProOptions, AppSettings.Settings.DeviceOptions.SwitchProSupportSettings);
+                    DataContextObject = new SwitchProControllerOptionsWrapper(CurrentSwitchProOptions,
+                        AppSettings.Settings.DeviceOptions.SwitchProSupportSettings);
                     break;
                 case JoyConControllerOptions _:
-                    dataContextObject = new JoyConControllerOptionsWrapper(CurrentJoyConOptions, AppSettings.Settings.DeviceOptions.JoyConSupportSettings);
+                    DataContextObject = new JoyConControllerOptionsWrapper(CurrentJoyConOptions,
+                        AppSettings.Settings.DeviceOptions.JoyConSupportSettings);
                     break;
             }
         }
 
         public void SaveControllerConfigs()
         {
-            foreach (DeviceListItem item in currentInputDevices)
-            {
-                Global.Instance.Config.SaveControllerConfigs(item.Device);
-            }
+            foreach (var item in CurrentInputDevices) Global.Instance.Config.SaveControllerConfigs(item.Device);
         }
     }
 
     public class DeviceListItem
     {
-        private DS4Device device;
-        public DS4Device Device { get => device; }
-
-        public string IdText
-        {
-            get => $"{device.DisplayName} ({device.MacAddress})";
-        }
-
         public DeviceListItem(DS4Device device)
         {
-            this.device = device;
+            Device = device;
         }
+
+        public DS4Device Device { get; }
+
+        public string IdText => $"{Device.DisplayName} ({Device.MacAddress})";
     }
 
 
     public class DS4ControllerOptionsWrapper
     {
-        private DS4ControllerOptions options;
-        public DS4ControllerOptions Options { get => options; }
-
-        private DS4DeviceOptions parentOptions;
-        public bool Visible
-        {
-            get => parentOptions.Enabled;
-        }
-        public event EventHandler VisibleChanged;
+        private readonly DS4DeviceOptions parentOptions;
 
         public DS4ControllerOptionsWrapper(DS4ControllerOptions options, DS4DeviceOptions parentOpts)
         {
-            this.options = options;
-            this.parentOptions = parentOpts;
-            parentOptions.EnabledChanged += () =>
-            {
-                VisibleChanged?.Invoke(this, EventArgs.Empty);
-            };
+            Options = options;
+            parentOptions = parentOpts;
+            parentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
         }
+
+        public DS4ControllerOptions Options { get; }
+
+        public bool Visible => parentOptions.Enabled;
+
+        public event EventHandler VisibleChanged;
     }
 
     public class DualSenseControllerOptionsWrapper
     {
-        private DualSenseControllerOptions options;
-        public DualSenseControllerOptions Options { get => options; }
-
-        private DualSenseDeviceOptions parentOptions;
-        public bool Visible { get => parentOptions.Enabled; }
-        public event EventHandler VisibleChanged;
-
-        private List<DSHapticsChoiceEnum> dsHapticOptions = new List<DSHapticsChoiceEnum>()
-        {
-            new DSHapticsChoiceEnum("Low", DS4Windows.InputDevices.DualSenseDevice.HapticIntensity.Low),
-            new DSHapticsChoiceEnum("Medium", DS4Windows.InputDevices.DualSenseDevice.HapticIntensity.Medium),
-            new DSHapticsChoiceEnum("High", DS4Windows.InputDevices.DualSenseDevice.HapticIntensity.High)
-        };
-        public List<DSHapticsChoiceEnum> DSHapticOptions { get => dsHapticOptions; }
-
-        private List<EnumChoiceSelection<LEDBarMode>> dsLEDModeOptions = new List<EnumChoiceSelection<LEDBarMode>>()
-        {
-            new EnumChoiceSelection<LEDBarMode>("Off", LEDBarMode.Off),
-            new EnumChoiceSelection<LEDBarMode>("Only for multiple controllers", LEDBarMode.MultipleControllers),
-            new EnumChoiceSelection<LEDBarMode>("Battery Percentage", LEDBarMode.BatteryPercentage),
-            new EnumChoiceSelection<LEDBarMode>("On", LEDBarMode.On),
-        };
-        public List<EnumChoiceSelection<LEDBarMode>> DsLEDModes { get => dsLEDModeOptions; }
-
-        private List<EnumChoiceSelection<MuteLEDMode>> dsMuteLEDModes = new List<EnumChoiceSelection<MuteLEDMode>>()
-        {
-            new EnumChoiceSelection<MuteLEDMode>("Off", MuteLEDMode.Off),
-            new EnumChoiceSelection<MuteLEDMode>("On", MuteLEDMode.On),
-            new EnumChoiceSelection<MuteLEDMode>("Pulse", MuteLEDMode.Pulse),
-        };
-        public List<EnumChoiceSelection<MuteLEDMode>> DsMuteLEDModes { get => dsMuteLEDModes; }
+        private readonly DualSenseDeviceOptions parentOptions;
 
         public DualSenseControllerOptionsWrapper(DualSenseControllerOptions options,
             DualSenseDeviceOptions parentOpts)
         {
-            this.options = options;
-            this.parentOptions = parentOpts;
+            Options = options;
+            parentOptions = parentOpts;
             parentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
         }
+
+        public DualSenseControllerOptions Options { get; }
+
+        public bool Visible => parentOptions.Enabled;
+
+        public List<DSHapticsChoiceEnum> DSHapticOptions { get; } = new()
+        {
+            new DSHapticsChoiceEnum("Low", DualSenseDevice.HapticIntensity.Low),
+            new DSHapticsChoiceEnum("Medium", DualSenseDevice.HapticIntensity.Medium),
+            new DSHapticsChoiceEnum("High", DualSenseDevice.HapticIntensity.High)
+        };
+
+        public List<EnumChoiceSelection<DualSenseControllerOptions.LEDBarMode>> DsLEDModes { get; } = new()
+        {
+            new EnumChoiceSelection<DualSenseControllerOptions.LEDBarMode>("Off",
+                DualSenseControllerOptions.LEDBarMode.Off),
+            new EnumChoiceSelection<DualSenseControllerOptions.LEDBarMode>("Only for multiple controllers",
+                DualSenseControllerOptions.LEDBarMode.MultipleControllers),
+            new EnumChoiceSelection<DualSenseControllerOptions.LEDBarMode>("Battery Percentage",
+                DualSenseControllerOptions.LEDBarMode.BatteryPercentage),
+            new EnumChoiceSelection<DualSenseControllerOptions.LEDBarMode>("On",
+                DualSenseControllerOptions.LEDBarMode.On)
+        };
+
+        public List<EnumChoiceSelection<DualSenseControllerOptions.MuteLEDMode>> DsMuteLEDModes { get; } = new()
+        {
+            new EnumChoiceSelection<DualSenseControllerOptions.MuteLEDMode>("Off",
+                DualSenseControllerOptions.MuteLEDMode.Off),
+            new EnumChoiceSelection<DualSenseControllerOptions.MuteLEDMode>("On",
+                DualSenseControllerOptions.MuteLEDMode.On),
+            new EnumChoiceSelection<DualSenseControllerOptions.MuteLEDMode>("Pulse",
+                DualSenseControllerOptions.MuteLEDMode.Pulse)
+        };
+
+        public event EventHandler VisibleChanged;
     }
 
     public class SwitchProControllerOptionsWrapper
     {
-        private SwitchProControllerOptions options;
-        public SwitchProControllerOptions Options { get => options; }
-
-        private SwitchProDeviceOptions parentOptions;
-        public bool Visible { get => parentOptions.Enabled; }
-        public event EventHandler VisibleChanged;
+        private readonly SwitchProDeviceOptions parentOptions;
 
         public SwitchProControllerOptionsWrapper(SwitchProControllerOptions options,
             SwitchProDeviceOptions parentOpts)
         {
-            this.options = options;
-            this.parentOptions = parentOpts;
+            Options = options;
+            parentOptions = parentOpts;
             parentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
         }
+
+        public SwitchProControllerOptions Options { get; }
+
+        public bool Visible => parentOptions.Enabled;
+        public event EventHandler VisibleChanged;
     }
 
     public class JoyConControllerOptionsWrapper
     {
-        private JoyConControllerOptions options;
-        public JoyConControllerOptions Options { get => options; }
-
-        private JoyConDeviceOptions parentOptions;
-        public JoyConDeviceOptions ParentOptions { get => parentOptions; }
-
-        public bool Visible { get => parentOptions.Enabled; }
-        public event EventHandler VisibleChanged;
-
-        private List<EnumChoiceSelection<LinkMode>> linkModes = new List<EnumChoiceSelection<LinkMode>>()
-        {
-            new EnumChoiceSelection<LinkMode>("Split", LinkMode.Split),
-            new EnumChoiceSelection<LinkMode>("Joined", LinkMode.Joined),
-        };
-        public List<EnumChoiceSelection<LinkMode>> LinkModes { get => linkModes; }
-
-        private List<EnumChoiceSelection<JoinedGyroProvider>> joinGyroOptions = new List<EnumChoiceSelection<JoinedGyroProvider>>()
-        {
-            new EnumChoiceSelection<JoinedGyroProvider>("Left", JoinedGyroProvider.JoyConL),
-            new EnumChoiceSelection<JoinedGyroProvider>("Right", JoinedGyroProvider.JoyConR),
-        };
-        public List<EnumChoiceSelection<JoinedGyroProvider>> JoinGyroOptions { get => joinGyroOptions; }
-
         public JoyConControllerOptionsWrapper(JoyConControllerOptions options,
             JoyConDeviceOptions parentOpts)
         {
-            this.options = options;
-            this.parentOptions = parentOpts;
-            parentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
+            Options = options;
+            ParentOptions = parentOpts;
+            ParentOptions.EnabledChanged += () => { VisibleChanged?.Invoke(this, EventArgs.Empty); };
         }
+
+        public JoyConControllerOptions Options { get; }
+
+        public JoyConDeviceOptions ParentOptions { get; }
+
+        public bool Visible => ParentOptions.Enabled;
+
+        public List<EnumChoiceSelection<JoyConDeviceOptions.LinkMode>> LinkModes { get; } = new()
+        {
+            new EnumChoiceSelection<JoyConDeviceOptions.LinkMode>("Split", JoyConDeviceOptions.LinkMode.Split),
+            new EnumChoiceSelection<JoyConDeviceOptions.LinkMode>("Joined", JoyConDeviceOptions.LinkMode.Joined)
+        };
+
+        public List<EnumChoiceSelection<JoyConDeviceOptions.JoinedGyroProvider>> JoinGyroOptions { get; } = new()
+        {
+            new EnumChoiceSelection<JoyConDeviceOptions.JoinedGyroProvider>("Left",
+                JoyConDeviceOptions.JoinedGyroProvider.JoyConL),
+            new EnumChoiceSelection<JoyConDeviceOptions.JoinedGyroProvider>("Right",
+                JoyConDeviceOptions.JoinedGyroProvider.JoyConR)
+        };
+
+        public event EventHandler VisibleChanged;
     }
 
     public class DSHapticsChoiceEnum
     {
-        private string displayName = string.Empty;
-        public string DisplayName { get => displayName; }
-
-        private DS4Windows.InputDevices.DualSenseDevice.HapticIntensity choiceValue;
-        public DS4Windows.InputDevices.DualSenseDevice.HapticIntensity ChoiceValue
-        {
-            get => choiceValue;
-            set => choiceValue = value;
-        }
-
         public DSHapticsChoiceEnum(string name,
-            DS4Windows.InputDevices.DualSenseDevice.HapticIntensity intensity)
+            DualSenseDevice.HapticIntensity intensity)
         {
-            displayName = name;
-            choiceValue = intensity;
+            DisplayName = name;
+            ChoiceValue = intensity;
         }
+
+        public string DisplayName { get; } = string.Empty;
+
+        public DualSenseDevice.HapticIntensity ChoiceValue { get; set; }
 
         public override string ToString()
         {
-            return displayName;
+            return DisplayName;
         }
     }
 }
