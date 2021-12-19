@@ -659,8 +659,9 @@ namespace DS4WinWPF.DS4Forms
                 var presetWin = new PresetOptionWindow(rootHub);
                 presetWin.SetupData(DeviceNum);
                 presetWin.ShowDialog();
-                if (presetWin.Result == System.Windows.MessageBoxResult.Cancel)
-                    Global.Instance.LoadBlankDevProfile(device, false, rootHub, false);
+                // TODO: fix me!
+                //if (presetWin.Result == System.Windows.MessageBoxResult.Cancel)
+                //    Global.Instance.LoadBlankDevProfile(device, false, rootHub, false);
             }
 
             ColorByBatteryPerCheck();
@@ -679,10 +680,10 @@ namespace DS4WinWPF.DS4Forms
             }
 
             conReadingsUserCon.EnableControl(false);
-            axialLSStickControl.UseDevice(ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo);
-            axialRSStickControl.UseDevice(ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo);
+            axialLSStickControl.UseDevice(currentProfile.LSModInfo);
+            axialRSStickControl.UseDevice(currentProfile.RSModInfo);
 
-            specialActionsVM.LoadActions(currentProfileOLD == null);
+            //specialActionsVM.LoadActions(currentProfileOLD == null);
             mappingListVM.UpdateMappings();
             profileSettingsVM.UpdateLateProperties();
             profileSettingsVM.PopulateTouchDisInver(touchDisInvertBtn.ContextMenu);
@@ -695,7 +696,7 @@ namespace DS4WinWPF.DS4Forms
             specialActionsTab.DataContext = specialActionsVM;
             lightbarRect.DataContext = profileSettingsVM;
 
-            var lsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
+            var lsMod = currentProfile.LSModInfo;
             if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.LsDeadX = profileSettingsVM.LSDeadZone;
@@ -707,7 +708,7 @@ namespace DS4WinWPF.DS4Forms
                 conReadingsUserCon.LsDeadY = axialLSStickControl.AxialVM.DeadZoneY;
             }
 
-            var rsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
+            var rsMod = currentProfile.RSModInfo;
             if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
                 conReadingsUserCon.RsDeadX = profileSettingsVM.RSDeadZone;
@@ -730,10 +731,11 @@ namespace DS4WinWPF.DS4Forms
             axialRSStickControl.AxialVM.DeadZoneYChanged += UpdateReadingsRsDeadZoneY;
 
             // Sort special action list by action name
-            var view = (CollectionView)CollectionViewSource.GetDefaultView(specialActionsVM.ActionCol);
-            view.SortDescriptions.Clear();
-            view.SortDescriptions.Add(new SortDescription("ActionName", ListSortDirection.Ascending));
-            view.Refresh();
+            // TODO: fix me!
+            //var view = (CollectionView)CollectionViewSource.GetDefaultView(specialActionsVM.ActionCol);
+            //view.SortDescriptions.Clear();
+            //view.SortDescriptions.Add(new SortDescription("ActionName", ListSortDirection.Ascending));
+            //view.Refresh();
 
             if (profileSettingsVM.UseControllerReadout) inputTimer.Start();
         }
@@ -856,8 +858,8 @@ namespace DS4WinWPF.DS4Forms
 
         private void SetLateProperties(bool fullSave = true)
         {
-            ProfilesService.Instance.ActiveProfiles.ElementAt(DeviceNum).BluetoothPollRate = profileSettingsVM.TempBTPollRateIndex;
-            ProfilesService.Instance.ActiveProfiles.ElementAt(DeviceNum).OutputDeviceType = profileSettingsVM.TempConType;
+            currentProfile.BluetoothPollRate = profileSettingsVM.TempBTPollRateIndex;
+            currentProfile.OutputDeviceType = profileSettingsVM.TempConType;
             if (fullSave) Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
         }
 

@@ -1131,8 +1131,7 @@ Suspend support not enabled.", true);
             editor.Closed += ProfileEditor_Closed;
             profDockPanel.Children.Add(editor);
 
-            // TODO: fix this method
-            //await editor.Reload(device, entity);
+            await editor.Reload(device, entity);
         }
 
         private void Editor_CreatedProfile(ProfileEditor sender, string profile)
