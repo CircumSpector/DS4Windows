@@ -4,40 +4,6 @@ using Sensorit.Base;
 
 namespace DS4Windows
 {
-    public class BatteryReportArgs : EventArgs
-    {
-        private int Index { get; }
-        private int Level { get; }
-        private bool Charging { get; }
-
-        public BatteryReportArgs(int index, int level, bool charging)
-        {
-            Index = index;
-            Level = level;
-            Charging = charging;
-        }
-    }
-
-    public class ControllerRemovedArgs : EventArgs
-    {
-        public int Index { get; }
-
-        public ControllerRemovedArgs(int index)
-        {
-            Index = index;
-        }
-    }
-
-    public class DeviceStatusChangeEventArgs : EventArgs
-    {
-        private int Index { get; }
-
-        public DeviceStatusChangeEventArgs(int index)
-        {
-            Index = index;
-        }
-    }
-
     public class SerialChangeArgs : EventArgs
     {
         private int Index { get; }

@@ -155,45 +155,6 @@ namespace DS4Windows
         public static event EventHandler<EventArgs>
             ControllerStatusChange; // called when a controller is added/removed/battery or touchpad mode changes/etc.
 
-        public static void ControllerStatusChanged(object sender)
-        {
-            if (ControllerStatusChange != null)
-                ControllerStatusChange(sender, EventArgs.Empty);
-        }
-
-        public static event EventHandler<BatteryReportArgs> BatteryStatusChange;
-
-        public static void OnBatteryStatusChange(object sender, int index, int level, bool charging)
-        {
-            if (BatteryStatusChange != null)
-            {
-                var args = new BatteryReportArgs(index, level, charging);
-                BatteryStatusChange(sender, args);
-            }
-        }
-
-        public static event EventHandler<ControllerRemovedArgs> ControllerRemoved;
-
-        public static void OnControllerRemoved(object sender, int index)
-        {
-            if (ControllerRemoved != null)
-            {
-                var args = new ControllerRemovedArgs(index);
-                ControllerRemoved(sender, args);
-            }
-        }
-
-        public static event EventHandler<DeviceStatusChangeEventArgs> DeviceStatusChange;
-
-        public static void OnDeviceStatusChanged(object sender, int index)
-        {
-            if (DeviceStatusChange != null)
-            {
-                var args = new DeviceStatusChangeEventArgs(index);
-                DeviceStatusChange(sender, args);
-            }
-        }
-
         public static event EventHandler<SerialChangeArgs> DeviceSerialChange;
 
         public static void OnDeviceSerialChange(object sender, int index, PhysicalAddress serial)
