@@ -16,6 +16,7 @@
         <local:ControlIndexCheck x:Key="controlIndexCheck" />
     </UserControl.Resources>
     <DockPanel>
+        <!-- Profile action buttons -->
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,4,0,10">
             <TextBlock Text="{lex:LocText Profile, Suffix=:}" VerticalAlignment="Center" Margin="0,0,8,0" />
             <TextBox x:Name="profileNameTxt" Text="" Width="160" VerticalContentAlignment="Center" />
@@ -33,6 +34,8 @@
 
             </Button>
         </StackPanel>
+
+        <!-- Special actions -->
         <TabControl x:Name="sidebarTabControl" Width="480" DockPanel.Dock="Left"
                     SelectionChanged="SidebarTabControl_SelectionChanged">
             <TabItem Header="Controls">
@@ -269,11 +272,13 @@
             </TabItem>
         </TabControl>
 
+        <!-- Main profile settings -->
         <TabControl x:Name="profileSettingsTabCon" DockPanel.Dock="Right" Margin="10,0,0,0" Padding="6">
             <TabControl.Resources>
                 <Thickness x:Key="spaceMargin" Bottom="8" />
             </TabControl.Resources>
 
+            <!-- Axes -->
             <TabItem Header="Axis Config">
                 <TabItem.Resources>
                     <Thickness x:Key="spaceMargin" Left="10" Bottom="6" />
@@ -1287,6 +1292,7 @@
                 </ScrollViewer>
             </TabItem>
 
+            <!-- Lightbar -->
             <TabItem Header="Lightbar">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -1426,6 +1432,7 @@
                 </StackPanel>
             </TabItem>
 
+            <!-- Touchpad -->
             <TabItem Header="Touchpad">
                 <TabItem.Resources>
                     <Thickness x:Key="spaceMargin" Bottom="8" />
@@ -1681,6 +1688,7 @@
                 </StackPanel>
             </TabItem>
 
+            <!-- Gyro -->
             <TabItem Header="Gyro">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
@@ -2431,6 +2439,7 @@
                 </ScrollViewer>
             </TabItem>
 
+            <!-- Other -->
             <TabItem Header="Other">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
