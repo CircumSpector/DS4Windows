@@ -72,8 +72,6 @@ namespace DS4Windows
 
         void ChangeLinkedProfile(PhysicalAddress serial, string profile);
 
-        void RemoveLinkedProfile(PhysicalAddress serial);
-
         int GetProfileActionIndexOf(int device, string name);
 
         int GetLsOutCurveMode(int index);
