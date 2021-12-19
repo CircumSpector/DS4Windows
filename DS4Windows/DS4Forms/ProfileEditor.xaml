@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:lex="http://wpflocalizeextension.codeplex.com"
+             xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
              lex:LocalizeDictionary.DesignCulture=""
              lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
@@ -2443,12 +2444,14 @@
             <TabItem Header="Other">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <GroupBox Header="{lex:Loc VirtualControllerSettings}" MinHeight="50" Margin="4,4,4,0"
-                                  Padding="0,4,0,4">
+
+                        <!-- Output device settings -->
+                        <GroupBox Header="{lex:Loc VirtualControllerSettings}" MinHeight="50" Margin="{adonisUi:Space 0.5}">
                             <StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <Label Content="{lex:Loc EmulatedController}" ToolTip="{lex:Loc OutContNotice}" />
-                                    <ComboBox x:Name="outConTypeCombo"
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="{lex:Loc EmulatedController}" ToolTip="{lex:Loc OutContNotice}" Margin="{adonisUi:Space 1}" VerticalAlignment="Center" />
+                                    <ComboBox x:Name="outConTypeCombo" Margin="{adonisUi:Space 0.5}"
+                                              VerticalAlignment="Center"
                                               SelectedIndex="{Binding TempControllerIndex, FallbackValue=0}"
                                               IsEnabled="{Binding DInputOnly, Converter={StaticResource InverseBoolConverter}}"
                                               MinWidth="140"
@@ -2457,37 +2460,47 @@
                                         <ComboBoxItem Content="DualShock 4" />
                                     </ComboBox>
                                 </StackPanel>
-                                <CheckBox Content="{lex:Loc DisableVirtualController}" IsChecked="{Binding DInputOnly}"
+                                <CheckBox Content="{lex:Loc DisableVirtualController}" 
+                                          Margin="{adonisUi:Space 0.5}" VerticalAlignment="Center"
+                                          IsChecked="{Binding DInputOnly}"
                                           ToolTip="{lex:Loc DisableVirtualControllerTip}" />
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="{lex:Loc Rumble}" MinHeight="50" Margin="4,4,4,0" Padding="0,4,0,4">
+
+                        <!-- Rumble -->
+                        <GroupBox Header="{lex:Loc Rumble}" MinHeight="50" Margin="{adonisUi:Space 0.5}">
                             <UniformGrid Rows="1" Columns="3">
                                 <UniformGrid Columns="2" HorizontalAlignment="Left">
                                     <DockPanel>
-                                        <Label Content="%" DockPanel.Dock="Right" />
+                                        <Label Content="%" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}" />
                                         <xctk:IntegerUpDown x:Name="RumbleBoostIUD" d:IsHidden="True"
+                                                            Margin="{adonisUi:Space 0.5}" VerticalAlignment="Center"
                                                             Value="{Binding RumbleBoost}" Minimum="0" Maximum="200"
                                                             Increment="10"
                                                             MinWidth="50" DockPanel.Dock="Left" />
                                     </DockPanel>
 
                                     <DockPanel>
-                                        <Label Content="{lex:Loc RumbleMaxSecs}" DockPanel.Dock="Right" />
+                                        <Label Content="{lex:Loc RumbleMaxSecs}" DockPanel.Dock="Right" 
+                                               VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}" />
                                         <xctk:IntegerUpDown x:Name="RumbleAutostopTimeIUD" d:IsHidden="True"
                                                             Value="{Binding RumbleAutostopTime}" Minimum="0"
+                                                            Margin="{adonisUi:Space 0.5}" VerticalAlignment="Center"
                                                             Maximum="3600" Increment="1"
                                                             ToolTip="{lex:Loc RumbleMaxSecsTip}"
                                                             MinWidth="50" DockPanel.Dock="Left" />
                                     </DockPanel>
                                 </UniformGrid>
 
-                                <Button x:Name="heavyRumbleTestBtn" Content="Test Heavy" Margin="10,0,0,0"
+                                <Button x:Name="heavyRumbleTestBtn" Content="Test Heavy" 
+                                        Margin="{adonisUi:Space 0.5}" VerticalAlignment="Center"
                                         Click="HeavyRumbleTestBtn_Click" />
-                                <Button x:Name="lightRumbleTestBtn" Content="Test Light" Margin="10,0,0,0"
+                                <Button x:Name="lightRumbleTestBtn" Content="Test Light" 
+                                        Margin="{adonisUi:Space 0.5}" VerticalAlignment="Center"
                                         Click="LightRumbleTestBtn_Click" />
                             </UniformGrid>
                         </GroupBox>
+
                         <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                             <Label Content="Use Controller" ToolTip="{lex:Loc Resources:UseControllerForMapping}" />
                             <xctk:IntegerUpDown x:Name="useControllerUD" d:IsHidden="True" Width="40" Margin="8,0,0,0"
@@ -2505,6 +2518,7 @@
                                 </CheckBox.Resources>
                             </CheckBox>
                         </StackPanel>
+
                         <StackPanel Orientation="Horizontal" Height="40" Margin="0,4,0,0">
                             <Label Content="Mouse Sensitivity" VerticalAlignment="Center" />
                             <xctk:IntegerUpDown d:IsHidden="True" MinWidth="50" Height="20"
@@ -2513,6 +2527,7 @@
                             <TextBlock Text="{Binding OutputMouseSpeed,Mode=OneWay,StringFormat='\{0} pps'}"
                                        MinWidth="50" VerticalAlignment="Center" Margin="10,0,0,0" />
                         </StackPanel>
+
                         <StackPanel Orientation="Horizontal" Height="40">
                             <Label Content="Mouse Vertical Scale" ContentStringFormat="{}{0}:"
                                    VerticalAlignment="Center" />
@@ -2521,6 +2536,7 @@
                                                 Minimum="0" Maximum="500" Increment="10" Margin="10,0,0,0" />
                             <Label Content="%" VerticalContentAlignment="Center" Margin="4,0,0,0" />
                         </StackPanel>
+
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Mouse Offset" VerticalAlignment="Center" />
                             <xctk:DoubleUpDown d:IsHidden="True" MinWidth="50" FormatString="F3" DefaultValue="0"
@@ -2530,6 +2546,7 @@
                             <TextBlock Text="{Binding MouseOffsetSpeed,Mode=OneWay,StringFormat='\{0:0.00} pps'}"
                                        MinWidth="50" VerticalAlignment="Center" Margin="10,0,0,0" />
                         </StackPanel>
+
                         <CheckBox Content="Mouse Acceleration" IsChecked="{Binding MouseAcceleration}" Margin="0,6,0,0" />
                         <CheckBox Content="Enable Touchpad Toggle" IsChecked="{Binding EnableTouchpadToggle}"
                                   Margin="0,6,0,0"
