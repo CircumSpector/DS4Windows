@@ -444,58 +444,64 @@
                 </DockPanel>
             </TabItem>
             <TabItem Header="{lex:Loc InfoBoardTabTitle}">
-                <Grid>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-                    <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+                        <Grid>
 
-                        <StackPanel  VerticalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc AboutPatchTextTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
-                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc AboutPatchTextBody}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="20,10,20,0" TextAlignment="Center"/>
-                            <Button x:Name="DS4WinLatestBtn" BorderThickness="0" Margin="10,10,0,0" Background="{x:Null}" BorderBrush="{x:Null}"
-                                                Style="{StaticResource NoBGHoverBtn}" Click="DS4WinLatestBtn_Click" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                                <TextBlock Text="{lex:Loc AboutTabDS4WinLatest}" TextDecorations="Underline" Foreground="{DynamicResource AccentColor}" Cursor="Hand" />
-                            </Button>
-                        </StackPanel>
+                        <Grid.RowDefinitions>
+                            <RowDefinition MinHeight="150"/>
+                            <RowDefinition MinHeight="150"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-                    </GroupBox>
+                        <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
 
-                    <GroupBox Grid.Row="1" Grid.Column="0">
+                            <StackPanel  VerticalAlignment="Center">
+                                <TextBlock HorizontalAlignment="Center" Text="{lex:Loc AboutPatchTextTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
+                                <TextBlock HorizontalAlignment="Center" Text="{lex:Loc AboutPatchTextBody}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="20,10,20,0" TextAlignment="Center"/>
+                                <Button x:Name="DS4WinLatestBtn" BorderThickness="0" Margin="10,10,0,0" Background="{x:Null}" BorderBrush="{x:Null}"
+                                                    Style="{StaticResource NoBGHoverBtn}" Click="DS4WinLatestBtn_Click" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                    <TextBlock Text="{lex:Loc AboutTabDS4WinLatest}" TextDecorations="Underline" Foreground="{DynamicResource AccentColor}" Cursor="Hand" />
+                                </Button>
+                            </StackPanel>
 
-                        <StackPanel VerticalAlignment="Center">
+                        </GroupBox>
 
-                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc VDS4WarningTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
-                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc VDS4WarningBody}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="20,10,20,0" TextAlignment="Center"/>
+                        <GroupBox Grid.Row="1" Grid.Column="0">
 
-                        </StackPanel>
+                            <StackPanel VerticalAlignment="Center">
 
-                    </GroupBox>
+                                <TextBlock HorizontalAlignment="Center" Text="{lex:Loc VDS4WarningTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
+                                <TextBlock HorizontalAlignment="Center" Text="{lex:Loc VDS4WarningBody}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="20,10,20,0" TextAlignment="Center"/>
 
-                    <GroupBox Grid.Row="1" Grid.Column="1">
+                            </StackPanel>
 
-                        <StackPanel VerticalAlignment="Center">
+                        </GroupBox>
 
-                            <TextBlock HorizontalAlignment="Center" Text="{lex:Loc DoubleInputInfoTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
-                            <Image Source="/Resources/ExCheck.png" Height="80" Width="180"/>
-                            <Button x:Name="DoubleInputInfoBtn" BorderThickness="0" Margin="10,10,0,0" Background="{x:Null}" BorderBrush="{x:Null}"
-                                                Style="{StaticResource NoBGHoverBtn}" Click="DoubleInputInfoBtn_Click" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                                <TextBlock Text="{lex:Loc DoubleInputInfoBody}" TextWrapping="Wrap" TextDecorations="Underline" Foreground="{DynamicResource AccentColor}" Cursor="Hand" TextAlignment="Center" />
-                            </Button>
+                        <GroupBox Grid.Row="1" Grid.Column="1">
 
-                        </StackPanel>
+                            <StackPanel VerticalAlignment="Center">
 
-                    </GroupBox>
+                                <TextBlock HorizontalAlignment="Center" Text="{lex:Loc DoubleInputInfoTitle}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
+                                <Image Source="/Resources/ExCheck.png" Height="80" Width="180"/>
+                                <Button x:Name="DoubleInputInfoBtn" BorderThickness="0" Margin="10,10,0,0" Background="{x:Null}" BorderBrush="{x:Null}"
+                                                    Style="{StaticResource NoBGHoverBtn}" Click="DoubleInputInfoBtn_Click" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                    <TextBlock Text="{lex:Loc DoubleInputInfoBody}" TextWrapping="Wrap" TextDecorations="Underline" Foreground="{DynamicResource AccentColor}" Cursor="Hand" TextAlignment="Center" />
+                                </Button>
 
-                </Grid>
+                            </StackPanel>
+
+                        </GroupBox>
+
+                    </Grid>
+
+                </ScrollViewer>                         
+
             </TabItem>
         </TabControl>
     </DockPanel>
