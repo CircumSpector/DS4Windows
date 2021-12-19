@@ -4,44 +4,6 @@ using Sensorit.Base;
 
 namespace DS4Windows
 {
-    public class MappingDoneEventArgs : EventArgs
-    {
-        protected int deviceNum = -1;
-
-        public MappingDoneEventArgs(int DeviceID)
-        {
-            deviceNum = DeviceID;
-        }
-
-        public int DeviceID => deviceNum;
-    }
-
-    public class ReportEventArgs : EventArgs
-    {
-        protected Ds3PadId m_Pad = Ds3PadId.None;
-        protected byte[] m_Report = new byte[64];
-
-        public ReportEventArgs()
-        {
-        }
-
-        public ReportEventArgs(Ds3PadId Pad)
-        {
-            m_Pad = Pad;
-        }
-
-        public Ds3PadId Pad
-        {
-            get { return m_Pad; }
-            set { m_Pad = value; }
-        }
-
-        public Byte[] Report
-        {
-            get { return m_Report; }
-        }
-    }
-
     public class BatteryReportArgs : EventArgs
     {
         private int Index { get; }
