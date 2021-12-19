@@ -112,15 +112,9 @@ namespace DS4Windows
 
         int GetProfileActionCount(int index);
 
-        void EstablishDefaultSpecialActions(int idx);
-
         void CacheProfileCustomsFlags(int device);
 
         void CacheExtraProfileInfo(int device);
-
-        void CalculateProfileActionCount(int index);
-
-        void CalculateProfileActionDicts(int device);
 
         SpecialAction GetAction(string name);
 
