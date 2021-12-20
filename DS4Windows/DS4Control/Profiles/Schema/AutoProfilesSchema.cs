@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
-using ExtendedXmlSerializer;
-using ExtendedXmlSerializer.Configuration;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
