@@ -691,6 +691,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             return result;
         }
 
+        //
+        // TODO: fix me up!
+        // 
         public void LaunchCurveEditor(string customDefinition)
         {
             // Custom curve editor web link clicked. Open the bezier curve editor web app usign the default browser app and pass on current custom definition as a query string parameter.
@@ -784,6 +787,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 case nameof(RSOutputCurveIndex):
                     CurrentProfile.RSOutCurveMode = (CurveMode)RSOutputCurveIndex;
                     OnPropertyChanged(nameof(RSCustomCurveSelected));
+                    break;
+
+                case nameof(L2OutputCurveIndex):
+                    CurrentProfile.L2OutCurveMode = (CurveMode)L2OutputCurveIndex;
+                    OnPropertyChanged(nameof(L2CustomCurveSelected));
+                    break;
+
+                case nameof(R2OutputCurveIndex):
+                    CurrentProfile.R2OutCurveMode = (CurveMode)R2OutputCurveIndex;
+                    OnPropertyChanged(nameof(R2CustomCurveSelected));
+                    break;
+
+                case nameof(SXOutputCurveIndex):
+                    CurrentProfile.SXOutCurveMode = (CurveMode)SXOutputCurveIndex;
+                    OnPropertyChanged(nameof(SXCustomCurveSelected));
+                    break;
+
+                case nameof(SZOutputCurveIndex):
+                    CurrentProfile.SZOutCurveMode = (CurveMode)SZOutputCurveIndex;
+                    OnPropertyChanged(nameof(SZCustomCurveSelected));
                     break;
             }
 

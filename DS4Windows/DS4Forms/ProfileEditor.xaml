@@ -7,6 +7,9 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:lex="http://wpflocalizeextension.codeplex.com"
              xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+             xmlns:System="clr-namespace:System;assembly=System.Runtime"
+             xmlns:schema="clr-namespace:DS4WinWPF.DS4Control.Profiles.Schema"
+             xmlns:converters="clr-namespace:DS4WinWPF.DS4Forms.Converters"
              lex:LocalizeDictionary.DesignCulture=""
              lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
@@ -15,6 +18,14 @@
     <UserControl.Resources>
         <xctk:InverseBoolConverter x:Key="InverseBoolConverter" />
         <local:ControlIndexCheck x:Key="controlIndexCheck" />
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+
+        <ObjectDataProvider x:Key="CurveModes" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="schema:CurveMode"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </UserControl.Resources>
     <DockPanel>
         <!-- Profile action buttons -->
@@ -431,14 +442,13 @@
                                                 <Label Content="Output Curve:" Grid.Row="0" Grid.Column="0" />
                                                 <ComboBox Grid.Row="0" Grid.Column="1"
                                                           SelectedIndex="{Binding LSOutputCurveIndex}"
-                                                          Margin="{StaticResource spaceMargin}">
-                                                    <ComboBoxItem Content="Linear" />
-                                                    <ComboBoxItem Content="Enhanced Precision" />
-                                                    <ComboBoxItem Content="Quadratic" />
-                                                    <ComboBoxItem Content="Cubic" />
-                                                    <ComboBoxItem Content="Easeout Quad" />
-                                                    <ComboBoxItem Content="Easeout Cubic" />
-                                                    <ComboBoxItem Content="Custom" />
+                                                          Margin="{StaticResource spaceMargin}"
+                                                          ItemsSource="{Binding Source={StaticResource CurveModes}}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
                                                 </ComboBox>
 
                                                 <DockPanel Grid.Row="1" Grid.Column="1"
@@ -755,14 +765,13 @@
                                                 <Label Content="Output Curve:" Grid.Row="0" Grid.Column="0" />
                                                 <ComboBox Grid.Row="0" Grid.Column="1"
                                                           SelectedIndex="{Binding RSOutputCurveIndex}"
-                                                          Margin="{StaticResource spaceMargin}">
-                                                    <ComboBoxItem Content="Linear" />
-                                                    <ComboBoxItem Content="Enhanced Precision" />
-                                                    <ComboBoxItem Content="Quadratic" />
-                                                    <ComboBoxItem Content="Cubic" />
-                                                    <ComboBoxItem Content="Easeout Quad" />
-                                                    <ComboBoxItem Content="Easeout Cubic" />
-                                                    <ComboBoxItem Content="Custom" />
+                                                          Margin="{StaticResource spaceMargin}"
+                                                          ItemsSource="{Binding Source={StaticResource CurveModes}}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
                                                 </ComboBox>
 
                                                 <DockPanel Grid.Row="1" Grid.Column="1"
@@ -1024,24 +1033,23 @@
 
                                 <Label Content="Output Curve:" Grid.Row="6" Grid.Column="0" />
                                 <ComboBox Grid.Row="6" Grid.Column="1" SelectedIndex="{Binding L2OutputCurveIndex}"
-                                          Margin="{StaticResource spaceMargin}">
-                                    <ComboBoxItem Content="Linear" />
-                                    <ComboBoxItem Content="Enhanced Precision" />
-                                    <ComboBoxItem Content="Quadratic" />
-                                    <ComboBoxItem Content="Cubic" />
-                                    <ComboBoxItem Content="Easeout Quad" />
-                                    <ComboBoxItem Content="Easeout Cubic" />
-                                    <ComboBoxItem Content="Custom" />
+                                          Margin="{StaticResource spaceMargin}"
+                                          ItemsSource="{Binding Source={StaticResource CurveModes}}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
+
                                 <ComboBox Grid.Row="6" Grid.Column="2" SelectedIndex="{Binding R2OutputCurveIndex}"
-                                          Margin="{StaticResource spaceMargin}">
-                                    <ComboBoxItem Content="Linear" />
-                                    <ComboBoxItem Content="Enhanced Precision" />
-                                    <ComboBoxItem Content="Quadratic" />
-                                    <ComboBoxItem Content="Cubic" />
-                                    <ComboBoxItem Content="Easeout Quad" />
-                                    <ComboBoxItem Content="Easeout Cubic" />
-                                    <ComboBoxItem Content="Custom" />
+                                          Margin="{StaticResource spaceMargin}"
+                                          ItemsSource="{Binding Source={StaticResource CurveModes}}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
 
                                 <DockPanel Grid.Row="7" Grid.Column="1" IsEnabled="{Binding L2CustomCurveSelected}">
@@ -1255,24 +1263,23 @@
 
                                 <Label Content="Output Curve:" Grid.Row="5" Grid.Column="0" />
                                 <ComboBox Grid.Row="5" Grid.Column="1" SelectedIndex="{Binding SXOutputCurveIndex}"
-                                          Margin="{StaticResource spaceMargin}">
-                                    <ComboBoxItem Content="Linear" />
-                                    <ComboBoxItem Content="Enhanced Precision" />
-                                    <ComboBoxItem Content="Quadratic" />
-                                    <ComboBoxItem Content="Cubic" />
-                                    <ComboBoxItem Content="Easeout Quad" />
-                                    <ComboBoxItem Content="Easeout Cubic" />
-                                    <ComboBoxItem Content="Custom" />
+                                          Margin="{StaticResource spaceMargin}"
+                                          ItemsSource="{Binding Source={StaticResource CurveModes}}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
+
                                 <ComboBox Grid.Row="5" Grid.Column="2" SelectedIndex="{Binding SZOutputCurveIndex}"
-                                          Margin="{StaticResource spaceMargin}">
-                                    <ComboBoxItem Content="Linear" />
-                                    <ComboBoxItem Content="Enhanced Precision" />
-                                    <ComboBoxItem Content="Quadratic" />
-                                    <ComboBoxItem Content="Cubic" />
-                                    <ComboBoxItem Content="Easeout Quad" />
-                                    <ComboBoxItem Content="Easeout Cubic" />
-                                    <ComboBoxItem Content="Custom" />
+                                          Margin="{StaticResource spaceMargin}"
+                                          ItemsSource="{Binding Source={StaticResource CurveModes}}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
 
                                 <DockPanel Grid.Row="6" Grid.Column="1" IsEnabled="{Binding SXCustomCurveSelected}">
