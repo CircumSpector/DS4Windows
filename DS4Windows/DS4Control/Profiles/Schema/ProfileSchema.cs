@@ -27,7 +27,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     }
 
     /// <summary>
-    ///     "New" controller profile definition.
+    ///     Controller profile definition.
     /// </summary>
     public class DS4WindowsProfile :
         JsonSerializable<DS4WindowsProfile>,
@@ -46,7 +46,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public DS4WindowsProfile()
         {
-            Id = DefaultProfileId;
         }
 
         public DS4WindowsProfile(int index) : this()
@@ -63,15 +62,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public string FileName => GetValidFileName(DisplayName);
 
         /// <summary>
-        ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup. This value is assigned
-        ///     at runtime and not persisted.
+        ///     The controller slot index this profile is loaded, if applicable. Useful to speed up lookup.
         /// </summary>
+        /// <remarks>This value is assigned at runtime and not persisted.</remarks>
         [JsonIgnore]
         public int? Index { get; set; }
 
         /// <summary>
-        ///     The controller ID this profile is currently attached to. This value is assigned at runtime and not persisted.
+        ///     The controller ID this profile is currently attached to.
         /// </summary>
+        /// <remarks>This value is assigned at runtime and not persisted.</remarks>
         [JsonIgnore]
         public PhysicalAddress DeviceId { get; set; }
 
@@ -82,15 +82,16 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool IsDefaultProfile => Equals(Id, DefaultProfileId);
 
         /// <summary>
-        ///     If true, this profile is linked to the current slots device' MAC/ID. This value is assigned at runtime and not
-        ///     persisted.
+        ///     If true, this profile is linked to the current slots device' MAC/ID.
         /// </summary>
+        /// <remarks>This value is assigned at runtime and not persisted.</remarks>
         [JsonIgnore]
         public bool IsLinkedProfile { get; set; }
 
         /// <summary>
         ///     State information if an output device is active.
         /// </summary>
+        /// <remarks>This value is assigned at runtime and not persisted.</remarks>
         [JsonIgnore]
         public bool IsOutputDeviceEnabled { get; set; }
 

@@ -19,10 +19,12 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
+using Control = System.Windows.Controls.Control;
 using MessageBox = AdonisUI.Controls.MessageBox;
 using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
 using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
@@ -1123,10 +1125,16 @@ Suspend support not enabled.", true);
 
             if (Height < DEFAULT_PROFILE_EDITOR_HEIGHT) Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
 
-            editor = device == 8
-                ? new ProfileEditor(profilesService.CurrentlyEditedProfile, appSettings, rootHub)
-                : new ProfileEditor(appSettings, rootHub, device);
-
+            if (device == 8)
+            {
+                profilesService.CurrentlyEditedProfile = new DS4WindowsProfile();
+                editor = new ProfileEditor(profilesService.CurrentlyEditedProfile, appSettings, rootHub);
+            }
+            else
+            {
+                editor = new ProfileEditor(appSettings, rootHub, device);
+            }
+            
             editor.CreatedProfile += Editor_CreatedProfile;
             editor.Closed += ProfileEditor_Closed;
             profDockPanel.Children.Add(editor);
