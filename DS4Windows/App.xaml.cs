@@ -22,6 +22,10 @@ using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Forms;
 using DS4WinWPF.DS4Forms.ViewModels;
+using EmbedIO;
+using EmbedIO.Actions;
+using EmbedIO.Files;
+using EmbedIO.WebApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -67,7 +71,7 @@ namespace DS4WinWPF
 
         private bool exitApp;
         private bool exitComThread;
-        
+
         private bool runShutdown;
         private bool skipSave;
         private Thread testThread;
@@ -141,6 +145,23 @@ namespace DS4WinWPF
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
             services.AddSingleton<IProfilesService, ProfilesService>();
             services.AddSingleton<IDS4Devices, DS4Devices>();
+
+            //
+            // Embedded web server to deliver curve editor
+            // 
+            services.AddSingleton(provider =>
+            {
+                var settings = provider.GetRequiredService<IAppSettingsService>().Settings;
+
+                return new WebServer(o => o
+                        .WithUrlPrefix(settings.EmbeddedWebServerUrl)
+                        .WithMode(HttpListenerMode.EmbedIO)
+                    )
+                    .WithLocalSessionManager()
+                    .WithStaticFolder("/", "./BezierCurveEditor", true, m => m
+                        .WithContentCaching(true)
+                    );
+            });
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -154,6 +175,8 @@ namespace DS4WinWPF
             // TODO: why is this here?
             // 
             requestClient = new HttpClient();
+
+            _ = Task.Run(async () => await host.Services.GetRequiredService<WebServer>().RunAsync());
 
             logger = host.Services.GetRequiredService<ILogger<App>>();
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
@@ -190,7 +213,7 @@ namespace DS4WinWPF
             CheckOptions(parser);
 
             if (exitApp) return;
-            
+
             ApplyOptimizations();
 
             #region Check for existing instance
@@ -228,7 +251,7 @@ namespace DS4WinWPF
 
             rootHub = host.Services.GetRequiredService<ControlService>();
 
-            rootHub.Debug += RootHubOnDebug; 
+            rootHub.Debug += RootHubOnDebug;
 
             //
             // TODO: I wonder why this was done...
@@ -268,14 +291,14 @@ namespace DS4WinWPF
             logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
             logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
             logger.LogInformation("Logger created");
-            
+
             //
             // Notify user if tracing is enabled
             // 
             appSettings.IsTracingEnabledChanged += SettingsOnIsTracingEnabledChanged;
 
             var readAppConfig = await appSettings.LoadAsync();
-            
+
             switch (firstRun)
             {
                 case false when !readAppConfig:
@@ -283,17 +306,17 @@ namespace DS4WinWPF
                         $@"{Constants.ProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesFileName)}. Using default app settings");
                     break;
                 case true:
-                {
-                    logger.LogInformation("No config found. Creating default config");
-                    AttemptSave();
+                    {
+                        logger.LogInformation("No config found. Creating default config");
+                        AttemptSave();
 
-                    await Global.Instance.Config.SaveAsNewProfile(0, "Default");
-                    for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
-                        Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
+                        await Global.Instance.Config.SaveAsNewProfile(0, "Default");
+                        for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
+                            Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                    logger.LogInformation("Default config created");
-                    break;
-                }
+                        logger.LogInformation("Default config created");
+                        break;
+                    }
             }
 
             skipSave = false;
@@ -391,8 +414,8 @@ namespace DS4WinWPF
                     + "supports, as well as the virtual controllers produced in the process. "
                     + $"\r\n\r\nSteam can detect {Constants.ApplicationName} running and alters its behaviour to "
                     + "not interfere, but depending on your Steam and DS4Windows settings you can still suffer "
-                    +  "from remapping conflicts between the two. "
-                    + "\r\n\r\nIt is highly recommended that you seek aid in the online documentation for more details, "+
+                    + "from remapping conflicts between the two. "
+                    + "\r\n\r\nIt is highly recommended that you seek aid in the online documentation for more details, " +
                     "should you encounter issues."
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "Steam is running",
@@ -443,9 +466,9 @@ namespace DS4WinWPF
                     "Hello, Gamer!" +
                     "\r\n\r\nYou have enabled Tracing in the application settings. This is an advanced feature useful for diagnosing "
                     + "issues with lag or stutter and general remapping performance. "
-                    +"\r\n\r\nTracing is a very memory-hungry operation and requires additional software to be useful. "
-                    +"Do not leave Tracing enabled if you simply wanna play your games, it's for diagnostics only."
-                    +"\r\n\r\nThanks for your attention ❤️",
+                    + "\r\n\r\nTracing is a very memory-hungry operation and requires additional software to be useful. "
+                    + "Do not leave Tracing enabled if you simply wanna play your games, it's for diagnostics only."
+                    + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "Performance Tracing is enabled",
                 Icon = AdonisUI.Controls.MessageBoxImage.Warning,
                 Buttons = new[]
@@ -694,7 +717,7 @@ namespace DS4WinWPF
                                     "DS4Windows_IPCResultData_ReadyEvent");
                             }
                             else
-                                // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
+                            // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
                             {
                                 bDoSendMsg = false;
                             }
@@ -812,12 +835,12 @@ namespace DS4WinWPF
             if (ThemeResources.TryGetValue(themeChoice, out var loc))
             {
                 Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    { Source = new Uri(loc, UriKind.Absolute) };
+                { Source = new Uri(loc, UriKind.Absolute) };
 
                 if (fireChanged) ThemeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        
+
         private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
             logger.LogInformation("User Session Ending");

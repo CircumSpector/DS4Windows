@@ -110,6 +110,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool AreProfilePresetsEnabled { get; set; } = true;
 
         /// <summary>
+        ///     Listen URL of embedded web server.
+        /// </summary>
+        public string EmbeddedWebServerUrl { get; set; } = "http://localhost:11838";
+
+        /// <summary>
         ///     Gets slot to profile assignments.
         /// </summary>
         public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
