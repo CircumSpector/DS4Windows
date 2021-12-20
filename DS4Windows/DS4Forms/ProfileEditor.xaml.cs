@@ -981,13 +981,18 @@ namespace DS4WinWPF.DS4Forms
 
         private void LowColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ColorPickerWindow();
-            dialog.Owner = Application.Current.MainWindow;
+            var dialog = new ColorPickerWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+
             var tempcolor = profileSettingsVM.LowColorMedia;
             dialog.colorPicker.SelectedColor = tempcolor;
             profileSettingsVM.StartForcedColor(tempcolor);
+
             dialog.ColorChanged += (sender2, color) => { profileSettingsVM.UpdateForcedColor(color); };
             dialog.ShowDialog();
+
             profileSettingsVM.EndForcedColor();
             profileSettingsVM.UpdateLowColor(dialog.colorPicker.SelectedColor.GetValueOrDefault());
         }

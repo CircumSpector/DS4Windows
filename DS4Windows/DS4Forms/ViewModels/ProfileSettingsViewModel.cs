@@ -175,25 +175,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             // TODO: simplify!
             /*
-            MainColorChanged += ProfileSettingsViewModel_MainColorChanged;
-            MainColorRChanged += (sender, args) =>
-            {
-                MainColorRStringChanged?.Invoke(this, EventArgs.Empty);
-                MainColorStringChanged?.Invoke(this, EventArgs.Empty);
-                LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
-            };
-            MainColorGChanged += (sender, args) =>
-            {
-                MainColorGStringChanged?.Invoke(this, EventArgs.Empty);
-                MainColorStringChanged?.Invoke(this, EventArgs.Empty);
-                LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
-            };
-            MainColorBChanged += (sender, args) =>
-            {
-                MainColorBStringChanged?.Invoke(this, EventArgs.Empty);
-                MainColorStringChanged?.Invoke(this, EventArgs.Empty);
-                LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
-            };
+
 
             RainbowChanged += (sender, args) => { LightbarBrushChanged?.Invoke(this, EventArgs.Empty); };
 
@@ -233,40 +215,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             MouseOffsetSpeed = RawButtonMouseOffset * OutputMouseSpeed;
         }
 
-        private void ProfileSettingsViewModel_MainColorChanged(object sender, EventArgs e)
-        {
-            // TODO: simplify!
-            //MainColorStringChanged?.Invoke(this, EventArgs.Empty);
-            //MainColorRChanged?.Invoke(this, EventArgs.Empty);
-            //MainColorGChanged?.Invoke(this, EventArgs.Empty);
-            //MainColorBChanged?.Invoke(this, EventArgs.Empty);
-            //LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
-        }
-
         public void UpdateFlashColor(Color color)
         {
             appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashLed = new DS4Color(color);
         }
 
+        /// <summary>
+        ///     Updates the main lightbar color.
+        /// </summary>
         public void UpdateMainColor(Color color)
         {
-            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led = new DS4Color(color);
-            // TODO: simplify!
-            //MainColorChanged?.Invoke(this, EventArgs.Empty);
+            CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led = new DS4Color(color);
+            OnPropertyChanged(nameof(MainColor));
         }
 
+        /// <summary>
+        ///     Updates the low battery lightbar color.
+        /// </summary>
         public void UpdateLowColor(Color color)
         {
-            appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed = new DS4Color(color);
-
-            // TODO: simplify!
-            //LowColorChanged?.Invoke(this, EventArgs.Empty);
-            //LowColorRChanged?.Invoke(this, EventArgs.Empty);
-            //LowColorGChanged?.Invoke(this, EventArgs.Empty);
-            //LowColorBChanged?.Invoke(this, EventArgs.Empty);
-            //LowColorRStringChanged?.Invoke(this, EventArgs.Empty);
-            //LowColorGStringChanged?.Invoke(this, EventArgs.Empty);
-            //LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
+            CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed = new DS4Color(color);
+            OnPropertyChanged(nameof(LowColor));
         }
 
         public void UpdateForcedColor(Color color)
@@ -770,6 +739,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        ///     Reacts to property changes and routes them through to dependencies.
+        /// </summary>
         [UsedImplicitly]
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -808,6 +780,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     break;
                 #endregion
 
+                #region Colors
+                case nameof(MainColor):
+                    OnPropertyChanged(nameof(MainColorR));
+                    OnPropertyChanged(nameof(MainColorG));
+                    OnPropertyChanged(nameof(MainColorB));
+                    break;
+
                 case nameof(MainColorR):
                     OnPropertyChanged(nameof(MainColorRString));
                     OnPropertyChanged(nameof(LightbarBrush));
@@ -822,6 +801,28 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     OnPropertyChanged(nameof(MainColorBString));
                     OnPropertyChanged(nameof(LightbarBrush));
                     break;
+
+                case nameof(LowColor):
+                    OnPropertyChanged(nameof(LowColorR));
+                    OnPropertyChanged(nameof(LowColorG));
+                    OnPropertyChanged(nameof(LowColorB));
+                    break;
+
+                case nameof(LowColorR):
+                    OnPropertyChanged(nameof(LowColorRString));
+                    OnPropertyChanged(nameof(LightbarBrush));
+                    break;
+
+                case nameof(LowColorG):
+                    OnPropertyChanged(nameof(LowColorGString));
+                    OnPropertyChanged(nameof(LightbarBrush));
+                    break;
+
+                case nameof(LowColorB):
+                    OnPropertyChanged(nameof(LowColorBString));
+                    OnPropertyChanged(nameof(LightbarBrush));
+                    break;
+                #endregion
             }
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
