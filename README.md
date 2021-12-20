@@ -65,3 +65,5 @@ This application benefits from these awesome projects (appearance in no special 
   - Provides a .NET wrapper for the Windows Task Scheduler. It aggregates the multiple versions, provides an editor and allows for localization
 - [WPFLocalizeExtension](https://github.com/XAMLMarkupExtensions/WPFLocalizeExtension)
   - LocalizationExtension is a the easy way to localize any type of DependencyProperties or native Properties on DependencyObjects
+- [EmbedIO](https://github.com/unosquare/embedio)
+  - A tiny, cross-platform, module based web server for .NET
