@@ -1125,6 +1125,9 @@ Suspend support not enabled.", true);
 
             if (Height < DEFAULT_PROFILE_EDITOR_HEIGHT) Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
 
+            //
+            // TODO: legacy stupidity
+            // 
             if (device == 8)
             {
                 profilesService.CurrentlyEditedProfile = new DS4WindowsProfile();
