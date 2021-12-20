@@ -544,14 +544,8 @@ Example: whyme_DS4Windows</value>
   <data name="AboutTabDS4WinLatest" xml:space="preserve">
     <value>Click here to check for updates, read the changelog and for more info regarding the current state of the DS4Windows project</value>
   </data>
-  <data name="AboutPatchTextBody" xml:space="preserve">
-    <value>This is a patched version of DS4Windows v3.0.18 being distributed by the CircumSpector Team. The purpose of these patched builds is to deliver bug fixes and new features while a proper "main" DS4Windows version cannot be released.
-
-THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!</value>
-    <comment>Use Shift + Enter to enter a line break</comment>
-  </data>
   <data name="AboutPatchTextTitle" xml:space="preserve">
-    <value>CircumSpector's Custom Build of DS4Windows</value>
+    <value>CircumSpector's DS4Windows</value>
   </data>
   <data name="InfoBoardTabTitle" xml:space="preserve">
     <value>Info Board</value>
@@ -597,5 +591,11 @@ If infinite rumble occurs then the user must set the rumble strength to 0% in th
   </data>
   <data name="VDS4WarningTitle" xml:space="preserve">
     <value>DS4 Emulation Warning</value>
+  </data>
+  <data name="AboutPatchTextBody" xml:space="preserve">
+    <value>This is a new fork of DS4Windows created and distributed by the CircumSpector Team,  with the intention of continuing providing bug fixes and improving user experience. Based on Ryochan7's DS4Windows v3.0.18.
+
+THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY FOR NOW!</value>
+    <comment>Use Shift + Enter to enter a line break</comment>
   </data>
 </root>

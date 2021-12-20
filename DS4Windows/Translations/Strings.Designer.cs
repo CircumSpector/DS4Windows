@@ -61,9 +61,9 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is a patched version of DS4Windows v3.0.18 being distributed by the CircumSpector Team. The purpose of these patched builds is to deliver bug fixes and new features while a proper &quot;main&quot; DS4Windows version cannot be released.
+        ///   Looks up a localized string similar to This is a new fork of DS4Windows created and distributed by the CircumSpector Team,  with the intention of continuing providing bug fixes and improving user experience. Based on Ryochan7&apos;s DS4Windows v3.0.18.
         ///
-        ///THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY!.
+        ///THIS CUSTOM BUILD DOES NOT CHECK FOR UPDATES AUTOMATICALLY FOR NOW!.
         /// </summary>
         public static string AboutPatchTextBody {
             get {
@@ -72,7 +72,7 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CircumSpector&apos;s Custom Build of DS4Windows.
+        ///   Looks up a localized string similar to CircumSpector&apos;s DS4Windows.
         /// </summary>
         public static string AboutPatchTextTitle {
             get {
