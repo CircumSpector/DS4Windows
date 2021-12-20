@@ -14,7 +14,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private string tooltipText = "DS4Windows";
         private string iconSource;
         public const string ballonTitle = "DS4Windows";
-        public static string trayTitle = $"DS4Windows v{Global.exeversion} (CS Patch 1)";
+        public static string trayTitle = $"DS4Windows v{Global.exeversion} (CircumSpector)";
         private ContextMenu contextMenu;
         private MenuItem changeServiceItem;
         private MenuItem openItem;
