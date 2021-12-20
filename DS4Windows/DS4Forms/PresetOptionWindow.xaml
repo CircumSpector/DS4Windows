@@ -36,7 +36,10 @@
                                 Click="YesPresetBtn_Click" />
                     </StackPanel>
                     <StackPanel>
-                        <TextBlock Text="{lex:Loc PresetIntrotext}" TextWrapping="Wrap" />
+                        <TextBlock Text="{lex:Loc PresetIntrotext}" 
+                                   Margin="{adonisUi:Space 1}"
+                                   FontSize="16"
+                                   TextWrapping="Wrap" TextAlignment="Justify"/>
                     </StackPanel>
                 </DockPanel>
             </TabItem>
@@ -50,7 +53,7 @@
                         <ComboBox x:Name="presetComboBox"
                                   ItemsSource="{Binding PresetsList, Mode=OneTime}"
                                   SelectedIndex="{Binding PresetIndex, FallbackValue=0}"
-                                  MinWidth="400"
+                                  MinWidth="300"
                                   Margin="{adonisUi:Space 1}"
                                   VerticalAlignment="Center">
                             <ComboBox.ItemTemplate>
