@@ -30,7 +30,7 @@
     <DockPanel>
         <!-- Profile action buttons -->
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,4,0,10">
-            
+
             <TextBlock Text="{lex:LocText Profile, Suffix=:}" VerticalAlignment="Center" Margin="0,0,8,0" />
 
             <!-- Profile name -->
@@ -51,7 +51,7 @@
             </Button>
         </StackPanel>
 
-        <!-- Special actions -->
+        <!-- Macros, Special actions -->
         <TabControl x:Name="sidebarTabControl" Width="480" DockPanel.Dock="Left"
                     SelectionChanged="SidebarTabControl_SelectionChanged">
             <TabItem Header="Controls">
@@ -59,9 +59,9 @@
                     <DockPanel.Background>
                         <SolidColorBrush Color="DimGray" />
                     </DockPanel.Background>
+
+                    <!-- Controller surface -->
                     <Canvas x:Name="conCanvas" Width="440" Height="240" Margin="0,10,0,0" DockPanel.Dock="Top">
-                        <Canvas.Resources>
-                        </Canvas.Resources>
 
                         <Image Source="/DS4Windows;component/Resources/DS4 Config.png" Width="440" Height="220"
                                Stretch="Uniform" />
@@ -1307,91 +1307,137 @@
             <!-- Lightbar -->
             <TabItem Header="Lightbar">
                 <StackPanel>
+
+                    <!-- Modes -->
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="Mode:" />
-                        <ComboBox x:Name="lightbarModeCombo" Width="160"
+                        <Label Content="Mode:" VerticalAlignment="Center" Margin="{adonisUi:Space 1}" />
+                        <ComboBox x:Name="lightbarModeCombo" Width="160" Margin="{adonisUi:Space 1}"
                                   SelectedIndex="{Binding LightbarModeIndex, FallbackValue='0'}"
-                                  VerticalContentAlignment="Center" Margin="10,0,0,0">
+                                  VerticalContentAlignment="Center" >
                             <ComboBoxItem Content="Normal" />
                             <ComboBoxItem Content="Passthru" />
                         </ComboBox>
                     </StackPanel>
 
+                    <!-- Lightbar settings -->
                     <TabControl SelectedIndex="{Binding LightbarModeIndex, FallbackValue='0'}" BorderBrush="{x:Null}"
                                 Margin="{StaticResource spaceMargin}">
                         <TabItem Header="Normal" Visibility="Collapsed">
 
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <GroupBox x:Name="colorGB" Header="{lex:Loc Color}" Padding="4">
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Label Content="R" />
-                                                <Slider Value="{Binding MainColorR}" Minimum="0" Maximum="255"
-                                                        ToolTip="{Binding MainColorR}" MinWidth="100"
-                                                        Background="{Binding MainColorRString, FallbackValue=Red}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Label Content="G" />
-                                                <Slider Value="{Binding MainColorG}" MinWidth="100" Minimum="0"
-                                                        Maximum="255" ToolTip="{Binding MainColorG}"
-                                                        Background="{Binding MainColorGString, FallbackValue=Lime}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Label Content="B" />
-                                                <Slider Value="{Binding MainColorB}" MinWidth="100" Minimum="0"
-                                                        Maximum="255" ToolTip="{Binding MainColorB}"
-                                                        Background="{Binding MainColorBString, FallbackValue=Blue}" />
-                                            </StackPanel>
-                                        </StackPanel>
+
+                                    <!-- Main Color -->
+                                    <GroupBox x:Name="colorGB" Header="{lex:Loc Color}" Margin="{adonisUi:Space 1}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Grid.Row="0" Grid.Column="0"
+                                                Content="R" VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}" />
+                                            <Slider Grid.Row="0" Grid.Column="1"
+                                                    Value="{Binding MainColorR}" Minimum="0" Maximum="255"
+                                                    ToolTip="{Binding MainColorR}" MinWidth="100"
+                                                    Background="{Binding MainColorRString, FallbackValue=Red}" 
+                                                    Margin="{adonisUi:Space 0.5}"/>
+
+                                            <Label Grid.Row="1" Grid.Column="0"
+                                                   Content="G" VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}"  />
+                                            <Slider Grid.Row="1" Grid.Column="1"
+                                                    Value="{Binding MainColorG}" MinWidth="100" Minimum="0"
+                                                    Maximum="255" ToolTip="{Binding MainColorG}"
+                                                    Background="{Binding MainColorGString, FallbackValue=Lime}" 
+                                                    Margin="{adonisUi:Space 0.5}"/>
+
+                                            <Label Grid.Row="2" Grid.Column="0"
+                                                   Content="B" VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}" />
+                                            <Slider Grid.Row="2" Grid.Column="1"
+                                                    Value="{Binding MainColorB}" MinWidth="100" Minimum="0"
+                                                    Maximum="255" ToolTip="{Binding MainColorB}"
+                                                    Background="{Binding MainColorBString, FallbackValue=Blue}" 
+                                                    Margin="{adonisUi:Space 0.5}"/>
+                                        </Grid>
                                     </GroupBox>
 
-                                    <GroupBox x:Name="emptyColorGB" Header="Empty" Padding="4">
-                                        <StackPanel>
+                                    <!-- Low Color -->
+                                    <GroupBox x:Name="emptyColorGB" Margin="{adonisUi:Space 1}">
+                                        <GroupBox.Header>
+                                            <DockPanel LastChildFill="False">
+                                                <TextBlock>Empty</TextBlock>
+                                                <Button  x:Name="lowColorBtn"
+                                                         Background="{Binding LowColor}" HorizontalAlignment="Right"
+                                                         Click="LowColorBtn_Click"
+                                                         Margin="{adonisUi:Space 1, 0, 0, 0}"/>
+                                            </DockPanel>
+                                        </GroupBox.Header>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
 
-                                            <StackPanel Orientation="Horizontal">
-                                                <Label Content="R" />
-                                                <Slider Value="{Binding LowColorR}" MinWidth="100" Minimum="0"
-                                                        Maximum="255" ToolTip="{Binding LowColorR}"
-                                                        Background="{Binding LowColorRString, FallbackValue=Red}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Label Content="G" />
-                                                <Slider Value="{Binding LowColorG}" MinWidth="100" Minimum="0"
-                                                        Maximum="255" ToolTip="{Binding LowColorG}"
-                                                        Background="{Binding LowColorGString, FallbackValue=Lime}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Label Content="B" />
-                                                <Slider Value="{Binding LowColorB}" MinWidth="100" Minimum="0"
-                                                        Maximum="255" ToolTip="{Binding LowColorB}"
-                                                        Background="{Binding LowColorBString, FallbackValue=Blue}" />
-                                            </StackPanel>
 
-                                            <Button x:Name="lowColorBtn" Width="10" Height="10"
-                                                    Background="{Binding LowColor}" HorizontalAlignment="Right"
-                                                    Margin="0,6,0,0" Click="LowColorBtn_Click" />
-                                        </StackPanel>
+                                            <Label Grid.Row="0" Grid.Column="0"
+                                                   Content="R"  VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}"/>
+                                            <Slider  Grid.Row="0" Grid.Column="1"
+                                                     Value="{Binding LowColorR}" MinWidth="100" Minimum="0"
+                                                     Maximum="255" ToolTip="{Binding LowColorR}"
+                                                     Background="{Binding LowColorRString, FallbackValue=Red}" 
+                                                     Margin="{adonisUi:Space 0.5}"/>
+
+                                            <Label Grid.Row="1" Grid.Column="0"
+                                                   Content="G" VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}" />
+                                            <Slider Grid.Row="1" Grid.Column="1"
+                                                    Value="{Binding LowColorG}" MinWidth="100" Minimum="0"
+                                                    Maximum="255" ToolTip="{Binding LowColorG}"
+                                                    Background="{Binding LowColorGString, FallbackValue=Lime}"
+                                                    Margin="{adonisUi:Space 0.5}"/>
+
+                                            <Label Grid.Row="2" Grid.Column="0"
+                                                               Content="B"  VerticalAlignment="Center" Margin="{adonisUi:Space 0.5}"/>
+                                            <Slider Grid.Row="2" Grid.Column="1"
+                                                    Value="{Binding LowColorB}" MinWidth="100" Minimum="0"
+                                                    Maximum="255" ToolTip="{Binding LowColorB}"
+                                                    Background="{Binding LowColorBString, FallbackValue=Blue}" 
+                                                    Margin="{adonisUi:Space 0.5}"/>
+                                        </Grid>
                                     </GroupBox>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                    <ComboBox x:Name="flashTypeCombo"
+
+                                <!-- Flash at -->
+                                <StackPanel Orientation="Horizontal" Margin="{adonisUi:Space 1}">
+                                    <ComboBox x:Name="flashTypeCombo" Margin="{adonisUi:Space 0, 1, 0, 1}"
                                               SelectedIndex="{Binding FlashTypeIndex,FallbackValue=0}">
                                         <ComboBoxItem Content="Flash at" />
                                         <ComboBoxItem Content="Pulse at" />
                                     </ComboBox>
                                     <xctk:IntegerUpDown d:IsHidden="True" Value="{Binding FlashAt,FallbackValue=0}"
+                                                        Margin="{adonisUi:Space 1}"
                                                         MinWidth="50"
                                                         Minimum="-10" Maximum="100" Increment="10" />
-                                    <Label Content="%" />
+                                    <Label Content="%" VerticalAlignment="Center" Margin="{adonisUi:Space 1}" />
                                     <Button x:Name="flashColorBtn" Width="20" Height="20"
+                                            Margin="{adonisUi:Space 1}"
                                             Background="{Binding FlashColor,FallbackValue=Blue}"
                                             ToolTip="{lex:Loc Resources:FlashAtTip}" Click="FlashColorBtn_Click" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                    <Label Content="While Charging:" />
-                                    <ComboBox Margin="8,0,0,0" SelectedIndex="{Binding ChargingType,FallbackValue=0}">
+                                <!-- While charging -->
+                                <StackPanel Orientation="Horizontal" Margin="{adonisUi:Space 1}">
+                                    <Label Content="While Charging:" VerticalAlignment="Center" Margin="{adonisUi:Space 0, 1, 0, 1}" />
+                                    <ComboBox SelectedIndex="{Binding ChargingType,FallbackValue=0}" Margin="{adonisUi:Space 1}">
                                         <ComboBoxItem Content="Normal" />
                                         <ComboBoxItem Content="Pulse" />
                                         <ComboBoxItem Content="Rainbow" />
@@ -1399,16 +1445,17 @@
                                     </ComboBox>
                                     <Button x:Name="chargingColorBtn" Width="20" Height="20"
                                             Background="{Binding ChargingColor,FallbackValue=Blue}"
-                                            Visibility="{Binding ChargingColorVisible}" Click="ChargingColorBtn_Click"
-                                            Margin="20,0,0,0" />
+                                            Visibility="{Binding ChargingColorVisible}" 
+                                            Click="ChargingColorBtn_Click"
+                                            Margin="{adonisUi:Space 0, 1, 0, 1}"/>
                                 </StackPanel>
 
                                 <CheckBox x:Name="colorByBatteryPerCk" Content="Color by Battery %"
                                           IsChecked="{Binding ColorBatteryPercent}"
                                           ToolTip="{lex:Loc Resources:LightByBatteryTip}"
-                                          Click="ColorByBatteryPerCk_Click" Margin="0,10,0,0" />
+                                          Click="ColorByBatteryPerCk_Click" Margin="{adonisUi:Space 1}" />
 
-                                <StackPanel Orientation="Horizontal" Height="60" Margin="0,10,0,0">
+                                <StackPanel Orientation="Horizontal" Height="60" Margin="{adonisUi:Space 1}">
                                     <Button x:Name="rainbowBtn" Height="20" Width="20"
                                             ToolTip="{lex:Loc Resources:AlwaysRainbow}" Click="RainbowBtn_Click">
                                         <Button.Content>
@@ -1419,12 +1466,12 @@
                                                         Increment="1" Margin="8,0,0,0"
                                                         Value="{Binding Rainbow,FallbackValue=5}"
                                                         IsEnabled="{Binding RainbowExists}" />
-                                    <Label Content="secs/cycle" Padding="0" Margin="8,0,0,0"
+                                    <Label Content="secs/cycle" Padding="0" Margin="{adonisUi:Space 1}"
                                            VerticalContentAlignment="Center" />
-                                    <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                                    <StackPanel Margin="{adonisUi:Space 1}" VerticalAlignment="Center">
                                         <TextBlock
                                             Text="{Binding MaxSatRainbow,FallbackValue=100,StringFormat=Max Sat. {0:N2}%}"
-                                            Margin="0,0,0,5" />
+                                            Margin="{adonisUi:Space 0, 1, 0, 1}" />
                                         <Slider Value="{Binding MaxSatRainbow,FallbackValue=100}" Minimum="0"
                                                 Maximum="100" Width="100" IsEnabled="{Binding RainbowExists}" />
                                     </StackPanel>

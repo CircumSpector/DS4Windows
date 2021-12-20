@@ -585,13 +585,13 @@ namespace DS4Windows
     /// </summary>
     public class LightbarDS4WinInfo
     {
-        public bool UseCustomLed { get; set; }
+        public bool UseCustomLed { get; set; } = false;
 
-        public bool LedAsBattery { get; set; }
+        public bool LedAsBattery { get; set; } = false;
 
         public DS4Color CustomLed { get; set; } = new(Color.Blue);
 
-        public DS4Color Led { get; set; }
+        public DS4Color Led { get; set; } = new(Color.Blue);
 
         public DS4Color LowLed { get; set; } = new(Color.Black);
 

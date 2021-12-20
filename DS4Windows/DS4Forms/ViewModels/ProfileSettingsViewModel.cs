@@ -37,12 +37,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private string gyroSwipeTrigDisplay = "Always On";
 
-        private bool heavyRumbleActive;
         private readonly SolidColorBrush lightbarColBrush = new();
 
         private readonly ImageBrush lightbarImgBrush = new();
-
-        private bool lightRumbleActive;
 
         private double mouseOffsetSpeed;
 
@@ -779,6 +776,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             switch (propertyName)
             {
+                #region Bezier Curve Modes
                 case nameof(LSOutputCurveIndex):
                     CurrentProfile.LSOutCurveMode = (CurveMode)LSOutputCurveIndex;
                     OnPropertyChanged(nameof(LSCustomCurveSelected));
@@ -807,6 +805,22 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 case nameof(SZOutputCurveIndex):
                     CurrentProfile.SZOutCurveMode = (CurveMode)SZOutputCurveIndex;
                     OnPropertyChanged(nameof(SZCustomCurveSelected));
+                    break;
+                #endregion
+
+                case nameof(MainColorR):
+                    OnPropertyChanged(nameof(MainColorRString));
+                    OnPropertyChanged(nameof(LightbarBrush));
+                    break;
+
+                case nameof(MainColorG):
+                    OnPropertyChanged(nameof(MainColorGString));
+                    OnPropertyChanged(nameof(LightbarBrush));
+                    break;
+
+                case nameof(MainColorB):
+                    OnPropertyChanged(nameof(MainColorBString));
+                    OnPropertyChanged(nameof(LightbarBrush));
                     break;
             }
 

@@ -1293,13 +1293,19 @@ namespace DS4WinWPF.DS4Forms
 
         private void Ds4LightbarColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ColorPickerWindow();
-            dialog.Owner = Application.Current.MainWindow;
+            var dialog = new ColorPickerWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            
             var tempcolor = profileSettingsVM.MainColor;
+
             dialog.colorPicker.SelectedColor = tempcolor;
             profileSettingsVM.StartForcedColor(tempcolor);
+
             dialog.ColorChanged += (sender2, color) => { profileSettingsVM.UpdateForcedColor(color); };
             dialog.ShowDialog();
+
             profileSettingsVM.EndForcedColor();
             profileSettingsVM.UpdateMainColor(dialog.colorPicker.SelectedColor.GetValueOrDefault());
         }
