@@ -62,18 +62,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// <summary>
         ///     The <see cref="DS4WindowsProfile"/> this <see cref="ProfileSettingsViewModel"/> is editing.
         /// </summary>
-        private readonly DS4WindowsProfile currentProfile;
+        public DS4WindowsProfile CurrentProfile { get; set; }
 
         public ProfileSettingsViewModel(DS4WindowsProfile profile, IAppSettingsService appSettings, ControlService service)
         {
-            currentProfile = profile;
+            CurrentProfile = profile;
             this.appSettings = appSettings;
             rootHub = service;
             //Device = device;
             //FuncDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
             //Global.OutDevTypeTemp[device] = OutContType.X360;
-            TempBTPollRateIndex = currentProfile.BluetoothPollRate;
+            TempBTPollRateIndex = CurrentProfile.BluetoothPollRate;
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
