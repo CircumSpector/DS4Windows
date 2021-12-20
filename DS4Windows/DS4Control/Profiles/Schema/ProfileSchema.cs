@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Util;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -48,7 +49,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         {
         }
 
-        public DS4WindowsProfile(int index) : this()
+        protected DS4WindowsProfile(int index) : this()
         {
             Index = index;
         }
@@ -245,15 +246,27 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public StickAntiSnapbackInfo RSAntiSnapbackInfo { get; set; } = new();
 
+        public CurveMode LSOutCurveMode { get; set; } = new();
+
         public BezierCurve LSOutCurve { get; set; } = new();
+
+        public CurveMode RSOutCurveMode { get; set; } = new();
 
         public BezierCurve RSOutCurve { get; set; } = new();
 
+        public CurveMode L2OutCurveMode { get; set; } = new();
+
         public BezierCurve L2OutCurve { get; set; } = new();
+
+        public CurveMode R2OutCurveMode { get; set; } = new();
 
         public BezierCurve R2OutCurve { get; set; } = new();
 
+        public CurveMode SXOutCurveMode { get; set; } = new();
+
         public BezierCurve SXOutCurve { get; set; } = new();
+
+        public CurveMode SZOutCurveMode { get; set; } = new();
 
         public BezierCurve SZOutCurve { get; set; } = new();
 
@@ -305,6 +318,19 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             // Add extension
             // 
             return $"{profileName}{FileExtension}";
+        }
+
+        public static DS4WindowsProfile GetDefaultProfile(int index = default)
+        {
+            return new DS4WindowsProfile(index)
+            {
+                Id = DefaultProfileId
+            };
+        }
+
+        public static DS4WindowsProfile CreateNewProfile(int index = default)
+        {
+            return new DS4WindowsProfile(index);
         }
 
         [CanBeNull] public event ProfilePropertyChangedEventHandler ProfilePropertyChanged;

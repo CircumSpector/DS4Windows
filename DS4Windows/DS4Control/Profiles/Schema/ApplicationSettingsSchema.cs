@@ -105,6 +105,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool HasUserConfirmedArchitectureWarning { get; set; }
 
         /// <summary>
+        ///     If true, will present user with preset dialog on new profile creation.
+        /// </summary>
+        public bool AreProfilePresetsEnabled { get; set; } = true;
+
+        /// <summary>
         ///     Gets slot to profile assignments.
         /// </summary>
         public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable

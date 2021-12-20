@@ -293,10 +293,11 @@
                 </TabItem.Resources>
                 <ScrollViewer>
                     <StackPanel>
+                        <!-- LS -->
                         <GroupBox Header="LS">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <Label Content="Output Mode" />
+                                    <Label Content="Output Mode" VerticalAlignment="Center" />
                                     <ComboBox MinWidth="160" SelectedIndex="{Binding LSOutputIndex,FallbackValue='0'}"
                                               VerticalContentAlignment="Center" Margin="10,0,0,0">
                                         <ComboBoxItem Content="None" />
@@ -614,14 +615,13 @@
                                     </TabItem>
                                 </TabControl>
                             </StackPanel>
-
-
                         </GroupBox>
 
+                        <!-- RS -->
                         <GroupBox Header="RS">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <Label Content="Output Mode" />
+                                    <Label Content="Output Mode" VerticalAlignment="Center" />
                                     <ComboBox MinWidth="160" SelectedIndex="{Binding RSOutputIndex,FallbackValue='0'}"
                                               VerticalContentAlignment="Center" Margin="10,0,0,0">
                                         <ComboBoxItem Content="None" />

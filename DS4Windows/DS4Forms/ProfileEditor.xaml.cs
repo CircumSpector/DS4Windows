@@ -359,13 +359,13 @@ namespace DS4WinWPF.DS4Forms
             };
 
             hoverLocations[leftTouchConBtn] = new HoverImageInfo
-                { point = new Point(144, 44), size = new Size(140, 98) };
+            { point = new Point(144, 44), size = new Size(140, 98) };
             hoverLocations[multiTouchConBtn] = new HoverImageInfo
-                { point = new Point(143, 42), size = new Size(158, 100) };
+            { point = new Point(143, 42), size = new Size(158, 100) };
             hoverLocations[rightTouchConBtn] = new HoverImageInfo
-                { point = new Point(156, 47), size = new Size(146, 94) };
+            { point = new Point(156, 47), size = new Size(146, 94) };
             hoverLocations[topTouchConBtn] = new HoverImageInfo
-                { point = new Point(155, 6), size = new Size(153, 114) };
+            { point = new Point(155, 6), size = new Size(153, 114) };
 
             hoverLocations[l3ConBtn] = new HoverImageInfo
             {
@@ -657,12 +657,18 @@ namespace DS4WinWPF.DS4Forms
             else
             {
                 currentProfileOLD = null;
-                var presetWin = new PresetOptionWindow(rootHub);
-                presetWin.SetupData(DeviceNum);
-                presetWin.ShowDialog();
-                // TODO: fix me!
-                //if (presetWin.Result == System.Windows.MessageBoxResult.Cancel)
-                //    Global.Instance.LoadBlankDevProfile(device, false, rootHub, false);
+
+                if (appSettings.Settings.AreProfilePresetsEnabled)
+                {
+                    var presetWin = new PresetOptionWindow(rootHub);
+                    presetWin.SetupData(DeviceNum);
+                    presetWin.ShowDialog();
+                    // TODO: fix me!
+                    /*
+                    if (presetWin.Result == System.Windows.MessageBoxResult.Cancel)
+                        Global.Instance.LoadBlankDevProfile(device, false, rootHub, false);
+                    */
+                }
             }
 
             ColorByBatteryPerCheck();

@@ -1,9 +1,31 @@
-﻿using System.Xml.Serialization;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 using DS4Windows;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
+    /// <summary>
+    ///     Possible Bezier Curve Modes.
+    /// </summary>
+    public enum CurveMode
+    {
+        [Description("Linear")]
+        Linear = 0,
+        [Description("Enhanced Precision")]
+        EnhancedPrecision,
+        [Description("Quadratic")]
+        Quadratic,
+        [Description("Cubic")]
+        Cubic,
+        [Description("Easeout Quad")]
+        EaseoutQuad,
+        [Description("Easeout Cubic")]
+        EaseoutCubic,
+        [Description("Custom")]
+        Custom
+    }
+
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "LSAxialDeadOptions")]
     public class LSAxialDeadOptions

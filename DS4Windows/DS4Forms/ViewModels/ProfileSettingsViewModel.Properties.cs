@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using Brush = System.Windows.Media.Brush;
 using Color = System.Windows.Media.Color;
 
@@ -869,9 +870,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set => CurrentProfile.RSRotation = value * Math.PI / 180.0;
         }
 
-        public bool LSCustomCurveSelected => Global.Instance.Config.GetLsOutCurveMode(Device) == 6;
+        public bool LSCustomCurveSelected => CurrentProfile. LSOutCurveMode == CurveMode.Custom;
 
-        public bool RSCustomCurveSelected => Global.Instance.Config.GetRsOutCurveMode(Device) == 6;
+        public bool RSCustomCurveSelected => CurrentProfile. RSOutCurveMode == CurveMode.Custom;
 
         public string LSCustomCurve
         {

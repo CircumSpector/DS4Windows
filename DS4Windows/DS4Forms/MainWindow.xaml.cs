@@ -1130,7 +1130,7 @@ Suspend support not enabled.", true);
             // 
             if (device == 8)
             {
-                profilesService.CurrentlyEditedProfile = new DS4WindowsProfile();
+                profilesService.CurrentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
                 editor = new ProfileEditor(profilesService.CurrentlyEditedProfile, appSettings, rootHub);
             }
             else

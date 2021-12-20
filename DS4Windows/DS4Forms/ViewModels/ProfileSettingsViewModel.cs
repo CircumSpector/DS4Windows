@@ -28,11 +28,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private string gyroControlsTrigDisplay = "Always On";
 
         private int gyroMouseSmoothMethodIndex;
-        
+
         private int gyroMouseStickSmoothMethodIndex;
 
         private string gyroMouseStickTrigDisplay = "Always On";
-        
+
         private string gyroMouseTrigDisplay = "Always On";
 
         private string gyroSwipeTrigDisplay = "Always On";
@@ -136,7 +136,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             SetupEvents();
         }
-        
+
         public PresetMenuHelper PresetMenuUtil { get; }
 
         private int FindGyroMouseSmoothMethodIndex()
@@ -607,7 +607,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             GyroSwipeTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
-        
+
         public void UpdateGyroControlsTrig(ContextMenu menu, bool alwaysOnChecked)
         {
             var index = 0;
@@ -774,6 +774,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
+            switch (propertyName)
+            {
+                case nameof(LSOutputCurveIndex):
+                    CurrentProfile.LSOutCurveMode = (CurveMode)LSOutputCurveIndex;
+                    OnPropertyChanged(nameof(LSCustomCurveSelected));
+                    break;
+
+                case nameof(RSOutputCurveIndex):
+                    CurrentProfile.RSOutCurveMode = (CurveMode)RSOutputCurveIndex;
+                    OnPropertyChanged(nameof(RSCustomCurveSelected));
+                    break;
+            }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

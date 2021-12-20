@@ -141,7 +141,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         private readonly ObservableCollection<DS4WindowsProfile> controllerSlotProfiles;
 
-        private readonly DS4WindowsProfile currentlyEditedProfile = new();
+        private readonly DS4WindowsProfile currentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
 
         private readonly IGlobalStateService global;
 
@@ -165,7 +165,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             controllerSlotProfiles = new ObservableCollection<DS4WindowsProfile>(Enumerable
                 .Range(0, 8)
-                .Select(i => new DS4WindowsProfile(i)));
+                .Select(DS4WindowsProfile.GetDefaultProfile));
 
             ActiveProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(controllerSlotProfiles);
 
@@ -531,7 +531,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
         public void CreateProfile(DS4WindowsProfile profile = default)
         {
-            profile ??= new DS4WindowsProfile();
+            profile ??= DS4WindowsProfile.GetDefaultProfile();
 
             availableProfiles.Add(profile);
 
@@ -573,7 +573,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
         {
-            return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ?? new DS4WindowsProfile(slot);
+            return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ?? DS4WindowsProfile.GetDefaultProfile(slot);
         }
 
         /// <summary>
