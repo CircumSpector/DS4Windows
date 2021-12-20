@@ -50,7 +50,7 @@
                         <ComboBox x:Name="presetComboBox"
                                   ItemsSource="{Binding PresetsList, Mode=OneTime}"
                                   SelectedIndex="{Binding PresetIndex, FallbackValue=0}"
-                                  MinWidth="200"
+                                  MinWidth="400"
                                   Margin="{adonisUi:Space 1}"
                                   VerticalAlignment="Center">
                             <ComboBox.ItemTemplate>
@@ -62,12 +62,12 @@
                     </StackPanel>
 
                     <StackPanel x:Name="outputContStackPanel" Orientation="Horizontal" DockPanel.Dock="Top"
-                                Visibility="{Binding PresetDisplayOutputCont, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                IsEnabled="{Binding Path=PresetDisplayOutputCont, Mode=OneWay}">
                         <Label Content="Output Controller:" Margin="{adonisUi:Space 1}" VerticalAlignment="Center" />
 
                         <ComboBox ItemsSource="{Binding OutputChoices}" DisplayMemberPath="DisplayName"
                                   SelectedValuePath="ChoiceValue" SelectedValue="{Binding ControllerChoice}"
-                                  Margin="{adonisUi:Space 1}" VerticalAlignment="" />
+                                  Margin="{adonisUi:Space 1}" VerticalAlignment="Center" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
