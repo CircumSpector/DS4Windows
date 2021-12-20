@@ -45,6 +45,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public const string FileExtension = ".json";
 
+        /// <summary>
+        ///     Create new <see cref="DS4WindowsProfile" />. Constructor must remain public for deep cloning to work.
+        /// </summary>
         public DS4WindowsProfile()
         {
         }
