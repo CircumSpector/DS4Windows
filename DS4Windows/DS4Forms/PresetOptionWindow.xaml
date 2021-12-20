@@ -1,41 +1,58 @@
 ﻿<controls:AdonisWindow
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:lex="http://wpflocalizeextension.codeplex.com"
-        xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
-        xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
-        x:Class="DS4WinWPF.DS4Forms.PresetOptionWindow"
-        lex:LocalizeDictionary.DesignCulture=""
-        lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
-        lex:ResxLocalizationProvider.DefaultDictionary="Strings"
-        mc:Ignorable="d"
-        Title="Select Preset" Height="250" Width="600" Padding="0">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lex="http://wpflocalizeextension.codeplex.com"
+    xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+    xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+    x:Class="DS4WinWPF.DS4Forms.PresetOptionWindow"
+    lex:LocalizeDictionary.DesignCulture=""
+    lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
+    lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+    mc:Ignorable="d"
+    Title="Select Preset" Height="250" Width="600"
+    ResizeMode="NoResize">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}" />
     </Window.Style>
+
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
+
     <DockPanel>
         <TabControl x:Name="screensTabControl" BorderBrush="{x:Null}">
+
+            <!-- Introduction -->
             <TabItem x:Name="IntroTab" Header="Intro">
-                <DockPanel Margin="4,0,4,8">
+                <DockPanel>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                        <Button x:Name="noPresetBtn" Content="No" MinWidth="60" Margin="0,0,20,0" TabIndex="0" Click="NoPresetBtn_Click" />
-                        <Button x:Name="yesPresetBtn" Content="Yes" MinWidth="60" TabIndex="1" Click="YesPresetBtn_Click" />
+                        <Button x:Name="noPresetBtn" Content="No" MinWidth="60" Margin="{adonisUi:Space 1}"
+                                TabIndex="0"
+                                Click="NoPresetBtn_Click" />
+                        <Button x:Name="yesPresetBtn" Content="Yes" MinWidth="60" TabIndex="1"
+                                Margin="{adonisUi:Space 1}"
+                                Click="YesPresetBtn_Click" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="{lex:Loc PresetIntrotext}" TextWrapping="Wrap" />
                     </StackPanel>
                 </DockPanel>
             </TabItem>
+
+            <!-- Preset choices -->
             <TabItem x:Name="PresetListTab" Header="Preset Menu">
-                <DockPanel Margin="4,0,4,8">
+                <DockPanel>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                        <Label Content="{lex:Loc Presets}" />
-                        <ComboBox x:Name="presetComboBox" ItemsSource="{Binding PresetsList, Mode=OneTime}" SelectedIndex="{Binding PresetIndex, FallbackValue=0}" MinWidth="200" Margin="20,0,0,0">
+                        <Label Content="{lex:Loc Presets}" Margin="{adonisUi:Space 1}" VerticalAlignment="Center"/>
+
+                        <ComboBox x:Name="presetComboBox"
+                                  ItemsSource="{Binding PresetsList, Mode=OneTime}"
+                                  SelectedIndex="{Binding PresetIndex, FallbackValue=0}"
+                                  MinWidth="200"
+                                  Margin="{adonisUi:Space 1}"
+                                  VerticalAlignment="Center">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Name}" />
@@ -43,16 +60,31 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                     </StackPanel>
-                    <StackPanel x:Name="outputContStackPanel" Orientation="Horizontal" DockPanel.Dock="Top" Visibility="{Binding PresetDisplayOutputCont, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Margin="0,10,0,10">
-                        <Label Content="Output Controller:" />
-                        <ComboBox ItemsSource="{Binding OutputChoices}" DisplayMemberPath="DisplayName" SelectedValuePath="ChoiceValue" SelectedValue="{Binding ControllerChoice}" Margin="8,0,0,0" />
+
+                    <StackPanel x:Name="outputContStackPanel" Orientation="Horizontal" DockPanel.Dock="Top"
+                                Visibility="{Binding PresetDisplayOutputCont, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                        <Label Content="Output Controller:" Margin="{adonisUi:Space 1}" VerticalAlignment="Center" />
+
+                        <ComboBox ItemsSource="{Binding OutputChoices}" DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="ChoiceValue" SelectedValue="{Binding ControllerChoice}"
+                                  Margin="{adonisUi:Space 1}" VerticalAlignment="" />
                     </StackPanel>
+
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                        <Button x:Name="presetCancelBtn" Content="{lex:Loc Cancel}" MinWidth="60" Margin="0,0,20,0" Click="PresetCancelBtn_Click" />
-                        <Button x:Name="presetApplyBtn" Content="{lex:Loc Apply}" MinWidth="60" Click="PresetApplyBtn_Click" />
+                        <Button x:Name="presetCancelBtn" Content="{lex:Loc Cancel}" MinWidth="60"
+                                Margin="{adonisUi:Space 1}"
+                                Click="PresetCancelBtn_Click" />
+
+                        <Button x:Name="presetApplyBtn" Content="{lex:Loc Apply}" MinWidth="60"
+                                Margin="{adonisUi:Space 1}"
+                                Click="PresetApplyBtn_Click" />
                     </StackPanel>
-                    <Label Content="{lex:Loc Description}" FontSize="10" FontWeight="Bold" DockPanel.Dock="Top" />
-                    <TextBlock Text="{Binding PresetDescription, Mode=OneWay}" DockPanel.Dock="Bottom" TextWrapping="Wrap" />
+
+                    <Label Content="{lex:Loc Description}" FontSize="10" FontWeight="Bold" DockPanel.Dock="Top"
+                           Margin="{adonisUi:Space 1}" />
+
+                    <TextBlock Text="{Binding PresetDescription, Mode=OneWay}" DockPanel.Dock="Bottom"
+                               TextWrapping="Wrap" Margin="{adonisUi:Space 1}" />
                 </DockPanel>
 
             </TabItem>
