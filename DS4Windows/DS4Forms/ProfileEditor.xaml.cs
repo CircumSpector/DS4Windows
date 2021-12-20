@@ -139,12 +139,13 @@ namespace DS4WinWPF.DS4Forms
             mappingListBox.SelectionChanged += MappingListBox_SelectionChanged;
             Closed += ProfileEditor_Closed;
 
-            profileSettingsVM.LSDeadZoneChanged += UpdateReadingsLsDeadZone;
-            profileSettingsVM.RSDeadZoneChanged += UpdateReadingsRsDeadZone;
-            profileSettingsVM.L2DeadZoneChanged += UpdateReadingsL2DeadZone;
-            profileSettingsVM.R2DeadZoneChanged += UpdateReadingsR2DeadZone;
-            profileSettingsVM.SXDeadZoneChanged += UpdateReadingsSXDeadZone;
-            profileSettingsVM.SZDeadZoneChanged += UpdateReadingsSZDeadZone;
+            // TODO: simplify!
+            //profileSettingsVM.LSDeadZoneChanged += UpdateReadingsLsDeadZone;
+            //profileSettingsVM.RSDeadZoneChanged += UpdateReadingsRsDeadZone;
+            //profileSettingsVM.L2DeadZoneChanged += UpdateReadingsL2DeadZone;
+            //profileSettingsVM.R2DeadZoneChanged += UpdateReadingsR2DeadZone;
+            //profileSettingsVM.SXDeadZoneChanged += UpdateReadingsSXDeadZone;
+            //profileSettingsVM.SZDeadZoneChanged += UpdateReadingsSZDeadZone;
         }
 
         private void UpdateReadingsSZDeadZone(object sender, EventArgs e)

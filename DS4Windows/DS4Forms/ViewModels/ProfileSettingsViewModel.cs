@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,12 +12,13 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
+using JetBrains.Annotations;
 using Microsoft.Win32;
 using Color = System.Windows.Media.Color;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public partial class ProfileSettingsViewModel
+    public partial class ProfileSettingsViewModel : INotifyPropertyChanged
     {
         private readonly IAppSettingsService appSettings;
 
@@ -136,85 +139,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         
         public PresetMenuHelper PresetMenuUtil { get; }
 
-        public event EventHandler LightbarModeIndexChanged;
-        public event EventHandler LightbarBrushChanged;
-        public event EventHandler MainColorChanged;
-        public event EventHandler MainColorStringChanged;
-        public event EventHandler MainColorRChanged;
-        public event EventHandler MainColorRStringChanged;
-        public event EventHandler MainColorGChanged;
-        public event EventHandler MainColorGStringChanged;
-        public event EventHandler MainColorBChanged;
-        public event EventHandler MainColorBStringChanged;
-        public event EventHandler LowColorChanged;
-        public event EventHandler LowColorRChanged;
-        public event EventHandler LowColorRStringChanged;
-        public event EventHandler LowColorGChanged;
-        public event EventHandler LowColorGStringChanged;
-        public event EventHandler LowColorBChanged;
-        public event EventHandler LowColorBStringChanged;
-
-        public event EventHandler FlashColorChanged;
-
-        public event EventHandler ChargingColorChanged;
-        public event EventHandler ChargingColorVisibleChanged;
-        public event EventHandler RainbowChanged;
-
-        public event EventHandler RainbowExistsChanged;
-        public event EventHandler HeavyRumbleActiveChanged;
-        public event EventHandler LightRumbleActiveChanged;
-        public event EventHandler ButtonMouseSensitivityChanged;
-        public event EventHandler ButtonMouseVerticalScaleChanged;
-        public event EventHandler ButtonMouseOffsetChanged;
-        public event EventHandler OutputMouseSpeedChanged;
-        public event EventHandler MouseOffsetSpeedChanged;
-        public event EventHandler LaunchProgramExistsChanged;
-        public event EventHandler LaunchProgramChanged;
-        public event EventHandler LaunchProgramNameChanged;
-        public event EventHandler LaunchProgramIconChanged;
-        public event EventHandler IdleDisconnectExistsChanged;
-        public event EventHandler IdleDisconnectChanged;
-        public event EventHandler GyroOutModeIndexChanged;
-        public event EventHandler SASteeringWheelEmulationAxisIndexChanged;
-        public event EventHandler SASteeringWheelUseSmoothingChanged;
-        public event EventHandler LSDeadZoneChanged;
-        public event EventHandler RSDeadZoneChanged;
-        public event EventHandler LSCustomCurveSelectedChanged;
-        public event EventHandler RSCustomCurveSelectedChanged;
-        public event EventHandler LSOutputIndexChanged;
-        public event EventHandler RSOutputIndexChanged;
-        public event EventHandler L2DeadZoneChanged;
-        public event EventHandler R2DeadZoneChanged;
-        public event EventHandler L2CustomCurveSelectedChanged;
-        public event EventHandler R2CustomCurveSelectedChanged;
-        public event EventHandler L2TriggerModeChanged;
-        public event EventHandler R2TriggerModeChanged;
-        public event EventHandler SXDeadZoneChanged;
-        public event EventHandler SZDeadZoneChanged;
-        public event EventHandler SXCustomCurveSelectedChanged;
-        public event EventHandler SZCustomCurveSelectedChanged;
-        public event EventHandler TouchpadOutputIndexChanged;
-        public event EventHandler TouchSenExistsChanged;
-        public event EventHandler TouchSensChanged;
-        public event EventHandler TouchScrollExistsChanged;
-        public event EventHandler TouchScrollChanged;
-        public event EventHandler TouchTapExistsChanged;
-        public event EventHandler TouchTapChanged;
-        public event EventHandler GyroMouseSmoothChanged;
-        public event EventHandler GyroMouseSmoothMethodIndexChanged;
-        public event EventHandler GyroMouseWeightAvgPanelVisibilityChanged;
-        public event EventHandler GyroMouseOneEuroPanelVisibilityChanged;
-        public event EventHandler GyroMouseStickSmoothMethodIndexChanged;
-        public event EventHandler GyroMouseStickWeightAvgPanelVisibilityChanged;
-        public event EventHandler GyroMouseStickOneEuroPanelVisibilityChanged;
-        public event EventHandler GyroMouseStickMaxOutputChanged;
-        public event EventHandler TouchDisInvertStringChanged;
-        public event EventHandler GyroControlsTrigDisplayChanged;
-        public event EventHandler GyroMouseTrigDisplayChanged;
-
-        public event EventHandler GyroMouseStickTrigDisplayChanged;
-        public event EventHandler GyroSwipeTrigDisplayChanged;
-
         private int FindGyroMouseSmoothMethodIndex()
         {
             var result = 0;
@@ -252,6 +176,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void SetupEvents()
         {
+            // TODO: simplify!
+            /*
             MainColorChanged += ProfileSettingsViewModel_MainColorChanged;
             MainColorRChanged += (sender, args) =>
             {
@@ -287,18 +213,21 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             ButtonMouseOffsetChanged += ProfileSettingsViewModel_ButtonMouseOffsetChanged;
             GyroMouseSmoothMethodIndexChanged += ProfileSettingsViewModel_GyroMouseSmoothMethodIndexChanged;
             GyroMouseStickSmoothMethodIndexChanged += ProfileSettingsViewModel_GyroMouseStickSmoothMethodIndexChanged;
+            */
         }
 
         private void ProfileSettingsViewModel_GyroMouseStickSmoothMethodIndexChanged(object sender, EventArgs e)
         {
-            GyroMouseStickWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
-            GyroMouseStickOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //GyroMouseStickWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            //GyroMouseStickOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void ProfileSettingsViewModel_GyroMouseSmoothMethodIndexChanged(object sender, EventArgs e)
         {
-            GyroMouseWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
-            GyroMouseOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //GyroMouseWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            //GyroMouseOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void ProfileSettingsViewModel_ButtonMouseOffsetChanged(object sender,
@@ -309,36 +238,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void ProfileSettingsViewModel_MainColorChanged(object sender, EventArgs e)
         {
-            MainColorStringChanged?.Invoke(this, EventArgs.Empty);
-            MainColorRChanged?.Invoke(this, EventArgs.Empty);
-            MainColorGChanged?.Invoke(this, EventArgs.Empty);
-            MainColorBChanged?.Invoke(this, EventArgs.Empty);
-            LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //MainColorStringChanged?.Invoke(this, EventArgs.Empty);
+            //MainColorRChanged?.Invoke(this, EventArgs.Empty);
+            //MainColorGChanged?.Invoke(this, EventArgs.Empty);
+            //MainColorBChanged?.Invoke(this, EventArgs.Empty);
+            //LightbarBrushChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateFlashColor(Color color)
         {
             appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.FlashLed = new DS4Color(color);
-            FlashColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateMainColor(Color color)
         {
             appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led = new DS4Color(color);
-            MainColorChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //MainColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateLowColor(Color color)
         {
             appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed = new DS4Color(color);
 
-            LowColorChanged?.Invoke(this, EventArgs.Empty);
-            LowColorRChanged?.Invoke(this, EventArgs.Empty);
-            LowColorGChanged?.Invoke(this, EventArgs.Empty);
-            LowColorBChanged?.Invoke(this, EventArgs.Empty);
-            LowColorRStringChanged?.Invoke(this, EventArgs.Empty);
-            LowColorGStringChanged?.Invoke(this, EventArgs.Empty);
-            LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //LowColorChanged?.Invoke(this, EventArgs.Empty);
+            //LowColorRChanged?.Invoke(this, EventArgs.Empty);
+            //LowColorGChanged?.Invoke(this, EventArgs.Empty);
+            //LowColorBChanged?.Invoke(this, EventArgs.Empty);
+            //LowColorRStringChanged?.Invoke(this, EventArgs.Empty);
+            //LowColorGStringChanged?.Invoke(this, EventArgs.Empty);
+            //LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateForcedColor(Color color)
@@ -377,25 +308,28 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingLed = new DS4Color(color);
 
-            ChargingColorChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //ChargingColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateLaunchProgram(string path)
         {
             Global.Instance.Config.LaunchProgram[Device] = path;
-            LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
-            LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
-            LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);
-            LaunchProgramIconChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
+            //LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
+            //LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);
+            //LaunchProgramIconChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void ResetLauchProgram()
         {
             Global.Instance.Config.LaunchProgram[Device] = string.Empty;
-            LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
-            LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
-            LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);
-            LaunchProgramIconChanged?.Invoke(this, EventArgs.Empty);
+            // TODO: simplify!
+            //LaunchProgramExistsChanged?.Invoke(this, EventArgs.Empty);
+            //LaunchProgramChanged?.Invoke(this, EventArgs.Empty);
+            //LaunchProgramNameChanged?.Invoke(this, EventArgs.Empty);
+            //LaunchProgramIconChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateTouchDisInvert(ContextMenu menu)
@@ -832,6 +766,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
             gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();
             gyroMouseStickSmoothMethodIndex = FindGyroMouseStickSmoothMethodIndex();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [UsedImplicitly]
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

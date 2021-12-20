@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
 using DS4Windows.InputDevices;
-using DS4WinWPF.DS4Control.IoC.Services;
 using Brush = System.Windows.Media.Brush;
 using Color = System.Windows.Media.Color;
 
@@ -52,7 +50,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
 
                 appSettings.Settings.LightbarSettingInfo[Device].Mode = temp;
-                LightbarModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -99,7 +96,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Red = (byte)value;
-                MainColorRChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -112,7 +108,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Green = (byte)value;
-                MainColorGChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -125,7 +120,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Led.Blue = (byte)value;
-                MainColorBChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -147,8 +141,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Red = (byte)value;
-                LowColorRChanged?.Invoke(this, EventArgs.Empty);
-                LowColorRStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -161,8 +153,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Green = (byte)value;
-                LowColorGChanged?.Invoke(this, EventArgs.Empty);
-                LowColorGStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -175,8 +165,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.LowLed.Blue = (byte)value;
-                LowColorBChanged?.Invoke(this, EventArgs.Empty);
-                LowColorBStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -232,7 +220,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.ChargingType = value;
-                ChargingColorVisibleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -265,8 +252,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 appSettings.Settings.LightbarSettingInfo[Device].Ds4WinSettings.Rainbow = value;
-                RainbowChanged?.Invoke(this, EventArgs.Empty);
-                RainbowExistsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -297,7 +282,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 heavyRumbleActive = value;
-                HeavyRumbleActiveChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -307,7 +291,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 lightRumbleActive = value;
-                LightRumbleActiveChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -325,7 +308,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.ButtonMouseInfo.ButtonSensitivity;
                 if (temp == value) return;
                 CurrentProfile.ButtonMouseInfo.ButtonSensitivity = value;
-                ButtonMouseSensitivityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -341,7 +323,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (temp == attemptValue) return;
                 CurrentProfile.ButtonMouseInfo.ButtonVerticalScale =
                     attemptValue;
-                ButtonMouseVerticalScaleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -360,7 +341,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (temp == value) return;
                 CurrentProfile.ButtonMouseInfo.MouseVelocityOffset =
                     value * 0.01;
-                ButtonMouseOffsetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -371,7 +351,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (value == outputMouseSpeed) return;
                 outputMouseSpeed = value;
-                OutputMouseSpeedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -382,7 +361,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (mouseOffsetSpeed == value) return;
                 mouseOffsetSpeed = value;
-                MouseOffsetSpeedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -462,9 +440,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 // Otherwise, set time to 0 to mean disabled
                 CurrentProfile.IdleDisconnectTimeout =
                     value ? Global.DEFAULT_ENABLE_IDLE_DISCONN_MINS * 60 : 0;
-
-                IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
-                IdleDisconnectExistsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -476,8 +451,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.IdleDisconnectTimeout / 60;
                 if (temp == value) return;
                 CurrentProfile.IdleDisconnectTimeout = value * 60;
-                IdleDisconnectChanged?.Invoke(this, EventArgs.Empty);
-                IdleDisconnectExistsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -584,7 +557,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var current = CurrentProfile.GyroOutputMode;
                 if (temp == current) return;
                 CurrentProfile.GyroOutputMode = temp;
-                GyroOutModeIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -600,7 +572,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
                 CurrentProfile.SASteeringWheelEmulationAxis =
                     (SASteeringWheelEmulationAxisType)value;
-                SASteeringWheelEmulationAxisIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -669,7 +640,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.WheelSmoothInfo.Enabled;
                 if (temp == value) return;
                 CurrentProfile.WheelSmoothInfo.Enabled = value;
-                SASteeringWheelUseSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -693,7 +663,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = Math.Round(CurrentProfile.LSModInfo.DeadZone / 127d, 2);
                 if (temp == value) return;
                 CurrentProfile.LSModInfo.DeadZone = (int)Math.Round(value * 127d);
-                LSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -705,7 +674,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = Math.Round(CurrentProfile.RSModInfo.DeadZone / 127d, 2);
                 if (temp == value) return;
                 CurrentProfile.RSModInfo.DeadZone = (int)Math.Round(value * 127d);
-                RSDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -877,7 +845,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 Global.Instance.Config.SetLsOutCurveMode(Device, value);
-                LSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -887,7 +854,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 Global.Instance.Config.SetRsOutCurveMode(Device, value);
-                RSCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1032,7 +998,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var current = CurrentProfile.LSOutputSettings.Mode;
                 if (temp == current) return;
                 CurrentProfile.LSOutputSettings.Mode = temp;
-                LSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1100,7 +1065,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var current = CurrentProfile.RSOutputSettings.Mode;
                 if (temp == current) return;
                 CurrentProfile.RSOutputSettings.Mode = temp;
-                RSOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1138,7 +1102,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.L2ModInfo.DeadZone / 255.0;
                 if (temp == value) return;
                 CurrentProfile.L2ModInfo.DeadZone = (byte)(value * 255.0);
-                L2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1150,7 +1113,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.R2ModInfo.DeadZone / 255.0;
                 if (temp == value) return;
                 CurrentProfile.R2ModInfo.DeadZone = (byte)(value * 255.0);
-                R2DeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1208,7 +1170,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 Global.Instance.Config.SetL2OutCurveMode(Device, value);
-                L2CustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1218,7 +1179,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 Global.Instance.Config.SetR2OutCurveMode(Device, value);
-                R2CustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1259,7 +1219,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (temp == value) return;
 
                 CurrentProfile.L2OutputSettings.TwoStageMode = value;
-                L2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1272,7 +1231,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (temp == value) return;
 
                 CurrentProfile.R2OutputSettings.TwoStageMode = value;
-                R2TriggerModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1328,7 +1286,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.SXDeadZone;
                 if (temp == value) return;
                 CurrentProfile.SXDeadZone = value;
-                SXDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1340,7 +1297,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.SZDeadZone;
                 if (temp == value) return;
                 CurrentProfile.SZDeadZone = value;
-                SZDeadZoneChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1386,7 +1342,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 Global.Instance.Config.SetSXOutCurveMode(Device, value);
-                SXCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1396,7 +1351,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 Global.Instance.Config.SetSZOutCurveMode(Device, value);
-                SZCustomCurveSelectedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1461,7 +1415,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var current = CurrentProfile.TouchOutMode;
                 if (temp == current) return;
                 CurrentProfile.TouchOutMode = temp;
-                TouchpadOutputIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1472,8 +1425,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 CurrentProfile.TouchSensitivity =
                     value ? (byte)100 : (byte)0;
-                TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
-                TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1485,8 +1436,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 int temp = CurrentProfile.TouchSensitivity;
                 if (temp == value) return;
                 CurrentProfile.TouchSensitivity = (byte)value;
-                if (value == 0) TouchSenExistsChanged?.Invoke(this, EventArgs.Empty);
-                TouchSensChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1496,8 +1445,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 CurrentProfile.ScrollSensitivity = value ? 100 : 0;
-                TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
-                TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1509,8 +1456,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.ScrollSensitivity;
                 if (temp == value) return;
                 CurrentProfile.ScrollSensitivity = value;
-                if (value == 0) TouchScrollExistsChanged?.Invoke(this, EventArgs.Empty);
-                TouchScrollChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1520,8 +1465,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 CurrentProfile.TapSensitivity = value ? (byte)100 : (byte)0;
-                TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
-                TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1533,8 +1476,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 int temp = CurrentProfile.TapSensitivity;
                 if (temp == value) return;
                 CurrentProfile.TapSensitivity = (byte)value;
-                if (value == 0) TouchTapExistsChanged?.Invoke(this, EventArgs.Empty);
-                TouchTapChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1719,7 +1660,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (tempInfo.EnableSmoothing == value) return;
 
                 CurrentProfile.GyroMouseInfo.EnableSmoothing = value;
-                GyroMouseSmoothChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1744,7 +1684,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
 
                 gyroMouseSmoothMethodIndex = value;
-                GyroMouseSmoothMethodIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1820,7 +1759,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
 
                 gyroMouseStickSmoothMethodIndex = value;
-                GyroMouseStickSmoothMethodIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -1954,7 +1892,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var temp = CurrentProfile.GyroMouseStickInfo.MaxOutputEnabled;
                 if (temp == value) return;
                 CurrentProfile.GyroMouseStickInfo.MaxOutputEnabled = value;
-                GyroMouseStickMaxOutputChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -2028,7 +1965,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 touchDisInvertString = value;
-                TouchDisInvertStringChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -2038,7 +1974,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 gyroControlsTrigDisplay = value;
-                GyroControlsTrigDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -2067,7 +2002,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 gyroMouseTrigDisplay = value;
-                GyroMouseTrigDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -2077,7 +2011,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 gyroMouseStickTrigDisplay = value;
-                GyroMouseStickTrigDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -2087,7 +2020,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 gyroSwipeTrigDisplay = value;
-                GyroSwipeTrigDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
