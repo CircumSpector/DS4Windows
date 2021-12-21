@@ -6,7 +6,8 @@
                        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
                        xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
                        mc:Ignorable="d"
-                       Title="ColorPickerWindow" Height="400" Width="300">
+                       ResizeMode="NoResize"
+                       Title="Color Picker" Height="400" Width="300">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}" />
     </Window.Style>
