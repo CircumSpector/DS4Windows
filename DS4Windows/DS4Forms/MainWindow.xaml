@@ -302,6 +302,7 @@
                     </ToolBar>
 
                     <ListBox x:Name="profilesListBox" DockPanel.Dock="Bottom"
+                             ItemsSource="{Binding Path=AvailableProfiles}"
                              SelectionChanged="ProfilesListBox_SelectionChanged"
                              MouseDoubleClick="ProfilesListBox_MouseDoubleClick">
                         <ListBox.Resources>

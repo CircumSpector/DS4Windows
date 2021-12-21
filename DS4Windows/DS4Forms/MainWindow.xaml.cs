@@ -110,10 +110,8 @@ namespace DS4WinWPF.DS4Forms
             lastMsgLb.DataContext = lastLogMsg;
 
             ProfileListHolder.Refresh();
-            profilesListBox.ItemsSource = ProfileListHolder.ProfileListCollection;
-
-
-            profilesListBox.ItemsSource = profilesService.AvailableProfiles;
+            
+            profilesListBox.DataContext = profilesService;
 
 
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
