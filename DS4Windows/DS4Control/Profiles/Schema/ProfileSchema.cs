@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Util;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
