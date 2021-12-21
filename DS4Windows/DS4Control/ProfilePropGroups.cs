@@ -621,7 +621,7 @@ namespace DS4Windows
     {
         public LightbarMode Mode { get; set; } = LightbarMode.DS4Win;
 
-        public LightbarDS4WinInfo Ds4WinSettings { get; } = new();
+        public LightbarDS4WinInfo Ds4WinSettings { get; set; } = new();
 
         public event EventHandler ModeChanged;
 

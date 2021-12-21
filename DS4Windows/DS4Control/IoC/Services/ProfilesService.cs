@@ -453,7 +453,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 // 
                 if (linkedProfileId != DS4WindowsProfile.DefaultProfileId)
                 {
-                    availableProfiles.First(p => Equals(p.Id, linkedProfileId)) .DeepCloneTo(controllerSlotProfiles[slot]);
+                    availableProfiles.First(p => Equals(p.Id, linkedProfileId)).DeepCloneTo(controllerSlotProfiles[slot]);
                     controllerSlotProfiles[slot].DeviceId = address;
                     return;
                 }
@@ -536,7 +536,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             profile ??= DS4WindowsProfile.CreateNewProfile();
 
-            availableProfiles.Add(profile);
+            if (!availableProfiles.Contains(profile))
+                availableProfiles.Add(profile);
 
             PersistProfile(profile, global.ProfilesDirectory);
         }

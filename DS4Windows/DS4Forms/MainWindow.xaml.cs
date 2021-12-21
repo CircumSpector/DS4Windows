@@ -1078,9 +1078,7 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex < 0) return;
             
-            var profile = profilesService.AvailableProfiles.ElementAt(profilesListBox.SelectedIndex);
-
-            ShowProfileEditor(profile);
+            ShowProfileEditor();
         }
 
         private void ProfileEditor_Closed(object sender, EventArgs e)
@@ -1105,14 +1103,15 @@ Suspend support not enabled.", true);
 
         private void NewProfListBtn_Click(object sender, RoutedEventArgs e)
         {
+            profilesService.CurrentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
+
             ShowProfileEditor();
         }
 
         /// <summary>
         ///     Show profile editor with either now or existing profile.
         /// </summary>
-        /// <param name="profile">If not null, the existing <see cref="DS4WindowsProfile"/> to edit.</param>
-        private async void ShowProfileEditor(DS4WindowsProfile profile = null)
+        private async void ShowProfileEditor()
         {
             profOptsToolbar.Visibility = Visibility.Collapsed;
             profilesListBox.Visibility = Visibility.Collapsed;
@@ -1125,8 +1124,6 @@ Suspend support not enabled.", true);
             if (Width < DEFAULT_PROFILE_EDITOR_WIDTH) Width = DEFAULT_PROFILE_EDITOR_WIDTH;
 
             if (Height < DEFAULT_PROFILE_EDITOR_HEIGHT) Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
-
-            profilesService.CurrentlyEditedProfile = profile ?? DS4WindowsProfile.CreateNewProfile();
             
             editor.CreatedProfile += Editor_CreatedProfile;
             editor.Closed += ProfileEditor_Closed;
@@ -1153,10 +1150,8 @@ Suspend support not enabled.", true);
         private void ProfilesListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (profilesListBox.SelectedIndex < 0) return;
-
-            var profile = profilesService.AvailableProfiles.ElementAt(profilesListBox.SelectedIndex);
             
-            ShowProfileEditor(profile);
+            ShowProfileEditor();
         }
 
         private void Html5GameBtn_Click(object sender, RoutedEventArgs e)
@@ -1263,9 +1258,9 @@ Suspend support not enabled.", true);
 
             if (item != null)
             {
-                var profile = profilesService.AvailableProfiles.ElementAt(item.SelectedIndex);
+                profilesService.CurrentlyEditedProfile = profilesService.AvailableProfiles.ElementAt(item.SelectedIndex);
                 
-                ShowProfileEditor(profile);
+                ShowProfileEditor();
                 mainTabCon.SelectedIndex = 1;
             }
         }
@@ -1284,9 +1279,9 @@ Suspend support not enabled.", true);
             
             controllerLV.SelectedIndex = idx;
 
-            var profile = profilesService.AvailableProfiles.ElementAt(idx);
+            profilesService.CurrentlyEditedProfile = profilesService.AvailableProfiles.ElementAt(idx);
             
-            ShowProfileEditor(profile);
+            ShowProfileEditor();
             
             mainTabCon.SelectedIndex = 1;
         }
