@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -19,6 +20,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int Device { get; }
 
         public int FuncDevNum { get; }
+
+        public string ProfileName
+        {
+            get => profileService.CurrentlyEditedProfile.DisplayName;
+            set => profileService.CurrentlyEditedProfile.DisplayName = value;
+        }
 
         public int LightbarModeIndex
         {

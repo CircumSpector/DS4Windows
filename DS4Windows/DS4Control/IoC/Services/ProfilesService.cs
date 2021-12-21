@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
@@ -128,7 +131,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// <summary>
     ///     Handles managing profiles.
     /// </summary>
-    public sealed class ProfilesService : IProfilesService
+    public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     {
         private const string LINKED_PROFILES_FILE_NAME = "LinkedProfiles.json";
 
@@ -531,7 +534,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
         public void CreateProfile(DS4WindowsProfile profile = default)
         {
-            profile ??= DS4WindowsProfile.GetDefaultProfile();
+            profile ??= DS4WindowsProfile.CreateNewProfile();
 
             availableProfiles.Add(profile);
 
@@ -591,6 +594,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             using var stream = File.Open(profilePath, FileMode.Create);
 
             profile.Serialize(stream);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [UsedImplicitly]
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

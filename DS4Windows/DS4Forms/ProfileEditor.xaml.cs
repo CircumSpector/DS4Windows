@@ -73,6 +73,7 @@ namespace DS4WinWPF.DS4Forms
 
             profileSettingsTabCon.DataContext = settingsViewModel;
             lightbarRect.DataContext = settingsViewModel;
+            profileNameTxt.DataContext = settingsViewModel;
 
             //DeviceNum = device;
             emptyColorGB.Visibility = Visibility.Collapsed;
@@ -694,8 +695,8 @@ namespace DS4WinWPF.DS4Forms
                     Global.Instance.Config.ProfilePath[Global.TEST_PROFILE_INDEX] = profile.Name;
 
                 await Global.Instance.LoadProfile(device, false, rootHub, false);
-                profileNameTxt.Text = profile.Name;
-                profileNameTxt.IsEnabled = false;
+                //profileNameTxt.Text = profile.Name;
+                //profileNameTxt.IsEnabled = false;
                 applyBtn.IsEnabled = true;
             }
             else
@@ -787,6 +788,8 @@ namespace DS4WinWPF.DS4Forms
             //view.SortDescriptions.Clear();
             //view.SortDescriptions.Add(new SortDescription("ActionName", ListSortDirection.Ascending));
             //view.Refresh();
+
+            settingsViewModel.RefreshCurrentProfile();
 
             if (settingsViewModel.UseControllerReadout) inputTimer.Start();
         }
@@ -915,10 +918,11 @@ namespace DS4WinWPF.DS4Forms
             if (fullSave) Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
         }
 
-        private async void SaveBtn_Click(object sender, RoutedEventArgs e)
+        private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            var saved = await ApplyProfileStep(false);
-            if (saved) Closed?.Invoke(this, EventArgs.Empty);
+            profileService.CreateProfile(profileService.CurrentlyEditedProfile);
+
+            Closed?.Invoke(this, EventArgs.Empty);
         }
 
         [ConfigurationSystemComponent]

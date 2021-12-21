@@ -776,6 +776,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             gyroMouseStickSmoothMethodIndex = FindGyroMouseStickSmoothMethodIndex();
         }
 
+        /// <summary>
+        ///     Updates all view model properties.
+        /// </summary>
+        public void RefreshCurrentProfile()
+        {
+            OnPropertyChanged(null);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
