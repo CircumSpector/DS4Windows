@@ -86,13 +86,15 @@ namespace DS4WinWPF.DS4Forms
             LogViewModel logViewModel,
             ControlService controlService,
             IAppSettingsService appSettings,
-            IProfilesService profilesService
+            IProfilesService profilesService,
+            ProfileEditor editor
         )
         {
             ServiceProvider = serviceProvider;
             rootHub = controlService;
             this.appSettings = appSettings;
             this.profilesService = profilesService;
+            this.editor = editor;
 
             InitializeComponent();
 
@@ -740,12 +742,12 @@ Suspend support not enabled.", true);
 
         private void MainDS4Window_Closing(object sender, CancelEventArgs e)
         {
-            if (editor != null)
-            {
-                editor.Close();
-                e.Cancel = true;
-                return;
-            }
+            //if (editor != null)
+            //{
+            //    editor.Close();
+            //    e.Cancel = true;
+            //    return;
+            //}
 
             if (contextclose) return;
 
@@ -1098,10 +1100,8 @@ Suspend support not enabled.", true);
                 oldSize = new Size(Width, Height);
             }
 
-            editor = null;
             mainTabCon.SelectedIndex = 0;
             mainWinVM.FullTabsEnabled = true;
-            //Task.Run(() => GC.Collect(0, GCCollectionMode.Forced, false));
         }
 
         private void NewProfListBtn_Click(object sender, RoutedEventArgs e)
@@ -1111,8 +1111,6 @@ Suspend support not enabled.", true);
 
         private async void ShowProfileEditor(int device, ProfileEntity entity = null)
         {
-            if (editor != null) return;
-
             profOptsToolbar.Visibility = Visibility.Collapsed;
             profilesListBox.Visibility = Visibility.Collapsed;
             mainWinVM.FullTabsEnabled = false;
@@ -1131,7 +1129,7 @@ Suspend support not enabled.", true);
             if (device == 8)
             {
                 profilesService.CurrentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
-                editor = new ProfileEditor(profilesService.CurrentlyEditedProfile, appSettings, rootHub);
+                //editor = new ProfileEditor(profilesService.CurrentlyEditedProfile, appSettings, rootHub);
             }
             else
             {

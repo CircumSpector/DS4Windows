@@ -162,6 +162,9 @@ namespace DS4WinWPF
                         .WithContentCaching(true)
                     );
             });
+
+            services.AddTransient<ProfileSettingsViewModel>();
+            services.AddSingleton<ProfileEditor>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)

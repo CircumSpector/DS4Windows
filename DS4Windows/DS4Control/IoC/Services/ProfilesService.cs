@@ -190,10 +190,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public DS4WindowsProfile CurrentlyEditedProfile
         {
+            get => currentlyEditedProfile;
             //
             // Use cloning here to not change the active copy of the profile until the user decides to apply the changes
             // 
-            get => currentlyEditedProfile.DeepClone();
             set => value.DeepCloneTo(currentlyEditedProfile);
         }
 

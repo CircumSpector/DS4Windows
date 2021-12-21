@@ -25,7 +25,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (CurrentProfile.LightbarSettingInfo.Mode)
+                switch (profileService.CurrentlyEditedProfile.LightbarSettingInfo.Mode)
                 {
                     case LightbarMode.DS4Win:
                         index = 0;
@@ -50,7 +50,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                CurrentProfile.LightbarSettingInfo.Mode = temp;
+                profileService.CurrentlyEditedProfile.LightbarSettingInfo.Mode = temp;
             }
         }
 
@@ -59,7 +59,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 Brush tempBrush;
-                var color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led;
+                var color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led;
                 if (!RainbowExists)
                 {
                     lightbarColBrush.Color = new Color
@@ -80,105 +80,105 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public Color MainColor => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.ToColor();
+        public Color MainColor => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.ToColor();
 
         public string MainColorString
         {
             get
             {
-                var color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led;
+                var color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
 
         public int MainColorR
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Red;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Red = (byte)value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Red;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Red = (byte)value;
         }
 
         public string MainColorRString =>
-            $"#{CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Red:X2}FF0000";
+            $"#{profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Red:X2}FF0000";
 
         public int MainColorG
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Green;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Green = (byte)value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Green;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Green = (byte)value;
         }
 
         public string MainColorGString =>
-            $"#{CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Green:X2}00FF00";
+            $"#{profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Green:X2}00FF00";
 
         public int MainColorB
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Blue;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Blue = (byte)value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Blue;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Blue = (byte)value;
         }
 
         public string MainColorBString =>
-            $"#{CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led.Blue:X2}0000FF";
+            $"#{profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led.Blue:X2}0000FF";
 
         public string LowColor
         {
             get
             {
-                var color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed;
+                var color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
 
         public int LowColorR
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Red;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Red = (byte)value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Red;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Red = (byte)value;
         }
 
         public string LowColorRString =>
-            $"#{CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Red:X2}FF0000";
+            $"#{profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Red:X2}FF0000";
 
         public int LowColorG
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Green;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Green = (byte)value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Green;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Green = (byte)value;
         }
 
         public string LowColorGString =>
-            $"#{CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Green:X2}00FF00";
+            $"#{profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Green:X2}00FF00";
 
         public int LowColorB
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Blue;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Blue = (byte)value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Blue;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Blue = (byte)value;
         }
 
         public string LowColorBString =>
-            $"#{CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Blue:X2}0000FF";
+            $"#{profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.Blue:X2}0000FF";
 
-        public Color LowColorMedia => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.ToColor();
+        public Color LowColorMedia => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed.ToColor();
 
         public int FlashTypeIndex
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings
                 .FlashType; //Global.Instance.FlashType[device];
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.FlashType = (byte)value;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.FlashType = (byte)value;
         }
 
         public int FlashAt
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings
                 .FlashAt; //Global.Instance.FlashAt[device];
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.FlashAt = value;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.FlashAt = value;
         }
 
         public string FlashColor
         {
             get
             {
-                var color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed;
+                var color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed;
 
                 if (color.Red == 0 && color.Green == 0 && color.Blue == 0)
-                    color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed =
-                        CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led;
+                    color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed =
+                        profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led;
 
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
@@ -188,10 +188,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                var color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed;
+                var color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed;
                 if (color.Red == 0 && color.Green == 0 && color.Blue == 0)
-                    color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed =
-                        CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led;
+                    color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.FlashLed =
+                        profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led;
 
                 return color.ToColor();
             }
@@ -199,61 +199,61 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ChargingType
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.ChargingType;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.ChargingType = value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.ChargingType;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.ChargingType = value;
         }
 
         public bool ColorBatteryPercent
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LedAsBattery;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LedAsBattery = value;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LedAsBattery;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LedAsBattery = value;
         }
 
         public string ChargingColor
         {
             get
             {
-                var color = CurrentProfile.LightbarSettingInfo.Ds4WinSettings.ChargingLed;
+                var color = profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.ChargingLed;
                 return $"#FF{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
             }
         }
 
         public Color ChargingColorMedia =>
-            CurrentProfile.LightbarSettingInfo.Ds4WinSettings.ChargingLed.ToColor();
+            profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.ChargingLed.ToColor();
 
         public Visibility ChargingColorVisible =>
-            CurrentProfile.LightbarSettingInfo.Ds4WinSettings.ChargingType == 3
+            profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.ChargingType == 3
                 ? Visibility.Visible
                 : Visibility.Hidden;
 
         public double Rainbow
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Rainbow;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Rainbow;
             set
             {
-                CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Rainbow = value;
+                profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Rainbow = value;
             }
         }
 
-        public bool RainbowExists => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Rainbow != 0.0;
+        public bool RainbowExists => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Rainbow != 0.0;
 
         public double MaxSatRainbow
         {
-            get => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.MaxRainbowSaturation * 100.0;
-            set => CurrentProfile.LightbarSettingInfo.Ds4WinSettings.MaxRainbowSaturation = value / 100.0;
+            get => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.MaxRainbowSaturation * 100.0;
+            set => profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.MaxRainbowSaturation = value / 100.0;
         }
 
         public int RumbleBoost
         {
-            get => CurrentProfile.RumbleBoost;
-            set => CurrentProfile.RumbleBoost = (byte)value;
+            get => profileService.CurrentlyEditedProfile.RumbleBoost;
+            set => profileService.CurrentlyEditedProfile.RumbleBoost = (byte)value;
         }
 
         public int RumbleAutostopTime
         {
             // RumbleAutostopTime value is in milliseconds in XML config file, but GUI uses just seconds
-            get => CurrentProfile.RumbleAutostopTime / 1000;
-            set => CurrentProfile.RumbleAutostopTime = value * 1000;
+            get => profileService.CurrentlyEditedProfile.RumbleAutostopTime / 1000;
+            set => profileService.CurrentlyEditedProfile.RumbleAutostopTime = value * 1000;
         }
 
         public bool HeavyRumbleActive { get; set; }
@@ -268,44 +268,44 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ButtonMouseSensitivity
         {
-            get => CurrentProfile.ButtonMouseInfo.ButtonSensitivity;
+            get => profileService.CurrentlyEditedProfile.ButtonMouseInfo.ButtonSensitivity;
             set
             {
-                var temp = CurrentProfile.ButtonMouseInfo.ButtonSensitivity;
+                var temp = profileService.CurrentlyEditedProfile.ButtonMouseInfo.ButtonSensitivity;
                 if (temp == value) return;
-                CurrentProfile.ButtonMouseInfo.ButtonSensitivity = value;
+                profileService.CurrentlyEditedProfile.ButtonMouseInfo.ButtonSensitivity = value;
             }
         }
 
         public int ButtonMouseVerticalScale
         {
-            get => Convert.ToInt32(CurrentProfile.ButtonMouseInfo
+            get => Convert.ToInt32(profileService.CurrentlyEditedProfile.ButtonMouseInfo
                 .ButtonVerticalScale * 100.0);
             set
             {
-                var temp = CurrentProfile.ButtonMouseInfo
+                var temp = profileService.CurrentlyEditedProfile.ButtonMouseInfo
                     .ButtonVerticalScale;
                 var attemptValue = value * 0.01;
                 if (temp == attemptValue) return;
-                CurrentProfile.ButtonMouseInfo.ButtonVerticalScale =
+                profileService.CurrentlyEditedProfile.ButtonMouseInfo.ButtonVerticalScale =
                     attemptValue;
             }
         }
 
-        private double RawButtonMouseOffset => CurrentProfile.ButtonMouseInfo
+        private double RawButtonMouseOffset => profileService.CurrentlyEditedProfile.ButtonMouseInfo
             .MouseVelocityOffset;
 
         public double ButtonMouseOffset
         {
-            get => CurrentProfile.ButtonMouseInfo.MouseVelocityOffset *
+            get => profileService.CurrentlyEditedProfile.ButtonMouseInfo.MouseVelocityOffset *
                    100.0;
             set
             {
                 var temp =
-                    CurrentProfile.ButtonMouseInfo.MouseVelocityOffset *
+                    profileService.CurrentlyEditedProfile.ButtonMouseInfo.MouseVelocityOffset *
                     100.0;
                 if (temp == value) return;
-                CurrentProfile.ButtonMouseInfo.MouseVelocityOffset =
+                profileService.CurrentlyEditedProfile.ButtonMouseInfo.MouseVelocityOffset =
                     value * 0.01;
             }
         }
@@ -332,20 +332,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool MouseAcceleration
         {
-            get => CurrentProfile.ButtonMouseInfo.MouseAcceleration;
-            set => CurrentProfile.ButtonMouseInfo.MouseAcceleration = value;
+            get => profileService.CurrentlyEditedProfile.ButtonMouseInfo.MouseAcceleration;
+            set => profileService.CurrentlyEditedProfile.ButtonMouseInfo.MouseAcceleration = value;
         }
 
         public bool EnableTouchpadToggle
         {
-            get => CurrentProfile.EnableTouchToggle;
-            set => CurrentProfile.EnableTouchToggle = value;
+            get => profileService.CurrentlyEditedProfile.EnableTouchToggle;
+            set => profileService.CurrentlyEditedProfile.EnableTouchToggle = value;
         }
 
         public bool EnableOutputDataToDS4
         {
-            get => CurrentProfile.EnableOutputDataToDS4;
-            set => CurrentProfile.EnableOutputDataToDS4 = value;
+            get => profileService.CurrentlyEditedProfile.EnableOutputDataToDS4;
+            set => profileService.CurrentlyEditedProfile.EnableOutputDataToDS4 = value;
         }
 
         public bool LaunchProgramExists
@@ -393,30 +393,30 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool DInputOnly
         {
-            get => CurrentProfile.DisableVirtualController;
-            set => CurrentProfile.DisableVirtualController = value;
+            get => profileService.CurrentlyEditedProfile.DisableVirtualController;
+            set => profileService.CurrentlyEditedProfile.DisableVirtualController = value;
         }
 
         public bool IdleDisconnectExists
         {
-            get => CurrentProfile.IdleDisconnectTimeout != 0;
+            get => profileService.CurrentlyEditedProfile.IdleDisconnectTimeout != 0;
             set
             {
                 // If enabling Idle Disconnect, set default time.
                 // Otherwise, set time to 0 to mean disabled
-                CurrentProfile.IdleDisconnectTimeout =
+                profileService.CurrentlyEditedProfile.IdleDisconnectTimeout =
                     value ? Global.DEFAULT_ENABLE_IDLE_DISCONN_MINS * 60 : 0;
             }
         }
 
         public int IdleDisconnect
         {
-            get => CurrentProfile.IdleDisconnectTimeout / 60;
+            get => profileService.CurrentlyEditedProfile.IdleDisconnectTimeout / 60;
             set
             {
-                var temp = CurrentProfile.IdleDisconnectTimeout / 60;
+                var temp = profileService.CurrentlyEditedProfile.IdleDisconnectTimeout / 60;
                 if (temp == value) return;
-                CurrentProfile.IdleDisconnectTimeout = value * 60;
+                profileService.CurrentlyEditedProfile.IdleDisconnectTimeout = value * 60;
             }
         }
 
@@ -427,7 +427,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var type = 0;
-                switch (CurrentProfile.OutputDeviceType)
+                switch (profileService.CurrentlyEditedProfile.OutputDeviceType)
                 {
                     case OutContType.X360:
                         type = 0;
@@ -479,7 +479,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (CurrentProfile.GyroOutputMode)
+                switch (profileService.CurrentlyEditedProfile.GyroOutputMode)
                 {
                     case GyroOutMode.Controls:
                         index = 0;
@@ -520,23 +520,23 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = CurrentProfile.GyroOutputMode;
+                var current = profileService.CurrentlyEditedProfile.GyroOutputMode;
                 if (temp == current) return;
-                CurrentProfile.GyroOutputMode = temp;
+                profileService.CurrentlyEditedProfile.GyroOutputMode = temp;
             }
         }
 
-        public OutContType ContType => CurrentProfile.OutputDeviceType;
+        public OutContType ContType => profileService.CurrentlyEditedProfile.OutputDeviceType;
 
         public int SASteeringWheelEmulationAxisIndex
         {
-            get => (int)CurrentProfile.SASteeringWheelEmulationAxis;
+            get => (int)profileService.CurrentlyEditedProfile.SASteeringWheelEmulationAxis;
             set
             {
-                var temp = (int)CurrentProfile.SASteeringWheelEmulationAxis;
+                var temp = (int)profileService.CurrentlyEditedProfile.SASteeringWheelEmulationAxis;
                 if (temp == value) return;
 
-                CurrentProfile.SASteeringWheelEmulationAxis =
+                profileService.CurrentlyEditedProfile.SASteeringWheelEmulationAxis =
                     (SASteeringWheelEmulationAxisType)value;
             }
         }
@@ -546,7 +546,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 360;
-                switch (CurrentProfile.SASteeringWheelEmulationRange)
+                switch (profileService.CurrentlyEditedProfile.SASteeringWheelEmulationRange)
                 {
                     case 90:
                         index = 0;
@@ -582,125 +582,125 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set
             {
                 var temp = saSteeringRangeValues[value];
-                CurrentProfile.SASteeringWheelEmulationRange = temp;
+                profileService.CurrentlyEditedProfile.SASteeringWheelEmulationRange = temp;
             }
         }
 
         public int SASteeringWheelEmulationRange
         {
-            get => CurrentProfile.SASteeringWheelEmulationRange;
-            set => CurrentProfile.SASteeringWheelEmulationRange = value;
+            get => profileService.CurrentlyEditedProfile.SASteeringWheelEmulationRange;
+            set => profileService.CurrentlyEditedProfile.SASteeringWheelEmulationRange = value;
         }
 
         public int SASteeringWheelFuzz
         {
-            get => CurrentProfile.SAWheelFuzzValues;
-            set => CurrentProfile.SAWheelFuzzValues = value;
+            get => profileService.CurrentlyEditedProfile.SAWheelFuzzValues;
+            set => profileService.CurrentlyEditedProfile.SAWheelFuzzValues = value;
         }
 
         public bool SASteeringWheelUseSmoothing
         {
-            get => CurrentProfile.WheelSmoothInfo.Enabled;
+            get => profileService.CurrentlyEditedProfile.WheelSmoothInfo.Enabled;
             set
             {
-                var temp = CurrentProfile.WheelSmoothInfo.Enabled;
+                var temp = profileService.CurrentlyEditedProfile.WheelSmoothInfo.Enabled;
                 if (temp == value) return;
-                CurrentProfile.WheelSmoothInfo.Enabled = value;
+                profileService.CurrentlyEditedProfile.WheelSmoothInfo.Enabled = value;
             }
         }
 
         public double SASteeringWheelSmoothMinCutoff
         {
-            get => CurrentProfile.WheelSmoothInfo.MinCutoff;
-            set => CurrentProfile.WheelSmoothInfo.MinCutoff = value;
+            get => profileService.CurrentlyEditedProfile.WheelSmoothInfo.MinCutoff;
+            set => profileService.CurrentlyEditedProfile.WheelSmoothInfo.MinCutoff = value;
         }
 
         public double SASteeringWheelSmoothBeta
         {
-            get => CurrentProfile.WheelSmoothInfo.Beta;
-            set => CurrentProfile.WheelSmoothInfo.Beta = value;
+            get => profileService.CurrentlyEditedProfile.WheelSmoothInfo.Beta;
+            set => profileService.CurrentlyEditedProfile.WheelSmoothInfo.Beta = value;
         }
 
         public double LSDeadZone
         {
-            get => Math.Round(CurrentProfile.LSModInfo.DeadZone / 127d, 2);
+            get => Math.Round(profileService.CurrentlyEditedProfile.LSModInfo.DeadZone / 127d, 2);
             set
             {
-                var temp = Math.Round(CurrentProfile.LSModInfo.DeadZone / 127d, 2);
+                var temp = Math.Round(profileService.CurrentlyEditedProfile.LSModInfo.DeadZone / 127d, 2);
                 if (temp == value) return;
-                CurrentProfile.LSModInfo.DeadZone = (int)Math.Round(value * 127d);
+                profileService.CurrentlyEditedProfile.LSModInfo.DeadZone = (int)Math.Round(value * 127d);
             }
         }
 
         public double RSDeadZone
         {
-            get => Math.Round(CurrentProfile.RSModInfo.DeadZone / 127d, 2);
+            get => Math.Round(profileService.CurrentlyEditedProfile.RSModInfo.DeadZone / 127d, 2);
             set
             {
-                var temp = Math.Round(CurrentProfile.RSModInfo.DeadZone / 127d, 2);
+                var temp = Math.Round(profileService.CurrentlyEditedProfile.RSModInfo.DeadZone / 127d, 2);
                 if (temp == value) return;
-                CurrentProfile.RSModInfo.DeadZone = (int)Math.Round(value * 127d);
+                profileService.CurrentlyEditedProfile.RSModInfo.DeadZone = (int)Math.Round(value * 127d);
             }
         }
 
         public double LSMaxZone
         {
-            get => CurrentProfile.LSModInfo.MaxZone / 100.0;
-            set => CurrentProfile.LSModInfo.MaxZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.LSModInfo.MaxZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double RSMaxZone
         {
-            get => CurrentProfile.RSModInfo.MaxZone / 100.0;
-            set => CurrentProfile.RSModInfo.MaxZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.RSModInfo.MaxZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double LSAntiDeadZone
         {
-            get => CurrentProfile.LSModInfo.AntiDeadZone / 100.0;
-            set => CurrentProfile.LSModInfo.AntiDeadZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.LSModInfo.AntiDeadZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double RSAntiDeadZone
         {
-            get => CurrentProfile.RSModInfo.AntiDeadZone / 100.0;
-            set => CurrentProfile.RSModInfo.AntiDeadZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.RSModInfo.AntiDeadZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double LSVerticalScale
         {
-            get => CurrentProfile.LSModInfo.VerticalScale / 100.0;
-            set => CurrentProfile.LSModInfo.VerticalScale = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.LSModInfo.VerticalScale / 100.0;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.VerticalScale = value * 100.0;
         }
 
         public double LSMaxOutput
         {
-            get => CurrentProfile.LSModInfo.MaxOutput / 100.0;
-            set => CurrentProfile.LSModInfo.MaxOutput = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.LSModInfo.MaxOutput / 100.0;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.MaxOutput = value * 100.0;
         }
 
         public bool LSMaxOutputForce
         {
-            get => CurrentProfile.LSModInfo.MaxOutputForce;
-            set => CurrentProfile.LSModInfo.MaxOutputForce = value;
+            get => profileService.CurrentlyEditedProfile.LSModInfo.MaxOutputForce;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.MaxOutputForce = value;
         }
 
         public double RSVerticalScale
         {
-            get => CurrentProfile.RSModInfo.VerticalScale / 100.0;
-            set => CurrentProfile.RSModInfo.VerticalScale = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.RSModInfo.VerticalScale / 100.0;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.VerticalScale = value * 100.0;
         }
 
         public double RSMaxOutput
         {
-            get => CurrentProfile.RSModInfo.MaxOutput / 100.0;
-            set => CurrentProfile.RSModInfo.MaxOutput = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.RSModInfo.MaxOutput / 100.0;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.MaxOutput = value * 100.0;
         }
 
         public bool RSMaxOutputForce
         {
-            get => CurrentProfile.RSModInfo.MaxOutputForce;
-            set => CurrentProfile.RSModInfo.MaxOutputForce = value;
+            get => profileService.CurrentlyEditedProfile.RSModInfo.MaxOutputForce;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.MaxOutputForce = value;
         }
 
         public int LSDeadTypeIndex
@@ -708,7 +708,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (CurrentProfile.LSModInfo.DZType)
+                switch (profileService.CurrentlyEditedProfile.LSModInfo.DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -730,9 +730,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = CurrentProfile.LSModInfo.DZType;
+                var current = profileService.CurrentlyEditedProfile.LSModInfo.DZType;
                 if (temp == current) return;
-                CurrentProfile.LSModInfo.DZType = temp;
+                profileService.CurrentlyEditedProfile.LSModInfo.DZType = temp;
             }
         }
 
@@ -741,7 +741,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (CurrentProfile.RSModInfo.DZType)
+                switch (profileService.CurrentlyEditedProfile.RSModInfo.DZType)
                 {
                     case StickDeadZoneInfo.DeadZoneType.Radial:
                         break;
@@ -763,46 +763,46 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = CurrentProfile.RSModInfo.DZType;
+                var current = profileService.CurrentlyEditedProfile.RSModInfo.DZType;
                 if (temp == current) return;
-                CurrentProfile.RSModInfo.DZType = temp;
+                profileService.CurrentlyEditedProfile.RSModInfo.DZType = temp;
             }
         }
 
         public double LSSens
         {
-            get => CurrentProfile.LSSens;
-            set => CurrentProfile.LSSens = value;
+            get => profileService.CurrentlyEditedProfile.LSSens;
+            set => profileService.CurrentlyEditedProfile.LSSens = value;
         }
 
         public double RSSens
         {
-            get => CurrentProfile.RSSens;
-            set => CurrentProfile.RSSens = value;
+            get => profileService.CurrentlyEditedProfile.RSSens;
+            set => profileService.CurrentlyEditedProfile.RSSens = value;
         }
 
         public bool LSSquareStick
         {
-            get => CurrentProfile.SquStickInfo.LSMode;
-            set => CurrentProfile.SquStickInfo.LSMode = value;
+            get => profileService.CurrentlyEditedProfile.SquStickInfo.LSMode;
+            set => profileService.CurrentlyEditedProfile.SquStickInfo.LSMode = value;
         }
 
         public bool RSSquareStick
         {
-            get => CurrentProfile.SquStickInfo.RSMode;
-            set => CurrentProfile.SquStickInfo.RSMode = value;
+            get => profileService.CurrentlyEditedProfile.SquStickInfo.RSMode;
+            set => profileService.CurrentlyEditedProfile.SquStickInfo.RSMode = value;
         }
 
         public double LSSquareRoundness
         {
-            get => CurrentProfile.SquStickInfo.LSRoundness;
-            set => CurrentProfile.SquStickInfo.LSRoundness = value;
+            get => profileService.CurrentlyEditedProfile.SquStickInfo.LSRoundness;
+            set => profileService.CurrentlyEditedProfile.SquStickInfo.LSRoundness = value;
         }
 
         public double RSSquareRoundness
         {
-            get => CurrentProfile.SquStickInfo.RSRoundness;
-            set => CurrentProfile.SquStickInfo.RSRoundness = value;
+            get => profileService.CurrentlyEditedProfile.SquStickInfo.RSRoundness;
+            set => profileService.CurrentlyEditedProfile.SquStickInfo.RSRoundness = value;
         }
 
         public int LSOutputCurveIndex
@@ -825,19 +825,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double LSRotation
         {
-            get => CurrentProfile.LSRotation * 180.0 / Math.PI;
-            set => CurrentProfile.LSRotation = value * Math.PI / 180.0;
+            get => profileService.CurrentlyEditedProfile.LSRotation * 180.0 / Math.PI;
+            set => profileService.CurrentlyEditedProfile.LSRotation = value * Math.PI / 180.0;
         }
 
         public double RSRotation
         {
-            get => CurrentProfile.RSRotation * 180.0 / Math.PI;
-            set => CurrentProfile.RSRotation = value * Math.PI / 180.0;
+            get => profileService.CurrentlyEditedProfile.RSRotation * 180.0 / Math.PI;
+            set => profileService.CurrentlyEditedProfile.RSRotation = value * Math.PI / 180.0;
         }
 
-        public bool LSCustomCurveSelected => CurrentProfile. LSOutCurveMode == CurveMode.Custom;
+        public bool LSCustomCurveSelected => profileService.CurrentlyEditedProfile. LSOutCurveMode == CurveMode.Custom;
 
-        public bool RSCustomCurveSelected => CurrentProfile. RSOutCurveMode == CurveMode.Custom;
+        public bool RSCustomCurveSelected => profileService.CurrentlyEditedProfile. RSOutCurveMode == CurveMode.Custom;
 
         public string LSCustomCurve
         {
@@ -855,74 +855,74 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int LSFuzz
         {
-            get => CurrentProfile.LSModInfo.Fuzz;
-            set => CurrentProfile.LSModInfo.Fuzz = value;
+            get => profileService.CurrentlyEditedProfile.LSModInfo.Fuzz;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.Fuzz = value;
         }
 
         public int RSFuzz
         {
-            get => CurrentProfile.RSModInfo.Fuzz;
-            set => CurrentProfile.RSModInfo.Fuzz = value;
+            get => profileService.CurrentlyEditedProfile.RSModInfo.Fuzz;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.Fuzz = value;
         }
 
         public bool LSAntiSnapback
         {
-            get => CurrentProfile.LSAntiSnapbackInfo.Enabled;
-            set => CurrentProfile.LSAntiSnapbackInfo.Enabled = value;
+            get => profileService.CurrentlyEditedProfile.LSAntiSnapbackInfo.Enabled;
+            set => profileService.CurrentlyEditedProfile.LSAntiSnapbackInfo.Enabled = value;
         }
 
         public bool RSAntiSnapback
         {
-            get => CurrentProfile.RSAntiSnapbackInfo.Enabled;
-            set => CurrentProfile.RSAntiSnapbackInfo.Enabled = value;
+            get => profileService.CurrentlyEditedProfile.RSAntiSnapbackInfo.Enabled;
+            set => profileService.CurrentlyEditedProfile.RSAntiSnapbackInfo.Enabled = value;
         }
 
         public double LSAntiSnapbackDelta
         {
-            get => CurrentProfile.LSAntiSnapbackInfo.Delta;
-            set => CurrentProfile.LSAntiSnapbackInfo.Delta = value;
+            get => profileService.CurrentlyEditedProfile.LSAntiSnapbackInfo.Delta;
+            set => profileService.CurrentlyEditedProfile.LSAntiSnapbackInfo.Delta = value;
         }
 
         public double RSAntiSnapbackDelta
         {
-            get => CurrentProfile.RSAntiSnapbackInfo.Delta;
-            set => CurrentProfile.RSAntiSnapbackInfo.Delta = value;
+            get => profileService.CurrentlyEditedProfile.RSAntiSnapbackInfo.Delta;
+            set => profileService.CurrentlyEditedProfile.RSAntiSnapbackInfo.Delta = value;
         }
 
         public int LSAntiSnapbackTimeout
         {
-            get => CurrentProfile.LSAntiSnapbackInfo.Timeout;
-            set => CurrentProfile.LSAntiSnapbackInfo.Timeout = value;
+            get => profileService.CurrentlyEditedProfile.LSAntiSnapbackInfo.Timeout;
+            set => profileService.CurrentlyEditedProfile.LSAntiSnapbackInfo.Timeout = value;
         }
 
         public int RSAntiSnapbackTimeout
         {
-            get => CurrentProfile.RSAntiSnapbackInfo.Timeout;
-            set => CurrentProfile.RSAntiSnapbackInfo.Timeout = value;
+            get => profileService.CurrentlyEditedProfile.RSAntiSnapbackInfo.Timeout;
+            set => profileService.CurrentlyEditedProfile.RSAntiSnapbackInfo.Timeout = value;
         }
 
         public bool LSOuterBindInvert
         {
-            get => CurrentProfile.LSModInfo.OuterBindInvert;
-            set => CurrentProfile.LSModInfo.OuterBindInvert = value;
+            get => profileService.CurrentlyEditedProfile.LSModInfo.OuterBindInvert;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.OuterBindInvert = value;
         }
 
         public bool RSOuterBindInvert
         {
-            get => CurrentProfile.RSModInfo.OuterBindInvert;
-            set => CurrentProfile.RSModInfo.OuterBindInvert = value;
+            get => profileService.CurrentlyEditedProfile.RSModInfo.OuterBindInvert;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.OuterBindInvert = value;
         }
 
         public double LSOuterBindDead
         {
-            get => CurrentProfile.LSModInfo.OuterBindDeadZone / 100.0;
-            set => CurrentProfile.LSModInfo.OuterBindDeadZone = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.LSModInfo.OuterBindDeadZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.LSModInfo.OuterBindDeadZone = value * 100.0;
         }
 
         public double RSOuterBindDead
         {
-            get => CurrentProfile.RSModInfo.OuterBindDeadZone / 100.0;
-            set => CurrentProfile.RSModInfo.OuterBindDeadZone = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.RSModInfo.OuterBindDeadZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.RSModInfo.OuterBindDeadZone = value * 100.0;
         }
 
         public int LSOutputIndex
@@ -930,7 +930,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (CurrentProfile.LSOutputSettings.Mode)
+                switch (profileService.CurrentlyEditedProfile.LSOutputSettings.Mode)
                 {
                     case StickMode.None:
                         index = 0;
@@ -961,35 +961,35 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = CurrentProfile.LSOutputSettings.Mode;
+                var current = profileService.CurrentlyEditedProfile.LSOutputSettings.Mode;
                 if (temp == current) return;
-                CurrentProfile.LSOutputSettings.Mode = temp;
+                profileService.CurrentlyEditedProfile.LSOutputSettings.Mode = temp;
             }
         }
 
         public double LSFlickRWC
         {
-            get => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration;
-            set => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
+            get => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration;
+            set => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
                 value;
         }
 
         public double LSFlickThreshold
         {
-            get => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold;
-            set => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold = value;
+            get => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold;
+            set => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold = value;
         }
 
         public double LSFlickTime
         {
-            get => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickTime;
-            set => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickTime = value;
+            get => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickTime;
+            set => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.FlickTime = value;
         }
 
         public double LSMinAngleThreshold
         {
-            get => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold;
-            set => CurrentProfile.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
+            get => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold;
+            set => profileService.CurrentlyEditedProfile.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
                 value;
         }
 
@@ -998,7 +998,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (CurrentProfile.RSOutputSettings.Mode)
+                switch (profileService.CurrentlyEditedProfile.RSOutputSettings.Mode)
                 {
                     case StickMode.None:
                         break;
@@ -1028,106 +1028,106 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = CurrentProfile.RSOutputSettings.Mode;
+                var current = profileService.CurrentlyEditedProfile.RSOutputSettings.Mode;
                 if (temp == current) return;
-                CurrentProfile.RSOutputSettings.Mode = temp;
+                profileService.CurrentlyEditedProfile.RSOutputSettings.Mode = temp;
             }
         }
 
         public double RSFlickRWC
         {
-            get => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration;
-            set => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
+            get => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration;
+            set => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration =
                 value;
         }
 
         public double RSFlickThreshold
         {
-            get => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold;
-            set => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold = value;
+            get => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold;
+            set => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold = value;
         }
 
         public double RSFlickTime
         {
-            get => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickTime;
-            set => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickTime = value;
+            get => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickTime;
+            set => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.FlickTime = value;
         }
 
         public double RSMinAngleThreshold
         {
-            get => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold;
-            set => CurrentProfile.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
+            get => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold;
+            set => profileService.CurrentlyEditedProfile.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold =
                 value;
         }
 
         public double L2DeadZone
         {
-            get => CurrentProfile.L2ModInfo.DeadZone / 255.0;
+            get => profileService.CurrentlyEditedProfile.L2ModInfo.DeadZone / 255.0;
             set
             {
-                var temp = CurrentProfile.L2ModInfo.DeadZone / 255.0;
+                var temp = profileService.CurrentlyEditedProfile.L2ModInfo.DeadZone / 255.0;
                 if (temp == value) return;
-                CurrentProfile.L2ModInfo.DeadZone = (byte)(value * 255.0);
+                profileService.CurrentlyEditedProfile.L2ModInfo.DeadZone = (byte)(value * 255.0);
             }
         }
 
         public double R2DeadZone
         {
-            get => CurrentProfile.R2ModInfo.DeadZone / 255.0;
+            get => profileService.CurrentlyEditedProfile.R2ModInfo.DeadZone / 255.0;
             set
             {
-                var temp = CurrentProfile.R2ModInfo.DeadZone / 255.0;
+                var temp = profileService.CurrentlyEditedProfile.R2ModInfo.DeadZone / 255.0;
                 if (temp == value) return;
-                CurrentProfile.R2ModInfo.DeadZone = (byte)(value * 255.0);
+                profileService.CurrentlyEditedProfile.R2ModInfo.DeadZone = (byte)(value * 255.0);
             }
         }
 
         public double L2MaxZone
         {
-            get => CurrentProfile.L2ModInfo.MaxZone / 100.0;
-            set => CurrentProfile.L2ModInfo.MaxZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.L2ModInfo.MaxZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.L2ModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double R2MaxZone
         {
-            get => CurrentProfile.R2ModInfo.MaxZone / 100.0;
-            set => CurrentProfile.R2ModInfo.MaxZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.R2ModInfo.MaxZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.R2ModInfo.MaxZone = (int)(value * 100.0);
         }
 
         public double L2AntiDeadZone
         {
-            get => CurrentProfile.L2ModInfo.AntiDeadZone / 100.0;
-            set => CurrentProfile.L2ModInfo.AntiDeadZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.L2ModInfo.AntiDeadZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.L2ModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double R2AntiDeadZone
         {
-            get => CurrentProfile.R2ModInfo.AntiDeadZone / 100.0;
-            set => CurrentProfile.R2ModInfo.AntiDeadZone = (int)(value * 100.0);
+            get => profileService.CurrentlyEditedProfile.R2ModInfo.AntiDeadZone / 100.0;
+            set => profileService.CurrentlyEditedProfile.R2ModInfo.AntiDeadZone = (int)(value * 100.0);
         }
 
         public double L2MaxOutput
         {
-            get => CurrentProfile.L2ModInfo.MaxOutput / 100.0;
-            set => CurrentProfile.L2ModInfo.MaxOutput = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.L2ModInfo.MaxOutput / 100.0;
+            set => profileService.CurrentlyEditedProfile.L2ModInfo.MaxOutput = value * 100.0;
         }
 
         public double R2MaxOutput
         {
-            get => CurrentProfile.R2ModInfo.MaxOutput / 100.0;
-            set => CurrentProfile.R2ModInfo.MaxOutput = value * 100.0;
+            get => profileService.CurrentlyEditedProfile.R2ModInfo.MaxOutput / 100.0;
+            set => profileService.CurrentlyEditedProfile.R2ModInfo.MaxOutput = value * 100.0;
         }
 
         public double L2Sens
         {
-            get => CurrentProfile.L2Sens;
-            set => CurrentProfile.L2Sens = value;
+            get => profileService.CurrentlyEditedProfile.L2Sens;
+            set => profileService.CurrentlyEditedProfile.L2Sens = value;
         }
 
         public double R2Sens
         {
-            get => CurrentProfile.R2Sens;
-            set => CurrentProfile.R2Sens = value;
+            get => profileService.CurrentlyEditedProfile.R2Sens;
+            set => profileService.CurrentlyEditedProfile.R2Sens = value;
         }
 
         public int L2OutputCurveIndex
@@ -1178,38 +1178,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TwoStageTriggerMode L2TriggerMode
         {
-            get => CurrentProfile.L2OutputSettings.TwoStageMode;
+            get => profileService.CurrentlyEditedProfile.L2OutputSettings.TwoStageMode;
             set
             {
-                var temp = CurrentProfile.L2OutputSettings.TwoStageMode;
+                var temp = profileService.CurrentlyEditedProfile.L2OutputSettings.TwoStageMode;
                 if (temp == value) return;
 
-                CurrentProfile.L2OutputSettings.TwoStageMode = value;
+                profileService.CurrentlyEditedProfile.L2OutputSettings.TwoStageMode = value;
             }
         }
 
         public TwoStageTriggerMode R2TriggerMode
         {
-            get => CurrentProfile.R2OutputSettings.TwoStageMode;
+            get => profileService.CurrentlyEditedProfile.R2OutputSettings.TwoStageMode;
             set
             {
-                var temp = CurrentProfile.R2OutputSettings.TwoStageMode;
+                var temp = profileService.CurrentlyEditedProfile.R2OutputSettings.TwoStageMode;
                 if (temp == value) return;
 
-                CurrentProfile.R2OutputSettings.TwoStageMode = value;
+                profileService.CurrentlyEditedProfile.R2OutputSettings.TwoStageMode = value;
             }
         }
 
         public int L2HipFireTime
         {
-            get => CurrentProfile.L2OutputSettings.HipFireMs;
-            set => CurrentProfile.L2OutputSettings.HipFireMs = value;
+            get => profileService.CurrentlyEditedProfile.L2OutputSettings.HipFireMs;
+            set => profileService.CurrentlyEditedProfile.L2OutputSettings.HipFireMs = value;
         }
 
         public int R2HipFireTime
         {
-            get => CurrentProfile.R2OutputSettings.HipFireMs;
-            set => CurrentProfile.R2OutputSettings.HipFireMs = value;
+            get => profileService.CurrentlyEditedProfile.R2OutputSettings.HipFireMs;
+            set => profileService.CurrentlyEditedProfile.R2OutputSettings.HipFireMs = value;
         }
 
         public List<TriggerEffectChoice> TriggerEffectChoices { get; } = new()
@@ -1222,84 +1222,84 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public TriggerEffects L2TriggerEffect
         {
-            get => CurrentProfile.L2OutputSettings.TriggerEffect;
+            get => profileService.CurrentlyEditedProfile.L2OutputSettings.TriggerEffect;
             set
             {
-                var temp = CurrentProfile.L2OutputSettings.TriggerEffect;
+                var temp = profileService.CurrentlyEditedProfile.L2OutputSettings.TriggerEffect;
                 if (temp == value) return;
 
-                CurrentProfile.L2OutputSettings.TriggerEffect = value;
+                profileService.CurrentlyEditedProfile.L2OutputSettings.TriggerEffect = value;
             }
         }
 
         public TriggerEffects R2TriggerEffect
         {
-            get => CurrentProfile.R2OutputSettings.TriggerEffect;
+            get => profileService.CurrentlyEditedProfile.R2OutputSettings.TriggerEffect;
             set
             {
-                var temp = CurrentProfile.R2OutputSettings.TriggerEffect;
+                var temp = profileService.CurrentlyEditedProfile.R2OutputSettings.TriggerEffect;
                 if (temp == value) return;
 
-                CurrentProfile.R2OutputSettings.TriggerEffect = value;
+                profileService.CurrentlyEditedProfile.R2OutputSettings.TriggerEffect = value;
             }
         }
 
         public double SXDeadZone
         {
-            get => CurrentProfile.SXDeadZone;
+            get => profileService.CurrentlyEditedProfile.SXDeadZone;
             set
             {
-                var temp = CurrentProfile.SXDeadZone;
+                var temp = profileService.CurrentlyEditedProfile.SXDeadZone;
                 if (temp == value) return;
-                CurrentProfile.SXDeadZone = value;
+                profileService.CurrentlyEditedProfile.SXDeadZone = value;
             }
         }
 
         public double SZDeadZone
         {
-            get => CurrentProfile.SZDeadZone;
+            get => profileService.CurrentlyEditedProfile.SZDeadZone;
             set
             {
-                var temp = CurrentProfile.SZDeadZone;
+                var temp = profileService.CurrentlyEditedProfile.SZDeadZone;
                 if (temp == value) return;
-                CurrentProfile.SZDeadZone = value;
+                profileService.CurrentlyEditedProfile.SZDeadZone = value;
             }
         }
 
         public double SXMaxZone
         {
-            get => CurrentProfile.SXMaxZone;
-            set => CurrentProfile.SXMaxZone = value;
+            get => profileService.CurrentlyEditedProfile.SXMaxZone;
+            set => profileService.CurrentlyEditedProfile.SXMaxZone = value;
         }
 
         public double SZMaxZone
         {
-            get => CurrentProfile.SZMaxZone;
-            set => CurrentProfile.SZMaxZone = value;
+            get => profileService.CurrentlyEditedProfile.SZMaxZone;
+            set => profileService.CurrentlyEditedProfile.SZMaxZone = value;
         }
 
         public double SXAntiDeadZone
         {
-            get => CurrentProfile.SXAntiDeadZone;
-            set => CurrentProfile.SXAntiDeadZone = value;
+            get => profileService.CurrentlyEditedProfile.SXAntiDeadZone;
+            set => profileService.CurrentlyEditedProfile.SXAntiDeadZone = value;
         }
 
         public double SZAntiDeadZone
         {
-            get => CurrentProfile.SZAntiDeadZone;
-            set => CurrentProfile.SZAntiDeadZone = value;
+            get => profileService.CurrentlyEditedProfile.SZAntiDeadZone;
+            set => profileService.CurrentlyEditedProfile.SZAntiDeadZone = value;
         }
 
         public double SXSens
         {
-            get => CurrentProfile.SXSens;
-            set => CurrentProfile.SXSens = value;
+            get => profileService.CurrentlyEditedProfile.SXSens;
+            set => profileService.CurrentlyEditedProfile.SXSens = value;
         }
 
         public double SZSens
         {
-            get => CurrentProfile.SZSens;
-            set => CurrentProfile.SZSens = value;
+            get => profileService.CurrentlyEditedProfile.SZSens;
+            set => profileService.CurrentlyEditedProfile.SZSens = value;
         }
 
         public int SXOutputCurveIndex
@@ -1343,7 +1343,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var index = 0;
-                switch (CurrentProfile.TouchOutMode)
+                switch (profileService.CurrentlyEditedProfile.TouchOutMode)
                 {
                     case TouchpadOutMode.Mouse:
                         index = 0;
@@ -1378,196 +1378,196 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         break;
                 }
 
-                var current = CurrentProfile.TouchOutMode;
+                var current = profileService.CurrentlyEditedProfile.TouchOutMode;
                 if (temp == current) return;
-                CurrentProfile.TouchOutMode = temp;
+                profileService.CurrentlyEditedProfile.TouchOutMode = temp;
             }
         }
 
         public bool TouchSenExists
         {
-            get => CurrentProfile.TouchSensitivity != 0;
+            get => profileService.CurrentlyEditedProfile.TouchSensitivity != 0;
             set
             {
-                CurrentProfile.TouchSensitivity =
+                profileService.CurrentlyEditedProfile.TouchSensitivity =
                     value ? (byte)100 : (byte)0;
             }
         }
 
         public int TouchSens
         {
-            get => CurrentProfile.TouchSensitivity;
+            get => profileService.CurrentlyEditedProfile.TouchSensitivity;
             set
             {
-                int temp = CurrentProfile.TouchSensitivity;
+                int temp = profileService.CurrentlyEditedProfile.TouchSensitivity;
                 if (temp == value) return;
-                CurrentProfile.TouchSensitivity = (byte)value;
+                profileService.CurrentlyEditedProfile.TouchSensitivity = (byte)value;
             }
         }
 
         public bool TouchScrollExists
         {
-            get => CurrentProfile.ScrollSensitivity != 0;
+            get => profileService.CurrentlyEditedProfile.ScrollSensitivity != 0;
             set
             {
-                CurrentProfile.ScrollSensitivity = value ? 100 : 0;
+                profileService.CurrentlyEditedProfile.ScrollSensitivity = value ? 100 : 0;
             }
         }
 
         public int TouchScroll
         {
-            get => CurrentProfile.ScrollSensitivity;
+            get => profileService.CurrentlyEditedProfile.ScrollSensitivity;
             set
             {
-                var temp = CurrentProfile.ScrollSensitivity;
+                var temp = profileService.CurrentlyEditedProfile.ScrollSensitivity;
                 if (temp == value) return;
-                CurrentProfile.ScrollSensitivity = value;
+                profileService.CurrentlyEditedProfile.ScrollSensitivity = value;
             }
         }
 
         public bool TouchTapExists
         {
-            get => CurrentProfile.TapSensitivity != 0;
+            get => profileService.CurrentlyEditedProfile.TapSensitivity != 0;
             set
             {
-                CurrentProfile.TapSensitivity = value ? (byte)100 : (byte)0;
+                profileService.CurrentlyEditedProfile.TapSensitivity = value ? (byte)100 : (byte)0;
             }
         }
 
         public int TouchTap
         {
-            get => CurrentProfile.TapSensitivity;
+            get => profileService.CurrentlyEditedProfile.TapSensitivity;
             set
             {
-                int temp = CurrentProfile.TapSensitivity;
+                int temp = profileService.CurrentlyEditedProfile.TapSensitivity;
                 if (temp == value) return;
-                CurrentProfile.TapSensitivity = (byte)value;
+                profileService.CurrentlyEditedProfile.TapSensitivity = (byte)value;
             }
         }
 
         public bool TouchDoubleTap
         {
-            get => CurrentProfile.DoubleTap;
-            set => CurrentProfile.DoubleTap = value;
+            get => profileService.CurrentlyEditedProfile.DoubleTap;
+            set => profileService.CurrentlyEditedProfile.DoubleTap = value;
         }
 
         public bool TouchJitter
         {
-            get => CurrentProfile.TouchpadJitterCompensation;
-            set => CurrentProfile.TouchpadJitterCompensation = value;
+            get => profileService.CurrentlyEditedProfile.TouchpadJitterCompensation;
+            set => profileService.CurrentlyEditedProfile.TouchpadJitterCompensation = value;
         }
 
         public int TouchInvertIndex
         {
             get
             {
-                var invert = CurrentProfile.TouchPadInvert;
+                var invert = profileService.CurrentlyEditedProfile.TouchPadInvert;
                 var index = Array.IndexOf(touchpadInvertToValue, invert);
                 return index;
             }
             set
             {
                 var invert = touchpadInvertToValue[value];
-                CurrentProfile.TouchPadInvert = invert;
+                profileService.CurrentlyEditedProfile.TouchPadInvert = invert;
             }
         }
 
         public bool LowerRightTouchRMB
         {
-            get => CurrentProfile.LowerRCOn;
-            set => CurrentProfile.LowerRCOn = value;
+            get => profileService.CurrentlyEditedProfile.LowerRCOn;
+            set => profileService.CurrentlyEditedProfile.LowerRCOn = value;
         }
 
         public bool TouchpadClickPassthru
         {
-            get => CurrentProfile.TouchClickPassthru;
-            set => CurrentProfile.TouchClickPassthru = value;
+            get => profileService.CurrentlyEditedProfile.TouchClickPassthru;
+            set => profileService.CurrentlyEditedProfile.TouchClickPassthru = value;
         }
 
         public bool StartTouchpadOff
         {
-            get => CurrentProfile.StartTouchpadOff;
-            set => CurrentProfile.StartTouchpadOff = value;
+            get => profileService.CurrentlyEditedProfile.StartTouchpadOff;
+            set => profileService.CurrentlyEditedProfile.StartTouchpadOff = value;
         }
 
         public double TouchRelMouseRotation
         {
-            get => CurrentProfile.TouchPadRelMouse.Rotation * 180.0 / Math.PI;
-            set => CurrentProfile.TouchPadRelMouse.Rotation = value * Math.PI / 180.0;
+            get => profileService.CurrentlyEditedProfile.TouchPadRelMouse.Rotation * 180.0 / Math.PI;
+            set => profileService.CurrentlyEditedProfile.TouchPadRelMouse.Rotation = value * Math.PI / 180.0;
         }
 
         public double TouchRelMouseMinThreshold
         {
-            get => CurrentProfile.TouchPadRelMouse.MinThreshold;
+            get => profileService.CurrentlyEditedProfile.TouchPadRelMouse.MinThreshold;
             set
             {
-                var temp = CurrentProfile.TouchPadRelMouse.MinThreshold;
+                var temp = profileService.CurrentlyEditedProfile.TouchPadRelMouse.MinThreshold;
                 if (temp == value) return;
-                CurrentProfile.TouchPadRelMouse.MinThreshold = value;
+                profileService.CurrentlyEditedProfile.TouchPadRelMouse.MinThreshold = value;
             }
         }
 
         public bool TouchTrackball
         {
-            get => CurrentProfile.TrackballMode;
-            set => CurrentProfile.TrackballMode = value;
+            get => profileService.CurrentlyEditedProfile.TrackballMode;
+            set => profileService.CurrentlyEditedProfile.TrackballMode = value;
         }
 
         public double TouchTrackballFriction
         {
-            get => CurrentProfile.TrackballFriction;
-            set => CurrentProfile.TrackballFriction = value;
+            get => profileService.CurrentlyEditedProfile.TrackballFriction;
+            set => profileService.CurrentlyEditedProfile.TrackballFriction = value;
         }
 
         public int TouchAbsMouseMaxZoneX
         {
-            get => CurrentProfile.TouchPadAbsMouse.MaxZoneX;
+            get => profileService.CurrentlyEditedProfile.TouchPadAbsMouse.MaxZoneX;
             set
             {
-                var temp = CurrentProfile.TouchPadAbsMouse.MaxZoneX;
+                var temp = profileService.CurrentlyEditedProfile.TouchPadAbsMouse.MaxZoneX;
                 if (temp == value) return;
-                CurrentProfile.TouchPadAbsMouse.MaxZoneX = value;
+                profileService.CurrentlyEditedProfile.TouchPadAbsMouse.MaxZoneX = value;
             }
         }
 
         public int TouchAbsMouseMaxZoneY
         {
-            get => CurrentProfile.TouchPadAbsMouse.MaxZoneY;
+            get => profileService.CurrentlyEditedProfile.TouchPadAbsMouse.MaxZoneY;
             set
             {
-                var temp = CurrentProfile.TouchPadAbsMouse.MaxZoneY;
+                var temp = profileService.CurrentlyEditedProfile.TouchPadAbsMouse.MaxZoneY;
                 if (temp == value) return;
-                CurrentProfile.TouchPadAbsMouse.MaxZoneY = value;
+                profileService.CurrentlyEditedProfile.TouchPadAbsMouse.MaxZoneY = value;
             }
         }
 
         public bool TouchAbsMouseSnapCenter
         {
-            get => CurrentProfile.TouchPadAbsMouse.SnapToCenter;
+            get => profileService.CurrentlyEditedProfile.TouchPadAbsMouse.SnapToCenter;
             set
             {
-                var temp = CurrentProfile.TouchPadAbsMouse.SnapToCenter;
+                var temp = profileService.CurrentlyEditedProfile.TouchPadAbsMouse.SnapToCenter;
                 if (temp == value) return;
-                CurrentProfile.TouchPadAbsMouse.SnapToCenter = value;
+                profileService.CurrentlyEditedProfile.TouchPadAbsMouse.SnapToCenter = value;
             }
         }
 
         public bool GyroMouseTurns
         {
-            get => CurrentProfile.GyroTriggerTurns;
-            set => CurrentProfile.GyroTriggerTurns = value;
+            get => profileService.CurrentlyEditedProfile.GyroTriggerTurns;
+            set => profileService.CurrentlyEditedProfile.GyroTriggerTurns = value;
         }
 
         public int GyroSensitivity
         {
-            get => CurrentProfile.GyroSensitivity;
-            set => CurrentProfile.GyroSensitivity = value;
+            get => profileService.CurrentlyEditedProfile.GyroSensitivity;
+            set => profileService.CurrentlyEditedProfile.GyroSensitivity = value;
         }
 
         public int GyroVertScale
         {
-            get => CurrentProfile.GyroSensVerticalScale;
-            set => CurrentProfile.GyroSensVerticalScale = value;
+            get => profileService.CurrentlyEditedProfile.GyroSensVerticalScale;
+            set => profileService.CurrentlyEditedProfile.GyroSensVerticalScale = value;
         }
 
         public int GyroMouseEvalCondIndex
@@ -1578,54 +1578,54 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int GyroMouseXAxis
         {
-            get => CurrentProfile.GyroMouseHorizontalAxis;
-            set => CurrentProfile.GyroMouseHorizontalAxis = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseHorizontalAxis;
+            set => profileService.CurrentlyEditedProfile.GyroMouseHorizontalAxis = value;
         }
 
         public double GyroMouseMinThreshold
         {
-            get => CurrentProfile.GyroMouseInfo.MinThreshold;
+            get => profileService.CurrentlyEditedProfile.GyroMouseInfo.MinThreshold;
             set
             {
-                var temp = CurrentProfile.GyroMouseInfo.MinThreshold;
+                var temp = profileService.CurrentlyEditedProfile.GyroMouseInfo.MinThreshold;
                 if (temp == value) return;
-                CurrentProfile.GyroMouseInfo.MinThreshold = value;
+                profileService.CurrentlyEditedProfile.GyroMouseInfo.MinThreshold = value;
             }
         }
 
         public bool GyroMouseInvertX
         {
-            get => (CurrentProfile.GyroInvert & 2) == 2;
+            get => (profileService.CurrentlyEditedProfile.GyroInvert & 2) == 2;
             set
             {
                 if (value)
-                    CurrentProfile.GyroInvert |= 2;
+                    profileService.CurrentlyEditedProfile.GyroInvert |= 2;
                 else
-                    CurrentProfile.GyroInvert &= ~2;
+                    profileService.CurrentlyEditedProfile.GyroInvert &= ~2;
             }
         }
 
         public bool GyroMouseInvertY
         {
-            get => (CurrentProfile.GyroInvert & 1) == 1;
+            get => (profileService.CurrentlyEditedProfile.GyroInvert & 1) == 1;
             set
             {
                 if (value)
-                    CurrentProfile.GyroInvert |= 1;
+                    profileService.CurrentlyEditedProfile.GyroInvert |= 1;
                 else
-                    CurrentProfile.GyroInvert &= ~1;
+                    profileService.CurrentlyEditedProfile.GyroInvert &= ~1;
             }
         }
 
         public bool GyroMouseSmooth
         {
-            get => CurrentProfile.GyroMouseInfo.EnableSmoothing;
+            get => profileService.CurrentlyEditedProfile.GyroMouseInfo.EnableSmoothing;
             set
             {
-                var tempInfo = CurrentProfile.GyroMouseInfo;
+                var tempInfo = profileService.CurrentlyEditedProfile.GyroMouseInfo;
                 if (tempInfo.EnableSmoothing == value) return;
 
-                CurrentProfile.GyroMouseInfo.EnableSmoothing = value;
+                profileService.CurrentlyEditedProfile.GyroMouseInfo.EnableSmoothing = value;
             }
         }
 
@@ -1636,7 +1636,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (gyroMouseSmoothMethodIndex == value) return;
 
-                var tempInfo = CurrentProfile.GyroMouseInfo;
+                var tempInfo = profileService.CurrentlyEditedProfile.GyroMouseInfo;
                 switch (value)
                 {
                     case 0:
@@ -1658,7 +1658,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (CurrentProfile.GyroMouseInfo.Smoothing)
+                switch (profileService.CurrentlyEditedProfile.GyroMouseInfo.Smoothing)
                 {
                     case GyroMouseInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -1674,7 +1674,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (CurrentProfile.GyroMouseInfo.Smoothing)
+                switch (profileService.CurrentlyEditedProfile.GyroMouseInfo.Smoothing)
                 {
                     case GyroMouseInfo.SmoothingMethod.OneEuro:
                     case GyroMouseInfo.SmoothingMethod.None:
@@ -1688,20 +1688,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseSmoothWeight
         {
-            get => CurrentProfile.GyroMouseInfo.SmoothingWeight;
-            set => CurrentProfile.GyroMouseInfo.SmoothingWeight = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseInfo.SmoothingWeight;
+            set => profileService.CurrentlyEditedProfile.GyroMouseInfo.SmoothingWeight = value;
         }
 
         public double GyroMouseOneEuroMinCutoff
         {
-            get => CurrentProfile.GyroMouseInfo.MinCutoff;
-            set => CurrentProfile.GyroMouseInfo.MinCutoff = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseInfo.MinCutoff;
+            set => profileService.CurrentlyEditedProfile.GyroMouseInfo.MinCutoff = value;
         }
 
         public double GyroMouseOneEuroBeta
         {
-            get => CurrentProfile.GyroMouseInfo.Beta;
-            set => CurrentProfile.GyroMouseInfo.Beta = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseInfo.Beta;
+            set => profileService.CurrentlyEditedProfile.GyroMouseInfo.Beta = value;
         }
 
         public int GyroMouseStickSmoothMethodIndex
@@ -1711,7 +1711,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 if (gyroMouseStickSmoothMethodIndex == value) return;
 
-                var tempInfo = CurrentProfile.GyroMouseStickInfo;
+                var tempInfo = profileService.CurrentlyEditedProfile.GyroMouseStickInfo;
                 switch (value)
                 {
                     case 0:
@@ -1733,7 +1733,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (CurrentProfile.GyroMouseStickInfo.Smoothing)
+                switch (profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
                         result = Visibility.Visible;
@@ -1749,7 +1749,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var result = Visibility.Collapsed;
-                switch (CurrentProfile.GyroMouseStickInfo.Smoothing)
+                switch (profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Smoothing)
                 {
                     case GyroMouseStickInfo.SmoothingMethod.OneEuro:
                     case GyroMouseStickInfo.SmoothingMethod.None:
@@ -1763,20 +1763,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public double GyroMouseStickSmoothWeight
         {
-            get => CurrentProfile.GyroMouseStickInfo.SmoothWeight;
-            set => CurrentProfile.GyroMouseStickInfo.SmoothWeight = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.SmoothWeight;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.SmoothWeight = value;
         }
 
         public double GyroMouseStickOneEuroMinCutoff
         {
-            get => CurrentProfile.GyroMouseStickInfo.MinCutoff;
-            set => CurrentProfile.GyroMouseStickInfo.MinCutoff = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MinCutoff;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MinCutoff = value;
         }
 
         public double GyroMouseStickOneEuroBeta
         {
-            get => CurrentProfile.GyroMouseStickInfo.Beta;
-            set => CurrentProfile.GyroMouseStickInfo.Beta = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Beta;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Beta = value;
         }
 
 
@@ -1788,141 +1788,141 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroMouseToggle
         {
-            get => CurrentProfile.GyroMouseToggle;
+            get => profileService.CurrentlyEditedProfile.GyroMouseToggle;
             set => Global.Instance.Config.SetGyroMouseToggle(Device, value, rootHub);
         }
 
         public bool GyroMouseStickTurns
         {
-            get => CurrentProfile.GyroMouseStickTriggerTurns;
-            set => CurrentProfile.GyroMouseStickTriggerTurns = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickTriggerTurns;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickTriggerTurns = value;
         }
 
         public bool GyroMouseStickToggle
         {
-            get => CurrentProfile.GyroMouseStickToggle;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickToggle;
             set => Global.Instance.Config.SetGyroMouseStickToggle(Device, value, rootHub);
         }
 
         public int GyroMouseStickDeadZone
         {
-            get => CurrentProfile.GyroMouseStickInfo.DeadZone;
-            set => CurrentProfile.GyroMouseStickInfo.DeadZone = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.DeadZone;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.DeadZone = value;
         }
 
         public int GyroMouseStickMaxZone
         {
-            get => CurrentProfile.GyroMouseStickInfo.MaxZone;
-            set => CurrentProfile.GyroMouseStickInfo.MaxZone = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MaxZone;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MaxZone = value;
         }
 
         public int GyroMouseStickOutputStick
         {
-            get => (int)CurrentProfile.GyroMouseStickInfo.OutStick;
+            get => (int)profileService.CurrentlyEditedProfile.GyroMouseStickInfo.OutStick;
             set =>
-                CurrentProfile.GyroMouseStickInfo.OutStick =
+                profileService.CurrentlyEditedProfile.GyroMouseStickInfo.OutStick =
                     (GyroMouseStickInfo.OutputStick)value;
         }
 
         public int GyroMouseStickOutputAxes
         {
-            get => (int)CurrentProfile.GyroMouseStickInfo.OutputStickDir;
+            get => (int)profileService.CurrentlyEditedProfile.GyroMouseStickInfo.OutputStickDir;
             set =>
-                CurrentProfile.GyroMouseStickInfo.OutputStickDir =
+                profileService.CurrentlyEditedProfile.GyroMouseStickInfo.OutputStickDir =
                     (GyroMouseStickInfo.OutputStickAxes)value;
         }
 
         public double GyroMouseStickAntiDeadX
         {
-            get => CurrentProfile.GyroMouseStickInfo.AntiDeadX * 100.0;
-            set => CurrentProfile.GyroMouseStickInfo.AntiDeadX = value * 0.01;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.AntiDeadX * 100.0;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.AntiDeadX = value * 0.01;
         }
 
         public double GyroMouseStickAntiDeadY
         {
-            get => CurrentProfile.GyroMouseStickInfo.AntiDeadY * 100.0;
-            set => CurrentProfile.GyroMouseStickInfo.AntiDeadY = value * 0.01;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.AntiDeadY * 100.0;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.AntiDeadY = value * 0.01;
         }
 
         public int GyroMouseStickVertScale
         {
-            get => CurrentProfile.GyroMouseStickInfo.VerticalScale;
-            set => CurrentProfile.GyroMouseStickInfo.VerticalScale = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.VerticalScale;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.VerticalScale = value;
         }
 
         public bool GyroMouseStickMaxOutputEnabled
         {
-            get => CurrentProfile.GyroMouseStickInfo.MaxOutputEnabled;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MaxOutputEnabled;
             set
             {
-                var temp = CurrentProfile.GyroMouseStickInfo.MaxOutputEnabled;
+                var temp = profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MaxOutputEnabled;
                 if (temp == value) return;
-                CurrentProfile.GyroMouseStickInfo.MaxOutputEnabled = value;
+                profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MaxOutputEnabled = value;
             }
         }
 
         public double GyroMouseStickMaxOutput
         {
-            get => CurrentProfile.GyroMouseStickInfo.MaxOutput;
-            set => CurrentProfile.GyroMouseStickInfo.MaxOutput = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MaxOutput;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.MaxOutput = value;
         }
 
         public int GyroMouseStickEvalCondIndex
         {
-            get => CurrentProfile.SAMouseStickTriggerCond ? 0 : 1;
+            get => profileService.CurrentlyEditedProfile.SAMouseStickTriggerCond ? 0 : 1;
             set => Global.Instance.Config.SetSaMouseStickTriggerCond(Device, value == 0 ? "and" : "or");
         }
 
         public int GyroMouseStickXAxis
         {
-            get => CurrentProfile.GyroMouseStickHorizontalAxis;
-            set => CurrentProfile.GyroMouseStickHorizontalAxis = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickHorizontalAxis;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickHorizontalAxis = value;
         }
 
         public bool GyroMouseStickInvertX
         {
-            get => (CurrentProfile.GyroMouseStickInfo.Inverted & 1) == 1;
+            get => (profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted & 1) == 1;
             set
             {
                 if (value)
                 {
-                    CurrentProfile.GyroMouseStickInfo.Inverted |= 1;
+                    profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted |= 1;
                 }
                 else
                 {
-                    var temp = CurrentProfile.GyroMouseStickInfo.Inverted;
-                    CurrentProfile.GyroMouseStickInfo.Inverted = (uint)(temp & ~1);
+                    var temp = profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted;
+                    profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted = (uint)(temp & ~1);
                 }
             }
         }
 
         public bool GyroMouseStickInvertY
         {
-            get => (CurrentProfile.GyroMouseStickInfo.Inverted & 2) == 2;
+            get => (profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted & 2) == 2;
             set
             {
                 if (value)
                 {
-                    CurrentProfile.GyroMouseStickInfo.Inverted |= 2;
+                    profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted |= 2;
                 }
                 else
                 {
-                    var temp = CurrentProfile.GyroMouseStickInfo.Inverted;
-                    CurrentProfile.GyroMouseStickInfo.Inverted = (uint)(temp & ~2);
+                    var temp = profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted;
+                    profileService.CurrentlyEditedProfile.GyroMouseStickInfo.Inverted = (uint)(temp & ~2);
                 }
             }
         }
 
         public bool GyroMouseStickSmooth
         {
-            get => CurrentProfile.GyroMouseStickInfo.UseSmoothing;
-            set => CurrentProfile.GyroMouseStickInfo.UseSmoothing = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.UseSmoothing;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.UseSmoothing = value;
         }
 
         public double GyroMousetickSmoothWeight
         {
-            get => CurrentProfile.GyroMouseStickInfo.SmoothWeight;
-            set => CurrentProfile.GyroMouseStickInfo.SmoothWeight = value;
+            get => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.SmoothWeight;
+            set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.SmoothWeight = value;
         }
 
         public string TouchDisInvertString
@@ -1945,20 +1945,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroControlsTurns
         {
-            get => CurrentProfile.GyroControlsInfo.TriggerTurns;
-            set => CurrentProfile.GyroControlsInfo.TriggerTurns = value;
+            get => profileService.CurrentlyEditedProfile.GyroControlsInfo.TriggerTurns;
+            set => profileService.CurrentlyEditedProfile.GyroControlsInfo.TriggerTurns = value;
         }
 
         public int GyroControlsEvalCondIndex
         {
-            get => CurrentProfile.GyroControlsInfo.TriggerCond ? 0 : 1;
-            set => CurrentProfile.GyroControlsInfo.TriggerCond =
+            get => profileService.CurrentlyEditedProfile.GyroControlsInfo.TriggerCond ? 0 : 1;
+            set => profileService.CurrentlyEditedProfile.GyroControlsInfo.TriggerCond =
                 value == 0 ? true : false;
         }
 
         public bool GyroControlsToggle
         {
-            get => CurrentProfile.GyroControlsInfo.TriggerToggle;
+            get => profileService.CurrentlyEditedProfile.GyroControlsInfo.TriggerToggle;
             set => Global.Instance.Config.SetGyroControlsToggle(Device, value, rootHub);
         }
 
@@ -1991,38 +1991,38 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool GyroSwipeTurns
         {
-            get => CurrentProfile.GyroSwipeInfo.TriggerTurns;
-            set => CurrentProfile.GyroSwipeInfo.TriggerTurns = value;
+            get => profileService.CurrentlyEditedProfile.GyroSwipeInfo.TriggerTurns;
+            set => profileService.CurrentlyEditedProfile.GyroSwipeInfo.TriggerTurns = value;
         }
 
         public int GyroSwipeEvalCondIndex
         {
-            get => CurrentProfile.GyroSwipeInfo.TriggerCondition ? 0 : 1;
-            set => CurrentProfile.GyroSwipeInfo.TriggerCondition = value == 0 ? true : false;
+            get => profileService.CurrentlyEditedProfile.GyroSwipeInfo.TriggerCondition ? 0 : 1;
+            set => profileService.CurrentlyEditedProfile.GyroSwipeInfo.TriggerCondition = value == 0 ? true : false;
         }
 
         public int GyroSwipeXAxis
         {
-            get => (int)CurrentProfile.GyroSwipeInfo.XAxis;
-            set => CurrentProfile.GyroSwipeInfo.XAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
+            get => (int)profileService.CurrentlyEditedProfile.GyroSwipeInfo.XAxis;
+            set => profileService.CurrentlyEditedProfile.GyroSwipeInfo.XAxis = (GyroDirectionalSwipeInfo.XAxisSwipe)value;
         }
 
         public int GyroSwipeDeadZoneX
         {
-            get => CurrentProfile.GyroSwipeInfo.DeadZoneX;
-            set => CurrentProfile.GyroSwipeInfo.DeadZoneX = value;
+            get => profileService.CurrentlyEditedProfile.GyroSwipeInfo.DeadZoneX;
+            set => profileService.CurrentlyEditedProfile.GyroSwipeInfo.DeadZoneX = value;
         }
 
         public int GyroSwipeDeadZoneY
         {
-            get => CurrentProfile.GyroSwipeInfo.DeadZoneY;
-            set => CurrentProfile.GyroSwipeInfo.DeadZoneY = value;
+            get => profileService.CurrentlyEditedProfile.GyroSwipeInfo.DeadZoneY;
+            set => profileService.CurrentlyEditedProfile.GyroSwipeInfo.DeadZoneY = value;
         }
 
         public int GyroSwipeDelayTime
         {
-            get => CurrentProfile.GyroSwipeInfo.DelayTime;
-            set => CurrentProfile.GyroSwipeInfo.DelayTime = value;
+            get => profileService.CurrentlyEditedProfile.GyroSwipeInfo.DelayTime;
+            set => profileService.CurrentlyEditedProfile.GyroSwipeInfo.DelayTime = value;
         }
     }
 }

@@ -21,8 +21,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     public partial class ProfileSettingsViewModel : INotifyPropertyChanged
     {
         private readonly IAppSettingsService appSettings;
+ 
+        private readonly IProfilesService profileService;
 
         private readonly ControlService rootHub;
+        
         public EventHandler DInputOnlyChanged;
 
         private string gyroControlsTrigDisplay = "Always On";
@@ -59,21 +62,56 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             new TriggerModeChoice("Normal", TriggerMode.Normal)
         };
 
-        /// <summary>
-        ///     The <see cref="DS4WindowsProfile"/> this <see cref="ProfileSettingsViewModel"/> is editing.
-        /// </summary>
-        public DS4WindowsProfile CurrentProfile { get; set; }
-
-        public ProfileSettingsViewModel(DS4WindowsProfile profile, IAppSettingsService appSettings, ControlService service)
+        public ProfileSettingsViewModel(
+            IAppSettingsService appSettings,
+            IProfilesService profileService,
+            ControlService service
+            )
         {
-            CurrentProfile = profile;
+            this.profileService = profileService;
             this.appSettings = appSettings;
             rootHub = service;
             //Device = device;
             //FuncDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
             //Global.OutDevTypeTemp[device] = OutContType.X360;
-            TempBTPollRateIndex = CurrentProfile.BluetoothPollRate;
+            //TempBTPollRateIndex = profileService.CurrentlyEditedProfile.BluetoothPollRate;
+
+            outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
+            mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
+
+            /*ImageSourceConverter sourceConverter = new ImageSourceConverter();
+            ImageSource temp = sourceConverter.
+                ConvertFromString($"{Global.Instance.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png") as ImageSource;
+            lightbarImgBrush.ImageSource = temp.Clone();
+            */
+            var tempResourceUri = new Uri($"{Global.ASSEMBLY_RESOURCE_PREFIX}component/Resources/rainbowCCrop.png");
+            var tempBitmap = new BitmapImage();
+            tempBitmap.BeginInit();
+            // Needed for some systems not using the System default color profile
+            tempBitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+            tempBitmap.UriSource = tempResourceUri;
+            tempBitmap.EndInit();
+            lightbarImgBrush.ImageSource = tempBitmap.Clone();
+
+            //PresetMenuUtil = new PresetMenuHelper(device);
+            gyroMouseSmoothMethodIndex = FindGyroMouseSmoothMethodIndex();
+            gyroMouseStickSmoothMethodIndex = FindGyroMouseStickSmoothMethodIndex();
+
+            SetupEvents();
+        }
+
+        [Obsolete]
+        public ProfileSettingsViewModel(DS4WindowsProfile profile, IAppSettingsService appSettings, ControlService service)
+        {
+            //profileService.CurrentlyEditedProfile = profile;
+            this.appSettings = appSettings;
+            rootHub = service;
+            //Device = device;
+            //FuncDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
+            tempControllerIndex = ControllerTypeIndex;
+            //Global.OutDevTypeTemp[device] = OutContType.X360;
+            //TempBTPollRateIndex = profileService.CurrentlyEditedProfile.BluetoothPollRate;
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
             mouseOffsetSpeed = RawButtonMouseOffset * outputMouseSpeed;
@@ -171,6 +209,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Global.Instance.Config.CacheProfileCustomsFlags(Device);
         }
 
+        [Obsolete]
         private void SetupEvents()
         {
             // TODO: simplify!
@@ -225,7 +264,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// </summary>
         public void UpdateMainColor(Color color)
         {
-            CurrentProfile.LightbarSettingInfo.Ds4WinSettings.Led = new DS4Color(color);
+            profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.Led = new DS4Color(color);
             OnPropertyChanged(nameof(MainColor));
         }
 
@@ -234,7 +273,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// </summary>
         public void UpdateLowColor(Color color)
         {
-            CurrentProfile.LightbarSettingInfo.Ds4WinSettings.LowLed = new DS4Color(color);
+            profileService.CurrentlyEditedProfile.LightbarSettingInfo.Ds4WinSettings.LowLed = new DS4Color(color);
             OnPropertyChanged(nameof(LowColor));
         }
 
@@ -750,32 +789,32 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 #region Bezier Curve Modes
                 case nameof(LSOutputCurveIndex):
-                    CurrentProfile.LSOutCurveMode = (CurveMode)LSOutputCurveIndex;
+                    profileService.CurrentlyEditedProfile.LSOutCurveMode = (CurveMode)LSOutputCurveIndex;
                     OnPropertyChanged(nameof(LSCustomCurveSelected));
                     break;
 
                 case nameof(RSOutputCurveIndex):
-                    CurrentProfile.RSOutCurveMode = (CurveMode)RSOutputCurveIndex;
+                    profileService.CurrentlyEditedProfile.RSOutCurveMode = (CurveMode)RSOutputCurveIndex;
                     OnPropertyChanged(nameof(RSCustomCurveSelected));
                     break;
 
                 case nameof(L2OutputCurveIndex):
-                    CurrentProfile.L2OutCurveMode = (CurveMode)L2OutputCurveIndex;
+                    profileService.CurrentlyEditedProfile.L2OutCurveMode = (CurveMode)L2OutputCurveIndex;
                     OnPropertyChanged(nameof(L2CustomCurveSelected));
                     break;
 
                 case nameof(R2OutputCurveIndex):
-                    CurrentProfile.R2OutCurveMode = (CurveMode)R2OutputCurveIndex;
+                    profileService.CurrentlyEditedProfile.R2OutCurveMode = (CurveMode)R2OutputCurveIndex;
                     OnPropertyChanged(nameof(R2CustomCurveSelected));
                     break;
 
                 case nameof(SXOutputCurveIndex):
-                    CurrentProfile.SXOutCurveMode = (CurveMode)SXOutputCurveIndex;
+                    profileService.CurrentlyEditedProfile.SXOutCurveMode = (CurveMode)SXOutputCurveIndex;
                     OnPropertyChanged(nameof(SXCustomCurveSelected));
                     break;
 
                 case nameof(SZOutputCurveIndex):
-                    CurrentProfile.SZOutCurveMode = (CurveMode)SZOutputCurveIndex;
+                    profileService.CurrentlyEditedProfile.SZOutCurveMode = (CurveMode)SZOutputCurveIndex;
                     OnPropertyChanged(nameof(SZCustomCurveSelected));
                     break;
                 #endregion
