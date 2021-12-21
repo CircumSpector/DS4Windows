@@ -680,13 +680,14 @@ namespace DS4WinWPF.DS4Forms
         }
 
         [Obsolete]
-        public async Task Reload(int device, ProfileEntity profile = null)
+        public async Task Reload()
         {
             //profileSettingsTabCon.DataContext = null;
             mappingListBox.DataContext = null;
             specialActionsTab.DataContext = null;
             //lightbarRect.DataContext = null;
 
+            /*
             DeviceNum = device;
             if (profile != null)
             {
@@ -709,15 +710,17 @@ namespace DS4WinWPF.DS4Forms
                     presetWin.SetupData(DeviceNum);
                     presetWin.ShowDialog();
                     // TODO: fix me!
-                    /*
+                    
                     if (presetWin.Result == System.Windows.MessageBoxResult.Cancel)
                         Global.Instance.LoadBlankDevProfile(device, false, rootHub, false);
-                    */
+                    
                 }
             }
+             */
 
             ColorByBatteryPerCheck();
 
+            /*
             if (device < Global.TEST_PROFILE_INDEX)
             {
                 useControllerUD.Value = device + 1;
@@ -730,6 +733,7 @@ namespace DS4WinWPF.DS4Forms
                 conReadingsUserCon.UseDevice(0, Global.TEST_PROFILE_INDEX);
                 contReadingsTab.IsEnabled = true;
             }
+            */
 
             conReadingsUserCon.EnableControl(false);
             axialLSStickControl.UseDevice(profileService.CurrentlyEditedProfile.LSModInfo);
@@ -1351,7 +1355,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 Owner = Application.Current.MainWindow
             };
-            
+
             var tempcolor = settingsViewModel.MainColor;
 
             dialog.colorPicker.SelectedColor = tempcolor;

@@ -1079,9 +1079,10 @@ Suspend support not enabled.", true);
         private void EditProfBtn_Click(object sender, RoutedEventArgs e)
         {
             if (profilesListBox.SelectedIndex < 0) return;
+            
+            var profile = profilesService.AvailableProfiles.ElementAt(profilesListBox.SelectedIndex);
 
-            var entity = ProfileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
-            ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
+            ShowProfileEditor(profile);
         }
 
         private void ProfileEditor_Closed(object sender, EventArgs e)
@@ -1106,10 +1107,14 @@ Suspend support not enabled.", true);
 
         private void NewProfListBtn_Click(object sender, RoutedEventArgs e)
         {
-            ShowProfileEditor(Global.TEST_PROFILE_INDEX);
+            ShowProfileEditor();
         }
 
-        private async void ShowProfileEditor(int device, ProfileEntity entity = null)
+        /// <summary>
+        ///     Show profile editor with either now or existing profile.
+        /// </summary>
+        /// <param name="profile">If not null, the existing <see cref="DS4WindowsProfile"/> to edit.</param>
+        private async void ShowProfileEditor(DS4WindowsProfile profile = null)
         {
             profOptsToolbar.Visibility = Visibility.Collapsed;
             profilesListBox.Visibility = Visibility.Collapsed;
@@ -1123,24 +1128,13 @@ Suspend support not enabled.", true);
 
             if (Height < DEFAULT_PROFILE_EDITOR_HEIGHT) Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
 
-            //
-            // TODO: legacy stupidity
-            // 
-            if (device == 8)
-            {
-                profilesService.CurrentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
-                //editor = new ProfileEditor(profilesService.CurrentlyEditedProfile, appSettings, rootHub);
-            }
-            else
-            {
-                editor = new ProfileEditor(appSettings, rootHub, device);
-            }
+            profilesService.CurrentlyEditedProfile = profile ?? DS4WindowsProfile.CreateNewProfile();
             
             editor.CreatedProfile += Editor_CreatedProfile;
             editor.Closed += ProfileEditor_Closed;
             profDockPanel.Children.Add(editor);
 
-            await editor.Reload(device, entity);
+            await editor.Reload();
         }
 
         private void Editor_CreatedProfile(ProfileEditor sender, string profile)
@@ -1162,8 +1156,9 @@ Suspend support not enabled.", true);
         {
             if (profilesListBox.SelectedIndex < 0) return;
 
-            var entity = ProfileListHolder.ProfileListCollection[profilesListBox.SelectedIndex];
-            ShowProfileEditor(Global.TEST_PROFILE_INDEX, entity);
+            var profile = profilesService.AvailableProfiles.ElementAt(profilesListBox.SelectedIndex);
+            
+            ShowProfileEditor(profile);
         }
 
         private void Html5GameBtn_Click(object sender, RoutedEventArgs e)
@@ -1270,8 +1265,9 @@ Suspend support not enabled.", true);
 
             if (item != null)
             {
-                var entity = ProfileListHolder.ProfileListCollection[item.SelectedIndex];
-                ShowProfileEditor(idx, entity);
+                var profile = profilesService.AvailableProfiles.ElementAt(item.SelectedIndex);
+                
+                ShowProfileEditor(profile);
                 mainTabCon.SelectedIndex = 1;
             }
         }
@@ -1287,8 +1283,13 @@ Suspend support not enabled.", true);
         {
             var temp = sender as Control;
             var idx = Convert.ToInt32(temp.Tag);
+            
             controllerLV.SelectedIndex = idx;
-            ShowProfileEditor(idx);
+
+            var profile = profilesService.AvailableProfiles.ElementAt(idx);
+            
+            ShowProfileEditor(profile);
+            
             mainTabCon.SelectedIndex = 1;
         }
 
