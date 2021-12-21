@@ -11,6 +11,7 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema;
+using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using Microsoft.Win32;
@@ -920,7 +921,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            profileService.CreateProfile(profileService.CurrentlyEditedProfile);
+            profileService.CreateProfile(profileService.CurrentlyEditedProfile.DeepClone());
 
             Closed?.Invoke(this, EventArgs.Empty);
         }
