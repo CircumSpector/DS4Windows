@@ -26,8 +26,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly ControlService rootHub;
         
-        public EventHandler DInputOnlyChanged;
-
         private int gyroMouseSmoothMethodIndex;
 
         private int gyroMouseStickSmoothMethodIndex;
