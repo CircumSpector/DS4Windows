@@ -1393,11 +1393,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public bool TouchSenExists
         {
             get => profileService.CurrentlyEditedProfile.TouchSensitivity != 0;
-            set
-            {
+            set =>
                 profileService.CurrentlyEditedProfile.TouchSensitivity =
                     value ? (byte)100 : (byte)0;
-            }
         }
 
         public int TouchSens
@@ -1414,10 +1412,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public bool TouchScrollExists
         {
             get => profileService.CurrentlyEditedProfile.ScrollSensitivity != 0;
-            set
-            {
-                profileService.CurrentlyEditedProfile.ScrollSensitivity = value ? 100 : 0;
-            }
+            set => profileService.CurrentlyEditedProfile.ScrollSensitivity = value ? 100 : 0;
         }
 
         public int TouchScroll
@@ -1434,10 +1429,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public bool TouchTapExists
         {
             get => profileService.CurrentlyEditedProfile.TapSensitivity != 0;
-            set
-            {
-                profileService.CurrentlyEditedProfile.TapSensitivity = value ? (byte)100 : (byte)0;
-            }
+            set => profileService.CurrentlyEditedProfile.TapSensitivity = value ? (byte)100 : (byte)0;
         }
 
         public int TouchTap
@@ -1931,23 +1923,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set => profileService.CurrentlyEditedProfile.GyroMouseStickInfo.SmoothWeight = value;
         }
 
-        public string TouchDisInvertString
-        {
-            get => touchDisInvertString;
-            set
-            {
-                touchDisInvertString = value;
-            }
-        }
+        public string TouchDisInvertString { get; set; } = "None";
 
-        public string GyroControlsTrigDisplay
-        {
-            get => gyroControlsTrigDisplay;
-            set
-            {
-                gyroControlsTrigDisplay = value;
-            }
-        }
+        public string GyroControlsTrigDisplay { get; set; } = "Always On";
 
         public bool GyroControlsTurns
         {
@@ -1968,32 +1946,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             set => Global.Instance.Config.SetGyroControlsToggle(Device, value, rootHub);
         }
 
-        public string GyroMouseTrigDisplay
-        {
-            get => gyroMouseTrigDisplay;
-            set
-            {
-                gyroMouseTrigDisplay = value;
-            }
-        }
+        public string GyroMouseTrigDisplay { get; set; } = "Always On";
 
-        public string GyroMouseStickTrigDisplay
-        {
-            get => gyroMouseStickTrigDisplay;
-            set
-            {
-                gyroMouseStickTrigDisplay = value;
-            }
-        }
+        public string GyroMouseStickTrigDisplay { get; set; } = "Always On";
 
-        public string GyroSwipeTrigDisplay
-        {
-            get => gyroSwipeTrigDisplay;
-            set
-            {
-                gyroSwipeTrigDisplay = value;
-            }
-        }
+        public string GyroSwipeTrigDisplay { get; set; } = "Always On";
 
         public bool GyroSwipeTurns
         {

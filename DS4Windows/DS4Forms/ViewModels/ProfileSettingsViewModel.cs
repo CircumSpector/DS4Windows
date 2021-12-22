@@ -28,17 +28,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         
         public EventHandler DInputOnlyChanged;
 
-        private string gyroControlsTrigDisplay = "Always On";
-
         private int gyroMouseSmoothMethodIndex;
 
         private int gyroMouseStickSmoothMethodIndex;
-
-        private string gyroMouseStickTrigDisplay = "Always On";
-
-        private string gyroMouseTrigDisplay = "Always On";
-
-        private string gyroSwipeTrigDisplay = "Always On";
 
         private readonly SolidColorBrush lightbarColBrush = new();
 
@@ -52,8 +44,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             new int[9] { 90, 180, 270, 360, 450, 720, 900, 1080, 1440 };
 
         private int tempControllerIndex;
-
-        private string touchDisInvertString = "None";
 
         private readonly int[] touchpadInvertToValue = new int[4] { 0, 2, 1, 3 };
 
