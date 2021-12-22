@@ -4,18 +4,25 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Input;
 using DS4Windows;
+using DS4WinWPF.Properties;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class SpecialActionsListViewModel
     {
-        private int deviceNum;
-        private ObservableCollection<SpecialActionItem> actionCol =
-            new ObservableCollection<SpecialActionItem>();
         private int specialActionIndex = -1;
 
-        public ObservableCollection<SpecialActionItem> ActionCol { get => actionCol; }
-        public int DeviceNum { get => deviceNum; }
+        public SpecialActionsListViewModel(int deviceNum)
+        {
+            DeviceNum = deviceNum;
+
+            SpecialActionIndexChanged += SpecialActionsListViewModel_SpecialActionIndexChanged;
+        }
+
+        public ObservableCollection<SpecialActionItem> ActionCol { get; } = new();
+
+        public int DeviceNum { get; }
+
         public int SpecialActionIndex
         {
             get => specialActionIndex;
@@ -26,27 +33,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 SpecialActionIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        public SpecialActionItem CurrentSpecialActionItem { get; set; }
+
+        public bool ItemSelected => specialActionIndex >= 0;
         public event EventHandler SpecialActionIndexChanged;
-
-        private SpecialActionItem currentSAItem;
-        public SpecialActionItem CurrentSpecialActionItem
-        {
-            get => currentSAItem;
-            set
-            {
-                currentSAItem = value;
-            }
-        }
-
-        public bool ItemSelected { get => specialActionIndex >= 0; }
         public event EventHandler ItemSelectedChanged;
-
-        public SpecialActionsListViewModel(int deviceNum)
-        {
-            this.deviceNum = deviceNum;
-
-            SpecialActionIndexChanged += SpecialActionsListViewModel_SpecialActionIndexChanged;
-        }
 
         private void SpecialActionsListViewModel_SpecialActionIndexChanged(object sender, EventArgs e)
         {
@@ -55,69 +47,67 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void LoadActions(bool newProfile = false)
         {
-            actionCol.Clear();
+            ActionCol.Clear();
 
-            var pactions = Global.Instance.Config.ProfileActions[deviceNum];
-            int idx = 0;
-            foreach (SpecialAction action in Global.Instance.Config.Actions)
+            var pactions = Global.Instance.Config.ProfileActions[DeviceNum];
+            var idx = 0;
+            foreach (var action in Global.Instance.Config.Actions)
             {
-                string displayName = GetActionDisplayName(action);
-                SpecialActionItem item = new SpecialActionItem(action, displayName, idx);
+                var displayName = GetActionDisplayName(action);
+                var item = new SpecialActionItem(action, displayName, idx);
 
                 if (pactions.Contains(action.Name))
-                {
                     item.Active = true;
-                }
-                else if (newProfile && action.TypeId == SpecialAction.ActionTypeId.DisconnectBT)
-                {
-                    item.Active = true;
-                }
+                else if (newProfile && action.TypeId == SpecialAction.ActionTypeId.DisconnectBT) item.Active = true;
 
-                actionCol.Add(item);
+                ActionCol.Add(item);
                 idx++;
             }
         }
 
         public SpecialActionItem CreateActionItem(SpecialAction action)
         {
-            string displayName = GetActionDisplayName(action);
-            SpecialActionItem item = new SpecialActionItem(action, displayName, 0);
+            var displayName = GetActionDisplayName(action);
+            var item = new SpecialActionItem(action, displayName, 0);
             return item;
         }
 
         public string GetActionDisplayName(SpecialAction action)
         {
-            string displayName = string.Empty;
+            var displayName = string.Empty;
             switch (action.TypeId)
             {
                 case SpecialAction.ActionTypeId.DisconnectBT:
-                    displayName = Properties.Resources.DisconnectBT; break;
+                    displayName = Resources.DisconnectBT;
+                    break;
                 case SpecialAction.ActionTypeId.Macro:
-                    displayName = Properties.Resources.Macro + (action.KeyType.HasFlag(DS4KeyType.ScanCode) ? " (" + Properties.Resources.ScanCode + ")" : "");
+                    displayName = Resources.Macro + (action.KeyType.HasFlag(DS4KeyType.ScanCode)
+                        ? " (" + Resources.ScanCode + ")"
+                        : "");
                     break;
                 case SpecialAction.ActionTypeId.Program:
-                    displayName = Properties.Resources.LaunchProgram.Replace("*program*", Path.GetFileNameWithoutExtension(action.Details));
+                    displayName =
+                        Resources.LaunchProgram.Replace("*program*", Path.GetFileNameWithoutExtension(action.Details));
                     break;
                 case SpecialAction.ActionTypeId.Profile:
-                    displayName = Properties.Resources.LoadProfile.Replace("*profile*", action.Details);
+                    displayName = Resources.LoadProfile.Replace("*profile*", action.Details);
                     break;
                 case SpecialAction.ActionTypeId.Key:
-                    displayName = KeyInterop.KeyFromVirtualKey(int.Parse(action.Details)).ToString() +
-                         (action.UTrigger.Count > 0 ? " (Toggle)" : "");
+                    displayName = KeyInterop.KeyFromVirtualKey(int.Parse(action.Details)) +
+                                  (action.UTrigger.Count > 0 ? " (Toggle)" : "");
                     break;
                 case SpecialAction.ActionTypeId.BatteryCheck:
-                    displayName = Properties.Resources.CheckBattery;
+                    displayName = Resources.CheckBattery;
                     break;
                 case SpecialAction.ActionTypeId.XboxGameDVR:
                     displayName = "Xbox Game DVR";
                     break;
                 case SpecialAction.ActionTypeId.MultiAction:
-                    displayName = Properties.Resources.MultiAction;
+                    displayName = Resources.MultiAction;
                     break;
                 case SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate:
-                    displayName = Properties.Resources.SASteeringWheelEmulationCalibrate;
+                    displayName = Resources.SASteeringWheelEmulationCalibrate;
                     break;
-                default: break;
             }
 
             return displayName;
@@ -125,67 +115,52 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ExportEnabledActions()
         {
-            List<string> pactions = new List<string>();
-            foreach(SpecialActionItem item in actionCol)
-            {
+            var pactions = new List<string>();
+            foreach (var item in ActionCol)
                 if (item.Active)
-                {
                     pactions.Add(item.ActionName);
-                }
-            }
 
-            Global.Instance.Config.ProfileActions[deviceNum] = pactions;
-            Global.Instance.Config.CacheExtraProfileInfo(deviceNum);
+            Global.Instance.Config.ProfileActions[DeviceNum] = pactions;
+            Global.Instance.Config.CacheExtraProfileInfo(DeviceNum);
         }
 
         public void RemoveAction(SpecialActionItem item)
         {
             Global.Instance.Config.RemoveAction(item.SpecialAction.Name);
-            actionCol.RemoveAt(specialActionIndex);
-            Global.Instance.Config.ProfileActions[deviceNum].Remove(item.SpecialAction.Name);
-            Global.Instance.Config.CacheExtraProfileInfo(deviceNum);
+            ActionCol.RemoveAt(specialActionIndex);
+            Global.Instance.Config.ProfileActions[DeviceNum].Remove(item.SpecialAction.Name);
+            Global.Instance.Config.CacheExtraProfileInfo(DeviceNum);
         }
     }
 
     public class SpecialActionItem
     {
-        private SpecialAction specialAction;
         private bool active;
-        private string typeName;
-        private int index = 0;
 
         public SpecialActionItem(SpecialAction specialAction, string displayName,
             int index)
         {
-            this.specialAction = specialAction;
-            this.typeName = displayName;
-            this.index = index;
+            SpecialAction = specialAction;
+            TypeName = displayName;
+            Index = index;
         }
 
         /// <summary>
-        /// Index of SpecialActionItem in the ObservableCollection
+        ///     Index of SpecialActionItem in the ObservableCollection
         /// </summary>
-        public int Index
-        {
-            get => index;
-            set => index = value;
-        }
+        public int Index { get; set; }
 
         /// <summary>
-        /// The user defined name for a Special Action
+        ///     The user defined name for a Special Action
         /// </summary>
         public string ActionName
         {
-            get => specialAction.Name;
-            set
-            {
-                specialAction.Name = value;
-            }
+            get => SpecialAction.Name;
+            set => SpecialAction.Name = value;
         }
-        public event EventHandler ActionNameChanged;
 
         /// <summary>
-        /// Flag to determine if a Special Action is enabled in a specific Profile
+        ///     Flag to determine if a Special Action is enabled in a specific Profile
         /// </summary>
         public bool Active
         {
@@ -197,24 +172,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 ActiveChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        /// <summary>
+        ///     Display string with the trigger controls that launch a Special Action
+        /// </summary>
+        public string Controls => SpecialAction.Controls.Replace("/", ", ");
+
+        /// <summary>
+        ///     Cached display string for the base type of the Special Action
+        /// </summary>
+        public string TypeName { get; }
+
+        /// <summary>
+        ///     Reference to the SpecialAction instance
+        /// </summary>
+        public SpecialAction SpecialAction { get; }
+
+        public event EventHandler ActionNameChanged;
         public event EventHandler ActiveChanged;
 
-        /// <summary>
-        /// Display string with the trigger controls that launch a Special Action
-        /// </summary>
-        public string Controls { get => specialAction.Controls.Replace("/", ", "); }
-
         public event EventHandler ControlsChanged;
-
-        /// <summary>
-        /// Cached display string for the base type of the Special Action
-        /// </summary>
-        public string TypeName { get => typeName; }
-
-        /// <summary>
-        /// Reference to the SpecialAction instance
-        /// </summary>
-        public SpecialAction SpecialAction { get => specialAction; }
 
         public void Refresh()
         {
