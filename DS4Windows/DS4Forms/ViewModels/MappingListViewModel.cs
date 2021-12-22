@@ -3,16 +3,117 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using DS4Windows;
+using DS4WinWPF.Properties;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class MappingListViewModel
     {
+        private readonly List<MappedControl> extraControls = new();
+
         //private int devIndex;
-        private ObservableCollection<MappedControl> mappings = new ObservableCollection<MappedControl>();
-        public ObservableCollection<MappedControl> Mappings { get => mappings; }
+
+        private readonly MappedControl gyroSwipeDownControl;
+
+        private readonly MappedControl gyroSwipeLeftControl;
+        private readonly MappedControl gyroSwipeRightControl;
+        private readonly MappedControl gyroSwipeUpControl;
 
         private int selectedIndex = -1;
+
+        public MappingListViewModel(int devIndex, OutContType devType)
+        {
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Cross, "Cross", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Circle, "Circle", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Square, "Square", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Triangle, "Triangle", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Options, "Options", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Share, "Share", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadUp, "Up", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadDown, "Down", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadLeft, "Left", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadRight, "Right", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.PS, "PS", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Mute, "Mute", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.L1, "L1", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.R1, "R1", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.L2, "L2", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.R2, "R2", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.L3, "L3", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.R3, "R3", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.Capture, "Capture", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.SideL, "Side L", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.SideR, "Side R", devType));
+
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchLeft, "Left Touch", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchRight, "Right Touch", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchMulti, "Multitouch", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchUpper, "Upper Touch", devType));
+
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.LYNeg, "LS Up", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.LYPos, "LS Down", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.LXNeg, "LS Left", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.LXPos, "LS Right", devType));
+
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.RYNeg, "RS Up", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.RYPos, "RS Down", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.RXNeg, "RS Left", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.RXPos, "RS Right", devType));
+
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroZNeg, "Tilt Up", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroZPos, "Tilt Down", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroXPos, "Tilt Left", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroXNeg, "Tilt Right", devType));
+
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeUp, "Swipe Up", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeDown, "Swipe Down", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeLeft, "Swipe Left", devType));
+            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeRight, "Swipe Right", devType));
+
+            var controlIndex = 0;
+            foreach (var mapped in Mappings)
+            {
+                ControlMap.Add(mapped.Control, mapped);
+                ControlIndexMap.Add(mapped.Control, controlIndex);
+                controlIndex++;
+            }
+
+            /*
+             * Establish data binding data for virtual button DS4ControlSettings instances
+             */
+            LsOuterBindControl = new MappedControl(devIndex, DS4Controls.LSOuter, "LS Outer", devType);
+            RsOuterBindControl = new MappedControl(devIndex, DS4Controls.RSOuter, "RS Outer", devType);
+
+            L2FullPullControl = new MappedControl(devIndex, DS4Controls.L2FullPull, "L2 Full Pull", devType);
+            R2FullPullControl = new MappedControl(devIndex, DS4Controls.R2FullPull, "R2 Full Pull", devType);
+
+            gyroSwipeLeftControl = new MappedControl(devIndex, DS4Controls.GyroSwipeLeft, "Gyro Swipe Left", devType);
+            gyroSwipeRightControl =
+                new MappedControl(devIndex, DS4Controls.GyroSwipeRight, "Gyro Swipe Right", devType);
+            gyroSwipeUpControl = new MappedControl(devIndex, DS4Controls.GyroSwipeUp, "Gyro Swipe Up", devType);
+            gyroSwipeDownControl = new MappedControl(devIndex, DS4Controls.GyroSwipeDown, "Gyro Swipe Down", devType);
+
+            extraControls.Add(LsOuterBindControl);
+            extraControls.Add(RsOuterBindControl);
+            extraControls.Add(L2FullPullControl);
+            extraControls.Add(R2FullPullControl);
+            extraControls.Add(gyroSwipeLeftControl);
+            extraControls.Add(gyroSwipeRightControl);
+            extraControls.Add(gyroSwipeUpControl);
+            extraControls.Add(gyroSwipeDownControl);
+
+            ControlMap.Add(DS4Controls.LSOuter, LsOuterBindControl);
+            ControlMap.Add(DS4Controls.RSOuter, RsOuterBindControl);
+            ControlMap.Add(DS4Controls.L2FullPull, L2FullPullControl);
+            ControlMap.Add(DS4Controls.R2FullPull, R2FullPullControl);
+            ControlMap.Add(DS4Controls.GyroSwipeLeft, gyroSwipeLeftControl);
+            ControlMap.Add(DS4Controls.GyroSwipeRight, gyroSwipeRightControl);
+            ControlMap.Add(DS4Controls.GyroSwipeUp, gyroSwipeUpControl);
+            ControlMap.Add(DS4Controls.GyroSwipeDown, gyroSwipeDownControl);
+        }
+
+        public ObservableCollection<MappedControl> Mappings { get; } = new();
+
         public int SelectedIndex
         {
             get => selectedIndex;
@@ -23,170 +124,72 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler SelectedIndexChanged;
 
-        private Dictionary<DS4Controls, MappedControl> controlMap =
-            new Dictionary<DS4Controls, MappedControl>();
-        public Dictionary<DS4Controls, MappedControl> ControlMap { get => controlMap; }
+        public Dictionary<DS4Controls, MappedControl> ControlMap { get; } = new();
 
         /// <summary>
-        /// DS4Controls -> Int index map. Store approriate list index for a stored MappedControl instance
+        ///     DS4Controls -> Int index map. Store approriate list index for a stored MappedControl instance
         /// </summary>
-        private Dictionary<DS4Controls, int> controlIndexMap =
-            new Dictionary<DS4Controls, int>();
-        public Dictionary<DS4Controls, int> ControlIndexMap { get => controlIndexMap; }
+        public Dictionary<DS4Controls, int> ControlIndexMap { get; } = new();
 
-        private MappedControl l2FullPullControl;
-        public MappedControl L2FullPullControl { get => l2FullPullControl; }
+        public MappedControl L2FullPullControl { get; }
 
-        private MappedControl r2FullPullControl;
-        public MappedControl R2FullPullControl { get => r2FullPullControl; }
+        public MappedControl R2FullPullControl { get; }
 
-        private MappedControl lsOuterBindControl;
-        public MappedControl LsOuterBindControl { get => lsOuterBindControl; }
+        public MappedControl LsOuterBindControl { get; }
 
-        private MappedControl rsOuterBindControl;
-        public MappedControl RsOuterBindControl { get => rsOuterBindControl; }
+        public MappedControl RsOuterBindControl { get; }
 
-        private MappedControl gyroSwipeLeftControl;
-        private MappedControl gyroSwipeRightControl;
-        private MappedControl gyroSwipeUpControl;
-        private MappedControl gyroSwipeDownControl;
-
-        private List<MappedControl> extraControls = new List<MappedControl>();
-
-        public MappingListViewModel(int devIndex, OutContType devType)
-        {
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Cross, "Cross",  devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Circle, "Circle", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Square, "Square", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Triangle, "Triangle", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Options, "Options", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Share, "Share", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.DpadUp, "Up", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.DpadDown, "Down", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.DpadLeft, "Left", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.DpadRight, "Right", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.PS, "PS", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Mute, "Mute", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.L1, "L1", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.R1, "R1", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.L2, "L2", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.R2, "R2", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.L3, "L3", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.R3, "R3", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.Capture, "Capture", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.SideL, "Side L", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.SideR, "Side R", devType));
-
-            mappings.Add(new MappedControl(devIndex, DS4Controls.TouchLeft, "Left Touch", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.TouchRight, "Right Touch", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.TouchMulti, "Multitouch", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.TouchUpper, "Upper Touch", devType));
-
-            mappings.Add(new MappedControl(devIndex, DS4Controls.LYNeg, "LS Up", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.LYPos, "LS Down", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.LXNeg, "LS Left", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.LXPos, "LS Right", devType));
-
-            mappings.Add(new MappedControl(devIndex, DS4Controls.RYNeg, "RS Up", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.RYPos, "RS Down", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.RXNeg, "RS Left", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.RXPos, "RS Right", devType));
-
-            mappings.Add(new MappedControl(devIndex, DS4Controls.GyroZNeg, "Tilt Up", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.GyroZPos, "Tilt Down", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.GyroXPos, "Tilt Left", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.GyroXNeg, "Tilt Right", devType));
-
-            mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeUp, "Swipe Up", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeDown, "Swipe Down", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeLeft, "Swipe Left", devType));
-            mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeRight, "Swipe Right", devType));
-
-            int controlIndex = 0;
-            foreach (MappedControl mapped in mappings)
-            {
-                controlMap.Add(mapped.Control, mapped);
-                controlIndexMap.Add(mapped.Control, controlIndex);
-                controlIndex++;
-            }
-
-            /*
-             * Establish data binding data for virtual button DS4ControlSettings instances
-             */
-            lsOuterBindControl = new MappedControl(devIndex, DS4Controls.LSOuter, "LS Outer", devType);
-            rsOuterBindControl = new MappedControl(devIndex, DS4Controls.RSOuter, "RS Outer", devType);
-
-            l2FullPullControl = new MappedControl(devIndex, DS4Controls.L2FullPull, "L2 Full Pull", devType);
-            r2FullPullControl = new MappedControl(devIndex, DS4Controls.R2FullPull, "R2 Full Pull", devType);
-
-            gyroSwipeLeftControl = new MappedControl(devIndex, DS4Controls.GyroSwipeLeft, "Gyro Swipe Left", devType);
-            gyroSwipeRightControl = new MappedControl(devIndex, DS4Controls.GyroSwipeRight, "Gyro Swipe Right", devType);
-            gyroSwipeUpControl = new MappedControl(devIndex, DS4Controls.GyroSwipeUp, "Gyro Swipe Up", devType);
-            gyroSwipeDownControl = new MappedControl(devIndex, DS4Controls.GyroSwipeDown, "Gyro Swipe Down", devType);
-
-            extraControls.Add(lsOuterBindControl);
-            extraControls.Add(rsOuterBindControl);
-            extraControls.Add(l2FullPullControl);
-            extraControls.Add(r2FullPullControl);
-            extraControls.Add(gyroSwipeLeftControl);
-            extraControls.Add(gyroSwipeRightControl);
-            extraControls.Add(gyroSwipeUpControl);
-            extraControls.Add(gyroSwipeDownControl);
-
-            controlMap.Add(DS4Controls.LSOuter, lsOuterBindControl);
-            controlMap.Add(DS4Controls.RSOuter, rsOuterBindControl);
-            controlMap.Add(DS4Controls.L2FullPull, l2FullPullControl);
-            controlMap.Add(DS4Controls.R2FullPull, r2FullPullControl);
-            controlMap.Add(DS4Controls.GyroSwipeLeft, gyroSwipeLeftControl);
-            controlMap.Add(DS4Controls.GyroSwipeRight, gyroSwipeRightControl);
-            controlMap.Add(DS4Controls.GyroSwipeUp, gyroSwipeUpControl);
-            controlMap.Add(DS4Controls.GyroSwipeDown, gyroSwipeDownControl);
-        }
+        public event EventHandler SelectedIndexChanged;
 
         public void UpdateMappingDevType(OutContType devType)
         {
-            foreach(MappedControl mapped in mappings)
-            {
-                mapped.DevType = devType;
-            }
+            foreach (var mapped in Mappings) mapped.DevType = devType;
 
-            foreach(MappedControl mapped in extraControls)
-            {
-                mapped.DevType = devType;
-            }
+            foreach (var mapped in extraControls) mapped.DevType = devType;
         }
 
         public void UpdateMappings()
         {
-            foreach (MappedControl mapped in mappings)
-            {
-                mapped.UpdateMappingName();
-            }
+            foreach (var mapped in Mappings) mapped.UpdateMappingName();
 
-            foreach (MappedControl mapped in extraControls)
-            {
-                mapped.UpdateMappingName();
-            }
+            foreach (var mapped in extraControls) mapped.UpdateMappingName();
         }
     }
 
     public class MappedControl
     {
-        private int devIndex;
         private OutContType devType;
-        private DS4Controls control;
-        private DS4ControlSettings setting;
-        private string controlName;
-        private string mappingName;
-        private string shiftMappingName;
 
-        public int DevIndex { get => devIndex; }
-        public DS4Controls Control { get => control; }
-        public DS4ControlSettings Setting { get => setting; }
-        public string ControlName { get => controlName; }
-        public string MappingName { get => mappingName; }
+        public MappedControl(int devIndex, DS4Controls control, string controlName,
+            OutContType devType, bool initMap = false)
+        {
+            DevIndex = devIndex;
+            this.devType = devType;
+            Control = control;
+            ControlName = controlName;
+            Setting = Global.Instance.Config.GetDs4ControllerSetting(devIndex, control);
+            //mappingName = "?";
+            if (initMap)
+            {
+                MappingName = GetMappingString();
+                if (HasShiftAction())
+                    ShiftMappingName = ShiftTrigger(Setting.ShiftTrigger) + " -> " + GetMappingString(true);
+            }
+
+            DevTypeChanged += MappedControl_DevTypeChanged;
+        }
+
+        public int DevIndex { get; }
+
+        public DS4Controls Control { get; }
+
+        public DS4ControlSettings Setting { get; }
+
+        public string ControlName { get; }
+
+        public string MappingName { get; private set; }
+
         public OutContType DevType
         {
             get => devType;
@@ -197,32 +200,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public string ShiftMappingName { get => shiftMappingName; set => shiftMappingName = value; }
+        public string ShiftMappingName { get; set; }
 
         public event EventHandler DevTypeChanged;
 
         public event EventHandler MappingNameChanged;
-
-        public MappedControl(int devIndex, DS4Controls control, string controlName,
-            OutContType devType, bool initMap=false)
-        {
-            this.devIndex = devIndex;
-            this.devType = devType;
-            this.control = control;
-            this.controlName = controlName;
-            setting = Global.Instance.Config.GetDs4ControllerSetting(devIndex, control);
-            //mappingName = "?";
-            if (initMap)
-            {
-                mappingName = GetMappingString();
-                if (HasShiftAction())
-                {
-                    shiftMappingName = ShiftTrigger(setting.ShiftTrigger) + " -> " + GetMappingString(true);
-                }
-            }
-            
-            DevTypeChanged += MappedControl_DevTypeChanged;
-        }
 
         private void MappedControl_DevTypeChanged(object sender, EventArgs e)
         {
@@ -231,66 +213,62 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void UpdateMappingName()
         {
-            mappingName = GetMappingString();
+            MappingName = GetMappingString();
             if (HasShiftAction())
-            {
-                shiftMappingName = ShiftTrigger(setting.ShiftTrigger) + " -> " + GetMappingString(true);
-            }
+                ShiftMappingName = ShiftTrigger(Setting.ShiftTrigger) + " -> " + GetMappingString(true);
             else
-            {
-                shiftMappingName = "";
-            }
+                ShiftMappingName = "";
 
             MappingNameChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public string GetMappingString(bool shift = false)
         {
-            string temp = Properties.Resources.Unassigned;
-            ControlActionData action = !shift ? setting.ActionData : setting.ShiftAction;
-            bool sc = !shift ? setting.KeyType.HasFlag(DS4KeyType.ScanCode) :
-                setting.ShiftKeyType.HasFlag(DS4KeyType.ScanCode);
-            bool extra = control >= DS4Controls.GyroXPos && control <= DS4Controls.SwipeDown;
-            DS4ControlSettings.ActionType actionType = !shift ? setting.ControlActionType : setting.ShiftActionType;
+            var temp = Resources.Unassigned;
+            var action = !shift ? Setting.ActionData : Setting.ShiftAction;
+            var sc = !shift
+                ? Setting.KeyType.HasFlag(DS4KeyType.ScanCode)
+                : Setting.ShiftKeyType.HasFlag(DS4KeyType.ScanCode);
+            var extra = Control >= DS4Controls.GyroXPos && Control <= DS4Controls.SwipeDown;
+            var actionType = !shift ? Setting.ControlActionType : Setting.ShiftActionType;
             if (actionType != DS4ControlSettings.ActionType.Default)
             {
                 if (actionType == DS4ControlSettings.ActionType.Key)
                 {
                     //return (Keys)int.Parse(action.ToString()) + (sc ? " (" + Properties.Resources.ScanCode + ")" : "");
-                    temp = KeyInterop.KeyFromVirtualKey(action.ActionKey) + (sc ? " (" + Properties.Resources.ScanCode + ")" : "");
+                    temp = KeyInterop.KeyFromVirtualKey(action.ActionKey) + (sc ? " (" + Resources.ScanCode + ")" : "");
                 }
                 else if (actionType == DS4ControlSettings.ActionType.Macro)
                 {
-                    temp = Properties.Resources.Macro + (sc ? " (" + Properties.Resources.ScanCode + ")" : "");
+                    temp = Resources.Macro + (sc ? " (" + Resources.ScanCode + ")" : "");
                 }
                 else if (actionType == DS4ControlSettings.ActionType.Button)
                 {
                     string tag;
-                    tag = Global.GetX360ControlString((X360Controls)action.ActionButton, devType);
+                    tag = Global.GetX360ControlString(action.ActionButton, devType);
                     temp = tag;
                 }
                 else
                 {
-                    temp = Global.GetX360ControlString(Global.DefaultButtonMapping[(int)control], devType);
+                    temp = Global.GetX360ControlString(Global.DefaultButtonMapping[(int)Control], devType);
                 }
             }
             else if (!extra && !shift)
             {
-                X360Controls tempOutControl = Global.DefaultButtonMapping[(int)control];
-                if (tempOutControl != X360Controls.None)
-                {
-                    temp = Global.GetX360ControlString(tempOutControl, devType);
-                }
+                var tempOutControl = Global.DefaultButtonMapping[(int)Control];
+                if (tempOutControl != X360Controls.None) temp = Global.GetX360ControlString(tempOutControl, devType);
             }
             else if (shift)
+            {
                 temp = "";
+            }
 
             return temp;
         }
 
         public bool HasShiftAction()
         {
-            return setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
+            return Setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
         }
 
         private static string ShiftTrigger(int trigger)
@@ -318,10 +296,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 case 19: return "Upper Touch";
                 case 20: return "Multi Touch";
                 case 21: return "Right Touch";
-                case 22: return Properties.Resources.TiltUp;
-                case 23: return Properties.Resources.TiltDown;
-                case 24: return Properties.Resources.TiltLeft;
-                case 25: return Properties.Resources.TiltRight;
+                case 22: return Resources.TiltUp;
+                case 23: return Resources.TiltDown;
+                case 24: return Resources.TiltLeft;
+                case 25: return Resources.TiltRight;
                 case 26: return "Finger on Touchpad";
                 case 27: return "Mute";
                 case 28: return "Capture";
