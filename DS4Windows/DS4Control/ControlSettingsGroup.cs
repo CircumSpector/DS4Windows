@@ -4,7 +4,7 @@ namespace DS4Windows
 {
     public class ControlSettingsGroup
     {
-        private readonly IList<DS4ControlSettings> _settingsList;
+        private readonly IList<DS4ControlSettings> settingsList;
 
         public ControlSettingsGroup(IList<DS4ControlSettings> settingsList)
         {
@@ -33,7 +33,7 @@ namespace DS4Windows
             for (var i = (int)DS4Controls.Square; i <= (int)DS4Controls.SwipeDown; i++)
                 ControlButtons.Add(settingsList[i - 1]);
 
-            _settingsList = settingsList;
+            this.settingsList = settingsList;
         }
 
         public List<DS4ControlSettings> ControlButtons => new();
@@ -62,7 +62,7 @@ namespace DS4Windows
 
         public void EstablishExtraButtons(List<DS4Controls> buttonList)
         {
-            foreach (var control in buttonList) ExtraDeviceButtons.Add(_settingsList[(int)control - 1]);
+            foreach (var control in buttonList) ExtraDeviceButtons.Add(settingsList[(int)control - 1]);
         }
 
         public void ResetExtraButtons()
