@@ -36,6 +36,8 @@ namespace DS4Windows
             this.settingsList = settingsList;
         }
 
+        public DS4ControlSettings this[DS4Controls control] => settingsList[(int)control - 1];
+
         public List<DS4ControlSettings> ControlButtons => new();
 
         public List<DS4ControlSettings> ExtraDeviceButtons => new();

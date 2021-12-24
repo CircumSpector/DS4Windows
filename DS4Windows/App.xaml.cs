@@ -159,6 +159,7 @@ namespace DS4WinWPF
                     );
             });
 
+            services.AddTransient<MappingListViewModel>();
             services.AddTransient<ProfileSettingsViewModel>();
             services.AddSingleton<ProfileEditor>();
         }

@@ -14,6 +14,7 @@ using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
+using JetBrains.Annotations;
 using Microsoft.Win32;
 using NonFormTimer = System.Timers.Timer;
 using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
@@ -41,7 +42,7 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly NonFormTimer inputTimer;
 
-        private readonly MappingListViewModel mappingListVM;
+        private readonly MappingListViewModel mappingListVm;
 
         private readonly ProfileSettingsViewModel settingsViewModel;
 
@@ -54,11 +55,13 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly IProfilesService profileService;
 
+        [UsedImplicitly]
         public ProfileEditor(
             ProfileSettingsViewModel viewModel,
             IAppSettingsService appSettings,
             ControlService service,
-            IProfilesService profileService
+            IProfilesService profileService,
+            MappingListViewModel mappingViewModel
             )
         {
             settingsViewModel = viewModel;
@@ -77,7 +80,7 @@ namespace DS4WinWPF.DS4Forms
             picBoxHover.Visibility = Visibility.Hidden;
             picBoxHover2.Visibility = Visibility.Hidden;
 
-            mappingListVM = new MappingListViewModel(DeviceNum, settingsViewModel.ContType);
+            mappingListVm = mappingViewModel;
             //specialActionsVM = new SpecialActionsListViewModel(device);
 
             RemoveHoverBtnText();
@@ -112,7 +115,7 @@ namespace DS4WinWPF.DS4Forms
             picBoxHover.Visibility = Visibility.Hidden;
             picBoxHover2.Visibility = Visibility.Hidden;
 
-            mappingListVM = new MappingListViewModel(DeviceNum, settingsViewModel.ContType);
+            //mappingListVm = new MappingListViewModel(DeviceNum, settingsViewModel.ContType);
             //specialActionsVM = new SpecialActionsListViewModel(device);
 
             RemoveHoverBtnText();
@@ -146,7 +149,7 @@ namespace DS4WinWPF.DS4Forms
             picBoxHover.Visibility = Visibility.Hidden;
             picBoxHover2.Visibility = Visibility.Hidden;
 
-            mappingListVM = new MappingListViewModel(DeviceNum, settingsViewModel.ContType);
+            //mappingListVm = new MappingListViewModel(DeviceNum, settingsViewModel.ContType);
             specialActionsVM = new SpecialActionsListViewModel(device);
 
             RemoveHoverBtnText();
@@ -243,44 +246,44 @@ namespace DS4WinWPF.DS4Forms
 
         private void AssignTiltAssociation()
         {
-            gyroZNLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroZNeg];
-            gyroZPLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroZPos];
-            gyroXNLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroXNeg];
-            gyroXLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroXPos];
+            gyroZNLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroZNeg];
+            gyroZPLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroZPos];
+            gyroXNLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroXNeg];
+            gyroXLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroXPos];
         }
 
         private void AssignSwipeAssociation()
         {
-            swipeUpLb.DataContext = mappingListVM.ControlMap[DS4Controls.SwipeUp];
-            swipeDownLb.DataContext = mappingListVM.ControlMap[DS4Controls.SwipeDown];
-            swipeLeftLb.DataContext = mappingListVM.ControlMap[DS4Controls.SwipeLeft];
-            swipeRightLb.DataContext = mappingListVM.ControlMap[DS4Controls.SwipeRight];
+            swipeUpLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeUp];
+            swipeDownLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeDown];
+            swipeLeftLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeLeft];
+            swipeRightLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeRight];
         }
 
         private void AssignTriggerFullPullAssociation()
         {
-            l2FullPullLb.DataContext = mappingListVM.ControlMap[DS4Controls.L2FullPull];
-            r2FullPullLb.DataContext = mappingListVM.ControlMap[DS4Controls.R2FullPull];
+            l2FullPullLb.DataContext = mappingListVm.ControlMap[DS4Controls.L2FullPull];
+            r2FullPullLb.DataContext = mappingListVm.ControlMap[DS4Controls.R2FullPull];
         }
 
         private void AssignStickOuterBindAssociation()
         {
-            lsOuterBindLb.DataContext = mappingListVM.ControlMap[DS4Controls.LSOuter];
-            rsOuterBindLb.DataContext = mappingListVM.ControlMap[DS4Controls.RSOuter];
+            lsOuterBindLb.DataContext = mappingListVm.ControlMap[DS4Controls.LSOuter];
+            rsOuterBindLb.DataContext = mappingListVm.ControlMap[DS4Controls.RSOuter];
         }
 
         private void AssignGyroSwipeAssociation()
         {
-            gyroSwipeLeftLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroSwipeLeft];
-            gyroSwipeRightLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroSwipeRight];
-            gyroSwipeUpLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroSwipeUp];
-            gyroSwipeDownLb.DataContext = mappingListVM.ControlMap[DS4Controls.GyroSwipeDown];
+            gyroSwipeLeftLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeLeft];
+            gyroSwipeRightLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeRight];
+            gyroSwipeUpLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeUp];
+            gyroSwipeDownLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeDown];
         }
 
         private void MappingListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mappingListVM.SelectedIndex >= 0)
-                if (reverseHoverIndexes.TryGetValue(mappingListVM.SelectedIndex, out var tempBtn))
+            if (mappingListVm.SelectedIndex >= 0)
+                if (reverseHoverIndexes.TryGetValue(mappingListVm.SelectedIndex, out var tempBtn))
                     InputControlHighlight(tempBtn);
         }
 
@@ -310,10 +313,10 @@ namespace DS4WinWPF.DS4Forms
             hoverIndexes[l3ConBtn] = 16;
             hoverIndexes[r3ConBtn] = 17;
 
-            hoverIndexes[leftTouchConBtn] = mappingListVM.ControlIndexMap[DS4Controls.TouchLeft]; // 21
-            hoverIndexes[rightTouchConBtn] = mappingListVM.ControlIndexMap[DS4Controls.TouchRight]; // 22
-            hoverIndexes[multiTouchConBtn] = mappingListVM.ControlIndexMap[DS4Controls.TouchMulti]; // 23
-            hoverIndexes[topTouchConBtn] = mappingListVM.ControlIndexMap[DS4Controls.TouchUpper]; // 24
+            hoverIndexes[leftTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchLeft]; // 21
+            hoverIndexes[rightTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchRight]; // 22
+            hoverIndexes[multiTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchMulti]; // 23
+            hoverIndexes[topTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchUpper]; // 24
 
             hoverIndexes[lsuConBtn] = 25;
             hoverIndexes[lsdConBtn] = 26;
@@ -737,7 +740,7 @@ namespace DS4WinWPF.DS4Forms
             axialRSStickControl.UseDevice(profileService.CurrentlyEditedProfile.RSModInfo);
 
             //specialActionsVM.LoadActions(currentProfileOLD == null);
-            mappingListVM.UpdateMappings();
+            mappingListVm.UpdateMappings();
             settingsViewModel.UpdateLateProperties();
             settingsViewModel.PopulateTouchDisInver(touchDisInvertBtn.ContextMenu);
             settingsViewModel.PopulateGyroMouseTrig(gyroMouseTrigBtn.ContextMenu);
@@ -745,7 +748,7 @@ namespace DS4WinWPF.DS4Forms
             settingsViewModel.PopulateGyroSwipeTrig(gyroSwipeTrigBtn.ContextMenu);
             settingsViewModel.PopulateGyroControlsTrig(gyroControlsTrigBtn.ContextMenu);
             profileSettingsTabCon.DataContext = settingsViewModel;
-            mappingListBox.DataContext = mappingListVM;
+            mappingListBox.DataContext = mappingListVm;
             specialActionsTab.DataContext = specialActionsVM;
             lightbarRect.DataContext = settingsViewModel;
 
@@ -806,7 +809,7 @@ namespace DS4WinWPF.DS4Forms
         private void RefreshEditorBindings()
         {
             specialActionsVM.LoadActions(currentProfileOLD == null);
-            mappingListVM.UpdateMappings();
+            mappingListVm.UpdateMappings();
             settingsViewModel.UpdateLateProperties();
             settingsViewModel.PopulateTouchDisInver(touchDisInvertBtn.ContextMenu);
             settingsViewModel.PopulateGyroMouseTrig(gyroMouseTrigBtn.ContextMenu);
@@ -814,7 +817,7 @@ namespace DS4WinWPF.DS4Forms
             settingsViewModel.PopulateGyroSwipeTrig(gyroSwipeTrigBtn.ContextMenu);
             settingsViewModel.PopulateGyroControlsTrig(gyroControlsTrigBtn.ContextMenu);
             profileSettingsTabCon.DataContext = settingsViewModel;
-            mappingListBox.DataContext = mappingListVM;
+            mappingListBox.DataContext = mappingListVm;
             specialActionsTab.DataContext = specialActionsVM;
             lightbarRect.DataContext = settingsViewModel;
 
@@ -838,7 +841,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void HoverConBtn_Click(object sender, RoutedEventArgs e)
         {
-            var mpControl = mappingListVM.Mappings[mappingListVM.SelectedIndex];
+            var mpControl = mappingListVm.Mappings[mappingListVm.SelectedIndex];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting);
             window.Owner = Application.Current.MainWindow;
             window.ShowDialog();
@@ -870,9 +873,9 @@ namespace DS4WinWPF.DS4Forms
 
             if (hoverIndexes.TryGetValue(control, out var tempIndex))
             {
-                mappingListVM.SelectedIndex = tempIndex;
+                mappingListVm.SelectedIndex = tempIndex;
                 mappingListBox.ScrollIntoView(mappingListBox.SelectedItem);
-                var mapped = mappingListVM.Mappings[tempIndex];
+                var mapped = mappingListVm.Mappings[tempIndex];
                 UpdateHighlightLabel(mapped);
             }
         }
@@ -1254,7 +1257,7 @@ namespace DS4WinWPF.DS4Forms
         private void OutConTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var index = outConTypeCombo.SelectedIndex;
-            if (index >= 0) mappingListVM.UpdateMappingDevType(settingsViewModel.TempConType);
+            if (index >= 0) mappingListVm.UpdateMappingDevType(settingsViewModel.TempConType);
         }
 
         private void NewActionBtn_Click(object sender, RoutedEventArgs e)
@@ -1478,7 +1481,7 @@ namespace DS4WinWPF.DS4Forms
                 if (index >= 0)
                     Dispatcher.BeginInvoke((Action)(() =>
                     {
-                        mappingListVM.SelectedIndex = index;
+                        mappingListVm.SelectedIndex = index;
                         ShowControlBindingWindow();
                     }));
             }
@@ -1505,7 +1508,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void ShowControlBindingWindow()
         {
-            var mpControl = mappingListVM.Mappings[mappingListVM.SelectedIndex];
+            var mpControl = mappingListVm.Mappings[mappingListVm.SelectedIndex];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
                 Owner = Application.Current.MainWindow
@@ -1518,7 +1521,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MappingListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (mappingListVM.SelectedIndex >= 0) ShowControlBindingWindow();
+            if (mappingListVm.SelectedIndex >= 0) ShowControlBindingWindow();
         }
 
         private void SidebarTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1539,7 +1542,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var btn = sender as Button;
             var control = (DS4Controls)Convert.ToInt32(btn.Tag);
-            var mpControl = mappingListVM.ControlMap[control];
+            var mpControl = mappingListVm.ControlMap[control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
                 Owner = Application.Current.MainWindow
@@ -1554,7 +1557,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var btn = sender as Button;
             var control = (DS4Controls)Convert.ToInt32(btn.Tag);
-            var mpControl = mappingListVM.ControlMap[control];
+            var mpControl = mappingListVm.ControlMap[control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
                 Owner = Application.Current.MainWindow
@@ -1568,7 +1571,7 @@ namespace DS4WinWPF.DS4Forms
         private void ConBtn_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             var btn = sender as Button;
-            var mpControl = mappingListVM.Mappings[mappingListVM.SelectedIndex];
+            var mpControl = mappingListVm.Mappings[mappingListVm.SelectedIndex];
             settingsViewModel.PresetMenuUtil.SetHighlightControl(mpControl.Control);
             var cm = conCanvas.FindResource("presetMenu") as ContextMenu;
             var temp = cm.Items[0] as MenuItem;
@@ -1588,7 +1591,7 @@ namespace DS4WinWPF.DS4Forms
                     settingsViewModel.PresetMenuUtil.ModifySettingWithPreset(baseTag, subTag);
                 foreach (var control in controls)
                 {
-                    var mpControl = mappingListVM.ControlMap[control];
+                    var mpControl = mappingListVm.ControlMap[control];
                     mpControl.UpdateMappingName();
                 }
 
@@ -1628,7 +1631,7 @@ namespace DS4WinWPF.DS4Forms
             if (ds4control == DS4Controls.None) return;
 
             //DS4ControlSettings setting = Global.getDS4CSetting(tag, ds4control);
-            var mpControl = mappingListVM.ControlMap[ds4control];
+            var mpControl = mappingListVm.ControlMap[ds4control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
                 Owner = Application.Current.MainWindow
@@ -1671,7 +1674,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var btn = sender as Button;
             var control = (DS4Controls)Convert.ToInt32(btn.Tag);
-            var mpControl = mappingListVM.ControlMap[control];
+            var mpControl = mappingListVm.ControlMap[control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
                 Owner = Application.Current.MainWindow
@@ -1703,7 +1706,7 @@ namespace DS4WinWPF.DS4Forms
             if (ds4control == DS4Controls.None) return;
 
             //DS4ControlSettings setting = Global.getDS4CSetting(tag, ds4control);
-            var mpControl = mappingListVM.ControlMap[ds4control];
+            var mpControl = mappingListVm.ControlMap[ds4control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
                 Owner = Application.Current.MainWindow

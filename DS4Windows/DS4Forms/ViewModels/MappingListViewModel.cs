@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.Properties;
 using JetBrains.Annotations;
 
@@ -17,8 +18,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     {
         private readonly List<MappedControl> extraControls = new();
 
-        //private int devIndex;
-
         private readonly MappedControl gyroSwipeDownControl;
 
         private readonly MappedControl gyroSwipeLeftControl;
@@ -27,54 +26,54 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private int selectedIndex = -1;
 
-        public MappingListViewModel(int devIndex, OutContType devType)
+        public MappingListViewModel(IProfilesService profileService)
         {
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Cross, "Cross", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Circle, "Circle", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Square, "Square", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Triangle, "Triangle", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Options, "Options", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Share, "Share", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadUp, "Up", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadDown, "Down", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadLeft, "Left", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.DpadRight, "Right", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.PS, "PS", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Mute, "Mute", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.L1, "L1", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.R1, "R1", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.L2, "L2", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.R2, "R2", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.L3, "L3", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.R3, "R3", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.Capture, "Capture", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.SideL, "Side L", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.SideR, "Side R", devType));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Cross, "Cross"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Circle, "Circle"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Square, "Square"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Triangle, "Triangle"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Options, "Options"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Share, "Share"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.DpadUp, "Up"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.DpadDown, "Down"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.DpadLeft, "Left"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.DpadRight, "Right"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.PS, "PS"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Mute, "Mute"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.L1, "L1"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.R1, "R1"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.L2, "L2"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.R2, "R2"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.L3, "L3"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.R3, "R3"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.Capture, "Capture"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.SideL, "Side L"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.SideR, "Side R"));
 
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchLeft, "Left Touch", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchRight, "Right Touch", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchMulti, "Multitouch", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.TouchUpper, "Upper Touch", devType));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.TouchLeft, "Left Touch"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.TouchRight, "Right Touch"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.TouchMulti, "Multitouch"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.TouchUpper, "Upper Touch"));
 
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.LYNeg, "LS Up", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.LYPos, "LS Down", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.LXNeg, "LS Left", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.LXPos, "LS Right", devType));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.LYNeg, "LS Up"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.LYPos, "LS Down"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.LXNeg, "LS Left"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.LXPos, "LS Right"));
 
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.RYNeg, "RS Up", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.RYPos, "RS Down", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.RXNeg, "RS Left", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.RXPos, "RS Right", devType));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.RYNeg, "RS Up"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.RYPos, "RS Down"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.RXNeg, "RS Left"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.RXPos, "RS Right"));
 
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroZNeg, "Tilt Up", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroZPos, "Tilt Down", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroXPos, "Tilt Left", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.GyroXNeg, "Tilt Right", devType));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.GyroZNeg, "Tilt Up"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.GyroZPos, "Tilt Down"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.GyroXPos, "Tilt Left"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.GyroXNeg, "Tilt Right"));
 
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeUp, "Swipe Up", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeDown, "Swipe Down", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeLeft, "Swipe Left", devType));
-            Mappings.Add(new MappedControl(devIndex, DS4Controls.SwipeRight, "Swipe Right", devType));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.SwipeUp, "Swipe Up"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.SwipeDown, "Swipe Down"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.SwipeLeft, "Swipe Left"));
+            Mappings.Add(new MappedControl(profileService, DS4Controls.SwipeRight, "Swipe Right"));
 
             var controlIndex = 0;
             foreach (var mapped in Mappings)
@@ -87,17 +86,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             /*
              * Establish data binding data for virtual button DS4ControlSettings instances
              */
-            LsOuterBindControl = new MappedControl(devIndex, DS4Controls.LSOuter, "LS Outer", devType);
-            RsOuterBindControl = new MappedControl(devIndex, DS4Controls.RSOuter, "RS Outer", devType);
+            LsOuterBindControl = new MappedControl(profileService, DS4Controls.LSOuter, "LS Outer");
+            RsOuterBindControl = new MappedControl(profileService, DS4Controls.RSOuter, "RS Outer");
 
-            L2FullPullControl = new MappedControl(devIndex, DS4Controls.L2FullPull, "L2 Full Pull", devType);
-            R2FullPullControl = new MappedControl(devIndex, DS4Controls.R2FullPull, "R2 Full Pull", devType);
+            L2FullPullControl = new MappedControl(profileService, DS4Controls.L2FullPull, "L2 Full Pull");
+            R2FullPullControl = new MappedControl(profileService, DS4Controls.R2FullPull, "R2 Full Pull");
 
-            gyroSwipeLeftControl = new MappedControl(devIndex, DS4Controls.GyroSwipeLeft, "Gyro Swipe Left", devType);
+            gyroSwipeLeftControl = new MappedControl(profileService, DS4Controls.GyroSwipeLeft, "Gyro Swipe Left");
             gyroSwipeRightControl =
-                new MappedControl(devIndex, DS4Controls.GyroSwipeRight, "Gyro Swipe Right", devType);
-            gyroSwipeUpControl = new MappedControl(devIndex, DS4Controls.GyroSwipeUp, "Gyro Swipe Up", devType);
-            gyroSwipeDownControl = new MappedControl(devIndex, DS4Controls.GyroSwipeDown, "Gyro Swipe Down", devType);
+                new MappedControl(profileService, DS4Controls.GyroSwipeRight, "Gyro Swipe Right");
+            gyroSwipeUpControl = new MappedControl(profileService, DS4Controls.GyroSwipeUp, "Gyro Swipe Up");
+            gyroSwipeDownControl = new MappedControl(profileService, DS4Controls.GyroSwipeDown, "Gyro Swipe Down");
 
             extraControls.Add(LsOuterBindControl);
             extraControls.Add(RsOuterBindControl);
@@ -177,16 +176,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     public class MappedControl : INotifyPropertyChanged
     {
         public MappedControl(
-            int devIndex,
+            IProfilesService profileService,
             DS4Controls control,
             string controlName,
-            OutContType devType,
             bool initMap = false
         )
         {
-            Setting = Global.Instance.Config.GetDs4ControllerSetting(devIndex, control);
-            DevIndex = devIndex;
-            this.DevType = devType;
+            Setting = profileService.CurrentlyEditedProfile.PerControlSettings[control];
+            DevType = profileService.CurrentlyEditedProfile.OutputDeviceType;
             Control = control;
             ControlName = controlName;
 
@@ -198,8 +195,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     ShiftMappingName = ShiftTrigger(Setting.ShiftTrigger) + " -> " + GetMappingString(true);
             }
         }
-
-        public int DevIndex { get; }
 
         public DS4Controls Control { get; }
 
