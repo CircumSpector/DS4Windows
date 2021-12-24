@@ -47,6 +47,7 @@ namespace DS4WinWPF.DS4Forms
         private readonly ProfileSettingsViewModel settingsViewModel;
 
         private readonly Dictionary<int, Button> reverseHoverIndexes = new();
+        
         private readonly SpecialActionsListViewModel specialActionsVM;
 
         private readonly ControlService rootHub;

@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DS4Windows;
 using DS4WinWPF.Properties;
+using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public class SpecialActionsListViewModel
+    public class SpecialActionsListViewModel : INotifyPropertyChanged
     {
         private int specialActionIndex = -1;
 
@@ -131,9 +134,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Global.Instance.Config.ProfileActions[DeviceNum].Remove(item.SpecialAction.Name);
             Global.Instance.Config.CacheExtraProfileInfo(DeviceNum);
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    public class SpecialActionItem
+    public class SpecialActionItem : INotifyPropertyChanged
     {
         private bool active;
 
@@ -197,6 +208,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             ActionNameChanged?.Invoke(this, EventArgs.Empty);
             ControlsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
