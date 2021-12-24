@@ -98,6 +98,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [JsonIgnore]
         public bool IsOutputDeviceEnabled { get; set; }
 
+        [JsonIgnore]
+        public ControlSettingsGroup PerControlSettings { get; set; } = new(
+            (from DS4Controls dc in Enum.GetValues(typeof(DS4Controls))
+                where dc != DS4Controls.None
+                select new DS4ControlSettings(dc)).ToList());
+
         #endregion
 
         #region Persisted properties

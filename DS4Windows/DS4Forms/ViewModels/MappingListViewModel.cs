@@ -134,7 +134,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public Dictionary<DS4Controls, MappedControl> ControlMap { get; } = new();
 
         /// <summary>
-        ///     DS4Controls -> Int index map. Store approriate list index for a stored MappedControl instance
+        ///     DS4Controls -> Int index map. Store appropriate list index for a stored MappedControl instance
         /// </summary>
         public Dictionary<DS4Controls, int> ControlIndexMap { get; } = new();
 
@@ -176,8 +176,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     /// </summary>
     public class MappedControl : INotifyPropertyChanged
     {
-        private OutContType devType;
-
         public MappedControl(
             int devIndex,
             DS4Controls control,
@@ -186,11 +184,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             bool initMap = false
         )
         {
+            Setting = Global.Instance.Config.GetDs4ControllerSetting(devIndex, control);
             DevIndex = devIndex;
-            this.devType = devType;
+            this.DevType = devType;
             Control = control;
             ControlName = controlName;
-            Setting = Global.Instance.Config.GetDs4ControllerSetting(devIndex, control);
+
             //mappingName = "?";
             if (initMap)
             {
@@ -198,8 +197,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (HasShiftAction)
                     ShiftMappingName = ShiftTrigger(Setting.ShiftTrigger) + " -> " + GetMappingString(true);
             }
-
-            DevTypeChanged += MappedControl_DevTypeChanged;
         }
 
         public int DevIndex { get; }
@@ -212,26 +209,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MappingName { get; private set; }
 
-        public OutContType DevType
-        {
-            get => devType;
-            set
-            {
-                devType = value;
-                DevTypeChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public OutContType DevType { get; set; }
 
         public string ShiftMappingName { get; set; }
-
-        public event EventHandler DevTypeChanged;
-
-        public event EventHandler MappingNameChanged;
-
-        private void MappedControl_DevTypeChanged(object sender, EventArgs e)
-        {
-            UpdateMappingName();
-        }
 
         public void UpdateMappingName()
         {
@@ -240,8 +220,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 ShiftMappingName = ShiftTrigger(Setting.ShiftTrigger) + " -> " + GetMappingString(true);
             else
                 ShiftMappingName = "";
-
-            MappingNameChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public string GetMappingString(bool shift = false)
@@ -267,18 +245,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 else if (actionType == DS4ControlSettings.ActionType.Button)
                 {
                     string tag;
-                    tag = Global.GetX360ControlString(action.ActionButton, devType);
+                    tag = Global.GetX360ControlString(action.ActionButton, DevType);
                     temp = tag;
                 }
                 else
                 {
-                    temp = Global.GetX360ControlString(Global.DefaultButtonMapping[(int)Control], devType);
+                    temp = Global.GetX360ControlString(Global.DefaultButtonMapping[(int)Control], DevType);
                 }
             }
             else if (!extra && !shift)
             {
                 var tempOutControl = Global.DefaultButtonMapping[(int)Control];
-                if (tempOutControl != X360Controls.None) temp = Global.GetX360ControlString(tempOutControl, devType);
+                if (tempOutControl != X360Controls.None) temp = Global.GetX360ControlString(tempOutControl, DevType);
             }
             else if (shift)
             {
@@ -333,6 +311,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
+            switch (propertyName)
+            {
+                case nameof(DevType):
+                    UpdateMappingName();
+                    break;
+            }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

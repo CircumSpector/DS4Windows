@@ -1,7 +1,9 @@
 ﻿using System;
+using PropertyChanged;
 
 namespace DS4Windows
 {
+    [AddINotifyPropertyChangedInterface]
     public class DS4ControlSettings
     {
         public enum ActionType : byte
