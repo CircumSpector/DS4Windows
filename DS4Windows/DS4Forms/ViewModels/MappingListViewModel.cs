@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DS4Windows;
 using DS4WinWPF.Properties;
+using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public class MappingListViewModel
+    /// <summary>
+    ///     Controller buttons/axes to remapped actions view model.
+    /// </summary>
+    public class MappingListViewModel : INotifyPropertyChanged
     {
         private readonly List<MappedControl> extraControls = new();
 
@@ -155,14 +161,30 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             foreach (var mapped in extraControls) mapped.UpdateMappingName();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    public class MappedControl
+    /// <summary>
+    ///     Remapped control entity description.
+    /// </summary>
+    public class MappedControl : INotifyPropertyChanged
     {
         private OutContType devType;
 
-        public MappedControl(int devIndex, DS4Controls control, string controlName,
-            OutContType devType, bool initMap = false)
+        public MappedControl(
+            int devIndex,
+            DS4Controls control,
+            string controlName,
+            OutContType devType,
+            bool initMap = false
+        )
         {
             DevIndex = devIndex;
             this.devType = devType;
@@ -173,7 +195,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             if (initMap)
             {
                 MappingName = GetMappingString();
-                if (HasShiftAction())
+                if (HasShiftAction)
                     ShiftMappingName = ShiftTrigger(Setting.ShiftTrigger) + " -> " + GetMappingString(true);
             }
 
@@ -214,7 +236,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public void UpdateMappingName()
         {
             MappingName = GetMappingString();
-            if (HasShiftAction())
+            if (HasShiftAction)
                 ShiftMappingName = ShiftTrigger(Setting.ShiftTrigger) + " -> " + GetMappingString(true);
             else
                 ShiftMappingName = "";
@@ -266,47 +288,52 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             return temp;
         }
 
-        public bool HasShiftAction()
-        {
-            return Setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
-        }
+        public bool HasShiftAction => Setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
 
         private static string ShiftTrigger(int trigger)
         {
-            switch (trigger)
+            return trigger switch
             {
-                case 1: return "Cross";
-                case 2: return "Circle";
-                case 3: return "Square";
-                case 4: return "Triangle";
-                case 5: return "Options";
-                case 6: return "Share";
-                case 7: return "Dpad Up";
-                case 8: return "Dpad Down";
-                case 9: return "Dpad Left";
-                case 10: return "Dpad Right";
-                case 11: return "PS";
-                case 12: return "L1";
-                case 13: return "R1";
-                case 14: return "L2";
-                case 15: return "R2";
-                case 16: return "L3";
-                case 17: return "R3";
-                case 18: return "Left Touch";
-                case 19: return "Upper Touch";
-                case 20: return "Multi Touch";
-                case 21: return "Right Touch";
-                case 22: return Resources.TiltUp;
-                case 23: return Resources.TiltDown;
-                case 24: return Resources.TiltLeft;
-                case 25: return Resources.TiltRight;
-                case 26: return "Finger on Touchpad";
-                case 27: return "Mute";
-                case 28: return "Capture";
-                case 29: return "Side L";
-                case 30: return "Side R";
-                default: return "";
-            }
+                1 => "Cross",
+                2 => "Circle",
+                3 => "Square",
+                4 => "Triangle",
+                5 => "Options",
+                6 => "Share",
+                7 => "Dpad Up",
+                8 => "Dpad Down",
+                9 => "Dpad Left",
+                10 => "Dpad Right",
+                11 => "PS",
+                12 => "L1",
+                13 => "R1",
+                14 => "L2",
+                15 => "R2",
+                16 => "L3",
+                17 => "R3",
+                18 => "Left Touch",
+                19 => "Upper Touch",
+                20 => "Multi Touch",
+                21 => "Right Touch",
+                22 => Resources.TiltUp,
+                23 => Resources.TiltDown,
+                24 => Resources.TiltLeft,
+                25 => Resources.TiltRight,
+                26 => "Finger on Touchpad",
+                27 => "Mute",
+                28 => "Capture",
+                29 => "Side L",
+                30 => "Side R",
+                _ => ""
+            };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
