@@ -68,7 +68,7 @@ namespace DS4WinWPF.DS4Forms
         private readonly StatusLogMsg lastLogMsg = new();
         private readonly LogViewModel logvm;
 
-        private readonly MainWindowsViewModel mainWinVM;
+        private readonly MainWindowsViewModel mainWinVm;
         private ManagementEventWatcher managementEvWatcher;
         private Size oldSize;
         private bool preserveSize = true;
@@ -98,8 +98,8 @@ namespace DS4WinWPF.DS4Forms
 
             InitializeComponent();
 
-            mainWinVM = mainWindowsViewModel;
-            DataContext = mainWinVM;
+            mainWinVm = mainWindowsViewModel;
+            DataContext = mainWinVm;
 
             var root = Application.Current as App;
             settingsWrapVM = settingsViewModel;
@@ -256,7 +256,7 @@ namespace DS4WinWPF.DS4Forms
             autoprofileChecker.RequestServiceChange += AutoprofileChecker_RequestServiceChange;
             autoProfileHolder.AutoProfileCollection.CollectionChanged += AutoProfileColl_CollectionChanged;
             //autoProfControl.AutoProfVM.AutoProfileSystemChange += AutoProfVM_AutoProfileSystemChange;
-            mainWinVM.FullTabsEnabledChanged += MainWinVM_FullTabsEnabledChanged;
+            mainWinVm.FullTabsEnabledChanged += MainWinVM_FullTabsEnabledChanged;
 
             var wmiConnected = false;
             var q = new WqlEventQuery();
@@ -308,7 +308,7 @@ Suspend support not enabled.", true);
 
         private void MainWinVM_FullTabsEnabledChanged(object sender, EventArgs e)
         {
-            settingsWrapVM.ViewEnabled = mainWinVM.FullTabsEnabled;
+            settingsWrapVM.ViewEnabled = mainWinVm.FullTabsEnabled;
         }
 
         private void TrayIconVM_RequestServiceChange(object sender, EventArgs e)
@@ -828,29 +828,6 @@ Suspend support not enabled.", true);
             }
         }
 
-        private void ProfFolderBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var startInfo =
-                new ProcessStartInfo(Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesSubDirectory))
-                {
-                    UseShellExecute = true
-                };
-            try
-            {
-                using (var temp = Process.Start(startInfo))
-                {
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void ControlPanelBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("control", "joy.cpl");
-        }
-
         private async void DriverSetupBtn_Click(object sender, RoutedEventArgs e)
         {
             StartStopBtn.IsEnabled = false;
@@ -1098,7 +1075,7 @@ Suspend support not enabled.", true);
             }
 
             mainTabCon.SelectedIndex = 0;
-            mainWinVM.FullTabsEnabled = true;
+            mainWinVm.FullTabsEnabled = true;
         }
 
         private void NewProfListBtn_Click(object sender, RoutedEventArgs e)
@@ -1115,7 +1092,7 @@ Suspend support not enabled.", true);
         {
             profOptsToolbar.Visibility = Visibility.Collapsed;
             profilesListBox.Visibility = Visibility.Collapsed;
-            mainWinVM.FullTabsEnabled = false;
+            mainWinVm.FullTabsEnabled = false;
 
             preserveSize = false;
             oldSize.Width = Width;
@@ -1152,56 +1129,6 @@ Suspend support not enabled.", true);
             if (profilesListBox.SelectedIndex < 0) return;
             
             ShowProfileEditor();
-        }
-
-        private void Html5GameBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Util.StartProcessHelper("https://gamepad-tester.com/");
-        }
-
-        private void HidHideBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var driveLetter = Path.GetPathRoot(Global.ExecutableDirectory);
-            var path = Path.Combine(driveLetter, "Program Files",
-                "Nefarius Software Solutions e.U", "HidHideClient", "HidHideClient.exe");
-
-            if (!File.Exists(path)) return;
-
-            try
-            {
-                var startInfo = new ProcessStartInfo(path);
-                startInfo.UseShellExecute = true;
-                using (var proc = Process.Start(startInfo))
-                {
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void FakeExeNameExplainBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var message = Strings.CustomExeNameInfo;
-            MessageBox.Show(message, "Custom Exe Name Info", MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-
-        private void XinputCheckerBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var path = Path.Combine(Global.ExecutableDirectory, "Tools",
-                "XInputChecker", "XInputChecker.exe");
-
-            if (File.Exists(path))
-                try
-                {
-                    using (var proc = Process.Start(path))
-                    {
-                    }
-                }
-                catch
-                {
-                }
         }
 
         private void ChecklogViewBtn_Click(object sender, RoutedEventArgs e)

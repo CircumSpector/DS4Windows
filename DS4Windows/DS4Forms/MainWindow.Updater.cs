@@ -129,7 +129,7 @@ namespace DS4WinWPF.DS4Forms
                         {
                             MessageBox.Show(Properties.Resources.PleaseDownloadUpdater);
                             Util.StartProcessHelper(
-                                $"https://github.com/Ryochan7/DS4Updater/releases/tag/v{version}/{mainWinVM.updaterExe}");
+                                $"https://github.com/Ryochan7/DS4Updater/releases/tag/v{version}/{mainWinVm.updaterExe}");
                         });
                     //Process.Start($"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
                 }
@@ -160,7 +160,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 launch = false;
                 var url2 = new Uri(
-                    $"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVM.updaterExe}");
+                    $"https://github.com/Ryochan7/DS4Updater/releases/download/v{version}/{mainWinVm.updaterExe}");
                 var filename = Path.Combine(Path.GetTempPath(), "DS4Updater.exe");
                 using (var downloadStream = new FileStream(filename, FileMode.Create))
                 {
