@@ -76,6 +76,9 @@ namespace DS4WinWPF.DS4Forms
             lightbarRect.DataContext = settingsViewModel;
             profileNameTxt.DataContext = settingsViewModel;
 
+            // TODO: migrate me
+            specialActionsVM = new SpecialActionsListViewModel(profileService.CurrentlyEditedProfile.Index ?? 0);
+
             //DeviceNum = device;
             emptyColorGB.Visibility = Visibility.Collapsed;
             picBoxHover.Visibility = Visibility.Hidden;

@@ -244,6 +244,8 @@
                     </ListBox>
                 </DockPanel>
             </TabItem>
+
+            <!-- Special Actions -->
             <TabItem x:Name="specialActionsTab" Header="Special Actions">
                 <DockPanel x:Name="specialActionDockPanel">
                     <DockPanel x:Name="baseSpeActPanel" DockPanel.Dock="Top">
@@ -256,6 +258,7 @@
                                     IsEnabled="{Binding ItemSelected}" Margin="5,0,0,0" Click="RemoveActionBtn_Click" />
                         </UniformGrid>
 
+                        <!-- Actions list -->
                         <ListView x:Name="specialActionsLV" ItemsSource="{Binding ActionCol}"
                                   SelectedIndex="{Binding SpecialActionIndex}"
                                   SelectedItem="{Binding CurrentSpecialActionItem,Mode=OneWayToSource}"
@@ -273,8 +276,12 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
+
+                                    <!-- Source Trigger -->
                                     <GridViewColumn Header="{lex:Loc Trigger}"
                                                     DisplayMemberBinding="{Binding Controls}" Width="100" />
+                                    
+                                    <!-- Action -->
                                     <GridViewColumn Header="{lex:Loc Action}" DisplayMemberBinding="{Binding TypeName}"
                                                     Width="200" />
                                 </GridView>
