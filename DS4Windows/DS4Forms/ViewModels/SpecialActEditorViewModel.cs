@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
+using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public class SpecialActEditorViewModel : NotifyDataErrorBase
+    public class SpecialActEditorViewModel : NotifyDataErrorBase, INotifyPropertyChanged
     {
         public SpecialActEditorViewModel(int deviceNum, SpecialAction action)
         {
@@ -141,6 +144,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 RaiseErrorsChanged("TriggerError");
                 RaiseErrorsChanged("ActionTypeIndex");
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [UsedImplicitly]
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
