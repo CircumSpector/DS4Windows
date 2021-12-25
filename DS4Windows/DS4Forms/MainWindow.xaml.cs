@@ -59,7 +59,7 @@ namespace DS4WinWPF.DS4Forms
         private NonFormTimer autoProfilesTimer;
         private readonly ControllerListViewModel conLvViewModel;
         private bool contextclose;
-        private ProfileEditor editor;
+        private readonly ProfileEditor editor;
         private NonFormTimer hotkeysTimer;
         private int hotplugCounter;
         private readonly object hotplugCounterLock = new();
