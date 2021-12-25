@@ -39,8 +39,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var item = new SpecialActionItem(action, displayName, idx);
 
                 if (pactions.Contains(action.Name))
-                    item.Active = true;
-                else if (newProfile && action.TypeId == SpecialAction.ActionTypeId.DisconnectBT) item.Active = true;
+                    item.IsActive = true;
+                else if (newProfile && action.TypeId == SpecialAction.ActionTypeId.DisconnectBT) item.IsActive = true;
 
                 ActionCol.Add(item);
                 idx++;
@@ -99,7 +99,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             var pactions = new List<string>();
             foreach (var item in ActionCol)
-                if (item.Active)
+                if (item.IsActive)
                     pactions.Add(item.ActionName);
 
             Global.Instance.Config.ProfileActions[DeviceNum] = pactions;
@@ -151,7 +151,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// <summary>
         ///     Flag to determine if a Special Action is enabled in a specific Profile
         /// </summary>
-        public bool Active { get; set; }
+        public bool IsActive { get; set; }
 
         /// <summary>
         ///     Display string with the trigger controls that launch a Special Action

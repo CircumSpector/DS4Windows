@@ -1280,7 +1280,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 var action = Global.Instance.Config.GetAction(actionName);
                 var newitem = specialActionsVM.CreateActionItem(action);
-                newitem.Active = true;
+                newitem.IsActive = true;
                 var lastIdx = specialActionsVM.ActionCol.Count;
                 newitem.Index = lastIdx;
                 specialActionsVM.ActionCol.Add(newitem);
@@ -1315,7 +1315,7 @@ namespace DS4WinWPF.DS4Forms
                 {
                     var action = Global.Instance.Config.GetAction(actionName);
                     var newitem = specialActionsVM.CreateActionItem(action);
-                    newitem.Active = item.Active;
+                    newitem.IsActive = item.IsActive;
                     newitem.Index = currentIndex;
                     specialActionsVM.ActionCol.RemoveAt(currentIndex);
                     specialActionsVM.ActionCol.Insert(currentIndex, newitem);
