@@ -854,32 +854,38 @@ namespace DS4WinWPF.DS4Forms
             Global.Instance.Config.CacheProfileCustomsFlags(settingsViewModel.Device);
         }
 
+        /// <summary>
+        ///     Updates the highlights on the controls buttons on mouse-over.
+        /// </summary>
         private void InputControlHighlight(Button control)
         {
+            //
+            // Replace brush of button image
+            //
             if (hoverImages.TryGetValue(control, out var hoverBrush))
                 picBoxHover.Source = hoverBrush.ImageSource;
-            //picBoxHover.Width = tempBrush.ImageSource.Width * .8;
-            //picBoxHover.Height = tempBrush.ImageSource.Height * .8;
-            //control.Background = tempBrush;
-            //control.Background = new SolidColorBrush(Colors.Green);
-            //control.Width = tempBrush.ImageSource.Width;
-            //control.Height = tempBrush.ImageSource.Height;
 
-            if (hoverLocations.TryGetValue(control, out var tempInfo))
+            //
+            // Place hover box over control
+            //
+            if (hoverLocations.TryGetValue(control, out var position))
             {
-                Canvas.SetLeft(picBoxHover, tempInfo.Coordinates.X);
-                Canvas.SetTop(picBoxHover, tempInfo.Coordinates.Y);
-                picBoxHover.Width = tempInfo.Dimensions.Width;
-                picBoxHover.Height = tempInfo.Dimensions.Height;
+                Canvas.SetLeft(picBoxHover, position.Coordinates.X);
+                Canvas.SetTop(picBoxHover, position.Coordinates.Y);
+                picBoxHover.Width = position.Dimensions.Width;
+                picBoxHover.Height = position.Dimensions.Height;
                 picBoxHover.Stretch = Stretch.Fill;
                 picBoxHover.Visibility = Visibility.Visible;
             }
 
-            if (hoverIndexes.TryGetValue(control, out var tempIndex))
+            //
+            // Change highlighted control in list box
+            //
+            if (hoverIndexes.TryGetValue(control, out var controlIndex))
             {
-                mappingListVm.SelectedIndex = tempIndex;
+                mappingListVm.SelectedIndex = controlIndex;
                 mappingListBox.ScrollIntoView(mappingListBox.SelectedItem);
-                var mapped = mappingListVm.Mappings[tempIndex];
+                var mapped = mappingListVm.Mappings[controlIndex];
                 UpdateHighlightLabel(mapped);
             }
         }
@@ -904,8 +910,6 @@ namespace DS4WinWPF.DS4Forms
 
         private void ContBtn_MouseLeave(object sender, MouseEventArgs e)
         {
-            //Button control = sender as Button;
-            //control.Background = new SolidColorBrush(Colors.Transparent);
             Canvas.SetLeft(picBoxHover, 0);
             Canvas.SetTop(picBoxHover, 0);
             picBoxHover.Visibility = Visibility.Hidden;
