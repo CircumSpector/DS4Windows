@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -13,40 +12,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class SpecialActionsListViewModel : INotifyPropertyChanged
     {
-        private int specialActionIndex = -1;
-
         public SpecialActionsListViewModel(int deviceNum)
         {
             DeviceNum = deviceNum;
-
-            SpecialActionIndexChanged += SpecialActionsListViewModel_SpecialActionIndexChanged;
         }
 
         public ObservableCollection<SpecialActionItem> ActionCol { get; } = new();
 
         public int DeviceNum { get; }
 
-        public int SpecialActionIndex
-        {
-            get => specialActionIndex;
-            set
-            {
-                if (specialActionIndex == value) return;
-                specialActionIndex = value;
-                SpecialActionIndexChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public int SpecialActionIndex { get; set; } = -1;
 
         public SpecialActionItem CurrentSpecialActionItem { get; set; }
 
-        public bool ItemSelected => specialActionIndex >= 0;
-        public event EventHandler SpecialActionIndexChanged;
-        public event EventHandler ItemSelectedChanged;
-
-        private void SpecialActionsListViewModel_SpecialActionIndexChanged(object sender, EventArgs e)
-        {
-            ItemSelectedChanged?.Invoke(this, EventArgs.Empty);
-        }
+        public bool ItemSelected => SpecialActionIndex >= 0;
 
         public void LoadActions(bool newProfile = false)
         {
@@ -130,13 +109,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public void RemoveAction(SpecialActionItem item)
         {
             Global.Instance.Config.RemoveAction(item.SpecialAction.Name);
-            ActionCol.RemoveAt(specialActionIndex);
+            ActionCol.RemoveAt(SpecialActionIndex);
             Global.Instance.Config.ProfileActions[DeviceNum].Remove(item.SpecialAction.Name);
             Global.Instance.Config.CacheExtraProfileInfo(DeviceNum);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [UsedImplicitly]
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -146,8 +126,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
     public class SpecialActionItem : INotifyPropertyChanged
     {
-        private bool active;
-
         public SpecialActionItem(SpecialAction specialAction, string displayName,
             int index)
         {
@@ -173,16 +151,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// <summary>
         ///     Flag to determine if a Special Action is enabled in a specific Profile
         /// </summary>
-        public bool Active
-        {
-            get => active;
-            set
-            {
-                if (active == value) return;
-                active = value;
-                ActiveChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public bool Active { get; set; }
 
         /// <summary>
         ///     Display string with the trigger controls that launch a Special Action
@@ -199,19 +168,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// </summary>
         public SpecialAction SpecialAction { get; }
 
-        public event EventHandler ActionNameChanged;
-        public event EventHandler ActiveChanged;
-
-        public event EventHandler ControlsChanged;
-
-        public void Refresh()
-        {
-            ActionNameChanged?.Invoke(this, EventArgs.Empty);
-            ControlsChanged?.Invoke(this, EventArgs.Empty);
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [UsedImplicitly]
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
