@@ -6,77 +6,55 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class SpecialActEditorViewModel : NotifyDataErrorBase
     {
-        private int deviceNum;
-        private int actionTypeIndex = 0;
-        private string actionName;
-        private SpecialAction savedaction;
-        private SpecialAction.ActionTypeId[] typeAssoc = new SpecialAction.ActionTypeId[]
+        public SpecialActEditorViewModel(int deviceNum, SpecialAction action)
+        {
+            DeviceNum = deviceNum;
+            SavedAction = action;
+            EditMode = SavedAction != null;
+        }
+
+        public int DeviceNum { get; }
+
+        public int ActionTypeIndex { get; set; }
+        public string ActionName { get; set; }
+
+        public SpecialAction.ActionTypeId[] TypeAssoc { get; } =
         {
             SpecialAction.ActionTypeId.None, SpecialAction.ActionTypeId.Macro,
             SpecialAction.ActionTypeId.Program, SpecialAction.ActionTypeId.Profile,
             SpecialAction.ActionTypeId.Key, SpecialAction.ActionTypeId.DisconnectBT,
             SpecialAction.ActionTypeId.BatteryCheck, SpecialAction.ActionTypeId.MultiAction,
-            SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate,
+            SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate
         };
 
-        private List<string> controlTriggerList = new List<string>();
-        private List<string> controlUnloadTriggerList = new List<string>();
-        private bool editMode;
+        public SpecialAction SavedAction { get; }
 
-        public int DeviceNum { get => deviceNum; }
-        public int ActionTypeIndex { get => actionTypeIndex; set => actionTypeIndex = value; }
-        public string ActionName { get => actionName; set => actionName = value; }
-        public SpecialAction.ActionTypeId[] TypeAssoc { get => typeAssoc; }
-        public SpecialAction SavedAction { get => savedaction; }
-        public List<string> ControlTriggerList { get => controlTriggerList; }
-        public List<string> ControlUnloadTriggerList { get => controlUnloadTriggerList; }
-        public bool EditMode { get => editMode; }
+        public List<string> ControlTriggerList { get; } = new();
 
-        public bool TriggerError
-        {
-            get
-            {
-                return errors.TryGetValue("TriggerError", out List<string> _);
-            }
-        }
+        public List<string> ControlUnloadTriggerList { get; } = new();
 
-        public bool ExistingName { get => existingName; }
+        public bool EditMode { get; }
 
-        private bool existingName;
+        public bool TriggerError => errors.TryGetValue("TriggerError", out var _);
 
-
-        public SpecialActEditorViewModel(int deviceNum, SpecialAction action)
-        {
-            this.deviceNum = deviceNum;
-            savedaction = action;
-            editMode = savedaction != null;
-        }
+        public bool ExistingName { get; private set; }
 
         public void LoadAction(SpecialAction action)
         {
-            foreach (string s in action.Controls.Split('/'))
-            {
-                controlTriggerList.Add(s);
-            }
+            foreach (var s in action.Controls.Split('/')) ControlTriggerList.Add(s);
 
             if (action.UControls != null)
-            {
-                foreach (string s in action.UControls.Split('/'))
-                {
+                foreach (var s in action.UControls.Split('/'))
                     if (s != "AutomaticUntrigger")
-                    {
-                        controlUnloadTriggerList.Add(s);
-                    }
-                }
-            }
+                        ControlUnloadTriggerList.Add(s);
 
-            actionName = action.Name;
-            for(int i = 0; i < typeAssoc.Length; i++)
+            ActionName = action.Name;
+            for (var i = 0; i < TypeAssoc.Length; i++)
             {
-                SpecialAction.ActionTypeId type = typeAssoc[i];
+                var type = TypeAssoc[i];
                 if (type == action.TypeId)
                 {
-                    actionTypeIndex = i;
+                    ActionTypeIndex = i;
                     break;
                 }
             }
@@ -84,46 +62,42 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void SetAction(SpecialAction action)
         {
-            action.Name = actionName;
-            action.Controls = string.Join("/", controlTriggerList.ToArray());
-            if (controlUnloadTriggerList.Count > 0)
-            {
-                action.UControls = string.Join("/", controlUnloadTriggerList.ToArray());
-            }
-            action.TypeId = typeAssoc[actionTypeIndex];
+            action.Name = ActionName;
+            action.Controls = string.Join("/", ControlTriggerList.ToArray());
+            if (ControlUnloadTriggerList.Count > 0)
+                action.UControls = string.Join("/", ControlUnloadTriggerList.ToArray());
+            action.TypeId = TypeAssoc[ActionTypeIndex];
         }
 
         public override bool IsValid(SpecialAction action)
         {
             ClearOldErrors();
 
-            bool valid = true;
-            List<string> actionNameErrors = new List<string>();
-            List<string> triggerErrors = new List<string>();
-            List<string> typeErrors = new List<string>();
+            var valid = true;
+            var actionNameErrors = new List<string>();
+            var triggerErrors = new List<string>();
+            var typeErrors = new List<string>();
 
-            if (string.IsNullOrWhiteSpace(actionName))
+            if (string.IsNullOrWhiteSpace(ActionName))
             {
                 valid = false;
                 actionNameErrors.Add("No name provided");
             }
-            else if (!editMode || savedaction.Name != actionName)
+            else if (!EditMode || SavedAction.Name != ActionName)
             {
                 // Perform existing name check when creating a new action
                 // or if the action name has changed
-                foreach (SpecialAction sA in Global.Instance.Config.Actions)
-                {
-                    if (sA.Name == actionName)
+                foreach (var sA in Global.Instance.Config.Actions)
+                    if (sA.Name == ActionName)
                     {
                         valid = false;
                         actionNameErrors.Add("Existing action with name already exists");
-                        existingName = true;
+                        ExistingName = true;
                         break;
                     }
-                }
             }
 
-            if (controlTriggerList.Count == 0)
+            if (ControlTriggerList.Count == 0)
             {
                 valid = false;
                 triggerErrors.Add("No triggers provided");
@@ -140,11 +114,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 errors["ActionName"] = actionNameErrors;
                 RaiseErrorsChanged("ActionName");
             }
+
             if (triggerErrors.Count > 0)
             {
                 errors["TriggerError"] = triggerErrors;
                 RaiseErrorsChanged("TriggerError");
             }
+
             if (typeErrors.Count > 0)
             {
                 errors["ActionTypeIndex"] = typeErrors;
@@ -156,7 +132,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public override void ClearOldErrors()
         {
-            existingName = false;
+            ExistingName = false;
 
             if (errors.Count > 0)
             {
