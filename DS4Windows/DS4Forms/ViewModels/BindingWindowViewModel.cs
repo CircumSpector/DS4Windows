@@ -2,163 +2,141 @@
 using System.Windows;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.Properties;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class BindingWindowViewModel
     {
-        private int deviceNum;
-        private bool use360Mode;
-        private DS4ControlSettings settings;
-        private OutBinding currentOutBind;
-        private OutBinding shiftOutBind;
-        private OutBinding actionBinding;
-        private bool showShift;
-        private bool rumbleActive;
-
-        public bool Using360Mode
-        {
-            get => use360Mode;
-        }
-        public int DeviceNum { get => deviceNum; }
-        public OutBinding CurrentOutBind { get => currentOutBind; }
-        public OutBinding ShiftOutBind { get => shiftOutBind; }
-        public OutBinding ActionBinding
-        {
-            get => actionBinding;
-            set
-            {
-                actionBinding = value;
-            }
-        }
-
-        public bool ShowShift { get => showShift; set => showShift = value; }
-        public bool RumbleActive { get => rumbleActive; set => rumbleActive = value; }
-        public DS4ControlSettings Settings { get => settings; }
-
         public BindingWindowViewModel(int deviceNum, DS4ControlSettings settings)
         {
-            this.deviceNum = deviceNum;
-            use360Mode = Global.OutDevTypeTemp[deviceNum] == OutContType.X360;
-            this.settings = settings;
-            currentOutBind = new OutBinding();
-            shiftOutBind = new OutBinding();
-            shiftOutBind.shiftBind = true;
+            DeviceNum = deviceNum;
+            Using360Mode = Global.OutDevTypeTemp[deviceNum] == OutContType.X360;
+            Settings = settings;
+            CurrentOutBind = new OutBinding();
+            ShiftOutBind = new OutBinding();
+            ShiftOutBind.shiftBind = true;
             PopulateCurrentBinds();
         }
 
+        public bool Using360Mode { get; }
+
+        public int DeviceNum { get; }
+
+        public OutBinding CurrentOutBind { get; }
+
+        public OutBinding ShiftOutBind { get; }
+
+        public OutBinding ActionBinding { get; set; }
+
+        public bool ShowShift { get; set; }
+
+        public bool RumbleActive { get; set; }
+
+        public DS4ControlSettings Settings { get; }
+
         public void PopulateCurrentBinds()
         {
-            DS4ControlSettings setting = settings;
-            bool sc = setting.KeyType.HasFlag(DS4KeyType.ScanCode);
-            bool toggle = setting.KeyType.HasFlag(DS4KeyType.Toggle);
-            currentOutBind.input = setting.Control;
-            shiftOutBind.input = setting.Control;
+            var setting = Settings;
+            var sc = setting.KeyType.HasFlag(DS4KeyType.ScanCode);
+            var toggle = setting.KeyType.HasFlag(DS4KeyType.Toggle);
+            CurrentOutBind.input = setting.Control;
+            ShiftOutBind.input = setting.Control;
             if (setting.ControlActionType != DS4ControlSettings.ActionType.Default)
-            {
-                switch(setting.ControlActionType)
+                switch (setting.ControlActionType)
                 {
                     case DS4ControlSettings.ActionType.Button:
-                        currentOutBind.outputType = OutBinding.OutType.Button;
-                        currentOutBind.control = (X360Controls)setting.ActionData.ActionButton;
+                        CurrentOutBind.outputType = OutBinding.OutType.Button;
+                        CurrentOutBind.control = setting.ActionData.ActionButton;
                         break;
                     case DS4ControlSettings.ActionType.Default:
-                        currentOutBind.outputType = OutBinding.OutType.Default;
+                        CurrentOutBind.outputType = OutBinding.OutType.Default;
                         break;
                     case DS4ControlSettings.ActionType.Key:
-                        currentOutBind.outputType = OutBinding.OutType.Key;
-                        currentOutBind.outkey = setting.ActionData.ActionKey;
-                        currentOutBind.hasScanCode = sc;
-                        currentOutBind.toggle = toggle;
+                        CurrentOutBind.outputType = OutBinding.OutType.Key;
+                        CurrentOutBind.outkey = setting.ActionData.ActionKey;
+                        CurrentOutBind.HasScanCode = sc;
+                        CurrentOutBind.Toggle = toggle;
                         break;
                     case DS4ControlSettings.ActionType.Macro:
-                        currentOutBind.outputType = OutBinding.OutType.Macro;
-                        currentOutBind.macro = (int[])setting.ActionData.ActionMacro;
-                        currentOutBind.macroType = settings.KeyType;
-                        currentOutBind.hasScanCode = sc;
+                        CurrentOutBind.outputType = OutBinding.OutType.Macro;
+                        CurrentOutBind.macro = setting.ActionData.ActionMacro;
+                        CurrentOutBind.macroType = Settings.KeyType;
+                        CurrentOutBind.HasScanCode = sc;
                         break;
                 }
-            }
             else
-            {
-                currentOutBind.outputType = OutBinding.OutType.Default;
-            }
+                CurrentOutBind.outputType = OutBinding.OutType.Default;
 
-            if (!string.IsNullOrEmpty(setting.Extras))
-            {
-                currentOutBind.ParseExtras(setting.Extras);
-            }
+            if (!string.IsNullOrEmpty(setting.Extras)) CurrentOutBind.ParseExtras(setting.Extras);
 
             if (setting.ShiftActionType != DS4ControlSettings.ActionType.Default)
             {
                 sc = setting.ShiftKeyType.HasFlag(DS4KeyType.ScanCode);
                 toggle = setting.ShiftKeyType.HasFlag(DS4KeyType.Toggle);
-                shiftOutBind.shiftTrigger = setting.ShiftTrigger;
+                ShiftOutBind.ShiftTrigger = setting.ShiftTrigger;
                 switch (setting.ShiftActionType)
                 {
                     case DS4ControlSettings.ActionType.Button:
-                        shiftOutBind.outputType = OutBinding.OutType.Button;
-                        shiftOutBind.control = (X360Controls)setting.ShiftAction.ActionButton;
+                        ShiftOutBind.outputType = OutBinding.OutType.Button;
+                        ShiftOutBind.control = setting.ShiftAction.ActionButton;
                         break;
                     case DS4ControlSettings.ActionType.Default:
-                        shiftOutBind.outputType = OutBinding.OutType.Default;
+                        ShiftOutBind.outputType = OutBinding.OutType.Default;
                         break;
                     case DS4ControlSettings.ActionType.Key:
-                        shiftOutBind.outputType = OutBinding.OutType.Key;
-                        shiftOutBind.outkey = setting.ShiftAction.ActionKey;
-                        shiftOutBind.hasScanCode = sc;
-                        shiftOutBind.toggle = toggle;
+                        ShiftOutBind.outputType = OutBinding.OutType.Key;
+                        ShiftOutBind.outkey = setting.ShiftAction.ActionKey;
+                        ShiftOutBind.HasScanCode = sc;
+                        ShiftOutBind.Toggle = toggle;
                         break;
                     case DS4ControlSettings.ActionType.Macro:
-                        shiftOutBind.outputType = OutBinding.OutType.Macro;
-                        shiftOutBind.macro = (int[])setting.ShiftAction.ActionMacro;
-                        shiftOutBind.macroType = setting.ShiftKeyType;
-                        shiftOutBind.hasScanCode = sc;
+                        ShiftOutBind.outputType = OutBinding.OutType.Macro;
+                        ShiftOutBind.macro = setting.ShiftAction.ActionMacro;
+                        ShiftOutBind.macroType = setting.ShiftKeyType;
+                        ShiftOutBind.HasScanCode = sc;
                         break;
                 }
             }
 
-            if (!string.IsNullOrEmpty(setting.ShiftExtras))
-            {
-                shiftOutBind.ParseExtras(setting.ShiftExtras);
-            }
+            if (!string.IsNullOrEmpty(setting.ShiftExtras)) ShiftOutBind.ParseExtras(setting.ShiftExtras);
         }
 
         public void WriteBinds()
         {
-            currentOutBind.WriteBind(settings);
-            shiftOutBind.WriteBind(settings);
+            CurrentOutBind.WriteBind(Settings);
+            ShiftOutBind.WriteBind(Settings);
         }
 
         public void StartForcedColor(Color color)
         {
-            if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
+            if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color(color);
-                DS4LightBar.forcedColor[deviceNum] = dcolor;
-                DS4LightBar.forcedFlash[deviceNum] = 0;
-                DS4LightBar.forcelight[deviceNum] = true;
+                var dcolor = new DS4Color(color);
+                DS4LightBar.forcedColor[DeviceNum] = dcolor;
+                DS4LightBar.forcedFlash[DeviceNum] = 0;
+                DS4LightBar.forcelight[DeviceNum] = true;
             }
         }
 
         public void EndForcedColor()
         {
-            if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
+            if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4LightBar.forcedColor[deviceNum] = new DS4Color(0, 0, 0);
-                DS4LightBar.forcedFlash[deviceNum] = 0;
-                DS4LightBar.forcelight[deviceNum] = false;
+                DS4LightBar.forcedColor[DeviceNum] = new DS4Color(0, 0, 0);
+                DS4LightBar.forcedFlash[DeviceNum] = 0;
+                DS4LightBar.forcelight[DeviceNum] = false;
             }
         }
 
         public void UpdateForcedColor(Color color)
         {
-            if (deviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
+            if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4Color dcolor = new DS4Color(color);
-                DS4LightBar.forcedColor[deviceNum] = dcolor;
-                DS4LightBar.forcedFlash[deviceNum] = 0;
-                DS4LightBar.forcelight[deviceNum] = true;
+                var dcolor = new DS4Color(color);
+                DS4LightBar.forcedColor[DeviceNum] = dcolor;
+                DS4LightBar.forcedFlash[DeviceNum] = 0;
+                DS4LightBar.forcelight[DeviceNum] = true;
             }
         }
     }
@@ -173,13 +151,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Macro
         }
 
-        public OutType outputType;
         public X360Controls control;
         public int outkey;
 
+        public OutType outputType;
+
         public bool IsMouse()
         {
-            return outputType == OutType.Button && (control >= X360Controls.LeftMouse && control < X360Controls.Unbound);
+            return outputType == OutType.Button && control >= X360Controls.LeftMouse && control < X360Controls.Unbound;
         }
 
         public static bool IsMouseRange(X360Controls control)
@@ -198,27 +177,50 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Macro
         }
 
+        public X360Controls control;
+        private DS4Color extrasColor = new(255, 255, 255);
+        private int flashRate;
+        private int heavyRumble;
+
         public DS4Controls input;
-        public bool toggle;
-        public bool hasScanCode;
-        public OutType outputType;
-        public int outkey;
+        private int lightRumble;
         public int[] macro;
         public DS4KeyType macroType;
-        public X360Controls control;
-        public bool shiftBind;
-        public int shiftTrigger;
-        private int heavyRumble = 0;
-        private int lightRumble = 0;
-        private int flashRate;
         private int mouseSens = 25;
-        private DS4Color extrasColor = new DS4Color(255,255,255);
+        public int outkey;
+        public OutType outputType;
+        public bool shiftBind;
 
-        public bool HasScanCode { get => hasScanCode; set => hasScanCode = value; }
-        public bool Toggle { get => toggle; set => toggle = value; }
-        public int ShiftTrigger { get => shiftTrigger; set => shiftTrigger = value; }
-        public int HeavyRumble { get => heavyRumble; set => heavyRumble = value; }
-        public int LightRumble { get => lightRumble; set => lightRumble = value; }
+        private bool useExtrasColor;
+
+        private bool useMouseSens;
+
+        public OutBinding()
+        {
+            ExtrasColorRChanged += OutBinding_ExtrasColorRChanged;
+            ExtrasColorGChanged += OutBinding_ExtrasColorGChanged;
+            ExtrasColorBChanged += OutBinding_ExtrasColorBChanged;
+            UseExtrasColorChanged += OutBinding_UseExtrasColorChanged;
+        }
+
+        public bool HasScanCode { get; set; }
+
+        public bool Toggle { get; set; }
+
+        public int ShiftTrigger { get; set; }
+
+        public int HeavyRumble
+        {
+            get => heavyRumble;
+            set => heavyRumble = value;
+        }
+
+        public int LightRumble
+        {
+            get => lightRumble;
+            set => lightRumble = value;
+        }
+
         public int FlashRate
         {
             get => flashRate;
@@ -228,7 +230,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 FlashRateChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler FlashRateChanged;
 
         public int MouseSens
         {
@@ -239,189 +240,108 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 MouseSensChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler MouseSensChanged;
 
-        private bool useMouseSens;
         public bool UseMouseSens
         {
-            get
-            {
-                return useMouseSens;
-            }
+            get => useMouseSens;
             set
             {
                 useMouseSens = value;
                 UseMouseSensChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler UseMouseSensChanged;
 
-        private bool useExtrasColor;
-        public bool UseExtrasColor {
-            get
-            {
-                return useExtrasColor;
-            }
+        public bool UseExtrasColor
+        {
+            get => useExtrasColor;
             set
             {
                 useExtrasColor = value;
                 UseExtrasColorChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler UseExtrasColorChanged;
 
         public int ExtrasColorR
         {
             get => extrasColor.Red;
             set
             {
-                extrasColor.Red = (byte)value;
+                extrasColor.Red = (byte) value;
                 ExtrasColorRChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ExtrasColorRChanged;
 
-        public string ExtrasColorRString
-        {
-            get
-            {
-                string temp = $"#{extrasColor.Red.ToString("X2")}FF0000";
-                return temp;
-            }
-        }
-        public event EventHandler ExtrasColorRStringChanged;
+        public string ExtrasColorRString => $"#{extrasColor.Red:X2}FF0000";
+
         public int ExtrasColorG
         {
             get => extrasColor.Green;
             set
             {
-                extrasColor.Green = (byte)value;
+                extrasColor.Green = (byte) value;
                 ExtrasColorGChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ExtrasColorGChanged;
 
-        public string ExtrasColorGString
-        {
-            get
-            {
-                string temp = $"#{ extrasColor.Green.ToString("X2")}00FF00";
-                return temp;
-            }
-        }
-        public event EventHandler ExtrasColorGStringChanged;
+        public string ExtrasColorGString => $"#{extrasColor.Green:X2}00FF00";
 
         public int ExtrasColorB
         {
             get => extrasColor.Blue;
             set
             {
-                extrasColor.Blue = (byte)value;
+                extrasColor.Blue = (byte) value;
                 ExtrasColorBChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ExtrasColorBChanged;
 
-        public string ExtrasColorBString
-        {
-            get
+        public string ExtrasColorBString => $"#{extrasColor.Blue:X2}0000FF";
+
+        public string ExtrasColorString =>
+            $"#FF{extrasColor.Red:X2}{extrasColor.Green:X2}{extrasColor.Blue:X2}";
+
+        public Color ExtrasColorMedia =>
+            new()
             {
-                string temp = $"#{extrasColor.Blue.ToString("X2")}0000FF";
-                return temp;
-            }
-        }
-        public event EventHandler ExtrasColorBStringChanged;
+                A = 255,
+                R = extrasColor.Red,
+                B = extrasColor.Blue,
+                G = extrasColor.Green
+            };
 
-        public string ExtrasColorString
-        {
-            get => $"#FF{extrasColor.Red.ToString("X2")}{extrasColor.Green.ToString("X2")}{extrasColor.Blue.ToString("X2")}";
-        }
-        public event EventHandler ExtrasColorStringChanged;
+        public int ShiftTriggerIndex { get; set; }
 
-        public Color ExtrasColorMedia
-        {
-            get
-            {
-                return new Color()
-                {
-                    A = 255,
-                    R = extrasColor.Red,
-                    B = extrasColor.Blue,
-                    G = extrasColor.Green
-                };
-            }
-        }
+        public string DefaultColor => outputType == OutType.Default ? Colors.LimeGreen.ToString() : Application.Current.FindResource("SecondaryColor").ToString();
 
-        private int shiftTriggerIndex;
-        public int ShiftTriggerIndex { get => shiftTriggerIndex; set => shiftTriggerIndex = value; }
-
-        public string DefaultColor
-        {
-            get
-            {
-                string color = string.Empty;
-                if (outputType == OutType.Default)
-                {
-                    color =  Colors.LimeGreen.ToString();
-                }
-                else
-                {
-                    color = Application.Current.FindResource("SecondaryColor").ToString();
-                    //color = SystemColors.ControlBrush.Color.ToString();
-                }
-
-                return color;
-            }
-        }
-
-        public string UnboundColor
-        {
-            get
-            {
-                string color = string.Empty;
-                if (outputType == OutType.Button && control == X360Controls.Unbound)
-                {
-                    color = Colors.LimeGreen.ToString();
-                }
-                else
-                {
-                    color = Application.Current.FindResource("SecondaryColor").ToString();
-                    //color = SystemColors.ControlBrush.Color.ToString();
-                }
-
-                return color;
-            }
-        }
+        public string UnboundColor =>
+            outputType == OutType.Button && control == X360Controls.Unbound
+                ? Colors.LimeGreen.ToString()
+                : Application.Current.FindResource("SecondaryColor").ToString();
 
         public string DefaultBtnString
         {
             get
             {
-                string result = "Default";
-                if (shiftBind)
-                {
-                    result = Properties.Resources.FallBack;
-                }
+                var result = "Default";
+                if (shiftBind) result = Resources.FallBack;
 
                 return result;
             }
         }
 
-        public Visibility MacroLbVisible
-        {
-            get
-            {
-                return outputType == OutType.Macro ? Visibility.Visible : Visibility.Hidden;
-            }
-        }
+        public Visibility MacroLbVisible => outputType == OutType.Macro ? Visibility.Visible : Visibility.Hidden;
 
-        public OutBinding()
-        {
-            ExtrasColorRChanged += OutBinding_ExtrasColorRChanged;
-            ExtrasColorGChanged += OutBinding_ExtrasColorGChanged;
-            ExtrasColorBChanged += OutBinding_ExtrasColorBChanged;
-            UseExtrasColorChanged += OutBinding_UseExtrasColorChanged;
-        }
+        public event EventHandler FlashRateChanged;
+        public event EventHandler MouseSensChanged;
+        public event EventHandler UseMouseSensChanged;
+        public event EventHandler UseExtrasColorChanged;
+        public event EventHandler ExtrasColorRChanged;
+        public event EventHandler ExtrasColorRStringChanged;
+        public event EventHandler ExtrasColorGChanged;
+        public event EventHandler ExtrasColorGStringChanged;
+        public event EventHandler ExtrasColorBChanged;
+        public event EventHandler ExtrasColorBStringChanged;
+        public event EventHandler ExtrasColorStringChanged;
 
         private void OutBinding_ExtrasColorBChanged(object sender, EventArgs e)
         {
@@ -458,7 +378,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool IsMouse()
         {
-            return outputType == OutType.Button && (control >= X360Controls.LeftMouse && control < X360Controls.Unbound);
+            return outputType == OutType.Button && control >= X360Controls.LeftMouse && control < X360Controls.Unbound;
         }
 
         public static bool IsMouseRange(X360Controls control)
@@ -468,12 +388,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ParseExtras(string extras)
         {
-            string[] temp = extras.Split(',');
+            var temp = extras.Split(',');
             if (temp.Length == 9)
             {
                 int.TryParse(temp[0], out heavyRumble);
                 int.TryParse(temp[1], out lightRumble);
-                int.TryParse(temp[2], out int useColor);
+                int.TryParse(temp[2], out var useColor);
                 if (useColor == 1)
                 {
                     useExtrasColor = true;
@@ -491,7 +411,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     flashRate = 0;
                 }
 
-                int.TryParse(temp[7], out int useM);
+                int.TryParse(temp[7], out var useM);
                 if (useM == 1)
                 {
                     useMouseSens = true;
@@ -507,41 +427,33 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string CompileExtras()
         {
-            string result = $"{heavyRumble},{lightRumble},";
+            var result = $"{heavyRumble},{lightRumble},";
             if (useExtrasColor)
-            {
                 result += $"1,{extrasColor.Red},{extrasColor.Green},{extrasColor.Blue},{flashRate},";
-            }
             else
-            {
                 result += "0,0,0,0,0,";
-            }
 
             if (useMouseSens)
-            {
                 result += $"1,{mouseSens}";
-            }
             else
-            {
                 result += "0,0";
-            }
 
             return result;
         }
 
         public bool IsUsingExtras()
         {
-            bool result = false;
-            result = result || (heavyRumble != 0);
-            result = result || (lightRumble != 0);
+            var result = false;
+            result = result || heavyRumble != 0;
+            result = result || lightRumble != 0;
             result = result || useExtrasColor;
             result = result ||
-                (extrasColor.Red != 255 && extrasColor.Green != 255 &&
-                extrasColor.Blue != 255);
+                     extrasColor.Red != 255 && extrasColor.Green != 255 &&
+                     extrasColor.Blue != 255;
 
-            result = result || (flashRate != 0);
+            result = result || flashRate != 0;
             result = result || useMouseSens;
-            result = result || (mouseSens != 25);
+            result = result || mouseSens != 25;
             return result;
         }
 
@@ -560,61 +472,41 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     settings.ActionData.ActionButton = control;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Button;
-                    if (control == X360Controls.Unbound)
-                    {
-                        settings.KeyType |= DS4KeyType.Unbound;
-                    }
+                    if (control == X360Controls.Unbound) settings.KeyType |= DS4KeyType.Unbound;
                 }
                 else if (outputType == OutType.Key)
                 {
                     settings.ActionData.ActionKey = outkey;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Key;
-                    if (hasScanCode)
-                    {
-                        settings.KeyType |= DS4KeyType.ScanCode;
-                    }
+                    if (HasScanCode) settings.KeyType |= DS4KeyType.ScanCode;
 
-                    if (toggle)
-                    {
-                        settings.KeyType |= DS4KeyType.Toggle;
-                    }
+                    if (Toggle) settings.KeyType |= DS4KeyType.Toggle;
                 }
                 else if (outputType == OutType.Macro)
                 {
                     settings.ActionData.ActionMacro = macro;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
                     if (macroType.HasFlag(DS4KeyType.HoldMacro))
-                    {
                         settings.KeyType |= DS4KeyType.HoldMacro;
-                    }
                     else
-                    {
                         settings.KeyType |= DS4KeyType.Macro;
-                    }
 
-                    if (hasScanCode)
-                    {
-                        settings.KeyType |= DS4KeyType.ScanCode;
-                    }
+                    if (HasScanCode) settings.KeyType |= DS4KeyType.ScanCode;
                 }
 
                 if (IsUsingExtras())
-                {
                     settings.Extras = CompileExtras();
-                }
                 else
-                {
                     settings.Extras = string.Empty;
-                }
 
                 Global.RefreshActionAlias(settings, shiftBind);
             }
             else
             {
                 settings.ShiftKeyType = DS4KeyType.None;
-                settings.ShiftTrigger = shiftTrigger;
+                settings.ShiftTrigger = ShiftTrigger;
 
-                if (outputType == OutType.Default || shiftTrigger == 0)
+                if (outputType == OutType.Default || ShiftTrigger == 0)
                 {
                     settings.ShiftAction.ActionKey = 0;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Default;
@@ -623,24 +515,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     settings.ShiftAction.ActionButton = control;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Button;
-                    if (control == X360Controls.Unbound)
-                    {
-                        settings.ShiftKeyType |= DS4KeyType.Unbound;
-                    }
+                    if (control == X360Controls.Unbound) settings.ShiftKeyType |= DS4KeyType.Unbound;
                 }
                 else if (outputType == OutType.Key)
                 {
                     settings.ShiftAction.ActionKey = outkey;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Key;
-                    if (hasScanCode)
-                    {
-                        settings.ShiftKeyType |= DS4KeyType.ScanCode;
-                    }
+                    if (HasScanCode) settings.ShiftKeyType |= DS4KeyType.ScanCode;
 
-                    if (toggle)
-                    {
-                        settings.ShiftKeyType |= DS4KeyType.Toggle;
-                    }
+                    if (Toggle) settings.ShiftKeyType |= DS4KeyType.Toggle;
                 }
                 else if (outputType == OutType.Macro)
                 {
@@ -648,28 +531,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Macro;
 
                     if (macroType.HasFlag(DS4KeyType.HoldMacro))
-                    {
                         settings.ShiftKeyType |= DS4KeyType.HoldMacro;
-                    }
                     else
-                    {
                         settings.ShiftKeyType |= DS4KeyType.Macro;
-                    }
 
-                    if (hasScanCode)
-                    {
-                        settings.ShiftKeyType |= DS4KeyType.ScanCode;
-                    }
+                    if (HasScanCode) settings.ShiftKeyType |= DS4KeyType.ScanCode;
                 }
 
                 if (IsUsingExtras())
-                {
                     settings.ShiftExtras = CompileExtras();
-                }
                 else
-                {
                     settings.ShiftExtras = string.Empty;
-                }
 
                 Global.RefreshActionAlias(settings, shiftBind);
             }
