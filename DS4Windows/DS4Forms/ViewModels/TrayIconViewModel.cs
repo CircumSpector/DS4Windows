@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -12,78 +13,50 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class TrayIconViewModel
     {
-        private string tooltipText = "DS4Windows";
-        private string iconSource;
-        public const string ballonTitle = "DS4Windows";
-        public static string trayTitle = $"DS4Windows v{Global.ExecutableProductVersion}";
-        private ContextMenu contextMenu;
-        private MenuItem changeServiceItem;
-        private MenuItem openItem;
-        private MenuItem minimizeItem;
-        private MenuItem openProgramItem;
-        private MenuItem closeItem;
-
-
-        public string TooltipText { get => tooltipText;
-            set
-            {
-                string temp = value;
-                if (value.Length > 63) temp = value.Substring(0, 63);
-                if (tooltipText == temp) return;
-                tooltipText = temp;
-                TooltipTextChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler TooltipTextChanged;
-
-        public string IconSource { get => iconSource;
-            set
-            {
-                if (iconSource == value) return;
-                iconSource = value;
-                IconSourceChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public ContextMenu ContextMenu { get => contextMenu; }
-
-        public event EventHandler IconSourceChanged;
-        public event EventHandler RequestShutdown;
-        public event EventHandler RequestOpen;
-        public event EventHandler RequestMinimize;
-        public event EventHandler RequestServiceChange;
-
-        private ReaderWriterLockSlim _colLocker = new ReaderWriterLockSlim();
-        private List<ControllerHolder> controllerList = new List<ControllerHolder>();
-        private ProfileList profileListHolder;
-        private ControlService controlService;
-
         public delegate void ProfileSelectedHandler(TrayIconViewModel sender,
             ControllerHolder item, string profile);
-        public event ProfileSelectedHandler ProfileSelected;
+
+        public const string ballonTitle = "DS4Windows";
+        public static string trayTitle = $"DS4Windows v{Global.ExecutableProductVersion}";
 
         private readonly IAppSettingsService appSettings;
+
+        private readonly ReaderWriterLockSlim _colLocker = new();
+        private readonly MenuItem changeServiceItem;
+        private readonly MenuItem closeItem;
+        private readonly List<ControllerHolder> controllerList = new();
+        private readonly ControlService controlService;
+        private string iconSource;
+        private readonly MenuItem minimizeItem;
+        private readonly MenuItem openItem;
+        private readonly MenuItem openProgramItem;
+        private readonly ProfileList profileListHolder;
+        private string tooltipText = "DS4Windows";
 
         //public TrayIconViewModel(Tester tester)
         public TrayIconViewModel(IAppSettingsService appSettings, ControlService service, ProfileList profileListHolder)
         {
             this.appSettings = appSettings;
             this.profileListHolder = profileListHolder;
-            this.controlService = service;
-            contextMenu = new ContextMenu();
+            controlService = service;
+            ContextMenu = new ContextMenu();
             iconSource = Global.IconChoiceResources[appSettings.Settings.AppIcon];
-            changeServiceItem = new MenuItem() { Header = "Start" };
+            changeServiceItem = new MenuItem {Header = "Start"};
             changeServiceItem.Click += ChangeControlServiceItem_Click;
             changeServiceItem.IsEnabled = false;
 
-            openItem = new MenuItem() { Header = "Open",
-                FontWeight = FontWeights.Bold };
+            openItem = new MenuItem
+            {
+                Header = "Open",
+                FontWeight = FontWeights.Bold
+            };
             openItem.Click += OpenMenuItem_Click;
-            minimizeItem = new MenuItem() { Header = "Minimize" };
+            minimizeItem = new MenuItem {Header = "Minimize"};
             minimizeItem.Click += MinimizeMenuItem_Click;
-            openProgramItem = new MenuItem() { Header = "Open Program Folder" };
+            openProgramItem = new MenuItem {Header = "Open Program Folder"};
             openProgramItem.Click += OpenProgramFolderItem_Click;
-            closeItem = new MenuItem() { Header = "Exit (Middle Mouse)" }; ;
+            closeItem = new MenuItem {Header = "Exit (Middle Mouse)"};
+            ;
             closeItem.Click += ExitMenuItem_Click;
 
             PopulateControllerList();
@@ -108,10 +81,46 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             */
         }
 
+
+        public string TooltipText
+        {
+            get => tooltipText;
+            set
+            {
+                var temp = value;
+                if (value.Length > 63) temp = value.Substring(0, 63);
+                if (tooltipText == temp) return;
+                tooltipText = temp;
+                TooltipTextChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public string IconSource
+        {
+            get => iconSource;
+            set
+            {
+                if (iconSource == value) return;
+                iconSource = value;
+                IconSourceChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public ContextMenu ContextMenu { get; }
+
+        public event EventHandler TooltipTextChanged;
+
+        public event EventHandler IconSourceChanged;
+        public event EventHandler RequestShutdown;
+        public event EventHandler RequestOpen;
+        public event EventHandler RequestMinimize;
+        public event EventHandler RequestServiceChange;
+        public event ProfileSelectedHandler ProfileSelected;
+
         private void Service_RunningChanged(object sender, EventArgs e)
         {
-            string temp = controlService.IsRunning ? "Stop" : "Start";
-            App.Current.Dispatcher.BeginInvoke((Action)(() =>
+            var temp = controlService.IsRunning ? "Stop" : "Start";
+            Application.Current.Dispatcher.BeginInvoke((Action) (() =>
             {
                 changeServiceItem.Header = temp;
                 changeServiceItem.IsEnabled = true;
@@ -128,11 +137,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void UnhookEvents(object sender, EventArgs e)
         {
             _colLocker.EnterReadLock();
-            foreach (ControllerHolder holder in controllerList)
+            foreach (var holder in controllerList)
             {
-                DS4Device currentDev = holder.Device;
+                var currentDev = holder.Device;
                 RemoveDeviceEvents(currentDev);
             }
+
             _colLocker.ExitReadLock();
         }
 
@@ -145,7 +155,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
 
         private void ProfileListCol_CollectionChanged(object sender,
-            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            NotifyCollectionChangedEventArgs e)
         {
             PopulateContextMenu();
         }
@@ -157,33 +167,30 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void PopulateContextMenu()
         {
-            contextMenu.Items.Clear();
-            ItemCollection items = contextMenu.Items;
+            ContextMenu.Items.Clear();
+            var items = ContextMenu.Items;
             MenuItem item;
-            int idx = 0;
+            var idx = 0;
 
-            using (ReadLocker locker = new ReadLocker(_colLocker))
+            using (var locker = new ReadLocker(_colLocker))
             {
-                foreach (ControllerHolder holder in controllerList)
+                foreach (var holder in controllerList)
                 {
-                    DS4Device currentDev = holder.Device;
-                    item = new MenuItem() { Header = $"Controller {idx + 1}" };
+                    var currentDev = holder.Device;
+                    item = new MenuItem {Header = $"Controller {idx + 1}"};
                     item.Tag = idx;
                     //item.ContextMenu = new ContextMenu();
-                    ItemCollection subitems = item.Items;
-                    string currentProfile = Global.Instance.Config.ProfilePath[idx];
-                    foreach (ProfileEntity entry in profileListHolder.ProfileListCollection)
+                    var subitems = item.Items;
+                    var currentProfile = Global.Instance.Config.ProfilePath[idx];
+                    foreach (var entry in profileListHolder.ProfileListCollection)
                     {
                         // Need to escape profile name to disable Access Keys for control
-                        string name = entry.Name;
+                        var name = entry.Name;
                         name = Regex.Replace(name, "_{1}", "__");
-                        MenuItem temp = new MenuItem() { Header = name };
+                        var temp = new MenuItem {Header = name};
                         temp.Tag = idx;
                         temp.Click += ProfileItem_Click;
-                        if (entry.Name == currentProfile)
-                        {
-                            temp.IsChecked = true;
-                        }
+                        if (entry.Name == currentProfile) temp.IsChecked = true;
 
                         subitems.Add(temp);
                     }
@@ -192,14 +199,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     idx++;
                 }
 
-                item = new MenuItem() { Header = "Disconnect Menu" };
+                item = new MenuItem {Header = "Disconnect Menu"};
                 idx = 0;
-                foreach (ControllerHolder holder in controllerList)
+                foreach (var holder in controllerList)
                 {
-                    DS4Device tempDev = holder.Device;
+                    var tempDev = holder.Device;
                     if (tempDev.Synced && !tempDev.Charging)
                     {
-                        MenuItem subitem = new MenuItem() { Header = $"Disconnect Controller {idx + 1}" };
+                        var subitem = new MenuItem {Header = $"Disconnect Controller {idx + 1}"};
                         subitem.Click += DisconnectMenuItem_Click;
                         subitem.Tag = idx;
                         item.Items.Add(subitem);
@@ -208,10 +215,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     idx++;
                 }
 
-                if (idx == 0)
-                {
-                    item.IsEnabled = false;
-                }
+                if (idx == 0) item.IsEnabled = false;
             }
 
             items.Add(item);
@@ -219,60 +223,55 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             PopulateStaticItems();
         }
 
-        private void ChangeControlServiceItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ChangeControlServiceItem_Click(object sender, RoutedEventArgs e)
         {
             changeServiceItem.IsEnabled = false;
             RequestServiceChange?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OpenProgramFolderItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void OpenProgramFolderItem_Click(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo(Global.ExecutableDirectory);
+            var startInfo = new ProcessStartInfo(Global.ExecutableDirectory);
             startInfo.UseShellExecute = true;
-            using (Process temp = Process.Start(startInfo))
+            using (var temp = Process.Start(startInfo))
             {
             }
         }
 
-        private void OpenMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
             RequestOpen?.Invoke(this, EventArgs.Empty);
         }
 
-        private void MinimizeMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void MinimizeMenuItem_Click(object sender, RoutedEventArgs e)
         {
             RequestMinimize?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ProfileItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ProfileItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuItem item = sender as MenuItem;
-            int idx = Convert.ToInt32(item.Tag);
-            ControllerHolder holder = controllerList[idx];
+            var item = sender as MenuItem;
+            var idx = Convert.ToInt32(item.Tag);
+            var holder = controllerList[idx];
             // Un-escape underscores is MenuItem header. Header holds the profile name
-            string tempProfileName = Regex.Replace(item.Header.ToString(),
+            var tempProfileName = Regex.Replace(item.Header.ToString(),
                 "_{2}", "_");
             ProfileSelected?.Invoke(this, holder, tempProfileName);
         }
 
         private void DisconnectMenuItem_Click(object sender,
-            System.Windows.RoutedEventArgs e)
+            RoutedEventArgs e)
         {
-            MenuItem item = sender as MenuItem;
-            int idx = Convert.ToInt32(item.Tag);
-            ControllerHolder holder = controllerList[idx];
-            DS4Device tempDev = holder?.Device;
+            var item = sender as MenuItem;
+            var idx = Convert.ToInt32(item.Tag);
+            var holder = controllerList[idx];
+            var tempDev = holder?.Device;
             if (tempDev != null && tempDev.Synced && !tempDev.Charging)
             {
                 if (tempDev.ConnectionType == ConnectionType.BT)
-                {
                     //tempDev.StopUpdate();
                     tempDev.DisconnectBT();
-                }
-                else if (tempDev.ConnectionType == ConnectionType.SONYWA)
-                {
-                    tempDev.DisconnectDongle();
-                }
+                else if (tempDev.ConnectionType == ConnectionType.SONYWA) tempDev.DisconnectDongle();
             }
 
             //controllerList[idx] = null;
@@ -281,13 +280,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void PopulateControllerList()
         {
             //IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
-            int idx = 0;
+            var idx = 0;
             _colLocker.EnterWriteLock();
-            foreach (DS4Device currentDev in controlService.slotManager.ControllerColl)
+            foreach (var currentDev in controlService.slotManager.ControllerColl)
             {
                 controllerList.Add(new ControllerHolder(currentDev, idx));
                 idx++;
             }
+
             _colLocker.ExitWriteLock();
         }
 
@@ -299,18 +299,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void PopulateToolText()
         {
-            List<string> items = new List<string>();
+            var items = new List<string>();
             items.Add(trayTitle);
             //IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
-            int idx = 1;
+            var idx = 1;
             //foreach (DS4Device currentDev in devices)
             _colLocker.EnterReadLock();
-            foreach (ControllerHolder holder in controllerList)
+            foreach (var holder in controllerList)
             {
-                DS4Device currentDev = holder.Device;
-                items.Add($"{idx}: {currentDev.ConnectionType} {currentDev.Battery}%{(currentDev.Charging ? "+" : "")}");
+                var currentDev = holder.Device;
+                items.Add(
+                    $"{idx}: {currentDev.ConnectionType} {currentDev.Battery}%{(currentDev.Charging ? "+" : "")}");
                 idx++;
             }
+
             _colLocker.ExitReadLock();
 
             TooltipText = string.Join("\n", items);
@@ -321,11 +323,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             //IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
             //foreach (DS4Device currentDev in devices)
             _colLocker.EnterReadLock();
-            foreach (ControllerHolder holder in controllerList)
+            foreach (var holder in controllerList)
             {
-                DS4Device currentDev = holder.Device;
+                var currentDev = holder.Device;
                 SetupDeviceEvents(currentDev);
             }
+
             _colLocker.ExitReadLock();
         }
 
@@ -345,13 +348,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void CurrentDev_Removal(object sender, EventArgs e)
         {
-            DS4Device currentDev = sender as DS4Device;
+            var currentDev = sender as DS4Device;
             ControllerHolder item = null;
-            int idx = 0;
+            var idx = 0;
 
-            using (WriteLocker locker = new WriteLocker(_colLocker))
+            using (var locker = new WriteLocker(_colLocker))
             {
-                foreach (ControllerHolder holder in controllerList)
+                foreach (var holder in controllerList)
                 {
                     if (currentDev == holder.Device)
                     {
@@ -390,7 +393,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void PopulateStaticItems()
         {
-            ItemCollection items = contextMenu.Items;
+            var items = ContextMenu.Items;
             items.Add(changeServiceItem);
             items.Add(openItem);
             items.Add(minimizeItem);
@@ -401,11 +404,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void ClearContextMenu()
         {
-            contextMenu.Items.Clear();
+            ContextMenu.Items.Clear();
             PopulateStaticItems();
         }
 
-        private void ExitMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
         {
             RequestShutdown?.Invoke(this, EventArgs.Empty);
         }
@@ -413,15 +416,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
     public class ControllerHolder
     {
-        private DS4Device device;
-        private int index;
-        public DS4Device Device { get => device; }
-        public int Index { get => index; }
-
         public ControllerHolder(DS4Device device, int index)
         {
-            this.device = device;
-            this.index = index;
+            Device = device;
+            Index = index;
         }
+
+        public DS4Device Device { get; }
+
+        public int Index { get; }
     }
 }
