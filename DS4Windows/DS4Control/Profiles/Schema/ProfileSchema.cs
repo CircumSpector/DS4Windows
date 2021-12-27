@@ -292,6 +292,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
 
+        public IList<SpecialAction> SpecialActions { get; set; } = new List<SpecialAction>();
+
         #endregion
 
         public bool Equals(DS4WindowsProfile other)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using Newtonsoft.Json;
 using PropertyChanged;
@@ -34,6 +36,11 @@ namespace DS4WinWPF.DS4Control
         /// </summary>
         public string DisplayName { get; set; }
 
+        /// <summary>
+        ///     On or more <see cref="DS4Controls"/> which may trigger execution of this <see cref="SpecialAction"/>.
+        /// </summary>
+        public List<DS4Controls> Trigger { get; } = new();
+
         protected SpecialAction() { }
 
         public bool Equals(SpecialAction other)
@@ -62,6 +69,12 @@ namespace DS4WinWPF.DS4Control
     public class SpecialActionProgram : SpecialAction
     {
         public override string Type => nameof(SpecialActionProgram);
+
+        public string FilePath { get; set; }
+
+        public double Delay { get; set; }
+
+        public string Arguments { get; set; }
     }
 
     public class SpecialActionProfile : SpecialAction
