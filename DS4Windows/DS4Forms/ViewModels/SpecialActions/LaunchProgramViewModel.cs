@@ -1,35 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
+using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 {
-    public class LaunchProgramViewModel : NotifyDataErrorBase
+    public class LaunchProgramViewModel : NotifyDataErrorBase, INotifyPropertyChanged
     {
-        private string filepath;
-
-        public LaunchProgramViewModel()
-        {
-            FilepathChanged += LaunchProgramViewModel_FilepathChanged;
-        }
-
-        public string Filepath
-        {
-            get => filepath;
-            set
-            {
-                if (filepath == value) return;
-                filepath = value;
-                FilepathChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public string FilePath { get; set; }
 
         public double Delay { get; set; }
 
@@ -39,44 +25,29 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             get
             {
-                ImageSource exeicon = null;
-                var path = filepath;
-                if (File.Exists(path) && Path.GetExtension(path).ToLower() == ".exe")
-                    using (var ico = Icon.ExtractAssociatedIcon(path))
-                    {
-                        exeicon = Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty,
-                            BitmapSizeOptions.FromEmptyOptions());
-                        exeicon.Freeze();
-                    }
+                ImageSource exeIcon = null;
+                var path = FilePath;
+                if (!File.Exists(path) || Path.GetExtension(path).ToLower() != ".exe") return exeIcon;
+                using var ico = Icon.ExtractAssociatedIcon(path);
+                exeIcon = Imaging.CreateBitmapSourceFromHIcon(
+                    ico.Handle,
+                    Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions()
+                );
+                exeIcon.Freeze();
 
-                return exeicon;
+                return exeIcon;
             }
         }
 
-        public string ProgramName
-        {
-            get
-            {
-                var temp = "";
-                if (!string.IsNullOrEmpty(filepath)) temp = Path.GetFileNameWithoutExtension(filepath);
+        public string ProgramName =>
+            string.IsNullOrEmpty(FilePath) ? string.Empty : Path.GetFileNameWithoutExtension(FilePath);
 
-                return temp;
-            }
-        }
-
-        public event EventHandler FilepathChanged;
-        public event EventHandler ProgramIconChanged;
-        public event EventHandler ProgramNameChanged;
-
-        private void LaunchProgramViewModel_FilepathChanged(object sender, EventArgs e)
-        {
-            ProgramIconChanged?.Invoke(this, EventArgs.Empty);
-            ProgramNameChanged?.Invoke(this, EventArgs.Empty);
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void LoadAction(SpecialActionV3 action)
         {
-            filepath = action.Details;
+            FilePath = action.Details;
             Delay = action.DelayTime;
             Arguments = action.Extras;
         }
@@ -84,7 +55,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
             Global.Instance.SaveAction(action.Name, action.Controls, 2,
-                $"{filepath}?{Delay.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit, Arguments);
+                $"{FilePath}?{Delay.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit, Arguments);
         }
 
         public override bool IsValid(SpecialActionV3 action)
@@ -94,14 +65,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             var valid = true;
             var filepathErrors = new List<string>();
 
-            if (filepath.Length == 0)
-                filepathErrors.Add("Filepath empty");
-            else if (!File.Exists(filepath)) filepathErrors.Add("File at path does not exist");
+            if (FilePath.Length == 0)
+                filepathErrors.Add("FilePath empty");
+            else if (!File.Exists(FilePath)) filepathErrors.Add("File at path does not exist");
 
             if (filepathErrors.Count > 0)
             {
-                errors["Filepath"] = filepathErrors;
-                RaiseErrorsChanged("Filepath");
+                errors["FilePath"] = filepathErrors;
+                RaiseErrorsChanged("FilePath");
             }
 
             return valid;
@@ -112,8 +83,23 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             if (errors.Count > 0)
             {
                 errors.Clear();
-                RaiseErrorsChanged("Filepath");
+                RaiseErrorsChanged("FilePath");
             }
+        }
+
+        [UsedImplicitly]
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            switch (propertyName)
+            {
+                case nameof(FilePath):
+                    OnPropertyChanged(nameof(ProgramName));
+                    OnPropertyChanged(nameof(ProgramIcon));
+                    break;
+            }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

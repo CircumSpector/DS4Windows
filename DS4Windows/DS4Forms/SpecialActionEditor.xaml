@@ -351,13 +351,15 @@
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
                                     <Label Content="Hold for " VerticalAlignment="Center"></Label>
-                                    <xctk:DecimalUpDown Value="{Binding Delay}" Width="60" Minimum="0" Maximum="60" FormatString= "F2" Increment="0.5" />
+                                    <xctk:DecimalUpDown Value="{Binding Delay}" Width="60" 
+                                                        Minimum="0" Maximum="60" FormatString= "F2" Increment="0.5" />
                                     <Label Content="secs" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <Button x:Name="launchProgBrowseBtn" Content="{lex:Loc Browse}" Margin="{StaticResource spaceMargin}"
                                         Click="LaunchProgBrowseBtn_Click" />
                                 <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
-                                    <Label Content="{Binding ProgramName}" ToolTip="{Binding Filepath}" Width="150" HorizontalContentAlignment="Center" />
+                                    <Label Content="{Binding ProgramName}" ToolTip="{Binding FilePath}"
+                                           Width="150" HorizontalContentAlignment="Center" VerticalAlignment="Center" />
                                     <Image Source="{Binding ProgramIcon}" Width="32" Height="32" Margin="10,0,0,0" />
                                 </StackPanel>
                                 <StackPanel Margin="{StaticResource spaceMargin}">

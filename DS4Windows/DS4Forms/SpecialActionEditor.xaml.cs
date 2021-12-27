@@ -468,7 +468,7 @@ namespace DS4WinWPF.DS4Forms
 
             if (dialog.ShowDialog() == true)
             {
-                launchProgVM.Filepath = dialog.FileName;
+                launchProgVM.FilePath = dialog.FileName;
             }
         }
 
