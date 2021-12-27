@@ -1,85 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
+using DS4WinWPF.Properties;
 
 namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 {
     public class MultiActButtonViewModel : NotifyDataErrorBase
     {
-        private List<int> tapMacro = new List<int>();
-        private List<int> holdMacro = new List<int>();
-        private List<int> doubleTapMacro = new List<int>();
-        private List<int>[] loadAccessArray;
+        private readonly List<int>[] loadAccessArray;
 
-        public List<int> TapMacro { get => tapMacro; }
-        public List<int> HoldMacro { get => holdMacro; }
-        public List<int> DoubleTapMacro { get => doubleTapMacro; }
+        public MultiActButtonViewModel()
+        {
+            loadAccessArray = new List<int>[3] {TapMacro, HoldMacro, DoubleTapMacro};
+        }
+
+        public List<int> TapMacro { get; } = new();
+
+        public List<int> HoldMacro { get; } = new();
+
+        public List<int> DoubleTapMacro { get; } = new();
 
         public string TapMacroText
         {
             get
             {
-                string result = Properties.Resources.SelectMacro;
-                if (tapMacro.Count > 0)
-                {
-                    result = Properties.Resources.MacroRecorded;
-                }
+                var result = Resources.SelectMacro;
+                if (TapMacro.Count > 0) result = Resources.MacroRecorded;
 
                 return result;
             }
         }
-        public event EventHandler TapMacroTextChanged;
 
         public string HoldMacroText
         {
             get
             {
-                string result = Properties.Resources.SelectMacro;
-                if (holdMacro.Count > 0)
-                {
-                    result = Properties.Resources.MacroRecorded;
-                }
+                var result = Resources.SelectMacro;
+                if (HoldMacro.Count > 0) result = Resources.MacroRecorded;
 
                 return result;
             }
         }
-        public event EventHandler HoldMacroTextChanged;
 
         public string DoubleTapMacroText
         {
             get
             {
-                string result = Properties.Resources.SelectMacro;
-                if (doubleTapMacro.Count > 0)
-                {
-                    result = Properties.Resources.MacroRecorded;
-                }
+                var result = Resources.SelectMacro;
+                if (DoubleTapMacro.Count > 0) result = Resources.MacroRecorded;
 
                 return result;
             }
         }
-        public event EventHandler DoubleTapMacroTextChanged;
 
-        public MultiActButtonViewModel()
-        {
-            loadAccessArray = new List<int>[3] { tapMacro, holdMacro, doubleTapMacro };
-        }
+        public event EventHandler TapMacroTextChanged;
+        public event EventHandler HoldMacroTextChanged;
+        public event EventHandler DoubleTapMacroTextChanged;
 
         public void LoadAction(SpecialActionV3 action)
         {
-            string[] dets = action.Details.Split(',');
-            for (int i = 0; i < 3; i++)
+            var dets = action.Details.Split(',');
+            for (var i = 0; i < 3; i++)
             {
-                string[] macs = dets[i].Split('/');
-                foreach (string s in macs)
-                {
-                    if (int.TryParse(s, out int v))
+                var macs = dets[i].Split('/');
+                foreach (var s in macs)
+                    if (int.TryParse(s, out var v))
                         loadAccessArray[i].Add(v);
-                }
             }
         }
 
@@ -100,8 +87,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettings PrepareTapSettings()
         {
-            DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.ActionData.ActionMacro = tapMacro.ToArray();
+            var settings = new DS4ControlSettings(DS4Controls.None);
+            settings.ActionData.ActionMacro = TapMacro.ToArray();
             settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
             return settings;
@@ -109,8 +96,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettings PrepareHoldSettings()
         {
-            DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.ActionData.ActionMacro = holdMacro.ToArray();
+            var settings = new DS4ControlSettings(DS4Controls.None);
+            settings.ActionData.ActionMacro = HoldMacro.ToArray();
             settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
             return settings;
@@ -118,8 +105,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettings PrepareDoubleTapSettings()
         {
-            DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
-            settings.ActionData.ActionMacro = doubleTapMacro.ToArray();
+            var settings = new DS4ControlSettings(DS4Controls.None);
+            settings.ActionData.ActionMacro = DoubleTapMacro.ToArray();
             settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
             return settings;
@@ -127,9 +114,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
-            string details = string.Join("/", tapMacro) + "," +
-                string.Join("/", holdMacro) + "," +
-                string.Join("/", doubleTapMacro);
+            var details = string.Join("/", TapMacro) + "," +
+                          string.Join("/", HoldMacro) + "," +
+                          string.Join("/", DoubleTapMacro);
             Global.Instance.SaveAction(action.Name, action.Controls, 7, details, edit);
         }
 
@@ -137,24 +124,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             ClearOldErrors();
 
-            bool valid = true;
-            List<string> tapMacroErrors = new List<string>();
-            List<string> holdMacroErrors = new List<string>();
-            List<string> doubleTapMacroErrors = new List<string>();
+            var valid = true;
+            var tapMacroErrors = new List<string>();
+            var holdMacroErrors = new List<string>();
+            var doubleTapMacroErrors = new List<string>();
 
-            if (tapMacro.Count == 0)
+            if (TapMacro.Count == 0)
             {
                 tapMacroErrors.Add("No tap macro defined");
                 errors["TapMacro"] = tapMacroErrors;
                 RaiseErrorsChanged("TapMacro");
             }
-            if (holdMacro.Count == 0)
+
+            if (HoldMacro.Count == 0)
             {
                 holdMacroErrors.Add("No hold macro defined");
                 errors["HoldMacro"] = holdMacroErrors;
                 RaiseErrorsChanged("HoldMacro");
             }
-            if (doubleTapMacro.Count == 0)
+
+            if (DoubleTapMacro.Count == 0)
             {
                 doubleTapMacroErrors.Add("No double tap macro defined");
                 errors["DoubleTapMacro"] = doubleTapMacroErrors;
