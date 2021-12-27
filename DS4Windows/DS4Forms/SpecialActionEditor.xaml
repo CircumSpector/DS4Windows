@@ -14,12 +14,14 @@
              d:DesignHeight="350" d:DesignWidth="420">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="4,8,4,8">
-            <Label Content="Name:" DockPanel.Dock="Left" />
+            <Label Content="Name:" DockPanel.Dock="Left" VerticalAlignment="Center" />
             <TextBox x:Name="actionNameTxt" Text="{Binding ActionName,FallbackValue=Name,ValidatesOnNotifyDataErrors=True}"
                      Margin="8,0,0,0" DockPanel.Dock="Right" VerticalContentAlignment="Center" />
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom">
             <DockPanel DockPanel.Dock="Left">
+
+                <!-- Triggers -->
                 <ListView x:Name="triggersListView" Tag="{Binding TriggerError, ValidatesOnNotifyDataErrors=True}" Width="200">
                     <ListView.View>
                         <GridView>
@@ -167,6 +169,7 @@
                     </ListViewItem>
                 </ListView>
 
+                <!-- Unload Triggers -->
                 <ListView x:Name="unloadTriggersListView" Width="200" Visibility="Collapsed">
                     <ListView.View>
                         <GridView>
@@ -303,11 +306,13 @@
                     </ListViewItem>
                 </ListView>
             </DockPanel>
+
             <DockPanel DockPanel.Dock="Left" Margin="8,0,0,0">
                 <DockPanel.Resources>
                     <Thickness x:Key="spaceMargin" Bottom="8" />
                 </DockPanel.Resources>
                 <StackPanel>
+                    <!-- Special action type selection -->
                     <ComboBox x:Name="actionTypeCombo" SelectedIndex="{Binding ActionTypeIndex,FallbackValue=0}" Margin="0,0,0,8">
                         <ComboBoxItem Content="-Select an Action-" />
                         <ComboBoxItem Content="Record a macro" />
@@ -320,10 +325,13 @@
                         <ComboBoxItem Content="Calibration of sixaxis wheel calibration" />
                     </ComboBox>
 
+                    <!-- Individual special action properties -->
                     <TabControl x:Name="actionTypeTabControl" SelectedIndex="{Binding ActionTypeIndex}" BorderBrush="{x:Null}">
                         <TabItem x:Name="blankActTab" Header="">
 
                         </TabItem>
+
+                        <!-- Macro -->
                         <TabItem x:Name="macroActTab" Header="Macro">
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <Button x:Name="recordMacroBtn" Content="Record a macro"
@@ -337,6 +345,8 @@
                                 <TextBlock Text="{Binding Macrostring,FallbackValue='Macro Recorded'}" Margin="{StaticResource spaceMargin}" />
                             </StackPanel>
                         </TabItem>
+
+                        <!-- Program -->
                         <TabItem x:Name="launchProgActTab" Header="Launch Program">
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
@@ -356,6 +366,8 @@
                                 </StackPanel>
                             </StackPanel>
                         </TabItem>
+
+                        <!-- Profile -->
                         <TabItem x:Name="loadProfileTab" Header="Load Profile">
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <ComboBox SelectedIndex="{Binding ProfileIndex,FallbackValue=0}"
@@ -383,6 +395,8 @@
                                 <CheckBox Content="Unload on trigger release" Margin="{StaticResource spaceMargin}" IsChecked="{Binding AutoUntrigger}" />
                             </StackPanel>
                         </TabItem>
+
+                        <!-- Key -->
                         <TabItem x:Name="pressKetActTab" Header="Press Key">
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <Button x:Name="pressKeySelectBtn" Content="{Binding DescribeText,FallbackValue='Select a Key'}"
@@ -401,6 +415,8 @@
                                 </StackPanel>
                             </StackPanel>
                         </TabItem>
+
+                        <!-- Disconnect Bluetooth -->
                         <TabItem x:Name="disconnectBTTab" Header="DisBT">
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
                                 <Label Content="Hold for "></Label>
@@ -408,6 +424,8 @@
                                 <Label Content="secs" />
                             </StackPanel>
                         </TabItem>
+
+                        <!-- Check Battery -->
                         <TabItem x:Name="checkBatteryTab" Header="Check Battery">
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
@@ -446,6 +464,8 @@
                                 </StackPanel>
                             </StackPanel>
                         </TabItem>
+
+                        <!-- Multiple actions -->
                         <TabItem x:Name="multiActTab" Header="MultiAct">
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <Label Content="Tap Trigger" Margin="{StaticResource spaceMargin}" />
@@ -459,6 +479,8 @@
                                         Margin="{StaticResource spaceMargin}" Click="MultiDoubleTapTrigBtn_Click" />
                             </StackPanel>
                         </TabItem>
+
+                        <!-- Wheel calibration -->
                         <TabItem x:Name="sixaxisWheelCalibrateTab" Header="Sixaxis Wheel">
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
                                 <Label Content="Hold for "></Label>
@@ -468,6 +490,7 @@
                         </TabItem>
                     </TabControl>
 
+                    <!-- Action buttons -->
                     <UniformGrid Rows="1">
                         <Button x:Name="saveBtn" Content="{lex:Loc Save}" Margin="0,0,5,0" Click="SaveBtn_Click" />
                         <Button x:Name="cancelBtn" Content="{lex:Loc Cancel}" Margin="5,0,0,0" Click="CancelBtn_Click" />
