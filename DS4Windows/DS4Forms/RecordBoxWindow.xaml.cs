@@ -1,36 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using DS4Windows;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for RecordBoxWindow.xaml
+    ///     Interaction logic for RecordBoxWindow.xaml
     /// </summary>
     public partial class RecordBoxWindow : Window
     {
-        public event EventHandler Saved;
-
-        public RecordBoxWindow(int deviceNum, DS4Windows.DS4ControlSettings settings, bool repeatable = true)
+        public RecordBoxWindow(int deviceNum, DS4ControlSettings settings, bool repeatable = true)
         {
             InitializeComponent();
 
-            RecordBox box = new RecordBox(deviceNum, settings, false, repeatable: repeatable);
+            var box = new RecordBox(deviceNum, settings, false, repeatable: repeatable);
             mainPanel.Children.Add(box);
 
             box.Save += RecordBox_Save;
             box.Cancel += Box_Cancel;
         }
+
+        public event EventHandler Saved;
 
         private void Box_Cancel(object sender, EventArgs e)
         {
