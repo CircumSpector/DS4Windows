@@ -99,12 +99,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     {
                         var tmpPar = new Paragraph();
                         var tmp = tmpLog.Header;
-                        tmpPar.Inlines.Add(new Run(tmp) { Tag = "Header" });
+                        tmpPar.Inlines.Add(new Run(tmp) {Tag = "Header"});
                         flow.Blocks.Add(tmpPar);
 
                         tmpPar.Inlines.Add(new LineBreak());
                         tmpPar.Inlines.Add(new Run(versionInfo.ReleaseDate.ToUniversalTime().ToString("r"))
-                            { Tag = "ReleaseDate" });
+                            {Tag = "ReleaseDate"});
 
                         tmpLog.BuildDisplayText();
 
@@ -140,14 +140,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
     public class ChangelogInfo
     {
-        [JsonPropertyName("latest_version")] 
-        public string LatestVersion { get; set; }
-        
-        [JsonPropertyName("updated_at")] 
-        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("latest_version")] public string LatestVersion { get; set; }
 
-        [JsonPropertyName("changelog")] 
-        public ChangelogVersions Changelog { get; set; }
+        [JsonPropertyName("updated_at")] public DateTime UpdatedAt { get; set; }
+
+        [JsonPropertyName("changelog")] public ChangelogVersions Changelog { get; set; }
 
         [JsonPropertyName("latest_version_number_info")]
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
@@ -156,45 +153,36 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
     public class ChangeVersionNumberInfo
     {
-        [JsonPropertyName("majorPart")] 
-        public ushort MajorPart { get; set; }
+        [JsonPropertyName("majorPart")] public ushort MajorPart { get; set; }
 
-        [JsonPropertyName("minorPart")] 
-        public ushort MinorPart { get; set; }
+        [JsonPropertyName("minorPart")] public ushort MinorPart { get; set; }
 
-        [JsonPropertyName("buildPart")] 
-        public ushort BuildPart { get; set; }
+        [JsonPropertyName("buildPart")] public ushort BuildPart { get; set; }
 
-        [JsonPropertyName("privatePart")] 
-        public ushort PrivatePart { get; set; }
+        [JsonPropertyName("privatePart")] public ushort PrivatePart { get; set; }
 
         public ulong GetVersionNumber()
         {
-            var temp = ((ulong)MajorPart << 48) | ((ulong)MinorPart << 32) |
-                       ((ulong)BuildPart << 16) | PrivatePart;
+            var temp = ((ulong) MajorPart << 48) | ((ulong) MinorPart << 32) |
+                       ((ulong) BuildPart << 16) | PrivatePart;
             return temp;
         }
     }
 
     public class ChangelogVersions
     {
-        [JsonPropertyName("versions")] 
-        public List<ChangeVersionInfo> Versions { get; set; }
+        [JsonPropertyName("versions")] public List<ChangeVersionInfo> Versions { get; set; }
     }
 
     public class ChangeVersionInfo
     {
-        [JsonPropertyName("version_str")] 
-        public string Version { get; set; }
+        [JsonPropertyName("version_str")] public string Version { get; set; }
 
-        [JsonPropertyName("base_header")] 
-        public string BaseHeader { get; set; }
+        [JsonPropertyName("base_header")] public string BaseHeader { get; set; }
 
-        [JsonPropertyName("release_date")] 
-        public DateTime ReleaseDate { get; set; }
+        [JsonPropertyName("release_date")] public DateTime ReleaseDate { get; set; }
 
-        [JsonPropertyName("locales")] 
-        public List<VersionLogLocale> VersionLocales { get; set; }
+        [JsonPropertyName("locales")] public List<VersionLogLocale> VersionLocales { get; set; }
 
         [JsonPropertyName("version_number_info")]
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
@@ -242,17 +230,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string Header { get; set; }
 
-        [JsonPropertyName("log_text")] 
-        public List<string> LogText { get; set; }
+        [JsonPropertyName("log_text")] public List<string> LogText { get; set; }
 
-        [JsonPropertyName("editor")] 
-        public string Editor { get; set; }
+        [JsonPropertyName("editor")] public string Editor { get; set; }
 
-        [JsonPropertyName("editors_note")] 
-        public List<string> EditorsNote { get; set; }
+        [JsonPropertyName("editors_note")] public List<string> EditorsNote { get; set; }
 
-        [JsonPropertyName("updated_at")] 
-        public DateTime EditedAt { get; set; }
+        [JsonPropertyName("updated_at")] public DateTime EditedAt { get; set; }
 
         public void BuildDisplayText()
         {
