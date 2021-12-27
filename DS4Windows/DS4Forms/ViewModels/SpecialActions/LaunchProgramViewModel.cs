@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -17,8 +14,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
     public class LaunchProgramViewModel : NotifyDataErrorBase
     {
         private string filepath;
-        private double delay;
-        private string arguments;
+
+        public LaunchProgramViewModel()
+        {
+            FilepathChanged += LaunchProgramViewModel_FilepathChanged;
+        }
 
         public string Filepath
         {
@@ -30,50 +30,43 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                 FilepathChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler FilepathChanged;
-        public double Delay { get => delay; set => delay = value; }
-        public string Arguments { get => arguments; set => arguments = value; }
+
+        public double Delay { get; set; }
+
+        public string Arguments { get; set; }
 
         public ImageSource ProgramIcon
         {
             get
             {
                 ImageSource exeicon = null;
-                string path = filepath;
+                var path = filepath;
                 if (File.Exists(path) && Path.GetExtension(path).ToLower() == ".exe")
-                {
-                    using (Icon ico = Icon.ExtractAssociatedIcon(path))
+                    using (var ico = Icon.ExtractAssociatedIcon(path))
                     {
                         exeicon = Imaging.CreateBitmapSourceFromHIcon(ico.Handle, Int32Rect.Empty,
                             BitmapSizeOptions.FromEmptyOptions());
                         exeicon.Freeze();
                     }
-                }
 
                 return exeicon;
             }
         }
-        public event EventHandler ProgramIconChanged;
 
         public string ProgramName
         {
             get
             {
-                string temp = "";
-                if (!string.IsNullOrEmpty(filepath))
-                {
-                    temp = Path.GetFileNameWithoutExtension(filepath);
-                }
+                var temp = "";
+                if (!string.IsNullOrEmpty(filepath)) temp = Path.GetFileNameWithoutExtension(filepath);
 
                 return temp;
             }
         }
-        public event EventHandler ProgramNameChanged;
 
-        public LaunchProgramViewModel()
-        {
-            FilepathChanged += LaunchProgramViewModel_FilepathChanged;
-        }
+        public event EventHandler FilepathChanged;
+        public event EventHandler ProgramIconChanged;
+        public event EventHandler ProgramNameChanged;
 
         private void LaunchProgramViewModel_FilepathChanged(object sender, EventArgs e)
         {
@@ -84,30 +77,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         public void LoadAction(SpecialActionV3 action)
         {
             filepath = action.Details;
-            delay = action.DelayTime;
-            arguments = action.Extras;
+            Delay = action.DelayTime;
+            Arguments = action.Extras;
         }
 
         public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
-            Global.Instance.SaveAction(action.Name, action.Controls, 2, $"{filepath}?{delay.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit, arguments);
+            Global.Instance.SaveAction(action.Name, action.Controls, 2,
+                $"{filepath}?{Delay.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit, Arguments);
         }
 
         public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 
-            bool valid = true;
-            List<string> filepathErrors = new List<string>();
+            var valid = true;
+            var filepathErrors = new List<string>();
 
             if (filepath.Length == 0)
-            {
                 filepathErrors.Add("Filepath empty");
-            }
-            else if (!File.Exists(filepath))
-            {
-                filepathErrors.Add("File at path does not exist");
-            }
+            else if (!File.Exists(filepath)) filepathErrors.Add("File at path does not exist");
 
             if (filepathErrors.Count > 0)
             {
