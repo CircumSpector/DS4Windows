@@ -350,9 +350,9 @@
                         <TabItem x:Name="launchProgActTab" Header="Launch Program">
                             <StackPanel Margin="{StaticResource spaceMargin}">
                                 <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
-                                    <Label Content="Hold for "></Label>
+                                    <Label Content="Hold for " VerticalAlignment="Center"></Label>
                                     <xctk:DecimalUpDown Value="{Binding Delay}" Width="60" Minimum="0" Maximum="60" FormatString= "F2" Increment="0.5" />
-                                    <Label Content="secs" />
+                                    <Label Content="secs" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <Button x:Name="launchProgBrowseBtn" Content="{lex:Loc Browse}" Margin="{StaticResource spaceMargin}"
                                         Click="LaunchProgBrowseBtn_Click" />
