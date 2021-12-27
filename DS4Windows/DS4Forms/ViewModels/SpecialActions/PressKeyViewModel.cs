@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using DS4Windows;
@@ -13,59 +10,49 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
     public class PressKeyViewModel : NotifyDataErrorBase
     {
         private string describeText;
-        private DS4KeyType keyType;
         private int value;
-        private int pressReleaseIndex = 0;
-        private bool normalTrigger = true;
-        public bool IsToggle => (keyType & DS4KeyType.Toggle) != 0;
-        public event EventHandler IsToggleChanged;
+        public bool IsToggle => (KeyType & DS4KeyType.Toggle) != 0;
 
-        public Visibility ShowToggleControls
-        {
-            get
-            {
-                return ((keyType & DS4KeyType.Toggle) != 0) ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-        public event EventHandler ShowToggleControlsChanged;
+        public Visibility ShowToggleControls =>
+            (KeyType & DS4KeyType.Toggle) != 0 ? Visibility.Visible : Visibility.Collapsed;
 
         public string DescribeText
         {
             get
             {
-                string result = "Select a Key";
-                if (!string.IsNullOrEmpty(describeText))
-                {
-                    result = describeText;
-                };
+                var result = "Select a Key";
+                if (!string.IsNullOrEmpty(describeText)) result = describeText;
+                ;
 
                 return result;
             }
         }
-        public event EventHandler DescribeTextChanged;
-        public DS4KeyType KeyType { get => keyType; set => keyType = value; }
-        public int Value { get => value; set => this.value = value; }
-        public int PressReleaseIndex { get => pressReleaseIndex; set => pressReleaseIndex = value; }
-        public bool NormalTrigger { get => normalTrigger; set => normalTrigger = value; }
-        public bool UnloadError
+
+        public DS4KeyType KeyType { get; set; }
+
+        public int Value
         {
-            get => errors.TryGetValue("UnloadError", out _);
+            get => value;
+            set => this.value = value;
         }
+
+        public int PressReleaseIndex { get; set; }
+        public bool NormalTrigger { get; set; } = true;
+
+        public bool UnloadError => errors.TryGetValue("UnloadError", out _);
+
+        public event EventHandler IsToggleChanged;
+        public event EventHandler ShowToggleControlsChanged;
+        public event EventHandler DescribeTextChanged;
 
         public void LoadAction(SpecialActionV3 action)
         {
-            keyType = action.KeyType;
-            if (!string.IsNullOrEmpty(action.UControls))
-            {
-                keyType |= DS4KeyType.Toggle;
-            }
+            KeyType = action.KeyType;
+            if (!string.IsNullOrEmpty(action.UControls)) KeyType |= DS4KeyType.Toggle;
 
             int.TryParse(action.Details, out value);
 
-            if (action.PressRelease)
-            {
-                pressReleaseIndex = 1;
-            }
+            if (action.PressRelease) PressReleaseIndex = 1;
 
             UpdateDescribeText();
             UpdateToggleControls();
@@ -73,9 +60,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public void UpdateDescribeText()
         {
-            describeText = KeyInterop.KeyFromVirtualKey(value).ToString() +
-                (keyType.HasFlag(DS4KeyType.ScanCode) ? " (SC)" : "") +
-                (keyType.HasFlag(DS4KeyType.Toggle) ? " (Toggle)" : "");
+            describeText = KeyInterop.KeyFromVirtualKey(value) +
+                           (KeyType.HasFlag(DS4KeyType.ScanCode) ? " (SC)" : "") +
+                           (KeyType.HasFlag(DS4KeyType.Toggle) ? " (Toggle)" : "");
 
             DescribeTextChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -88,33 +75,30 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettings PrepareSettings()
         {
-            DS4ControlSettings settings = new DS4ControlSettings(DS4Controls.None);
+            var settings = new DS4ControlSettings(DS4Controls.None);
             settings.ActionData.ActionKey = value;
-            settings.KeyType = keyType;
+            settings.KeyType = KeyType;
             settings.ControlActionType = DS4ControlSettings.ActionType.Key;
             return settings;
         }
 
         public void ReadSettings(DS4ControlSettings settings)
         {
-            value = (int)settings.ActionData.ActionKey;
-            keyType = settings.KeyType;
+            value = settings.ActionData.ActionKey;
+            KeyType = settings.KeyType;
         }
 
         public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
             string uaction = null;
-            if (keyType.HasFlag(DS4KeyType.Toggle))
+            if (KeyType.HasFlag(DS4KeyType.Toggle))
             {
                 uaction = "Press";
-                if (pressReleaseIndex == 1)
-                {
-                    uaction = "Release";
-                }
+                if (PressReleaseIndex == 1) uaction = "Release";
             }
 
             Global.Instance.SaveAction(action.Name, action.Controls, 4,
-                $"{value}{(keyType.HasFlag(DS4KeyType.ScanCode) ? " Scan Code" : "")}", edit,
+                $"{value}{(KeyType.HasFlag(DS4KeyType.ScanCode) ? " Scan Code" : "")}", edit,
                 !string.IsNullOrEmpty(uaction) ? $"{uaction}\n{action.UControls}" : "");
         }
 
@@ -122,9 +106,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         {
             ClearOldErrors();
 
-            bool valid = true;
-            List<string> valueErrors = new List<string>();
-            List<string> toggleErrors = new List<string>();
+            var valid = true;
+            var valueErrors = new List<string>();
+            var toggleErrors = new List<string>();
 
             if (value == 0)
             {
@@ -132,7 +116,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                 errors["Value"] = valueErrors;
                 RaiseErrorsChanged("Value");
             }
-            if (keyType.HasFlag(DS4KeyType.Toggle) && string.IsNullOrEmpty(action.UControls))
+
+            if (KeyType.HasFlag(DS4KeyType.Toggle) && string.IsNullOrEmpty(action.UControls))
             {
                 toggleErrors.Add("No unload triggers specified");
                 errors["UnloadError"] = toggleErrors;
