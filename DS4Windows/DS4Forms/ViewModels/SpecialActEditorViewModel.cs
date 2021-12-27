@@ -9,7 +9,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class SpecialActEditorViewModel : NotifyDataErrorBase, INotifyPropertyChanged
     {
-        public SpecialActEditorViewModel(int deviceNum, SpecialAction action)
+        public SpecialActEditorViewModel(int deviceNum, SpecialActionV3 action)
         {
             DeviceNum = deviceNum;
             SavedAction = action;
@@ -21,16 +21,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public int ActionTypeIndex { get; set; }
         public string ActionName { get; set; }
 
-        public SpecialAction.ActionTypeId[] TypeAssoc { get; } =
+        public SpecialActionV3.ActionTypeId[] TypeAssoc { get; } =
         {
-            SpecialAction.ActionTypeId.None, SpecialAction.ActionTypeId.Macro,
-            SpecialAction.ActionTypeId.Program, SpecialAction.ActionTypeId.Profile,
-            SpecialAction.ActionTypeId.Key, SpecialAction.ActionTypeId.DisconnectBT,
-            SpecialAction.ActionTypeId.BatteryCheck, SpecialAction.ActionTypeId.MultiAction,
-            SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate
+            SpecialActionV3.ActionTypeId.None, SpecialActionV3.ActionTypeId.Macro,
+            SpecialActionV3.ActionTypeId.Program, SpecialActionV3.ActionTypeId.Profile,
+            SpecialActionV3.ActionTypeId.Key, SpecialActionV3.ActionTypeId.DisconnectBT,
+            SpecialActionV3.ActionTypeId.BatteryCheck, SpecialActionV3.ActionTypeId.MultiAction,
+            SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate
         };
 
-        public SpecialAction SavedAction { get; }
+        public SpecialActionV3 SavedAction { get; }
 
         public List<string> ControlTriggerList { get; } = new();
 
@@ -42,7 +42,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool ExistingName { get; private set; }
 
-        public void LoadAction(SpecialAction action)
+        public void LoadAction(SpecialActionV3 action)
         {
             foreach (var s in action.Controls.Split('/')) ControlTriggerList.Add(s);
 
@@ -63,7 +63,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public void SetAction(SpecialAction action)
+        public void SetAction(SpecialActionV3 action)
         {
             action.Name = ActionName;
             action.Controls = string.Join("/", ControlTriggerList.ToArray());
@@ -72,7 +72,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             action.TypeId = TypeAssoc[ActionTypeIndex];
         }
 
-        public override bool IsValid(SpecialAction action)
+        public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 

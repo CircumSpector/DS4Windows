@@ -77,7 +77,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             }
         }
 
-        public void LoadAction(SpecialAction action)
+        public void LoadAction(SpecialActionV3 action)
         {
             string[] details = action.Details.Split(',');
             delay = action.DelayTime;
@@ -87,7 +87,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             fullColor = Color.FromArgb(255, byte.Parse(details[6]), byte.Parse(details[7]), byte.Parse(details[8]));
         }
 
-        public void SaveAction(SpecialAction action, bool edit = false)
+        public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
             string details = $"{delay.ToString("#.##", Global.ConfigFileDecimalCulture)}|{notification}|{lightbar}|{emptyColor.R}|{emptyColor.G}|{emptyColor.B}|" +
                 $"{fullColor.R}|{fullColor.G}|{fullColor.B}";
@@ -95,7 +95,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             Global.Instance.SaveAction(action.Name, action.Controls, 6, details, edit);
         }
 
-        public override bool IsValid(SpecialAction action)
+        public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 

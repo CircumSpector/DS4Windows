@@ -40,54 +40,54 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
                 if (pactions.Contains(action.Name))
                     item.IsActive = true;
-                else if (newProfile && action.TypeId == SpecialAction.ActionTypeId.DisconnectBT) item.IsActive = true;
+                else if (newProfile && action.TypeId == SpecialActionV3.ActionTypeId.DisconnectBT) item.IsActive = true;
 
                 ActionCol.Add(item);
                 idx++;
             }
         }
 
-        public SpecialActionItem CreateActionItem(SpecialAction action)
+        public SpecialActionItem CreateActionItem(SpecialActionV3 action)
         {
             var displayName = GetActionDisplayName(action);
             var item = new SpecialActionItem(action, displayName, 0);
             return item;
         }
 
-        public string GetActionDisplayName(SpecialAction action)
+        public string GetActionDisplayName(SpecialActionV3 action)
         {
             var displayName = string.Empty;
             switch (action.TypeId)
             {
-                case SpecialAction.ActionTypeId.DisconnectBT:
+                case SpecialActionV3.ActionTypeId.DisconnectBT:
                     displayName = Resources.DisconnectBT;
                     break;
-                case SpecialAction.ActionTypeId.Macro:
+                case SpecialActionV3.ActionTypeId.Macro:
                     displayName = Resources.Macro + (action.KeyType.HasFlag(DS4KeyType.ScanCode)
                         ? " (" + Resources.ScanCode + ")"
                         : "");
                     break;
-                case SpecialAction.ActionTypeId.Program:
+                case SpecialActionV3.ActionTypeId.Program:
                     displayName =
                         Resources.LaunchProgram.Replace("*program*", Path.GetFileNameWithoutExtension(action.Details));
                     break;
-                case SpecialAction.ActionTypeId.Profile:
+                case SpecialActionV3.ActionTypeId.Profile:
                     displayName = Resources.LoadProfile.Replace("*profile*", action.Details);
                     break;
-                case SpecialAction.ActionTypeId.Key:
+                case SpecialActionV3.ActionTypeId.Key:
                     displayName = KeyInterop.KeyFromVirtualKey(int.Parse(action.Details)) +
                                   (action.UTrigger.Count > 0 ? " (Toggle)" : "");
                     break;
-                case SpecialAction.ActionTypeId.BatteryCheck:
+                case SpecialActionV3.ActionTypeId.BatteryCheck:
                     displayName = Resources.CheckBattery;
                     break;
-                case SpecialAction.ActionTypeId.XboxGameDVR:
+                case SpecialActionV3.ActionTypeId.XboxGameDVR:
                     displayName = "Xbox Game DVR";
                     break;
-                case SpecialAction.ActionTypeId.MultiAction:
+                case SpecialActionV3.ActionTypeId.MultiAction:
                     displayName = Resources.MultiAction;
                     break;
-                case SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate:
+                case SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
                     displayName = Resources.SASteeringWheelEmulationCalibrate;
                     break;
             }
@@ -126,7 +126,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
     public class SpecialActionItem : INotifyPropertyChanged
     {
-        public SpecialActionItem(SpecialAction specialAction, string displayName,
+        public SpecialActionItem(SpecialActionV3 specialAction, string displayName,
             int index)
         {
             SpecialAction = specialAction;
@@ -166,7 +166,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         /// <summary>
         ///     Reference to the SpecialAction instance
         /// </summary>
-        public SpecialAction SpecialAction { get; }
+        public SpecialActionV3 SpecialAction { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

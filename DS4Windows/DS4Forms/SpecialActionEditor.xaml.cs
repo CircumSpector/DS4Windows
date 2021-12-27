@@ -39,7 +39,7 @@ namespace DS4WinWPF.DS4Forms
         private readonly ControlService rootHub;
 
         public SpecialActionEditor(ControlService service, int deviceNum, ProfileList profileList,
-            DS4Windows.SpecialAction specialAction = null)
+            DS4Windows.SpecialActionV3 specialAction = null)
         {
             rootHub = service;
 
@@ -121,7 +121,7 @@ namespace DS4WinWPF.DS4Forms
             actionTypeCombo.SelectionChanged += ActionTypeCombo_SelectionChanged;
         }
 
-        private void LoadAction(DS4Windows.SpecialAction specialAction)
+        private void LoadAction(DS4Windows.SpecialActionV3 specialAction)
         {
             specialActVM.LoadAction(specialAction);
             string[] tempTriggers = specialActVM.ControlTriggerList.ToArray();
@@ -166,28 +166,28 @@ namespace DS4WinWPF.DS4Forms
 
             switch (specialAction.TypeId)
             {
-                case DS4Windows.SpecialAction.ActionTypeId.Macro:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Macro:
                     macroActVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.Program:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Program:
                     launchProgVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.Profile:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Profile:
                     loadProfileVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.Key:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Key:
                     pressKeyVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.DisconnectBT:
+                case DS4Windows.SpecialActionV3.ActionTypeId.DisconnectBT:
                     disconnectBtVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.BatteryCheck:
+                case DS4Windows.SpecialActionV3.ActionTypeId.BatteryCheck:
                     checkBatteryVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.MultiAction:
+                case DS4Windows.SpecialActionV3.ActionTypeId.MultiAction:
                     multiActButtonVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate:
+                case DS4Windows.SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
                     saSteeringWheelVM.LoadAction(specialAction);
                     break;
             }
@@ -215,8 +215,8 @@ namespace DS4WinWPF.DS4Forms
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.SpecialAction.ActionTypeId typeId = specialActVM.TypeAssoc[specialActVM.ActionTypeIndex];
-            DS4Windows.SpecialAction tempAct = new DS4Windows.SpecialAction("null", "null", "null", "null");
+            DS4Windows.SpecialActionV3.ActionTypeId typeId = specialActVM.TypeAssoc[specialActVM.ActionTypeIndex];
+            DS4Windows.SpecialActionV3 tempAct = new DS4Windows.SpecialActionV3("null", "null", "null", "null");
             bool valid = specialActVM.IsValid(tempAct);
             if (valid)
             {
@@ -239,28 +239,28 @@ namespace DS4WinWPF.DS4Forms
 
                 switch (typeId)
                 {
-                    case DS4Windows.SpecialAction.ActionTypeId.Macro:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.Macro:
                         macroActVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialAction.ActionTypeId.Program:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.Program:
                         launchProgVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialAction.ActionTypeId.Profile:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.Profile:
                         loadProfileVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialAction.ActionTypeId.Key:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.Key:
                         pressKeyVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialAction.ActionTypeId.DisconnectBT:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.DisconnectBT:
                         disconnectBtVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialAction.ActionTypeId.BatteryCheck:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.BatteryCheck:
                         checkBatteryVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialAction.ActionTypeId.MultiAction:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.MultiAction:
                         multiActButtonVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate:
+                    case DS4Windows.SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
                         saSteeringWheelVM.SaveAction(tempAct, editMode);
                         break;
                 }
@@ -269,34 +269,34 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        private bool CheckActionValid(DS4Windows.SpecialAction action,
-            DS4Windows.SpecialAction.ActionTypeId typeId)
+        private bool CheckActionValid(DS4Windows.SpecialActionV3 action,
+            DS4Windows.SpecialActionV3.ActionTypeId typeId)
         {
             bool valid = false;
             switch (typeId)
             {
-                case DS4Windows.SpecialAction.ActionTypeId.Macro:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Macro:
                     valid = macroActVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.Program:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Program:
                     valid = launchProgVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.Profile:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Profile:
                     valid = loadProfileVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.Key:
+                case DS4Windows.SpecialActionV3.ActionTypeId.Key:
                     valid = pressKeyVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.DisconnectBT:
+                case DS4Windows.SpecialActionV3.ActionTypeId.DisconnectBT:
                     valid = disconnectBtVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.BatteryCheck:
+                case DS4Windows.SpecialActionV3.ActionTypeId.BatteryCheck:
                     valid = checkBatteryVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.MultiAction:
+                case DS4Windows.SpecialActionV3.ActionTypeId.MultiAction:
                     valid = multiActButtonVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialAction.ActionTypeId.SASteeringWheelEmulationCalibrate:
+                case DS4Windows.SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
                     valid = saSteeringWheelVM.IsValid(action);
                     break;
             }

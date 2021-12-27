@@ -38,7 +38,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
         public event EventHandler ProfileIndexChanged;
         public event EventHandler UnloadEnabledChanged;
 
-        public void LoadAction(SpecialAction action)
+        public void LoadAction(SpecialActionV3 action)
         {
             AutoUntrigger = action.AutomaticUnTrigger;
             var profilename = action.Details;
@@ -51,7 +51,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             UnloadEnabledChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void SaveAction(SpecialAction action, bool edit = false)
+        public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
             if (profileIndex > 0)
             {
@@ -64,7 +64,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             }
         }
 
-        public override bool IsValid(SpecialAction action)
+        public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 

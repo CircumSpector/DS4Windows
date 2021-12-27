@@ -22,7 +22,7 @@ namespace DS4Windows
 
         IList<string>[] ProfileActions { get; set; }
 
-        IList<SpecialAction> Actions { get; set; }
+        IList<SpecialActionV3> Actions { get; set; }
 
         IList<string> OlderProfilePath { get; set; }
 
@@ -68,7 +68,7 @@ namespace DS4Windows
 
         bool SaveControllerConfigs(DS4Device device = null);
 
-        SpecialAction GetProfileAction(int device, string name);
+        SpecialActionV3 GetProfileAction(int device, string name);
 
         void ChangeLinkedProfile(PhysicalAddress serial, string profile);
 
@@ -116,7 +116,7 @@ namespace DS4Windows
 
         void CacheExtraProfileInfo(int device);
 
-        SpecialAction GetAction(string name);
+        SpecialActionV3 GetAction(string name);
 
         int GetActionIndexOf(string name);
 

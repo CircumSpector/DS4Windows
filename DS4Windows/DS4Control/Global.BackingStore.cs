@@ -52,8 +52,8 @@ namespace DS4Windows
 
             private readonly int[] profileActionCount = new int[TEST_PROFILE_ITEM_COUNT] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-            private readonly Dictionary<string, SpecialAction>[] profileActionDict =
-                new Dictionary<string, SpecialAction>[TEST_PROFILE_ITEM_COUNT]
+            private readonly Dictionary<string, SpecialActionV3>[] profileActionDict =
+                new Dictionary<string, SpecialActionV3>[TEST_PROFILE_ITEM_COUNT]
                 {
                     new(), new(), new(),
                     new(), new(), new(), new(), new(), new()
@@ -173,7 +173,7 @@ namespace DS4Windows
 
             public bool Ds4Mapping { get; set; }
 
-            public IList<SpecialAction> Actions { get; set; } = new List<SpecialAction>();
+            public IList<SpecialActionV3> Actions { get; set; } = new List<SpecialActionV3>();
 
             public IList<string>[] ProfileActions { get; set; } =
                 { null, null, null, null, null, null, null, null, null };
@@ -345,7 +345,7 @@ namespace DS4Windows
                 }
             }
 
-            public SpecialAction GetAction(string name)
+            public SpecialActionV3 GetAction(string name)
             {
                 //foreach (SpecialAction sA in actions)
                 for (int i = 0, actionCount = Actions.Count; i < actionCount; i++)
@@ -355,7 +355,7 @@ namespace DS4Windows
                         return sA;
                 }
 
-                return new SpecialAction("null", "null", "null", "null");
+                return new SpecialActionV3("null", "null", "null", "null");
             }
 
             public int GetActionIndexOf(string name)
@@ -1685,13 +1685,13 @@ namespace DS4Windows
                         if (type == "Profile")
                         {
                             extras = x.ChildNodes[3].InnerText;
-                            Actions.Add(new SpecialAction(name, controls, type, details, 0, extras));
+                            Actions.Add(new SpecialActionV3(name, controls, type, details, 0, extras));
                         }
                         else if (type == "Macro")
                         {
                             if (x.ChildNodes[3] != null) extras = x.ChildNodes[3].InnerText;
                             else extras = string.Empty;
-                            Actions.Add(new SpecialAction(name, controls, type, details, 0, extras));
+                            Actions.Add(new SpecialActionV3(name, controls, type, details, 0, extras));
                         }
                         else if (type == "Key")
                         {
@@ -1708,29 +1708,29 @@ namespace DS4Windows
 
                             if (!string.IsNullOrEmpty(extras))
                                 Actions.Add(
-                                    new SpecialAction(name, controls, type, details, 0, extras2 + '\n' + extras));
+                                    new SpecialActionV3(name, controls, type, details, 0, extras2 + '\n' + extras));
                             else
-                                Actions.Add(new SpecialAction(name, controls, type, details));
+                                Actions.Add(new SpecialActionV3(name, controls, type, details));
                         }
                         else if (type == "DisconnectBT")
                         {
                             double doub;
                             if (double.TryParse(details, NumberStyles.Float, ConfigFileDecimalCulture, out doub))
-                                Actions.Add(new SpecialAction(name, controls, type, "", doub));
+                                Actions.Add(new SpecialActionV3(name, controls, type, "", doub));
                             else
-                                Actions.Add(new SpecialAction(name, controls, type, ""));
+                                Actions.Add(new SpecialActionV3(name, controls, type, ""));
                         }
                         else if (type == "BatteryCheck")
                         {
                             double doub;
                             if (double.TryParse(details.Split('|')[0], NumberStyles.Float, ConfigFileDecimalCulture,
                                 out doub))
-                                Actions.Add(new SpecialAction(name, controls, type, details, doub));
+                                Actions.Add(new SpecialActionV3(name, controls, type, details, doub));
                             else if (double.TryParse(details.Split(',')[0], NumberStyles.Float,
                                 ConfigFileDecimalCulture, out doub))
-                                Actions.Add(new SpecialAction(name, controls, type, details, doub));
+                                Actions.Add(new SpecialActionV3(name, controls, type, details, doub));
                             else
-                                Actions.Add(new SpecialAction(name, controls, type, details));
+                                Actions.Add(new SpecialActionV3(name, controls, type, details));
                         }
                         else if (type == "Program")
                         {
@@ -1740,26 +1740,26 @@ namespace DS4Windows
                                 extras = x.ChildNodes[3].InnerText;
                                 if (double.TryParse(x.ChildNodes[4].InnerText, NumberStyles.Float,
                                     ConfigFileDecimalCulture, out doub))
-                                    Actions.Add(new SpecialAction(name, controls, type, details, doub, extras));
+                                    Actions.Add(new SpecialActionV3(name, controls, type, details, doub, extras));
                                 else
-                                    Actions.Add(new SpecialAction(name, controls, type, details, 0, extras));
+                                    Actions.Add(new SpecialActionV3(name, controls, type, details, 0, extras));
                             }
                             else
                             {
-                                Actions.Add(new SpecialAction(name, controls, type, details));
+                                Actions.Add(new SpecialActionV3(name, controls, type, details));
                             }
                         }
                         else if (type == "XboxGameDVR" || type == "MultiAction")
                         {
-                            Actions.Add(new SpecialAction(name, controls, type, details));
+                            Actions.Add(new SpecialActionV3(name, controls, type, details));
                         }
                         else if (type == "SASteeringWheelEmulationCalibrate")
                         {
                             double doub;
                             if (double.TryParse(details, NumberStyles.Float, ConfigFileDecimalCulture, out doub))
-                                Actions.Add(new SpecialAction(name, controls, type, "", doub));
+                                Actions.Add(new SpecialActionV3(name, controls, type, "", doub));
                             else
-                                Actions.Add(new SpecialAction(name, controls, type, ""));
+                                Actions.Add(new SpecialActionV3(name, controls, type, ""));
                         }
                     }
                 }
@@ -1875,9 +1875,9 @@ namespace DS4Windows
                 }
             }
 
-            public SpecialAction GetProfileAction(int device, string name)
+            public SpecialActionV3 GetProfileAction(int device, string name)
             {
-                SpecialAction sA = null;
+                SpecialActionV3 sA = null;
                 profileActionDict[device].TryGetValue(name, out sA);
                 return sA;
             }

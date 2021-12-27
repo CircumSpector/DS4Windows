@@ -25,7 +25,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.Util
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
-        public abstract bool IsValid(DS4Windows.SpecialAction action);
+        public abstract bool IsValid(DS4Windows.SpecialActionV3 action);
         public abstract void ClearOldErrors();
     }
 }

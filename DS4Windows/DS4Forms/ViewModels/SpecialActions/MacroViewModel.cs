@@ -36,7 +36,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public event EventHandler MacrostringChanged;
 
-        public void LoadAction(SpecialAction action)
+        public void LoadAction(SpecialActionV3 action)
         {
             macro = action.Macro;
             if (action.Macro.Count > 0)
@@ -67,7 +67,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             return settings;
         }
 
-        public void SaveAction(SpecialAction action, bool edit = false)
+        public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
             List<string> extrasList = new List<string>();
             extrasList.Add(useScanCode ? "Scan Code" : null);
@@ -92,7 +92,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             Macrostring = temp;
         }
 
-        public override bool IsValid(SpecialAction action)
+        public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 

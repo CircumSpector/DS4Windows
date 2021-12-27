@@ -52,7 +52,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             get => errors.TryGetValue("UnloadError", out _);
         }
 
-        public void LoadAction(SpecialAction action)
+        public void LoadAction(SpecialActionV3 action)
         {
             keyType = action.KeyType;
             if (!string.IsNullOrEmpty(action.UControls))
@@ -101,7 +101,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             keyType = settings.KeyType;
         }
 
-        public void SaveAction(SpecialAction action, bool edit = false)
+        public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
             string uaction = null;
             if (keyType.HasFlag(DS4KeyType.Toggle))
@@ -118,7 +118,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
                 !string.IsNullOrEmpty(uaction) ? $"{uaction}\n{action.UControls}" : "");
         }
 
-        public override bool IsValid(SpecialAction action)
+        public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 

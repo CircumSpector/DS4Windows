@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DS4Windows
 {
-    public class SpecialAction
+    public class SpecialActionV3
     {
         public enum ActionTypeId
         {
@@ -22,12 +22,12 @@ namespace DS4Windows
         //
         // TODO: here to satisfy serializer until I found out how to improve this class
         // 
-        public SpecialAction()
+        public SpecialActionV3()
         {
 
         }
 
-        public SpecialAction(
+        public SpecialActionV3(
             string name, 
             string controls, 
             string type, 

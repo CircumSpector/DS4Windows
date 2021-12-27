@@ -69,7 +69,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             loadAccessArray = new List<int>[3] { tapMacro, holdMacro, doubleTapMacro };
         }
 
-        public void LoadAction(SpecialAction action)
+        public void LoadAction(SpecialActionV3 action)
         {
             string[] dets = action.Details.Split(',');
             for (int i = 0; i < 3; i++)
@@ -125,7 +125,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             return settings;
         }
 
-        public void SaveAction(SpecialAction action, bool edit = false)
+        public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
             string details = string.Join("/", tapMacro) + "," +
                 string.Join("/", holdMacro) + "," +
@@ -133,7 +133,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             Global.Instance.SaveAction(action.Name, action.Controls, 7, details, edit);
         }
 
-        public override bool IsValid(SpecialAction action)
+        public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 
