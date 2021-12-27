@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 
@@ -10,27 +6,27 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 {
     public class DisconnectBTViewModel : NotifyDataErrorBase
     {
-        private double holdInterval;
-        public double HoldInterval { get => holdInterval; set => holdInterval = value; }
+        public double HoldInterval { get; set; }
 
         public void LoadAction(SpecialActionV3 action)
         {
-            holdInterval = action.DelayTime;
+            HoldInterval = action.DelayTime;
         }
 
         public void SaveAction(SpecialActionV3 action, bool edit = false)
         {
-            Global.Instance.SaveAction(action.Name, action.Controls, 5, $"{holdInterval.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit);
+            Global.Instance.SaveAction(action.Name, action.Controls, 5,
+                $"{HoldInterval.ToString("#.##", Global.ConfigFileDecimalCulture)}", edit);
         }
 
         public override bool IsValid(SpecialActionV3 action)
         {
             ClearOldErrors();
 
-            bool valid = true;
-            List<string> holdIntervalErrors = new List<string>();
+            var valid = true;
+            var holdIntervalErrors = new List<string>();
 
-            if (holdInterval < 0 || holdInterval > 60)
+            if (HoldInterval < 0 || HoldInterval > 60)
             {
                 holdIntervalErrors.Add("Interval not valid");
                 errors["HoldInterval"] = holdIntervalErrors;
