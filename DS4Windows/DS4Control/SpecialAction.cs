@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control
 {
     [JsonConverter(typeof(SpecialActionsConverter))]
-    [AddINotifyPropertyChangedInterface]
-    public abstract class SpecialAction : IEquatable<SpecialAction>
+    public abstract class SpecialAction : IEquatable<SpecialAction>, INotifyPropertyChanged
     {
         public static SpecialAction Key = new SpecialActionKey();
         public static SpecialAction Program = new SpecialActionProgram();
@@ -58,6 +60,15 @@ namespace DS4WinWPF.DS4Control
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [UsedImplicitly]
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
