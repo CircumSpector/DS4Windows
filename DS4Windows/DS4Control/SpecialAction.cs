@@ -10,6 +10,7 @@
         public static SpecialAction BatteryCheck = new SpecialActionBatteryCheck();
         public static SpecialAction MultiAction = new SpecialActionMultiAction();
         public static SpecialAction XboxGameDVR = new SpecialActionXboxGameDVR();
+        public static SpecialAction SteeringWheelEmulationCalibrate = new SpecialActionSteeringWheelEmulationCalibrate();
 
         protected SpecialAction() { }
     }
@@ -50,6 +51,11 @@
     }
 
     public class SpecialActionXboxGameDVR : SpecialAction
+    {
+
+    }
+
+    public class SpecialActionSteeringWheelEmulationCalibrate : SpecialAction
     {
 
     }
