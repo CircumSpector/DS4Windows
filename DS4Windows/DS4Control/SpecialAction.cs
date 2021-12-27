@@ -1,10 +1,13 @@
-﻿using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
+﻿using System;
+using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using Newtonsoft.Json;
+using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control
 {
     [JsonConverter(typeof(SpecialActionsConverter))]
-    public abstract class SpecialAction
+    [AddINotifyPropertyChangedInterface]
+    public abstract class SpecialAction : IEquatable<SpecialAction>
     {
         public static SpecialAction Key = new SpecialActionKey();
         public static SpecialAction Program = new SpecialActionProgram();
@@ -16,9 +19,39 @@ namespace DS4WinWPF.DS4Control
         public static SpecialAction XboxGameDVR = new SpecialActionXboxGameDVR();
         public static SpecialAction SteeringWheelEmulationCalibrate = new SpecialActionSteeringWheelEmulationCalibrate();
 
+        /// <summary>
+        ///     The <see cref="SpecialAction"/> type to help with (de-)serialization.
+        /// </summary>
         public abstract string Type { get; }
 
+        /// <summary>
+        ///     A unique ID to guarantee uniqueness of this <see cref="SpecialAction"/>.
+        /// </summary>
+        public Guid Id { get; } = Guid.NewGuid();
+
+        /// <summary>
+        ///     User-defined display name of this <see cref="SpecialAction"/>.
+        /// </summary>
+        public string DisplayName { get; set; }
+
         protected SpecialAction() { }
+
+        public bool Equals(SpecialAction other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Id.Equals(other.Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj is SpecialAction other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 
     public class SpecialActionKey : SpecialAction
