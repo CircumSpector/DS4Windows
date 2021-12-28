@@ -230,7 +230,8 @@
 
                     <ListBox x:Name="mappingListBox" DockPanel.Dock="Bottom" Height="200"
                              ItemsSource="{Binding Mappings}"
-                             SelectedIndex="{Binding SelectedIndex}" Margin="6"
+                             SelectedItem="{Binding SelectedControl}"
+                             Margin="6"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              MouseDoubleClick="MappingListBox_MouseDoubleClick">
                         <ListBox.ItemTemplate>

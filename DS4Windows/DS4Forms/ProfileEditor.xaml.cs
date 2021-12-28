@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -16,11 +17,11 @@ using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using JetBrains.Annotations;
 using Microsoft.Win32;
-using NonFormTimer = System.Timers.Timer;
+using MessageBox = AdonisUI.Controls.MessageBox;
 using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
 using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
 using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
-using MessageBox = AdonisUI.Controls.MessageBox;
+using NonFormTimer = System.Timers.Timer;
 
 namespace DS4WinWPF.DS4Forms
 {
@@ -31,30 +32,27 @@ namespace DS4WinWPF.DS4Forms
     {
         public delegate void CreatedProfileHandler(ProfileEditor sender, string profile);
 
-        private bool controllerReadingsTabActive;
-        private ProfileEntity currentProfileOLD;
+        private readonly IAppSettingsService appSettings;
 
-        private readonly Dictionary<Button, ImageBrush> hoverImages =
-            new();
+        private readonly Dictionary<Button, ImageBrush> hoverImages = new();
 
-        private readonly Dictionary<Button, int> hoverIndexes = new();
+        private readonly Dictionary<Button, DS4Controls> hoverIndexes = new();
         private readonly Dictionary<Button, HoverImageInfo> hoverLocations = new();
 
         private readonly NonFormTimer inputTimer;
 
         private readonly MappingListViewModel mappingListVm;
 
-        private readonly ProfileSettingsViewModel settingsViewModel;
-
-        private readonly Dictionary<int, Button> reverseHoverIndexes = new();
-        
-        private readonly SpecialActionsListViewModel specialActionsVM;
+        private readonly IProfilesService profileService;
 
         private readonly ControlService rootHub;
 
-        private readonly IAppSettingsService appSettings;
+        private readonly ProfileSettingsViewModel settingsViewModel;
 
-        private readonly IProfilesService profileService;
+        private readonly SpecialActionsListViewModel specialActionsVM;
+
+        private bool controllerReadingsTabActive;
+        private ProfileEntity currentProfileOLD;
 
         [UsedImplicitly]
         public ProfileEditor(
@@ -63,7 +61,7 @@ namespace DS4WinWPF.DS4Forms
             ControlService service,
             IProfilesService profileService,
             MappingListViewModel mappingViewModel
-            )
+        )
         {
             settingsViewModel = viewModel;
             this.appSettings = appSettings;
@@ -91,7 +89,6 @@ namespace DS4WinWPF.DS4Forms
             PopulateHoverImages();
             PopulateHoverLocations();
             PopulateHoverIndexes();
-            PopulateReverseHoverIndexes();
 
             AssignTiltAssociation();
             AssignSwipeAssociation();
@@ -126,7 +123,6 @@ namespace DS4WinWPF.DS4Forms
             PopulateHoverImages();
             PopulateHoverLocations();
             PopulateHoverIndexes();
-            PopulateReverseHoverIndexes();
 
             AssignTiltAssociation();
             AssignSwipeAssociation();
@@ -160,7 +156,6 @@ namespace DS4WinWPF.DS4Forms
             PopulateHoverImages();
             PopulateHoverLocations();
             PopulateHoverIndexes();
-            PopulateReverseHoverIndexes();
 
             AssignTiltAssociation();
             AssignSwipeAssociation();
@@ -175,7 +170,7 @@ namespace DS4WinWPF.DS4Forms
 
         public bool KeepSize { get; private set; }
 
-        public int DeviceNum { get; private set; }
+        public int DeviceNum { get; }
 
         public event EventHandler Closed;
         public event CreatedProfileHandler CreatedProfile;
@@ -286,61 +281,58 @@ namespace DS4WinWPF.DS4Forms
 
         private void MappingListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mappingListVm.SelectedIndex >= 0)
-                if (reverseHoverIndexes.TryGetValue(mappingListVm.SelectedIndex, out var tempBtn))
-                    InputControlHighlight(tempBtn);
-        }
+            var button = hoverIndexes.FirstOrDefault(
+                pair => pair.Value.Equals(mappingListVm.SelectedControl.Control)
+            ).Key;
 
-        private void PopulateReverseHoverIndexes()
-        {
-            foreach (var pair in hoverIndexes) reverseHoverIndexes.Add(pair.Value, pair.Key);
+            if (button is not null) InputControlHighlight(button);
         }
 
         private void PopulateHoverIndexes()
         {
-            hoverIndexes[crossConBtn] = 0;
-            hoverIndexes[circleConBtn] = 1;
-            hoverIndexes[squareConBtn] = 2;
-            hoverIndexes[triangleConBtn] = 3;
-            hoverIndexes[optionsConBtn] = 4;
-            hoverIndexes[shareConBtn] = 5;
-            hoverIndexes[upConBtn] = 6;
-            hoverIndexes[downConBtn] = 7;
-            hoverIndexes[leftConBtn] = 8;
-            hoverIndexes[rightConBtn] = 9;
-            hoverIndexes[guideConBtn] = 10;
-            hoverIndexes[muteConBtn] = 11;
-            hoverIndexes[l1ConBtn] = 12;
-            hoverIndexes[r1ConBtn] = 13;
-            hoverIndexes[l2ConBtn] = 14;
-            hoverIndexes[r2ConBtn] = 15;
-            hoverIndexes[l3ConBtn] = 16;
-            hoverIndexes[r3ConBtn] = 17;
+            hoverIndexes[crossConBtn] = DS4Controls.Cross;
+            hoverIndexes[circleConBtn] = DS4Controls.Circle;
+            hoverIndexes[squareConBtn] = DS4Controls.Square;
+            hoverIndexes[triangleConBtn] = DS4Controls.Triangle;
+            hoverIndexes[optionsConBtn] = DS4Controls.Options;
+            hoverIndexes[shareConBtn] = DS4Controls.Share;
+            hoverIndexes[upConBtn] = DS4Controls.DpadUp;
+            hoverIndexes[downConBtn] = DS4Controls.DpadDown;
+            hoverIndexes[leftConBtn] = DS4Controls.DpadLeft;
+            hoverIndexes[rightConBtn] = DS4Controls.DpadRight;
+            hoverIndexes[guideConBtn] = DS4Controls.PS;
+            hoverIndexes[muteConBtn] = DS4Controls.Mute;
+            hoverIndexes[l1ConBtn] = DS4Controls.L1;
+            hoverIndexes[r1ConBtn] = DS4Controls.R1;
+            hoverIndexes[l2ConBtn] = DS4Controls.L2;
+            hoverIndexes[r2ConBtn] = DS4Controls.R2;
+            hoverIndexes[l3ConBtn] = DS4Controls.L3;
+            hoverIndexes[r3ConBtn] = DS4Controls.R3;
 
-            hoverIndexes[leftTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchLeft]; // 21
-            hoverIndexes[rightTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchRight]; // 22
-            hoverIndexes[multiTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchMulti]; // 23
-            hoverIndexes[topTouchConBtn] = mappingListVm.ControlIndexMap[DS4Controls.TouchUpper]; // 24
+            hoverIndexes[leftTouchConBtn] = DS4Controls.TouchLeft;
+            hoverIndexes[rightTouchConBtn] = DS4Controls.TouchRight;
+            hoverIndexes[multiTouchConBtn] = DS4Controls.TouchMulti;
+            hoverIndexes[topTouchConBtn] = DS4Controls.TouchUpper;
 
-            hoverIndexes[lsuConBtn] = 25;
-            hoverIndexes[lsdConBtn] = 26;
-            hoverIndexes[lslConBtn] = 27;
-            hoverIndexes[lsrConBtn] = 28;
+            hoverIndexes[lsuConBtn] = DS4Controls.LYPos;
+            hoverIndexes[lsdConBtn] = DS4Controls.LYNeg;
+            hoverIndexes[lslConBtn] = DS4Controls.LXNeg;
+            hoverIndexes[lsrConBtn] = DS4Controls.LXPos;
 
-            hoverIndexes[rsuConBtn] = 29;
-            hoverIndexes[rsdConBtn] = 30;
-            hoverIndexes[rslConBtn] = 31;
-            hoverIndexes[rsrConBtn] = 32;
+            hoverIndexes[rsuConBtn] = DS4Controls.RYPos;
+            hoverIndexes[rsdConBtn] = DS4Controls.RYNeg;
+            hoverIndexes[rslConBtn] = DS4Controls.RXNeg;
+            hoverIndexes[rsrConBtn] = DS4Controls.RYPos;
 
-            hoverIndexes[gyroZNBtn] = 33;
-            hoverIndexes[gyroZPBtn] = 34;
-            hoverIndexes[gyroXNBtn] = 35;
-            hoverIndexes[gyroXPBtn] = 36;
+            hoverIndexes[gyroZNBtn] = DS4Controls.GyroZNeg;
+            hoverIndexes[gyroZPBtn] = DS4Controls.GyroZPos;
+            hoverIndexes[gyroXNBtn] = DS4Controls.GyroXNeg;
+            hoverIndexes[gyroXPBtn] = DS4Controls.GyroXPos;
 
-            hoverIndexes[swipeUpBtn] = 37;
-            hoverIndexes[swipeDownBtn] = 38;
-            hoverIndexes[swipeLeftBtn] = 39;
-            hoverIndexes[swipeRightBtn] = 40;
+            hoverIndexes[swipeUpBtn] = DS4Controls.SwipeUp;
+            hoverIndexes[swipeDownBtn] = DS4Controls.SwipeDown;
+            hoverIndexes[swipeLeftBtn] = DS4Controls.SwipeLeft;
+            hoverIndexes[swipeRightBtn] = DS4Controls.SwipeRight;
         }
 
         private void PopulateHoverLocations()
@@ -407,13 +399,13 @@ namespace DS4WinWPF.DS4Forms
             };
 
             hoverLocations[leftTouchConBtn] = new HoverImageInfo
-            { Coordinates = new Point(144, 44), Dimensions = new Size(140, 98) };
+                { Coordinates = new Point(144, 44), Dimensions = new Size(140, 98) };
             hoverLocations[multiTouchConBtn] = new HoverImageInfo
-            { Coordinates = new Point(143, 42), Dimensions = new Size(158, 100) };
+                { Coordinates = new Point(143, 42), Dimensions = new Size(158, 100) };
             hoverLocations[rightTouchConBtn] = new HoverImageInfo
-            { Coordinates = new Point(156, 47), Dimensions = new Size(146, 94) };
+                { Coordinates = new Point(156, 47), Dimensions = new Size(146, 94) };
             hoverLocations[topTouchConBtn] = new HoverImageInfo
-            { Coordinates = new Point(155, 6), Dimensions = new Size(153, 114) };
+                { Coordinates = new Point(155, 6), Dimensions = new Size(153, 114) };
 
             hoverLocations[l3ConBtn] = new HoverImageInfo
             {
@@ -845,12 +837,19 @@ namespace DS4WinWPF.DS4Forms
 
         private void HoverConBtn_Click(object sender, RoutedEventArgs e)
         {
-            var mpControl = mappingListVm.Mappings[mappingListVm.SelectedIndex];
-            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting);
-            window.Owner = Application.Current.MainWindow;
+            var mpControl = mappingListVm.SelectedControl;
+
+            var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
+            {
+                Owner = Application.Current.MainWindow
+            };
+
             window.ShowDialog();
+
             mpControl.UpdateMappingName();
+
             UpdateHighlightLabel(mpControl);
+
             Global.Instance.Config.CacheProfileCustomsFlags(settingsViewModel.Device);
         }
 
@@ -883,10 +882,11 @@ namespace DS4WinWPF.DS4Forms
             //
             if (hoverIndexes.TryGetValue(control, out var controlIndex))
             {
-                mappingListVm.SelectedIndex = controlIndex;
+                //mappingListVm.SelectedIndex = controlIndex;
+                mappingListVm.SelectedControl =
+                    mappingListVm.Mappings.First(mappedControl => mappedControl.Control.Equals(controlIndex));
                 mappingListBox.ScrollIntoView(mappingListBox.SelectedItem);
-                var mapped = mappingListVm.Mappings[controlIndex];
-                UpdateHighlightLabel(mapped);
+                UpdateHighlightLabel(mappingListVm.SelectedControl);
             }
         }
 
@@ -1390,108 +1390,17 @@ namespace DS4WinWPF.DS4Forms
 
             if (activeWin && settingsViewModel.UseControllerReadout)
             {
-                var index = -1;
-                switch (ControlService.CurrentInstance.GetActiveInputControl(tempDeviceNum))
-                {
-                    case DS4Controls.None: break;
-                    case DS4Controls.Cross:
-                        index = 0;
-                        break;
-                    case DS4Controls.Circle:
-                        index = 1;
-                        break;
-                    case DS4Controls.Square:
-                        index = 2;
-                        break;
-                    case DS4Controls.Triangle:
-                        index = 3;
-                        break;
-                    case DS4Controls.Options:
-                        index = 4;
-                        break;
-                    case DS4Controls.Share:
-                        index = 5;
-                        break;
-                    case DS4Controls.DpadUp:
-                        index = 6;
-                        break;
-                    case DS4Controls.DpadDown:
-                        index = 7;
-                        break;
-                    case DS4Controls.DpadLeft:
-                        index = 8;
-                        break;
-                    case DS4Controls.DpadRight:
-                        index = 9;
-                        break;
-                    case DS4Controls.PS:
-                        index = 10;
-                        break;
-                    case DS4Controls.Mute:
-                        index = 11;
-                        break;
-                    case DS4Controls.L1:
-                        index = 12;
-                        break;
-                    case DS4Controls.R1:
-                        index = 13;
-                        break;
-                    case DS4Controls.L2:
-                        index = 14;
-                        break;
-                    case DS4Controls.R2:
-                        index = 15;
-                        break;
-                    case DS4Controls.L3:
-                        index = 16;
-                        break;
-                    case DS4Controls.R3:
-                        index = 17;
-                        break;
-                    case DS4Controls.TouchLeft:
-                        index = 18;
-                        break;
-                    case DS4Controls.TouchRight:
-                        index = 19;
-                        break;
-                    case DS4Controls.TouchMulti:
-                        index = 20;
-                        break;
-                    case DS4Controls.TouchUpper:
-                        index = 21;
-                        break;
-                    case DS4Controls.LYNeg:
-                        index = 22;
-                        break;
-                    case DS4Controls.LYPos:
-                        index = 23;
-                        break;
-                    case DS4Controls.LXNeg:
-                        index = 24;
-                        break;
-                    case DS4Controls.LXPos:
-                        index = 25;
-                        break;
-                    case DS4Controls.RYNeg:
-                        index = 26;
-                        break;
-                    case DS4Controls.RYPos:
-                        index = 27;
-                        break;
-                    case DS4Controls.RXNeg:
-                        index = 28;
-                        break;
-                    case DS4Controls.RXPos:
-                        index = 29;
-                        break;
-                }
+                var control = ControlService.CurrentInstance.GetActiveInputControl(tempDeviceNum);
 
-                if (index >= 0)
-                    Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        mappingListVm.SelectedIndex = index;
-                        ShowControlBindingWindow();
-                    }));
+                Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    //
+                    // TODO: fix me
+                    // 
+                    mappingListVm.SelectedControl =
+                        mappingListVm.Mappings.First(mappedControl => mappedControl.Control.Equals(control));
+                    ShowControlBindingWindow();
+                }));
             }
 
             if (settingsViewModel.UseControllerReadout) inputTimer.Start();
@@ -1516,7 +1425,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void ShowControlBindingWindow()
         {
-            var mpControl = mappingListVm.Mappings[mappingListVm.SelectedIndex];
+            var mpControl = mappingListVm.SelectedControl;
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
                 Owner = Application.Current.MainWindow
@@ -1529,7 +1438,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MappingListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (mappingListVm.SelectedIndex >= 0) ShowControlBindingWindow();
+            ShowControlBindingWindow();
         }
 
         private void SidebarTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1579,7 +1488,7 @@ namespace DS4WinWPF.DS4Forms
         private void ConBtn_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             var btn = sender as Button;
-            var mpControl = mappingListVm.Mappings[mappingListVm.SelectedIndex];
+            var mpControl = mappingListVm.SelectedControl;
             settingsViewModel.PresetMenuUtil.SetHighlightControl(mpControl.Control);
             var cm = conCanvas.FindResource("presetMenu") as ContextMenu;
             var temp = cm.Items[0] as MenuItem;

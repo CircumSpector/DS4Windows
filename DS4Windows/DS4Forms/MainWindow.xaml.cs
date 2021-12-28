@@ -1109,6 +1109,7 @@ Suspend support not enabled.", true);
             await editor.Reload();
         }
 
+        [Obsolete]
         private void Editor_CreatedProfile(ProfileEditor sender, string profile)
         {
             ProfileListHolder.AddProfileSort(profile);

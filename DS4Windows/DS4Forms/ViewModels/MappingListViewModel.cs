@@ -119,9 +119,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public ReadOnlyObservableCollection<MappedControl> Mappings { get; }
 
-        [Obsolete]
-        public int SelectedIndex { get; set; } = -1;
-
         public MappedControl SelectedControl { get; set; }
 
         public Dictionary<DS4Controls, MappedControl> ControlMap { get; } = new();
