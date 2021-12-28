@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -23,8 +22,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private readonly MappedControl gyroSwipeLeftControl;
         private readonly MappedControl gyroSwipeRightControl;
         private readonly MappedControl gyroSwipeUpControl;
-
-        private int selectedIndex = -1;
 
         public MappingListViewModel(IProfilesService profileService)
         {
@@ -93,8 +90,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             R2FullPullControl = new MappedControl(profileService, DS4Controls.R2FullPull);
 
             gyroSwipeLeftControl = new MappedControl(profileService, DS4Controls.GyroSwipeLeft);
-            gyroSwipeRightControl =
-                new MappedControl(profileService, DS4Controls.GyroSwipeRight);
+            gyroSwipeRightControl = new MappedControl(profileService, DS4Controls.GyroSwipeRight);
             gyroSwipeUpControl = new MappedControl(profileService, DS4Controls.GyroSwipeUp);
             gyroSwipeDownControl = new MappedControl(profileService, DS4Controls.GyroSwipeDown);
 
@@ -119,16 +115,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public ObservableCollection<MappedControl> Mappings { get; } = new();
 
-        public int SelectedIndex
-        {
-            get => selectedIndex;
-            set
-            {
-                if (selectedIndex == value) return;
-                selectedIndex = value;
-                SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public int SelectedIndex { get; set; } = -1;
 
         public Dictionary<DS4Controls, MappedControl> ControlMap { get; } = new();
 
@@ -145,7 +132,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public MappedControl RsOuterBindControl { get; }
 
-        public event EventHandler SelectedIndexChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void UpdateMappingDevType(OutContType devType)
         {
@@ -160,8 +147,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             foreach (var mapped in extraControls) mapped.UpdateMappingName();
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -184,7 +169,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Setting = profileService.CurrentlyEditedProfile.PerControlSettings[control];
             DevType = profileService.CurrentlyEditedProfile.OutputDeviceType;
             Control = control;
-            
+
             //mappingName = "?";
             if (initMap)
             {
@@ -205,6 +190,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public OutContType DevType { get; set; }
 
         public string ShiftMappingName { get; set; }
+
+        public bool HasShiftAction => Setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void UpdateMappingName()
         {
@@ -259,8 +248,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             return temp;
         }
 
-        public bool HasShiftAction => Setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
-
         private static string ShiftTrigger(int trigger)
         {
             return trigger switch
@@ -298,8 +285,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 _ => ""
             };
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
