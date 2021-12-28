@@ -24,6 +24,120 @@ namespace DS4Windows
         All = 0x04
     }
 
+    public static class DS4ControlsExtensions
+    {
+        public static string ToDisplayName(this DS4Controls control)
+        {
+            switch (control)
+            {
+                case DS4Controls.None:
+                    break;
+                case DS4Controls.LXNeg:
+                    return "LS Left";
+                case DS4Controls.LXPos:
+                    return "LS Right";
+                case DS4Controls.LYNeg:
+                    return "LS Up";
+                case DS4Controls.LYPos:
+                    return "LS Down";
+                case DS4Controls.RXNeg:
+                    return "RS Left";
+                case DS4Controls.RXPos:
+                    return "RS Right";
+                case DS4Controls.RYNeg:
+                    return "RS Up";
+                case DS4Controls.RYPos:
+                    return "RS Down";
+                case DS4Controls.L1:
+                    return "L1";
+                case DS4Controls.L2:
+                    return "L2";
+                case DS4Controls.L3:
+                    return "L3";
+                case DS4Controls.R1:
+                    return "R1";
+                case DS4Controls.R2:
+                    return "R2";
+                case DS4Controls.R3:
+                    return "R3";
+                case DS4Controls.Square:
+                    return "Square";
+                case DS4Controls.Triangle:
+                    return "Triangle";
+                case DS4Controls.Circle:
+                    return "Circle";
+                case DS4Controls.Cross:
+                    return "Cross";
+                case DS4Controls.DpadUp:
+                    return "Up";
+                case DS4Controls.DpadRight:
+                    return "Right";
+                case DS4Controls.DpadDown:
+                    return "Down";
+                case DS4Controls.DpadLeft:
+                    return "Left";
+                case DS4Controls.PS:
+                    return "PS";
+                case DS4Controls.TouchLeft:
+                    return "Left Touch";
+                case DS4Controls.TouchUpper:
+                    return "Upper Touch";
+                case DS4Controls.TouchMulti:
+                    return "Multitouch";
+                case DS4Controls.TouchRight:
+                    return "Right Touch";
+                case DS4Controls.Share:
+                    return "Share";
+                case DS4Controls.Options:
+                    return "Options";
+                case DS4Controls.Mute:
+                    return "Mute";
+                case DS4Controls.GyroXPos:
+                    return "Tilt Left";
+                case DS4Controls.GyroXNeg:
+                    return "Tilt Right";
+                case DS4Controls.GyroZPos:
+                    return "Tilt Down";
+                case DS4Controls.GyroZNeg:
+                    return "Tilt Up";
+                case DS4Controls.SwipeLeft:
+                    return "Swipe Left";
+                case DS4Controls.SwipeRight:
+                    return "Swipe Right";
+                case DS4Controls.SwipeUp:
+                    return "Swipe Up";
+                case DS4Controls.SwipeDown:
+                    return "Swipe Down";
+                case DS4Controls.L2FullPull:
+                    return "L2 Full Pull";
+                case DS4Controls.R2FullPull:
+                    return "R2 Full Pull";
+                case DS4Controls.GyroSwipeLeft:
+                    return "Gyro Swipe Left";
+                case DS4Controls.GyroSwipeRight:
+                    return "Gyro Swipe Right";
+                case DS4Controls.GyroSwipeUp:
+                    return "Gyro Swipe Up";
+                case DS4Controls.GyroSwipeDown:
+                    return "Gyro Swipe Down";
+                case DS4Controls.Capture:
+                    return "Capture";
+                case DS4Controls.SideL:
+                    return "Side L";
+                case DS4Controls.SideR:
+                    return "Side R";
+                case DS4Controls.LSOuter:
+                    return "LS Outer";
+                case DS4Controls.RSOuter:
+                    return "RS Outer";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(control), control, null);
+            }
+
+            return string.Empty;
+        }
+    }
+
     public enum DS4Controls : byte
     {
         None,
