@@ -37,6 +37,7 @@ namespace DS4WinWPF.DS4Forms
         private readonly Dictionary<Button, ImageBrush> hoverImages = new();
 
         private readonly Dictionary<Button, DS4Controls> hoverIndexes = new();
+
         private readonly Dictionary<Button, HoverImageInfo> hoverLocations = new();
 
         private readonly NonFormTimer inputTimer;
@@ -52,6 +53,8 @@ namespace DS4WinWPF.DS4Forms
         private readonly ISpecialActionsListViewModel specialActionsVM;
 
         private bool controllerReadingsTabActive;
+
+        [Obsolete]
         private ProfileEntity currentProfileOLD;
 
         [UsedImplicitly]
@@ -167,6 +170,7 @@ namespace DS4WinWPF.DS4Forms
 
         public bool KeepSize { get; private set; }
 
+        [Obsolete]
         public int DeviceNum { get; }
 
         public event EventHandler Closed;
