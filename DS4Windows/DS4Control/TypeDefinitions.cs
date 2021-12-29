@@ -26,6 +26,11 @@ namespace DS4Windows
 
     public static class DS4ControlsExtensions
     {
+        /// <summary>
+        ///     Provides a user-readable representation of <see cref="DS4Controls"/>.
+        /// </summary>
+        /// <param name="control">The <see cref="DS4Controls"/> to return as <see cref="string"/>.</param>
+        /// <returns>A <see cref="string"/>.</returns>
         public static string ToDisplayName(this DS4Controls control)
         {
             switch (control)
