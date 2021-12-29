@@ -159,10 +159,14 @@ namespace DS4WinWPF
                     );
             });
 
+            #region Profile Editor and dependencies
+
             services.AddTransient<IMappingListViewModel, MappingListViewModel>();
             services.AddTransient<IProfileSettingsViewModel, ProfileSettingsViewModel>();
             services.AddTransient<ISpecialActionsListViewModel, SpecialActionsListViewModel>();
             services.AddSingleton<ProfileEditor>();
+
+            #endregion
         }
 
         protected override async void OnStartup(StartupEventArgs e)
