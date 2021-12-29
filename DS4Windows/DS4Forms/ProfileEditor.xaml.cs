@@ -41,7 +41,7 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly NonFormTimer inputTimer;
 
-        private readonly MappingListViewModel mappingListVm;
+        private readonly IMappingListViewModel mappingListVm;
 
         private readonly IProfilesService profileService;
 
@@ -60,7 +60,7 @@ namespace DS4WinWPF.DS4Forms
             IAppSettingsService appSettings,
             ControlService service,
             IProfilesService profileService,
-            MappingListViewModel mappingViewModel
+            IMappingListViewModel mappingViewModel
         )
         {
             settingsViewModel = viewModel;
