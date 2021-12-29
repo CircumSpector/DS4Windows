@@ -11,10 +11,30 @@ using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
+    public interface IMappingListViewModel
+    {
+        ReadOnlyObservableCollection<MappedControl> Mappings { get; }
+        MappedControl SelectedControl { get; set; }
+        Dictionary<DS4Controls, MappedControl> ControlMap { get; }
+
+        /// <summary>
+        ///     DS4Controls -> Int index map. Store appropriate list index for a stored MappedControl instance
+        /// </summary>
+        Dictionary<DS4Controls, int> ControlIndexMap { get; }
+
+        MappedControl L2FullPullControl { get; }
+        MappedControl R2FullPullControl { get; }
+        MappedControl LsOuterBindControl { get; }
+        MappedControl RsOuterBindControl { get; }
+        event PropertyChangedEventHandler PropertyChanged;
+        void UpdateMappingDevType(OutContType devType);
+        void UpdateMappings();
+    }
+
     /// <summary>
     ///     Controller buttons/axes to remapped actions view model.
     /// </summary>
-    public class MappingListViewModel : INotifyPropertyChanged
+    public class MappingListViewModel : INotifyPropertyChanged, IMappingListViewModel
     {
         private readonly ObservableCollection<MappedControl> mappings = new();
         private readonly List<MappedControl> extraControls = new();
