@@ -30,6 +30,7 @@ namespace DS4WinWPF.DS4Forms
     /// </summary>
     public partial class ProfileEditor : UserControl
     {
+        [Obsolete]
         public delegate void CreatedProfileHandler(ProfileEditor sender, string profile);
 
         private readonly IAppSettingsService appSettings;
@@ -174,6 +175,8 @@ namespace DS4WinWPF.DS4Forms
         public int DeviceNum { get; }
 
         public event EventHandler Closed;
+
+        [Obsolete("ProfileService should be used to fire this event!")]
         public event CreatedProfileHandler CreatedProfile;
 
         private void SetupEvents()
