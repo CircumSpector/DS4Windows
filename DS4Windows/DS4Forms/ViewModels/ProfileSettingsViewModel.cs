@@ -50,19 +50,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         string LowColorBString { get; }
         Color LowColorMedia { get; }
 
-        int FlashTypeIndex
-        {
-            get;
-            //Global.Instance.FlashType[device];
-            set;
-        }
+        int FlashTypeIndex { get; set; }
 
-        int FlashAt
-        {
-            get;
-            //Global.Instance.FlashAt[device];
-            set;
-        }
+        int FlashAt { get; set; }
 
         string FlashColor { get; }
         Color FlashColorMedia { get; }
@@ -76,12 +66,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         double MaxSatRainbow { get; set; }
         int RumbleBoost { get; set; }
 
-        int RumbleAutostopTime
-        {
-            // RumbleAutostopTime value is in milliseconds in XML config file, but GUI uses just seconds
-            get;
-            set;
-        }
+        int RumbleAutostopTime { get; set; }
 
         bool HeavyRumbleActive { get; set; }
         bool LightRumbleActive { get; set; }
