@@ -16,6 +16,9 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
+    /// <summary>
+    ///     Handles managing profiles.
+    /// </summary>
     public interface IProfilesService
     {
         /// <summary>
