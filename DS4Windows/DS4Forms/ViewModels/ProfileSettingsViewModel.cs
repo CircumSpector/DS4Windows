@@ -5,10 +5,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
+using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
@@ -18,7 +20,298 @@ using Color = System.Windows.Media.Color;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public partial class ProfileSettingsViewModel : INotifyPropertyChanged
+    public interface IProfileSettingsViewModel
+    {
+        int GyroMouseSmoothMethodIndex { get; set; }
+        int GyroMouseStickSmoothMethodIndex { get; set; }
+        double MouseOffsetSpeed { get; set; }
+        int OutputMouseSpeed { get; set; }
+        int TempControllerIndex { get; set; }
+        PresetMenuHelper PresetMenuUtil { get; }
+        int Device { get; }
+        int FuncDevNum { get; }
+        string ProfileName { get; set; }
+        int LightbarModeIndex { get; set; }
+        Brush LightbarBrush { get; }
+        Color MainColor { get; }
+        string MainColorString { get; }
+        int MainColorR { get; set; }
+        string MainColorRString { get; }
+        int MainColorG { get; set; }
+        string MainColorGString { get; }
+        int MainColorB { get; set; }
+        string MainColorBString { get; }
+        string LowColor { get; }
+        int LowColorR { get; set; }
+        string LowColorRString { get; }
+        int LowColorG { get; set; }
+        string LowColorGString { get; }
+        int LowColorB { get; set; }
+        string LowColorBString { get; }
+        Color LowColorMedia { get; }
+
+        int FlashTypeIndex
+        {
+            get;
+            //Global.Instance.FlashType[device];
+            set;
+        }
+
+        int FlashAt
+        {
+            get;
+            //Global.Instance.FlashAt[device];
+            set;
+        }
+
+        string FlashColor { get; }
+        Color FlashColorMedia { get; }
+        int ChargingType { get; set; }
+        bool ColorBatteryPercent { get; set; }
+        string ChargingColor { get; }
+        Color ChargingColorMedia { get; }
+        Visibility ChargingColorVisible { get; }
+        double Rainbow { get; set; }
+        bool RainbowExists { get; }
+        double MaxSatRainbow { get; set; }
+        int RumbleBoost { get; set; }
+
+        int RumbleAutostopTime
+        {
+            // RumbleAutostopTime value is in milliseconds in XML config file, but GUI uses just seconds
+            get;
+            set;
+        }
+
+        bool HeavyRumbleActive { get; set; }
+        bool LightRumbleActive { get; set; }
+        bool UseControllerReadout { get; set; }
+        int ButtonMouseSensitivity { get; set; }
+        int ButtonMouseVerticalScale { get; set; }
+        double ButtonMouseOffset { get; set; }
+        bool MouseAcceleration { get; set; }
+        bool EnableTouchpadToggle { get; set; }
+        bool EnableOutputDataToDS4 { get; set; }
+        bool LaunchProgramExists { get; set; }
+        string LaunchProgram { get; }
+        string LaunchProgramName { get; }
+        ImageSource LaunchProgramIcon { get; }
+        bool DInputOnly { get; set; }
+        bool IdleDisconnectExists { get; set; }
+        int IdleDisconnect { get; set; }
+        int TempBTPollRateIndex { get; set; }
+        int ControllerTypeIndex { get; }
+        OutContType TempConType { get; }
+        int GyroOutModeIndex { get; set; }
+        OutContType ContType { get; }
+        int SASteeringWheelEmulationAxisIndex { get; set; }
+        int SASteeringWheelEmulationRangeIndex { get; set; }
+        int SASteeringWheelEmulationRange { get; set; }
+        int SASteeringWheelFuzz { get; set; }
+        bool SASteeringWheelUseSmoothing { get; set; }
+        double SASteeringWheelSmoothMinCutoff { get; set; }
+        double SASteeringWheelSmoothBeta { get; set; }
+        double LSDeadZone { get; set; }
+        double RSDeadZone { get; set; }
+        double LSMaxZone { get; set; }
+        double RSMaxZone { get; set; }
+        double LSAntiDeadZone { get; set; }
+        double RSAntiDeadZone { get; set; }
+        double LSVerticalScale { get; set; }
+        double LSMaxOutput { get; set; }
+        bool LSMaxOutputForce { get; set; }
+        double RSVerticalScale { get; set; }
+        double RSMaxOutput { get; set; }
+        bool RSMaxOutputForce { get; set; }
+        int LSDeadTypeIndex { get; set; }
+        int RSDeadTypeIndex { get; set; }
+        double LSSens { get; set; }
+        double RSSens { get; set; }
+        bool LSSquareStick { get; set; }
+        bool RSSquareStick { get; set; }
+        double LSSquareRoundness { get; set; }
+        double RSSquareRoundness { get; set; }
+        int LSOutputCurveIndex { get; set; }
+        int RSOutputCurveIndex { get; set; }
+        double LSRotation { get; set; }
+        double RSRotation { get; set; }
+        bool LSCustomCurveSelected { get; }
+        bool RSCustomCurveSelected { get; }
+        string LSCustomCurve { get; set; }
+        string RSCustomCurve { get; set; }
+        int LSFuzz { get; set; }
+        int RSFuzz { get; set; }
+        bool LSAntiSnapback { get; set; }
+        bool RSAntiSnapback { get; set; }
+        double LSAntiSnapbackDelta { get; set; }
+        double RSAntiSnapbackDelta { get; set; }
+        int LSAntiSnapbackTimeout { get; set; }
+        int RSAntiSnapbackTimeout { get; set; }
+        bool LSOuterBindInvert { get; set; }
+        bool RSOuterBindInvert { get; set; }
+        double LSOuterBindDead { get; set; }
+        double RSOuterBindDead { get; set; }
+        int LSOutputIndex { get; set; }
+        double LSFlickRWC { get; set; }
+        double LSFlickThreshold { get; set; }
+        double LSFlickTime { get; set; }
+        double LSMinAngleThreshold { get; set; }
+        int RSOutputIndex { get; set; }
+        double RSFlickRWC { get; set; }
+        double RSFlickThreshold { get; set; }
+        double RSFlickTime { get; set; }
+        double RSMinAngleThreshold { get; set; }
+        double L2DeadZone { get; set; }
+        double R2DeadZone { get; set; }
+        double L2MaxZone { get; set; }
+        double R2MaxZone { get; set; }
+        double L2AntiDeadZone { get; set; }
+        double R2AntiDeadZone { get; set; }
+        double L2MaxOutput { get; set; }
+        double R2MaxOutput { get; set; }
+        double L2Sens { get; set; }
+        double R2Sens { get; set; }
+        int L2OutputCurveIndex { get; set; }
+        int R2OutputCurveIndex { get; set; }
+        bool L2CustomCurveSelected { get; }
+        bool R2CustomCurveSelected { get; }
+        string L2CustomCurve { get; set; }
+        string R2CustomCurve { get; set; }
+        List<TwoStageChoice> TwoStageModeChoices { get; }
+        TwoStageTriggerMode L2TriggerMode { get; set; }
+        TwoStageTriggerMode R2TriggerMode { get; set; }
+        int L2HipFireTime { get; set; }
+        int R2HipFireTime { get; set; }
+        List<TriggerEffectChoice> TriggerEffectChoices { get; }
+        TriggerEffects L2TriggerEffect { get; set; }
+        TriggerEffects R2TriggerEffect { get; set; }
+        double SXDeadZone { get; set; }
+        double SZDeadZone { get; set; }
+        double SXMaxZone { get; set; }
+        double SZMaxZone { get; set; }
+        double SXAntiDeadZone { get; set; }
+        double SZAntiDeadZone { get; set; }
+        double SXSens { get; set; }
+        double SZSens { get; set; }
+        int SXOutputCurveIndex { get; set; }
+        int SZOutputCurveIndex { get; set; }
+        bool SXCustomCurveSelected { get; }
+        bool SZCustomCurveSelected { get; }
+        string SXCustomCurve { get; set; }
+        string SZCustomCurve { get; set; }
+        int TouchpadOutputIndex { get; set; }
+        bool TouchSenExists { get; set; }
+        int TouchSens { get; set; }
+        bool TouchScrollExists { get; set; }
+        int TouchScroll { get; set; }
+        bool TouchTapExists { get; set; }
+        int TouchTap { get; set; }
+        bool TouchDoubleTap { get; set; }
+        bool TouchJitter { get; set; }
+        int TouchInvertIndex { get; set; }
+        bool LowerRightTouchRMB { get; set; }
+        bool TouchpadClickPassthru { get; set; }
+        bool StartTouchpadOff { get; set; }
+        double TouchRelMouseRotation { get; set; }
+        double TouchRelMouseMinThreshold { get; set; }
+        bool TouchTrackball { get; set; }
+        double TouchTrackballFriction { get; set; }
+        int TouchAbsMouseMaxZoneX { get; set; }
+        int TouchAbsMouseMaxZoneY { get; set; }
+        bool TouchAbsMouseSnapCenter { get; set; }
+        bool GyroMouseTurns { get; set; }
+        int GyroSensitivity { get; set; }
+        int GyroVertScale { get; set; }
+        int GyroMouseEvalCondIndex { get; set; }
+        int GyroMouseXAxis { get; set; }
+        double GyroMouseMinThreshold { get; set; }
+        bool GyroMouseInvertX { get; set; }
+        bool GyroMouseInvertY { get; set; }
+        bool GyroMouseSmooth { get; set; }
+        Visibility GyroMouseWeightAvgPanelVisibility { get; }
+        Visibility GyroMouseOneEuroPanelVisibility { get; }
+        double GyroMouseSmoothWeight { get; set; }
+        double GyroMouseOneEuroMinCutoff { get; set; }
+        double GyroMouseOneEuroBeta { get; set; }
+        Visibility GyroMouseStickWeightAvgPanelVisibility { get; }
+        Visibility GyroMouseStickOneEuroPanelVisibility { get; }
+        double GyroMouseStickSmoothWeight { get; set; }
+        double GyroMouseStickOneEuroMinCutoff { get; set; }
+        double GyroMouseStickOneEuroBeta { get; set; }
+        int GyroMouseDeadZone { get; set; }
+        bool GyroMouseToggle { get; set; }
+        bool GyroMouseStickTurns { get; set; }
+        bool GyroMouseStickToggle { get; set; }
+        int GyroMouseStickDeadZone { get; set; }
+        int GyroMouseStickMaxZone { get; set; }
+        int GyroMouseStickOutputStick { get; set; }
+        int GyroMouseStickOutputAxes { get; set; }
+        double GyroMouseStickAntiDeadX { get; set; }
+        double GyroMouseStickAntiDeadY { get; set; }
+        int GyroMouseStickVertScale { get; set; }
+        bool GyroMouseStickMaxOutputEnabled { get; set; }
+        double GyroMouseStickMaxOutput { get; set; }
+        int GyroMouseStickEvalCondIndex { get; set; }
+        int GyroMouseStickXAxis { get; set; }
+        bool GyroMouseStickInvertX { get; set; }
+        bool GyroMouseStickInvertY { get; set; }
+        bool GyroMouseStickSmooth { get; set; }
+        double GyroMousetickSmoothWeight { get; set; }
+        string TouchDisInvertString { get; set; }
+        string GyroControlsTrigDisplay { get; set; }
+        bool GyroControlsTurns { get; set; }
+        int GyroControlsEvalCondIndex { get; set; }
+        bool GyroControlsToggle { get; set; }
+        string GyroMouseTrigDisplay { get; set; }
+        string GyroMouseStickTrigDisplay { get; set; }
+        string GyroSwipeTrigDisplay { get; set; }
+        bool GyroSwipeTurns { get; set; }
+        int GyroSwipeEvalCondIndex { get; set; }
+        int GyroSwipeXAxis { get; set; }
+        int GyroSwipeDeadZoneX { get; set; }
+        int GyroSwipeDeadZoneY { get; set; }
+        int GyroSwipeDelayTime { get; set; }
+
+        void UpdateFlashColor(Color color);
+
+        /// <summary>
+        ///     Updates the main lightbar color.
+        /// </summary>
+        void UpdateMainColor(Color color);
+
+        /// <summary>
+        ///     Updates the low battery lightbar color.
+        /// </summary>
+        void UpdateLowColor(Color color);
+
+        void UpdateForcedColor(Color color);
+        void StartForcedColor(Color color);
+        void EndForcedColor();
+        void UpdateChargingColor(Color color);
+        void UpdateLaunchProgram(string path);
+        void ResetLauchProgram();
+        void UpdateTouchDisInvert(ContextMenu menu);
+        void PopulateTouchDisInver(ContextMenu menu);
+        void UpdateGyroMouseTrig(ContextMenu menu, bool alwaysOnChecked);
+        void PopulateGyroMouseTrig(ContextMenu menu);
+        void UpdateGyroMouseStickTrig(ContextMenu menu, bool alwaysOnChecked);
+        void PopulateGyroMouseStickTrig(ContextMenu menu);
+        void UpdateGyroSwipeTrig(ContextMenu menu, bool alwaysOnChecked);
+        void PopulateGyroSwipeTrig(ContextMenu menu);
+        void UpdateGyroControlsTrig(ContextMenu menu, bool alwaysOnChecked);
+        void PopulateGyroControlsTrig(ContextMenu menu);
+        void LaunchCurveEditor(string customDefinition);
+        void UpdateLateProperties();
+
+        /// <summary>
+        ///     Updates all view model properties.
+        /// </summary>
+        void RefreshCurrentProfile();
+
+        event PropertyChangedEventHandler PropertyChanged;
+    }
+
+    public partial class ProfileSettingsViewModel : INotifyPropertyChanged, IProfileSettingsViewModel
     {
         private readonly IAppSettingsService appSettings;
  

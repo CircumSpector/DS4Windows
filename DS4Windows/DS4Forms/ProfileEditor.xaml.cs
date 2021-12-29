@@ -47,7 +47,7 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly ControlService rootHub;
 
-        private readonly ProfileSettingsViewModel settingsViewModel;
+        private readonly IProfileSettingsViewModel settingsViewModel;
 
         private readonly SpecialActionsListViewModel specialActionsVM;
 
@@ -56,7 +56,7 @@ namespace DS4WinWPF.DS4Forms
 
         [UsedImplicitly]
         public ProfileEditor(
-            ProfileSettingsViewModel viewModel,
+            IProfileSettingsViewModel viewModel,
             IAppSettingsService appSettings,
             ControlService service,
             IProfilesService profileService,
