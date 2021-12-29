@@ -11,6 +11,7 @@
         xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
         xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         Title="Select action" Height="500" Width="1020" Closing="Window_Closing">
 
     <Window.Style>
