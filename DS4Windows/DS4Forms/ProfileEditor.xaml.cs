@@ -49,7 +49,7 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly IProfileSettingsViewModel settingsViewModel;
 
-        private readonly SpecialActionsListViewModel specialActionsVM;
+        private readonly ISpecialActionsListViewModel specialActionsVM;
 
         private bool controllerReadingsTabActive;
         private ProfileEntity currentProfileOLD;
@@ -60,7 +60,8 @@ namespace DS4WinWPF.DS4Forms
             IAppSettingsService appSettings,
             ControlService service,
             IProfilesService profileService,
-            IMappingListViewModel mappingViewModel
+            IMappingListViewModel mappingViewModel,
+            ISpecialActionsListViewModel specialActionsListViewModel
         )
         {
             settingsViewModel = viewModel;
@@ -74,16 +75,12 @@ namespace DS4WinWPF.DS4Forms
             lightbarRect.DataContext = settingsViewModel;
             profileNameTxt.DataContext = settingsViewModel;
 
-            // TODO: migrate me
-            specialActionsVM = new SpecialActionsListViewModel(profileService.CurrentlyEditedProfile.Index ?? 0);
+            mappingListVm = mappingViewModel;
+            specialActionsVM = specialActionsListViewModel;
 
-            //DeviceNum = device;
             emptyColorGB.Visibility = Visibility.Collapsed;
             picBoxHover.Visibility = Visibility.Hidden;
             picBoxHover2.Visibility = Visibility.Hidden;
-
-            mappingListVm = mappingViewModel;
-            //specialActionsVM = new SpecialActionsListViewModel(device);
 
             RemoveHoverBtnText();
             PopulateHoverImages();
@@ -150,7 +147,7 @@ namespace DS4WinWPF.DS4Forms
             picBoxHover2.Visibility = Visibility.Hidden;
 
             //mappingListVm = new MappingListViewModel(DeviceNum, settingsViewModel.ContType);
-            specialActionsVM = new SpecialActionsListViewModel(device);
+            //specialActionsVM = new SpecialActionsListViewModel(device);
 
             RemoveHoverBtnText();
             PopulateHoverImages();

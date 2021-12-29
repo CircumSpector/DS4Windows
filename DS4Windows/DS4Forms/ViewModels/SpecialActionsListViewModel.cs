@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -10,16 +11,26 @@ using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public class SpecialActionsListViewModel : INotifyPropertyChanged
+    public interface ISpecialActionsListViewModel
     {
-        public SpecialActionsListViewModel(int deviceNum)
-        {
-            DeviceNum = deviceNum;
-        }
+        ObservableCollection<SpecialActionItem> ActionCol { get; }
+        int SpecialActionIndex { get; set; }
+        SpecialActionItem CurrentSpecialActionItem { get; set; }
+        bool ItemSelected { get; }
+        void LoadActions(bool newProfile = false);
+        SpecialActionItem CreateActionItem(SpecialActionV3 action);
+        string GetActionDisplayName(SpecialActionV3 action);
+        void ExportEnabledActions();
+        void RemoveAction(SpecialActionItem item);
+        event PropertyChangedEventHandler PropertyChanged;
+    }
 
+    public class SpecialActionsListViewModel : INotifyPropertyChanged, ISpecialActionsListViewModel
+    {
         public ObservableCollection<SpecialActionItem> ActionCol { get; } = new();
 
-        public int DeviceNum { get; }
+        [Obsolete]
+        public int DeviceNum { get; } = 0;
 
         public int SpecialActionIndex { get; set; } = -1;
 
