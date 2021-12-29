@@ -21,6 +21,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         private readonly IList<LightbarSettingInfo> lightbarSettings =
             new List<LightbarSettingInfo>(Enumerable.Range(0, 8).Select(i => new LightbarSettingInfo()));
 
+        [Obsolete]
         public bool UseExclusiveMode { get; set; }
 
         public bool StartMinimized { get; set; }
