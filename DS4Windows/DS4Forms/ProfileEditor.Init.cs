@@ -7,6 +7,9 @@ namespace DS4WinWPF.DS4Forms
 {
     public partial class ProfileEditor
     {
+        /// <summary>
+        ///     Links <see cref="Button"/>s to the corresponding <see cref="DS4Controls"/>.
+        /// </summary>
         private void PopulateHoverIndexes()
         {
             hoverIndexes[crossConBtn] = DS4Controls.Cross;
@@ -54,6 +57,9 @@ namespace DS4WinWPF.DS4Forms
             hoverIndexes[swipeRightBtn] = DS4Controls.SwipeRight;
         }
 
+        /// <summary>
+        ///     Links <see cref="Button"/>s to the corresponding <see cref="HoverImageInfo"/>.
+        /// </summary>
         private void PopulateHoverLocations()
         {
             hoverLocations[crossConBtn] = new HoverImageInfo
@@ -237,6 +243,9 @@ namespace DS4WinWPF.DS4Forms
             leftConBtn.Content = string.Empty;
         }
 
+        /// <summary>
+        ///     Links <see cref="Button"/>s to the corresponding <see cref="ImageBrush"/>.
+        /// </summary>
         private void PopulateHoverImages()
         {
             var sourceConverter = new ImageSourceConverter();
