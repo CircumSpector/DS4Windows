@@ -12,7 +12,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     public sealed class OutputSlotService
     {
         private readonly IList<OutSlotDevice> outputSlots =
-            new List<OutSlotDevice>(Enumerable.Range(0, 8).Select(i => new OutSlotDevice(i)));
+            new List<OutSlotDevice>(Enumerable.Range(0, Constants.MaxControllers).Select(i => new OutSlotDevice(i)));
 
         public OutputSlotService(ViGEmClient client)
         {

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
@@ -167,7 +168,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             AvailableProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(availableProfiles);
 
             controllerSlotProfiles = new ObservableCollection<DS4WindowsProfile>(Enumerable
-                .Range(0, 8)
+                .Range(0, Constants.MaxControllers)
                 .Select(DS4WindowsProfile.GetDefaultProfile));
 
             ActiveProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(controllerSlotProfiles);

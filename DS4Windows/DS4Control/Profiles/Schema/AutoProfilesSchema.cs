@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DS4Windows;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
@@ -12,7 +13,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     Association between controller slots and the profile (ID) to switch to.
         /// </summary>
         public Dictionary<int, Guid?> ControllerSlotProfileId { get; set; } = new(Enumerable
-            .Range(0, 8)
+            .Range(0, Constants.MaxControllers)
             .Select(i => new KeyValuePair<int, Guid?>(i, null)));
 
         public bool TurnOff { get; set; }

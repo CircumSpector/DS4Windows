@@ -41,5 +41,7 @@ namespace DS4Windows
         public const string SteamTroubleshootingUri = "https://docs.ds4windows.app/troubleshooting/steam-related/";
         
         public const string TracingGuideUri = "https://docs.ds4windows.app/troubleshooting/tracing-guide/";
+
+        public const int MaxControllers = 8;
     }
 }

@@ -13,13 +13,17 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using OpenTracing.Util;
+using Constants = DS4Windows.Constants;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
+    /// <summary>
+    ///     Global application settings persisted to/fetched from disk.
+    /// </summary>
     public class DS4WindowsAppSettings : JsonSerializable<DS4WindowsAppSettings>
     {
         private readonly IList<LightbarSettingInfo> lightbarSettings =
-            new List<LightbarSettingInfo>(Enumerable.Range(0, 8).Select(i => new LightbarSettingInfo()));
+            new List<LightbarSettingInfo>(Enumerable.Range(0, Constants.MaxControllers).Select(i => new LightbarSettingInfo()));
 
         [Obsolete]
         public bool UseExclusiveMode { get; set; }
@@ -87,7 +91,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     Gets custom LED/Lightbar overrides per controller slot.
         /// </summary>
         public Dictionary<int, CustomLedProxyType> CustomLedOverrides { get; set; } = new(Enumerable
-            .Range(0, 8)
+            .Range(0, Constants.MaxControllers)
             .Select(i => new KeyValuePair<int, CustomLedProxyType>(i, new CustomLedProxyType())));
 
         /// <summary>
@@ -119,7 +123,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     Gets slot to profile assignments.
         /// </summary>
         public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
-            .Range(0, 8)
+            .Range(0, Constants.MaxControllers)
             .Select(i => new KeyValuePair<int, Guid?>(i, null)));
 
         public event Action<bool> IsTracingEnabledChanged;

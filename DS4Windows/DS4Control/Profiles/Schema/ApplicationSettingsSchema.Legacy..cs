@@ -185,7 +185,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     Gets slot to profile assignments.
         /// </summary>
         public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
-            .Range(0, 8)
+            .Range(0, Constants.MaxControllers)
             .Select(i => new KeyValuePair<int, Guid?>(i, null)));
 
         [XmlAttribute(AttributeName = "app_version")]
