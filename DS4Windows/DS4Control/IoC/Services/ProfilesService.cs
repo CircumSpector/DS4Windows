@@ -134,9 +134,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     {
-        private const string LINKED_PROFILES_FILE_NAME = "LinkedProfiles.json";
+        private const string LinkedProfilesFileName = "LinkedProfiles.json";
 
-        private const string AUTO_PROFILES_FILE_NAME = "AutoSwitchingProfiles.json";
+        private const string AutoProfilesFileName = "AutoSwitchingProfiles.json";
+
         private readonly IAppSettingsService appSettings;
 
         private readonly ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
@@ -340,7 +341,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public bool SaveLinkedProfiles()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, LINKED_PROFILES_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, LinkedProfilesFileName);
 
             try
             {
@@ -366,7 +367,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public bool LoadLinkedProfiles()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, LINKED_PROFILES_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, LinkedProfilesFileName);
 
             if (!File.Exists(path))
             {
@@ -482,7 +483,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public void SaveAutoSwitchingProfiles()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, AUTO_PROFILES_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, AutoProfilesFileName);
 
             using var stream = File.Open(path, FileMode.Create);
 
@@ -499,7 +500,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public void LoadAutoSwitchingProfiles()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, AUTO_PROFILES_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, AutoProfilesFileName);
 
             if (!File.Exists(path))
             {
