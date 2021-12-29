@@ -26,7 +26,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public bool StartMinimized { get; set; }
 
-        public bool MinimizeToTaskbar { get; set; }
+        public bool MinimizeToTaskBar { get; set; }
 
         public int FormWidth { get; set; } = 782;
 

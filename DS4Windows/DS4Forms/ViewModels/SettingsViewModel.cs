@@ -87,7 +87,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public bool FlashHighLatency { get => appSettings.Settings.FlashWhenLate; set => appSettings.Settings.FlashWhenLate = value; }
         public int FlashHighLatencyAt { get => appSettings.Settings.FlashWhenLateAt; set => appSettings.Settings.FlashWhenLateAt = value; }
         public bool StartMinimize { get => appSettings.Settings.StartMinimized; set => appSettings.Settings.StartMinimized = value; }
-        public bool MinimizeToTaskbar { get => appSettings.Settings.MinimizeToTaskbar; set => appSettings.Settings.MinimizeToTaskbar = value; }
+        public bool MinimizeToTaskbar { get => appSettings.Settings.MinimizeToTaskBar; set => appSettings.Settings.MinimizeToTaskBar = value; }
         public bool CloseMinimizes { get => appSettings.Settings.CloseMinimizes; set => appSettings.Settings.CloseMinimizes = value; }
         public bool QuickCharge { get => appSettings.Settings.QuickCharge; set => appSettings.Settings.QuickCharge = value; }
 

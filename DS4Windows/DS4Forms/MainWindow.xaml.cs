@@ -1006,7 +1006,7 @@ Suspend support not enabled.", true);
 
         public void CheckMinStatus()
         {
-            var minToTask = appSettings.Settings.MinimizeToTaskbar;
+            var minToTask = appSettings.Settings.MinimizeToTaskBar;
 
             switch (WindowState)
             {
