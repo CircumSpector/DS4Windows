@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using AdonisUI.Controls;
 using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels;
 
@@ -13,7 +14,7 @@ namespace DS4WinWPF.DS4Forms
     /// <summary>
     ///     Interaction logic for BindingWindow.xaml
     /// </summary>
-    public partial class BindingWindow : Window
+    public partial class BindingWindow : AdonisWindow
     {
         public enum ExposeMode : uint
         {

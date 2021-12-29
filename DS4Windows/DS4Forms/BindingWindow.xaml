@@ -1,4 +1,4 @@
-﻿<Window x:Class="DS4WinWPF.DS4Forms.BindingWindow"
+﻿<controls:AdonisWindow x:Class="DS4WinWPF.DS4Forms.BindingWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,9 +9,14 @@
         lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
         xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
+        xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
         mc:Ignorable="d"
-        Title="Select action" Height="500" Width="1020" Closing="Window_Closing"
-        Style="{DynamicResource WindowStyle}">
+        Title="Select action" Height="500" Width="1020" Closing="Window_Closing">
+
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}" />
+    </Window.Style>
+
     <DockPanel x:Name="fullPanel" Margin="4">
         <StackPanel x:Name="extrasSidePanel" Width="160" Orientation="Vertical" DockPanel.Dock="Right">
             <StackPanel.Resources>
@@ -566,4 +571,4 @@
             </Grid>
         </DockPanel>
     </DockPanel>
-</Window>
+</controls:AdonisWindow>
