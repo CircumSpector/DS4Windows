@@ -665,6 +665,7 @@ namespace DS4Windows
             /// </summary>
             /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
+            [Obsolete]
             public bool SaveApplicationSettings()
             {
                 var saved = true;
@@ -703,6 +704,7 @@ namespace DS4Windows
             /// </summary>
             /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
+            [Obsolete]
             public async Task<bool> LoadApplicationSettings()
             {
                 var loaded = true;
@@ -737,6 +739,7 @@ namespace DS4Windows
             /// <param name="proName">The profile name (without extension or root path).</param>
             /// <returns>True on success, false otherwise.</returns>
             [ConfigurationSystemComponent]
+            [Obsolete]
             public async Task<bool> SaveProfile(int device, string proName)
             {
                 var saved = true;
@@ -882,6 +885,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public async Task<bool> LoadProfile(
                 int device,
                 bool launchprogram,
@@ -1542,6 +1546,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public bool SaveAction(string name, string controls, int mode, string details, bool edit,
                 string extras = "")
             {
@@ -1644,6 +1649,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public void RemoveAction(string name)
             {
                 m_Xdoc.Load(ActionsPath);
@@ -1658,6 +1664,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public bool LoadActions()
             {
                 var saved = true;
@@ -1772,6 +1779,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public bool LoadLinkedProfiles()
             {
                 var loaded = true;
@@ -1803,6 +1811,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public bool SaveLinkedProfiles()
             {
                 var saved = true;
@@ -1830,6 +1839,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public bool LoadControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
@@ -1843,6 +1853,7 @@ namespace DS4Windows
             }
 
             [ConfigurationSystemComponent]
+            [Obsolete]
             public bool SaveControllerConfigs(DS4Device device = null)
             {
                 if (device != null)
