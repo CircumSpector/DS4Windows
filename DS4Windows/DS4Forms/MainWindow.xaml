@@ -323,8 +323,8 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Label
-                                    Content="{Binding DisplayName, Mode=OneWay, Converter={StaticResource escapeAccessConvert}}"
-                                    Padding="0" />
+                                    Content="{Binding ExtendedDisplayName, Mode=OneWay, Converter={StaticResource escapeAccessConvert}}"
+                                    Margin="{adonisUi:Space 1,0.5}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

@@ -107,6 +107,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
                 where dc != DS4Controls.None
                 select new DS4ControlSettings(dc)).ToList());
 
+        [JsonIgnore]
+        public string ExtendedDisplayName =>
+            IsImmutable
+                ? $"{DisplayName} (r/o)"
+                : DisplayName;
+
         #endregion
 
         #region Persisted properties
