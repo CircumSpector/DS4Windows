@@ -309,6 +309,17 @@
                         <ListBox.Resources>
                             <localConverters:EscapeAccessKeysConverter x:Key="escapeAccessConvert" />
                         </ListBox.Resources>
+
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsImmutable}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Label
