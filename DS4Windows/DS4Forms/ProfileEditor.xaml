@@ -1941,11 +1941,13 @@
                                                            VerticalAlignment="Center" />
                                             </StackPanel>
 
+                                            <!-- Smoothing -->
                                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                                                 <CheckBox Content="Use Smoothing" Margin="{adonisUi:Space 1,0}"
                                                           IsChecked="{Binding SASteeringWheelUseSmoothing}" />
                                             </StackPanel>
 
+                                            <!-- Euro Filter -->
                                             <StackPanel x:Name="euroFilterOptionsPanel"
                                                         IsEnabled="{Binding SASteeringWheelUseSmoothing,FallbackValue=False}"
                                                         Orientation="Horizontal" Margin="0,0,0,8">
@@ -1975,6 +1977,7 @@
                                 </StackPanel>
                             </TabItem>
 
+                            <!-- Mouse -->
                             <TabItem Header="Mouse" Visibility="Collapsed">
                                 <StackPanel x:Name="gyroMousePanel" Margin="{StaticResource spaceMargin}">
                                     <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
@@ -2145,6 +2148,7 @@
                                 </StackPanel>
                             </TabItem>
 
+                            <!-- Mouse Joystick -->
                             <TabItem Header="Mouse Joystick" Visibility="Collapsed">
                                 <StackPanel x:Name="gyroMouseJoystickPanel">
                                     <StackPanel Orientation="Horizontal" Margin="{StaticResource spaceMargin}">
@@ -2353,6 +2357,7 @@
                                 </StackPanel>
                             </TabItem>
 
+                            <!-- Directional Swipe -->
                             <TabItem Header="Directional Swipe" Visibility="Collapsed">
                                 <StackPanel x:Name="gyroDirSwipePanel">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
@@ -2496,6 +2501,7 @@
                                 </StackPanel>
                             </TabItem>
 
+                            <!-- Passthru -->
                             <TabItem Header="Passthru" Visibility="Collapsed">
                                 <StackPanel x:Name="passthruPanel">
                                     <TextBlock Foreground="Red">
