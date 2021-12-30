@@ -119,6 +119,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// </summary>
         public string DisplayName { get; set; } = "Default";
 
+        /// <summary>
+        ///     If set, prohibits editing this profile via UI.
+        /// </summary>
+        public bool IsImmutable { get; set; }
+
         public bool EnableTouchToggle { get; set; } = true;
 
         public ButtonMouseInfo ButtonMouseInfo { get; set; } = new();
