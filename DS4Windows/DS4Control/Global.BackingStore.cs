@@ -2094,6 +2094,7 @@ namespace DS4Windows
                 return false;
             }
 
+            [Obsolete]
             public void LoadBlankDs4Profile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2123,6 +2124,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadBlankProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2156,6 +2158,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultGamepadGyroProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2196,6 +2199,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultDS4GamepadGyroProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2232,6 +2236,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultMixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2277,6 +2282,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultDs4MixedGyroMouseProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2313,6 +2319,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultDS4MixedControlsProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2340,6 +2347,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultMixedControlsProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2387,6 +2395,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultKBMProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2491,6 +2500,7 @@ namespace DS4Windows
                     PostLoadSnippet(device, control, xinputStatus, xinputPlug);
             }
 
+            [Obsolete]
             public void LoadDefaultKBMGyroMouseProfile(int device, bool launchprogram, ControlService control,
                 string propath = "", bool xinputChange = true, bool postLoad = true)
             {
@@ -2853,6 +2863,7 @@ namespace DS4Windows
                 m_Xdoc.Save(ActionsPath);
             }
 
+            [Obsolete]
             private void PrepareActionsXml(XmlDocument xmlDoc)
             {
                 XmlNode Node;
@@ -2897,6 +2908,7 @@ namespace DS4Windows
                     control.touchPad[device]?.ResetToggleGyroModes();
             }
 
+            [Obsolete]
             private void ResetProfile(int device)
             {
                 //IdleDisconnectTimeout[device] = 0;
@@ -2974,6 +2986,7 @@ namespace DS4Windows
                 Ds4Mapping = false;
             }
 
+            [Obsolete]
             private void PrepareBlankingProfile(int device, ControlService control, out bool xinputPlug,
                 out bool xinputStatus, bool xinputChange = true)
             {
