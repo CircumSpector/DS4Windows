@@ -173,7 +173,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             controllerSlotProfiles = new ObservableCollection<DS4WindowsProfile>(Enumerable
                 .Range(0, Constants.MaxControllers)
-                .Select(DS4WindowsProfile.GetDefaultProfile));
+                .Select(DS4WindowsProfile.CreateDefaultProfile));
 
             ActiveProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(controllerSlotProfiles);
 
@@ -582,7 +582,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
         {
-            return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ?? DS4WindowsProfile.GetDefaultProfile(slot);
+            return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ?? DS4WindowsProfile.CreateDefaultProfile(slot);
         }
 
         /// <summary>

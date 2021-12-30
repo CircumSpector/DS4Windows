@@ -42,6 +42,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
             ProfilePropertyChangedEventArgs e);
 
+        /// <summary>
+        ///     Default file extension for persisted profile files.
+        /// </summary>
         public const string FileExtension = ".json";
 
         /// <summary>
@@ -335,7 +338,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             return $"{profileName}{FileExtension}";
         }
 
-        public static DS4WindowsProfile GetDefaultProfile(int index = default)
+        /// <summary>
+        ///     Returns a new copy of the default <see cref="DS4WindowsProfile"/> with default settings.
+        /// </summary>
+        /// <param name="index">An optional slot index.</param>
+        /// <returns>The new <see cref="DS4WindowsProfile"/>.</returns>
+        public static DS4WindowsProfile CreateDefaultProfile(int index = default)
         {
             return new DS4WindowsProfile(index)
             {
@@ -343,6 +351,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             };
         }
 
+        /// <summary>
+        ///     Returns a new unique <see cref="DS4WindowsProfile"/> with default settings.
+        /// </summary>
+        /// <param name="index">An optional slot index.</param>
+        /// <returns>The new <see cref="DS4WindowsProfile"/>.</returns>
         public static DS4WindowsProfile CreateNewProfile(int index = default)
         {
             return new DS4WindowsProfile(index);
