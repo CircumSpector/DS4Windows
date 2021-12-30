@@ -1758,9 +1758,11 @@
             <!-- Gyro -->
             <TabItem Header="Gyro">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                    <!-- Mode -->
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Output Mode" />
+                            <Label Content="Output Mode" VerticalAlignment="Center" />
                             <ComboBox x:Name="gyroOutModeCombo" Width="160"
                                       SelectedIndex="{Binding GyroOutModeIndex, FallbackValue='0'}"
                                       VerticalContentAlignment="Center" Margin="10,0,0,0">
@@ -1772,6 +1774,7 @@
                             </ComboBox>
                         </StackPanel>
 
+                        <!-- Bindings -->
                         <TabControl SelectedIndex="{Binding GyroOutModeIndex, FallbackValue='0'}"
                                     BorderBrush="{x:Null}" Margin="{StaticResource spaceMargin}">
                             <TabItem Header="Controls (Accel)" Visibility="Collapsed">
@@ -1780,7 +1783,7 @@
                                         <Button x:Name="gyroZNBtn" Content="Tilt Up" Width="100"
                                                 Tag="{Binding TiltUp, Source={StaticResource controlIndexCheck}}"
                                                 Click="TiltControlsButton_Click" />
-                                        <Label x:Name="gyroZNLb"
+                                        <Label x:Name="gyroZNLb" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}"
                                                Content="{Binding MappingName,FallbackValue=Unassigned}" />
                                     </StackPanel>
 
@@ -1788,7 +1791,7 @@
                                         <Button x:Name="gyroZPBtn" Content="Tilt Down" Width="100"
                                                 Tag="{Binding TiltDown, Source={StaticResource controlIndexCheck}}"
                                                 Click="TiltControlsButton_Click" />
-                                        <Label x:Name="gyroZPLb"
+                                        <Label x:Name="gyroZPLb" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}"
                                                Content="{Binding MappingName,FallbackValue=Unassigned}" />
                                     </StackPanel>
 
@@ -1796,7 +1799,7 @@
                                         <Button x:Name="gyroXPBtn" Content="Tilt Left" Width="100"
                                                 Tag="{Binding TiltLeft, Source={StaticResource controlIndexCheck}}"
                                                 Click="TiltControlsButton_Click" />
-                                        <Label x:Name="gyroXLb"
+                                        <Label x:Name="gyroXLb" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}"
                                                Content="{Binding MappingName,FallbackValue=Unassigned}" />
                                     </StackPanel>
 
@@ -1804,12 +1807,13 @@
                                         <Button x:Name="gyroXNBtn" Content="Tilt Right" Width="100"
                                                 Tag="{Binding TiltRight, Source={StaticResource controlIndexCheck}}"
                                                 Click="TiltControlsButton_Click" />
-                                        <Label x:Name="gyroXNLb"
+                                        <Label x:Name="gyroXNLb" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}"
                                                Content="{Binding MappingName,FallbackValue=Unassigned}" />
                                     </StackPanel>
 
+                                    <!-- Triggers -->
                                     <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                                        <Label Content="Triggers" />
+                                        <Label Content="Triggers" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}"/>
                                         <Button x:Name="gyroControlsTrigBtn"
                                                 Content="{Binding GyroControlsTrigDisplay,FallbackValue='Always On'}"
                                                 MinWidth="160" Click="GyroControlsTrigBtn_Click">
@@ -1864,6 +1868,7 @@
                                         </Button>
                                     </StackPanel>
 
+                                    <!-- Turn -->
                                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                                         <CheckBox Content="Turn Behavior - Turns Gyro"
                                                   IsChecked="{Binding GyroControlsTurns}"
@@ -1872,8 +1877,9 @@
                                                   Margin="20,0,0,0" />
                                     </StackPanel>
 
+                                    <!-- Eval -->
                                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                        <Label Content="Eval Cond." />
+                                        <Label Content="Eval Cond." VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}" />
                                         <ComboBox SelectedIndex="{Binding GyroControlsEvalCondIndex,FallbackValue=0}"
                                                   Margin="8,0,0,0">
                                             <ComboBoxItem Content="And" />
@@ -1881,10 +1887,11 @@
                                         </ComboBox>
                                     </StackPanel>
 
-                                    <GroupBox Header="360 Steering Wheel" Margin="0,16,0,0" Padding="2,4">
+                                    <!-- Steering wheel -->
+                                    <GroupBox Header="360 Steering Wheel" Margin="{adonisUi:Space 1}">
                                         <StackPanel>
                                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                                <Label Content="Steering wheel axis" />
+                                                <Label Content="Steering wheel axis" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}" />
                                                 <ComboBox Width="160" Margin="8,0,0,0"
                                                           SelectedIndex="{Binding SASteeringWheelEmulationAxisIndex,FallbackValue=0}">
                                                     <ComboBoxItem Content="None" />
@@ -1903,7 +1910,7 @@
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                                <Label Content="Steering wheel range" />
+                                                <Label Content="Steering wheel range" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}" />
                                                 <ComboBox Margin="8,0,0,0"
                                                           SelectedIndex="{Binding SASteeringWheelEmulationRangeIndex,FallbackValue=0}">
                                                     <ComboBoxItem Content="90" />
@@ -1921,8 +1928,9 @@
                                                         Click="SteeringWheelEmulationCalibrateBtn_Click" />
                                             </StackPanel>
 
+                                            <!-- Fuzz -->
                                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                                <Label Content="Fuzz:" />
+                                                <Label Content="Fuzz:" VerticalAlignment="Center" Margin="{adonisUi:Space 1,0}" />
                                                 <xctk:IntegerUpDown d:IsHidden="True"
                                                                     Value="{Binding SASteeringWheelFuzz}"
                                                                     Minimum="0" Maximum="100"
@@ -1934,7 +1942,7 @@
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                                <CheckBox Content="Use Smoothing"
+                                                <CheckBox Content="Use Smoothing" Margin="{adonisUi:Space 1,0}"
                                                           IsChecked="{Binding SASteeringWheelUseSmoothing}" />
                                             </StackPanel>
 
