@@ -153,7 +153,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public enum OutType : uint
         {
             Default,
+            /// <summary>
+            ///     Keyboard key press.
+            /// </summary>
             Key,
+            /// <summary>
+            ///     Face button on output controller.
+            /// </summary>
             Button,
             Macro
         }
