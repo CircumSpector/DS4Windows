@@ -306,12 +306,12 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public IList<SpecialAction> SpecialActions { get; set; } = new List<SpecialAction>();
 
         /// <summary>
-        ///     Collection of <see cref="DS4ControlSettings"/>.
+        ///     Collection of <see cref="DS4ControlSettingsV3"/>.
         /// </summary>
         public ControlSettingsGroup PerControlSettings { get; set; } = new(
             (from DS4Controls dc in Enum.GetValues(typeof(DS4Controls))
                 where dc != DS4Controls.None
-                select new DS4ControlSettings(dc)).ToList());
+                select new DS4ControlSettingsV3(dc)).ToList());
 
         #endregion
 

@@ -334,7 +334,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void RecordMacroBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettings settings = macroActVM.PrepareSettings();
+            DS4Windows.DS4ControlSettingsV3 settings = macroActVM.PrepareSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings);
             recordWin.Saved += (sender2, args) =>
             {
@@ -414,7 +414,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettings settings = multiActButtonVM.PrepareTapSettings();
+            DS4Windows.DS4ControlSettingsV3 settings = multiActButtonVM.PrepareTapSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
@@ -428,7 +428,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiHoldTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettings settings = multiActButtonVM.PrepareHoldSettings();
+            DS4Windows.DS4ControlSettingsV3 settings = multiActButtonVM.PrepareHoldSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
@@ -442,7 +442,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiDoubleTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettings settings = multiActButtonVM.PrepareDoubleTapSettings();
+            DS4Windows.DS4ControlSettingsV3 settings = multiActButtonVM.PrepareDoubleTapSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
@@ -474,7 +474,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void PressKeySelectBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettings settings = pressKeyVM.PrepareSettings();
+            DS4Windows.DS4ControlSettingsV3 settings = pressKeyVM.PrepareSettings();
             BindingWindow window = new BindingWindow(rootHub, specialActVM.DeviceNum, settings,
                 BindingWindow.ExposeMode.Keyboard)
             {

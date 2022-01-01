@@ -39,7 +39,7 @@ namespace DS4WinWPF.DS4Forms
         public BindingWindow(
             ControlService service,
             int deviceNum,
-            DS4ControlSettings settings,
+            DS4ControlSettingsV3 settings,
             ExposeMode expose = ExposeMode.Full
         )
         {

@@ -320,19 +320,19 @@ namespace DS4Windows
         /// </summary>
         /// <param name="setting">Instance of edited DS4ControlSettings object</param>
         /// <param name="shift">Flag to indicate if shift action is being modified</param>
-        public static void RefreshActionAlias(DS4ControlSettings setting, bool shift)
+        public static void RefreshActionAlias(DS4ControlSettingsV3 setting, bool shift)
         {
             if (!shift)
             {
                 setting.ActionData.ActionAlias = 0;
-                if (setting.ControlActionType == DS4ControlSettings.ActionType.Key)
+                if (setting.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
                     setting.ActionData.ActionAlias =
                         outputKBMMapping.GetRealEventKey(Convert.ToUInt32(setting.ActionData.ActionKey));
             }
             else
             {
                 setting.ShiftAction.ActionAlias = 0;
-                if (setting.ShiftActionType == DS4ControlSettings.ActionType.Key)
+                if (setting.ShiftActionType == DS4ControlSettingsV3.ActionType.Key)
                     setting.ShiftAction.ActionAlias =
                         outputKBMMapping.GetRealEventKey(Convert.ToUInt32(setting.ShiftAction.ActionKey));
             }

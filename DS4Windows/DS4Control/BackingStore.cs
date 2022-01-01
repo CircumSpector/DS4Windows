@@ -174,9 +174,9 @@ namespace DS4Windows
 
         int GetDs4STrigger(int deviceNum, DS4Controls dc);
 
-        DS4ControlSettings GetDs4ControllerSetting(int deviceNum, string buttonName);
+        DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, string buttonName);
 
-        DS4ControlSettings GetDs4ControllerSetting(int deviceNum, DS4Controls dc);
+        DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, DS4Controls dc);
 
         bool HasCustomActions(int deviceNum);
 

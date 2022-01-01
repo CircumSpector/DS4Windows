@@ -73,16 +73,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             ShowToggleControlsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public DS4ControlSettings PrepareSettings()
+        public DS4ControlSettingsV3 PrepareSettings()
         {
-            var settings = new DS4ControlSettings(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4Controls.None);
             settings.ActionData.ActionKey = value;
             settings.KeyType = KeyType;
-            settings.ControlActionType = DS4ControlSettings.ActionType.Key;
+            settings.ControlActionType = DS4ControlSettingsV3.ActionType.Key;
             return settings;
         }
 
-        public void ReadSettings(DS4ControlSettings settings)
+        public void ReadSettings(DS4ControlSettingsV3 settings)
         {
             value = settings.ActionData.ActionKey;
             KeyType = settings.KeyType;

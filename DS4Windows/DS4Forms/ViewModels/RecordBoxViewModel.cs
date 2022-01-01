@@ -28,7 +28,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private TouchpadOutMode oldTouchpadMode = TouchpadOutMode.None;
 
 
-        public RecordBoxViewModel(int deviceNum, DS4ControlSettings controlSettings, bool shift, bool repeatable = true)
+        public RecordBoxViewModel(int deviceNum, DS4ControlSettingsV3 controlSettings, bool shift, bool repeatable = true)
         {
             if (KeydownOverrides == null) CreateKeyDownOverrides();
 
@@ -43,9 +43,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 UseScanCode = true;
             else if (shift && Settings.ShiftKeyType.HasFlag(DS4KeyType.ScanCode)) UseScanCode = true;
 
-            if (!shift && Settings.ControlActionType == DS4ControlSettings.ActionType.Macro)
+            if (!shift && Settings.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
                 LoadMacro();
-            else if (shift && Settings.ShiftActionType == DS4ControlSettings.ActionType.Macro) LoadMacro();
+            else if (shift && Settings.ShiftActionType == DS4ControlSettingsV3.ActionType.Macro) LoadMacro();
 
             Repeatable = repeatable;
 
@@ -64,7 +64,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int DeviceNum { get; }
 
-        public DS4ControlSettings Settings { get; }
+        public DS4ControlSettingsV3 Settings { get; }
 
         public bool Shift { get; }
 
@@ -151,7 +151,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             if (!Shift)
             {
                 Settings.ActionData.ActionMacro = outmac;
-                Settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+                Settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
                 Settings.KeyType = DS4KeyType.Macro;
                 if (MacroModeIndex == 1) Settings.KeyType |= DS4KeyType.HoldMacro;
                 if (UseScanCode) Settings.KeyType |= DS4KeyType.ScanCode;
@@ -159,7 +159,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             else
             {
                 Settings.ShiftAction.ActionMacro = outmac;
-                Settings.ShiftActionType = DS4ControlSettings.ActionType.Macro;
+                Settings.ShiftActionType = DS4ControlSettingsV3.ActionType.Macro;
                 Settings.ShiftKeyType = DS4KeyType.Macro;
                 if (MacroModeIndex == 1) Settings.ShiftKeyType |= DS4KeyType.HoldMacro;
                 if (UseScanCode) Settings.ShiftKeyType |= DS4KeyType.ScanCode;

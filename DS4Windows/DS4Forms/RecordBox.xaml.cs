@@ -37,7 +37,7 @@ namespace DS4WinWPF.DS4Forms
         private ColorPickerWindow colorDialog;
         private NonFormTimer ds4 = new NonFormTimer();
 
-        public RecordBox(int deviceNum, DS4Windows.DS4ControlSettings controlSettings, bool shift, bool showscan = true, bool repeatable = true)
+        public RecordBox(int deviceNum, DS4Windows.DS4ControlSettingsV3 controlSettings, bool shift, bool showscan = true, bool repeatable = true)
         {
             InitializeComponent();
 

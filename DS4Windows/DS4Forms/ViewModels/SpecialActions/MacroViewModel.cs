@@ -51,11 +51,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             RepeatHeld = action.KeyType.HasFlag(DS4KeyType.RepeatMacro);
         }
 
-        public DS4ControlSettings PrepareSettings()
+        public DS4ControlSettingsV3 PrepareSettings()
         {
-            var settings = new DS4ControlSettings(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4Controls.None);
             settings.ActionData.ActionMacro = Macro.ToArray();
-            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
             if (RepeatHeld) settings.KeyType |= DS4KeyType.RepeatMacro;
 

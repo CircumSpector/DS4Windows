@@ -4,9 +4,9 @@ namespace DS4Windows
 {
     public class ControlSettingsGroup
     {
-        private readonly IList<DS4ControlSettings> settingsList;
+        private readonly IList<DS4ControlSettingsV3> settingsList;
 
-        public ControlSettingsGroup(IList<DS4ControlSettings> settingsList)
+        public ControlSettingsGroup(IList<DS4ControlSettingsV3> settingsList)
         {
             LS.Add(settingsList[(int)DS4Controls.LSOuter - 1]);
             for (var i = (int)DS4Controls.LXNeg; i <= (int)DS4Controls.LYPos; i++) LS.Add(settingsList[i - 1]);
@@ -36,31 +36,31 @@ namespace DS4Windows
             this.settingsList = settingsList;
         }
 
-        public DS4ControlSettings this[DS4Controls control] => settingsList[(int)control - 1];
+        public DS4ControlSettingsV3 this[DS4Controls control] => settingsList[(int)control - 1];
 
-        public List<DS4ControlSettings> ControlButtons => new();
+        public List<DS4ControlSettingsV3> ControlButtons => new();
 
-        public List<DS4ControlSettings> ExtraDeviceButtons => new();
+        public List<DS4ControlSettingsV3> ExtraDeviceButtons => new();
 
-        public DS4ControlSettings GyroSwipeDown { get; set; }
+        public DS4ControlSettingsV3 GyroSwipeDown { get; set; }
 
-        public DS4ControlSettings GyroSwipeLeft { get; set; }
+        public DS4ControlSettingsV3 GyroSwipeLeft { get; set; }
 
-        public DS4ControlSettings GyroSwipeRight { get; set; }
+        public DS4ControlSettingsV3 GyroSwipeRight { get; set; }
 
-        public DS4ControlSettings GyroSwipeUp { get; set; }
+        public DS4ControlSettingsV3 GyroSwipeUp { get; set; }
 
-        public DS4ControlSettings L2 { get; set; }
+        public DS4ControlSettingsV3 L2 { get; set; }
 
-        public DS4ControlSettings L2FullPull { get; set; }
+        public DS4ControlSettingsV3 L2FullPull { get; set; }
 
-        public List<DS4ControlSettings> LS => new();
+        public List<DS4ControlSettingsV3> LS => new();
 
-        public DS4ControlSettings R2 { get; set; }
+        public DS4ControlSettingsV3 R2 { get; set; }
 
-        public DS4ControlSettings R2FullPull { get; set; }
+        public DS4ControlSettingsV3 R2FullPull { get; set; }
 
-        public List<DS4ControlSettings> RS => new();
+        public List<DS4ControlSettingsV3> RS => new();
 
         public void EstablishExtraButtons(List<DS4Controls> buttonList)
         {

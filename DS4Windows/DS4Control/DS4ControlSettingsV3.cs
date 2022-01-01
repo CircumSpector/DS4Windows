@@ -4,7 +4,7 @@ using PropertyChanged;
 namespace DS4Windows
 {
     [AddINotifyPropertyChangedInterface]
-    public class DS4ControlSettings
+    public class DS4ControlSettingsV3
     {
         public enum ActionType : byte
         {
@@ -16,7 +16,7 @@ namespace DS4Windows
 
         public const int MaxMacroValue = 286;
 
-        public DS4ControlSettings(DS4Controls ctrl)
+        public DS4ControlSettingsV3(DS4Controls ctrl)
         {
             Control = ctrl;
         }

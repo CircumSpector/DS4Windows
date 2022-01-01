@@ -85,29 +85,29 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
             DoubleTapMacroTextChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public DS4ControlSettings PrepareTapSettings()
+        public DS4ControlSettingsV3 PrepareTapSettings()
         {
-            var settings = new DS4ControlSettings(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4Controls.None);
             settings.ActionData.ActionMacro = TapMacro.ToArray();
-            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
             return settings;
         }
 
-        public DS4ControlSettings PrepareHoldSettings()
+        public DS4ControlSettingsV3 PrepareHoldSettings()
         {
-            var settings = new DS4ControlSettings(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4Controls.None);
             settings.ActionData.ActionMacro = HoldMacro.ToArray();
-            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
             return settings;
         }
 
-        public DS4ControlSettings PrepareDoubleTapSettings()
+        public DS4ControlSettingsV3 PrepareDoubleTapSettings()
         {
-            var settings = new DS4ControlSettings(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4Controls.None);
             settings.ActionData.ActionMacro = DoubleTapMacro.ToArray();
-            settings.ControlActionType = DS4ControlSettings.ActionType.Macro;
+            settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
             return settings;
         }

@@ -205,7 +205,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public DS4Controls Control { get; }
 
-        public DS4ControlSettings Setting { get; }
+        public DS4ControlSettingsV3 Setting { get; }
 
         public string ControlName => Control.ToDisplayName();
 
@@ -215,7 +215,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string ShiftMappingName { get; set; }
 
-        public bool HasShiftAction => Setting.ShiftActionType != DS4ControlSettings.ActionType.Default;
+        public bool HasShiftAction => Setting.ShiftActionType != DS4ControlSettingsV3.ActionType.Default;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -237,18 +237,18 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 : Setting.ShiftKeyType.HasFlag(DS4KeyType.ScanCode);
             var extra = Control >= DS4Controls.GyroXPos && Control <= DS4Controls.SwipeDown;
             var actionType = !shift ? Setting.ControlActionType : Setting.ShiftActionType;
-            if (actionType != DS4ControlSettings.ActionType.Default)
+            if (actionType != DS4ControlSettingsV3.ActionType.Default)
             {
-                if (actionType == DS4ControlSettings.ActionType.Key)
+                if (actionType == DS4ControlSettingsV3.ActionType.Key)
                 {
                     //return (Keys)int.Parse(action.ToString()) + (sc ? " (" + Properties.Resources.ScanCode + ")" : "");
                     temp = KeyInterop.KeyFromVirtualKey(action.ActionKey) + (sc ? " (" + Resources.ScanCode + ")" : "");
                 }
-                else if (actionType == DS4ControlSettings.ActionType.Macro)
+                else if (actionType == DS4ControlSettingsV3.ActionType.Macro)
                 {
                     temp = Resources.Macro + (sc ? " (" + Resources.ScanCode + ")" : "");
                 }
-                else if (actionType == DS4ControlSettings.ActionType.Button)
+                else if (actionType == DS4ControlSettingsV3.ActionType.Button)
                 {
                     string tag;
                     tag = Global.GetX360ControlString(action.ActionButton, DevType);

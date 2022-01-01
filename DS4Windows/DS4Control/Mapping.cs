@@ -2110,10 +2110,10 @@ namespace DS4Windows
             var imuOutMode = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode;
             if (imuOutMode == GyroOutMode.DirectionalSwipe)
             {
-                DS4ControlSettings gyroSwipeXDcs = null;
-                DS4ControlSettings gyroSwipeYDcs = null;
-                DS4ControlSettings previousGyroSwipeXDcs = null;
-                DS4ControlSettings previousGyroSwipeYDcs = null;
+                DS4ControlSettingsV3 gyroSwipeXDcs = null;
+                DS4ControlSettingsV3 gyroSwipeYDcs = null;
+                DS4ControlSettingsV3 previousGyroSwipeXDcs = null;
+                DS4ControlSettingsV3 previousGyroSwipeYDcs = null;
 
                 if (tp.gyroSwipe.swipeLeft)
                     gyroSwipeXDcs = controlSetGroup.GyroSwipeLeft;
@@ -2301,17 +2301,17 @@ namespace DS4Windows
         }
 
         private static void ProcessTwoStageTrigger(int device, DS4State cState, byte triggerValue,
-            ref DS4ControlSettings inputSoftPull, ref DS4ControlSettings inputFullPull,
+            ref DS4ControlSettingsV3 inputSoftPull, ref DS4ControlSettingsV3 inputFullPull,
             TriggerOutputSettings outputSettings,
-            TwoStageTriggerMappingData twoStageData, out DS4ControlSettings outputSoftPull,
-            out DS4ControlSettings outputFullPull)
+            TwoStageTriggerMappingData twoStageData, out DS4ControlSettingsV3 outputSoftPull,
+            out DS4ControlSettingsV3 outputFullPull)
         {
             using var scope = GlobalTracer.Instance
                 .BuildSpan($"{nameof(Mapping)}::{nameof(ProcessTwoStageTrigger)}")
                 .StartActive(true);
 
             var dcsTemp = inputSoftPull;
-            DS4ControlSettings dcsFullPull = null;
+            DS4ControlSettingsV3 dcsFullPull = null;
             var triggerData = twoStageData;
 
             switch (outputSettings.TwoStageMode)
@@ -2628,7 +2628,7 @@ namespace DS4Windows
         //private static double FlickTime = 0.1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void ProcessControlSettingAction(DS4ControlSettings dcs, int device, DS4State cState,
+        private static void ProcessControlSettingAction(DS4ControlSettingsV3 dcs, int device, DS4State cState,
             DS4State MappedState, DS4StateExposed eState,
             Mouse tp, DS4StateFieldMapping fieldMapping, DS4StateFieldMapping outputfieldMapping,
             SyntheticState deviceState, ref double tempMouseDeltaX, ref double tempMouseDeltaY,
@@ -2644,10 +2644,10 @@ namespace DS4Windows
 
             //object action = null;
             ControlActionData action = null;
-            DS4ControlSettings.ActionType actionType = 0;
+            DS4ControlSettingsV3.ActionType actionType = 0;
             var keyType = DS4KeyType.None;
             var usingExtra = DS4Controls.None;
-            if (dcs.ShiftActionType != DS4ControlSettings.ActionType.Default &&
+            if (dcs.ShiftActionType != DS4ControlSettingsV3.ActionType.Default &&
                 ShiftTrigger2(dcs.ShiftTrigger, device, cState, eState, tp, fieldMapping))
             {
                 action = dcs.ShiftAction;
@@ -2655,7 +2655,7 @@ namespace DS4Windows
                 actionAlias = dcs.ShiftAction.ActionAlias;
                 keyType = dcs.ShiftKeyType;
             }
-            else if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
+            else if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
             {
                 action = dcs.ActionData;
                 actionType = dcs.ControlActionType;
@@ -2741,9 +2741,9 @@ namespace DS4Windows
                 }
             }
 
-            if (actionType != DS4ControlSettings.ActionType.Default)
+            if (actionType != DS4ControlSettingsV3.ActionType.Default)
             {
-                if (actionType == DS4ControlSettings.ActionType.Macro)
+                if (actionType == DS4ControlSettingsV3.ActionType.Macro)
                 {
                     var active = GetBoolMapping2(device, dcs.Control, cState, eState, tp, fieldMapping);
                     if (active)
@@ -2755,7 +2755,7 @@ namespace DS4Windows
                     // erase default mappings for things that are remapped
                     ResetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
                 }
-                else if (actionType == DS4ControlSettings.ActionType.Key)
+                else if (actionType == DS4ControlSettingsV3.ActionType.Key)
                 {
                     var value = Convert.ToUInt16(action.ActionKey);
                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
@@ -2793,7 +2793,7 @@ namespace DS4Windows
                     // erase default mappings for things that are remapped
                     ResetToDefaultValue2(dcs.Control, MappedState, outputfieldMapping);
                 }
-                else if (actionType == DS4ControlSettings.ActionType.Button)
+                else if (actionType == DS4ControlSettingsV3.ActionType.Button)
                 {
                     var keyvalue = 0;
                     var isAnalog = false;
@@ -3004,7 +3004,7 @@ namespace DS4Windows
             return shift
                 ? false
                 : Instance.Config.GetDs4ControllerSetting(device, dc).ControlActionType ==
-                  DS4ControlSettings.ActionType.Default;
+                  DS4ControlSettingsV3.ActionType.Default;
         }
 
         private static async void MapCustomAction(int device, DS4State cState, DS4State MappedState,
@@ -3269,16 +3269,16 @@ namespace DS4Windows
                                             var dc = action.Trigger[i];
                                             var dcs =
                                                 Instance.Config.GetDs4ControllerSetting(device, dc);
-                                            if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
+                                            if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
                                             {
-                                                if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
+                                                if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
                                                 {
                                                     var tempKey =
                                                         outputKBMMapping.GetRealEventKey(
                                                             (uint)dcs.ActionData.ActionKey);
                                                     outputKBMHandler.PerformKeyRelease(tempKey);
                                                 }
-                                                else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
+                                                else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
                                                 {
                                                     var keys = dcs.ActionData.ActionMacro;
                                                     for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
@@ -3793,13 +3793,13 @@ namespace DS4Windows
                                     var dc = action.UTrigger[i];
                                     actionDone[index].dev[device] = true;
                                     var dcs = Instance.Config.GetDs4ControllerSetting(device, dc);
-                                    if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
+                                    if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
                                     {
-                                        if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
+                                        if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
                                         {
                                             outputKBMHandler.PerformKeyRelease((ushort)dcs.ActionData.ActionKey);
                                         }
-                                        else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
+                                        else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
                                         {
                                             var keys = dcs.ActionData.ActionMacro;
                                             for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
@@ -3846,14 +3846,14 @@ namespace DS4Windows
             {
                 var dc = action.Trigger[i];
                 var dcs = Instance.Config.GetDs4ControllerSetting(device, dc);
-                if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
+                if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
                 {
-                    if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
+                    if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
                     {
                         var tempKey = outputKBMMapping.GetRealEventKey((uint)dcs.ActionData.ActionKey);
                         outputKBMHandler.PerformKeyRelease(tempKey);
                     }
-                    else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
+                    else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
                     {
                         var keys = dcs.ActionData.ActionMacro;
                         for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
@@ -3998,7 +3998,7 @@ namespace DS4Windows
                 .StartActive(true);
 
             var doDelayOnCaller = false;
-            if (macroCodeValue >= 261 && macroCodeValue <= DS4ControlSettings.MaxMacroValue)
+            if (macroCodeValue >= 261 && macroCodeValue <= DS4ControlSettingsV3.MaxMacroValue)
             {
                 // Gamepad button up or down macro event. macroCodeValue index value is the button identifier (codeValue-261 = idx in 0..24 range)
                 if (!keydown[macroCodeValue])

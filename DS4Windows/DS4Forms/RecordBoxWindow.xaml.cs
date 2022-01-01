@@ -9,7 +9,7 @@ namespace DS4WinWPF.DS4Forms
     /// </summary>
     public partial class RecordBoxWindow : Window
     {
-        public RecordBoxWindow(int deviceNum, DS4ControlSettings settings, bool repeatable = true)
+        public RecordBoxWindow(int deviceNum, DS4ControlSettingsV3 settings, bool repeatable = true)
         {
             InitializeComponent();
 

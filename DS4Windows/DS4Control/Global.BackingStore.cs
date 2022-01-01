@@ -41,8 +41,8 @@ namespace DS4Windows
 
             private readonly IList<ControlSettingsGroup> ds4controlSettings;
 
-            private readonly List<DS4ControlSettings>[] Ds4Settings =
-                new List<DS4ControlSettings>[TEST_PROFILE_ITEM_COUNT]
+            private readonly List<DS4ControlSettingsV3>[] Ds4Settings =
+                new List<DS4ControlSettingsV3>[TEST_PROFILE_ITEM_COUNT]
                 {
                     new(), new(), new(),
                     new(), new(), new(), new(), new(), new()
@@ -76,7 +76,7 @@ namespace DS4Windows
                 {
                     foreach (DS4Controls dc in Enum.GetValues(typeof(DS4Controls)))
                         if (dc != DS4Controls.None)
-                            Ds4Settings[i].Add(new DS4ControlSettings(dc));
+                            Ds4Settings[i].Add(new DS4ControlSettingsV3(dc));
 
                     ds4controlSettings[i] = new ControlSettingsGroup(Ds4Settings[i]);
 
@@ -769,11 +769,11 @@ namespace DS4Windows
                     {
                         var property = $"{dcs.Control}.Value";
 
-                        if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default)
+                        if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
                         {
                             var keyType = string.Empty;
 
-                            if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button &&
+                            if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Button &&
                                 dcs.ActionData.ActionButton == X360Controls.Unbound)
                                 keyType += DS4KeyType.Unbound;
 
@@ -790,18 +790,18 @@ namespace DS4Windows
                             if (string.IsNullOrEmpty(keyType))
                                 SetNestedProperty(property, profileObject.Controls.KeyTypes, keyType);
 
-                            if (dcs.ControlActionType == DS4ControlSettings.ActionType.Macro)
+                            if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
                             {
                                 var ii = dcs.ActionData.ActionMacro;
 
                                 SetNestedProperty(property, profileObject.Controls.Macros, string.Join("/", ii));
                             }
-                            else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Key)
+                            else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
                             {
                                 SetNestedProperty(property, profileObject.Controls.Keys,
                                     dcs.ActionData.ActionKey.ToString());
                             }
-                            else if (dcs.ControlActionType == DS4ControlSettings.ActionType.Button)
+                            else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Button)
                             {
                                 SetNestedProperty(property, profileObject.Controls.Buttons,
                                     GetX360ControlString(dcs.ActionData.ActionButton));
@@ -815,11 +815,11 @@ namespace DS4Windows
 
                         if (hasValue) SetNestedProperty(property, profileObject.Controls.Extras, dcs.Extras);
 
-                        if (dcs.ShiftActionType != DS4ControlSettings.ActionType.Default && dcs.ShiftTrigger > 0)
+                        if (dcs.ShiftActionType != DS4ControlSettingsV3.ActionType.Default && dcs.ShiftTrigger > 0)
                         {
                             var keyType = string.Empty;
 
-                            if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button &&
+                            if (dcs.ShiftActionType == DS4ControlSettingsV3.ActionType.Button &&
                                 dcs.ShiftAction.ActionButton == X360Controls.Unbound)
                                 keyType += DS4KeyType.Unbound;
 
@@ -835,7 +835,7 @@ namespace DS4Windows
                             if (keyType != string.Empty)
                                 SetNestedProperty(property, profileObject.ShiftControls.KeyTypes, keyType);
 
-                            if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Macro)
+                            if (dcs.ShiftActionType == DS4ControlSettingsV3.ActionType.Macro)
                             {
                                 var ii = dcs.ShiftAction.ActionMacro;
 
@@ -843,14 +843,14 @@ namespace DS4Windows
                                 SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Macros,
                                     dcs.ShiftTrigger.ToString());
                             }
-                            else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Key)
+                            else if (dcs.ShiftActionType == DS4ControlSettingsV3.ActionType.Key)
                             {
                                 SetNestedProperty(property, profileObject.ShiftControls.Keys,
                                     dcs.ShiftAction.ActionKey.ToString());
                                 SetNestedProperty($"{dcs.Control}.ShiftTrigger", profileObject.ShiftControls.Keys,
                                     dcs.ShiftTrigger.ToString());
                             }
-                            else if (dcs.ShiftActionType == DS4ControlSettings.ActionType.Button)
+                            else if (dcs.ShiftActionType == DS4ControlSettingsV3.ActionType.Button)
                             {
                                 SetNestedProperty(property, profileObject.ShiftControls.Buttons,
                                     dcs.ShiftAction.ActionKey.ToString());
@@ -2035,7 +2035,7 @@ namespace DS4Windows
                 return 0;
             }
 
-            public DS4ControlSettings GetDs4ControllerSetting(int deviceNum, string buttonName)
+            public DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, string buttonName)
             {
                 DS4Controls dc;
                 if (buttonName.StartsWith("bn"))
@@ -2054,7 +2054,7 @@ namespace DS4Windows
                 return null;
             }
 
-            public DS4ControlSettings GetDs4ControllerSetting(int deviceNum, DS4Controls dc)
+            public DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, DS4Controls dc)
             {
                 var temp = (int)dc;
                 if (temp > 0)
@@ -2073,8 +2073,8 @@ namespace DS4Windows
                 for (int i = 0, settingsLen = ds4settingsList.Count; i < settingsLen; i++)
                 {
                     var dcs = ds4settingsList[i];
-                    if (dcs.ControlActionType != DS4ControlSettings.ActionType.Default ||
-                        dcs.ShiftActionType != DS4ControlSettings.ActionType.Default)
+                    if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default ||
+                        dcs.ShiftActionType != DS4ControlSettingsV3.ActionType.Default)
                         return true;
                 }
 
