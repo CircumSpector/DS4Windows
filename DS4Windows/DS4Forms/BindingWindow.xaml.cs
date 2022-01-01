@@ -36,8 +36,12 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly Dictionary<X360Controls, Button> mouseBtnMap = new();
 
-        public BindingWindow(ControlService service, int deviceNum, DS4ControlSettings settings,
-            ExposeMode expose = ExposeMode.Full)
+        public BindingWindow(
+            ControlService service,
+            int deviceNum,
+            DS4ControlSettings settings,
+            ExposeMode expose = ExposeMode.Full
+        )
         {
             rootHub = service;
 
