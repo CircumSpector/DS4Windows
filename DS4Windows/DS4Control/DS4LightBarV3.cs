@@ -126,11 +126,11 @@ namespace DS4Windows
                             var useSat = (byte)(maxSat == 1.0
                                 ? device.GetBattery() * 2.55
                                 : device.GetBattery() * 2.55 * maxSat);
-                            color = HuetoRGB((float)counters[deviceNum] % 360, useSat);
+                            color = HueToRGB((float)counters[deviceNum] % 360, useSat);
                         }
                         else
                         {
-                            color = HuetoRGB((float)counters[deviceNum] % 360,
+                            color = HueToRGB((float)counters[deviceNum] % 360,
                                 (byte)(maxSat == 1.0 ? 255 : 255 * maxSat));
                         }
                     }
@@ -279,7 +279,7 @@ namespace DS4Windows
                         case 2:
                         {
                             counters[deviceNum] += 0.167;
-                            color = HuetoRGB((float)counters[deviceNum] % 360, 255);
+                            color = HueToRGB((float)counters[deviceNum] % 360, 255);
                             break;
                         }
                         case 3:
@@ -390,7 +390,7 @@ namespace DS4Windows
             }
         }
 
-        public static DS4Color HuetoRGB(float hue, byte sat)
+        private static DS4Color HueToRGB(float hue, byte sat)
         {
             var C = sat;
             var X = (int)(C * (1 - Abs(hue / 60 % 2 - 1)));

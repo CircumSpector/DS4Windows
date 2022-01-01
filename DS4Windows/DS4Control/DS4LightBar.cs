@@ -40,7 +40,7 @@ namespace DS4WinWPF.DS4Control
 
         private DateTime oldnow = DateTime.UtcNow;
 
-        public bool forcelight =false;
+        public bool forcelight = false;
 
         public DS4Color forcedColor = new();
 
@@ -62,17 +62,17 @@ namespace DS4WinWPF.DS4Control
         public DS4Color GetTransitionedColor(DS4Color c1, DS4Color c2, double ratio)
         {
             return new DS4Color(
-                ApplyRatio(c1.Red, c2.Red, ratio), 
+                ApplyRatio(c1.Red, c2.Red, ratio),
                 ApplyRatio(c1.Green, c2.Green, ratio),
                 ApplyRatio(c1.Blue, c2.Blue, ratio)
-                );
+            );
         }
 
         public void UpdateLightBar(DS4Device device, int deviceNum)
         {
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBar)}::{nameof(UpdateLightBar)}")
                 .StartActive(true);
-            
+
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight;
             var lightbarSettingInfo = AppSettingsService.Instance.Settings.LightbarSettingInfo[deviceNum];
@@ -115,11 +115,11 @@ namespace DS4WinWPF.DS4Control
                             var useSat = (byte)(maxSat == 1.0
                                 ? device.GetBattery() * 2.55
                                 : device.GetBattery() * 2.55 * maxSat);
-                            color = HuetoRGB((float)counters % 360, useSat);
+                            color = HueToRGB((float)counters % 360, useSat);
                         }
                         else
                         {
-                            color = HuetoRGB((float)counters % 360,
+                            color = HueToRGB((float)counters % 360,
                                 (byte)(maxSat == 1.0 ? 255 : 255 * maxSat));
                         }
                     }
@@ -189,7 +189,8 @@ namespace DS4WinWPF.DS4Control
                     }
                 }
 
-                var idleDisconnectTimeout = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).IdleDisconnectTimeout;
+                var idleDisconnectTimeout =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).IdleDisconnectTimeout;
                 if (idleDisconnectTimeout > 0 && lightModeInfo.LedAsBattery &&
                     (!device.IsCharging() || device.GetBattery() >= 100))
                 {
@@ -268,7 +269,7 @@ namespace DS4WinWPF.DS4Control
                         case 2:
                         {
                             counters += 0.167;
-                            color = HuetoRGB((float)counters % 360, 255);
+                            color = HueToRGB((float)counters % 360, 255);
                             break;
                         }
                         case 3:
@@ -379,7 +380,7 @@ namespace DS4WinWPF.DS4Control
             }
         }
 
-        public DS4Color HuetoRGB(float hue, byte sat)
+        private DS4Color HueToRGB(float hue, byte sat)
         {
             var C = sat;
             var X = (int)(C * (1 - Abs(hue / 60 % 2 - 1)));
