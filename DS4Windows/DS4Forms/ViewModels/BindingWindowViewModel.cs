@@ -40,14 +40,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             var setting = Settings;
             var sc = setting.KeyType.HasFlag(DS4KeyType.ScanCode);
             var toggle = setting.KeyType.HasFlag(DS4KeyType.Toggle);
-            CurrentOutBind.input = setting.Control;
-            ShiftOutBind.input = setting.Control;
+            CurrentOutBind.Input = setting.Control;
+            ShiftOutBind.Input = setting.Control;
             if (setting.ControlActionType != DS4ControlSettings.ActionType.Default)
                 switch (setting.ControlActionType)
                 {
                     case DS4ControlSettings.ActionType.Button:
                         CurrentOutBind.outputType = OutBinding.OutType.Button;
-                        CurrentOutBind.control = setting.ActionData.ActionButton;
+                        CurrentOutBind.Control = setting.ActionData.ActionButton;
                         break;
                     case DS4ControlSettings.ActionType.Default:
                         CurrentOutBind.outputType = OutBinding.OutType.Default;
@@ -79,7 +79,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     case DS4ControlSettings.ActionType.Button:
                         ShiftOutBind.outputType = OutBinding.OutType.Button;
-                        ShiftOutBind.control = setting.ShiftAction.ActionButton;
+                        ShiftOutBind.Control = setting.ShiftAction.ActionButton;
                         break;
                     case DS4ControlSettings.ActionType.Default:
                         ShiftOutBind.outputType = OutBinding.OutType.Default;
@@ -151,14 +151,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Macro
         }
 
-        public X360Controls control;
-        public int outkey;
+        public X360Controls Control { get; set; }
 
-        public OutType outputType;
+        public int OutKey { get; set; }
+
+        public OutType OutputType { get; set; }
 
         public bool IsMouse()
         {
-            return outputType == OutType.Button && control >= X360Controls.LeftMouse && control < X360Controls.Unbound;
+            return OutputType == OutType.Button && Control is >= X360Controls.LeftMouse and < X360Controls.Unbound;
         }
 
         public static bool IsMouseRange(X360Controls control)
@@ -177,12 +178,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Macro
         }
 
-        public X360Controls control;
+        public X360Controls Control;
         private DS4Color extrasColor = new(255, 255, 255);
         private int flashRate;
         private int heavyRumble;
 
-        public DS4Controls input;
+        public DS4Controls Input;
         private int lightRumble;
         public int[] macro;
         public DS4KeyType macroType;
@@ -266,7 +267,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => extrasColor.Red;
             set
             {
-                extrasColor.Red = (byte) value;
+                extrasColor.Red = (byte)value;
                 ExtrasColorRChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -278,7 +279,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => extrasColor.Green;
             set
             {
-                extrasColor.Green = (byte) value;
+                extrasColor.Green = (byte)value;
                 ExtrasColorGChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -290,7 +291,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get => extrasColor.Blue;
             set
             {
-                extrasColor.Blue = (byte) value;
+                extrasColor.Blue = (byte)value;
                 ExtrasColorBChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -311,10 +312,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public int ShiftTriggerIndex { get; set; }
 
-        public string DefaultColor => outputType == OutType.Default ? Colors.LimeGreen.ToString() : Application.Current.FindResource("SecondaryColor").ToString();
+        public string DefaultColor => outputType == OutType.Default
+            ? Colors.LimeGreen.ToString()
+            : Application.Current.FindResource("SecondaryColor").ToString();
 
         public string UnboundColor =>
-            outputType == OutType.Button && control == X360Controls.Unbound
+            outputType == OutType.Button && Control == X360Controls.Unbound
                 ? Colors.LimeGreen.ToString()
                 : Application.Current.FindResource("SecondaryColor").ToString();
 
@@ -378,7 +381,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool IsMouse()
         {
-            return outputType == OutType.Button && control >= X360Controls.LeftMouse && control < X360Controls.Unbound;
+            return outputType == OutType.Button && Control >= X360Controls.LeftMouse && Control < X360Controls.Unbound;
         }
 
         public static bool IsMouseRange(X360Controls control)
@@ -470,9 +473,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
                 else if (outputType == OutType.Button)
                 {
-                    settings.ActionData.ActionButton = control;
+                    settings.ActionData.ActionButton = Control;
                     settings.ControlActionType = DS4ControlSettings.ActionType.Button;
-                    if (control == X360Controls.Unbound) settings.KeyType |= DS4KeyType.Unbound;
+                    if (Control == X360Controls.Unbound) settings.KeyType |= DS4KeyType.Unbound;
                 }
                 else if (outputType == OutType.Key)
                 {
@@ -513,9 +516,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
                 else if (outputType == OutType.Button)
                 {
-                    settings.ShiftAction.ActionButton = control;
+                    settings.ShiftAction.ActionButton = Control;
                     settings.ShiftActionType = DS4ControlSettings.ActionType.Button;
-                    if (control == X360Controls.Unbound) settings.ShiftKeyType |= DS4KeyType.Unbound;
+                    if (Control == X360Controls.Unbound) settings.ShiftKeyType |= DS4KeyType.Unbound;
                 }
                 else if (outputType == OutType.Key)
                 {
