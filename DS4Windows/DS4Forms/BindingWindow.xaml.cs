@@ -134,11 +134,11 @@ namespace DS4WinWPF.DS4Forms
         {
             var button = sender as Button;
             var binding = bindingVM.ActionBinding;
-            binding.outputType = OutBinding.OutType.Key;
+            binding.OutputType = OutBinding.OutType.Key;
             if (associatedBindings.TryGetValue(button, out var bind))
             {
-                binding.outputType = OutBinding.OutType.Key;
-                binding.outkey = bind.OutKey;
+                binding.OutputType = OutBinding.OutType.Key;
+                binding.Outkey = bind.OutKey;
             }
 
             Close();
@@ -153,11 +153,11 @@ namespace DS4WinWPF.DS4Forms
             {
                 if (defaultControl == bind.Control && !binding.IsShift())
                 {
-                    binding.outputType = OutBinding.OutType.Default;
+                    binding.OutputType = OutBinding.OutType.Default;
                 }
                 else
                 {
-                    binding.outputType = OutBinding.OutType.Button;
+                    binding.OutputType = OutBinding.OutType.Button;
                     binding.Control = bind.Control;
                 }
             }
@@ -186,7 +186,7 @@ namespace DS4WinWPF.DS4Forms
             if (highlightBtn != null) highlightBtn.Background = SystemColors.ControlBrush;
 
             var binding = bindingVM.ActionBinding;
-            if (binding.outputType == OutBinding.OutType.Default)
+            if (binding.OutputType == OutBinding.OutType.Default)
             {
                 var defaultBind = Global.DefaultButtonMapping[(int)binding.Input];
                 if (!OutBinding.IsMouseRange(defaultBind))
@@ -204,7 +204,7 @@ namespace DS4WinWPF.DS4Forms
                     }
                 }
             }
-            else if (binding.outputType == OutBinding.OutType.Button)
+            else if (binding.OutputType == OutBinding.OutType.Button)
             {
                 if (!binding.IsMouse())
                 {
@@ -221,9 +221,9 @@ namespace DS4WinWPF.DS4Forms
                     }
                 }
             }
-            else if (binding.outputType == OutBinding.OutType.Key)
+            else if (binding.OutputType == OutBinding.OutType.Key)
             {
-                if (keyBtnMap.TryGetValue(binding.outkey, out var tempBtn))
+                if (keyBtnMap.TryGetValue(binding.Outkey, out var tempBtn))
                 {
                     tempBtn.Background = new SolidColorBrush(Colors.LimeGreen);
                     highlightBtn = tempBtn;
@@ -875,12 +875,12 @@ namespace DS4WinWPF.DS4Forms
 
             if (!actBind.shiftBind)
             {
-                actBind.outputType = OutBinding.OutType.Default;
+                actBind.OutputType = OutBinding.OutType.Default;
                 actBind.Control = Global.DefaultButtonMapping[(int)actBind.Input];
             }
             else
             {
-                actBind.outputType = OutBinding.OutType.Default;
+                actBind.OutputType = OutBinding.OutType.Default;
             }
 
             Close();
@@ -889,7 +889,7 @@ namespace DS4WinWPF.DS4Forms
         private void UnboundBtn_Click(object sender, RoutedEventArgs e)
         {
             var actBind = bindingVM.ActionBinding;
-            actBind.outputType = OutBinding.OutType.Button;
+            actBind.OutputType = OutBinding.OutType.Button;
             actBind.Control = X360Controls.Unbound;
             Close();
         }
