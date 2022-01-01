@@ -70,11 +70,9 @@ namespace DS4WinWPF.DS4Control
 
         public void UpdateLightBar(DS4Device device, int deviceNum)
         {
-
             using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBar)}::{nameof(UpdateLightBar)}")
                 .StartActive(true);
-
-
+            
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight;
             var lightbarSettingInfo = AppSettingsService.Instance.Settings.LightbarSettingInfo[deviceNum];
