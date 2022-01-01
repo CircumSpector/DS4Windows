@@ -100,13 +100,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <remarks>This value is assigned at runtime and not persisted.</remarks>
         [JsonIgnore]
         public bool IsOutputDeviceEnabled { get; set; }
-
-        [JsonIgnore]
-        public ControlSettingsGroup PerControlSettings { get; set; } = new(
-            (from DS4Controls dc in Enum.GetValues(typeof(DS4Controls))
-                where dc != DS4Controls.None
-                select new DS4ControlSettings(dc)).ToList());
-
+        
         [JsonIgnore]
         public string ExtendedDisplayName =>
             IsImmutable
@@ -306,7 +300,18 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public LightbarSettingInfo LightbarSettingInfo { get; set; } = new();
 
+        /// <summary>
+        ///     Collection of <see cref="SpecialAction"/>s.
+        /// </summary>
         public IList<SpecialAction> SpecialActions { get; set; } = new List<SpecialAction>();
+
+        /// <summary>
+        ///     Collection of <see cref="DS4ControlSettings"/>.
+        /// </summary>
+        public ControlSettingsGroup PerControlSettings { get; set; } = new(
+            (from DS4Controls dc in Enum.GetValues(typeof(DS4Controls))
+                where dc != DS4Controls.None
+                select new DS4ControlSettings(dc)).ToList());
 
         #endregion
 
