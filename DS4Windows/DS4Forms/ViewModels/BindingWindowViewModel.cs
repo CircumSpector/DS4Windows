@@ -17,13 +17,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Using360Mode = Global.OutDevTypeTemp[deviceNum] == OutContType.X360;
             Settings = settings;
             CurrentOutBind = new OutBinding();
-            ShiftOutBind = new OutBinding();
-            ShiftOutBind.ShiftBind = true;
+            ShiftOutBind = new OutBinding
+            {
+                ShiftBind = true
+            };
+
             PopulateCurrentBinds();
         }
 
         public bool Using360Mode { get; }
 
+        [Obsolete]
         public int DeviceNum { get; }
 
         public OutBinding CurrentOutBind { get; }
