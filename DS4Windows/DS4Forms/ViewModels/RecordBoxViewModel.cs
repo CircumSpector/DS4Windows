@@ -266,9 +266,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
                 var dcolor = new DS4Color(color) {Red = color.R, Green = color.G, Blue = color.B};
-                DS4LightBar.forcedColor[DeviceNum] = dcolor;
-                DS4LightBar.forcedFlash[DeviceNum] = 0;
-                DS4LightBar.forcelight[DeviceNum] = true;
+                DS4LightBarV3.forcedColor[DeviceNum] = dcolor;
+                DS4LightBarV3.forcedFlash[DeviceNum] = 0;
+                DS4LightBarV3.forcelight[DeviceNum] = true;
             }
         }
 
@@ -276,9 +276,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
-                DS4LightBar.forcedColor[DeviceNum] = new DS4Color(0, 0, 0);
-                DS4LightBar.forcedFlash[DeviceNum] = 0;
-                DS4LightBar.forcelight[DeviceNum] = false;
+                DS4LightBarV3.forcedColor[DeviceNum] = new DS4Color(0, 0, 0);
+                DS4LightBarV3.forcedFlash[DeviceNum] = 0;
+                DS4LightBarV3.forcelight[DeviceNum] = false;
             }
         }
 
@@ -287,9 +287,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             if (DeviceNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
             {
                 var dcolor = new DS4Color(color);
-                DS4LightBar.forcedColor[DeviceNum] = dcolor;
-                DS4LightBar.forcedFlash[DeviceNum] = 0;
-                DS4LightBar.forcelight[DeviceNum] = true;
+                DS4LightBarV3.forcedColor[DeviceNum] = dcolor;
+                DS4LightBarV3.forcedFlash[DeviceNum] = 0;
+                DS4LightBarV3.forcelight[DeviceNum] = true;
             }
         }
 

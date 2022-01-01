@@ -931,8 +931,8 @@ namespace DS4Windows
 
                     if (device < MAX_DS4_CONTROLLER_COUNT)
                     {
-                        DS4LightBar.forcelight[device] = false;
-                        DS4LightBar.forcedFlash[device] = 0;
+                        DS4LightBarV3.forcelight[device] = false;
+                        DS4LightBarV3.forcedFlash[device] = 0;
                     }
 
                     var oldContType = ActiveOutDevType[device];

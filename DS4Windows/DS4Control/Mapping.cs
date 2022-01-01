@@ -2700,9 +2700,9 @@ namespace DS4Windows
                         if (extras[2] == 1)
                         {
                             var color = new DS4Color((byte)extras[3], (byte)extras[4], (byte)extras[5]);
-                            DS4LightBar.forcedColor[device] = color;
-                            DS4LightBar.forcedFlash[device] = (byte)extras[6];
-                            DS4LightBar.forcelight[device] = true;
+                            DS4LightBarV3.forcedColor[device] = color;
+                            DS4LightBarV3.forcedFlash[device] = (byte)extras[6];
+                            DS4LightBarV3.forcelight[device] = true;
                         }
 
                         if (extras[7] == 1)
@@ -2721,8 +2721,8 @@ namespace DS4Windows
                 }
                 else if ((regE || shiftE) && held[device] == dcs.Control)
                 {
-                    DS4LightBar.forcelight[device] = false;
-                    DS4LightBar.forcedFlash[device] = 0;
+                    DS4LightBarV3.forcelight[device] = false;
+                    DS4LightBarV3.forcedFlash[device] = 0;
                     var tempMouseInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).ButtonMouseInfo;
                     if (tempMouseInfo.TempButtonSensitivity != -1)
                     {
@@ -3450,17 +3450,17 @@ namespace DS4Windows
                                         if (!actionDone[index].dev[device])
                                         {
                                             lastColor[device] = d.LightBarColor;
-                                            DS4LightBar.forcelight[device] = true;
+                                            DS4LightBarV3.forcelight[device] = true;
                                         }
 
                                         var empty = new DS4Color(byte.Parse(dets[3]), byte.Parse(dets[4]),
                                             byte.Parse(dets[5]));
                                         var full = new DS4Color(byte.Parse(dets[6]), byte.Parse(dets[7]),
                                             byte.Parse(dets[8]));
-                                        var trans = DS4LightBar.GetTransitionedColor(empty, full, d.Battery);
+                                        var trans = DS4LightBarV3.GetTransitionedColor(empty, full, d.Battery);
                                         if (fadetimer[device] < 100)
-                                            DS4LightBar.forcedColor[device] =
-                                                DS4LightBar.GetTransitionedColor(lastColor[device], trans,
+                                            DS4LightBarV3.forcedColor[device] =
+                                                DS4LightBarV3.GetTransitionedColor(lastColor[device], trans,
                                                     fadetimer[device] += 2);
                                     }
 
@@ -3503,7 +3503,7 @@ namespace DS4Windows
                                         }
                                         else
                                             prevFadetimer[device] = fadetimer[device];*/
-                                        DS4LightBar.forcelight[device] = false;
+                                        DS4LightBarV3.forcelight[device] = false;
                                         actionDone[index].dev[device] = false;
                                     }
                                 }
@@ -3969,8 +3969,8 @@ namespace DS4Windows
                             PlayMacroCodeValue(device, macrocontrol, keyType, i, keydown);
 
                     // Reset lightbar back to a default value (if the macro modified the color) because keepKeyState macro option was not set
-                    DS4LightBar.forcedFlash[device] = 0;
-                    DS4LightBar.forcelight[device] = false;
+                    DS4LightBarV3.forcedFlash[device] = 0;
+                    DS4LightBarV3.forcelight[device] = false;
                 }
 
                 // Commented out rumble reset. No need to zero out rumble after a macro because it may conflict with a game generated rumble events (ie. macro would stop a game generated rumble effect).
@@ -4096,14 +4096,14 @@ namespace DS4Windows
                                    int.Parse(lb[5].ToString()));
                     var b = (byte)(int.Parse(lb[6].ToString()) * 100 + int.Parse(lb[7].ToString()) * 10 +
                                    int.Parse(lb[8].ToString()));
-                    DS4LightBar.forcelight[device] = true;
-                    DS4LightBar.forcedFlash[device] = 0;
-                    DS4LightBar.forcedColor[device] = new DS4Color(r, g, b);
+                    DS4LightBarV3.forcelight[device] = true;
+                    DS4LightBarV3.forcedFlash[device] = 0;
+                    DS4LightBarV3.forcedColor[device] = new DS4Color(r, g, b);
                 }
                 else
                 {
-                    DS4LightBar.forcedFlash[device] = 0;
-                    DS4LightBar.forcelight[device] = false;
+                    DS4LightBarV3.forcedFlash[device] = 0;
+                    DS4LightBarV3.forcelight[device] = false;
                 }
             }
             else if (macroCodeValue >= 1000000)
@@ -5714,10 +5714,10 @@ namespace DS4Windows
                 // Show lightbar color feedback how the calibration process is proceeding.
                 //  red / yellow / blue / green = No calibration anchors/one anchor/two anchors/all three anchors calibrated when color turns to green (center, 90DegLeft, 90DegRight).
                 var bitsSet = CountNumOfSetBits((int)controller.wheelCalibratedAxisBitmask);
-                if (bitsSet >= 3) DS4LightBar.forcedColor[device] = calibrationColor_3;
-                else if (bitsSet == 2) DS4LightBar.forcedColor[device] = calibrationColor_2;
-                else if (bitsSet == 1) DS4LightBar.forcedColor[device] = calibrationColor_1;
-                else DS4LightBar.forcedColor[device] = calibrationColor_0;
+                if (bitsSet >= 3) DS4LightBarV3.forcedColor[device] = calibrationColor_3;
+                else if (bitsSet == 2) DS4LightBarV3.forcedColor[device] = calibrationColor_2;
+                else if (bitsSet == 1) DS4LightBarV3.forcedColor[device] = calibrationColor_1;
+                else DS4LightBarV3.forcedColor[device] = calibrationColor_0;
 
                 result = CalculateControllerAngle(gyroAccelX, gyroAccelZ, controller);
 
@@ -5730,11 +5730,11 @@ namespace DS4Windows
                     result >= 89 * C_WHEEL_ANGLE_PRECISION && result <= 91 * C_WHEEL_ANGLE_PRECISION
                     || (controller.wheelCalibratedAxisBitmask & DS4Device.WheelCalibrationPoint.Left90) != 0 &&
                     Math.Abs(result) >= 179 * C_WHEEL_ANGLE_PRECISION)
-                    DS4LightBar.forcedFlash[device] = 2;
+                    DS4LightBarV3.forcedFlash[device] = 2;
                 else
-                    DS4LightBar.forcedFlash[device] = 0;
+                    DS4LightBarV3.forcedFlash[device] = 0;
 
-                DS4LightBar.forcelight[device] = true;
+                DS4LightBarV3.forcelight[device] = true;
 
                 LogToGuiSACalibrationDebugMsg(
                     $"Calibration values ({gyroAccelX}, {gyroAccelZ})  angle={result / (1.0 * C_WHEEL_ANGLE_PRECISION)}\n");
@@ -5742,10 +5742,10 @@ namespace DS4Windows
             else
             {
                 // Re-calibration completed or cancelled. Set lightbar color back to normal color
-                DS4LightBar.forcedFlash[device] = 0;
-                DS4LightBar.forcedColor[device] = AppSettingsService.Instance.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
-                DS4LightBar.forcelight[device] = false;
-                DS4LightBar.UpdateLightBar(controller, device);
+                DS4LightBarV3.forcedFlash[device] = 0;
+                DS4LightBarV3.forcedColor[device] = AppSettingsService.Instance.Settings.LightbarSettingInfo[device].Ds4WinSettings.Led;
+                DS4LightBarV3.forcelight[device] = false;
+                DS4LightBarV3.UpdateLightBar(controller, device);
             }
         }
 

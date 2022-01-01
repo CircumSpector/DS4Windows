@@ -1063,7 +1063,7 @@ namespace DS4Windows
                     var numControllers = devices.Count;
                     activeControllers = numControllers;
                     //int ind = 0;
-                    DS4LightBar.defaultLight = false;
+                    DS4LightBarV3.defaultLight = false;
                     //foreach (DS4Device device in devices)
                     //for (int i = 0, devCount = devices.Count(); i < devCount; i++)
                     var i = 0;
@@ -1385,10 +1385,10 @@ namespace DS4Windows
                     }
                     else
                     {
-                        DS4LightBar.forcelight[i] = false;
-                        DS4LightBar.forcedFlash[i] = 0;
-                        DS4LightBar.defaultLight = true;
-                        DS4LightBar.UpdateLightBar(DS4Controllers[i], i);
+                        DS4LightBarV3.forcelight[i] = false;
+                        DS4LightBarV3.forcedFlash[i] = 0;
+                        DS4LightBarV3.defaultLight = true;
+                        DS4LightBarV3.UpdateLightBar(DS4Controllers[i], i);
                         tempDevice.IsRemoved = true;
                         tempDevice.StopUpdate();
                         ds4devices.RemoveDevice(tempDevice);
@@ -2177,7 +2177,7 @@ namespace DS4Windows
             Mapping.Commit(ind);
 
             // Update the Lightbar color
-            DS4LightBar.UpdateLightBar(device, ind);
+            DS4LightBarV3.UpdateLightBar(device, ind);
 
             if (device.PerformStateMerge) device.PreserveMergedStateData();
         }
@@ -2191,17 +2191,17 @@ namespace DS4Windows
                 if (appSettings.Settings.FlashWhenLate)
                 {
                     var color = new DS4Color(50, 0, 0);
-                    DS4LightBar.forcedColor[ind] = color;
-                    DS4LightBar.forcedFlash[ind] = 2;
-                    DS4LightBar.forcelight[ind] = true;
+                    DS4LightBarV3.forcedColor[ind] = color;
+                    DS4LightBarV3.forcedFlash[ind] = 2;
+                    DS4LightBarV3.forcelight[ind] = true;
                 }
             }
             else
             {
                 lag[ind] = false;
                 LogDebug(Resources.LatencyNotOverTen.Replace("*number*", (ind + 1).ToString()));
-                DS4LightBar.forcelight[ind] = false;
-                DS4LightBar.forcedFlash[ind] = 0;
+                DS4LightBarV3.forcelight[ind] = false;
+                DS4LightBarV3.forcedFlash[ind] = 0;
                 device.LightBarColor = appSettings.Settings.LightbarSettingInfo[ind].Ds4WinSettings.Led;
             }
         }

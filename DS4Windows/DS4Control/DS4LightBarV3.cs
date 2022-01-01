@@ -9,7 +9,8 @@ using static DS4Windows.Global;
 
 namespace DS4Windows
 {
-    public class DS4LightBar
+    [Obsolete]
+    public class DS4LightBarV3
     {
         internal const int PULSE_FLASH_DURATION = 2000;
         internal const double PULSE_FLASH_SEGMENTS = PULSE_FLASH_DURATION / 40;
@@ -79,7 +80,7 @@ namespace DS4Windows
         public static void UpdateLightBar(DS4Device device, int deviceNum)
         {
 
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBar)}::{nameof(UpdateLightBar)}")
+            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBarV3)}::{nameof(UpdateLightBar)}")
                 .StartActive(true);
 
 

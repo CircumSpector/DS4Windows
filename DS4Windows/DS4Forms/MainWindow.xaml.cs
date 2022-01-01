@@ -371,7 +371,7 @@ Suspend support not enabled.", true);
             {
                 // Wakeup from Suspend
                 case 7:
-                    DS4LightBar.shuttingdown = false;
+                    DS4LightBarV3.shuttingdown = false;
                     rootHub.suspending = false;
 
                     if (wasrunning)
@@ -386,7 +386,7 @@ Suspend support not enabled.", true);
                     break;
                 // Entering Suspend
                 case 4:
-                    DS4LightBar.shuttingdown = true;
+                    DS4LightBarV3.shuttingdown = true;
                     ControlService.CurrentInstance.suspending = true;
 
                     if (rootHub.IsRunning)
