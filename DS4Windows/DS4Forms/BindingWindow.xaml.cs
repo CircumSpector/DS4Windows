@@ -138,7 +138,7 @@ namespace DS4WinWPF.DS4Forms
             if (associatedBindings.TryGetValue(button, out var bind))
             {
                 binding.OutputType = OutBinding.OutType.Key;
-                binding.Outkey = bind.OutKey;
+                binding.OutKey = bind.OutKey;
             }
 
             Close();
@@ -223,7 +223,7 @@ namespace DS4WinWPF.DS4Forms
             }
             else if (binding.OutputType == OutBinding.OutType.Key)
             {
-                if (keyBtnMap.TryGetValue(binding.Outkey, out var tempBtn))
+                if (keyBtnMap.TryGetValue(binding.OutKey, out var tempBtn))
                 {
                     tempBtn.Background = new SolidColorBrush(Colors.LimeGreen);
                     highlightBtn = tempBtn;
@@ -873,7 +873,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var actBind = bindingVM.ActionBinding;
 
-            if (!actBind.shiftBind)
+            if (!actBind.ShiftBind)
             {
                 actBind.OutputType = OutBinding.OutType.Default;
                 actBind.Control = Global.DefaultButtonMapping[(int)actBind.Input];
