@@ -19,6 +19,8 @@
     </Window.Style>
 
     <DockPanel x:Name="fullPanel" Margin="4">
+
+        <!-- Extra side panel -->
         <StackPanel x:Name="extrasSidePanel" Width="160" Orientation="Vertical" DockPanel.Dock="Right">
             <StackPanel.Resources>
                 <Thickness x:Key="spaceMargin" Bottom="8" />
@@ -73,10 +75,13 @@
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
-
         </StackPanel>
+
+        <!-- Visual controller canvas -->
         <DockPanel x:Name="mapBindingPanel" DockPanel.Dock="Left">
             <DockPanel x:Name="bottomPanel" DockPanel.Dock="Bottom" Margin="0">
+
+                <!-- Binding actions -->
                 <StackPanel x:Name="modePanel" Width="160" DockPanel.Dock="Left" Margin="8,0,0,0">
                     <StackPanel Orientation="Horizontal">
                         <RadioButton x:Name="regBindRadio" Content="Regular" GroupName="bindModeGroup" IsChecked="True" Click="RegBindRadio_Click" />
@@ -120,7 +125,7 @@
                     <Button x:Name="defaultBtn" Content="{Binding DefaultBtnString,FallbackValue=Default}" Background="{Binding DefaultColor,FallbackValue={StaticResource SecondaryColor}}" Margin="0,50,0,0" Click="DefaultBtn_Click" />
                     <Button x:Name="unboundBtn" Content="Unbound" Background="{Binding UnboundColor,FallbackValue={StaticResource SecondaryColor}}" Margin="0,10,0,0" Click="UnboundBtn_Click" />
                 </StackPanel>
-
+                
                 <StackPanel x:Name="outConPanel" Width="630" Orientation="Vertical" DockPanel.Dock="Right" HorizontalAlignment="Center" Margin="0">
                     <Canvas Height="247" Margin="0,10,0,0">
                         <Canvas.Background>
@@ -211,6 +216,8 @@
                     <ColumnDefinition Width="1.2*" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
+
+                <!-- Keyboard main -->
                 <UniformGrid Columns="1" Grid.Column="0">
                     <Grid Margin="0,0,0,6">
                         <Grid.RowDefinitions>
@@ -447,12 +454,16 @@
                         <Button x:Name="rctrlBtn" Content="RCtrl" Grid.Column="6" Style="{StaticResource midMargin}"/>
                     </Grid>
                 </UniformGrid>
+                
+                <!-- Keyboard remaining -->
                 <Grid x:Name="otherKeysMouseGrid" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width=".85*" />
                         <ColumnDefinition />
                         <ColumnDefinition x:Name="mouseGridColumn" Width=".9*" />
                     </Grid.ColumnDefinitions>
+
+                    <!-- Keyboard centre -->
                     <DockPanel LastChildFill="False" Grid.Column="0" Margin="6,0">
                         <UniformGrid Rows="3" Columns="3" Margin="2,0" MinHeight="104" DockPanel.Dock="Top">
                             <UniformGrid.Resources>
@@ -491,6 +502,7 @@
                         </Grid>
                     </DockPanel>
 
+                    <!-- Keyboard multimedia and numpad -->
                     <Grid Margin="0,0,0,6" Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -547,6 +559,8 @@
                         <Button x:Name="num0Btn" Content="0" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" />
                         <Button x:Name="numPeriodBtn" Content="." Grid.Row="5" Grid.Column="2" />
                     </Grid>
+                    
+                    <!-- Mouse -->
                     <Canvas x:Name="mouseCanvas" Width="120" Height="170" Grid.Column="2">
                         <StackPanel Width="120">
                             <Image Source="/DS4Windows;component/Resources/mouse.png" Stretch="Uniform"
