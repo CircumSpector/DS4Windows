@@ -53,7 +53,6 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly ControlService rootHub;
 
-        private readonly IServiceProvider ServiceProvider;
         private readonly AutoProfileChecker autoprofileChecker;
         private readonly AutoProfileHolder autoProfileHolder;
         private NonFormTimer autoProfilesTimer;
@@ -80,7 +79,6 @@ namespace DS4WinWPF.DS4Forms
 
         public MainWindow(
             ICommandLineOptions parser,
-            IServiceProvider serviceProvider,
             MainWindowsViewModel mainWindowsViewModel,
             SettingsViewModel settingsViewModel,
             LogViewModel logViewModel,
@@ -90,7 +88,6 @@ namespace DS4WinWPF.DS4Forms
             ProfileEditor editor
         )
         {
-            ServiceProvider = serviceProvider;
             rootHub = controlService;
             this.appSettings = appSettings;
             this.profilesService = profilesService;
