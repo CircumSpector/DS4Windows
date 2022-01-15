@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Data;
@@ -8,6 +9,7 @@ using DS4WinWPF.DS4Control.Profiles.Schema;
 
 namespace DS4WinWPF
 {
+    [Obsolete]
     public class AutoProfileHolder
     {
         private readonly object _collectionLock = new();
@@ -108,6 +110,7 @@ namespace DS4WinWPF
         }
     }
 
+    [Obsolete]
     public class AutoProfileEntity
     {
         public const string NONE_STRING = "(none)";

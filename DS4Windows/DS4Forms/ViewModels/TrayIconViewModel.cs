@@ -33,15 +33,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private readonly ProfileList profileListHolder;
         private string tooltipText = "DS4Windows";
 
-        //public TrayIconViewModel(Tester tester)
-        public TrayIconViewModel(IAppSettingsService appSettings, ControlService service, ProfileList profileListHolder)
+        private readonly IProfilesService profilesService;
+
+        public TrayIconViewModel(
+            IAppSettingsService appSettings,
+            ControlService service,
+            IProfilesService profilesService
+            )
         {
             this.appSettings = appSettings;
-            this.profileListHolder = profileListHolder;
             controlService = service;
+            this.profilesService = profilesService;
             ContextMenu = new ContextMenu();
             iconSource = Global.IconChoiceResources[appSettings.Settings.AppIcon];
-            changeServiceItem = new MenuItem {Header = "Start"};
+            changeServiceItem = new MenuItem { Header = "Start" };
             changeServiceItem.Click += ChangeControlServiceItem_Click;
             changeServiceItem.IsEnabled = false;
 
@@ -51,11 +56,51 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 FontWeight = FontWeights.Bold
             };
             openItem.Click += OpenMenuItem_Click;
-            minimizeItem = new MenuItem {Header = "Minimize"};
+            minimizeItem = new MenuItem { Header = "Minimize" };
             minimizeItem.Click += MinimizeMenuItem_Click;
-            openProgramItem = new MenuItem {Header = "Open Program Folder"};
+            openProgramItem = new MenuItem { Header = "Open Program Folder" };
             openProgramItem.Click += OpenProgramFolderItem_Click;
-            closeItem = new MenuItem {Header = "Exit (Middle Mouse)"};
+            closeItem = new MenuItem { Header = "Exit (Middle Mouse)" };
+            closeItem.Click += ExitMenuItem_Click;
+
+            PopulateControllerList();
+            PopulateToolText();
+            PopulateContextMenu();
+            SetupEvents();
+
+            service.ServiceStarted += BuildControllerList;
+            service.ServiceStarted += HookEvents;
+            service.ServiceStarted += StartPopulateText;
+            service.PreServiceStop += ClearToolText;
+            service.PreServiceStop += UnhookEvents;
+            service.PreServiceStop += ClearControllerList;
+            service.RunningChanged += Service_RunningChanged;
+            service.HotplugController += Service_HotplugController;
+        }
+
+
+        public TrayIconViewModel(IAppSettingsService appSettings, ControlService service, ProfileList profileListHolder)
+        {
+            this.appSettings = appSettings;
+            this.profileListHolder = profileListHolder;
+            controlService = service;
+            ContextMenu = new ContextMenu();
+            iconSource = Global.IconChoiceResources[appSettings.Settings.AppIcon];
+            changeServiceItem = new MenuItem { Header = "Start" };
+            changeServiceItem.Click += ChangeControlServiceItem_Click;
+            changeServiceItem.IsEnabled = false;
+
+            openItem = new MenuItem
+            {
+                Header = "Open",
+                FontWeight = FontWeights.Bold
+            };
+            openItem.Click += OpenMenuItem_Click;
+            minimizeItem = new MenuItem { Header = "Minimize" };
+            minimizeItem.Click += MinimizeMenuItem_Click;
+            openProgramItem = new MenuItem { Header = "Open Program Folder" };
+            openProgramItem.Click += OpenProgramFolderItem_Click;
+            closeItem = new MenuItem { Header = "Exit (Middle Mouse)" };
             ;
             closeItem.Click += ExitMenuItem_Click;
 
@@ -80,7 +125,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             tester.HotplugControllers += StartPopulateText;
             */
         }
-
 
         public string TooltipText
         {
@@ -120,7 +164,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void Service_RunningChanged(object sender, EventArgs e)
         {
             var temp = controlService.IsRunning ? "Stop" : "Start";
-            Application.Current.Dispatcher.BeginInvoke((Action) (() =>
+            Application.Current.Dispatcher.BeginInvoke((Action)(() =>
             {
                 changeServiceItem.Header = temp;
                 changeServiceItem.IsEnabled = true;
@@ -177,7 +221,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 foreach (var holder in controllerList)
                 {
                     var currentDev = holder.Device;
-                    item = new MenuItem {Header = $"Controller {idx + 1}"};
+                    item = new MenuItem { Header = $"Controller {idx + 1}" };
                     item.Tag = idx;
                     //item.ContextMenu = new ContextMenu();
                     var subitems = item.Items;
@@ -187,7 +231,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         // Need to escape profile name to disable Access Keys for control
                         var name = entry.Name;
                         name = Regex.Replace(name, "_{1}", "__");
-                        var temp = new MenuItem {Header = name};
+                        var temp = new MenuItem { Header = name };
                         temp.Tag = idx;
                         temp.Click += ProfileItem_Click;
                         if (entry.Name == currentProfile) temp.IsChecked = true;
@@ -199,14 +243,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     idx++;
                 }
 
-                item = new MenuItem {Header = "Disconnect Menu"};
+                item = new MenuItem { Header = "Disconnect Menu" };
                 idx = 0;
                 foreach (var holder in controllerList)
                 {
                     var tempDev = holder.Device;
                     if (tempDev.Synced && !tempDev.Charging)
                     {
-                        var subitem = new MenuItem {Header = $"Disconnect Controller {idx + 1}"};
+                        var subitem = new MenuItem { Header = $"Disconnect Controller {idx + 1}" };
                         subitem.Click += DisconnectMenuItem_Click;
                         subitem.Tag = idx;
                         item.Items.Add(subitem);

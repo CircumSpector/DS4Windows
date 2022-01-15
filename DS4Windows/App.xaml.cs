@@ -117,6 +117,7 @@ namespace DS4WinWPF
             services.AddTransient<MainWindowsViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<LogViewModel>();
+            services.AddTransient<TrayIconViewModel>();
 
             services.AddTransient<IProfileList, ProfileList>();
 
