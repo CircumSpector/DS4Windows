@@ -100,7 +100,7 @@
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="TaskScheduler" Version="2.9.3" />
-    <PackageReference Include="WPFLocalizeExtension" Version="3.9.1" />
+    <PackageReference Include="WPFLocalizeExtension" Version="3.9.2" />
 
     <Reference Include="Nefarius.ViGEm.Client">
       <HintPath>..\libs\$(Platform)\Nefarius.ViGEm.Client\Nefarius.ViGEm.Client.dll</HintPath>
