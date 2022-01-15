@@ -49,7 +49,7 @@ This application benefits from these awesome projects (appearance in no special 
   - A configurable and eXtensible Xml serializer for .NET
 - [Fody](https://github.com/Fody/Fody)
   - Extensible tool for weaving .net assemblies
-- [H.NotifyIcon.WPF - NotifyIcon for .Net Core 3.1 and .Net 5 WPF](https://github.com/HavenDV/H.NotifyIcon.WPF)
+- [Hardcodet NotifyIcon for WPF](https://github.com/hardcodet/wpf-notifyicon)
   - NotifyIcon for .Net Core 3.1 and .Net 5 WPF
 - [Jaeger Tracing](https://github.com/jaegertracing/jaeger-client-csharp)
   - C# client (tracer) for Jaeger
