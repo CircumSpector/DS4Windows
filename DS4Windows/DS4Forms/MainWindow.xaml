@@ -41,17 +41,26 @@
 
     <DockPanel>
         <tb:TaskbarIcon x:Name="notifyIcon" IconSource="{Binding IconSource,Mode=OneWay}"
-                        ToolTipText="{Binding TooltipText,Mode=OneWay}" MenuActivation="RightClick"
+                        MenuActivation="RightClick"
                         TrayRightMouseUp="NotifyIcon_TrayRightMouseUp"
                         TrayMiddleMouseDown="NotifyIcon_TrayMiddleMouseDown"
                         TrayMouseDoubleClick="NotifyIcon_TrayMouseDoubleClick">
-            <!--<tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Open" />
-                    <Separator />
-                    <MenuItem x:Name="exitMenuItem" Header="Exit" />
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>-->
+            <tb:TaskbarIcon.TrayToolTip>
+                <Border
+                    Background="White"
+                    BorderBrush="Orange"
+                    BorderThickness="2"
+                    CornerRadius="4"
+                    Opacity="0.8"
+                    Width="160"
+                    Height="40">
+                    <TextBlock
+                        Text="{Binding TooltipText,Mode=OneWay}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                    />
+                </Border>
+            </tb:TaskbarIcon.TrayToolTip>
         </tb:TaskbarIcon>
 
         <!-- Bottom Status bar --> 
