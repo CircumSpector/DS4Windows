@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using DS4Windows;
 using DS4WinWPF.DS4Control.IoC.Services;
+using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -35,6 +36,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly IProfilesService profilesService;
 
+        [UsedImplicitly]
         public TrayIconViewModel(
             IAppSettingsService appSettings,
             ControlService service,
@@ -55,6 +57,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 Header = "Open",
                 FontWeight = FontWeights.Bold
             };
+
             openItem.Click += OpenMenuItem_Click;
             minimizeItem = new MenuItem { Header = "Minimize" };
             minimizeItem.Click += MinimizeMenuItem_Click;
@@ -76,54 +79,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             service.PreServiceStop += ClearControllerList;
             service.RunningChanged += Service_RunningChanged;
             service.HotplugController += Service_HotplugController;
-        }
-
-
-        public TrayIconViewModel(IAppSettingsService appSettings, ControlService service, ProfileList profileListHolder)
-        {
-            this.appSettings = appSettings;
-            this.profileListHolder = profileListHolder;
-            controlService = service;
-            ContextMenu = new ContextMenu();
-            iconSource = Global.IconChoiceResources[appSettings.Settings.AppIcon];
-            changeServiceItem = new MenuItem { Header = "Start" };
-            changeServiceItem.Click += ChangeControlServiceItem_Click;
-            changeServiceItem.IsEnabled = false;
-
-            openItem = new MenuItem
-            {
-                Header = "Open",
-                FontWeight = FontWeights.Bold
-            };
-            openItem.Click += OpenMenuItem_Click;
-            minimizeItem = new MenuItem { Header = "Minimize" };
-            minimizeItem.Click += MinimizeMenuItem_Click;
-            openProgramItem = new MenuItem { Header = "Open Program Folder" };
-            openProgramItem.Click += OpenProgramFolderItem_Click;
-            closeItem = new MenuItem { Header = "Exit (Middle Mouse)" };
-            ;
-            closeItem.Click += ExitMenuItem_Click;
-
-            PopulateControllerList();
-            PopulateToolText();
-            PopulateContextMenu();
-            SetupEvents();
-            profileListHolder.ProfileListCollection.CollectionChanged += ProfileListCol_CollectionChanged;
-
-            service.ServiceStarted += BuildControllerList;
-            service.ServiceStarted += HookEvents;
-            service.ServiceStarted += StartPopulateText;
-            service.PreServiceStop += ClearToolText;
-            service.PreServiceStop += UnhookEvents;
-            service.PreServiceStop += ClearControllerList;
-            service.RunningChanged += Service_RunningChanged;
-            service.HotplugController += Service_HotplugController;
-            /*tester.StartControllers += HookBatteryUpdate;
-            tester.StartControllers += StartPopulateText;
-            tester.PreRemoveControllers += ClearToolText;
-            tester.HotplugControllers += HookBatteryUpdate;
-            tester.HotplugControllers += StartPopulateText;
-            */
         }
 
         public string TooltipText
@@ -221,11 +176,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 foreach (var holder in controllerList)
                 {
                     var currentDev = holder.Device;
-                    item = new MenuItem { Header = $"Controller {idx + 1}" };
-                    item.Tag = idx;
-                    //item.ContextMenu = new ContextMenu();
+                    item = new MenuItem
+                    {
+                        Header = $"Controller {idx + 1}",
+                        Tag = idx
+                    };
+
                     var subitems = item.Items;
                     var currentProfile = Global.Instance.Config.ProfilePath[idx];
+
                     foreach (var entry in profileListHolder.ProfileListCollection)
                     {
                         // Need to escape profile name to disable Access Keys for control
@@ -245,6 +204,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
                 item = new MenuItem { Header = "Disconnect Menu" };
                 idx = 0;
+
                 foreach (var holder in controllerList)
                 {
                     var tempDev = holder.Device;
@@ -323,7 +283,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void PopulateControllerList()
         {
-            //IEnumerable<DS4Device> devices = DS4Devices.getDS4Controllers();
             var idx = 0;
             _colLocker.EnterWriteLock();
             foreach (var currentDev in controlService.slotManager.ControllerColl)

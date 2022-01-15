@@ -5,6 +5,9 @@ using DS4Windows;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
+    /// <summary>
+    ///     Provides global properties that can change during runtime but will not be persisted to or restored from disk.
+    /// </summary>
     public interface IGlobalStateService
     {
         /// <summary>
@@ -33,6 +36,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         string AutoSwitchingProfilesPath { get; }
     }
 
+    /// <summary>
+    ///     Provides global properties that can change during runtime but will not be persisted to or restored from disk.
+    /// </summary>
     public sealed class GlobalStateService : IGlobalStateService
     {
         private readonly string appDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;

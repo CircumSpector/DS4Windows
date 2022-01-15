@@ -85,7 +85,8 @@ namespace DS4WinWPF.DS4Forms
             ControlService controlService,
             IAppSettingsService appSettings,
             IProfilesService profilesService,
-            ProfileEditor editor
+            ProfileEditor editor,
+            TrayIconViewModel trayIconViewModel
         )
         {
             rootHub = controlService;
@@ -123,7 +124,7 @@ namespace DS4WinWPF.DS4Forms
             view.SortDescriptions.Add(new SortDescription("DevIndex", ListSortDirection.Ascending));
             view.Refresh();
 
-            trayIconVM = new TrayIconViewModel(appSettings, rootHub, ProfileListHolder);
+            trayIconVM = trayIconViewModel;
             notifyIcon.DataContext = trayIconVM;
 
             if (appSettings.Settings.StartMinimized || parser.StartMinimized) WindowState = WindowState.Minimized;
