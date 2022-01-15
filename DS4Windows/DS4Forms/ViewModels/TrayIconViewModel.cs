@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using JetBrains.Annotations;
 
@@ -37,6 +38,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private readonly IProfilesService profilesService;
 
         [UsedImplicitly]
+        [MissingLocalization]
         public TrayIconViewModel(
             IAppSettingsService appSettings,
             ControlService service,
@@ -116,6 +118,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public event EventHandler RequestServiceChange;
         public event ProfileSelectedHandler ProfileSelected;
 
+        [MissingLocalization]
         private void Service_RunningChanged(object sender, EventArgs e)
         {
             var temp = controlService.IsRunning ? "Stop" : "Start";
@@ -164,6 +167,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             PopulateControllerList();
         }
 
+        [MissingLocalization]
         public void PopulateContextMenu()
         {
             ContextMenu.Items.Clear();

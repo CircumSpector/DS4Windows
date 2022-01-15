@@ -1,7 +1,7 @@
 # DS4Windows
 
 [![Build status](https://ci.appveyor.com/api/projects/status/gt6hhm5aqy04ou7u?svg=true)](https://ci.appveyor.com/project/nefarius/ds4windows)
-![.NET Version: >= 5.0](https://img.shields.io/badge/.NET-%3E%3D%205.0-green.svg)
+[![Requirements](https://img.shields.io/badge/Requirements-.NET%205.0-blue.svg)](https://github.com/dotnet/core/blob/main/release-notes/5.0/5.0-supported-os.md)
 
 ☣️ **Highly unstable, work-in-progress, constantly changing, incubating software ahead** ☣️
 
