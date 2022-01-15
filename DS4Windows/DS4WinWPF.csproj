@@ -80,7 +80,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Hardcodet.NotifyIcon.Wpf.NetCore" Version="1.0.18" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="Jaeger" Version="1.0.3" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="all" />
     <PackageReference Include="MdXaml" Version="1.12.0" />
