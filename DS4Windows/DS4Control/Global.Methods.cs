@@ -13,18 +13,18 @@ namespace DS4Windows
         public void SaveTo(string path)
         {
             RuntimeAppDataPath = path;
-            _config.ProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.ProfilesFileName);
-            _config.ActionsPath = Path.Combine(RuntimeAppDataPath, Constants.ActionsFileName);
-            _config.LinkedProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.LinkedProfilesFileName);
-            _config.ControllerConfigsPath = Path.Combine(RuntimeAppDataPath, Constants.ControllerConfigsFileName);
+            _config.ProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.LegacyProfilesFileName);
+            _config.ActionsPath = Path.Combine(RuntimeAppDataPath, Constants.LegacyActionsFileName);
+            _config.LinkedProfilesPath = Path.Combine(RuntimeAppDataPath, Constants.LegacyLinkedProfilesFileName);
+            _config.ControllerConfigsPath = Path.Combine(RuntimeAppDataPath, Constants.LegacyControllerConfigsFileName);
         }
 
         public void FindConfigLocation()
         {
             var programFolderAutoProfilesExists =
-                File.Exists(Path.Combine(ExecutableDirectory, Constants.AutoProfilesFileName));
+                File.Exists(Path.Combine(ExecutableDirectory, Constants.LegacyAutoProfilesFileName));
             var appDataAutoProfilesExists =
-                File.Exists(Path.Combine(RoamingAppDataPath, Constants.AutoProfilesFileName));
+                File.Exists(Path.Combine(RoamingAppDataPath, Constants.LegacyAutoProfilesFileName));
             //bool localAppDataAutoProfilesExists = File.Exists(Path.Combine(localAppDataPpath, "Auto Profiles.xml"));
             //bool systemAppConfigExists = appDataAutoProfilesExists || localAppDataAutoProfilesExists;
             var systemAppConfigExists = appDataAutoProfilesExists;

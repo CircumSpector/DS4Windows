@@ -19,7 +19,7 @@ namespace DS4WinWPF.DS4Forms
     /// </summary>
     public partial class AutoProfiles : UserControl
     {
-        protected String m_Profile = Path.Combine(DS4Windows.Global.RuntimeAppDataPath, Constants.AutoProfilesFileName);
+        protected String m_Profile = Path.Combine(DS4Windows.Global.RuntimeAppDataPath, Constants.LegacyAutoProfilesFileName);
         public const string steamCommx86Loc = @"C:\Program Files (x86)\Steam\steamapps\common";
         public const string steamCommLoc = @"C:\Program Files\Steam\steamapps\common";
         private string steamgamesdir;
@@ -38,7 +38,7 @@ namespace DS4WinWPF.DS4Forms
         {
             InitializeComponent();
 
-            if (!File.Exists(Path.Combine(Global.RuntimeAppDataPath, Constants.AutoProfilesFileName)))
+            if (!File.Exists(Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyAutoProfilesFileName)))
                 DS4Windows.Global.CreateAutoProfiles(m_Profile);
 
             //LoadP();
@@ -304,7 +304,7 @@ namespace DS4WinWPF.DS4Forms
                 editControlsPanel.DataContext = null;
                 autoProfVM.RemoveAutoProfileEntry(autoProfVM.SelectedItem);
                 autoProfVM.AutoProfileHolder.Save(Path.Combine(Global.RuntimeAppDataPath,
-                    Constants.AutoProfilesFileName));
+                    Constants.LegacyAutoProfilesFileName));
                 autoProfVM.SelectedItem = null;
             }
         }
@@ -323,7 +323,7 @@ namespace DS4WinWPF.DS4Forms
                 }
 
                 autoProfVM.AutoProfileHolder.Save(Path.Combine(Global.RuntimeAppDataPath,
-                    Constants.AutoProfilesFileName));
+                    Constants.LegacyAutoProfilesFileName));
             }
         }
 
@@ -356,7 +356,7 @@ namespace DS4WinWPF.DS4Forms
             {
                 if(autoProfVM.MoveItemUpDown(autoProfVM.SelectedItem, ((sender as MenuItem).Name == "MoveUp") ? -1 : 1))
                     autoProfVM.AutoProfileHolder.Save(Path.Combine(Global.RuntimeAppDataPath,
-                        Constants.AutoProfilesFileName));
+                        Constants.LegacyAutoProfilesFileName));
             }
         }
     }

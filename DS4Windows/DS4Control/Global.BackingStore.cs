@@ -111,16 +111,16 @@ namespace DS4Windows
             [Obsolete]
             public string ProfilesPath { get; set; } =
                 Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
-                    Constants.ProfilesFileName);
+                    Constants.LegacyProfilesFileName);
 
-            public string ActionsPath { get; set; } = Path.Combine(RuntimeAppDataPath, Constants.ActionsFileName);
+            public string ActionsPath { get; set; } = Path.Combine(RuntimeAppDataPath, Constants.LegacyActionsFileName);
 
             [Obsolete]
             public string LinkedProfilesPath { get; set; } =
-                Path.Combine(RuntimeAppDataPath, Constants.LinkedProfilesFileName);
+                Path.Combine(RuntimeAppDataPath, Constants.LegacyLinkedProfilesFileName);
 
             public string ControllerConfigsPath { get; set; } =
-                Path.Combine(RuntimeAppDataPath, Constants.ControllerConfigsFileName);
+                Path.Combine(RuntimeAppDataPath, Constants.LegacyControllerConfigsFileName);
 
             public IList<string> ProfilePath { get; set; } = new List<string>
             {
@@ -1668,7 +1668,7 @@ namespace DS4Windows
             public bool LoadActions()
             {
                 var saved = true;
-                if (!File.Exists(Path.Combine(RuntimeAppDataPath, Constants.ActionsFileName)))
+                if (!File.Exists(Path.Combine(RuntimeAppDataPath, Constants.LegacyActionsFileName)))
                 {
                     SaveAction("Disconnect Controller", "PS/Options", 5, "0", false);
                     saved = false;
@@ -1678,7 +1678,7 @@ namespace DS4Windows
                 {
                     Actions.Clear();
                     var doc = new XmlDocument();
-                    doc.Load(Path.Combine(RuntimeAppDataPath, Constants.ActionsFileName));
+                    doc.Load(Path.Combine(RuntimeAppDataPath, Constants.LegacyActionsFileName));
                     var actionslist = doc.SelectNodes("Actions/Action");
                     string name, controls, type, details, extras, extras2;
                     Mapping.actionDone.Clear();

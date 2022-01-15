@@ -309,7 +309,7 @@ namespace DS4WinWPF
             {
                 case false when !readAppConfig:
                     logger.LogInformation(
-                        $@"{Constants.ProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.ProfilesFileName)}. Using default app settings");
+                        $@"{Constants.LegacyProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyProfilesFileName)}. Using default app settings");
                     break;
                 case true:
                     {
@@ -615,10 +615,10 @@ namespace DS4WinWPF
                     try
                     {
                         Directory.CreateDirectory(Global.RoamingAppDataPath);
-                        File.Copy(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesFileName),
-                            Global.RoamingAppDataPath + Constants.ProfilesFileName);
-                        File.Copy(Global.ExecutableDirectory + Constants.AutoProfilesFileName,
-                            Global.RoamingAppDataPath + Constants.AutoProfilesFileName);
+                        File.Copy(Path.Combine(Global.ExecutableDirectory, Constants.LegacyProfilesFileName),
+                            Global.RoamingAppDataPath + Constants.LegacyProfilesFileName);
+                        File.Copy(Global.ExecutableDirectory + Constants.LegacyAutoProfilesFileName,
+                            Global.RoamingAppDataPath + Constants.LegacyAutoProfilesFileName);
                         Directory.CreateDirectory(Path.Combine(Global.RoamingAppDataPath,
                             Constants.ProfilesSubDirectory));
                         foreach (var s in Directory.GetFiles(Path.Combine(Global.ExecutableDirectory,

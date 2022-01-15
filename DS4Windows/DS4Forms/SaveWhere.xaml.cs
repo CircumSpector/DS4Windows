@@ -54,8 +54,8 @@ namespace DS4WinWPF.DS4Forms
                 try
                 {
                     Directory.Delete(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesSubDirectory), true);
-                    File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.ProfilesFileName));
-                    File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.AutoProfilesFileName));
+                    File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.LegacyProfilesFileName));
+                    File.Delete(Path.Combine(Global.ExecutableDirectory, Constants.LegacyAutoProfilesFileName));
                 }
                 catch (UnauthorizedAccessException)
                 {

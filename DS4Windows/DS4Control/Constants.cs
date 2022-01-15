@@ -10,15 +10,15 @@ namespace DS4Windows
     {
         public const string ApplicationName = "DS4Windows";
 
-        public const string ProfilesFileName = "Profiles.xml";
+        public const string LegacyProfilesFileName = "Profiles.xml";
         
-        public const string ActionsFileName = "Actions.xml";
+        public const string LegacyActionsFileName = "Actions.xml";
 
-        public const string LinkedProfilesFileName = "LinkedProfiles.xml";
+        public const string LegacyLinkedProfilesFileName = "LinkedProfiles.xml";
 
-        public const string ControllerConfigsFileName = "ControllerConfigs.xml";
+        public const string LegacyControllerConfigsFileName = "ControllerConfigs.xml";
 
-        public const string AutoProfilesFileName = "Auto Profiles.xml";
+        public const string LegacyAutoProfilesFileName = "Auto Profiles.xml";
 
         public static Guid ViGemBusInterfaceGuid = new("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
 
@@ -28,7 +28,7 @@ namespace DS4Windows
 
         public const string ProfilesSubDirectory = "Profiles";
 
-        public const string OutputSlotsFileName = "OutputSlots.xml";
+        public const string LegacyOutputSlotsFileName = "OutputSlots.xml";
 
         public const string SingleAppComEventName = "{a52b5b20-d9ee-4f32-8518-307fa14aa0c6}";
 

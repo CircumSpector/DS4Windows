@@ -21,7 +21,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         string RoamingAppDataPath { get; }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.LinkedProfilesFileName" />
+        ///     Absolute path to <see cref="Constants.LegacyLinkedProfilesFileName" />
         /// </summary>
         string LinkedProfilesPath { get; }
 
@@ -31,7 +31,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         string ProfilesDirectory { get; }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.AutoProfilesFileName" />
+        ///     Absolute path to <see cref="Constants.LegacyAutoProfilesFileName" />
         /// </summary>
         string AutoSwitchingProfilesPath { get; }
     }
@@ -60,50 +60,50 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.ProfilesFileName" />
+        ///     Absolute path to <see cref="Constants.LegacyProfilesFileName" />
         /// </summary>
         public string AppSettingsFilePath
         {
             get
             {
                 var programFolderFile = Path.Combine(appDirectory
-                    , Constants.ProfilesFileName);
+                    , Constants.LegacyProfilesFileName);
 
                 return File.Exists(programFolderFile)
                     ? programFolderFile
-                    : Path.Combine(RoamingAppDataPath, Constants.ProfilesFileName);
+                    : Path.Combine(RoamingAppDataPath, Constants.LegacyProfilesFileName);
             }
         }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.LinkedProfilesFileName" />
+        ///     Absolute path to <see cref="Constants.LegacyLinkedProfilesFileName" />
         /// </summary>
         public string LinkedProfilesPath
         {
             get
             {
                 var programFolderFile = Path.Combine(appDirectory
-                    , Constants.LinkedProfilesFileName);
+                    , Constants.LegacyLinkedProfilesFileName);
 
                 return File.Exists(programFolderFile)
                     ? programFolderFile
-                    : Path.Combine(RoamingAppDataPath, Constants.LinkedProfilesFileName);
+                    : Path.Combine(RoamingAppDataPath, Constants.LegacyLinkedProfilesFileName);
             }
         }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.AutoProfilesFileName" />
+        ///     Absolute path to <see cref="Constants.LegacyAutoProfilesFileName" />
         /// </summary>
         public string AutoSwitchingProfilesPath
         {
             get
             {
                 var programFolderFile = Path.Combine(appDirectory
-                    , Constants.AutoProfilesFileName);
+                    , Constants.LegacyAutoProfilesFileName);
 
                 return File.Exists(programFolderFile)
                     ? programFolderFile
-                    : Path.Combine(RoamingAppDataPath, Constants.AutoProfilesFileName);
+                    : Path.Combine(RoamingAppDataPath, Constants.LegacyAutoProfilesFileName);
             }
         }
 

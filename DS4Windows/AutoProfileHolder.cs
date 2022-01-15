@@ -32,7 +32,7 @@ namespace DS4WinWPF
         [ConfigurationSystemComponent]
         private void Load()
         {
-            var settingsPath = Path.Combine(Global.RuntimeAppDataPath, Constants.AutoProfilesFileName);
+            var settingsPath = Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyAutoProfilesFileName);
 
             if (!File.Exists(settingsPath))
                 return;

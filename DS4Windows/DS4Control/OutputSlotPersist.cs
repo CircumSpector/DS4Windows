@@ -21,7 +21,7 @@ namespace DS4WinWPF.DS4Control
         [ConfigurationSystemComponent]
         public async Task<bool> ReadConfig(IOutputSlotManager slotManager)
         {
-            var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
+            var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyOutputSlotsFileName);
 
             if (!File.Exists(outputPath))
                 return false;
@@ -59,7 +59,7 @@ namespace DS4WinWPF.DS4Control
                     }).ToList()
             };
             
-            var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.OutputSlotsFileName);
+            var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyOutputSlotsFileName);
 
             try
             {
