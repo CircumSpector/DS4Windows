@@ -159,12 +159,10 @@ namespace DS4WinWPF
 
             #endregion
         }
-        
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             logger = host.Services.GetRequiredService<ILogger<App>>();
-
-            logger.LogInformation("-------- BEGIN NEW LOG SESSION --------");
 
             await host.StartAsync();
 
@@ -177,7 +175,7 @@ namespace DS4WinWPF
             requestClient = new HttpClient();
 
             _ = Task.Run(async () => await host.Services.GetRequiredService<WebServer>().RunAsync());
-            
+
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
             var appLogger = host.Services.GetRequiredService<IAppLogger>();
             devices = host.Services.GetRequiredService<IDS4Devices>();
@@ -841,10 +839,12 @@ namespace DS4WinWPF
             }
         }
 
-        private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+        protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
         {
             logger.LogInformation("User Session Ending");
             CleanShutdown();
+
+            base.OnSessionEnding(e);
         }
 
         private void CleanShutdown()
