@@ -20,7 +20,7 @@ namespace DS4Windows
 
         public const string LegacyAutoProfilesFileName = "Auto Profiles.xml";
 
-        public static Guid ViGemBusInterfaceGuid = new("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
+        public static Guid ViGemBusGen1InterfaceGuid = new("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
 
         public static Guid SystemDeviceClassGuid = new("{4d36e97d-e325-11ce-bfc1-08002be10318}");
 

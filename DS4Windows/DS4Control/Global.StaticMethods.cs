@@ -56,7 +56,7 @@ namespace DS4Windows
         private static void FindViGEmDeviceInfo()
         {
             var result = false;
-            var deviceGuid = Constants.ViGemBusInterfaceGuid;
+            var deviceGuid = Constants.ViGemBusGen1InterfaceGuid;
             var deviceInfoData =
                 new NativeMethods.SP_DEVINFO_DATA();
             deviceInfoData.cbSize =

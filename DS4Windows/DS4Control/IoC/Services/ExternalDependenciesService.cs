@@ -30,7 +30,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     internal class ExternalDependenciesService : IExternalDependenciesService
     {
         public IEnumerable<DeviceNodeInfo> ViGEmBusGen1Versions =>
-            GetDeviceInfoForInterfaceGuid(Constants.ViGemBusInterfaceGuid);
+            GetDeviceInfoForInterfaceGuid(Constants.ViGemBusGen1InterfaceGuid);
 
         private static IEnumerable<DeviceNodeInfo> GetDeviceInfoForInterfaceGuid(Guid deviceGuid)
         {
