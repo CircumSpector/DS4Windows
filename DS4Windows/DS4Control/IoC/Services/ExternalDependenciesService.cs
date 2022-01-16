@@ -25,12 +25,24 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         IEnumerable<DeviceNodeInfo> ViGEmBusGen1Versions { get; }
 
         [CanBeNull] DeviceNodeInfo ViGEmBusGen1LatestVersion { get; }
+
+        IEnumerable<DeviceNodeInfo> HidHideVersions { get; }
+
+        [CanBeNull] DeviceNodeInfo HidHideLatestVersion { get; }
     }
 
     internal class ExternalDependenciesService : IExternalDependenciesService
     {
         public IEnumerable<DeviceNodeInfo> ViGEmBusGen1Versions =>
             GetDeviceInfoForInterfaceGuid(Constants.ViGemBusGen1InterfaceGuid);
+
+        public DeviceNodeInfo ViGEmBusGen1LatestVersion =>
+            ViGEmBusGen1Versions.OrderBy(v => v.DriverVersion).FirstOrDefault();
+
+        public IEnumerable<DeviceNodeInfo> HidHideVersions =>
+            GetDeviceInfoForInterfaceGuid(Constants.HidHideInterfaceGuid);
+
+        public DeviceNodeInfo HidHideLatestVersion => HidHideVersions.OrderBy(v => v.DriverVersion).FirstOrDefault();
 
         private static IEnumerable<DeviceNodeInfo> GetDeviceInfoForInterfaceGuid(Guid deviceGuid)
         {
@@ -46,19 +58,19 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // Properties to retrieve
             NativeMethods.DEVPROPKEY[] lookupProperties =
             {
-                NativeMethods.DEVPKEY_Device_DriverVersion, 
+                NativeMethods.DEVPKEY_Device_DriverVersion,
                 NativeMethods.DEVPKEY_Device_InstanceId,
-                NativeMethods.DEVPKEY_Device_Manufacturer, 
+                NativeMethods.DEVPKEY_Device_Manufacturer,
                 NativeMethods.DEVPKEY_Device_Provider,
                 NativeMethods.DEVPKEY_Device_DeviceDesc
             };
 
             var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(
-                ref deviceGuid, 
-                null, 
+                ref deviceGuid,
+                null,
                 0,
                 NativeMethods.DIGCF_DEVICEINTERFACE
-                );
+            );
 
             for (var i = 0;
                  NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, i, ref deviceInfoData);
@@ -117,8 +129,5 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             if (deviceInfoSet.ToInt64() != NativeMethods.INVALID_HANDLE_VALUE)
                 NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
         }
-
-        public DeviceNodeInfo ViGEmBusGen1LatestVersion =>
-            ViGEmBusGen1Versions.OrderBy(v => v.DriverVersion).FirstOrDefault();
     }
 }
