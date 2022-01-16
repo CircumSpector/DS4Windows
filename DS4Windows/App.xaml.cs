@@ -159,7 +159,7 @@ namespace DS4WinWPF
 
             #endregion
         }
-
+        
         protected override async void OnStartup(StartupEventArgs e)
         {
             await host.StartAsync();
@@ -279,14 +279,15 @@ namespace DS4WinWPF
 
             var version = Global.ExecutableProductVersion;
 
+            logger.LogInformation($"Current directory: {Directory.GetCurrentDirectory()}");
             logger.LogInformation($"{Constants.ApplicationName} version {version}");
             logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
             logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
             logger.LogInformation($"OS Version: {Environment.OSVersion}");
             logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
             logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
+            logger.LogInformation($"OS Branding String: {Util.BrandingFormatString("%WINDOWS_LONG%")}");
             logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
-            logger.LogInformation("Logger created");
 
             //
             // Notify user if tracing is enabled

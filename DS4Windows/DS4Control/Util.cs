@@ -255,5 +255,9 @@ namespace DS4Windows
                 Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ReleaseId", "").ToString();
             return releaseId;
         }
+
+        [DllImport("winbrand.dll", CharSet = CharSet.Unicode)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        public static extern string BrandingFormatString(string format);
     }
 }
