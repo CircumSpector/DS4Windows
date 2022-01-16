@@ -20,13 +20,17 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
     {
         private readonly IAppSettingsService appSettings;
 
+        private readonly IExternalDependenciesService dependenciesService;
+
         private readonly ILogger<StartupChecksUserNotifications> logger;
 
         public StartupChecksUserNotifications(IAppSettingsService appSettings,
-            ILogger<StartupChecksUserNotifications> logger)
+            ILogger<StartupChecksUserNotifications> logger,
+            IExternalDependenciesService dependenciesService)
         {
             this.appSettings = appSettings;
             this.logger = logger;
+            this.dependenciesService = dependenciesService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,6 +38,8 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
             logger.LogInformation("Performing startup tasks");
 
             await appSettings.LoadAsync();
+
+            await CheckViGEmBusPresence();
 
             await CheckIsTracingEnabled();
 
@@ -44,6 +50,47 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
             await CheckAppArchitecture();
 
             logger.LogInformation("Done performing startup tasks");
+        }
+
+        [MissingLocalization]
+        private async Task CheckViGEmBusPresence()
+        {
+            if (dependenciesService.ViGEmBusGen1LatestVersion is not null)
+                return;
+
+            var messageBox = new MessageBoxModel
+            {
+                Text =
+                    "Hello, Gamer!" +
+                    "\r\n\r\nThe emulation driver ViGEmBus seems to be missing on this system. "
+                    + "\r\n\r\nWithout this component almost all application features will not be available. "
+                    + "Please install it now and restart the application afterwards or read up on troubleshooting."
+                    + "\r\n\r\nThanks for your attention ❤️",
+                Caption = "ViGEmBus not found",
+                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Buttons = new[]
+                {
+                    MessageBoxButtons.Custom("Take me to the download!"),
+                    MessageBoxButtons.No("Not working, I need help!"),
+                    MessageBoxButtons.Yes("I know what I'm doing")
+                },
+                IsSoundEnabled = false
+            };
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+
+                switch (messageBox.Result)
+                {
+                    case AdonisUI.Controls.MessageBoxResult.Custom:
+                        DS4Windows.Util.StartProcessHelper(Constants.ViGEmBusGen1DownloadUri);
+                        break;
+                    case AdonisUI.Controls.MessageBoxResult.No:
+                        DS4Windows.Util.StartProcessHelper(Constants.ViGEmBusGen1GuideUri);
+                        break;
+                }
+            });
         }
 
         [MissingLocalization]

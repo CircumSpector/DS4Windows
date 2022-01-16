@@ -117,7 +117,9 @@ namespace DS4WinWPF
             {
                 try
                 {
-                    return new ViGEmClient();
+                    var version = provider.GetRequiredService<IExternalDependenciesService>().ViGEmBusGen1LatestVersion;
+
+                    return version is null ? null : new ViGEmClient();
                 }
                 catch
                 {
@@ -175,6 +177,8 @@ namespace DS4WinWPF
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             await host.StartAsync();
+
+            var t = host.Services.GetRequiredService<IExternalDependenciesService>().HidHideLatestVersion;
 
             runShutdown = true;
             skipSave = true;

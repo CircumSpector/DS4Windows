@@ -44,6 +44,10 @@ namespace DS4Windows
         
         public const string TracingGuideUri = "https://docs.ds4windows.app/troubleshooting/tracing-guide/";
 
+        public const string ViGEmBusGen1DownloadUri = "https://github.com/ViGEm/ViGEmBus/releases/latest";
+        
+        public const string ViGEmBusGen1GuideUri = "https://vigem.org/projects/ViGEm/How-to-Install/#troubleshooting";
+
         public const int MaxControllers = 8;
     }
 }
