@@ -37,7 +37,14 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
         {
             logger.LogInformation("Performing startup tasks");
 
+            //
+            // Required to know if user has suppressed some checks already
+            // 
             await appSettings.LoadAsync();
+
+            //
+            // Perform each check sequential and display a modal dialog
+            // 
 
             await CheckViGEmBusPresence();
 
@@ -71,7 +78,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                 Buttons = new[]
                 {
                     MessageBoxButtons.Custom("Take me to the download!"),
-                    MessageBoxButtons.No("Not working, I need help!"),
+                    MessageBoxButtons.No("Didn't work, I need help!"),
                     MessageBoxButtons.Yes("I know what I'm doing")
                 },
                 IsSoundEnabled = false
