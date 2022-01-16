@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using AdonisUI.Controls;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
+using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Forms;
@@ -158,6 +159,8 @@ namespace DS4WinWPF
             //services.AddSingleton<BindingWindow>();
 
             #endregion
+
+            services.AddHostedService<StartupChecksUserNotifications>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -290,11 +293,6 @@ namespace DS4WinWPF
             logger.LogInformation($"OS Branding String: {Util.BrandingFormatString("%WINDOWS_LONG%")}");
             logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
 
-            //
-            // Notify user if tracing is enabled
-            // 
-            appSettings.IsTracingEnabledChanged += SettingsOnIsTracingEnabledChanged;
-
             var readAppConfig = await appSettings.LoadAsync();
 
             switch (firstRun)
@@ -343,202 +341,13 @@ namespace DS4WinWPF
             await rootHub.LoadPermanentSlotsConfig();
             window.LateChecks(parser);
 
-            CheckWindows11();
-
-            CheckIsSteamRunning();
-
-            CheckAppArchitecture();
 
             base.OnStartup(e);
-        }
-
-        [MissingLocalization]
-        private void CheckAppArchitecture()
-        {
-            if (appSettings.Settings.HasUserConfirmedArchitectureWarning)
-                return;
-
-            if (!Environment.Is64BitOperatingSystem || Environment.Is64BitProcess) return;
-
-            var messageBox = new MessageBoxModel
-            {
-                Text =
-                    "Hello, Gamer!" +
-                    "\r\n\r\nYou're running the 32-Bit edition on a 64-Bit system. "
-                    + $"\r\n\r\nIf this isn't by intention you've probably downloaded the wrong build of"
-                    + $" {Constants.ApplicationName}."
-                    + $"\r\n\r\nIt is highly recommended to run the 64-Bit (x64) edition on a 64-Bit operating system "
-                    + "or you will most likely encounter unsolvable issues."
-                    + "\r\n\r\nThanks for your attention ❤️",
-                Caption = "Architecture mismatch detected",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
-                Buttons = new[]
-                {
-                    MessageBoxButtons.Yes("Understood")
-                },
-                CheckBoxes = new[]
-                {
-                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
-                    {
-                        IsChecked = false,
-                        Placement = MessageBoxCheckBoxPlacement.BelowText
-                    }
-                },
-                IsSoundEnabled = false
-            };
-
-            Current.Dispatcher.InvokeAsync(() =>
-            {
-                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
-
-                appSettings.Settings.HasUserConfirmedArchitectureWarning = messageBox.CheckBoxes.First().IsChecked;
-            });
-        }
-
-        [MissingLocalization]
-        private void CheckWindows11()
-        {
-            if (appSettings.Settings.HasUserConfirmedWindows11Warning)
-                return;
-
-            //
-            // TODO: quite primitive but currently the most reliable check
-            // 
-            if (!Util.BrandingFormatString("%WINDOWS_LONG%").Contains("Windows 11"))
-                return;
-
-            var messageBox = new MessageBoxModel
-            {
-                Text =
-                    "Hello, Gamer!" +
-                    "\r\n\r\nYou're running this application on Windows 11. "
-                    + $"\r\n\r\nPlease bear in mind that compatibility with Windows 11 currently is in its very early stage, "
-                    + "if something that worked on Windows 10 is broken, for now, you're on your own!"
-                    + "\r\n\r\nThanks for your attention ❤️",
-                Caption = "Windows 11 detected",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
-                Buttons = new[]
-                {
-                    MessageBoxButtons.Yes("Understood")
-                },
-                CheckBoxes = new[]
-                {
-                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
-                    {
-                        IsChecked = false,
-                        Placement = MessageBoxCheckBoxPlacement.BelowText
-                    }
-                },
-                IsSoundEnabled = false
-            };
-
-            Current.Dispatcher.InvokeAsync(() =>
-            {
-                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
-
-                appSettings.Settings.HasUserConfirmedWindows11Warning = messageBox.CheckBoxes.First().IsChecked;
-            });
-        }
-
-        [MissingLocalization]
-        private void CheckIsSteamRunning()
-        {
-            if (appSettings.Settings.HasUserConfirmedSteamWarning)
-                return;
-
-            using var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Valve\\Steam\\ActiveProcess");
-
-            if (key?.GetValue("pid") is not int pid || pid == 0) return;
-
-            var messageBox = new MessageBoxModel
-            {
-                Text =
-                    "Hello, Gamer!" +
-                    "\r\n\r\nIt has been detected that Steam is running. "
-                    + $"\r\n\r\nSteam itself offers native support for many game controllers {Constants.ApplicationName} "
-                    + "supports, as well as the virtual controllers produced in the process. "
-                    + $"\r\n\r\nSteam can detect {Constants.ApplicationName} running and alters its behaviour to "
-                    + "not interfere, but depending on your Steam and DS4Windows settings you can still suffer "
-                    + "from remapping conflicts between the two. "
-                    + "\r\n\r\nIt is highly recommended that you seek aid in the online documentation for more details, " +
-                    "should you encounter issues."
-                    + "\r\n\r\nThanks for your attention ❤️",
-                Caption = "Steam is running",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
-                Buttons = new[]
-                {
-                    MessageBoxButtons.Custom("Show me what to do"),
-                    MessageBoxButtons.Yes("Understood")
-                },
-                CheckBoxes = new[]
-                {
-                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
-                    {
-                        IsChecked = false,
-                        Placement = MessageBoxCheckBoxPlacement.BelowText
-                    }
-                },
-                IsSoundEnabled = false
-            };
-
-            Current.Dispatcher.InvokeAsync(() =>
-            {
-                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
-
-                appSettings.Settings.HasUserConfirmedSteamWarning = messageBox.CheckBoxes.First().IsChecked;
-
-                if (messageBox.Result == AdonisUI.Controls.MessageBoxResult.Custom)
-                {
-                    Util.StartProcessHelper(Constants.SteamTroubleshootingUri);
-                }
-            });
         }
 
         private void RootHubOnDebug(object? sender, LogEntryEventArgs e)
         {
             logger.LogDebug(e.Data);
-        }
-
-        [MissingLocalization]
-        private void SettingsOnIsTracingEnabledChanged(bool obj)
-        {
-            if (!obj)
-                return;
-
-            var messageBox = new MessageBoxModel
-            {
-                Text =
-                    "Hello, Gamer!" +
-                    "\r\n\r\nYou have enabled Tracing in the application settings. This is an advanced feature useful for diagnosing "
-                    + "issues with lag or stutter and general remapping performance. "
-                    + "\r\n\r\nTracing is a very memory-hungry operation and requires additional software to be useful. "
-                    + "Do not leave Tracing enabled if you simply wanna play your games, it's for diagnostics only."
-                    + "\r\n\r\nThanks for your attention ❤️",
-                Caption = "Performance Tracing is enabled",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
-                Buttons = new[]
-                {
-                    MessageBoxButtons.Custom("Tell me more"),
-                    MessageBoxButtons.No("Uh, turn it off, please!"),
-                    MessageBoxButtons.Yes("Understood")
-                },
-                IsSoundEnabled = false
-            };
-
-            Current.Dispatcher.InvokeAsync(() =>
-            {
-                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
-
-                switch (messageBox.Result)
-                {
-                    case AdonisUI.Controls.MessageBoxResult.Custom:
-                        Util.StartProcessHelper(Constants.TracingGuideUri);
-                        break;
-                    case AdonisUI.Controls.MessageBoxResult.No:
-                        appSettings.Settings.IsTracingEnabled = false;
-                        break;
-                }
-            });
         }
 
         private static void ApplyOptimizations()
