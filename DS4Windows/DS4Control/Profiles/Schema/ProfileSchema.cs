@@ -101,6 +101,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [JsonIgnore]
         public bool IsOutputDeviceEnabled { get; set; }
         
+        /// <summary>
+        ///     Dynamically built display name (for use in UI).
+        /// </summary>
+        [UsedImplicitly]
         [JsonIgnore]
         public string ExtendedDisplayName =>
             IsImmutable
