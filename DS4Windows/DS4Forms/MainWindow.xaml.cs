@@ -65,7 +65,6 @@ namespace DS4WinWPF.DS4Forms
 
         private bool inHotPlug;
         private readonly StatusLogMsg lastLogMsg = new();
-        private readonly LogViewModel logvm;
 
         private readonly MainWindowsViewModel mainWinVm;
         private ManagementEventWatcher managementEvWatcher;
@@ -81,7 +80,6 @@ namespace DS4WinWPF.DS4Forms
             ICommandLineOptions parser,
             MainWindowsViewModel mainWindowsViewModel,
             SettingsViewModel settingsViewModel,
-            LogViewModel logViewModel,
             ControlService controlService,
             IAppSettingsService appSettings,
             IProfilesService profilesService,
@@ -102,9 +100,6 @@ namespace DS4WinWPF.DS4Forms
             var root = Application.Current as App;
             settingsWrapVM = settingsViewModel;
             settingsTab.DataContext = settingsWrapVM;
-            logvm = logViewModel;
-            //logListView.ItemsSource = logvm.LogItems;
-            logListView.DataContext = logvm;
             lastMsgLb.DataContext = lastLogMsg;
 
             ProfileListHolder.Refresh();
@@ -240,7 +235,6 @@ namespace DS4WinWPF.DS4Forms
             AppLogger.Instance.NewTrayAreaLog += ShowNotification;
             AppLogger.Instance.NewGuiLog += UpdateLastStatusMessage;
 
-            logvm.LogItems.CollectionChanged += LogItems_CollectionChanged;
             rootHub.Debug += UpdateLastStatusMessage;
             trayIconVM.RequestShutdown += TrayIconVM_RequestShutdown;
             trayIconVM.ProfileSelected += TrayIconVM_ProfileSelected;
@@ -312,17 +306,6 @@ Suspend support not enabled.", true);
         private void TrayIconVM_RequestServiceChange(object sender, EventArgs e)
         {
             ChangeService();
-        }
-
-        private void LogItems_CollectionChanged(object sender,
-            NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-                Dispatcher.BeginInvoke((Action)(() =>
-                {
-                    var count = logListView.Items.Count;
-                    if (count > 0) logListView.ScrollIntoView(logvm.LogItems[count - 1]);
-                }));
         }
 
         private void ControlServiceStarted(object sender, EventArgs e)
@@ -619,24 +602,6 @@ Suspend support not enabled.", true);
             await serviceTask;
         }
 
-        private void LogListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var idx = logListView.SelectedIndex;
-            if (idx > -1)
-            {
-                var temp = logvm.LogItems[idx];
-                var msgBox = new LogMessageDisplay(temp.Message);
-                msgBox.Owner = this;
-                msgBox.ShowDialog();
-                //MessageBox.Show(temp.Message, "Log");
-            }
-        }
-
-        private void ClearLogBtn_Click(object sender, RoutedEventArgs e)
-        {
-            logvm.LogItems.Clear();
-        }
-
         private void MainTabCon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (mainTabCon.SelectedIndex == 4)
@@ -670,22 +635,6 @@ Suspend support not enabled.", true);
             var item = conLvViewModel.CurrentItem;
             //CompositeDeviceModel item = conLvViewModel.ControllerDict[tag];
             if (item != null) item.RequestDisconnect();
-        }
-
-        private void ExportLogBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new SaveFileDialog();
-            dialog.AddExtension = true;
-            dialog.DefaultExt = ".txt";
-            dialog.Filter = "Text Documents (*.txt)|*.txt";
-            dialog.Title = "Select Export File";
-            // TODO: Expose config dir
-            dialog.InitialDirectory = Global.RuntimeAppDataPath;
-            if (dialog.ShowDialog() == true)
-            {
-                var logWriter = new LogExporter(dialog.FileName, logvm.LogItems.ToList());
-                logWriter.Process();
-            }
         }
 
         private void IdColumnTxtB_ToolTipOpening(object sender, ToolTipEventArgs e)

@@ -597,40 +597,7 @@
                 </ScrollViewer>
 
             </TabItem>
-
-            <!-- Log Tab -->
-            <TabItem Header="{lex:Loc Log}">
-                <DockPanel>
-                    <DockPanel Height="20" DockPanel.Dock="Bottom" Margin="4,8">
-                        <Button x:Name="exportLogBtn" Content="Export" HorizontalAlignment="Left" Padding="20,1"
-                                Click="ExportLogBtn_Click" />
-                        <Button x:Name="clearLogBtn" Content="{lex:Loc Clear}" DockPanel.Dock="Right" Padding="20,1"
-                                Margin="100,0,0,0" Click="ClearLogBtn_Click" />
-                    </DockPanel>
-                    <ListView x:Name="logListView" DockPanel.Dock="Top" ItemsSource="{Binding LogItems}"
-                              MouseDoubleClick="LogListView_MouseDoubleClick" Margin="0">
-                        <ListView.View>
-                            <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Header="Time" Width="150">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Time, StringFormat=\{0:G\}}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="Data" Width="800">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Message}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </DockPanel>
-            </TabItem>
-
+            
         </TabControl>
     </DockPanel>
 </controls:AdonisWindow>
