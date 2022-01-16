@@ -75,8 +75,21 @@ namespace DS4WinWPF
 
         public App()
         {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile(
+                    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
+                    true)
+                .Build();
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
             host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) => { ConfigureServices(context.Configuration, services); })
+                .UseSerilog()
                 .Build();
         }
 
@@ -85,29 +98,6 @@ namespace DS4WinWPF
         /// </summary>
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            #region Logging
-
-            var lc = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-#if DEBUG
-                .MinimumLevel.Debug()
-#endif
-                .CreateLogger();
-
-            services.AddLogging(builder =>
-            {
-#if DEBUG
-                builder.SetMinimumLevel(LogLevel.Debug);
-#else
-                builder.SetMinimumLevel(LogLevel.Information);
-#endif
-                builder.AddSerilog(lc, true);
-            });
-
-            services.AddSingleton(new LoggerFactory().AddSerilog(lc));
-
-            #endregion
-
             services.AddOptions();
 
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
