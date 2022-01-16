@@ -11,7 +11,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     {
         public string DeviceName { get; init; }
 
-        public Version DeviceVersion { get; init; }
+        public Version DriverVersion { get; init; }
 
         public string DriverProviderName { get; init; }
 
@@ -107,7 +107,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 yield return new DeviceNodeInfo()
                 {
                     DeviceName = deviceName,
-                    DeviceVersion = version,
+                    DriverVersion = version,
                     DriverProviderName = providerName,
                     InstanceId = instanceId,
                     Manufacturer = manufacturer
@@ -119,6 +119,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         public DeviceNodeInfo ViGEmBusGen1LatestVersion =>
-            ViGEmBusGen1Versions.OrderBy(v => v.DeviceVersion).FirstOrDefault();
+            ViGEmBusGen1Versions.OrderBy(v => v.DriverVersion).FirstOrDefault();
     }
 }
