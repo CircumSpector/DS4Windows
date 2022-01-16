@@ -170,6 +170,9 @@ namespace DS4WinWPF
         {
             logger = host.Services.GetRequiredService<ILogger<App>>();
 
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             await host.StartAsync();
 
             runShutdown = true;
@@ -279,11 +282,7 @@ namespace DS4WinWPF
                     Constants.ApplicationName, MessageBoxButton.OK, MessageBoxImage.Error);
                 Current.Shutdown(1);
             }
-
-            //logHolder = new LoggerHolder(rootHub);
-            DispatcherUnhandledException += App_DispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
+            
             var version = Global.ExecutableProductVersion;
 
             logger.LogInformation($"Current directory: {Directory.GetCurrentDirectory()}");
