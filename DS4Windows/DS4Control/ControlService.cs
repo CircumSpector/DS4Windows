@@ -315,7 +315,7 @@ namespace DS4Windows
             //
             // TODO: can be further simplified
             // 
-            var stringMac = d.MacAddress.AsFriendlyName();
+            var stringMac = d.MacAddress.ToFriendlyName();
             if (!string.IsNullOrEmpty(stringMac))
             {
                 stringMac = string.Join("", stringMac.Split(':'));
@@ -441,7 +441,7 @@ namespace DS4Windows
                     var messageBox = new MessageBoxModel
                     {
                         Text =
-                            $"Hello, Gamer! \r\n\r\nYour DualSense ({dualSenseDevice.MacAddress.AsFriendlyName()}) is running " +
+                            $"Hello, Gamer! \r\n\r\nYour DualSense ({dualSenseDevice.MacAddress.ToFriendlyName()}) is running " +
                             $"outdated Firmware (version {version}) known to cause issues (e.g. excessive battery drainage). "
                             + "\r\n\r\nPlease plug the controller into a PlayStation 5 and update the firmware. \r\n\r\nThanks for your attention ❤️",
                         Caption = "Outdated Firmware detected",
@@ -597,7 +597,7 @@ namespace DS4Windows
         {
             if (ds4devices.IsExclusiveMode && !device.isExclusive())
             {
-                var message = Resources.CouldNotOpenDS4.Replace("*Mac address*", device.MacAddress.AsFriendlyName()) +
+                var message = Resources.CouldNotOpenDS4.Replace("*Mac address*", device.MacAddress.ToFriendlyName()) +
                               " " +
                               Resources.QuitOtherPrograms;
                 LogDebug(message, true);

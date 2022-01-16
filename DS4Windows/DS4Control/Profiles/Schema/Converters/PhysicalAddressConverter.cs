@@ -22,7 +22,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters
 
         public override string Format(PhysicalAddress instance)
         {
-            return instance.AsFriendlyName();
+            return instance.ToFriendlyName();
         }
     }
 }

@@ -307,7 +307,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public ContextMenu LightContext { get; set; }
 
-        public string IdText => $"{Device.DisplayName} ({Device.MacAddress.AsFriendlyName()})";
+        public string IdText => $"{Device.DisplayName} ({Device.MacAddress.ToFriendlyName()})";
 
         public string IsExclusiveText
         {

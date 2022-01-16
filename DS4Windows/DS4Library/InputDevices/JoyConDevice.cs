@@ -1241,7 +1241,7 @@ namespace DS4Windows.InputDevices
             //
             // TODO: can be further simplified
             // 
-            var sbytes = MacAddress.AsFriendlyName().Split(':');
+            var sbytes = MacAddress.ToFriendlyName().Split(':');
             for (var i = 0; i < 6; i++)
                 // parse hex byte in reverse order
                 btAddr[5 - i] = Convert.ToByte(sbytes[i], 16);

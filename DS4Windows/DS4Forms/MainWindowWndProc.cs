@@ -251,7 +251,7 @@ namespace DS4WinWPF.DS4Forms
                                         else if (propName == "macaddress" &&
                                                  rootHub.DS4Controllers[tdevice] != null)
                                         {
-                                            propValue = rootHub.DS4Controllers[tdevice].MacAddress.AsFriendlyName();
+                                            propValue = rootHub.DS4Controllers[tdevice].MacAddress.ToFriendlyName();
                                         }
                                         else if (propName == "displayname" &&
                                                  rootHub.DS4Controllers[tdevice] != null)

@@ -9,7 +9,7 @@ namespace DS4WinWPF.DS4Control.Util
         /// </summary>
         /// <param name="address">The <see cref="PhysicalAddress"/> object to transform.</param>
         /// <returns>The hex string.</returns>
-        public static string AsFriendlyName(this PhysicalAddress address)
+        public static string ToFriendlyName(this PhysicalAddress address)
         {
             if (address == null)
                 return string.Empty;
