@@ -9,6 +9,9 @@ using static DS4Windows.Global;
 
 namespace DS4Windows
 {
+    /// <summary>
+    ///     Migrate this logic to an IoC service or put it where it makes sense.
+    /// </summary>
     [Obsolete]
     public class DS4LightBarV3
     {
