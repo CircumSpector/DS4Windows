@@ -101,6 +101,7 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
+            services.AddSingleton<IControllerManagerService, ControllerManagerService>();
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<IAppLogger, AppLogger>();
             services.AddSingleton<MainWindow>();
