@@ -48,6 +48,8 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
             await CheckViGEmBusPresence();
 
+            await CheckHidHidePresence();
+
             await CheckIsTracingEnabled();
 
             await CheckWindows11();
@@ -95,6 +97,50 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                         break;
                     case AdonisUI.Controls.MessageBoxResult.No:
                         DS4Windows.Util.StartProcessHelper(Constants.ViGEmBusGen1GuideUri);
+                        break;
+                }
+            });
+        }
+
+        [MissingLocalization]
+        private async Task CheckHidHidePresence()
+        {
+            if (dependenciesService.HidHideLatestVersion is not null)
+                return;
+
+            var messageBox = new MessageBoxModel
+            {
+                Text =
+                    "Hello, Gamer!" +
+                    "\r\n\r\nThe filter driver HidHide seems to be missing on this system. "
+                    + "\r\n\r\nWithout this component many games may probably see two controllers: "
+                    + "your \"real\" (hardware) one and a \"fake\" (virtual) one your inputs get mapped to. "
+                    + "\r\n\r\nThis will lead to so called doubled inputs or other glitches, because two controllers "
+                    + "will report the same input and the game may now know which one is the dominant one. "
+                    + "\r\n\r\nTo mitigate this, please install HidHide now and restart your machine afterwards or read up on troubleshooting."
+                    + "\r\n\r\nThanks for your attention ❤️",
+                Caption = "HidHide not found",
+                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Buttons = new[]
+                {
+                    MessageBoxButtons.Custom("Take me to the download!"),
+                    MessageBoxButtons.No("Didn't work, I need help!"),
+                    MessageBoxButtons.Yes("I know what I'm doing")
+                },
+                IsSoundEnabled = false
+            };
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+
+                switch (messageBox.Result)
+                {
+                    case AdonisUI.Controls.MessageBoxResult.Custom:
+                        DS4Windows.Util.StartProcessHelper(Constants.HidHideDownloadUri);
+                        break;
+                    case AdonisUI.Controls.MessageBoxResult.No:
+                        DS4Windows.Util.StartProcessHelper(Constants.HidHideGuideUri);
                         break;
                 }
             });

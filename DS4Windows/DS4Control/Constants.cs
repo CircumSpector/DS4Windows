@@ -48,6 +48,10 @@ namespace DS4Windows
         
         public const string ViGEmBusGen1GuideUri = "https://vigem.org/projects/ViGEm/How-to-Install/#troubleshooting";
 
+        public const string HidHideDownloadUri = "https://github.com/ViGEm/HidHide/releases/latest";
+        
+        public const string HidHideGuideUri = "https://docs.ds4windows.app/troubleshooting/hidhide-troubleshoot/";
+
         public const int MaxControllers = 8;
     }
 }
