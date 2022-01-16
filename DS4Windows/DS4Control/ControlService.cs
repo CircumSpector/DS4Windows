@@ -185,7 +185,7 @@ namespace DS4Windows
         private readonly Queue<Action> busEvtQueue = new();
         private readonly object busEvtQueueLock = new();
 
-        private readonly IDS4Devices ds4devices;
+        private readonly IDS4DeviceEnumerator ds4devices;
 
         private readonly IAppSettingsService appSettings;
 
@@ -201,7 +201,7 @@ namespace DS4Windows
             ICommandLineOptions cmdParser,
             IOutputSlotManager osl,
             IAppSettingsService appSettings,
-            IDS4Devices devices,
+            IDS4DeviceEnumerator devices,
             IProfilesService profilesService
         )
         {
@@ -410,7 +410,7 @@ namespace DS4Windows
         {
             switch (metaInfo.InputDevType)
             {
-                case InputDeviceType.DS4:
+                case InputDeviceType.DualShock4:
                     return appSettings.Settings.DeviceOptions.DS4SupportSettings.Enabled;
                 case InputDeviceType.DualSense:
                     return appSettings.Settings.DeviceOptions.DualSenseSupportSettings.Enabled;
@@ -1042,7 +1042,7 @@ namespace DS4Windows
                         AssignInitialDevices();
                     }
 
-                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4Devices.FindControllers))
+                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4DeviceEnumerator.FindControllers))
                         .StartActive(true))
                     {
                         EventDispatcher.Invoke(() =>
@@ -1054,7 +1054,7 @@ namespace DS4Windows
 
                     IList<DS4Device> devices;
 
-                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4Devices.GetDs4Controllers))
+                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4DeviceEnumerator.GetDs4Controllers))
                         .StartActive(true))
                     {
                         devices = ds4devices.GetDs4Controllers().ToList();

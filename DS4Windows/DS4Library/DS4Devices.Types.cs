@@ -34,7 +34,7 @@ namespace DS4Windows
             int vid,
             int pid,
             string name = "Generic DS4",
-            InputDeviceType inputDevType = InputDeviceType.DS4,
+            InputDeviceType inputDevType = InputDeviceType.DualShock4,
             VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4,
             CheckConnectionDelegate checkConnection = null
         )

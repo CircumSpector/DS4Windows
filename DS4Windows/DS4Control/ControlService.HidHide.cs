@@ -75,7 +75,7 @@ namespace DS4Windows
             var result = false;
             if (dev != null && hidDeviceHidingEnabled)
             {
-                var deviceInstanceId = DS4Devices.DevicePathToInstanceId(dev.HidDevice.DevicePath);
+                var deviceInstanceId = DS4DeviceEnumerator.DevicePathToInstanceId(dev.HidDevice.DevicePath);
                 if (hidHideInstalled)
                     result = CheckHidHideAffectedStatus(deviceInstanceId,
                         hidDeviceHidingAffectedDevs, hidDeviceHidingExemptedDevs, hidDeviceHidingForced);

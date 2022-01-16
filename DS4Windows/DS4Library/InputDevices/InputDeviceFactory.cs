@@ -1,37 +1,49 @@
-﻿namespace DS4Windows.InputDevices
+﻿using System;
+
+namespace DS4Windows.InputDevices
 {
     public enum InputDeviceType : uint
     {
-        DS4,
+        DualShock4,
         SwitchPro,
         JoyConL,
         JoyConR,
         DualSense
     }
 
-    public abstract class InputDeviceFactory
+    public interface IInputDeviceFactory
     {
-        public static DS4Device CreateDevice(
+        DS4Device CreateDevice(
             InputDeviceType deviceType,
             HidDevice hidDevice,
-            string disName,
+            string displayName,
+            VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4
+        );
+    }
+
+    public class InputDeviceFactory : IInputDeviceFactory
+    {
+        public DS4Device CreateDevice(
+            InputDeviceType deviceType,
+            HidDevice hidDevice,
+            string displayName,
             VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4
         )
         {
             switch (deviceType)
             {
-                case InputDeviceType.DS4:
-                    return new DS4Device(hidDevice, disName, featureSet);
+                case InputDeviceType.DualShock4:
+                    return new DS4Device(hidDevice, displayName, featureSet);
                 case InputDeviceType.SwitchPro:
-                    return new SwitchProDevice(hidDevice, disName, featureSet);
+                    return new SwitchProDevice(hidDevice, displayName, featureSet);
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
-                    return new JoyConDevice(hidDevice, disName, featureSet);
+                    return new JoyConDevice(hidDevice, displayName, featureSet);
                 case InputDeviceType.DualSense:
-                    return new DualSenseDevice(hidDevice, disName, featureSet);
+                    return new DualSenseDevice(hidDevice, displayName, featureSet);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
             }
-
-            return null;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace DS4Windows
     /// <summary>
     ///     Compatible input device discovery and enumeration service.
     /// </summary>
-    public interface IDS4Devices
+    public interface IDS4DeviceEnumerator
     {
         event CheckVirtualDelegate CheckVirtualFunc;
         event PrepareInitDelegate PrepareDs4Init;
@@ -44,7 +44,7 @@ namespace DS4Windows
     /// <summary>
     ///     Compatible input device discovery and enumeration service.
     /// </summary>
-    public class DS4Devices : IDS4Devices
+    public class DS4DeviceEnumerator : IDS4DeviceEnumerator
     {
         internal const int SONY_VID = 0x054C;
         internal const int RAZER_VID = 0x1532;
@@ -74,11 +74,14 @@ namespace DS4Windows
         public event CheckPendingDevice PreparePendingDevice = null;
         public bool IsExclusiveMode { get; set; } = false;
 
-        private readonly ILogger<DS4Devices> logger;
+        private readonly ILogger<DS4DeviceEnumerator> logger;
 
-        public DS4Devices(ILogger<DS4Devices> logger)
+        private readonly IInputDeviceFactory deviceFactory;
+
+        public DS4DeviceEnumerator(ILogger<DS4DeviceEnumerator> logger, IInputDeviceFactory deviceFactory)
         {
             this.logger = logger;
+            this.deviceFactory = deviceFactory;
         }
 
         // https://support.steampowered.com/kb_article.php?ref=5199-TOKV-4426&l=english web site has a list of other PS4 compatible device VID/PID values and brand names. 
@@ -87,12 +90,12 @@ namespace DS4Windows
         private static readonly VidPidInfo[] KnownDevices =
         {
             new(SONY_VID, 0xBA0, "Sony WA",
-                InputDeviceType.DS4,
+                InputDeviceType.DualShock4,
                 VidPidFeatureSet.MonitorAudio
             ),
             new(SONY_VID, 0x5C4, "DS4 v.1"),
             new(SONY_VID, 0x09CC, "DS4 v.2",
-                InputDeviceType.DS4,
+                InputDeviceType.DualShock4,
                 VidPidFeatureSet.MonitorAudio
             ),
             new(SONY_VID, 0x0CE6, "DualSense",
@@ -102,15 +105,15 @@ namespace DS4Windows
             ),
             new(RAZER_VID, 0x1000, "Razer Raiju PS4"),
             new(NACON_VID, 0x0D01, "Nacon Revol Pro v.1",
-                InputDeviceType.DS4,
+                InputDeviceType.DualShock4,
                 VidPidFeatureSet.NoGyroCalib
             ), // Nacon Revolution Pro v1 and v2 doesn't support DS4 gyro calibration routines
             new(NACON_VID, 0x0D02, "Nacon Revol Pro v.2",
-                InputDeviceType.DS4,
+                InputDeviceType.DualShock4,
                 VidPidFeatureSet.NoGyroCalib | VidPidFeatureSet.MonitorAudio
             ),
             new(HORI_VID, 0x00EE, "Hori PS4 Mini",
-                InputDeviceType.DS4,
+                InputDeviceType.DualShock4,
                 VidPidFeatureSet.NoOutputData | VidPidFeatureSet.NoBatteryReading | VidPidFeatureSet.NoGyroCalib
             ), // Hori PS4 Mini Wired Gamepad
             new(0x7545, 0x0104, "Armor 3 LU Cobra"), // Armor 3 Level Up Cobra
@@ -119,17 +122,17 @@ namespace DS4Windows
             new(0x0C12, 0x0E20, "Brook Mars Controller"), // Brook Mars controller (wired) with DS4 mode
             new(RAZER_VID, 0x1007, "Razer Raiju TE"), // Razer Raiju Tournament Edition (wired)
             new(RAZER_VID, 0x100A, "Razer Raiju TE BT",
-                InputDeviceType.DS4,
+                InputDeviceType.DualShock4,
                 VidPidFeatureSet.OnlyInputData0x01 | VidPidFeatureSet.OnlyOutputData0x05 |
                 VidPidFeatureSet.NoBatteryReading |
                 VidPidFeatureSet.NoGyroCalib
             ), // Razer Raiju Tournament Edition (BT). Incoming report data is in "ds4 USB format" (32 bytes) in BT. Also, WriteOutput uses "usb" data packet type in BT.
             new(RAZER_VID, 0x1004, "Razer Raiju UE USB"), // Razer Raiju Ultimate Edition (wired)
-            new(RAZER_VID, 0x1009, "Razer Raiju UE BT", InputDeviceType.DS4,
+            new(RAZER_VID, 0x1009, "Razer Raiju UE BT", InputDeviceType.DualShock4,
                 VidPidFeatureSet.OnlyInputData0x01 | VidPidFeatureSet.OnlyOutputData0x05 |
                 VidPidFeatureSet.NoBatteryReading | VidPidFeatureSet.NoGyroCalib), // Razer Raiju Ultimate Edition (BT)
             new(SONY_VID, 0x05C5, "CronusMax (PS4 Mode)"), // CronusMax (PS4 Output Mode)
-            new(0x0C12, 0x57AB, "Warrior Joypad JS083", InputDeviceType.DS4,
+            new(0x0C12, 0x57AB, "Warrior Joypad JS083", InputDeviceType.DualShock4,
                 VidPidFeatureSet
                     .NoGyroCalib), // Warrior Joypad JS083 (wired). Custom lightbar color doesn't work, but everything else works OK (except touchpad and gyro because the gamepad doesnt have those).
             new(0x0C12, 0x0E16, "Steel Play MetalTech"), // Steel Play Metaltech P4 (wired)
@@ -139,21 +142,21 @@ namespace DS4Windows
             new(HORI_VID, 0x0084,
                 "Hori Fighting Cmd"), // Hori Fighting Commander (special kind of gamepad without touchpad or sticks. There is a hardware switch to alter d-pad type between dpad and LS/RS)
             new(NACON_VID, 0x0D13, "Nacon Revol Pro v.3"),
-            new(HORI_VID, 0x0066, "Horipad FPS Plus", InputDeviceType.DS4,
+            new(HORI_VID, 0x0066, "Horipad FPS Plus", InputDeviceType.DualShock4,
                 VidPidFeatureSet
                     .NoGyroCalib), // Horipad FPS Plus (wired only. No light bar, rumble and Gyro/Accel sensor. Cannot Hide "HID-compliant vendor-defined device" in USB Composite Device. Other feature works fine.)
-            new(0x9886, 0x0025, "Astro C40", InputDeviceType.DS4,
+            new(0x9886, 0x0025, "Astro C40", InputDeviceType.DualShock4,
                 VidPidFeatureSet
                     .NoGyroCalib), // Astro C40 (wired and BT. Works if Astro specific xinput drivers haven't been installed. Uninstall those to use the pad as dinput device)
-            new(0x0E8F, 0x1114, "Gamo2 Divaller", InputDeviceType.DS4,
+            new(0x0E8F, 0x1114, "Gamo2 Divaller", InputDeviceType.DualShock4,
                 VidPidFeatureSet
                     .NoGyroCalib), // Gamo2 Divaller (wired only. Light bar not controllable. No touchpad, gyro or rumble)
-            new(HORI_VID, 0x0101, "Hori Mini Hatsune Miku FT", InputDeviceType.DS4,
+            new(HORI_VID, 0x0101, "Hori Mini Hatsune Miku FT", InputDeviceType.DualShock4,
                 VidPidFeatureSet.NoGyroCalib), // Hori Mini Hatsune Miku FT (wired only. No light bar, gyro or rumble)
-            new(HORI_VID, 0x00C9, "Hori Taiko Controller", InputDeviceType.DS4,
+            new(HORI_VID, 0x00C9, "Hori Taiko Controller", InputDeviceType.DualShock4,
                 VidPidFeatureSet
                     .NoGyroCalib), // Hori Taiko Controller (wired only. No light bar, touchpad, gyro, rumble, sticks or triggers)
-            new(0x0C12, 0x1E1C, "SnakeByte Game:Pad 4S", InputDeviceType.DS4,
+            new(0x0C12, 0x1E1C, "SnakeByte Game:Pad 4S", InputDeviceType.DualShock4,
                 VidPidFeatureSet.NoGyroCalib |
                 VidPidFeatureSet
                     .NoBatteryReading), // SnakeByte Gamepad for PS4 (wired only. No gyro. No light bar). If it doesn't work then try the latest gamepad firmware from https://mysnakebyte.com/
@@ -164,7 +167,7 @@ namespace DS4Windows
             new(NINTENDO_VENDOR_ID, JOYCON_R_PRODUCT_ID, "JoyCon (R)", InputDeviceType.JoyConR,
                 VidPidFeatureSet.DefaultDS4, JoyConDevice.DetermineConnectionType),
             new(0x7545, 0x1122, "Gioteck VX4"), // Gioteck VX4 (no real lightbar, only some RGB leds)
-            new(0x7331, 0x0001, "DualShock 3 (DS4 Emulation)", InputDeviceType.DS4,
+            new(0x7331, 0x0001, "DualShock 3 (DS4 Emulation)", InputDeviceType.DualShock4,
                 VidPidFeatureSet.NoGyroCalib |
                 VidPidFeatureSet
                     .VendorDefinedDevice) // Sony DualShock 3 using DsHidMini driver. DsHidMini uses vendor-defined HID device type when it's emulating DS3 using DS4 button layout
@@ -172,6 +175,10 @@ namespace DS4Windows
 
         public event RequestElevationDelegate RequestElevation;
 
+        /// <summary>
+        ///     TODO: This should never be done this way!
+        /// </summary>
+        [Obsolete]
         public static string DevicePathToInstanceId(string devicePath)
         {
             var deviceInstanceId = devicePath;
@@ -308,7 +315,7 @@ namespace DS4Windows
                         case InputDeviceType.DualSense:
                             serial = hDevice.ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
                             break;
-                        case InputDeviceType.DS4 when info.CheckConnection(hDevice) == ConnectionType.SONYWA:
+                        case InputDeviceType.DualShock4 when info.CheckConnection(hDevice) == ConnectionType.SONYWA:
                             serial = hDevice.GenerateFakeHwSerial();
                             break;
                         default:
@@ -351,7 +358,7 @@ namespace DS4Windows
 
                     if (!newDevice) continue;
 
-                    var ds4Device = InputDeviceFactory.CreateDevice(info.InputDevType, hDevice,
+                    var ds4Device = deviceFactory.CreateDevice(info.InputDevType, hDevice,
                         info.Name, info.FeatureSet);
                     //DS4Device ds4Device = new DS4Device(hDevice, metainfo.name, metainfo.featureSet);
                     if (ds4Device == null)

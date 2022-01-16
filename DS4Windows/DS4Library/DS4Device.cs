@@ -681,7 +681,7 @@ namespace DS4Windows
         /// </summary>
         public virtual void PostInit()
         {
-            DeviceType = InputDeviceType.DS4;
+            DeviceType = InputDeviceType.DualShock4;
 
             gyroMouseSensSettings = new GyroMouseSens();
             OptionsStore = nativeOptionsStore = new DS4ControllerOptions();
@@ -708,7 +708,7 @@ namespace DS4Windows
                         micAudio = new DS4Audio(DataFlow.Capture,
                             hDevice.ParentPath);
                     }
-                    else if (tempAttr.VendorId == DS4Devices.RAZER_VID &&
+                    else if (tempAttr.VendorId == DS4DeviceEnumerator.RAZER_VID &&
                              tempAttr.ProductId == 0x1007)
                     {
                         audio = new DS4Audio(searchDeviceInstance: hDevice.ParentPath);

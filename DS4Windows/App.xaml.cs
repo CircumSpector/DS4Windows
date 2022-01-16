@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using AdonisUI.Controls;
 using DS4Windows;
+using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
@@ -62,7 +63,7 @@ namespace DS4WinWPF
 
         private IAppSettingsService appSettings;
 
-        private IDS4Devices devices;
+        private IDS4DeviceEnumerator devices;
 
         private IProfilesService profileService;
 
@@ -102,6 +103,7 @@ namespace DS4WinWPF
             services.AddOptions();
 
             services.AddSingleton<IControllerManagerService, ControllerManagerService>();
+            services.AddSingleton<IInputDeviceFactory, InputDeviceFactory>();
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<IAppLogger, AppLogger>();
             services.AddSingleton<MainWindow>();
@@ -137,7 +139,7 @@ namespace DS4WinWPF
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
             services.AddSingleton<IProfilesService, ProfilesService>();
-            services.AddSingleton<IDS4Devices, DS4Devices>();
+            services.AddSingleton<IDS4DeviceEnumerator, DS4DeviceEnumerator>();
 
             //
             // Embedded web server to deliver curve editor
@@ -193,7 +195,7 @@ namespace DS4WinWPF
 
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
             var appLogger = host.Services.GetRequiredService<IAppLogger>();
-            devices = host.Services.GetRequiredService<IDS4Devices>();
+            devices = host.Services.GetRequiredService<IDS4DeviceEnumerator>();
 
             profileService = host.Services.GetRequiredService<IProfilesService>();
 
