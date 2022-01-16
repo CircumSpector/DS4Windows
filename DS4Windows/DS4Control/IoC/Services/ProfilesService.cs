@@ -130,6 +130,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         void LoadAutoSwitchingProfiles();
 
         void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile);
+
+        /// <summary>
+        ///     Switch the <see cref="ActiveProfiles"/> for slot to <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="slot">The zero-based slot index.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to switch to.</param>
+        void SetActiveTo(int slot, DS4WindowsProfile profile);
     }
 
     /// <summary>
@@ -530,6 +537,16 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         public void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile)
         {
             autoSwitchingProfiles.Add(profile);
+        }
+
+        /// <summary>
+        ///     Switch the <see cref="ActiveProfiles"/> for slot to <see cref="DS4WindowsProfile"/>.
+        /// </summary>
+        /// <param name="slot">The zero-based slot index.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to switch to.</param>
+        public void SetActiveTo(int slot, DS4WindowsProfile profile)
+        {
+            profile.DeepCloneTo(controllerSlotProfiles[slot]);
         }
 
         /// <summary>

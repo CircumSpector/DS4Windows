@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -9,15 +10,13 @@ using System.Windows.Controls;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
+using DS4WinWPF.DS4Control.Profiles.Schema;
 using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class TrayIconViewModel
     {
-        public delegate void ProfileSelectedHandler(TrayIconViewModel sender,
-            ControllerHolder item, string profile);
-
         public const string ballonTitle = "DS4Windows";
         public static string trayTitle = $"DS4Windows v{Global.ExecutableProductVersion}";
 
@@ -32,7 +31,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private readonly MenuItem minimizeItem;
         private readonly MenuItem openItem;
         private readonly MenuItem openProgramItem;
-        private readonly ProfileList profileListHolder;
         private string tooltipText = "DS4Windows";
 
         private readonly IProfilesService profilesService;
@@ -43,7 +41,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             IAppSettingsService appSettings,
             ControlService service,
             IProfilesService profilesService
-            )
+        )
         {
             this.appSettings = appSettings;
             controlService = service;
@@ -80,7 +78,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             service.PreServiceStop += UnhookEvents;
             service.PreServiceStop += ClearControllerList;
             service.RunningChanged += Service_RunningChanged;
-            service.HotplugController += Service_HotplugController;
+            service.HotplugController += Service_HotPlugController;
         }
 
         public string TooltipText
@@ -116,7 +114,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public event EventHandler RequestOpen;
         public event EventHandler RequestMinimize;
         public event EventHandler RequestServiceChange;
-        public event ProfileSelectedHandler ProfileSelected;
 
         [MissingLocalization]
         private void Service_RunningChanged(object sender, EventArgs e)
@@ -148,7 +145,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             _colLocker.ExitReadLock();
         }
 
-        private void Service_HotplugController(ControlService sender, DS4Device device, int index)
+        private void Service_HotPlugController(ControlService sender, DS4Device device, int index)
         {
             SetupDeviceEvents(device);
             _colLocker.EnterWriteLock();
@@ -187,19 +184,33 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     };
 
                     var subitems = item.Items;
-                    var currentProfile = Global.Instance.Config.ProfilePath[idx];
+                    var currentProfile = profilesService.ActiveProfiles.ElementAt(idx);
 
-                    foreach (var entry in profileListHolder.ProfileListCollection)
+                    foreach (var profile in profilesService.AvailableProfiles)
                     {
                         // Need to escape profile name to disable Access Keys for control
-                        var name = entry.Name;
-                        name = Regex.Replace(name, "_{1}", "__");
-                        var temp = new MenuItem { Header = name };
-                        temp.Tag = idx;
-                        temp.Click += ProfileItem_Click;
-                        if (entry.Name == currentProfile) temp.IsChecked = true;
+                        var name = Regex.Replace(profile.DisplayName, "_{1}", "__");
 
-                        subitems.Add(temp);
+                        var newItem = new MenuItem
+                        {
+                            Header = name,
+                            Tag = new SlotToProfileMap()
+                            {
+                                Slot = idx,
+                                Profile = profile
+                            }
+                        };
+
+                        newItem.Click += (sender, args) =>
+                        {
+                            var map = (SlotToProfileMap)((MenuItem)sender).Tag;
+
+                            profilesService.SetActiveTo(map.Slot, map.Profile);
+                        };
+
+                        if (profile.Equals(currentProfile)) newItem.IsChecked = true;
+
+                        subitems.Add(newItem);
                     }
 
                     items.Add(item);
@@ -239,9 +250,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void OpenProgramFolderItem_Click(object sender, RoutedEventArgs e)
         {
-            var startInfo = new ProcessStartInfo(Global.ExecutableDirectory);
-            startInfo.UseShellExecute = true;
-            using (var temp = Process.Start(startInfo))
+            var startInfo = new ProcessStartInfo(Global.ExecutableDirectory)
+            {
+                UseShellExecute = true
+            };
+            using (Process.Start(startInfo))
             {
             }
         }
@@ -254,17 +267,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void MinimizeMenuItem_Click(object sender, RoutedEventArgs e)
         {
             RequestMinimize?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void ProfileItem_Click(object sender, RoutedEventArgs e)
-        {
-            var item = sender as MenuItem;
-            var idx = Convert.ToInt32(item.Tag);
-            var holder = controllerList[idx];
-            // Un-escape underscores is MenuItem header. Header holds the profile name
-            var tempProfileName = Regex.Replace(item.Header.ToString(),
-                "_{2}", "_");
-            ProfileSelected?.Invoke(this, holder, tempProfileName);
         }
 
         private void DisconnectMenuItem_Click(object sender,
@@ -418,6 +420,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
         {
             RequestShutdown?.Invoke(this, EventArgs.Empty);
+        }
+
+        private sealed class SlotToProfileMap
+        {
+            public int Slot { get; init; }
+
+            public DS4WindowsProfile Profile { get; init; }
         }
     }
 

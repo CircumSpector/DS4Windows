@@ -204,6 +204,7 @@ namespace DS4WinWPF.DS4Forms
             WindowState = WindowState.Minimized;
         }
 
+        [Obsolete]
         private void TrayIconVM_ProfileSelected(TrayIconViewModel sender,
             ControllerHolder item, string profile)
         {
@@ -237,7 +238,6 @@ namespace DS4WinWPF.DS4Forms
 
             rootHub.Debug += UpdateLastStatusMessage;
             trayIconVM.RequestShutdown += TrayIconVM_RequestShutdown;
-            trayIconVM.ProfileSelected += TrayIconVM_ProfileSelected;
             trayIconVM.RequestMinimize += TrayIconVM_RequestMinimize;
             trayIconVM.RequestOpen += TrayIconVM_RequestOpen;
             trayIconVM.RequestServiceChange += TrayIconVM_RequestServiceChange;
