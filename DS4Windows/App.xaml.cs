@@ -343,6 +343,8 @@ namespace DS4WinWPF
             await rootHub.LoadPermanentSlotsConfig();
             window.LateChecks(parser);
 
+            CheckWindows11();
+
             CheckIsSteamRunning();
 
             CheckAppArchitecture();
@@ -390,6 +392,51 @@ namespace DS4WinWPF
                 AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
 
                 appSettings.Settings.HasUserConfirmedArchitectureWarning = messageBox.CheckBoxes.First().IsChecked;
+            });
+        }
+
+        [MissingLocalization]
+        private void CheckWindows11()
+        {
+            if (appSettings.Settings.HasUserConfirmedWindows11Warning)
+                return;
+
+            //
+            // TODO: quite primitive but currently the most reliable check
+            // 
+            if (!Util.BrandingFormatString("%WINDOWS_LONG%").Contains("Windows 11"))
+                return;
+
+            var messageBox = new MessageBoxModel
+            {
+                Text =
+                    "Hello, Gamer!" +
+                    "\r\n\r\nYou're running this application on Windows 11. "
+                    + $"\r\n\r\nPlease bear in mind that compatibility with Windows 11 currently is in its very early stage, "
+                    + "if something that worked on Windows 10 is broken, for now, you're on your own!"
+                    + "\r\n\r\nThanks for your attention ❤️",
+                Caption = "Windows 11 detected",
+                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Buttons = new[]
+                {
+                    MessageBoxButtons.Yes("Understood")
+                },
+                CheckBoxes = new[]
+                {
+                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
+                    {
+                        IsChecked = false,
+                        Placement = MessageBoxCheckBoxPlacement.BelowText
+                    }
+                },
+                IsSoundEnabled = false
+            };
+
+            Current.Dispatcher.InvokeAsync(() =>
+            {
+                AdonisUI.Controls.MessageBox.Show(Current.MainWindow, messageBox);
+
+                appSettings.Settings.HasUserConfirmedWindows11Warning = messageBox.CheckBoxes.First().IsChecked;
             });
         }
 

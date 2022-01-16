@@ -110,6 +110,11 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public bool HasUserConfirmedArchitectureWarning { get; set; }
 
         /// <summary>
+        ///     If true, will suppress the warning about Windows 11 at startup.
+        /// </summary>
+        public bool HasUserConfirmedWindows11Warning { get; set; }
+
+        /// <summary>
         ///     If true, will present user with preset dialog on new profile creation.
         /// </summary>
         public bool AreProfilePresetsEnabled { get; set; } = true;
