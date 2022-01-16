@@ -4,13 +4,39 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using DS4Windows;
+using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.Properties;
 using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public class BindingWindowViewModel
+    public interface IBindingWindowViewModel
     {
+        bool Using360Mode { get; }
+        int DeviceNum { get; }
+        OutBinding CurrentOutBind { get; }
+        OutBinding ShiftOutBind { get; }
+        OutBinding ActionBinding { get; set; }
+        bool ShowShift { get; set; }
+        bool RumbleActive { get; set; }
+        DS4ControlSettingsV3 Settings { get; }
+        void PopulateCurrentBinds();
+        void WriteBinds();
+        void StartForcedColor(Color color);
+        void EndForcedColor();
+        void UpdateForcedColor(Color color);
+    }
+
+    public class BindingWindowViewModel : IBindingWindowViewModel
+    {
+        private readonly IProfilesService profilesService;
+
+        [UsedImplicitly]
+        public BindingWindowViewModel(IProfilesService profilesService)
+        {
+            this.profilesService = profilesService;
+        }
+
         public BindingWindowViewModel(int deviceNum, DS4ControlSettingsV3 settings)
         {
             DeviceNum = deviceNum;

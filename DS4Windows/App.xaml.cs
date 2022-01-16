@@ -153,6 +153,7 @@ namespace DS4WinWPF
             services.AddTransient<IMappingListViewModel, MappingListViewModel>();
             services.AddTransient<IProfileSettingsViewModel, ProfileSettingsViewModel>();
             services.AddTransient<ISpecialActionsListViewModel, SpecialActionsListViewModel>();
+            services.AddTransient<IBindingWindowViewModel, BindingWindowViewModel>();
             services.AddSingleton<ProfileEditor>();
 
             #endregion
