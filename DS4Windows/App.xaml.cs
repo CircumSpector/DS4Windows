@@ -155,6 +155,7 @@ namespace DS4WinWPF
             services.AddTransient<ISpecialActionsListViewModel, SpecialActionsListViewModel>();
             services.AddTransient<IBindingWindowViewModel, BindingWindowViewModel>();
             services.AddSingleton<ProfileEditor>();
+            //services.AddSingleton<BindingWindow>();
 
             #endregion
         }
