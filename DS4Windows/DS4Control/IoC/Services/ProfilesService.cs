@@ -137,10 +137,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <param name="slot">The zero-based slot index.</param>
         /// <param name="profile">The <see cref="DS4WindowsProfile"/> to switch to.</param>
         void SetActiveTo(int slot, DS4WindowsProfile profile);
+
+        /// <summary>
+        ///     Gets invoked when a change to <see cref="AvailableProfiles"/> happened.
+        /// </summary>
+        event Action AvailableProfilesChanged;
     }
 
     /// <summary>
-    ///     Handles managing profiles.
+    ///     Single point of truth for managing profiles.
     /// </summary>
     public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     {
@@ -175,6 +180,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             this.appSettings = appSettings;
 
             availableProfiles = new ObservableCollection<DS4WindowsProfile>();
+
+            availableProfiles.CollectionChanged += (_, _) => AvailableProfilesChanged?.Invoke();
 
             AvailableProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(availableProfiles);
 
@@ -548,6 +555,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
         }
+
+        /// <summary>
+        ///     Gets invoked when a change to <see cref="AvailableProfiles"/> happened.
+        /// </summary>
+        public event Action AvailableProfilesChanged;
 
         /// <summary>
         ///     Adds a pre-existing or new <see cref="DS4WindowsProfile" /> to <see cref="AvailableProfiles" /> and persists it to

@@ -32,7 +32,6 @@ using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
 using Serilog;
 using WPFLocalizeExtension.Engine;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;

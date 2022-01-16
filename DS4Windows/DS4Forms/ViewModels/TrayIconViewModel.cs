@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -22,6 +21,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly IAppSettingsService appSettings;
 
+        [Obsolete]
         private readonly ReaderWriterLockSlim _colLocker = new();
         private readonly MenuItem changeServiceItem;
         private readonly MenuItem closeItem;
@@ -51,6 +51,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             changeServiceItem = new MenuItem { Header = "Start" };
             changeServiceItem.Click += ChangeControlServiceItem_Click;
             changeServiceItem.IsEnabled = false;
+
+            profilesService.AvailableProfilesChanged += PopulateContextMenu;
 
             openItem = new MenuItem
             {
@@ -151,12 +153,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             _colLocker.EnterWriteLock();
             controllerList.Add(new ControllerHolder(device, index));
             _colLocker.ExitWriteLock();
-        }
-
-        private void ProfileListCol_CollectionChanged(object sender,
-            NotifyCollectionChangedEventArgs e)
-        {
-            PopulateContextMenu();
         }
 
         private void BuildControllerList(object sender, EventArgs e)
