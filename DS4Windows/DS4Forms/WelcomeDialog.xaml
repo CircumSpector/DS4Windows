@@ -20,7 +20,7 @@
     </Window.Resources>
     <ScrollViewer>
         <DockPanel Margin="10,10,10,10" LastChildFill="False">
-            <Button x:Name="vigemInstallBtn" Content="Step 1: Install ViGEmBus Driver" Style="{StaticResource CommonMargin}" DockPanel.Dock="Top" Click="VigemInstallBtn_Click" />
+            <Button x:Name="vigemInstallBtn" Content="Step 1: Install ViGEmBus Driver" Style="{StaticResource CommonMargin}" DockPanel.Dock="Top" />
             <TextBlock TextAlignment="Center" DockPanel.Dock="Top" TextWrapping="Wrap">
                 <TextBlock.Text>
                     If this window reappears after installing, you may need to reboot your PC.

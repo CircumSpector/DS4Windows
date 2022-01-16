@@ -207,7 +207,6 @@ namespace DS4WinWPF.DS4Forms
         {
             var tempTask = Task.Run(async () =>
             {
-                CheckDrivers();
                 if (!parser.Stop)
                 {
                     await Dispatcher.BeginInvoke((Action)(() => { StartStopBtn.IsEnabled = false; }));
@@ -857,30 +856,6 @@ Suspend support not enabled.", true);
                 DownloadUpstreamVersionInfo();
                 Check_Version(true);
             });
-        }
-
-        private void CheckDrivers()
-        {
-            var deriverinstalled = Global.IsViGEmBusInstalled();
-            if (!deriverinstalled || !Global.IsRunningSupportedViGEmBus)
-            {
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = $"{Global.ExecutableLocation}",
-                    Arguments = "-driverinstall",
-                    Verb = "runas",
-                    UseShellExecute = true
-                };
-                try
-                {
-                    using (var temp = Process.Start(startInfo))
-                    {
-                    }
-                }
-                catch
-                {
-                }
-            }
         }
 
         private void ImportProfBtn_Click(object sender, RoutedEventArgs e)
