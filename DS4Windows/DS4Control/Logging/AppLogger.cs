@@ -26,6 +26,7 @@ namespace DS4WinWPF.DS4Control.Logging
     {
         event EventHandler<LogEntryEventArgs> NewTrayAreaLog;
         event EventHandler<LogEntryEventArgs> NewGuiLog;
+        [Obsolete]
         void LogToGui(string data, bool warning, bool temporary = false);
         void LogToTray(string data, bool warning = false, bool ignoreSettings = false);
     }
@@ -54,6 +55,7 @@ namespace DS4WinWPF.DS4Control.Logging
 
         public event EventHandler<LogEntryEventArgs> NewGuiLog;
 
+        [Obsolete]
         public void LogToGui(string data, bool warning, bool temporary = false)
         {
             //
