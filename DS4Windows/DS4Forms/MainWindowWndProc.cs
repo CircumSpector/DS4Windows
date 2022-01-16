@@ -18,15 +18,7 @@ namespace DS4WinWPF.DS4Forms
 {
     public partial class MainWindow
     {
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-
-            var source = PresentationSource.FromVisual(this) as HwndSource;
-            HookWindowMessages(source);
-            source.AddHook(WndProc);
-        }
-
+        [Obsolete]
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam,
             IntPtr lParam, ref bool handled)
         {
@@ -322,6 +314,7 @@ namespace DS4WinWPF.DS4Forms
             return IntPtr.Zero;
         }
 
+        [Obsolete]
         private async void HandleDeviceArrivalRemoval()
         {
             inHotPlug = true;
@@ -356,6 +349,7 @@ namespace DS4WinWPF.DS4Forms
             inHotPlug = false;
         }
 
+        [Obsolete]
         private void HookWindowMessages(HwndSource source)
         {
             var hidGuid = new Guid();

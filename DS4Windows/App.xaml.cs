@@ -20,6 +20,7 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
+using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Forms;
 using DS4WinWPF.DS4Forms.ViewModels;
 using EmbedIO;
@@ -103,6 +104,8 @@ namespace DS4WinWPF
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<IAppLogger, AppLogger>();
             services.AddSingleton<MainWindow>();
+
+            services.AddTransient<IDeviceNotificationListener, DeviceNotificationListener>();
 
             services.AddTransient<MainWindowsViewModel>();
             services.AddTransient<SettingsViewModel>();

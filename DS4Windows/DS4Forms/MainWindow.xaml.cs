@@ -20,9 +20,11 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
+using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using Hardcodet.Wpf.TaskbarNotification;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Control = System.Windows.Controls.Control;
 using MessageBox = AdonisUI.Controls.MessageBox;
@@ -51,6 +53,10 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly IProfilesService profilesService;
 
+        private readonly IDeviceNotificationListener deviceNotificationListener;
+
+        private readonly ILogger<MainWindow> logger;
+
         private readonly ControlService rootHub;
 
         private readonly AutoProfileChecker autoprofileChecker;
@@ -75,6 +81,7 @@ namespace DS4WinWPF.DS4Forms
         private bool showAppInTaskbar;
         private readonly TrayIconViewModel trayIconVM;
         private bool wasrunning;
+        public ProfileList ProfileListHolder { get; } = new();
 
         public MainWindow(
             ICommandLineOptions parser,
@@ -84,27 +91,37 @@ namespace DS4WinWPF.DS4Forms
             IAppSettingsService appSettings,
             IProfilesService profilesService,
             ProfileEditor editor,
-            TrayIconViewModel trayIconViewModel
-        )
+            TrayIconViewModel trayIconViewModel,
+            IDeviceNotificationListener deviceNotificationListener,
+            ILogger<MainWindow> logger)
         {
             rootHub = controlService;
             this.appSettings = appSettings;
             this.profilesService = profilesService;
             this.editor = editor;
+            this.deviceNotificationListener = deviceNotificationListener;
+            this.logger = logger;
 
             InitializeComponent();
+
+            deviceNotificationListener.DeviceArrived += DeviceNotificationListenerOnDeviceArrived;
+            deviceNotificationListener.DeviceRemoved += DeviceNotificationListenerOnDeviceRemoved;
 
             mainWinVm = mainWindowsViewModel;
             DataContext = mainWinVm;
 
-            var root = Application.Current as App;
+            trayIconVM = trayIconViewModel;
+            notifyIcon.DataContext = trayIconVM;
+
             settingsWrapVM = settingsViewModel;
             settingsTab.DataContext = settingsWrapVM;
+
+            profilesListBox.DataContext = profilesService;
+
             lastMsgLb.DataContext = lastLogMsg;
 
             ProfileListHolder.Refresh();
-            
-            profilesListBox.DataContext = profilesService;
+
 
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
 
@@ -118,8 +135,7 @@ namespace DS4WinWPF.DS4Forms
             view.SortDescriptions.Add(new SortDescription("DevIndex", ListSortDirection.Ascending));
             view.Refresh();
 
-            trayIconVM = trayIconViewModel;
-            notifyIcon.DataContext = trayIconVM;
+            
 
             if (appSettings.Settings.StartMinimized || parser.StartMinimized) WindowState = WindowState.Minimized;
 
@@ -159,8 +175,33 @@ namespace DS4WinWPF.DS4Forms
             timerThread.Start();
             timerThread.Join();
         }
+        
+        private void DeviceNotificationListenerOnDeviceArrived(string obj)
+        {
+            //
+            // TODO: implement me
+            //
+            logger.LogInformation("HID Device {Path} arrived", obj);
+        }
+        
+        private void DeviceNotificationListenerOnDeviceRemoved(string obj)
+        {
+            //
+            // TODO: implement me
+            // 
+            logger.LogInformation("HID Device {Path} removed", obj);
+        }
 
-        public ProfileList ProfileListHolder { get; } = new();
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            var hidGuid = new Guid();
+
+            NativeMethods.HidD_GetHidGuid(ref hidGuid);
+
+            deviceNotificationListener.StartListen(this, hidGuid);
+        }
 
         public void LateChecks(CommandLineOptions parser)
         {
@@ -401,7 +442,7 @@ Suspend support not enabled.", true);
 
             if (appSettings.Settings.SwipeProfiles)
                 foreach (var item in conLvViewModel.ControllerCol)
-                    //for (int i = 0; i < 4; i++)
+                //for (int i = 0; i < 4; i++)
                 {
                     var slide = rootHub.TouchpadSlide(item.DevIndex);
                     if (slide == "left")
@@ -1000,7 +1041,7 @@ Suspend support not enabled.", true);
         private void EditProfBtn_Click(object sender, RoutedEventArgs e)
         {
             if (profilesListBox.SelectedIndex < 0) return;
-            
+
             ShowProfileEditor();
         }
 
@@ -1047,7 +1088,7 @@ Suspend support not enabled.", true);
             if (Width < DEFAULT_PROFILE_EDITOR_WIDTH) Width = DEFAULT_PROFILE_EDITOR_WIDTH;
 
             if (Height < DEFAULT_PROFILE_EDITOR_HEIGHT) Height = DEFAULT_PROFILE_EDITOR_HEIGHT;
-            
+
             editor.CreatedProfile += Editor_CreatedProfile;
             editor.Closed += ProfileEditor_Closed;
             profDockPanel.Children.Add(editor);
@@ -1074,7 +1115,7 @@ Suspend support not enabled.", true);
         private void ProfilesListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (profilesListBox.SelectedIndex < 0) return;
-            
+
             ShowProfileEditor();
         }
 
@@ -1133,7 +1174,7 @@ Suspend support not enabled.", true);
             if (item != null)
             {
                 profilesService.CurrentlyEditedProfile = profilesService.AvailableProfiles.ElementAt(item.SelectedIndex);
-                
+
                 ShowProfileEditor();
                 mainTabCon.SelectedIndex = 1;
             }
@@ -1150,13 +1191,13 @@ Suspend support not enabled.", true);
         {
             var temp = sender as Control;
             var idx = Convert.ToInt32(temp.Tag);
-            
+
             controllerLV.SelectedIndex = idx;
 
             profilesService.CurrentlyEditedProfile = profilesService.AvailableProfiles.ElementAt(idx);
-            
+
             ShowProfileEditor();
-            
+
             mainTabCon.SelectedIndex = 1;
         }
 

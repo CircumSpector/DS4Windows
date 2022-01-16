@@ -164,6 +164,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 return false;
             }
 
+            logger.LogDebug("Loading persisted application configuration from {Path}", path);
+
             await using var stream = File.OpenRead(path);
 
             var settings = await DS4WindowsAppSettings.DeserializeAsync(stream);

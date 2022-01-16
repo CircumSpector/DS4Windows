@@ -8,6 +8,7 @@ using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 namespace DS4WinWPF.DS4Control.IoC.HostedServices
@@ -19,13 +20,21 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
     {
         private readonly IAppSettingsService appSettings;
 
-        public StartupChecksUserNotifications(IAppSettingsService appSettings)
+        private readonly ILogger<StartupChecksUserNotifications> logger;
+
+        public StartupChecksUserNotifications(IAppSettingsService appSettings,
+            ILogger<StartupChecksUserNotifications> logger)
         {
             this.appSettings = appSettings;
+            this.logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            logger.LogInformation("Performing startup tasks");
+
+            await appSettings.LoadAsync();
+
             await CheckIsTracingEnabled();
 
             await CheckWindows11();
@@ -33,12 +42,14 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
             await CheckIsSteamRunning();
 
             await CheckAppArchitecture();
+
+            logger.LogInformation("Done performing startup tasks");
         }
 
         [MissingLocalization]
         private async Task CheckIsTracingEnabled()
         {
-            if (appSettings.Settings.IsTracingEnabled)
+            if (!appSettings.Settings.IsTracingEnabled)
                 return;
 
             var messageBox = new MessageBoxModel
@@ -76,7 +87,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                 }
             });
         }
-        
+
         [MissingLocalization]
         private async Task CheckWindows11()
         {
