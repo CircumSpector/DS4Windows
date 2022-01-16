@@ -106,7 +106,6 @@ namespace DS4WinWPF.DS4Forms
             
             profilesListBox.DataContext = profilesService;
 
-
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
 
             conLvViewModel = new ControllerListViewModel(controlService, ProfileListHolder, appSettings);
