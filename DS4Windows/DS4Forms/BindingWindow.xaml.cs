@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using AdonisUI.Controls;
 using DS4Windows;
+using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Forms.ViewModels;
 
 namespace DS4WinWPF.DS4Forms
@@ -36,6 +37,7 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly Dictionary<X360Controls, Button> mouseBtnMap = new();
 
+        [MissingLocalization]
         public BindingWindow(
             ControlService service,
             int deviceNum,
@@ -50,10 +52,9 @@ namespace DS4WinWPF.DS4Forms
             this.expose = expose;
             bindingVM = new BindingWindowViewModel(deviceNum, settings);
 
-            if (settings.Control != DS4Controls.None)
-                Title = $"Select action for {Global.Ds4InputNames[settings.Control]}";
-            else
-                Title = "Select action";
+            Title = settings.Control != DS4Controls.None
+                ? $"Select action for {Global.Ds4InputNames[settings.Control]}"
+                : "Select action";
 
             guideBtn.Content = "";
             highlightImg.Visibility = Visibility.Hidden;
