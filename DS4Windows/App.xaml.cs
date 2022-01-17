@@ -95,7 +95,7 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
-            services.AddSingleton<IHidDeviceEnumeratorService, HidHidDeviceEnumeratorService>();
+            services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
             services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
             services.AddSingleton<IInputDeviceFactory, InputDeviceFactory>();
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();

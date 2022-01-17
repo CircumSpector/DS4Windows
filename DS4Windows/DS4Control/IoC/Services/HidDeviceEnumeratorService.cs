@@ -67,7 +67,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         public override string ToString()
         {
-            return $"{DisplayName} ({InstanceId})";
+            return $"{DisplayName ?? "<no name>"} ({InstanceId})";
         }
     }
 
@@ -100,7 +100,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// <summary>
     ///     Single point of truth of states for all connected and handled HID devices.
     /// </summary>
-    internal class HidHidDeviceEnumeratorService : IHidDeviceEnumeratorService
+    internal class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     {
         private const int HidUsageJoystick = 0x04;
         private const int HidUsageGamepad = 0x05;
@@ -110,10 +110,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly IDeviceNotificationListener deviceNotificationListener;
         private readonly Guid hidClassInterfaceGuid = Guid.Empty;
 
-        private readonly ILogger<HidHidDeviceEnumeratorService> logger;
+        private readonly ILogger<HidDeviceEnumeratorService> logger;
 
-        public HidHidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
-            ILogger<HidHidDeviceEnumeratorService> logger)
+        public HidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
+            ILogger<HidDeviceEnumeratorService> logger)
         {
             this.deviceNotificationListener = deviceNotificationListener;
             this.logger = logger;
@@ -172,6 +172,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                     ParentInstance = parentId,
                     Attributes = attributes
                 };
+
+                logger.LogInformation("Discovered HID device {Device}", entry);
 
                 if (!connectedDevices.Contains(entry))
                     connectedDevices.Add(entry);
