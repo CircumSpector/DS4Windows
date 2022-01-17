@@ -73,3 +73,5 @@ This application benefits from these awesome projects (appearance in no special 
   - A tiny, cross-platform, module based web server for .NET
 - [Nefarius.Utilities.DeviceManagement](https://github.com/nefarius/Nefarius.Utilities.DeviceManagement)
   - Managed wrappers around SetupAPI and Cfgmgr32
+- [P/Invoke](https://github.com/dotnet/pinvoke/)
+  - A collection of libraries intended to contain all P/Invoke method signatures for popular operating systems
