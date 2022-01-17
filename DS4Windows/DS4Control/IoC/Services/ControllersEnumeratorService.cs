@@ -1,5 +1,6 @@
 ﻿using DS4Windows;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Control.HID;
 using DS4WinWPF.DS4Library.InputDevices;
 using Microsoft.Extensions.Logging;
 
@@ -20,6 +21,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private const int SwitchProProductId = 0x2009;
         private const int JoyconLProductId = 0x2006;
         private const int JoyconRProductId = 0x2007;
+
+        private const int HidUsageJoystick = 0x04;
+        private const int HidUsageGamepad = 0x05;
 
         private static readonly VidPidInfo[] KnownDevices =
         {
@@ -120,12 +124,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
         }
         
-        private void EnumeratorServiceOnDeviceArrived(PnPHidDeviceInfo obj)
+        private void EnumeratorServiceOnDeviceArrived(HidDevice obj)
         {
             
         }
 
-        private void EnumeratorServiceOnDeviceRemoved(PnPHidDeviceInfo obj)
+        private void EnumeratorServiceOnDeviceRemoved(HidDevice obj)
         {
             
         }

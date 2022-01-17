@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
 using DS4Windows;
+using DS4WinWPF.DS4Control.HID;
 using DS4WinWPF.DS4Control.Util;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -9,69 +11,6 @@ using PInvoke;
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
     /// <summary>
-    ///     Describes a HID device's basic properties.
-    /// </summary>
-    internal sealed class PnPHidDeviceInfo : IEquatable<PnPHidDeviceInfo>
-    {
-        /// <summary>
-        ///     True if device originates from a software device.
-        /// </summary>
-        public bool IsVirtual;
-
-        /// <summary>
-        ///     The Instance ID of this device.
-        /// </summary>
-        public string InstanceId { get; init; }
-
-        /// <summary>
-        ///     The path (symbolic link) of the device instance.
-        /// </summary>
-        public string Path { get; init; }
-
-        /// <summary>
-        ///     Device description.
-        /// </summary>
-        public string Description { get; init; }
-
-        /// <summary>
-        ///     Device friendly name.
-        /// </summary>
-        public string DisplayName { get; init; }
-
-        /// <summary>
-        ///     The Instance ID of the parent device.
-        /// </summary>
-        public string ParentInstance { get; init; }
-
-        /// <summary>
-        ///     HID Device Attributes.
-        /// </summary>
-        public Hid.HiddAttributes Attributes { get; init; }
-
-        public bool Equals(PnPHidDeviceInfo other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return string.Equals(InstanceId, other.InstanceId, StringComparison.OrdinalIgnoreCase);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return ReferenceEquals(this, obj) || obj is PnPHidDeviceInfo other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
-        }
-
-        public override string ToString()
-        {
-            return $"{DisplayName ?? "<no name>"} ({InstanceId})";
-        }
-    }
-
-    /// <summary>
     ///     Single point of truth of states for all connected and handled HID devices.
     /// </summary>
     internal interface IHidDeviceEnumeratorService
@@ -79,17 +18,17 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// <summary>
         ///     List of currently available (connected) HID devices.
         /// </summary>
-        ReadOnlyObservableCollection<PnPHidDeviceInfo> ConnectedDevices { get; }
+        ReadOnlyObservableCollection<HidDevice> ConnectedDevices { get; }
 
         /// <summary>
         ///     Gets fired when a new non-emulated device has been detected.
         /// </summary>
-        event Action<PnPHidDeviceInfo> DeviceArrived;
+        event Action<HidDevice> DeviceArrived;
 
         /// <summary>
         ///     Gets fired when an existing non-emulated device has been removed.
         /// </summary>
-        event Action<PnPHidDeviceInfo> DeviceRemoved;
+        event Action<HidDevice> DeviceRemoved;
 
         /// <summary>
         ///     Refreshes <see cref="ConnectedDevices" />. This clears out the list and repopulates is.
@@ -102,10 +41,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     internal class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     {
-        private const int HidUsageJoystick = 0x04;
-        private const int HidUsageGamepad = 0x05;
-
-        private readonly ObservableCollection<PnPHidDeviceInfo> connectedDevices;
+        private readonly ObservableCollection<HidDevice> connectedDevices;
 
         private readonly IDeviceNotificationListener deviceNotificationListener;
         private readonly Guid hidClassInterfaceGuid = Guid.Empty;
@@ -123,9 +59,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             this.deviceNotificationListener.DeviceArrived += DeviceNotificationListenerOnDeviceArrived;
             this.deviceNotificationListener.DeviceRemoved += DeviceNotificationListenerOnDeviceRemoved;
 
-            connectedDevices = new ObservableCollection<PnPHidDeviceInfo>();
+            connectedDevices = new ObservableCollection<HidDevice>();
 
-            ConnectedDevices = new ReadOnlyObservableCollection<PnPHidDeviceInfo>(connectedDevices);
+            ConnectedDevices = new ReadOnlyObservableCollection<HidDevice>(connectedDevices);
         }
 
         /// <summary>
@@ -134,13 +70,13 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         public static Guid HidDeviceClassGuid => Guid.Parse("{745a17a0-74d3-11d0-b6fe-00a0c90f57da}");
 
         /// <inheritdoc />
-        public event Action<PnPHidDeviceInfo> DeviceArrived;
+        public event Action<HidDevice> DeviceArrived;
 
         /// <inheritdoc />
-        public event Action<PnPHidDeviceInfo> DeviceRemoved;
+        public event Action<HidDevice> DeviceRemoved;
 
         /// <inheritdoc />
-        public ReadOnlyObservableCollection<PnPHidDeviceInfo> ConnectedDevices { get; }
+        public ReadOnlyObservableCollection<HidDevice> ConnectedDevices { get; }
 
         /// <inheritdoc />
         public void EnumerateDevices()
@@ -151,27 +87,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
             {
-                var device = PnPDevice.GetDeviceByInterfaceId(path);
-
-                var friendlyName = device.GetProperty<string>(DevicePropertyDevice.FriendlyName);
-                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
-
-                //
-                // Grab product string from device if property is missing
-                // 
-                if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductName(path);
-
-                GetHidAttributes(path, out var attributes);
-
-                var entry = new PnPHidDeviceInfo
-                {
-                    Path = path,
-                    InstanceId = instanceId.ToUpper(),
-                    Description = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc),
-                    DisplayName = friendlyName,
-                    ParentInstance = parentId,
-                    Attributes = attributes
-                };
+                var entry = CreateNewHidDevice(path);
 
                 logger.LogInformation("Discovered HID device {Device}", entry);
 
@@ -180,7 +96,46 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             }
         }
 
-        private static string GetHidProductName(string path)
+        /// <summary>
+        ///     Create new <see cref="HidDevice" /> and initialize basic properties.
+        /// </summary>
+        /// <param name="path">The symbolic link path of the device instance.</param>
+        /// <returns>The new <see cref="HidDevice" />.</returns>
+        private static HidDevice CreateNewHidDevice(string path)
+        {
+            var device = PnPDevice.GetDeviceByInterfaceId(path);
+
+            //
+            // Try to get friendly display name (not always there)
+            // 
+            var friendlyName = device.GetProperty<string>(DevicePropertyDevice.FriendlyName);
+            var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+            //
+            // Grab product string from device if property is missing
+            // 
+            if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductString(path);
+
+            GetHidAttributes(path, out var attributes);
+
+            GetHidCapabilities(path, out var caps);
+
+            return new HidDevice
+            {
+                Path = path,
+                InstanceId = device.InstanceId.ToUpper(),
+                Description = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc),
+                DisplayName = friendlyName,
+                ParentInstance = parentId,
+                Attributes = attributes,
+                Capabilities = caps,
+                IsVirtual = IsVirtualDevice(device),
+                ManufacturerString = GetHidManufacturerString(path),
+                ProductString = GetHidProductString(path)
+            };
+        }
+
+        private static string GetHidManufacturerString(string path)
         {
             using var handle = Kernel32.CreateFile(path,
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
@@ -189,8 +144,24 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
                 Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
                 | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
-                | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
+                Kernel32.SafeObjectHandle.Null
+            );
+
+            Hid.HidD_GetManufacturerString(handle, out var manufacturerString);
+            return manufacturerString;
+        }
+
+        private static string GetHidProductString(string path)
+        {
+            using var handle = Kernel32.CreateFile(path,
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
+                | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
                 Kernel32.SafeObjectHandle.Null
             );
 
@@ -209,13 +180,38 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
                 Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
                 | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
-                | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
                 Kernel32.SafeObjectHandle.Null
             );
 
             return Hid.HidD_GetAttributes(handle, ref attributes);
         }
+
+        private static bool GetHidCapabilities(string path, out Hid.HidpCaps caps)
+        {
+            caps = new Hid.HidpCaps();
+
+            using var handle = Kernel32.CreateFile(path,
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
+                | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
+                Kernel32.SafeObjectHandle.Null
+            );
+
+            if (!Hid.HidD_GetPreparsedData(handle, out var data)) return false;
+
+            Hid.HidP_GetCaps(data, ref caps);
+            HidD_FreePreparsedData(data.DangerousGetHandle());
+
+            return true;
+        }
+
+        [DllImport("hid.dll")]
+        internal static extern bool HidD_FreePreparsedData(IntPtr preparsedData);
 
         private void DeviceNotificationListenerOnDeviceArrived(string symLink)
         {
@@ -235,25 +231,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 return;
             }
 
-            var friendlyName = device.GetProperty<string>(DevicePropertyDevice.FriendlyName);
-            var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
-
-            //
-            // Grab product string from device if property is missing
-            // 
-            if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductName(symLink);
-
-            GetHidAttributes(symLink, out var attributes);
-
-            var entry = new PnPHidDeviceInfo
-            {
-                Path = symLink,
-                InstanceId = device.InstanceId.ToUpper(),
-                Description = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc),
-                DisplayName = friendlyName,
-                ParentInstance = parentId,
-                Attributes = attributes
-            };
+            var entry = CreateNewHidDevice(symLink);
 
             if (IsVirtualDevice(device))
             {
@@ -275,7 +253,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             logger.LogInformation("HID Device {Instance} ({Path}) removed",
                 device.InstanceId, symLink);
 
-            var entry = new PnPHidDeviceInfo
+            var entry = new HidDevice
             {
                 Path = symLink,
                 InstanceId = device.InstanceId.ToUpper()
