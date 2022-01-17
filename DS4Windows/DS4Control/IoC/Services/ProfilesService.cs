@@ -132,14 +132,14 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile);
 
         /// <summary>
-        ///     Switch the <see cref="ActiveProfiles"/> for slot to <see cref="DS4WindowsProfile"/>.
+        ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="DS4WindowsProfile" />.
         /// </summary>
         /// <param name="slot">The zero-based slot index.</param>
-        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to switch to.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to switch to.</param>
         void SetActiveTo(int slot, DS4WindowsProfile profile);
 
         /// <summary>
-        ///     Gets invoked when a change to <see cref="AvailableProfiles"/> happened.
+        ///     Gets invoked when a change to <see cref="AvailableProfiles" /> happened.
         /// </summary>
         event Action AvailableProfilesChanged;
     }
@@ -206,6 +206,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         [IntermediateSolution]
         public static ProfilesService Instance { get; private set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         ///     The profile copy that is currently being edited.
@@ -472,7 +474,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 // 
                 if (linkedProfileId != DS4WindowsProfile.DefaultProfileId)
                 {
-                    availableProfiles.First(p => Equals(p.Id, linkedProfileId)).DeepCloneTo(controllerSlotProfiles[slot]);
+                    availableProfiles.First(p => Equals(p.Id, linkedProfileId))
+                        .DeepCloneTo(controllerSlotProfiles[slot]);
                     controllerSlotProfiles[slot].DeviceId = address;
                     return;
                 }
@@ -547,17 +550,17 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         /// <summary>
-        ///     Switch the <see cref="ActiveProfiles"/> for slot to <see cref="DS4WindowsProfile"/>.
+        ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="DS4WindowsProfile" />.
         /// </summary>
         /// <param name="slot">The zero-based slot index.</param>
-        /// <param name="profile">The <see cref="DS4WindowsProfile"/> to switch to.</param>
+        /// <param name="profile">The <see cref="DS4WindowsProfile" /> to switch to.</param>
         public void SetActiveTo(int slot, DS4WindowsProfile profile)
         {
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
         }
 
         /// <summary>
-        ///     Gets invoked when a change to <see cref="AvailableProfiles"/> happened.
+        ///     Gets invoked when a change to <see cref="AvailableProfiles" /> happened.
         /// </summary>
         public event Action AvailableProfilesChanged;
 
@@ -611,7 +614,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
         {
-            return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ?? DS4WindowsProfile.CreateDefaultProfile(slot);
+            return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ??
+                   DS4WindowsProfile.CreateDefaultProfile(slot);
         }
 
         /// <summary>
@@ -630,8 +634,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             profile.Serialize(stream);
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [UsedImplicitly]
         [NotifyPropertyChangedInvocator]

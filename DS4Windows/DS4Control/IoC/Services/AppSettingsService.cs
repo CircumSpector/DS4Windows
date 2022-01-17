@@ -63,10 +63,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class AppSettingsService : IAppSettingsService
     {
+        private const string APPLICATION_SETTINGS_FILE_NAME = "ApplicationSettings.json";
         private readonly IGlobalStateService global;
         private readonly ILogger<AppSettingsService> logger;
-
-        private const string APPLICATION_SETTINGS_FILE_NAME = "ApplicationSettings.json";
 
         public AppSettingsService(ILogger<AppSettingsService> logger, IGlobalStateService global)
         {

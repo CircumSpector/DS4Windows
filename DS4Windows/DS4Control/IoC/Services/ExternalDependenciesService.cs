@@ -116,7 +116,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                         deviceName = buffer;
                 }
 
-                yield return new DeviceNodeInfo()
+                yield return new DeviceNodeInfo
                 {
                     DeviceName = deviceName,
                     DriverVersion = version,
