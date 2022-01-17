@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
-    internal interface ISupportedControllersService
+    internal interface IControllersEnumeratorService
     {
         void RefreshDevices();
     }
 
-    internal class SupportedControllersService : ISupportedControllersService
+    internal class ControllersEnumeratorService : IControllersEnumeratorService
     {
 
 
