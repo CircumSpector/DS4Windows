@@ -23,6 +23,8 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            logger.LogInformation("Starting web server");
+
             _ = Task.Run(async () => await webServer.RunAsync(stoppingToken), stoppingToken);
 
             return Task.CompletedTask;
