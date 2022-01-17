@@ -82,6 +82,12 @@ namespace DS4WinWPF.DS4Control.HID
         public string ProductString { get; init; }
 
         /// <summary>
+        ///     The serial number, if any.
+        /// </summary>
+        [CanBeNull]
+        public string SerialNumberString { get; init; }
+
+        /// <summary>
         ///     Is this device currently open (for reading, writing).
         /// </summary>
         public bool IsOpen => Handle is not null && !Handle.IsClosed;

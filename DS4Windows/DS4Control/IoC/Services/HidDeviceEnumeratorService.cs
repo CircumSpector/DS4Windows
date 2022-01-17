@@ -131,7 +131,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 Capabilities = caps,
                 IsVirtual = IsVirtualDevice(device),
                 ManufacturerString = GetHidManufacturerString(path),
-                ProductString = GetHidProductString(path)
+                ProductString = GetHidProductString(path),
+                SerialNumberString = GetHidSerialNumberString(path)
             };
         }
 
@@ -167,6 +168,23 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             Hid.HidD_GetProductString(handle, out var productName);
             return productName;
+        }
+
+        private static string GetHidSerialNumberString(string path)
+        {
+            using var handle = Kernel32.CreateFile(path,
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
+                | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
+                Kernel32.SafeObjectHandle.Null
+            );
+
+            Hid.HidD_GetSerialNumberString(handle, out var serialNumberString);
+            return serialNumberString;
         }
 
         private static bool GetHidAttributes(string path, out Hid.HiddAttributes attributes)
