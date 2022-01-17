@@ -43,6 +43,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public string ParentInstance { get; init; }
 
+        /// <summary>
+        ///     HID Device Attributes.
+        /// </summary>
+        public Hid.HiddAttributes Attributes { get; init; }
+
         public bool Equals(PnPHidDeviceInfo other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -156,13 +161,16 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 // 
                 if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductName(path);
 
+                GetHidAttributes(path, out var attributes);
+
                 var entry = new PnPHidDeviceInfo
                 {
                     Path = path,
                     InstanceId = instanceId.ToUpper(),
                     Description = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc),
                     DisplayName = friendlyName,
-                    ParentInstance = parentId
+                    ParentInstance = parentId,
+                    Attributes = attributes
                 };
 
                 if (!connectedDevices.Contains(entry))
@@ -186,6 +194,25 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             Hid.HidD_GetProductString(handle, out var productName);
             return productName;
+        }
+
+        private static bool GetHidAttributes(string path, out Hid.HiddAttributes attributes)
+        {
+            attributes = new Hid.HiddAttributes();
+
+            using var handle = Kernel32.CreateFile(path,
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
+                | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
+                | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
+                Kernel32.SafeObjectHandle.Null
+            );
+
+            return Hid.HidD_GetAttributes(handle, ref attributes);
         }
 
         private void DeviceNotificationListenerOnDeviceArrived(string symLink)
@@ -214,13 +241,16 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
             if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductName(symLink);
 
+            GetHidAttributes(symLink, out var attributes);
+
             var entry = new PnPHidDeviceInfo
             {
                 Path = symLink,
                 InstanceId = device.InstanceId.ToUpper(),
                 Description = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc),
                 DisplayName = friendlyName,
-                ParentInstance = parentId
+                ParentInstance = parentId,
+                Attributes = attributes
             };
 
             if (IsVirtualDevice(device))
