@@ -82,7 +82,8 @@ namespace DS4WinWPF.DS4Library.InputDevices
                 case InputDeviceType.DualSense:
                     return new DualSenseDevice(hidDevice, displayName, featureSet);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
+                    throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType,
+                        @"Unsupported device type provided.");
             }
         }
     }
