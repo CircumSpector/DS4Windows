@@ -33,7 +33,7 @@ namespace DS4WinWPF.DS4Control.HID
         /// <summary>
         ///     Native handle to device.
         /// </summary>
-        public Kernel32.SafeObjectHandle DeviceHandle { get; private set; }
+        public Kernel32.SafeObjectHandle Handle { get; private set; }
 
         /// <summary>
         ///     The Instance ID of this device.
@@ -84,11 +84,11 @@ namespace DS4WinWPF.DS4Control.HID
         /// <summary>
         ///     Is this device currently open (for reading, writing).
         /// </summary>
-        public bool IsOpen => DeviceHandle is not null && !DeviceHandle.IsClosed;
+        public bool IsOpen => Handle is not null && !Handle.IsClosed;
 
         public void Dispose()
         {
-            DeviceHandle?.Dispose();
+            Handle?.Dispose();
         }
 
         public bool Equals(HidDevice other)
@@ -115,32 +115,32 @@ namespace DS4WinWPF.DS4Control.HID
         /// </summary>
         public void OpenDevice()
         {
-            if (IsOpen || DeviceHandle.IsInvalid)
-                DeviceHandle.Close();
+            if (IsOpen || Handle.IsInvalid)
+                Handle.Close();
 
-            DeviceHandle = OpenHandle(Path);
+            Handle = OpenHandle(Path);
         }
 
         public void CloseDevice()
         {
             if (!IsOpen) return;
 
-            DeviceHandle?.Dispose();
+            Handle?.Dispose();
         }
 
         public bool WriteFeatureReport(byte[] data)
         {
-            return HidD_SetFeature(DeviceHandle.DangerousGetHandle(), data, data.Length);
+            return HidD_SetFeature(Handle.DangerousGetHandle(), data, data.Length);
         }
 
         public bool WriteOutputReportViaControl(byte[] outputBuffer)
         {
-            return HidD_SetOutputReport(DeviceHandle.DangerousGetHandle(), outputBuffer, outputBuffer.Length);
+            return HidD_SetOutputReport(Handle.DangerousGetHandle(), outputBuffer, outputBuffer.Length);
         }
 
         public bool ReadFeatureData(byte[] inputBuffer)
         {
-            return HidD_GetFeature(DeviceHandle.DangerousGetHandle(), inputBuffer, inputBuffer.Length);
+            return HidD_GetFeature(Handle.DangerousGetHandle(), inputBuffer, inputBuffer.Length);
         }
 
         public bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
@@ -151,7 +151,7 @@ namespace DS4WinWPF.DS4Control.HID
 
             try
             {
-                DeviceHandle.OverlappedWriteFile(unmanagedBuffer, outputBuffer.Length, out _);
+                Handle.OverlappedWriteFile(unmanagedBuffer, outputBuffer.Length, out _);
             }
             finally
             {
@@ -169,13 +169,13 @@ namespace DS4WinWPF.DS4Control.HID
             int? bytesRead = 0;
 
             Kernel32.ReadFile(
-                DeviceHandle,
+                Handle,
                 inputBuffer,
                 bufferSize,
                 ref bytesRead,
                 inputOverlapped);
 
-            if (!Kernel32.GetOverlappedResult(DeviceHandle, inputOverlapped, out bytesReturned, true))
+            if (!Kernel32.GetOverlappedResult(Handle, inputOverlapped, out bytesReturned, true))
                 throw new Win32Exception(Kernel32.GetLastError(), "Reading input report failed.");
         }
 
