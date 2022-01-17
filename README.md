@@ -49,6 +49,12 @@ This application benefits from these awesome projects (appearance in no special 
   - A configurable and eXtensible Xml serializer for .NET
 - [Fody](https://github.com/Fody/Fody)
   - Extensible tool for weaving .net assemblies
+- [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
+  - Injects INotifyPropertyChanged code into properties at compile time
+- [AsyncErrorHandler.Fody](https://github.com/Fody/AsyncErrorHandler)
+  - An extension for Fody to integrate error handling into async and TPL code
+- [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
+  - Configure async code's ConfigureAwait at a global level
 - [Hardcodet NotifyIcon for WPF](https://github.com/hardcodet/wpf-notifyicon)
   - NotifyIcon for .Net Core 3.1 and .Net 5 WPF
 - [Jaeger Tracing](https://github.com/jaegertracing/jaeger-client-csharp)
@@ -57,8 +63,6 @@ This application benefits from these awesome projects (appearance in no special 
   - Markdown for WPF - alternate version of Markdown.Xaml
 - [Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf)
   - Awesome dialogs for Windows Desktop applications built with Microsoft .NET (WPF)
-- [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
-  - Injects INotifyPropertyChanged code into properties at compile time
 - [Serilog](https://serilog.net/)
   - Flexible, structured events — log file convenience
 - [Task Scheduler Managed Wrapper](https://github.com/dahall/taskscheduler)
@@ -67,5 +71,3 @@ This application benefits from these awesome projects (appearance in no special 
   - LocalizationExtension is a the easy way to localize any type of DependencyProperties or native Properties on DependencyObjects
 - [EmbedIO](https://github.com/unosquare/embedio)
   - A tiny, cross-platform, module based web server for .NET
-- [AsyncErrorHandler.Fody](https://github.com/Fody/AsyncErrorHandler)
-  - An extension for Fody to integrate error handling into async and TPL code
