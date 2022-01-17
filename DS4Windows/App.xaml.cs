@@ -24,6 +24,7 @@ using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Forms;
 using DS4WinWPF.DS4Forms.ViewModels;
+using DS4WinWPF.DS4Library.InputDevices;
 using EmbedIO;
 using EmbedIO.Files;
 using Microsoft.Extensions.Configuration;

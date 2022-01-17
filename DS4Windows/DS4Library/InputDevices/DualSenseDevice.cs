@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
+using DS4WinWPF.DS4Library.InputDevices;
 using DS4WinWPF.Translations;
 using OpenTracing.Util;
 using PropertyChanged;

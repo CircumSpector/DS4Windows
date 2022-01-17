@@ -1,6 +1,8 @@
 ﻿using System;
+using DS4Windows;
+using DS4Windows.InputDevices;
 
-namespace DS4Windows.InputDevices
+namespace DS4WinWPF.DS4Library.InputDevices
 {
     public enum InputDeviceType : uint
     {

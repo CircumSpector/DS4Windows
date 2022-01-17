@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Library.InputDevices;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows

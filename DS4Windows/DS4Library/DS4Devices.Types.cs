@@ -1,5 +1,6 @@
 ﻿using System;
 using DS4Windows.InputDevices;
+using DS4WinWPF.DS4Library.InputDevices;
 using PropertyChanged;
 
 namespace DS4Windows
