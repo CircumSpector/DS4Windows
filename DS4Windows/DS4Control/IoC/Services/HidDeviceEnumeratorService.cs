@@ -59,6 +59,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             return StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
         }
+
+        public override string ToString()
+        {
+            return $"{DisplayName} ({InstanceId})";
+        }
     }
 
     /// <summary>
@@ -149,24 +154,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 //
                 // Grab product string from device if property is missing
                 // 
-                if (string.IsNullOrEmpty(friendlyName))
-                {
-                    using var handle = Kernel32.CreateFile(path,
-                        Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-                        Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-                        Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-                        IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-                        Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-                        | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-                        | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
-                        | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
-                        Kernel32.SafeObjectHandle.Null
-                    );
-
-                    Hid.HidD_GetProductString(handle, out var productName);
-
-                    friendlyName = productName;
-                }
+                if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductName(path);
 
                 var entry = new PnPHidDeviceInfo
                 {
@@ -180,6 +168,24 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 if (!connectedDevices.Contains(entry))
                     connectedDevices.Add(entry);
             }
+        }
+
+        private static string GetHidProductName(string path)
+        {
+            using var handle = Kernel32.CreateFile(path,
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
+                | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
+                | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
+                Kernel32.SafeObjectHandle.Null
+            );
+
+            Hid.HidD_GetProductString(handle, out var productName);
+            return productName;
         }
 
         private void DeviceNotificationListenerOnDeviceArrived(string symLink)
@@ -206,24 +212,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             //
             // Grab product string from device if property is missing
             // 
-            if (string.IsNullOrEmpty(friendlyName))
-            {
-                using var handle = Kernel32.CreateFile(symLink,
-                    Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-                    Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-                    Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-                    IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-                    Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-                    | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-                    | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
-                    | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
-                    Kernel32.SafeObjectHandle.Null
-                );
-
-                Hid.HidD_GetProductString(handle, out var productName);
-
-                friendlyName = productName;
-            }
+            if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductName(symLink);
 
             var entry = new PnPHidDeviceInfo
             {
