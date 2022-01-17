@@ -102,7 +102,7 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
-            services.AddSingleton<IControllerManagerService, ControllerManagerService>();
+            services.AddSingleton<IControllerEnumeratorService, ControllerEnumeratorService>();
             services.AddSingleton<IInputDeviceFactory, InputDeviceFactory>();
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<IAppLogger, AppLogger>();
@@ -188,6 +188,18 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
+
+            var version = Global.ExecutableProductVersion;
+
+            logger.LogInformation($"Current directory: {Directory.GetCurrentDirectory()}");
+            logger.LogInformation($"{Constants.ApplicationName} version {version}");
+            logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
+            logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
+            logger.LogInformation($"OS Version: {Environment.OSVersion}");
+            logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
+            logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
+            logger.LogInformation($"OS Branding String: {Util.BrandingFormatString("%WINDOWS_LONG%")}");
+            logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
 
             runShutdown = true;
             skipSave = true;
@@ -292,18 +304,6 @@ namespace DS4WinWPF
                 Current.Shutdown(1);
             }
             
-            var version = Global.ExecutableProductVersion;
-
-            logger.LogInformation($"Current directory: {Directory.GetCurrentDirectory()}");
-            logger.LogInformation($"{Constants.ApplicationName} version {version}");
-            logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
-            logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
-            logger.LogInformation($"OS Version: {Environment.OSVersion}");
-            logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
-            logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
-            logger.LogInformation($"OS Branding String: {Util.BrandingFormatString("%WINDOWS_LONG%")}");
-            logger.LogInformation($"System Architecture: {(Environment.Is64BitOperatingSystem ? "x64" : "x86")}");
-
             var readAppConfig = await appSettings.LoadAsync();
 
             switch (firstRun)
