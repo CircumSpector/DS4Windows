@@ -21,12 +21,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         ReadOnlyObservableCollection<HidDevice> ConnectedDevices { get; }
 
         /// <summary>
-        ///     Gets fired when a new non-emulated device has been detected.
+        ///     Gets fired when a new HID device has been detected.
         /// </summary>
         event Action<HidDevice> DeviceArrived;
 
         /// <summary>
-        ///     Gets fired when an existing non-emulated device has been removed.
+        ///     Gets fired when an existing HID device has been removed.
         /// </summary>
         event Action<HidDevice> DeviceRemoved;
 
