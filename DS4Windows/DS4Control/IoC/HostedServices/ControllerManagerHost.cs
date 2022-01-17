@@ -8,11 +8,11 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 {
     internal class ControllerManagerHost : BackgroundService
     {
-        private readonly IDeviceEnumeratorService deviceEnumeratorService;
+        private readonly IHidDeviceEnumeratorService hidDeviceEnumeratorService;
 
-        public ControllerManagerHost(IDeviceEnumeratorService deviceEnumeratorService)
+        public ControllerManagerHost(IHidDeviceEnumeratorService hidDeviceEnumeratorService)
         {
-            this.deviceEnumeratorService = deviceEnumeratorService;
+            this.hidDeviceEnumeratorService = hidDeviceEnumeratorService;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)

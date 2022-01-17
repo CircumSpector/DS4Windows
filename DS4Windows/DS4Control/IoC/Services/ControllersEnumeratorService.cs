@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
@@ -13,7 +10,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
     internal class ControllersEnumeratorService : IControllersEnumeratorService
     {
+        private readonly ILogger<ControllersEnumeratorService> logger;
 
+        public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger)
+        {
+            this.logger = logger;
+        }
 
         public void RefreshDevices()
         {

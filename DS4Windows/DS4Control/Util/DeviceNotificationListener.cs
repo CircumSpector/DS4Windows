@@ -26,23 +26,27 @@ namespace DS4WinWPF.DS4Control.Util
     {
         private readonly ILogger<DeviceNotificationListener> logger;
 
+        public event Action<string> DeviceArrived;
+
+        public event Action<string> DeviceRemoved;
+
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_DEVICECHANGE)
             {
                 DEV_BROADCAST_HDR hdr;
 
-                switch ((int) wParam)
+                switch ((int)wParam)
                 {
                     case DBT_DEVICEARRIVAL:
                         logger.LogDebug("Device added.");
 
-                        hdr = (DEV_BROADCAST_HDR) Marshal.PtrToStructure(lParam, typeof(DEV_BROADCAST_HDR));
+                        hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(lParam, typeof(DEV_BROADCAST_HDR));
 
                         if (hdr.dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
                         {
                             var deviceInterface =
-                                (DEV_BROADCAST_DEVICEINTERFACE) Marshal.PtrToStructure(lParam,
+                                (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(lParam,
                                     typeof(DEV_BROADCAST_DEVICEINTERFACE));
 
                             DeviceArrived?.Invoke(deviceInterface.dbcc_name);
@@ -53,12 +57,12 @@ namespace DS4WinWPF.DS4Control.Util
                     case DBT_DEVICEREMOVECOMPLETE:
                         logger.LogDebug("Device removed.");
 
-                        hdr = (DEV_BROADCAST_HDR) Marshal.PtrToStructure(lParam, typeof(DEV_BROADCAST_HDR));
+                        hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(lParam, typeof(DEV_BROADCAST_HDR));
 
                         if (hdr.dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
                         {
                             var deviceInterface =
-                                (DEV_BROADCAST_DEVICEINTERFACE) Marshal.PtrToStructure(lParam,
+                                (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(lParam,
                                     typeof(DEV_BROADCAST_DEVICEINTERFACE));
 
                             DeviceRemoved?.Invoke(deviceInterface.dbcc_name);
@@ -134,13 +138,9 @@ namespace DS4WinWPF.DS4Control.Util
 
         // Identifier: GUID_DEVINTERFACE_USB_DEVICE
         // Class GUID: {A5DCBF10-6530-11D2-901F-00C04FB951ED}
-        private static readonly Guid GUID_DEVINTERFACE_USB_DEVICE = new Guid("A5DCBF10-6530-11D2-901F-00C04FB951ED");
+        private static readonly Guid GUID_DEVINTERFACE_USB_DEVICE = new("A5DCBF10-6530-11D2-901F-00C04FB951ED");
 
         #endregion
-
-        public event Action<string> DeviceArrived;
-
-        public event Action<string> DeviceRemoved;
 
         #region Start/End
 
@@ -183,7 +183,7 @@ namespace DS4WinWPF.DS4Control.Util
         {
             var dbcc = new DEV_BROADCAST_DEVICEINTERFACE
             {
-                dbcc_size = (uint) Marshal.SizeOf(typeof(DEV_BROADCAST_DEVICEINTERFACE)),
+                dbcc_size = (uint)Marshal.SizeOf(typeof(DEV_BROADCAST_DEVICEINTERFACE)),
                 dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE,
                 dbcc_classguid = interfaceGuid
             };

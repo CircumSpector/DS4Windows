@@ -95,7 +95,7 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
-            services.AddSingleton<IDeviceEnumeratorService, DeviceEnumeratorService>();
+            services.AddSingleton<IHidDeviceEnumeratorService, HidHidDeviceEnumeratorService>();
             services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
             services.AddSingleton<IInputDeviceFactory, InputDeviceFactory>();
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
@@ -182,6 +182,8 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
+
+            host.Services.GetRequiredService<IHidDeviceEnumeratorService>().EnumerateDevices();
 
             var version = Global.ExecutableProductVersion;
 
@@ -396,7 +398,6 @@ namespace DS4WinWPF
             Util.NtSetInformationProcess(Process.GetCurrentProcess().Handle,
                 Util.PROCESS_INFORMATION_CLASS.ProcessPagePriority, ref pagePrio, 4);
         }
-
 
         public event EventHandler ThemeChanged;
 
