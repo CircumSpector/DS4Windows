@@ -118,7 +118,7 @@ namespace DS4WinWPF.DS4Control.HID
             if (IsOpen || Handle.IsInvalid)
                 Handle.Close();
 
-            Handle = OpenHandle(Path);
+            Handle = OpenAsyncHandle(Path);
         }
 
         public void CloseDevice()
@@ -179,7 +179,7 @@ namespace DS4WinWPF.DS4Control.HID
                 throw new Win32Exception(Kernel32.GetLastError(), "Reading input report failed.");
         }
 
-        private Kernel32.SafeObjectHandle OpenHandle(string devicePathName, bool openExclusive = false,
+        private Kernel32.SafeObjectHandle OpenAsyncHandle(string devicePathName, bool openExclusive = false,
             bool enumerateOnly = false)
         {
             return Kernel32.CreateFile(devicePathName,
