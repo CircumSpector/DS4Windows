@@ -103,7 +103,7 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
-            services.AddSingleton<IControllerEnumeratorService, ControllerEnumeratorService>();
+            services.AddSingleton<IDeviceEnumeratorService, DeviceEnumeratorService>();
             services.AddSingleton<IInputDeviceFactory, InputDeviceFactory>();
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<IAppLogger, AppLogger>();

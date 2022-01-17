@@ -5,33 +5,43 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
-    /// <summary>
-    ///     Single point of truth of states for all connected and handled hardware devices.
-    /// </summary>
-    internal interface IControllerEnumeratorService
+    internal class PnPDeviceMeta
     {
+        public string Path { get; init; }
+
+        public string InstanceId { get; init; }
     }
 
     /// <summary>
     ///     Single point of truth of states for all connected and handled hardware devices.
     /// </summary>
-    internal class ControllerEnumeratorService : IControllerEnumeratorService
+    internal interface IDeviceEnumeratorService
+    {
+        /// <summary>
+        ///     Gets fired when a new non-emulated device has been detected.
+        /// </summary>
+        event Action<PnPDeviceMeta> DeviceArrived;
+
+        /// <summary>
+        ///     Gets fired when an existing non-emulated device has been removed.
+        /// </summary>
+        event Action<PnPDeviceMeta> DeviceRemoved;
+    }
+
+    /// <summary>
+    ///     Single point of truth of states for all connected and handled hardware devices.
+    /// </summary>
+    internal class DeviceEnumeratorService : IDeviceEnumeratorService
     {
         private readonly IDeviceNotificationListener deviceNotificationListener;
 
-        private readonly ILogger<ControllerEnumeratorService> logger;
+        private readonly ILogger<DeviceEnumeratorService> logger;
 
-        private readonly IAppSettingsService appSettings;
-
-        private readonly IProfilesService profilesService;
-
-        public ControllerEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
-            ILogger<ControllerEnumeratorService> logger, IAppSettingsService appSettings, IProfilesService profilesService)
+        public DeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
+            ILogger<DeviceEnumeratorService> logger)
         {
             this.deviceNotificationListener = deviceNotificationListener;
             this.logger = logger;
-            this.appSettings = appSettings;
-            this.profilesService = profilesService;
 
             this.deviceNotificationListener.DeviceArrived += DeviceNotificationListenerOnDeviceArrived;
             this.deviceNotificationListener.DeviceRemoved += DeviceNotificationListenerOnDeviceRemoved;
@@ -51,14 +61,32 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 return;
             }
 
-            //
-            // TODO: implement me
-            // 
+            DeviceArrived?.Invoke(new PnPDeviceMeta()
+            {
+                Path = symLink,
+                InstanceId = device.InstanceId
+            });
         }
 
-        private void DeviceNotificationListenerOnDeviceRemoved(string obj)
+        private void DeviceNotificationListenerOnDeviceRemoved(string symLink)
         {
-            logger.LogInformation("HID Device {Path} removed", obj);
+            var device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom);
+
+            logger.LogInformation("HID Device {Instance} ({Path}) removed",
+                device.InstanceId, symLink);
+
+            if (IsVirtualDevice(device, true))
+            {
+                logger.LogInformation("HID Device {Instance} ({Path}) is emulated, ignoring",
+                    device.InstanceId, symLink);
+                return;
+            }
+
+            DeviceRemoved?.Invoke(new PnPDeviceMeta()
+            {
+                Path = symLink,
+                InstanceId = device.InstanceId
+            });
         }
 
         /// <summary>
@@ -66,8 +94,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         /// <remarks>This is achieved by walking up the node tree until the top most parent and check if the last parent below the tree root is a software device. Hardware devices originate from a PCI(e) bus while virtual devices originate from a root enumerated device.</remarks>
         /// <param name="device">The <see cref="PnPDevice"/> to test.</param>
+        /// <param name="isRemoved">If true, look for a currently non-present device.</param>
         /// <returns>True if this devices originates from an emulator, false otherwise.</returns>
-        private static bool IsVirtualDevice(PnPDevice device)
+        private static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
         {
             while (device is not null)
             {
@@ -76,13 +105,24 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
                     break;
 
-                device = PnPDevice.GetDeviceByInstanceId(parentId);
+                device = PnPDevice.GetDeviceByInstanceId(parentId,
+                    isRemoved
+                        ? DeviceLocationFlags.Phantom
+                        : DeviceLocationFlags.Normal
+                );
             }
 
             //
             // TODO: test how others behave (reWASD, NVIDIA, ...)
             // 
-            return device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase);
+            return device is not null &&
+                   device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase);
         }
+
+        /// <inheritdoc />
+        public event Action<PnPDeviceMeta> DeviceArrived;
+
+        /// <inheritdoc />
+        public event Action<PnPDeviceMeta> DeviceRemoved;
     }
 }
