@@ -183,7 +183,7 @@ namespace DS4WinWPF
             // 
             await host.StartAsync();
 
-            host.Services.GetRequiredService<IHidDeviceEnumeratorService>().EnumerateDevices();
+            host.Services.GetRequiredService<IControllersEnumeratorService>().EnumerateDevices();
 
             var version = Global.ExecutableProductVersion;
 

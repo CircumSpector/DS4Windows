@@ -1,4 +1,7 @@
-﻿using DS4Windows;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using DS4Windows;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.HID;
 using DS4WinWPF.DS4Library.InputDevices;
@@ -8,6 +11,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 {
     internal interface IControllersEnumeratorService
     {
+        ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
+
         void EnumerateDevices();
     }
 
@@ -25,7 +30,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private const int HidUsageJoystick = 0x04;
         private const int HidUsageGamepad = 0x05;
 
-        private static readonly VidPidInfo[] KnownDevices =
+        private static readonly IEnumerable<VidPidInfo> KnownDevices = new List<VidPidInfo>
         {
             new(SonyVid, 0xBA0, "Sony WA",
                 InputDeviceType.DualShock4,
@@ -114,6 +119,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly IHidDeviceEnumeratorService enumeratorService;
         private readonly ILogger<ControllersEnumeratorService> logger;
 
+        private readonly ObservableCollection<HidDevice> supportedDevices;
+
         public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
             IHidDeviceEnumeratorService enumeratorService)
         {
@@ -122,20 +129,70 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
             enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
-        }
-        
-        private void EnumeratorServiceOnDeviceArrived(HidDevice obj)
-        {
-            
+
+            supportedDevices = new ObservableCollection<HidDevice>();
+
+            SupportedDevices = new ReadOnlyObservableCollection<HidDevice>(supportedDevices);
         }
 
-        private void EnumeratorServiceOnDeviceRemoved(HidDevice obj)
-        {
-            
-        }
+        public ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
 
         public void EnumerateDevices()
         {
+            enumeratorService.EnumerateDevices();
+
+            var hidDevices = enumeratorService.ConnectedDevices;
+
+            //
+            // Filter for supported devices
+            // 
+            var filtered = from hidDevice in hidDevices
+                let known =
+                    KnownDevices.FirstOrDefault(d =>
+                        d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId)
+                where known is not null
+                where hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
+                      known.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice)
+                select hidDevice;
+
+            supportedDevices.Clear();
+
+            foreach (var device in filtered)
+            {
+                logger.LogInformation("Adding supported input device {Device} to cache",
+                    device);
+
+                supportedDevices.Add(device);
+            }
+        }
+
+        private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
+        {
+            var known = KnownDevices.FirstOrDefault(d =>
+                d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId);
+
+            if (known is null) return;
+
+            if (hidDevice.Capabilities.Usage is not (HidUsageGamepad or HidUsageJoystick) &&
+                !known.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice)) return;
+
+            if (!supportedDevices.Contains(hidDevice))
+                supportedDevices.Add(hidDevice);
+        }
+
+        private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
+        {
+            //
+            // Don't remove from list as someone may still rely on this object, if open
+            // 
+            if (hidDevice.IsOpen)
+            {
+                hidDevice.IsRemoved = true;
+                return;
+            }
+
+            if (supportedDevices.Contains(hidDevice))
+                supportedDevices.Remove(hidDevice);
         }
     }
 }

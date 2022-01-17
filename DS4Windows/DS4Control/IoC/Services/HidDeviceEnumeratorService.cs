@@ -91,8 +91,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
                 logger.LogInformation("Discovered HID device {Device}", entry);
 
-                if (!connectedDevices.Contains(entry))
-                    connectedDevices.Add(entry);
+                connectedDevices.Add(entry);
             }
         }
 

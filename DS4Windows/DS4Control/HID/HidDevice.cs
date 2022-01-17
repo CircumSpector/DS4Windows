@@ -92,6 +92,11 @@ namespace DS4WinWPF.DS4Control.HID
         /// </summary>
         public bool IsOpen => Handle is not null && !Handle.IsClosed;
 
+        /// <summary>
+        ///     Indicates, if the device has been surprise removed from the system.
+        /// </summary>
+        public bool IsRemoved { get; set; }
+
         public void Dispose()
         {
             Handle?.Dispose();
