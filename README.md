@@ -71,3 +71,5 @@ This application benefits from these awesome projects (appearance in no special 
   - LocalizationExtension is a the easy way to localize any type of DependencyProperties or native Properties on DependencyObjects
 - [EmbedIO](https://github.com/unosquare/embedio)
   - A tiny, cross-platform, module based web server for .NET
+- [Nefarius.Utilities.DeviceManagement](https://github.com/nefarius/Nefarius.Utilities.DeviceManagement)
+  - Managed wrappers around SetupAPI and Cfgmgr32
