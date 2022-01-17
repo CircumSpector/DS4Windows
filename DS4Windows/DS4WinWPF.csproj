@@ -73,12 +73,16 @@
     <PackageReference Include="AdonisUI.NET5" Version="1.17.1" />
     <PackageReference Include="AsyncErrorHandler.Fody" Version="1.3.0" />
     <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
-    <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" />
     <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="4.6.97" />
     <PackageReference Include="EmbedIO" Version="3.4.3" />
     <PackageReference Include="ExtendedXmlSerializer" Version="3.7.6" />
     <PackageReference Include="FastDeepCloner" Version="1.3.6" />
     <PackageReference Include="Fody" Version="6.6.0" ExcludeAssets="runtime">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -96,7 +100,6 @@
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="PInvoke.Hid" Version="0.7.104" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.104" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
