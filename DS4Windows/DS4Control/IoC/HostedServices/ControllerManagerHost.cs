@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace DS4WinWPF.DS4Control.IoC.HostedServices
 {
-    class ControllerManagerHost : BackgroundService
+    internal class ControllerManagerHost : BackgroundService
     {
         private readonly IControllerEnumeratorService controllerEnumeratorService;
 
