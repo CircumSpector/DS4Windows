@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -14,9 +13,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using AdonisUI.Controls;
 using DS4Windows;
-using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
@@ -31,15 +28,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
 using Serilog;
 using WPFLocalizeExtension.Engine;
-using MessageBox = System.Windows.MessageBox;
-using MessageBoxButton = System.Windows.MessageBoxButton;
-using MessageBoxImage = System.Windows.MessageBoxImage;
-using MessageBoxResult = System.Windows.MessageBoxResult;
 
 namespace DS4WinWPF
 {
@@ -49,7 +41,6 @@ namespace DS4WinWPF
     [SuppressUnmanagedCodeSecurity]
     public partial class App : Application
     {
-        private ControlService rootHub;
         public static HttpClient requestClient;
 
         private static readonly Dictionary<AppThemeChoice, string> ThemeResources = new()
@@ -60,16 +51,17 @@ namespace DS4WinWPF
 
         private readonly IHost host;
 
-        private ILogger<App> logger;
-
         private IAppSettingsService appSettings;
 
         private IDS4DeviceEnumerator devices;
 
-        private IProfilesService profileService;
-
         private bool exitApp;
         private bool exitComThread;
+
+        private ILogger<App> logger;
+
+        private IProfilesService profileService;
+        private ControlService rootHub;
 
         private bool runShutdown;
         private bool skipSave;
@@ -140,7 +132,7 @@ namespace DS4WinWPF
 
             services.AddSingleton<IExternalDependenciesService, ExternalDependenciesService>();
             services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
-            services.AddSingleton</*IControlService, */ControlService>();
+            services.AddSingleton< /*IControlService, */ControlService>();
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
             services.AddSingleton<IProfilesService, ProfilesService>();
@@ -196,7 +188,8 @@ namespace DS4WinWPF
             logger.LogInformation($"Current directory: {Directory.GetCurrentDirectory()}");
             logger.LogInformation($"{Constants.ApplicationName} version {version}");
             logger.LogInformation($"{Constants.ApplicationName} exe file: {Global.ExecutableFileName}");
-            logger.LogInformation($"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
+            logger.LogInformation(
+                $"{Constants.ApplicationName} Assembly Architecture: {(Environment.Is64BitProcess ? "x64" : "x86")}");
             logger.LogInformation($"OS Version: {Environment.OSVersion}");
             logger.LogInformation($"OS Product Name: {Util.GetOSProductName()}");
             logger.LogInformation($"OS Release ID: {Util.GetOSReleaseId()}");
@@ -305,7 +298,7 @@ namespace DS4WinWPF
                     Constants.ApplicationName, MessageBoxButton.OK, MessageBoxImage.Error);
                 Current.Shutdown(1);
             }
-            
+
             var readAppConfig = await appSettings.LoadAsync();
 
             switch (firstRun)
@@ -315,17 +308,17 @@ namespace DS4WinWPF
                         $@"{Constants.LegacyProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyProfilesFileName)}. Using default app settings");
                     break;
                 case true:
-                    {
-                        logger.LogInformation("No config found. Creating default config");
-                        AttemptSave();
+                {
+                    logger.LogInformation("No config found. Creating default config");
+                    AttemptSave();
 
-                        await Global.Instance.Config.SaveAsNewProfile(0, "Default");
-                        for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
-                            Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
+                    await Global.Instance.Config.SaveAsNewProfile(0, "Default");
+                    for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
+                        Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                        logger.LogInformation("Default config created");
-                        break;
-                    }
+                    logger.LogInformation("Default config created");
+                    break;
+                }
             }
 
             skipSave = false;
@@ -475,7 +468,7 @@ namespace DS4WinWPF
             if (!await appSettings.SaveAsync()) //if can't write to file
             {
                 if (MessageBox.Show("Cannot write at current location\nCopy Settings to AppData?", "DS4Windows",
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     try
                     {
@@ -487,7 +480,7 @@ namespace DS4WinWPF
                         Directory.CreateDirectory(Path.Combine(Global.RoamingAppDataPath,
                             Constants.ProfilesSubDirectory));
                         foreach (var s in Directory.GetFiles(Path.Combine(Global.ExecutableDirectory,
-                            Constants.ProfilesSubDirectory)))
+                                     Constants.ProfilesSubDirectory)))
                             File.Copy(s,
                                 Path.Combine(Global.RoamingAppDataPath, Constants.ProfilesSubDirectory,
                                     Path.GetFileName(s)));
@@ -584,7 +577,7 @@ namespace DS4WinWPF
                                     "DS4Windows_IPCResultData_ReadyEvent");
                             }
                             else
-                            // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
+                                // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
                             {
                                 bDoSendMsg = false;
                             }
@@ -702,7 +695,7 @@ namespace DS4WinWPF
             if (ThemeResources.TryGetValue(themeChoice, out var loc))
             {
                 Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                { Source = new Uri(loc, UriKind.Absolute) };
+                    { Source = new Uri(loc, UriKind.Absolute) };
 
                 if (fireChanged) ThemeChanged?.Invoke(this, EventArgs.Empty);
             }

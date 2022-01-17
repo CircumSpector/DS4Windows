@@ -13,6 +13,15 @@ namespace DS4Windows
         private const int HID_USAGE_GAMEPAD = 0x05;
         private static Guid _hidClassGuid = Guid.Empty;
 
+        public static Guid HidClassGuid
+        {
+            get
+            {
+                if (_hidClassGuid.Equals(Guid.Empty)) NativeMethods.HidD_GetHidGuid(ref _hidClassGuid);
+                return _hidClassGuid;
+            }
+        }
+
         public static bool IsConnected(string devicePath)
         {
             return EnumerateDevices().Any(x => x.Path == devicePath);
@@ -72,13 +81,6 @@ namespace DS4Windows
             return foundDevices;
         }
 
-        private class DeviceInfo
-        {
-            public string Path { get; init; }
-            public string Description { get; init; }
-            public string Parent { get; init; }
-        }
-
         private static IEnumerable<DeviceInfo> EnumerateDevices()
         {
             var devices = new List<DeviceInfo>();
@@ -100,7 +102,7 @@ namespace DS4Windows
                 var deviceInterfaceIndex = 0;
 
                 while (NativeMethods.SetupDiEnumDeviceInterfaces(deviceInfoSet, ref deviceInfoData, ref hidClass,
-                    deviceInterfaceIndex, ref deviceInterfaceData))
+                           deviceInterfaceIndex, ref deviceInterfaceData))
                 {
                     deviceInterfaceIndex++;
                     var devicePath = GetDevicePath(deviceInfoSet, deviceInterfaceData);
@@ -141,15 +143,6 @@ namespace DS4Windows
                 ref interfaceDetail, bufferSize, ref bufferSize, IntPtr.Zero)
                 ? interfaceDetail.DevicePath
                 : null;
-        }
-
-        public static Guid HidClassGuid
-        {
-            get
-            {
-                if (_hidClassGuid.Equals(Guid.Empty)) NativeMethods.HidD_GetHidGuid(ref _hidClassGuid);
-                return _hidClassGuid;
-            }
         }
 
         private static string GetDeviceDescription(IntPtr deviceInfoSet, ref NativeMethods.SP_DEVINFO_DATA devinfoData)
@@ -218,5 +211,12 @@ namespace DS4Windows
 
             return result;
         }
-   }
+
+        private class DeviceInfo
+        {
+            public string Path { get; init; }
+            public string Description { get; init; }
+            public string Parent { get; init; }
+        }
+    }
 }

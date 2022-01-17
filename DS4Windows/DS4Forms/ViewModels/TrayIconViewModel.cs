@@ -19,21 +19,20 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public const string ballonTitle = "DS4Windows";
         public static string trayTitle = $"DS4Windows v{Global.ExecutableProductVersion}";
 
-        private readonly IAppSettingsService appSettings;
+        [Obsolete] private readonly ReaderWriterLockSlim _colLocker = new();
 
-        [Obsolete]
-        private readonly ReaderWriterLockSlim _colLocker = new();
+        private readonly IAppSettingsService appSettings;
         private readonly MenuItem changeServiceItem;
         private readonly MenuItem closeItem;
         private readonly List<ControllerHolder> controllerList = new();
         private readonly ControlService controlService;
-        private string iconSource;
         private readonly MenuItem minimizeItem;
         private readonly MenuItem openItem;
         private readonly MenuItem openProgramItem;
-        private string tooltipText = "DS4Windows";
 
         private readonly IProfilesService profilesService;
+        private string iconSource;
+        private string tooltipText = "DS4Windows";
 
         [UsedImplicitly]
         [MissingLocalization]
@@ -190,7 +189,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                         var newItem = new MenuItem
                         {
                             Header = name,
-                            Tag = new SlotToProfileMap()
+                            Tag = new SlotToProfileMap
                             {
                                 Slot = idx,
                                 Profile = profile
