@@ -1,5 +1,4 @@
 ﻿using System;
-using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Library.InputDevices;
 using PropertyChanged;
 
@@ -20,13 +19,13 @@ namespace DS4Windows
     public enum VidPidFeatureSet : ushort
     {
         DefaultDS4 = 0,
-        OnlyInputData0x01 = 1,
-        OnlyOutputData0x05 = 2,
-        NoOutputData = 4,
-        NoBatteryReading = 8,
-        NoGyroCalib = 16,
-        MonitorAudio = 32,
-        VendorDefinedDevice = 64
+        OnlyInputData0x01 = 1 << 0,
+        OnlyOutputData0x05 = 1 << 2,
+        NoOutputData = 1 << 3,
+        NoBatteryReading = 1 << 4,
+        NoGyroCalib = 1 << 5,
+        MonitorAudio = 1 << 6,
+        VendorDefinedDevice = 1 << 7
     }
 
     public class VidPidInfo
@@ -90,9 +89,9 @@ namespace DS4Windows
 
     public delegate CheckVirtualInfo CheckVirtualDelegate(string deviceInstanceId);
 
-    public delegate ConnectionType CheckConnectionDelegate(HidDevice hidDevice);
+    public delegate ConnectionType CheckConnectionDelegate(HidDeviceV3 hidDevice);
 
     public delegate void PrepareInitDelegate(DS4Device device);
 
-    public delegate bool CheckPendingDevice(HidDevice device, VidPidInfo vidPidInfo);
+    public delegate bool CheckPendingDevice(HidDeviceV3 device, VidPidInfo vidPidInfo);
 }

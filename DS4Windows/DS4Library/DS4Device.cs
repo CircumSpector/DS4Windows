@@ -156,7 +156,7 @@ namespace DS4Windows
         protected GyroMouseSens gyroMouseSensSettings;
         protected uint HamSeed = 2351727372;
         protected bool hasInputEvts;
-        protected HidDevice hDevice;
+        protected HidDeviceV3 hDevice;
         protected bool idleInput = true;
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace DS4Windows
 
         protected int wheelRecalibrateActiveState;
 
-        public DS4Device(HidDevice hidDevice, string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4)
+        public DS4Device(HidDeviceV3 hidDevice, string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4)
         {
             hDevice = hidDevice;
             displayName = disName;
@@ -292,7 +292,7 @@ namespace DS4Windows
 
         public bool ExitOutputThread => exitOutputThread;
 
-        public HidDevice HidDevice => hDevice;
+        public HidDeviceV3 HidDevice => hDevice;
         public bool IsHidExclusive => HidDevice.IsExclusive;
 
         public bool IsExclusive => exclusiveStatus > ExclusiveStatus.Shared;
@@ -655,7 +655,7 @@ namespace DS4Windows
             if (btPollRate != value && value >= 0 && value <= 16) btPollRate = value;
         }
 
-        public static ConnectionType HidConnectionType(HidDevice hidDevice)
+        public static ConnectionType HidConnectionType(HidDeviceV3 hidDevice)
         {
             var result = ConnectionType.USB;
             if (hidDevice.Capabilities.InputReportByteLength == 64)
@@ -1139,7 +1139,7 @@ namespace DS4Windows
                     {
                         //HidDevice.ReadStatus res = hDevice.ReadFile(btInputReport);
                         //HidDevice.ReadStatus res = hDevice.ReadAsyncWithFileStream(btInputReport, READ_STREAM_TIMEOUT);
-                        HidDevice.ReadStatus res;
+                        HidDeviceV3.ReadStatus res;
 
 
                         using (GlobalTracer.Instance.BuildSpan(nameof(hDevice.ReadInputReport)).StartActive(true))
@@ -1152,7 +1152,7 @@ namespace DS4Windows
 
 
                         timeoutEvent = false;
-                        if (res == HidDevice.ReadStatus.Success)
+                        if (res == HidDeviceV3.ReadStatus.Success)
                         {
                             //Array.Copy(btInputReport, 2, inputReport, 0, inputReport.Length);
 
@@ -1221,7 +1221,7 @@ namespace DS4Windows
                         }
                         else
                         {
-                            if (res == HidDevice.ReadStatus.WaitTimedOut)
+                            if (res == HidDeviceV3.ReadStatus.WaitTimedOut)
                             {
                                 AppLogger.Instance.LogToGui(MacAddress + " disconnected due to timeout", true);
                             }
@@ -1260,9 +1260,9 @@ namespace DS4Windows
                             var res = hDevice.ReadInputReport(InputReportBuffer, inputReport.Length, out _);
                             Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
-                            if (res != HidDevice.ReadStatus.Success)
+                            if (res != HidDeviceV3.ReadStatus.Success)
                             {
-                                if (res == HidDevice.ReadStatus.WaitTimedOut)
+                                if (res == HidDeviceV3.ReadStatus.WaitTimedOut)
                                 {
                                     AppLogger.Instance.LogToGui(MacAddress + " disconnected due to timeout", true);
                                 }

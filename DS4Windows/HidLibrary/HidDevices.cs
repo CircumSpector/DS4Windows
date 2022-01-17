@@ -7,6 +7,7 @@ using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4Windows
 {
+    [Obsolete]
     public class HidDevices
     {
         private const int HID_USAGE_JOYSTICK = 0x04;
@@ -27,27 +28,27 @@ namespace DS4Windows
             return EnumerateDevices().Any(x => x.Path == devicePath);
         }
 
-        public static HidDevice GetDevice(string devicePath)
+        public static HidDeviceV3 GetDevice(string devicePath)
         {
             return Enumerate(devicePath).FirstOrDefault();
         }
 
-        public static IEnumerable<HidDevice> Enumerate(string devicePath)
+        public static IEnumerable<HidDeviceV3> Enumerate(string devicePath)
         {
             return EnumerateDevices().Where(x => x.Path == devicePath)
-                .Select(x => new HidDevice(x.Path, x.Description));
+                .Select(x => new HidDeviceV3(x.Path, x.Description));
         }
 
-        public static IEnumerable<HidDevice> EnumerateDs4(VidPidInfo[] devInfo, bool logVerbose = false)
+        public static IEnumerable<HidDeviceV3> EnumerateDs4(VidPidInfo[] devInfo, bool logVerbose = false)
         {
             var iEnumeratedDevCount = 0;
-            var foundDevices = new List<HidDevice>();
+            var foundDevices = new List<HidDeviceV3>();
             var devInfoLen = devInfo.Length;
             var devices = EnumerateDevices().ToList();
 
             foreach (var deviceInfo in devices)
             {
-                var device = new HidDevice(deviceInfo.Path, deviceInfo.Description, deviceInfo.Parent);
+                var device = new HidDeviceV3(deviceInfo.Path, deviceInfo.Description, deviceInfo.Parent);
                 iEnumeratedDevCount++;
                 var found = false;
                 for (var j = 0; !found && j < devInfoLen; j++)

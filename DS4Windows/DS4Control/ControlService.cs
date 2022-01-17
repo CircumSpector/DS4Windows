@@ -43,7 +43,7 @@ namespace DS4Windows
         IOutputSlotManager OutputslotMan { get; }
         IAppSettingsService GetAppSettings();
         void PostDs4DeviceInit(DS4Device device);
-        bool CheckForSupportedDevice(HidDevice device, VidPidInfo metaInfo);
+        bool CheckForSupportedDevice(HidDeviceV3 device, VidPidInfo metaInfo);
         CheckVirtualInfo CheckForVirtualDevice(string deviceInstanceId);
         void ShutDown();
         Task LoadPermanentSlotsConfig();
@@ -407,7 +407,7 @@ namespace DS4Windows
             }
         }
 
-        public bool CheckForSupportedDevice(HidDevice device, VidPidInfo metaInfo)
+        public bool CheckForSupportedDevice(HidDeviceV3 device, VidPidInfo metaInfo)
         {
             switch (metaInfo.InputDevType)
             {

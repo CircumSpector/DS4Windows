@@ -15,6 +15,7 @@ namespace DS4Windows
     /// <summary>
     ///     Compatible input device discovery and enumeration service.
     /// </summary>
+    [Obsolete]
     public interface IDS4DeviceEnumerator
     {
         event CheckVirtualDelegate CheckVirtualFunc;
@@ -45,6 +46,7 @@ namespace DS4Windows
     /// <summary>
     ///     Compatible input device discovery and enumeration service.
     /// </summary>
+    [Obsolete]
     public class DS4DeviceEnumerator : IDS4DeviceEnumerator
     {
         internal const int SONY_VID = 0x054C;
@@ -67,7 +69,7 @@ namespace DS4Windows
         private readonly HashSet<string> devicePaths = new();
 
         // Keep instance of opened exclusive mode devices not in use (Charging while using BT connection)
-        private readonly List<HidDevice> disabledDevices = new();
+        private readonly List<HidDeviceV3> disabledDevices = new();
         private readonly Stopwatch sw = new();
         public event CheckVirtualDelegate CheckVirtualFunc = null;
         public event PrepareInitDelegate PrepareDs4Init = null;
@@ -203,7 +205,7 @@ namespace DS4Windows
             return deviceInstanceId;
         }
 
-        private bool IsRealDs4(HidDevice hDevice)
+        private bool IsRealDs4(HidDeviceV3 hDevice)
         {
             // Assume true by default
             var result = true;
@@ -473,7 +475,7 @@ namespace DS4Windows
             
             if (disabledDevCount <= 0) return;
 
-            var disabledDevList = new List<HidDevice>();
+            var disabledDevList = new List<HidDeviceV3>();
             for (var devEnum = disabledDevices.GetEnumerator(); devEnum.MoveNext();)
                 //for (int i = 0, arlen = disabledDevCount; i < arlen; i++)
             {

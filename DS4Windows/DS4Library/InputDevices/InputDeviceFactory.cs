@@ -35,16 +35,16 @@ namespace DS4WinWPF.DS4Library.InputDevices
     public interface IInputDeviceFactory
     {
         /// <summary>
-        ///     Creates a new <see cref="DS4Device"/> based on <see cref="HidDevice"/>.
+        ///     Creates a new <see cref="DS4Device"/> based on <see cref="HidDeviceV3"/>.
         /// </summary>
         /// <param name="deviceType">The <see cref="InputDeviceType"/> to instantiate.</param>
-        /// <param name="hidDevice">The underlying <see cref="HidDevice"/> this device is based on.</param>
+        /// <param name="hidDevice">The underlying <see cref="HidDeviceV3"/> this device is based on.</param>
         /// <param name="displayName">The display name to use.</param>
         /// <param name="featureSet">Features altering device behaviour.</param>
         /// <returns>The new <see cref="DS4Device"/>.</returns>
         DS4Device CreateDevice(
             InputDeviceType deviceType,
-            HidDevice hidDevice,
+            HidDeviceV3 hidDevice,
             string displayName,
             VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4
         );
@@ -56,16 +56,16 @@ namespace DS4WinWPF.DS4Library.InputDevices
     public class InputDeviceFactory : IInputDeviceFactory
     {
         /// <summary>
-        ///     Creates a new <see cref="DS4Device"/> based on <see cref="HidDevice"/>.
+        ///     Creates a new <see cref="DS4Device"/> based on <see cref="HidDeviceV3"/>.
         /// </summary>
         /// <param name="deviceType">The <see cref="InputDeviceType"/> to instantiate.</param>
-        /// <param name="hidDevice">The underlying <see cref="HidDevice"/> this device is based on.</param>
+        /// <param name="hidDevice">The underlying <see cref="HidDeviceV3"/> this device is based on.</param>
         /// <param name="displayName">The display name to use.</param>
         /// <param name="featureSet">Features altering device behaviour.</param>
         /// <returns>The new <see cref="DS4Device"/>.</returns>
         public DS4Device CreateDevice(
             InputDeviceType deviceType,
-            HidDevice hidDevice,
+            HidDeviceV3 hidDevice,
             string displayName,
             VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4
         )

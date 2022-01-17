@@ -9,7 +9,7 @@ using PInvoke;
 
 namespace DS4Windows
 {
-    public class HidDevice : IDisposable
+    public class HidDeviceV3 : IDisposable
     {
         public enum ReadStatus
         {
@@ -30,7 +30,7 @@ namespace DS4Windows
         //private bool _monitorDeviceEvents;
         private PhysicalAddress serial;
 
-        internal HidDevice(string devicePath, string description = null, string parentPath = null)
+        internal HidDeviceV3(string devicePath, string description = null, string parentPath = null)
         {
             DevicePath = devicePath;
             Description = description;

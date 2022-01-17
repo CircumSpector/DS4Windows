@@ -177,7 +177,7 @@ namespace DS4Windows.InputDevices
         private StickAxisData rightStickYData;
         private byte[] rumbleReportBuffer;
 
-        public JoyConDevice(HidDevice hidDevice,
+        public JoyConDevice(HidDeviceV3 hidDevice,
             string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4) :
             base(hidDevice, disName, featureSet)
         {
@@ -270,7 +270,7 @@ namespace DS4Windows.InputDevices
             rumbleReportBuffer = new byte[RUMBLE_REPORT_LEN];
         }
 
-        public static ConnectionType DetermineConnectionType(HidDevice hDevice)
+        public static ConnectionType DetermineConnectionType(HidDeviceV3 hDevice)
         {
             var result = ConnectionType.BT;
             return result;
@@ -375,7 +375,7 @@ namespace DS4Windows.InputDevices
                     var res = hDevice.ReadInputReport(InputReportBuffer, inputReportBuffer.Length, out _);
                     Marshal.Copy(InputReportBuffer, inputReportBuffer, 0, inputReportBuffer.Length);
 
-                    if (res == HidDevice.ReadStatus.Success)
+                    if (res == HidDeviceV3.ReadStatus.Success)
                     {
                         if (inputReportBuffer[0] != 0x30)
                         {
@@ -844,10 +844,10 @@ namespace DS4Windows.InputDevices
             if (result && checkResponse)
             {
                 tmpReport = new byte[INPUT_REPORT_LEN];
-                HidDevice.ReadStatus res;
+                HidDeviceV3.ReadStatus res;
                 res = hDevice.ReadWithTimeout(tmpReport, SUBCOMMAND_RESPONSE_TIMEOUT);
                 var tries = 1;
-                while (res == HidDevice.ReadStatus.Success &&
+                while (res == HidDeviceV3.ReadStatus.Success &&
                        tmpReport[0] != 0x21 && tmpReport[14] != subcommand && tries < 100)
                 {
                     //Console.WriteLine("TRY AGAIN: {0}", tmpReport[0]);

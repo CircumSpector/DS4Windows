@@ -58,7 +58,7 @@ namespace DS4Windows.InputDevices
         private bool timeStampInit;
         private uint timeStampPrevious;
 
-        public DualSenseDevice(HidDevice hidDevice, string disName,
+        public DualSenseDevice(HidDeviceV3 hidDevice, string disName,
             VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4) :
             base(hidDevice, disName, featureSet)
         {
@@ -152,7 +152,7 @@ namespace DS4Windows.InputDevices
             if (ConnectionType == ConnectionType.BT) SendInitialBTOutputReport();
         }
 
-        public static ConnectionType DetermineConnectionType(HidDevice hidDevice)
+        public static ConnectionType DetermineConnectionType(HidDeviceV3 hidDevice)
         {
             ConnectionType result;
             if (hidDevice.Capabilities.InputReportByteLength == 64)
@@ -358,7 +358,7 @@ namespace DS4Windows.InputDevices
                         var res = hDevice.ReadInputReport(InputReportBuffer, inputReport.Length, out _);
                         Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
-                        if (res == HidDevice.ReadStatus.Success)
+                        if (res == HidDeviceV3.ReadStatus.Success)
                         {
                             var recvCrc32 = inputReport[BT_INPUT_REPORT_CRC32_POS] |
                                             (uint)(inputReport[CRC32_POS_1] << 8) |
@@ -396,7 +396,7 @@ namespace DS4Windows.InputDevices
                         }
                         else
                         {
-                            if (res == HidDevice.ReadStatus.WaitTimedOut)
+                            if (res == HidDeviceV3.ReadStatus.WaitTimedOut)
                             {
                                 AppLogger.Instance.LogToGui(MacAddress + " disconnected due to timeout", true);
                             }
@@ -427,9 +427,9 @@ namespace DS4Windows.InputDevices
                         var res = hDevice.ReadInputReport(InputReportBuffer, inputReport.Length, out _);
                         Marshal.Copy(InputReportBuffer, inputReport, 0, inputReport.Length);
 
-                        if (res != HidDevice.ReadStatus.Success)
+                        if (res != HidDeviceV3.ReadStatus.Success)
                         {
-                            if (res == HidDevice.ReadStatus.WaitTimedOut)
+                            if (res == HidDeviceV3.ReadStatus.WaitTimedOut)
                             {
                                 AppLogger.Instance.LogToGui(MacAddress + " disconnected due to timeout", true);
                             }
