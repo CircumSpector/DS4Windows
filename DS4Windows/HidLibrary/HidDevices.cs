@@ -23,29 +23,10 @@ namespace DS4Windows
             return Enumerate(devicePath).FirstOrDefault();
         }
 
-        public static IEnumerable<HidDevice> Enumerate()
-        {
-            return EnumerateDevices().Select(x => new HidDevice(x.Path, x.Description));
-        }
-
         public static IEnumerable<HidDevice> Enumerate(string devicePath)
         {
             return EnumerateDevices().Where(x => x.Path == devicePath)
                 .Select(x => new HidDevice(x.Path, x.Description));
-        }
-
-        public static IEnumerable<HidDevice> Enumerate(int vendorId, params int[] productIds)
-        {
-            return EnumerateDevices().Select(x => new HidDevice(x.Path, x.Description)).Where(x =>
-                x.Attributes.VendorId == vendorId &&
-                productIds.Contains(x.Attributes.ProductId));
-        }
-
-        public static IEnumerable<HidDevice> Enumerate(int[] vendorIds, params int[] productIds)
-        {
-            return EnumerateDevices().Select(x => new HidDevice(x.Path, x.Description)).Where(x =>
-                vendorIds.Contains(x.Attributes.VendorId) &&
-                productIds.Contains(x.Attributes.ProductId));
         }
 
         public static IEnumerable<HidDevice> EnumerateDs4(VidPidInfo[] devInfo, bool logVerbose = false)
@@ -89,11 +70,6 @@ namespace DS4Windows
                 AppLogger.Instance.LogToGui("-------------------------", false);
 
             return foundDevices;
-        }
-
-        public static IEnumerable<HidDevice> Enumerate(int vendorId)
-        {
-            return EnumerateDevices().Select(x => new HidDevice(x.Path, x.Description)).Where(x => x.Attributes.VendorId == vendorId);
         }
 
         private class DeviceInfo
