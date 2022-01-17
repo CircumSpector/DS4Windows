@@ -128,22 +128,6 @@ namespace DS4WinWPF.DS4Forms
             Process.Start("control", "bthprops.cpl");
         }
 
-        private void HidHideInstall_Click(object sender, RoutedEventArgs e)
-        {
-            if (File.Exists(DS4Windows.Global.ExecutableDirectory + $"\\{InstHidHideFileNameX64}"))
-            {
-                File.Delete(DS4Windows.Global.ExecutableDirectory + $"\\{InstHidHideFileNameX64}");
-            }
-
-            string tempInstHidFileName = DS4Windows.Global.ExecutableDirectory + $"\\{InstHidHideFileNameX64}.tmp";
-            if (File.Exists(tempInstHidFileName))
-            {
-                File.Delete(tempInstHidFileName);
-            }
-
-            EnableControls(false);
-        }
-
         private void FakerInputInstallBtn_Click(object sender, RoutedEventArgs e)
         {
             if (File.Exists(DS4Windows.Global.ExecutableDirectory + $"\\{instFakerInputFileName}"))
