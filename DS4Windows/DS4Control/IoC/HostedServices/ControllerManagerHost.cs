@@ -15,12 +15,9 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
             this.controllerManagerService = controllerManagerService;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //
-            // TODO: implement me!
-            // 
-            await Task.Delay(-1, stoppingToken);
+            return Task.CompletedTask;
         }
     }
 }

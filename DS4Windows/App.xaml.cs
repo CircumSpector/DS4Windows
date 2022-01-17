@@ -116,6 +116,9 @@ namespace DS4WinWPF
 
             services.AddTransient<IProfileList, ProfileList>();
 
+            //
+            // ViGEm Client (Gen1) service
+            // 
             services.AddSingleton(provider =>
             {
                 try
@@ -171,6 +174,7 @@ namespace DS4WinWPF
 
             services.AddHostedService<StartupChecksUserNotifications>();
             services.AddHostedService<ControllerManagerHost>();
+            services.AddHostedService<WebServerHost>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -180,9 +184,10 @@ namespace DS4WinWPF
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            //
+            // Boot all hosted services
+            // 
             await host.StartAsync();
-
-            var t = host.Services.GetRequiredService<IExternalDependenciesService>().HidHideLatestVersion;
 
             runShutdown = true;
             skipSave = true;
@@ -191,8 +196,6 @@ namespace DS4WinWPF
             // TODO: why is this here?
             // 
             requestClient = new HttpClient();
-
-            _ = Task.Run(async () => await host.Services.GetRequiredService<WebServer>().RunAsync());
 
             appSettings = host.Services.GetRequiredService<IAppSettingsService>();
             var appLogger = host.Services.GetRequiredService<IAppLogger>();
@@ -353,6 +356,25 @@ namespace DS4WinWPF
             base.OnStartup(e);
         }
 
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            if (runShutdown)
+            {
+                logger.LogInformation("Request App Shutdown");
+                CleanShutdown();
+            }
+
+            using (host)
+            {
+                //
+                // TODO: fix me!
+                // 
+                await host.StopAsync();
+            }
+
+            base.OnExit(e);
+        }
+
         private void RootHubOnDebug(object? sender, LogEntryEventArgs e)
         {
             logger.LogDebug(e.Data);
@@ -380,21 +402,6 @@ namespace DS4WinWPF
                 Util.PROCESS_INFORMATION_CLASS.ProcessPagePriority, ref pagePrio, 4);
         }
 
-        protected override async void OnExit(ExitEventArgs e)
-        {
-            if (runShutdown)
-            {
-                logger.LogInformation("Request App Shutdown");
-                CleanShutdown();
-            }
-
-            using (host)
-            {
-                await host.StopAsync();
-            }
-
-            base.OnExit(e);
-        }
 
         public event EventHandler ThemeChanged;
 
