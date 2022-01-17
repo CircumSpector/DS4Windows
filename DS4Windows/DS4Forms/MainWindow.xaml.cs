@@ -104,9 +104,6 @@ namespace DS4WinWPF.DS4Forms
 
             InitializeComponent();
 
-            deviceNotificationListener.DeviceArrived += DeviceNotificationListenerOnDeviceArrived;
-            deviceNotificationListener.DeviceRemoved += DeviceNotificationListenerOnDeviceRemoved;
-
             mainWinVm = mainWindowsViewModel;
             DataContext = mainWinVm;
 
@@ -176,22 +173,6 @@ namespace DS4WinWPF.DS4Forms
             timerThread.Join();
         }
         
-        private void DeviceNotificationListenerOnDeviceArrived(string obj)
-        {
-            //
-            // TODO: implement me
-            //
-            logger.LogInformation("HID Device {Path} arrived", obj);
-        }
-        
-        private void DeviceNotificationListenerOnDeviceRemoved(string obj)
-        {
-            //
-            // TODO: implement me
-            // 
-            logger.LogInformation("HID Device {Path} removed", obj);
-        }
-
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);

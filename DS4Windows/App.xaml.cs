@@ -108,7 +108,7 @@ namespace DS4WinWPF
             services.AddSingleton<IAppLogger, AppLogger>();
             services.AddSingleton<MainWindow>();
 
-            services.AddTransient<IDeviceNotificationListener, DeviceNotificationListener>();
+            services.AddSingleton<IDeviceNotificationListener, DeviceNotificationListener>();
 
             services.AddTransient<MainWindowsViewModel>();
             services.AddTransient<SettingsViewModel>();
@@ -170,6 +170,7 @@ namespace DS4WinWPF
             #endregion
 
             services.AddHostedService<StartupChecksUserNotifications>();
+            services.AddHostedService<ControllerManagerHost>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)

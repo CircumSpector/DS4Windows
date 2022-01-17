@@ -67,3 +67,5 @@ This application benefits from these awesome projects (appearance in no special 
   - LocalizationExtension is a the easy way to localize any type of DependencyProperties or native Properties on DependencyObjects
 - [EmbedIO](https://github.com/unosquare/embedio)
   - A tiny, cross-platform, module based web server for .NET
+- [AsyncErrorHandler.Fody](https://github.com/Fody/AsyncErrorHandler)
+  - An extension for Fody to integrate error handling into async and TPL code
