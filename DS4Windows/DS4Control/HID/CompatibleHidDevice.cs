@@ -6,6 +6,7 @@ using DS4Windows;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Library.InputDevices;
+using MethodTimer;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace DS4WinWPF.DS4Control.HID
@@ -41,7 +42,7 @@ namespace DS4WinWPF.DS4Control.HID
         public InputDeviceType DeviceType { get; init; }
 
         /// <summary>
-        ///     The <see cref="ConnectionType"/> of this <see cref="CompatibleHidDevice" />.
+        ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
         /// </summary>
         public ConnectionType Connection { get; init; }
 
@@ -53,7 +54,8 @@ namespace DS4WinWPF.DS4Control.HID
         /// <summary>
         ///     Determine the connection type of this device.
         /// </summary>
-        /// <returns>The <see cref="ConnectionType"/> detected, or null otherwise.</returns>
+        /// <returns>The <see cref="ConnectionType" /> detected, or null otherwise.</returns>
+        [Time]
         private ConnectionType? LookupConnectionType()
         {
             var device = PnPDevice.GetDeviceByInterfaceId(Path);
@@ -112,6 +114,7 @@ namespace DS4WinWPF.DS4Control.HID
         /// </summary>
         public abstract void PopulateSerial();
 
+        [Time]
         protected PhysicalAddress ReadSerial(byte featureId = 0x12)
         {
             var serial = new PhysicalAddress(new byte[] { 0, 0, 0, 0, 0, 0 });
@@ -128,21 +131,11 @@ namespace DS4WinWPF.DS4Control.HID
             }
             else
             {
-                var buffer = new byte[126];
-#if WIN64
-                ulong bufferLen = 126;
-#else
-                uint bufferLen = 126;
-#endif
-
                 try
                 {
                     if (!string.IsNullOrEmpty(SerialNumberString))
                     {
-                        var address = Encoding.Unicode.GetString(buffer).Replace("\0", string.Empty).ToUpper();
-                        address =
-                            $"{address[0]}{address[1]}:{address[2]}{address[3]}:{address[4]}{address[5]}:{address[6]}{address[7]}:{address[8]}{address[9]}:{address[10]}{address[11]}";
-                        serial = PhysicalAddress.Parse(address);
+                        serial = PhysicalAddress.Parse(SerialNumberString);
                     }
                 }
                 catch
@@ -192,6 +185,12 @@ namespace DS4WinWPF.DS4Control.HID
             return PhysicalAddress.Parse(address);
         }
 
+        public override string ToString()
+        {
+            return $"{DisplayName} ({Serial}) via {Connection}";
+        }
+
+        [Time]
         public static CompatibleHidDevice Create(InputDeviceType deviceType, HidDevice source)
         {
             switch (deviceType)
@@ -218,6 +217,11 @@ namespace DS4WinWPF.DS4Control.HID
 
         public sealed override void PopulateSerial()
         {
+            OpenDevice();
+            Serial = Connection == ConnectionType.SONYWA
+                ? GenerateFakeHwSerial()
+                : ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
+            CloseDevice();
         }
     }
 

@@ -198,7 +198,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // 
             foreach (var hidDevice in filtered)
             {
-                logger.LogInformation("Adding supported input device {Device} to cache",
+                logger.LogInformation("Adding supported input device {Device}",
                     hidDevice);
 
                 //
@@ -216,6 +216,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 // Notify compatible device found and ready
                 // 
                 ControllerReady?.Invoke(device);
+
+                logger.LogInformation("Added identified input device {Device}",
+                    device.ToString());
             }
 
             //
