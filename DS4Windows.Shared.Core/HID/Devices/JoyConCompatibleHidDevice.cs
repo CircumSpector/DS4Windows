@@ -1,8 +1,12 @@
-﻿namespace DS4Windows.Shared.Core.HID.Devices
+﻿using System;
+
+namespace DS4Windows.Shared.Core.HID.Devices
 {
     public class JoyConCompatibleHidDevice : CompatibleHidDevice
     {
-        public JoyConCompatibleHidDevice(HidDevice source, CompatibleHidDeviceFeatureSet featureSet) : base(source, featureSet)
+        public JoyConCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+            CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
+            featureSet, serviceProvider)
         {
         }
 

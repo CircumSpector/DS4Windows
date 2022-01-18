@@ -132,15 +132,19 @@ namespace DS4Windows.Shared.Core.Services
         };
 
         private readonly IHidDeviceEnumeratorService enumeratorService;
+
         private readonly ILogger<ControllersEnumeratorService> logger;
+
+        private readonly IServiceProvider serviceProvider;
 
         private readonly ObservableCollection<CompatibleHidDevice> supportedDevices;
 
         public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-            IHidDeviceEnumeratorService enumeratorService)
+            IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider)
         {
             this.logger = logger;
             this.enumeratorService = enumeratorService;
+            this.serviceProvider = serviceProvider;
 
             enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
             enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
@@ -205,7 +209,8 @@ namespace DS4Windows.Shared.Core.Services
                 var device = CompatibleHidDevice.CreateFrom(
                     deviceMeta.InputDevType,
                     hidDevice,
-                    deviceMeta.FeatureSet
+                    deviceMeta.FeatureSet,
+                    serviceProvider
                 );
 
                 supportedDevices.Add(device);
@@ -251,7 +256,8 @@ namespace DS4Windows.Shared.Core.Services
             var device = CompatibleHidDevice.CreateFrom(
                 deviceMeta.InputDevType, 
                 hidDevice,
-                deviceMeta.FeatureSet
+                deviceMeta.FeatureSet,
+                serviceProvider
             );
 
             if (!supportedDevices.Contains(device))

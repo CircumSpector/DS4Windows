@@ -4,6 +4,8 @@ using System.Net.NetworkInformation;
 using DS4Windows.Shared.Core.HID.Devices;
 using DS4Windows.Shared.Core.Util;
 using MethodTimer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace DS4Windows.Shared.Core.HID
@@ -21,14 +23,22 @@ namespace DS4Windows.Shared.Core.HID
 
         protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
-        protected CompatibleHidDevice(HidDevice source, CompatibleHidDeviceFeatureSet featureSet)
+        protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+            CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider)
         {
             //
             // This makes this instance independent
             // 
             source.DeepCloneTo(this);
 
+            Services = serviceProvider;
+            DeviceType = deviceType;
             FeatureSet = featureSet;
+
+            //
+            // Grab new logger
+            // 
+            Logger = Services.GetRequiredService<ILogger<CompatibleHidDevice>>();
 
             //
             // Query and store connection type
@@ -65,6 +75,16 @@ namespace DS4Windows.Shared.Core.HID
         ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
         /// </summary>
         public CompatibleHidDeviceFeatureSet FeatureSet { get; }
+
+        /// <summary>
+        ///     Service provider for injected services.
+        /// </summary>
+        protected IServiceProvider Services { get; }
+
+        /// <summary>
+        ///     Logger instance.
+        /// </summary>
+        protected ILogger<CompatibleHidDevice> Logger { get; }
 
         /// <summary>
         ///     Determine the connection type of this device.
@@ -208,22 +228,23 @@ namespace DS4Windows.Shared.Core.HID
         /// <param name="deviceType">The <see cref="InputDeviceType" /> to base the new device on.</param>
         /// <param name="source">The source <see cref="HidDevice" /> to copy from.</param>
         /// <param name="featureSet">The <see cref="CompatibleHidDeviceFeatureSet" /> flags to use to create this device.</param>
+        /// <param name="services">The <see cref="IServiceProvider" />.</param>
         /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
         [Time]
         public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source,
-            CompatibleHidDeviceFeatureSet featureSet)
+            CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services)
         {
             switch (deviceType)
             {
                 case InputDeviceType.DualShock4:
-                    return new DualShock4CompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
+                    return new DualShock4CompatibleHidDevice(deviceType, source, featureSet, services);
                 case InputDeviceType.DualSense:
-                    return new DualSenseCompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
+                    return new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services);
                 case InputDeviceType.SwitchPro:
-                    return new SwitchProCompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
+                    return new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services);
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
-                    return new JoyConCompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
+                    return new JoyConCompatibleHidDevice(deviceType, source, featureSet, services);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
             }

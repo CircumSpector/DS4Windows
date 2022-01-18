@@ -1,10 +1,14 @@
-﻿namespace DS4Windows.Shared.Core.HID.Devices
+﻿using System;
+
+namespace DS4Windows.Shared.Core.HID.Devices
 {
     public class DualSenseCompatibleHidDevice : CompatibleHidDevice
     {
         private const byte SerialFeatureId = 9;
 
-        public DualSenseCompatibleHidDevice(HidDevice source, CompatibleHidDeviceFeatureSet featureSet) : base(source, featureSet)
+        public DualSenseCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+            CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
+            featureSet, serviceProvider)
         {
         }
 
