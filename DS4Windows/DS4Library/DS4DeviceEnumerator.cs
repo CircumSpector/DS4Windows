@@ -477,6 +477,9 @@ namespace DS4Windows
             if (disabledDevCount <= 0) return;
 
             var disabledDevList = new List<HidDeviceV3>();
+            //
+            // TODO: memory leak
+            // 
             for (var devEnum = disabledDevices.GetEnumerator(); devEnum.MoveNext();)
                 //for (int i = 0, arlen = disabledDevCount; i < arlen; i++)
             {
