@@ -205,6 +205,7 @@ namespace DS4Windows.Shared.Core.HID
                     return new SwitchProCompatibleHidDevice(source) { DeviceType = deviceType };
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
+                    return new JoyConCompatibleHidDevice(source) { DeviceType = deviceType };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
             }
