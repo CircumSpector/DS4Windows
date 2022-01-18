@@ -23,8 +23,14 @@ namespace DS4Windows.Shared.Core.HID
 
         protected CompatibleHidDevice(HidDevice source)
         {
+            //
+            // This makes this instance independent
+            // 
             source.DeepCloneTo(this);
 
+            //
+            // Query and store connection type
+            // 
             var connection = LookupConnectionType();
 
             if (!connection.HasValue)
@@ -32,6 +38,9 @@ namespace DS4Windows.Shared.Core.HID
 
             Connection = connection.Value;
 
+            //
+            // Request or generate serial number (MAC address)
+            // 
             PopulateSerial();
         }
 
