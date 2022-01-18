@@ -11,19 +11,34 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
+    /// <summary>
+    ///     Enumerates and watches hot-plugging of supported input devices (controllers).
+    /// </summary>
     internal interface IControllersEnumeratorService
     {
         ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
 
         event Action DeviceListReady;
 
+        /// <summary>
+        ///     Fired every time a supported device is found and read.
+        /// </summary>
         event Action<HidDevice> ControllerReady;
 
+        /// <summary>
+        ///     Fired every time a supported device has departed.
+        /// </summary>
         event Action<HidDevice> ControllerRemoved;
 
+        /// <summary>
+        ///     Enumerate system for compatible devices. This rebuilds <see cref="SupportedDevices"/>.
+        /// </summary>
         void EnumerateDevices();
     }
 
+    /// <summary>
+    ///     Enumerates and watches hot-plugging of supported input devices (controllers).
+    /// </summary>
     internal class ControllersEnumeratorService : IControllersEnumeratorService
     {
         private const int SonyVid = 0x054C;
@@ -143,14 +158,19 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             SupportedDevices = new ReadOnlyObservableCollection<HidDevice>(supportedDevices);
         }
 
+        /// <inheritdoc />
         public ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
 
+        /// <inheritdoc />
         public event Action DeviceListReady;
 
+        /// <inheritdoc />
         public event Action<HidDevice> ControllerReady;
 
+        /// <inheritdoc />
         public event Action<HidDevice> ControllerRemoved;
 
+        /// <inheritdoc />
         [Time]
         public void EnumerateDevices()
         {
