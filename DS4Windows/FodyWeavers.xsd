@@ -53,6 +53,7 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
+        <xs:element name="MethodTimer" minOccurs="0" maxOccurs="1" type="xs:anyType" />
         <xs:element name="ConfigureAwait" minOccurs="0" maxOccurs="1">
           <xs:complexType>
             <xs:attribute name="ContinueOnCapturedContext" type="xs:boolean" />

@@ -6,6 +6,7 @@ using DS4Windows;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.HID;
 using DS4WinWPF.DS4Library.InputDevices;
+using MethodTimer;
 using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
@@ -141,6 +142,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         public ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
         public event Action DeviceListReady;
 
+        [Time]
         public void EnumerateDevices()
         {
             enumeratorService.EnumerateDevices();

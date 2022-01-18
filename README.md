@@ -55,6 +55,8 @@ This application benefits from these awesome projects (appearance in no special 
   - An extension for Fody to integrate error handling into async and TPL code
 - [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
   - Configure async code's ConfigureAwait at a global level
+- [MethodTimer.Fody](https://github.com/Fody/MethodTimer)
+  - Injects some very basic method timing code
 - [Hardcodet NotifyIcon for WPF](https://github.com/hardcodet/wpf-notifyicon)
   - NotifyIcon for .Net Core 3.1 and .Net 5 WPF
 - [Jaeger Tracing](https://github.com/jaegertracing/jaeger-client-csharp)
