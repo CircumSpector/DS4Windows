@@ -212,6 +212,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             DeviceListReady?.Invoke();
         }
 
+        [Time]
         private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
         {
             var known = KnownDevices.FirstOrDefault(d =>
@@ -227,6 +228,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 supportedDevices.Add(hidDevice);
         }
 
+        [Time]
         private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
         {
             if (supportedDevices.Contains(hidDevice))

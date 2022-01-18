@@ -3,4 +3,5 @@
   <AsyncErrorHandler />
   <ConfigureAwait />
   <MethodTimer />
+  <WeakEventHandler />
 </Weavers>
