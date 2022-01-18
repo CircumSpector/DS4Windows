@@ -21,12 +21,14 @@ namespace DS4Windows.Shared.Core.HID
 
         protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
-        protected CompatibleHidDevice(HidDevice source)
+        protected CompatibleHidDevice(HidDevice source, CompatibleHidDeviceFeatureSet featureSet)
         {
             //
             // This makes this instance independent
             // 
             source.DeepCloneTo(this);
+
+            FeatureSet = featureSet;
 
             //
             // Query and store connection type
@@ -58,6 +60,11 @@ namespace DS4Windows.Shared.Core.HID
         ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice" />.
         /// </summary>
         public PhysicalAddress Serial { get; protected set; }
+
+        /// <summary>
+        ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
+        /// </summary>
+        public CompatibleHidDeviceFeatureSet FeatureSet { get; }
 
         /// <summary>
         ///     Determine the connection type of this device.
@@ -200,21 +207,23 @@ namespace DS4Windows.Shared.Core.HID
         /// </summary>
         /// <param name="deviceType">The <see cref="InputDeviceType" /> to base the new device on.</param>
         /// <param name="source">The source <see cref="HidDevice" /> to copy from.</param>
+        /// <param name="featureSet">The <see cref="CompatibleHidDeviceFeatureSet" /> flags to use to create this device.</param>
         /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
         [Time]
-        public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source)
+        public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source,
+            CompatibleHidDeviceFeatureSet featureSet)
         {
             switch (deviceType)
             {
                 case InputDeviceType.DualShock4:
-                    return new DualShock4CompatibleHidDevice(source) { DeviceType = deviceType };
+                    return new DualShock4CompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
                 case InputDeviceType.DualSense:
-                    return new DualSenseCompatibleHidDevice(source) { DeviceType = deviceType };
+                    return new DualSenseCompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
                 case InputDeviceType.SwitchPro:
-                    return new SwitchProCompatibleHidDevice(source) { DeviceType = deviceType };
+                    return new SwitchProCompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
-                    return new JoyConCompatibleHidDevice(source) { DeviceType = deviceType };
+                    return new JoyConCompatibleHidDevice(source, featureSet) { DeviceType = deviceType };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
             }

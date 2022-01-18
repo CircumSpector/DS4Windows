@@ -4,7 +4,7 @@ namespace DS4Windows.Shared.Core.HID.Devices
 {
     public class SwitchProCompatibleHidDevice : CompatibleHidDevice
     {
-        public SwitchProCompatibleHidDevice(HidDevice source) : base(source)
+        public SwitchProCompatibleHidDevice(HidDevice source, CompatibleHidDeviceFeatureSet featureSet) : base(source, featureSet)
         {
         }
 

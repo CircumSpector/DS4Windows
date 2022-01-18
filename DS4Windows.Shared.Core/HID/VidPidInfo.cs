@@ -14,7 +14,7 @@ namespace DS4Windows.Shared.Core.HID
     // VendorDefinedDevice  = Accept the gamepad VID/PID even when it would be shown as vendor defined HID device on Windows (fex DS3 over DsMiniHid gamepad may have vendor defined HID type)
     //
     [Flags]
-    public enum VidPidFeatureSet : ushort
+    public enum CompatibleHidDeviceFeatureSet : ushort
     {
         DefaultDS4 = 0,
         OnlyInputData0x01 = 1 << 0,
@@ -33,7 +33,7 @@ namespace DS4Windows.Shared.Core.HID
             int pid,
             string name = "Generic DS4",
             InputDeviceType inputDevType = InputDeviceType.DualShock4,
-            VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4
+            CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.DefaultDS4
         )
         {
             Vid = vid;
@@ -51,6 +51,6 @@ namespace DS4Windows.Shared.Core.HID
 
         public InputDeviceType InputDevType { get; }
 
-        public VidPidFeatureSet FeatureSet { get; }
+        public CompatibleHidDeviceFeatureSet FeatureSet { get; }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class JoyConCompatibleHidDevice : CompatibleHidDevice
     {
-        public JoyConCompatibleHidDevice(HidDevice source) : base(source)
+        public JoyConCompatibleHidDevice(HidDevice source, CompatibleHidDeviceFeatureSet featureSet) : base(source, featureSet)
         {
         }
 
