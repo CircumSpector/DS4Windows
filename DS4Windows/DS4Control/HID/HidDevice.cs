@@ -10,7 +10,7 @@ namespace DS4WinWPF.DS4Control.HID
     /// <summary>
     ///     Describes a HID device's basic properties.
     /// </summary>
-    internal sealed class HidDevice : IEquatable<HidDevice>, IDisposable
+    internal class HidDevice : IEquatable<HidDevice>, IDisposable
     {
         private readonly IntPtr inputOverlapped;
 
@@ -33,7 +33,7 @@ namespace DS4WinWPF.DS4Control.HID
         /// <summary>
         ///     Native handle to device.
         /// </summary>
-        public Kernel32.SafeObjectHandle Handle { get; private set; }
+        protected Kernel32.SafeObjectHandle Handle { get; private set; }
 
         /// <summary>
         ///     The Instance ID of this device.
