@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using DS4Windows.Shared.Core.Util;
 using PInvoke;
 
 namespace DS4Windows.Shared.Core.Services
@@ -7,6 +10,10 @@ namespace DS4Windows.Shared.Core.Services
     public interface IHidHideControlService
     {
         bool IsActive { get; set; }
+
+        IEnumerable<string> BlockedInstanceIds { get; }
+
+        IEnumerable<string> AllowedApplicationPaths { get; }
     }
 
     public class HidHideControlService : IHidHideControlService
@@ -80,6 +87,114 @@ namespace DS4Windows.Shared.Core.Services
                         out _,
                         IntPtr.Zero
                     );
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(buffer);
+                }
+            }
+        }
+
+        public IEnumerable<string> BlockedInstanceIds
+        {
+            get
+            {
+                using var handle = Kernel32.CreateFile(ControlDeviceFilename,
+                    Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
+                    Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                    IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                    Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
+                    Kernel32.SafeObjectHandle.Null
+                );
+
+                var buffer = IntPtr.Zero;
+                
+                try
+                {
+                    // Get required buffer size
+                    // Check return value for success
+                    Kernel32.DeviceIoControl(
+                        handle,
+                        unchecked((int) IoctlGetBlacklist),
+                        IntPtr.Zero,
+                        0,
+                        IntPtr.Zero,
+                        0,
+                        out var required,
+                        IntPtr.Zero
+                    );
+
+                    buffer = Marshal.AllocHGlobal(required);
+
+                    // Get actual buffer content
+                    // Check return value for success
+                    Kernel32.DeviceIoControl(
+                        handle,
+                        unchecked((int) IoctlGetBlacklist),
+                        IntPtr.Zero,
+                        0,
+                        buffer,
+                        required,
+                        out _,
+                        IntPtr.Zero
+                    );
+
+                    // Store existing block-list in a more manageable "C#" fashion
+                    return buffer.MultiSzPointerToStringArray(required).ToList();
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(buffer);
+                }
+            }
+        }
+
+        public IEnumerable<string> AllowedApplicationPaths
+        {
+            get
+            {
+                using var handle = Kernel32.CreateFile(ControlDeviceFilename,
+                    Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
+                    Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                    IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                    Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
+                    Kernel32.SafeObjectHandle.Null
+                );
+
+                var buffer = IntPtr.Zero;
+                
+                try
+                {
+                    // Get required buffer size
+                    // Check return value for success
+                    Kernel32.DeviceIoControl(
+                        handle,
+                        unchecked((int) IoctlGetWhitelist),
+                        IntPtr.Zero,
+                        0,
+                        IntPtr.Zero,
+                        0,
+                        out var required,
+                        IntPtr.Zero
+                    );
+
+                    buffer = Marshal.AllocHGlobal(required);
+
+                    // Get actual buffer content
+                    // Check return value for success
+                    Kernel32.DeviceIoControl(
+                        handle,
+                        unchecked((int) IoctlGetWhitelist),
+                        IntPtr.Zero,
+                        0,
+                        buffer,
+                        required,
+                        out _,
+                        IntPtr.Zero
+                    );
+
+                    // Store existing block-list in a more manageable "C#" fashion
+                    return buffer.MultiSzPointerToStringArray(required).ToList();
                 }
                 finally
                 {

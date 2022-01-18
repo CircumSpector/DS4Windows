@@ -112,7 +112,7 @@ namespace DS4Windows.Shared.Core.Util
 
             // Walk up the directory tree to get the "deepest" potential junction
             for (var current = new DirectoryInfo(pathPart);
-                 current != null && current.Exists;
+                 current is { Exists: true };
                  current = Directory.GetParent(current.FullName))
             {
                 if (!IsPathReparsePoint(current)) continue;
@@ -122,7 +122,7 @@ namespace DS4Windows.Shared.Core.Util
                         NormalizePath(m.DriveLetter) == NormalizePath(current.FullName))
                     ?.DevicePath;
 
-                pathNoRoot = pathPart.Substring(current.FullName.Length);
+                pathNoRoot = pathPart[current.FullName.Length..];
 
                 break;
             }
@@ -133,7 +133,7 @@ namespace DS4Windows.Shared.Core.Util
                 var driveLetter = Path.GetPathRoot(pathPart);
                 devicePath = GetVolumeMappings().FirstOrDefault(m =>
                     m.DriveLetter.Equals(driveLetter, StringComparison.InvariantCultureIgnoreCase))?.DevicePath;
-                pathNoRoot = pathPart.Substring(Path.GetPathRoot(pathPart).Length);
+                pathNoRoot = pathPart[Path.GetPathRoot(pathPart).Length..];
             }
 
             if (string.IsNullOrEmpty(devicePath))

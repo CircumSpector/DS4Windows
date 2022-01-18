@@ -98,6 +98,7 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
+            services.AddSingleton<IHidHideControlService, HidHideControlService>();
             services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
             services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
             services.AddSingleton<IInputDeviceFactory, InputDeviceFactory>();
@@ -190,6 +191,10 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
+
+            var blocked = host.Services.GetRequiredService<IHidHideControlService>().BlockedInstanceIds;
+            
+            var allowed = host.Services.GetRequiredService<IHidHideControlService>().AllowedApplicationPaths;
 
             var version = Global.ExecutableProductVersion;
 
