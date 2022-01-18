@@ -92,6 +92,29 @@ namespace DS4Windows.Shared.Core.Util
         }
 
         /// <summary>
+        ///     Translates a "DOS device" path to user-land path.
+        /// </summary>
+        /// <param name="devicePath">The DOS device path to convert.</param>
+        /// <returns>The user-land path.</returns>
+        public static string DosDevicePathToPath(string devicePath)
+        {
+            //
+            // TODO: cover and test junctions!
+            // 
+
+            var mapping = GetVolumeMappings()
+                .FirstOrDefault(m => devicePath.Contains(m.DevicePath));
+
+            if (mapping is null)
+                throw new ArgumentException("Failed to translate provided path");
+
+            var relativePath = devicePath.Replace(mapping.DevicePath, string.Empty)
+                .TrimStart(Path.DirectorySeparatorChar);
+
+            return Path.Combine(mapping.DriveLetter, relativePath);
+        }
+
+        /// <summary>
         ///     Translates a user-land file path to "DOS device" path.
         /// </summary>
         /// <param name="path">The file path in normal namespace format.</param>

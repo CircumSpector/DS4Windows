@@ -17,6 +17,7 @@ using DS4Windows;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.HostedServices;
 using DS4Windows.Shared.Core.Services;
+using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
@@ -191,6 +192,9 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
+
+            VolumeHelper.DosDevicePathToPath(
+                @"\Device\HarddiskVolume7\Development\GitHub\DS4Windows\DS4Windows\bin\x64\Debug\net5.0-windows\DS4Windows.exe");
 
             var blocked = host.Services.GetRequiredService<IHidHideControlService>().BlockedInstanceIds;
             
