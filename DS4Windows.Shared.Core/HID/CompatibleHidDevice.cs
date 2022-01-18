@@ -130,7 +130,7 @@ namespace DS4Windows.Shared.Core.HID
         public abstract void PopulateSerial();
 
         [Time]
-        protected PhysicalAddress ReadSerial(byte featureId = 0x12)
+        protected PhysicalAddress ReadSerial(byte featureId)
         {
             var serial = new PhysicalAddress(new byte[] { 0, 0, 0, 0, 0, 0 });
 
