@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.NetworkInformation;
+using DS4Windows.Shared.Core.HID.Devices;
 using DS4Windows.Shared.Core.Util;
 using MethodTimer;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -129,10 +130,7 @@ namespace DS4Windows.Shared.Core.HID
             {
                 try
                 {
-                    if (!string.IsNullOrEmpty(SerialNumberString))
-                    {
-                        serial = PhysicalAddress.Parse(SerialNumberString);
-                    }
+                    if (!string.IsNullOrEmpty(SerialNumberString)) serial = PhysicalAddress.Parse(SerialNumberString);
                 }
                 catch
                 {
@@ -186,6 +184,12 @@ namespace DS4Windows.Shared.Core.HID
             return $"{DisplayName} ({Serial}) via {Connection}";
         }
 
+        /// <summary>
+        ///     Craft a new specific input device depending on supplied <see cref="InputDeviceType" />.
+        /// </summary>
+        /// <param name="deviceType">The <see cref="InputDeviceType" /> to base the new device on.</param>
+        /// <param name="source">The source <see cref="HidDevice" /> to copy from.</param>
+        /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
         [Time]
         public static CompatibleHidDevice Create(InputDeviceType deviceType, HidDevice source)
         {
@@ -201,38 +205,6 @@ namespace DS4Windows.Shared.Core.HID
                 default:
                     throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
             }
-        }
-    }
-
-    public class DualShock4CompatibleHidDevice : CompatibleHidDevice
-    {
-        public DualShock4CompatibleHidDevice(HidDevice source) : base(source)
-        {
-            PopulateSerial();
-        }
-
-        public sealed override void PopulateSerial()
-        {
-            OpenDevice();
-            
-            CloseDevice();
-        }
-    }
-
-    public class DualSenseCompatibleHidDevice : CompatibleHidDevice
-    {
-        private const byte SerialFeatureId = 9;
-
-        public DualSenseCompatibleHidDevice(HidDevice source) : base(source)
-        {
-            PopulateSerial();
-        }
-
-        public sealed override void PopulateSerial()
-        {
-            OpenDevice();
-            Serial = ReadSerial(SerialFeatureId);
-            CloseDevice();
         }
     }
 }
