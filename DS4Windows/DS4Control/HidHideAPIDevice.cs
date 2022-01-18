@@ -7,6 +7,7 @@ using DS4Windows;
 
 namespace DS4WinWPF.DS4Control
 {
+    [Obsolete]
     class HidHideAPIDevice : IDisposable
     {
         private const uint IOCTL_GET_WHITELIST = 0x80016000;

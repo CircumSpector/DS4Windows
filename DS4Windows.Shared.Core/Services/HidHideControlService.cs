@@ -13,7 +13,7 @@ namespace DS4Windows.Shared.Core.Services
     public interface IHidHideControlService
     {
         /// <summary>
-        ///     True if device hiding is globally active, false otherwise.
+        ///     Gets or sets whether global device hiding is currently active or not.
         /// </summary>
         bool IsActive { get; set; }
 
