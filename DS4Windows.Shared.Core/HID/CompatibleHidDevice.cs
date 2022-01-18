@@ -67,7 +67,7 @@ namespace DS4Windows.Shared.Core.HID
                 // Parent is Bluetooth device
                 // 
                 if (Equals(deviceClass, BluetoothDeviceClassGuid))
-                    return ConnectionType.BT;
+                    return ConnectionType.Bluetooth;
 
                 //
                 // USB or via Sony Wireless Adapter
@@ -80,7 +80,7 @@ namespace DS4Windows.Shared.Core.HID
                     var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
 
                     if (children.Count == 1)
-                        return ConnectionType.USB;
+                        return ConnectionType.Usb;
 
                     var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
 
@@ -90,8 +90,8 @@ namespace DS4Windows.Shared.Core.HID
                     // Match friendly name reported by Wireless Adapter
                     // 
                     return friendlyName.Equals(SonyWirelessAdapterFriendlyName, StringComparison.OrdinalIgnoreCase)
-                        ? ConnectionType.SONYWA
-                        : ConnectionType.USB;
+                        ? ConnectionType.SonyWirelessAdapter
+                        : ConnectionType.Usb;
                 }
 
                 var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);

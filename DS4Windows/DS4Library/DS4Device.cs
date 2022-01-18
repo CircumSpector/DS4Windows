@@ -659,14 +659,14 @@ namespace DS4Windows
 
         public static ConnectionType HidConnectionType(HidDeviceV3 hidDevice)
         {
-            var result = ConnectionType.USB;
+            var result = ConnectionType.Usb;
             if (hidDevice.Capabilities.InputReportByteLength == 64)
             {
-                if (hidDevice.Capabilities.NumberFeatureDataIndices == 22) result = ConnectionType.SONYWA;
+                if (hidDevice.Capabilities.NumberFeatureDataIndices == 22) result = ConnectionType.SonyWirelessAdapter;
             }
             else
             {
-                result = ConnectionType.BT;
+                result = ConnectionType.Bluetooth;
             }
 
             return result;
@@ -693,7 +693,7 @@ namespace DS4Windows
             //
             // Connected via USB or proprietary wireless adapter which behaves equal to USB
             // 
-            if (ConnectionType is ConnectionType.USB or ConnectionType.SONYWA)
+            if (ConnectionType is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
             {
                 inputReport = new byte[64];
                 InputReportBuffer = Marshal.AllocHGlobal(inputReport.Length);
@@ -701,7 +701,7 @@ namespace DS4Windows
                 outputReport = new byte[hDevice.Capabilities.OutputReportByteLength];
                 outReportBuffer = new byte[hDevice.Capabilities.OutputReportByteLength];
 
-                if (ConnectionType == ConnectionType.USB)
+                if (ConnectionType == ConnectionType.Usb)
                 {
                     warnInterval = WARN_INTERVAL_USB;
                     var tempAttr = hDevice.Attributes;
@@ -767,7 +767,7 @@ namespace DS4Windows
             if (runCalib)
                 RefreshCalibration();
 
-            if (ConnectionType == ConnectionType.BT &&
+            if (ConnectionType == ConnectionType.Bluetooth &&
                 !featureSet.HasFlag(VidPidFeatureSet.NoOutputData) &&
                 !featureSet.HasFlag(VidPidFeatureSet.OnlyOutputData0x05))
                 CheckOutputReportTypes();
@@ -833,9 +833,9 @@ namespace DS4Windows
         public virtual void RefreshCalibration()
         {
             var calibration = new byte[41];
-            calibration[0] = ConnectionType == ConnectionType.BT ? (byte)0x05 : (byte)0x02;
+            calibration[0] = ConnectionType == ConnectionType.Bluetooth ? (byte)0x05 : (byte)0x02;
 
-            if (ConnectionType == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.Bluetooth)
             {
                 var found = false;
                 for (var tries = 0; !found && tries < 5; tries++)
@@ -859,7 +859,7 @@ namespace DS4Windows
                     if (validCrc) found = true;
                 }
 
-                sixAxis.SetCalibrationData(ref calibration, ConnectionType == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, ConnectionType == ConnectionType.Usb);
 
                 if (hDevice.Attributes.ProductId == 0x5C4 && hDevice.Attributes.VendorId == 0x054C &&
                     sixAxis.fixupInvertedGyroAxis())
@@ -870,7 +870,7 @@ namespace DS4Windows
             else
             {
                 hDevice.ReadFeatureData(calibration);
-                sixAxis.SetCalibrationData(ref calibration, ConnectionType == ConnectionType.USB);
+                sixAxis.SetCalibrationData(ref calibration, ConnectionType == ConnectionType.Usb);
             }
         }
 
@@ -880,7 +880,7 @@ namespace DS4Windows
 
             if (ds4Input == null)
             {
-                if (ConnectionType == ConnectionType.BT)
+                if (ConnectionType == ConnectionType.Bluetooth)
                 {
                     if (BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
                     {
@@ -959,7 +959,7 @@ namespace DS4Windows
 
         protected bool WriteOutput(byte[] outputBuffer)
         {
-            if (ConnectionType == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.Bluetooth)
             {
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
@@ -975,7 +975,7 @@ namespace DS4Windows
 
         protected bool WriteOutput()
         {
-            if (ConnectionType == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.Bluetooth)
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
 
@@ -1082,7 +1082,7 @@ namespace DS4Windows
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = ConnectionType != ConnectionType.BT ||
+                var syncWriteReport = ConnectionType != ConnectionType.Bluetooth ||
                                       BTOutputMethod == BTOutputReportMethod.WriteFile;
                 //bool syncWriteReport = true;
                 var forceWrite = false;
@@ -1137,7 +1137,7 @@ namespace DS4Windows
                     // Sony DS4 and compatible gamepads send data packets with 0x11 type code in BT mode. 
                     // Will no longer support any third party fake DS4 that does not behave according to official DS4 specs
                     //if (conType == ConnectionType.BT)
-                    if (ConnectionType == ConnectionType.BT && (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
+                    if (ConnectionType == ConnectionType.Bluetooth && (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
                     {
                         //HidDevice.ReadStatus res = hDevice.ReadFile(btInputReport);
                         //HidDevice.ReadStatus res = hDevice.ReadAsyncWithFileStream(btInputReport, READ_STREAM_TIMEOUT);
@@ -1312,7 +1312,7 @@ namespace DS4Windows
                         oldtime = curtime;
 
                         // Not going to do featureSet check anymore
-                        if (ConnectionType == ConnectionType.BT && btInputReport[0] != 0x11 &&
+                        if (ConnectionType == ConnectionType.Bluetooth && btInputReport[0] != 0x11 &&
                             (featureSet & VidPidFeatureSet.OnlyInputData0x01) == 0)
                             //Received incorrect report, skip it
                             continue;
@@ -1497,7 +1497,7 @@ namespace DS4Windows
                         currentState.TrackPadTouch1.Y =
                             (short)((inputReport[42] << 4) | ((ushort)(inputReport[41] & 0xf0) >> 4));
 
-                        if (ConnectionType == ConnectionType.SONYWA)
+                        if (ConnectionType == ConnectionType.SonyWirelessAdapter)
                         {
                             var controllerSynced = inputReport[31] == 0;
                             if (controllerSynced != synced)
@@ -1618,7 +1618,7 @@ namespace DS4Windows
                         ds4InactiveFrame = currentState.FrameCounter == pState.FrameCounter;
                         if (!ds4InactiveFrame) isRemoved = false;
 
-                        if (ConnectionType == ConnectionType.USB)
+                        if (ConnectionType == ConnectionType.Usb)
                         {
                             if (idleTimeout == 0)
                             {
@@ -1656,7 +1656,7 @@ namespace DS4Windows
                             {
                                 AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                                if (ConnectionType == ConnectionType.BT)
+                                if (ConnectionType == ConnectionType.Bluetooth)
                                 {
                                     if (DisconnectBT(true))
                                     {
@@ -1664,7 +1664,7 @@ namespace DS4Windows
                                         return; // all done
                                     }
                                 }
-                                else if (ConnectionType == ConnectionType.SONYWA)
+                                else if (ConnectionType == ConnectionType.SonyWirelessAdapter)
                                 {
                                     DisconnectDongle();
                                 }
@@ -1739,7 +1739,7 @@ namespace DS4Windows
 
         private unsafe void PrepareOutputReportInner(ref bool change, ref bool haptime)
         {
-            var usingBT = ConnectionType == ConnectionType.BT;
+            var usingBT = ConnectionType == ConnectionType.Bluetooth;
 
             if (usingBT && (featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
             {
@@ -1818,7 +1818,7 @@ namespace DS4Windows
                 //setHapticState();
 
                 var quitOutputThread = false;
-                var usingBT = ConnectionType == ConnectionType.BT;
+                var usingBT = ConnectionType == ConnectionType.Bluetooth;
 
                 // Some gamepads don't support lightbar and rumble, so no need to write out anything (writeOut always fails, so DS4Windows would accidentally force quit the gamepad connection).
                 // If noOutputData featureSet flag is set then don't try to write out anything to the gamepad device.
@@ -1982,9 +1982,9 @@ namespace DS4Windows
         public virtual bool DisconnectWireless(bool callRemoval = false)
         {
             var result = false;
-            if (ConnectionType == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.Bluetooth)
                 result = DisconnectBT(callRemoval);
-            else if (ConnectionType == ConnectionType.SONYWA) result = DisconnectDongle(callRemoval);
+            else if (ConnectionType == ConnectionType.SonyWirelessAdapter) result = DisconnectDongle(callRemoval);
 
             return result;
         }

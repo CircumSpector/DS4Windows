@@ -221,7 +221,7 @@ namespace DS4Windows.InputDevices
             OptionsStore = nativeOptionsStore = new SwitchProControllerOptions();
             SetupOptionsEvents();
 
-            warnInterval = ConnectionType == ConnectionType.BT ? WARN_INTERVAL_BT : WARN_INTERVAL_USB;
+            warnInterval = ConnectionType == ConnectionType.Bluetooth ? WARN_INTERVAL_BT : WARN_INTERVAL_USB;
 
             inputReportBuffer = new byte[INPUT_REPORT_LEN];
             InputReportBuffer = Marshal.AllocHGlobal(inputReportBuffer.Length);
@@ -233,9 +233,9 @@ namespace DS4Windows.InputDevices
         {
             ConnectionType result;
             if (hDevice.DevicePath.ToUpper().Contains(Constants.BluetoothHidGuild.ToString().ToUpper()))
-                result = ConnectionType.BT;
+                result = ConnectionType.Bluetooth;
             else
-                result = ConnectionType.USB;
+                result = ConnectionType.Usb;
 
             return result;
         }
@@ -308,7 +308,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = ConnectionType != ConnectionType.BT;
+                var syncWriteReport = ConnectionType != ConnectionType.Bluetooth;
                 //bool forceWrite = false;
 
                 //int maxBatteryValue = 0;
@@ -578,7 +578,7 @@ namespace DS4Windows.InputDevices
                     var args = new SixAxisEventArgs(currentState.ReportTimeStamp, currentState.Motion);
                     sixAxis.FireSixAxisEvent(args);
 
-                    if (ConnectionType == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.Usb)
                     {
                         if (idleTimeout == 0)
                         {
@@ -616,7 +616,7 @@ namespace DS4Windows.InputDevices
                         {
                             AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (ConnectionType == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.Bluetooth)
                                 if (DisconnectBT(true))
                                 {
                                     timeoutExecuted = true;
@@ -658,7 +658,7 @@ namespace DS4Windows.InputDevices
 
         public void SetOperational()
         {
-            if (ConnectionType == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.Usb)
             {
                 RunUSBSetup();
                 Thread.Sleep(300);
@@ -714,7 +714,7 @@ namespace DS4Windows.InputDevices
             EnableFastPollRate();
 
             // USB Connections seem to need a delay after switching input modes
-            if (ConnectionType == ConnectionType.USB) Thread.Sleep(1000);
+            if (ConnectionType == ConnectionType.Usb) Thread.Sleep(1000);
 
             SetInitRumble();
             //Thread.Sleep(1000);
@@ -1238,7 +1238,7 @@ namespace DS4Windows.InputDevices
                 byte[] powerChoiceArray = { 0x01 };
                 Subcommand(SwitchProSubCmd.SET_LOW_POWER_STATE, powerChoiceArray, 1, true);
 
-                if (ConnectionType == ConnectionType.USB)
+                if (ConnectionType == ConnectionType.Usb)
                 {
                     var data = new byte[64];
                     data[0] = 0x80;

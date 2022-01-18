@@ -120,7 +120,7 @@ namespace DS4Windows.InputDevices
 
             ConnectionType = DetermineConnectionType(hDevice);
 
-            if (ConnectionType == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.Usb)
             {
                 dataBytes = new InputReportDataBytesUSB();
 
@@ -151,16 +151,16 @@ namespace DS4Windows.InputDevices
 
             // Need to blank LED lights so lightbar will change colors
             // as requested
-            if (ConnectionType == ConnectionType.BT) SendInitialBTOutputReport();
+            if (ConnectionType == ConnectionType.Bluetooth) SendInitialBTOutputReport();
         }
 
         public static ConnectionType DetermineConnectionType(HidDeviceV3 hidDevice)
         {
             ConnectionType result;
             if (hidDevice.Capabilities.InputReportByteLength == 64)
-                result = ConnectionType.USB;
+                result = ConnectionType.Usb;
             else
-                result = ConnectionType.BT;
+                result = ConnectionType.Bluetooth;
 
             return result;
         }
@@ -189,9 +189,9 @@ namespace DS4Windows.InputDevices
         public override void RefreshCalibration()
         {
             var calibration = new byte[41];
-            calibration[0] = ConnectionType == ConnectionType.BT ? (byte)0x05 : (byte)0x05;
+            calibration[0] = ConnectionType == ConnectionType.Bluetooth ? (byte)0x05 : (byte)0x05;
 
-            if (ConnectionType == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.Bluetooth)
             {
                 var found = false;
                 for (var tries = 0; !found && tries < 5; tries++)
@@ -235,7 +235,7 @@ namespace DS4Windows.InputDevices
 
             if (ds4Input == null)
             {
-                if (ConnectionType == ConnectionType.BT)
+                if (ConnectionType == ConnectionType.Bluetooth)
                 {
                     //ds4Output = new Thread(performDs4Output);
                     //ds4Output.Priority = ThreadPriority.Normal;
@@ -305,7 +305,7 @@ namespace DS4Windows.InputDevices
                 timeoutEvent = false;
                 ds4InactiveFrame = true;
                 idleInput = true;
-                var syncWriteReport = ConnectionType != ConnectionType.BT;
+                var syncWriteReport = ConnectionType != ConnectionType.Bluetooth;
                 //bool forceWrite = false;
 
                 var maxBatteryValue = 0;
@@ -322,7 +322,7 @@ namespace DS4Windows.InputDevices
                 var crcpos = BT_INPUT_REPORT_CRC32_POS;
                 var crcoffset = 0;
                 long latencySum = 0;
-                var reportOffset = ConnectionType == ConnectionType.BT ? 1 : 0;
+                var reportOffset = ConnectionType == ConnectionType.Bluetooth ? 1 : 0;
 
                 // Run continuous calibration on Gyro when starting input loop
                 sixAxis.ResetContinuousCalibration();
@@ -353,7 +353,7 @@ namespace DS4Windows.InputDevices
 
                     readWaitEv.Set();
 
-                    if (ConnectionType == ConnectionType.BT)
+                    if (ConnectionType == ConnectionType.Bluetooth)
                     {
                         timeoutEvent = false;
 
@@ -463,7 +463,7 @@ namespace DS4Windows.InputDevices
                     lastTimeElapsed = (long)lastTimeElapsedDouble;
                     oldtime = curtime;
 
-                    if (ConnectionType == ConnectionType.BT && inputReport[0] != 0x31)
+                    if (ConnectionType == ConnectionType.Bluetooth && inputReport[0] != 0x31)
                         // Received incorrect report, skip it
                         continue;
 
@@ -730,7 +730,7 @@ namespace DS4Windows.InputDevices
                     }
                     ///*/
 
-                    if (ConnectionType == ConnectionType.USB)
+                    if (ConnectionType == ConnectionType.Usb)
                     {
                         if (idleTimeout == 0)
                         {
@@ -768,7 +768,7 @@ namespace DS4Windows.InputDevices
                         {
                             AppLogger.Instance.LogToGui(MacAddress + " disconnecting due to idle disconnect", false);
 
-                            if (ConnectionType == ConnectionType.BT)
+                            if (ConnectionType == ConnectionType.Bluetooth)
                                 if (DisconnectBT(true))
                                 {
                                     exitInputThread = true;
@@ -822,16 +822,16 @@ namespace DS4Windows.InputDevices
 
         private void SendEmptyOutputReport()
         {
-            var reportOffset = ConnectionType == ConnectionType.BT ? 1 : 0;
+            var reportOffset = ConnectionType == ConnectionType.Bluetooth ? 1 : 0;
             Array.Clear(outputReport, 0, outputReport.Length);
 
-            outputReport[0] = ConnectionType == ConnectionType.USB ? OUTPUT_REPORT_ID_USB : OUTPUT_REPORT_ID_BT;
+            outputReport[0] = ConnectionType == ConnectionType.Usb ? OUTPUT_REPORT_ID_USB : OUTPUT_REPORT_ID_BT;
 
             // Disable haptics and trigger motors
             outputReport[1 + reportOffset] = useRumble ? (byte)0x0F : (byte)0x0C;
             outputReport[2 + reportOffset] = 0x15; // Toggle all LED lights. 0x01 | 0x04 | 0x10
 
-            if (ConnectionType == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.Bluetooth)
             {
                 outputReport[1] = OUTPUT_REPORT_ID_DATA;
 
@@ -876,7 +876,7 @@ namespace DS4Windows.InputDevices
             var change = false;
             var rumbleSet = CurrentHaptics.IsRumbleSet();
 
-            if (ConnectionType == ConnectionType.USB)
+            if (ConnectionType == ConnectionType.Usb)
             {
                 outputReport[0] = OUTPUT_REPORT_ID_USB; // Report ID
                 // 0x01 Set the main motors (also requires flag 0x02)
@@ -1224,7 +1224,7 @@ namespace DS4Windows.InputDevices
         private bool WriteReport()
         {
             bool result;
-            if (ConnectionType == ConnectionType.BT)
+            if (ConnectionType == ConnectionType.Bluetooth)
                 // DualSense seems to only accept output data via the Interrupt endpoint
                 result = hDevice.WriteOutputReportViaInterrupt(outputReport, READ_STREAM_TIMEOUT);
             //result = hDevice.WriteOutputReportViaControl(outputReport);

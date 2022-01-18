@@ -319,7 +319,7 @@ namespace DS4Windows
                         case InputDeviceType.DualSense:
                             serial = hDevice.ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
                             break;
-                        case InputDeviceType.DualShock4 when info.CheckConnection(hDevice) == ConnectionType.SONYWA:
+                        case InputDeviceType.DualShock4 when info.CheckConnection(hDevice) == ConnectionType.SonyWirelessAdapter:
                             serial = hDevice.GenerateFakeHwSerial();
                             break;
                         default:

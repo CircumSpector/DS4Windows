@@ -337,7 +337,7 @@ namespace DS4Windows
             }
 
             meta.ConnectionType =
-                d.GetConnectionType() == ConnectionType.USB ? DsConnection.Usb : DsConnection.Bluetooth;
+                d.GetConnectionType() == ConnectionType.Usb ? DsConnection.Usb : DsConnection.Bluetooth;
             meta.IsActive = !d.IsDs4Idle();
 
             var batteryLevel = d.GetBattery();
@@ -1327,7 +1327,7 @@ namespace DS4Windows
 
         private void CheckQuickCharge(DS4Device device)
         {
-            if (device.ConnectionType == ConnectionType.BT && appSettings.Settings.QuickCharge &&
+            if (device.ConnectionType == ConnectionType.Bluetooth && appSettings.Settings.QuickCharge &&
                 device.Charging)
                 // Set disconnect flag here. Later Hotplug event will check
                 // for presence of flag and remove the device then
@@ -1367,12 +1367,12 @@ namespace DS4Windows
 
                     if (appSettings.Settings.DisconnectBluetoothAtStop && !tempDevice.IsCharging() || suspending)
                     {
-                        if (tempDevice.GetConnectionType() == ConnectionType.BT)
+                        if (tempDevice.GetConnectionType() == ConnectionType.Bluetooth)
                         {
                             tempDevice.StopUpdate();
                             tempDevice.DisconnectBT(true);
                         }
-                        else if (tempDevice.GetConnectionType() == ConnectionType.SONYWA)
+                        else if (tempDevice.GetConnectionType() == ConnectionType.SonyWirelessAdapter)
                         {
                             tempDevice.StopUpdate();
                             tempDevice.DisconnectDongle(true);
@@ -1969,7 +1969,7 @@ namespace DS4Windows
 
             var removed = Resources.ControllerWasRemoved.Replace("*Mac address*", (ind + 1).ToString());
             if (device.GetBattery() <= 20 &&
-                device.GetConnectionType() == ConnectionType.BT && !device.IsCharging())
+                device.GetConnectionType() == ConnectionType.Bluetooth && !device.IsCharging())
                 removed += ". " + Resources.ChargeController;
 
             LogDebug(removed);

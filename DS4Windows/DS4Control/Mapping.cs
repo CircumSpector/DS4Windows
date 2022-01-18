@@ -3424,14 +3424,14 @@ namespace DS4Windows
                                     {
                                         var deviceConn = d.GetConnectionType();
                                         //bool exclusive = /*tempBool =*/ d.isExclusive();
-                                        if (deviceConn == ConnectionType.BT)
+                                        if (deviceConn == ConnectionType.Bluetooth)
                                         {
                                             d.DisconnectBT();
                                             ReleaseActionKeys(action, device);
                                             return;
                                         }
 
-                                        if (deviceConn == ConnectionType.SONYWA) action.PressRelease = true;
+                                        if (deviceConn == ConnectionType.SonyWirelessAdapter) action.PressRelease = true;
                                     }
                                 }
                                 else if (action.TypeId == SpecialActionV3.ActionTypeId.BatteryCheck)
@@ -3514,7 +3514,7 @@ namespace DS4Windows
                                     actionFound = true;
                                     var d = ctrl.DS4Controllers[device];
                                     var deviceConn = d.GetConnectionType();
-                                    if (deviceConn == ConnectionType.SONYWA && d.IsSynced())
+                                    if (deviceConn == ConnectionType.SonyWirelessAdapter && d.IsSynced())
                                         if (d.IsDs4Idle())
                                         {
                                             d.DisconnectDongle();

@@ -274,10 +274,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             var tempDev = holder?.Device;
             if (tempDev != null && tempDev.Synced && !tempDev.Charging)
             {
-                if (tempDev.ConnectionType == ConnectionType.BT)
+                if (tempDev.ConnectionType == ConnectionType.Bluetooth)
                     //tempDev.StopUpdate();
                     tempDev.DisconnectBT();
-                else if (tempDev.ConnectionType == ConnectionType.SONYWA) tempDev.DisconnectDongle();
+                else if (tempDev.ConnectionType == ConnectionType.SonyWirelessAdapter) tempDev.DisconnectDongle();
             }
 
             //controllerList[idx] = null;

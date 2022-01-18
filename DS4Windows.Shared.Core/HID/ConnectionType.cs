@@ -2,8 +2,8 @@
 {
     public enum ConnectionType : byte
     {
-        BT,
-        SONYWA,
-        USB
+        Bluetooth,
+        SonyWirelessAdapter,
+        Usb
     } // Prioritize Bluetooth when both BT and USB are connected.
 }

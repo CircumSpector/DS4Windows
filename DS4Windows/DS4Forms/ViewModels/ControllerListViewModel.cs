@@ -263,7 +263,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var imgName =
-                    (string) Application.Current.FindResource(Device.ConnectionType == ConnectionType.USB
+                    (string) Application.Current.FindResource(Device.ConnectionType == ConnectionType.Usb
                         ? "UsbImg"
                         : "BtImg");
                 var source = $"/DS4Windows;component/Resources/{imgName}";
@@ -459,10 +459,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             if (Device.Synced && !Device.Charging)
             {
-                if (Device.ConnectionType == ConnectionType.BT)
+                if (Device.ConnectionType == ConnectionType.Bluetooth)
                     //device.StopUpdate();
                     Device.QueueEvent(() => { Device.DisconnectBT(); });
-                else if (Device.ConnectionType == ConnectionType.SONYWA) Device.DisconnectDongle();
+                else if (Device.ConnectionType == ConnectionType.SonyWirelessAdapter) Device.DisconnectDongle();
             }
         }
     }
