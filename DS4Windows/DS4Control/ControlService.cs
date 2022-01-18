@@ -12,6 +12,8 @@ using System.Windows;
 using System.Windows.Threading;
 using AdonisUI.Controls;
 using DS4Windows.InputDevices;
+using DS4Windows.Shared.Core.HID;
+using DS4Windows.Shared.Core.Util;
 using DS4Windows.VJoyFeeder;
 using DS4WinWPF;
 using DS4WinWPF.DS4Control;

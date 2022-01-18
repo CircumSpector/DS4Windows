@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using DS4Windows;
-using DS4Windows.InputDevices;
-using DS4WinWPF.DS4Control.HID;
-using DS4WinWPF.DS4Library.InputDevices;
+using DS4Windows.Shared.Core.HID;
 using MethodTimer;
 using Microsoft.Extensions.Logging;
 
-namespace DS4WinWPF.DS4Control.IoC.Services
+namespace DS4Windows.Shared.Core.Services
 {
     /// <summary>
     ///     Enumerates and watches hot-plugging of supported input devices (controllers).
     /// </summary>
-    internal interface IControllersEnumeratorService
+    public interface IControllersEnumeratorService
     {
         ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
 
@@ -39,7 +36,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// <summary>
     ///     Enumerates and watches hot-plugging of supported input devices (controllers).
     /// </summary>
-    internal class ControllersEnumeratorService : IControllersEnumeratorService
+    public class ControllersEnumeratorService : IControllersEnumeratorService
     {
         private const int SonyVid = 0x054C;
         private const int RazerVid = 0x1532;
@@ -66,8 +63,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             ),
             new(SonyVid, 0x0CE6, "DualSense",
                 InputDeviceType.DualSense,
-                VidPidFeatureSet.DefaultDS4,
-                DualSenseDevice.DetermineConnectionType
+                VidPidFeatureSet.DefaultDS4
             ),
             new(RazerVid, 0x1000, "Razer Raiju PS4"),
             new(NaconVid, 0x0D01, "Nacon Revol Pro v.1",
@@ -127,11 +123,11 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 VidPidFeatureSet
                     .NoBatteryReading), // SnakeByte Gamepad for PS4 (wired only. No gyro. No light bar). If it doesn't work then try the latest gamepad firmware from https://mysnakebyte.com/
             new(NintendoVendorId, SwitchProProductId, "Switch Pro", InputDeviceType.SwitchPro,
-                VidPidFeatureSet.DefaultDS4, SwitchProDevice.DetermineConnectionType),
+                VidPidFeatureSet.DefaultDS4),
             new(NintendoVendorId, JoyconLProductId, "JoyCon (L)", InputDeviceType.JoyConL,
-                VidPidFeatureSet.DefaultDS4, JoyConDevice.DetermineConnectionType),
+                VidPidFeatureSet.DefaultDS4),
             new(NintendoVendorId, JoyconRProductId, "JoyCon (R)", InputDeviceType.JoyConR,
-                VidPidFeatureSet.DefaultDS4, JoyConDevice.DetermineConnectionType),
+                VidPidFeatureSet.DefaultDS4),
             new(0x7545, 0x1122, "Gioteck VX4"), // Gioteck VX4 (no real lightbar, only some RGB leds)
             new(0x7331, 0x0001, "DualShock 3 (DS4 Emulation)", InputDeviceType.DualShock4,
                 VidPidFeatureSet.NoGyroCalib |
@@ -257,6 +253,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             // Notify compatible device found and ready
             // 
             ControllerReady?.Invoke(device);
+
+            logger.LogInformation("Added identified input device {Device}",
+                device.ToString());
         }
 
         [Time]

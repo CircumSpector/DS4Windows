@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using DS4Windows.Shared.Core.HID;
 using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.Util
@@ -10,10 +11,8 @@ namespace DS4WinWPF.DS4Control.Util
     /// <summary>
     ///     Utility interface to add device arrival/removal notifications to WPF window.
     /// </summary>
-    public interface IDeviceNotificationListener
+    public interface IDeviceNotificationListener : IDeviceNotificationListenerSubscriber
     {
-        event Action<string> DeviceArrived;
-        event Action<string> DeviceRemoved;
         void StartListen(Window window, Guid interfaceGuid);
         void EndListen();
     }

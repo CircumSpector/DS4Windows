@@ -1,4 +1,5 @@
 ﻿using System.Net.NetworkInformation;
+using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Util;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 

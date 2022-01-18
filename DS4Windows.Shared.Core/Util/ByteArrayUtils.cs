@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace DS4WinWPF.DS4Control.Util
+namespace DS4Windows.Shared.Core.Util
 {
-    internal static class ByteArrayUtils
+    public static class ByteArrayUtils
     {
         public static T ByteArrayToStructure<T>(this byte[] bytes) where T : struct
         {

@@ -1,8 +1,8 @@
 ﻿using FastDeepCloner;
 
-namespace DS4WinWPF.DS4Control.Util
+namespace DS4Windows.Shared.Core.Util
 {
-    internal static class CloningExtensions
+    public static class CloningExtensions
     {
         /// <summary>
         ///     Performs deep (full) copy of object and related graph

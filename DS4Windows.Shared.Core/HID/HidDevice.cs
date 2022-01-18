@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using DS4WinWPF.DS4Control.Util;
+using DS4Windows.Shared.Core.Util;
 using JetBrains.Annotations;
 using PInvoke;
 
-namespace DS4WinWPF.DS4Control.HID
+namespace DS4Windows.Shared.Core.HID
 {
     /// <summary>
     ///     Describes a HID device's basic properties.
     /// </summary>
-    internal class HidDevice : IEquatable<HidDevice>, IDisposable
+    public class HidDevice : IEquatable<HidDevice>, IDisposable
     {
         private readonly IntPtr inputOverlapped;
 

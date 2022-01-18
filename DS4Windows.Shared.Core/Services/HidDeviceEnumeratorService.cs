@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-using DS4Windows;
-using DS4WinWPF.DS4Control.HID;
-using DS4WinWPF.DS4Control.Util;
+using DS4Windows.Shared.Core.HID;
 using MethodTimer;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 
-namespace DS4WinWPF.DS4Control.IoC.Services
+namespace DS4Windows.Shared.Core.Services
 {
     /// <summary>
     ///     Single point of truth of states for all connected and handled HID devices.
     /// </summary>
-    internal interface IHidDeviceEnumeratorService
+    public interface IHidDeviceEnumeratorService
     {
         /// <summary>
         ///     List of currently available (connected) HID devices.
@@ -40,22 +38,24 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// <summary>
     ///     Single point of truth of states for all connected and handled HID devices.
     /// </summary>
-    internal class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
+    public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     {
         private readonly ObservableCollection<HidDevice> connectedDevices;
 
-        private readonly IDeviceNotificationListener deviceNotificationListener;
+        private readonly IDeviceNotificationListenerSubscriber deviceNotificationListener;
         private readonly Guid hidClassInterfaceGuid = Guid.Empty;
 
         private readonly ILogger<HidDeviceEnumeratorService> logger;
 
-        public HidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
+        public HidDeviceEnumeratorService(IDeviceNotificationListenerSubscriber deviceNotificationListener,
             ILogger<HidDeviceEnumeratorService> logger)
         {
             this.deviceNotificationListener = deviceNotificationListener;
             this.logger = logger;
 
-            NativeMethods.HidD_GetHidGuid(ref hidClassInterfaceGuid);
+            Hid.HidD_GetHidGuid(out var interfaceGuid);
+
+            hidClassInterfaceGuid = interfaceGuid;
 
             this.deviceNotificationListener.DeviceArrived += DeviceNotificationListenerOnDeviceArrived;
             this.deviceNotificationListener.DeviceRemoved += DeviceNotificationListenerOnDeviceRemoved;

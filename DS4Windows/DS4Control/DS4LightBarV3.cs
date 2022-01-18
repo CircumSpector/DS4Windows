@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using DS4Windows.Shared.Core.HID;
 using DS4WinWPF.DS4Control.IoC.Services;
 using OpenTracing.Util;
 using static System.Math;

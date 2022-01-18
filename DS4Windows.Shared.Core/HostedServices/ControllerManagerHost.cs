@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DS4WinWPF.DS4Control.IoC.Services;
+using DS4Windows.Shared.Core.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace DS4WinWPF.DS4Control.IoC.HostedServices
+namespace DS4Windows.Shared.Core.HostedServices
 {
-    internal class ControllerManagerHost : IHostedService
+    public class ControllerManagerHost : IHostedService
     {
         private readonly IControllersEnumeratorService enumeratorService;
 

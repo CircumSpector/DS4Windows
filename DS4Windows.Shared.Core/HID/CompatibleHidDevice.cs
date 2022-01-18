@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
-using DS4Windows;
-using DS4Windows.InputDevices;
-using DS4WinWPF.DS4Control.Util;
-using DS4WinWPF.DS4Library.InputDevices;
+using DS4Windows.Shared.Core.Util;
 using MethodTimer;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
-namespace DS4WinWPF.DS4Control.HID
+namespace DS4Windows.Shared.Core.HID
 {
     /// <summary>
     ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
     /// </summary>
-    internal abstract class CompatibleHidDevice : HidDevice
+    public abstract class CompatibleHidDevice : HidDevice
     {
         protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
         protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
@@ -208,7 +204,7 @@ namespace DS4WinWPF.DS4Control.HID
         }
     }
 
-    internal class DualShock4CompatibleHidDevice : CompatibleHidDevice
+    public class DualShock4CompatibleHidDevice : CompatibleHidDevice
     {
         public DualShock4CompatibleHidDevice(HidDevice source) : base(source)
         {
@@ -218,15 +214,15 @@ namespace DS4WinWPF.DS4Control.HID
         public sealed override void PopulateSerial()
         {
             OpenDevice();
-            Serial = Connection == ConnectionType.SONYWA
-                ? GenerateFakeHwSerial()
-                : ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
+            
             CloseDevice();
         }
     }
 
-    internal class DualSenseCompatibleHidDevice : CompatibleHidDevice
+    public class DualSenseCompatibleHidDevice : CompatibleHidDevice
     {
+        private const byte SerialFeatureId = 9;
+
         public DualSenseCompatibleHidDevice(HidDevice source) : base(source)
         {
             PopulateSerial();
@@ -235,7 +231,7 @@ namespace DS4WinWPF.DS4Control.HID
         public sealed override void PopulateSerial()
         {
             OpenDevice();
-            Serial = ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
+            Serial = ReadSerial(SerialFeatureId);
             CloseDevice();
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace DS4WinWPF.DS4Control.Util
+namespace DS4Windows.Shared.Core.Util
 {
     /// <summary>
     ///     https://github.com/Fody/MethodTimer

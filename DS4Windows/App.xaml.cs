@@ -14,6 +14,9 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DS4Windows;
+using DS4Windows.Shared.Core.HID;
+using DS4Windows.Shared.Core.HostedServices;
+using DS4Windows.Shared.Core.Services;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
@@ -102,7 +105,12 @@ namespace DS4WinWPF
             services.AddSingleton<IAppLogger, AppLogger>();
             services.AddSingleton<MainWindow>();
 
-            services.AddSingleton<IDeviceNotificationListener, DeviceNotificationListener>();
+
+            services.AddSingleton<DeviceNotificationListener>();
+            services.AddSingleton<IDeviceNotificationListener>(provider =>
+                provider.GetRequiredService<DeviceNotificationListener>());
+            services.AddSingleton<IDeviceNotificationListenerSubscriber>(provider =>
+                provider.GetRequiredService<DeviceNotificationListener>());
 
             services.AddTransient<MainWindowsViewModel>();
             services.AddTransient<SettingsViewModel>();

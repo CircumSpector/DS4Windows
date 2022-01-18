@@ -1,9 +1,6 @@
 ﻿using System;
-using DS4Windows.Shared.Core.HID;
-using DS4WinWPF.DS4Library.InputDevices;
-using PropertyChanged;
 
-namespace DS4Windows
+namespace DS4Windows.Shared.Core.HID
 {
     // VidPidFeatureSet feature bit-flags (the default in VidPidInfo is zero value = standard DS4 behavior):
     //
@@ -36,8 +33,7 @@ namespace DS4Windows
             int pid,
             string name = "Generic DS4",
             InputDeviceType inputDevType = InputDeviceType.DualShock4,
-            VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4,
-            CheckConnectionDelegate checkConnection = null
+            VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4
         )
         {
             Vid = vid;
@@ -45,8 +41,6 @@ namespace DS4Windows
             Name = name;
             InputDevType = inputDevType;
             FeatureSet = featureSet;
-
-            CheckConnection = checkConnection ?? DS4Device.HidConnectionType;
         }
 
         public int Vid { get; }
@@ -58,41 +52,5 @@ namespace DS4Windows
         public InputDeviceType InputDevType { get; }
 
         public VidPidFeatureSet FeatureSet { get; }
-
-        public CheckConnectionDelegate CheckConnection { get; }
     }
-
-    [AddINotifyPropertyChangedInterface]
-    public class RequestElevationArgs : EventArgs
-    {
-        public const int STATUS_SUCCESS = 0;
-        public const int STATUS_INIT_FAILURE = -1;
-
-        public RequestElevationArgs(string instanceId)
-        {
-            InstanceId = instanceId;
-        }
-
-        public int StatusCode { get; set; } = STATUS_INIT_FAILURE;
-
-        public string InstanceId { get; }
-    }
-
-    public delegate void RequestElevationDelegate(RequestElevationArgs args);
-
-    [AddINotifyPropertyChangedInterface]
-    public class CheckVirtualInfo : EventArgs
-    {
-        public string DeviceInstanceId { get; set; }
-
-        public string PropertyValue { get; set; }
-    }
-
-    public delegate CheckVirtualInfo CheckVirtualDelegate(string deviceInstanceId);
-
-    public delegate ConnectionType CheckConnectionDelegate(HidDeviceV3 hidDevice);
-
-    public delegate void PrepareInitDelegate(DS4Device device);
-
-    public delegate bool CheckPendingDevice(HidDeviceV3 device, VidPidInfo vidPidInfo);
 }

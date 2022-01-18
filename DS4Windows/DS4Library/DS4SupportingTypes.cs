@@ -2,12 +2,7 @@
 
 namespace DS4Windows
 {
-    public enum ConnectionType : byte
-    {
-        BT,
-        SONYWA,
-        USB
-    } // Prioritize Bluetooth when both BT and USB are connected.
+    
 
     /**
      * The haptics engine uses a stack of these states representing the light bar and rumble motor settings.
