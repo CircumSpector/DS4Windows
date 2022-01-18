@@ -31,6 +31,8 @@ namespace DS4Windows.Shared.Core.HID
                 throw new ArgumentException("Couldn't determine connection type.");
 
             Connection = connection.Value;
+
+            PopulateSerial();
         }
 
         /// <summary>
@@ -200,6 +202,7 @@ namespace DS4Windows.Shared.Core.HID
                 case InputDeviceType.DualSense:
                     return new DualSenseCompatibleHidDevice(source) { DeviceType = deviceType };
                 case InputDeviceType.SwitchPro:
+                    return new SwitchProCompatibleHidDevice(source) { DeviceType = deviceType };
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
                 default:

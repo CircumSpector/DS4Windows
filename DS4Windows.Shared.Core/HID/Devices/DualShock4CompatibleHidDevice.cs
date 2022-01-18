@@ -4,7 +4,6 @@
     {
         public DualShock4CompatibleHidDevice(HidDevice source) : base(source)
         {
-            PopulateSerial();
         }
 
         public sealed override void PopulateSerial()
