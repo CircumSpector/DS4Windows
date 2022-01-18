@@ -263,10 +263,13 @@ namespace DS4Windows.Shared.Core.Services
         {
             logger.LogInformation("Compatible device {Device} got removed", hidDevice);
 
-            //if (supportedDevices.Contains(hidDevice))
-            //    supportedDevices.Remove(new CompatibleHidDevice(hidDevice));
-            //
-            //ControllerRemoved?.Invoke(new CompatibleHidDevice(hidDevice));
+            var device = supportedDevices.First(d =>
+                d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
+
+            if (supportedDevices.Contains(device))
+                supportedDevices.Remove(device);
+            
+            ControllerRemoved?.Invoke(device);
         }
     }
 }
