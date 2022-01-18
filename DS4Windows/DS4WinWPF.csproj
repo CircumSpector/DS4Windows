@@ -311,6 +311,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DS4Windows.Shared.Core\DS4Windows.Shared.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Update="DS4Forms\Themes\Common.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
