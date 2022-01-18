@@ -118,12 +118,15 @@ namespace DS4Windows.Shared.Core.HID
                     // 
                     var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
 
-                    if (children.Count == 1)
+                    if (children.Count != 2)
                         return ConnectionType.Usb;
 
                     var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
 
                     var friendlyName = audioDevice.GetProperty<string>(DevicePropertyDevice.FriendlyName);
+
+                    if (string.IsNullOrEmpty(friendlyName))
+                        return ConnectionType.Usb;
 
                     //
                     // Match friendly name reported by Wireless Adapter

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Core.HID.Devices
 {
@@ -18,6 +19,8 @@ namespace DS4Windows.Shared.Core.HID.Devices
             {
                 OpenDevice();
                 Serial = ReadSerial(SerialFeatureId);
+
+                Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
             }
             finally
             {

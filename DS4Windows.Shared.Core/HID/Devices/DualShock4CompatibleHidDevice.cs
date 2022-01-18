@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Core.HID.Devices
 {
@@ -10,13 +11,24 @@ namespace DS4Windows.Shared.Core.HID.Devices
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
             featureSet, serviceProvider)
         {
+            if (FeatureSet != CompatibleHidDeviceFeatureSet.DefaultDS4)
+                Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
+                    this, FeatureSet);
         }
 
         public sealed override void PopulateSerial()
         {
-            OpenDevice();
-            Serial = ReadSerial(SerialFeatureId);
-            CloseDevice();
+            try
+            {
+                OpenDevice();
+                Serial = ReadSerial(SerialFeatureId);
+
+                Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
+            }
+            finally
+            {
+                CloseDevice();
+            }
         }
     }
 }
