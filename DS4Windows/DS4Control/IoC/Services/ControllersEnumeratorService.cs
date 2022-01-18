@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Text;
 using DS4Windows;
 using DS4Windows.InputDevices;
 using DS4WinWPF.DS4Control.HID;
+using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Library.InputDevices;
 using MethodTimer;
 using Microsoft.Extensions.Logging;
@@ -12,26 +15,175 @@ using Microsoft.Extensions.Logging;
 namespace DS4WinWPF.DS4Control.IoC.Services
 {
     /// <summary>
+    ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
+    /// </summary>
+    internal abstract class CompatibleHidDevice : HidDevice
+    {
+        protected CompatibleHidDevice(HidDevice source)
+        {
+            source.DeepCloneTo(this);
+        }
+
+        /// <summary>
+        ///     The <see cref="InputDeviceType"/> of this <see cref="CompatibleHidDevice"/>.
+        /// </summary>
+        public InputDeviceType DeviceType { get; init; }
+
+        /// <summary>
+        ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice"/>.
+        /// </summary>
+        public PhysicalAddress Serial { get; protected set; }
+
+        /// <summary>
+        ///     Retrieves <see cref="Serial" /> with device-specific methods.
+        /// </summary>
+        public abstract void PopulateSerial();
+
+        protected PhysicalAddress ReadSerial(byte featureId = 0x12)
+        {
+            var serial = new PhysicalAddress(new byte[] { 0, 0, 0, 0, 0, 0 });
+
+            if (Capabilities.InputReportByteLength == 64)
+            {
+                var buffer = new byte[64];
+                buffer[0] = featureId;
+
+                if (ReadFeatureData(buffer))
+                    serial = PhysicalAddress.Parse(
+                        $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
+                    );
+            }
+            else
+            {
+                var buffer = new byte[126];
+#if WIN64
+                ulong bufferLen = 126;
+#else
+                uint bufferLen = 126;
+#endif
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(SerialNumberString))
+                    {
+                        var address = Encoding.Unicode.GetString(buffer).Replace("\0", string.Empty).ToUpper();
+                        address =
+                            $"{address[0]}{address[1]}:{address[2]}{address[3]}:{address[4]}{address[5]}:{address[6]}{address[7]}:{address[8]}{address[9]}:{address[10]}{address[11]}";
+                        serial = PhysicalAddress.Parse(address);
+                    }
+                }
+                catch
+                {
+                    serial = GenerateFakeHwSerial();
+                }
+            }
+
+            return serial;
+        }
+
+        /// <summary>
+        ///     Generate <see cref="Serial" /> from <see cref="HidDevice.Path" />.
+        /// </summary>
+        /// <returns></returns>
+        protected PhysicalAddress GenerateFakeHwSerial()
+        {
+            var address = string.Empty;
+
+            // Substring: \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030} -> \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001#
+            var endPos = Path.LastIndexOf('{');
+            if (endPos < 0)
+                endPos = Path.Length;
+
+            // String array: \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001# -> [0]=\\?\hidvid_054c, [1]=pid_09cc, [2]=mi_037, [3]=1f882A25, [4]=0, [5]=0001
+            var devPathItems = Path.Substring(0, endPos).Replace("#", "").Replace("-", "").Replace("{", "")
+                .Replace("}", "").Split('&');
+
+            address = devPathItems.Length switch
+            {
+                >= 3 => devPathItems[^3].ToUpper() // 1f882A25
+                        + devPathItems[^2].ToUpper() // 0
+                        + devPathItems[^1].TrimStart('0').ToUpper(),
+                // Device and usb hub and port identifiers missing in devicePath string. Fallback to use vendor and product ID values and 
+                // take a number from the last part of the devicePath. Hopefully the last part is a usb port number as it usually should be.
+                >= 1 => Attributes.VendorId.ToString("X4") + Attributes.ProductId.ToString("X4") +
+                        devPathItems[^1].TrimStart('0').ToUpper(),
+                _ => address
+            };
+
+            if (string.IsNullOrEmpty(address)) return PhysicalAddress.Parse(address);
+
+            address = address.PadRight(12, '0');
+            address =
+                $"{address[0]}{address[1]}:{address[2]}{address[3]}:{address[4]}{address[5]}:{address[6]}{address[7]}:{address[8]}{address[9]}:{address[10]}{address[11]}";
+
+            return PhysicalAddress.Parse(address);
+        }
+
+        public static CompatibleHidDevice Create(InputDeviceType deviceType, HidDevice source)
+        {
+            switch (deviceType)
+            {
+                case InputDeviceType.DualShock4:
+                    return new DualShock4CompatibleHidDevice(source) { DeviceType = deviceType };
+                case InputDeviceType.DualSense:
+                    return new DualSenseCompatibleHidDevice(source) { DeviceType = deviceType };
+                case InputDeviceType.SwitchPro:
+                case InputDeviceType.JoyConL:
+                case InputDeviceType.JoyConR:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
+            }
+        }
+    }
+
+    internal class DualShock4CompatibleHidDevice : CompatibleHidDevice
+    {
+        public DualShock4CompatibleHidDevice(HidDevice source) : base(source)
+        {
+            PopulateSerial();
+        }
+
+        public sealed override void PopulateSerial()
+        {
+        }
+    }
+
+    internal class DualSenseCompatibleHidDevice : CompatibleHidDevice
+    {
+        public DualSenseCompatibleHidDevice(HidDevice source) : base(source)
+        {
+            PopulateSerial();
+        }
+
+        public sealed override void PopulateSerial()
+        {
+            OpenDevice();
+            Serial = ReadSerial(DualSenseDevice.SERIAL_FEATURE_ID);
+            CloseDevice();
+        }
+    }
+
+    /// <summary>
     ///     Enumerates and watches hot-plugging of supported input devices (controllers).
     /// </summary>
     internal interface IControllersEnumeratorService
     {
-        ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
+        ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
 
         event Action DeviceListReady;
 
         /// <summary>
         ///     Fired every time a supported device is found and read.
         /// </summary>
-        event Action<HidDevice> ControllerReady;
+        event Action<CompatibleHidDevice> ControllerReady;
 
         /// <summary>
         ///     Fired every time a supported device has departed.
         /// </summary>
-        event Action<HidDevice> ControllerRemoved;
+        event Action<CompatibleHidDevice> ControllerRemoved;
 
         /// <summary>
-        ///     Enumerate system for compatible devices. This rebuilds <see cref="SupportedDevices"/>.
+        ///     Enumerate system for compatible devices. This rebuilds <see cref="SupportedDevices" />.
         /// </summary>
         void EnumerateDevices();
     }
@@ -142,7 +294,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         private readonly IHidDeviceEnumeratorService enumeratorService;
         private readonly ILogger<ControllersEnumeratorService> logger;
 
-        private readonly ObservableCollection<HidDevice> supportedDevices;
+        private readonly ObservableCollection<CompatibleHidDevice> supportedDevices;
 
         public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
             IHidDeviceEnumeratorService enumeratorService)
@@ -153,22 +305,22 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
             enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
 
-            supportedDevices = new ObservableCollection<HidDevice>();
+            supportedDevices = new ObservableCollection<CompatibleHidDevice>();
 
-            SupportedDevices = new ReadOnlyObservableCollection<HidDevice>(supportedDevices);
+            SupportedDevices = new ReadOnlyObservableCollection<CompatibleHidDevice>(supportedDevices);
         }
 
         /// <inheritdoc />
-        public ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
+        public ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
 
         /// <inheritdoc />
         public event Action DeviceListReady;
 
         /// <inheritdoc />
-        public event Action<HidDevice> ControllerReady;
+        public event Action<CompatibleHidDevice> ControllerReady;
 
         /// <inheritdoc />
-        public event Action<HidDevice> ControllerRemoved;
+        public event Action<CompatibleHidDevice> ControllerRemoved;
 
         /// <inheritdoc />
         [Time]
@@ -193,10 +345,22 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
             supportedDevices.Clear();
 
-            foreach (var device in filtered)
+            //
+            // Cast to enriched class
+            // 
+            foreach (var hidDevice in filtered)
             {
                 logger.LogInformation("Adding supported input device {Device} to cache",
-                    device);
+                    hidDevice);
+
+                //
+                // Get device type
+                // 
+                var deviceType = KnownDevices
+                    .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId)
+                    .InputDevType;
+
+                var device = CompatibleHidDevice.Create(deviceType, hidDevice);
 
                 supportedDevices.Add(device);
 
@@ -224,17 +388,35 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                 !known.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice)
                 || hidDevice.IsVirtual) return;
 
-            if (!supportedDevices.Contains(hidDevice))
-                supportedDevices.Add(hidDevice);
+            logger.LogInformation("Compatible device {Device} got attached", hidDevice);
+
+            //
+            // Get device type
+            // 
+            var deviceType = KnownDevices
+                .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId)
+                .InputDevType;
+
+            var device = CompatibleHidDevice.Create(deviceType, hidDevice);
+
+            if (!supportedDevices.Contains(device))
+                supportedDevices.Add(device);
+
+            //
+            // Notify compatible device found and ready
+            // 
+            ControllerReady?.Invoke(device);
         }
 
         [Time]
         private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
         {
-            if (supportedDevices.Contains(hidDevice))
-                supportedDevices.Remove(hidDevice);
+            logger.LogInformation("Compatible device {Device} got removed", hidDevice);
 
-            ControllerRemoved?.Invoke(hidDevice);
+            //if (supportedDevices.Contains(hidDevice))
+            //    supportedDevices.Remove(new CompatibleHidDevice(hidDevice));
+            //
+            //ControllerRemoved?.Invoke(new CompatibleHidDevice(hidDevice));
         }
     }
 }

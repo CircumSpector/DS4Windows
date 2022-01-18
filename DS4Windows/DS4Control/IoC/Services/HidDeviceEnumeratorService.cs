@@ -256,7 +256,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             {
                 logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
                     device.InstanceId, symLink);
-                entry.IsVirtual = true;
             }
 
             if (!connectedDevices.Contains(entry))

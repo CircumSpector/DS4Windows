@@ -16,11 +16,6 @@ namespace DS4WinWPF.DS4Control.HID
 
         private readonly ManualResetEvent inputReportEvent;
 
-        /// <summary>
-        ///     True if device originates from a software device.
-        /// </summary>
-        public bool IsVirtual;
-
         public HidDevice()
         {
             inputReportEvent = new ManualResetEvent(false);
@@ -29,6 +24,11 @@ namespace DS4WinWPF.DS4Control.HID
                 new NativeOverlapped { EventHandle = inputReportEvent.SafeWaitHandle.DangerousGetHandle() },
                 inputOverlapped, false);
         }
+
+        /// <summary>
+        ///     True if device originates from a software device.
+        /// </summary>
+        public bool IsVirtual { get; init; }
 
         /// <summary>
         ///     Native handle to device.
@@ -90,7 +90,7 @@ namespace DS4WinWPF.DS4Control.HID
         /// <summary>
         ///     Is this device currently open (for reading, writing).
         /// </summary>
-        public bool IsOpen => Handle is not null && !Handle.IsClosed;
+        public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;
 
         public void Dispose()
         {
@@ -105,15 +105,15 @@ namespace DS4WinWPF.DS4Control.HID
         }
 
         [DllImport("hid.dll")]
-        internal static extern bool HidD_SetOutputReport(IntPtr hidDeviceObject, byte[] lpReportBuffer,
+        private static extern bool HidD_SetOutputReport(IntPtr hidDeviceObject, byte[] lpReportBuffer,
             int reportBufferLength);
 
         [DllImport("hid.dll")]
-        internal static extern bool HidD_SetFeature(IntPtr hidDeviceObject, byte[] lpReportBuffer,
+        private static extern bool HidD_SetFeature(IntPtr hidDeviceObject, byte[] lpReportBuffer,
             int reportBufferLength);
 
         [DllImport("hid.dll")]
-        internal static extern bool HidD_GetFeature(IntPtr hidDeviceObject, byte[] lpReportBuffer,
+        private static extern bool HidD_GetFeature(IntPtr hidDeviceObject, byte[] lpReportBuffer,
             int reportBufferLength);
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace DS4WinWPF.DS4Control.HID
         /// </summary>
         public void OpenDevice()
         {
-            if (IsOpen || Handle.IsInvalid)
+            if (IsOpen)
                 Handle.Close();
 
             Handle = OpenAsyncHandle(Path);
