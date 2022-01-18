@@ -17,6 +17,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         event Action DeviceListReady;
 
+        event Action<HidDevice> ControllerReady;
+
+        event Action<HidDevice> ControllerRemoved;
+
         void EnumerateDevices();
     }
 
@@ -140,7 +144,12 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         public ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
+
         public event Action DeviceListReady;
+
+        public event Action<HidDevice> ControllerReady;
+
+        public event Action<HidDevice> ControllerRemoved;
 
         [Time]
         public void EnumerateDevices()
@@ -170,8 +179,16 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                     device);
 
                 supportedDevices.Add(device);
+
+                //
+                // Notify compatible device found and ready
+                // 
+                ControllerReady?.Invoke(device);
             }
 
+            //
+            // Notify list is built
+            // 
             DeviceListReady?.Invoke();
         }
 
@@ -183,7 +200,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             if (known is null) return;
 
             if (hidDevice.Capabilities.Usage is not (HidUsageGamepad or HidUsageJoystick) &&
-                !known.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice)) return;
+                !known.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice)
+                || hidDevice.IsVirtual) return;
 
             if (!supportedDevices.Contains(hidDevice))
                 supportedDevices.Add(hidDevice);
@@ -191,17 +209,10 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
         {
-            //
-            // Don't remove from list as someone may still rely on this object, if open
-            // 
-            if (hidDevice.IsOpen)
-            {
-                hidDevice.IsRemoved = true;
-                return;
-            }
-
             if (supportedDevices.Contains(hidDevice))
                 supportedDevices.Remove(hidDevice);
+
+            ControllerRemoved?.Invoke(hidDevice);
         }
     }
 }
