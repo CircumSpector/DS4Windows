@@ -183,8 +183,6 @@ namespace DS4WinWPF
             // 
             await host.StartAsync();
 
-            host.Services.GetRequiredService<IControllersEnumeratorService>().EnumerateDevices();
-
             var version = Global.ExecutableProductVersion;
 
             logger.LogInformation($"Current directory: {Directory.GetCurrentDirectory()}");

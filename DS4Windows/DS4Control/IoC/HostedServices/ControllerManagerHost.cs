@@ -1,21 +1,25 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using DS4WinWPF.DS4Control.IoC.Services;
 using Microsoft.Extensions.Hosting;
 
 namespace DS4WinWPF.DS4Control.IoC.HostedServices
 {
-    internal class ControllerManagerHost : BackgroundService
+    internal class ControllerManagerHost : IHostedService
     {
-        private readonly IHidDeviceEnumeratorService hidDeviceEnumeratorService;
+        private readonly IControllersEnumeratorService enumeratorService;
 
-        public ControllerManagerHost(IHidDeviceEnumeratorService hidDeviceEnumeratorService)
+        public ControllerManagerHost(IControllersEnumeratorService enumeratorService)
         {
-            this.hidDeviceEnumeratorService = hidDeviceEnumeratorService;
+            this.enumeratorService = enumeratorService;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            await Task.Run(() => enumeratorService.EnumerateDevices(), cancellationToken);
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
