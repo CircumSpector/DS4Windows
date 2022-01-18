@@ -116,7 +116,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                     + "\r\n\r\nWithout this component many games may probably see two controllers: "
                     + "your \"real\" (hardware) one and a \"fake\" (virtual) one your inputs get mapped to. "
                     + "\r\n\r\nThis will lead to so called doubled inputs or other glitches, because two controllers "
-                    + "will report the same input and the game may now know which one is the dominant one. "
+                    + "will report the same input and the game may not know which one is the dominant one. "
                     + "\r\n\r\nTo mitigate this, please install HidHide now and restart your machine afterwards or read up on troubleshooting."
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "HidHide not found",

@@ -23,6 +23,10 @@ namespace DS4Windows.Shared.Core.HID
 
         protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
+        protected IntPtr InputReportBuffer;
+
+        protected byte[] InputReportArray;
+
         [Time]
         protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider)
