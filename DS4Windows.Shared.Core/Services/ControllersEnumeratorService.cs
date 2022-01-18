@@ -204,7 +204,7 @@ namespace DS4Windows.Shared.Core.Services
                     .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId)
                     .InputDevType;
 
-                var device = CompatibleHidDevice.Create(deviceType, hidDevice);
+                var device = CompatibleHidDevice.CreateFrom(deviceType, hidDevice);
 
                 supportedDevices.Add(device);
 
@@ -244,7 +244,7 @@ namespace DS4Windows.Shared.Core.Services
                 .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId)
                 .InputDevType;
 
-            var device = CompatibleHidDevice.Create(deviceType, hidDevice);
+            var device = CompatibleHidDevice.CreateFrom(deviceType, hidDevice);
 
             if (!supportedDevices.Contains(device))
                 supportedDevices.Add(device);

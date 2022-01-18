@@ -193,7 +193,7 @@ namespace DS4Windows.Shared.Core.HID
         /// <param name="source">The source <see cref="HidDevice" /> to copy from.</param>
         /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
         [Time]
-        public static CompatibleHidDevice Create(InputDeviceType deviceType, HidDevice source)
+        public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source)
         {
             switch (deviceType)
             {
