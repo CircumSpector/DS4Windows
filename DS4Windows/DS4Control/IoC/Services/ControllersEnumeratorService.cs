@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using DS4Windows;
@@ -12,6 +13,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     internal interface IControllersEnumeratorService
     {
         ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
+
+        event Action DeviceListReady;
 
         void EnumerateDevices();
     }
@@ -136,6 +139,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         }
 
         public ReadOnlyObservableCollection<HidDevice> SupportedDevices { get; }
+        public event Action DeviceListReady;
 
         public void EnumerateDevices()
         {
@@ -151,8 +155,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
                     KnownDevices.FirstOrDefault(d =>
                         d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId)
                 where known is not null
-                where hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
-                      known.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice)
+                where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
+                       known.FeatureSet.HasFlag(VidPidFeatureSet.VendorDefinedDevice)) &&
+                      !hidDevice.IsVirtual
                 select hidDevice;
 
             supportedDevices.Clear();
@@ -164,6 +169,8 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
                 supportedDevices.Add(device);
             }
+
+            DeviceListReady?.Invoke();
         }
 
         private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
