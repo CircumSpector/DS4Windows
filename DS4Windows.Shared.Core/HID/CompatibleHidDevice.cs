@@ -12,6 +12,8 @@ using MethodTimer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using OpenTracing;
+using OpenTracing.Util;
 
 namespace DS4Windows.Shared.Core.HID
 {
@@ -44,7 +46,9 @@ namespace DS4Windows.Shared.Core.HID
 
         private Task inputReportReader;
 
-        protected CancellationTokenSource InputReportToken = new();
+        private CancellationTokenSource inputReportToken = new();
+
+        private readonly ITracer tracer;
 
         [Time]
         protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
@@ -63,6 +67,8 @@ namespace DS4Windows.Shared.Core.HID
             // Grab new logger
             // 
             Logger = Services.GetRequiredService<ILogger<CompatibleHidDevice>>();
+
+            tracer = Services.GetRequiredService<ITracer>();
 
             if (!Connection.HasValue)
                 throw new ArgumentException("Couldn't determine connection type.");
@@ -168,8 +174,8 @@ namespace DS4Windows.Shared.Core.HID
 
         protected void StartInputReportReader()
         {
-            if (InputReportToken.Token.IsCancellationRequested)
-                InputReportToken = new CancellationTokenSource();
+            if (inputReportToken.Token.IsCancellationRequested)
+                inputReportToken = new CancellationTokenSource();
 
             inputReportReader = Task.Run(ReadInputReportLoop);
             inputReportProcessor = Task.Run(ProcessInputReportLoop);
@@ -179,15 +185,22 @@ namespace DS4Windows.Shared.Core.HID
         {
             Logger.LogDebug("Started input report processing thread");
 
+            var scope = tracer.BuildSpan($"{nameof(CompatibleHidDevice)}::{nameof(ProcessInputReportLoop)}")
+                .IgnoreActiveSpan();
+
             try
             {
-                while (!InputReportToken.IsCancellationRequested)
+                while (!inputReportToken.IsCancellationRequested)
                 {
+                    var span = scope.Start();
+
                     if (!await InputReportChannel.Reader.WaitToReadAsync()) continue;
 
                     var buffer = await InputReportChannel.Reader.ReadAsync();
 
                     ProcessInputReport(buffer);
+
+                    span.Finish();
                 }
             }
             catch (Exception ex)
@@ -200,15 +213,22 @@ namespace DS4Windows.Shared.Core.HID
         {
             Logger.LogDebug("Started input report reading thread");
 
+            var scope = tracer.BuildSpan($"{nameof(CompatibleHidDevice)}::{nameof(ReadInputReportLoop)}")
+                .IgnoreActiveSpan();
+
             try
             {
-                while (!InputReportToken.IsCancellationRequested)
+                while (!inputReportToken.IsCancellationRequested)
                 {
+                    var span = scope.Start();
+
                     ReadInputReport(InputReportBuffer, InputReportArray.Length, out var written);
 
                     Marshal.Copy(InputReportBuffer, InputReportArray, 0, written);
 
-                    await InputReportChannel.Writer.WriteAsync(InputReportArray, InputReportToken.Token);
+                    await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
+
+                    span.Finish();
                 }
             }
             catch (Exception ex)

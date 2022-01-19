@@ -28,14 +28,20 @@ using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.DS4Library.InputDevices;
 using EmbedIO;
 using EmbedIO.Files;
+using Jaeger;
+using Jaeger.Senders;
+using Jaeger.Senders.Thrift;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
+using OpenTracing;
+using OpenTracing.Util;
 using Serilog;
 using WPFLocalizeExtension.Engine;
+using Constants = DS4Windows.Constants;
 
 namespace DS4WinWPF
 {
@@ -98,6 +104,32 @@ namespace DS4WinWPF
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddOptions();
+
+            /*
+            // Adds the Jaeger Tracer.
+            services.AddSingleton<ITracer>(serviceProvider =>
+            {
+                var serviceName = Constants.ApplicationName;
+                var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+
+                // This is necessary to pick the correct sender, otherwise a NoopSender is used!
+                Jaeger.Configuration.SenderConfiguration.DefaultSenderResolver = new SenderResolver(loggerFactory)
+                    .RegisterSenderFactory<ThriftSenderFactory>();
+
+                // This will log to a default localhost installation of Jaeger.
+                var tracer = new Tracer.Builder(serviceName)
+                    .WithLoggerFactory(loggerFactory)
+                    .Build();
+
+                // Allows code that can't use DI to also access the tracer.
+                if (!GlobalTracer.IsRegistered())
+                {
+                    GlobalTracer.Register(tracer);
+                }
+
+                return tracer;
+            });
+            */
 
             services.AddSingleton<IHidHideControlService, HidHideControlService>();
             services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
