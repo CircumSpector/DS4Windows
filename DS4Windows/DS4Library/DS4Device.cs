@@ -908,7 +908,7 @@ namespace DS4Windows
                 ds4Input.Priority = ThreadPriority.AboveNormal;
                 ds4Input.Name = "DS4 Input thread: " + MacAddress;
                 ds4Input.IsBackground = true;
-                ds4Input.Start();
+                //ds4Input.Start();
             }
             else
             {

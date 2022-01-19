@@ -37,6 +37,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Trace;
 using OpenTracing;
 using OpenTracing.Util;
 using Serilog;
@@ -104,6 +107,24 @@ namespace DS4WinWPF
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddOptions();
+
+            services.AddOpenTelemetryTracing(builder => builder
+                .SetSampler(new AlwaysOnSampler())
+                .AddSource(Constants.ApplicationName)
+                .AddJaegerExporter(options =>
+                {
+                    options.AgentHost = "localhost";
+                    options.AgentPort = 6831;
+                    options.ExportProcessorType = ExportProcessorType.Simple;
+                }));
+
+            using var source = new ActivitySource("Test");
+
+            using var activity = source.StartActivity(
+                $"Test 2",
+                ActivityKind.Consumer);
+
+
 
             /*
             // Adds the Jaeger Tracer.
@@ -229,7 +250,7 @@ namespace DS4WinWPF
                 @"\Device\HarddiskVolume7\Development\GitHub\DS4Windows\DS4Windows\bin\x64\Debug\net5.0-windows\DS4Windows.exe");
 
             var blocked = host.Services.GetRequiredService<IHidHideControlService>().BlockedInstanceIds;
-            
+
             var allowed = host.Services.GetRequiredService<IHidHideControlService>().AllowedApplicationPaths;
 
             var version = Global.ExecutableProductVersion;
@@ -357,17 +378,17 @@ namespace DS4WinWPF
                         $@"{Constants.LegacyProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyProfilesFileName)}. Using default app settings");
                     break;
                 case true:
-                {
-                    logger.LogInformation("No config found. Creating default config");
-                    AttemptSave();
+                    {
+                        logger.LogInformation("No config found. Creating default config");
+                        AttemptSave();
 
-                    await Global.Instance.Config.SaveAsNewProfile(0, "Default");
-                    for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
-                        Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
+                        await Global.Instance.Config.SaveAsNewProfile(0, "Default");
+                        for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
+                            Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                    logger.LogInformation("Default config created");
-                    break;
-                }
+                        logger.LogInformation("Default config created");
+                        break;
+                    }
             }
 
             skipSave = false;
@@ -625,7 +646,7 @@ namespace DS4WinWPF
                                     "DS4Windows_IPCResultData_ReadyEvent");
                             }
                             else
-                                // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
+                            // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
                             {
                                 bDoSendMsg = false;
                             }
@@ -743,7 +764,7 @@ namespace DS4WinWPF
             if (ThemeResources.TryGetValue(themeChoice, out var loc))
             {
                 Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                    { Source = new Uri(loc, UriKind.Absolute) };
+                { Source = new Uri(loc, UriKind.Absolute) };
 
                 if (fireChanged) ThemeChanged?.Invoke(this, EventArgs.Empty);
             }
