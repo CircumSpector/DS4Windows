@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Core.HID.Devices
@@ -37,6 +38,8 @@ namespace DS4Windows.Shared.Core.HID.Devices
                 InputReportArray = new byte[BthInputReportSize];
                 InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
             }
+
+            StartInputReportReader();
         }
     }
 }

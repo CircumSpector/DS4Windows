@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 using DS4Windows.Shared.Core.HID.Devices;
 using DS4Windows.Shared.Core.Util;
 using JetBrains.Annotations;
@@ -24,6 +28,10 @@ namespace DS4Windows.Shared.Core.HID
 
         protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
+        protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
+
+        protected readonly ChannelWriter<byte[]> InputReportWriter;
+
         /// <summary>
         ///     Managed input report array.
         /// </summary>
@@ -33,6 +41,10 @@ namespace DS4Windows.Shared.Core.HID
         ///     Unmanaged input report buffer.
         /// </summary>
         protected IntPtr InputReportBuffer;
+
+        protected CancellationTokenSource InputReportToken = new();
+
+        protected Task InputReportWorker;
 
         [Time]
         protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
@@ -58,6 +70,8 @@ namespace DS4Windows.Shared.Core.HID
             if (FeatureSet != CompatibleHidDeviceFeatureSet.Default)
                 Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
                     this, FeatureSet);
+
+            InputReportWriter = InputReportChannel.Writer;
 
             //
             // Open handle
@@ -151,6 +165,35 @@ namespace DS4Windows.Shared.Core.HID
         ///     Logger instance.
         /// </summary>
         protected ILogger<CompatibleHidDevice> Logger { get; }
+
+        protected void StartInputReportReader()
+        {
+            if (InputReportToken.Token.IsCancellationRequested)
+                InputReportToken = new CancellationTokenSource();
+
+            InputReportWorker = Task.Run(ReadInputReportLoop);
+        }
+
+        protected async void ReadInputReportLoop()
+        {
+            Logger.LogDebug("Started input report reading thread");
+
+            try
+            {
+                while (!InputReportToken.IsCancellationRequested)
+                {
+                    ReadInputReport(InputReportBuffer, InputReportArray.Length, out var written);
+
+                    Marshal.Copy(InputReportBuffer, InputReportArray, 0, written);
+
+                    await InputReportWriter.WriteAsync(InputReportArray, InputReportToken.Token);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Fatal failure in input report processing");
+            }
+        }
 
         [Time]
         [CanBeNull]
