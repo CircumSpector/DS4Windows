@@ -11,21 +11,12 @@ namespace DS4Windows.Shared.Core.HID.Devices
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
             featureSet, serviceProvider)
         {
-        }
+            Serial = ReadSerial(SerialFeatureId);
 
-        public sealed override void PopulateSerial()
-        {
-            try
-            {
-                OpenDevice();
-                Serial = ReadSerial(SerialFeatureId);
+            if (Serial is null)
+                throw new ArgumentException("Could not retrieve a valid serial number.");
 
-                Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
-            }
-            finally
-            {
-                CloseDevice();
-            }
+            Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
         }
     }
 }

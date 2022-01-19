@@ -9,10 +9,5 @@ namespace DS4Windows.Shared.Core.HID.Devices
             featureSet, serviceProvider)
         {
         }
-
-        public override void PopulateSerial()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

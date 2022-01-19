@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Core.HID.Devices
@@ -13,24 +11,12 @@ namespace DS4Windows.Shared.Core.HID.Devices
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
             featureSet, serviceProvider)
         {
-            if (FeatureSet != CompatibleHidDeviceFeatureSet.DefaultDS4)
-                Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
-                    this, FeatureSet);
-        }
+            Serial = ReadSerial(SerialFeatureId);
 
-        public sealed override void PopulateSerial()
-        {
-            try
-            {
-                OpenDevice();
-                Serial = ReadSerial(SerialFeatureId);
+            if (Serial is null)
+                throw new ArgumentException("Could not retrieve a valid serial number.");
 
-                Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
-            }
-            finally
-            {
-                CloseDevice();
-            }
+            Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
         }
     }
 }

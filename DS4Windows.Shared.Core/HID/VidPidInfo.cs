@@ -16,7 +16,7 @@ namespace DS4Windows.Shared.Core.HID
     [Flags]
     public enum CompatibleHidDeviceFeatureSet : ushort
     {
-        DefaultDS4 = 0,
+        Default = 0,
         OnlyInputData0x01 = 1 << 0,
         OnlyOutputData0x05 = 1 << 2,
         NoOutputData = 1 << 3,
@@ -33,7 +33,7 @@ namespace DS4Windows.Shared.Core.HID
             int pid,
             string name = "Generic DS4",
             InputDeviceType inputDevType = InputDeviceType.DualShock4,
-            CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.DefaultDS4
+            CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.Default
         )
         {
             Vid = vid;
