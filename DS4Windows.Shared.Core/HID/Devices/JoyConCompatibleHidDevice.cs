@@ -9,5 +9,10 @@ namespace DS4Windows.Shared.Core.HID.Devices
             featureSet, serviceProvider)
         {
         }
+
+        protected override void ProcessInputReport(byte[] report)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

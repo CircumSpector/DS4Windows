@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using MethodTimer;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Core.HID.Devices
@@ -40,6 +43,11 @@ namespace DS4Windows.Shared.Core.HID.Devices
             }
 
             StartInputReportReader();
+        }
+
+        protected override void ProcessInputReport(byte[] report)
+        {
+
         }
     }
 }

@@ -30,8 +30,6 @@ namespace DS4Windows.Shared.Core.HID
 
         protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
 
-        protected readonly ChannelWriter<byte[]> InputReportWriter;
-
         /// <summary>
         ///     Managed input report array.
         /// </summary>
@@ -42,9 +40,11 @@ namespace DS4Windows.Shared.Core.HID
         /// </summary>
         protected IntPtr InputReportBuffer;
 
-        protected CancellationTokenSource InputReportToken = new();
+        private Task inputReportProcessor;
 
-        protected Task InputReportWorker;
+        private Task inputReportReader;
+
+        protected CancellationTokenSource InputReportToken = new();
 
         [Time]
         protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
@@ -70,8 +70,6 @@ namespace DS4Windows.Shared.Core.HID
             if (FeatureSet != CompatibleHidDeviceFeatureSet.Default)
                 Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
                     this, FeatureSet);
-
-            InputReportWriter = InputReportChannel.Writer;
 
             //
             // Open handle
@@ -166,12 +164,36 @@ namespace DS4Windows.Shared.Core.HID
         /// </summary>
         protected ILogger<CompatibleHidDevice> Logger { get; }
 
+        protected abstract void ProcessInputReport(byte[] report);
+
         protected void StartInputReportReader()
         {
             if (InputReportToken.Token.IsCancellationRequested)
                 InputReportToken = new CancellationTokenSource();
 
-            InputReportWorker = Task.Run(ReadInputReportLoop);
+            inputReportReader = Task.Run(ReadInputReportLoop);
+            inputReportProcessor = Task.Run(ProcessInputReportLoop);
+        }
+
+        protected async void ProcessInputReportLoop()
+        {
+            Logger.LogDebug("Started input report processing thread");
+
+            try
+            {
+                while (!InputReportToken.IsCancellationRequested)
+                {
+                    if (!await InputReportChannel.Reader.WaitToReadAsync()) continue;
+
+                    var buffer = await InputReportChannel.Reader.ReadAsync();
+
+                    ProcessInputReport(buffer);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Fatal failure in input report processing");
+            }
         }
 
         protected async void ReadInputReportLoop()
@@ -186,12 +208,12 @@ namespace DS4Windows.Shared.Core.HID
 
                     Marshal.Copy(InputReportBuffer, InputReportArray, 0, written);
 
-                    await InputReportWriter.WriteAsync(InputReportArray, InputReportToken.Token);
+                    await InputReportChannel.Writer.WriteAsync(InputReportArray, InputReportToken.Token);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Fatal failure in input report processing");
+                Logger.LogError(ex, "Fatal failure in input report reading");
             }
         }
 

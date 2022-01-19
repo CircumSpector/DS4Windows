@@ -18,5 +18,10 @@ namespace DS4Windows.Shared.Core.HID.Devices
 
             Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
         }
+
+        protected override void ProcessInputReport(byte[] report)
+        {
+            
+        }
     }
 }
