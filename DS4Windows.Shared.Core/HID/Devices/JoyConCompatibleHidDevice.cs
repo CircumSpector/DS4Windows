@@ -10,7 +10,7 @@ namespace DS4Windows.Shared.Core.HID.Devices
         {
         }
 
-        protected override void ProcessInputReport(byte[] report)
+        protected override void ProcessInputReport(byte[] inputReport)
         {
             throw new NotImplementedException();
         }

@@ -183,8 +183,8 @@ namespace DS4Windows.Shared.Core.HID
         /// <summary>
         ///     Process the input report read from the device.
         /// </summary>
-        /// <param name="report">The raw report buffer.</param>
-        protected abstract void ProcessInputReport(byte[] report);
+        /// <param name="inputReport">The raw report buffer.</param>
+        protected abstract void ProcessInputReport(byte[] inputReport);
 
         /// <summary>
         ///     Start the asynchronous input report reading logic.

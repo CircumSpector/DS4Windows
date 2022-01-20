@@ -262,7 +262,7 @@ namespace DS4Windows.InputDevices
                 ds4Input.Priority = ThreadPriority.AboveNormal;
                 ds4Input.Name = "DualSense Input thread: " + MacAddress;
                 ds4Input.IsBackground = true;
-                ds4Input.Start();
+                //ds4Input.Start();
             }
             else
             {

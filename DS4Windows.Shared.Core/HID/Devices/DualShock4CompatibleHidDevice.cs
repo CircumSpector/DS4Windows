@@ -45,7 +45,7 @@ namespace DS4Windows.Shared.Core.HID.Devices
             StartInputReportReader();
         }
 
-        protected override void ProcessInputReport(byte[] report)
+        protected override void ProcessInputReport(byte[] inputReport)
         {
 
         }

@@ -19,12 +19,20 @@
 
         public byte TouchIdentifier2 { get; init; }
 
-        public byte TouchPacketCounter;
+        public byte TouchPacketCounter { get; init; }
 
-        public bool TouchFinger1 { get; init; }
+        public bool TouchOneFingerActive => Touch1 || Touch2;
 
-        public bool TouchFingers2 { get; init; }
+        public bool TouchTwoFingersActive => Touch1 && Touch2;
 
         public bool Mute { get; init; }
+
+        public bool Touch1 { get; init; }
+
+        public bool Touch2 { get; init; }
+
+        public bool TouchIsOnLeftSide { get; init; }
+
+        public bool TouchIsOnRightSide { get; init; }
     }
 }
