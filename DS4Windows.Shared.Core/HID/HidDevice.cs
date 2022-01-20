@@ -92,7 +92,7 @@ namespace DS4Windows.Shared.Core.HID
         /// </summary>
         public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Handle?.Dispose();
         }

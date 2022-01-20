@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using DS4Windows.Shared.Core.HID.Devices;
 using DS4Windows.Shared.Core.Util;
 using JetBrains.Annotations;
 using MethodTimer;
@@ -19,7 +18,7 @@ namespace DS4Windows.Shared.Core.HID
     /// <summary>
     ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
     /// </summary>
-    public abstract class CompatibleHidDevice : HidDevice
+    public abstract partial class CompatibleHidDevice : HidDevice
     {
         protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
         protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
@@ -170,17 +169,37 @@ namespace DS4Windows.Shared.Core.HID
         /// </summary>
         public event Action Disconnected;
 
+        /// <summary>
+        ///     Process the input report read from the device.
+        /// </summary>
+        /// <param name="report">The raw report buffer.</param>
         protected abstract void ProcessInputReport(byte[] report);
 
+        /// <summary>
+        ///     Start the asynchronous input report reading logic.
+        /// </summary>
         protected void StartInputReportReader()
         {
             if (inputReportToken.Token.IsCancellationRequested)
                 inputReportToken = new CancellationTokenSource();
 
-            inputReportReader = Task.Run(ReadInputReportLoop);
-            inputReportProcessor = Task.Run(ProcessInputReportLoop);
+            inputReportReader = Task.Run(ReadInputReportLoop, inputReportToken.Token);
+            inputReportProcessor = Task.Run(ProcessInputReportLoop, inputReportToken.Token);
         }
 
+        /// <summary>
+        ///      Stop the asynchronous input report reading logic.
+        /// </summary>
+        protected void StopInputReportReader()
+        {
+            inputReportToken.Cancel();
+
+            Task.WaitAll(inputReportReader, inputReportProcessor);
+        }
+
+        /// <summary>
+        ///     Continuous input report processing thread.
+        /// </summary>
         protected async void ProcessInputReportLoop()
         {
             Logger.LogDebug("Started input report processing thread");
@@ -193,6 +212,9 @@ namespace DS4Windows.Shared.Core.HID
 
                     var buffer = await InputReportChannel.Reader.ReadAsync();
 
+                    //
+                    // Implementation depends on derived object
+                    // 
                     ProcessInputReport(buffer);
                 }
             }
@@ -202,6 +224,9 @@ namespace DS4Windows.Shared.Core.HID
             }
         }
 
+        /// <summary>
+        ///     Continuous input report reader thread.
+        /// </summary>
         protected async void ReadInputReportLoop()
         {
             Logger.LogDebug("Started input report reading thread");
@@ -220,6 +245,8 @@ namespace DS4Windows.Shared.Core.HID
             catch (Win32Exception win32)
             {
                 if (win32.NativeErrorCode != Win32ErrorCode.ERROR_DEVICE_NOT_CONNECTED) throw;
+
+                inputReportToken.Cancel();
 
                 Disconnected?.Invoke();
             }
@@ -298,37 +325,16 @@ namespace DS4Windows.Shared.Core.HID
             return PhysicalAddress.Parse(address);
         }
 
+        public override void Dispose()
+        {
+            StopInputReportReader();
+
+            base.Dispose();
+        }
+
         public override string ToString()
         {
             return $"{DisplayName} ({Serial}) via {Connection}";
-        }
-
-        /// <summary>
-        ///     Craft a new specific input device depending on supplied <see cref="InputDeviceType" />.
-        /// </summary>
-        /// <param name="deviceType">The <see cref="InputDeviceType" /> to base the new device on.</param>
-        /// <param name="source">The source <see cref="HidDevice" /> to copy from.</param>
-        /// <param name="featureSet">The <see cref="CompatibleHidDeviceFeatureSet" /> flags to use to create this device.</param>
-        /// <param name="services">The <see cref="IServiceProvider" />.</param>
-        /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
-        [Time]
-        public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source,
-            CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services)
-        {
-            switch (deviceType)
-            {
-                case InputDeviceType.DualShock4:
-                    return new DualShock4CompatibleHidDevice(deviceType, source, featureSet, services);
-                case InputDeviceType.DualSense:
-                    return new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services);
-                case InputDeviceType.SwitchPro:
-                    return new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services);
-                case InputDeviceType.JoyConL:
-                case InputDeviceType.JoyConR:
-                    return new JoyConCompatibleHidDevice(deviceType, source, featureSet, services);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
-            }
         }
     }
 }
