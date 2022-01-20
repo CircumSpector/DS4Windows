@@ -33,6 +33,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
+using OpenTelemetry;
+using OpenTelemetry.Trace;
 using Serilog;
 using WPFLocalizeExtension.Engine;
 using Constants = DS4Windows.Constants;
@@ -98,6 +100,16 @@ namespace DS4WinWPF
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddOptions();
+
+            services.AddOpenTelemetryTracing(builder => builder
+                .SetSampler(new AlwaysOnSampler())
+                .AddSource(Constants.ApplicationName)
+                .AddZipkinExporter(o =>
+                {
+                    o.Endpoint = new Uri("http://owen:9411/api/v2/spans");
+                    o.ExportProcessorType = ExportProcessorType.Simple;
+                })
+            );
 
             services.AddSingleton<IHidHideControlService, HidHideControlService>();
             services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
@@ -196,6 +208,12 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
+
+            using var s = new ActivitySource("Test");
+
+            using var activity = s.StartActivity(
+                $"Test 2",
+                ActivityKind.Consumer);
 
             var version = Global.ExecutableProductVersion;
 
