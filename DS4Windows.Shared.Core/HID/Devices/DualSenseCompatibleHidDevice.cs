@@ -101,9 +101,7 @@ namespace DS4Windows.Shared.Core.HID.Devices
                 },
                 TouchPacketCounter = inputReport[41 + ReportStartOffset],
                 Touch1 =  inputReport[33 + ReportStartOffset] >> 7 == 0,
-                TouchIdentifier1 = (byte)(inputReport[33 + ReportStartOffset] & 0x7f),
                 Touch2 = inputReport[37 + ReportStartOffset] >> 7 == 0,
-                TouchIdentifier2 = (byte)(inputReport[37 + ReportStartOffset] & 0x7f),
                 TouchIsOnLeftSide = !(touchX >= 1920 * 2 / 5), // TODO: port const
                 TouchIsOnRightSide = !(touchX < 1920 * 2 / 5) // TODO: port const
             };

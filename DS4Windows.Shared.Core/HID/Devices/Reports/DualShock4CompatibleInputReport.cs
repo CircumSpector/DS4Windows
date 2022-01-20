@@ -15,10 +15,6 @@
 
         public TrackPadTouch TrackPadTouch2;
 
-        public byte TouchIdentifier1 { get; init; }
-
-        public byte TouchIdentifier2 { get; init; }
-
         public byte TouchPacketCounter { get; init; }
 
         public bool TouchOneFingerActive => Touch1 || Touch2;
@@ -27,8 +23,14 @@
 
         public bool Mute { get; init; }
 
+        /// <summary>
+        ///     First (one finger) touch is registered.
+        /// </summary>
         public bool Touch1 { get; init; }
 
+        /// <summary>
+        ///     Second (two fingers) touch is registered.
+        /// </summary>
         public bool Touch2 { get; init; }
 
         public bool TouchIsOnLeftSide { get; init; }
