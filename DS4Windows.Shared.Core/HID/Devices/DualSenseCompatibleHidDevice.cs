@@ -48,6 +48,8 @@ namespace DS4Windows.Shared.Core.HID.Devices
         {
             var state = new DualShock4CompatibleInputReport()
             {
+                ReportId = report[0 + ReportStartOffset],
+
                 LeftThumbX = report[1 + ReportStartOffset],
                 LeftThumbY = report[2 + ReportStartOffset],
                 RightThumbX = report[3 + ReportStartOffset],

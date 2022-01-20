@@ -18,7 +18,7 @@
     /// </summary>
     public class CompatibleHidDeviceInputReport
     {
-        private byte ReportId { get; init; }
+        public byte ReportId { get; init; }
 
         public byte? Battery { get; init; }
 
