@@ -165,6 +165,11 @@ namespace DS4Windows.Shared.Core.HID
         /// </summary>
         protected ILogger<CompatibleHidDevice> Logger { get; }
 
+        /// <summary>
+        ///     Fired when this device has been disconnected/unplugged.
+        /// </summary>
+        public event Action Disconnected;
+
         protected abstract void ProcessInputReport(byte[] report);
 
         protected void StartInputReportReader()
@@ -179,7 +184,7 @@ namespace DS4Windows.Shared.Core.HID
         protected async void ProcessInputReportLoop()
         {
             Logger.LogDebug("Started input report processing thread");
-            
+
             try
             {
                 while (!inputReportToken.IsCancellationRequested)
@@ -203,7 +208,7 @@ namespace DS4Windows.Shared.Core.HID
 
             try
             {
-                while (!inputReportToken.IsCancellationRequested) 
+                while (!inputReportToken.IsCancellationRequested)
                 {
                     ReadInputReport(InputReportBuffer, InputReportArray.Length, out var written);
 
@@ -214,10 +219,9 @@ namespace DS4Windows.Shared.Core.HID
             }
             catch (Win32Exception win32)
             {
-                if (win32.NativeErrorCode == Win32ErrorCode.ERROR_DEVICE_NOT_CONNECTED)
-                    return;
+                if (win32.NativeErrorCode != Win32ErrorCode.ERROR_DEVICE_NOT_CONNECTED) throw;
 
-                throw win32;
+                Disconnected?.Invoke();
             }
             catch (Exception ex)
             {
