@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
@@ -165,6 +166,16 @@ namespace DS4Windows.Shared.Core.HID
         protected ILogger<CompatibleHidDevice> Logger { get; }
 
         /// <summary>
+        ///     Metrics of how many input reports were read in a second.
+        /// </summary>
+        public int ReportsPerSecondRead { get; private set; }
+
+        /// <summary>
+        ///      Metrics of how many input reports were processed in a second.
+        /// </summary>
+        public int ReportsPerSecondProcessed { get; private set; }
+
+        /// <summary>
         ///     Fired when this device has been disconnected/unplugged.
         /// </summary>
         public event Action Disconnected;
@@ -188,7 +199,7 @@ namespace DS4Windows.Shared.Core.HID
         }
 
         /// <summary>
-        ///      Stop the asynchronous input report reading logic.
+        ///     Stop the asynchronous input report reading logic.
         /// </summary>
         protected void StopInputReportReader()
         {
@@ -204,10 +215,23 @@ namespace DS4Windows.Shared.Core.HID
         {
             Logger.LogDebug("Started input report processing thread");
 
+            Stopwatch sw = new();
+
+            var counter = 0;
+
             try
             {
+                sw.Start();
+
                 while (!inputReportToken.IsCancellationRequested)
                 {
+                    if (sw.Elapsed >= TimeSpan.FromSeconds(1))
+                    {
+                        ReportsPerSecondProcessed = counter;
+                        counter = 0;
+                        sw.Restart();
+                    }
+
                     if (!await InputReportChannel.Reader.WaitToReadAsync()) continue;
 
                     var buffer = await InputReportChannel.Reader.ReadAsync();
@@ -216,6 +240,8 @@ namespace DS4Windows.Shared.Core.HID
                     // Implementation depends on derived object
                     // 
                     ProcessInputReport(buffer);
+
+                    counter++;
                 }
             }
             catch (Exception ex)
@@ -231,15 +257,30 @@ namespace DS4Windows.Shared.Core.HID
         {
             Logger.LogDebug("Started input report reading thread");
 
+            Stopwatch sw = new();
+
+            var counter = 0;
+
             try
             {
+                sw.Start();
+
                 while (!inputReportToken.IsCancellationRequested)
                 {
+                    if (sw.Elapsed >= TimeSpan.FromSeconds(1))
+                    {
+                        ReportsPerSecondRead = counter;
+                        counter = 0;
+                        sw.Restart();
+                    }
+
                     ReadInputReport(InputReportBuffer, InputReportArray.Length, out var written);
 
                     Marshal.Copy(InputReportBuffer, InputReportArray, 0, written);
 
                     await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
+
+                    counter++;
                 }
             }
             catch (Win32Exception win32)
