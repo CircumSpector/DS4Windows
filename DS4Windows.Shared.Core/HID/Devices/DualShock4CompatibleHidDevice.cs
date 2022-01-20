@@ -10,6 +10,8 @@ namespace DS4Windows.Shared.Core.HID.Devices
         private const int UsbInputReportSize = 64;
         private const int BthInputReportSize = 547;
 
+        protected readonly int ReportStartOffset;
+
         public DualShock4CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
             featureSet, serviceProvider)
@@ -25,6 +27,7 @@ namespace DS4Windows.Shared.Core.HID.Devices
 
             if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
             {
+                ReportStartOffset = 0;
                 InputReportArray = new byte[UsbInputReportSize];
                 InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
 
@@ -34,6 +37,7 @@ namespace DS4Windows.Shared.Core.HID.Devices
             }
             else
             {
+                ReportStartOffset = 1;
                 InputReportArray = new byte[BthInputReportSize];
                 InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
             }

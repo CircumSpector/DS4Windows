@@ -22,19 +22,23 @@
 
         public byte? Battery { get; init; }
 
-        private DPadDirection DPad { get; init; }
+        public DPadDirection DPad { get; init; }
 
         public ushort Timestamp { get; init; }
 
         public byte FrameCounter { get; init; } = byte.MaxValue;
 
-        public byte LeftShoulder { get; init; }
+        public bool LeftShoulder { get; init; }
 
-        public byte RightShoulder { get; init; }
+        public bool RightShoulder { get; init; }
 
         public byte LeftTrigger { get; init; }
 
+        public bool LeftTriggerButton { get; init; }
+
         public byte RightTrigger { get; init; }
+        
+        public bool RightTriggerButton { get; init; }
 
         public bool LeftThumb { get; init; }
 
