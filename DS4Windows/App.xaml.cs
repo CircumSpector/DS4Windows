@@ -17,7 +17,6 @@ using DS4Windows;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.HostedServices;
 using DS4Windows.Shared.Core.Services;
-using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
@@ -28,20 +27,12 @@ using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.DS4Library.InputDevices;
 using EmbedIO;
 using EmbedIO.Files;
-using Jaeger;
-using Jaeger.Senders;
-using Jaeger.Senders.Thrift;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
-using OpenTelemetry;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Trace;
-using OpenTracing;
-using OpenTracing.Util;
 using Serilog;
 using WPFLocalizeExtension.Engine;
 using Constants = DS4Windows.Constants;
@@ -107,50 +98,6 @@ namespace DS4WinWPF
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddOptions();
-
-            services.AddOpenTelemetryTracing(builder => builder
-                .SetSampler(new AlwaysOnSampler())
-                .AddSource(Constants.ApplicationName)
-                .AddJaegerExporter(options =>
-                {
-                    options.AgentHost = "localhost";
-                    options.AgentPort = 6831;
-                    options.ExportProcessorType = ExportProcessorType.Simple;
-                }));
-
-            using var source = new ActivitySource("Test");
-
-            using var activity = source.StartActivity(
-                $"Test 2",
-                ActivityKind.Consumer);
-
-
-
-            /*
-            // Adds the Jaeger Tracer.
-            services.AddSingleton<ITracer>(serviceProvider =>
-            {
-                var serviceName = Constants.ApplicationName;
-                var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-
-                // This is necessary to pick the correct sender, otherwise a NoopSender is used!
-                Jaeger.Configuration.SenderConfiguration.DefaultSenderResolver = new SenderResolver(loggerFactory)
-                    .RegisterSenderFactory<ThriftSenderFactory>();
-
-                // This will log to a default localhost installation of Jaeger.
-                var tracer = new Tracer.Builder(serviceName)
-                    .WithLoggerFactory(loggerFactory)
-                    .Build();
-
-                // Allows code that can't use DI to also access the tracer.
-                if (!GlobalTracer.IsRegistered())
-                {
-                    GlobalTracer.Register(tracer);
-                }
-
-                return tracer;
-            });
-            */
 
             services.AddSingleton<IHidHideControlService, HidHideControlService>();
             services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
@@ -234,6 +181,10 @@ namespace DS4WinWPF
             services.AddHostedService<WebServerHost>();
         }
 
+        private static readonly ActivitySource MyActivitySource = new ActivitySource(
+        "MyCompany.MyProduct.MyLibrary");
+
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             logger = host.Services.GetRequiredService<ILogger<App>>();
@@ -245,13 +196,6 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
-
-            VolumeHelper.DosDevicePathToPath(
-                @"\Device\HarddiskVolume7\Development\GitHub\DS4Windows\DS4Windows\bin\x64\Debug\net5.0-windows\DS4Windows.exe");
-
-            var blocked = host.Services.GetRequiredService<IHidHideControlService>().BlockedInstanceIds;
-
-            var allowed = host.Services.GetRequiredService<IHidHideControlService>().AllowedApplicationPaths;
 
             var version = Global.ExecutableProductVersion;
 

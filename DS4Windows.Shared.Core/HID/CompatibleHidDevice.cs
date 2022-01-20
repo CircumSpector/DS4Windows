@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
@@ -13,6 +12,7 @@ using MethodTimer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using PInvoke;
 
 namespace DS4Windows.Shared.Core.HID
 {
@@ -179,17 +179,11 @@ namespace DS4Windows.Shared.Core.HID
         protected async void ProcessInputReportLoop()
         {
             Logger.LogDebug("Started input report processing thread");
-
-            using var source = new ActivitySource($"{nameof(CompatibleHidDevice)}::{nameof(ProcessInputReportLoop)}");
-
+            
             try
             {
                 while (!inputReportToken.IsCancellationRequested)
                 {
-                    using var activity = source.StartActivity(
-                        $"{nameof(CompatibleHidDevice)}::{nameof(ProcessInputReportLoop)}::{nameof(InputReportChannel.Reader.WaitToReadAsync)}",
-                        ActivityKind.Consumer);
-
                     if (!await InputReportChannel.Reader.WaitToReadAsync()) continue;
 
                     var buffer = await InputReportChannel.Reader.ReadAsync();
@@ -207,22 +201,23 @@ namespace DS4Windows.Shared.Core.HID
         {
             Logger.LogDebug("Started input report reading thread");
 
-            using var source = new ActivitySource($"{nameof(CompatibleHidDevice)}::{nameof(ReadInputReportLoop)}");
-
             try
             {
-                while (!inputReportToken.IsCancellationRequested)
+                while (!inputReportToken.IsCancellationRequested) 
                 {
-                    using var activity = source.StartActivity(
-                        $"{nameof(CompatibleHidDevice)}::{nameof(ProcessInputReportLoop)}::{nameof(InputReportChannel.Reader.WaitToReadAsync)}",
-                        ActivityKind.Producer);
-
                     ReadInputReport(InputReportBuffer, InputReportArray.Length, out var written);
 
                     Marshal.Copy(InputReportBuffer, InputReportArray, 0, written);
 
                     await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
                 }
+            }
+            catch (Win32Exception win32)
+            {
+                if (win32.NativeErrorCode == Win32ErrorCode.ERROR_DEVICE_NOT_CONNECTED)
+                    return;
+
+                throw win32;
             }
             catch (Exception ex)
             {
