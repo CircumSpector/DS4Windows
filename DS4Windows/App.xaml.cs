@@ -34,10 +34,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.ViGEm.Client;
 using OpenTelemetry;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using WPFLocalizeExtension.Engine;
-using Constants = DS4Windows.Constants;
 
 namespace DS4WinWPF
 {
@@ -101,15 +101,18 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
-            services.AddOpenTelemetryTracing(builder => builder
-                .SetSampler(new AlwaysOnSampler())
-                .AddSource(Constants.ApplicationName)
-                .AddZipkinExporter(o =>
-                {
-                    o.Endpoint = new Uri("http://owen:9411/api/v2/spans");
-                    o.ExportProcessorType = ExportProcessorType.Simple;
-                })
-            );
+            if (bool.TryParse(configuration.GetSection("OpenTelemetry:IsEnabled").Value, out var isEnabled) &&
+                isEnabled)
+                //
+                // Initialize OpenTelemetry
+                // 
+                services.AddOpenTelemetryTracing(builder => builder
+                    .SetSampler(new AlwaysOnSampler())
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Constants.ApplicationName))
+                    .AddSource(Constants.ApplicationName)
+                    .AddSource("DS4Windows.Shared.Core")
+                    .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; })
+                );
 
             services.AddSingleton<IHidHideControlService, HidHideControlService>();
             services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
@@ -118,7 +121,6 @@ namespace DS4WinWPF
             services.AddSingleton<ICommandLineOptions, CommandLineOptions>();
             services.AddSingleton<IAppLogger, AppLogger>();
             services.AddSingleton<MainWindow>();
-
 
             services.AddSingleton<DeviceNotificationListener>();
             services.AddSingleton<IDeviceNotificationListener>(provider =>
@@ -193,10 +195,6 @@ namespace DS4WinWPF
             services.AddHostedService<WebServerHost>();
         }
 
-        private static readonly ActivitySource MyActivitySource = new ActivitySource(
-        "MyCompany.MyProduct.MyLibrary");
-
-
         protected override async void OnStartup(StartupEventArgs e)
         {
             logger = host.Services.GetRequiredService<ILogger<App>>();
@@ -208,12 +206,6 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
-
-            using var s = new ActivitySource("Test");
-
-            using var activity = s.StartActivity(
-                $"Test 2",
-                ActivityKind.Consumer);
 
             var version = Global.ExecutableProductVersion;
 
@@ -340,17 +332,17 @@ namespace DS4WinWPF
                         $@"{Constants.LegacyProfilesFileName} not read at location ${Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyProfilesFileName)}. Using default app settings");
                     break;
                 case true:
-                    {
-                        logger.LogInformation("No config found. Creating default config");
-                        AttemptSave();
+                {
+                    logger.LogInformation("No config found. Creating default config");
+                    AttemptSave();
 
-                        await Global.Instance.Config.SaveAsNewProfile(0, "Default");
-                        for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
-                            Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
+                    await Global.Instance.Config.SaveAsNewProfile(0, "Default");
+                    for (var i = 0; i < ControlService.MAX_DS4_CONTROLLER_COUNT; i++)
+                        Global.Instance.Config.ProfilePath[i] = Global.Instance.Config.OlderProfilePath[i] = "Default";
 
-                        logger.LogInformation("Default config created");
-                        break;
-                    }
+                    logger.LogInformation("Default config created");
+                    break;
+                }
             }
 
             skipSave = false;
@@ -608,7 +600,7 @@ namespace DS4WinWPF
                                     "DS4Windows_IPCResultData_ReadyEvent");
                             }
                             else
-                            // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
+                                // If the mtx failed then something must be seriously wrong. Cannot do anything in that case because MMF file may be modified by concurrent processes.
                             {
                                 bDoSendMsg = false;
                             }
@@ -726,7 +718,7 @@ namespace DS4WinWPF
             if (ThemeResources.TryGetValue(themeChoice, out var loc))
             {
                 Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                { Source = new Uri(loc, UriKind.Absolute) };
+                    { Source = new Uri(loc, UriKind.Absolute) };
 
                 if (fireChanged) ThemeChanged?.Invoke(this, EventArgs.Empty);
             }

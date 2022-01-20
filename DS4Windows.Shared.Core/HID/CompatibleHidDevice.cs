@@ -31,6 +31,8 @@ namespace DS4Windows.Shared.Core.HID
 
         protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
 
+        protected readonly ActivitySource CoreActivity = new("DS4Windows.Shared.Core");
+
         /// <summary>
         ///     Managed input report array.
         /// </summary>
@@ -225,6 +227,12 @@ namespace DS4Windows.Shared.Core.HID
 
                 while (!inputReportToken.IsCancellationRequested)
                 {
+                    using var activity = CoreActivity.StartActivity(
+                        $"{nameof(CompatibleHidDevice)}:{nameof(ProcessInputReportLoop)}",
+                        ActivityKind.Consumer);
+
+                    activity?.SetTag(nameof(ReportsPerSecondProcessed), ReportsPerSecondProcessed);
+
                     if (sw.Elapsed >= TimeSpan.FromSeconds(1))
                     {
                         ReportsPerSecondProcessed = counter;
@@ -267,6 +275,12 @@ namespace DS4Windows.Shared.Core.HID
 
                 while (!inputReportToken.IsCancellationRequested)
                 {
+                    using var activity = CoreActivity.StartActivity(
+                        $"{nameof(CompatibleHidDevice)}:{nameof(ReadInputReportLoop)}",
+                        ActivityKind.Producer);
+
+                    activity?.SetTag(nameof(ReportsPerSecondRead), ReportsPerSecondRead);
+
                     if (sw.Elapsed >= TimeSpan.FromSeconds(1))
                     {
                         ReportsPerSecondRead = counter;
