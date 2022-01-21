@@ -309,6 +309,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Core\DS4Windows.Shared.Core.csproj" />
   </ItemGroup>
 

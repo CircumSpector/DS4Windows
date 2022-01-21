@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using DS4Windows;
+using DS4Windows.Shared.Configuration.Common.Util;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using Newtonsoft.Json;
 using Constants = DS4Windows.Constants;

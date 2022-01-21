@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace DS4WinWPF.DS4Control.Profiles.Schema
+namespace DS4Windows.Shared.Configuration.Common.Util
 {
     /// <summary>
     ///     Adds JSON (de-)serialization helper methods to <see cref="T" />.
