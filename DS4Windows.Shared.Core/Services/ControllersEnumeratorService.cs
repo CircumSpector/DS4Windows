@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using DS4Windows.Shared.Core.HID;
-using MethodTimer;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Core.Services
@@ -167,7 +166,6 @@ namespace DS4Windows.Shared.Core.Services
         public event Action<CompatibleHidDevice> ControllerRemoved;
 
         /// <inheritdoc />
-        [Time]
         public void EnumerateDevices()
         {
             enumeratorService.EnumerateDevices();
@@ -230,7 +228,6 @@ namespace DS4Windows.Shared.Core.Services
             DeviceListReady?.Invoke();
         }
 
-        [Time]
         private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
         {
             var known = KnownDevices.FirstOrDefault(d =>
@@ -272,7 +269,6 @@ namespace DS4Windows.Shared.Core.Services
                 device.ToString());
         }
 
-        [Time]
         private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
         {
             logger.LogInformation("Compatible device {Device} got removed", hidDevice);

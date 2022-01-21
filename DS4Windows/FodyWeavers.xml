@@ -2,6 +2,5 @@
   <PropertyChanged />
   <AsyncErrorHandler />
   <ConfigureAwait />
-  <MethodTimer />
   <WeakEventHandler />
 </Weavers>

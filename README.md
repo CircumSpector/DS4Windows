@@ -55,12 +55,12 @@ This application benefits from these awesome projects (appearance in no special 
   - An extension for Fody to integrate error handling into async and TPL code
 - [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
   - Configure async code's ConfigureAwait at a global level
-- [MethodTimer.Fody](https://github.com/Fody/MethodTimer)
-  - Injects some very basic method timing code
 - [Hardcodet NotifyIcon for WPF](https://github.com/hardcodet/wpf-notifyicon)
   - NotifyIcon for .Net Core 3.1 and .Net 5 WPF
 - [Jaeger Tracing](https://github.com/jaegertracing/jaeger-client-csharp)
   - C# client (tracer) for Jaeger
+- [OpenTelemetry .NET](https://github.com/open-telemetry/opentelemetry-dotnet)
+  - The [OpenTelemetry](https://opentelemetry.io/) .NET Client
 - [MdXaml](https://github.com/whistyun/MdXaml)
   - Markdown for WPF - alternate version of Markdown.Xaml
 - [Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf)

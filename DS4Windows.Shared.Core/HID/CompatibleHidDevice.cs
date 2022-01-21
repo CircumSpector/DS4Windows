@@ -8,7 +8,6 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Core.Util;
 using JetBrains.Annotations;
-using MethodTimer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -49,7 +48,6 @@ namespace DS4Windows.Shared.Core.HID
 
         private CancellationTokenSource inputReportToken = new();
 
-        [Time]
         protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider)
         {
@@ -311,7 +309,6 @@ namespace DS4Windows.Shared.Core.HID
             }
         }
 
-        [Time]
         [CanBeNull]
         protected PhysicalAddress ReadSerial(byte featureId)
         {

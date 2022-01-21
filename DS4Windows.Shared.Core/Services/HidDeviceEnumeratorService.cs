@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using DS4Windows.Shared.Core.HID;
-using MethodTimer;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
@@ -80,7 +79,6 @@ namespace DS4Windows.Shared.Core.Services
         public ReadOnlyObservableCollection<HidDevice> ConnectedDevices { get; }
 
         /// <inheritdoc />
-        [Time]
         public void EnumerateDevices()
         {
             var deviceIndex = 0;

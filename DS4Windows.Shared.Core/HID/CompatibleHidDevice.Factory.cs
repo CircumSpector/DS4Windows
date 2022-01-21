@@ -1,6 +1,5 @@
 ﻿using System;
 using DS4Windows.Shared.Core.HID.Devices;
-using MethodTimer;
 
 namespace DS4Windows.Shared.Core.HID
 {
@@ -14,7 +13,6 @@ namespace DS4Windows.Shared.Core.HID
         /// <param name="featureSet">The <see cref="CompatibleHidDeviceFeatureSet" /> flags to use to create this device.</param>
         /// <param name="services">The <see cref="IServiceProvider" />.</param>
         /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
-        [Time]
         public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source,
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services)
         {
