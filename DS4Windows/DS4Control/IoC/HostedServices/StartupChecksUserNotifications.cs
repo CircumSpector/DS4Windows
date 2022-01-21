@@ -157,7 +157,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
         [MissingLocalization]
         private async Task CheckIsTracingEnabled()
         {
-            if (!bool.TryParse(config.GetSection("OpenTelemetry:IsEnabled").Value, out var isEnabled) ||
+            if (!bool.TryParse(config.GetSection("OpenTelemetry:IsTracingEnabled").Value, out var isEnabled) ||
                 !isEnabled)
                 return;
 

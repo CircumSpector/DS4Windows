@@ -102,7 +102,7 @@ namespace DS4WinWPF
         {
             services.AddOptions();
 
-            if (bool.TryParse(configuration.GetSection("OpenTelemetry:IsEnabled").Value, out var isEnabled) &&
+            if (bool.TryParse(configuration.GetSection("OpenTelemetry:IsTracingEnabled").Value, out var isEnabled) &&
                 isEnabled)
                 //
                 // Initialize OpenTelemetry
