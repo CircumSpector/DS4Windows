@@ -5,14 +5,7 @@ using System.Globalization;
 using System.Linq;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
-using Jaeger;
-using Jaeger.Samplers;
-using Jaeger.Senders;
-using Jaeger.Senders.Thrift;
-using JetBrains.Annotations;
-using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
-using OpenTracing.Util;
 using Constants = DS4Windows.Constants;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
@@ -95,11 +88,6 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
             .Select(i => new KeyValuePair<int, CustomLedProxyType>(i, new CustomLedProxyType())));
 
         /// <summary>
-        ///     If true, Tracing will be enabled to start collecting performance metrics.
-        /// </summary>
-        public bool IsTracingEnabled { get; set; }
-
-        /// <summary>
         ///     If true, will suppress the Steam warning dialog at startup.
         /// </summary>
         public bool HasUserConfirmedSteamWarning { get; set; }
@@ -130,32 +118,5 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
             .Range(0, Constants.MaxControllers)
             .Select(i => new KeyValuePair<int, Guid?>(i, null)));
-
-        public event Action<bool> IsTracingEnabledChanged;
-
-        [UsedImplicitly]
-        private void OnIsTracingEnabledChanged(object oldValue, object newValue)
-        {
-            //
-            // Automatically register tracer, if configuration value instructs to
-            // 
-            if ((bool)newValue && !GlobalTracer.IsRegistered())
-            {
-                // This is necessary to pick the correct sender, otherwise a NoopSender is used!
-                Configuration.SenderConfiguration.DefaultSenderResolver = new SenderResolver(new NullLoggerFactory())
-                    .RegisterSenderFactory<ThriftSenderFactory>();
-
-                // This will log to a default localhost installation of Jaeger.
-                var tracer = new Tracer.Builder(DS4Windows.Constants.ApplicationName)
-                    .WithLoggerFactory(new NullLoggerFactory())
-                    .WithSampler(new ConstSampler(true))
-                    .Build();
-
-                // Allows code that can't use DI to also access the tracer.
-                GlobalTracer.Register(tracer);
-            }
-
-            IsTracingEnabledChanged?.Invoke((bool)newValue);
-        }
     }
 }

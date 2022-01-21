@@ -7,9 +7,14 @@ using AdonisUI.Controls;
 using DS4Windows;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
+using DS4WinWPF.Translations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
+using MessageBox = AdonisUI.Controls.MessageBox;
+using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
+using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
 
 namespace DS4WinWPF.DS4Control.IoC.HostedServices
 {
@@ -20,17 +25,20 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
     {
         private readonly IAppSettingsService appSettings;
 
+        private readonly IConfiguration config;
+
         private readonly IExternalDependenciesService dependenciesService;
 
         private readonly ILogger<StartupChecksUserNotifications> logger;
 
         public StartupChecksUserNotifications(IAppSettingsService appSettings,
             ILogger<StartupChecksUserNotifications> logger,
-            IExternalDependenciesService dependenciesService)
+            IExternalDependenciesService dependenciesService, IConfiguration config)
         {
             this.appSettings = appSettings;
             this.logger = logger;
             this.dependenciesService = dependenciesService;
+            this.config = config;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -76,7 +84,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                     + "Please install it now and restart the application afterwards or read up on troubleshooting."
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "ViGEmBus not found",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Icon = MessageBoxImage.Warning,
                 Buttons = new[]
                 {
                     MessageBoxButtons.Custom("Take me to the download!"),
@@ -88,14 +96,14 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+                MessageBox.Show(Application.Current.MainWindow, messageBox);
 
                 switch (messageBox.Result)
                 {
-                    case AdonisUI.Controls.MessageBoxResult.Custom:
+                    case MessageBoxResult.Custom:
                         DS4Windows.Util.StartProcessHelper(Constants.ViGEmBusGen1DownloadUri);
                         break;
-                    case AdonisUI.Controls.MessageBoxResult.No:
+                    case MessageBoxResult.No:
                         DS4Windows.Util.StartProcessHelper(Constants.ViGEmBusGen1GuideUri);
                         break;
                 }
@@ -120,7 +128,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                     + "\r\n\r\nTo mitigate this, please install HidHide now and restart your machine afterwards or read up on troubleshooting."
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "HidHide not found",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Icon = MessageBoxImage.Warning,
                 Buttons = new[]
                 {
                     MessageBoxButtons.Custom("Take me to the download!"),
@@ -132,14 +140,14 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+                MessageBox.Show(Application.Current.MainWindow, messageBox);
 
                 switch (messageBox.Result)
                 {
-                    case AdonisUI.Controls.MessageBoxResult.Custom:
+                    case MessageBoxResult.Custom:
                         DS4Windows.Util.StartProcessHelper(Constants.HidHideDownloadUri);
                         break;
-                    case AdonisUI.Controls.MessageBoxResult.No:
+                    case MessageBoxResult.No:
                         DS4Windows.Util.StartProcessHelper(Constants.HidHideGuideUri);
                         break;
                 }
@@ -149,24 +157,24 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
         [MissingLocalization]
         private async Task CheckIsTracingEnabled()
         {
-            if (!appSettings.Settings.IsTracingEnabled)
+            if (!bool.TryParse(config.GetSection("OpenTelemetry:IsEnabled").Value, out var isEnabled) ||
+                !isEnabled)
                 return;
 
             var messageBox = new MessageBoxModel
             {
                 Text =
                     "Hello, Gamer!" +
-                    "\r\n\r\nYou have enabled Tracing in the application settings. This is an advanced feature useful for diagnosing "
+                    "\r\n\r\nYou have enabled Tracing in appsettings.json file. This is an advanced feature useful for diagnosing "
                     + "issues with lag or stutter and general remapping performance. "
                     + "\r\n\r\nTracing is a very memory-hungry operation and requires additional software to be useful. "
                     + "Do not leave Tracing enabled if you simply wanna play your games, it's for diagnostics only."
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "Performance Tracing is enabled",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Icon = MessageBoxImage.Warning,
                 Buttons = new[]
                 {
                     MessageBoxButtons.Custom("Tell me more"),
-                    MessageBoxButtons.No("Uh, turn it off, please!"),
                     MessageBoxButtons.Yes("Understood")
                 },
                 IsSoundEnabled = false
@@ -174,15 +182,12 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+                MessageBox.Show(Application.Current.MainWindow, messageBox);
 
                 switch (messageBox.Result)
                 {
-                    case AdonisUI.Controls.MessageBoxResult.Custom:
+                    case MessageBoxResult.Custom:
                         DS4Windows.Util.StartProcessHelper(Constants.TracingGuideUri);
-                        break;
-                    case AdonisUI.Controls.MessageBoxResult.No:
-                        appSettings.Settings.IsTracingEnabled = false;
                         break;
                 }
             });
@@ -205,18 +210,18 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                 Text =
                     "Hello, Gamer!" +
                     "\r\n\r\nYou're running this application on Windows 11. "
-                    + $"\r\n\r\nPlease bear in mind that compatibility with Windows 11 currently is in its very early stage, "
+                    + "\r\n\r\nPlease bear in mind that compatibility with Windows 11 currently is in its very early stage, "
                     + "if something that worked on Windows 10 is broken, for now, you're on your own!"
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "Windows 11 detected",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Icon = MessageBoxImage.Warning,
                 Buttons = new[]
                 {
                     MessageBoxButtons.Yes("Understood")
                 },
                 CheckBoxes = new[]
                 {
-                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
+                    new MessageBoxCheckBoxModel(Strings.NotAMoronConfirmationCheckbox)
                     {
                         IsChecked = false,
                         Placement = MessageBoxCheckBoxPlacement.BelowText
@@ -227,7 +232,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+                MessageBox.Show(Application.Current.MainWindow, messageBox);
 
                 appSettings.Settings.HasUserConfirmedWindows11Warning = messageBox.CheckBoxes.First().IsChecked;
             });
@@ -257,7 +262,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                     "should you encounter issues."
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "Steam is running",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Icon = MessageBoxImage.Warning,
                 Buttons = new[]
                 {
                     MessageBoxButtons.Custom("Show me what to do"),
@@ -265,7 +270,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                 },
                 CheckBoxes = new[]
                 {
-                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
+                    new MessageBoxCheckBoxModel(Strings.NotAMoronConfirmationCheckbox)
                     {
                         IsChecked = false,
                         Placement = MessageBoxCheckBoxPlacement.BelowText
@@ -276,11 +281,11 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+                MessageBox.Show(Application.Current.MainWindow, messageBox);
 
                 appSettings.Settings.HasUserConfirmedSteamWarning = messageBox.CheckBoxes.First().IsChecked;
 
-                if (messageBox.Result == AdonisUI.Controls.MessageBoxResult.Custom)
+                if (messageBox.Result == MessageBoxResult.Custom)
                     DS4Windows.Util.StartProcessHelper(Constants.SteamTroubleshootingUri);
             });
         }
@@ -298,20 +303,20 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                 Text =
                     "Hello, Gamer!" +
                     "\r\n\r\nYou're running the 32-Bit edition on a 64-Bit system. "
-                    + $"\r\n\r\nIf this isn't by intention you've probably downloaded the wrong build of"
+                    + "\r\n\r\nIf this isn't by intention you've probably downloaded the wrong build of"
                     + $" {Constants.ApplicationName}."
-                    + $"\r\n\r\nIt is highly recommended to run the 64-Bit (x64) edition on a 64-Bit operating system "
+                    + "\r\n\r\nIt is highly recommended to run the 64-Bit (x64) edition on a 64-Bit operating system "
                     + "or you will most likely encounter unsolvable issues."
                     + "\r\n\r\nThanks for your attention ❤️",
                 Caption = "Architecture mismatch detected",
-                Icon = AdonisUI.Controls.MessageBoxImage.Warning,
+                Icon = MessageBoxImage.Warning,
                 Buttons = new[]
                 {
                     MessageBoxButtons.Yes("Understood")
                 },
                 CheckBoxes = new[]
                 {
-                    new MessageBoxCheckBoxModel(Translations.Strings.NotAMoronConfirmationCheckbox)
+                    new MessageBoxCheckBoxModel(Strings.NotAMoronConfirmationCheckbox)
                     {
                         IsChecked = false,
                         Placement = MessageBoxCheckBoxPlacement.BelowText
@@ -322,7 +327,7 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                AdonisUI.Controls.MessageBox.Show(Application.Current.MainWindow, messageBox);
+                MessageBox.Show(Application.Current.MainWindow, messageBox);
 
                 appSettings.Settings.HasUserConfirmedArchitectureWarning = messageBox.CheckBoxes.First().IsChecked;
             });

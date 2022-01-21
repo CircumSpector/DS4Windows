@@ -231,9 +231,6 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             UdpSmoothBetaChanged?.Invoke();
             Settings.UDPServerSmoothingOptions.BetaChanged += () => UdpSmoothBetaChanged?.Invoke();
 
-            IsTracingEnabledChanged?.Invoke(Settings.IsTracingEnabled);
-            Settings.IsTracingEnabledChanged += b => IsTracingEnabledChanged?.Invoke(b);
-
             //
             // Always call last
             // 
