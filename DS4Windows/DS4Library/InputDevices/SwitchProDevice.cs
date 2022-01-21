@@ -8,9 +8,6 @@ using System.Threading;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Logging;
-using DS4WinWPF.DS4Control.Util;
-using DS4WinWPF.DS4Library.InputDevices;
-using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
 {
@@ -129,6 +126,19 @@ namespace DS4Windows.InputDevices
 
         private readonly short[] accelNeutral = new short[3];
         private readonly short[] accelSens = new short[3];
+
+        private readonly short[] gyroBias = new short[3];
+        private readonly short[] gyroCalibOffsets = new short[3];
+        private readonly double[] gyroCoeff = new double[3];
+        private readonly short[] gyroSens = new short[3];
+
+        private readonly ushort[] leftStickCalib = new ushort[6];
+        private readonly ushort leftStickOffsetX = 0;
+        private readonly ushort leftStickOffsetY = 0;
+
+        private readonly ushort[] rightStickCalib = new ushort[6];
+        private readonly ushort rightStickOffsetX = 0;
+        private readonly ushort rightStickOffsetY = 0;
         private double[] accelSensMulti = new double[3];
 
         /// <summary>
@@ -138,27 +148,14 @@ namespace DS4Windows.InputDevices
 
         public double currentLeftAmpRatio;
         public double currentRightAmpRatio;
-
-        private readonly short[] gyroBias = new short[3];
-        private readonly short[] gyroCalibOffsets = new short[3];
-        private readonly double[] gyroCoeff = new double[3];
-        private readonly short[] gyroSens = new short[3];
         private double[] gyroSensMulti = new double[3];
         private byte[] inputReportBuffer;
-
-        private readonly ushort[] leftStickCalib = new ushort[6];
-        private readonly ushort leftStickOffsetX = 0;
-        private readonly ushort leftStickOffsetY = 0;
 
         private StickAxisData leftStickXData;
         private StickAxisData leftStickYData;
 
         private SwitchProControllerOptions nativeOptionsStore;
         private byte[] outputReportBuffer;
-
-        private readonly ushort[] rightStickCalib = new ushort[6];
-        private readonly ushort rightStickOffsetX = 0;
-        private readonly ushort rightStickOffsetY = 0;
         private StickAxisData rightStickXData;
         private StickAxisData rightStickYData;
         private byte[] rumbleReportBuffer;
@@ -326,10 +323,6 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
-                    using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SwitchProDevice)}::{nameof(ReadInput)}")
-                        .IgnoreActiveSpan()
-                        .StartActive(true);
-
                     oldCharging = charging;
                     currerror = string.Empty;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using DS4WinWPF.DS4Control.IoC.Services;
-using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -23,11 +22,13 @@ namespace DS4Windows
         private const int SMOOTH_BUFFER_LEN = 3;
         private readonly int deviceNumber;
 
+        private readonly DS4Device.GyroMouseSens gyroMouseSensSettings;
+        private readonly double[] xSmoothBuffer = new double[SMOOTH_BUFFER_LEN];
+        private readonly double[] ySmoothBuffer = new double[SMOOTH_BUFFER_LEN];
+
 
         private double coefficient;
         private OneEuroFilterPair filterPair = new();
-
-        private readonly DS4Device.GyroMouseSens gyroMouseSensSettings;
         private bool gyroSmooth;
 
         private Direction hDirection = Direction.Neutral, vDirection = Direction.Neutral;
@@ -46,8 +47,6 @@ namespace DS4Windows
 
         private int tempInt;
         private double verticalScale;
-        private readonly double[] xSmoothBuffer = new double[SMOOTH_BUFFER_LEN];
-        private readonly double[] ySmoothBuffer = new double[SMOOTH_BUFFER_LEN];
 
         public MouseCursor(int deviceNum, DS4Device.GyroMouseSens gyroMouseSens)
         {
@@ -55,8 +54,10 @@ namespace DS4Windows
             gyroMouseSensSettings = gyroMouseSens;
             filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseInfo.DefaultMinCutoff;
             filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseInfo.DefaultBeta;
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseInfo.SetRefreshEvents(filterPair.Axis1Filter);
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseInfo.SetRefreshEvents(filterPair.Axis2Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseInfo
+                .SetRefreshEvents(filterPair.Axis1Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseInfo
+                .SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         public int GyroCursorDeadZone { get; set; } = GYRO_MOUSE_DEADZONE;
@@ -72,17 +73,17 @@ namespace DS4Windows
             filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff =
                 ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseInfo.MinCutoff;
             filterPair.Axis1Filter.Beta =
-                filterPair.Axis2Filter.Beta = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseInfo.Beta;
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseInfo.SetRefreshEvents(filterPair.Axis1Filter);
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseInfo.SetRefreshEvents(filterPair.Axis2Filter);
+                filterPair.Axis2Filter.Beta =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseInfo.Beta;
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseInfo
+                .SetRefreshEvents(filterPair.Axis1Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseInfo
+                .SetRefreshEvents(filterPair.Axis2Filter);
         }
         //bool tempBool = false;
 
         public virtual void SixAxisMoved(SixAxisEventArgs arg)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixAxisMoved)).StartActive(true);
-
-
             int deltaX = 0, deltaY = 0;
             deltaX = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroMouseHorizontalAxis == 0
                 ? arg.sixAxis.gyroYawFull
@@ -128,7 +129,8 @@ namespace DS4Windows
                   + normX * (offset * signX)
                 : 0;
 
-            verticalScale = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroSensVerticalScale * 0.01;
+            verticalScale = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroSensVerticalScale *
+                            0.01;
             var yMotion = deltaY != 0
                 ? coefficient * verticalScale * (deltaY * tempDouble)
                   + normY * (offset * signY)
@@ -251,9 +253,6 @@ namespace DS4Windows
 
         public void TouchesMoved(TouchpadEventArgs arg, bool dragging, bool disableInvert = false)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesMoved)).StartActive(true);
-
-
             var touchesLen = arg.touches.Length;
             if (!dragging && touchesLen != 1 || dragging && touchesLen < 1)
                 return;
@@ -285,9 +284,6 @@ namespace DS4Windows
 
         public void TouchesMovedAbsolute(TouchpadEventArgs arg)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesMovedAbsolute)).StartActive(true);
-
-
             var touchesLen = arg.touches.Length;
             if (touchesLen != 1)
                 return;
@@ -333,9 +329,6 @@ namespace DS4Windows
 
         public void TouchMoveCursor(int dx, int dy, bool disableInvert = false)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchMoveCursor)).StartActive(true);
-
-
             var relMouseSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchPadRelMouse;
             if (relMouseSettings.Rotation != 0.0)
             {
@@ -355,7 +348,8 @@ namespace DS4Windows
             var signX = Math.Sign(dx);
             var signY = Math.Sign(dy);
             var coefficient = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchSensitivity * 0.01;
-            var jitterCompenstation = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchpadJitterCompensation;
+            var jitterCompenstation = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber)
+                .TouchpadJitterCompensation;
 
             var xMotion = dx != 0 ? coefficient * dx + normX * (TOUCHPAD_MOUSE_OFFSET * signX) : 0.0;
 
@@ -409,7 +403,8 @@ namespace DS4Windows
 
             if (disableInvert == false)
             {
-                var touchpadInvert = tempInt = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchPadInvert;
+                var touchpadInvert =
+                    tempInt = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).TouchPadInvert;
                 if ((touchpadInvert & 0x02) == 2)
                     xAction *= -1;
 

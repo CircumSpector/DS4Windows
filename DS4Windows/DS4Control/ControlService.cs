@@ -20,8 +20,8 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Properties;
+using DS4WinWPF.Translations;
 using Nefarius.ViGEm.Client.Targets;
-using OpenTracing.Util;
 using Sensorit.Base;
 using static DS4Windows.Global;
 using MessageBox = AdonisUI.Controls.MessageBox;
@@ -31,14 +31,14 @@ namespace DS4Windows
 {
     public interface IControlService
     {
+        Dispatcher EventDispatcher { get; }
+        IOutputSlotManager OutputslotMan { get; }
         event EventHandler<LogEntryEventArgs> Debug;
         event EventHandler ServiceStarted;
         event EventHandler PreServiceStop;
         event EventHandler ServiceStopped;
         event EventHandler RunningChanged;
         event ControlService.HotplugControllerHandler HotplugController;
-        Dispatcher EventDispatcher { get; }
-        IOutputSlotManager OutputslotMan { get; }
         IAppSettingsService GetAppSettings();
         void PostDs4DeviceInit(DS4Device device);
         bool CheckForSupportedDevice(HidDeviceV3 device, VidPidInfo metaInfo);
@@ -204,7 +204,7 @@ namespace DS4Windows
             IProfilesService profilesService
         )
         {
-            this.ds4devices = devices;
+            ds4devices = devices;
             this.appSettings = appSettings;
             this.cmdParser = cmdParser;
             this.profilesService = profilesService;
@@ -265,15 +265,11 @@ namespace DS4Windows
                 ExposedState[i] = new DS4StateExposed(CurrentState[i]);
 
                 var tempDev = i;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(i).L2OutputSettings.TwoStageModeChanged += (sender, e) =>
-                {
-                    Mapping.l2TwoStageMappingData[tempDev].Reset();
-                };
+                ProfilesService.Instance.ActiveProfiles.ElementAt(i).L2OutputSettings.TwoStageModeChanged +=
+                    (sender, e) => { Mapping.l2TwoStageMappingData[tempDev].Reset(); };
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(i).R2OutputSettings.TwoStageModeChanged += (sender, e) =>
-                {
-                    Mapping.r2TwoStageMappingData[tempDev].Reset();
-                };
+                ProfilesService.Instance.ActiveProfiles.ElementAt(i).R2OutputSettings.TwoStageModeChanged +=
+                    (sender, e) => { Mapping.r2TwoStageMappingData[tempDev].Reset(); };
             }
 
             OutputslotMan = osl;
@@ -368,7 +364,8 @@ namespace DS4Windows
         {
             if (device.DeviceType is not (InputDeviceType.JoyConL or InputDeviceType.JoyConR)) return;
 
-            if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode != JoyConDeviceOptions.LinkMode.Joined) return;
+            if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode !=
+                JoyConDeviceOptions.LinkMode.Joined) return;
 
             var tempJoyDev = device as JoyConDevice;
             tempJoyDev.PerformStateMerge = true;
@@ -392,13 +389,13 @@ namespace DS4Windows
             switch (device.DeviceType)
             {
                 case InputDeviceType.DualSense:
-                    {
-                        var tempDSDev = device as DualSenseDevice;
+                {
+                    var tempDSDev = device as DualSenseDevice;
 
-                        var dSOpts = tempDSDev.NativeOptionsStore;
-                        dSOpts.LedModeChanged += () => { tempDSDev.CheckControllerNumDeviceSettings(activeControllers); };
-                        break;
-                    }
+                    var dSOpts = tempDSDev.NativeOptionsStore;
+                    dSOpts.LedModeChanged += () => { tempDSDev.CheckControllerNumDeviceSettings(activeControllers); };
+                    break;
+                }
                 case InputDeviceType.JoyConL:
                 case InputDeviceType.JoyConR:
                     break;
@@ -451,7 +448,7 @@ namespace DS4Windows
                         },
                         CheckBoxes = new[]
                         {
-                            new MessageBoxCheckBoxModel(DS4WinWPF.Translations.Strings.NotAMoronConfirmationCheckbox)
+                            new MessageBoxCheckBoxModel(Strings.NotAMoronConfirmationCheckbox)
                             {
                                 IsChecked = false,
                                 Placement = MessageBoxCheckBoxPlacement.BelowText
@@ -801,7 +798,7 @@ namespace DS4Windows
             var contType = profile.OutputDeviceType;
 
             var slotDevice = OutputslotMan.FindExistUnboundSlotType(contType);
-            
+
             var success = false;
             switch (contType)
             {
@@ -994,9 +991,6 @@ namespace DS4Windows
 
         public async Task<bool> Start(bool showInLog = true)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(ControlService)}::{nameof(Start)}")
-                .StartActive(true);
-
             inServiceTask = true;
 
             if (OutputslotMan.Client != null)
@@ -1009,11 +1003,9 @@ namespace DS4Windows
 
                 ds4devices.IsExclusiveMode = appSettings.Settings.UseExclusiveMode; //Re-enable Exclusive Mode
 
-                using (GlobalTracer.Instance.BuildSpan(nameof(UpdateHidHiddenAttributes))
-                    .StartActive(true))
-                {
-                    UpdateHidHiddenAttributes();
-                }
+
+                UpdateHidHiddenAttributes();
+
 
                 //uiContext = tempui as SynchronizationContext;
                 if (showInLog)
@@ -1022,42 +1014,32 @@ namespace DS4Windows
                     LogDebug(ds4devices.IsExclusiveMode ? Resources.UsingExclusive : Resources.UsingShared);
                 }
 
-                using (GlobalTracer.Instance.BuildSpan(nameof(ChangeUDPStatus))
-                    .StartActive(true))
+
+                if (appSettings.Settings.UseUDPServer && _udpServer == null)
                 {
-                    if (appSettings.Settings.UseUDPServer && _udpServer == null)
-                    {
-                        ChangeUDPStatus(true, false);
-                        while (udpChangeStatus) Thread.SpinWait(500);
-                    }
+                    ChangeUDPStatus(true, false);
+                    while (udpChangeStatus) Thread.SpinWait(500);
                 }
+
 
                 try
                 {
                     loopControllers = true;
-                    using (GlobalTracer.Instance.BuildSpan(nameof(AssignInitialDevices))
-                        .StartActive(true))
-                    {
-                        AssignInitialDevices();
-                    }
 
-                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4DeviceEnumerator.FindControllers))
-                        .StartActive(true))
-                    {
-                        EventDispatcher.Invoke(() =>
+                    AssignInitialDevices();
+
+
+                    EventDispatcher.Invoke(() =>
                     {
                         ds4devices.FindControllers(appSettings.Settings.DeviceOptions.VerboseLogMessages);
                     });
 
-                    }
 
                     IList<DS4Device> devices;
 
-                    using (GlobalTracer.Instance.BuildSpan(nameof(DS4DeviceEnumerator.GetDs4Controllers))
-                        .StartActive(true))
-                    {
-                        devices = ds4devices.GetDs4Controllers().ToList();
-                    }
+
+                    devices = ds4devices.GetDs4Controllers().ToList();
+
 
                     var numControllers = devices.Count;
                     activeControllers = numControllers;
@@ -1068,174 +1050,156 @@ namespace DS4Windows
                     var i = 0;
                     JoyConDevice tempPrimaryJoyDev = null;
 
-                    using (GlobalTracer.Instance.BuildSpan("Detected devices enumeration")
-                        .StartActive(true))
+
+                    //
+                    // TODO: GetEnumerator leaks memory
+                    // 
+                    for (var devEnum = devices.GetEnumerator(); devEnum.MoveNext() && loopControllers; i++)
                     {
-                        //
-                        // TODO: GetEnumerator leaks memory
-                        // 
-                        for (var devEnum = devices.GetEnumerator(); devEnum.MoveNext() && loopControllers; i++)
+                        var device = devEnum.Current;
+                        if (showInLog)
+                            LogDebug(Resources.FoundController + " " + device.MacAddress + " (" +
+                                     device.GetConnectionType() + ") (" +
+                                     device.DisplayName + ")");
+
+
+                        if (hidDeviceHidingEnabled && CheckAffected(device))
+                            //device.CurrentExclusiveStatus = DS4Device.ExclusiveStatus.HidGuardAffected;
+                            ChangeExclusiveStatus(device);
+
+                        var task = new Task(() =>
                         {
-                            var device = devEnum.Current;
-                            if (showInLog)
-                                LogDebug(Resources.FoundController + " " + device.MacAddress + " (" +
-                                         device.GetConnectionType() + ") (" +
-                                         device.DisplayName + ")");
+                            Thread.Sleep(5);
+                            WarnExclusiveModeFailure(device);
+                        });
+                        task.Start();
 
-                            using (GlobalTracer.Instance.BuildSpan("Exclusive check")
-                                .StartActive(true))
+
+                        PrepareDs4DeviceSettingHooks(device);
+
+
+                        if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode ==
+                            JoyConDeviceOptions.LinkMode.Joined)
+                            if (device.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR &&
+                                device.PerformStateMerge)
                             {
-                                if (hidDeviceHidingEnabled && CheckAffected(device))
-                                    //device.CurrentExclusiveStatus = DS4Device.ExclusiveStatus.HidGuardAffected;
-                                    ChangeExclusiveStatus(device);
-
-                                var task = new Task(() =>
+                                if (tempPrimaryJoyDev == null)
                                 {
-                                    Thread.Sleep(5);
-                                    WarnExclusiveModeFailure(device);
-                                });
-                                task.Start();
-                            }
-
-                            using (GlobalTracer.Instance.BuildSpan(nameof(PrepareDs4DeviceSettingHooks))
-                                .StartActive(true))
-                            {
-                                PrepareDs4DeviceSettingHooks(device);
-                            }
-
-                            if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode ==
-                                JoyConDeviceOptions.LinkMode.Joined)
-                                if (device.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR &&
-                                    device.PerformStateMerge)
-                                {
-                                    if (tempPrimaryJoyDev == null)
-                                    {
-                                        tempPrimaryJoyDev = device as JoyConDevice;
-                                    }
-                                    else
-                                    {
-                                        var currentJoyDev = device as JoyConDevice;
-                                        tempPrimaryJoyDev.JointDevice = currentJoyDev;
-                                        currentJoyDev.JointDevice = tempPrimaryJoyDev;
-
-                                        tempPrimaryJoyDev.JointState = currentJoyDev.JointState;
-
-                                        var parentJoy = tempPrimaryJoyDev;
-                                        tempPrimaryJoyDev.Removal += (sender, args) =>
-                                        {
-                                            currentJoyDev.JointDevice = null;
-                                        };
-                                        currentJoyDev.Removal += (sender, args) => { parentJoy.JointDevice = null; };
-
-                                        tempPrimaryJoyDev = null;
-                                    }
+                                    tempPrimaryJoyDev = device as JoyConDevice;
                                 }
-
-                            DS4Controllers[i] = device;
-                            device.DeviceSlotNumber = i;
-
-                            using (GlobalTracer.Instance.BuildSpan("Refresh configuration")
-                                .StartActive(true))
-                            {
-                                Instance.Config.RefreshExtrasButtons(i, GetKnownExtraButtons(device));
-                                Instance.Config.LoadControllerConfigs(device);
-
-                                device.LoadStoreSettings();
-                                device.CheckControllerNumDeviceSettings(numControllers);
-                            }
-
-                            using (GlobalTracer.Instance.BuildSpan(nameof(slotManager.AddController))
-                                .StartActive(true))
-                            {
-                                slotManager.AddController(device, i);
-                            }
-
-                            device.Removal += On_DS4Removal;
-                            device.Removal += ds4devices.On_Removal;
-                            device.SyncChange += On_SyncChange;
-                            device.SyncChange += ds4devices.UpdateSerial;
-                            device.SerialChange += On_SerialChange;
-                            device.ChargingChanged += CheckQuickCharge;
-
-                            touchPad[i] = new Mouse(i, device);
-
-                            var profileLoaded = true;
-                            var useAutoProfile = UseTempProfiles[i];
-
-                            profilesService.ControllerArrived(i, device.MacAddress);
-
-                            var profile = profilesService.ActiveProfiles.ElementAt(i);
-
-                            if (profileLoaded || useAutoProfile)
-                            {
-                                using (GlobalTracer.Instance.BuildSpan("Plugin Output Device")
-                                    .StartActive(true))
+                                else
                                 {
-                                    device.LightBarColor =
-                                        appSettings.Settings.LightbarSettingInfo[i].Ds4WinSettings.Led;
+                                    var currentJoyDev = device as JoyConDevice;
+                                    tempPrimaryJoyDev.JointDevice = currentJoyDev;
+                                    currentJoyDev.JointDevice = tempPrimaryJoyDev;
 
-                                    if (!profile.DisableVirtualController && device.IsSynced())
+                                    tempPrimaryJoyDev.JointState = currentJoyDev.JointState;
+
+                                    var parentJoy = tempPrimaryJoyDev;
+                                    tempPrimaryJoyDev.Removal += (sender, args) =>
                                     {
-                                        if (device.PrimaryDevice)
-                                        {
-                                            PluginOutDev(i, device);
-                                        }
-                                        else if (device.JointDeviceSlotNumber != DS4Device.DEFAULT_JOINT_SLOT_NUMBER)
-                                        {
-                                            var otherIdx = device.JointDeviceSlotNumber;
-                                            var tempOutDev = outputDevices[otherIdx];
-                                            if (tempOutDev != null)
-                                            {
-                                                var tempConType = ActiveOutDevType[otherIdx];
-                                                EstablishOutFeedback(i, tempConType, tempOutDev, device);
-                                                outputDevices[i] = tempOutDev;
-                                                ActiveOutDevType[i] = tempConType;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        profile.IsOutputDeviceEnabled = false;
-                                        ActiveOutDevType[i] = OutContType.None;
-                                    }
+                                        currentJoyDev.JointDevice = null;
+                                    };
+                                    currentJoyDev.Removal += (sender, args) => { parentJoy.JointDevice = null; };
+
+                                    tempPrimaryJoyDev = null;
                                 }
+                            }
 
-                                if (device.PrimaryDevice && device.OutputMapGyro)
+                        DS4Controllers[i] = device;
+                        device.DeviceSlotNumber = i;
+
+
+                        Instance.Config.RefreshExtrasButtons(i, GetKnownExtraButtons(device));
+                        Instance.Config.LoadControllerConfigs(device);
+
+                        device.LoadStoreSettings();
+                        device.CheckControllerNumDeviceSettings(numControllers);
+
+
+                        slotManager.AddController(device, i);
+
+
+                        device.Removal += On_DS4Removal;
+                        device.Removal += ds4devices.On_Removal;
+                        device.SyncChange += On_SyncChange;
+                        device.SyncChange += ds4devices.UpdateSerial;
+                        device.SerialChange += On_SerialChange;
+                        device.ChargingChanged += CheckQuickCharge;
+
+                        touchPad[i] = new Mouse(i, device);
+
+                        var profileLoaded = true;
+                        var useAutoProfile = UseTempProfiles[i];
+
+                        profilesService.ControllerArrived(i, device.MacAddress);
+
+                        var profile = profilesService.ActiveProfiles.ElementAt(i);
+
+                        if (profileLoaded || useAutoProfile)
+                        {
+                            device.LightBarColor =
+                                appSettings.Settings.LightbarSettingInfo[i].Ds4WinSettings.Led;
+
+                            if (!profile.DisableVirtualController && device.IsSynced())
+                            {
+                                if (device.PrimaryDevice)
                                 {
-                                    TouchPadOn(i, device);
+                                    PluginOutDev(i, device);
                                 }
                                 else if (device.JointDeviceSlotNumber != DS4Device.DEFAULT_JOINT_SLOT_NUMBER)
                                 {
                                     var otherIdx = device.JointDeviceSlotNumber;
-                                    var tempDev = DS4Controllers[otherIdx];
-                                    if (tempDev != null)
+                                    var tempOutDev = outputDevices[otherIdx];
+                                    if (tempOutDev != null)
                                     {
-                                        var mappedIdx = tempDev.PrimaryDevice ? otherIdx : i;
-                                        var gyroDev = device.OutputMapGyro ? device :
-                                            tempDev.OutputMapGyro ? tempDev : null;
-                                        if (gyroDev != null) TouchPadOn(mappedIdx, gyroDev);
+                                        var tempConType = ActiveOutDevType[otherIdx];
+                                        EstablishOutFeedback(i, tempConType, tempOutDev, device);
+                                        outputDevices[i] = tempOutDev;
+                                        ActiveOutDevType[i] = tempConType;
                                     }
                                 }
-
-                                CheckProfileOptions(i, device, true);
-                                SetupInitialHookEvents(i, device);
                             }
-
-                            var tempIdx = i;
-                            device.Report += (sender, e) => { On_Report(sender, e, tempIdx); };
-
-                            if (_udpServer != null && i < UdpServer.NUMBER_SLOTS && device.PrimaryDevice)
-                                PrepareDevUDPMotion(device, tempIdx);
-
-                            using (GlobalTracer.Instance.BuildSpan(nameof(device.StartUpdate))
-                                .StartActive(true))
+                            else
                             {
-                                device.StartUpdate();
+                                profile.IsOutputDeviceEnabled = false;
+                                ActiveOutDevType[i] = OutContType.None;
                             }
 
-                            if (i >= CURRENT_DS4_CONTROLLER_LIMIT) // out of Xinput devices!
-                                break;
+
+                            if (device.PrimaryDevice && device.OutputMapGyro)
+                            {
+                                TouchPadOn(i, device);
+                            }
+                            else if (device.JointDeviceSlotNumber != DS4Device.DEFAULT_JOINT_SLOT_NUMBER)
+                            {
+                                var otherIdx = device.JointDeviceSlotNumber;
+                                var tempDev = DS4Controllers[otherIdx];
+                                if (tempDev != null)
+                                {
+                                    var mappedIdx = tempDev.PrimaryDevice ? otherIdx : i;
+                                    var gyroDev = device.OutputMapGyro ? device :
+                                        tempDev.OutputMapGyro ? tempDev : null;
+                                    if (gyroDev != null) TouchPadOn(mappedIdx, gyroDev);
+                                }
+                            }
+
+                            CheckProfileOptions(i, device, true);
+                            SetupInitialHookEvents(i, device);
                         }
+
+                        var tempIdx = i;
+                        device.Report += (sender, e) => { On_Report(sender, e, tempIdx); };
+
+                        if (_udpServer != null && i < UdpServer.NUMBER_SLOTS && device.PrimaryDevice)
+                            PrepareDevUDPMotion(device, tempIdx);
+
+
+                        device.StartUpdate();
+
+
+                        if (i >= CURRENT_DS4_CONTROLLER_LIMIT) // out of Xinput devices!
+                            break;
                     }
                 }
                 catch (Exception e)
@@ -1461,7 +1425,8 @@ namespace DS4Windows
             JoyConDevice tempPrimaryJoyDev = null;
             JoyConDevice tempSecondaryJoyDev = null;
 
-            if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
+            if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode ==
+                JoyConDeviceOptions.LinkMode.Joined)
             {
                 tempPrimaryJoyDev = devices.FirstOrDefault(d =>
                     d.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR
@@ -1483,22 +1448,22 @@ namespace DS4Windows
                     continue;
 
                 if (((Func<bool>)delegate
-                {
-                    for (int Index = 0, arlength = DS4Controllers.Length; Index < arlength; Index++)
-                        if (DS4Controllers[Index] != null &&
-                            Equals(DS4Controllers[Index].MacAddress, device.MacAddress))
-                        {
-                            device.CheckControllerNumDeviceSettings(numControllers);
-                            return true;
-                        }
+                    {
+                        for (int Index = 0, arlength = DS4Controllers.Length; Index < arlength; Index++)
+                            if (DS4Controllers[Index] != null &&
+                                Equals(DS4Controllers[Index].MacAddress, device.MacAddress))
+                            {
+                                device.CheckControllerNumDeviceSettings(numControllers);
+                                return true;
+                            }
 
-                    return false;
-                })())
+                        return false;
+                    })())
                     continue;
 
                 for (int index = 0, controllerCount = DS4Controllers.Length;
-                    index < controllerCount && index < CURRENT_DS4_CONTROLLER_LIMIT;
-                    index++)
+                     index < controllerCount && index < CURRENT_DS4_CONTROLLER_LIMIT;
+                     index++)
                     if (DS4Controllers[index] == null)
                     {
                         //LogDebug(DS4WinWPF.Properties.Resources.FoundController + device.getMacAddress() + " (" + device.getConnectionType() + ")");
@@ -1522,47 +1487,47 @@ namespace DS4Windows
 
                         PrepareDs4DeviceSettingHooks(device);
 
-                        if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode == JoyConDeviceOptions.LinkMode.Joined)
-                            if (device.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR && device.PerformStateMerge)
-                            {
+                        if (appSettings.Settings.DeviceOptions.JoyConSupportSettings.LinkedMode ==
+                            JoyConDeviceOptions.LinkMode.Joined)
+                            if (device.DeviceType is InputDeviceType.JoyConL or InputDeviceType.JoyConR &&
+                                device.PerformStateMerge)
                                 switch (device.PrimaryDevice)
                                 {
                                     case true when tempSecondaryJoyDev != null:
-                                        {
-                                            var currentJoyDev = device as JoyConDevice;
-                                            tempSecondaryJoyDev.JointDevice = currentJoyDev;
-                                            currentJoyDev.JointDevice = tempSecondaryJoyDev;
+                                    {
+                                        var currentJoyDev = device as JoyConDevice;
+                                        tempSecondaryJoyDev.JointDevice = currentJoyDev;
+                                        currentJoyDev.JointDevice = tempSecondaryJoyDev;
 
-                                            tempSecondaryJoyDev.JointState = currentJoyDev.JointState;
+                                        tempSecondaryJoyDev.JointState = currentJoyDev.JointState;
 
-                                            var secondaryJoy = tempSecondaryJoyDev;
-                                            secondaryJoy.Removal += (sender, args) => { currentJoyDev.JointDevice = null; };
-                                            currentJoyDev.Removal += (sender, args) => { secondaryJoy.JointDevice = null; };
+                                        var secondaryJoy = tempSecondaryJoyDev;
+                                        secondaryJoy.Removal += (sender, args) => { currentJoyDev.JointDevice = null; };
+                                        currentJoyDev.Removal += (sender, args) => { secondaryJoy.JointDevice = null; };
 
-                                            tempSecondaryJoyDev = null;
-                                            tempPrimaryJoyDev = null;
-                                            break;
-                                        }
+                                        tempSecondaryJoyDev = null;
+                                        tempPrimaryJoyDev = null;
+                                        break;
+                                    }
                                     case false when tempPrimaryJoyDev != null:
+                                    {
+                                        var currentJoyDev = device as JoyConDevice;
+                                        tempPrimaryJoyDev.JointDevice = currentJoyDev;
+                                        currentJoyDev.JointDevice = tempPrimaryJoyDev;
+
+                                        tempPrimaryJoyDev.JointState = currentJoyDev.JointState;
+
+                                        var parentJoy = tempPrimaryJoyDev;
+                                        tempPrimaryJoyDev.Removal += (sender, args) =>
                                         {
-                                            var currentJoyDev = device as JoyConDevice;
-                                            tempPrimaryJoyDev.JointDevice = currentJoyDev;
-                                            currentJoyDev.JointDevice = tempPrimaryJoyDev;
+                                            currentJoyDev.JointDevice = null;
+                                        };
+                                        currentJoyDev.Removal += (sender, args) => { parentJoy.JointDevice = null; };
 
-                                            tempPrimaryJoyDev.JointState = currentJoyDev.JointState;
-
-                                            var parentJoy = tempPrimaryJoyDev;
-                                            tempPrimaryJoyDev.Removal += (sender, args) =>
-                                            {
-                                                currentJoyDev.JointDevice = null;
-                                            };
-                                            currentJoyDev.Removal += (sender, args) => { parentJoy.JointDevice = null; };
-
-                                            tempPrimaryJoyDev = null;
-                                            break;
-                                        }
+                                        tempPrimaryJoyDev = null;
+                                        break;
+                                    }
                                 }
-                            }
 
                         DS4Controllers[index] = device;
                         device.DeviceSlotNumber = index;
@@ -1581,7 +1546,7 @@ namespace DS4Windows
                         device.ChargingChanged += CheckQuickCharge;
 
                         touchPad[index] = new Mouse(index, device);
-                        
+
                         var profileLoaded = true;
                         var useAutoProfile = UseTempProfiles[index];
 
@@ -1658,7 +1623,8 @@ namespace DS4Windows
 
         public void CheckProfileOptions(int ind, DS4Device device, bool startUp = false)
         {
-            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData, !profilesService.ActiveProfiles.ElementAt(ind).EnableOutputDataToDS4);
+            device.ModifyFeatureSetFlag(VidPidFeatureSet.NoOutputData,
+                !profilesService.ActiveProfiles.ElementAt(ind).EnableOutputDataToDS4);
             if (!profilesService.ActiveProfiles.ElementAt(ind).EnableOutputDataToDS4)
                 LogDebug(
                     "Output data to DS4 disabled. Lightbar and rumble events are not written to DS4 gamepad. If the gamepad is connected over BT then IdleDisconnect option is recommended to let DS4Windows to close the connection after long period of idling.");
@@ -1680,9 +1646,11 @@ namespace DS4Windows
                         ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2ModInfo.MaxZone) /
                     100.0 * 255);
 
-            device.PrepareTriggerEffect(TriggerId.LeftTrigger, ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2OutputSettings.TriggerEffect,
+            device.PrepareTriggerEffect(TriggerId.LeftTrigger,
+                ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2OutputSettings.TriggerEffect,
                 ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2OutputSettings.EffectSettings);
-            device.PrepareTriggerEffect(TriggerId.RightTrigger, ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2OutputSettings.TriggerEffect,
+            device.PrepareTriggerEffect(TriggerId.RightTrigger,
+                ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2OutputSettings.TriggerEffect,
                 ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2OutputSettings.EffectSettings);
 
             device.RumbleAutostopTime = profilesService.ActiveProfiles.ElementAt(ind).RumbleAutostopTime;
@@ -1749,23 +1717,26 @@ namespace DS4Windows
             wheelSmoothInfo.SetFilterAttrs(tempFilter);
             wheelSmoothInfo.SetRefreshEvents(tempFilter);
 
-            var flickStickSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(ind).LSOutputSettings.OutputSettings.FlickSettings;
+            var flickStickSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(ind).LSOutputSettings
+                .OutputSettings.FlickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
-            flickStickSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(ind).RSOutputSettings.OutputSettings.FlickSettings;
+            flickStickSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(ind).RSOutputSettings.OutputSettings
+                .FlickSettings;
             flickStickSettings.RemoveRefreshEvents();
             flickStickSettings.SetRefreshEvents(Mapping.flickMappingData[ind].flickFilter);
 
             var tempIdx = ind;
             ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2OutputSettings.ResetEvents();
             ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2ModInfo.ResetEvents();
-            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2OutputSettings.TriggerEffectChanged += (sender, e) =>
-            {
-                device.PrepareTriggerEffect(TriggerId.LeftTrigger,
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).L2OutputSettings.TriggerEffect,
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).L2OutputSettings.EffectSettings);
-            };
+            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2OutputSettings.TriggerEffectChanged +=
+                (sender, e) =>
+                {
+                    device.PrepareTriggerEffect(TriggerId.LeftTrigger,
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).L2OutputSettings.TriggerEffect,
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).L2OutputSettings.EffectSettings);
+                };
             ProfilesService.Instance.ActiveProfiles.ElementAt(ind).L2ModInfo.MaxOutputChanged += (sender, e) =>
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
@@ -1790,12 +1761,13 @@ namespace DS4Windows
             };
 
             ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2OutputSettings.ResetEvents();
-            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2OutputSettings.TriggerEffectChanged += (sender, e) =>
-            {
-                device.PrepareTriggerEffect(TriggerId.RightTrigger,
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).R2OutputSettings.TriggerEffect,
-                    ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).R2OutputSettings.EffectSettings);
-            };
+            ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2OutputSettings.TriggerEffectChanged +=
+                (sender, e) =>
+                {
+                    device.PrepareTriggerEffect(TriggerId.RightTrigger,
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).R2OutputSettings.TriggerEffect,
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(tempIdx).R2OutputSettings.EffectSettings);
+                };
             ProfilesService.Instance.ActiveProfiles.ElementAt(ind).R2ModInfo.MaxOutputChanged += (sender, e) =>
             {
                 var tempInfo = sender as TriggerDeadZoneZInfo;
@@ -2073,7 +2045,7 @@ namespace DS4Windows
                 if (device.PrimaryDevice)
                 {
                     if (File.Exists(Path.Combine(RuntimeAppDataPath, Constants.ProfilesSubDirectory,
-                        Instance.Config.ProfilePath[ind] + ".xml")))
+                            Instance.Config.ProfilePath[ind] + ".xml")))
                     {
                         var prolog = string.Format(Resources.UsingProfile, (ind + 1).ToString(),
                             Instance.Config.ProfilePath[ind], $"{device.Battery}");
@@ -2096,7 +2068,8 @@ namespace DS4Windows
                 // Skip mapping routine if part of a joined device
                 return;
 
-            if (ProfilesService.Instance.ActiveProfiles.ElementAt(ind).EnableTouchToggle) CheckForTouchToggle(ind, cState, pState);
+            if (ProfilesService.Instance.ActiveProfiles.ElementAt(ind).EnableTouchToggle)
+                CheckForTouchToggle(ind, cState, pState);
 
             cState = Mapping.SetCurveAndDeadzone(ind, cState, TempState[ind]);
 
@@ -2144,7 +2117,8 @@ namespace DS4Windows
             {
                 // UseDInputOnly profile may re-map sixaxis gyro sensor values as a VJoy joystick axis (steering wheel emulation mode using VJoy output device). Handle this option because VJoy output works even in USeDInputOnly mode.
                 // If steering wheel emulation uses LS/RS/R2/L2 output axies then the profile should NOT use UseDInputOnly option at all because those require a virtual output device.
-                var steeringWheelMappedAxis =ProfilesService.Instance.ActiveProfiles.ElementAt(ind).SASteeringWheelEmulationAxis;
+                var steeringWheelMappedAxis =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(ind).SASteeringWheelEmulationAxis;
                 switch (steeringWheelMappedAxis)
                 {
                     case SASteeringWheelEmulationAxisType.None: break;

@@ -1,20 +1,17 @@
-﻿
-using OpenTracing.Util;
-
-namespace DS4Windows
+﻿namespace DS4Windows
 {
     public class DS4StateFieldMapping
     {
-        public enum ControlType: int { Unknown = 0, Button, AxisDir, Trigger, Touch, GyroDir, SwipeDir }
-
-        public bool[] buttons = new bool[(int)DS4Controls.RSOuter + 1];
-        public byte[] axisdirs = new byte[(int)DS4Controls.RSOuter + 1];
-        public byte[] triggers = new byte[(int)DS4Controls.RSOuter + 1];
-        public int[] gryodirs = new int[(int)DS4Controls.RSOuter + 1];
-        public byte[] swipedirs = new byte[(int)DS4Controls.RSOuter + 1];
-        public bool[] swipedirbools = new bool[(int)DS4Controls.RSOuter + 1];
-        public bool touchButton = false;
-        public bool outputTouchButton = false;
+        public enum ControlType
+        {
+            Unknown = 0,
+            Button,
+            AxisDir,
+            Trigger,
+            Touch,
+            GyroDir,
+            SwipeDir
+        }
 
         public static ControlType[] mappedType = new ControlType[50]
         {
@@ -67,24 +64,31 @@ namespace DS4Windows
             ControlType.Button, // DS4Controls.SideL
             ControlType.Button, // DS4Controls.SideR
             ControlType.Trigger, // DS4Controls.LSOuter
-            ControlType.Trigger, // DS4Controls.RSOuter
+            ControlType.Trigger // DS4Controls.RSOuter
         };
+
+        public byte[] axisdirs = new byte[(int)DS4Controls.RSOuter + 1];
+
+        public bool[] buttons = new bool[(int)DS4Controls.RSOuter + 1];
+        public int[] gryodirs = new int[(int)DS4Controls.RSOuter + 1];
+        public bool outputTouchButton;
+        public bool[] swipedirbools = new bool[(int)DS4Controls.RSOuter + 1];
+        public byte[] swipedirs = new byte[(int)DS4Controls.RSOuter + 1];
+        public bool touchButton;
+        public byte[] triggers = new byte[(int)DS4Controls.RSOuter + 1];
 
         public DS4StateFieldMapping()
         {
         }
 
-        public DS4StateFieldMapping(DS4State cState, DS4StateExposed exposeState, Mouse tp, bool priorMouse=false)
+        public DS4StateFieldMapping(DS4State cState, DS4StateExposed exposeState, Mouse tp, bool priorMouse = false)
         {
             PopulateFieldMapping(cState, exposeState, tp, priorMouse);
         }
 
-        public void PopulateFieldMapping(DS4State cState, DS4StateExposed exposeState, Mouse tp, bool priorMouse = false)
+        public void PopulateFieldMapping(DS4State cState, DS4StateExposed exposeState, Mouse tp,
+            bool priorMouse = false)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(DS4StateFieldMapping)}::{nameof(PopulateFieldMapping)}")
-                .StartActive(true);
-
             unchecked
             {
                 axisdirs[(int)DS4Controls.LXNeg] = cState.LX;
@@ -126,28 +130,39 @@ namespace DS4Windows
                 buttons[(int)DS4Controls.DpadDown] = cState.DpadDown;
                 buttons[(int)DS4Controls.DpadLeft] = cState.DpadLeft;
 
-                buttons[(int)DS4Controls.TouchLeft] = tp != null ? (!priorMouse ? tp.leftDown : tp.priorLeftDown) : false;
-                buttons[(int)DS4Controls.TouchRight] = tp != null ? (!priorMouse ? tp.rightDown : tp.priorRightDown) : false;
-                buttons[(int)DS4Controls.TouchUpper] = tp != null ? (!priorMouse ? tp.upperDown : tp.priorUpperDown) : false;
-                buttons[(int)DS4Controls.TouchMulti] = tp != null ? (!priorMouse ? tp.multiDown : tp.priorMultiDown) : false;
+                buttons[(int)DS4Controls.TouchLeft] = tp != null ? !priorMouse ? tp.leftDown : tp.priorLeftDown : false;
+                buttons[(int)DS4Controls.TouchRight] =
+                    tp != null ? !priorMouse ? tp.rightDown : tp.priorRightDown : false;
+                buttons[(int)DS4Controls.TouchUpper] =
+                    tp != null ? !priorMouse ? tp.upperDown : tp.priorUpperDown : false;
+                buttons[(int)DS4Controls.TouchMulti] =
+                    tp != null ? !priorMouse ? tp.multiDown : tp.priorMultiDown : false;
 
-                int sixAxisX = -exposeState.getOutputAccelX();
+                var sixAxisX = -exposeState.getOutputAccelX();
                 gryodirs[(int)DS4Controls.GyroXPos] = sixAxisX > 0 ? sixAxisX : 0;
                 gryodirs[(int)DS4Controls.GyroXNeg] = sixAxisX < 0 ? sixAxisX : 0;
 
-                int sixAxisZ = exposeState.getOutputAccelZ();
+                var sixAxisZ = exposeState.getOutputAccelZ();
                 gryodirs[(int)DS4Controls.GyroZPos] = sixAxisZ > 0 ? sixAxisZ : 0;
                 gryodirs[(int)DS4Controls.GyroZNeg] = sixAxisZ < 0 ? sixAxisZ : 0;
 
-                swipedirs[(int)DS4Controls.SwipeLeft] = tp != null ? (!priorMouse ? tp.swipeLeftB : tp.priorSwipeLeftB) : (byte)0;
-                swipedirs[(int)DS4Controls.SwipeRight] = tp != null ? (!priorMouse ? tp.swipeRightB : tp.priorSwipeRightB) : (byte)0;
-                swipedirs[(int)DS4Controls.SwipeUp] = tp != null ? (!priorMouse ? tp.swipeUpB : tp.priorSwipeUpB) : (byte)0;
-                swipedirs[(int)DS4Controls.SwipeDown] = tp != null ? (!priorMouse ? tp.swipeDownB : tp.priorSwipeDownB) : (byte)0;
+                swipedirs[(int)DS4Controls.SwipeLeft] =
+                    tp != null ? !priorMouse ? tp.swipeLeftB : tp.priorSwipeLeftB : (byte)0;
+                swipedirs[(int)DS4Controls.SwipeRight] =
+                    tp != null ? !priorMouse ? tp.swipeRightB : tp.priorSwipeRightB : (byte)0;
+                swipedirs[(int)DS4Controls.SwipeUp] =
+                    tp != null ? !priorMouse ? tp.swipeUpB : tp.priorSwipeUpB : (byte)0;
+                swipedirs[(int)DS4Controls.SwipeDown] =
+                    tp != null ? !priorMouse ? tp.swipeDownB : tp.priorSwipeDownB : (byte)0;
 
-                swipedirbools[(int)DS4Controls.SwipeLeft] = tp != null ? (!priorMouse ? tp.swipeLeft : tp.priorSwipeLeft) : false;
-                swipedirbools[(int)DS4Controls.SwipeRight] = tp != null ? (!priorMouse ? tp.swipeRight : tp.priorSwipeRight) : false;
-                swipedirbools[(int)DS4Controls.SwipeUp] = tp != null ? (!priorMouse ? tp.swipeUp : tp.priorSwipeUp) : false;
-                swipedirbools[(int)DS4Controls.SwipeDown] = tp != null ? (!priorMouse ? tp.swipeDown : tp.priorSwipeDown) : false;
+                swipedirbools[(int)DS4Controls.SwipeLeft] =
+                    tp != null ? !priorMouse ? tp.swipeLeft : tp.priorSwipeLeft : false;
+                swipedirbools[(int)DS4Controls.SwipeRight] =
+                    tp != null ? !priorMouse ? tp.swipeRight : tp.priorSwipeRight : false;
+                swipedirbools[(int)DS4Controls.SwipeUp] =
+                    tp != null ? !priorMouse ? tp.swipeUp : tp.priorSwipeUp : false;
+                swipedirbools[(int)DS4Controls.SwipeDown] =
+                    tp != null ? !priorMouse ? tp.swipeDown : tp.priorSwipeDown : false;
 
                 buttons[(int)DS4Controls.GyroSwipeLeft] = tp != null ? tp.gyroSwipe.swipeLeft : false;
                 buttons[(int)DS4Controls.GyroSwipeRight] = tp != null ? tp.gyroSwipe.swipeRight : false;
@@ -161,10 +176,6 @@ namespace DS4Windows
 
         public void PopulateState(DS4State state)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(DS4StateFieldMapping)}::{nameof(PopulateState)}")
-                .StartActive(true);
-
             unchecked
             {
                 state.LX = axisdirs[(int)DS4Controls.LXNeg];

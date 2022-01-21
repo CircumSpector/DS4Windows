@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using DS4Windows.Shared.Core.HID;
 using DS4WinWPF.DS4Control.IoC.Services;
-using OpenTracing.Util;
 using static System.Math;
 using static DS4Windows.Global;
 
@@ -75,19 +74,14 @@ namespace DS4Windows
         public static DS4Color GetTransitionedColor(DS4Color c1, DS4Color c2, double ratio)
         {
             return new DS4Color(
-                ApplyRatio(c1.Red, c2.Red, ratio), 
+                ApplyRatio(c1.Red, c2.Red, ratio),
                 ApplyRatio(c1.Green, c2.Green, ratio),
                 ApplyRatio(c1.Blue, c2.Blue, ratio)
-                );
+            );
         }
 
         public static void UpdateLightBar(DS4Device device, int deviceNum)
         {
-
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBarV3)}::{nameof(UpdateLightBar)}")
-                .StartActive(true);
-
-
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight[deviceNum];
             var lightbarSettingInfo = AppSettingsService.Instance.Settings.LightbarSettingInfo[deviceNum];
@@ -204,7 +198,8 @@ namespace DS4Windows
                     }
                 }
 
-                var idleDisconnectTimeout = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).IdleDisconnectTimeout;
+                var idleDisconnectTimeout =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).IdleDisconnectTimeout;
                 if (idleDisconnectTimeout > 0 && lightModeInfo.LedAsBattery &&
                     (!device.IsCharging() || device.GetBattery() >= 100))
                 {

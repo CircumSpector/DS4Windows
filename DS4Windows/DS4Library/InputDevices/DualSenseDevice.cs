@@ -9,7 +9,7 @@ using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Library.InputDevices;
 using DS4WinWPF.Translations;
-using OpenTracing.Util;
+
 using PropertyChanged;
 
 namespace DS4Windows.InputDevices
@@ -330,11 +330,6 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
-                    using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DualSenseDevice)}::{nameof(ReadInput)}")
-                        .IgnoreActiveSpan()
-                        .StartActive(true);
-
-
                     oldCharging = charging;
                     currerror = string.Empty;
 

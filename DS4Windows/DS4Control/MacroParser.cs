@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using OpenTracing.Util;
 
 namespace DS4Windows
 {
     public class MacroParser
     {
-        private bool loaded;
-        private List<MacroStep> macroSteps;
-        private int[] inputMacro;
-        private Dictionary<int, bool> keydown = new Dictionary<int, bool>();
-        public static Dictionary<int, string> macroInputNames = new Dictionary<int, string>()
+        public static Dictionary<int, string> macroInputNames = new()
         {
             [256] = "Left Mouse Button", [257] = "Right Mouse Button",
             [258] = "Middle Mouse Button", [259] = "4th Mouse Button",
@@ -32,30 +24,31 @@ namespace DS4Windows
             [280] = "LS Down", [281] = "LS Up",
             [282] = "RS Right", [283] = "RS Left",
             [284] = "RS Down", [285] = "RS Up",
-            [286] = "Touchpad Click",
+            [286] = "Touchpad Click"
         };
 
-        public List<MacroStep> MacroSteps { get => macroSteps; }
+        private readonly int[] inputMacro;
+        private readonly Dictionary<int, bool> keydown = new();
+        private bool loaded;
 
         public MacroParser(int[] macro)
         {
-            macroSteps = new List<MacroStep>();
+            MacroSteps = new List<MacroStep>();
             inputMacro = macro;
         }
 
+        public List<MacroStep> MacroSteps { get; }
+
         public void LoadMacro()
         {
-            if (loaded)
-            {
-                return;
-            }
+            if (loaded) return;
 
             keydown.Clear();
-            for(int i = 0; i < inputMacro.Length; i++)
+            for (var i = 0; i < inputMacro.Length; i++)
             {
-                int value = inputMacro[i];
-                MacroStep step = ParseStep(value);
-                macroSteps.Add(step);
+                var value = inputMacro[i];
+                var step = ParseStep(value);
+                MacroSteps.Add(step);
             }
 
             loaded = true;
@@ -63,29 +56,19 @@ namespace DS4Windows
 
         public List<string> GetMacroStrings()
         {
-            if (!loaded)
-            {
-                LoadMacro();
-            }
+            if (!loaded) LoadMacro();
 
-            List<string> result = new List<string>();
-            foreach(MacroStep step in macroSteps)
-            {
-                result.Add(step.Name);
-            }
+            var result = new List<string>();
+            foreach (var step in MacroSteps) result.Add(step.Name);
 
             return result;
         }
 
         private MacroStep ParseStep(int value)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(MacroParser)}::{nameof(ParseStep)}")
-                .StartActive(true);
-
-            string name = string.Empty;
-            MacroStep.StepType type = MacroStep.StepType.ActDown;
-            MacroStep.StepOutput outType = MacroStep.StepOutput.Key;
+            var name = string.Empty;
+            var type = MacroStep.StepType.ActDown;
+            var outType = MacroStep.StepOutput.Key;
 
             if (value >= 1000000000)
             {
@@ -93,10 +76,13 @@ namespace DS4Windows
                 if (value > 1000000000)
                 {
                     type = MacroStep.StepType.ActDown;
-                    string lb = value.ToString().Substring(1);
-                    byte r = (byte)(int.Parse(lb[0].ToString()) * 100 + int.Parse(lb[1].ToString()) * 10 + int.Parse(lb[2].ToString()));
-                    byte g = (byte)(int.Parse(lb[3].ToString()) * 100 + int.Parse(lb[4].ToString()) * 10 + int.Parse(lb[5].ToString()));
-                    byte b = (byte)(int.Parse(lb[6].ToString()) * 100 + int.Parse(lb[7].ToString()) * 10 + int.Parse(lb[8].ToString()));
+                    var lb = value.ToString().Substring(1);
+                    var r = (byte)(int.Parse(lb[0].ToString()) * 100 + int.Parse(lb[1].ToString()) * 10 +
+                                   int.Parse(lb[2].ToString()));
+                    var g = (byte)(int.Parse(lb[3].ToString()) * 100 + int.Parse(lb[4].ToString()) * 10 +
+                                   int.Parse(lb[5].ToString()));
+                    var b = (byte)(int.Parse(lb[6].ToString()) * 100 + int.Parse(lb[7].ToString()) * 10 +
+                                   int.Parse(lb[8].ToString()));
                     name = $"Lightbar Color: {r},{g},{b}";
                 }
                 else
@@ -111,9 +97,11 @@ namespace DS4Windows
                 if (value > 1000000)
                 {
                     type = MacroStep.StepType.ActDown;
-                    string r = value.ToString().Substring(1);
-                    byte heavy = (byte)(int.Parse(r[0].ToString()) * 100 + int.Parse(r[1].ToString()) * 10 + int.Parse(r[2].ToString()));
-                    byte light = (byte)(int.Parse(r[3].ToString()) * 100 + int.Parse(r[4].ToString()) * 10 + int.Parse(r[5].ToString()));
+                    var r = value.ToString().Substring(1);
+                    var heavy = (byte)(int.Parse(r[0].ToString()) * 100 + int.Parse(r[1].ToString()) * 10 +
+                                       int.Parse(r[2].ToString()));
+                    var light = (byte)(int.Parse(r[3].ToString()) * 100 + int.Parse(r[4].ToString()) * 10 +
+                                       int.Parse(r[5].ToString()));
                     name = $"Rumble {heavy}, {light} ({Math.Round((heavy * .75f + light * .25f) / 2.55f, 1)}%)";
                 }
                 else
@@ -132,36 +120,28 @@ namespace DS4Windows
             {
                 // anything above 255 is not a key value
                 outType = value <= 255 ? MacroStep.StepOutput.Key : MacroStep.StepOutput.Button;
-                keydown.TryGetValue(value, out bool isdown);
+                keydown.TryGetValue(value, out var isdown);
                 if (!isdown)
                 {
                     type = MacroStep.StepType.ActDown;
                     keydown.Add(value, true);
                     if (outType == MacroStep.StepOutput.Key)
-                    {
                         name = KeyInterop.KeyFromVirtualKey(value).ToString();
-                    }
                     else
-                    {
                         macroInputNames.TryGetValue(value, out name);
-                    }
                 }
                 else
                 {
                     type = MacroStep.StepType.ActUp;
                     keydown.Remove(value);
                     if (outType == MacroStep.StepOutput.Key)
-                    {
                         name = KeyInterop.KeyFromVirtualKey(value).ToString();
-                    }
                     else
-                    {
                         macroInputNames.TryGetValue(value, out name);
-                    }
                 }
             }
 
-            MacroStep step = new MacroStep(value, name, type, outType);
+            var step = new MacroStep(value, name, type, outType);
             return step;
         }
 
@@ -173,26 +153,34 @@ namespace DS4Windows
 
     public class MacroStep
     {
-        public enum StepType : uint
-        {
-            ActDown,
-            ActUp,
-            Wait,
-        }
-
         public enum StepOutput : uint
         {
             None,
             Key,
             Button,
             Rumble,
-            Lightbar,
+            Lightbar
+        }
+
+        public enum StepType : uint
+        {
+            ActDown,
+            ActUp,
+            Wait
         }
 
         private string name;
         private int value;
-        private StepType actType;
-        private StepOutput outputType;
+
+        public MacroStep(int value, string name, StepType act, StepOutput output)
+        {
+            this.value = value;
+            this.name = name;
+            ActType = act;
+            OutputType = output;
+
+            ValueChanged += MacroStep_ValueChanged;
+        }
 
         public string Name
         {
@@ -203,7 +191,7 @@ namespace DS4Windows
                 NameChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler NameChanged;
+
         public int Value
         {
             get => value;
@@ -213,42 +201,36 @@ namespace DS4Windows
                 ValueChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        public StepType ActType { get; }
+
+        public StepOutput OutputType { get; }
+
+        public event EventHandler NameChanged;
         public event EventHandler ValueChanged;
-        public StepType ActType { get => actType; }
-        public StepOutput OutputType { get => outputType; }
-
-        public MacroStep(int value, string name, StepType act, StepOutput output)
-        {
-            this.value = value;
-            this.name = name;
-            actType = act;
-            outputType = output;
-
-            ValueChanged += MacroStep_ValueChanged;
-        }
 
         private void MacroStep_ValueChanged(object sender, EventArgs e)
         {
-            if (actType == StepType.Wait)
+            if (ActType == StepType.Wait)
             {
-                Name = $"Wait {value-300}ms";
+                Name = $"Wait {value - 300}ms";
             }
-            else if (outputType == StepOutput.Rumble)
+            else if (OutputType == StepOutput.Rumble)
             {
-                int result = value;
+                var result = value;
                 result -= 1000000;
-                int curHeavy = result / 1000;
-                int curLight = result - (curHeavy * 1000);
+                var curHeavy = result / 1000;
+                var curLight = result - curHeavy * 1000;
                 Name = $"Rumble {curHeavy},{curLight}";
             }
-            else if (outputType == StepOutput.Lightbar)
+            else if (OutputType == StepOutput.Lightbar)
             {
-                int temp = value - 1000000000;
-                int r = temp / 1000000;
-                temp -= (r * 1000000);
-                int g = temp / 1000;
-                temp -= (g * 1000);
-                int b = temp;
+                var temp = value - 1000000000;
+                var r = temp / 1000000;
+                temp -= r * 1000000;
+                var g = temp / 1000;
+                temp -= g * 1000;
+                var b = temp;
                 Name = $"Lightbar Color: {r},{g},{b}";
             }
         }

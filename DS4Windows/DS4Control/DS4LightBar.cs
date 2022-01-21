@@ -5,7 +5,6 @@ using System.Linq;
 using DS4Windows;
 using DS4Windows.Shared.Core.HID;
 using DS4WinWPF.DS4Control.IoC.Services;
-using OpenTracing.Util;
 using static System.Math;
 using static DS4Windows.Global;
 
@@ -33,21 +32,21 @@ namespace DS4WinWPF.DS4Control
             { 0, 0 } // use on 100%. 0 is for "charging" OR anything sufficiently-"charged"
         };
 
-        private double counters = 0;
+        private double counters;
+
+        public bool defaultLight = false, shuttingdown = false;
+
+        private bool fadedirection;
 
         public Stopwatch fadewatches = new();
-
-        private bool fadedirection = false;
-
-        private DateTime oldnow = DateTime.UtcNow;
-
-        public bool forcelight = false;
 
         public DS4Color forcedColor = new();
 
         public byte forcedFlash = new();
 
-        public bool defaultLight = false, shuttingdown = false;
+        public bool forcelight = false;
+
+        private DateTime oldnow = DateTime.UtcNow;
 
         private byte ApplyRatio(byte b1, byte b2, double r)
         {
@@ -71,9 +70,6 @@ namespace DS4WinWPF.DS4Control
 
         public void UpdateLightBar(DS4Device device, int deviceNum)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4LightBar)}::{nameof(UpdateLightBar)}")
-                .StartActive(true);
-
             var color = new DS4Color(0, 0, 0);
             var useForceLight = forcelight;
             var lightbarSettingInfo = AppSettingsService.Instance.Settings.LightbarSettingInfo[deviceNum];

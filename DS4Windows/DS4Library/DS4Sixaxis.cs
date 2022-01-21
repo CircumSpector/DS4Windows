@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using OpenTracing.Util;
+
 
 namespace DS4Windows
 {
@@ -46,10 +46,6 @@ namespace DS4Windows
 
         public void CopyFrom(SixAxis src)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(CopyFrom)}")
-                .StartActive(true);
-
-
             gyroYaw = src.gyroYaw;
             gyroPitch = src.gyroPitch;
             gyroRoll = src.gyroRoll;
@@ -84,10 +80,6 @@ namespace DS4Windows
             int aX, int aY, int aZ,
             double elapsedDelta, SixAxis prevAxis = null)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(SixAxis)}::{nameof(Populate)}")
-                .StartActive(true);
-
-
             gyroYaw = -X / 256;
             gyroPitch = Y / 256;
             gyroRoll = -Z / 256;
@@ -336,10 +328,6 @@ namespace DS4Windows
         public unsafe void HandleSixAxis(byte* gyro, byte* accel, DS4State state,
             double elapsedDelta)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(HandleSixAxis)}")
-                .StartActive(true);
-
-
             unchecked
             {
                 int currentYaw = (short)((ushort)(gyro[3] << 8) | gyro[2]);
@@ -480,10 +468,6 @@ namespace DS4Windows
 
         public void AverageGyro(ref int x, ref int y, ref int z, ref double accelMagnitude)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(DS4SixAxis)}::{nameof(AverageGyro)}")
-                .StartActive(true);
-
-
             var weight = 0.0;
             var totalX = 0.0;
             var totalY = 0.0;

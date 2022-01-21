@@ -5,7 +5,6 @@ using DS4WinWPF.DS4Control.IoC.Services;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
-using OpenTracing.Util;
 
 namespace DS4Windows
 {
@@ -36,108 +35,105 @@ namespace DS4Windows
             if (!IsConnected) return;
 
 
-            using (GlobalTracer.Instance.BuildSpan($"{nameof(Xbox360OutDevice)}::{nameof(ConvertAndSendReport)}")
-                .StartActive(true))
+            //cont.ResetReport();
+            ushort tempButtons = 0;
+
+            if (state.Share) tempButtons |= Xbox360Button.Back.Value;
+            if (state.L3) tempButtons |= Xbox360Button.LeftThumb.Value;
+            if (state.R3) tempButtons |= Xbox360Button.RightThumb.Value;
+            if (state.Options) tempButtons |= Xbox360Button.Start.Value;
+
+            if (state.DpadUp) tempButtons |= Xbox360Button.Up.Value;
+            if (state.DpadRight) tempButtons |= Xbox360Button.Right.Value;
+            if (state.DpadDown) tempButtons |= Xbox360Button.Down.Value;
+            if (state.DpadLeft) tempButtons |= Xbox360Button.Left.Value;
+
+            if (state.L1) tempButtons |= Xbox360Button.LeftShoulder.Value;
+            if (state.R1) tempButtons |= Xbox360Button.RightShoulder.Value;
+
+            if (state.Triangle) tempButtons |= Xbox360Button.Y.Value;
+            if (state.Circle) tempButtons |= Xbox360Button.B.Value;
+            if (state.Cross) tempButtons |= Xbox360Button.A.Value;
+            if (state.Square) tempButtons |= Xbox360Button.X.Value;
+            if (state.PS) tempButtons |= Xbox360Button.Guide.Value;
+            cont.SetButtonsFull(tempButtons);
+
+            cont.LeftTrigger = state.L2;
+            cont.RightTrigger = state.R2;
+
+            var steeringWheelMappedAxis =
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
+            switch (steeringWheelMappedAxis)
             {
-                //cont.ResetReport();
-                ushort tempButtons = 0;
+                case SASteeringWheelEmulationAxisType.None:
+                    cont.LeftThumbX = AxisScale(state.LX, false);
+                    cont.LeftThumbY = AxisScale(state.LY, true);
+                    cont.RightThumbX = AxisScale(state.RX, false);
+                    cont.RightThumbY = AxisScale(state.RY, true);
+                    break;
 
-                if (state.Share) tempButtons |= Xbox360Button.Back.Value;
-                if (state.L3) tempButtons |= Xbox360Button.LeftThumb.Value;
-                if (state.R3) tempButtons |= Xbox360Button.RightThumb.Value;
-                if (state.Options) tempButtons |= Xbox360Button.Start.Value;
+                case SASteeringWheelEmulationAxisType.LX:
+                    cont.LeftThumbX = (short)state.SASteeringWheelEmulationUnit;
+                    cont.LeftThumbY = AxisScale(state.LY, true);
+                    cont.RightThumbX = AxisScale(state.RX, false);
+                    cont.RightThumbY = AxisScale(state.RY, true);
+                    break;
 
-                if (state.DpadUp) tempButtons |= Xbox360Button.Up.Value;
-                if (state.DpadRight) tempButtons |= Xbox360Button.Right.Value;
-                if (state.DpadDown) tempButtons |= Xbox360Button.Down.Value;
-                if (state.DpadLeft) tempButtons |= Xbox360Button.Left.Value;
+                case SASteeringWheelEmulationAxisType.LY:
+                    cont.LeftThumbX = AxisScale(state.LX, false);
+                    cont.LeftThumbY = (short)state.SASteeringWheelEmulationUnit;
+                    cont.RightThumbX = AxisScale(state.RX, false);
+                    cont.RightThumbY = AxisScale(state.RY, true);
+                    break;
 
-                if (state.L1) tempButtons |= Xbox360Button.LeftShoulder.Value;
-                if (state.R1) tempButtons |= Xbox360Button.RightShoulder.Value;
+                case SASteeringWheelEmulationAxisType.RX:
+                    cont.LeftThumbX = AxisScale(state.LX, false);
+                    cont.LeftThumbY = AxisScale(state.LY, true);
+                    cont.RightThumbX = (short)state.SASteeringWheelEmulationUnit;
+                    cont.RightThumbY = AxisScale(state.RY, true);
+                    break;
 
-                if (state.Triangle) tempButtons |= Xbox360Button.Y.Value;
-                if (state.Circle) tempButtons |= Xbox360Button.B.Value;
-                if (state.Cross) tempButtons |= Xbox360Button.A.Value;
-                if (state.Square) tempButtons |= Xbox360Button.X.Value;
-                if (state.PS) tempButtons |= Xbox360Button.Guide.Value;
-                cont.SetButtonsFull(tempButtons);
+                case SASteeringWheelEmulationAxisType.RY:
+                    cont.LeftThumbX = AxisScale(state.LX, false);
+                    cont.LeftThumbY = AxisScale(state.LY, true);
+                    cont.RightThumbX = AxisScale(state.RX, false);
+                    cont.RightThumbY = (short)state.SASteeringWheelEmulationUnit;
+                    break;
 
-                cont.LeftTrigger = state.L2;
-                cont.RightTrigger = state.R2;
+                case SASteeringWheelEmulationAxisType.L2R2:
+                    cont.LeftTrigger = cont.RightTrigger = 0;
+                    if (state.SASteeringWheelEmulationUnit >= 0)
+                        cont.LeftTrigger = (byte)state.SASteeringWheelEmulationUnit;
+                    else cont.RightTrigger = (byte)state.SASteeringWheelEmulationUnit;
+                    goto case SASteeringWheelEmulationAxisType.None;
 
-                var steeringWheelMappedAxis = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis;
-                switch (steeringWheelMappedAxis)
-                {
-                    case SASteeringWheelEmulationAxisType.None:
-                        cont.LeftThumbX = AxisScale(state.LX, false);
-                        cont.LeftThumbY = AxisScale(state.LY, true);
-                        cont.RightThumbX = AxisScale(state.RX, false);
-                        cont.RightThumbY = AxisScale(state.RY, true);
-                        break;
+                case SASteeringWheelEmulationAxisType.VJoy1X:
+                case SASteeringWheelEmulationAxisType.VJoy2X:
+                    vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                        ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                        HID_USAGES.HID_USAGE_X);
+                    goto case SASteeringWheelEmulationAxisType.None;
 
-                    case SASteeringWheelEmulationAxisType.LX:
-                        cont.LeftThumbX = (short)state.SASteeringWheelEmulationUnit;
-                        cont.LeftThumbY = AxisScale(state.LY, true);
-                        cont.RightThumbX = AxisScale(state.RX, false);
-                        cont.RightThumbY = AxisScale(state.RY, true);
-                        break;
+                case SASteeringWheelEmulationAxisType.VJoy1Y:
+                case SASteeringWheelEmulationAxisType.VJoy2Y:
+                    vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                        ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                        HID_USAGES.HID_USAGE_Y);
+                    goto case SASteeringWheelEmulationAxisType.None;
 
-                    case SASteeringWheelEmulationAxisType.LY:
-                        cont.LeftThumbX = AxisScale(state.LX, false);
-                        cont.LeftThumbY = (short)state.SASteeringWheelEmulationUnit;
-                        cont.RightThumbX = AxisScale(state.RX, false);
-                        cont.RightThumbY = AxisScale(state.RY, true);
-                        break;
+                case SASteeringWheelEmulationAxisType.VJoy1Z:
+                case SASteeringWheelEmulationAxisType.VJoy2Z:
+                    vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
+                        ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
+                        HID_USAGES.HID_USAGE_Z);
+                    goto case SASteeringWheelEmulationAxisType.None;
 
-                    case SASteeringWheelEmulationAxisType.RX:
-                        cont.LeftThumbX = AxisScale(state.LX, false);
-                        cont.LeftThumbY = AxisScale(state.LY, true);
-                        cont.RightThumbX = (short)state.SASteeringWheelEmulationUnit;
-                        cont.RightThumbY = AxisScale(state.RY, true);
-                        break;
-
-                    case SASteeringWheelEmulationAxisType.RY:
-                        cont.LeftThumbX = AxisScale(state.LX, false);
-                        cont.LeftThumbY = AxisScale(state.LY, true);
-                        cont.RightThumbX = AxisScale(state.RX, false);
-                        cont.RightThumbY = (short)state.SASteeringWheelEmulationUnit;
-                        break;
-
-                    case SASteeringWheelEmulationAxisType.L2R2:
-                        cont.LeftTrigger = cont.RightTrigger = 0;
-                        if (state.SASteeringWheelEmulationUnit >= 0)
-                            cont.LeftTrigger = (byte)state.SASteeringWheelEmulationUnit;
-                        else cont.RightTrigger = (byte)state.SASteeringWheelEmulationUnit;
-                        goto case SASteeringWheelEmulationAxisType.None;
-
-                    case SASteeringWheelEmulationAxisType.VJoy1X:
-                    case SASteeringWheelEmulationAxisType.VJoy2X:
-                        vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
-                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
-                            HID_USAGES.HID_USAGE_X);
-                        goto case SASteeringWheelEmulationAxisType.None;
-
-                    case SASteeringWheelEmulationAxisType.VJoy1Y:
-                    case SASteeringWheelEmulationAxisType.VJoy2Y:
-                        vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
-                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
-                            HID_USAGES.HID_USAGE_Y);
-                        goto case SASteeringWheelEmulationAxisType.None;
-
-                    case SASteeringWheelEmulationAxisType.VJoy1Z:
-                    case SASteeringWheelEmulationAxisType.VJoy2Z:
-                        vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit,
-                            ((uint)steeringWheelMappedAxis - (uint)SASteeringWheelEmulationAxisType.VJoy1X) / 3 + 1,
-                            HID_USAGES.HID_USAGE_Z);
-                        goto case SASteeringWheelEmulationAxisType.None;
-
-                    default:
-                        // Should never come here but just in case use the NONE case as default handler....
-                        goto case SASteeringWheelEmulationAxisType.None;
-                }
-
-                cont.SubmitReport();
+                default:
+                    // Should never come here but just in case use the NONE case as default handler....
+                    goto case SASteeringWheelEmulationAxisType.None;
             }
+
+            cont.SubmitReport();
         }
 
         private short AxisScale(int Value, bool Flip)

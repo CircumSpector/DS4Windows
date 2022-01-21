@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -15,11 +14,7 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
-using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Properties;
-
-using OpenTracing.Util;
-
 
 namespace DS4Windows
 {
@@ -86,12 +81,14 @@ namespace DS4Windows
             }
 
             private Dictionary<PhysicalAddress, string> LinkedProfiles { get; set; } = new();
-            
+
             /// <summary>
             ///     TRUE=AutoProfile reverts to default profile if current foreground process is unknown, FALSE=Leave existing profile
             ///     active when a foreground process is unknown (ie. no matching auto-profile rule)
             /// </summary>
             public bool AutoProfileRevertDefaultProfile { get; set; } = true;
+
+            public string UseLang { get; set; } = string.Empty;
 
             public ulong LastVersionCheckedNumber { get; set; }
 
@@ -177,8 +174,6 @@ namespace DS4Windows
 
             public IList<string>[] ProfileActions { get; set; } =
                 { null, null, null, null, null, null, null, null, null };
-
-            public string UseLang { get; set; } = string.Empty;
 
             public string FakeExeFileName { get; set; } = string.Empty;
 
@@ -267,12 +262,12 @@ namespace DS4Windows
                     SetOutBezierCurveObjArrayItem(SZOutCurve, index, value, BezierCurve.AxisType.SA);
                 _szOutCurveMode[index] = value;
             }
-            
+
             public bool GetSATriggerCondition(int index)
             {
                 return SATriggerCondition[index];
             }
-            
+
             public string GetSAMouseStickTriggers(int device)
             {
                 return SAMouseStickTriggers[device];
@@ -280,7 +275,8 @@ namespace DS4Windows
 
             public bool IsUsingTouchpadForControls(int index)
             {
-                return ProfilesService.Instance.ActiveProfiles.ElementAt(index).TouchOutMode == TouchpadOutMode.Controls;
+                return ProfilesService.Instance.ActiveProfiles.ElementAt(index).TouchOutMode ==
+                       TouchpadOutMode.Controls;
             }
 
             public bool IsUsingSAForControls(int index)
@@ -292,16 +288,10 @@ namespace DS4Windows
             {
                 return profileActionCount[index];
             }
-            
+
             public ControlSettingsGroup GetControlSettingsGroup(int deviceNum)
             {
                 return ds4controlSettings[deviceNum];
-            }
-
-            public void EstablishDefaultSpecialActions(int idx)
-            {
-                ProfileActions[idx] = new List<string> { "Disconnect Controller" };
-                profileActionCount[idx] = ProfileActions[idx].Count;
             }
 
             public void CacheProfileCustomsFlags(int device)
@@ -312,11 +302,17 @@ namespace DS4Windows
 
                 if (!customAct)
                 {
-                    customAct = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode == GyroOutMode.MouseJoystick;
+                    customAct = ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode ==
+                                GyroOutMode.MouseJoystick;
                     customAct = customAct ||
-                                ProfilesService.Instance.ActiveProfiles.ElementAt(device).SASteeringWheelEmulationAxis >= SASteeringWheelEmulationAxisType.VJoy1X;
-                    customAct = customAct || ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSOutputSettings.Mode != StickMode.Controls;
-                    customAct = customAct || ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSOutputSettings.Mode != StickMode.Controls;
+                                ProfilesService.Instance.ActiveProfiles.ElementAt(device)
+                                    .SASteeringWheelEmulationAxis >= SASteeringWheelEmulationAxisType.VJoy1X;
+                    customAct = customAct ||
+                                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSOutputSettings.Mode !=
+                                StickMode.Controls;
+                    customAct = customAct ||
+                                ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSOutputSettings.Mode !=
+                                StickMode.Controls;
                     ContainsCustomAction[device] = customAct;
                 }
             }
@@ -326,23 +322,6 @@ namespace DS4Windows
                 CalculateProfileActionCount(device);
                 CalculateProfileActionDicts(device);
                 CacheProfileCustomsFlags(device);
-            }
-
-            public void CalculateProfileActionCount(int index)
-            {
-                profileActionCount[index] = ProfileActions[index].Count;
-            }
-
-            public void CalculateProfileActionDicts(int device)
-            {
-                profileActionDict[device].Clear();
-                profileActionIndexDict[device].Clear();
-
-                foreach (var actionname in ProfileActions[device])
-                {
-                    profileActionDict[device][actionname] = GetAction(actionname);
-                    profileActionIndexDict[device][actionname] = GetActionIndexOf(actionname);
-                }
             }
 
             public SpecialActionV3 GetAction(string name)
@@ -661,78 +640,6 @@ namespace DS4Windows
             }
 
             /// <summary>
-            ///     Persists <see cref="DS4WindowsAppSettingsV3" /> on disk.
-            /// </summary>
-            /// <returns>True on success, false otherwise.</returns>
-            [ConfigurationSystemComponent]
-            [Obsolete]
-            public bool SaveApplicationSettings()
-            {
-                var saved = true;
-
-                var settings = new DS4WindowsAppSettingsV3(this, ExecutableProductVersion, APP_CONFIG_VERSION);
-
-                try
-                {
-                    using var stream = File.Open(ProfilesPath, FileMode.Create);
-
-                    settings.Serialize(stream);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    saved = false;
-                }
-
-                //
-                // TODO: WTF?!
-                // 
-                var adminNeeded = IsAdminNeeded;
-                if (saved &&
-                    (!adminNeeded || adminNeeded && IsAdministrator))
-                {
-                    var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
-                    var fakeExeFileExists = File.Exists(custom_exe_name_path);
-                    if (!string.IsNullOrEmpty(FakeExeFileName) || fakeExeFileExists)
-                        File.WriteAllText(custom_exe_name_path, FakeExeFileName);
-                }
-
-                return saved;
-            }
-
-            /// <summary>
-            ///     Restores <see cref="DS4WindowsAppSettingsV3" /> from disk.
-            /// </summary>
-            /// <returns>True on success, false otherwise.</returns>
-            [ConfigurationSystemComponent]
-            [Obsolete]
-            public async Task<bool> LoadApplicationSettings()
-            {
-                var loaded = true;
-
-                if (File.Exists(ProfilesPath))
-                {
-                    await using (var stream = File.OpenRead(ProfilesPath))
-                    {
-                        (await DS4WindowsAppSettingsV3.DeserializeAsync(stream)).CopyTo(this);
-                    }
-
-                    if (loaded)
-                    {
-                        var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
-                        var fakeExeFileExists = File.Exists(custom_exe_name_path);
-                        if (fakeExeFileExists)
-                        {
-                            var fake_exe_name = (await File.ReadAllTextAsync(custom_exe_name_path)).Trim();
-                            var valid = !(fake_exe_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0);
-                            if (valid) FakeExeFileName = fake_exe_name;
-                        }
-                    }
-                }
-
-                return loaded;
-            }
-
-            /// <summary>
             ///     Persists a <see cref="DS4WindowsProfileV3" /> on disk.
             /// </summary>
             /// <param name="device">The index of the device to store the profile for.</param>
@@ -760,9 +667,7 @@ namespace DS4Windows
                     ExecutableProductVersion,
                     CONFIG_VERSION
                 );
-                
-                using var scope = GlobalTracer.Instance.BuildSpan(nameof(SaveProfile)).StartActive(true);
-                
+
                 try
                 {
                     foreach (var dcs in Ds4Settings[device])
@@ -919,10 +824,6 @@ namespace DS4Windows
                 var xinputPlug = false;
                 var xinputStatus = false;
 
-
-                using var scope = GlobalTracer.Instance.BuildSpan(nameof(LoadProfile)).StartActive(true);
-
-
                 if (File.Exists(profilepath))
                 {
                     XmlNode Item;
@@ -1010,11 +911,13 @@ namespace DS4Windows
                             Item = m_Xdoc.SelectSingleNode("/" + rootname + "/UseTPforControls");
                             if (bool.TryParse(Item?.InnerText ?? "", out var temp))
                                 if (temp)
-                                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Controls;
+                                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode =
+                                        TouchpadOutMode.Controls;
                         }
                         catch
                         {
-                            ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;
+                            ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode =
+                                TouchpadOutMode.Mouse;
                         }
 
                     // Fallback lookup if GyroOutMode is not set
@@ -1023,7 +926,8 @@ namespace DS4Windows
                         Item = m_Xdoc.SelectSingleNode("/" + rootname + "/UseSAforMouse");
                         if (bool.TryParse(Item?.InnerText ?? "", out var temp))
                             if (temp)
-                                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode = GyroOutMode.Mouse;
+                                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroOutputMode =
+                                    GyroOutMode.Mouse;
                     }
                     catch
                     {
@@ -1054,7 +958,8 @@ namespace DS4Windows
                         }
                         catch
                         {
-                            ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;
+                            ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode =
+                                TouchpadOutMode.Mouse;
                             missingSetting = true;
                         }
 
@@ -1731,10 +1636,10 @@ namespace DS4Windows
                         {
                             double doub;
                             if (double.TryParse(details.Split('|')[0], NumberStyles.Float, ConfigFileDecimalCulture,
-                                out doub))
+                                    out doub))
                                 Actions.Add(new SpecialActionV3(name, controls, type, details, doub));
                             else if (double.TryParse(details.Split(',')[0], NumberStyles.Float,
-                                ConfigFileDecimalCulture, out doub))
+                                         ConfigFileDecimalCulture, out doub))
                                 Actions.Add(new SpecialActionV3(name, controls, type, details, doub));
                             else
                                 Actions.Add(new SpecialActionV3(name, controls, type, details));
@@ -1746,7 +1651,7 @@ namespace DS4Windows
                             {
                                 extras = x.ChildNodes[3].InnerText;
                                 if (double.TryParse(x.ChildNodes[4].InnerText, NumberStyles.Float,
-                                    ConfigFileDecimalCulture, out doub))
+                                        ConfigFileDecimalCulture, out doub))
                                     Actions.Add(new SpecialActionV3(name, controls, type, details, doub, extras));
                                 else
                                     Actions.Add(new SpecialActionV3(name, controls, type, details, 0, extras));
@@ -1789,7 +1694,7 @@ namespace DS4Windows
                     {
                         using var stream = File.OpenRead(LinkedProfilesPath);
 
-                        var profiles = DS4WinWPF.DS4Control.Profiles.Schema.LinkedProfilesV3.Deserialize(stream);
+                        var profiles = LinkedProfilesV3.Deserialize(stream);
 
                         LinkedProfiles = profiles.LegacyAssignments.ToDictionary(
                             x => x.Key,
@@ -2269,7 +2174,8 @@ namespace DS4Windows
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.EnableSmoothing = true;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing =
+                    GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.10 * 127);
@@ -2309,7 +2215,8 @@ namespace DS4Windows
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.EnableSmoothing = true;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing =
+                    GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
 
@@ -2547,7 +2454,8 @@ namespace DS4Windows
                 SATriggerCondition[device] = true;
                 //GyroTriggerTurns[device] = false;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.EnableSmoothing = true;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing = DS4Windows.GyroMouseInfo.SmoothingMethod.OneEuro;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing =
+                    GyroMouseInfo.SmoothingMethod.OneEuro;
 
                 // Flag to unplug virtual controller
                 //DIOnly[device] = true;
@@ -2701,6 +2609,101 @@ namespace DS4Windows
                 }
 
                 return result;
+            }
+
+            public void EstablishDefaultSpecialActions(int idx)
+            {
+                ProfileActions[idx] = new List<string> { "Disconnect Controller" };
+                profileActionCount[idx] = ProfileActions[idx].Count;
+            }
+
+            public void CalculateProfileActionCount(int index)
+            {
+                profileActionCount[index] = ProfileActions[index].Count;
+            }
+
+            public void CalculateProfileActionDicts(int device)
+            {
+                profileActionDict[device].Clear();
+                profileActionIndexDict[device].Clear();
+
+                foreach (var actionname in ProfileActions[device])
+                {
+                    profileActionDict[device][actionname] = GetAction(actionname);
+                    profileActionIndexDict[device][actionname] = GetActionIndexOf(actionname);
+                }
+            }
+
+            /// <summary>
+            ///     Persists <see cref="DS4WindowsAppSettingsV3" /> on disk.
+            /// </summary>
+            /// <returns>True on success, false otherwise.</returns>
+            [ConfigurationSystemComponent]
+            [Obsolete]
+            public bool SaveApplicationSettings()
+            {
+                var saved = true;
+
+                var settings = new DS4WindowsAppSettingsV3(this, ExecutableProductVersion, APP_CONFIG_VERSION);
+
+                try
+                {
+                    using var stream = File.Open(ProfilesPath, FileMode.Create);
+
+                    settings.Serialize(stream);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    saved = false;
+                }
+
+                //
+                // TODO: WTF?!
+                // 
+                var adminNeeded = IsAdminNeeded;
+                if (saved &&
+                    (!adminNeeded || adminNeeded && IsAdministrator))
+                {
+                    var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
+                    var fakeExeFileExists = File.Exists(custom_exe_name_path);
+                    if (!string.IsNullOrEmpty(FakeExeFileName) || fakeExeFileExists)
+                        File.WriteAllText(custom_exe_name_path, FakeExeFileName);
+                }
+
+                return saved;
+            }
+
+            /// <summary>
+            ///     Restores <see cref="DS4WindowsAppSettingsV3" /> from disk.
+            /// </summary>
+            /// <returns>True on success, false otherwise.</returns>
+            [ConfigurationSystemComponent]
+            [Obsolete]
+            public async Task<bool> LoadApplicationSettings()
+            {
+                var loaded = true;
+
+                if (File.Exists(ProfilesPath))
+                {
+                    await using (var stream = File.OpenRead(ProfilesPath))
+                    {
+                        (await DS4WindowsAppSettingsV3.DeserializeAsync(stream)).CopyTo(this);
+                    }
+
+                    if (loaded)
+                    {
+                        var custom_exe_name_path = Path.Combine(ExecutableDirectory, CUSTOM_EXE_CONFIG_FILENAME);
+                        var fakeExeFileExists = File.Exists(custom_exe_name_path);
+                        if (fakeExeFileExists)
+                        {
+                            var fake_exe_name = (await File.ReadAllTextAsync(custom_exe_name_path)).Trim();
+                            var valid = !(fake_exe_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0);
+                            if (valid) FakeExeFileName = fake_exe_name;
+                        }
+                    }
+                }
+
+                return loaded;
             }
 
             private void SetNestedProperty(string compoundProperty, object target, object value)
@@ -2915,11 +2918,17 @@ namespace DS4Windows
 
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.Reset();
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.Reset();
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.DeadZone = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.DeadZone = 10;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.AntiDeadZone = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.AntiDeadZone = 20;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.MaxZone = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.MaxZone = 100;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.MaxOutput = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.MaxOutput = 100.0;
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.Fuzz = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.Fuzz = StickDeadZoneInfo.DefaultFuzz;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.DeadZone =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.DeadZone = 10;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.AntiDeadZone =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.AntiDeadZone = 20;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.MaxZone =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.MaxZone = 100;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.MaxOutput =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.MaxOutput = 100.0;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.Fuzz =
+                    ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo.Fuzz =
+                        StickDeadZoneInfo.DefaultFuzz;
 
                 //l2ModInfo[device].deadZone = r2ModInfo[device].deadZone = 0;
                 //l2ModInfo[device].antiDeadZone = r2ModInfo[device].antiDeadZone = 0;
@@ -2939,7 +2948,7 @@ namespace DS4Windows
                 L2OutputSettings[device].ResetSettings();
                 R2OutputSettings[device].ResetSettings();
                 */
-                
+
                 LaunchProgram[device] = string.Empty;
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).TouchOutMode = TouchpadOutMode.Mouse;
                 //SATriggers[device] = "-1";
@@ -3077,7 +3086,8 @@ namespace DS4Windows
                                     control.UnplugOutDev(device, tempDev);
                                 }
 
-                                var tempContType = ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType;
+                                var tempContType = ProfilesService.Instance.ActiveProfiles.ElementAt(device)
+                                    .OutputDeviceType;
                                 control.PluginOutDev(device, tempDev);
                                 //Global.UseDirectInputOnly[device] = false;
                             }

@@ -12,7 +12,6 @@ using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Properties;
-using OpenTracing.Util;
 using Sensorit.Base;
 using static DS4Windows.Global;
 // Point struct
@@ -303,245 +302,241 @@ namespace DS4Windows
 
         public static void Commit(int device)
         {
-            using (GlobalTracer.Instance.BuildSpan(nameof(Commit)).StartActive(true))
+
+            var state = deviceState[device];
+            syncStateLock.EnterWriteLock();
+
+            globalState.currentClicks.leftCount += state.currentClicks.leftCount - state.previousClicks.leftCount;
+            globalState.currentClicks.middleCount +=
+                state.currentClicks.middleCount - state.previousClicks.middleCount;
+            globalState.currentClicks.rightCount +=
+                state.currentClicks.rightCount - state.previousClicks.rightCount;
+            globalState.currentClicks.fourthCount +=
+                state.currentClicks.fourthCount - state.previousClicks.fourthCount;
+            globalState.currentClicks.fifthCount +=
+                state.currentClicks.fifthCount - state.previousClicks.fifthCount;
+            globalState.currentClicks.wUpCount += state.currentClicks.wUpCount - state.previousClicks.wUpCount;
+            globalState.currentClicks.wDownCount +=
+                state.currentClicks.wDownCount - state.previousClicks.wDownCount;
+            globalState.currentClicks.toggleCount +=
+                state.currentClicks.toggleCount - state.previousClicks.toggleCount;
+            globalState.currentClicks.toggle = state.currentClicks.toggle;
+
+            if (globalState.currentClicks.toggleCount != 0 && globalState.previousClicks.toggleCount == 0 &&
+                globalState.currentClicks.toggle)
             {
-                var state = deviceState[device];
-                syncStateLock.EnterWriteLock();
+                if (globalState.currentClicks.leftCount != 0 && globalState.previousClicks.leftCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTDOWN);
+                if (globalState.currentClicks.rightCount != 0 && globalState.previousClicks.rightCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTDOWN);
+                if (globalState.currentClicks.middleCount != 0 && globalState.previousClicks.middleCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEDOWN);
+                if (globalState.currentClicks.fourthCount != 0 && globalState.previousClicks.fourthCount == 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 1);
+                if (globalState.currentClicks.fifthCount != 0 && globalState.previousClicks.fifthCount == 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 2);
+            }
+            else if (globalState.currentClicks.toggleCount != 0 && globalState.previousClicks.toggleCount == 0 &&
+                     !globalState.currentClicks.toggle)
+            {
+                if (globalState.currentClicks.leftCount != 0 && globalState.previousClicks.leftCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTUP);
+                if (globalState.currentClicks.rightCount != 0 && globalState.previousClicks.rightCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTUP);
+                if (globalState.currentClicks.middleCount != 0 && globalState.previousClicks.middleCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEUP);
+                if (globalState.currentClicks.fourthCount != 0 && globalState.previousClicks.fourthCount == 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 1);
+                if (globalState.currentClicks.fifthCount != 0 && globalState.previousClicks.fifthCount == 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 2);
+            }
 
-                globalState.currentClicks.leftCount += state.currentClicks.leftCount - state.previousClicks.leftCount;
-                globalState.currentClicks.middleCount +=
-                    state.currentClicks.middleCount - state.previousClicks.middleCount;
-                globalState.currentClicks.rightCount +=
-                    state.currentClicks.rightCount - state.previousClicks.rightCount;
-                globalState.currentClicks.fourthCount +=
-                    state.currentClicks.fourthCount - state.previousClicks.fourthCount;
-                globalState.currentClicks.fifthCount +=
-                    state.currentClicks.fifthCount - state.previousClicks.fifthCount;
-                globalState.currentClicks.wUpCount += state.currentClicks.wUpCount - state.previousClicks.wUpCount;
-                globalState.currentClicks.wDownCount +=
-                    state.currentClicks.wDownCount - state.previousClicks.wDownCount;
-                globalState.currentClicks.toggleCount +=
-                    state.currentClicks.toggleCount - state.previousClicks.toggleCount;
-                globalState.currentClicks.toggle = state.currentClicks.toggle;
+            if (globalState.currentClicks.toggleCount == 0 && globalState.previousClicks.toggleCount == 0)
+            {
+                if (globalState.currentClicks.leftCount != 0 && globalState.previousClicks.leftCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTDOWN);
+                else if (globalState.currentClicks.leftCount == 0 && globalState.previousClicks.leftCount != 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTUP);
 
-                if (globalState.currentClicks.toggleCount != 0 && globalState.previousClicks.toggleCount == 0 &&
-                    globalState.currentClicks.toggle)
+                if (globalState.currentClicks.middleCount != 0 && globalState.previousClicks.middleCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEDOWN);
+                else if (globalState.currentClicks.middleCount == 0 && globalState.previousClicks.middleCount != 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEUP);
+
+                if (globalState.currentClicks.rightCount != 0 && globalState.previousClicks.rightCount == 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTDOWN);
+                else if (globalState.currentClicks.rightCount == 0 && globalState.previousClicks.rightCount != 0)
+                    outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTUP);
+
+                if (globalState.currentClicks.fourthCount != 0 && globalState.previousClicks.fourthCount == 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 1);
+                else if (globalState.currentClicks.fourthCount == 0 && globalState.previousClicks.fourthCount != 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 1);
+
+                if (globalState.currentClicks.fifthCount != 0 && globalState.previousClicks.fifthCount == 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 2);
+                else if (globalState.currentClicks.fifthCount == 0 && globalState.previousClicks.fifthCount != 0)
+                    outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 2);
+
+                if (globalState.currentClicks.wUpCount != 0 && globalState.previousClicks.wUpCount == 0)
                 {
-                    if (globalState.currentClicks.leftCount != 0 && globalState.previousClicks.leftCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTDOWN);
-                    if (globalState.currentClicks.rightCount != 0 && globalState.previousClicks.rightCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTDOWN);
-                    if (globalState.currentClicks.middleCount != 0 && globalState.previousClicks.middleCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEDOWN);
-                    if (globalState.currentClicks.fourthCount != 0 && globalState.previousClicks.fourthCount == 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 1);
-                    if (globalState.currentClicks.fifthCount != 0 && globalState.previousClicks.fifthCount == 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 2);
+                    outputKBMHandler.PerformMouseWheelEvent(outputKBMMapping.WHEEL_TICK_UP, 0);
+                    oldnow = DateTime.UtcNow;
+                    wheel = outputKBMMapping.WHEEL_TICK_UP;
                 }
-                else if (globalState.currentClicks.toggleCount != 0 && globalState.previousClicks.toggleCount == 0 &&
-                         !globalState.currentClicks.toggle)
+                else if (globalState.currentClicks.wUpCount == 0 && globalState.previousClicks.wUpCount != 0)
                 {
-                    if (globalState.currentClicks.leftCount != 0 && globalState.previousClicks.leftCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTUP);
-                    if (globalState.currentClicks.rightCount != 0 && globalState.previousClicks.rightCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTUP);
-                    if (globalState.currentClicks.middleCount != 0 && globalState.previousClicks.middleCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEUP);
-                    if (globalState.currentClicks.fourthCount != 0 && globalState.previousClicks.fourthCount == 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 1);
-                    if (globalState.currentClicks.fifthCount != 0 && globalState.previousClicks.fifthCount == 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 2);
+                    wheel = 0;
                 }
 
-                if (globalState.currentClicks.toggleCount == 0 && globalState.previousClicks.toggleCount == 0)
+                if (globalState.currentClicks.wDownCount != 0 && globalState.previousClicks.wDownCount == 0)
                 {
-                    if (globalState.currentClicks.leftCount != 0 && globalState.previousClicks.leftCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTDOWN);
-                    else if (globalState.currentClicks.leftCount == 0 && globalState.previousClicks.leftCount != 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_LEFTUP);
+                    outputKBMHandler.PerformMouseWheelEvent(outputKBMMapping.WHEEL_TICK_DOWN, 0);
+                    oldnow = DateTime.UtcNow;
+                    wheel = outputKBMMapping.WHEEL_TICK_DOWN;
+                }
 
-                    if (globalState.currentClicks.middleCount != 0 && globalState.previousClicks.middleCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEDOWN);
-                    else if (globalState.currentClicks.middleCount == 0 && globalState.previousClicks.middleCount != 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_MIDDLEUP);
+                if (globalState.currentClicks.wDownCount == 0 && globalState.previousClicks.wDownCount != 0)
+                    wheel = 0;
+            }
 
-                    if (globalState.currentClicks.rightCount != 0 && globalState.previousClicks.rightCount == 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTDOWN);
-                    else if (globalState.currentClicks.rightCount == 0 && globalState.previousClicks.rightCount != 0)
-                        outputKBMHandler.PerformMouseButtonEvent(outputKBMMapping.MOUSEEVENTF_RIGHTUP);
 
-                    if (globalState.currentClicks.fourthCount != 0 && globalState.previousClicks.fourthCount == 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 1);
-                    else if (globalState.currentClicks.fourthCount == 0 && globalState.previousClicks.fourthCount != 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 1);
+            if (wheel != 0) //Continue mouse wheel movement
+            {
+                var now = DateTime.UtcNow;
+                if (now >= oldnow + TimeSpan.FromMilliseconds(150) && !pressagain)
+                {
+                    oldnow = now;
+                    outputKBMHandler.PerformMouseWheelEvent(wheel, 0);
+                }
+            }
 
-                    if (globalState.currentClicks.fifthCount != 0 && globalState.previousClicks.fifthCount == 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONDOWN, 2);
-                    else if (globalState.currentClicks.fifthCount == 0 && globalState.previousClicks.fifthCount != 0)
-                        outputKBMHandler.PerformMouseButtonEventAlt(outputKBMMapping.MOUSEEVENTF_XBUTTONUP, 2);
+            // Merge and synthesize all key presses/releases that are present in this device's mapping.
+            // TODO what about the rest?  e.g. repeat keys really ought to be on some set schedule
+            var kvpKeys = state.keyPresses.Keys;
+            //foreach (KeyValuePair<UInt16, SyntheticState.KeyPresses> kvp in state.keyPresses)
+            //for (int i = 0, keyCount = kvpKeys.Count; i < keyCount; i++)
+            for (var keyEnum = kvpKeys.GetEnumerator(); keyEnum.MoveNext();)
+            {
+                //UInt16 kvpKey = kvpKeys.ElementAt(i);
+                var kvpKey = keyEnum.Current;
+                var kvpValue = state.keyPresses[kvpKey];
 
-                    if (globalState.currentClicks.wUpCount != 0 && globalState.previousClicks.wUpCount == 0)
+                SyntheticState.KeyPresses gkp;
+                if (globalState.keyPresses.TryGetValue(kvpKey, out gkp))
+                {
+                    gkp.current.vkCount += kvpValue.current.vkCount - kvpValue.previous.vkCount;
+                    gkp.current.scanCodeCount += kvpValue.current.scanCodeCount - kvpValue.previous.scanCodeCount;
+                    gkp.current.repeatCount += kvpValue.current.repeatCount - kvpValue.previous.repeatCount;
+                    gkp.current.toggle = kvpValue.current.toggle;
+                    gkp.current.toggleCount += kvpValue.current.toggleCount - kvpValue.previous.toggleCount;
+                }
+                else
+                {
+                    gkp = new SyntheticState.KeyPresses();
+                    gkp.current = kvpValue.current;
+                    globalState.keyPresses[kvpKey] = gkp;
+                }
+
+                var nativeKey = state.nativeKeyAlias[kvpKey];
+                if (gkp.current.toggleCount != 0 && gkp.previous.toggleCount == 0 && gkp.current.toggle)
+                {
+                    if (gkp.current.scanCodeCount != 0)
+                        outputKBMHandler.PerformKeyPressAlt(nativeKey);
+                    else
+                        outputKBMHandler.PerformKeyPress(nativeKey);
+                }
+                else if (gkp.current.toggleCount != 0 && gkp.previous.toggleCount == 0 && !gkp.current.toggle)
+                {
+                    if (gkp.previous.scanCodeCount != 0) // use the last type of VK/SC
+                        outputKBMHandler.PerformKeyReleaseAlt(nativeKey);
+                    else
+                        outputKBMHandler.PerformKeyRelease(nativeKey);
+                }
+                else if (gkp.current.vkCount + gkp.current.scanCodeCount != 0 &&
+                         gkp.previous.vkCount + gkp.previous.scanCodeCount == 0)
+                {
+                    if (gkp.current.scanCodeCount != 0)
                     {
-                        outputKBMHandler.PerformMouseWheelEvent(outputKBMMapping.WHEEL_TICK_UP, 0);
                         oldnow = DateTime.UtcNow;
-                        wheel = outputKBMMapping.WHEEL_TICK_UP;
-                    }
-                    else if (globalState.currentClicks.wUpCount == 0 && globalState.previousClicks.wUpCount != 0)
-                    {
-                        wheel = 0;
-                    }
-
-                    if (globalState.currentClicks.wDownCount != 0 && globalState.previousClicks.wDownCount == 0)
-                    {
-                        outputKBMHandler.PerformMouseWheelEvent(outputKBMMapping.WHEEL_TICK_DOWN, 0);
-                        oldnow = DateTime.UtcNow;
-                        wheel = outputKBMMapping.WHEEL_TICK_DOWN;
-                    }
-
-                    if (globalState.currentClicks.wDownCount == 0 && globalState.previousClicks.wDownCount != 0)
-                        wheel = 0;
-                }
-
-
-                if (wheel != 0) //Continue mouse wheel movement
-                {
-                    var now = DateTime.UtcNow;
-                    if (now >= oldnow + TimeSpan.FromMilliseconds(150) && !pressagain)
-                    {
-                        oldnow = now;
-                        outputKBMHandler.PerformMouseWheelEvent(wheel, 0);
-                    }
-                }
-
-                // Merge and synthesize all key presses/releases that are present in this device's mapping.
-                // TODO what about the rest?  e.g. repeat keys really ought to be on some set schedule
-                var kvpKeys = state.keyPresses.Keys;
-                //foreach (KeyValuePair<UInt16, SyntheticState.KeyPresses> kvp in state.keyPresses)
-                //for (int i = 0, keyCount = kvpKeys.Count; i < keyCount; i++)
-                for (var keyEnum = kvpKeys.GetEnumerator(); keyEnum.MoveNext();)
-                {
-                    //UInt16 kvpKey = kvpKeys.ElementAt(i);
-                    var kvpKey = keyEnum.Current;
-                    var kvpValue = state.keyPresses[kvpKey];
-
-                    SyntheticState.KeyPresses gkp;
-                    if (globalState.keyPresses.TryGetValue(kvpKey, out gkp))
-                    {
-                        gkp.current.vkCount += kvpValue.current.vkCount - kvpValue.previous.vkCount;
-                        gkp.current.scanCodeCount += kvpValue.current.scanCodeCount - kvpValue.previous.scanCodeCount;
-                        gkp.current.repeatCount += kvpValue.current.repeatCount - kvpValue.previous.repeatCount;
-                        gkp.current.toggle = kvpValue.current.toggle;
-                        gkp.current.toggleCount += kvpValue.current.toggleCount - kvpValue.previous.toggleCount;
+                        outputKBMHandler.PerformKeyPressAlt(nativeKey);
+                        pressagain = false;
+                        keyshelddown = kvpKey;
                     }
                     else
                     {
-                        gkp = new SyntheticState.KeyPresses();
-                        gkp.current = kvpValue.current;
-                        globalState.keyPresses[kvpKey] = gkp;
+                        oldnow = DateTime.UtcNow;
+                        outputKBMHandler.PerformKeyPress(nativeKey);
+                        pressagain = false;
+                        keyshelddown = kvpKey;
                     }
+                }
+                else if (outputKBMHandler.fakeKeyRepeat &&
+                         (gkp.current.toggleCount != 0 || gkp.previous.toggleCount != 0 ||
+                          gkp.current.repeatCount != 0 || // repeat or SC/VK transition
+                          gkp.previous.scanCodeCount == 0 !=
+                          (gkp.current.scanCodeCount == 0))) //repeat keystroke after 500ms
+                {
+                    if (keyshelddown == kvpKey)
+                    {
+                        var now = DateTime.UtcNow;
+                        if (now >= oldnow + TimeSpan.FromMilliseconds(500) && !pressagain)
+                        {
+                            oldnow = now;
+                            pressagain = true;
+                        }
 
-                    var nativeKey = state.nativeKeyAlias[kvpKey];
-                    if (gkp.current.toggleCount != 0 && gkp.previous.toggleCount == 0 && gkp.current.toggle)
-                    {
-                        if (gkp.current.scanCodeCount != 0)
-                            outputKBMHandler.PerformKeyPressAlt(nativeKey);
-                        else
-                            outputKBMHandler.PerformKeyPress(nativeKey);
-                    }
-                    else if (gkp.current.toggleCount != 0 && gkp.previous.toggleCount == 0 && !gkp.current.toggle)
-                    {
-                        if (gkp.previous.scanCodeCount != 0) // use the last type of VK/SC
-                            outputKBMHandler.PerformKeyReleaseAlt(nativeKey);
-                        else
-                            outputKBMHandler.PerformKeyRelease(nativeKey);
-                    }
-                    else if (gkp.current.vkCount + gkp.current.scanCodeCount != 0 &&
-                             gkp.previous.vkCount + gkp.previous.scanCodeCount == 0)
-                    {
-                        if (gkp.current.scanCodeCount != 0)
+                        if (pressagain && gkp.current.scanCodeCount != 0)
                         {
-                            oldnow = DateTime.UtcNow;
-                            outputKBMHandler.PerformKeyPressAlt(nativeKey);
-                            pressagain = false;
-                            keyshelddown = kvpKey;
-                        }
-                        else
-                        {
-                            oldnow = DateTime.UtcNow;
-                            outputKBMHandler.PerformKeyPress(nativeKey);
-                            pressagain = false;
-                            keyshelddown = kvpKey;
-                        }
-                    }
-                    else if (outputKBMHandler.fakeKeyRepeat &&
-                             (gkp.current.toggleCount != 0 || gkp.previous.toggleCount != 0 ||
-                              gkp.current.repeatCount != 0 || // repeat or SC/VK transition
-                              gkp.previous.scanCodeCount == 0 !=
-                              (gkp.current.scanCodeCount == 0))) //repeat keystroke after 500ms
-                    {
-                        if (keyshelddown == kvpKey)
-                        {
-                            var now = DateTime.UtcNow;
-                            if (now >= oldnow + TimeSpan.FromMilliseconds(500) && !pressagain)
+                            now = DateTime.UtcNow;
+                            if (now >= oldnow + TimeSpan.FromMilliseconds(25) && pressagain)
                             {
                                 oldnow = now;
-                                pressagain = true;
-                            }
-
-                            if (pressagain && gkp.current.scanCodeCount != 0)
-                            {
-                                now = DateTime.UtcNow;
-                                if (now >= oldnow + TimeSpan.FromMilliseconds(25) && pressagain)
-                                {
-                                    oldnow = now;
-                                    outputKBMHandler.PerformKeyPressAlt(nativeKey);
-                                }
-                            }
-                            else if (pressagain)
-                            {
-                                now = DateTime.UtcNow;
-                                if (now >= oldnow + TimeSpan.FromMilliseconds(25) && pressagain)
-                                {
-                                    oldnow = now;
-                                    outputKBMHandler.PerformKeyPress(nativeKey);
-                                }
+                                outputKBMHandler.PerformKeyPressAlt(nativeKey);
                             }
                         }
-                    }
-
-                    if (gkp.current.toggleCount == 0 && gkp.previous.toggleCount == 0 &&
-                        gkp.current.vkCount + gkp.current.scanCodeCount == 0 &&
-                        gkp.previous.vkCount + gkp.previous.scanCodeCount != 0)
-                    {
-                        if (gkp.previous.scanCodeCount != 0) // use the last type of VK/SC
+                        else if (pressagain)
                         {
-                            outputKBMHandler.PerformKeyReleaseAlt(nativeKey);
-                            pressagain = false;
-                        }
-                        else
-                        {
-                            outputKBMHandler.PerformKeyRelease(nativeKey);
-                            pressagain = false;
+                            now = DateTime.UtcNow;
+                            if (now >= oldnow + TimeSpan.FromMilliseconds(25) && pressagain)
+                            {
+                                oldnow = now;
+                                outputKBMHandler.PerformKeyPress(nativeKey);
+                            }
                         }
                     }
                 }
 
-                globalState.SaveToPrevious(false);
-
-                syncStateLock.ExitWriteLock();
-                state.SaveToPrevious(true);
-
-                // Send possible virtual events to system. Only used for FakerInput atm.
-                // SendInput version does nothing
-                outputKBMHandler.Sync();
+                if (gkp.current.toggleCount == 0 && gkp.previous.toggleCount == 0 &&
+                    gkp.current.vkCount + gkp.current.scanCodeCount == 0 &&
+                    gkp.previous.vkCount + gkp.previous.scanCodeCount != 0)
+                {
+                    if (gkp.previous.scanCodeCount != 0) // use the last type of VK/SC
+                    {
+                        outputKBMHandler.PerformKeyReleaseAlt(nativeKey);
+                        pressagain = false;
+                    }
+                    else
+                    {
+                        outputKBMHandler.PerformKeyRelease(nativeKey);
+                        pressagain = false;
+                    }
+                }
             }
+
+            globalState.SaveToPrevious(false);
+
+            syncStateLock.ExitWriteLock();
+            state.SaveToPrevious(true);
+
+            // Send possible virtual events to system. Only used for FakerInput atm.
+            // SendInput version does nothing
+            outputKBMHandler.Sync();
+
         }
 
         public static void MapClick(int device, Click mouseClick)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(MapClick)).StartActive(true);
-
-
             switch (mouseClick)
             {
                 case Click.Left:
@@ -570,10 +565,6 @@ namespace DS4Windows
 
         public static int DS4ControltoInt(DS4Controls ctrl)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(DS4ControltoInt)}")
-                .StartActive(true);
-
             var result = 0;
             if (ctrl >= DS4Controls.None && ctrl <= DS4Controls.SideR) result = ds4ControlMapping[(int)ctrl];
 
@@ -593,1168 +584,1162 @@ namespace DS4Windows
 
         public static DS4State SetCurveAndDeadzone(int device, DS4State cState, DS4State dState)
         {
-            using (GlobalTracer.Instance.BuildSpan(nameof(SetCurveAndDeadzone)).StartActive(true))
+
+            var rotation = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSRotation;
+            if (rotation > 0.0 || rotation < 0.0)
+                cState.RotateLSCoordinates(rotation);
+
+            var rotationRS = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSRotation;
+            if (rotationRS > 0.0 || rotationRS < 0.0)
+                cState.RotateRSCoordinates(rotationRS);
+
+            var lsAntiSnapback = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSAntiSnapbackInfo;
+            var rsAntiSnapback = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSAntiSnapbackInfo;
+
+            if (lsAntiSnapback.Enabled)
+                CalcAntiSnapbackStick(device, 0, lsAntiSnapback.Delta, lsAntiSnapback.Timeout, cState.LX, cState.LY,
+                    out cState.LX, out cState.LY);
+
+            if (rsAntiSnapback.Enabled)
+                CalcAntiSnapbackStick(device, 1, rsAntiSnapback.Delta, rsAntiSnapback.Timeout, cState.RX, cState.RY,
+                    out cState.RX, out cState.RY);
+
+            var lsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
+            var rsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
+
+            if (lsMod.Fuzz > 0)
+                CalcStickAxisFuzz(device, 0, lsMod.Fuzz, cState.LX, cState.LY, out cState.LX, out cState.LY);
+
+            if (rsMod.Fuzz > 0)
+                CalcStickAxisFuzz(device, 1, rsMod.Fuzz, cState.RX, cState.RY, out cState.RX, out cState.RY);
+
+            cState.CopyTo(dState);
+            //DS4State dState = new DS4State(cState);
+
+            if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
             {
-                var rotation = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSRotation;
-                if (rotation > 0.0 || rotation < 0.0)
-                    cState.RotateLSCoordinates(rotation);
+                var lsDeadzone = lsMod.DeadZone;
+                var lsAntiDead = lsMod.AntiDeadZone;
+                var lsMaxZone = lsMod.MaxZone;
+                var lsMaxOutput = lsMod.MaxOutput;
+                var lsVerticalScale = lsMod.VerticalScale;
+                var interpret = lsAntiDead > 0 || lsMaxZone != 100 || lsMaxOutput != 100.0 ||
+                                lsMod.MaxOutputForce ||
+                                lsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale;
 
-                var rotationRS = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSRotation;
-                if (rotationRS > 0.0 || rotationRS < 0.0)
-                    cState.RotateRSCoordinates(rotationRS);
-
-                var lsAntiSnapback = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSAntiSnapbackInfo;
-                var rsAntiSnapback = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSAntiSnapbackInfo;
-
-                if (lsAntiSnapback.Enabled)
-                    CalcAntiSnapbackStick(device, 0, lsAntiSnapback.Delta, lsAntiSnapback.Timeout, cState.LX, cState.LY,
-                        out cState.LX, out cState.LY);
-
-                if (rsAntiSnapback.Enabled)
-                    CalcAntiSnapbackStick(device, 1, rsAntiSnapback.Delta, rsAntiSnapback.Timeout, cState.RX, cState.RY,
-                        out cState.RX, out cState.RY);
-
-                var lsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo;
-                var rsMod = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
-
-                if (lsMod.Fuzz > 0)
-                    CalcStickAxisFuzz(device, 0, lsMod.Fuzz, cState.LX, cState.LY, out cState.LX, out cState.LY);
-
-                if (rsMod.Fuzz > 0)
-                    CalcStickAxisFuzz(device, 1, rsMod.Fuzz, cState.RX, cState.RY, out cState.RX, out cState.RY);
-
-                cState.CopyTo(dState);
-                //DS4State dState = new DS4State(cState);
-
-                if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
+                if (lsDeadzone > 0 || interpret)
                 {
-                    var lsDeadzone = lsMod.DeadZone;
-                    var lsAntiDead = lsMod.AntiDeadZone;
-                    var lsMaxZone = lsMod.MaxZone;
-                    var lsMaxOutput = lsMod.MaxOutput;
-                    var lsVerticalScale = lsMod.VerticalScale;
-                    var interpret = lsAntiDead > 0 || lsMaxZone != 100 || lsMaxOutput != 100.0 ||
-                                    lsMod.MaxOutputForce ||
-                                    lsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale;
-
-                    if (lsDeadzone > 0 || interpret)
+                    var lsSquared = Math.Pow(cState.LX - 128f, 2) + Math.Pow(cState.LY - 128f, 2);
+                    var lsDeadzoneSquared = Math.Pow(lsDeadzone, 2);
+                    if (lsDeadzone > 0 && lsSquared <= lsDeadzoneSquared)
                     {
-                        var lsSquared = Math.Pow(cState.LX - 128f, 2) + Math.Pow(cState.LY - 128f, 2);
-                        var lsDeadzoneSquared = Math.Pow(lsDeadzone, 2);
-                        if (lsDeadzone > 0 && lsSquared <= lsDeadzoneSquared)
+                        dState.LX = 128;
+                        dState.LY = 128;
+                    }
+                    else if (lsDeadzone > 0 && lsSquared > lsDeadzoneSquared || interpret)
+                    {
+                        var r = Math.Atan2(-(dState.LY - 128.0), dState.LX - 128.0);
+                        var maxXValue = dState.LX >= 128.0 ? 127.0 : -128;
+                        var maxYValue = dState.LY >= 128.0 ? 127.0 : -128;
+                        var ratio = lsMaxZone / 100.0;
+                        var maxOutRatio = lsMaxOutput / 100.0;
+                        var verticalScale = lsVerticalScale / 100.0;
+
+                        var maxZoneXNegValue = ratio * -128 + 128;
+                        var maxZoneXPosValue = ratio * 127 + 128;
+                        var maxZoneYNegValue = maxZoneXNegValue;
+                        var maxZoneYPosValue = maxZoneXPosValue;
+                        var maxZoneX = dState.LX >= 128.0 ? maxZoneXPosValue - 128.0 : maxZoneXNegValue - 128.0;
+                        var maxZoneY = dState.LY >= 128.0 ? maxZoneYPosValue - 128.0 : maxZoneYNegValue - 128.0;
+
+                        double tempLsXDead = 0.0, tempLsYDead = 0.0;
+                        double tempOutputX = 0.0, tempOutputY = 0.0;
+                        if (lsDeadzone > 0)
                         {
-                            dState.LX = 128;
-                            dState.LY = 128;
-                        }
-                        else if (lsDeadzone > 0 && lsSquared > lsDeadzoneSquared || interpret)
-                        {
-                            var r = Math.Atan2(-(dState.LY - 128.0), dState.LX - 128.0);
-                            var maxXValue = dState.LX >= 128.0 ? 127.0 : -128;
-                            var maxYValue = dState.LY >= 128.0 ? 127.0 : -128;
-                            var ratio = lsMaxZone / 100.0;
-                            var maxOutRatio = lsMaxOutput / 100.0;
-                            var verticalScale = lsVerticalScale / 100.0;
+                            tempLsXDead = Math.Abs(Math.Cos(r)) * (lsDeadzone / 127.0) * maxXValue;
+                            tempLsYDead = Math.Abs(Math.Sin(r)) * (lsDeadzone / 127.0) * maxYValue;
 
-                            var maxZoneXNegValue = ratio * -128 + 128;
-                            var maxZoneXPosValue = ratio * 127 + 128;
-                            var maxZoneYNegValue = maxZoneXNegValue;
-                            var maxZoneYPosValue = maxZoneXPosValue;
-                            var maxZoneX = dState.LX >= 128.0 ? maxZoneXPosValue - 128.0 : maxZoneXNegValue - 128.0;
-                            var maxZoneY = dState.LY >= 128.0 ? maxZoneYPosValue - 128.0 : maxZoneYNegValue - 128.0;
-
-                            double tempLsXDead = 0.0, tempLsYDead = 0.0;
-                            double tempOutputX = 0.0, tempOutputY = 0.0;
-                            if (lsDeadzone > 0)
-                            {
-                                tempLsXDead = Math.Abs(Math.Cos(r)) * (lsDeadzone / 127.0) * maxXValue;
-                                tempLsYDead = Math.Abs(Math.Sin(r)) * (lsDeadzone / 127.0) * maxYValue;
-
-                                if (lsSquared > lsDeadzoneSquared)
-                                {
-                                    var currentX = Clamp(maxZoneXNegValue, dState.LX, maxZoneXPosValue);
-                                    var currentY = Clamp(maxZoneYNegValue, dState.LY, maxZoneYPosValue);
-                                    tempOutputX = (currentX - 128.0 - tempLsXDead) / (maxZoneX - tempLsXDead);
-                                    tempOutputY = (currentY - 128.0 - tempLsYDead) / (maxZoneY - tempLsYDead);
-                                }
-                            }
-                            else
+                            if (lsSquared > lsDeadzoneSquared)
                             {
                                 var currentX = Clamp(maxZoneXNegValue, dState.LX, maxZoneXPosValue);
                                 var currentY = Clamp(maxZoneYNegValue, dState.LY, maxZoneYPosValue);
-                                tempOutputX = (currentX - 128.0) / maxZoneX;
-                                tempOutputY = (currentY - 128.0) / maxZoneY;
-                            }
-
-                            if (lsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale)
-                                tempOutputY = Math.Min(Math.Max(tempOutputY * verticalScale, 0.0), 1.0);
-
-                            if (lsMaxOutput != 100.0 || lsMod.MaxOutputForce)
-                            {
-                                var maxOutXRatio = Math.Abs(Math.Cos(r)) * maxOutRatio;
-                                // Expand output a bit
-                                maxOutXRatio = Math.Min(maxOutXRatio / 0.99, 1.0);
-
-                                var maxOutYRatio = Math.Abs(Math.Sin(r)) * maxOutRatio;
-                                // Expand output a bit
-                                maxOutYRatio = Math.Min(maxOutYRatio / 0.99, 1.0);
-
-                                tempOutputX = Math.Min(Math.Max(tempOutputX, 0.0), maxOutXRatio);
-                                tempOutputY = Math.Min(Math.Max(tempOutputY, 0.0), maxOutYRatio);
-                            }
-
-                            double tempLsXAntiDeadPercent = 0.0, tempLsYAntiDeadPercent = 0.0;
-                            if (lsAntiDead > 0)
-                            {
-                                tempLsXAntiDeadPercent = lsAntiDead * 0.01 * Math.Abs(Math.Cos(r));
-                                tempLsYAntiDeadPercent = lsAntiDead * 0.01 * Math.Abs(Math.Sin(r));
-                            }
-
-                            if (tempOutputX > 0.0)
-                                dState.LX =
-                                    (byte)(((1.0 - tempLsXAntiDeadPercent) * tempOutputX + tempLsXAntiDeadPercent) *
-                                        maxXValue + 128.0);
-                            else
-                                dState.LX = 128;
-
-                            if (tempOutputY > 0.0)
-                                dState.LY =
-                                    (byte)(((1.0 - tempLsYAntiDeadPercent) * tempOutputY + tempLsYAntiDeadPercent) *
-                                        maxYValue + 128.0);
-                            else
-                                dState.LY = 128;
-                        }
-                    }
-
-                    // Process LS Outer Binding
-                    dState.OutputLSOuter = 0;
-                    if (dState.LX != 128 || dState.LY != 128)
-                    {
-                        var adjustX = dState.LX - 128;
-                        var adjustY = dState.LY - 128;
-                        var r = Math.Atan2(-adjustY, adjustX);
-                        //double r = Math.Atan2(-(dState.RY - 128.0), (dState.RX - 128.0));
-                        //double maxXValue = dState.RX >= 128.0 ? 127.0 : -128;
-                        //double maxYValue = dState.RY >= 128.0 ? 127.0 : -128;
-                        var hyp = Math.Sqrt(adjustX * adjustX + adjustY * adjustY);
-
-                        if (hyp != 0.0)
-                        {
-                            var tempX = (int)(Math.Abs(Math.Cos(r)) * (dState.LX >= 128 ? 127 : 128));
-                            var tempY = (int)(Math.Abs(Math.Sin(r)) * (dState.LY >= 128 ? 127 : 128));
-                            var maxValue = Math.Sqrt(tempX * tempX + tempY * tempY);
-                            var ratio = hyp / maxValue;
-                            if (ratio > 1.0) ratio = 1.0;
-                            var currentValue = ratio * 255.0;
-                            var deadValue = lsMod.OuterBindDeadZone * 0.01 * 255.0;
-                            if (!lsMod.OuterBindInvert && currentValue > deadValue)
-                            {
-                                var outputRatio = (currentValue - deadValue) / (255.0 - deadValue);
-                                dState.OutputLSOuter = (byte)(outputRatio * 255);
-                            }
-                            else if (lsMod.OuterBindInvert && currentValue < deadValue)
-                            {
-                                var outputRatio = (deadValue - currentValue) / deadValue;
-                                dState.OutputLSOuter = (byte)(outputRatio * 255);
+                                tempOutputX = (currentX - 128.0 - tempLsXDead) / (maxZoneX - tempLsXDead);
+                                tempOutputY = (currentY - 128.0 - tempLsYDead) / (maxZoneY - tempLsYDead);
                             }
                         }
-                    }
-                }
-                else if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
-                {
-                    var xAxisDeadInfo = lsMod.XAxisDeadInfo;
-                    if (xAxisDeadInfo.DeadZone > 0 || xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
-                        xAxisDeadInfo.MaxOutput != 100)
-                    {
-                        var distVal = Math.Abs(cState.LX - 128);
-                        if (xAxisDeadInfo.DeadZone > 0 && distVal <= xAxisDeadInfo.DeadZone)
+                        else
                         {
+                            var currentX = Clamp(maxZoneXNegValue, dState.LX, maxZoneXPosValue);
+                            var currentY = Clamp(maxZoneYNegValue, dState.LY, maxZoneYPosValue);
+                            tempOutputX = (currentX - 128.0) / maxZoneX;
+                            tempOutputY = (currentY - 128.0) / maxZoneY;
+                        }
+
+                        if (lsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale)
+                            tempOutputY = Math.Min(Math.Max(tempOutputY * verticalScale, 0.0), 1.0);
+
+                        if (lsMaxOutput != 100.0 || lsMod.MaxOutputForce)
+                        {
+                            var maxOutXRatio = Math.Abs(Math.Cos(r)) * maxOutRatio;
+                            // Expand output a bit
+                            maxOutXRatio = Math.Min(maxOutXRatio / 0.99, 1.0);
+
+                            var maxOutYRatio = Math.Abs(Math.Sin(r)) * maxOutRatio;
+                            // Expand output a bit
+                            maxOutYRatio = Math.Min(maxOutYRatio / 0.99, 1.0);
+
+                            tempOutputX = Math.Min(Math.Max(tempOutputX, 0.0), maxOutXRatio);
+                            tempOutputY = Math.Min(Math.Max(tempOutputY, 0.0), maxOutYRatio);
+                        }
+
+                        double tempLsXAntiDeadPercent = 0.0, tempLsYAntiDeadPercent = 0.0;
+                        if (lsAntiDead > 0)
+                        {
+                            tempLsXAntiDeadPercent = lsAntiDead * 0.01 * Math.Abs(Math.Cos(r));
+                            tempLsYAntiDeadPercent = lsAntiDead * 0.01 * Math.Abs(Math.Sin(r));
+                        }
+
+                        if (tempOutputX > 0.0)
+                            dState.LX =
+                                (byte)(((1.0 - tempLsXAntiDeadPercent) * tempOutputX + tempLsXAntiDeadPercent) *
+                                    maxXValue + 128.0);
+                        else
                             dState.LX = 128;
-                        }
-                        else if (xAxisDeadInfo.DeadZone > 0 && distVal > xAxisDeadInfo.DeadZone ||
-                                 xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
-                                 xAxisDeadInfo.MaxOutput != 100)
-                        {
-                            var maxAxisValue = dState.LX >= 128.0 ? 127.0 : -128.0;
-                            var ratio = xAxisDeadInfo.MaxZone / 100.0;
-                            var maxOutRatio = xAxisDeadInfo.MaxOutput / 100.0;
 
-                            var maxZoneNegValue = ratio * -128.0 + 128.0;
-                            var maxZonePosValue = ratio * 127.0 + 128.0;
-                            var maxZone = dState.LX >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
-
-                            var tempDead = xAxisDeadInfo.DeadZone > 0
-                                ? xAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
-                                : 0.0;
-                            var currentVal = Clamp(maxZoneNegValue, dState.LX, maxZonePosValue);
-                            var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
-
-                            if (xAxisDeadInfo.MaxOutput != 100.0)
-                            {
-                                // Expand output a bit
-                                maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
-                                tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
-                            }
-
-                            var tempAntiDeadPercent = 0.0;
-                            if (xAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = xAxisDeadInfo.AntiDeadZone * 0.01;
-
-                            if (tempOutput > 0.0)
-                                dState.LX = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
-                                    maxAxisValue + 128.0);
-                            else
-                                dState.LX = 128;
-                        }
-                    }
-
-                    var yAxisDeadInfo = lsMod.YAxisDeadInfo;
-                    if (yAxisDeadInfo.DeadZone > 0 || yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
-                        yAxisDeadInfo.MaxOutput != 100)
-                    {
-                        var distVal = Math.Abs(cState.LY - 128);
-                        if (yAxisDeadInfo.DeadZone > 0 && distVal <= yAxisDeadInfo.DeadZone)
-                        {
+                        if (tempOutputY > 0.0)
+                            dState.LY =
+                                (byte)(((1.0 - tempLsYAntiDeadPercent) * tempOutputY + tempLsYAntiDeadPercent) *
+                                    maxYValue + 128.0);
+                        else
                             dState.LY = 128;
-                        }
-                        else if (yAxisDeadInfo.DeadZone > 0 && distVal > yAxisDeadInfo.DeadZone ||
-                                 yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
-                                 yAxisDeadInfo.MaxOutput != 100)
-                        {
-                            var maxAxisValue = dState.LY >= 128.0 ? 127.0 : -128.0;
-                            var ratio = yAxisDeadInfo.MaxZone / 100.0;
-                            var maxOutRatio = yAxisDeadInfo.MaxOutput / 100.0;
-
-                            var maxZoneNegValue = ratio * -128.0 + 128.0;
-                            var maxZonePosValue = ratio * 127.0 + 128.0;
-                            var maxZone = dState.LY >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
-
-                            var tempDead = yAxisDeadInfo.DeadZone > 0
-                                ? yAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
-                                : 0.0;
-                            var currentVal = Clamp(maxZoneNegValue, dState.LY, maxZonePosValue);
-                            var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
-
-                            if (yAxisDeadInfo.MaxOutput != 100.0)
-                            {
-                                // Expand output a bit
-                                maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
-                                tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
-                            }
-
-                            var tempAntiDeadPercent = 0.0;
-                            if (yAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = yAxisDeadInfo.AntiDeadZone * 0.01;
-
-                            if (tempOutput > 0.0)
-                                dState.LY = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
-                                    maxAxisValue + 128.0);
-                            else
-                                dState.LY = 128;
-                        }
                     }
                 }
 
-
-                if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
+                // Process LS Outer Binding
+                dState.OutputLSOuter = 0;
+                if (dState.LX != 128 || dState.LY != 128)
                 {
-                    var rsDeadzone = rsMod.DeadZone;
-                    var rsAntiDead = rsMod.AntiDeadZone;
-                    var rsMaxZone = rsMod.MaxZone;
-                    var rsMaxOutput = rsMod.MaxOutput;
-                    var rsVerticalScale = rsMod.VerticalScale;
-                    var interpret = rsAntiDead > 0 || rsMaxZone != 100 || rsMaxOutput != 100.0 ||
-                                    rsMod.MaxOutputForce ||
-                                    rsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale;
+                    var adjustX = dState.LX - 128;
+                    var adjustY = dState.LY - 128;
+                    var r = Math.Atan2(-adjustY, adjustX);
+                    //double r = Math.Atan2(-(dState.RY - 128.0), (dState.RX - 128.0));
+                    //double maxXValue = dState.RX >= 128.0 ? 127.0 : -128;
+                    //double maxYValue = dState.RY >= 128.0 ? 127.0 : -128;
+                    var hyp = Math.Sqrt(adjustX * adjustX + adjustY * adjustY);
 
-                    if (rsDeadzone > 0 || interpret)
+                    if (hyp != 0.0)
                     {
-                        var rsSquared = Math.Pow(cState.RX - 128.0, 2) + Math.Pow(cState.RY - 128.0, 2);
-                        var rsDeadzoneSquared = Math.Pow(rsDeadzone, 2);
-                        if (rsDeadzone > 0 && rsSquared <= rsDeadzoneSquared)
+                        var tempX = (int)(Math.Abs(Math.Cos(r)) * (dState.LX >= 128 ? 127 : 128));
+                        var tempY = (int)(Math.Abs(Math.Sin(r)) * (dState.LY >= 128 ? 127 : 128));
+                        var maxValue = Math.Sqrt(tempX * tempX + tempY * tempY);
+                        var ratio = hyp / maxValue;
+                        if (ratio > 1.0) ratio = 1.0;
+                        var currentValue = ratio * 255.0;
+                        var deadValue = lsMod.OuterBindDeadZone * 0.01 * 255.0;
+                        if (!lsMod.OuterBindInvert && currentValue > deadValue)
                         {
-                            dState.RX = 128;
-                            dState.RY = 128;
+                            var outputRatio = (currentValue - deadValue) / (255.0 - deadValue);
+                            dState.OutputLSOuter = (byte)(outputRatio * 255);
                         }
-                        else if (rsDeadzone > 0 && rsSquared > rsDeadzoneSquared || interpret)
+                        else if (lsMod.OuterBindInvert && currentValue < deadValue)
                         {
-                            var r = Math.Atan2(-(dState.RY - 128.0), dState.RX - 128.0);
-                            double maxXValue = dState.RX >= 128.0 ? 127 : -128;
-                            double maxYValue = dState.RY >= 128.0 ? 127 : -128;
-                            var ratio = rsMaxZone / 100.0;
-                            var maxOutRatio = rsMaxOutput / 100.0;
-                            var verticalScale = rsVerticalScale / 100.0;
+                            var outputRatio = (deadValue - currentValue) / deadValue;
+                            dState.OutputLSOuter = (byte)(outputRatio * 255);
+                        }
+                    }
+                }
+            }
+            else if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
+            {
+                var xAxisDeadInfo = lsMod.XAxisDeadInfo;
+                if (xAxisDeadInfo.DeadZone > 0 || xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
+                    xAxisDeadInfo.MaxOutput != 100)
+                {
+                    var distVal = Math.Abs(cState.LX - 128);
+                    if (xAxisDeadInfo.DeadZone > 0 && distVal <= xAxisDeadInfo.DeadZone)
+                    {
+                        dState.LX = 128;
+                    }
+                    else if (xAxisDeadInfo.DeadZone > 0 && distVal > xAxisDeadInfo.DeadZone ||
+                             xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
+                             xAxisDeadInfo.MaxOutput != 100)
+                    {
+                        var maxAxisValue = dState.LX >= 128.0 ? 127.0 : -128.0;
+                        var ratio = xAxisDeadInfo.MaxZone / 100.0;
+                        var maxOutRatio = xAxisDeadInfo.MaxOutput / 100.0;
 
-                            var maxZoneXNegValue = ratio * -128.0 + 128.0;
-                            var maxZoneXPosValue = ratio * 127.0 + 128.0;
-                            var maxZoneYNegValue = maxZoneXNegValue;
-                            var maxZoneYPosValue = maxZoneXPosValue;
-                            var maxZoneX = dState.RX >= 128.0 ? maxZoneXPosValue - 128.0 : maxZoneXNegValue - 128.0;
-                            var maxZoneY = dState.RY >= 128.0 ? maxZoneYPosValue - 128.0 : maxZoneYNegValue - 128.0;
+                        var maxZoneNegValue = ratio * -128.0 + 128.0;
+                        var maxZonePosValue = ratio * 127.0 + 128.0;
+                        var maxZone = dState.LX >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
 
-                            double tempRsXDead = 0.0, tempRsYDead = 0.0;
-                            double tempOutputX = 0.0, tempOutputY = 0.0;
-                            if (rsDeadzone > 0)
-                            {
-                                tempRsXDead = Math.Abs(Math.Cos(r)) * (rsDeadzone / 127.0) * maxXValue;
-                                tempRsYDead = Math.Abs(Math.Sin(r)) * (rsDeadzone / 127.0) * maxYValue;
+                        var tempDead = xAxisDeadInfo.DeadZone > 0
+                            ? xAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
+                            : 0.0;
+                        var currentVal = Clamp(maxZoneNegValue, dState.LX, maxZonePosValue);
+                        var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
 
-                                if (rsSquared > rsDeadzoneSquared)
-                                {
-                                    var currentX = Clamp(maxZoneXNegValue, dState.RX, maxZoneXPosValue);
-                                    var currentY = Clamp(maxZoneYNegValue, dState.RY, maxZoneYPosValue);
+                        if (xAxisDeadInfo.MaxOutput != 100.0)
+                        {
+                            // Expand output a bit
+                            maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
+                            tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
+                        }
 
-                                    tempOutputX = (currentX - 128.0 - tempRsXDead) / (maxZoneX - tempRsXDead);
-                                    tempOutputY = (currentY - 128.0 - tempRsYDead) / (maxZoneY - tempRsYDead);
-                                }
-                            }
-                            else
+                        var tempAntiDeadPercent = 0.0;
+                        if (xAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = xAxisDeadInfo.AntiDeadZone * 0.01;
+
+                        if (tempOutput > 0.0)
+                            dState.LX = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
+                                maxAxisValue + 128.0);
+                        else
+                            dState.LX = 128;
+                    }
+                }
+
+                var yAxisDeadInfo = lsMod.YAxisDeadInfo;
+                if (yAxisDeadInfo.DeadZone > 0 || yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
+                    yAxisDeadInfo.MaxOutput != 100)
+                {
+                    var distVal = Math.Abs(cState.LY - 128);
+                    if (yAxisDeadInfo.DeadZone > 0 && distVal <= yAxisDeadInfo.DeadZone)
+                    {
+                        dState.LY = 128;
+                    }
+                    else if (yAxisDeadInfo.DeadZone > 0 && distVal > yAxisDeadInfo.DeadZone ||
+                             yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
+                             yAxisDeadInfo.MaxOutput != 100)
+                    {
+                        var maxAxisValue = dState.LY >= 128.0 ? 127.0 : -128.0;
+                        var ratio = yAxisDeadInfo.MaxZone / 100.0;
+                        var maxOutRatio = yAxisDeadInfo.MaxOutput / 100.0;
+
+                        var maxZoneNegValue = ratio * -128.0 + 128.0;
+                        var maxZonePosValue = ratio * 127.0 + 128.0;
+                        var maxZone = dState.LY >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
+
+                        var tempDead = yAxisDeadInfo.DeadZone > 0
+                            ? yAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
+                            : 0.0;
+                        var currentVal = Clamp(maxZoneNegValue, dState.LY, maxZonePosValue);
+                        var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
+
+                        if (yAxisDeadInfo.MaxOutput != 100.0)
+                        {
+                            // Expand output a bit
+                            maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
+                            tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
+                        }
+
+                        var tempAntiDeadPercent = 0.0;
+                        if (yAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = yAxisDeadInfo.AntiDeadZone * 0.01;
+
+                        if (tempOutput > 0.0)
+                            dState.LY = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
+                                maxAxisValue + 128.0);
+                        else
+                            dState.LY = 128;
+                    }
+                }
+            }
+
+
+            if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
+            {
+                var rsDeadzone = rsMod.DeadZone;
+                var rsAntiDead = rsMod.AntiDeadZone;
+                var rsMaxZone = rsMod.MaxZone;
+                var rsMaxOutput = rsMod.MaxOutput;
+                var rsVerticalScale = rsMod.VerticalScale;
+                var interpret = rsAntiDead > 0 || rsMaxZone != 100 || rsMaxOutput != 100.0 ||
+                                rsMod.MaxOutputForce ||
+                                rsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale;
+
+                if (rsDeadzone > 0 || interpret)
+                {
+                    var rsSquared = Math.Pow(cState.RX - 128.0, 2) + Math.Pow(cState.RY - 128.0, 2);
+                    var rsDeadzoneSquared = Math.Pow(rsDeadzone, 2);
+                    if (rsDeadzone > 0 && rsSquared <= rsDeadzoneSquared)
+                    {
+                        dState.RX = 128;
+                        dState.RY = 128;
+                    }
+                    else if (rsDeadzone > 0 && rsSquared > rsDeadzoneSquared || interpret)
+                    {
+                        var r = Math.Atan2(-(dState.RY - 128.0), dState.RX - 128.0);
+                        double maxXValue = dState.RX >= 128.0 ? 127 : -128;
+                        double maxYValue = dState.RY >= 128.0 ? 127 : -128;
+                        var ratio = rsMaxZone / 100.0;
+                        var maxOutRatio = rsMaxOutput / 100.0;
+                        var verticalScale = rsVerticalScale / 100.0;
+
+                        var maxZoneXNegValue = ratio * -128.0 + 128.0;
+                        var maxZoneXPosValue = ratio * 127.0 + 128.0;
+                        var maxZoneYNegValue = maxZoneXNegValue;
+                        var maxZoneYPosValue = maxZoneXPosValue;
+                        var maxZoneX = dState.RX >= 128.0 ? maxZoneXPosValue - 128.0 : maxZoneXNegValue - 128.0;
+                        var maxZoneY = dState.RY >= 128.0 ? maxZoneYPosValue - 128.0 : maxZoneYNegValue - 128.0;
+
+                        double tempRsXDead = 0.0, tempRsYDead = 0.0;
+                        double tempOutputX = 0.0, tempOutputY = 0.0;
+                        if (rsDeadzone > 0)
+                        {
+                            tempRsXDead = Math.Abs(Math.Cos(r)) * (rsDeadzone / 127.0) * maxXValue;
+                            tempRsYDead = Math.Abs(Math.Sin(r)) * (rsDeadzone / 127.0) * maxYValue;
+
+                            if (rsSquared > rsDeadzoneSquared)
                             {
                                 var currentX = Clamp(maxZoneXNegValue, dState.RX, maxZoneXPosValue);
                                 var currentY = Clamp(maxZoneYNegValue, dState.RY, maxZoneYPosValue);
 
-                                tempOutputX = (currentX - 128.0) / maxZoneX;
-                                tempOutputY = (currentY - 128.0) / maxZoneY;
+                                tempOutputX = (currentX - 128.0 - tempRsXDead) / (maxZoneX - tempRsXDead);
+                                tempOutputY = (currentY - 128.0 - tempRsYDead) / (maxZoneY - tempRsYDead);
                             }
-
-                            if (rsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale)
-                                tempOutputY = Math.Min(Math.Max(tempOutputY * verticalScale, 0.0), 1.0);
-
-                            if (rsMaxOutput != 100.0 || rsMod.MaxOutputForce)
-                            {
-                                var maxOutXRatio = Math.Abs(Math.Cos(r)) * maxOutRatio;
-                                // Expand output a bit
-                                maxOutXRatio = Math.Min(maxOutXRatio / 0.99, 1.0);
-
-                                var maxOutYRatio = Math.Abs(Math.Sin(r)) * maxOutRatio;
-                                // Expand output a bit
-                                maxOutYRatio = Math.Min(maxOutYRatio / 0.99, 1.0);
-
-                                tempOutputX = Math.Min(Math.Max(tempOutputX, 0.0), maxOutXRatio);
-                                tempOutputY = Math.Min(Math.Max(tempOutputY, 0.0), maxOutYRatio);
-                            }
-
-                            double tempRsXAntiDeadPercent = 0.0, tempRsYAntiDeadPercent = 0.0;
-                            if (rsAntiDead > 0)
-                            {
-                                tempRsXAntiDeadPercent = rsAntiDead * 0.01 * Math.Abs(Math.Cos(r));
-                                tempRsYAntiDeadPercent = rsAntiDead * 0.01 * Math.Abs(Math.Sin(r));
-                            }
-
-                            if (tempOutputX > 0.0)
-                                dState.RX =
-                                    (byte)(((1.0 - tempRsXAntiDeadPercent) * tempOutputX + tempRsXAntiDeadPercent) *
-                                        maxXValue + 128.0);
-                            else
-                                dState.RX = 128;
-
-                            if (tempOutputY > 0.0)
-                                dState.RY =
-                                    (byte)(((1.0 - tempRsYAntiDeadPercent) * tempOutputY + tempRsYAntiDeadPercent) *
-                                        maxYValue + 128.0);
-                            else
-                                dState.RY = 128;
-                        }
-                    }
-
-                    // Process RS Outer Binding
-                    dState.OutputRSOuter = 0;
-                    if (dState.RX != 128 || dState.RY != 128)
-                    {
-                        var adjustX = dState.RX - 128;
-                        var adjustY = dState.RY - 128;
-                        var r = Math.Atan2(-adjustY, adjustX);
-                        //double r = Math.Atan2(-(dState.RY - 128.0), (dState.RX - 128.0));
-                        //double maxXValue = dState.RX >= 128.0 ? 127.0 : -128;
-                        //double maxYValue = dState.RY >= 128.0 ? 127.0 : -128;
-                        var hyp = Math.Sqrt(adjustX * adjustX + adjustY * adjustY);
-
-                        if (hyp != 0.0)
-                        {
-                            var tempX = (int)(Math.Abs(Math.Cos(r)) * (dState.RX >= 128 ? 127 : 128));
-                            var tempY = (int)(Math.Abs(Math.Sin(r)) * (dState.RY >= 128 ? 127 : 128));
-                            var maxValue = Math.Sqrt(tempX * tempX + tempY * tempY);
-                            var ratio = hyp / maxValue;
-                            if (ratio > 1.0) ratio = 1.0;
-                            var currentValue = ratio * 255;
-                            var deadValue = rsMod.OuterBindDeadZone * 0.01 * 255.0;
-                            if (!rsMod.OuterBindInvert && currentValue > deadValue)
-                            {
-                                var outputRatio = (currentValue - deadValue) / (255.0 - deadValue);
-                                dState.OutputRSOuter = (byte)(outputRatio * 255);
-                            }
-                            else if (rsMod.OuterBindInvert && currentValue < deadValue)
-                            {
-                                var outputRatio = (deadValue - currentValue) / deadValue;
-                                dState.OutputRSOuter = (byte)(outputRatio * 255);
-                            }
-                        }
-                    }
-                }
-                else if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
-                {
-                    var xAxisDeadInfo = rsMod.XAxisDeadInfo;
-                    if (xAxisDeadInfo.DeadZone > 0 || xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
-                        xAxisDeadInfo.MaxOutput != 100)
-                    {
-                        var distVal = Math.Abs(cState.RX - 128);
-                        if (xAxisDeadInfo.DeadZone > 0 && distVal <= xAxisDeadInfo.DeadZone)
-                        {
-                            dState.RX = 128;
-                        }
-                        else if (xAxisDeadInfo.DeadZone > 0 && distVal > xAxisDeadInfo.DeadZone ||
-                                 xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
-                                 xAxisDeadInfo.MaxOutput != 100)
-                        {
-                            var maxAxisValue = dState.RX >= 128.0 ? 127.0 : -128.0;
-                            var ratio = xAxisDeadInfo.MaxZone / 100.0;
-                            var maxOutRatio = xAxisDeadInfo.MaxOutput / 100.0;
-
-                            var maxZoneNegValue = ratio * -128.0 + 128.0;
-                            var maxZonePosValue = ratio * 127.0 + 128.0;
-                            var maxZone = dState.RX >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
-
-                            var tempDead = xAxisDeadInfo.DeadZone > 0
-                                ? xAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
-                                : 0.0;
-                            var currentVal = Clamp(maxZoneNegValue, dState.RX, maxZonePosValue);
-                            var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
-
-                            if (xAxisDeadInfo.MaxOutput != 100.0)
-                            {
-                                // Expand output a bit
-                                maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
-                                tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
-                            }
-
-                            var tempAntiDeadPercent = 0.0;
-                            if (xAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = xAxisDeadInfo.AntiDeadZone * 0.01;
-
-                            if (tempOutput > 0.0)
-                                dState.RX = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
-                                    maxAxisValue + 128.0);
-                            else
-                                dState.RX = 128;
-                        }
-                    }
-
-                    var yAxisDeadInfo = rsMod.YAxisDeadInfo;
-                    if (yAxisDeadInfo.DeadZone > 0 || yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
-                        yAxisDeadInfo.MaxOutput != 100)
-                    {
-                        var distVal = Math.Abs(cState.RY - 128);
-                        if (yAxisDeadInfo.DeadZone > 0 && distVal <= yAxisDeadInfo.DeadZone)
-                        {
-                            dState.RY = 128;
-                        }
-                        else if (yAxisDeadInfo.DeadZone > 0 && distVal > yAxisDeadInfo.DeadZone ||
-                                 yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
-                                 yAxisDeadInfo.MaxOutput != 100)
-                        {
-                            var maxAxisValue = dState.RY >= 128.0 ? 127.0 : -128.0;
-                            var ratio = yAxisDeadInfo.MaxZone / 100.0;
-                            var maxOutRatio = yAxisDeadInfo.MaxOutput / 100.0;
-
-                            var maxZoneNegValue = ratio * -128.0 + 128.0;
-                            var maxZonePosValue = ratio * 127.0 + 128.0;
-                            var maxZone = dState.RY >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
-
-                            var tempDead = yAxisDeadInfo.DeadZone > 0
-                                ? yAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
-                                : 0.0;
-                            var currentVal = Clamp(maxZoneNegValue, dState.RY, maxZonePosValue);
-                            var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
-
-                            if (yAxisDeadInfo.MaxOutput != 100.0)
-                            {
-                                // Expand output a bit
-                                maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
-                                tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
-                            }
-
-                            var tempAntiDeadPercent = 0.0;
-                            if (yAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = yAxisDeadInfo.AntiDeadZone * 0.01;
-
-                            if (tempOutput > 0.0)
-                                dState.RY = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
-                                    maxAxisValue + 128.0);
-                            else
-                                dState.RY = 128;
-                        }
-                    }
-                }
-
-                /*byte l2Deadzone = getL2Deadzone(device);
-                int l2AntiDeadzone = getL2AntiDeadzone(device);
-                int l2Maxzone = getL2Maxzone(device);
-                */
-
-                var l2ModInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
-                var l2Deadzone = l2ModInfo.DeadZone;
-                var l2AntiDeadzone = l2ModInfo.AntiDeadZone;
-                var l2Maxzone = l2ModInfo.MaxZone;
-                var l2MaxOutput = l2ModInfo.MaxOutput;
-                if (l2Deadzone > 0 || l2AntiDeadzone > 0 || l2Maxzone != 100 || l2MaxOutput != 100.0)
-                {
-                    var tempL2Output = cState.L2 / 255.0;
-                    var tempL2AntiDead = 0.0;
-                    var ratio = l2Maxzone / 100.0;
-                    var maxValue = 255.0 * ratio;
-
-                    if (l2Deadzone > 0)
-                    {
-                        if (cState.L2 > l2Deadzone)
-                        {
-                            var current = Clamp(0, dState.L2, maxValue);
-                            tempL2Output = (current - l2Deadzone) / (maxValue - l2Deadzone);
                         }
                         else
                         {
-                            tempL2Output = 0.0;
+                            var currentX = Clamp(maxZoneXNegValue, dState.RX, maxZoneXPosValue);
+                            var currentY = Clamp(maxZoneYNegValue, dState.RY, maxZoneYPosValue);
+
+                            tempOutputX = (currentX - 128.0) / maxZoneX;
+                            tempOutputY = (currentY - 128.0) / maxZoneY;
+                        }
+
+                        if (rsVerticalScale != StickDeadZoneInfo.DefaultVerticalScale)
+                            tempOutputY = Math.Min(Math.Max(tempOutputY * verticalScale, 0.0), 1.0);
+
+                        if (rsMaxOutput != 100.0 || rsMod.MaxOutputForce)
+                        {
+                            var maxOutXRatio = Math.Abs(Math.Cos(r)) * maxOutRatio;
+                            // Expand output a bit
+                            maxOutXRatio = Math.Min(maxOutXRatio / 0.99, 1.0);
+
+                            var maxOutYRatio = Math.Abs(Math.Sin(r)) * maxOutRatio;
+                            // Expand output a bit
+                            maxOutYRatio = Math.Min(maxOutYRatio / 0.99, 1.0);
+
+                            tempOutputX = Math.Min(Math.Max(tempOutputX, 0.0), maxOutXRatio);
+                            tempOutputY = Math.Min(Math.Max(tempOutputY, 0.0), maxOutYRatio);
+                        }
+
+                        double tempRsXAntiDeadPercent = 0.0, tempRsYAntiDeadPercent = 0.0;
+                        if (rsAntiDead > 0)
+                        {
+                            tempRsXAntiDeadPercent = rsAntiDead * 0.01 * Math.Abs(Math.Cos(r));
+                            tempRsYAntiDeadPercent = rsAntiDead * 0.01 * Math.Abs(Math.Sin(r));
+                        }
+
+                        if (tempOutputX > 0.0)
+                            dState.RX =
+                                (byte)(((1.0 - tempRsXAntiDeadPercent) * tempOutputX + tempRsXAntiDeadPercent) *
+                                    maxXValue + 128.0);
+                        else
+                            dState.RX = 128;
+
+                        if (tempOutputY > 0.0)
+                            dState.RY =
+                                (byte)(((1.0 - tempRsYAntiDeadPercent) * tempOutputY + tempRsYAntiDeadPercent) *
+                                    maxYValue + 128.0);
+                        else
+                            dState.RY = 128;
+                    }
+                }
+
+                // Process RS Outer Binding
+                dState.OutputRSOuter = 0;
+                if (dState.RX != 128 || dState.RY != 128)
+                {
+                    var adjustX = dState.RX - 128;
+                    var adjustY = dState.RY - 128;
+                    var r = Math.Atan2(-adjustY, adjustX);
+                    //double r = Math.Atan2(-(dState.RY - 128.0), (dState.RX - 128.0));
+                    //double maxXValue = dState.RX >= 128.0 ? 127.0 : -128;
+                    //double maxYValue = dState.RY >= 128.0 ? 127.0 : -128;
+                    var hyp = Math.Sqrt(adjustX * adjustX + adjustY * adjustY);
+
+                    if (hyp != 0.0)
+                    {
+                        var tempX = (int)(Math.Abs(Math.Cos(r)) * (dState.RX >= 128 ? 127 : 128));
+                        var tempY = (int)(Math.Abs(Math.Sin(r)) * (dState.RY >= 128 ? 127 : 128));
+                        var maxValue = Math.Sqrt(tempX * tempX + tempY * tempY);
+                        var ratio = hyp / maxValue;
+                        if (ratio > 1.0) ratio = 1.0;
+                        var currentValue = ratio * 255;
+                        var deadValue = rsMod.OuterBindDeadZone * 0.01 * 255.0;
+                        if (!rsMod.OuterBindInvert && currentValue > deadValue)
+                        {
+                            var outputRatio = (currentValue - deadValue) / (255.0 - deadValue);
+                            dState.OutputRSOuter = (byte)(outputRatio * 255);
+                        }
+                        else if (rsMod.OuterBindInvert && currentValue < deadValue)
+                        {
+                            var outputRatio = (deadValue - currentValue) / deadValue;
+                            dState.OutputRSOuter = (byte)(outputRatio * 255);
                         }
                     }
-                    else
+                }
+            }
+            else if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
+            {
+                var xAxisDeadInfo = rsMod.XAxisDeadInfo;
+                if (xAxisDeadInfo.DeadZone > 0 || xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
+                    xAxisDeadInfo.MaxOutput != 100)
+                {
+                    var distVal = Math.Abs(cState.RX - 128);
+                    if (xAxisDeadInfo.DeadZone > 0 && distVal <= xAxisDeadInfo.DeadZone)
+                    {
+                        dState.RX = 128;
+                    }
+                    else if (xAxisDeadInfo.DeadZone > 0 && distVal > xAxisDeadInfo.DeadZone ||
+                             xAxisDeadInfo.AntiDeadZone > 0 || xAxisDeadInfo.MaxZone != 100 ||
+                             xAxisDeadInfo.MaxOutput != 100)
+                    {
+                        var maxAxisValue = dState.RX >= 128.0 ? 127.0 : -128.0;
+                        var ratio = xAxisDeadInfo.MaxZone / 100.0;
+                        var maxOutRatio = xAxisDeadInfo.MaxOutput / 100.0;
+
+                        var maxZoneNegValue = ratio * -128.0 + 128.0;
+                        var maxZonePosValue = ratio * 127.0 + 128.0;
+                        var maxZone = dState.RX >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
+
+                        var tempDead = xAxisDeadInfo.DeadZone > 0
+                            ? xAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
+                            : 0.0;
+                        var currentVal = Clamp(maxZoneNegValue, dState.RX, maxZonePosValue);
+                        var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
+
+                        if (xAxisDeadInfo.MaxOutput != 100.0)
+                        {
+                            // Expand output a bit
+                            maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
+                            tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
+                        }
+
+                        var tempAntiDeadPercent = 0.0;
+                        if (xAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = xAxisDeadInfo.AntiDeadZone * 0.01;
+
+                        if (tempOutput > 0.0)
+                            dState.RX = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
+                                maxAxisValue + 128.0);
+                        else
+                            dState.RX = 128;
+                    }
+                }
+
+                var yAxisDeadInfo = rsMod.YAxisDeadInfo;
+                if (yAxisDeadInfo.DeadZone > 0 || yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
+                    yAxisDeadInfo.MaxOutput != 100)
+                {
+                    var distVal = Math.Abs(cState.RY - 128);
+                    if (yAxisDeadInfo.DeadZone > 0 && distVal <= yAxisDeadInfo.DeadZone)
+                    {
+                        dState.RY = 128;
+                    }
+                    else if (yAxisDeadInfo.DeadZone > 0 && distVal > yAxisDeadInfo.DeadZone ||
+                             yAxisDeadInfo.AntiDeadZone > 0 || yAxisDeadInfo.MaxZone != 100 ||
+                             yAxisDeadInfo.MaxOutput != 100)
+                    {
+                        var maxAxisValue = dState.RY >= 128.0 ? 127.0 : -128.0;
+                        var ratio = yAxisDeadInfo.MaxZone / 100.0;
+                        var maxOutRatio = yAxisDeadInfo.MaxOutput / 100.0;
+
+                        var maxZoneNegValue = ratio * -128.0 + 128.0;
+                        var maxZonePosValue = ratio * 127.0 + 128.0;
+                        var maxZone = dState.RY >= 128.0 ? maxZonePosValue - 128.0 : maxZoneNegValue - 128.0;
+
+                        var tempDead = yAxisDeadInfo.DeadZone > 0
+                            ? yAxisDeadInfo.DeadZone / 127.0 * maxAxisValue
+                            : 0.0;
+                        var currentVal = Clamp(maxZoneNegValue, dState.RY, maxZonePosValue);
+                        var tempOutput = (currentVal - 128.0 - tempDead) / (maxZone - tempDead);
+
+                        if (yAxisDeadInfo.MaxOutput != 100.0)
+                        {
+                            // Expand output a bit
+                            maxOutRatio = Math.Min(maxOutRatio / 0.99, 1.0);
+                            tempOutput = Math.Min(Math.Max(tempOutput, 0.0), maxOutRatio);
+                        }
+
+                        var tempAntiDeadPercent = 0.0;
+                        if (yAxisDeadInfo.AntiDeadZone > 0) tempAntiDeadPercent = yAxisDeadInfo.AntiDeadZone * 0.01;
+
+                        if (tempOutput > 0.0)
+                            dState.RY = (byte)(((1.0 - tempAntiDeadPercent) * tempOutput + tempAntiDeadPercent) *
+                                maxAxisValue + 128.0);
+                        else
+                            dState.RY = 128;
+                    }
+                }
+            }
+
+            /*byte l2Deadzone = getL2Deadzone(device);
+            int l2AntiDeadzone = getL2AntiDeadzone(device);
+            int l2Maxzone = getL2Maxzone(device);
+            */
+
+            var l2ModInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2ModInfo;
+            var l2Deadzone = l2ModInfo.DeadZone;
+            var l2AntiDeadzone = l2ModInfo.AntiDeadZone;
+            var l2Maxzone = l2ModInfo.MaxZone;
+            var l2MaxOutput = l2ModInfo.MaxOutput;
+            if (l2Deadzone > 0 || l2AntiDeadzone > 0 || l2Maxzone != 100 || l2MaxOutput != 100.0)
+            {
+                var tempL2Output = cState.L2 / 255.0;
+                var tempL2AntiDead = 0.0;
+                var ratio = l2Maxzone / 100.0;
+                var maxValue = 255.0 * ratio;
+
+                if (l2Deadzone > 0)
+                {
+                    if (cState.L2 > l2Deadzone)
                     {
                         var current = Clamp(0, dState.L2, maxValue);
-                        tempL2Output = current / maxValue;
+                        tempL2Output = (current - l2Deadzone) / (maxValue - l2Deadzone);
                     }
-
-                    if (l2MaxOutput != 100.0)
-                    {
-                        var maxOutRatio = l2MaxOutput / 100.0;
-                        tempL2Output = Math.Min(Math.Max(tempL2Output, 0.0), maxOutRatio);
-                    }
-
-                    if (l2AntiDeadzone > 0) tempL2AntiDead = l2AntiDeadzone * 0.01;
-
-                    if (tempL2Output > 0.0)
-                        dState.L2 = (byte)(((1.0 - tempL2AntiDead) * tempL2Output + tempL2AntiDead) * 255.0);
                     else
-                        dState.L2 = 0;
+                    {
+                        tempL2Output = 0.0;
+                    }
+                }
+                else
+                {
+                    var current = Clamp(0, dState.L2, maxValue);
+                    tempL2Output = current / maxValue;
                 }
 
-                /*byte r2Deadzone = getR2Deadzone(device);
-                int r2AntiDeadzone = getR2AntiDeadzone(device);
-                int r2Maxzone = getR2Maxzone(device);
-                */
-                var r2ModInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
-                var r2Deadzone = r2ModInfo.DeadZone;
-                var r2AntiDeadzone = r2ModInfo.AntiDeadZone;
-                var r2Maxzone = r2ModInfo.MaxZone;
-                var r2MaxOutput = r2ModInfo.MaxOutput;
-                if (r2Deadzone > 0 || r2AntiDeadzone > 0 || r2Maxzone != 100 || r2MaxOutput != 100.0)
+                if (l2MaxOutput != 100.0)
                 {
-                    var tempR2Output = cState.R2 / 255.0;
-                    var tempR2AntiDead = 0.0;
-                    var ratio = r2Maxzone / 100.0;
-                    var maxValue = 255 * ratio;
+                    var maxOutRatio = l2MaxOutput / 100.0;
+                    tempL2Output = Math.Min(Math.Max(tempL2Output, 0.0), maxOutRatio);
+                }
 
-                    if (r2Deadzone > 0)
-                    {
-                        if (cState.R2 > r2Deadzone)
-                        {
-                            var current = Clamp(0, dState.R2, maxValue);
-                            tempR2Output = (current - r2Deadzone) / (maxValue - r2Deadzone);
-                        }
-                        else
-                        {
-                            tempR2Output = 0.0;
-                        }
-                    }
-                    else
+                if (l2AntiDeadzone > 0) tempL2AntiDead = l2AntiDeadzone * 0.01;
+
+                if (tempL2Output > 0.0)
+                    dState.L2 = (byte)(((1.0 - tempL2AntiDead) * tempL2Output + tempL2AntiDead) * 255.0);
+                else
+                    dState.L2 = 0;
+            }
+
+            /*byte r2Deadzone = getR2Deadzone(device);
+            int r2AntiDeadzone = getR2AntiDeadzone(device);
+            int r2Maxzone = getR2Maxzone(device);
+            */
+            var r2ModInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
+            var r2Deadzone = r2ModInfo.DeadZone;
+            var r2AntiDeadzone = r2ModInfo.AntiDeadZone;
+            var r2Maxzone = r2ModInfo.MaxZone;
+            var r2MaxOutput = r2ModInfo.MaxOutput;
+            if (r2Deadzone > 0 || r2AntiDeadzone > 0 || r2Maxzone != 100 || r2MaxOutput != 100.0)
+            {
+                var tempR2Output = cState.R2 / 255.0;
+                var tempR2AntiDead = 0.0;
+                var ratio = r2Maxzone / 100.0;
+                var maxValue = 255 * ratio;
+
+                if (r2Deadzone > 0)
+                {
+                    if (cState.R2 > r2Deadzone)
                     {
                         var current = Clamp(0, dState.R2, maxValue);
-                        tempR2Output = current / maxValue;
+                        tempR2Output = (current - r2Deadzone) / (maxValue - r2Deadzone);
                     }
-
-                    if (r2MaxOutput != 100.0)
-                    {
-                        var maxOutRatio = r2MaxOutput / 100.0;
-                        tempR2Output = Math.Min(Math.Max(tempR2Output, 0.0), maxOutRatio);
-                    }
-
-                    if (r2AntiDeadzone > 0) tempR2AntiDead = r2AntiDeadzone * 0.01;
-
-                    if (tempR2Output > 0.0)
-                        dState.R2 = (byte)(((1.0 - tempR2AntiDead) * tempR2Output + tempR2AntiDead) * 255.0);
                     else
-                        dState.R2 = 0;
+                    {
+                        tempR2Output = 0.0;
+                    }
+                }
+                else
+                {
+                    var current = Clamp(0, dState.R2, maxValue);
+                    tempR2Output = current / maxValue;
                 }
 
-                // Only apply deprecated Sensitivity modifier for Radial DZ
+                if (r2MaxOutput != 100.0)
+                {
+                    var maxOutRatio = r2MaxOutput / 100.0;
+                    tempR2Output = Math.Min(Math.Max(tempR2Output, 0.0), maxOutRatio);
+                }
+
+                if (r2AntiDeadzone > 0) tempR2AntiDead = r2AntiDeadzone * 0.01;
+
+                if (tempR2Output > 0.0)
+                    dState.R2 = (byte)(((1.0 - tempR2AntiDead) * tempR2Output + tempR2AntiDead) * 255.0);
+                else
+                    dState.R2 = 0;
+            }
+
+            // Only apply deprecated Sensitivity modifier for Radial DZ
+            if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
+            {
+                var lsSens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSSens;
+                if (lsSens != 1.0)
+                {
+                    dState.LX = (byte)Clamp(0, lsSens * (dState.LX - 128.0) + 128.0, 255);
+                    dState.LY = (byte)Clamp(0, lsSens * (dState.LY - 128.0) + 128.0, 255);
+                }
+            }
+
+            // Only apply deprecated Sensitivity modifier for Radial DZ
+            if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
+            {
+                var rsSens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSSens;
+                if (rsSens != 1.0)
+                {
+                    dState.RX = (byte)Clamp(0, rsSens * (dState.RX - 128.0) + 128.0, 255);
+                    dState.RY = (byte)Clamp(0, rsSens * (dState.RY - 128.0) + 128.0, 255);
+                }
+            }
+
+            var l2Sens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2Sens;
+            if (l2Sens != 1.0)
+                dState.L2 = (byte)Clamp(0, l2Sens * dState.L2, 255);
+
+            var r2Sens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2Sens;
+            if (r2Sens != 1.0)
+                dState.R2 = (byte)Clamp(0, r2Sens * dState.R2, 255);
+
+            var squStk = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SquStickInfo;
+            if (squStk.LSMode && (dState.LX != 128 || dState.LY != 128))
+            {
+                var capX = dState.LX >= 128 ? 127.0 : 128.0;
+                var capY = dState.LY >= 128 ? 127.0 : 128.0;
+                var tempX = (dState.LX - 128.0) / capX;
+                var tempY = (dState.LY - 128.0) / capY;
+                var sqstick = outSqrStk[device];
+                sqstick.current.x = tempX;
+                sqstick.current.y = tempY;
+                sqstick.CircleToSquare(squStk.LSRoundness);
+                //Console.WriteLine("Input ({0}) | Output ({1})", tempY, sqstick.current.y);
+                tempX = sqstick.current.x < -1.0
+                    ? -1.0
+                    : sqstick.current.x > 1.0
+                        ? 1.0
+                        : sqstick.current.x;
+                tempY = sqstick.current.y < -1.0
+                    ? -1.0
+                    : sqstick.current.y > 1.0
+                        ? 1.0
+                        : sqstick.current.y;
+                dState.LX = (byte)(tempX * capX + 128.0);
+                dState.LY = (byte)(tempY * capY + 128.0);
+            }
+
+            var lsOutCurveMode = Instance.Config.GetLsOutCurveMode(device);
+            if (lsOutCurveMode > 0 && (dState.LX != 128 || dState.LY != 128))
+            {
+                double tempRatioX = 0.0, tempRatioY = 0.0;
+                double capX = 0.0, capY = 0.0;
                 if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
                 {
-                    var lsSens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSSens;
-                    if (lsSens != 1.0)
-                    {
-                        dState.LX = (byte)Clamp(0, lsSens * (dState.LX - 128.0) + 128.0, 255);
-                        dState.LY = (byte)Clamp(0, lsSens * (dState.LY - 128.0) + 128.0, 255);
-                    }
+                    var r = Math.Atan2(-(dState.LY - 128.0), dState.LX - 128.0);
+                    var maxOutXRatio = Math.Abs(Math.Cos(r));
+                    var maxOutYRatio = Math.Abs(Math.Sin(r));
+                    double sideX = dState.LX - 128;
+                    var sideY = dState.LY - 128.0;
+                    capX = dState.LX >= 128 ? maxOutXRatio * 127.0 : maxOutXRatio * 128.0;
+                    capY = dState.LY >= 128 ? maxOutYRatio * 127.0 : maxOutYRatio * 128.0;
+                    var absSideX = Math.Abs(sideX);
+                    var absSideY = Math.Abs(sideY);
+                    if (absSideX > capX) capX = absSideX;
+                    if (absSideY > capY) capY = absSideY;
+                    tempRatioX = capX > 0 ? (dState.LX - 128.0) / capX : 0;
+                    tempRatioY = capY > 0 ? (dState.LY - 128.0) / capY : 0;
+                }
+                else if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
+                {
+                    capX = dState.LX >= 128 ? 127.0 : 128.0;
+                    capY = dState.LY >= 128 ? 127.0 : 128.0;
+                    tempRatioX = (dState.LX - 128.0) / capX;
+                    tempRatioY = (dState.LY - 128.0) / capY;
                 }
 
-                // Only apply deprecated Sensitivity modifier for Radial DZ
-                if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
+                var signX = tempRatioX >= 0.0 ? 1.0 : -1.0;
+                var signY = tempRatioY >= 0.0 ? 1.0 : -1.0;
+
+                if (lsOutCurveMode == 1)
                 {
-                    var rsSens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSSens;
-                    if (rsSens != 1.0)
-                    {
-                        dState.RX = (byte)Clamp(0, rsSens * (dState.RX - 128.0) + 128.0, 255);
-                        dState.RY = (byte)Clamp(0, rsSens * (dState.RY - 128.0) + 128.0, 255);
-                    }
+                    var absX = Math.Abs(tempRatioX);
+                    var absY = Math.Abs(tempRatioY);
+                    var outputX = 0.0;
+                    var outputY = 0.0;
+
+                    if (absX <= 0.4)
+                        outputX = 0.8 * absX;
+                    else if (absX <= 0.75)
+                        outputX = absX - 0.08;
+                    else if (absX > 0.75) outputX = absX * 1.32 - 0.32;
+
+                    if (absY <= 0.4)
+                        outputY = 0.8 * absY;
+                    else if (absY <= 0.75)
+                        outputY = absY - 0.08;
+                    else if (absY > 0.75) outputY = absY * 1.32 - 0.32;
+
+                    dState.LX = (byte)(outputX * signX * capX + 128.0);
+                    dState.LY = (byte)(outputY * signY * capY + 128.0);
                 }
-
-                var l2Sens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).L2Sens;
-                if (l2Sens != 1.0)
-                    dState.L2 = (byte)Clamp(0, l2Sens * dState.L2, 255);
-
-                var r2Sens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2Sens;
-                if (r2Sens != 1.0)
-                    dState.R2 = (byte)Clamp(0, r2Sens * dState.R2, 255);
-
-                var squStk = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SquStickInfo;
-                if (squStk.LSMode && (dState.LX != 128 || dState.LY != 128))
+                else if (lsOutCurveMode == 2)
                 {
-                    var capX = dState.LX >= 128 ? 127.0 : 128.0;
-                    var capY = dState.LY >= 128 ? 127.0 : 128.0;
-                    var tempX = (dState.LX - 128.0) / capX;
-                    var tempY = (dState.LY - 128.0) / capY;
-                    var sqstick = outSqrStk[device];
-                    sqstick.current.x = tempX;
-                    sqstick.current.y = tempY;
-                    sqstick.CircleToSquare(squStk.LSRoundness);
-                    //Console.WriteLine("Input ({0}) | Output ({1})", tempY, sqstick.current.y);
-                    tempX = sqstick.current.x < -1.0
-                        ? -1.0
-                        : sqstick.current.x > 1.0
-                            ? 1.0
-                            : sqstick.current.x;
-                    tempY = sqstick.current.y < -1.0
-                        ? -1.0
-                        : sqstick.current.y > 1.0
-                            ? 1.0
-                            : sqstick.current.y;
-                    dState.LX = (byte)(tempX * capX + 128.0);
-                    dState.LY = (byte)(tempY * capY + 128.0);
+                    var outputX = tempRatioX * tempRatioX;
+                    var outputY = tempRatioY * tempRatioY;
+                    dState.LX = (byte)(outputX * signX * capX + 128.0);
+                    dState.LY = (byte)(outputY * signY * capY + 128.0);
                 }
-
-                var lsOutCurveMode = Instance.Config.GetLsOutCurveMode(device);
-                if (lsOutCurveMode > 0 && (dState.LX != 128 || dState.LY != 128))
+                else if (lsOutCurveMode == 3)
                 {
-                    double tempRatioX = 0.0, tempRatioY = 0.0;
-                    double capX = 0.0, capY = 0.0;
+                    var outputX = tempRatioX * tempRatioX * tempRatioX;
+                    var outputY = tempRatioY * tempRatioY * tempRatioY;
+                    dState.LX = (byte)(outputX * capX + 128.0);
+                    dState.LY = (byte)(outputY * capY + 128.0);
+                }
+                else if (lsOutCurveMode == 4)
+                {
+                    var absX = Math.Abs(tempRatioX);
+                    var absY = Math.Abs(tempRatioY);
+                    var outputX = absX * (absX - 2.0);
+                    var outputY = absY * (absY - 2.0);
+                    dState.LX = (byte)(-1.0 * outputX * signX * capX + 128.0);
+                    dState.LY = (byte)(-1.0 * outputY * signY * capY + 128.0);
+                }
+                else if (lsOutCurveMode == 5)
+                {
+                    var innerX = Math.Abs(tempRatioX) - 1.0;
+                    var innerY = Math.Abs(tempRatioY) - 1.0;
+                    var outputX = innerX * innerX * innerX + 1.0;
+                    var outputY = innerY * innerY * innerY + 1.0;
+                    dState.LX = (byte)(1.0 * outputX * signX * capX + 128.0);
+                    dState.LY = (byte)(1.0 * outputY * signY * capY + 128.0);
+                }
+                else if (lsOutCurveMode == 6)
+                {
                     if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
                     {
-                        var r = Math.Atan2(-(dState.LY - 128.0), dState.LX - 128.0);
-                        var maxOutXRatio = Math.Abs(Math.Cos(r));
-                        var maxOutYRatio = Math.Abs(Math.Sin(r));
-                        double sideX = dState.LX - 128;
-                        var sideY = dState.LY - 128.0;
-                        capX = dState.LX >= 128 ? maxOutXRatio * 127.0 : maxOutXRatio * 128.0;
-                        capY = dState.LY >= 128 ? maxOutYRatio * 127.0 : maxOutYRatio * 128.0;
-                        var absSideX = Math.Abs(sideX);
-                        var absSideY = Math.Abs(sideY);
-                        if (absSideX > capX) capX = absSideX;
-                        if (absSideY > capY) capY = absSideY;
-                        tempRatioX = capX > 0 ? (dState.LX - 128.0) / capX : 0;
-                        tempRatioY = capY > 0 ? (dState.LY - 128.0) / capY : 0;
+                        // Get max values and circular distance of axes
+                        double maxX = dState.LX >= 128 ? 127 : 128;
+                        double maxY = dState.LY >= 128 ? 127 : 128;
+                        var tempOutX = (byte)(tempRatioX * maxX + 128.0);
+                        var tempOutY = (byte)(tempRatioY * maxY + 128.0);
+
+                        // Perform curve based on byte values from vector
+                        var tempX = Instance.Config.LSOutCurve[device].arrayBezierLUT[tempOutX];
+                        var tempY = Instance.Config.LSOutCurve[device].arrayBezierLUT[tempOutY];
+
+                        // Calculate new ratio
+                        var tempRatioOutX = (tempX - 128.0) / maxX;
+                        var tempRatioOutY = (tempY - 128.0) / maxY;
+
+                        // Map back to stick coordinates
+                        dState.LX = (byte)(tempRatioOutX * capX + 128);
+                        dState.LY = (byte)(tempRatioOutY * capY + 128);
+                        //Console.WriteLine("X(I){0} X(O){1} {2} {3}", tempOutX, dState.LX, tempOutY, dState.LY);
                     }
                     else if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
                     {
-                        capX = dState.LX >= 128 ? 127.0 : 128.0;
-                        capY = dState.LY >= 128 ? 127.0 : 128.0;
-                        tempRatioX = (dState.LX - 128.0) / capX;
-                        tempRatioY = (dState.LY - 128.0) / capY;
-                    }
-
-                    var signX = tempRatioX >= 0.0 ? 1.0 : -1.0;
-                    var signY = tempRatioY >= 0.0 ? 1.0 : -1.0;
-
-                    if (lsOutCurveMode == 1)
-                    {
-                        var absX = Math.Abs(tempRatioX);
-                        var absY = Math.Abs(tempRatioY);
-                        var outputX = 0.0;
-                        var outputY = 0.0;
-
-                        if (absX <= 0.4)
-                            outputX = 0.8 * absX;
-                        else if (absX <= 0.75)
-                            outputX = absX - 0.08;
-                        else if (absX > 0.75) outputX = absX * 1.32 - 0.32;
-
-                        if (absY <= 0.4)
-                            outputY = 0.8 * absY;
-                        else if (absY <= 0.75)
-                            outputY = absY - 0.08;
-                        else if (absY > 0.75) outputY = absY * 1.32 - 0.32;
-
-                        dState.LX = (byte)(outputX * signX * capX + 128.0);
-                        dState.LY = (byte)(outputY * signY * capY + 128.0);
-                    }
-                    else if (lsOutCurveMode == 2)
-                    {
-                        var outputX = tempRatioX * tempRatioX;
-                        var outputY = tempRatioY * tempRatioY;
-                        dState.LX = (byte)(outputX * signX * capX + 128.0);
-                        dState.LY = (byte)(outputY * signY * capY + 128.0);
-                    }
-                    else if (lsOutCurveMode == 3)
-                    {
-                        var outputX = tempRatioX * tempRatioX * tempRatioX;
-                        var outputY = tempRatioY * tempRatioY * tempRatioY;
-                        dState.LX = (byte)(outputX * capX + 128.0);
-                        dState.LY = (byte)(outputY * capY + 128.0);
-                    }
-                    else if (lsOutCurveMode == 4)
-                    {
-                        var absX = Math.Abs(tempRatioX);
-                        var absY = Math.Abs(tempRatioY);
-                        var outputX = absX * (absX - 2.0);
-                        var outputY = absY * (absY - 2.0);
-                        dState.LX = (byte)(-1.0 * outputX * signX * capX + 128.0);
-                        dState.LY = (byte)(-1.0 * outputY * signY * capY + 128.0);
-                    }
-                    else if (lsOutCurveMode == 5)
-                    {
-                        var innerX = Math.Abs(tempRatioX) - 1.0;
-                        var innerY = Math.Abs(tempRatioY) - 1.0;
-                        var outputX = innerX * innerX * innerX + 1.0;
-                        var outputY = innerY * innerY * innerY + 1.0;
-                        dState.LX = (byte)(1.0 * outputX * signX * capX + 128.0);
-                        dState.LY = (byte)(1.0 * outputY * signY * capY + 128.0);
-                    }
-                    else if (lsOutCurveMode == 6)
-                    {
-                        if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
-                        {
-                            // Get max values and circular distance of axes
-                            double maxX = dState.LX >= 128 ? 127 : 128;
-                            double maxY = dState.LY >= 128 ? 127 : 128;
-                            var tempOutX = (byte)(tempRatioX * maxX + 128.0);
-                            var tempOutY = (byte)(tempRatioY * maxY + 128.0);
-
-                            // Perform curve based on byte values from vector
-                            var tempX = Instance.Config.LSOutCurve[device].arrayBezierLUT[tempOutX];
-                            var tempY = Instance.Config.LSOutCurve[device].arrayBezierLUT[tempOutY];
-
-                            // Calculate new ratio
-                            var tempRatioOutX = (tempX - 128.0) / maxX;
-                            var tempRatioOutY = (tempY - 128.0) / maxY;
-
-                            // Map back to stick coordinates
-                            dState.LX = (byte)(tempRatioOutX * capX + 128);
-                            dState.LY = (byte)(tempRatioOutY * capY + 128);
-                            //Console.WriteLine("X(I){0} X(O){1} {2} {3}", tempOutX, dState.LX, tempOutY, dState.LY);
-                        }
-                        else if (lsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
-                        {
-                            dState.LX = Instance.Config.LSOutCurve[device].arrayBezierLUT[dState.LX];
-                            dState.LY = Instance.Config.LSOutCurve[device].arrayBezierLUT[dState.LY];
-                        }
+                        dState.LX = Instance.Config.LSOutCurve[device].arrayBezierLUT[dState.LX];
+                        dState.LY = Instance.Config.LSOutCurve[device].arrayBezierLUT[dState.LY];
                     }
                 }
+            }
 
-                if (squStk.RSMode && (dState.RX != 128 || dState.RY != 128))
+            if (squStk.RSMode && (dState.RX != 128 || dState.RY != 128))
+            {
+                var capX = dState.RX >= 128 ? 127.0 : 128.0;
+                var capY = dState.RY >= 128 ? 127.0 : 128.0;
+                var tempX = (dState.RX - 128.0) / capX;
+                var tempY = (dState.RY - 128.0) / capY;
+                var sqstick = outSqrStk[device];
+                sqstick.current.x = tempX;
+                sqstick.current.y = tempY;
+                sqstick.CircleToSquare(squStk.RSRoundness);
+                tempX = sqstick.current.x < -1.0
+                    ? -1.0
+                    : sqstick.current.x > 1.0
+                        ? 1.0
+                        : sqstick.current.x;
+                tempY = sqstick.current.y < -1.0
+                    ? -1.0
+                    : sqstick.current.y > 1.0
+                        ? 1.0
+                        : sqstick.current.y;
+                //Console.WriteLine("Input ({0}) | Output ({1})", tempY, sqstick.current.y);
+                dState.RX = (byte)(tempX * capX + 128.0);
+                dState.RY = (byte)(tempY * capY + 128.0);
+            }
+
+            var rsOutCurveMode = Instance.Config.GetRsOutCurveMode(device);
+            if (rsOutCurveMode > 0 && (dState.RX != 128 || dState.RY != 128))
+            {
+                double tempRatioX = 0.0, tempRatioY = 0.0;
+                double capX = 0.0, capY = 0.0;
+                if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
                 {
-                    var capX = dState.RX >= 128 ? 127.0 : 128.0;
-                    var capY = dState.RY >= 128 ? 127.0 : 128.0;
-                    var tempX = (dState.RX - 128.0) / capX;
-                    var tempY = (dState.RY - 128.0) / capY;
-                    var sqstick = outSqrStk[device];
-                    sqstick.current.x = tempX;
-                    sqstick.current.y = tempY;
-                    sqstick.CircleToSquare(squStk.RSRoundness);
-                    tempX = sqstick.current.x < -1.0
-                        ? -1.0
-                        : sqstick.current.x > 1.0
-                            ? 1.0
-                            : sqstick.current.x;
-                    tempY = sqstick.current.y < -1.0
-                        ? -1.0
-                        : sqstick.current.y > 1.0
-                            ? 1.0
-                            : sqstick.current.y;
-                    //Console.WriteLine("Input ({0}) | Output ({1})", tempY, sqstick.current.y);
-                    dState.RX = (byte)(tempX * capX + 128.0);
-                    dState.RY = (byte)(tempY * capY + 128.0);
+                    var r = Math.Atan2(-(dState.RY - 128.0), dState.RX - 128.0);
+                    var maxOutXRatio = Math.Abs(Math.Cos(r));
+                    var maxOutYRatio = Math.Abs(Math.Sin(r));
+                    double sideX = dState.RX - 128;
+                    var sideY = dState.RY - 128.0;
+                    capX = dState.RX >= 128 ? maxOutXRatio * 127.0 : maxOutXRatio * 128.0;
+                    capY = dState.RY >= 128 ? maxOutYRatio * 127.0 : maxOutYRatio * 128.0;
+                    var absSideX = Math.Abs(sideX);
+                    var absSideY = Math.Abs(sideY);
+                    if (absSideX > capX) capX = absSideX;
+                    if (absSideY > capY) capY = absSideY;
+                    tempRatioX = capX > 0 ? (dState.RX - 128.0) / capX : 0;
+                    tempRatioY = capY > 0 ? (dState.RY - 128.0) / capY : 0;
+                }
+                else if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
+                {
+                    capX = dState.RX >= 128 ? 127.0 : 128.0;
+                    capY = dState.RY >= 128 ? 127.0 : 128.0;
+                    tempRatioX = (dState.RX - 128.0) / capX;
+                    tempRatioY = (dState.RY - 128.0) / capY;
                 }
 
-                var rsOutCurveMode = Instance.Config.GetRsOutCurveMode(device);
-                if (rsOutCurveMode > 0 && (dState.RX != 128 || dState.RY != 128))
+                var signX = tempRatioX >= 0.0 ? 1.0 : -1.0;
+                var signY = tempRatioY >= 0.0 ? 1.0 : -1.0;
+
+                if (rsOutCurveMode == 1)
                 {
-                    double tempRatioX = 0.0, tempRatioY = 0.0;
-                    double capX = 0.0, capY = 0.0;
+                    var absX = Math.Abs(tempRatioX);
+                    var absY = Math.Abs(tempRatioY);
+                    var outputX = 0.0;
+                    var outputY = 0.0;
+
+                    if (absX <= 0.4)
+                        outputX = 0.8 * absX;
+                    else if (absX <= 0.75)
+                        outputX = absX - 0.08;
+                    else if (absX > 0.75) outputX = absX * 1.32 - 0.32;
+
+                    if (absY <= 0.4)
+                        outputY = 0.8 * absY;
+                    else if (absY <= 0.75)
+                        outputY = absY - 0.08;
+                    else if (absY > 0.75) outputY = absY * 1.32 - 0.32;
+
+                    dState.RX = (byte)(outputX * signX * capX + 128.0);
+                    dState.RY = (byte)(outputY * signY * capY + 128.0);
+                }
+                else if (rsOutCurveMode == 2)
+                {
+                    var outputX = tempRatioX * tempRatioX;
+                    var outputY = tempRatioY * tempRatioY;
+                    dState.RX = (byte)(outputX * signX * capX + 128.0);
+                    dState.RY = (byte)(outputY * signY * capY + 128.0);
+                }
+                else if (rsOutCurveMode == 3)
+                {
+                    var outputX = tempRatioX * tempRatioX * tempRatioX;
+                    var outputY = tempRatioY * tempRatioY * tempRatioY;
+                    dState.RX = (byte)(outputX * capX + 128.0);
+                    dState.RY = (byte)(outputY * capY + 128.0);
+                }
+                else if (rsOutCurveMode == 4)
+                {
+                    var absX = Math.Abs(tempRatioX);
+                    var absY = Math.Abs(tempRatioY);
+                    var outputX = absX * (absX - 2.0);
+                    var outputY = absY * (absY - 2.0);
+                    dState.RX = (byte)(-1.0 * outputX * signX * capX + 128.0);
+                    dState.RY = (byte)(-1.0 * outputY * signY * capY + 128.0);
+                }
+                else if (rsOutCurveMode == 5)
+                {
+                    var innerX = Math.Abs(tempRatioX) - 1.0;
+                    var innerY = Math.Abs(tempRatioY) - 1.0;
+                    var outputX = innerX * innerX * innerX + 1.0;
+                    var outputY = innerY * innerY * innerY + 1.0;
+                    dState.RX = (byte)(1.0 * outputX * signX * capX + 128.0);
+                    dState.RY = (byte)(1.0 * outputY * signY * capY + 128.0);
+                }
+                else if (rsOutCurveMode == 6)
+                {
                     if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
                     {
-                        var r = Math.Atan2(-(dState.RY - 128.0), dState.RX - 128.0);
-                        var maxOutXRatio = Math.Abs(Math.Cos(r));
-                        var maxOutYRatio = Math.Abs(Math.Sin(r));
-                        double sideX = dState.RX - 128;
-                        var sideY = dState.RY - 128.0;
-                        capX = dState.RX >= 128 ? maxOutXRatio * 127.0 : maxOutXRatio * 128.0;
-                        capY = dState.RY >= 128 ? maxOutYRatio * 127.0 : maxOutYRatio * 128.0;
-                        var absSideX = Math.Abs(sideX);
-                        var absSideY = Math.Abs(sideY);
-                        if (absSideX > capX) capX = absSideX;
-                        if (absSideY > capY) capY = absSideY;
-                        tempRatioX = capX > 0 ? (dState.RX - 128.0) / capX : 0;
-                        tempRatioY = capY > 0 ? (dState.RY - 128.0) / capY : 0;
+                        // Get max values and circular distance of axes
+                        double maxX = dState.RX >= 128 ? 127 : 128;
+                        double maxY = dState.RY >= 128 ? 127 : 128;
+                        var tempOutX = (byte)(tempRatioX * maxX + 128.0);
+                        var tempOutY = (byte)(tempRatioY * maxY + 128.0);
+
+                        // Perform curve based on byte values from vector
+                        var tempX = Instance.Config.RSOutCurve[device].arrayBezierLUT[tempOutX];
+                        var tempY = Instance.Config.RSOutCurve[device].arrayBezierLUT[tempOutY];
+
+                        // Calculate new ratio
+                        var tempRatioOutX = (tempX - 128.0) / maxX;
+                        var tempRatioOutY = (tempY - 128.0) / maxY;
+
+                        // Map back to stick coordinates
+                        dState.RX = (byte)(tempRatioOutX * capX + 128);
+                        dState.RY = (byte)(tempRatioOutY * capY + 128);
                     }
                     else if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
                     {
-                        capX = dState.RX >= 128 ? 127.0 : 128.0;
-                        capY = dState.RY >= 128 ? 127.0 : 128.0;
-                        tempRatioX = (dState.RX - 128.0) / capX;
-                        tempRatioY = (dState.RY - 128.0) / capY;
-                    }
-
-                    var signX = tempRatioX >= 0.0 ? 1.0 : -1.0;
-                    var signY = tempRatioY >= 0.0 ? 1.0 : -1.0;
-
-                    if (rsOutCurveMode == 1)
-                    {
-                        var absX = Math.Abs(tempRatioX);
-                        var absY = Math.Abs(tempRatioY);
-                        var outputX = 0.0;
-                        var outputY = 0.0;
-
-                        if (absX <= 0.4)
-                            outputX = 0.8 * absX;
-                        else if (absX <= 0.75)
-                            outputX = absX - 0.08;
-                        else if (absX > 0.75) outputX = absX * 1.32 - 0.32;
-
-                        if (absY <= 0.4)
-                            outputY = 0.8 * absY;
-                        else if (absY <= 0.75)
-                            outputY = absY - 0.08;
-                        else if (absY > 0.75) outputY = absY * 1.32 - 0.32;
-
-                        dState.RX = (byte)(outputX * signX * capX + 128.0);
-                        dState.RY = (byte)(outputY * signY * capY + 128.0);
-                    }
-                    else if (rsOutCurveMode == 2)
-                    {
-                        var outputX = tempRatioX * tempRatioX;
-                        var outputY = tempRatioY * tempRatioY;
-                        dState.RX = (byte)(outputX * signX * capX + 128.0);
-                        dState.RY = (byte)(outputY * signY * capY + 128.0);
-                    }
-                    else if (rsOutCurveMode == 3)
-                    {
-                        var outputX = tempRatioX * tempRatioX * tempRatioX;
-                        var outputY = tempRatioY * tempRatioY * tempRatioY;
-                        dState.RX = (byte)(outputX * capX + 128.0);
-                        dState.RY = (byte)(outputY * capY + 128.0);
-                    }
-                    else if (rsOutCurveMode == 4)
-                    {
-                        var absX = Math.Abs(tempRatioX);
-                        var absY = Math.Abs(tempRatioY);
-                        var outputX = absX * (absX - 2.0);
-                        var outputY = absY * (absY - 2.0);
-                        dState.RX = (byte)(-1.0 * outputX * signX * capX + 128.0);
-                        dState.RY = (byte)(-1.0 * outputY * signY * capY + 128.0);
-                    }
-                    else if (rsOutCurveMode == 5)
-                    {
-                        var innerX = Math.Abs(tempRatioX) - 1.0;
-                        var innerY = Math.Abs(tempRatioY) - 1.0;
-                        var outputX = innerX * innerX * innerX + 1.0;
-                        var outputY = innerY * innerY * innerY + 1.0;
-                        dState.RX = (byte)(1.0 * outputX * signX * capX + 128.0);
-                        dState.RY = (byte)(1.0 * outputY * signY * capY + 128.0);
-                    }
-                    else if (rsOutCurveMode == 6)
-                    {
-                        if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Radial)
-                        {
-                            // Get max values and circular distance of axes
-                            double maxX = dState.RX >= 128 ? 127 : 128;
-                            double maxY = dState.RY >= 128 ? 127 : 128;
-                            var tempOutX = (byte)(tempRatioX * maxX + 128.0);
-                            var tempOutY = (byte)(tempRatioY * maxY + 128.0);
-
-                            // Perform curve based on byte values from vector
-                            var tempX = Instance.Config.RSOutCurve[device].arrayBezierLUT[tempOutX];
-                            var tempY = Instance.Config.RSOutCurve[device].arrayBezierLUT[tempOutY];
-
-                            // Calculate new ratio
-                            var tempRatioOutX = (tempX - 128.0) / maxX;
-                            var tempRatioOutY = (tempY - 128.0) / maxY;
-
-                            // Map back to stick coordinates
-                            dState.RX = (byte)(tempRatioOutX * capX + 128);
-                            dState.RY = (byte)(tempRatioOutY * capY + 128);
-                        }
-                        else if (rsMod.DZType == StickDeadZoneInfo.DeadZoneType.Axial)
-                        {
-                            dState.RX = Instance.Config.RSOutCurve[device].arrayBezierLUT[dState.RX];
-                            dState.RY = Instance.Config.RSOutCurve[device].arrayBezierLUT[dState.RY];
-                        }
+                        dState.RX = Instance.Config.RSOutCurve[device].arrayBezierLUT[dState.RX];
+                        dState.RY = Instance.Config.RSOutCurve[device].arrayBezierLUT[dState.RY];
                     }
                 }
-
-                var l2OutCurveMode = Instance.Config.GetL2OutCurveMode(device);
-                if (l2OutCurveMode > 0 && dState.L2 != 0)
-                {
-                    var temp = dState.L2 / 255.0;
-                    if (l2OutCurveMode == 1)
-                    {
-                        double output;
-
-                        if (temp <= 0.4)
-                            output = 0.55 * temp;
-                        else if (temp <= 0.75)
-                            output = temp - 0.18;
-                        else // if (temp > 0.75)
-                            output = temp * 1.72 - 0.72;
-                        dState.L2 = (byte)(output * 255.0);
-                    }
-                    else if (l2OutCurveMode == 2)
-                    {
-                        var output = temp * temp;
-                        dState.L2 = (byte)(output * 255.0);
-                    }
-                    else if (l2OutCurveMode == 3)
-                    {
-                        var output = temp * temp * temp;
-                        dState.L2 = (byte)(output * 255.0);
-                    }
-                    else if (l2OutCurveMode == 4)
-                    {
-                        var output = temp * (temp - 2.0);
-                        dState.L2 = (byte)(-1.0 * output * 255.0);
-                    }
-                    else if (l2OutCurveMode == 5)
-                    {
-                        var inner = Math.Abs(temp) - 1.0;
-                        var output = inner * inner * inner + 1.0;
-                        dState.L2 = (byte)(-1.0 * output * 255.0);
-                    }
-                    else if (l2OutCurveMode == 6)
-                    {
-                        dState.L2 = Instance.Config.L2OutCurve[device].arrayBezierLUT[dState.L2];
-                    }
-                }
-
-                var r2OutCurveMode = Instance.Config.GetR2OutCurveMode(device);
-                if (r2OutCurveMode > 0 && dState.R2 != 0)
-                {
-                    var temp = dState.R2 / 255.0;
-                    if (r2OutCurveMode == 1)
-                    {
-                        double output;
-
-                        if (temp <= 0.4)
-                            output = 0.55 * temp;
-                        else if (temp <= 0.75)
-                            output = temp - 0.18;
-                        else // if (temp > 0.75)
-                            output = temp * 1.72 - 0.72;
-                        dState.R2 = (byte)(output * 255.0);
-                    }
-                    else if (r2OutCurveMode == 2)
-                    {
-                        var output = temp * temp;
-                        dState.R2 = (byte)(output * 255.0);
-                    }
-                    else if (r2OutCurveMode == 3)
-                    {
-                        var output = temp * temp * temp;
-                        dState.R2 = (byte)(output * 255.0);
-                    }
-                    else if (r2OutCurveMode == 4)
-                    {
-                        var output = temp * (temp - 2.0);
-                        dState.R2 = (byte)(-1.0 * output * 255.0);
-                    }
-                    else if (r2OutCurveMode == 5)
-                    {
-                        var inner = Math.Abs(temp) - 1.0;
-                        var output = inner * inner * inner + 1.0;
-                        dState.R2 = (byte)(-1.0 * output * 255.0);
-                    }
-                    else if (r2OutCurveMode == 6)
-                    {
-                        dState.R2 = Instance.Config.R2OutCurve[device].arrayBezierLUT[dState.R2];
-                    }
-                }
-
-
-                var saControls = Instance.Config.IsUsingSAForControls(device);
-                if (saControls && dState.Motion.outputGyroControls)
-                {
-                    var SXD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone);
-                    var SZD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone);
-                    var SXMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxZone;
-                    var SZMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxZone;
-                    var sxAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone;
-                    var szAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadZone;
-                    var sxsens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens;
-                    var szsens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens;
-                    var result = 0;
-
-                    int gyroX = cState.Motion.accelX, gyroZ = cState.Motion.accelZ;
-                    int absx = Math.Abs(gyroX), absz = Math.Abs(gyroZ);
-
-                    if (SXD > 0 || SXMax < 1.0 || sxAntiDead > 0)
-                    {
-                        var maxValue = (int)(SXMax * 128d);
-                        if (absx > SXD)
-                        {
-                            var ratioX = absx < maxValue ? (absx - SXD) / (double)(maxValue - SXD) : 1.0;
-                            dState.Motion.outputAccelX = Math.Sign(gyroX) *
-                                                         (int)Math.Min(128d,
-                                                             sxsens * 128d * ((1.0 - sxAntiDead) * ratioX +
-                                                                              sxAntiDead));
-                        }
-                        else
-                        {
-                            dState.Motion.outputAccelX = 0;
-                        }
-                    }
-                    else
-                    {
-                        dState.Motion.outputAccelX = Math.Sign(gyroX) *
-                                                     (int)Math.Min(128d, sxsens * 128d * (absx / 128d));
-                    }
-
-                    if (SZD > 0 || SZMax < 1.0 || szAntiDead > 0)
-                    {
-                        var maxValue = (int)(SZMax * 128d);
-                        if (absz > SZD)
-                        {
-                            var ratioZ = absz < maxValue ? (absz - SZD) / (double)(maxValue - SZD) : 1.0;
-                            dState.Motion.outputAccelZ = Math.Sign(gyroZ) *
-                                                         (int)Math.Min(128d,
-                                                             szsens * 128d * ((1.0 - szAntiDead) * ratioZ +
-                                                                              szAntiDead));
-                        }
-                        else
-                        {
-                            dState.Motion.outputAccelZ = 0;
-                        }
-                    }
-                    else
-                    {
-                        dState.Motion.outputAccelZ = Math.Sign(gyroZ) *
-                                                     (int)Math.Min(128d, szsens * 128d * (absz / 128d));
-                    }
-
-                    var sxOutCurveMode = Instance.Config.GetSXOutCurveMode(device);
-                    if (sxOutCurveMode > 0)
-                    {
-                        var temp = dState.Motion.outputAccelX / 128.0;
-                        double sign = Math.Sign(temp);
-                        if (sxOutCurveMode == 1)
-                        {
-                            double output;
-                            var abs = Math.Abs(temp);
-
-                            if (abs <= 0.4)
-                                output = 0.55 * abs;
-                            else if (abs <= 0.75)
-                                output = abs - 0.18;
-                            else // if (abs > 0.75)
-                                output = abs * 1.72 - 0.72;
-                            dState.Motion.outputAccelX = (int)(output * sign * 128.0);
-                        }
-                        else if (sxOutCurveMode == 2)
-                        {
-                            var output = temp * temp;
-                            result = (int)(output * sign * 128.0);
-                            dState.Motion.outputAccelX = result;
-                        }
-                        else if (sxOutCurveMode == 3)
-                        {
-                            var output = temp * temp * temp;
-                            result = (int)(output * 128.0);
-                            dState.Motion.outputAccelX = result;
-                        }
-                        else if (sxOutCurveMode == 4)
-                        {
-                            var abs = Math.Abs(temp);
-                            var output = abs * (abs - 2.0);
-                            dState.Motion.outputAccelX = (int)(-1.0 * output *
-                                                               sign * 128.0);
-                        }
-                        else if (sxOutCurveMode == 5)
-                        {
-                            var inner = Math.Abs(temp) - 1.0;
-                            var output = inner * inner * inner + 1.0;
-                            dState.Motion.outputAccelX = (int)(output *
-                                                               sign * 128.0);
-                        }
-                        else if (sxOutCurveMode == 6)
-                        {
-                            var signSA = Math.Sign(dState.Motion.outputAccelX);
-                            dState.Motion.outputAccelX = Instance.Config.SXOutCurve[device]
-                                .arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
-                        }
-                    }
-
-                    var szOutCurveMode = Instance.Config.GetSZOutCurveMode(device);
-                    if (szOutCurveMode > 0 && dState.Motion.outputAccelZ != 0)
-                    {
-                        var temp = dState.Motion.outputAccelZ / 128.0;
-                        double sign = Math.Sign(temp);
-                        if (szOutCurveMode == 1)
-                        {
-                            double output;
-                            var abs = Math.Abs(temp);
-
-                            if (abs <= 0.4)
-                                output = 0.55 * abs;
-                            else if (abs <= 0.75)
-                                output = abs - 0.18;
-                            else // if (abs > 0.75)
-                                output = abs * 1.72 - 0.72;
-                            dState.Motion.outputAccelZ = (int)(output * sign * 128.0);
-                        }
-                        else if (szOutCurveMode == 2)
-                        {
-                            var output = temp * temp;
-                            result = (int)(output * sign * 128.0);
-                            dState.Motion.outputAccelZ = result;
-                        }
-                        else if (szOutCurveMode == 3)
-                        {
-                            var output = temp * temp * temp;
-                            result = (int)(output * 128.0);
-                            dState.Motion.outputAccelZ = result;
-                        }
-                        else if (szOutCurveMode == 4)
-                        {
-                            var abs = Math.Abs(temp);
-                            var output = abs * (abs - 2.0);
-                            dState.Motion.outputAccelZ = (int)(-1.0 * output *
-                                                               sign * 128.0);
-                        }
-                        else if (szOutCurveMode == 5)
-                        {
-                            var inner = Math.Abs(temp) - 1.0;
-                            var output = inner * inner * inner + 1.0;
-                            dState.Motion.outputAccelZ = (int)(output *
-                                                               sign * 128.0);
-                        }
-                        else if (szOutCurveMode == 6)
-                        {
-                            var signSA = Math.Sign(dState.Motion.outputAccelZ);
-                            dState.Motion.outputAccelZ = Instance.Config.SZOutCurve[device]
-                                .arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
-                        }
-                    }
-                }
-
-                return dState;
             }
+
+            var l2OutCurveMode = Instance.Config.GetL2OutCurveMode(device);
+            if (l2OutCurveMode > 0 && dState.L2 != 0)
+            {
+                var temp = dState.L2 / 255.0;
+                if (l2OutCurveMode == 1)
+                {
+                    double output;
+
+                    if (temp <= 0.4)
+                        output = 0.55 * temp;
+                    else if (temp <= 0.75)
+                        output = temp - 0.18;
+                    else // if (temp > 0.75)
+                        output = temp * 1.72 - 0.72;
+                    dState.L2 = (byte)(output * 255.0);
+                }
+                else if (l2OutCurveMode == 2)
+                {
+                    var output = temp * temp;
+                    dState.L2 = (byte)(output * 255.0);
+                }
+                else if (l2OutCurveMode == 3)
+                {
+                    var output = temp * temp * temp;
+                    dState.L2 = (byte)(output * 255.0);
+                }
+                else if (l2OutCurveMode == 4)
+                {
+                    var output = temp * (temp - 2.0);
+                    dState.L2 = (byte)(-1.0 * output * 255.0);
+                }
+                else if (l2OutCurveMode == 5)
+                {
+                    var inner = Math.Abs(temp) - 1.0;
+                    var output = inner * inner * inner + 1.0;
+                    dState.L2 = (byte)(-1.0 * output * 255.0);
+                }
+                else if (l2OutCurveMode == 6)
+                {
+                    dState.L2 = Instance.Config.L2OutCurve[device].arrayBezierLUT[dState.L2];
+                }
+            }
+
+            var r2OutCurveMode = Instance.Config.GetR2OutCurveMode(device);
+            if (r2OutCurveMode > 0 && dState.R2 != 0)
+            {
+                var temp = dState.R2 / 255.0;
+                if (r2OutCurveMode == 1)
+                {
+                    double output;
+
+                    if (temp <= 0.4)
+                        output = 0.55 * temp;
+                    else if (temp <= 0.75)
+                        output = temp - 0.18;
+                    else // if (temp > 0.75)
+                        output = temp * 1.72 - 0.72;
+                    dState.R2 = (byte)(output * 255.0);
+                }
+                else if (r2OutCurveMode == 2)
+                {
+                    var output = temp * temp;
+                    dState.R2 = (byte)(output * 255.0);
+                }
+                else if (r2OutCurveMode == 3)
+                {
+                    var output = temp * temp * temp;
+                    dState.R2 = (byte)(output * 255.0);
+                }
+                else if (r2OutCurveMode == 4)
+                {
+                    var output = temp * (temp - 2.0);
+                    dState.R2 = (byte)(-1.0 * output * 255.0);
+                }
+                else if (r2OutCurveMode == 5)
+                {
+                    var inner = Math.Abs(temp) - 1.0;
+                    var output = inner * inner * inner + 1.0;
+                    dState.R2 = (byte)(-1.0 * output * 255.0);
+                }
+                else if (r2OutCurveMode == 6)
+                {
+                    dState.R2 = Instance.Config.R2OutCurve[device].arrayBezierLUT[dState.R2];
+                }
+            }
+
+
+            var saControls = Instance.Config.IsUsingSAForControls(device);
+            if (saControls && dState.Motion.outputGyroControls)
+            {
+                var SXD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone);
+                var SZD = (int)(128d * ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone);
+                var SXMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXMaxZone;
+                var SZMax = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZMaxZone;
+                var sxAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone;
+                var szAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZAntiDeadZone;
+                var sxsens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens;
+                var szsens = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens;
+                var result = 0;
+
+                int gyroX = cState.Motion.accelX, gyroZ = cState.Motion.accelZ;
+                int absx = Math.Abs(gyroX), absz = Math.Abs(gyroZ);
+
+                if (SXD > 0 || SXMax < 1.0 || sxAntiDead > 0)
+                {
+                    var maxValue = (int)(SXMax * 128d);
+                    if (absx > SXD)
+                    {
+                        var ratioX = absx < maxValue ? (absx - SXD) / (double)(maxValue - SXD) : 1.0;
+                        dState.Motion.outputAccelX = Math.Sign(gyroX) *
+                                                     (int)Math.Min(128d,
+                                                         sxsens * 128d * ((1.0 - sxAntiDead) * ratioX +
+                                                                          sxAntiDead));
+                    }
+                    else
+                    {
+                        dState.Motion.outputAccelX = 0;
+                    }
+                }
+                else
+                {
+                    dState.Motion.outputAccelX = Math.Sign(gyroX) *
+                                                 (int)Math.Min(128d, sxsens * 128d * (absx / 128d));
+                }
+
+                if (SZD > 0 || SZMax < 1.0 || szAntiDead > 0)
+                {
+                    var maxValue = (int)(SZMax * 128d);
+                    if (absz > SZD)
+                    {
+                        var ratioZ = absz < maxValue ? (absz - SZD) / (double)(maxValue - SZD) : 1.0;
+                        dState.Motion.outputAccelZ = Math.Sign(gyroZ) *
+                                                     (int)Math.Min(128d,
+                                                         szsens * 128d * ((1.0 - szAntiDead) * ratioZ +
+                                                                          szAntiDead));
+                    }
+                    else
+                    {
+                        dState.Motion.outputAccelZ = 0;
+                    }
+                }
+                else
+                {
+                    dState.Motion.outputAccelZ = Math.Sign(gyroZ) *
+                                                 (int)Math.Min(128d, szsens * 128d * (absz / 128d));
+                }
+
+                var sxOutCurveMode = Instance.Config.GetSXOutCurveMode(device);
+                if (sxOutCurveMode > 0)
+                {
+                    var temp = dState.Motion.outputAccelX / 128.0;
+                    double sign = Math.Sign(temp);
+                    if (sxOutCurveMode == 1)
+                    {
+                        double output;
+                        var abs = Math.Abs(temp);
+
+                        if (abs <= 0.4)
+                            output = 0.55 * abs;
+                        else if (abs <= 0.75)
+                            output = abs - 0.18;
+                        else // if (abs > 0.75)
+                            output = abs * 1.72 - 0.72;
+                        dState.Motion.outputAccelX = (int)(output * sign * 128.0);
+                    }
+                    else if (sxOutCurveMode == 2)
+                    {
+                        var output = temp * temp;
+                        result = (int)(output * sign * 128.0);
+                        dState.Motion.outputAccelX = result;
+                    }
+                    else if (sxOutCurveMode == 3)
+                    {
+                        var output = temp * temp * temp;
+                        result = (int)(output * 128.0);
+                        dState.Motion.outputAccelX = result;
+                    }
+                    else if (sxOutCurveMode == 4)
+                    {
+                        var abs = Math.Abs(temp);
+                        var output = abs * (abs - 2.0);
+                        dState.Motion.outputAccelX = (int)(-1.0 * output *
+                                                           sign * 128.0);
+                    }
+                    else if (sxOutCurveMode == 5)
+                    {
+                        var inner = Math.Abs(temp) - 1.0;
+                        var output = inner * inner * inner + 1.0;
+                        dState.Motion.outputAccelX = (int)(output *
+                                                           sign * 128.0);
+                    }
+                    else if (sxOutCurveMode == 6)
+                    {
+                        var signSA = Math.Sign(dState.Motion.outputAccelX);
+                        dState.Motion.outputAccelX = Instance.Config.SXOutCurve[device]
+                            .arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelX), 128)] * signSA;
+                    }
+                }
+
+                var szOutCurveMode = Instance.Config.GetSZOutCurveMode(device);
+                if (szOutCurveMode > 0 && dState.Motion.outputAccelZ != 0)
+                {
+                    var temp = dState.Motion.outputAccelZ / 128.0;
+                    double sign = Math.Sign(temp);
+                    if (szOutCurveMode == 1)
+                    {
+                        double output;
+                        var abs = Math.Abs(temp);
+
+                        if (abs <= 0.4)
+                            output = 0.55 * abs;
+                        else if (abs <= 0.75)
+                            output = abs - 0.18;
+                        else // if (abs > 0.75)
+                            output = abs * 1.72 - 0.72;
+                        dState.Motion.outputAccelZ = (int)(output * sign * 128.0);
+                    }
+                    else if (szOutCurveMode == 2)
+                    {
+                        var output = temp * temp;
+                        result = (int)(output * sign * 128.0);
+                        dState.Motion.outputAccelZ = result;
+                    }
+                    else if (szOutCurveMode == 3)
+                    {
+                        var output = temp * temp * temp;
+                        result = (int)(output * 128.0);
+                        dState.Motion.outputAccelZ = result;
+                    }
+                    else if (szOutCurveMode == 4)
+                    {
+                        var abs = Math.Abs(temp);
+                        var output = abs * (abs - 2.0);
+                        dState.Motion.outputAccelZ = (int)(-1.0 * output *
+                                                           sign * 128.0);
+                    }
+                    else if (szOutCurveMode == 5)
+                    {
+                        var inner = Math.Abs(temp) - 1.0;
+                        var output = inner * inner * inner + 1.0;
+                        dState.Motion.outputAccelZ = (int)(output *
+                                                           sign * 128.0);
+                    }
+                    else if (szOutCurveMode == 6)
+                    {
+                        var signSA = Math.Sign(dState.Motion.outputAccelZ);
+                        dState.Motion.outputAccelZ = Instance.Config.SZOutCurve[device]
+                            .arrayBezierLUT[Math.Min(Math.Abs(dState.Motion.outputAccelZ), 128)] * signSA;
+                    }
+                }
+            }
+
+            return dState;
         }
 
         /* TODO: Possibly remove usage of this version of the method */
         private static bool ShiftTrigger(int trigger, int device, DS4State cState, DS4StateExposed eState, Mouse tp)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(ShiftTrigger)}")
-                .StartActive(true);
-
             var result = false;
             if (trigger == 0)
             {
@@ -1772,10 +1757,6 @@ namespace DS4Windows
         private static bool ShiftTrigger2(int trigger, int device, DS4State cState, DS4StateExposed eState, Mouse tp,
             DS4StateFieldMapping fieldMapping)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(ShiftTrigger2)}")
-                .StartActive(true);
-
             var result = false;
             if (trigger == 0)
             {
@@ -1854,11 +1835,6 @@ namespace DS4Windows
         public static void MapCustom(int device, DS4State cState, DS4State MappedState, DS4StateExposed eState,
             Mouse tp, ControlService ctrl)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(MapCustom)}")
-                .StartActive(true);
-
-
             /* TODO: This method is slow sauce. Find ways to speed up action execution */
             var tempMouseDeltaX = 0.0;
             var tempMouseDeltaY = 0.0;
@@ -2161,7 +2137,7 @@ namespace DS4Windows
             unchecked
             {
                 for (int i = 0, len = tempControl.Count; i < len; i++)
-                    //while(tempControl.Any())
+                //while(tempControl.Any())
                 {
                     var tempMap = tempControl.Dequeue();
                     var controlNum = (int)tempMap.ds4input;
@@ -2307,10 +2283,6 @@ namespace DS4Windows
             TwoStageTriggerMappingData twoStageData, out DS4ControlSettingsV3 outputSoftPull,
             out DS4ControlSettingsV3 outputFullPull)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(ProcessTwoStageTrigger)}")
-                .StartActive(true);
-
             var dcsTemp = inputSoftPull;
             DS4ControlSettingsV3 dcsFullPull = null;
             var triggerData = twoStageData;
@@ -2496,10 +2468,6 @@ namespace DS4Windows
         private static void ProcessFlickStick(int device, DS4State cRawState, byte stickX, byte stickY, byte prevStickX,
             byte prevStickY, ControlService ctrl, FlickStickSettings flickSettings, ref double tempMouseDeltaX)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(ProcessFlickStick)}")
-                .StartActive(true);
-
             var tempFlickData = flickMappingData[device];
             var angleChange = HandleFlickStickAngle(cRawState, stickX, stickY, prevStickX, prevStickY,
                 tempFlickData, flickSettings);
@@ -2516,7 +2484,7 @@ namespace DS4Windows
             //Console.WriteLine(lsangle);
             //if (angleChange != 0.0)
             if (flickSettings.MinAngleThreshold == 0.0 && lsangle != 0.0)
-                //if (Math.Abs(lsangle) >= 0.5)
+            //if (Math.Abs(lsangle) >= 0.5)
             {
                 tempFlickData.flickAngleRemainder = 0.0;
                 //flickAngleRemainder = lsangle - (int)lsangle;
@@ -2540,10 +2508,6 @@ namespace DS4Windows
             byte prevStickY,
             FlickStickMappingData flickData, FlickStickSettings flickSettings)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(HandleFlickStickAngle)}")
-                .StartActive(true);
-
             var result = 0.0;
 
             var lastXMax = prevStickX >= 128 ? 127.0 : -128.0;
@@ -2635,10 +2599,6 @@ namespace DS4Windows
             SyntheticState deviceState, ref double tempMouseDeltaX, ref double tempMouseDeltaY,
             ControlService ctrl)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(ProcessControlSettingAction)}")
-                .StartActive(true);
-
             //DS4ControlSettings dcs = tempSettingsList[settingIndex];
 
             uint actionAlias = 0;
@@ -2825,91 +2785,91 @@ namespace DS4Windows
                         switch (xboxControl)
                         {
                             case X360Controls.LeftMouse:
-                            {
-                                keyvalue = 256;
-                                if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
-                                    deviceState.currentClicks.leftCount++;
+                                {
+                                    keyvalue = 256;
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                        deviceState.currentClicks.leftCount++;
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.RightMouse:
-                            {
-                                keyvalue = 257;
-                                if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
-                                    deviceState.currentClicks.rightCount++;
+                                {
+                                    keyvalue = 257;
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                        deviceState.currentClicks.rightCount++;
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.MiddleMouse:
-                            {
-                                keyvalue = 258;
-                                if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
-                                    deviceState.currentClicks.middleCount++;
+                                {
+                                    keyvalue = 258;
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                        deviceState.currentClicks.middleCount++;
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.FourthMouse:
-                            {
-                                keyvalue = 259;
-                                if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
-                                    deviceState.currentClicks.fourthCount++;
+                                {
+                                    keyvalue = 259;
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                        deviceState.currentClicks.fourthCount++;
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.FifthMouse:
-                            {
-                                keyvalue = 260;
-                                if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
-                                    deviceState.currentClicks.fifthCount++;
+                                {
+                                    keyvalue = 260;
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
+                                        deviceState.currentClicks.fifthCount++;
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.WUP:
-                            {
-                                if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                 {
-                                    if (isAnalog)
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                     {
-                                        if (stickWheelDownDir)
+                                        if (isAnalog)
                                         {
-                                            stickWheelRemainder = 0.0;
-                                            stickWheelDownDir = !stickWheelDownDir;
+                                            if (stickWheelDownDir)
+                                            {
+                                                stickWheelRemainder = 0.0;
+                                                stickWheelDownDir = !stickWheelDownDir;
+                                            }
+
+                                            GetMouseWheelMapping(device, dcs.Control, cState, eState, tp, fieldMapping,
+                                                false);
                                         }
+                                        else
+                                        {
+                                            deviceState.currentClicks.wUpCount++;
+                                        }
+                                    }
 
-                                        GetMouseWheelMapping(device, dcs.Control, cState, eState, tp, fieldMapping,
-                                            false);
-                                    }
-                                    else
-                                    {
-                                        deviceState.currentClicks.wUpCount++;
-                                    }
+                                    break;
                                 }
-
-                                break;
-                            }
                             case X360Controls.WDOWN:
-                            {
-                                if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                 {
-                                    if (isAnalog)
+                                    if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                     {
-                                        if (!stickWheelDownDir)
+                                        if (isAnalog)
                                         {
-                                            stickWheelRemainder = 0.0;
-                                            stickWheelDownDir = !stickWheelDownDir;
+                                            if (!stickWheelDownDir)
+                                            {
+                                                stickWheelRemainder = 0.0;
+                                                stickWheelDownDir = !stickWheelDownDir;
+                                            }
+
+                                            GetMouseWheelMapping(device, dcs.Control, cState, eState, tp, fieldMapping,
+                                                true);
                                         }
+                                        else
+                                        {
+                                            deviceState.currentClicks.wDownCount++;
+                                        }
+                                    }
 
-                                        GetMouseWheelMapping(device, dcs.Control, cState, eState, tp, fieldMapping,
-                                            true);
-                                    }
-                                    else
-                                    {
-                                        deviceState.currentClicks.wDownCount++;
-                                    }
+                                    break;
                                 }
-
-                                break;
-                            }
                         }
                     }
                     else if (xboxControl >= X360Controls.MouseUp && xboxControl <= X360Controls.MouseRight)
@@ -2917,53 +2877,53 @@ namespace DS4Windows
                         switch (xboxControl)
                         {
                             case X360Controls.MouseUp:
-                            {
-                                if (tempMouseDeltaY == 0)
                                 {
-                                    tempMouseDeltaY = GetMouseMapping(device, dcs.Control, cState, eState,
-                                        fieldMapping, 0, ctrl);
-                                    tempMouseDeltaY =
-                                        -Math.Abs(tempMouseDeltaY == -2147483648 ? 0 : tempMouseDeltaY);
-                                }
+                                    if (tempMouseDeltaY == 0)
+                                    {
+                                        tempMouseDeltaY = GetMouseMapping(device, dcs.Control, cState, eState,
+                                            fieldMapping, 0, ctrl);
+                                        tempMouseDeltaY =
+                                            -Math.Abs(tempMouseDeltaY == -2147483648 ? 0 : tempMouseDeltaY);
+                                    }
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.MouseDown:
-                            {
-                                if (tempMouseDeltaY == 0)
                                 {
-                                    tempMouseDeltaY = GetMouseMapping(device, dcs.Control, cState, eState,
-                                        fieldMapping, 1, ctrl);
-                                    tempMouseDeltaY =
-                                        Math.Abs(tempMouseDeltaY == -2147483648 ? 0 : tempMouseDeltaY);
-                                }
+                                    if (tempMouseDeltaY == 0)
+                                    {
+                                        tempMouseDeltaY = GetMouseMapping(device, dcs.Control, cState, eState,
+                                            fieldMapping, 1, ctrl);
+                                        tempMouseDeltaY =
+                                            Math.Abs(tempMouseDeltaY == -2147483648 ? 0 : tempMouseDeltaY);
+                                    }
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.MouseLeft:
-                            {
-                                if (tempMouseDeltaX == 0)
                                 {
-                                    tempMouseDeltaX = GetMouseMapping(device, dcs.Control, cState, eState,
-                                        fieldMapping, 2, ctrl);
-                                    tempMouseDeltaX =
-                                        -Math.Abs(tempMouseDeltaX == -2147483648 ? 0 : tempMouseDeltaX);
-                                }
+                                    if (tempMouseDeltaX == 0)
+                                    {
+                                        tempMouseDeltaX = GetMouseMapping(device, dcs.Control, cState, eState,
+                                            fieldMapping, 2, ctrl);
+                                        tempMouseDeltaX =
+                                            -Math.Abs(tempMouseDeltaX == -2147483648 ? 0 : tempMouseDeltaX);
+                                    }
 
-                                break;
-                            }
+                                    break;
+                                }
                             case X360Controls.MouseRight:
-                            {
-                                if (tempMouseDeltaX == 0)
                                 {
-                                    tempMouseDeltaX = GetMouseMapping(device, dcs.Control, cState, eState,
-                                        fieldMapping, 3, ctrl);
-                                    tempMouseDeltaX =
-                                        Math.Abs(tempMouseDeltaX == -2147483648 ? 0 : tempMouseDeltaX);
-                                }
+                                    if (tempMouseDeltaX == 0)
+                                    {
+                                        tempMouseDeltaX = GetMouseMapping(device, dcs.Control, cState, eState,
+                                            fieldMapping, 3, ctrl);
+                                        tempMouseDeltaX =
+                                            Math.Abs(tempMouseDeltaX == -2147483648 ? 0 : tempMouseDeltaX);
+                                    }
 
-                                break;
-                            }
+                                    break;
+                                }
                         }
                     }
 
@@ -3012,322 +2972,347 @@ namespace DS4Windows
             DS4StateExposed eState, Mouse tp, ControlService ctrl, DS4StateFieldMapping fieldMapping,
             DS4StateFieldMapping outputfieldMapping)
         {
-            using (GlobalTracer.Instance.BuildSpan(nameof(MapCustomAction)).StartActive(true))
+
+            /* TODO: This method is slow sauce. Find ways to speed up action execution */
+            try
             {
-                /* TODO: This method is slow sauce. Find ways to speed up action execution */
-                try
+                var actionDoneCount = actionDone.Count;
+                var totalActionCount = Instance.Config.Actions.Count;
+                DS4StateFieldMapping previousFieldMapping = null;
+                var profileActions = Instance.Config.ProfileActions[device];
+                //foreach (string actionname in profileActions)
+                for (int actionIndex = 0, profileListLen = profileActions.Count;
+                    actionIndex < profileListLen;
+                    actionIndex++)
                 {
-                    var actionDoneCount = actionDone.Count;
-                    var totalActionCount = Instance.Config.Actions.Count;
-                    DS4StateFieldMapping previousFieldMapping = null;
-                    var profileActions = Instance.Config.ProfileActions[device];
-                    //foreach (string actionname in profileActions)
-                    for (int actionIndex = 0, profileListLen = profileActions.Count;
-                        actionIndex < profileListLen;
-                        actionIndex++)
+                    //DS4KeyType keyType = getShiftCustomKeyType(device, customKey.Key);
+                    //SpecialAction action = GetAction(actionname);
+                    //int index = GetActionIndexOf(actionname);
+                    var actionname = profileActions[actionIndex];
+                    var action = Instance.Config.GetProfileAction(device, actionname);
+                    var index = Instance.Config.GetProfileActionIndexOf(device, actionname);
+
+                    if (actionDoneCount < index + 1)
                     {
-                        //DS4KeyType keyType = getShiftCustomKeyType(device, customKey.Key);
-                        //SpecialAction action = GetAction(actionname);
-                        //int index = GetActionIndexOf(actionname);
-                        var actionname = profileActions[actionIndex];
-                        var action = Instance.Config.GetProfileAction(device, actionname);
-                        var index = Instance.Config.GetProfileActionIndexOf(device, actionname);
+                        actionDone.Add(new ActionState());
+                        actionDoneCount++;
+                    }
+                    else if (actionDoneCount > totalActionCount)
+                    {
+                        actionDone.RemoveAt(actionDoneCount - 1);
+                        actionDoneCount--;
+                    }
 
-                        if (actionDoneCount < index + 1)
-                        {
-                            actionDone.Add(new ActionState());
-                            actionDoneCount++;
-                        }
-                        else if (actionDoneCount > totalActionCount)
-                        {
-                            actionDone.RemoveAt(actionDoneCount - 1);
-                            actionDoneCount--;
-                        }
+                    if (action == null) continue;
 
-                        if (action == null) continue;
-
-                        var time = 0.0;
-                        //If a key or button is assigned to the trigger, a key special action is used like
-                        //a quick tap to use and hold to use the regular custom button/key
-                        var triggerToBeTapped = action.TypeId == SpecialActionV3.ActionTypeId.None &&
-                                                action.Trigger.Count == 1 &&
-                                                (Instance.Config
-                                                     .GetDs4ControllerSetting(device, action.Trigger[0])?.IsDefault ??
-                                                 false);
-                        if (!(action.TypeId == SpecialActionV3.ActionTypeId.None || index < 0))
+                    var time = 0.0;
+                    //If a key or button is assigned to the trigger, a key special action is used like
+                    //a quick tap to use and hold to use the regular custom button/key
+                    var triggerToBeTapped = action.TypeId == SpecialActionV3.ActionTypeId.None &&
+                                            action.Trigger.Count == 1 &&
+                                            (Instance.Config
+                                                 .GetDs4ControllerSetting(device, action.Trigger[0])?.IsDefault ??
+                                             false);
+                    if (!(action.TypeId == SpecialActionV3.ActionTypeId.None || index < 0))
+                    {
+                        var triggeractivated = true;
+                        if (action.DelayTime > 0.0)
                         {
-                            var triggeractivated = true;
-                            if (action.DelayTime > 0.0)
+                            triggeractivated = false;
+                            var subtriggeractivated = true;
+                            //foreach (DS4Controls dc in action.trigger)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
                             {
-                                triggeractivated = false;
-                                var subtriggeractivated = true;
-                                //foreach (DS4Controls dc in action.trigger)
-                                for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
+                                var dc = action.Trigger[i];
+                                if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
-                                    var dc = action.Trigger[i];
-                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
-                                    {
-                                        subtriggeractivated = false;
-                                        break;
-                                    }
-                                }
-
-                                if (subtriggeractivated)
-                                {
-                                    time = action.DelayTime;
-                                    nowAction[device] = DateTime.UtcNow;
-                                    if (nowAction[device] >= oldnowAction[device] + TimeSpan.FromSeconds(time))
-                                        triggeractivated = true;
-                                }
-                                else if (nowAction[device] < DateTime.UtcNow - TimeSpan.FromMilliseconds(100))
-                                {
-                                    oldnowAction[device] = DateTime.UtcNow;
+                                    subtriggeractivated = false;
+                                    break;
                                 }
                             }
-                            else if (triggerToBeTapped && oldnowKeyAct[device] == DateTime.MinValue)
-                            {
-                                triggeractivated = false;
-                                var subtriggeractivated = true;
-                                //foreach (DS4Controls dc in action.trigger)
-                                for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
-                                {
-                                    var dc = action.Trigger[i];
-                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
-                                    {
-                                        subtriggeractivated = false;
-                                        break;
-                                    }
-                                }
 
-                                if (subtriggeractivated) oldnowKeyAct[device] = DateTime.UtcNow;
-                            }
-                            else if (triggerToBeTapped && oldnowKeyAct[device] != DateTime.MinValue)
+                            if (subtriggeractivated)
                             {
-                                triggeractivated = false;
-                                var subtriggeractivated = true;
-                                //foreach (DS4Controls dc in action.trigger)
-                                for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
-                                {
-                                    var dc = action.Trigger[i];
-                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
-                                    {
-                                        subtriggeractivated = false;
-                                        break;
-                                    }
-                                }
-
-                                var now = DateTime.UtcNow;
-                                if (!subtriggeractivated &&
-                                    now <= oldnowKeyAct[device] + TimeSpan.FromMilliseconds(250))
-                                {
-                                    await Task.Delay(
-                                        3); //if the button is assigned to the same key use a delay so the key down is the last action, not key up
+                                time = action.DelayTime;
+                                nowAction[device] = DateTime.UtcNow;
+                                if (nowAction[device] >= oldnowAction[device] + TimeSpan.FromSeconds(time))
                                     triggeractivated = true;
-                                    oldnowKeyAct[device] = DateTime.MinValue;
-                                }
-                                else if (!subtriggeractivated)
+                            }
+                            else if (nowAction[device] < DateTime.UtcNow - TimeSpan.FromMilliseconds(100))
+                            {
+                                oldnowAction[device] = DateTime.UtcNow;
+                            }
+                        }
+                        else if (triggerToBeTapped && oldnowKeyAct[device] == DateTime.MinValue)
+                        {
+                            triggeractivated = false;
+                            var subtriggeractivated = true;
+                            //foreach (DS4Controls dc in action.trigger)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
+                            {
+                                var dc = action.Trigger[i];
+                                if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
-                                    oldnowKeyAct[device] = DateTime.MinValue;
+                                    subtriggeractivated = false;
+                                    break;
                                 }
                             }
-                            else
-                            {
-                                //foreach (DS4Controls dc in action.trigger)
-                                for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
-                                {
-                                    var dc = action.Trigger[i];
-                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
-                                    {
-                                        triggeractivated = false;
-                                        break;
-                                    }
-                                }
 
-                                // If special action macro is set to run on key release then activate the trigger status only when the trigger key is released
-                                if (action.TypeId == SpecialActionV3.ActionTypeId.Macro && action.PressRelease &&
-                                    action.FirstTouch)
-                                    triggeractivated = !triggeractivated;
+                            if (subtriggeractivated) oldnowKeyAct[device] = DateTime.UtcNow;
+                        }
+                        else if (triggerToBeTapped && oldnowKeyAct[device] != DateTime.MinValue)
+                        {
+                            triggeractivated = false;
+                            var subtriggeractivated = true;
+                            //foreach (DS4Controls dc in action.trigger)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
+                            {
+                                var dc = action.Trigger[i];
+                                if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                                {
+                                    subtriggeractivated = false;
+                                    break;
+                                }
                             }
 
-                            var utriggeractivated = true;
-                            var uTriggerCount = action.UTrigger.Count;
-                            if (action.TypeId == SpecialActionV3.ActionTypeId.Key && uTriggerCount > 0)
+                            var now = DateTime.UtcNow;
+                            if (!subtriggeractivated &&
+                                now <= oldnowKeyAct[device] + TimeSpan.FromMilliseconds(250))
                             {
-                                //foreach (DS4Controls dc in action.uTrigger)
-                                for (int i = 0, arlen = action.UTrigger.Count; i < arlen; i++)
+                                await Task.Delay(
+                                    3); //if the button is assigned to the same key use a delay so the key down is the last action, not key up
+                                triggeractivated = true;
+                                oldnowKeyAct[device] = DateTime.MinValue;
+                            }
+                            else if (!subtriggeractivated)
+                            {
+                                oldnowKeyAct[device] = DateTime.MinValue;
+                            }
+                        }
+                        else
+                        {
+                            //foreach (DS4Controls dc in action.trigger)
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
+                            {
+                                var dc = action.Trigger[i];
+                                if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
-                                    var dc = action.UTrigger[i];
-                                    if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
-                                    {
-                                        utriggeractivated = false;
-                                        break;
-                                    }
+                                    triggeractivated = false;
+                                    break;
                                 }
-
-                                if (action.PressRelease) utriggeractivated = !utriggeractivated;
                             }
 
-                            var actionFound = false;
-                            if (triggeractivated)
+                            // If special action macro is set to run on key release then activate the trigger status only when the trigger key is released
+                            if (action.TypeId == SpecialActionV3.ActionTypeId.Macro && action.PressRelease &&
+                                action.FirstTouch)
+                                triggeractivated = !triggeractivated;
+                        }
+
+                        var utriggeractivated = true;
+                        var uTriggerCount = action.UTrigger.Count;
+                        if (action.TypeId == SpecialActionV3.ActionTypeId.Key && uTriggerCount > 0)
+                        {
+                            //foreach (DS4Controls dc in action.uTrigger)
+                            for (int i = 0, arlen = action.UTrigger.Count; i < arlen; i++)
                             {
-                                for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
+                                var dc = action.UTrigger[i];
+                                if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
                                 {
-                                    var dc = action.Trigger[i];
-                                    ResetToDefaultValue2(dc, MappedState, outputfieldMapping);
+                                    utriggeractivated = false;
+                                    break;
                                 }
+                            }
 
-                                if (action.TypeId == SpecialActionV3.ActionTypeId.Program)
+                            if (action.PressRelease) utriggeractivated = !utriggeractivated;
+                        }
+
+                        var actionFound = false;
+                        if (triggeractivated)
+                        {
+                            for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
+                            {
+                                var dc = action.Trigger[i];
+                                ResetToDefaultValue2(dc, MappedState, outputfieldMapping);
+                            }
+
+                            if (action.TypeId == SpecialActionV3.ActionTypeId.Program)
+                            {
+                                actionFound = true;
+
+                                if (!actionDone[index].dev[device])
                                 {
-                                    actionFound = true;
-
-                                    if (!actionDone[index].dev[device])
+                                    actionDone[index].dev[device] = true;
+                                    if (!string.IsNullOrEmpty(action.Extras))
                                     {
-                                        actionDone[index].dev[device] = true;
-                                        if (!string.IsNullOrEmpty(action.Extras))
+                                        var pos = action.Extras.IndexOf("$hidden",
+                                            StringComparison.OrdinalIgnoreCase);
+                                        if (pos >= 0)
                                         {
-                                            var pos = action.Extras.IndexOf("$hidden",
-                                                StringComparison.OrdinalIgnoreCase);
-                                            if (pos >= 0)
+                                            var specActionLaunchProc =
+                                                new Process();
+
+                                            // LaunchProgram specAction has $hidden argument to indicate that the child process window should be hidden (especially useful when launching .bat/.cmd batch files).
+                                            // Removes the first occurence of $hidden substring from extra argument because it was a special action modifier keyword
+                                            var cmdArgs = specActionLaunchProc.StartInfo.Arguments =
+                                                action.Extras.Remove(pos, 7);
+                                            var cmdExt = Path.GetExtension(action.Details).ToLower();
+
+                                            if (cmdExt == ".bat" || cmdExt == ".cmd")
                                             {
-                                                var specActionLaunchProc =
-                                                    new Process();
-
-                                                // LaunchProgram specAction has $hidden argument to indicate that the child process window should be hidden (especially useful when launching .bat/.cmd batch files).
-                                                // Removes the first occurence of $hidden substring from extra argument because it was a special action modifier keyword
-                                                var cmdArgs = specActionLaunchProc.StartInfo.Arguments =
-                                                    action.Extras.Remove(pos, 7);
-                                                var cmdExt = Path.GetExtension(action.Details).ToLower();
-
-                                                if (cmdExt == ".bat" || cmdExt == ".cmd")
-                                                {
-                                                    // Launch batch script using the default command shell cmd (COMSPEC env variable)
-                                                    specActionLaunchProc.StartInfo.FileName =
-                                                        Environment.GetEnvironmentVariable("COMSPEC");
-                                                    specActionLaunchProc.StartInfo.Arguments =
-                                                        "/C \"" + action.Details + "\" " + cmdArgs;
-                                                }
-                                                else
-                                                {
-                                                    // Normal EXE executable app (action.details) with optional cmdline arguments (action.extra)
-                                                    specActionLaunchProc.StartInfo.FileName = action.Details;
-                                                    specActionLaunchProc.StartInfo.Arguments = cmdArgs;
-                                                }
-
-                                                // Launch child process using hidden wnd option (the child process should probably do something and then close itself unless you want it to remain hidden in background)
-                                                specActionLaunchProc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                                specActionLaunchProc.StartInfo.CreateNoWindow = true;
-                                                specActionLaunchProc.StartInfo.UseShellExecute = true;
-                                                specActionLaunchProc.Start();
+                                                // Launch batch script using the default command shell cmd (COMSPEC env variable)
+                                                specActionLaunchProc.StartInfo.FileName =
+                                                    Environment.GetEnvironmentVariable("COMSPEC");
+                                                specActionLaunchProc.StartInfo.Arguments =
+                                                    "/C \"" + action.Details + "\" " + cmdArgs;
                                             }
                                             else
                                             {
-                                                // No special process modifiers (ie. $hidden wnd keyword). Launch the child process using the default WinOS settings
-                                                using (var temp = new Process())
-                                                {
-                                                    temp.StartInfo.FileName = action.Details;
-                                                    temp.StartInfo.Arguments = action.Extras;
-                                                    temp.StartInfo.UseShellExecute = true;
-                                                    temp.Start();
-                                                }
+                                                // Normal EXE executable app (action.details) with optional cmdline arguments (action.extra)
+                                                specActionLaunchProc.StartInfo.FileName = action.Details;
+                                                specActionLaunchProc.StartInfo.Arguments = cmdArgs;
                                             }
+
+                                            // Launch child process using hidden wnd option (the child process should probably do something and then close itself unless you want it to remain hidden in background)
+                                            specActionLaunchProc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                            specActionLaunchProc.StartInfo.CreateNoWindow = true;
+                                            specActionLaunchProc.StartInfo.UseShellExecute = true;
+                                            specActionLaunchProc.Start();
                                         }
                                         else
                                         {
+                                            // No special process modifiers (ie. $hidden wnd keyword). Launch the child process using the default WinOS settings
                                             using (var temp = new Process())
                                             {
                                                 temp.StartInfo.FileName = action.Details;
+                                                temp.StartInfo.Arguments = action.Extras;
                                                 temp.StartInfo.UseShellExecute = true;
                                                 temp.Start();
                                             }
                                         }
                                     }
-                                }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.Profile)
-                                {
-                                    actionFound = true;
-
-                                    if (!actionDone[index].dev[device] && (!UseTempProfiles[device] ||
-                                                                           untriggeraction[device] == null ||
-                                                                           untriggeraction[device].TypeId !=
-                                                                           SpecialActionV3.ActionTypeId.Profile))
+                                    else
                                     {
-                                        actionDone[index].dev[device] = true;
-                                        // If Loadprofile special action doesn't have untrigger keys or automatic untrigger option is not set then don't set untrigger status. This way the new loaded profile allows yet another loadProfile action key event.
-                                        if (action.UTrigger.Count > 0 || action.AutomaticUnTrigger)
+                                        using (var temp = new Process())
                                         {
-                                            untriggeraction[device] = action;
-                                            untriggerindex[device] = index;
-
-                                            // If the existing profile is a temp profile then store its name, because automaticUntrigger needs to know where to go back (empty name goes back to default regular profile)
-                                            untriggeraction[device].PreviousProfileName = UseTempProfiles[device]
-                                                ? TempProfileNames[device]
-                                                : string.Empty;
+                                            temp.StartInfo.FileName = action.Details;
+                                            temp.StartInfo.UseShellExecute = true;
+                                            temp.Start();
                                         }
-
-                                        //foreach (DS4Controls dc in action.trigger)
-                                        for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
-                                        {
-                                            var dc = action.Trigger[i];
-                                            var dcs =
-                                                Instance.Config.GetDs4ControllerSetting(device, dc);
-                                            if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
-                                            {
-                                                if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
-                                                {
-                                                    var tempKey =
-                                                        outputKBMMapping.GetRealEventKey(
-                                                            (uint)dcs.ActionData.ActionKey);
-                                                    outputKBMHandler.PerformKeyRelease(tempKey);
-                                                }
-                                                else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
-                                                {
-                                                    var keys = dcs.ActionData.ActionMacro;
-                                                    for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
-                                                    {
-                                                        var tempKey = outputKBMMapping.GetRealEventKey((uint)keys[j]);
-                                                        outputKBMHandler.PerformKeyRelease(tempKey);
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        var d = ctrl.DS4Controllers[device];
-                                        var prolog = string.Format(Resources.UsingProfile,
-                                            (device + 1).ToString(), action.Details, $"{d.Battery}");
-
-                                        AppLogger.Instance.LogToGui(prolog, false);
-                                        await Instance.LoadTempProfile(device, action.Details, true, ctrl);
-                                        //LoadProfile(device, false, ctrl);
-
-                                        if (action.UTrigger.Count == 0 && !action.AutomaticUnTrigger)
-                                        {
-                                            // If the new profile has any actions with the same action key (controls) than this action (which doesn't have untrigger keys) then set status of those actions to wait for the release of the existing action key. 
-                                            var profileActionsNext = Instance.Config.ProfileActions[device];
-                                            for (int actionIndexNext = 0, profileListLenNext = profileActionsNext.Count;
-                                                actionIndexNext < profileListLenNext;
-                                                actionIndexNext++)
-                                            {
-                                                var actionnameNext = profileActionsNext[actionIndexNext];
-                                                var actionNext =
-                                                    Instance.Config.GetProfileAction(device, actionnameNext);
-                                                var indexNext =
-                                                    Instance.Config.GetProfileActionIndexOf(device,
-                                                        actionnameNext);
-
-                                                if (actionNext.Controls == action.Controls)
-                                                    actionDone[indexNext].dev[device] = true;
-                                            }
-                                        }
-
-                                        return;
                                     }
                                 }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.Macro)
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.Profile)
+                            {
+                                actionFound = true;
+
+                                if (!actionDone[index].dev[device] && (!UseTempProfiles[device] ||
+                                                                       untriggeraction[device] == null ||
+                                                                       untriggeraction[device].TypeId !=
+                                                                       SpecialActionV3.ActionTypeId.Profile))
                                 {
-                                    actionFound = true;
-                                    if (!action.PressRelease)
+                                    actionDone[index].dev[device] = true;
+                                    // If Loadprofile special action doesn't have untrigger keys or automatic untrigger option is not set then don't set untrigger status. This way the new loaded profile allows yet another loadProfile action key event.
+                                    if (action.UTrigger.Count > 0 || action.AutomaticUnTrigger)
                                     {
-                                        // Macro run when trigger keys are pressed down (the default behaviour)
+                                        untriggeraction[device] = action;
+                                        untriggerindex[device] = index;
+
+                                        // If the existing profile is a temp profile then store its name, because automaticUntrigger needs to know where to go back (empty name goes back to default regular profile)
+                                        untriggeraction[device].PreviousProfileName = UseTempProfiles[device]
+                                            ? TempProfileNames[device]
+                                            : string.Empty;
+                                    }
+
+                                    //foreach (DS4Controls dc in action.trigger)
+                                    for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
+                                    {
+                                        var dc = action.Trigger[i];
+                                        var dcs =
+                                            Instance.Config.GetDs4ControllerSetting(device, dc);
+                                        if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
+                                        {
+                                            if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
+                                            {
+                                                var tempKey =
+                                                    outputKBMMapping.GetRealEventKey(
+                                                        (uint)dcs.ActionData.ActionKey);
+                                                outputKBMHandler.PerformKeyRelease(tempKey);
+                                            }
+                                            else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
+                                            {
+                                                var keys = dcs.ActionData.ActionMacro;
+                                                for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
+                                                {
+                                                    var tempKey = outputKBMMapping.GetRealEventKey((uint)keys[j]);
+                                                    outputKBMHandler.PerformKeyRelease(tempKey);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    var d = ctrl.DS4Controllers[device];
+                                    var prolog = string.Format(Resources.UsingProfile,
+                                        (device + 1).ToString(), action.Details, $"{d.Battery}");
+
+                                    AppLogger.Instance.LogToGui(prolog, false);
+                                    await Instance.LoadTempProfile(device, action.Details, true, ctrl);
+                                    //LoadProfile(device, false, ctrl);
+
+                                    if (action.UTrigger.Count == 0 && !action.AutomaticUnTrigger)
+                                    {
+                                        // If the new profile has any actions with the same action key (controls) than this action (which doesn't have untrigger keys) then set status of those actions to wait for the release of the existing action key. 
+                                        var profileActionsNext = Instance.Config.ProfileActions[device];
+                                        for (int actionIndexNext = 0, profileListLenNext = profileActionsNext.Count;
+                                            actionIndexNext < profileListLenNext;
+                                            actionIndexNext++)
+                                        {
+                                            var actionnameNext = profileActionsNext[actionIndexNext];
+                                            var actionNext =
+                                                Instance.Config.GetProfileAction(device, actionnameNext);
+                                            var indexNext =
+                                                Instance.Config.GetProfileActionIndexOf(device,
+                                                    actionnameNext);
+
+                                            if (actionNext.Controls == action.Controls)
+                                                actionDone[indexNext].dev[device] = true;
+                                        }
+                                    }
+
+                                    return;
+                                }
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.Macro)
+                            {
+                                actionFound = true;
+                                if (!action.PressRelease)
+                                {
+                                    // Macro run when trigger keys are pressed down (the default behaviour)
+                                    if (!actionDone[index].dev[device])
+                                    {
+                                        var keyType = action.KeyType;
+                                        actionDone[index].dev[device] = true;
+                                        /*for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
+                                        {
+                                            DS4Controls dc = action.trigger[i];
+                                            resetToDefaultValue2(dc, MappedState, outputfieldMapping);
+                                        }
+                                        */
+
+                                        PlayMacro(device, macroControl, string.Empty, action.Macro, null,
+                                            DS4Controls.None, keyType, action, actionDone[index]);
+                                    }
+                                    else
+                                    {
+                                        if (!action.KeyType.HasFlag(DS4KeyType.RepeatMacro))
+                                            EndMacro(device, macroControl, action.Macro, DS4Controls.None);
+                                    }
+                                }
+                                else
+                                {
+                                    // Macro is run when trigger keys are released (optional behaviour of macro special action))
+                                    if (action.FirstTouch)
+                                    {
+                                        action.FirstTouch = false;
                                         if (!actionDone[index].dev[device])
                                         {
                                             var keyType = action.KeyType;
@@ -3340,508 +3325,479 @@ namespace DS4Windows
                                             */
 
                                             PlayMacro(device, macroControl, string.Empty, action.Macro, null,
-                                                DS4Controls.None, keyType, action, actionDone[index]);
-                                        }
-                                        else
-                                        {
-                                            if (!action.KeyType.HasFlag(DS4KeyType.RepeatMacro))
-                                                EndMacro(device, macroControl, action.Macro, DS4Controls.None);
+                                                DS4Controls.None, keyType, action);
                                         }
                                     }
                                     else
                                     {
-                                        // Macro is run when trigger keys are released (optional behaviour of macro special action))
-                                        if (action.FirstTouch)
-                                        {
-                                            action.FirstTouch = false;
-                                            if (!actionDone[index].dev[device])
-                                            {
-                                                var keyType = action.KeyType;
-                                                actionDone[index].dev[device] = true;
-                                                /*for (int i = 0, arlen = action.trigger.Count; i < arlen; i++)
-                                                {
-                                                    DS4Controls dc = action.trigger[i];
-                                                    resetToDefaultValue2(dc, MappedState, outputfieldMapping);
-                                                }
-                                                */
-
-                                                PlayMacro(device, macroControl, string.Empty, action.Macro, null,
-                                                    DS4Controls.None, keyType, action);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            action.FirstTouch = true;
-                                        }
+                                        action.FirstTouch = true;
                                     }
                                 }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.Key)
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.Key)
+                            {
+                                actionFound = true;
+
+                                if (uTriggerCount == 0 || uTriggerCount > 0 && untriggerindex[device] == -1 &&
+                                    !actionDone[index].dev[device])
                                 {
-                                    actionFound = true;
-
-                                    if (uTriggerCount == 0 || uTriggerCount > 0 && untriggerindex[device] == -1 &&
-                                        !actionDone[index].dev[device])
-                                    {
-                                        actionDone[index].dev[device] = true;
-                                        untriggerindex[device] = index;
-                                        ushort key;
-                                        ushort.TryParse(action.Details, out key);
-                                        if (uTriggerCount == 0)
-                                        {
-                                            SyntheticState.KeyPresses kp;
-                                            if (!deviceState[device].keyPresses.TryGetValue(key, out kp))
-                                            {
-                                                deviceState[device].keyPresses[key] =
-                                                    kp = new SyntheticState.KeyPresses();
-                                                deviceState[device].nativeKeyAlias[key] =
-                                                    (ushort)outputKBMMapping.GetRealEventKey(key);
-                                            }
-
-                                            if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
-                                                kp.current.scanCodeCount++;
-                                            else
-                                                kp.current.vkCount++;
-
-                                            kp.current.repeatCount++;
-                                        }
-                                        else if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
-                                        {
-                                            outputKBMHandler.PerformKeyPressAlt(key);
-                                        }
-                                        else
-                                        {
-                                            outputKBMHandler.PerformKeyPress(key);
-                                        }
-                                    }
-                                }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.DisconnectBT)
-                                {
-                                    actionFound = true;
-
-                                    var d = ctrl.DS4Controllers[device];
-                                    var synced = /*tempBool =*/ d.IsSynced();
-                                    if (synced && !d.IsCharging())
-                                    {
-                                        var deviceConn = d.GetConnectionType();
-                                        //bool exclusive = /*tempBool =*/ d.isExclusive();
-                                        if (deviceConn == ConnectionType.Bluetooth)
-                                        {
-                                            d.DisconnectBT();
-                                            ReleaseActionKeys(action, device);
-                                            return;
-                                        }
-
-                                        if (deviceConn == ConnectionType.SonyWirelessAdapter) action.PressRelease = true;
-                                    }
-                                }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.BatteryCheck)
-                                {
-                                    actionFound = true;
-
-                                    var dets = action.Details.Split('|');
-                                    if (dets.Length == 1)
-                                        dets = action.Details.Split(',');
-                                    if (bool.Parse(dets[1]) && !actionDone[index].dev[device])
-                                        AppLogger.Instance.LogToTray("Controller " + (device + 1) + ": " +
-                                                                     ctrl.GetDs4Battery(device), true);
-
-                                    if (bool.Parse(dets[2]))
-                                    {
-                                        var d = ctrl.DS4Controllers[device];
-                                        if (!actionDone[index].dev[device])
-                                        {
-                                            lastColor[device] = d.LightBarColor;
-                                            DS4LightBarV3.forcelight[device] = true;
-                                        }
-
-                                        var empty = new DS4Color(byte.Parse(dets[3]), byte.Parse(dets[4]),
-                                            byte.Parse(dets[5]));
-                                        var full = new DS4Color(byte.Parse(dets[6]), byte.Parse(dets[7]),
-                                            byte.Parse(dets[8]));
-                                        var trans = DS4LightBarV3.GetTransitionedColor(empty, full, d.Battery);
-                                        if (fadetimer[device] < 100)
-                                            DS4LightBarV3.forcedColor[device] =
-                                                DS4LightBarV3.GetTransitionedColor(lastColor[device], trans,
-                                                    fadetimer[device] += 2);
-                                    }
-
                                     actionDone[index].dev[device] = true;
+                                    untriggerindex[device] = index;
+                                    ushort key;
+                                    ushort.TryParse(action.Details, out key);
+                                    if (uTriggerCount == 0)
+                                    {
+                                        SyntheticState.KeyPresses kp;
+                                        if (!deviceState[device].keyPresses.TryGetValue(key, out kp))
+                                        {
+                                            deviceState[device].keyPresses[key] =
+                                                kp = new SyntheticState.KeyPresses();
+                                            deviceState[device].nativeKeyAlias[key] =
+                                                (ushort)outputKBMMapping.GetRealEventKey(key);
+                                        }
+
+                                        if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
+                                            kp.current.scanCodeCount++;
+                                        else
+                                            kp.current.vkCount++;
+
+                                        kp.current.repeatCount++;
+                                    }
+                                    else if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
+                                    {
+                                        outputKBMHandler.PerformKeyPressAlt(key);
+                                    }
+                                    else
+                                    {
+                                        outputKBMHandler.PerformKeyPress(key);
+                                    }
                                 }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate)
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.DisconnectBT)
+                            {
+                                actionFound = true;
+
+                                var d = ctrl.DS4Controllers[device];
+                                var synced = /*tempBool =*/ d.IsSynced();
+                                if (synced && !d.IsCharging())
                                 {
-                                    actionFound = true;
+                                    var deviceConn = d.GetConnectionType();
+                                    //bool exclusive = /*tempBool =*/ d.isExclusive();
+                                    if (deviceConn == ConnectionType.Bluetooth)
+                                    {
+                                        d.DisconnectBT();
+                                        ReleaseActionKeys(action, device);
+                                        return;
+                                    }
 
+                                    if (deviceConn == ConnectionType.SonyWirelessAdapter) action.PressRelease = true;
+                                }
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.BatteryCheck)
+                            {
+                                actionFound = true;
+
+                                var dets = action.Details.Split('|');
+                                if (dets.Length == 1)
+                                    dets = action.Details.Split(',');
+                                if (bool.Parse(dets[1]) && !actionDone[index].dev[device])
+                                    AppLogger.Instance.LogToTray("Controller " + (device + 1) + ": " +
+                                                                 ctrl.GetDs4Battery(device), true);
+
+                                if (bool.Parse(dets[2]))
+                                {
                                     var d = ctrl.DS4Controllers[device];
-                                    // If controller is not already in SASteeringWheelCalibration state then enable it now. If calibration is active then complete it (commit calibration values)
-                                    if (d.WheelRecalibrateActiveState == 0 && DateTime.UtcNow >
-                                        action.FirstTap + TimeSpan.FromMilliseconds(3000))
+                                    if (!actionDone[index].dev[device])
                                     {
-                                        action.FirstTap = DateTime.UtcNow;
-                                        d.WheelRecalibrateActiveState = 1; // Start calibration process
-                                    }
-                                    else if (d.WheelRecalibrateActiveState == 2 && DateTime.UtcNow >
-                                        action.FirstTap + TimeSpan.FromMilliseconds(3000))
-                                    {
-                                        action.FirstTap = DateTime.UtcNow;
-                                        d.WheelRecalibrateActiveState = 3; // Complete calibration process
+                                        lastColor[device] = d.LightBarColor;
+                                        DS4LightBarV3.forcelight[device] = true;
                                     }
 
+                                    var empty = new DS4Color(byte.Parse(dets[3]), byte.Parse(dets[4]),
+                                        byte.Parse(dets[5]));
+                                    var full = new DS4Color(byte.Parse(dets[6]), byte.Parse(dets[7]),
+                                        byte.Parse(dets[8]));
+                                    var trans = DS4LightBarV3.GetTransitionedColor(empty, full, d.Battery);
+                                    if (fadetimer[device] < 100)
+                                        DS4LightBarV3.forcedColor[device] =
+                                            DS4LightBarV3.GetTransitionedColor(lastColor[device], trans,
+                                                fadetimer[device] += 2);
+                                }
+
+                                actionDone[index].dev[device] = true;
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate)
+                            {
+                                actionFound = true;
+
+                                var d = ctrl.DS4Controllers[device];
+                                // If controller is not already in SASteeringWheelCalibration state then enable it now. If calibration is active then complete it (commit calibration values)
+                                if (d.WheelRecalibrateActiveState == 0 && DateTime.UtcNow >
+                                    action.FirstTap + TimeSpan.FromMilliseconds(3000))
+                                {
+                                    action.FirstTap = DateTime.UtcNow;
+                                    d.WheelRecalibrateActiveState = 1; // Start calibration process
+                                }
+                                else if (d.WheelRecalibrateActiveState == 2 && DateTime.UtcNow >
+                                    action.FirstTap + TimeSpan.FromMilliseconds(3000))
+                                {
+                                    action.FirstTap = DateTime.UtcNow;
+                                    d.WheelRecalibrateActiveState = 3; // Complete calibration process
+                                }
+
+                                actionDone[index].dev[device] = true;
+                            }
+                        }
+                        else
+                        {
+                            if (action.TypeId == SpecialActionV3.ActionTypeId.BatteryCheck)
+                            {
+                                actionFound = true;
+                                if (actionDone[index].dev[device])
+                                {
+                                    fadetimer[device] = 0;
+                                    /*if (prevFadetimer[device] == fadetimer[device])
+                                    {
+                                        prevFadetimer[device] = 0;
+                                        fadetimer[device] = 0;
+                                    }
+                                    else
+                                        prevFadetimer[device] = fadetimer[device];*/
+                                    DS4LightBarV3.forcelight[device] = false;
+                                    actionDone[index].dev[device] = false;
+                                }
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.DisconnectBT &&
+                                     action.PressRelease)
+                            {
+                                actionFound = true;
+                                var d = ctrl.DS4Controllers[device];
+                                var deviceConn = d.GetConnectionType();
+                                if (deviceConn == ConnectionType.SonyWirelessAdapter && d.IsSynced())
+                                    if (d.IsDs4Idle())
+                                    {
+                                        d.DisconnectDongle();
+                                        ReleaseActionKeys(action, device);
+                                        actionDone[index].dev[device] = false;
+                                        action.PressRelease = false;
+                                    }
+                            }
+                            else if (action.TypeId != SpecialActionV3.ActionTypeId.Key &&
+                                     action.TypeId != SpecialActionV3.ActionTypeId.XboxGameDVR &&
+                                     action.TypeId != SpecialActionV3.ActionTypeId.MultiAction)
+                            {
+                                // Ignore
+                                actionFound = true;
+                                actionDone[index].dev[device] = false;
+                            }
+                        }
+
+                        if (!actionFound)
+                        {
+                            if (uTriggerCount > 0 && utriggeractivated &&
+                                action.TypeId == SpecialActionV3.ActionTypeId.Key)
+                            {
+                                actionFound = true;
+
+                                if (untriggerindex[device] > -1 && !actionDone[index].dev[device])
+                                {
                                     actionDone[index].dev[device] = true;
+                                    untriggerindex[device] = -1;
+                                    ushort key;
+                                    ushort.TryParse(action.Details, out key);
+                                    if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
+                                        outputKBMHandler.PerformKeyReleaseAlt(key);
+                                    else
+                                        outputKBMHandler.PerformKeyRelease(key);
+                                }
+                            }
+                            else if (action.TypeId == SpecialActionV3.ActionTypeId.XboxGameDVR ||
+                                     action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
+                            {
+                                actionFound = true;
+
+                                bool tappedOnce = action.TappedOnce,
+                                    firstTouch = action.FirstTouch,
+                                    secondtouchbegin = action.SecondTouchBegin;
+                                //DateTime pastTime = action.pastTime, firstTap = action.firstTap,
+                                //    TimeofEnd = action.TimeofEnd;
+
+                                /*if (getCustomButton(device, action.trigger[0]) != X360Controls.Unbound)
+                                    getCustomButtons(device)[action.trigger[0]] = X360Controls.Unbound;
+                                if (getCustomMacro(device, action.trigger[0]) != "0")
+                                    getCustomMacros(device).Remove(action.trigger[0]);
+                                if (getCustomKey(device, action.trigger[0]) != 0)
+                                    getCustomMacros(device).Remove(action.trigger[0]);*/
+                                var dets = action.Details.Split(',');
+                                var d = ctrl.DS4Controllers[device];
+                                //cus
+
+                                var tempPrevState = d.GetPreviousStateReference();
+                                // Only create one instance of previous DS4StateFieldMapping in case more than one multi-action
+                                // button is assigned
+                                if (previousFieldMapping == null)
+                                {
+                                    previousFieldMapping = previousFieldMappings[device];
+                                    previousFieldMapping.PopulateFieldMapping(tempPrevState, eState, tp, true);
+                                    //previousFieldMapping = new DS4StateFieldMapping(tempPrevState, eState, tp, true);
+                                }
+
+                                var activeCur = GetBoolSpecialActionMapping(device, action.Trigger[0], cState,
+                                    eState, tp, fieldMapping);
+                                var activePrev = GetBoolSpecialActionMapping(device, action.Trigger[0],
+                                    tempPrevState, eState, tp, previousFieldMapping);
+                                if (activeCur && !activePrev)
+                                {
+                                    // pressed down
+                                    action.PastTime = DateTime.UtcNow;
+                                    if (action.PastTime <= action.FirstTap + TimeSpan.FromMilliseconds(150))
+                                    {
+                                        action.TappedOnce = tappedOnce = false;
+                                        action.SecondTouchBegin = secondtouchbegin = true;
+                                        //tappedOnce = false;
+                                        //secondtouchbegin = true;
+                                    }
+                                    else
+                                    {
+                                        action.FirstTouch = firstTouch = true;
+                                    }
+                                    //firstTouch = true;
+                                }
+                                else if (!activeCur && activePrev)
+                                {
+                                    // released
+                                    if (secondtouchbegin)
+                                    {
+                                        action.FirstTouch = firstTouch = false;
+                                        action.SecondTouchBegin = secondtouchbegin = false;
+                                        //firstTouch = false;
+                                        //secondtouchbegin = false;
+                                    }
+                                    else if (firstTouch)
+                                    {
+                                        action.FirstTouch = firstTouch = false;
+                                        //firstTouch = false;
+                                        if (DateTime.UtcNow <= action.PastTime + TimeSpan.FromMilliseconds(150) &&
+                                            !tappedOnce)
+                                        {
+                                            action.TappedOnce = tappedOnce = true;
+                                            //tappedOnce = true;
+                                            action.FirstTap = DateTime.UtcNow;
+                                            action.TimeOfEnd = DateTime.UtcNow;
+                                        }
+                                    }
+                                }
+
+                                var type = 0;
+                                var macro = "";
+                                if (tappedOnce) //single tap
+                                {
+                                    if (action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
+                                        macro = dets[0];
+                                    else if (int.TryParse(dets[0], out type))
+                                        switch (type)
+                                        {
+                                            case 0:
+                                                macro = "91/71/71/91";
+                                                break;
+                                            case 1:
+                                                macro = "91/164/82/82/164/91";
+                                                break;
+                                            case 2:
+                                                macro = "91/164/44/44/164/91";
+                                                break;
+                                            case 3:
+                                                macro = dets[3] + "/" + dets[3];
+                                                break;
+                                            case 4:
+                                                macro = "91/164/71/71/164/91";
+                                                break;
+                                        }
+
+                                    if (DateTime.UtcNow - action.TimeOfEnd > TimeSpan.FromMilliseconds(150))
+                                    {
+                                        if (macro != "")
+                                            PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
+                                                DS4KeyType.None);
+
+                                        tappedOnce = false;
+                                        action.TappedOnce = false;
+                                    }
+                                    //if it fails the method resets, and tries again with a new tester value (gives tap a delay so tap and hold can work)
+                                }
+                                else if (firstTouch && DateTime.UtcNow - action.PastTime >
+                                    TimeSpan.FromMilliseconds(500)) //helddown
+                                {
+                                    if (action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
+                                        macro = dets[1];
+                                    else if (int.TryParse(dets[1], out type))
+                                        switch (type)
+                                        {
+                                            case 0:
+                                                macro = "91/71/71/91";
+                                                break;
+                                            case 1:
+                                                macro = "91/164/82/82/164/91";
+                                                break;
+                                            case 2:
+                                                macro = "91/164/44/44/164/91";
+                                                break;
+                                            case 3:
+                                                macro = dets[3] + "/" + dets[3];
+                                                break;
+                                            case 4:
+                                                macro = "91/164/71/71/164/91";
+                                                break;
+                                        }
+
+                                    if (macro != "")
+                                        PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
+                                            DS4KeyType.None);
+
+                                    firstTouch = false;
+                                    action.FirstTouch = false;
+                                }
+                                else if (secondtouchbegin) //if double tap
+                                {
+                                    if (action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
+                                        macro = dets[2];
+                                    else if (int.TryParse(dets[2], out type))
+                                        switch (type)
+                                        {
+                                            case 0:
+                                                macro = "91/71/71/91";
+                                                break;
+                                            case 1:
+                                                macro = "91/164/82/82/164/91";
+                                                break;
+                                            case 2:
+                                                macro = "91/164/44/44/164/91";
+                                                break;
+                                            case 3:
+                                                macro = dets[3] + "/" + dets[3];
+                                                break;
+                                            case 4:
+                                                macro = "91/164/71/71/164/91";
+                                                break;
+                                        }
+
+                                    if (macro != "")
+                                        PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
+                                            DS4KeyType.None);
+
+                                    secondtouchbegin = false;
+                                    action.SecondTouchBegin = false;
                                 }
                             }
                             else
                             {
-                                if (action.TypeId == SpecialActionV3.ActionTypeId.BatteryCheck)
-                                {
-                                    actionFound = true;
-                                    if (actionDone[index].dev[device])
-                                    {
-                                        fadetimer[device] = 0;
-                                        /*if (prevFadetimer[device] == fadetimer[device])
-                                        {
-                                            prevFadetimer[device] = 0;
-                                            fadetimer[device] = 0;
-                                        }
-                                        else
-                                            prevFadetimer[device] = fadetimer[device];*/
-                                        DS4LightBarV3.forcelight[device] = false;
-                                        actionDone[index].dev[device] = false;
-                                    }
-                                }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.DisconnectBT &&
-                                         action.PressRelease)
-                                {
-                                    actionFound = true;
-                                    var d = ctrl.DS4Controllers[device];
-                                    var deviceConn = d.GetConnectionType();
-                                    if (deviceConn == ConnectionType.SonyWirelessAdapter && d.IsSynced())
-                                        if (d.IsDs4Idle())
-                                        {
-                                            d.DisconnectDongle();
-                                            ReleaseActionKeys(action, device);
-                                            actionDone[index].dev[device] = false;
-                                            action.PressRelease = false;
-                                        }
-                                }
-                                else if (action.TypeId != SpecialActionV3.ActionTypeId.Key &&
-                                         action.TypeId != SpecialActionV3.ActionTypeId.XboxGameDVR &&
-                                         action.TypeId != SpecialActionV3.ActionTypeId.MultiAction)
-                                {
-                                    // Ignore
-                                    actionFound = true;
-                                    actionDone[index].dev[device] = false;
-                                }
-                            }
-
-                            if (!actionFound)
-                            {
-                                if (uTriggerCount > 0 && utriggeractivated &&
-                                    action.TypeId == SpecialActionV3.ActionTypeId.Key)
-                                {
-                                    actionFound = true;
-
-                                    if (untriggerindex[device] > -1 && !actionDone[index].dev[device])
-                                    {
-                                        actionDone[index].dev[device] = true;
-                                        untriggerindex[device] = -1;
-                                        ushort key;
-                                        ushort.TryParse(action.Details, out key);
-                                        if (action.KeyType.HasFlag(DS4KeyType.ScanCode))
-                                            outputKBMHandler.PerformKeyReleaseAlt(key);
-                                        else
-                                            outputKBMHandler.PerformKeyRelease(key);
-                                    }
-                                }
-                                else if (action.TypeId == SpecialActionV3.ActionTypeId.XboxGameDVR ||
-                                         action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
-                                {
-                                    actionFound = true;
-
-                                    bool tappedOnce = action.TappedOnce,
-                                        firstTouch = action.FirstTouch,
-                                        secondtouchbegin = action.SecondTouchBegin;
-                                    //DateTime pastTime = action.pastTime, firstTap = action.firstTap,
-                                    //    TimeofEnd = action.TimeofEnd;
-
-                                    /*if (getCustomButton(device, action.trigger[0]) != X360Controls.Unbound)
-                                        getCustomButtons(device)[action.trigger[0]] = X360Controls.Unbound;
-                                    if (getCustomMacro(device, action.trigger[0]) != "0")
-                                        getCustomMacros(device).Remove(action.trigger[0]);
-                                    if (getCustomKey(device, action.trigger[0]) != 0)
-                                        getCustomMacros(device).Remove(action.trigger[0]);*/
-                                    var dets = action.Details.Split(',');
-                                    var d = ctrl.DS4Controllers[device];
-                                    //cus
-
-                                    var tempPrevState = d.GetPreviousStateReference();
-                                    // Only create one instance of previous DS4StateFieldMapping in case more than one multi-action
-                                    // button is assigned
-                                    if (previousFieldMapping == null)
-                                    {
-                                        previousFieldMapping = previousFieldMappings[device];
-                                        previousFieldMapping.PopulateFieldMapping(tempPrevState, eState, tp, true);
-                                        //previousFieldMapping = new DS4StateFieldMapping(tempPrevState, eState, tp, true);
-                                    }
-
-                                    var activeCur = GetBoolSpecialActionMapping(device, action.Trigger[0], cState,
-                                        eState, tp, fieldMapping);
-                                    var activePrev = GetBoolSpecialActionMapping(device, action.Trigger[0],
-                                        tempPrevState, eState, tp, previousFieldMapping);
-                                    if (activeCur && !activePrev)
-                                    {
-                                        // pressed down
-                                        action.PastTime = DateTime.UtcNow;
-                                        if (action.PastTime <= action.FirstTap + TimeSpan.FromMilliseconds(150))
-                                        {
-                                            action.TappedOnce = tappedOnce = false;
-                                            action.SecondTouchBegin = secondtouchbegin = true;
-                                            //tappedOnce = false;
-                                            //secondtouchbegin = true;
-                                        }
-                                        else
-                                        {
-                                            action.FirstTouch = firstTouch = true;
-                                        }
-                                        //firstTouch = true;
-                                    }
-                                    else if (!activeCur && activePrev)
-                                    {
-                                        // released
-                                        if (secondtouchbegin)
-                                        {
-                                            action.FirstTouch = firstTouch = false;
-                                            action.SecondTouchBegin = secondtouchbegin = false;
-                                            //firstTouch = false;
-                                            //secondtouchbegin = false;
-                                        }
-                                        else if (firstTouch)
-                                        {
-                                            action.FirstTouch = firstTouch = false;
-                                            //firstTouch = false;
-                                            if (DateTime.UtcNow <= action.PastTime + TimeSpan.FromMilliseconds(150) &&
-                                                !tappedOnce)
-                                            {
-                                                action.TappedOnce = tappedOnce = true;
-                                                //tappedOnce = true;
-                                                action.FirstTap = DateTime.UtcNow;
-                                                action.TimeOfEnd = DateTime.UtcNow;
-                                            }
-                                        }
-                                    }
-
-                                    var type = 0;
-                                    var macro = "";
-                                    if (tappedOnce) //single tap
-                                    {
-                                        if (action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
-                                            macro = dets[0];
-                                        else if (int.TryParse(dets[0], out type))
-                                            switch (type)
-                                            {
-                                                case 0:
-                                                    macro = "91/71/71/91";
-                                                    break;
-                                                case 1:
-                                                    macro = "91/164/82/82/164/91";
-                                                    break;
-                                                case 2:
-                                                    macro = "91/164/44/44/164/91";
-                                                    break;
-                                                case 3:
-                                                    macro = dets[3] + "/" + dets[3];
-                                                    break;
-                                                case 4:
-                                                    macro = "91/164/71/71/164/91";
-                                                    break;
-                                            }
-
-                                        if (DateTime.UtcNow - action.TimeOfEnd > TimeSpan.FromMilliseconds(150))
-                                        {
-                                            if (macro != "")
-                                                PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
-                                                    DS4KeyType.None);
-
-                                            tappedOnce = false;
-                                            action.TappedOnce = false;
-                                        }
-                                        //if it fails the method resets, and tries again with a new tester value (gives tap a delay so tap and hold can work)
-                                    }
-                                    else if (firstTouch && DateTime.UtcNow - action.PastTime >
-                                        TimeSpan.FromMilliseconds(500)) //helddown
-                                    {
-                                        if (action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
-                                            macro = dets[1];
-                                        else if (int.TryParse(dets[1], out type))
-                                            switch (type)
-                                            {
-                                                case 0:
-                                                    macro = "91/71/71/91";
-                                                    break;
-                                                case 1:
-                                                    macro = "91/164/82/82/164/91";
-                                                    break;
-                                                case 2:
-                                                    macro = "91/164/44/44/164/91";
-                                                    break;
-                                                case 3:
-                                                    macro = dets[3] + "/" + dets[3];
-                                                    break;
-                                                case 4:
-                                                    macro = "91/164/71/71/164/91";
-                                                    break;
-                                            }
-
-                                        if (macro != "")
-                                            PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
-                                                DS4KeyType.None);
-
-                                        firstTouch = false;
-                                        action.FirstTouch = false;
-                                    }
-                                    else if (secondtouchbegin) //if double tap
-                                    {
-                                        if (action.TypeId == SpecialActionV3.ActionTypeId.MultiAction)
-                                            macro = dets[2];
-                                        else if (int.TryParse(dets[2], out type))
-                                            switch (type)
-                                            {
-                                                case 0:
-                                                    macro = "91/71/71/91";
-                                                    break;
-                                                case 1:
-                                                    macro = "91/164/82/82/164/91";
-                                                    break;
-                                                case 2:
-                                                    macro = "91/164/44/44/164/91";
-                                                    break;
-                                                case 3:
-                                                    macro = dets[3] + "/" + dets[3];
-                                                    break;
-                                                case 4:
-                                                    macro = "91/164/71/71/164/91";
-                                                    break;
-                                            }
-
-                                        if (macro != "")
-                                            PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
-                                                DS4KeyType.None);
-
-                                        secondtouchbegin = false;
-                                        action.SecondTouchBegin = false;
-                                    }
-                                }
-                                else
-                                {
-                                    actionDone[index].dev[device] = false;
-                                }
+                                actionDone[index].dev[device] = false;
                             }
                         }
-                    }
-                }
-                catch
-                {
-                    return;
-                }
-
-                if (untriggeraction[device] != null)
-                {
-                    var action = untriggeraction[device];
-                    var index = untriggerindex[device];
-                    bool utriggeractivated;
-
-                    if (!action.AutomaticUnTrigger)
-                    {
-                        // Untrigger keys defined and auto-untrigger (=unload) profile option is NOT set. Unload a temporary profile only when specified untrigger keys have been triggered.
-                        utriggeractivated = true;
-
-                        //foreach (DS4Controls dc in action.uTrigger)
-                        for (int i = 0, uTrigLen = action.UTrigger.Count; i < uTrigLen; i++)
-                        {
-                            var dc = action.UTrigger[i];
-                            if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
-                            {
-                                utriggeractivated = false;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Untrigger as soon any of the defined regular trigger keys have been released. 
-                        utriggeractivated = false;
-
-                        for (int i = 0, trigLen = action.Trigger.Count; i < trigLen; i++)
-                        {
-                            var dc = action.Trigger[i];
-                            if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
-                            {
-                                utriggeractivated = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (utriggeractivated && action.TypeId == SpecialActionV3.ActionTypeId.Profile)
-                    {
-                        if (action.Controls == action.UControls &&
-                            !actionDone[index].dev[device] || //if trigger and end trigger are the same
-                            action.Controls != action.UControls)
-                            if (UseTempProfiles[device])
-                            {
-                                //foreach (DS4Controls dc in action.uTrigger)
-                                for (int i = 0, arlen = action.UTrigger.Count; i < arlen; i++)
-                                {
-                                    var dc = action.UTrigger[i];
-                                    actionDone[index].dev[device] = true;
-                                    var dcs = Instance.Config.GetDs4ControllerSetting(device, dc);
-                                    if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
-                                    {
-                                        if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
-                                        {
-                                            outputKBMHandler.PerformKeyRelease((ushort)dcs.ActionData.ActionKey);
-                                        }
-                                        else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
-                                        {
-                                            var keys = dcs.ActionData.ActionMacro;
-                                            for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
-                                                outputKBMHandler.PerformKeyRelease((ushort)keys[j]);
-                                        }
-                                    }
-                                }
-
-                                var profileName = untriggeraction[device].PreviousProfileName;
-                                var d = ctrl.DS4Controllers[device];
-                                var prolog = string.Format(Resources.UsingProfile,
-                                    (device + 1).ToString(),
-                                    profileName == string.Empty
-                                        ? Instance.Config.ProfilePath[device]
-                                        : profileName, $"{d.Battery}");
-
-                                AppLogger.Instance.LogToGui(prolog, false);
-
-                                untriggeraction[device] = null;
-
-                                if (profileName == string.Empty)
-                                    await Instance.LoadProfile(device, false,
-                                        ctrl); // Previous profile was a regular default profile of a controller
-                                else
-                                    await Instance.LoadTempProfile(device, profileName, true,
-                                        ctrl); // Previous profile was a temporary profile, so re-load it as a temp profile
-                            }
-                    }
-                    else
-                    {
-                        actionDone[index].dev[device] = false;
                     }
                 }
             }
+            catch
+            {
+                return;
+            }
+
+            if (untriggeraction[device] != null)
+            {
+                var action = untriggeraction[device];
+                var index = untriggerindex[device];
+                bool utriggeractivated;
+
+                if (!action.AutomaticUnTrigger)
+                {
+                    // Untrigger keys defined and auto-untrigger (=unload) profile option is NOT set. Unload a temporary profile only when specified untrigger keys have been triggered.
+                    utriggeractivated = true;
+
+                    //foreach (DS4Controls dc in action.uTrigger)
+                    for (int i = 0, uTrigLen = action.UTrigger.Count; i < uTrigLen; i++)
+                    {
+                        var dc = action.UTrigger[i];
+                        if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                        {
+                            utriggeractivated = false;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // Untrigger as soon any of the defined regular trigger keys have been released. 
+                    utriggeractivated = false;
+
+                    for (int i = 0, trigLen = action.Trigger.Count; i < trigLen; i++)
+                    {
+                        var dc = action.Trigger[i];
+                        if (!GetBoolSpecialActionMapping(device, dc, cState, eState, tp, fieldMapping))
+                        {
+                            utriggeractivated = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (utriggeractivated && action.TypeId == SpecialActionV3.ActionTypeId.Profile)
+                {
+                    if (action.Controls == action.UControls &&
+                        !actionDone[index].dev[device] || //if trigger and end trigger are the same
+                        action.Controls != action.UControls)
+                        if (UseTempProfiles[device])
+                        {
+                            //foreach (DS4Controls dc in action.uTrigger)
+                            for (int i = 0, arlen = action.UTrigger.Count; i < arlen; i++)
+                            {
+                                var dc = action.UTrigger[i];
+                                actionDone[index].dev[device] = true;
+                                var dcs = Instance.Config.GetDs4ControllerSetting(device, dc);
+                                if (dcs.ControlActionType != DS4ControlSettingsV3.ActionType.Default)
+                                {
+                                    if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Key)
+                                    {
+                                        outputKBMHandler.PerformKeyRelease((ushort)dcs.ActionData.ActionKey);
+                                    }
+                                    else if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Macro)
+                                    {
+                                        var keys = dcs.ActionData.ActionMacro;
+                                        for (int j = 0, keysLen = keys.Length; j < keysLen; j++)
+                                            outputKBMHandler.PerformKeyRelease((ushort)keys[j]);
+                                    }
+                                }
+                            }
+
+                            var profileName = untriggeraction[device].PreviousProfileName;
+                            var d = ctrl.DS4Controllers[device];
+                            var prolog = string.Format(Resources.UsingProfile,
+                                (device + 1).ToString(),
+                                profileName == string.Empty
+                                    ? Instance.Config.ProfilePath[device]
+                                    : profileName, $"{d.Battery}");
+
+                            AppLogger.Instance.LogToGui(prolog, false);
+
+                            untriggeraction[device] = null;
+
+                            if (profileName == string.Empty)
+                                await Instance.LoadProfile(device, false,
+                                    ctrl); // Previous profile was a regular default profile of a controller
+                            else
+                                await Instance.LoadTempProfile(device, profileName, true,
+                                    ctrl); // Previous profile was a temporary profile, so re-load it as a temp profile
+                        }
+                }
+                else
+                {
+                    actionDone[index].dev[device] = false;
+                }
+            }
+
         }
 
         private static void ReleaseActionKeys(SpecialActionV3 action, int device)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(ReleaseActionKeys)).StartActive(true);
-
-
             //foreach (DS4Controls dc in action.trigger)
             for (int i = 0, arlen = action.Trigger.Count; i < arlen; i++)
             {
@@ -3887,8 +3843,8 @@ namespace DS4Windows
                             actionDoneState));
             }
             else
-                // Run macro as "fire and forget" background task. No need to wait for completion of any of the other macros. 
-                // If the same trigger macro is re-launched while previous macro is still running then the order of parallel macros is not guaranteed.
+            // Run macro as "fire and forget" background task. No need to wait for completion of any of the other macros. 
+            // If the same trigger macro is re-launched while previous macro is still running then the order of parallel macros is not guaranteed.
             {
                 Task.Factory.StartNew(() => PlayMacroTask(device, macroControl, macroStr, macroLst, macroArr, control,
                     keyType, action, actionDoneState));
@@ -3899,10 +3855,6 @@ namespace DS4Windows
         private static void PlayMacroTask(int device, bool[] macrocontrol, string macroStr, List<int> macroLst,
             int[] macroArr, DS4Controls control, DS4KeyType keyType, SpecialActionV3 action, ActionState actionDoneState)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(PlayMacroTask)}")
-                .StartActive(true);
-
             if (!string.IsNullOrEmpty(macroStr))
             {
                 string[] skeys;
@@ -3994,10 +3946,6 @@ namespace DS4Windows
         private static bool PlayMacroCodeValue(int device, bool[] macrocontrol, DS4KeyType keyType, int macroCodeValue,
             bool[] keydown)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(PlayMacroCodeValue)}")
-                .StartActive(true);
-
             var doDelayOnCaller = false;
             if (macroCodeValue >= 261 && macroCodeValue <= DS4ControlSettingsV3.MaxMacroValue)
             {
@@ -4193,10 +4141,6 @@ namespace DS4Windows
         private static void GetMouseWheelMapping(int device, DS4Controls control, DS4State cState,
             DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool down)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetMouseWheelMapping)}")
-                .StartActive(true);
-
             var now = DateTime.UtcNow;
             if (now >= oldnow + TimeSpan.FromMilliseconds(10) && !pressagain)
             {
@@ -4227,10 +4171,6 @@ namespace DS4Windows
         private static double GetMouseMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
             DS4StateFieldMapping fieldMapping, int mnum, ControlService ctrl)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetMouseMapping)}")
-                .StartActive(true);
-
             var deadzoneL = 0;
             var deadzoneR = 0;
             if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).LSModInfo.DeadZone == 0)
@@ -4279,133 +4219,133 @@ namespace DS4Windows
                 switch (control)
                 {
                     case DS4Controls.LXNeg:
-                    {
-                        if (cState.LX < 128 - deadzoneL)
                         {
-                            var diff = -(cState.LX - 128 - deadzoneL) / (double)(0 - 128 - deadzoneL);
-                            //tempMouseOffsetX = Math.Abs(Math.Cos(cState.LSAngleRad)) * MOUSESTICKOFFSET;
-                            //tempMouseOffsetX = MOUSESTICKOFFSET;
-                            tempMouseOffsetX = cState.LXUnit * mouseOffset;
-                            value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
-                                    tempMouseOffsetX * -1.0 * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = -(cState.LX - 127 - deadzoneL) / 2550d * speed;
-                        }
+                            if (cState.LX < 128 - deadzoneL)
+                            {
+                                var diff = -(cState.LX - 128 - deadzoneL) / (double)(0 - 128 - deadzoneL);
+                                //tempMouseOffsetX = Math.Abs(Math.Cos(cState.LSAngleRad)) * MOUSESTICKOFFSET;
+                                //tempMouseOffsetX = MOUSESTICKOFFSET;
+                                tempMouseOffsetX = cState.LXUnit * mouseOffset;
+                                value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
+                                        tempMouseOffsetX * -1.0 * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = -(cState.LX - 127 - deadzoneL) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.LXPos:
-                    {
-                        if (cState.LX > 128 + deadzoneL)
                         {
-                            var diff = (cState.LX - 128 + deadzoneL) / (double)(255 - 128 + deadzoneL);
-                            tempMouseOffsetX = cState.LXUnit * mouseOffset;
-                            //tempMouseOffsetX = Math.Abs(Math.Cos(cState.LSAngleRad)) * MOUSESTICKOFFSET;
-                            //tempMouseOffsetX = MOUSESTICKOFFSET;
-                            value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
-                                    tempMouseOffsetX * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = (cState.LX - 127 + deadzoneL) / 2550d * speed;
-                        }
+                            if (cState.LX > 128 + deadzoneL)
+                            {
+                                var diff = (cState.LX - 128 + deadzoneL) / (double)(255 - 128 + deadzoneL);
+                                tempMouseOffsetX = cState.LXUnit * mouseOffset;
+                                //tempMouseOffsetX = Math.Abs(Math.Cos(cState.LSAngleRad)) * MOUSESTICKOFFSET;
+                                //tempMouseOffsetX = MOUSESTICKOFFSET;
+                                value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
+                                        tempMouseOffsetX * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = (cState.LX - 127 + deadzoneL) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.RXNeg:
-                    {
-                        if (cState.RX < 128 - deadzoneR)
                         {
-                            var diff = -(cState.RX - 128 - deadzoneR) / (double)(0 - 128 - deadzoneR);
-                            tempMouseOffsetX = cState.RXUnit * mouseOffset;
-                            //tempMouseOffsetX = MOUSESTICKOFFSET;
-                            //tempMouseOffsetX = Math.Abs(Math.Cos(cState.RSAngleRad)) * MOUSESTICKOFFSET;
-                            value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
-                                    tempMouseOffsetX * -1.0 * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = -(cState.RX - 127 - deadzoneR) / 2550d * speed;
-                        }
+                            if (cState.RX < 128 - deadzoneR)
+                            {
+                                var diff = -(cState.RX - 128 - deadzoneR) / (double)(0 - 128 - deadzoneR);
+                                tempMouseOffsetX = cState.RXUnit * mouseOffset;
+                                //tempMouseOffsetX = MOUSESTICKOFFSET;
+                                //tempMouseOffsetX = Math.Abs(Math.Cos(cState.RSAngleRad)) * MOUSESTICKOFFSET;
+                                value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
+                                        tempMouseOffsetX * -1.0 * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = -(cState.RX - 127 - deadzoneR) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.RXPos:
-                    {
-                        if (cState.RX > 128 + deadzoneR)
                         {
-                            var diff = (cState.RX - 128 + deadzoneR) / (double)(255 - 128 + deadzoneR);
-                            tempMouseOffsetX = cState.RXUnit * mouseOffset;
-                            //tempMouseOffsetX = MOUSESTICKOFFSET;
-                            //tempMouseOffsetX = Math.Abs(Math.Cos(cState.RSAngleRad)) * MOUSESTICKOFFSET;
-                            value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
-                                    tempMouseOffsetX * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = (cState.RX - 127 + deadzoneR) / 2550d * speed;
-                        }
+                            if (cState.RX > 128 + deadzoneR)
+                            {
+                                var diff = (cState.RX - 128 + deadzoneR) / (double)(255 - 128 + deadzoneR);
+                                tempMouseOffsetX = cState.RXUnit * mouseOffset;
+                                //tempMouseOffsetX = MOUSESTICKOFFSET;
+                                //tempMouseOffsetX = Math.Abs(Math.Cos(cState.RSAngleRad)) * MOUSESTICKOFFSET;
+                                value = (mouseVelocity - tempMouseOffsetX) * timeDelta * diff +
+                                        tempMouseOffsetX * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = (cState.RX - 127 + deadzoneR) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.LYNeg:
-                    {
-                        if (cState.LY < 128 - deadzoneL)
                         {
-                            var diff = -(cState.LY - 128 - deadzoneL) / (double)(0 - 128 - deadzoneL);
-                            tempMouseOffsetY = cState.LYUnit * mouseOffset;
-                            //tempMouseOffsetY = MOUSESTICKOFFSET;
-                            //tempMouseOffsetY = Math.Abs(Math.Sin(cState.LSAngleRad)) * MOUSESTICKOFFSET;
-                            value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
-                                    tempMouseOffsetY * -1.0 * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = -(cState.LY - 127 - deadzoneL) / 2550d * speed;
-                        }
+                            if (cState.LY < 128 - deadzoneL)
+                            {
+                                var diff = -(cState.LY - 128 - deadzoneL) / (double)(0 - 128 - deadzoneL);
+                                tempMouseOffsetY = cState.LYUnit * mouseOffset;
+                                //tempMouseOffsetY = MOUSESTICKOFFSET;
+                                //tempMouseOffsetY = Math.Abs(Math.Sin(cState.LSAngleRad)) * MOUSESTICKOFFSET;
+                                value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
+                                        tempMouseOffsetY * -1.0 * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = -(cState.LY - 127 - deadzoneL) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.LYPos:
-                    {
-                        if (cState.LY > 128 + deadzoneL)
                         {
-                            var diff = (cState.LY - 128 + deadzoneL) / (double)(255 - 128 + deadzoneL);
-                            tempMouseOffsetY = cState.LYUnit * mouseOffset;
-                            //tempMouseOffsetY = MOUSESTICKOFFSET;
-                            //tempMouseOffsetY = Math.Abs(Math.Sin(cState.LSAngleRad)) * MOUSESTICKOFFSET;
-                            value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
-                                    tempMouseOffsetY * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = (cState.LY - 127 + deadzoneL) / 2550d * speed;
-                        }
+                            if (cState.LY > 128 + deadzoneL)
+                            {
+                                var diff = (cState.LY - 128 + deadzoneL) / (double)(255 - 128 + deadzoneL);
+                                tempMouseOffsetY = cState.LYUnit * mouseOffset;
+                                //tempMouseOffsetY = MOUSESTICKOFFSET;
+                                //tempMouseOffsetY = Math.Abs(Math.Sin(cState.LSAngleRad)) * MOUSESTICKOFFSET;
+                                value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
+                                        tempMouseOffsetY * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = (cState.LY - 127 + deadzoneL) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.RYNeg:
-                    {
-                        if (cState.RY < 128 - deadzoneR)
                         {
-                            var diff = -(cState.RY - 128 - deadzoneR) / (double)(0 - 128 - deadzoneR);
-                            tempMouseOffsetY = cState.RYUnit * mouseOffset;
-                            //tempMouseOffsetY = MOUSESTICKOFFSET;
-                            //tempMouseOffsetY = Math.Abs(Math.Sin(cState.RSAngleRad)) * MOUSESTICKOFFSET;
-                            value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
-                                    tempMouseOffsetY * -1.0 * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = -(cState.RY - 127 - deadzoneR) / 2550d * speed;
-                        }
+                            if (cState.RY < 128 - deadzoneR)
+                            {
+                                var diff = -(cState.RY - 128 - deadzoneR) / (double)(0 - 128 - deadzoneR);
+                                tempMouseOffsetY = cState.RYUnit * mouseOffset;
+                                //tempMouseOffsetY = MOUSESTICKOFFSET;
+                                //tempMouseOffsetY = Math.Abs(Math.Sin(cState.RSAngleRad)) * MOUSESTICKOFFSET;
+                                value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
+                                        tempMouseOffsetY * -1.0 * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = -(cState.RY - 127 - deadzoneR) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.RYPos:
-                    {
-                        if (cState.RY > 128 + deadzoneR)
                         {
-                            var diff = (cState.RY - 128 + deadzoneR) / (double)(255 - 128 + deadzoneR);
-                            tempMouseOffsetY = cState.RYUnit * mouseOffset;
-                            //tempMouseOffsetY = MOUSESTICKOFFSET;
-                            //tempMouseOffsetY = Math.Abs(Math.Sin(cState.RSAngleRad)) * MOUSESTICKOFFSET;
-                            value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
-                                    tempMouseOffsetY * timeDelta;
-                            //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
-                            //value = (cState.RY - 127 + deadzoneR) / 2550d * speed;
-                        }
+                            if (cState.RY > 128 + deadzoneR)
+                            {
+                                var diff = (cState.RY - 128 + deadzoneR) / (double)(255 - 128 + deadzoneR);
+                                tempMouseOffsetY = cState.RYUnit * mouseOffset;
+                                //tempMouseOffsetY = MOUSESTICKOFFSET;
+                                //tempMouseOffsetY = Math.Abs(Math.Sin(cState.RSAngleRad)) * MOUSESTICKOFFSET;
+                                value = (mouseVelocity - tempMouseOffsetY) * timeDelta * diff +
+                                        tempMouseOffsetY * timeDelta;
+                                //value = diff * MOUSESPEEDFACTOR * (timeElapsed * 0.001) * speed;
+                                //value = (cState.RY - 127 + deadzoneR) / 2550d * speed;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
             else if (controlType == DS4StateFieldMapping.ControlType.Trigger)
@@ -4422,33 +4362,33 @@ namespace DS4Windows
                 switch (control)
                 {
                     case DS4Controls.GyroXPos:
-                    {
-                        var gyroX = fieldMapping.gryodirs[controlNum];
-                        value = (byte)(gyroX > 0 ? Math.Pow(root + speed / divide, gyroX) : 0);
-                        if (verticalDir) value *= mouseVerticalScale;
-                        break;
-                    }
+                        {
+                            var gyroX = fieldMapping.gryodirs[controlNum];
+                            value = (byte)(gyroX > 0 ? Math.Pow(root + speed / divide, gyroX) : 0);
+                            if (verticalDir) value *= mouseVerticalScale;
+                            break;
+                        }
                     case DS4Controls.GyroXNeg:
-                    {
-                        var gyroX = fieldMapping.gryodirs[controlNum];
-                        value = (byte)(gyroX < 0 ? Math.Pow(root + speed / divide, -gyroX) : 0);
-                        if (verticalDir) value *= mouseVerticalScale;
-                        break;
-                    }
+                        {
+                            var gyroX = fieldMapping.gryodirs[controlNum];
+                            value = (byte)(gyroX < 0 ? Math.Pow(root + speed / divide, -gyroX) : 0);
+                            if (verticalDir) value *= mouseVerticalScale;
+                            break;
+                        }
                     case DS4Controls.GyroZPos:
-                    {
-                        var gyroZ = fieldMapping.gryodirs[controlNum];
-                        value = (byte)(gyroZ > 0 ? Math.Pow(root + speed / divide, gyroZ) : 0);
-                        if (verticalDir) value *= mouseVerticalScale;
-                        break;
-                    }
+                        {
+                            var gyroZ = fieldMapping.gryodirs[controlNum];
+                            value = (byte)(gyroZ > 0 ? Math.Pow(root + speed / divide, gyroZ) : 0);
+                            if (verticalDir) value *= mouseVerticalScale;
+                            break;
+                        }
                     case DS4Controls.GyroZNeg:
-                    {
-                        var gyroZ = fieldMapping.gryodirs[controlNum];
-                        value = (byte)(gyroZ < 0 ? Math.Pow(root + speed / divide, -gyroZ) : 0);
-                        if (verticalDir) value *= mouseVerticalScale;
-                        break;
-                    }
+                        {
+                            var gyroZ = fieldMapping.gryodirs[controlNum];
+                            value = (byte)(gyroZ < 0 ? Math.Pow(root + speed / divide, -gyroZ) : 0);
+                            if (verticalDir) value *= mouseVerticalScale;
+                            break;
+                        }
                 }
             }
 
@@ -4478,10 +4418,6 @@ namespace DS4Windows
         private static void CalculateFinalMouseMovement(ref double rawMouseX, ref double rawMouseY,
             out int mouseX, out int mouseY)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(CalculateFinalMouseMovement)}")
-                .StartActive(true);
-
             if (rawMouseX > 0.0 && horizontalRemainder > 0.0 || rawMouseX < 0.0 && horizontalRemainder < 0.0)
                 rawMouseX += horizontalRemainder;
             else
@@ -4535,10 +4471,6 @@ namespace DS4Windows
             Mouse tp,
             DS4StateFieldMapping fieldMap)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetByteMapping2)}")
-                .StartActive(true);
-
             byte result = 0;
 
             var controlNum = (int)control;
@@ -4589,29 +4521,29 @@ namespace DS4Windows
                 switch (control)
                 {
                     case DS4Controls.GyroXPos:
-                    {
-                        var gyroX = fieldMap.gryodirs[controlNum];
-                        result = (byte)(saControls ? Math.Min(255, gyroX * 2) : 0);
-                        break;
-                    }
+                        {
+                            var gyroX = fieldMap.gryodirs[controlNum];
+                            result = (byte)(saControls ? Math.Min(255, gyroX * 2) : 0);
+                            break;
+                        }
                     case DS4Controls.GyroXNeg:
-                    {
-                        var gyroX = fieldMap.gryodirs[controlNum];
-                        result = (byte)(saControls ? Math.Min(255, -gyroX * 2) : 0);
-                        break;
-                    }
+                        {
+                            var gyroX = fieldMap.gryodirs[controlNum];
+                            result = (byte)(saControls ? Math.Min(255, -gyroX * 2) : 0);
+                            break;
+                        }
                     case DS4Controls.GyroZPos:
-                    {
-                        var gyroZ = fieldMap.gryodirs[controlNum];
-                        result = (byte)(saControls ? Math.Min(255, gyroZ * 2) : 0);
-                        break;
-                    }
+                        {
+                            var gyroZ = fieldMap.gryodirs[controlNum];
+                            result = (byte)(saControls ? Math.Min(255, gyroZ * 2) : 0);
+                            break;
+                        }
                     case DS4Controls.GyroZNeg:
-                    {
-                        var gyroZ = fieldMap.gryodirs[controlNum];
-                        result = (byte)(saControls ? Math.Min(255, -gyroZ * 2) : 0);
-                        break;
-                    }
+                        {
+                            var gyroZ = fieldMap.gryodirs[controlNum];
+                            result = (byte)(saControls ? Math.Min(255, -gyroZ * 2) : 0);
+                            break;
+                        }
                 }
             }
 
@@ -4622,10 +4554,6 @@ namespace DS4Windows
         public static bool GetBoolMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
             Mouse tp)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetBoolMapping)}")
-                .StartActive(true);
-
             var result = false;
 
             if (control >= DS4Controls.Square && control <= DS4Controls.Cross)
@@ -4808,10 +4736,6 @@ namespace DS4Windows
         private static bool GetBoolMapping2(int device, DS4Controls control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetBoolMapping2)}")
-                .StartActive(true);
-
             var result = false;
 
             var controlNum = (int)control;
@@ -4885,10 +4809,6 @@ namespace DS4Windows
         private static bool GetBoolSpecialActionMapping(int device, DS4Controls control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetBoolSpecialActionMapping)}")
-                .StartActive(true);
-
             var result = false;
 
             var controlNum = (int)control;
@@ -4962,10 +4882,6 @@ namespace DS4Windows
         private static bool GetBoolActionMapping2(int device, DS4Controls control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool analog = false)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetBoolActionMapping2)}")
-                .StartActive(true);
-
             var result = false;
 
             var controlNum = (int)control;
@@ -4979,53 +4895,53 @@ namespace DS4Windows
                 switch (control)
                 {
                     case DS4Controls.LXNeg:
-                    {
-                        var angle = cState.LSAngle;
-                        result = cState.LX < 128 && angle >= 112.5 && angle <= 247.5;
-                        break;
-                    }
+                        {
+                            var angle = cState.LSAngle;
+                            result = cState.LX < 128 && angle >= 112.5 && angle <= 247.5;
+                            break;
+                        }
                     case DS4Controls.LYNeg:
-                    {
-                        var angle = cState.LSAngle;
-                        result = cState.LY < 128 && angle >= 22.5 && angle <= 157.5;
-                        break;
-                    }
+                        {
+                            var angle = cState.LSAngle;
+                            result = cState.LY < 128 && angle >= 22.5 && angle <= 157.5;
+                            break;
+                        }
                     case DS4Controls.RXNeg:
-                    {
-                        var angle = cState.RSAngle;
-                        result = cState.RX < 128 && angle >= 112.5 && angle <= 247.5;
-                        break;
-                    }
+                        {
+                            var angle = cState.RSAngle;
+                            result = cState.RX < 128 && angle >= 112.5 && angle <= 247.5;
+                            break;
+                        }
                     case DS4Controls.RYNeg:
-                    {
-                        var angle = cState.RSAngle;
-                        result = cState.RY < 128 && angle >= 22.5 && angle <= 157.5;
-                        break;
-                    }
+                        {
+                            var angle = cState.RSAngle;
+                            result = cState.RY < 128 && angle >= 22.5 && angle <= 157.5;
+                            break;
+                        }
                     case DS4Controls.LXPos:
-                    {
-                        var angle = cState.LSAngle;
-                        result = cState.LX > 128 && (angle <= 67.5 || angle >= 292.5);
-                        break;
-                    }
+                        {
+                            var angle = cState.LSAngle;
+                            result = cState.LX > 128 && (angle <= 67.5 || angle >= 292.5);
+                            break;
+                        }
                     case DS4Controls.LYPos:
-                    {
-                        var angle = cState.LSAngle;
-                        result = cState.LY > 128 && angle >= 202.5 && angle <= 337.5;
-                        break;
-                    }
+                        {
+                            var angle = cState.LSAngle;
+                            result = cState.LY > 128 && angle >= 202.5 && angle <= 337.5;
+                            break;
+                        }
                     case DS4Controls.RXPos:
-                    {
-                        var angle = cState.RSAngle;
-                        result = cState.RX > 128 && (angle <= 67.5 || angle >= 292.5);
-                        break;
-                    }
+                        {
+                            var angle = cState.RSAngle;
+                            result = cState.RX > 128 && (angle <= 67.5 || angle >= 292.5);
+                            break;
+                        }
                     case DS4Controls.RYPos:
-                    {
-                        var angle = cState.RSAngle;
-                        result = cState.RY > 128 && angle >= 202.5 && angle <= 337.5;
-                        break;
-                    }
+                        {
+                            var angle = cState.RSAngle;
+                            result = cState.RY > 128 && angle >= 202.5 && angle <= 337.5;
+                            break;
+                        }
                 }
             }
             else if (controlType == DS4StateFieldMapping.ControlType.Trigger)
@@ -5101,10 +5017,6 @@ namespace DS4Windows
         private static byte GetXYAxisMapping2(int device, DS4Controls control, DS4State cState,
             DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool alt = false)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetXYAxisMapping2)}")
-                .StartActive(true);
-
             const byte falseVal = 128;
             byte result = 0;
             byte trueVal = 0;
@@ -5172,61 +5084,61 @@ namespace DS4Windows
                 switch (control)
                 {
                     case DS4Controls.GyroXPos:
-                    {
-                        if (saControls && fieldMap.gryodirs[controlNum] > 0)
                         {
-                            if (alt) result = (byte)Math.Min(255, 128 + fieldMap.gryodirs[controlNum]);
-                            else result = (byte)Math.Max(0, 128 - fieldMap.gryodirs[controlNum]);
-                        }
-                        else
-                        {
-                            result = falseVal;
-                        }
+                            if (saControls && fieldMap.gryodirs[controlNum] > 0)
+                            {
+                                if (alt) result = (byte)Math.Min(255, 128 + fieldMap.gryodirs[controlNum]);
+                                else result = (byte)Math.Max(0, 128 - fieldMap.gryodirs[controlNum]);
+                            }
+                            else
+                            {
+                                result = falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.GyroXNeg:
-                    {
-                        if (saControls && fieldMap.gryodirs[controlNum] < 0)
                         {
-                            if (alt) result = (byte)Math.Min(255, 128 + -fieldMap.gryodirs[controlNum]);
-                            else result = (byte)Math.Max(0, 128 - -fieldMap.gryodirs[controlNum]);
-                        }
-                        else
-                        {
-                            result = falseVal;
-                        }
+                            if (saControls && fieldMap.gryodirs[controlNum] < 0)
+                            {
+                                if (alt) result = (byte)Math.Min(255, 128 + -fieldMap.gryodirs[controlNum]);
+                                else result = (byte)Math.Max(0, 128 - -fieldMap.gryodirs[controlNum]);
+                            }
+                            else
+                            {
+                                result = falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.GyroZPos:
-                    {
-                        if (saControls && fieldMap.gryodirs[controlNum] > 0)
                         {
-                            if (alt) result = (byte)Math.Min(255, 128 + fieldMap.gryodirs[controlNum]);
-                            else result = (byte)Math.Max(0, 128 - fieldMap.gryodirs[controlNum]);
-                        }
-                        else
-                        {
-                            return falseVal;
-                        }
+                            if (saControls && fieldMap.gryodirs[controlNum] > 0)
+                            {
+                                if (alt) result = (byte)Math.Min(255, 128 + fieldMap.gryodirs[controlNum]);
+                                else result = (byte)Math.Max(0, 128 - fieldMap.gryodirs[controlNum]);
+                            }
+                            else
+                            {
+                                return falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.GyroZNeg:
-                    {
-                        if (saControls && fieldMap.gryodirs[controlNum] < 0)
                         {
-                            if (alt) result = (byte)Math.Min(255, 128 + -fieldMap.gryodirs[controlNum]);
-                            else result = (byte)Math.Max(0, 128 - -fieldMap.gryodirs[controlNum]);
-                        }
-                        else
-                        {
-                            result = falseVal;
-                        }
+                            if (saControls && fieldMap.gryodirs[controlNum] < 0)
+                            {
+                                if (alt) result = (byte)Math.Min(255, 128 + -fieldMap.gryodirs[controlNum]);
+                                else result = (byte)Math.Max(0, 128 - -fieldMap.gryodirs[controlNum]);
+                            }
+                            else
+                            {
+                                result = falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
 
@@ -5237,10 +5149,6 @@ namespace DS4Windows
         public static byte GetXYAxisMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
             Mouse tp, bool alt = false)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(GetXYAxisMapping)}")
-                .StartActive(true);
-
             byte result = 0;
             byte trueVal = 0;
             byte falseVal = 127;
@@ -5397,74 +5305,74 @@ namespace DS4Windows
                 switch (control)
                 {
                     case DS4Controls.GyroXPos:
-                    {
-                        if (saControls && -eState.AccelX > SXD * 10)
                         {
-                            if (alt)
-                                result = (byte)Math.Min(255, 127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * -eState.AccelX);
-                            else result = (byte)Math.Max(0, 127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * -eState.AccelX);
-                        }
-                        else
-                        {
-                            result = falseVal;
-                        }
+                            if (saControls && -eState.AccelX > SXD * 10)
+                            {
+                                if (alt)
+                                    result = (byte)Math.Min(255, 127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * -eState.AccelX);
+                                else result = (byte)Math.Max(0, 127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * -eState.AccelX);
+                            }
+                            else
+                            {
+                                result = falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.GyroXNeg:
-                    {
-                        if (saControls && -eState.AccelX < -SXD * 10)
                         {
-                            if (alt) result = (byte)Math.Min(255, 127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * eState.AccelX);
-                            else result = (byte)Math.Max(0, 127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * eState.AccelX);
-                        }
-                        else
-                        {
-                            result = falseVal;
-                        }
+                            if (saControls && -eState.AccelX < -SXD * 10)
+                            {
+                                if (alt) result = (byte)Math.Min(255, 127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * eState.AccelX);
+                                else result = (byte)Math.Max(0, 127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens * eState.AccelX);
+                            }
+                            else
+                            {
+                                result = falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.GyroZPos:
-                    {
-                        if (saControls && eState.AccelZ > SZD * 10)
                         {
-                            if (alt)
-                                result = (byte)Math.Min(255,
-                                    127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
-                                    eState.AccelZ);
+                            if (saControls && eState.AccelZ > SZD * 10)
+                            {
+                                if (alt)
+                                    result = (byte)Math.Min(255,
+                                        127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
+                                        eState.AccelZ);
+                                else
+                                    result = (byte)Math.Max(0,
+                                        127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
+                                        eState.AccelZ);
+                            }
                             else
-                                result = (byte)Math.Max(0,
-                                    127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
-                                    eState.AccelZ);
-                        }
-                        else
-                        {
-                            return falseVal;
-                        }
+                            {
+                                return falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case DS4Controls.GyroZNeg:
-                    {
-                        if (saControls && eState.AccelZ < -SZD * 10)
                         {
-                            if (alt)
-                                result = (byte)Math.Min(255,
-                                    127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
-                                    -eState.AccelZ);
+                            if (saControls && eState.AccelZ < -SZD * 10)
+                            {
+                                if (alt)
+                                    result = (byte)Math.Min(255,
+                                        127 + ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
+                                        -eState.AccelZ);
+                                else
+                                    result = (byte)Math.Max(0,
+                                        127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
+                                        -eState.AccelZ);
+                            }
                             else
-                                result = (byte)Math.Max(0,
-                                    127 - ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens *
-                                    -eState.AccelZ);
-                        }
-                        else
-                        {
-                            result = falseVal;
-                        }
+                            {
+                                result = falseVal;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
             else
@@ -5489,10 +5397,6 @@ namespace DS4Windows
         private static void ResetToDefaultValue2(DS4Controls control, DS4State cState,
             DS4StateFieldMapping fieldMap)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(ResetToDefaultValue2)}")
-                .StartActive(true);
-
             var controlNum = (int)control;
             var controlType = DS4StateFieldMapping.mappedType[controlNum];
             if (controlType == DS4StateFieldMapping.ControlType.Button)
@@ -5546,10 +5450,6 @@ namespace DS4Windows
         // Calculate and return the angle of the controller as -180...0...+180 value.
         private static int CalculateControllerAngle(int gyroAccelX, int gyroAccelZ, DS4Device controller)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(CalculateControllerAngle)}")
-                .StartActive(true);
-
             int result;
 
             if (gyroAccelX == controller.wheelCenterPoint.X &&
@@ -5613,10 +5513,6 @@ namespace DS4Windows
         private static void SAWheelEmulationCalibration(int device, DS4StateExposed exposedState, ControlService ctrl,
             DS4State currentDeviceState, DS4Device controller)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(SAWheelEmulationCalibration)}")
-                .StartActive(true);
-
             int gyroAccelX, gyroAccelZ;
             int result;
 
@@ -5755,10 +5651,6 @@ namespace DS4Windows
             int stickId, int delta, byte axisXValue, byte axisYValue,
             out byte useAxisX, out byte useAxisY)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(CalcStickAxisFuzz)}")
-                .StartActive(true);
-
             if (stickId < 0 || stickId > 2) throw new ArgumentOutOfRangeException("Stick ID has to be either 0 or 1");
 
             var xIdX = stickId == 0 ? 0 : 2;
@@ -5800,10 +5692,6 @@ namespace DS4Windows
 
         protected static int Scale360degreeGyroAxis(int device, DS4StateExposed exposedState, ControlService ctrl)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(Scale360degreeGyroAxis)}")
-                .StartActive(true);
-
             unchecked
             {
                 DS4Device controller;
@@ -6054,10 +5942,6 @@ namespace DS4Windows
             int stickId, double delta, long timeout, byte axisXValue, byte axisYValue,
             out byte useAxisX, out byte useAxisY)
         {
-            using var scope = GlobalTracer.Instance
-                .BuildSpan($"{nameof(Mapping)}::{nameof(CalcAntiSnapbackStick)}")
-                .StartActive(true);
-
             var timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             ref var queue = ref stickValueHistory[device][stickId];
             while (queue.Count > 0 && queue.Peek().timestamp < timestamp - timeout) queue.Dequeue();
@@ -6109,7 +5993,7 @@ namespace DS4Windows
                 //foreach (KeyPresses kp in keyPresses.Values)
                 var keyValues = keyPresses.Values;
                 for (var keyEnum = keyValues.GetEnumerator(); keyEnum.MoveNext();)
-                    //for (int i = 0, kpCount = keyValues.Count; i < kpCount; i++)
+                //for (int i = 0, kpCount = keyValues.Count; i < kpCount; i++)
                 {
                     //KeyPresses kp = keyValues.ElementAt(i);
                     var kp = keyEnum.Current;
@@ -6196,10 +6080,6 @@ namespace DS4Windows
             // at http://theinstructionlimit.com/squaring-the-thumbsticks
             public void CircleToSquare(double roundness)
             {
-                using var scope = GlobalTracer.Instance
-                    .BuildSpan($"{nameof(Mapping)}::{nameof(CircleToSquare)}")
-                    .StartActive(true);
-
                 const double PiOverFour = Math.PI / 4.0;
 
                 // Determine the theta angle

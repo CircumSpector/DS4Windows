@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using DS4WinWPF.DS4Control.IoC.Services;
-using OpenTracing.Util;
 
 //using System.Diagnostics;
 
@@ -15,13 +14,20 @@ namespace DS4Windows
         private const int TRACKBALL_BUFFER_LEN = 8;
 
         private const int SMOOTH_BUFFER_LEN = 3;
+        private readonly DS4Device dev;
+
+        private readonly double TRACKBALL_INERTIA = 2.0 * (TRACKBALL_MASS * TRACKBALL_RADIUS * TRACKBALL_RADIUS) / 5.0;
+        private readonly double TRACKBALL_SCALE = 0.004;
+        private readonly double[] trackballXBuffer = new double[TRACKBALL_BUFFER_LEN];
+        private readonly double[] trackballYBuffer = new double[TRACKBALL_BUFFER_LEN];
         private readonly MouseWheel wheel;
+        private readonly int[] xSmoothBuffer = new int[SMOOTH_BUFFER_LEN];
+        private readonly int[] ySmoothBuffer = new int[SMOOTH_BUFFER_LEN];
         protected Mapping.Click clicked = Mapping.Click.None;
 
         private bool currentToggleGyroControls;
         private bool currentToggleGyroM;
         private bool currentToggleGyroStick;
-        private readonly DS4Device dev;
         protected int deviceNum;
 
         public bool dragging, dragging2;
@@ -54,24 +60,17 @@ namespace DS4Windows
         private bool toggleGyroMouse = true;
 
         private bool toggleGyroStick = true;
-
-        private readonly double TRACKBALL_INERTIA = 2.0 * (TRACKBALL_MASS * TRACKBALL_RADIUS * TRACKBALL_RADIUS) / 5.0;
-        private readonly double TRACKBALL_SCALE = 0.004;
         private double trackballAccel;
         private bool trackballActive;
         private int trackballBufferHead;
         private int trackballBufferTail;
         private double trackballDXRemain;
         private double trackballDYRemain;
-        private readonly double[] trackballXBuffer = new double[TRACKBALL_BUFFER_LEN];
         private double trackballXVel;
-        private readonly double[] trackballYBuffer = new double[TRACKBALL_BUFFER_LEN];
         private double trackballYVel;
 
         private bool triggeractivated;
         private bool useReverseRatchet;
-        private readonly int[] xSmoothBuffer = new int[SMOOTH_BUFFER_LEN];
-        private readonly int[] ySmoothBuffer = new int[SMOOTH_BUFFER_LEN];
 
         public Mouse(int deviceID, DS4Device d)
         {
@@ -84,8 +83,10 @@ namespace DS4Windows
 
             filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff = GyroMouseStickInfo.DefaultMinCutoff;
             filterPair.Axis1Filter.Beta = filterPair.Axis2Filter.Beta = GyroMouseStickInfo.DefaultBeta;
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis1Filter);
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis2Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo
+                .SetRefreshEvents(filterPair.Axis1Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo
+                .SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         public int CursorGyroDead
@@ -128,9 +129,6 @@ namespace DS4Windows
 
         public virtual void SixAxisMoved(DS4SixAxis sender, SixAxisEventArgs arg)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixAxisMoved)).StartActive(true);
-
-
             var outMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroOutputMode;
             if (outMode == GyroOutMode.Controls)
             {
@@ -182,7 +180,8 @@ namespace DS4Windows
                 else
                     s.Motion.outputGyroControls = false;
             }
-            else if (outMode == GyroOutMode.Mouse && ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroSensitivity > 0)
+            else if (outMode == GyroOutMode.Mouse &&
+                     ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroSensitivity > 0)
             {
                 s = dev.GetCurrentStateReference();
 
@@ -235,7 +234,8 @@ namespace DS4Windows
             {
                 s = dev.GetCurrentStateReference();
 
-                useReverseRatchet = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickTriggerTurns;
+                useReverseRatchet = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum)
+                    .GyroMouseStickTriggerTurns;
                 var i = 0;
                 var ss = Global.Instance.Config.GetSAMouseStickTriggers(deviceNum).Split(',');
                 var andCond = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).SAMouseStickTriggerCond;
@@ -327,9 +327,6 @@ namespace DS4Windows
 
         public virtual void TouchesMoved(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesMoved)).StartActive(true);
-
-
             s = dev.GetCurrentStateReference();
 
             var tempMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
@@ -406,9 +403,6 @@ namespace DS4Windows
 
         public virtual void TouchesBegan(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesBegan)).StartActive(true);
-
-
             var tempMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
             var mouseMode = tempMode == TouchpadOutMode.Mouse;
             if (mouseMode)
@@ -435,7 +429,8 @@ namespace DS4Windows
             {
                 var test = arg.timeStamp;
                 if (test <= firstTap +
-                    TimeSpan.FromMilliseconds(ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TapSensitivity * 1.5) &&
+                    TimeSpan.FromMilliseconds(ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum)
+                        .TapSensitivity * 1.5) &&
                     !arg.touchButtonPressed)
                     secondtouchbegin = true;
             }
@@ -446,15 +441,13 @@ namespace DS4Windows
 
         public virtual void TouchesEnded(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchesEnded)).StartActive(true);
-
-
             s = dev.GetCurrentStateReference();
             slideright = slideleft = false;
             swipeUp = swipeDown = swipeLeft = swipeRight = false;
             swipeUpB = swipeDownB = swipeLeftB = swipeRightB = 0;
             var tapSensitivity = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TapSensitivity;
-            if (tapSensitivity != 0 && ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode == TouchpadOutMode.Mouse)
+            if (tapSensitivity != 0 && ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode ==
+                TouchpadOutMode.Mouse)
             {
                 if (secondtouchbegin)
                 {
@@ -555,7 +548,8 @@ namespace DS4Windows
                 }
                 else if (tempMode == TouchpadOutMode.AbsoluteMouse)
                 {
-                    var absMouseSettings = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchPadAbsMouse;
+                    var absMouseSettings =
+                        ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchPadAbsMouse;
                     if (Global.Instance.GetTouchActive(deviceNum) && absMouseSettings.SnapToCenter)
                         Cursor.TouchCenterAbsolute();
                 }
@@ -566,9 +560,6 @@ namespace DS4Windows
 
         public virtual void TouchUnchanged(DS4Touchpad sender, EventArgs unused)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(TouchUnchanged)).StartActive(true);
-
-
             s = dev.GetCurrentStateReference();
 
             if (trackballActive)
@@ -641,7 +632,8 @@ namespace DS4Windows
             }
             else
             {
-                if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).LowerRCOn && arg.touches[0].hwX > 1920 * 3 / 4 &&
+                if (ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).LowerRCOn &&
+                    arg.touches[0].hwX > 1920 * 3 / 4 &&
                     arg.touches[0].hwY > 960 * 3 / 4)
                     Mapping.MapClick(deviceNum, Mapping.Click.Right);
 
@@ -681,16 +673,16 @@ namespace DS4Windows
             filterPair.Axis1Filter.MinCutoff = filterPair.Axis2Filter.MinCutoff =
                 ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.MinCutoff;
             filterPair.Axis1Filter.Beta =
-                filterPair.Axis2Filter.Beta = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.Beta;
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis1Filter);
-            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo.SetRefreshEvents(filterPair.Axis2Filter);
+                filterPair.Axis2Filter.Beta = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum)
+                    .GyroMouseStickInfo.Beta;
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo
+                .SetRefreshEvents(filterPair.Axis1Filter);
+            ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).GyroMouseStickInfo
+                .SetRefreshEvents(filterPair.Axis2Filter);
         }
 
         private void SixMouseReset(SixAxisEventArgs args)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixMouseReset)).StartActive(true);
-
-
             var iIndex = smoothBufferTail % SMOOTH_BUFFER_LEN;
             xSmoothBuffer[iIndex] = 0;
             ySmoothBuffer[iIndex] = 0;
@@ -707,9 +699,6 @@ namespace DS4Windows
 
         private void SixMouseStick(SixAxisEventArgs arg)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixMouseStick)).StartActive(true);
-
-
             int deltaX = 0, deltaY = 0;
             deltaX = ProfilesService.Instance.ActiveProfiles.ElementAt(0).GyroMouseStickHorizontalAxis == 0
                 ? arg.sixAxis.gyroYawFull
@@ -855,9 +844,6 @@ namespace DS4Windows
 
         private void SixDirectionalSwipe(SixAxisEventArgs arg, GyroDirectionalSwipeInfo swipeInfo)
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SixDirectionalSwipe)).StartActive(true);
-
-
             var velX = swipeInfo.XAxis == GyroDirectionalSwipeInfo.XAxisSwipe.Yaw
                 ? arg.sixAxis.angVelYaw
                 : arg.sixAxis.angVelRoll;
@@ -880,7 +866,7 @@ namespace DS4Windows
                     }
 
                     if (gyroSwipe.xActive || (gyroSwipe.xActive =
-                        gyroSwipe.initialTimeX + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
+                            gyroSwipe.initialTimeX + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
                         gyroSwipe.swipeRight = true;
                 }
                 else
@@ -893,7 +879,7 @@ namespace DS4Windows
                     }
 
                     if (gyroSwipe.xActive || (gyroSwipe.xActive =
-                        gyroSwipe.initialTimeX + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
+                            gyroSwipe.initialTimeX + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
                         gyroSwipe.swipeLeft = true;
                 }
             }
@@ -915,7 +901,7 @@ namespace DS4Windows
                     }
 
                     if (gyroSwipe.yActive || (gyroSwipe.yActive =
-                        gyroSwipe.initialTimeY + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
+                            gyroSwipe.initialTimeY + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
                         gyroSwipe.swipeUp = true;
                 }
                 else
@@ -928,7 +914,7 @@ namespace DS4Windows
                     }
 
                     if (gyroSwipe.yActive || (gyroSwipe.yActive =
-                        gyroSwipe.initialTimeY + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
+                            gyroSwipe.initialTimeY + TimeSpan.FromMilliseconds(delayTime) < DateTime.Now))
                         gyroSwipe.swipeDown = true;
                 }
             }
@@ -981,9 +967,6 @@ namespace DS4Windows
 
         private void SynthesizeMouseButtons()
         {
-            using var scope = GlobalTracer.Instance.BuildSpan(nameof(SynthesizeMouseButtons)).StartActive(true);
-
-
             var tempMode = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TouchOutMode;
             if (tempMode != TouchpadOutMode.Passthru)
             {
@@ -1027,7 +1010,8 @@ namespace DS4Windows
                 {
                     var tester = DateTime.Now;
                     if (tester > TimeofEnd +
-                        TimeSpan.FromMilliseconds(ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum).TapSensitivity * 1.5))
+                        TimeSpan.FromMilliseconds(ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNum)
+                            .TapSensitivity * 1.5))
                     {
                         Mapping.MapClick(deviceNum, Mapping.Click.Left);
                         tappedOnce = false;

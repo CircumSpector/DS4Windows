@@ -8,9 +8,6 @@ using System.Threading;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Logging;
-using DS4WinWPF.DS4Control.Util;
-using DS4WinWPF.DS4Library.InputDevices;
-using OpenTracing.Util;
 
 namespace DS4Windows.InputDevices
 {
@@ -365,10 +362,6 @@ namespace DS4Windows.InputDevices
 
                 while (!exitInputThread)
                 {
-                    using var scope = GlobalTracer.Instance.BuildSpan($"{nameof(JoyConDevice)}::{nameof(ReadInput)}")
-                        .IgnoreActiveSpan()
-                        .StartActive(true);
-
                     oldCharging = charging;
                     currerror = string.Empty;
 
