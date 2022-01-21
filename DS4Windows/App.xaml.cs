@@ -17,6 +17,7 @@ using DS4Windows;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.HostedServices;
 using DS4Windows.Shared.Core.Services;
+using DS4Windows.Shared.Core.Telemetry;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.HostedServices;
 using DS4WinWPF.DS4Control.IoC.Services;
@@ -110,7 +111,7 @@ namespace DS4WinWPF
                     .SetSampler(new AlwaysOnSampler())
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Constants.ApplicationName))
                     .AddSource(Constants.ApplicationName)
-                    .AddSource("DS4Windows.Shared.Core")
+                    .AddSource(TracingSources.AssemblyActivitySourceName)
                     .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; })
                 );
 

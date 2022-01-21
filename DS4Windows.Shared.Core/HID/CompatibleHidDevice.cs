@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Core.Telemetry;
 using DS4Windows.Shared.Core.Util;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +31,7 @@ namespace DS4Windows.Shared.Core.HID
 
         protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
 
-        protected readonly ActivitySource CoreActivity = new("DS4Windows.Shared.Core");
+        protected readonly ActivitySource CoreActivity = new(TracingSources.AssemblyActivitySourceName);
 
         /// <summary>
         ///     Managed input report array.
