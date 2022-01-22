@@ -8,6 +8,7 @@ using System.Windows.Media;
 using AdonisUI.Controls;
 using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
+using DS4Windows.Shared.Common.Converters;
 using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Forms.ViewModels;
 
@@ -24,8 +25,6 @@ namespace DS4WinWPF.DS4Forms
             Keyboard
         }
 
-        private readonly ControlService rootHub;
-
         private readonly Dictionary<Button, BindAssociation> associatedBindings = new();
 
         private readonly BindingWindowViewModel bindingVM;
@@ -33,10 +32,12 @@ namespace DS4WinWPF.DS4Forms
         private readonly Dictionary<X360ControlItem, Button> conBtnMap = new();
 
         private readonly ExposeMode expose;
-        private Button highlightBtn;
         private readonly Dictionary<int, Button> keyBtnMap = new();
 
         private readonly Dictionary<X360ControlItem, Button> mouseBtnMap = new();
+
+        private readonly ControlService rootHub;
+        private Button highlightBtn;
 
         [MissingLocalization]
         public BindingWindow(
@@ -54,7 +55,7 @@ namespace DS4WinWPF.DS4Forms
             bindingVM = new BindingWindowViewModel(deviceNum, settings);
 
             Title = settings.Control != DS4ControlItem.None
-                ? $"Select action for {Global.Ds4InputNames[settings.Control]}"
+                ? $"Select action for {EnumDescriptionConverter.GetEnumDescription(settings.Control)}"
                 : "Select action";
 
             guideBtn.Content = "";
@@ -311,13 +312,16 @@ namespace DS4WinWPF.DS4Forms
                 new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadUp });
             dpadUBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(dpadRBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadRight });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadRight });
             dpadRBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(dpadDBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadDown });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadDown });
             dpadDBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(dpadLBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadLeft });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadLeft });
             dpadLBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rsbBtn,
                 new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RS });
@@ -344,30 +348,36 @@ namespace DS4WinWPF.DS4Forms
                 new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseUp });
             mouseUpBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseDownBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseDown });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseDown });
             mouseDownBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseLeftBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseLeft });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseLeft });
             mouseLeftBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseRightBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseRight });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseRight });
             mouseRightBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseLBBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LeftMouse });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LeftMouse });
             mouseLBBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseMBBtn,
                 new BindAssociation
                     { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MiddleMouse });
             mouseMBBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseRBBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RightMouse });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RightMouse });
             mouseRBBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouse4Btn,
                 new BindAssociation
                     { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.FourthMouse });
             mouse4Btn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouse5Btn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.FifthMouse });
+                new BindAssociation
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.FifthMouse });
             mouse5Btn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseWheelUBtn,
                 new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.WUP });

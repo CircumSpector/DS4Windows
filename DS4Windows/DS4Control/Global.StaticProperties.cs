@@ -290,60 +290,6 @@ namespace DS4Windows
             [X360ControlItem.Unbound] = "Unbound"
         };
 
-        public static Dictionary<DS4ControlItem, string> Ds4InputNames => new()
-        {
-            [DS4ControlItem.LXNeg] = "Left X-Axis-",
-            [DS4ControlItem.LXPos] = "Left X-Axis+",
-            [DS4ControlItem.LYNeg] = "Left Y-Axis-",
-            [DS4ControlItem.LYPos] = "Left Y-Axis+",
-            [DS4ControlItem.RXNeg] = "Right X-Axis-",
-            [DS4ControlItem.RXPos] = "Right X-Axis+",
-            [DS4ControlItem.RYNeg] = "Right Y-Axis-",
-            [DS4ControlItem.RYPos] = "Right Y-Axis+",
-            [DS4ControlItem.L1] = "L1",
-            [DS4ControlItem.L2] = "L2",
-            [DS4ControlItem.L3] = "L3",
-            [DS4ControlItem.R1] = "R1",
-            [DS4ControlItem.R2] = "R2",
-            [DS4ControlItem.R3] = "R3",
-            [DS4ControlItem.Square] = "Square",
-            [DS4ControlItem.Triangle] = "Triangle",
-            [DS4ControlItem.Circle] = "Circle",
-            [DS4ControlItem.Cross] = "Cross",
-            [DS4ControlItem.DpadUp] = "Dpad Up",
-            [DS4ControlItem.DpadRight] = "Dpad Right",
-            [DS4ControlItem.DpadDown] = "Dpad Down",
-            [DS4ControlItem.DpadLeft] = "Dpad Left",
-            [DS4ControlItem.PS] = "PS",
-            [DS4ControlItem.Share] = "Share",
-            [DS4ControlItem.Options] = "Options",
-            [DS4ControlItem.Mute] = "Mute",
-            [DS4ControlItem.Capture] = "Capture",
-            [DS4ControlItem.SideL] = "Side L",
-            [DS4ControlItem.SideR] = "Side R",
-            [DS4ControlItem.TouchLeft] = "Left Touch",
-            [DS4ControlItem.TouchUpper] = "Upper Touch",
-            [DS4ControlItem.TouchMulti] = "Multitouch",
-            [DS4ControlItem.TouchRight] = "Right Touch",
-            [DS4ControlItem.GyroXPos] = "Gyro X+",
-            [DS4ControlItem.GyroXNeg] = "Gyro X-",
-            [DS4ControlItem.GyroZPos] = "Gyro Z+",
-            [DS4ControlItem.GyroZNeg] = "Gyro Z-",
-            [DS4ControlItem.SwipeLeft] = "Swipe Left",
-            [DS4ControlItem.SwipeRight] = "Swipe Right",
-            [DS4ControlItem.SwipeUp] = "Swipe Up",
-            [DS4ControlItem.SwipeDown] = "Swipe Down",
-            [DS4ControlItem.L2FullPull] = "L2 Full Pull",
-            [DS4ControlItem.R2FullPull] = "R2 Full Pull",
-            [DS4ControlItem.LSOuter] = "LS Outer",
-            [DS4ControlItem.RSOuter] = "RS Outer",
-
-            [DS4ControlItem.GyroSwipeLeft] = "Gyro Swipe Left",
-            [DS4ControlItem.GyroSwipeRight] = "Gyro Swipe Right",
-            [DS4ControlItem.GyroSwipeUp] = "Gyro Swipe Up",
-            [DS4ControlItem.GyroSwipeDown] = "Gyro Swipe Down"
-        };
-
         public static Dictionary<DS4ControlItem, int> MacroDs4Values => new()
         {
             [DS4ControlItem.Cross] = 261, [DS4ControlItem.Circle] = 262,
