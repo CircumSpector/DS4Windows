@@ -14,11 +14,10 @@ using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Types;
-using DS4WinWPF.DS4Control.Profiles.Schema;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
-namespace DS4WinWPF.DS4Control.IoC.Services
+namespace DS4Windows.Shared.Configuration.Profiles.Services
 {
     /// <summary>
     ///     Handles managing profiles.
@@ -402,7 +401,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             {
                 using var stream = File.OpenRead(path);
 
-                var store = DS4Windows.Shared.Configuration.Profiles.Schema.LinkedProfiles.Deserialize(stream);
+                var store = Schema.LinkedProfiles.Deserialize(stream);
 
                 linkedProfiles.Clear();
 
@@ -536,7 +535,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             {
                 using var stream = File.OpenRead(path);
 
-                var store = DS4Windows.Shared.Configuration.Profiles.Schema.AutoSwitchingProfiles.Deserialize(stream);
+                var store = Schema.AutoSwitchingProfiles.Deserialize(stream);
 
                 autoSwitchingProfiles.Clear();
 
