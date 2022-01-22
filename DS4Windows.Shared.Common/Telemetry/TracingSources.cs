@@ -1,4 +1,4 @@
-﻿namespace DS4Windows.Shared.Devices.Telemetry
+﻿namespace DS4Windows.Shared.Common.Telemetry
 {
     public static class TracingSources
     {
