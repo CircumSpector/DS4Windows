@@ -191,6 +191,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             bool initMap = false
         )
         {
+            // TODO: implement me!
             Setting = profileService.CurrentlyEditedProfile.PerControlSettings[control];
             DevType = profileService.CurrentlyEditedProfile.OutputDeviceType;
             Control = control;

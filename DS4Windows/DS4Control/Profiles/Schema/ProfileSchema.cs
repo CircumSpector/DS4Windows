@@ -294,7 +294,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <summary>
         ///     Collection of <see cref="SpecialAction"/>s.
         /// </summary>
-        public IList<SpecialAction> SpecialActions { get; set; } = new List<SpecialAction>();
+        // TODO: implement me!
+        //public IList<SpecialAction> SpecialActions { get; set; } = new List<SpecialAction>();
 
         /// <summary>
         ///     Collection of <see cref="DS4ControlSettingsV3"/>.
