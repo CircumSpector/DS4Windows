@@ -10,5 +10,8 @@
 
         public const string ConfigurationApplicationAssemblyActivitySourceName =
             "DS4Windows.Shared.Configuration.Application";
+
+        public const string ConfigurationProfilesAssemblyActivitySourceName =
+            "DS4Windows.Shared.Configuration.Profiles";
     }
 }

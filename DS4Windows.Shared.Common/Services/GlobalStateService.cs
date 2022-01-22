@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Telemetry;
 
 namespace DS4Windows.Shared.Common.Services
 {
@@ -51,7 +53,15 @@ namespace DS4Windows.Shared.Common.Services
     /// </summary>
     public sealed class GlobalStateService : IGlobalStateService
     {
+        private readonly ActivitySource activitySource = new(TracingSources.CommonAssemblyActivitySourceName);
+
         private readonly string appDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+
+        public GlobalStateService()
+        {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(GlobalStateService)}:Constructor");
+        }
 
         /// <summary>
         ///     Absolute path to <see cref="Constants.ProfilesSubDirectory" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,15 +11,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
-using DS4Windows.Shared.Devices.Util;
-using DS4WinWPF.DS4Control.IoC.Services;
-using DS4WinWPF.DS4Control.Profiles.Schema;
-using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.Translations;
 using JetBrains.Annotations;
@@ -64,6 +62,8 @@ namespace DS4WinWPF.DS4Forms
         [Obsolete]
         private ProfileEntity currentProfileOLD;
 
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+
         [UsedImplicitly]
         public ProfileEditor(
             IProfileSettingsViewModel viewModel,
@@ -74,12 +74,19 @@ namespace DS4WinWPF.DS4Forms
             ISpecialActionsListViewModel specialActionsListViewModel
         )
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(ProfileEditor)}:Constructor");
+
             settingsViewModel = viewModel;
             this.appSettings = appSettings;
             rootHub = service;
             this.profileService = profileService;
 
-            InitializeComponent();
+            using (activitySource.StartActivity(
+                       $"{nameof(ProfileEditor)}:{nameof(InitializeComponent)}"))
+            {
+                InitializeComponent();
+            }
 
             profileSettingsTabCon.DataContext = settingsViewModel;
             lightbarRect.DataContext = settingsViewModel;

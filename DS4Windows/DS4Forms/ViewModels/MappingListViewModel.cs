@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Configuration.Profiles.Services;
-using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.Properties;
 using JetBrains.Annotations;
 
@@ -38,6 +39,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     /// </summary>
     public class MappingListViewModel : INotifyPropertyChanged, IMappingListViewModel
     {
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+
         private readonly List<MappedControl> extraControls = new();
 
         private readonly MappedControl gyroSwipeDownControl;
@@ -49,6 +52,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public MappingListViewModel(IProfilesService profileService)
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(MappingListViewModel)}:Constructor");
+
             mappings.Add(new MappedControl(profileService, DS4ControlItem.Cross));
             mappings.Add(new MappedControl(profileService, DS4ControlItem.Circle));
             mappings.Add(new MappedControl(profileService, DS4ControlItem.Square));

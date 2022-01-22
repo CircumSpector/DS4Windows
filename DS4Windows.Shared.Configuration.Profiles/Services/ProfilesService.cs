@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -10,6 +11,7 @@ using System.Runtime.CompilerServices;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Services;
+using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
@@ -172,12 +174,17 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
 
         private readonly ILogger<ProfilesService> logger;
 
+        private readonly ActivitySource activitySource = new(TracingSources.ConfigurationProfilesAssemblyActivitySourceName);
+
         public ProfilesService(
             ILogger<ProfilesService> logger,
             IGlobalStateService global,
             IAppSettingsService appSettings
         )
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(ProfilesService)}:Constructor");
+
             this.logger = logger;
             this.global = global;
             this.appSettings = appSettings;

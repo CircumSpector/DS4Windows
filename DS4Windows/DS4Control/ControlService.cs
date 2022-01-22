@@ -201,6 +201,8 @@ namespace DS4Windows
             return appSettings;
         }
 
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+
         public ControlService(
             ICommandLineOptions cmdParser,
             IOutputSlotManager osl,
@@ -209,6 +211,9 @@ namespace DS4Windows
             IProfilesService profilesService
         )
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(ControlService)}:Constructor");
+
             ds4devices = devices;
             this.appSettings = appSettings;
             this.cmdParser = cmdParser;

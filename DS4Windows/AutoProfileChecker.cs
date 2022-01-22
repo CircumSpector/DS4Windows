@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.Logging;
 
@@ -32,8 +33,13 @@ namespace DS4WinWPF
         private AutoProfileEntity tempAutoProfile;
         private bool turnOffTemp;
 
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+
         public AutoProfileChecker(IAppSettingsService appSettings, ControlService service, AutoProfileHolder holder)
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(AutoProfileChecker)}:Constructor");
+
             this.appSettings = appSettings;
             rootHub = service;
             profileHolder = holder;

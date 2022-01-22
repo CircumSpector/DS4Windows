@@ -10,17 +10,14 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
-using DS4Windows.InputDevices;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
-using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
-using DS4WinWPF.DS4Control.Profiles.Schema;
 using JetBrains.Annotations;
 using Microsoft.Win32;
-using Color = System.Windows.Media.Color;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
@@ -302,30 +299,31 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
     public partial class ProfileSettingsViewModel : INotifyPropertyChanged, IProfileSettingsViewModel
     {
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
         private readonly IAppSettingsService appSettings;
- 
-        private readonly IProfilesService profileService;
-
-        private readonly ControlService rootHub;
-        
-        private int gyroMouseSmoothMethodIndex;
-
-        private int gyroMouseStickSmoothMethodIndex;
 
         private readonly SolidColorBrush lightbarColBrush = new();
 
         private readonly ImageBrush lightbarImgBrush = new();
 
-        private double mouseOffsetSpeed;
+        private readonly IProfilesService profileService;
 
-        private int outputMouseSpeed;
+        private readonly ControlService rootHub;
 
         private readonly int[] saSteeringRangeValues =
             new int[9] { 90, 180, 270, 360, 450, 720, 900, 1080, 1440 };
 
-        private int tempControllerIndex;
-
         private readonly int[] touchpadInvertToValue = new int[4] { 0, 2, 1, 3 };
+
+        private int gyroMouseSmoothMethodIndex;
+
+        private int gyroMouseStickSmoothMethodIndex;
+
+        private double mouseOffsetSpeed;
+
+        private int outputMouseSpeed;
+
+        private int tempControllerIndex;
 
         private List<TriggerModeChoice> triggerModeChoices = new()
         {
@@ -336,8 +334,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             IAppSettingsService appSettings,
             IProfilesService profileService,
             ControlService service
-            )
+        )
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(ProfileSettingsViewModel)}:Constructor");
+
             this.profileService = profileService;
             this.appSettings = appSettings;
             rootHub = service;
@@ -372,7 +373,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
 
         [Obsolete]
-        public ProfileSettingsViewModel(DS4WindowsProfile profile, IAppSettingsService appSettings, ControlService service)
+        public ProfileSettingsViewModel(DS4WindowsProfile profile, IAppSettingsService appSettings,
+            ControlService service)
         {
             //profileService.CurrentlyEditedProfile = profile;
             this.appSettings = appSettings;
@@ -442,87 +444,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             SetupEvents();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public PresetMenuHelper PresetMenuUtil { get; }
-
-        private int FindGyroMouseSmoothMethodIndex()
-        {
-            var result = 0;
-            var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo;
-            if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.OneEuro ||
-                tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.None)
-                result = 0;
-            else if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.WeightedAverage) result = 1;
-
-            return result;
-        }
-
-        private int FindGyroMouseStickSmoothMethodIndex()
-        {
-            var result = 0;
-            var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo;
-            switch (tempInfo.Smoothing)
-            {
-                case GyroMouseStickInfo.SmoothingMethod.OneEuro:
-                case GyroMouseStickInfo.SmoothingMethod.None:
-                    result = 0;
-                    break;
-                case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
-                    result = 1;
-                    break;
-            }
-
-            return result;
-        }
-
-        private void CalcProfileFlags(object sender, EventArgs e)
-        {
-            Global.Instance.Config.CacheProfileCustomsFlags(Device);
-        }
-
-        [Obsolete]
-        private void SetupEvents()
-        {
-            // TODO: simplify!
-            /*
-
-
-            RainbowChanged += (sender, args) => { LightbarBrushChanged?.Invoke(this, EventArgs.Empty); };
-
-            ButtonMouseSensitivityChanged += (sender, args) =>
-            {
-                OutputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
-                MouseOffsetSpeed = RawButtonMouseOffset * OutputMouseSpeed;
-            };
-
-            GyroOutModeIndexChanged += CalcProfileFlags;
-            SASteeringWheelEmulationAxisIndexChanged += CalcProfileFlags;
-            LSOutputIndexChanged += CalcProfileFlags;
-            RSOutputIndexChanged += CalcProfileFlags;
-            ButtonMouseOffsetChanged += ProfileSettingsViewModel_ButtonMouseOffsetChanged;
-            GyroMouseSmoothMethodIndexChanged += ProfileSettingsViewModel_GyroMouseSmoothMethodIndexChanged;
-            GyroMouseStickSmoothMethodIndexChanged += ProfileSettingsViewModel_GyroMouseStickSmoothMethodIndexChanged;
-            */
-        }
-
-        private void ProfileSettingsViewModel_GyroMouseStickSmoothMethodIndexChanged(object sender, EventArgs e)
-        {
-            // TODO: simplify!
-            //GyroMouseStickWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
-            //GyroMouseStickOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void ProfileSettingsViewModel_GyroMouseSmoothMethodIndexChanged(object sender, EventArgs e)
-        {
-            // TODO: simplify!
-            //GyroMouseWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
-            //GyroMouseOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void ProfileSettingsViewModel_ButtonMouseOffsetChanged(object sender,
-            EventArgs e)
-        {
-            MouseOffsetSpeed = RawButtonMouseOffset * OutputMouseSpeed;
-        }
 
         public void UpdateFlashColor(Color color)
         {
@@ -846,7 +770,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 alwaysOnItem.IsChecked = true;
             }
 
-            ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.Triggers = string.Join(",", triggerList.ToArray());
+            ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroSwipeInfo.Triggers =
+                string.Join(",", triggerList.ToArray());
             GyroSwipeTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
@@ -960,12 +885,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             GyroControlsTrigDisplay = string.Join(", ", triggerName.ToArray());
         }
 
-        private int CalculateOutputMouseSpeed(int mouseSpeed)
-        {
-            var result = mouseSpeed * Mapping.MOUSESPEEDFACTOR;
-            return result;
-        }
-
         //
         // TODO: fix me up!
         // 
@@ -980,7 +899,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     var progId = string.Empty;
                     using (var userChoiceKey = Registry.CurrentUser.OpenSubKey(
-                        "Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\http\\UserChoice"))
+                               "Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\http\\UserChoice"))
                     {
                         progId = userChoiceKey?.GetValue("Progid")?.ToString();
                     }
@@ -988,7 +907,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     if (!string.IsNullOrEmpty(progId))
                     {
                         using (var browserPathCmdKey =
-                            Registry.ClassesRoot.OpenSubKey($"{progId}\\shell\\open\\command"))
+                               Registry.ClassesRoot.OpenSubKey($"{progId}\\shell\\open\\command"))
                         {
                             defaultBrowserCmd = browserPathCmdKey?.GetValue(null).ToString().ToLower();
                         }
@@ -1054,7 +973,91 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             OnPropertyChanged(null);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private int FindGyroMouseSmoothMethodIndex()
+        {
+            var result = 0;
+            var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseInfo;
+            if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.OneEuro ||
+                tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.None)
+                result = 0;
+            else if (tempInfo.Smoothing == GyroMouseInfo.SmoothingMethod.WeightedAverage) result = 1;
+
+            return result;
+        }
+
+        private int FindGyroMouseStickSmoothMethodIndex()
+        {
+            var result = 0;
+            var tempInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(Device).GyroMouseStickInfo;
+            switch (tempInfo.Smoothing)
+            {
+                case GyroMouseStickInfo.SmoothingMethod.OneEuro:
+                case GyroMouseStickInfo.SmoothingMethod.None:
+                    result = 0;
+                    break;
+                case GyroMouseStickInfo.SmoothingMethod.WeightedAverage:
+                    result = 1;
+                    break;
+            }
+
+            return result;
+        }
+
+        private void CalcProfileFlags(object sender, EventArgs e)
+        {
+            Global.Instance.Config.CacheProfileCustomsFlags(Device);
+        }
+
+        [Obsolete]
+        private void SetupEvents()
+        {
+            // TODO: simplify!
+            /*
+
+
+            RainbowChanged += (sender, args) => { LightbarBrushChanged?.Invoke(this, EventArgs.Empty); };
+
+            ButtonMouseSensitivityChanged += (sender, args) =>
+            {
+                OutputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);
+                MouseOffsetSpeed = RawButtonMouseOffset * OutputMouseSpeed;
+            };
+
+            GyroOutModeIndexChanged += CalcProfileFlags;
+            SASteeringWheelEmulationAxisIndexChanged += CalcProfileFlags;
+            LSOutputIndexChanged += CalcProfileFlags;
+            RSOutputIndexChanged += CalcProfileFlags;
+            ButtonMouseOffsetChanged += ProfileSettingsViewModel_ButtonMouseOffsetChanged;
+            GyroMouseSmoothMethodIndexChanged += ProfileSettingsViewModel_GyroMouseSmoothMethodIndexChanged;
+            GyroMouseStickSmoothMethodIndexChanged += ProfileSettingsViewModel_GyroMouseStickSmoothMethodIndexChanged;
+            */
+        }
+
+        private void ProfileSettingsViewModel_GyroMouseStickSmoothMethodIndexChanged(object sender, EventArgs e)
+        {
+            // TODO: simplify!
+            //GyroMouseStickWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            //GyroMouseStickOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ProfileSettingsViewModel_GyroMouseSmoothMethodIndexChanged(object sender, EventArgs e)
+        {
+            // TODO: simplify!
+            //GyroMouseWeightAvgPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            //GyroMouseOneEuroPanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ProfileSettingsViewModel_ButtonMouseOffsetChanged(object sender,
+            EventArgs e)
+        {
+            MouseOffsetSpeed = RawButtonMouseOffset * OutputMouseSpeed;
+        }
+
+        private int CalculateOutputMouseSpeed(int mouseSpeed)
+        {
+            var result = mouseSpeed * Mapping.MOUSESPEEDFACTOR;
+            return result;
+        }
 
         /// <summary>
         ///     Reacts to property changes and routes them through to dependencies.
@@ -1066,6 +1069,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             switch (propertyName)
             {
                 #region Bezier Curve Modes
+
                 case nameof(LSOutputCurveIndex):
                     profileService.CurrentlyEditedProfile.LSOutCurveMode = (CurveMode)LSOutputCurveIndex;
                     OnPropertyChanged(nameof(LSCustomCurveSelected));
@@ -1095,9 +1099,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     profileService.CurrentlyEditedProfile.SZOutCurveMode = (CurveMode)SZOutputCurveIndex;
                     OnPropertyChanged(nameof(SZCustomCurveSelected));
                     break;
+
                 #endregion
 
                 #region Colors
+
                 case nameof(MainColor):
                     OnPropertyChanged(nameof(MainColorR));
                     OnPropertyChanged(nameof(MainColorG));
@@ -1139,6 +1145,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     OnPropertyChanged(nameof(LowColorBString));
                     OnPropertyChanged(nameof(LightbarBrush));
                     break;
+
                 #endregion
             }
 

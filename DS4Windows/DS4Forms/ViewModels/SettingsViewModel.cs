@@ -1,20 +1,140 @@
 ﻿using System;
-using System.IO;
+using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Media;
-using System.Windows.Interop;
-using System.Windows;
-using System.Windows.Media.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Configuration.Application.Services;
-using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
     public class SettingsViewModel
     {
+        public delegate void FakeExeNameChangeHandler(SettingsViewModel sender,
+            string oldvalue, string newvalue);
+
+        private readonly IAppSettingsService appSettings;
+
+        private int checkEveryUnitIdx = 1;
+
+        public ImageSource questionMarkSource;
+
+        private bool runAtStartup;
+
+        private bool runStartProg;
+
+        private bool runStartTask;
+
+        private Visibility showRunStartPanel = Visibility.Collapsed;
+
+        public ImageSource uacSource;
+
+        private bool viewEnabled = true;
+
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+
+        public SettingsViewModel(IAppSettingsService appSettings)
+        {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(SettingsViewModel)}:Constructor");
+
+            this.appSettings = appSettings;
+
+            checkEveryUnitIdx = 1;
+
+            var checklapse = appSettings.Settings.CheckWhen;
+            if (checklapse < 24 && checklapse > 0) checkEveryUnitIdx = 0;
+
+            CheckStartupOptions();
+
+            var img = SystemIcons.Shield;
+            var bitmap = img.ToBitmap();
+            var hBitmap = bitmap.GetHbitmap();
+
+            ImageSource wpfBitmap =
+                Imaging.CreateBitmapSourceFromHBitmap(
+                    hBitmap, IntPtr.Zero, Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
+            uacSource = wpfBitmap;
+
+            img = SystemIcons.Question;
+            wpfBitmap =
+                Imaging.CreateBitmapSourceFromHBitmap(
+                    img.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
+            questionMarkSource = wpfBitmap;
+
+            runStartProg = StartupMethods.HasStartProgEntry();
+            try
+            {
+                runStartTask = StartupMethods.HasTaskEntry();
+            }
+            catch (COMException ex)
+            {
+                AppLogger.Instance.LogToGui(
+                    string.Format("Error in TaskService. Check WinOS TaskScheduler service functionality. {0}",
+                        ex.Message), true);
+            }
+
+            runAtStartup = runStartProg || runStartTask;
+            CanWriteTask = Global.IsAdministrator;
+
+            if (!runAtStartup)
+            {
+                runStartProg = true;
+            }
+            else if (runStartProg && runStartTask)
+            {
+                runStartProg = false;
+                if (StartupMethods.CanWriteStartEntry()) StartupMethods.DeleteStartProgEntry();
+            }
+
+            if (runAtStartup && runStartProg)
+            {
+                var locChange = StartupMethods.CheckStartupExeLocation();
+                if (locChange)
+                {
+                    if (StartupMethods.CanWriteStartEntry())
+                    {
+                        StartupMethods.DeleteStartProgEntry();
+                        StartupMethods.WriteStartProgEntry();
+                    }
+                    else
+                    {
+                        runAtStartup = false;
+                        showRunStartPanel = Visibility.Collapsed;
+                    }
+                }
+            }
+            else if (runAtStartup && runStartTask)
+            {
+                if (CanWriteTask)
+                {
+                    StartupMethods.DeleteOldTaskEntry();
+                    StartupMethods.WriteTaskEntry();
+                }
+            }
+
+            if (runAtStartup) showRunStartPanel = Visibility.Visible;
+
+            RunAtStartupChanged += SettingsViewModel_RunAtStartupChanged;
+            RunStartProgChanged += SettingsViewModel_RunStartProgChanged;
+            RunStartTaskChanged += SettingsViewModel_RunStartTaskChanged;
+            FakeExeNameChanged += SettingsViewModel_FakeExeNameChanged;
+            FakeExeNameChangeCompare += SettingsViewModel_FakeExeNameChangeCompare;
+            UseUdpSmoothingChanged += SettingsViewModel_UseUdpSmoothingChanged;
+            UseUDPServerChanged += SettingsViewModel_UseUDPServerChanged;
+
+            //CheckForUpdatesChanged += SettingsViewModel_CheckForUpdatesChanged;
+        }
+
         // Re-Enable Ex Mode
         public bool HideDS4Controller
         {
@@ -23,10 +143,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         }
 
 
-        public bool SwipeTouchSwitchProfile { get => appSettings.Settings.SwipeProfiles;
-            set => appSettings.Settings.SwipeProfiles = value; }
+        public bool SwipeTouchSwitchProfile
+        {
+            get => appSettings.Settings.SwipeProfiles;
+            set => appSettings.Settings.SwipeProfiles = value;
+        }
 
-        private bool runAtStartup;
         public bool RunAtStartup
         {
             get => runAtStartup;
@@ -36,9 +158,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 RunAtStartupChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler RunAtStartupChanged;
 
-        private bool runStartProg;
         public bool RunStartProg
         {
             get => runStartProg;
@@ -48,9 +168,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 RunStartProgChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler RunStartProgChanged;
 
-        private bool runStartTask;
         public bool RunStartTask
         {
             get => runStartTask;
@@ -60,19 +178,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 RunStartTaskChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler RunStartTaskChanged;
 
-        private bool canWriteTask;
-        public bool CanWriteTask { get => canWriteTask; }
+        public bool CanWriteTask { get; }
 
-        public ImageSource uacSource;
-        public ImageSource UACSource { get => uacSource; }
+        public ImageSource UACSource => uacSource;
+        public ImageSource QuestionMarkSource => questionMarkSource;
 
-        public ImageSource questionMarkSource;
-        public ImageSource QuestionMarkSource { get => questionMarkSource; }
-
-        private Visibility showRunStartPanel = Visibility.Collapsed;
-        public Visibility ShowRunStartPanel {
+        public Visibility ShowRunStartPanel
+        {
             get => showRunStartPanel;
             set
             {
@@ -82,42 +195,77 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public event EventHandler ShowRunStartPanelChanged;
+        public int ShowNotificationsIndex
+        {
+            get => appSettings.Settings.Notifications;
+            set => appSettings.Settings.Notifications = value;
+        }
 
-        public int ShowNotificationsIndex { get => appSettings.Settings.Notifications; set => appSettings.Settings.Notifications = value; }
-        public bool DisconnectBTStop { get => appSettings.Settings.DisconnectBluetoothAtStop; set => appSettings.Settings.DisconnectBluetoothAtStop = value; }
-        public bool FlashHighLatency { get => appSettings.Settings.FlashWhenLate; set => appSettings.Settings.FlashWhenLate = value; }
-        public int FlashHighLatencyAt { get => appSettings.Settings.FlashWhenLateAt; set => appSettings.Settings.FlashWhenLateAt = value; }
-        public bool StartMinimize { get => appSettings.Settings.StartMinimized; set => appSettings.Settings.StartMinimized = value; }
-        public bool MinimizeToTaskbar { get => appSettings.Settings.MinimizeToTaskBar; set => appSettings.Settings.MinimizeToTaskBar = value; }
-        public bool CloseMinimizes { get => appSettings.Settings.CloseMinimizes; set => appSettings.Settings.CloseMinimizes = value; }
-        public bool QuickCharge { get => appSettings.Settings.QuickCharge; set => appSettings.Settings.QuickCharge = value; }
+        public bool DisconnectBTStop
+        {
+            get => appSettings.Settings.DisconnectBluetoothAtStop;
+            set => appSettings.Settings.DisconnectBluetoothAtStop = value;
+        }
+
+        public bool FlashHighLatency
+        {
+            get => appSettings.Settings.FlashWhenLate;
+            set => appSettings.Settings.FlashWhenLate = value;
+        }
+
+        public int FlashHighLatencyAt
+        {
+            get => appSettings.Settings.FlashWhenLateAt;
+            set => appSettings.Settings.FlashWhenLateAt = value;
+        }
+
+        public bool StartMinimize
+        {
+            get => appSettings.Settings.StartMinimized;
+            set => appSettings.Settings.StartMinimized = value;
+        }
+
+        public bool MinimizeToTaskbar
+        {
+            get => appSettings.Settings.MinimizeToTaskBar;
+            set => appSettings.Settings.MinimizeToTaskBar = value;
+        }
+
+        public bool CloseMinimizes
+        {
+            get => appSettings.Settings.CloseMinimizes;
+            set => appSettings.Settings.CloseMinimizes = value;
+        }
+
+        public bool QuickCharge
+        {
+            get => appSettings.Settings.QuickCharge;
+            set => appSettings.Settings.QuickCharge = value;
+        }
 
         public int IconChoiceIndex
         {
             get => (int)appSettings.Settings.AppIcon;
             set
             {
-                int temp = (int)appSettings.Settings.AppIcon;
+                var temp = (int)appSettings.Settings.AppIcon;
                 if (temp == value) return;
                 appSettings.Settings.AppIcon = (TrayIconChoice)value;
                 IconChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler IconChoiceIndexChanged;
 
         public int AppChoiceIndex
         {
             get => (int)appSettings.Settings.AppTheme;
             set
             {
-                int temp = (int)appSettings.Settings.AppTheme;
+                var temp = (int)appSettings.Settings.AppTheme;
                 if (temp == value) return;
                 appSettings.Settings.AppTheme = (AppThemeChoice)value;
                 AppChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler AppChoiceIndexChanged;
 
         public bool CheckForUpdates
         {
@@ -128,17 +276,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 CheckForNoUpdatesWhen();
             }
         }
-        public event EventHandler CheckForUpdatesChanged;
 
         public int CheckEvery
         {
             get
             {
-                int temp = appSettings.Settings.CheckWhen;
-                if (temp > 23)
-                {
-                    temp = temp / 24;
-                }
+                var temp = appSettings.Settings.CheckWhen;
+                if (temp > 23) temp = temp / 24;
                 return temp;
             }
             set
@@ -164,15 +308,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 }
             }
         }
-        public event EventHandler CheckEveryChanged;
 
-        private int checkEveryUnitIdx = 1;
         public int CheckEveryUnit
         {
-            get
-            {
-                return checkEveryUnitIdx;
-            }
+            get => checkEveryUnitIdx;
             set
             {
                 if (checkEveryUnitIdx == value) return;
@@ -180,7 +319,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 CheckEveryUnitChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler CheckEveryUnitChanged;
+
         public bool UseUDPServer
         {
             get => appSettings.Settings.UseUDPServer;
@@ -191,58 +330,60 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 UseUDPServerChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler UseUDPServerChanged;
 
-        public string UdpIpAddress { get => appSettings.Settings.UDPServerListenAddress;
-            set => appSettings.Settings.UDPServerListenAddress = value; }
-        public int UdpPort { get => appSettings.Settings.UDPServerPort; set => appSettings.Settings.UDPServerPort = value; }
+        public string UdpIpAddress
+        {
+            get => appSettings.Settings.UDPServerListenAddress;
+            set => appSettings.Settings.UDPServerListenAddress = value;
+        }
+
+        public int UdpPort
+        {
+            get => appSettings.Settings.UDPServerPort;
+            set => appSettings.Settings.UDPServerPort = value;
+        }
 
         public bool UseUdpSmoothing
         {
             get => appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing;
             set
             {
-                bool temp = appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing;
+                var temp = appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing;
                 if (temp == value) return;
                 appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing = value;
                 UseUdpSmoothingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler UseUdpSmoothingChanged;
 
-        public Visibility UdpServerOneEuroPanelVisibility
-        {
-            get => appSettings.Settings.UseUDPServer && appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing ? Visibility.Visible : Visibility.Collapsed;
-        }
-        public event EventHandler UdpServerOneEuroPanelVisibilityChanged;
+        public Visibility UdpServerOneEuroPanelVisibility =>
+            appSettings.Settings.UseUDPServer && appSettings.Settings.UDPServerSmoothingOptions.UseSmoothing
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
         public double UdpSmoothMinCutoff
         {
             get => appSettings.Settings.UDPServerSmoothingOptions.MinCutoff;
             set
             {
-                double temp = appSettings.Settings.UDPServerSmoothingOptions.MinCutoff;
+                var temp = appSettings.Settings.UDPServerSmoothingOptions.MinCutoff;
                 if (temp == value) return;
                 appSettings.Settings.UDPServerSmoothingOptions.MinCutoff = value;
                 UdpSmoothMinCutoffChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler UdpSmoothMinCutoffChanged;
 
         public double UdpSmoothBeta
         {
             get => appSettings.Settings.UDPServerSmoothingOptions.Beta;
             set
             {
-                double temp = appSettings.Settings.UDPServerSmoothingOptions.Beta;
+                var temp = appSettings.Settings.UDPServerSmoothingOptions.Beta;
                 if (temp == value) return;
                 appSettings.Settings.UDPServerSmoothingOptions.Beta = value;
                 UdpSmoothBetaChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler UdpSmoothBetaChanged;
 
-        private bool viewEnabled = true;
         public bool ViewEnabled
         {
             get => viewEnabled;
@@ -252,129 +393,41 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 ViewEnabledChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler ViewEnabledChanged;
 
         public string FakeExeName
         {
-            get => DS4Windows.Global.Instance.FakeExeName;
+            get => Global.Instance.FakeExeName;
             set
             {
-                string temp = DS4Windows.Global.Instance.FakeExeName;
+                var temp = Global.Instance.FakeExeName;
                 if (temp == value) return;
-                DS4Windows.Global.Instance.FakeExeName = value;
+                Global.Instance.FakeExeName = value;
                 FakeExeNameChanged?.Invoke(this, EventArgs.Empty);
                 FakeExeNameChangeCompare?.Invoke(this, temp, value);
             }
         }
+
+
+        public bool HidHideInstalled => Global.hidHideInstalled;
+        public event EventHandler RunAtStartupChanged;
+        public event EventHandler RunStartProgChanged;
+        public event EventHandler RunStartTaskChanged;
+
+        public event EventHandler ShowRunStartPanelChanged;
+        public event EventHandler IconChoiceIndexChanged;
+        public event EventHandler AppChoiceIndexChanged;
+        public event EventHandler CheckForUpdatesChanged;
+        public event EventHandler CheckEveryChanged;
+        public event EventHandler CheckEveryUnitChanged;
+        public event EventHandler UseUDPServerChanged;
+        public event EventHandler UseUdpSmoothingChanged;
+        public event EventHandler UdpServerOneEuroPanelVisibilityChanged;
+        public event EventHandler UdpSmoothMinCutoffChanged;
+        public event EventHandler UdpSmoothBetaChanged;
+        public event EventHandler ViewEnabledChanged;
         public event EventHandler FakeExeNameChanged;
         public event FakeExeNameChangeHandler FakeExeNameChangeCompare;
-        public delegate void FakeExeNameChangeHandler(SettingsViewModel sender,
-            string oldvalue, string newvalue);
-
-
-        public bool HidHideInstalled { get => DS4Windows.Global.hidHideInstalled; }
         public event EventHandler HidHideInstalledChanged;
-
-        private readonly IAppSettingsService appSettings;
-
-        public SettingsViewModel(IAppSettingsService appSettings)
-        {
-            this.appSettings = appSettings;
-
-            checkEveryUnitIdx = 1;
-
-            int checklapse = appSettings.Settings.CheckWhen;
-            if (checklapse < 24 && checklapse > 0)
-            {
-                checkEveryUnitIdx = 0;
-            }
-
-            CheckStartupOptions();
-
-            Icon img = SystemIcons.Shield;
-            Bitmap bitmap = img.ToBitmap();
-            IntPtr hBitmap = bitmap.GetHbitmap();
-
-            ImageSource wpfBitmap =
-                 Imaging.CreateBitmapSourceFromHBitmap(
-                      hBitmap, IntPtr.Zero, Int32Rect.Empty,
-                      BitmapSizeOptions.FromEmptyOptions());
-            uacSource = wpfBitmap;
-
-            img = SystemIcons.Question;
-            wpfBitmap =
-                 Imaging.CreateBitmapSourceFromHBitmap(
-                      img.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
-                      BitmapSizeOptions.FromEmptyOptions());
-            questionMarkSource = wpfBitmap;
-
-            runStartProg = StartupMethods.HasStartProgEntry();
-            try
-            {
-                runStartTask = StartupMethods.HasTaskEntry();
-            }
-            catch (COMException ex)
-            {
-                AppLogger.Instance.LogToGui(string.Format("Error in TaskService. Check WinOS TaskScheduler service functionality. {0}", ex.Message), true);
-            }
-
-            runAtStartup = runStartProg || runStartTask;
-            canWriteTask = DS4Windows.Global.IsAdministrator;
-
-            if (!runAtStartup)
-            {
-                runStartProg = true;
-            }
-            else if (runStartProg && runStartTask)
-            {
-                runStartProg = false;
-                if (StartupMethods.CanWriteStartEntry())
-                {
-                    StartupMethods.DeleteStartProgEntry();
-                }
-            }
-
-            if (runAtStartup && runStartProg)
-            {
-                bool locChange = StartupMethods.CheckStartupExeLocation();
-                if (locChange)
-                {
-                    if (StartupMethods.CanWriteStartEntry())
-                    {
-                        StartupMethods.DeleteStartProgEntry();
-                        StartupMethods.WriteStartProgEntry();
-                    }
-                    else
-                    {
-                        runAtStartup = false;
-                        showRunStartPanel = Visibility.Collapsed;
-                    }
-                }
-            }
-            else if (runAtStartup && runStartTask)
-            {
-                if (canWriteTask)
-                {
-                    StartupMethods.DeleteOldTaskEntry();
-                    StartupMethods.WriteTaskEntry();
-                }
-            }
-
-            if (runAtStartup)
-            {
-                showRunStartPanel = Visibility.Visible;
-            }
-
-            RunAtStartupChanged += SettingsViewModel_RunAtStartupChanged;
-            RunStartProgChanged += SettingsViewModel_RunStartProgChanged;
-            RunStartTaskChanged += SettingsViewModel_RunStartTaskChanged;
-            FakeExeNameChanged += SettingsViewModel_FakeExeNameChanged;
-            FakeExeNameChangeCompare += SettingsViewModel_FakeExeNameChangeCompare;
-            UseUdpSmoothingChanged += SettingsViewModel_UseUdpSmoothingChanged;
-            UseUDPServerChanged += SettingsViewModel_UseUDPServerChanged;
-
-            //CheckForUpdatesChanged += SettingsViewModel_CheckForUpdatesChanged;
-        }
 
         private void SettingsViewModel_UseUDPServerChanged(object sender, EventArgs e)
         {
@@ -389,60 +442,40 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private void SettingsViewModel_FakeExeNameChangeCompare(SettingsViewModel sender,
             string oldvalue, string newvalue)
         {
-            string old_exefile = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{oldvalue}.exe");
-            string old_conf_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{oldvalue}.runtimeconfig.json");
-            string old_deps_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{oldvalue}.deps.json");
+            var old_exefile = Path.Combine(Global.ExecutableDirectory, $"{oldvalue}.exe");
+            var old_conf_file = Path.Combine(Global.ExecutableDirectory, $"{oldvalue}.runtimeconfig.json");
+            var old_deps_file = Path.Combine(Global.ExecutableDirectory, $"{oldvalue}.deps.json");
 
             if (!string.IsNullOrEmpty(oldvalue))
             {
-                if (File.Exists(old_exefile))
-                {
-                    File.Delete(old_exefile);
-                }
+                if (File.Exists(old_exefile)) File.Delete(old_exefile);
 
-                if (File.Exists(old_conf_file))
-                {
-                    File.Delete(old_conf_file);
-                }
+                if (File.Exists(old_conf_file)) File.Delete(old_conf_file);
 
-                if (File.Exists(old_deps_file))
-                {
-                    File.Delete(old_deps_file);
-                }
+                if (File.Exists(old_deps_file)) File.Delete(old_deps_file);
             }
         }
 
         private void SettingsViewModel_FakeExeNameChanged(object sender, EventArgs e)
         {
-            string temp = FakeExeName;
-            if (!string.IsNullOrEmpty(temp))
-            {
-                CreateFakeExe(FakeExeName);
-            }
+            var temp = FakeExeName;
+            if (!string.IsNullOrEmpty(temp)) CreateFakeExe(FakeExeName);
         }
 
         private void SettingsViewModel_RunStartTaskChanged(object sender, EventArgs e)
         {
             if (runStartTask)
-            {
                 StartupMethods.WriteTaskEntry();
-            }
             else
-            {
                 StartupMethods.DeleteTaskEntry();
-            }
         }
 
         private void SettingsViewModel_RunStartProgChanged(object sender, EventArgs e)
         {
             if (runStartProg)
-            {
                 StartupMethods.WriteStartProgEntry();
-            }
             else
-            {
                 StartupMethods.DeleteStartProgEntry();
-            }
         }
 
         private void SettingsViewModel_RunAtStartupChanged(object sender, EventArgs e)
@@ -470,23 +503,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private void CheckStartupOptions()
         {
-            bool lnkExists = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DS4Windows.lnk");
+            var lnkExists =
+                File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DS4Windows.lnk");
             if (lnkExists)
-            {
                 runAtStartup = true;
-            }
             else
-            {
                 runAtStartup = false;
-            }
         }
 
         private void CheckForNoUpdatesWhen()
         {
-            if (appSettings.Settings.CheckWhen == 0)
-            {
-                checkEveryUnitIdx = 1;
-            }
+            if (appSettings.Settings.CheckWhen == 0) checkEveryUnitIdx = 1;
 
             CheckForUpdatesChanged?.Invoke(this, EventArgs.Empty);
             CheckEveryChanged?.Invoke(this, EventArgs.Empty);
@@ -495,14 +522,14 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public void CreateFakeExe(string filename)
         {
-            string exefile = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{filename}.exe");
-            string current_conf_file_path = $"{DS4Windows.Global.ExecutableLocation}.runtimeconfig.json";
-            string current_deps_file_path = $"{DS4Windows.Global.ExecutableLocation}.deps.json";
+            var exefile = Path.Combine(Global.ExecutableDirectory, $"{filename}.exe");
+            var current_conf_file_path = $"{Global.ExecutableLocation}.runtimeconfig.json";
+            var current_deps_file_path = $"{Global.ExecutableLocation}.deps.json";
 
-            string fake_conf_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{filename}.runtimeconfig.json");
-            string fake_deps_file = Path.Combine(DS4Windows.Global.ExecutableDirectory, $"{filename}.deps.json");
+            var fake_conf_file = Path.Combine(Global.ExecutableDirectory, $"{filename}.runtimeconfig.json");
+            var fake_deps_file = Path.Combine(Global.ExecutableDirectory, $"{filename}.deps.json");
 
-            File.Copy(DS4Windows.Global.ExecutableLocation, exefile); // Copy exe
+            File.Copy(Global.ExecutableLocation, exefile); // Copy exe
 
             // Copy needed app config and deps files
             File.Copy(current_conf_file_path, fake_conf_file);

@@ -87,6 +87,8 @@ namespace DS4WinWPF.DS4Forms
         private bool wasrunning;
         public ProfileList ProfileListHolder { get; } = new();
 
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+
         public MainWindow(
             ICommandLineOptions parser,
             MainWindowsViewModel mainWindowsViewModel,
@@ -99,6 +101,9 @@ namespace DS4WinWPF.DS4Forms
             IDeviceNotificationListener deviceNotificationListener,
             ILogger<MainWindow> logger)
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(MainWindow)}:Constructor");
+
             rootHub = controlService;
             this.appSettings = appSettings;
             this.profilesService = profilesService;
@@ -106,7 +111,11 @@ namespace DS4WinWPF.DS4Forms
             this.deviceNotificationListener = deviceNotificationListener;
             this.logger = logger;
 
-            InitializeComponent();
+            using (activitySource.StartActivity(
+                       $"{nameof(MainWindow)}:{nameof(InitializeComponent)}"))
+            {
+                InitializeComponent();
+            }
 
             mainWinVm = mainWindowsViewModel;
             DataContext = mainWinVm;
@@ -122,8 +131,7 @@ namespace DS4WinWPF.DS4Forms
             lastMsgLb.DataContext = lastLogMsg;
 
             ProfileListHolder.Refresh();
-
-
+            
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
 
             conLvViewModel = new ControllerListViewModel(controlService, ProfileListHolder, appSettings);
@@ -135,9 +143,7 @@ namespace DS4WinWPF.DS4Forms
             view.SortDescriptions.Clear();
             view.SortDescriptions.Add(new SortDescription("DevIndex", ListSortDirection.Ascending));
             view.Refresh();
-
             
-
             if (appSettings.Settings.StartMinimized || parser.StartMinimized) WindowState = WindowState.Minimized;
 
             var isElevated = Global.IsAdministrator;

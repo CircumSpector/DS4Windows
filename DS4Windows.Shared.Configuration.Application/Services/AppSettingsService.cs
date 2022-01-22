@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Common.Attributes;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Services;
+using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;
@@ -64,12 +67,17 @@ namespace DS4Windows.Shared.Configuration.Application.Services
     /// </summary>
     public sealed class AppSettingsService : IAppSettingsService
     {
+        private readonly ActivitySource activitySource = new(TracingSources.ConfigurationApplicationAssemblyActivitySourceName);
+
         private const string ApplicationSettingsFileName = "ApplicationSettings.json";
         private readonly IGlobalStateService global;
         private readonly ILogger<AppSettingsService> logger;
 
         public AppSettingsService(ILogger<AppSettingsService> logger, IGlobalStateService global)
         {
+            using var activity = activitySource.StartActivity(
+                $"{nameof(AppSettingsService)}:Constructor");
+
             this.logger = logger;
             this.global = global;
 
