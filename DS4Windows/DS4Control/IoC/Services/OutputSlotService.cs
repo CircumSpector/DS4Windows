@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using Nefarius.ViGEm.Client;
 
 namespace DS4WinWPF.DS4Control.IoC.Services

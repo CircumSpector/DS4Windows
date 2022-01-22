@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Data;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 

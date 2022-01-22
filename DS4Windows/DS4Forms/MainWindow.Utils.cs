@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4WinWPF.Translations;
 
 namespace DS4WinWPF.DS4Forms

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 
 namespace DS4WinWPF.DS4Control.IoC.Services
 {

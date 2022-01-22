@@ -2,6 +2,7 @@
 using System.Data.SqlTypes;
 using System.Globalization;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters

@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using AdonisUI.Controls;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4WinWPF.DS4Forms.ViewModels;
 
 namespace DS4WinWPF.DS4Forms

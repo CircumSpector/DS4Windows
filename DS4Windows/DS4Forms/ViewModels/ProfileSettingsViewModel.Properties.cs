@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
 using DS4Windows.InputDevices;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using Brush = System.Windows.Media.Brush;
 using Color = System.Windows.Media.Color;

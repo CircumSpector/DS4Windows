@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using Task = Microsoft.Win32.TaskScheduler.Task;

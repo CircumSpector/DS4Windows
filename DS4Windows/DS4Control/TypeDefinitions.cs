@@ -282,17 +282,7 @@ namespace DS4Windows
         Passthru,
     }
 
-    public enum TrayIconChoice : uint
-    {
-        Default,
-        Colored,
-        White,
-        Black,
-    }
+    
 
-    public enum AppThemeChoice : uint
-    {
-        Default,
-        Dark,
-    }
+    
 }

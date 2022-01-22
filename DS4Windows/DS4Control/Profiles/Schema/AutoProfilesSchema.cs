@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Configuration.Common.Util;
 using PropertyChanged;
 

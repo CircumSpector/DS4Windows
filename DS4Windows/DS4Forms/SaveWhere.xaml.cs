@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using AdonisUI.Controls;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
 using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
 using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;

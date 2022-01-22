@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;

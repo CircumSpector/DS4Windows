@@ -14,6 +14,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.HostedServices;
 using DS4Windows.Shared.Core.Services;

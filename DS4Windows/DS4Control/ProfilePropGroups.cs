@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using DS4Windows.InputDevices;
+using DS4Windows.Shared.Common.Types;
 using JetBrains.Annotations;
 using PropertyChanged;
 using Sensorit.Base;
@@ -561,74 +562,6 @@ namespace DS4Windows
             TempButtonSensitivity = DefaultTempSens;
             MouseVelocityOffset = MouseStickAntiOffset;
             ButtonVerticalScale = DefaultButtonVerticalScale;
-        }
-    }
-
-    public enum LightbarMode : uint
-    {
-        /// <summary>
-        ///     Unknown state.
-        /// </summary>
-        None,
-        /// <summary>
-        ///     Application is in control of Lightbar appearance.
-        /// </summary>
-        DS4Win,
-        /// <summary>
-        ///     Game is in control of Lightbar appearance.
-        /// </summary>
-        Passthru
-    }
-
-    /// <summary>
-    ///     Lightbar-specific properties like colors etc.
-    /// </summary>
-    public class LightbarDS4WinInfo
-    {
-        public bool UseCustomLed { get; set; } = false;
-
-        public bool LedAsBattery { get; set; } = false;
-
-        public DS4Color CustomLed { get; set; } = new(Color.Blue);
-
-        public DS4Color Led { get; set; } = new(Color.Blue);
-
-        public DS4Color LowLed { get; set; } = new(Color.Black);
-
-        public DS4Color ChargingLed { get; set; } = new(Color.Black);
-
-        public DS4Color FlashLed { get; set; } = new(Color.Black);
-
-        public double Rainbow { get; set; }
-
-        public double MaxRainbowSaturation { get; set; } = 1.0;
-
-        /// <summary>
-        ///     Battery % when flashing occurs. Smaller 0 means disabled.
-        /// </summary>
-        public int FlashAt { get; set; }
-
-        public byte FlashType { get; set; }
-
-        public int ChargingType { get; set; }
-    }
-
-    /// <summary>
-    ///     Lightbar behaviour settings.
-    /// </summary>
-    [AddINotifyPropertyChangedInterface]
-    public class LightbarSettingInfo
-    {
-        public LightbarMode Mode { get; set; } = LightbarMode.DS4Win;
-
-        public LightbarDS4WinInfo Ds4WinSettings { get; set; } = new();
-
-        public event EventHandler ModeChanged;
-
-        [UsedImplicitly]
-        private void OnModeChanged()
-        {
-            ModeChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 

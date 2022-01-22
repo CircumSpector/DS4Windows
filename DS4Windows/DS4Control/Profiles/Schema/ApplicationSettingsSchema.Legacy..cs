@@ -4,6 +4,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Xml.Serialization;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using PropertyChanged;
 

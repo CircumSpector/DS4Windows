@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.ComponentModel;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4WinWPF.DS4Control.IoC.Services;
 using Ookii.Dialogs.Wpf;
 using DS4WinWPF.DS4Forms.ViewModels;

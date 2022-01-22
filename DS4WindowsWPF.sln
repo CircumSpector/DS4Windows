@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4WinWPF", "DS4Windows\DS4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Core", "DS4Windows.Shared.Core\DS4Windows.Shared.Core.csproj", "{2C1F44F5-AFAE-4659-B595-ACE507816D9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Shared.Configuration.Application", "DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj", "{7947FA69-EF8C-4911-BD56-B0C47A8BD972}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Configuration.Application", "DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj", "{7947FA69-EF8C-4911-BD56-B0C47A8BD972}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Shared.Configuration.Common", "DS4Windows.Shared.Configuration.Common\DS4Windows.Shared.Configuration.Common.csproj", "{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Common", "DS4Windows.Shared.Configuration.Common\DS4Windows.Shared.Common.csproj", "{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

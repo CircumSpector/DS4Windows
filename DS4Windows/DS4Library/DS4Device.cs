@@ -9,6 +9,7 @@ using System.Threading;
 using DS4Windows.DS4Library;
 using DS4Windows.DS4Library.CoreAudio;
 using DS4Windows.InputDevices;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Logging;

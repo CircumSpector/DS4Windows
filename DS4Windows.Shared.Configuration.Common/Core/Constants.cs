@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Globalization;
 
-namespace DS4Windows
+namespace DS4Windows.Shared.Common.Core
 {
     /// <summary>
     ///     Constant value definitions used throughout the solution.
     /// </summary>
-    internal static class Constants
+    public static class Constants
     {
         public const string ApplicationName = "DS4Windows";
 

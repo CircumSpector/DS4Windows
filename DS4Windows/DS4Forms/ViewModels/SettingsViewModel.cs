@@ -6,6 +6,7 @@ using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 
@@ -98,7 +99,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 int temp = (int)appSettings.Settings.AppIcon;
                 if (temp == value) return;
-                appSettings.Settings.AppIcon = (DS4Windows.TrayIconChoice)value;
+                appSettings.Settings.AppIcon = (TrayIconChoice)value;
                 IconChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -111,7 +112,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             {
                 int temp = (int)appSettings.Settings.AppTheme;
                 if (temp == value) return;
-                appSettings.Settings.AppTheme = (DS4Windows.AppThemeChoice)value;
+                appSettings.Settings.AppTheme = (AppThemeChoice)value;
                 AppChoiceIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }

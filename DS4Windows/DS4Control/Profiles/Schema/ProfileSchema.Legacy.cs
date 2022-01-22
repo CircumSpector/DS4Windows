@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using DS4Windows;
 using DS4Windows.InputDevices;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;

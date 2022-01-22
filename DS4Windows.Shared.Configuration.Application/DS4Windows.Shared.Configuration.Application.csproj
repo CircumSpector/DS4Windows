@@ -28,10 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Schema\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Common\DS4Windows.Shared.Configuration.Common.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Common\DS4Windows.Shared.Common.csproj" />
   </ItemGroup>
 </Project>

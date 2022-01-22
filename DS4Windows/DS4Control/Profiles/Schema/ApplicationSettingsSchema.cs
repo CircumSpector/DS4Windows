@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using DS4Windows;
+using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Configuration.Common.Util;
-using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using Newtonsoft.Json;
-using Constants = DS4Windows.Constants;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
@@ -17,10 +17,10 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     public class DS4WindowsAppSettings : JsonSerializable<DS4WindowsAppSettings>
     {
         private readonly IList<LightbarSettingInfo> lightbarSettings =
-            new List<LightbarSettingInfo>(Enumerable.Range(0, Constants.MaxControllers).Select(i => new LightbarSettingInfo()));
+            new List<LightbarSettingInfo>(Enumerable.Range(0, Constants.MaxControllers)
+                .Select(i => new LightbarSettingInfo()));
 
-        [Obsolete]
-        public bool UseExclusiveMode { get; set; }
+        [Obsolete] public bool UseExclusiveMode { get; set; }
 
         public bool StartMinimized { get; set; }
 
@@ -84,9 +84,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         /// <summary>
         ///     Gets custom LED/Lightbar overrides per controller slot.
         /// </summary>
-        public Dictionary<int, CustomLedProxyType> CustomLedOverrides { get; set; } = new(Enumerable
-            .Range(0, Constants.MaxControllers)
-            .Select(i => new KeyValuePair<int, CustomLedProxyType>(i, new CustomLedProxyType())));
+        //public Dictionary<int, CustomLedProxyType> CustomLedOverrides { get; set; } = new(Enumerable
+        //    .Range(0, Constants.MaxControllers)
+        //    .Select(i => new KeyValuePair<int, CustomLedProxyType>(i, new CustomLedProxyType())));
 
         /// <summary>
         ///     If true, will suppress the Steam warning dialog at startup.

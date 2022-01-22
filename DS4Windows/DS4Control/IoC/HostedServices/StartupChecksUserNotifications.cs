@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using AdonisUI.Controls;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.Translations;

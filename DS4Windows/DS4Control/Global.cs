@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.NetworkInformation;
 using System.Xml;
 using DS4Windows.DS4Control;
+using DS4Windows.Shared.Common.Types;
 
 
 namespace DS4Windows

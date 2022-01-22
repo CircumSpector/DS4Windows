@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 using DS4Windows.DS4Control;
+using DS4Windows.Shared.Common.Core;
 
 namespace DS4Windows
 {

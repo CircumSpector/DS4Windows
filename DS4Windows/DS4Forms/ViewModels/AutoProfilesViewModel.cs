@@ -13,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
 using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
