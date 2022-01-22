@@ -1,7 +1,7 @@
 ﻿using System;
 using DS4Windows;
 using DS4Windows.InputDevices;
-using DS4Windows.Shared.Core.HID;
+using DS4Windows.Shared.Devices.HID;
 using VidPidFeatureSet = DS4Windows.VidPidFeatureSet;
 
 namespace DS4WinWPF.DS4Library.InputDevices

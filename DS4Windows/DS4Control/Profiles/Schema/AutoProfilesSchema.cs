@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DS4Windows.Shared.Common.Core;
-using DS4Windows.Shared.Configuration.Common.Util;
+using DS4Windows.Shared.Common.Util;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema

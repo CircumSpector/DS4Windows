@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using DS4Windows.Shared.Common.Util;
-using DS4Windows.Shared.Core.Util;
+using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
 using PInvoke;

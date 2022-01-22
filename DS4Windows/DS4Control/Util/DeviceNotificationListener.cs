@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using DS4Windows.Shared.Core.HID;
+using DS4Windows.Shared.Devices.HID;
 using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.Util

@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;
-using DS4Windows.Shared.Core.HID;
-using DS4Windows.Shared.Core.Util;
+using DS4Windows.Shared.Devices.HID;
+using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4Windows.InputDevices

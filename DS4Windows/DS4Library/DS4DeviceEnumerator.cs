@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using DS4Windows.InputDevices;
-using DS4Windows.Shared.Core.HID;
+using DS4Windows.Shared.Devices.HID;
 using DS4WinWPF.DS4Library.InputDevices;
 using Microsoft.Extensions.Logging;
 

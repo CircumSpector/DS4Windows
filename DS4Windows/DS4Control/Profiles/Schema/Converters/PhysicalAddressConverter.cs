@@ -1,6 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 using DS4Windows.Shared.Common.Util;
-using DS4Windows.Shared.Core.Util;
+using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.Util;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 

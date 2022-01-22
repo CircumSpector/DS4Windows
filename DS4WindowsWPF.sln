@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4WinWPF", "DS4Windows\DS4WinWPF.csproj", "{0135A24D-5DBB-483C-9FC5-9A869E23DA9A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Devices", "DS4Windows.Shared.Core\DS4Windows.Shared.Devices.csproj", "{2C1F44F5-AFAE-4659-B595-ACE507816D9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Devices", "DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj", "{2C1F44F5-AFAE-4659-B595-ACE507816D9E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Configuration.Application", "DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj", "{7947FA69-EF8C-4911-BD56-B0C47A8BD972}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Common", "DS4Windows.Shared.Configuration.Common\DS4Windows.Shared.Common.csproj", "{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Common", "DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj", "{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
