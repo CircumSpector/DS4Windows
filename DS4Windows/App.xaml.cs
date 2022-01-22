@@ -43,7 +43,6 @@ using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
-using Swan;
 using WPFLocalizeExtension.Engine;
 
 namespace DS4WinWPF
@@ -62,6 +61,8 @@ namespace DS4WinWPF
             [AppThemeChoice.Dark] = "pack://application:,,,/AdonisUI;component/ColorSchemes/Dark.xaml"
         };
 
+        private readonly ActivitySource appActivitySource = new(Constants.ApplicationName);
+
         private readonly IHost host;
 
         private IAppSettingsService appSettings;
@@ -71,9 +72,9 @@ namespace DS4WinWPF
         private bool exitApp;
         private bool exitComThread;
 
-        private ILogger<App> logger;
-
         private IGlobalStateService globalState;
+
+        private ILogger<App> logger;
 
         private IProfilesService profileService;
         private ControlService rootHub;
@@ -82,8 +83,6 @@ namespace DS4WinWPF
         private bool skipSave;
         private Thread testThread;
         private EventWaitHandle threadComEvent;
-
-        private readonly ActivitySource appActivitySource = new(Constants.ApplicationName);
 
         public App()
         {
@@ -251,34 +250,29 @@ namespace DS4WinWPF
             var appLogger = host.Services.GetRequiredService<IAppLogger>();
             devices = host.Services.GetRequiredService<IDS4DeviceEnumerator>();
 
-            profileService = host.Services.GetRequiredService<IProfilesService>();
-
-            profileService.Initialize();
-
-            //profileService.CreateProfile();
-
-            /*
-            profileService.AddAutoSwitchingProfile(new AutoSwitchingProfileEntry
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CreateProfilesService"))
             {
-                Path = @"C:\Windows\notepad.exe",
-                ControllerSlotProfileId = new Dictionary<int, Guid?>
-                {
-                    { 0, DS4WindowsProfile.DefaultProfileId }
-                }
-            });
+                profileService = host.Services.GetRequiredService<IProfilesService>();
 
-            profileService.SaveAutoSwitchingProfiles();
-            */
+                profileService.Initialize();
+            }
 
-            //profileService.SaveAvailableProfiles();
-            //profileService.LoadAvailableProfiles();
-            //
+            CommandLineOptions parser;
 
-            var parser = (CommandLineOptions)host.Services.GetRequiredService<ICommandLineOptions>();
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CommandLineParsing"))
+            {
+                parser = (CommandLineOptions)host.Services.GetRequiredService<ICommandLineOptions>();
 
-            parser.Parse(e.Args);
+                parser.Parse(e.Args);
+            }
 
-            CheckOptions(parser);
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CheckOptions"))
+            {
+                CheckOptions(parser);
+            }
 
             if (exitApp) return;
 
@@ -286,33 +280,42 @@ namespace DS4WinWPF
 
             #region Check for existing instance
 
-            try
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CheckExistingInstance"))
             {
-                // https://github.com/dotnet/runtime/issues/2117
-                // another instance is already running if OpenExisting succeeds.
-                //threadComEvent = EventWaitHandle.OpenExisting(SingleAppComEventName,
-                //    System.Security.AccessControl.EventWaitHandleRights.Synchronize |
-                //    System.Security.AccessControl.EventWaitHandleRights.Modify);
-                // Use this for now
-                threadComEvent = CreateAndReplaceHandle(OpenEvent(
-                    (uint)(EventWaitHandleRights.Synchronize | EventWaitHandleRights.Modify), false,
-                    Constants.SingleAppComEventName));
-                threadComEvent.Set(); // signal the other instance.
-                threadComEvent.Close();
-                Current.Shutdown(); // Quit temp instance
-                runShutdown = false;
-                return;
-            }
-            catch
-            {
-                /* don't care about errors */
+                try
+                {
+                    // https://github.com/dotnet/runtime/issues/2117
+                    // another instance is already running if OpenExisting succeeds.
+                    //threadComEvent = EventWaitHandle.OpenExisting(SingleAppComEventName,
+                    //    System.Security.AccessControl.EventWaitHandleRights.Synchronize |
+                    //    System.Security.AccessControl.EventWaitHandleRights.Modify);
+                    // Use this for now
+                    threadComEvent = CreateAndReplaceHandle(OpenEvent(
+                        (uint)(EventWaitHandleRights.Synchronize | EventWaitHandleRights.Modify), false,
+                        Constants.SingleAppComEventName));
+                    threadComEvent.Set(); // signal the other instance.
+                    threadComEvent.Close();
+                    Current.Shutdown(); // Quit temp instance
+                    runShutdown = false;
+                    return;
+                }
+                catch
+                {
+                    /* don't care about errors */
+                }
             }
 
             #endregion
 
-            // Create the Event handle
-            threadComEvent = new EventWaitHandle(false, EventResetMode.ManualReset, Constants.SingleAppComEventName);
-            CreateTempWorkerThread();
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CreateComEventHandle"))
+            {
+                // Create the Event handle
+                threadComEvent =
+                    new EventWaitHandle(false, EventResetMode.ManualReset, Constants.SingleAppComEventName);
+                CreateTempWorkerThread();
+            }
 
             rootHub = host.Services.GetRequiredService<ControlService>();
 
@@ -323,26 +326,42 @@ namespace DS4WinWPF
             // 
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
-            Global.Instance.FindConfigLocation();
-            var firstRun = Global.Instance.IsFirstRun;
-            if (firstRun)
+            var firstRun = false;
+
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:FindConfigLocation"))
             {
-                //
-                // TODO: turn into DI
-                // 
-                var savewh =
-                    new SaveWhere(Global.Instance.HasMultipleSaveSpots);
-                savewh.ShowDialog();
+                Global.Instance.FindConfigLocation();
+                firstRun = Global.Instance.IsFirstRun;
+                if (firstRun)
+                {
+                    //
+                    // TODO: turn into DI
+                    // 
+                    var savewh =
+                        new SaveWhere(Global.Instance.HasMultipleSaveSpots);
+                    savewh.ShowDialog();
+                }
             }
 
-            if (firstRun && !CreateConfDirSkeleton())
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CreateConfDirSkeleton"))
             {
-                MessageBox.Show($"Cannot create config folder structure in {Global.RuntimeAppDataPath}. Exiting",
-                    Constants.ApplicationName, MessageBoxButton.OK, MessageBoxImage.Error);
-                Current.Shutdown(1);
+                if (firstRun && !CreateConfDirSkeleton())
+                {
+                    MessageBox.Show($"Cannot create config folder structure in {Global.RuntimeAppDataPath}. Exiting",
+                        Constants.ApplicationName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Current.Shutdown(1);
+                }
             }
 
-            var readAppConfig = await appSettings.LoadAsync();
+            bool readAppConfig;
+
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:LoadAppSettings"))
+            {
+                readAppConfig = await appSettings.LoadAsync();
+            }
 
             switch (firstRun)
             {
@@ -366,30 +385,73 @@ namespace DS4WinWPF
 
             skipSave = false;
 
-            if (!Global.Instance.Config.LoadActions()) Global.Instance.CreateStdActions();
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:LoadActions"))
+            {
+                if (!Global.Instance.Config.LoadActions()) Global.Instance.CreateStdActions();
+            }
 
-            SetUICulture(appSettings.Settings.UseLang);
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:ApplyCultureAndTheme"))
+            {
+                SetUICulture(appSettings.Settings.UseLang);
 
-            if (appSettings.Settings.AppTheme != AppThemeChoice.Default)
-                ChangeTheme(appSettings.Settings.AppTheme, false);
+                if (appSettings.Settings.AppTheme != AppThemeChoice.Default)
+                    ChangeTheme(appSettings.Settings.AppTheme, false);
+            }
 
-            Global.Instance.Config.LoadLinkedProfiles();
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:LoadLinkedProfiles"))
+            {
+                Global.Instance.Config.LoadLinkedProfiles();
+            }
 
-            var window = host.Services.GetRequiredService<MainWindow>();
-            MainWindow = window;
-            window.Show();
+            MainWindow window;
 
-            var source = PresentationSource.FromVisual(window) as HwndSource;
-            CreateIPCClassNameMMF(source.Handle);
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CreateMainWindow"))
+            {
+                window = host.Services.GetRequiredService<MainWindow>();
+            }
 
-            window.CheckMinStatus();
-            rootHub.LogDebug($"Running as {(Global.IsAdministrator ? "Admin" : "User")}");
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:ShowMainWindow"))
+            {
+                MainWindow = window;
+                window.Show();
+            }
 
-            if (Global.hidHideInstalled) rootHub.CheckHidHidePresence();
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CreateIPCClassNameMMF"))
+            {
+                var source = PresentationSource.FromVisual(window) as HwndSource;
+                CreateIPCClassNameMMF(source.Handle);
+            }
 
-            await rootHub.LoadPermanentSlotsConfig();
-            window.LateChecks(parser);
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CheckMinStatus"))
+            {
+                window.CheckMinStatus();
+                rootHub.LogDebug($"Running as {(Global.IsAdministrator ? "Admin" : "User")}");
+            }
 
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:CheckHidHidePresence"))
+            {
+                if (Global.hidHideInstalled) rootHub.CheckHidHidePresence();
+            }
+
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:LoadPermanentSlotsConfig"))
+            {
+                await rootHub.LoadPermanentSlotsConfig();
+            }
+
+            using (appActivitySource.StartActivity(
+                       $"{nameof(App)}:LateChecks"))
+            {
+                window.LateChecks(parser);
+            }
 
             base.OnStartup(e);
         }
