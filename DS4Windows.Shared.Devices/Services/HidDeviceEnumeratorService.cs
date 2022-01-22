@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -39,6 +41,8 @@ namespace DS4Windows.Shared.Devices.Services
     /// </summary>
     public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     {
+        protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+
         private readonly ObservableCollection<HidDevice> connectedDevices;
 
         private readonly IDeviceNotificationListenerSubscriber deviceNotificationListener;
@@ -81,6 +85,9 @@ namespace DS4Windows.Shared.Devices.Services
         /// <inheritdoc />
         public void EnumerateDevices()
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
+
             var deviceIndex = 0;
 
             connectedDevices.Clear();
@@ -232,6 +239,11 @@ namespace DS4Windows.Shared.Devices.Services
 
         private void DeviceNotificationListenerOnDeviceArrived(string symLink)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
+
+            activity?.SetTag("Path", symLink);
+
             var device = PnPDevice.GetDeviceByInterfaceId(symLink);
 
             logger.LogInformation("HID Device {Instance} ({Path}) arrived",

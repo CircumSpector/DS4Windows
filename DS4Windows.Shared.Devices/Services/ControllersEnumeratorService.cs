@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
 using Microsoft.Extensions.Logging;
 
@@ -48,6 +50,8 @@ namespace DS4Windows.Shared.Devices.Services
 
         private const int HidUsageJoystick = 0x04;
         private const int HidUsageGamepad = 0x05;
+
+        protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
         private static readonly IEnumerable<VidPidInfo> KnownDevices = new List<VidPidInfo>
         {
@@ -168,6 +172,9 @@ namespace DS4Windows.Shared.Devices.Services
         /// <inheritdoc />
         public void EnumerateDevices()
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
+
             enumeratorService.EnumerateDevices();
 
             var hidDevices = enumeratorService.ConnectedDevices;
@@ -230,6 +237,11 @@ namespace DS4Windows.Shared.Devices.Services
 
         private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnDeviceArrived)}");
+
+            activity?.SetTag("Path", hidDevice.Path);
+
             var known = KnownDevices.FirstOrDefault(d =>
                 d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId);
 
