@@ -115,7 +115,9 @@ namespace DS4WinWPF
                     .SetSampler(new AlwaysOnSampler())
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Constants.ApplicationName))
                     .AddSource(Constants.ApplicationName)
-                    .AddSource(TracingSources.AssemblyActivitySourceName)
+                    .AddSource(TracingSources.DevicesAssemblyActivitySourceName)
+                    .AddSource(TracingSources.CommonAssemblyActivitySourceName)
+                    .AddSource(TracingSources.ConfigurationApplicationAssemblyActivitySourceName)
                     .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; })
                 );
 

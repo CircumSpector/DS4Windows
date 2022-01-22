@@ -32,7 +32,7 @@ namespace DS4Windows.Shared.Devices.HID
 
         protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
 
-        protected readonly ActivitySource CoreActivity = new(TracingSources.AssemblyActivitySourceName);
+        protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
         /// <summary>
         ///     Managed input report array.
