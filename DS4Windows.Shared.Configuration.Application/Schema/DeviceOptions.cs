@@ -1,11 +1,39 @@
 ﻿using System;
 using System.Xml.Serialization;
-using DS4Windows.InputDevices;
+using DS4Windows.Shared.Common.Types.DualSense;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using PropertyChanged;
 
-namespace DS4Windows
+namespace DS4Windows.Shared.Configuration.Application.Schema
 {
+    [AddINotifyPropertyChangedInterface]
+    [XmlRoot(ElementName = "DeviceOptions")]
+    public class DeviceOptions
+    {
+        [XmlElement(ElementName = "DS4SupportSettings")]
+        public DS4DeviceOptions DS4SupportSettings { get; set; } = new();
+
+        [XmlElement(ElementName = "DualSenseSupportSettings")]
+        public DualSenseDeviceOptions DualSenseSupportSettings { get; set; } = new();
+
+        [XmlElement(ElementName = "SwitchProSupportSettings")]
+        public SwitchProDeviceOptions SwitchProSupportSettings { get; set; } = new();
+
+        [XmlElement(ElementName = "JoyConSupportSettings")]
+        public JoyConDeviceOptions JoyConSupportSettings { get; set; } = new();
+
+        /// <summary>
+        ///     If enabled then DS4Windows shows additional log messages when a gamepad is connected (may be useful to diagnose
+        ///     connection problems).
+        ///     This option is not persistent (ie. not saved into config files), so if enabled then it is reset back to FALSE when
+        ///     DS4Windows is restarted.
+        /// </summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        public bool VerboseLogMessages { get; set; }
+    }
+
     [XmlRoot(ElementName = "Controller")]
     public abstract class ControllerOptionsStore
     {
@@ -15,8 +43,7 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DS4DeviceOptions
     {
-        [XmlElement(ElementName = "Enabled")]
-        public bool Enabled { get; set; } = true;
+        [XmlElement(ElementName = "Enabled")] public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
         private void OnEnabledChanged()
@@ -31,8 +58,7 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DS4ControllerOptions : ControllerOptionsStore
     {
-        [XmlElement(ElementName = "Copycat")]
-        public bool IsCopyCat { get; set; }
+        [XmlElement(ElementName = "Copycat")] public bool IsCopyCat { get; set; }
 
         [UsedImplicitly]
         private void OnIsCopyCatChanged()
@@ -47,8 +73,7 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class DualSenseDeviceOptions
     {
-        [XmlElement(ElementName = "Enabled")]
-        public bool Enabled { get; set; } = true;
+        [XmlElement(ElementName = "Enabled")] public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
         private void OnEnabledChanged()
@@ -82,7 +107,7 @@ namespace DS4Windows
         public bool EnableRumble { get; set; } = true;
 
         [XmlElement(ElementName = "RumbleStrength")]
-        public DualSenseDevice.HapticIntensity HapticIntensity { get; set; } = DualSenseDevice.HapticIntensity.Medium;
+        public HapticIntensity HapticIntensity { get; set; } = HapticIntensity.Medium;
 
         [XmlElement(ElementName = "LEDBarMode")]
         public LEDBarMode LedMode { get; set; } = LEDBarMode.MultipleControllers;
@@ -90,7 +115,7 @@ namespace DS4Windows
         [XmlElement(ElementName = "MuteLEDMode")]
         public MuteLEDMode MuteLedMode { get; set; } = MuteLEDMode.Off;
 
-        public bool HasUserConfirmedProblematicFirmware { get; set; } = false;
+        public bool HasUserConfirmedProblematicFirmware { get; set; }
 
         [UsedImplicitly]
         private void OnEnableRumbleChanged()
@@ -126,8 +151,7 @@ namespace DS4Windows
     [AddINotifyPropertyChangedInterface]
     public class SwitchProDeviceOptions
     {
-        [XmlElement(ElementName = "Enabled")]
-        public bool Enabled { get; set; } = true;
+        [XmlElement(ElementName = "Enabled")] public bool Enabled { get; set; } = true;
 
         [UsedImplicitly]
         private void OnEnabledChanged()
@@ -172,8 +196,7 @@ namespace DS4Windows
 
         public bool Enabled { get; set; } = true;
 
-        [XmlElement(ElementName = "LinkMode")]
-        public LinkMode LinkedMode { get; set; } = LinkMode.Joined;
+        [XmlElement(ElementName = "LinkMode")] public LinkMode LinkedMode { get; set; } = LinkMode.Joined;
 
         [XmlElement(ElementName = "JoinedGyroProvider")]
         public JoinedGyroProvider JoinGyroProv { get; set; } = JoinedGyroProvider.JoyConR;

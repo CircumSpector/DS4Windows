@@ -13,6 +13,7 @@ using AdonisUI.Controls;
 using DS4Windows.InputDevices;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;
 using DS4Windows.VJoyFeeder;

@@ -5,11 +5,10 @@ using System.Globalization;
 using System.Linq;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Types;
-using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Configuration.Common.Util;
 using Newtonsoft.Json;
 
-namespace DS4WinWPF.DS4Control.Profiles.Schema
+namespace DS4Windows.Shared.Configuration.Application.Schema
 {
     /// <summary>
     ///     Global application settings persisted to/fetched from disk.

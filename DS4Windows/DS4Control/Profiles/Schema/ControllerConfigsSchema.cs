@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using DS4Windows;
+using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;

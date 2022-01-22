@@ -1,9 +1,8 @@
 ﻿using System;
-using DS4Windows.Shared.Common.Types;
 using JetBrains.Annotations;
 using PropertyChanged;
 
-namespace DS4Windows.Shared.Configuration.Application.Schema
+namespace DS4Windows.Shared.Common.Types
 {
     /// <summary>
     ///     Lightbar behaviour settings.

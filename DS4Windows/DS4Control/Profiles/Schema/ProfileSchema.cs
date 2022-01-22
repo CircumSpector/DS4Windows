@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using DS4Windows;
-using DS4Windows.Shared.Configuration.Application.Schema;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Configuration.Common.Util;
 using JetBrains.Annotations;
 using Newtonsoft.Json;

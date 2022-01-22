@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Logging;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using DS4Windows;
 using DS4Windows.InputDevices;
+using DS4Windows.Shared.Common.Types.DualSense;
+using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 
@@ -187,9 +189,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public List<DSHapticsChoiceEnum> DSHapticOptions { get; } = new()
         {
-            new DSHapticsChoiceEnum("Low", DualSenseDevice.HapticIntensity.Low),
-            new DSHapticsChoiceEnum("Medium", DualSenseDevice.HapticIntensity.Medium),
-            new DSHapticsChoiceEnum("High", DualSenseDevice.HapticIntensity.High)
+            new DSHapticsChoiceEnum("Low", HapticIntensity.Low),
+            new DSHapticsChoiceEnum("Medium", HapticIntensity.Medium),
+            new DSHapticsChoiceEnum("High", HapticIntensity.High)
         };
 
         public List<EnumChoiceSelection<DualSenseControllerOptions.LEDBarMode>> DsLEDModes { get; } = new()
@@ -271,7 +273,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     public class DSHapticsChoiceEnum
     {
         public DSHapticsChoiceEnum(string name,
-            DualSenseDevice.HapticIntensity intensity)
+            HapticIntensity intensity)
         {
             DisplayName = name;
             ChoiceValue = intensity;
@@ -279,7 +281,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string DisplayName { get; } = string.Empty;
 
-        public DualSenseDevice.HapticIntensity ChoiceValue { get; set; }
+        public HapticIntensity ChoiceValue { get; set; }
 
         public override string ToString()
         {

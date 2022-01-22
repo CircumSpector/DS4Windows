@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DS4Windows.Shared.Common.Types.DualSense;
+using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;
 using DS4WinWPF.DS4Control.Logging;
@@ -17,12 +19,7 @@ namespace DS4Windows.InputDevices
     [AddINotifyPropertyChangedInterface]
     public partial class DualSenseDevice : DS4Device
     {
-        public enum HapticIntensity : uint
-        {
-            Low,
-            Medium,
-            High
-        }
+        
 
         private const int BT_REPORT_OFFSET = 2;
         protected new const int BT_OUTPUT_REPORT_LENGTH = 78;
