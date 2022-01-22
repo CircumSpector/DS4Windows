@@ -30,13 +30,13 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly BindingWindowViewModel bindingVM;
 
-        private readonly Dictionary<X360Controls, Button> conBtnMap = new();
+        private readonly Dictionary<X360ControlItem, Button> conBtnMap = new();
 
         private readonly ExposeMode expose;
         private Button highlightBtn;
         private readonly Dictionary<int, Button> keyBtnMap = new();
 
-        private readonly Dictionary<X360Controls, Button> mouseBtnMap = new();
+        private readonly Dictionary<X360ControlItem, Button> mouseBtnMap = new();
 
         [MissingLocalization]
         public BindingWindow(
@@ -260,120 +260,120 @@ namespace DS4WinWPF.DS4Forms
         private void InitButtonBindings()
         {
             associatedBindings.Add(aBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.A });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.A });
             aBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(bBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.B });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.B });
             bBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(xBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.X });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.X });
             xBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(yBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.Y });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.Y });
             yBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(lbBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LB });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LB });
             lbBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(ltBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LT });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LT });
             ltBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rbBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RB });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RB });
             rbBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rtBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RT });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RT });
             rtBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(backBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.Back });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.Back });
             backBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(startBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.Start });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.Start });
             startBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(guideBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.Guide });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.Guide });
             guideBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(lsbBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LS });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LS });
             lsbBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(lsuBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LYNeg });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LYNeg });
             lsuBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(lsrBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LXPos });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LXPos });
             lsrBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(lsdBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LYPos });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LYPos });
             lsdBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(lslBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LXNeg });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LXNeg });
             lslBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(dpadUBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.DpadUp });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadUp });
             dpadUBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(dpadRBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.DpadRight });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadRight });
             dpadRBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(dpadDBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.DpadDown });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadDown });
             dpadDBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(dpadLBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.DpadLeft });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.DpadLeft });
             dpadLBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rsbBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RS });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RS });
             rsbBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rsuBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RYNeg });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RYNeg });
             rsuBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rsrBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RXPos });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RXPos });
             rsrBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rsdBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RYPos });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RYPos });
             rsdBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(rslBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RXNeg });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RXNeg });
             rslBtn.Click += OutputButtonBtn_Click;
 
             associatedBindings.Add(touchpadClickBtn,
                 new BindAssociation
-                    { OutputType = BindAssociation.OutType.Button, Control = X360Controls.TouchpadClick });
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.TouchpadClick });
             touchpadClickBtn.Click += OutputButtonBtn_Click;
 
             associatedBindings.Add(mouseUpBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.MouseUp });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseUp });
             mouseUpBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseDownBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.MouseDown });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseDown });
             mouseDownBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseLeftBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.MouseLeft });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseLeft });
             mouseLeftBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseRightBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.MouseRight });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MouseRight });
             mouseRightBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseLBBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.LeftMouse });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.LeftMouse });
             mouseLBBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseMBBtn,
                 new BindAssociation
-                    { OutputType = BindAssociation.OutType.Button, Control = X360Controls.MiddleMouse });
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.MiddleMouse });
             mouseMBBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseRBBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.RightMouse });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.RightMouse });
             mouseRBBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouse4Btn,
                 new BindAssociation
-                    { OutputType = BindAssociation.OutType.Button, Control = X360Controls.FourthMouse });
+                    { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.FourthMouse });
             mouse4Btn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouse5Btn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.FifthMouse });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.FifthMouse });
             mouse5Btn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseWheelUBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.WUP });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.WUP });
             mouseWheelUBtn.Click += OutputButtonBtn_Click;
             associatedBindings.Add(mouseWheelDBtn,
-                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360Controls.WDOWN });
+                new BindAssociation { OutputType = BindAssociation.OutType.Button, Control = X360ControlItem.WDOWN });
             mouseWheelDBtn.Click += OutputButtonBtn_Click;
         }
 
@@ -896,7 +896,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var actBind = bindingVM.ActionBinding;
             actBind.OutputType = OutBinding.OutType.Button;
-            actBind.Control = X360Controls.Unbound;
+            actBind.Control = X360ControlItem.Unbound;
             Close();
         }
 

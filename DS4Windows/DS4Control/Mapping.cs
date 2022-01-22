@@ -1776,59 +1776,59 @@ namespace DS4Windows
             return result;
         }
 
-        private static X360Controls getX360ControlsByName(string key)
+        private static X360ControlItem getX360ControlsByName(string key)
         {
-            X360Controls x3c;
+            X360ControlItem x3c;
             if (Enum.TryParse(key, true, out x3c))
                 return x3c;
 
             switch (key)
             {
-                case "Back": return X360Controls.Back;
-                case "Left Stick": return X360Controls.LS;
-                case "Right Stick": return X360Controls.RS;
-                case "Start": return X360Controls.Start;
-                case "Up Button": return X360Controls.DpadUp;
-                case "Right Button": return X360Controls.DpadRight;
-                case "Down Button": return X360Controls.DpadDown;
-                case "Left Button": return X360Controls.DpadLeft;
+                case "Back": return X360ControlItem.Back;
+                case "Left Stick": return X360ControlItem.LS;
+                case "Right Stick": return X360ControlItem.RS;
+                case "Start": return X360ControlItem.Start;
+                case "Up Button": return X360ControlItem.DpadUp;
+                case "Right Button": return X360ControlItem.DpadRight;
+                case "Down Button": return X360ControlItem.DpadDown;
+                case "Left Button": return X360ControlItem.DpadLeft;
 
-                case "Left Bumper": return X360Controls.LB;
-                case "Right Bumper": return X360Controls.RB;
-                case "Y Button": return X360Controls.Y;
-                case "B Button": return X360Controls.B;
-                case "A Button": return X360Controls.A;
-                case "X Button": return X360Controls.X;
+                case "Left Bumper": return X360ControlItem.LB;
+                case "Right Bumper": return X360ControlItem.RB;
+                case "Y Button": return X360ControlItem.Y;
+                case "B Button": return X360ControlItem.B;
+                case "A Button": return X360ControlItem.A;
+                case "X Button": return X360ControlItem.X;
 
-                case "Guide": return X360Controls.Guide;
-                case "Left X-Axis-": return X360Controls.LXNeg;
-                case "Left Y-Axis-": return X360Controls.LYNeg;
-                case "Right X-Axis-": return X360Controls.RXNeg;
-                case "Right Y-Axis-": return X360Controls.RYNeg;
+                case "Guide": return X360ControlItem.Guide;
+                case "Left X-Axis-": return X360ControlItem.LXNeg;
+                case "Left Y-Axis-": return X360ControlItem.LYNeg;
+                case "Right X-Axis-": return X360ControlItem.RXNeg;
+                case "Right Y-Axis-": return X360ControlItem.RYNeg;
 
-                case "Left X-Axis+": return X360Controls.LXPos;
-                case "Left Y-Axis+": return X360Controls.LYPos;
-                case "Right X-Axis+": return X360Controls.RXPos;
-                case "Right Y-Axis+": return X360Controls.RYPos;
-                case "Left Trigger": return X360Controls.LT;
-                case "Right Trigger": return X360Controls.RT;
+                case "Left X-Axis+": return X360ControlItem.LXPos;
+                case "Left Y-Axis+": return X360ControlItem.LYPos;
+                case "Right X-Axis+": return X360ControlItem.RXPos;
+                case "Right Y-Axis+": return X360ControlItem.RYPos;
+                case "Left Trigger": return X360ControlItem.LT;
+                case "Right Trigger": return X360ControlItem.RT;
 
-                case "Left Mouse Button": return X360Controls.LeftMouse;
-                case "Right Mouse Button": return X360Controls.RightMouse;
-                case "Middle Mouse Button": return X360Controls.MiddleMouse;
-                case "4th Mouse Button": return X360Controls.FourthMouse;
-                case "5th Mouse Button": return X360Controls.FifthMouse;
-                case "Mouse Wheel Up": return X360Controls.WUP;
-                case "Mouse Wheel Down": return X360Controls.WDOWN;
-                case "Mouse Up": return X360Controls.MouseUp;
-                case "Mouse Down": return X360Controls.MouseDown;
-                case "Mouse Left": return X360Controls.MouseLeft;
-                case "Mouse Right": return X360Controls.MouseRight;
-                case "Touchpad Click": return X360Controls.TouchpadClick;
-                case "Unbound": return X360Controls.Unbound;
+                case "Left Mouse Button": return X360ControlItem.LeftMouse;
+                case "Right Mouse Button": return X360ControlItem.RightMouse;
+                case "Middle Mouse Button": return X360ControlItem.MiddleMouse;
+                case "4th Mouse Button": return X360ControlItem.FourthMouse;
+                case "5th Mouse Button": return X360ControlItem.FifthMouse;
+                case "Mouse Wheel Up": return X360ControlItem.WUP;
+                case "Mouse Wheel Down": return X360ControlItem.WDOWN;
+                case "Mouse Up": return X360ControlItem.MouseUp;
+                case "Mouse Down": return X360ControlItem.MouseDown;
+                case "Mouse Left": return X360ControlItem.MouseLeft;
+                case "Mouse Right": return X360ControlItem.MouseRight;
+                case "Touchpad Click": return X360ControlItem.TouchpadClick;
+                case "Unbound": return X360ControlItem.Unbound;
             }
 
-            return X360Controls.Unbound;
+            return X360ControlItem.Unbound;
         }
 
         [Shared.Common.Attributes.HighMemoryPressure]
@@ -2766,25 +2766,25 @@ namespace DS4Windows
                     else if (dcs.Control >= DS4ControlItem.GyroXPos && dcs.Control <= DS4ControlItem.GyroZNeg)
                         isAnalog = true;
 
-                    var xboxControl = X360Controls.None;
+                    var xboxControl = X360ControlItem.None;
                     xboxControl = action.ActionButton;
-                    if (xboxControl >= X360Controls.LXNeg && xboxControl <= X360Controls.Start)
+                    if (xboxControl >= X360ControlItem.LXNeg && xboxControl <= X360ControlItem.Start)
                     {
                         var tempDS4Control = ReverseX360ButtonMapping[(int)xboxControl];
                         customMapQueue[device].Enqueue(new ControlToXInput(dcs.Control, tempDS4Control));
                         //tempControlDict.Add(dcs.control, tempDS4Control);
                     }
-                    else if (xboxControl == X360Controls.TouchpadClick)
+                    else if (xboxControl == X360ControlItem.TouchpadClick)
                     {
                         var value = GetBoolMapping2(device, dcs.Control, cState, eState, tp, fieldMapping);
                         if (value)
                             outputfieldMapping.outputTouchButton = value;
                     }
-                    else if (xboxControl >= X360Controls.LeftMouse && xboxControl <= X360Controls.WDOWN)
+                    else if (xboxControl >= X360ControlItem.LeftMouse && xboxControl <= X360ControlItem.WDOWN)
                     {
                         switch (xboxControl)
                         {
-                            case X360Controls.LeftMouse:
+                            case X360ControlItem.LeftMouse:
                                 {
                                     keyvalue = 256;
                                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
@@ -2792,7 +2792,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.RightMouse:
+                            case X360ControlItem.RightMouse:
                                 {
                                     keyvalue = 257;
                                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
@@ -2800,7 +2800,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.MiddleMouse:
+                            case X360ControlItem.MiddleMouse:
                                 {
                                     keyvalue = 258;
                                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
@@ -2808,7 +2808,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.FourthMouse:
+                            case X360ControlItem.FourthMouse:
                                 {
                                     keyvalue = 259;
                                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
@@ -2816,7 +2816,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.FifthMouse:
+                            case X360ControlItem.FifthMouse:
                                 {
                                     keyvalue = 260;
                                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
@@ -2824,7 +2824,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.WUP:
+                            case X360ControlItem.WUP:
                                 {
                                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                     {
@@ -2847,7 +2847,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.WDOWN:
+                            case X360ControlItem.WDOWN:
                                 {
                                     if (GetBoolActionMapping2(device, dcs.Control, cState, eState, tp, fieldMapping))
                                     {
@@ -2872,11 +2872,11 @@ namespace DS4Windows
                                 }
                         }
                     }
-                    else if (xboxControl >= X360Controls.MouseUp && xboxControl <= X360Controls.MouseRight)
+                    else if (xboxControl >= X360ControlItem.MouseUp && xboxControl <= X360ControlItem.MouseRight)
                     {
                         switch (xboxControl)
                         {
-                            case X360Controls.MouseUp:
+                            case X360ControlItem.MouseUp:
                                 {
                                     if (tempMouseDeltaY == 0)
                                     {
@@ -2888,7 +2888,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.MouseDown:
+                            case X360ControlItem.MouseDown:
                                 {
                                     if (tempMouseDeltaY == 0)
                                     {
@@ -2900,7 +2900,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.MouseLeft:
+                            case X360ControlItem.MouseLeft:
                                 {
                                     if (tempMouseDeltaX == 0)
                                     {
@@ -2912,7 +2912,7 @@ namespace DS4Windows
 
                                     break;
                                 }
-                            case X360Controls.MouseRight:
+                            case X360ControlItem.MouseRight:
                                 {
                                     if (tempMouseDeltaX == 0)
                                     {

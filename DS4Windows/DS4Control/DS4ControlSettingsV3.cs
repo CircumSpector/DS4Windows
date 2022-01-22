@@ -74,10 +74,10 @@ namespace DS4Windows
                         ControlActionType = ActionType.Key;
                         ActionData.ActionKey = Convert.ToInt32(act);
                         break;
-                    case string or X360Controls:
+                    case string or X360ControlItem:
                     {
                         ControlActionType = ActionType.Button;
-                        if (act is X360Controls controls)
+                        if (act is X360ControlItem controls)
                             ActionData.ActionButton = controls;
                         else
                             Enum.TryParse(act.ToString(), out ActionData.ActionButton);
@@ -106,10 +106,10 @@ namespace DS4Windows
                         ShiftAction.ActionKey = Convert.ToInt32(act);
                         break;
                     case string:
-                    case X360Controls:
+                    case X360ControlItem:
                     {
                         ShiftActionType = ActionType.Button;
-                        if (act is X360Controls controls)
+                        if (act is X360ControlItem controls)
                             ShiftAction.ActionButton = controls;
                         else
                             Enum.TryParse(act.ToString(), out ShiftAction.ActionButton);

@@ -1,8 +1,10 @@
-﻿namespace DS4Windows
+﻿using DS4Windows.Shared.Common.Types;
+
+namespace DS4Windows
 {
     public class ControlActionData
     {
-        public X360Controls ActionButton;
+        public X360ControlItem ActionButton;
 
         /// <summary>
         ///     Store base mapping value. Uses Windows virtual key values as the base

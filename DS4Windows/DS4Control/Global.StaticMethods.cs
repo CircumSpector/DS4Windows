@@ -181,7 +181,7 @@ namespace DS4Windows
             return result;
         }
 
-        public static string GetX360ControlString(X360Controls key, OutputDeviceType conType)
+        public static string GetX360ControlString(X360ControlItem key, OutputDeviceType conType)
         {
             var result = string.Empty;
 

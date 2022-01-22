@@ -191,7 +191,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Macro
         }
 
-        public X360Controls Control { get; set; }
+        public X360ControlItem Control { get; set; }
 
         public int OutKey { get; set; }
 
@@ -199,12 +199,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool IsMouse()
         {
-            return OutputType == OutType.Button && Control is >= X360Controls.LeftMouse and < X360Controls.Unbound;
+            return OutputType == OutType.Button && Control is >= X360ControlItem.LeftMouse and < X360ControlItem.Unbound;
         }
 
-        public static bool IsMouseRange(X360Controls control)
+        public static bool IsMouseRange(X360ControlItem control)
         {
-            return control is >= X360Controls.LeftMouse and < X360Controls.Unbound;
+            return control is >= X360ControlItem.LeftMouse and < X360ControlItem.Unbound;
         }
     }
 
@@ -218,7 +218,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Macro
         }
 
-        public X360Controls Control;
+        public X360ControlItem Control;
 
         private DS4Color extrasColor = new(255, 255, 255);
 
@@ -319,7 +319,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             : Application.Current.FindResource("SecondaryColor").ToString();
 
         public string UnboundColor =>
-            OutputType == OutType.Button && Control == X360Controls.Unbound
+            OutputType == OutType.Button && Control == X360ControlItem.Unbound
                 ? Colors.LimeGreen.ToString()
                 : Application.Current.FindResource("SecondaryColor").ToString();
 
@@ -353,12 +353,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public bool IsMouse()
         {
-            return OutputType == OutType.Button && Control >= X360Controls.LeftMouse && Control < X360Controls.Unbound;
+            return OutputType == OutType.Button && Control >= X360ControlItem.LeftMouse && Control < X360ControlItem.Unbound;
         }
 
-        public static bool IsMouseRange(X360Controls control)
+        public static bool IsMouseRange(X360ControlItem control)
         {
-            return control >= X360Controls.LeftMouse && control < X360Controls.Unbound;
+            return control >= X360ControlItem.LeftMouse && control < X360ControlItem.Unbound;
         }
 
         public void ParseExtras(string extras)
@@ -447,7 +447,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     settings.ActionData.ActionButton = Control;
                     settings.ControlActionType = DS4ControlSettingsV3.ActionType.Button;
-                    if (Control == X360Controls.Unbound) settings.KeyType |= DS4KeyType.Unbound;
+                    if (Control == X360ControlItem.Unbound) settings.KeyType |= DS4KeyType.Unbound;
                 }
                 else if (OutputType == OutType.Key)
                 {
@@ -490,7 +490,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 {
                     settings.ShiftAction.ActionButton = Control;
                     settings.ShiftActionType = DS4ControlSettingsV3.ActionType.Button;
-                    if (Control == X360Controls.Unbound) settings.ShiftKeyType |= DS4KeyType.Unbound;
+                    if (Control == X360ControlItem.Unbound) settings.ShiftKeyType |= DS4KeyType.Unbound;
                 }
                 else if (OutputType == OutType.Key)
                 {

@@ -139,11 +139,11 @@ namespace DS4Windows
 
         DS4ControlItem GetDs4ControlsByName(string key);
 
-        X360Controls GetX360ControlsByName(string key);
+        X360ControlItem GetX360ControlsByName(string key);
 
         string StickOutputCurveString(int id);
 
-        string GetX360ControlString(X360Controls key);
+        string GetX360ControlString(X360ControlItem key);
 
         Task<bool> LoadProfile(int device, bool launchprogram, ControlService control,
             string profilePath = "", bool xinputChange = true, bool postLoad = true);

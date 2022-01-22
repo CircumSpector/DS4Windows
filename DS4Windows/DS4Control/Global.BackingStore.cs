@@ -529,107 +529,107 @@ namespace DS4Windows
                 return 0;
             }
 
-            public X360Controls GetX360ControlsByName(string key)
+            public X360ControlItem GetX360ControlsByName(string key)
             {
-                X360Controls x3c;
+                X360ControlItem x3c;
                 if (Enum.TryParse(key, true, out x3c))
                     return x3c;
 
                 switch (key)
                 {
-                    case "Back": return X360Controls.Back;
-                    case "Left Stick": return X360Controls.LS;
-                    case "Right Stick": return X360Controls.RS;
-                    case "Start": return X360Controls.Start;
-                    case "Up Button": return X360Controls.DpadUp;
-                    case "Right Button": return X360Controls.DpadRight;
-                    case "Down Button": return X360Controls.DpadDown;
-                    case "Left Button": return X360Controls.DpadLeft;
+                    case "Back": return X360ControlItem.Back;
+                    case "Left Stick": return X360ControlItem.LS;
+                    case "Right Stick": return X360ControlItem.RS;
+                    case "Start": return X360ControlItem.Start;
+                    case "Up Button": return X360ControlItem.DpadUp;
+                    case "Right Button": return X360ControlItem.DpadRight;
+                    case "Down Button": return X360ControlItem.DpadDown;
+                    case "Left Button": return X360ControlItem.DpadLeft;
 
-                    case "Left Bumper": return X360Controls.LB;
-                    case "Right Bumper": return X360Controls.RB;
-                    case "Y Button": return X360Controls.Y;
-                    case "B Button": return X360Controls.B;
-                    case "A Button": return X360Controls.A;
-                    case "X Button": return X360Controls.X;
+                    case "Left Bumper": return X360ControlItem.LB;
+                    case "Right Bumper": return X360ControlItem.RB;
+                    case "Y Button": return X360ControlItem.Y;
+                    case "B Button": return X360ControlItem.B;
+                    case "A Button": return X360ControlItem.A;
+                    case "X Button": return X360ControlItem.X;
 
-                    case "Guide": return X360Controls.Guide;
-                    case "Left X-Axis-": return X360Controls.LXNeg;
-                    case "Left Y-Axis-": return X360Controls.LYNeg;
-                    case "Right X-Axis-": return X360Controls.RXNeg;
-                    case "Right Y-Axis-": return X360Controls.RYNeg;
+                    case "Guide": return X360ControlItem.Guide;
+                    case "Left X-Axis-": return X360ControlItem.LXNeg;
+                    case "Left Y-Axis-": return X360ControlItem.LYNeg;
+                    case "Right X-Axis-": return X360ControlItem.RXNeg;
+                    case "Right Y-Axis-": return X360ControlItem.RYNeg;
 
-                    case "Left X-Axis+": return X360Controls.LXPos;
-                    case "Left Y-Axis+": return X360Controls.LYPos;
-                    case "Right X-Axis+": return X360Controls.RXPos;
-                    case "Right Y-Axis+": return X360Controls.RYPos;
-                    case "Left Trigger": return X360Controls.LT;
-                    case "Right Trigger": return X360Controls.RT;
-                    case "Touchpad Click": return X360Controls.TouchpadClick;
+                    case "Left X-Axis+": return X360ControlItem.LXPos;
+                    case "Left Y-Axis+": return X360ControlItem.LYPos;
+                    case "Right X-Axis+": return X360ControlItem.RXPos;
+                    case "Right Y-Axis+": return X360ControlItem.RYPos;
+                    case "Left Trigger": return X360ControlItem.LT;
+                    case "Right Trigger": return X360ControlItem.RT;
+                    case "Touchpad Click": return X360ControlItem.TouchpadClick;
 
-                    case "Left Mouse Button": return X360Controls.LeftMouse;
-                    case "Right Mouse Button": return X360Controls.RightMouse;
-                    case "Middle Mouse Button": return X360Controls.MiddleMouse;
-                    case "4th Mouse Button": return X360Controls.FourthMouse;
-                    case "5th Mouse Button": return X360Controls.FifthMouse;
-                    case "Mouse Wheel Up": return X360Controls.WUP;
-                    case "Mouse Wheel Down": return X360Controls.WDOWN;
-                    case "Mouse Up": return X360Controls.MouseUp;
-                    case "Mouse Down": return X360Controls.MouseDown;
-                    case "Mouse Left": return X360Controls.MouseLeft;
-                    case "Mouse Right": return X360Controls.MouseRight;
-                    case "Unbound": return X360Controls.Unbound;
+                    case "Left Mouse Button": return X360ControlItem.LeftMouse;
+                    case "Right Mouse Button": return X360ControlItem.RightMouse;
+                    case "Middle Mouse Button": return X360ControlItem.MiddleMouse;
+                    case "4th Mouse Button": return X360ControlItem.FourthMouse;
+                    case "5th Mouse Button": return X360ControlItem.FifthMouse;
+                    case "Mouse Wheel Up": return X360ControlItem.WUP;
+                    case "Mouse Wheel Down": return X360ControlItem.WDOWN;
+                    case "Mouse Up": return X360ControlItem.MouseUp;
+                    case "Mouse Down": return X360ControlItem.MouseDown;
+                    case "Mouse Left": return X360ControlItem.MouseLeft;
+                    case "Mouse Right": return X360ControlItem.MouseRight;
+                    case "Unbound": return X360ControlItem.Unbound;
                 }
 
-                return X360Controls.Unbound;
+                return X360ControlItem.Unbound;
             }
 
-            public string GetX360ControlString(X360Controls key)
+            public string GetX360ControlString(X360ControlItem key)
             {
                 switch (key)
                 {
-                    case X360Controls.Back: return "Back";
-                    case X360Controls.LS: return "Left Stick";
-                    case X360Controls.RS: return "Right Stick";
-                    case X360Controls.Start: return "Start";
-                    case X360Controls.DpadUp: return "Up Button";
-                    case X360Controls.DpadRight: return "Right Button";
-                    case X360Controls.DpadDown: return "Down Button";
-                    case X360Controls.DpadLeft: return "Left Button";
+                    case X360ControlItem.Back: return "Back";
+                    case X360ControlItem.LS: return "Left Stick";
+                    case X360ControlItem.RS: return "Right Stick";
+                    case X360ControlItem.Start: return "Start";
+                    case X360ControlItem.DpadUp: return "Up Button";
+                    case X360ControlItem.DpadRight: return "Right Button";
+                    case X360ControlItem.DpadDown: return "Down Button";
+                    case X360ControlItem.DpadLeft: return "Left Button";
 
-                    case X360Controls.LB: return "Left Bumper";
-                    case X360Controls.RB: return "Right Bumper";
-                    case X360Controls.Y: return "Y Button";
-                    case X360Controls.B: return "B Button";
-                    case X360Controls.A: return "A Button";
-                    case X360Controls.X: return "X Button";
+                    case X360ControlItem.LB: return "Left Bumper";
+                    case X360ControlItem.RB: return "Right Bumper";
+                    case X360ControlItem.Y: return "Y Button";
+                    case X360ControlItem.B: return "B Button";
+                    case X360ControlItem.A: return "A Button";
+                    case X360ControlItem.X: return "X Button";
 
-                    case X360Controls.Guide: return "Guide";
-                    case X360Controls.LXNeg: return "Left X-Axis-";
-                    case X360Controls.LYNeg: return "Left Y-Axis-";
-                    case X360Controls.RXNeg: return "Right X-Axis-";
-                    case X360Controls.RYNeg: return "Right Y-Axis-";
+                    case X360ControlItem.Guide: return "Guide";
+                    case X360ControlItem.LXNeg: return "Left X-Axis-";
+                    case X360ControlItem.LYNeg: return "Left Y-Axis-";
+                    case X360ControlItem.RXNeg: return "Right X-Axis-";
+                    case X360ControlItem.RYNeg: return "Right Y-Axis-";
 
-                    case X360Controls.LXPos: return "Left X-Axis+";
-                    case X360Controls.LYPos: return "Left Y-Axis+";
-                    case X360Controls.RXPos: return "Right X-Axis+";
-                    case X360Controls.RYPos: return "Right Y-Axis+";
-                    case X360Controls.LT: return "Left Trigger";
-                    case X360Controls.RT: return "Right Trigger";
-                    case X360Controls.TouchpadClick: return "Touchpad Click";
+                    case X360ControlItem.LXPos: return "Left X-Axis+";
+                    case X360ControlItem.LYPos: return "Left Y-Axis+";
+                    case X360ControlItem.RXPos: return "Right X-Axis+";
+                    case X360ControlItem.RYPos: return "Right Y-Axis+";
+                    case X360ControlItem.LT: return "Left Trigger";
+                    case X360ControlItem.RT: return "Right Trigger";
+                    case X360ControlItem.TouchpadClick: return "Touchpad Click";
 
-                    case X360Controls.LeftMouse: return "Left Mouse Button";
-                    case X360Controls.RightMouse: return "Right Mouse Button";
-                    case X360Controls.MiddleMouse: return "Middle Mouse Button";
-                    case X360Controls.FourthMouse: return "4th Mouse Button";
-                    case X360Controls.FifthMouse: return "5th Mouse Button";
-                    case X360Controls.WUP: return "Mouse Wheel Up";
-                    case X360Controls.WDOWN: return "Mouse Wheel Down";
-                    case X360Controls.MouseUp: return "Mouse Up";
-                    case X360Controls.MouseDown: return "Mouse Down";
-                    case X360Controls.MouseLeft: return "Mouse Left";
-                    case X360Controls.MouseRight: return "Mouse Right";
-                    case X360Controls.Unbound: return "Unbound";
+                    case X360ControlItem.LeftMouse: return "Left Mouse Button";
+                    case X360ControlItem.RightMouse: return "Right Mouse Button";
+                    case X360ControlItem.MiddleMouse: return "Middle Mouse Button";
+                    case X360ControlItem.FourthMouse: return "4th Mouse Button";
+                    case X360ControlItem.FifthMouse: return "5th Mouse Button";
+                    case X360ControlItem.WUP: return "Mouse Wheel Up";
+                    case X360ControlItem.WDOWN: return "Mouse Wheel Down";
+                    case X360ControlItem.MouseUp: return "Mouse Up";
+                    case X360ControlItem.MouseDown: return "Mouse Down";
+                    case X360ControlItem.MouseLeft: return "Mouse Left";
+                    case X360ControlItem.MouseRight: return "Mouse Right";
+                    case X360ControlItem.Unbound: return "Unbound";
                 }
 
                 return "Unbound";
@@ -681,7 +681,7 @@ namespace DS4Windows
                             var keyType = string.Empty;
 
                             if (dcs.ControlActionType == DS4ControlSettingsV3.ActionType.Button &&
-                                dcs.ActionData.ActionButton == X360Controls.Unbound)
+                                dcs.ActionData.ActionButton == X360ControlItem.Unbound)
                                 keyType += DS4KeyType.Unbound;
 
                             if (dcs.KeyType.HasFlag(DS4KeyType.HoldMacro))
@@ -727,7 +727,7 @@ namespace DS4Windows
                             var keyType = string.Empty;
 
                             if (dcs.ShiftActionType == DS4ControlSettingsV3.ActionType.Button &&
-                                dcs.ShiftAction.ActionButton == X360Controls.Unbound)
+                                dcs.ShiftAction.ActionButton == X360ControlItem.Unbound)
                                 keyType += DS4KeyType.Unbound;
 
                             if (dcs.ShiftKeyType.HasFlag(DS4KeyType.HoldMacro))
@@ -805,12 +805,12 @@ namespace DS4Windows
                 var loaded = true;
                 var customMapKeyTypes = new Dictionary<DS4ControlItem, DS4KeyType>();
                 var customMapKeys = new Dictionary<DS4ControlItem, ushort>();
-                var customMapButtons = new Dictionary<DS4ControlItem, X360Controls>();
+                var customMapButtons = new Dictionary<DS4ControlItem, X360ControlItem>();
                 var customMapMacros = new Dictionary<DS4ControlItem, string>();
                 var customMapExtras = new Dictionary<DS4ControlItem, string>();
                 var shiftCustomMapKeyTypes = new Dictionary<DS4ControlItem, DS4KeyType>();
                 var shiftCustomMapKeys = new Dictionary<DS4ControlItem, ushort>();
-                var shiftCustomMapButtons = new Dictionary<DS4ControlItem, X360Controls>();
+                var shiftCustomMapButtons = new Dictionary<DS4ControlItem, X360ControlItem>();
                 var shiftCustomMapMacros = new Dictionary<DS4ControlItem, string>();
                 var shiftCustomMapExtras = new Dictionary<DS4ControlItem, string>();
                 var rootname = "DS4Windows";
@@ -2235,13 +2235,13 @@ namespace DS4Windows
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
                 var setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
-                setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseUp, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
-                setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseDown, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
-                setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseLeft, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
-                setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseRight, "", DS4KeyType.None);
 
                 var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.035 * 127);
@@ -2285,13 +2285,13 @@ namespace DS4Windows
                 ContainsCustomExtras[device] = false;
 
                 var setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
-                setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseUp, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
-                setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseDown, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
-                setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseLeft, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
-                setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseRight, "", DS4KeyType.None);
 
                 var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
                 rsInfo.DeadZone = (int)(0.035 * 127);
@@ -2361,24 +2361,24 @@ namespace DS4Windows
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftShift), "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
-                setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseUp, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
-                setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseDown, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
-                setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseLeft, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
-                setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseRight, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.R3);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftCtrl), "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadUp);
-                setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.Unbound, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadRight);
-                setting.UpdateSettings(false, X360Controls.WDOWN, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.WDOWN, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadDown);
-                setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.Unbound, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadLeft);
-                setting.UpdateSettings(false, X360Controls.WUP, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.WUP, "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.Cross);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Space), "", DS4KeyType.None);
@@ -2392,11 +2392,11 @@ namespace DS4Windows
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.L1);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Q), "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.L2);
-                setting.UpdateSettings(false, X360Controls.RightMouse, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.RightMouse, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.R1);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.R), "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.R2);
-                setting.UpdateSettings(false, X360Controls.LeftMouse, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.LeftMouse, "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.Share);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Tab), "", DS4KeyType.None);
@@ -2474,24 +2474,24 @@ namespace DS4Windows
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftShift), "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
-                setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseUp, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
-                setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseDown, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
-                setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseLeft, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
-                setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.MouseRight, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.R3);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftCtrl), "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadUp);
-                setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.Unbound, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadRight);
-                setting.UpdateSettings(false, X360Controls.WDOWN, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.WDOWN, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadDown);
-                setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.Unbound, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadLeft);
-                setting.UpdateSettings(false, X360Controls.WUP, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.WUP, "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.Cross);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Space), "", DS4KeyType.None);
@@ -2504,13 +2504,13 @@ namespace DS4Windows
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.L1);
                 //setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Q), "", DS4KeyType.None);
-                setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.Unbound, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.L2);
-                setting.UpdateSettings(false, X360Controls.RightMouse, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.RightMouse, "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.R1);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.R), "", DS4KeyType.None);
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.R2);
-                setting.UpdateSettings(false, X360Controls.LeftMouse, "", DS4KeyType.None);
+                setting.UpdateSettings(false, X360ControlItem.LeftMouse, "", DS4KeyType.None);
 
                 setting = GetDs4ControllerSetting(device, DS4ControlItem.Share);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Tab), "", DS4KeyType.None);

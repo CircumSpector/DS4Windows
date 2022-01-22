@@ -1,5 +1,5 @@
-﻿using DS4Windows.Shared.Common.Types;
-using System;
+﻿using System;
+using DS4Windows.Shared.Common.Types;
 
 namespace DS4Windows
 {
@@ -28,10 +28,10 @@ namespace DS4Windows
     public static class DS4ControlsExtensions
     {
         /// <summary>
-        ///     Provides a user-readable representation of <see cref="DS4ControlItem"/>.
+        ///     Provides a user-readable representation of <see cref="DS4ControlItem" />.
         /// </summary>
-        /// <param name="control">The <see cref="DS4ControlItem"/> to return as <see cref="string"/>.</param>
-        /// <returns>A <see cref="string"/>.</returns>
+        /// <param name="control">The <see cref="DS4ControlItem" /> to return as <see cref="string" />.</param>
+        /// <returns>A <see cref="string" />.</returns>
         public static string ToDisplayName(this DS4ControlItem control)
         {
             switch (control)
@@ -143,56 +143,4 @@ namespace DS4Windows
             return string.Empty;
         }
     }
-
-
-    public enum X360Controls : byte
-    {
-        None,
-        LXNeg,
-        LXPos,
-        LYNeg,
-        LYPos,
-        RXNeg,
-        RXPos,
-        RYNeg,
-        RYPos,
-        LB,
-        LT,
-        LS,
-        RB,
-        RT,
-        RS,
-        X,
-        Y,
-        B,
-        A,
-        DpadUp,
-        DpadRight,
-        DpadDown,
-        DpadLeft,
-        Guide,
-        Back,
-        Start,
-        TouchpadClick,
-        LeftMouse,
-        RightMouse,
-        MiddleMouse,
-        FourthMouse,
-        FifthMouse,
-        WUP,
-        WDOWN,
-        MouseUp,
-        MouseDown,
-        MouseLeft,
-        MouseRight,
-        Unbound
-    }
-
-    
-
-   
-
-    
-
-    
 }
