@@ -88,9 +88,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         int IdleDisconnect { get; set; }
         int TempBTPollRateIndex { get; set; }
         int ControllerTypeIndex { get; }
-        OutContType TempConType { get; }
+        OutputDeviceType TempConType { get; }
         int GyroOutModeIndex { get; set; }
-        OutContType ContType { get; }
+        OutputDeviceType ContType { get; }
         int SASteeringWheelEmulationAxisIndex { get; set; }
         int SASteeringWheelEmulationRangeIndex { get; set; }
         int SASteeringWheelEmulationRange { get; set; }
@@ -413,7 +413,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Device = device;
             FuncDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
-            Global.OutDevTypeTemp[device] = OutContType.X360;
+            Global.OutDevTypeTemp[device] = OutputDeviceType.X360;
             TempBTPollRateIndex = ProfilesService.Instance.ActiveProfiles.ElementAt(device).BluetoothPollRate;
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);

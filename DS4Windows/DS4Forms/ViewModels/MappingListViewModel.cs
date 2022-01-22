@@ -28,7 +28,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         MappedControl LsOuterBindControl { get; }
         MappedControl RsOuterBindControl { get; }
         event PropertyChangedEventHandler PropertyChanged;
-        void UpdateMappingDevType(OutContType devType);
+        void UpdateMappingDevType(OutputDeviceType devType);
         void UpdateMappings();
     }
 
@@ -159,7 +159,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void UpdateMappingDevType(OutContType devType)
+        public void UpdateMappingDevType(OutputDeviceType devType)
         {
             foreach (var mapped in Mappings) mapped.DevType = devType;
 
@@ -212,7 +212,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string MappingName { get; private set; }
 
-        public OutContType DevType { get; set; }
+        public OutputDeviceType DevType { get; set; }
 
         public string ShiftMappingName { get; set; }
 

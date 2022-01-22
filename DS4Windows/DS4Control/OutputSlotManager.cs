@@ -27,9 +27,9 @@ namespace DS4Windows
 
         void ShutDown();
 
-        OutputDevice AllocateController(OutContType contType);
+        OutputDevice AllocateController(OutputDeviceType contType);
 
-        void DeferredPlugin(OutputDevice outputDevice, int inIdx, OutputDevice[] outdevs, OutContType contType);
+        void DeferredPlugin(OutputDevice outputDevice, int inIdx, OutputDevice[] outdevs, OutputDeviceType contType);
 
         void DeferredRemoval(OutputDevice outputDevice, int inIdx,
             OutputDevice[] outdevs, bool immediate = false);
@@ -38,7 +38,7 @@ namespace DS4Windows
 
         OutSlotDevice GetOutSlotDevice(OutputDevice outputDevice);
 
-        OutSlotDevice FindExistUnboundSlotType(OutContType contType);
+        OutSlotDevice FindExistUnboundSlotType(OutputDeviceType contType);
 
         void UnplugRemainingControllers(bool immediate = false);
     }
@@ -104,18 +104,18 @@ namespace DS4Windows
             revDeviceDict.Clear();
         }
 
-        public OutputDevice AllocateController(OutContType contType)
+        public OutputDevice AllocateController(OutputDeviceType contType)
         {
             OutputDevice outputDevice = null;
             switch (contType)
             {
-                case OutContType.X360:
+                case OutputDeviceType.X360:
                     outputDevice = new Xbox360OutDevice(Client);
                     break;
-                case OutContType.DS4:
+                case OutputDeviceType.DS4:
                     outputDevice = DS4OutDeviceFactory.CreateDS4Device(Client, Global.ViGEmBusVersionInfo);
                     break;
-                case OutContType.None:
+                case OutputDeviceType.None:
                 default:
                     break;
             }
@@ -135,7 +135,7 @@ namespace DS4Windows
             return result;
         }
 
-        public void DeferredPlugin(OutputDevice outputDevice, int inIdx, OutputDevice[] outdevs, OutContType contType)
+        public void DeferredPlugin(OutputDevice outputDevice, int inIdx, OutputDevice[] outdevs, OutputDeviceType contType)
         {
             queueLocker.EnterWriteLock();
             queuedTasks++;
@@ -253,7 +253,7 @@ namespace DS4Windows
             return temp;
         }
 
-        public OutSlotDevice FindExistUnboundSlotType(OutContType contType)
+        public OutSlotDevice FindExistUnboundSlotType(OutputDeviceType contType)
         {
             return OutputSlots.FirstOrDefault(tmp =>
                 tmp.CurrentInputBound == OutSlotDevice.InputBound.Unbound &&

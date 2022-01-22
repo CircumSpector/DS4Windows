@@ -56,7 +56,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 if (selectedIndex >= 0)
                 {
                     var temp = SlotDeviceEntries[selectedIndex];
-                    if (temp.OutSlotDevice.CurrentType != OutContType.None) result = Visibility.Visible;
+                    if (temp.OutSlotDevice.CurrentType != OutputDeviceType.None) result = Visibility.Visible;
                 }
 
                 return result;
@@ -278,13 +278,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             var result = 0;
             switch (OutSlotDevice.PermanentType)
             {
-                case OutContType.None:
+                case OutputDeviceType.None:
                     result = 0;
                     break;
-                case OutContType.X360:
+                case OutputDeviceType.X360:
                     result = 1;
                     break;
-                case OutContType.DS4:
+                case OutputDeviceType.DS4:
                     result = 2;
                     break;
             }
@@ -308,19 +308,19 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             return result;
         }
 
-        private OutContType DetermineDesiredTypeFromIdx()
+        private OutputDeviceType DetermineDesiredTypeFromIdx()
         {
-            var result = OutContType.None;
+            var result = OutputDeviceType.None;
             switch (desiredTypeChoiceIndex)
             {
                 case 0:
-                    result = OutContType.None;
+                    result = OutputDeviceType.None;
                     break;
                 case 1:
-                    result = OutContType.X360;
+                    result = OutputDeviceType.X360;
                     break;
                 case 2:
-                    result = OutContType.DS4;
+                    result = OutputDeviceType.DS4;
                     break;
             }
 

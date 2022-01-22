@@ -181,16 +181,16 @@ namespace DS4Windows
             return result;
         }
 
-        public static string GetX360ControlString(X360Controls key, OutContType conType)
+        public static string GetX360ControlString(X360Controls key, OutputDeviceType conType)
         {
             var result = string.Empty;
 
             switch (conType)
             {
-                case OutContType.X360:
+                case OutputDeviceType.X360:
                     XboxDefaultNames.TryGetValue(key, out result);
                     break;
-                case OutContType.DS4:
+                case OutputDeviceType.DS4:
                     Ds4DefaultNames.TryGetValue(key, out result);
                     break;
             }

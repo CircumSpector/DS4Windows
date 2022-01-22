@@ -29,8 +29,8 @@ namespace DS4WinWPF.DS4Control
         private OutputDevice outputDevice;
         private ReserveStatus reserveStatus;
         private InputBound inputBound;
-        private OutContType permanentType;
-        private OutContType currentType;
+        private OutputDeviceType permanentType;
+        private OutputDeviceType currentType;
         private int index;
         public int Index => index;
 
@@ -77,14 +77,14 @@ namespace DS4WinWPF.DS4Control
         /// <summary>
         /// Desired device type for a permanently connected slot
         /// </summary>
-        public OutContType PermanentType
+        public OutputDeviceType PermanentType
         {
             get => permanentType;
             set
             {
                 if (permanentType == value) return;
 
-                if(value != OutContType.None)
+                if(value != OutputDeviceType.None)
                     AppLogger.Instance.LogToGui($"Output slot #{this.index+1} has permanent type {value}", false);
 
                 permanentType = value;
@@ -96,7 +96,7 @@ namespace DS4WinWPF.DS4Control
         /// <summary>
         /// Device type of the current output controller
         /// </summary>
-        public OutContType CurrentType { get => currentType; set => currentType = value; }
+        public OutputDeviceType CurrentType { get => currentType; set => currentType = value; }
 
         public OutSlotDevice(int idx)
         {
@@ -108,15 +108,15 @@ namespace DS4WinWPF.DS4Control
         {
             if (reserveStatus == ReserveStatus.Dynamic)
             {
-                PermanentType = OutContType.None;
+                PermanentType = OutputDeviceType.None;
             }
-            else if (currentType != OutContType.None)
+            else if (currentType != OutputDeviceType.None)
             {
                 PermanentType = currentType;
             }
         }
 
-        public void AttachedDevice(OutputDevice outputDevice, OutContType contType)
+        public void AttachedDevice(OutputDevice outputDevice, OutputDeviceType contType)
         {
             this.outputDevice = outputDevice;
             attachedStatus = AttachedStatus.Attached;
@@ -130,11 +130,11 @@ namespace DS4WinWPF.DS4Control
             {
                 outputDevice = null;
                 attachedStatus = AttachedStatus.UnAttached;
-                currentType = OutContType.None;
+                currentType = OutputDeviceType.None;
                 CurrentInputBound = InputBound.Unbound;
                 if (reserveStatus == ReserveStatus.Dynamic)
                 {
-                    PermanentType = OutContType.None;
+                    PermanentType = OutputDeviceType.None;
                 }
             }
         }

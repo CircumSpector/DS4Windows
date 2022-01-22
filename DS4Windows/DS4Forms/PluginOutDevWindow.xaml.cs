@@ -18,7 +18,7 @@ namespace DS4WinWPF.DS4Forms
 
         public MessageBoxResult Result { get; private set; } = MessageBoxResult.Cancel;
 
-        public OutContType ContType { get; private set; } = OutContType.None;
+        public OutputDeviceType ContType { get; private set; } = OutputDeviceType.None;
 
         public OutSlotDevice.ReserveStatus ReserveType { get; private set; }
 
@@ -27,10 +27,10 @@ namespace DS4WinWPF.DS4Forms
             switch (devTypeCombo.SelectedIndex)
             {
                 case 0:
-                    ContType = OutContType.X360;
+                    ContType = OutputDeviceType.X360;
                     break;
                 case 1:
-                    ContType = OutContType.DS4;
+                    ContType = OutputDeviceType.DS4;
                     break;
             }
 
@@ -44,14 +44,14 @@ namespace DS4WinWPF.DS4Forms
                     break;
             }
 
-            if (ContType != OutContType.None) Result = MessageBoxResult.OK;
+            if (ContType != OutputDeviceType.None) Result = MessageBoxResult.OK;
 
             Close();
         }
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
-            ContType = OutContType.None;
+            ContType = OutputDeviceType.None;
             Result = MessageBoxResult.Cancel;
 
             Close();

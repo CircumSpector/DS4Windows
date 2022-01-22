@@ -52,12 +52,12 @@ namespace DS4Windows
         void ChangeMotionEventStatus(bool state);
         void AssignInitialDevices();
 
-        void EstablishOutFeedback(int index, OutContType contType,
+        void EstablishOutFeedback(int index, OutputDeviceType contType,
             OutputDevice outDevice, DS4Device device);
 
-        void RemoveOutFeedback(OutContType contType, OutputDevice outDevice, int inIdx);
-        void AttachNewUnboundOutDev(OutContType contType);
-        void AttachUnboundOutDev(OutSlotDevice slotDevice, OutContType contType);
+        void RemoveOutFeedback(OutputDeviceType contType, OutputDevice outDevice, int inIdx);
+        void AttachNewUnboundOutDev(OutputDeviceType contType);
+        void AttachUnboundOutDev(OutSlotDevice slotDevice, OutputDeviceType contType);
         void DetachUnboundOutDev(OutSlotDevice slotDevice);
         void PluginOutDev(int index, DS4Device device);
         void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false);
@@ -640,17 +640,17 @@ namespace DS4Windows
             }*/
         }
 
-        private OutputDevice EstablishOutDevice(int index, OutContType contType)
+        private OutputDevice EstablishOutDevice(int index, OutputDeviceType contType)
         {
             return OutputslotMan.AllocateController(contType);
         }
 
-        public void EstablishOutFeedback(int index, OutContType contType,
+        public void EstablishOutFeedback(int index, OutputDeviceType contType,
             OutputDevice outDevice, DS4Device device)
         {
             var devIndex = index;
 
-            if (contType == OutContType.X360)
+            if (contType == OutputDeviceType.X360)
             {
                 var tempXbox = outDevice as Xbox360OutDevice;
                 Xbox360FeedbackReceivedEventHandler p = (sender, args) =>
@@ -739,9 +739,9 @@ namespace DS4Windows
             //}
         }
 
-        public void RemoveOutFeedback(OutContType contType, OutputDevice outDevice, int inIdx)
+        public void RemoveOutFeedback(OutputDeviceType contType, OutputDevice outDevice, int inIdx)
         {
-            if (contType == OutContType.X360)
+            if (contType == OutputDeviceType.X360)
             {
                 var tempXbox = outDevice as Xbox360OutDevice;
                 tempXbox.RemoveFeedback(inIdx);
@@ -757,7 +757,7 @@ namespace DS4Windows
             //}
         }
 
-        public void AttachNewUnboundOutDev(OutContType contType)
+        public void AttachNewUnboundOutDev(OutputDeviceType contType)
         {
             var slotDevice = OutputslotMan.FindOpenSlot();
             if (slotDevice != null &&
@@ -769,7 +769,7 @@ namespace DS4Windows
             }
         }
 
-        public void AttachUnboundOutDev(OutSlotDevice slotDevice, OutContType contType)
+        public void AttachUnboundOutDev(OutSlotDevice slotDevice, OutputDeviceType contType)
         {
             if (slotDevice.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.UnAttached &&
                 slotDevice.CurrentInputBound == OutSlotDevice.InputBound.Unbound)
@@ -806,29 +806,29 @@ namespace DS4Windows
             var success = false;
             switch (contType)
             {
-                case OutContType.X360:
+                case OutputDeviceType.X360:
                 {
-                    ActiveOutDevType[index] = OutContType.X360;
+                    ActiveOutDevType[index] = OutputDeviceType.X360;
 
                     if (slotDevice == null)
                     {
                         slotDevice = OutputslotMan.FindOpenSlot();
                         if (slotDevice != null)
                         {
-                            var tempXbox = EstablishOutDevice(index, OutContType.X360)
+                            var tempXbox = EstablishOutDevice(index, OutputDeviceType.X360)
                                 as Xbox360OutDevice;
                             //outputDevices[index] = tempXbox;
 
                             // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                             if (profile.EnableOutputDataToDS4)
                             {
-                                EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
+                                EstablishOutFeedback(index, OutputDeviceType.X360, tempXbox, device);
 
                                 if (device.JointDeviceSlotNumber != -1)
                                 {
                                     var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                     if (tempDS4Device != null)
-                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutContType.X360, tempXbox,
+                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.X360, tempXbox,
                                             tempDS4Device);
                                 }
                             }
@@ -852,13 +852,13 @@ namespace DS4Windows
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                         if (profile.EnableOutputDataToDS4)
                         {
-                            EstablishOutFeedback(index, OutContType.X360, tempXbox, device);
+                            EstablishOutFeedback(index, OutputDeviceType.X360, tempXbox, device);
 
                             if (device.JointDeviceSlotNumber != -1)
                             {
                                 var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                 if (tempDS4Device != null)
-                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutContType.X360, tempXbox,
+                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.X360, tempXbox,
                                         tempDS4Device);
                             }
                         }
@@ -870,33 +870,33 @@ namespace DS4Windows
 
                     if (success)
                         LogDebug(
-                            $"Associate X360 Controller in{(slotDevice.PermanentType != OutContType.None ? " permanent" : "")} slot #{slotDevice.Index + 1} for input {device.DisplayName} controller #{index + 1}");
+                            $"Associate X360 Controller in{(slotDevice.PermanentType != OutputDeviceType.None ? " permanent" : "")} slot #{slotDevice.Index + 1} for input {device.DisplayName} controller #{index + 1}");
 
                     //tempXbox.Connect();
                     //LogDebug("X360 Controller #" + (index + 1) + " connected");
                     break;
                 }
-                case OutContType.DS4:
+                case OutputDeviceType.DS4:
                 {
-                    ActiveOutDevType[index] = OutContType.DS4;
+                    ActiveOutDevType[index] = OutputDeviceType.DS4;
                     if (slotDevice == null)
                     {
                         slotDevice = OutputslotMan.FindOpenSlot();
                         if (slotDevice != null)
                         {
-                            var tempDS4 = EstablishOutDevice(index, OutContType.DS4)
+                            var tempDS4 = EstablishOutDevice(index, OutputDeviceType.DS4)
                                 as DS4OutDevice;
 
                             // Enable ViGem feedback callback handler only if DS4 lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                             if (profile.EnableOutputDataToDS4)
                             {
-                                EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
+                                EstablishOutFeedback(index, OutputDeviceType.DS4, tempDS4, device);
 
                                 if (device.JointDeviceSlotNumber != -1)
                                 {
                                     var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                     if (tempDS4Device != null)
-                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutContType.DS4, tempDS4,
+                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.DS4, tempDS4,
                                             tempDS4Device);
                                 }
                             }
@@ -920,13 +920,13 @@ namespace DS4Windows
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                         if (profile.EnableOutputDataToDS4)
                         {
-                            EstablishOutFeedback(index, OutContType.DS4, tempDS4, device);
+                            EstablishOutFeedback(index, OutputDeviceType.DS4, tempDS4, device);
 
                             if (device.JointDeviceSlotNumber != -1)
                             {
                                 var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                 if (tempDS4Device != null)
-                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutContType.DS4, tempDS4,
+                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.DS4, tempDS4,
                                         tempDS4Device);
                             }
                         }
@@ -938,7 +938,7 @@ namespace DS4Windows
 
                     if (success)
                         LogDebug(
-                            $"Associate DS4 Controller in{(slotDevice.PermanentType != OutContType.None ? " permanent" : "")} slot #{slotDevice.Index + 1} for input {device.DisplayName} controller #{index + 1}");
+                            $"Associate DS4 Controller in{(slotDevice.PermanentType != OutputDeviceType.None ? " permanent" : "")} slot #{slotDevice.Index + 1} for input {device.DisplayName} controller #{index + 1}");
 
                     //DS4OutDevice tempDS4 = new DS4OutDevice(vigemTestClient);
                     //DS4OutDevice tempDS4 = outputslotMan.AllocateController(OutContType.DS4, vigemTestClient)
@@ -971,7 +971,7 @@ namespace DS4Windows
 
                 var currentType = ActiveOutDevType[index];
                 outputDevices[index] = null;
-                ActiveOutDevType[index] = OutContType.None;
+                ActiveOutDevType[index] = OutputDeviceType.None;
                 if (slotDevice.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached &&
                     slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Dynamic || force)
                 {
@@ -1167,7 +1167,7 @@ namespace DS4Windows
                             else
                             {
                                 profile.IsOutputDeviceEnabled = false;
-                                ActiveOutDevType[i] = OutContType.None;
+                                ActiveOutDevType[i] = OutputDeviceType.None;
                             }
 
 
@@ -1584,7 +1584,7 @@ namespace DS4Windows
                             else
                             {
                                 profile.IsOutputDeviceEnabled = false;
-                                ActiveOutDevType[index] = OutContType.None;
+                                ActiveOutDevType[index] = OutputDeviceType.None;
                             }
 
                             if (device.PrimaryDevice && device.OutputMapGyro)
@@ -1883,7 +1883,7 @@ namespace DS4Windows
             {
                 if (!profile.IsOutputDeviceEnabled) return;
 
-                ActiveOutDevType[ind] = OutContType.None;
+                ActiveOutDevType[ind] = OutputDeviceType.None;
                 UnplugOutDev(ind, device);
             }
             else
@@ -1973,7 +1973,7 @@ namespace DS4Windows
             lag[ind] = false;
             inWarnMonitor[ind] = false;
             profile.IsOutputDeviceEnabled = false;
-            ActiveOutDevType[ind] = OutContType.None;
+            ActiveOutDevType[ind] = OutputDeviceType.None;
             /* Leave up to Auto Profile system to change the following flags? */
             //Global.UseTempProfiles[ind] = false;
             //Global.TempProfileNames[ind] = string.Empty;

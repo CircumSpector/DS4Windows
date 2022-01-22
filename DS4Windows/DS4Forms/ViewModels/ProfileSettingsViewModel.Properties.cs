@@ -436,11 +436,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var type = 0;
                 switch (profileService.CurrentlyEditedProfile.OutputDeviceType)
                 {
-                    case OutContType.X360:
+                    case OutputDeviceType.X360:
                         type = 0;
                         break;
 
-                    case OutContType.DS4:
+                    case OutputDeviceType.DS4:
                         type = 1;
                         break;
                 }
@@ -459,21 +459,21 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public OutContType TempConType
+        public OutputDeviceType TempConType
         {
             get
             {
-                var result = OutContType.None;
+                var result = OutputDeviceType.None;
                 switch (tempControllerIndex)
                 {
                     case 0:
-                        result = OutContType.X360;
+                        result = OutputDeviceType.X360;
                         break;
                     case 1:
-                        result = OutContType.DS4;
+                        result = OutputDeviceType.DS4;
                         break;
                     default:
-                        result = OutContType.X360;
+                        result = OutputDeviceType.X360;
                         break;
                 }
 
@@ -533,7 +533,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public OutContType ContType => profileService.CurrentlyEditedProfile.OutputDeviceType;
+        public OutputDeviceType ContType => profileService.CurrentlyEditedProfile.OutputDeviceType;
 
         public int SASteeringWheelEmulationAxisIndex
         {

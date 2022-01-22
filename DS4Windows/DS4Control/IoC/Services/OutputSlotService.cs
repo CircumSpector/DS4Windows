@@ -25,15 +25,15 @@ namespace DS4WinWPF.DS4Control.IoC.Services
 
         public ViGEmClient Emulator { get; }
 
-        public OutputDevice AllocateController(OutContType contType)
+        public OutputDevice AllocateController(OutputDeviceType contType)
         {
             switch (contType)
             {
-                case OutContType.X360:
+                case OutputDeviceType.X360:
                     return new Xbox360OutDevice(Emulator);
-                case OutContType.DS4:
+                case OutputDeviceType.DS4:
                     return DS4OutDeviceFactory.CreateDS4Device(Emulator, Global.ViGEmBusVersionInfo);
-                case OutContType.None:
+                case OutputDeviceType.None:
                 default:
                     break;
             }

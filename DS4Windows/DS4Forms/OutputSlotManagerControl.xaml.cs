@@ -77,7 +77,7 @@ namespace DS4WinWPF.DS4Forms
             if (tempEntry != null &&
                 tempEntry.OutSlotDevice.CurrentReserveStatus ==
                 DS4Control.OutSlotDevice.ReserveStatus.Permanent &&
-                tempEntry.OutSlotDevice.PermanentType != OutContType.None)
+                tempEntry.OutSlotDevice.PermanentType != OutputDeviceType.None)
             {
                 tempEntry.OutSlotDevice.CurrentType = tempEntry.OutSlotDevice.PermanentType;
                 tempEntry.RequestPlugin();

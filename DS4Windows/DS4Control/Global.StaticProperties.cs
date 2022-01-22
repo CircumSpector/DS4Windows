@@ -129,25 +129,25 @@ namespace DS4Windows
         /// <summary>
         ///     Used to hold device type desired from Profile Editor
         /// </summary>
-        public static OutContType[] OutDevTypeTemp { get; set; } = new OutContType[TEST_PROFILE_ITEM_COUNT]
+        public static OutputDeviceType[] OutDevTypeTemp { get; set; } = new OutputDeviceType[TEST_PROFILE_ITEM_COUNT]
         {
-            OutContType.X360, OutContType.X360,
-            OutContType.X360, OutContType.X360,
-            OutContType.X360, OutContType.X360,
-            OutContType.X360, OutContType.X360,
-            OutContType.X360
+            OutputDeviceType.X360, OutputDeviceType.X360,
+            OutputDeviceType.X360, OutputDeviceType.X360,
+            OutputDeviceType.X360, OutputDeviceType.X360,
+            OutputDeviceType.X360, OutputDeviceType.X360,
+            OutputDeviceType.X360
         };
 
         /// <summary>
         ///     Used to hold the currently active controller output type in use for a slot.
         /// </summary>
-        public static OutContType[] ActiveOutDevType { get; set; } = new OutContType[TEST_PROFILE_ITEM_COUNT]
+        public static OutputDeviceType[] ActiveOutDevType { get; set; } = new OutputDeviceType[TEST_PROFILE_ITEM_COUNT]
         {
-            OutContType.None, OutContType.None,
-            OutContType.None, OutContType.None,
-            OutContType.None, OutContType.None,
-            OutContType.None, OutContType.None,
-            OutContType.None
+            OutputDeviceType.None, OutputDeviceType.None,
+            OutputDeviceType.None, OutputDeviceType.None,
+            OutputDeviceType.None, OutputDeviceType.None,
+            OutputDeviceType.None, OutputDeviceType.None,
+            OutputDeviceType.None
         };
 
         public static X360Controls[] DefaultButtonMapping =

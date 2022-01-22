@@ -441,7 +441,7 @@ namespace DS4WinWPF.DS4Forms
         {
             if (settingsViewModel.FuncDevNum < ControlService.CURRENT_DS4_CONTROLLER_LIMIT)
                 rootHub.SetRumble(0, 0, settingsViewModel.FuncDevNum);
-            Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
+            Global.OutDevTypeTemp[DeviceNum] = OutputDeviceType.X360;
             // TODO: fix me!
             //await Global.Instance.LoadProfile(DeviceNum, false, rootHub);
             Closed?.Invoke(this, EventArgs.Empty);
@@ -459,7 +459,7 @@ namespace DS4WinWPF.DS4Forms
         {
             profileService.CurrentlyEditedProfile.BluetoothPollRate = settingsViewModel.TempBTPollRateIndex;
             profileService.CurrentlyEditedProfile.OutputDeviceType = settingsViewModel.TempConType;
-            if (fullSave) Global.OutDevTypeTemp[DeviceNum] = OutContType.X360;
+            if (fullSave) Global.OutDevTypeTemp[DeviceNum] = OutputDeviceType.X360;
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)

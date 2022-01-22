@@ -2023,7 +2023,7 @@ namespace DS4Windows
                 var r2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 r2Info.DeadZone = (byte)(0.00 * 255);
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2135,7 +2135,7 @@ namespace DS4Windows
                 //GyroMouseStickInfo[device].UseSmoothing = true;
                 //GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2220,7 +2220,7 @@ namespace DS4Windows
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing =
                     GyroMouseInfo.SmoothingMethod.OneEuro;
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2248,7 +2248,7 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2745,16 +2745,16 @@ namespace DS4Windows
                 return StickOutputCurveId(name);
             }
 
-            private string OutContDeviceString(OutContType id)
+            private string OutContDeviceString(OutputDeviceType id)
             {
                 var result = "X360";
                 switch (id)
                 {
-                    case OutContType.None:
-                    case OutContType.X360:
+                    case OutputDeviceType.None:
+                    case OutputDeviceType.X360:
                         result = "X360";
                         break;
-                    case OutContType.DS4:
+                    case OutputDeviceType.DS4:
                         result = "DS4";
                         break;
                 }
@@ -2762,17 +2762,17 @@ namespace DS4Windows
                 return result;
             }
 
-            private OutContType OutContDeviceId(string name)
+            private OutputDeviceType OutContDeviceId(string name)
             {
-                var id = OutContType.X360;
+                var id = OutputDeviceType.X360;
                 switch (name)
                 {
                     case "None":
                     case "X360":
-                        id = OutContType.X360;
+                        id = OutputDeviceType.X360;
                         break;
                     case "DS4":
-                        id = OutContType.DS4;
+                        id = OutputDeviceType.DS4;
                         break;
                 }
 
@@ -2993,7 +2993,7 @@ namespace DS4Windows
                 //TrackballFriction[device] = 10.0;
                 //TouchPadAbsMouse[device].Reset();
                 //TouchPadRelMouse[device].Reset();
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutContType.X360;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.X360;
                 Ds4Mapping = false;
             }
 
