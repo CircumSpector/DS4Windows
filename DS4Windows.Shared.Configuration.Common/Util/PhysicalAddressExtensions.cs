@@ -1,6 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 
-namespace DS4Windows.Shared.Core.Util
+namespace DS4Windows.Shared.Common.Util
 {
     public static class PhysicalAddressExtensions
     {

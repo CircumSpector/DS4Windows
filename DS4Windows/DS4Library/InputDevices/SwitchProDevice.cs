@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;

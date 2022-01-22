@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using PInvoke;
 
-namespace DS4Windows.Shared.Core.Util
+namespace DS4Windows.Shared.Common.Util
 {
     public static class SafeObjectHandleExtensions
     {

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;
