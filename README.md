@@ -17,6 +17,8 @@
 
 ## About this fork
 
+👉 [Very sporadically updated development blog](https://github.com/CircumSpector/DS4Windows/discussions/21).
+
 ### What this is
 
 Over its lifespan of of *nearly a decade* DS4Windows has seen many contributors, changes, fixes, feature additions and has grown and kept relevant to gamers who'd love more control over their beloved peripherals. Beginning with the PS4 Controller (DualShock 4) it nowadays also supports its successor the PS5 DualSense and even the Nintendo JoyCons. With age and popularity come new challenges. The code has become more powerful, but also more troublesome to maintain and carries a lot of legacy design patterns and restraints from an outdated .NET universe. Here's where we step in.
