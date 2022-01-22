@@ -1,5 +1,8 @@
 ﻿namespace DS4Windows.Shared.Common.Types
 {
+    /// <summary>
+    ///     Describes a gamepad item (button, axis, slider, etc.) specific to the Xbox 360 feature set.
+    /// </summary>
     public enum X360ControlItem : byte
     {
         None,

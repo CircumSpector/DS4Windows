@@ -1,5 +1,8 @@
 ﻿namespace DS4Windows.Shared.Common.Types
 {
+    /// <summary>
+    ///     Describes a gamepad item (button, axis, slider, etc.) specific to the DualShock 4 feature set.
+    /// </summary>
     public enum DS4ControlItem : byte
     {
         None,
@@ -53,5 +56,4 @@
         LSOuter,
         RSOuter
     }
-
 }
