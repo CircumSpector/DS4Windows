@@ -13,6 +13,7 @@ using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Services;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Services;
+using DS4Windows.Shared.Configuration.Profiles.Types;
 using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;

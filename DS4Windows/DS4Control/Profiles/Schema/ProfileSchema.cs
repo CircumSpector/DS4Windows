@@ -7,27 +7,12 @@ using System.Net.NetworkInformation;
 using DS4Windows;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
+using DS4Windows.Shared.Configuration.Profiles.Types;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
-    public class ProfilePropertyChangedEventArgs : EventArgs
-    {
-        public ProfilePropertyChangedEventArgs(string propertyName, object before, object after)
-        {
-            PropertyName = propertyName;
-            Before = before;
-            After = after;
-        }
-
-        public string PropertyName { get; }
-
-        public object Before { get; }
-
-        public object After { get; }
-    }
-
     /// <summary>
     ///     Controller profile definition.
     /// </summary>
