@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 
-
 namespace DS4Windows
 {
     public delegate void SixAxisHandler<TEventArgs>(DS4SixAxis sender, TEventArgs args);

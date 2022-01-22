@@ -1,9 +1,8 @@
-﻿
-namespace DS4Windows
+﻿namespace DS4Windows
 {
     public class DS4StateExposed
     {
-        private DS4State _state;
+        private readonly DS4State _state;
 
         public DS4StateExposed()
         {
@@ -15,88 +14,94 @@ namespace DS4Windows
             _state = state;
         }
 
-        bool Square { get { return _state.Square; } }
-        bool Triangle { get { return _state.Triangle; } }
-        bool Circle { get { return _state.Circle; } }
-        bool Cross { get { return _state.Cross; } }
-        bool DpadUp { get { return _state.DpadUp; } }
-        bool DpadDown { get { return _state.DpadDown; } }
-        bool DpadLeft { get { return _state.DpadLeft; } }
-        bool DpadRight { get { return _state.DpadRight; } }
-        bool L1 { get { return _state.L1; } }
-        bool L3 { get { return _state.L3; } }
-        bool R1 { get { return _state.R1; } }
-        bool R3 { get { return _state.R3; } }
-        bool Share { get { return _state.Share; } }
-        bool Options { get { return _state.Options; } }
-        bool PS { get { return _state.PS; } }
-        bool Touch1 { get { return _state.Touch1; } }
-        bool Touch2 { get { return _state.Touch2; } }
-        bool TouchButton { get { return _state.TouchButton; } }
-        bool Touch1Finger { get { return _state.Touch1Finger; } }
-        bool Touch2Fingers { get { return _state.Touch2Fingers; } }
-        byte LX { get { return _state.LX; } }
-        byte RX { get { return _state.RX; } }
-        byte LY { get { return _state.LY; } }
-        byte RY { get { return _state.RY; } }
-        byte L2 { get { return _state.L2; } }
-        byte R2 { get { return _state.R2; } }
-        int Battery { get { return _state.Battery; } }
+        private bool Square => _state.Square;
+        private bool Triangle => _state.Triangle;
+        private bool Circle => _state.Circle;
+        private bool Cross => _state.Cross;
+        private bool DpadUp => _state.DpadUp;
+        private bool DpadDown => _state.DpadDown;
+        private bool DpadLeft => _state.DpadLeft;
+        private bool DpadRight => _state.DpadRight;
+        private bool L1 => _state.L1;
+        private bool L3 => _state.L3;
+        private bool R1 => _state.R1;
+        private bool R3 => _state.R3;
+        private bool Share => _state.Share;
+        private bool Options => _state.Options;
+        private bool PS => _state.PS;
+        private bool Touch1 => _state.Touch1;
+        private bool Touch2 => _state.Touch2;
+        private bool TouchButton => _state.TouchButton;
+        private bool Touch1Finger => _state.Touch1Finger;
+        private bool Touch2Fingers => _state.Touch2Fingers;
+        private byte LX => _state.LX;
+        private byte RX => _state.RX;
+        private byte LY => _state.LY;
+        private byte RY => _state.RY;
+        private byte L2 => _state.L2;
+        private byte R2 => _state.R2;
+        private int Battery => _state.Battery;
 
-        public SixAxis Motion
-        {
-            get => _state.Motion;
-        }
+        public SixAxis Motion => _state.Motion;
 
-        public int GyroYaw { get { return _state.Motion.gyroYaw; } }
+        public int GyroYaw => _state.Motion.gyroYaw;
+
+        public int GyroPitch => _state.Motion.gyroPitch;
+
+        public int GyroRoll => _state.Motion.gyroRoll;
+
+        public int AccelX => _state.Motion.accelX;
+
+        public int AccelY => _state.Motion.accelY;
+
+        public int AccelZ => _state.Motion.accelZ;
+
+        public int OutputAccelX => _state.Motion.outputAccelX;
+
+        public int OutputAccelY => _state.Motion.outputAccelY;
+
+        public int OutputAccelZ => _state.Motion.outputAccelZ;
+
         public int getGyroYaw()
         {
             return _state.Motion.gyroYaw;
         }
 
-        public int GyroPitch { get { return _state.Motion.gyroPitch; } }
         public int getGyroPitch()
         {
             return _state.Motion.gyroPitch;
         }
 
-        public int GyroRoll { get { return _state.Motion.gyroRoll; } }
         public int getGyroRoll()
         {
             return _state.Motion.gyroRoll;
         }
 
-        public int AccelX { get { return _state.Motion.accelX; } }
         public int getAccelX()
         {
             return _state.Motion.accelX;
         }
 
-        public int AccelY { get { return _state.Motion.accelY; } }
         public int getAccelY()
         {
             return _state.Motion.accelY;
         }
 
-        public int AccelZ { get { return _state.Motion.accelZ; } }
         public int getAccelZ()
         {
             return _state.Motion.accelZ;
         }
 
-        public int OutputAccelX { get { return _state.Motion.outputAccelX; } }
         public int getOutputAccelX()
         {
             return _state.Motion.outputAccelX;
         }
 
-        public int OutputAccelY { get { return _state.Motion.outputAccelY; } }
         public int getOutputAccelY()
         {
             return _state.Motion.outputAccelY;
         }
 
-        public int OutputAccelZ { get { return _state.Motion.outputAccelZ; } }
         public int getOutputAccelZ()
         {
             return _state.Motion.outputAccelZ;

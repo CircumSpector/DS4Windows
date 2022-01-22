@@ -3,7 +3,7 @@
 namespace DS4Windows
 {
     /// <summary>
-    ///     Represents all the properties a <see cref="DS4Device"/> input report carries.
+    ///     Represents all the properties a <see cref="DS4Device" /> input report carries.
     /// </summary>
     public class DS4State
     {

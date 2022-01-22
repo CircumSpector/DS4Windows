@@ -64,6 +64,10 @@ namespace DS4Windows
         //public event EventHandler<EventArgs> PreTouchProcess = null; // used to publish that a touch packet is about to be processed
 
         public static readonly int DS4_TOUCHPAD_DATA_OFFSET = 35;
+        private readonly Touch t0;
+        private readonly Touch t1;
+        private readonly Touch tPrev0;
+        private readonly Touch tPrev1;
         internal bool lastIsActive1, lastIsActive2;
         internal byte lastTouchID1, lastTouchID2;
         internal bool lastTouchPadIsDown;
@@ -74,10 +78,6 @@ namespace DS4Windows
             lastTouchPadY2; // tracks 0, 1 or 2 touches; we maintain touch 1 and 2 separately
 
         internal byte[] previousPacket = new byte[8];
-        private readonly Touch tPrev0;
-        private readonly Touch tPrev1;
-        private readonly Touch t0;
-        private readonly Touch t1;
 
         public DS4Touchpad()
         {

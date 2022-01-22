@@ -415,7 +415,7 @@
     <comment>Description</comment>
   </data>
   <data name="GamepadGyroCameraName" xml:space="preserve">
-    <value>Gamepad with Mouse-like Joystick</value>
+    <value>Геймпад с джойстиком, похожим на мышь</value>
     <comment>preset name</comment>
   </data>
   <data name="GamepadPresetDescription" xml:space="preserve">
@@ -443,7 +443,7 @@
     <comment>Description</comment>
   </data>
   <data name="MixedGyroMousePresetName" xml:space="preserve">
-    <value>Gamepad with Gyro Mouse</value>
+    <value>Геймпад с гироскопической мышью</value>
     <comment>preset name</comment>
   </data>
   <data name="MixedPresetDescription" xml:space="preserve">
@@ -451,7 +451,7 @@
     <comment>Description</comment>
   </data>
   <data name="MixedPresetName" xml:space="preserve">
-    <value>Gamepad with High Precision Camera</value>
+    <value>Геймпад с высокоточной камерой</value>
     <comment>preset name</comment>
   </data>
   <data name="FlickThreshold" xml:space="preserve">
@@ -499,5 +499,44 @@
   </data>
   <data name="SharedAccess" xml:space="preserve">
     <value>Общий доступ</value>
+  </data>
+  <data name="RenameProfile" xml:space="preserve">
+    <value>Переименовать</value>
+  </data>
+  <data name="DisableVirtualController" xml:space="preserve">
+    <value>Отключить виртуальный контроллер</value>
+  </data>
+  <data name="DisableVirtualControllerTip" xml:space="preserve">
+    <value>Не создавать/не связывать виртуальные контроллеры для подключенных контроллеров, использующих этот профиль (применяется при сохранении профиля)</value>
+  </data>
+  <data name="EmulatedController" xml:space="preserve">
+    <value>Эмулируемый контроллер</value>
+  </data>
+  <data name="OutContNotice" xml:space="preserve">
+    <value>Выберите тип виртуального контроллера вывода (применяется при сохранении профиля)</value>
+  </data>
+  <data name="VirtualControllerSettings" xml:space="preserve">
+    <value>Настройки виртуального контроллера</value>
+  </data>
+  <data name="ChangeOnNewDeviceConn" xml:space="preserve">
+    <value>Изменения вступают в силу при подключении нового устройства</value>
+  </data>
+  <data name="StickOuterBindDeadTooltip" xml:space="preserve">
+    <value>Пороговое значение для срабатывания действия</value>
+  </data>
+  <data name="StickRotationTooltip" xml:space="preserve">
+    <value>Настройка поворота предназначена для того, чтобы помочь исправить ориентацию аналогового джойстика, если ваш большой палец слегка смещен при перемещении аналогового джойстика. Например, ваш большой палец может быть немного смещен от центра, когда аналоговый джойстик полностью перемещен на север. Мои большие пальцы слегка смещаются вправо при перемещении аналогового джойстика полностью на север из-за того, как мои руки сжимают DS4. Используемое значение обозначает количество градусов, используемых для настройки конечного выходного значения оси. Допустимые значения варьируются от -180 до 180. Значение по умолчанию равно 0.</value>
+  </data>
+  <data name="TouchpadJitterCompTooltip" xml:space="preserve">
+    <value>Порог срабатывания нижней части движения сенсорной панели. Уменьшает случайное перемещение курсора мыши при удержании в основном фиксированном положении на сенсорной панели</value>
+  </data>
+  <data name="DS4BTPollRate" xml:space="preserve">
+    <value>Скорость опроса DS4 BT</value>
+  </data>
+  <data name="DS4LightbarPassthruDisabled" xml:space="preserve">
+    <value>Функция в настоящее время отключена в приложении из-за проблем драйвера. Надеюсь, проблемы исправятся в будущем обновлении.</value>
+  </data>
+  <data name="NotAMoronConfirmationCheckbox" xml:space="preserve">
+    <value>Я понял и не открою сообщение об ошибке об этом</value>
   </data>
 </root>

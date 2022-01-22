@@ -1,6 +1,5 @@
 ﻿using System;
 using DS4Windows.Shared.Devices.HID;
-using DS4WinWPF.DS4Library.InputDevices;
 using PropertyChanged;
 
 namespace DS4Windows

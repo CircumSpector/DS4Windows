@@ -3,8 +3,6 @@ using DS4Windows.Shared.Common.Types;
 
 namespace DS4Windows
 {
-    
-
     /**
      * The haptics engine uses a stack of these states representing the light bar and rumble motor settings.
      * It (will) handle composing them and the details of output report management.
