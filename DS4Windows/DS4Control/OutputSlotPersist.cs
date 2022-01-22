@@ -59,7 +59,7 @@ namespace DS4WinWPF.DS4Control
                         DeviceType = s.PermanentType
                     }).ToList()
             };
-            
+
             var outputPath = Path.Combine(Global.RuntimeAppDataPath, Constants.LegacyOutputSlotsFileName);
 
             try
@@ -67,7 +67,7 @@ namespace DS4WinWPF.DS4Control
                 using var stream = File.Open(outputPath, FileMode.Create);
 
                 settings.Serialize(stream);
-                
+
                 result = true;
             }
             catch (UnauthorizedAccessException)

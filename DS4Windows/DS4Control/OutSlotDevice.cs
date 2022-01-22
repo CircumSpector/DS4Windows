@@ -10,42 +10,45 @@ namespace DS4WinWPF.DS4Control
         public enum AttachedStatus : uint
         {
             UnAttached = 0,
-            Attached = 1,
-        }
-
-        public enum ReserveStatus : uint
-        {
-            Dynamic = 0,
-            Permanent = 1,
+            Attached = 1
         }
 
         public enum InputBound : uint
         {
             Unbound = 0,
-            Bound = 1,
+            Bound = 1
         }
 
-        private AttachedStatus attachedStatus;
-        private OutputDevice outputDevice;
-        private ReserveStatus reserveStatus;
+        public enum ReserveStatus : uint
+        {
+            Dynamic = 0,
+            Permanent = 1
+        }
+
         private InputBound inputBound;
         private OutputDeviceType permanentType;
-        private OutputDeviceType currentType;
-        private int index;
-        public int Index => index;
+        private ReserveStatus reserveStatus;
+
+        public OutSlotDevice(int idx)
+        {
+            Index = idx;
+            CurrentReserveStatusChanged += OutSlotDevice_CurrentReserveStatusChanged;
+        }
+
+        public int Index { get; }
 
         /// <summary>
-        /// Connection status of virtual output controller
+        ///     Connection status of virtual output controller
         /// </summary>
-        public AttachedStatus CurrentAttachedStatus { get => attachedStatus; }
+        public AttachedStatus CurrentAttachedStatus { get; private set; }
 
         /// <summary>
-        /// Reference to output controller
+        ///     Reference to output controller
         /// </summary>
-        public OutputDevice OutputDevice { get => outputDevice; }
+        public OutputDevice OutputDevice { get; private set; }
 
         /// <summary>
-        /// Flag stating the connection preference of an output controller
+        ///     Flag stating the connection preference of an output controller
         /// </summary>
         public ReserveStatus CurrentReserveStatus
         {
@@ -57,10 +60,9 @@ namespace DS4WinWPF.DS4Control
                 CurrentReserveStatusChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler CurrentReserveStatusChanged;
 
         /// <summary>
-        /// Whether an input controller is associated with the slot
+        ///     Whether an input controller is associated with the slot
         /// </summary>
         public InputBound CurrentInputBound
         {
@@ -72,10 +74,9 @@ namespace DS4WinWPF.DS4Control
                 CurrentInputBoundChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler CurrentInputBoundChanged;
 
         /// <summary>
-        /// Desired device type for a permanently connected slot
+        ///     Desired device type for a permanently connected slot
         /// </summary>
         public OutputDeviceType PermanentType
         {
@@ -84,58 +85,47 @@ namespace DS4WinWPF.DS4Control
             {
                 if (permanentType == value) return;
 
-                if(value != OutputDeviceType.None)
-                    AppLogger.Instance.LogToGui($"Output slot #{this.index+1} has permanent type {value}", false);
+                if (value != OutputDeviceType.None)
+                    AppLogger.Instance.LogToGui($"Output slot #{Index + 1} has permanent type {value}", false);
 
                 permanentType = value;
                 PermanentTypeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public event EventHandler PermanentTypeChanged;
 
         /// <summary>
-        /// Device type of the current output controller
+        ///     Device type of the current output controller
         /// </summary>
-        public OutputDeviceType CurrentType { get => currentType; set => currentType = value; }
+        public OutputDeviceType CurrentType { get; set; }
 
-        public OutSlotDevice(int idx)
-        {
-            this.index = idx;
-            CurrentReserveStatusChanged += OutSlotDevice_CurrentReserveStatusChanged;
-        }
+        public event EventHandler CurrentReserveStatusChanged;
+        public event EventHandler CurrentInputBoundChanged;
+        public event EventHandler PermanentTypeChanged;
 
         private void OutSlotDevice_CurrentReserveStatusChanged(object sender, EventArgs e)
         {
             if (reserveStatus == ReserveStatus.Dynamic)
-            {
                 PermanentType = OutputDeviceType.None;
-            }
-            else if (currentType != OutputDeviceType.None)
-            {
-                PermanentType = currentType;
-            }
+            else if (CurrentType != OutputDeviceType.None) PermanentType = CurrentType;
         }
 
         public void AttachedDevice(OutputDevice outputDevice, OutputDeviceType contType)
         {
-            this.outputDevice = outputDevice;
-            attachedStatus = AttachedStatus.Attached;
-            currentType = contType;
+            OutputDevice = outputDevice;
+            CurrentAttachedStatus = AttachedStatus.Attached;
+            CurrentType = contType;
             //desiredType = contType;
         }
 
         public void DetachDevice()
         {
-            if (outputDevice != null)
+            if (OutputDevice != null)
             {
-                outputDevice = null;
-                attachedStatus = AttachedStatus.UnAttached;
-                currentType = OutputDeviceType.None;
+                OutputDevice = null;
+                CurrentAttachedStatus = AttachedStatus.UnAttached;
+                CurrentType = OutputDeviceType.None;
                 CurrentInputBound = InputBound.Unbound;
-                if (reserveStatus == ReserveStatus.Dynamic)
-                {
-                    PermanentType = OutputDeviceType.None;
-                }
+                if (reserveStatus == ReserveStatus.Dynamic) PermanentType = OutputDeviceType.None;
             }
         }
 

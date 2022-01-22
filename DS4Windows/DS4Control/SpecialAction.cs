@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using DS4Windows;
 using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control
 {
@@ -22,29 +20,29 @@ namespace DS4WinWPF.DS4Control
         public static SpecialAction BatteryCheck = new SpecialActionBatteryCheck();
         public static SpecialAction MultiAction = new SpecialActionMultiAction();
         public static SpecialAction XboxGameDVR = new SpecialActionXboxGameDVR();
-        public static SpecialAction SteeringWheelEmulationCalibrate = new SpecialActionSteeringWheelEmulationCalibrate();
+
+        public static SpecialAction SteeringWheelEmulationCalibrate =
+            new SpecialActionSteeringWheelEmulationCalibrate();
 
         /// <summary>
-        ///     The <see cref="SpecialAction"/> type to help with (de-)serialization.
+        ///     The <see cref="SpecialAction" /> type to help with (de-)serialization.
         /// </summary>
         public abstract string Type { get; }
 
         /// <summary>
-        ///     A unique ID to guarantee uniqueness of this <see cref="SpecialAction"/>.
+        ///     A unique ID to guarantee uniqueness of this <see cref="SpecialAction" />.
         /// </summary>
         public Guid Id { get; } = Guid.NewGuid();
 
         /// <summary>
-        ///     User-defined display name of this <see cref="SpecialAction"/>.
+        ///     User-defined display name of this <see cref="SpecialAction" />.
         /// </summary>
         public string DisplayName { get; set; }
 
         /// <summary>
-        ///     On or more <see cref="DS4ControlItem"/> which may trigger execution of this <see cref="SpecialAction"/>.
+        ///     On or more <see cref="DS4ControlItem" /> which may trigger execution of this <see cref="SpecialAction" />.
         /// </summary>
         public List<DS4ControlItem> Trigger { get; } = new();
-
-        protected SpecialAction() { }
 
         public bool Equals(SpecialAction other)
         {
@@ -52,6 +50,8 @@ namespace DS4WinWPF.DS4Control
             if (ReferenceEquals(this, other)) return true;
             return Id.Equals(other.Id);
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public override bool Equals(object obj)
         {
@@ -62,8 +62,6 @@ namespace DS4WinWPF.DS4Control
         {
             return Id.GetHashCode();
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [UsedImplicitly]
         [NotifyPropertyChangedInvocator]
