@@ -46,7 +46,7 @@ namespace DS4Windows
         public bool priorSlideLeft, priorSlideright;
         public bool priorSwipeLeft, priorSwipeRight, priorSwipeUp, priorSwipeDown;
         public byte priorSwipeLeftB, priorSwipeRightB, priorSwipeUpB, priorSwipeDownB, priorSwipedB;
-        protected DS4Controls pushed = DS4Controls.None;
+        protected DS4ControlItem pushed = DS4ControlItem.None;
         private DS4State s = new();
         public bool slideleft, slideright;
         private int smoothBufferTail;
@@ -614,7 +614,7 @@ namespace DS4Windows
 
         public virtual void touchButtonUp(DS4Touchpad sender, TouchpadEventArgs arg)
         {
-            pushed = DS4Controls.None;
+            pushed = DS4ControlItem.None;
             upperDown = leftDown = rightDown = multiDown = false;
             s = dev.GetCurrentStateReference();
             if (s.Touch1 || s.Touch2)
@@ -982,7 +982,7 @@ namespace DS4Windows
                 return;
             }
 
-            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4Controls.TouchLeft).IsDefault &&
+            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4ControlItem.TouchLeft).IsDefault &&
                 leftDown)
             {
                 Mapping.MapClick(deviceNum, Mapping.Click.Left);
@@ -993,15 +993,15 @@ namespace DS4Windows
                 dragging2 = false;
             }
 
-            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4Controls.TouchUpper).IsDefault &&
+            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4ControlItem.TouchUpper).IsDefault &&
                 upperDown)
                 Mapping.MapClick(deviceNum, Mapping.Click.Middle);
 
-            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4Controls.TouchRight).IsDefault &&
+            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4ControlItem.TouchRight).IsDefault &&
                 rightDown)
                 Mapping.MapClick(deviceNum, Mapping.Click.Left);
 
-            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4Controls.TouchMulti).IsDefault &&
+            if (Global.Instance.Config.GetDs4ControllerSetting(deviceNum, DS4ControlItem.TouchMulti).IsDefault &&
                 multiDown)
                 Mapping.MapClick(deviceNum, Mapping.Click.Right);
 

@@ -16,12 +16,12 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     {
         ReadOnlyObservableCollection<MappedControl> Mappings { get; }
         MappedControl SelectedControl { get; set; }
-        Dictionary<DS4Controls, MappedControl> ControlMap { get; }
+        Dictionary<DS4ControlItem, MappedControl> ControlMap { get; }
 
         /// <summary>
         ///     DS4Controls -> Int index map. Store appropriate list index for a stored MappedControl instance
         /// </summary>
-        Dictionary<DS4Controls, int> ControlIndexMap { get; }
+        Dictionary<DS4ControlItem, int> ControlIndexMap { get; }
 
         MappedControl L2FullPullControl { get; }
         MappedControl R2FullPullControl { get; }
@@ -48,52 +48,52 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public MappingListViewModel(IProfilesService profileService)
         {
-            mappings.Add(new MappedControl(profileService, DS4Controls.Cross));
-            mappings.Add(new MappedControl(profileService, DS4Controls.Circle));
-            mappings.Add(new MappedControl(profileService, DS4Controls.Square));
-            mappings.Add(new MappedControl(profileService, DS4Controls.Triangle));
-            mappings.Add(new MappedControl(profileService, DS4Controls.Options));
-            mappings.Add(new MappedControl(profileService, DS4Controls.Share));
-            mappings.Add(new MappedControl(profileService, DS4Controls.DpadUp));
-            mappings.Add(new MappedControl(profileService, DS4Controls.DpadDown));
-            mappings.Add(new MappedControl(profileService, DS4Controls.DpadLeft));
-            mappings.Add(new MappedControl(profileService, DS4Controls.DpadRight));
-            mappings.Add(new MappedControl(profileService, DS4Controls.PS));
-            mappings.Add(new MappedControl(profileService, DS4Controls.Mute));
-            mappings.Add(new MappedControl(profileService, DS4Controls.L1));
-            mappings.Add(new MappedControl(profileService, DS4Controls.R1));
-            mappings.Add(new MappedControl(profileService, DS4Controls.L2));
-            mappings.Add(new MappedControl(profileService, DS4Controls.R2));
-            mappings.Add(new MappedControl(profileService, DS4Controls.L3));
-            mappings.Add(new MappedControl(profileService, DS4Controls.R3));
-            mappings.Add(new MappedControl(profileService, DS4Controls.Capture));
-            mappings.Add(new MappedControl(profileService, DS4Controls.SideL));
-            mappings.Add(new MappedControl(profileService, DS4Controls.SideR));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Cross));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Circle));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Square));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Triangle));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Options));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Share));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.DpadUp));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.DpadDown));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.DpadLeft));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.DpadRight));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.PS));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Mute));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.L1));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.R1));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.L2));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.R2));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.L3));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.R3));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.Capture));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.SideL));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.SideR));
 
-            mappings.Add(new MappedControl(profileService, DS4Controls.TouchLeft));
-            mappings.Add(new MappedControl(profileService, DS4Controls.TouchRight));
-            mappings.Add(new MappedControl(profileService, DS4Controls.TouchMulti));
-            mappings.Add(new MappedControl(profileService, DS4Controls.TouchUpper));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.TouchLeft));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.TouchRight));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.TouchMulti));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.TouchUpper));
 
-            mappings.Add(new MappedControl(profileService, DS4Controls.LYNeg));
-            mappings.Add(new MappedControl(profileService, DS4Controls.LYPos));
-            mappings.Add(new MappedControl(profileService, DS4Controls.LXNeg));
-            mappings.Add(new MappedControl(profileService, DS4Controls.LXPos));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.LYNeg));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.LYPos));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.LXNeg));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.LXPos));
 
-            mappings.Add(new MappedControl(profileService, DS4Controls.RYNeg));
-            mappings.Add(new MappedControl(profileService, DS4Controls.RYPos));
-            mappings.Add(new MappedControl(profileService, DS4Controls.RXNeg));
-            mappings.Add(new MappedControl(profileService, DS4Controls.RXPos));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.RYNeg));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.RYPos));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.RXNeg));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.RXPos));
 
-            mappings.Add(new MappedControl(profileService, DS4Controls.GyroZNeg));
-            mappings.Add(new MappedControl(profileService, DS4Controls.GyroZPos));
-            mappings.Add(new MappedControl(profileService, DS4Controls.GyroXPos));
-            mappings.Add(new MappedControl(profileService, DS4Controls.GyroXNeg));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.GyroZNeg));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.GyroZPos));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.GyroXPos));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.GyroXNeg));
 
-            mappings.Add(new MappedControl(profileService, DS4Controls.SwipeUp));
-            mappings.Add(new MappedControl(profileService, DS4Controls.SwipeDown));
-            mappings.Add(new MappedControl(profileService, DS4Controls.SwipeLeft));
-            mappings.Add(new MappedControl(profileService, DS4Controls.SwipeRight));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.SwipeUp));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.SwipeDown));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.SwipeLeft));
+            mappings.Add(new MappedControl(profileService, DS4ControlItem.SwipeRight));
 
             Mappings = new ReadOnlyObservableCollection<MappedControl>(mappings);
 
@@ -108,16 +108,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             /*
              * Establish data binding data for virtual button DS4ControlSettings instances
              */
-            LsOuterBindControl = new MappedControl(profileService, DS4Controls.LSOuter);
-            RsOuterBindControl = new MappedControl(profileService, DS4Controls.RSOuter);
+            LsOuterBindControl = new MappedControl(profileService, DS4ControlItem.LSOuter);
+            RsOuterBindControl = new MappedControl(profileService, DS4ControlItem.RSOuter);
 
-            L2FullPullControl = new MappedControl(profileService, DS4Controls.L2FullPull);
-            R2FullPullControl = new MappedControl(profileService, DS4Controls.R2FullPull);
+            L2FullPullControl = new MappedControl(profileService, DS4ControlItem.L2FullPull);
+            R2FullPullControl = new MappedControl(profileService, DS4ControlItem.R2FullPull);
 
-            gyroSwipeLeftControl = new MappedControl(profileService, DS4Controls.GyroSwipeLeft);
-            gyroSwipeRightControl = new MappedControl(profileService, DS4Controls.GyroSwipeRight);
-            gyroSwipeUpControl = new MappedControl(profileService, DS4Controls.GyroSwipeUp);
-            gyroSwipeDownControl = new MappedControl(profileService, DS4Controls.GyroSwipeDown);
+            gyroSwipeLeftControl = new MappedControl(profileService, DS4ControlItem.GyroSwipeLeft);
+            gyroSwipeRightControl = new MappedControl(profileService, DS4ControlItem.GyroSwipeRight);
+            gyroSwipeUpControl = new MappedControl(profileService, DS4ControlItem.GyroSwipeUp);
+            gyroSwipeDownControl = new MappedControl(profileService, DS4ControlItem.GyroSwipeDown);
 
             extraControls.Add(LsOuterBindControl);
             extraControls.Add(RsOuterBindControl);
@@ -128,26 +128,26 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             extraControls.Add(gyroSwipeUpControl);
             extraControls.Add(gyroSwipeDownControl);
 
-            ControlMap.Add(DS4Controls.LSOuter, LsOuterBindControl);
-            ControlMap.Add(DS4Controls.RSOuter, RsOuterBindControl);
-            ControlMap.Add(DS4Controls.L2FullPull, L2FullPullControl);
-            ControlMap.Add(DS4Controls.R2FullPull, R2FullPullControl);
-            ControlMap.Add(DS4Controls.GyroSwipeLeft, gyroSwipeLeftControl);
-            ControlMap.Add(DS4Controls.GyroSwipeRight, gyroSwipeRightControl);
-            ControlMap.Add(DS4Controls.GyroSwipeUp, gyroSwipeUpControl);
-            ControlMap.Add(DS4Controls.GyroSwipeDown, gyroSwipeDownControl);
+            ControlMap.Add(DS4ControlItem.LSOuter, LsOuterBindControl);
+            ControlMap.Add(DS4ControlItem.RSOuter, RsOuterBindControl);
+            ControlMap.Add(DS4ControlItem.L2FullPull, L2FullPullControl);
+            ControlMap.Add(DS4ControlItem.R2FullPull, R2FullPullControl);
+            ControlMap.Add(DS4ControlItem.GyroSwipeLeft, gyroSwipeLeftControl);
+            ControlMap.Add(DS4ControlItem.GyroSwipeRight, gyroSwipeRightControl);
+            ControlMap.Add(DS4ControlItem.GyroSwipeUp, gyroSwipeUpControl);
+            ControlMap.Add(DS4ControlItem.GyroSwipeDown, gyroSwipeDownControl);
         }
 
         public ReadOnlyObservableCollection<MappedControl> Mappings { get; }
 
         public MappedControl SelectedControl { get; set; }
 
-        public Dictionary<DS4Controls, MappedControl> ControlMap { get; } = new();
+        public Dictionary<DS4ControlItem, MappedControl> ControlMap { get; } = new();
 
         /// <summary>
         ///     DS4Controls -> Int index map. Store appropriate list index for a stored MappedControl instance
         /// </summary>
-        public Dictionary<DS4Controls, int> ControlIndexMap { get; } = new();
+        public Dictionary<DS4ControlItem, int> ControlIndexMap { get; } = new();
 
         public MappedControl L2FullPullControl { get; }
 
@@ -187,7 +187,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     {
         public MappedControl(
             IProfilesService profileService,
-            DS4Controls control,
+            DS4ControlItem control,
             bool initMap = false
         )
         {
@@ -205,7 +205,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             }
         }
 
-        public DS4Controls Control { get; }
+        public DS4ControlItem Control { get; }
 
         public DS4ControlSettingsV3 Setting { get; }
 
@@ -237,7 +237,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             var sc = !shift
                 ? Setting.KeyType.HasFlag(DS4KeyType.ScanCode)
                 : Setting.ShiftKeyType.HasFlag(DS4KeyType.ScanCode);
-            var extra = Control >= DS4Controls.GyroXPos && Control <= DS4Controls.SwipeDown;
+            var extra = Control >= DS4ControlItem.GyroXPos && Control <= DS4ControlItem.SwipeDown;
             var actionType = !shift ? Setting.ControlActionType : Setting.ShiftActionType;
             if (actionType != DS4ControlSettingsV3.ActionType.Default)
             {

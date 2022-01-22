@@ -71,8 +71,8 @@ namespace DS4Windows
 
                 for (var i = 0; i < TEST_PROFILE_ITEM_COUNT - 1; i++)
                 {
-                    foreach (DS4Controls dc in Enum.GetValues(typeof(DS4Controls)))
-                        if (dc != DS4Controls.None)
+                    foreach (DS4ControlItem dc in Enum.GetValues(typeof(DS4ControlItem)))
+                        if (dc != DS4ControlItem.None)
                             Ds4Settings[i].Add(new DS4ControlSettingsV3(dc));
 
                     ds4controlSettings[i] = new ControlSettingsGroup(Ds4Settings[i]);
@@ -187,7 +187,7 @@ namespace DS4Windows
             public IList<bool> ContainsCustomExtras { get; set; } = new bool[TEST_PROFILE_ITEM_COUNT]
                 { false, false, false, false, false, false, false, false, false };
 
-            public void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons)
+            public void RefreshExtrasButtons(int deviceNum, List<DS4ControlItem> devButtons)
             {
                 ds4controlSettings[deviceNum].ResetExtraButtons();
                 if (devButtons != null) ds4controlSettings[deviceNum].EstablishExtraButtons(devButtons);
@@ -390,140 +390,140 @@ namespace DS4Windows
                     control.touchPad[index].ToggleGyroStick = value;
             }
 
-            public DS4Controls GetDs4ControlsByName(string key)
+            public DS4ControlItem GetDs4ControlsByName(string key)
             {
                 if (!key.StartsWith("bn"))
-                    return (DS4Controls)Enum.Parse(typeof(DS4Controls), key, true);
+                    return (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), key, true);
 
                 switch (key)
                 {
-                    case "bnShare": return DS4Controls.Share;
-                    case "bnL3": return DS4Controls.L3;
-                    case "bnR3": return DS4Controls.R3;
-                    case "bnOptions": return DS4Controls.Options;
-                    case "bnUp": return DS4Controls.DpadUp;
-                    case "bnRight": return DS4Controls.DpadRight;
-                    case "bnDown": return DS4Controls.DpadDown;
-                    case "bnLeft": return DS4Controls.DpadLeft;
+                    case "bnShare": return DS4ControlItem.Share;
+                    case "bnL3": return DS4ControlItem.L3;
+                    case "bnR3": return DS4ControlItem.R3;
+                    case "bnOptions": return DS4ControlItem.Options;
+                    case "bnUp": return DS4ControlItem.DpadUp;
+                    case "bnRight": return DS4ControlItem.DpadRight;
+                    case "bnDown": return DS4ControlItem.DpadDown;
+                    case "bnLeft": return DS4ControlItem.DpadLeft;
 
-                    case "bnL1": return DS4Controls.L1;
-                    case "bnR1": return DS4Controls.R1;
-                    case "bnTriangle": return DS4Controls.Triangle;
-                    case "bnCircle": return DS4Controls.Circle;
-                    case "bnCross": return DS4Controls.Cross;
-                    case "bnSquare": return DS4Controls.Square;
+                    case "bnL1": return DS4ControlItem.L1;
+                    case "bnR1": return DS4ControlItem.R1;
+                    case "bnTriangle": return DS4ControlItem.Triangle;
+                    case "bnCircle": return DS4ControlItem.Circle;
+                    case "bnCross": return DS4ControlItem.Cross;
+                    case "bnSquare": return DS4ControlItem.Square;
 
-                    case "bnPS": return DS4Controls.PS;
-                    case "bnLSLeft": return DS4Controls.LXNeg;
-                    case "bnLSUp": return DS4Controls.LYNeg;
-                    case "bnRSLeft": return DS4Controls.RXNeg;
-                    case "bnRSUp": return DS4Controls.RYNeg;
+                    case "bnPS": return DS4ControlItem.PS;
+                    case "bnLSLeft": return DS4ControlItem.LXNeg;
+                    case "bnLSUp": return DS4ControlItem.LYNeg;
+                    case "bnRSLeft": return DS4ControlItem.RXNeg;
+                    case "bnRSUp": return DS4ControlItem.RYNeg;
 
-                    case "bnLSRight": return DS4Controls.LXPos;
-                    case "bnLSDown": return DS4Controls.LYPos;
-                    case "bnRSRight": return DS4Controls.RXPos;
-                    case "bnRSDown": return DS4Controls.RYPos;
-                    case "bnL2": return DS4Controls.L2;
-                    case "bnR2": return DS4Controls.R2;
+                    case "bnLSRight": return DS4ControlItem.LXPos;
+                    case "bnLSDown": return DS4ControlItem.LYPos;
+                    case "bnRSRight": return DS4ControlItem.RXPos;
+                    case "bnRSDown": return DS4ControlItem.RYPos;
+                    case "bnL2": return DS4ControlItem.L2;
+                    case "bnR2": return DS4ControlItem.R2;
 
-                    case "bnTouchLeft": return DS4Controls.TouchLeft;
-                    case "bnTouchMulti": return DS4Controls.TouchMulti;
-                    case "bnTouchUpper": return DS4Controls.TouchUpper;
-                    case "bnTouchRight": return DS4Controls.TouchRight;
-                    case "bnGyroXP": return DS4Controls.GyroXPos;
-                    case "bnGyroXN": return DS4Controls.GyroXNeg;
-                    case "bnGyroZP": return DS4Controls.GyroZPos;
-                    case "bnGyroZN": return DS4Controls.GyroZNeg;
+                    case "bnTouchLeft": return DS4ControlItem.TouchLeft;
+                    case "bnTouchMulti": return DS4ControlItem.TouchMulti;
+                    case "bnTouchUpper": return DS4ControlItem.TouchUpper;
+                    case "bnTouchRight": return DS4ControlItem.TouchRight;
+                    case "bnGyroXP": return DS4ControlItem.GyroXPos;
+                    case "bnGyroXN": return DS4ControlItem.GyroXNeg;
+                    case "bnGyroZP": return DS4ControlItem.GyroZPos;
+                    case "bnGyroZN": return DS4ControlItem.GyroZNeg;
 
-                    case "bnSwipeUp": return DS4Controls.SwipeUp;
-                    case "bnSwipeDown": return DS4Controls.SwipeDown;
-                    case "bnSwipeLeft": return DS4Controls.SwipeLeft;
-                    case "bnSwipeRight": return DS4Controls.SwipeRight;
+                    case "bnSwipeUp": return DS4ControlItem.SwipeUp;
+                    case "bnSwipeDown": return DS4ControlItem.SwipeDown;
+                    case "bnSwipeLeft": return DS4ControlItem.SwipeLeft;
+                    case "bnSwipeRight": return DS4ControlItem.SwipeRight;
 
                     #region OldShiftname
 
-                    case "sbnShare": return DS4Controls.Share;
-                    case "sbnL3": return DS4Controls.L3;
-                    case "sbnR3": return DS4Controls.R3;
-                    case "sbnOptions": return DS4Controls.Options;
-                    case "sbnUp": return DS4Controls.DpadUp;
-                    case "sbnRight": return DS4Controls.DpadRight;
-                    case "sbnDown": return DS4Controls.DpadDown;
-                    case "sbnLeft": return DS4Controls.DpadLeft;
+                    case "sbnShare": return DS4ControlItem.Share;
+                    case "sbnL3": return DS4ControlItem.L3;
+                    case "sbnR3": return DS4ControlItem.R3;
+                    case "sbnOptions": return DS4ControlItem.Options;
+                    case "sbnUp": return DS4ControlItem.DpadUp;
+                    case "sbnRight": return DS4ControlItem.DpadRight;
+                    case "sbnDown": return DS4ControlItem.DpadDown;
+                    case "sbnLeft": return DS4ControlItem.DpadLeft;
 
-                    case "sbnL1": return DS4Controls.L1;
-                    case "sbnR1": return DS4Controls.R1;
-                    case "sbnTriangle": return DS4Controls.Triangle;
-                    case "sbnCircle": return DS4Controls.Circle;
-                    case "sbnCross": return DS4Controls.Cross;
-                    case "sbnSquare": return DS4Controls.Square;
+                    case "sbnL1": return DS4ControlItem.L1;
+                    case "sbnR1": return DS4ControlItem.R1;
+                    case "sbnTriangle": return DS4ControlItem.Triangle;
+                    case "sbnCircle": return DS4ControlItem.Circle;
+                    case "sbnCross": return DS4ControlItem.Cross;
+                    case "sbnSquare": return DS4ControlItem.Square;
 
-                    case "sbnPS": return DS4Controls.PS;
-                    case "sbnLSLeft": return DS4Controls.LXNeg;
-                    case "sbnLSUp": return DS4Controls.LYNeg;
-                    case "sbnRSLeft": return DS4Controls.RXNeg;
-                    case "sbnRSUp": return DS4Controls.RYNeg;
+                    case "sbnPS": return DS4ControlItem.PS;
+                    case "sbnLSLeft": return DS4ControlItem.LXNeg;
+                    case "sbnLSUp": return DS4ControlItem.LYNeg;
+                    case "sbnRSLeft": return DS4ControlItem.RXNeg;
+                    case "sbnRSUp": return DS4ControlItem.RYNeg;
 
-                    case "sbnLSRight": return DS4Controls.LXPos;
-                    case "sbnLSDown": return DS4Controls.LYPos;
-                    case "sbnRSRight": return DS4Controls.RXPos;
-                    case "sbnRSDown": return DS4Controls.RYPos;
-                    case "sbnL2": return DS4Controls.L2;
-                    case "sbnR2": return DS4Controls.R2;
+                    case "sbnLSRight": return DS4ControlItem.LXPos;
+                    case "sbnLSDown": return DS4ControlItem.LYPos;
+                    case "sbnRSRight": return DS4ControlItem.RXPos;
+                    case "sbnRSDown": return DS4ControlItem.RYPos;
+                    case "sbnL2": return DS4ControlItem.L2;
+                    case "sbnR2": return DS4ControlItem.R2;
 
-                    case "sbnTouchLeft": return DS4Controls.TouchLeft;
-                    case "sbnTouchMulti": return DS4Controls.TouchMulti;
-                    case "sbnTouchUpper": return DS4Controls.TouchUpper;
-                    case "sbnTouchRight": return DS4Controls.TouchRight;
-                    case "sbnGsyroXP": return DS4Controls.GyroXPos;
-                    case "sbnGyroXN": return DS4Controls.GyroXNeg;
-                    case "sbnGyroZP": return DS4Controls.GyroZPos;
-                    case "sbnGyroZN": return DS4Controls.GyroZNeg;
+                    case "sbnTouchLeft": return DS4ControlItem.TouchLeft;
+                    case "sbnTouchMulti": return DS4ControlItem.TouchMulti;
+                    case "sbnTouchUpper": return DS4ControlItem.TouchUpper;
+                    case "sbnTouchRight": return DS4ControlItem.TouchRight;
+                    case "sbnGsyroXP": return DS4ControlItem.GyroXPos;
+                    case "sbnGyroXN": return DS4ControlItem.GyroXNeg;
+                    case "sbnGyroZP": return DS4ControlItem.GyroZPos;
+                    case "sbnGyroZN": return DS4ControlItem.GyroZNeg;
 
                     #endregion
 
-                    case "bnShiftShare": return DS4Controls.Share;
-                    case "bnShiftL3": return DS4Controls.L3;
-                    case "bnShiftR3": return DS4Controls.R3;
-                    case "bnShiftOptions": return DS4Controls.Options;
-                    case "bnShiftUp": return DS4Controls.DpadUp;
-                    case "bnShiftRight": return DS4Controls.DpadRight;
-                    case "bnShiftDown": return DS4Controls.DpadDown;
-                    case "bnShiftLeft": return DS4Controls.DpadLeft;
+                    case "bnShiftShare": return DS4ControlItem.Share;
+                    case "bnShiftL3": return DS4ControlItem.L3;
+                    case "bnShiftR3": return DS4ControlItem.R3;
+                    case "bnShiftOptions": return DS4ControlItem.Options;
+                    case "bnShiftUp": return DS4ControlItem.DpadUp;
+                    case "bnShiftRight": return DS4ControlItem.DpadRight;
+                    case "bnShiftDown": return DS4ControlItem.DpadDown;
+                    case "bnShiftLeft": return DS4ControlItem.DpadLeft;
 
-                    case "bnShiftL1": return DS4Controls.L1;
-                    case "bnShiftR1": return DS4Controls.R1;
-                    case "bnShiftTriangle": return DS4Controls.Triangle;
-                    case "bnShiftCircle": return DS4Controls.Circle;
-                    case "bnShiftCross": return DS4Controls.Cross;
-                    case "bnShiftSquare": return DS4Controls.Square;
+                    case "bnShiftL1": return DS4ControlItem.L1;
+                    case "bnShiftR1": return DS4ControlItem.R1;
+                    case "bnShiftTriangle": return DS4ControlItem.Triangle;
+                    case "bnShiftCircle": return DS4ControlItem.Circle;
+                    case "bnShiftCross": return DS4ControlItem.Cross;
+                    case "bnShiftSquare": return DS4ControlItem.Square;
 
-                    case "bnShiftPS": return DS4Controls.PS;
-                    case "bnShiftLSLeft": return DS4Controls.LXNeg;
-                    case "bnShiftLSUp": return DS4Controls.LYNeg;
-                    case "bnShiftRSLeft": return DS4Controls.RXNeg;
-                    case "bnShiftRSUp": return DS4Controls.RYNeg;
+                    case "bnShiftPS": return DS4ControlItem.PS;
+                    case "bnShiftLSLeft": return DS4ControlItem.LXNeg;
+                    case "bnShiftLSUp": return DS4ControlItem.LYNeg;
+                    case "bnShiftRSLeft": return DS4ControlItem.RXNeg;
+                    case "bnShiftRSUp": return DS4ControlItem.RYNeg;
 
-                    case "bnShiftLSRight": return DS4Controls.LXPos;
-                    case "bnShiftLSDown": return DS4Controls.LYPos;
-                    case "bnShiftRSRight": return DS4Controls.RXPos;
-                    case "bnShiftRSDown": return DS4Controls.RYPos;
-                    case "bnShiftL2": return DS4Controls.L2;
-                    case "bnShiftR2": return DS4Controls.R2;
+                    case "bnShiftLSRight": return DS4ControlItem.LXPos;
+                    case "bnShiftLSDown": return DS4ControlItem.LYPos;
+                    case "bnShiftRSRight": return DS4ControlItem.RXPos;
+                    case "bnShiftRSDown": return DS4ControlItem.RYPos;
+                    case "bnShiftL2": return DS4ControlItem.L2;
+                    case "bnShiftR2": return DS4ControlItem.R2;
 
-                    case "bnShiftTouchLeft": return DS4Controls.TouchLeft;
-                    case "bnShiftTouchMulti": return DS4Controls.TouchMulti;
-                    case "bnShiftTouchUpper": return DS4Controls.TouchUpper;
-                    case "bnShiftTouchRight": return DS4Controls.TouchRight;
-                    case "bnShiftGyroXP": return DS4Controls.GyroXPos;
-                    case "bnShiftGyroXN": return DS4Controls.GyroXNeg;
-                    case "bnShiftGyroZP": return DS4Controls.GyroZPos;
-                    case "bnShiftGyroZN": return DS4Controls.GyroZNeg;
+                    case "bnShiftTouchLeft": return DS4ControlItem.TouchLeft;
+                    case "bnShiftTouchMulti": return DS4ControlItem.TouchMulti;
+                    case "bnShiftTouchUpper": return DS4ControlItem.TouchUpper;
+                    case "bnShiftTouchRight": return DS4ControlItem.TouchRight;
+                    case "bnShiftGyroXP": return DS4ControlItem.GyroXPos;
+                    case "bnShiftGyroXN": return DS4ControlItem.GyroXNeg;
+                    case "bnShiftGyroZP": return DS4ControlItem.GyroZPos;
+                    case "bnShiftGyroZN": return DS4ControlItem.GyroZNeg;
 
-                    case "bnShiftSwipeUp": return DS4Controls.SwipeUp;
-                    case "bnShiftSwipeDown": return DS4Controls.SwipeDown;
-                    case "bnShiftSwipeLeft": return DS4Controls.SwipeLeft;
-                    case "bnShiftSwipeRight": return DS4Controls.SwipeRight;
+                    case "bnShiftSwipeUp": return DS4ControlItem.SwipeUp;
+                    case "bnShiftSwipeDown": return DS4ControlItem.SwipeDown;
+                    case "bnShiftSwipeLeft": return DS4ControlItem.SwipeLeft;
+                    case "bnShiftSwipeRight": return DS4ControlItem.SwipeRight;
                 }
 
                 return 0;
@@ -803,16 +803,16 @@ namespace DS4Windows
             )
             {
                 var loaded = true;
-                var customMapKeyTypes = new Dictionary<DS4Controls, DS4KeyType>();
-                var customMapKeys = new Dictionary<DS4Controls, ushort>();
-                var customMapButtons = new Dictionary<DS4Controls, X360Controls>();
-                var customMapMacros = new Dictionary<DS4Controls, string>();
-                var customMapExtras = new Dictionary<DS4Controls, string>();
-                var shiftCustomMapKeyTypes = new Dictionary<DS4Controls, DS4KeyType>();
-                var shiftCustomMapKeys = new Dictionary<DS4Controls, ushort>();
-                var shiftCustomMapButtons = new Dictionary<DS4Controls, X360Controls>();
-                var shiftCustomMapMacros = new Dictionary<DS4Controls, string>();
-                var shiftCustomMapExtras = new Dictionary<DS4Controls, string>();
+                var customMapKeyTypes = new Dictionary<DS4ControlItem, DS4KeyType>();
+                var customMapKeys = new Dictionary<DS4ControlItem, ushort>();
+                var customMapButtons = new Dictionary<DS4ControlItem, X360Controls>();
+                var customMapMacros = new Dictionary<DS4ControlItem, string>();
+                var customMapExtras = new Dictionary<DS4ControlItem, string>();
+                var shiftCustomMapKeyTypes = new Dictionary<DS4ControlItem, DS4KeyType>();
+                var shiftCustomMapKeys = new Dictionary<DS4ControlItem, ushort>();
+                var shiftCustomMapButtons = new Dictionary<DS4ControlItem, X360Controls>();
+                var shiftCustomMapMacros = new Dictionary<DS4ControlItem, string>();
+                var shiftCustomMapExtras = new Dictionary<DS4ControlItem, string>();
                 var rootname = "DS4Windows";
                 var missingSetting = false;
                 var migratePerformed = false;
@@ -1085,7 +1085,7 @@ namespace DS4Windows
                             .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
                             .ToList();
 
-                        foreach (var item in controls.Where(item => Enum.TryParse(item.Name, out DS4Controls _)))
+                        foreach (var item in controls.Where(item => Enum.TryParse(item.Name, out DS4ControlItem _)))
                         {
                             UpdateDs4ControllerSetting(device, item.Name, false,
                                 GetX360ControlsByName(item.Entity.Value), "", DS4KeyType.None);
@@ -1129,7 +1129,7 @@ namespace DS4Windows
                             for (int i = 0, keysLength = keys.Length; i < keysLength; i++)
                                 keys[i] = int.Parse(skeys[i]);
 
-                            if (Enum.TryParse(item.Name, out DS4Controls _))
+                            if (Enum.TryParse(item.Name, out DS4ControlItem _))
                                 UpdateDs4ControllerSetting(device, item.Name, false, keys, "", DS4KeyType.None);
                         }
                     }
@@ -1152,7 +1152,7 @@ namespace DS4Windows
 
                         foreach (var item in controls)
                             if (ushort.TryParse(item.Entity.Value, out wvk) &&
-                                Enum.TryParse(item.Name, out DS4Controls _))
+                                Enum.TryParse(item.Name, out DS4ControlItem _))
                             {
                                 UpdateDs4ControllerSetting(device, item.Name, false, wvk, "", DS4KeyType.None);
                                 customMapKeys.Add(GetDs4ControlsByName(item.Name), wvk);
@@ -1176,7 +1176,7 @@ namespace DS4Windows
                             .ToList();
 
                         foreach (var item in controls.Where(item => item.Entity.Value != string.Empty &&
-                                                                    Enum.TryParse(item.Name, out DS4Controls _)))
+                                                                    Enum.TryParse(item.Name, out DS4ControlItem _)))
                         {
                             UpdateDs4ControllerExtra(device, item.Name, false, item.Entity.Value);
                             customMapExtras.Add(GetDs4ControlsByName(item.Name), item.Entity.Value);
@@ -1213,7 +1213,7 @@ namespace DS4Windows
                             if (item.Entity.Value.Contains(DS4KeyType.Unbound.ToString()))
                                 keyType |= DS4KeyType.Unbound;
 
-                            if (keyType == DS4KeyType.None || !Enum.TryParse(item.Name, out DS4Controls _)) continue;
+                            if (keyType == DS4KeyType.None || !Enum.TryParse(item.Name, out DS4ControlItem _)) continue;
 
                             UpdateDs4ControllerKeyType(device, item.Name, false, keyType);
                             customMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
@@ -1242,7 +1242,7 @@ namespace DS4Windows
                             if (!string.IsNullOrEmpty(item.Entity.ShiftTrigger))
                                 int.TryParse(item.Entity.ShiftTrigger, out shiftT);
 
-                            if (Enum.TryParse(item.Name, out DS4Controls _))
+                            if (Enum.TryParse(item.Name, out DS4ControlItem _))
                             {
                                 UpdateDs4ControllerSetting(device, item.Name, true,
                                     GetX360ControlsByName(item.Entity.Value), "", DS4KeyType.None, shiftT);
@@ -1291,7 +1291,7 @@ namespace DS4Windows
                             if (string.IsNullOrEmpty(item.Entity.ShiftTrigger))
                                 int.TryParse(item.Entity.ShiftTrigger, out shiftT);
 
-                            if (Enum.TryParse(item.Name, out DS4Controls _))
+                            if (Enum.TryParse(item.Name, out DS4ControlItem _))
                                 UpdateDs4ControllerSetting(device, item.Name, true, keys, "", DS4KeyType.None,
                                     shiftT);
                         }
@@ -1320,7 +1320,7 @@ namespace DS4Windows
                                 if (string.IsNullOrEmpty(item.Entity.ShiftTrigger))
                                     int.TryParse(item.Entity.ShiftTrigger, out shiftT);
 
-                                if (Enum.TryParse(item.Name, out DS4Controls _))
+                                if (Enum.TryParse(item.Name, out DS4ControlItem _))
                                 {
                                     UpdateDs4ControllerSetting(device, item.Name, true, wvk, "", DS4KeyType.None,
                                         shiftT);
@@ -1345,7 +1345,7 @@ namespace DS4Windows
                             .Where(e => !string.IsNullOrEmpty(e.Entity.Value))
                             .ToList();
 
-                        foreach (var item in controls.Where(item => Enum.TryParse(item.Name, out DS4Controls _)))
+                        foreach (var item in controls.Where(item => Enum.TryParse(item.Name, out DS4ControlItem _)))
                         {
                             UpdateDs4ControllerExtra(device, item.Name, true, item.Entity.Value);
                             shiftCustomMapExtras.Add(GetDs4ControlsByName(item.Name), item.Entity.Value);
@@ -1383,7 +1383,7 @@ namespace DS4Windows
                                 keyType |= DS4KeyType.Unbound;
 
                             if (keyType != DS4KeyType.None &&
-                                Enum.TryParse(item.Name, out DS4Controls _))
+                                Enum.TryParse(item.Name, out DS4ControlItem _))
                             {
                                 UpdateDs4ControllerKeyType(device, item.Name, true, keyType);
                                 shiftCustomMapKeyTypes.Add(GetDs4ControlsByName(item.Name), keyType);
@@ -1777,11 +1777,11 @@ namespace DS4Windows
                 string exts,
                 DS4KeyType kt, int trigger = 0)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1814,11 +1814,11 @@ namespace DS4Windows
 
             public void UpdateDs4ControllerExtra(int deviceNum, string buttonName, bool shift, string exts)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1834,11 +1834,11 @@ namespace DS4Windows
 
             public ControlActionData GetDs4Action(int deviceNum, string buttonName, bool shift)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1853,7 +1853,7 @@ namespace DS4Windows
                 return null;
             }
 
-            public ControlActionData GetDs4Action(int deviceNum, DS4Controls dc, bool shift)
+            public ControlActionData GetDs4Action(int deviceNum, DS4ControlItem dc, bool shift)
             {
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1870,11 +1870,11 @@ namespace DS4Windows
 
             public string GetDs4Extra(int deviceNum, string buttonName, bool shift)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1891,11 +1891,11 @@ namespace DS4Windows
 
             public DS4KeyType GetDs4KeyType(int deviceNum, string buttonName, bool shift)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1912,11 +1912,11 @@ namespace DS4Windows
 
             public int GetDs4STrigger(int deviceNum, string buttonName)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1929,7 +1929,7 @@ namespace DS4Windows
                 return 0;
             }
 
-            public int GetDs4STrigger(int deviceNum, DS4Controls dc)
+            public int GetDs4STrigger(int deviceNum, DS4ControlItem dc)
             {
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1944,11 +1944,11 @@ namespace DS4Windows
 
             public DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, string buttonName)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)
@@ -1961,7 +1961,7 @@ namespace DS4Windows
                 return null;
             }
 
-            public DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, DS4Controls dc)
+            public DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, DS4ControlItem dc)
             {
                 var temp = (int)dc;
                 if (temp > 0)
@@ -2234,13 +2234,13 @@ namespace DS4Windows
             {
                 PrepareBlankingProfile(device, control, out var xinputPlug, out var xinputStatus, xinputChange);
 
-                var setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
+                var setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
                 setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
                 setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
                 setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
                 var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
@@ -2284,13 +2284,13 @@ namespace DS4Windows
                 ContainsCustomAction[device] = false;
                 ContainsCustomExtras[device] = false;
 
-                var setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
+                var setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
                 setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
                 setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
                 setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
 
                 var rsInfo = ProfilesService.Instance.ActiveProfiles.ElementAt(device).RSModInfo;
@@ -2349,58 +2349,58 @@ namespace DS4Windows
                 // Flag to unplug virtual controller
                 //DIOnly[device] = true;
 
-                var setting = GetDs4ControllerSetting(device, DS4Controls.LYNeg);
+                var setting = GetDs4ControllerSetting(device, DS4ControlItem.LYNeg);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.W), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.LXNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.LXNeg);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.A), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.LYPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.LYPos);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.S), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.LXPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.LXPos);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.D), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.L3);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.L3);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftShift), "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
                 setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
                 setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
                 setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.R3);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.R3);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftCtrl), "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadUp);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadUp);
                 setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadRight);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadRight);
                 setting.UpdateSettings(false, X360Controls.WDOWN, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadDown);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadDown);
                 setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadLeft);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadLeft);
                 setting.UpdateSettings(false, X360Controls.WUP, "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.Cross);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Cross);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Space), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Square);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Square);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.F), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Triangle);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Triangle);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.E), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Circle);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Circle);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.C), "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.L1);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.L1);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Q), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.L2);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.L2);
                 setting.UpdateSettings(false, X360Controls.RightMouse, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.R1);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.R1);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.R), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.R2);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.R2);
                 setting.UpdateSettings(false, X360Controls.LeftMouse, "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.Share);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Share);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Tab), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Options);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Options);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Escape), "", DS4KeyType.None);
 
                 // If a device exists, make sure to transfer relevant profile device
@@ -2462,59 +2462,59 @@ namespace DS4Windows
                 // Flag to unplug virtual controller
                 //DIOnly[device] = true;
 
-                var setting = GetDs4ControllerSetting(device, DS4Controls.LYNeg);
+                var setting = GetDs4ControllerSetting(device, DS4ControlItem.LYNeg);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.W), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.LXNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.LXNeg);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.A), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.LYPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.LYPos);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.S), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.LXPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.LXPos);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.D), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.L3);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.L3);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftShift), "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.RYNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RYNeg);
                 setting.UpdateSettings(false, X360Controls.MouseUp, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RYPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RYPos);
                 setting.UpdateSettings(false, X360Controls.MouseDown, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXNeg);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXNeg);
                 setting.UpdateSettings(false, X360Controls.MouseLeft, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.RXPos);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.RXPos);
                 setting.UpdateSettings(false, X360Controls.MouseRight, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.R3);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.R3);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.LeftCtrl), "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadUp);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadUp);
                 setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadRight);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadRight);
                 setting.UpdateSettings(false, X360Controls.WDOWN, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadDown);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadDown);
                 setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.DpadLeft);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.DpadLeft);
                 setting.UpdateSettings(false, X360Controls.WUP, "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.Cross);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Cross);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Space), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Square);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Square);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.F), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Triangle);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Triangle);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.E), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Circle);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Circle);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.C), "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.L1);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.L1);
                 //setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Q), "", DS4KeyType.None);
                 setting.UpdateSettings(false, X360Controls.Unbound, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.L2);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.L2);
                 setting.UpdateSettings(false, X360Controls.RightMouse, "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.R1);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.R1);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.R), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.R2);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.R2);
                 setting.UpdateSettings(false, X360Controls.LeftMouse, "", DS4KeyType.None);
 
-                setting = GetDs4ControllerSetting(device, DS4Controls.Share);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Share);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Tab), "", DS4KeyType.None);
-                setting = GetDs4ControllerSetting(device, DS4Controls.Options);
+                setting = GetDs4ControllerSetting(device, DS4ControlItem.Options);
                 setting.UpdateSettings(false, KeyInterop.VirtualKeyFromKey(Key.Escape), "", DS4KeyType.None);
 
                 // If a device exists, make sure to transfer relevant profile device
@@ -2888,11 +2888,11 @@ namespace DS4Windows
 
             private void UpdateDs4ControllerKeyType(int deviceNum, string buttonName, bool shift, DS4KeyType keyType)
             {
-                DS4Controls dc;
+                DS4ControlItem dc;
                 if (buttonName.StartsWith("bn"))
                     dc = GetDs4ControlsByName(buttonName);
                 else
-                    dc = (DS4Controls)Enum.Parse(typeof(DS4Controls), buttonName, true);
+                    dc = (DS4ControlItem)Enum.Parse(typeof(DS4ControlItem), buttonName, true);
 
                 var temp = (int)dc;
                 if (temp > 0)

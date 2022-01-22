@@ -301,7 +301,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var dev = ControlService.CurrentInstance.DS4Controllers[0];
                 var cState = dev.GetCurrentStateReference();
                 var tp = ControlService.CurrentInstance.touchPad[0];
-                for (var dc = DS4Controls.LXNeg; dc < DS4Controls.Mute; dc++)
+                for (var dc = DS4ControlItem.LXNeg; dc < DS4ControlItem.Mute; dc++)
                 {
                     var macroValue = Global.MacroDs4Values[dc];
                     ds4InputMap.TryGetValue((int) dc, out var isdown);

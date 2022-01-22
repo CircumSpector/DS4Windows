@@ -168,7 +168,7 @@ namespace DS4Windows
 
         public string Name { get; set; }
 
-        public List<DS4Controls> Trigger { get; } = new();
+        public List<DS4ControlItem> Trigger { get; } = new();
 
         public string Type { get; set; }
 
@@ -180,7 +180,7 @@ namespace DS4Windows
 
         public string Details { get; set; }
 
-        public List<DS4Controls> UTrigger { get; } = new();
+        public List<DS4ControlItem> UTrigger { get; } = new();
 
         public string UControls { get; set; }
 
@@ -225,53 +225,53 @@ namespace DS4Windows
         /// </summary>
         public bool KeepKeyState { get; set; }
 
-        private DS4Controls GetDs4ControlsByName(string key)
+        private DS4ControlItem GetDs4ControlsByName(string key)
         {
             return key switch
             {
-                "Share" => DS4Controls.Share,
-                "L3" => DS4Controls.L3,
-                "R3" => DS4Controls.R3,
-                "Options" => DS4Controls.Options,
-                "Up" => DS4Controls.DpadUp,
-                "Right" => DS4Controls.DpadRight,
-                "Down" => DS4Controls.DpadDown,
-                "Left" => DS4Controls.DpadLeft,
-                "L1" => DS4Controls.L1,
-                "R1" => DS4Controls.R1,
-                "Triangle" => DS4Controls.Triangle,
-                "Circle" => DS4Controls.Circle,
-                "Cross" => DS4Controls.Cross,
-                "Square" => DS4Controls.Square,
-                "PS" => DS4Controls.PS,
-                "Mute" => DS4Controls.Mute,
-                "Capture" => DS4Controls.Capture,
-                "SideL" => DS4Controls.SideL,
-                "SideR" => DS4Controls.SideL,
-                "Left Stick Left" => DS4Controls.LXNeg,
-                "Left Stick Up" => DS4Controls.LYNeg,
-                "Right Stick Left" => DS4Controls.RXNeg,
-                "Right Stick Up" => DS4Controls.RYNeg,
-                "Left Stick Right" => DS4Controls.LXPos,
-                "Left Stick Down" => DS4Controls.LYPos,
-                "Right Stick Right" => DS4Controls.RXPos,
-                "Right Stick Down" => DS4Controls.RYPos,
-                "L2" => DS4Controls.L2,
-                "L2 Full Pull" => DS4Controls.L2FullPull,
-                "R2" => DS4Controls.R2,
-                "R2 Full Pull" => DS4Controls.R2FullPull,
-                "Left Touch" => DS4Controls.TouchLeft,
-                "Multitouch" => DS4Controls.TouchMulti,
-                "Upper Touch" => DS4Controls.TouchUpper,
-                "Right Touch" => DS4Controls.TouchRight,
-                "Swipe Up" => DS4Controls.SwipeUp,
-                "Swipe Down" => DS4Controls.SwipeDown,
-                "Swipe Left" => DS4Controls.SwipeLeft,
-                "Swipe Right" => DS4Controls.SwipeRight,
-                "Tilt Up" => DS4Controls.GyroZNeg,
-                "Tilt Down" => DS4Controls.GyroZPos,
-                "Tilt Left" => DS4Controls.GyroXPos,
-                "Tilt Right" => DS4Controls.GyroXNeg,
+                "Share" => DS4ControlItem.Share,
+                "L3" => DS4ControlItem.L3,
+                "R3" => DS4ControlItem.R3,
+                "Options" => DS4ControlItem.Options,
+                "Up" => DS4ControlItem.DpadUp,
+                "Right" => DS4ControlItem.DpadRight,
+                "Down" => DS4ControlItem.DpadDown,
+                "Left" => DS4ControlItem.DpadLeft,
+                "L1" => DS4ControlItem.L1,
+                "R1" => DS4ControlItem.R1,
+                "Triangle" => DS4ControlItem.Triangle,
+                "Circle" => DS4ControlItem.Circle,
+                "Cross" => DS4ControlItem.Cross,
+                "Square" => DS4ControlItem.Square,
+                "PS" => DS4ControlItem.PS,
+                "Mute" => DS4ControlItem.Mute,
+                "Capture" => DS4ControlItem.Capture,
+                "SideL" => DS4ControlItem.SideL,
+                "SideR" => DS4ControlItem.SideL,
+                "Left Stick Left" => DS4ControlItem.LXNeg,
+                "Left Stick Up" => DS4ControlItem.LYNeg,
+                "Right Stick Left" => DS4ControlItem.RXNeg,
+                "Right Stick Up" => DS4ControlItem.RYNeg,
+                "Left Stick Right" => DS4ControlItem.LXPos,
+                "Left Stick Down" => DS4ControlItem.LYPos,
+                "Right Stick Right" => DS4ControlItem.RXPos,
+                "Right Stick Down" => DS4ControlItem.RYPos,
+                "L2" => DS4ControlItem.L2,
+                "L2 Full Pull" => DS4ControlItem.L2FullPull,
+                "R2" => DS4ControlItem.R2,
+                "R2 Full Pull" => DS4ControlItem.R2FullPull,
+                "Left Touch" => DS4ControlItem.TouchLeft,
+                "Multitouch" => DS4ControlItem.TouchMulti,
+                "Upper Touch" => DS4ControlItem.TouchUpper,
+                "Right Touch" => DS4ControlItem.TouchRight,
+                "Swipe Up" => DS4ControlItem.SwipeUp,
+                "Swipe Down" => DS4ControlItem.SwipeDown,
+                "Swipe Left" => DS4ControlItem.SwipeLeft,
+                "Swipe Right" => DS4ControlItem.SwipeRight,
+                "Tilt Up" => DS4ControlItem.GyroZNeg,
+                "Tilt Down" => DS4ControlItem.GyroZPos,
+                "Tilt Left" => DS4ControlItem.GyroXPos,
+                "Tilt Right" => DS4ControlItem.GyroXNeg,
                 _ => 0,
             };
         }

@@ -197,16 +197,16 @@ namespace DS4Windows
             DateTime.MinValue, DateTime.MinValue
         };
 
-        private static readonly DS4Controls[] shiftTriggerMapping = new DS4Controls[31]
+        private static readonly DS4ControlItem[] shiftTriggerMapping = new DS4ControlItem[31]
         {
-            DS4Controls.None, DS4Controls.Cross, DS4Controls.Circle, DS4Controls.Square,
-            DS4Controls.Triangle, DS4Controls.Options, DS4Controls.Share, DS4Controls.DpadUp, DS4Controls.DpadDown,
-            DS4Controls.DpadLeft, DS4Controls.DpadRight, DS4Controls.PS, DS4Controls.L1, DS4Controls.R1, DS4Controls.L2,
-            DS4Controls.R2, DS4Controls.L3, DS4Controls.R3, DS4Controls.TouchLeft, DS4Controls.TouchUpper,
-            DS4Controls.TouchMulti,
-            DS4Controls.TouchRight, DS4Controls.GyroZNeg, DS4Controls.GyroZPos, DS4Controls.GyroXPos,
-            DS4Controls.GyroXNeg,
-            DS4Controls.None, DS4Controls.Mute, DS4Controls.Capture, DS4Controls.SideL, DS4Controls.SideR
+            DS4ControlItem.None, DS4ControlItem.Cross, DS4ControlItem.Circle, DS4ControlItem.Square,
+            DS4ControlItem.Triangle, DS4ControlItem.Options, DS4ControlItem.Share, DS4ControlItem.DpadUp, DS4ControlItem.DpadDown,
+            DS4ControlItem.DpadLeft, DS4ControlItem.DpadRight, DS4ControlItem.PS, DS4ControlItem.L1, DS4ControlItem.R1, DS4ControlItem.L2,
+            DS4ControlItem.R2, DS4ControlItem.L3, DS4ControlItem.R3, DS4ControlItem.TouchLeft, DS4ControlItem.TouchUpper,
+            DS4ControlItem.TouchMulti,
+            DS4ControlItem.TouchRight, DS4ControlItem.GyroZNeg, DS4ControlItem.GyroZPos, DS4ControlItem.GyroXPos,
+            DS4ControlItem.GyroXNeg,
+            DS4ControlItem.None, DS4ControlItem.Mute, DS4ControlItem.Capture, DS4ControlItem.SideL, DS4ControlItem.SideR
         };
 
         // Button to index mapping used for macrodone array. Not even sure this
@@ -288,7 +288,7 @@ namespace DS4Windows
         /// <summary>
         ///     Map DS4 Buttons/Axes to other DS4 Buttons/Axes (largely the same as Xinput ones) and to keyboard and mouse buttons.
         /// </summary>
-        private static readonly DS4Controls[] held = new DS4Controls[MAX_DS4_CONTROLLER_COUNT];
+        private static readonly DS4ControlItem[] held = new DS4ControlItem[MAX_DS4_CONTROLLER_COUNT];
 
         private static readonly DS4Color calibrationColor_0 = new(0xA0, 0x00, 0x00);
         private static readonly DS4Color calibrationColor_1 = new(0xFF, 0xFF, 0x00);
@@ -563,10 +563,10 @@ namespace DS4Windows
             }
         }
 
-        public static int DS4ControltoInt(DS4Controls ctrl)
+        public static int DS4ControltoInt(DS4ControlItem ctrl)
         {
             var result = 0;
-            if (ctrl >= DS4Controls.None && ctrl <= DS4Controls.SideR) result = ds4ControlMapping[(int)ctrl];
+            if (ctrl >= DS4ControlItem.None && ctrl <= DS4ControlItem.SideR) result = ds4ControlMapping[(int)ctrl];
 
             return result;
         }
@@ -1878,10 +1878,10 @@ namespace DS4Windows
             }
             else
             {
-                outputfieldMapping.axisdirs[(int)DS4Controls.LXNeg] = 128;
-                outputfieldMapping.axisdirs[(int)DS4Controls.LXPos] = 128;
-                outputfieldMapping.axisdirs[(int)DS4Controls.LYNeg] = 128;
-                outputfieldMapping.axisdirs[(int)DS4Controls.LYPos] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.LXNeg] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.LXPos] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.LYNeg] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.LYPos] = 128;
 
                 switch (stickSettings.Mode)
                 {
@@ -1912,10 +1912,10 @@ namespace DS4Windows
             }
             else
             {
-                outputfieldMapping.axisdirs[(int)DS4Controls.RXNeg] = 128;
-                outputfieldMapping.axisdirs[(int)DS4Controls.RXPos] = 128;
-                outputfieldMapping.axisdirs[(int)DS4Controls.RYNeg] = 128;
-                outputfieldMapping.axisdirs[(int)DS4Controls.RYPos] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.RXNeg] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.RXPos] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.RYNeg] = 128;
+                outputfieldMapping.axisdirs[(int)DS4ControlItem.RYPos] = 128;
 
                 switch (stickSettings.Mode)
                 {
@@ -1964,8 +1964,8 @@ namespace DS4Windows
                     {
                         // Need to reset input state so output binding is not activated.
                         // Used to de-activate Extras
-                        fieldMapping.triggers[(int)DS4Controls.L2] = 0;
-                        outputfieldMapping.triggers[(int)DS4Controls.L2] = 0;
+                        fieldMapping.triggers[(int)DS4ControlItem.L2] = 0;
+                        outputfieldMapping.triggers[(int)DS4ControlItem.L2] = 0;
                     }
 
                     ProcessControlSettingAction(dcsTemp, device, cState, MappedState, eState,
@@ -1975,7 +1975,7 @@ namespace DS4Windows
                 else
                 {
                     // Soft Pull binding not engaged
-                    outputfieldMapping.triggers[(int)DS4Controls.L2] = 0;
+                    outputfieldMapping.triggers[(int)DS4ControlItem.L2] = 0;
                 }
 
                 // Check for Full Pull activation
@@ -1988,7 +1988,7 @@ namespace DS4Windows
                     else
                         // Need to reset input state so output binding is not activated.
                         // Used to de-activate Extras
-                        fieldMapping.buttons[(int)DS4Controls.L2FullPull] = false;
+                        fieldMapping.buttons[(int)DS4ControlItem.L2FullPull] = false;
 
                     ProcessControlSettingAction(l2FullPull, device, cState, MappedState, eState,
                         tp, fieldMapping, outputfieldMapping, deviceState, ref tempMouseDeltaX,
@@ -2031,8 +2031,8 @@ namespace DS4Windows
                     {
                         // Need to reset input state so output binding is not activated.
                         // Used to de-activate Extras
-                        fieldMapping.triggers[(int)DS4Controls.R2] = 0;
-                        outputfieldMapping.triggers[(int)DS4Controls.R2] = 0;
+                        fieldMapping.triggers[(int)DS4ControlItem.R2] = 0;
+                        outputfieldMapping.triggers[(int)DS4ControlItem.R2] = 0;
                     }
 
                     ProcessControlSettingAction(dcsTemp, device, cState, MappedState, eState,
@@ -2042,7 +2042,7 @@ namespace DS4Windows
                 else
                 {
                     // Soft Pull binding not engaged
-                    outputfieldMapping.triggers[(int)DS4Controls.R2] = 0;
+                    outputfieldMapping.triggers[(int)DS4ControlItem.R2] = 0;
                 }
 
                 // Check for Full Pull activation
@@ -2055,7 +2055,7 @@ namespace DS4Windows
                     else
                         // Need to reset input state so output binding is not activated.
                         // Used to de-activate Extras
-                        fieldMapping.buttons[(int)DS4Controls.R2FullPull] = false;
+                        fieldMapping.buttons[(int)DS4ControlItem.R2FullPull] = false;
 
                     ProcessControlSettingAction(r2FullPull, device, cState, MappedState, eState,
                         tp, fieldMapping, outputfieldMapping, deviceState, ref tempMouseDeltaX,
@@ -2142,7 +2142,7 @@ namespace DS4Windows
                     var tempMap = tempControl.Dequeue();
                     var controlNum = (int)tempMap.ds4input;
                     var tempOutControl = (int)tempMap.xoutput;
-                    if (tempMap.xoutput >= DS4Controls.LXNeg && tempMap.xoutput <= DS4Controls.RYPos)
+                    if (tempMap.xoutput >= DS4ControlItem.LXNeg && tempMap.xoutput <= DS4ControlItem.RYPos)
                     {
                         const byte axisDead = 128;
                         var controlType =
@@ -2162,7 +2162,7 @@ namespace DS4Windows
                     }
                     else
                     {
-                        if (tempMap.xoutput == DS4Controls.L2 || tempMap.xoutput == DS4Controls.R2)
+                        if (tempMap.xoutput == DS4ControlItem.L2 || tempMap.xoutput == DS4ControlItem.R2)
                         {
                             const byte axisZero = 0;
                             var axisMapping = GetByteMapping2(device, tempMap.ds4input, cState, eState, tp,
@@ -2607,7 +2607,7 @@ namespace DS4Windows
             ControlActionData action = null;
             DS4ControlSettingsV3.ActionType actionType = 0;
             var keyType = DS4KeyType.None;
-            var usingExtra = DS4Controls.None;
+            var usingExtra = DS4ControlItem.None;
             if (dcs.ShiftActionType != DS4ControlSettingsV3.ActionType.Default &&
                 ShiftTrigger2(dcs.ShiftTrigger, device, cState, eState, tp, fieldMapping))
             {
@@ -2624,7 +2624,7 @@ namespace DS4Windows
                 keyType = dcs.KeyType;
             }
 
-            if (usingExtra == DS4Controls.None || usingExtra == dcs.Control)
+            if (usingExtra == DS4ControlItem.None || usingExtra == dcs.Control)
             {
                 var shiftE = !dcs.IsExtrasEmpty(dcs.ShiftExtras) &&
                              ShiftTrigger2(dcs.ShiftTrigger, device, cState, eState, tp, fieldMapping);
@@ -2697,8 +2697,8 @@ namespace DS4Windows
                         extrasRumbleActive[device] = false;
                     }
 
-                    held[device] = DS4Controls.None;
-                    usingExtra = DS4Controls.None;
+                    held[device] = DS4ControlItem.None;
+                    usingExtra = DS4ControlItem.None;
                 }
             }
 
@@ -2759,11 +2759,11 @@ namespace DS4Windows
                     var keyvalue = 0;
                     var isAnalog = false;
 
-                    if (dcs.Control >= DS4Controls.LXNeg && dcs.Control <= DS4Controls.RYPos)
+                    if (dcs.Control >= DS4ControlItem.LXNeg && dcs.Control <= DS4ControlItem.RYPos)
                         isAnalog = true;
-                    else if (dcs.Control == DS4Controls.L2 || dcs.Control == DS4Controls.R2)
+                    else if (dcs.Control == DS4ControlItem.L2 || dcs.Control == DS4ControlItem.R2)
                         isAnalog = true;
-                    else if (dcs.Control >= DS4Controls.GyroXPos && dcs.Control <= DS4Controls.GyroZNeg)
+                    else if (dcs.Control >= DS4ControlItem.GyroXPos && dcs.Control <= DS4ControlItem.GyroZNeg)
                         isAnalog = true;
 
                     var xboxControl = X360Controls.None;
@@ -2960,7 +2960,7 @@ namespace DS4Windows
             }
         }
 
-        private static bool IfAxisIsNotModified(int device, bool shift, DS4Controls dc)
+        private static bool IfAxisIsNotModified(int device, bool shift, DS4ControlItem dc)
         {
             return shift
                 ? false
@@ -3299,12 +3299,12 @@ namespace DS4Windows
                                         */
 
                                         PlayMacro(device, macroControl, string.Empty, action.Macro, null,
-                                            DS4Controls.None, keyType, action, actionDone[index]);
+                                            DS4ControlItem.None, keyType, action, actionDone[index]);
                                     }
                                     else
                                     {
                                         if (!action.KeyType.HasFlag(DS4KeyType.RepeatMacro))
-                                            EndMacro(device, macroControl, action.Macro, DS4Controls.None);
+                                            EndMacro(device, macroControl, action.Macro, DS4ControlItem.None);
                                     }
                                 }
                                 else
@@ -3325,7 +3325,7 @@ namespace DS4Windows
                                             */
 
                                             PlayMacro(device, macroControl, string.Empty, action.Macro, null,
-                                                DS4Controls.None, keyType, action);
+                                                DS4ControlItem.None, keyType, action);
                                         }
                                     }
                                     else
@@ -3617,7 +3617,7 @@ namespace DS4Windows
                                     if (DateTime.UtcNow - action.TimeOfEnd > TimeSpan.FromMilliseconds(150))
                                     {
                                         if (macro != "")
-                                            PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
+                                            PlayMacro(device, macroControl, macro, null, null, DS4ControlItem.None,
                                                 DS4KeyType.None);
 
                                         tappedOnce = false;
@@ -3651,7 +3651,7 @@ namespace DS4Windows
                                         }
 
                                     if (macro != "")
-                                        PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
+                                        PlayMacro(device, macroControl, macro, null, null, DS4ControlItem.None,
                                             DS4KeyType.None);
 
                                     firstTouch = false;
@@ -3682,7 +3682,7 @@ namespace DS4Windows
                                         }
 
                                     if (macro != "")
-                                        PlayMacro(device, macroControl, macro, null, null, DS4Controls.None,
+                                        PlayMacro(device, macroControl, macro, null, null, DS4ControlItem.None,
                                             DS4KeyType.None);
 
                                     secondtouchbegin = false;
@@ -3827,7 +3827,7 @@ namespace DS4Windows
         // Macro steps are defined either as macrostr string value, macroLst list<int> object or as macroArr integer array. Only one of these should have a valid macro definition when this method is called.
         // If the macro definition is a macroStr string value then it will be converted as integer array on the fl. If steps are already defined as list or array of integers then there is no need to do type cast conversion.
         private static void PlayMacro(int device, bool[] macrocontrol, string macroStr, List<int> macroLst,
-            int[] macroArr, DS4Controls control, DS4KeyType keyType, SpecialActionV3 action = null,
+            int[] macroArr, DS4ControlItem control, DS4KeyType keyType, SpecialActionV3 action = null,
             ActionState actionDoneState = null)
         {
             if (action != null && action.Synchronized)
@@ -3853,7 +3853,7 @@ namespace DS4Windows
 
         // Play through a macro. The macro steps are defined either as string, List or Array object (always only one of those parameters is set to a valid value)
         private static void PlayMacroTask(int device, bool[] macrocontrol, string macroStr, List<int> macroLst,
-            int[] macroArr, DS4Controls control, DS4KeyType keyType, SpecialActionV3 action, ActionState actionDoneState)
+            int[] macroArr, DS4ControlItem control, DS4KeyType keyType, SpecialActionV3 action, ActionState actionDoneState)
         {
             if (!string.IsNullOrEmpty(macroStr))
             {
@@ -3886,15 +3886,15 @@ namespace DS4Windows
                     wait -= 300;
 
                 AltTabSwapping(wait, device);
-                if (control != DS4Controls.None)
+                if (control != DS4ControlItem.None)
                     macrodone[DS4ControltoInt(control)] = true;
             }
-            else if (control == DS4Controls.None || !macrodone[DS4ControltoInt(control)])
+            else if (control == DS4ControlItem.None || !macrodone[DS4ControltoInt(control)])
             {
                 int macroCodeValue;
                 var keydown = new bool[512];
 
-                if (control != DS4Controls.None)
+                if (control != DS4ControlItem.None)
                     macrodone[DS4ControltoInt(control)] = true;
 
                 // Play macro codes and simulate key down/up events (note! The same key may go through several up and down events during the same macro).
@@ -3933,7 +3933,7 @@ namespace DS4Windows
                 if (keyType.HasFlag(DS4KeyType.HoldMacro))
                 {
                     Task.Delay(50).Wait();
-                    if (control != DS4Controls.None)
+                    if (control != DS4ControlItem.None)
                         macrodone[DS4ControltoInt(control)] = false;
                 }
             }
@@ -4075,34 +4075,34 @@ namespace DS4Windows
             return doDelayOnCaller;
         }
 
-        private static void EndMacro(int device, bool[] macrocontrol, string macro, DS4Controls control)
+        private static void EndMacro(int device, bool[] macrocontrol, string macro, DS4ControlItem control)
         {
             if ((macro.StartsWith("164/9/9/164") || macro.StartsWith("18/9/9/18")) && !altTabDone)
                 AltTabSwappingRelease();
 
-            if (control != DS4Controls.None)
+            if (control != DS4ControlItem.None)
                 macrodone[DS4ControltoInt(control)] = false;
         }
 
-        private static void EndMacro(int device, bool[] macrocontrol, List<int> macro, DS4Controls control)
+        private static void EndMacro(int device, bool[] macrocontrol, List<int> macro, DS4ControlItem control)
         {
             if (macro.Count >= 4 &&
                 (macro[0] == 164 && macro[1] == 9 && macro[2] == 9 && macro[3] == 164 ||
                  macro[0] == 18 && macro[1] == 9 && macro[2] == 9 && macro[3] == 18) && !altTabDone)
                 AltTabSwappingRelease();
 
-            if (control != DS4Controls.None)
+            if (control != DS4ControlItem.None)
                 macrodone[DS4ControltoInt(control)] = false;
         }
 
-        private static void EndMacro(int device, bool[] macrocontrol, int[] macro, DS4Controls control)
+        private static void EndMacro(int device, bool[] macrocontrol, int[] macro, DS4ControlItem control)
         {
             if (macro.Length >= 4 &&
                 (macro[0] == 164 && macro[1] == 9 && macro[2] == 9 && macro[3] == 164 ||
                  macro[0] == 18 && macro[1] == 9 && macro[2] == 9 && macro[3] == 18) && !altTabDone)
                 AltTabSwappingRelease();
 
-            if (control != DS4Controls.None)
+            if (control != DS4ControlItem.None)
                 macrodone[DS4ControltoInt(control)] = false;
         }
 
@@ -4138,7 +4138,7 @@ namespace DS4Windows
             }
         }
 
-        private static void GetMouseWheelMapping(int device, DS4Controls control, DS4State cState,
+        private static void GetMouseWheelMapping(int device, DS4ControlItem control, DS4State cState,
             DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool down)
         {
             var now = DateTime.UtcNow;
@@ -4168,7 +4168,7 @@ namespace DS4Windows
             }
         }
 
-        private static double GetMouseMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
+        private static double GetMouseMapping(int device, DS4ControlItem control, DS4State cState, DS4StateExposed eState,
             DS4StateFieldMapping fieldMapping, int mnum, ControlService ctrl)
         {
             var deadzoneL = 0;
@@ -4218,7 +4218,7 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         {
                             if (cState.LX < 128 - deadzoneL)
                             {
@@ -4234,7 +4234,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.LXPos:
+                    case DS4ControlItem.LXPos:
                         {
                             if (cState.LX > 128 + deadzoneL)
                             {
@@ -4250,7 +4250,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         {
                             if (cState.RX < 128 - deadzoneR)
                             {
@@ -4266,7 +4266,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.RXPos:
+                    case DS4ControlItem.RXPos:
                         {
                             if (cState.RX > 128 + deadzoneR)
                             {
@@ -4282,7 +4282,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         {
                             if (cState.LY < 128 - deadzoneL)
                             {
@@ -4298,7 +4298,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.LYPos:
+                    case DS4ControlItem.LYPos:
                         {
                             if (cState.LY > 128 + deadzoneL)
                             {
@@ -4314,7 +4314,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         {
                             if (cState.RY < 128 - deadzoneR)
                             {
@@ -4330,7 +4330,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.RYPos:
+                    case DS4ControlItem.RYPos:
                         {
                             if (cState.RY > 128 + deadzoneR)
                             {
@@ -4361,28 +4361,28 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         {
                             var gyroX = fieldMapping.gryodirs[controlNum];
                             value = (byte)(gyroX > 0 ? Math.Pow(root + speed / divide, gyroX) : 0);
                             if (verticalDir) value *= mouseVerticalScale;
                             break;
                         }
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         {
                             var gyroX = fieldMapping.gryodirs[controlNum];
                             value = (byte)(gyroX < 0 ? Math.Pow(root + speed / divide, -gyroX) : 0);
                             if (verticalDir) value *= mouseVerticalScale;
                             break;
                         }
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         {
                             var gyroZ = fieldMapping.gryodirs[controlNum];
                             value = (byte)(gyroZ > 0 ? Math.Pow(root + speed / divide, gyroZ) : 0);
                             if (verticalDir) value *= mouseVerticalScale;
                             break;
                         }
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         {
                             var gyroZ = fieldMapping.gryodirs[controlNum];
                             value = (byte)(gyroZ < 0 ? Math.Pow(root + speed / divide, -gyroZ) : 0);
@@ -4467,7 +4467,7 @@ namespace DS4Windows
         /// <param name="tp">Mouse object</param>
         /// <param name="fieldMap">DS4StateFieldMapping instance for current MapCustom run</param>
         /// <returns></returns>
-        private static byte GetByteMapping2(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
+        private static byte GetByteMapping2(int device, DS4ControlItem control, DS4State cState, DS4StateExposed eState,
             Mouse tp,
             DS4StateFieldMapping fieldMap)
         {
@@ -4485,16 +4485,16 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         result = (byte)(axisValue - 128.0f >= 0 ? 0 : -(axisValue - 128.0f) * 1.9921875f);
                         break;
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         result = (byte)(axisValue - 128.0f >= 0 ? 0 : -(axisValue - 128.0f) * 1.9921875f);
                         break;
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         result = (byte)(axisValue - 128.0f >= 0 ? 0 : -(axisValue - 128.0f) * 1.9921875f);
                         break;
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         result = (byte)(axisValue - 128.0f >= 0 ? 0 : -(axisValue - 128.0f) * 1.9921875f);
                         break;
                     default:
@@ -4520,25 +4520,25 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         {
                             var gyroX = fieldMap.gryodirs[controlNum];
                             result = (byte)(saControls ? Math.Min(255, gyroX * 2) : 0);
                             break;
                         }
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         {
                             var gyroX = fieldMap.gryodirs[controlNum];
                             result = (byte)(saControls ? Math.Min(255, -gyroX * 2) : 0);
                             break;
                         }
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         {
                             var gyroZ = fieldMap.gryodirs[controlNum];
                             result = (byte)(saControls ? Math.Min(255, gyroZ * 2) : 0);
                             break;
                         }
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         {
                             var gyroZ = fieldMap.gryodirs[controlNum];
                             result = (byte)(saControls ? Math.Min(255, -gyroZ * 2) : 0);
@@ -4551,162 +4551,162 @@ namespace DS4Windows
         }
 
         /* TODO: Possibly remove usage of this version of the method */
-        public static bool GetBoolMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
+        public static bool GetBoolMapping(int device, DS4ControlItem control, DS4State cState, DS4StateExposed eState,
             Mouse tp)
         {
             var result = false;
 
-            if (control >= DS4Controls.Square && control <= DS4Controls.Cross)
+            if (control >= DS4ControlItem.Square && control <= DS4ControlItem.Cross)
             {
                 switch (control)
                 {
-                    case DS4Controls.Cross:
+                    case DS4ControlItem.Cross:
                         result = cState.Cross;
                         break;
-                    case DS4Controls.Square:
+                    case DS4ControlItem.Square:
                         result = cState.Square;
                         break;
-                    case DS4Controls.Triangle:
+                    case DS4ControlItem.Triangle:
                         result = cState.Triangle;
                         break;
-                    case DS4Controls.Circle:
+                    case DS4ControlItem.Circle:
                         result = cState.Circle;
                         break;
                 }
             }
-            else if (control >= DS4Controls.L1 && control <= DS4Controls.R3)
+            else if (control >= DS4ControlItem.L1 && control <= DS4ControlItem.R3)
             {
                 switch (control)
                 {
-                    case DS4Controls.L1:
+                    case DS4ControlItem.L1:
                         result = cState.L1;
                         break;
-                    case DS4Controls.R1:
+                    case DS4ControlItem.R1:
                         result = cState.R1;
                         break;
-                    case DS4Controls.L2:
+                    case DS4ControlItem.L2:
                         result = cState.L2 > 100;
                         break;
-                    case DS4Controls.R2:
+                    case DS4ControlItem.R2:
                         result = cState.R2 > 100;
                         break;
-                    case DS4Controls.L3:
+                    case DS4ControlItem.L3:
                         result = cState.L3;
                         break;
-                    case DS4Controls.R3:
+                    case DS4ControlItem.R3:
                         result = cState.R3;
                         break;
                 }
             }
-            else if (control >= DS4Controls.DpadUp && control <= DS4Controls.DpadLeft)
+            else if (control >= DS4ControlItem.DpadUp && control <= DS4ControlItem.DpadLeft)
             {
                 switch (control)
                 {
-                    case DS4Controls.DpadUp:
+                    case DS4ControlItem.DpadUp:
                         result = cState.DpadUp;
                         break;
-                    case DS4Controls.DpadDown:
+                    case DS4ControlItem.DpadDown:
                         result = cState.DpadDown;
                         break;
-                    case DS4Controls.DpadLeft:
+                    case DS4ControlItem.DpadLeft:
                         result = cState.DpadLeft;
                         break;
-                    case DS4Controls.DpadRight:
+                    case DS4ControlItem.DpadRight:
                         result = cState.DpadRight;
                         break;
                 }
             }
-            else if (control >= DS4Controls.LXNeg && control <= DS4Controls.RYPos)
+            else if (control >= DS4ControlItem.LXNeg && control <= DS4ControlItem.RYPos)
             {
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         result = cState.LX < 128 - 55;
                         break;
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         result = cState.LY < 128 - 55;
                         break;
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         result = cState.RX < 128 - 55;
                         break;
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         result = cState.RY < 128 - 55;
                         break;
-                    case DS4Controls.LXPos:
+                    case DS4ControlItem.LXPos:
                         result = cState.LX > 128 + 55;
                         break;
-                    case DS4Controls.LYPos:
+                    case DS4ControlItem.LYPos:
                         result = cState.LY > 128 + 55;
                         break;
-                    case DS4Controls.RXPos:
+                    case DS4ControlItem.RXPos:
                         result = cState.RX > 128 + 55;
                         break;
-                    case DS4Controls.RYPos:
+                    case DS4ControlItem.RYPos:
                         result = cState.RY > 128 + 55;
                         break;
                 }
             }
-            else if (control >= DS4Controls.TouchLeft && control <= DS4Controls.TouchRight)
+            else if (control >= DS4ControlItem.TouchLeft && control <= DS4ControlItem.TouchRight)
             {
                 switch (control)
                 {
-                    case DS4Controls.TouchLeft:
+                    case DS4ControlItem.TouchLeft:
                         result = tp != null ? tp.leftDown : false;
                         break;
-                    case DS4Controls.TouchRight:
+                    case DS4ControlItem.TouchRight:
                         result = tp != null ? tp.rightDown : false;
                         break;
-                    case DS4Controls.TouchMulti:
+                    case DS4ControlItem.TouchMulti:
                         result = tp != null ? tp.multiDown : false;
                         break;
-                    case DS4Controls.TouchUpper:
+                    case DS4ControlItem.TouchUpper:
                         result = tp != null ? tp.upperDown : false;
                         break;
                 }
             }
-            else if (control >= DS4Controls.SwipeLeft && control <= DS4Controls.SwipeDown)
+            else if (control >= DS4ControlItem.SwipeLeft && control <= DS4ControlItem.SwipeDown)
             {
                 switch (control)
                 {
-                    case DS4Controls.SwipeUp:
+                    case DS4ControlItem.SwipeUp:
                         result = tp != null && tp.swipeUp;
                         break;
-                    case DS4Controls.SwipeDown:
+                    case DS4ControlItem.SwipeDown:
                         result = tp != null && tp.swipeDown;
                         break;
-                    case DS4Controls.SwipeLeft:
+                    case DS4ControlItem.SwipeLeft:
                         result = tp != null && tp.swipeLeft;
                         break;
-                    case DS4Controls.SwipeRight:
+                    case DS4ControlItem.SwipeRight:
                         result = tp != null && tp.swipeRight;
                         break;
                 }
             }
-            else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
+            else if (control >= DS4ControlItem.GyroXPos && control <= DS4ControlItem.GyroZNeg)
             {
                 var saControls = Instance.Config.IsUsingSAForControls(device);
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         result = saControls
                             ? ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens *
                             -eState.AccelX > 67
                             : false;
                         break;
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         result = saControls
                             ? ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXSens *
                             -eState.AccelX < -67
                             : false;
                         break;
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         result = saControls
                             ? ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens * eState.AccelZ >
                               67
                             : false;
                         break;
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         result = saControls
                             ? ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZSens * eState.AccelZ <
                               -67
@@ -4718,13 +4718,13 @@ namespace DS4Windows
             {
                 switch (control)
                 {
-                    case DS4Controls.PS:
+                    case DS4ControlItem.PS:
                         result = cState.PS;
                         break;
-                    case DS4Controls.Share:
+                    case DS4ControlItem.Share:
                         result = cState.Share;
                         break;
-                    case DS4Controls.Options:
+                    case DS4ControlItem.Options:
                         result = cState.Options;
                         break;
                 }
@@ -4733,7 +4733,7 @@ namespace DS4Windows
             return result;
         }
 
-        private static bool GetBoolMapping2(int device, DS4Controls control,
+        private static bool GetBoolMapping2(int device, DS4ControlItem control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap)
         {
             var result = false;
@@ -4750,16 +4750,16 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         result = cState.LX < 128 - 55;
                         break;
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         result = cState.LY < 128 - 55;
                         break;
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         result = cState.RX < 128 - 55;
                         break;
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         result = cState.RY < 128 - 55;
                         break;
                     default:
@@ -4786,16 +4786,16 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         safeTest = fieldMap.gryodirs[controlNum] > 0;
                         break;
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         safeTest = fieldMap.gryodirs[controlNum] < -0;
                         break;
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         safeTest = fieldMap.gryodirs[controlNum] > 0;
                         break;
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         safeTest = fieldMap.gryodirs[controlNum] < -0;
                         break;
                 }
@@ -4806,7 +4806,7 @@ namespace DS4Windows
             return result;
         }
 
-        private static bool GetBoolSpecialActionMapping(int device, DS4Controls control,
+        private static bool GetBoolSpecialActionMapping(int device, DS4ControlItem control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap)
         {
             var result = false;
@@ -4823,16 +4823,16 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         result = cState.LX < 128 - 55;
                         break;
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         result = cState.LY < 128 - 55;
                         break;
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         result = cState.RX < 128 - 55;
                         break;
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         result = cState.RY < 128 - 55;
                         break;
                     default:
@@ -4859,16 +4859,16 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         safeTest = fieldMap.gryodirs[controlNum] > 67;
                         break;
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         safeTest = fieldMap.gryodirs[controlNum] < -67;
                         break;
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         safeTest = fieldMap.gryodirs[controlNum] > 67;
                         break;
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         safeTest = fieldMap.gryodirs[controlNum] < -67;
                         break;
                 }
@@ -4879,7 +4879,7 @@ namespace DS4Windows
             return result;
         }
 
-        private static bool GetBoolActionMapping2(int device, DS4Controls control,
+        private static bool GetBoolActionMapping2(int device, DS4ControlItem control,
             DS4State cState, DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool analog = false)
         {
             var result = false;
@@ -4894,49 +4894,49 @@ namespace DS4Windows
             {
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         {
                             var angle = cState.LSAngle;
                             result = cState.LX < 128 && angle >= 112.5 && angle <= 247.5;
                             break;
                         }
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         {
                             var angle = cState.LSAngle;
                             result = cState.LY < 128 && angle >= 22.5 && angle <= 157.5;
                             break;
                         }
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         {
                             var angle = cState.RSAngle;
                             result = cState.RX < 128 && angle >= 112.5 && angle <= 247.5;
                             break;
                         }
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         {
                             var angle = cState.RSAngle;
                             result = cState.RY < 128 && angle >= 22.5 && angle <= 157.5;
                             break;
                         }
-                    case DS4Controls.LXPos:
+                    case DS4ControlItem.LXPos:
                         {
                             var angle = cState.LSAngle;
                             result = cState.LX > 128 && (angle <= 67.5 || angle >= 292.5);
                             break;
                         }
-                    case DS4Controls.LYPos:
+                    case DS4ControlItem.LYPos:
                         {
                             var angle = cState.LSAngle;
                             result = cState.LY > 128 && angle >= 202.5 && angle <= 337.5;
                             break;
                         }
-                    case DS4Controls.RXPos:
+                    case DS4ControlItem.RXPos:
                         {
                             var angle = cState.RSAngle;
                             result = cState.RX > 128 && (angle <= 67.5 || angle >= 292.5);
                             break;
                         }
-                    case DS4Controls.RYPos:
+                    case DS4ControlItem.RYPos:
                         {
                             var angle = cState.RSAngle;
                             result = cState.RY > 128 && angle >= 202.5 && angle <= 337.5;
@@ -4963,16 +4963,16 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         safeTest = fieldMap.gryodirs[controlNum] > 0;
                         break;
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         safeTest = fieldMap.gryodirs[controlNum] < 0;
                         break;
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         safeTest = fieldMap.gryodirs[controlNum] > 0;
                         break;
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         safeTest = fieldMap.gryodirs[controlNum] < 0;
                         break;
                 }
@@ -5014,7 +5014,7 @@ namespace DS4Windows
         /// <param name="fieldMap">DS4StateFieldMapping instance for current MapCustom run</param>
         /// <param name="alt">Consider output a positive axis value</param>
         /// <returns></returns>
-        private static byte GetXYAxisMapping2(int device, DS4Controls control, DS4State cState,
+        private static byte GetXYAxisMapping2(int device, DS4ControlItem control, DS4State cState,
             DS4StateExposed eState, Mouse tp, DS4StateFieldMapping fieldMap, bool alt = false)
         {
             const byte falseVal = 128;
@@ -5037,19 +5037,19 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         if (!alt) result = axisValue < falseVal ? axisValue : falseVal;
                         else result = axisValue < falseVal ? (byte)(255 - axisValue) : falseVal;
                         break;
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         if (!alt) result = axisValue < falseVal ? axisValue : falseVal;
                         else result = axisValue < falseVal ? (byte)(255 - axisValue) : falseVal;
                         break;
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         if (!alt) result = axisValue < falseVal ? axisValue : falseVal;
                         else result = axisValue < falseVal ? (byte)(255 - axisValue) : falseVal;
                         break;
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         if (!alt) result = axisValue < falseVal ? axisValue : falseVal;
                         else result = axisValue < falseVal ? (byte)(255 - axisValue) : falseVal;
                         break;
@@ -5083,7 +5083,7 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         {
                             if (saControls && fieldMap.gryodirs[controlNum] > 0)
                             {
@@ -5097,7 +5097,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         {
                             if (saControls && fieldMap.gryodirs[controlNum] < 0)
                             {
@@ -5111,7 +5111,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         {
                             if (saControls && fieldMap.gryodirs[controlNum] > 0)
                             {
@@ -5125,7 +5125,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         {
                             if (saControls && fieldMap.gryodirs[controlNum] < 0)
                             {
@@ -5146,7 +5146,7 @@ namespace DS4Windows
         }
 
         /* TODO: Possibly remove usage of this version of the method */
-        public static byte GetXYAxisMapping(int device, DS4Controls control, DS4State cState, DS4StateExposed eState,
+        public static byte GetXYAxisMapping(int device, DS4ControlItem control, DS4State cState, DS4StateExposed eState,
             Mouse tp, bool alt = false)
         {
             byte result = 0;
@@ -5156,147 +5156,147 @@ namespace DS4Windows
             if (alt)
                 trueVal = 255;
 
-            if (control >= DS4Controls.Square && control <= DS4Controls.Cross)
+            if (control >= DS4ControlItem.Square && control <= DS4ControlItem.Cross)
             {
                 switch (control)
                 {
-                    case DS4Controls.Cross:
+                    case DS4ControlItem.Cross:
                         result = cState.Cross ? trueVal : falseVal;
                         break;
-                    case DS4Controls.Square:
+                    case DS4ControlItem.Square:
                         result = cState.Square ? trueVal : falseVal;
                         break;
-                    case DS4Controls.Triangle:
+                    case DS4ControlItem.Triangle:
                         result = cState.Triangle ? trueVal : falseVal;
                         break;
-                    case DS4Controls.Circle:
+                    case DS4ControlItem.Circle:
                         result = cState.Circle ? trueVal : falseVal;
                         break;
                 }
             }
-            else if (control >= DS4Controls.L1 && control <= DS4Controls.R3)
+            else if (control >= DS4ControlItem.L1 && control <= DS4ControlItem.R3)
             {
                 switch (control)
                 {
-                    case DS4Controls.L1:
+                    case DS4ControlItem.L1:
                         result = cState.L1 ? trueVal : falseVal;
                         break;
-                    case DS4Controls.L2:
+                    case DS4ControlItem.L2:
                         if (alt) result = (byte)(128.0f + cState.L2 / 2.0078740157480315f);
                         else result = (byte)(128.0f - cState.L2 / 2.0078740157480315f);
                         break;
-                    case DS4Controls.L3:
+                    case DS4ControlItem.L3:
                         result = cState.L3 ? trueVal : falseVal;
                         break;
-                    case DS4Controls.R1:
+                    case DS4ControlItem.R1:
                         result = cState.R1 ? trueVal : falseVal;
                         break;
-                    case DS4Controls.R2:
+                    case DS4ControlItem.R2:
                         if (alt) result = (byte)(128.0f + cState.R2 / 2.0078740157480315f);
                         else result = (byte)(128.0f - cState.R2 / 2.0078740157480315f);
                         break;
-                    case DS4Controls.R3:
+                    case DS4ControlItem.R3:
                         result = cState.R3 ? trueVal : falseVal;
                         break;
                 }
             }
-            else if (control >= DS4Controls.DpadUp && control <= DS4Controls.DpadLeft)
+            else if (control >= DS4ControlItem.DpadUp && control <= DS4ControlItem.DpadLeft)
             {
                 switch (control)
                 {
-                    case DS4Controls.DpadUp:
+                    case DS4ControlItem.DpadUp:
                         result = cState.DpadUp ? trueVal : falseVal;
                         break;
-                    case DS4Controls.DpadDown:
+                    case DS4ControlItem.DpadDown:
                         result = cState.DpadDown ? trueVal : falseVal;
                         break;
-                    case DS4Controls.DpadLeft:
+                    case DS4ControlItem.DpadLeft:
                         result = cState.DpadLeft ? trueVal : falseVal;
                         break;
-                    case DS4Controls.DpadRight:
+                    case DS4ControlItem.DpadRight:
                         result = cState.DpadRight ? trueVal : falseVal;
                         break;
                 }
             }
-            else if (control >= DS4Controls.LXNeg && control <= DS4Controls.RYPos)
+            else if (control >= DS4ControlItem.LXNeg && control <= DS4ControlItem.RYPos)
             {
                 switch (control)
                 {
-                    case DS4Controls.LXNeg:
+                    case DS4ControlItem.LXNeg:
                         if (!alt) result = cState.LX;
                         else result = (byte)(255 - cState.LX);
                         break;
-                    case DS4Controls.LYNeg:
+                    case DS4ControlItem.LYNeg:
                         if (!alt) result = cState.LY;
                         else result = (byte)(255 - cState.LY);
                         break;
-                    case DS4Controls.RXNeg:
+                    case DS4ControlItem.RXNeg:
                         if (!alt) result = cState.RX;
                         else result = (byte)(255 - cState.RX);
                         break;
-                    case DS4Controls.RYNeg:
+                    case DS4ControlItem.RYNeg:
                         if (!alt) result = cState.RY;
                         else result = (byte)(255 - cState.RY);
                         break;
-                    case DS4Controls.LXPos:
+                    case DS4ControlItem.LXPos:
                         if (!alt) result = (byte)(255 - cState.LX);
                         else result = cState.LX;
                         break;
-                    case DS4Controls.LYPos:
+                    case DS4ControlItem.LYPos:
                         if (!alt) result = (byte)(255 - cState.LY);
                         else result = cState.LY;
                         break;
-                    case DS4Controls.RXPos:
+                    case DS4ControlItem.RXPos:
                         if (!alt) result = (byte)(255 - cState.RX);
                         else result = cState.RX;
                         break;
-                    case DS4Controls.RYPos:
+                    case DS4ControlItem.RYPos:
                         if (!alt) result = (byte)(255 - cState.RY);
                         else result = cState.RY;
                         break;
                 }
             }
-            else if (control >= DS4Controls.TouchLeft && control <= DS4Controls.TouchRight)
+            else if (control >= DS4ControlItem.TouchLeft && control <= DS4ControlItem.TouchRight)
             {
                 switch (control)
                 {
-                    case DS4Controls.TouchLeft:
+                    case DS4ControlItem.TouchLeft:
                         result = tp != null && tp.leftDown ? trueVal : falseVal;
                         break;
-                    case DS4Controls.TouchRight:
+                    case DS4ControlItem.TouchRight:
                         result = tp != null && tp.rightDown ? trueVal : falseVal;
                         break;
-                    case DS4Controls.TouchMulti:
+                    case DS4ControlItem.TouchMulti:
                         result = tp != null && tp.multiDown ? trueVal : falseVal;
                         break;
-                    case DS4Controls.TouchUpper:
+                    case DS4ControlItem.TouchUpper:
                         result = tp != null && tp.upperDown ? trueVal : falseVal;
                         break;
                 }
             }
-            else if (control >= DS4Controls.SwipeLeft && control <= DS4Controls.SwipeDown)
+            else if (control >= DS4ControlItem.SwipeLeft && control <= DS4ControlItem.SwipeDown)
             {
                 switch (control)
                 {
-                    case DS4Controls.SwipeUp:
+                    case DS4ControlItem.SwipeUp:
                         if (alt) result = (byte)(tp != null ? 128.0f + tp.swipeUpB / 2f : 0);
                         else result = (byte)(tp != null ? 128.0f - tp.swipeUpB / 2f : 0);
                         break;
-                    case DS4Controls.SwipeDown:
+                    case DS4ControlItem.SwipeDown:
                         if (alt) result = (byte)(tp != null ? 128.0f + tp.swipeDownB / 2f : 0);
                         else result = (byte)(tp != null ? 128.0f - tp.swipeDownB / 2f : 0);
                         break;
-                    case DS4Controls.SwipeLeft:
+                    case DS4ControlItem.SwipeLeft:
                         if (alt) result = (byte)(tp != null ? 128.0f + tp.swipeLeftB / 2f : 0);
                         else result = (byte)(tp != null ? 128.0f - tp.swipeLeftB / 2f : 0);
                         break;
-                    case DS4Controls.SwipeRight:
+                    case DS4ControlItem.SwipeRight:
                         if (alt) result = (byte)(tp != null ? 128.0f + tp.swipeRightB / 2f : 0);
                         else result = (byte)(tp != null ? 128.0f - tp.swipeRightB / 2f : 0);
                         break;
                 }
             }
-            else if (control >= DS4Controls.GyroXPos && control <= DS4Controls.GyroZNeg)
+            else if (control >= DS4ControlItem.GyroXPos && control <= DS4ControlItem.GyroZNeg)
             {
                 var SXD = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXDeadZone;
                 var SZD = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SZDeadZone;
@@ -5304,7 +5304,7 @@ namespace DS4Windows
 
                 switch (control)
                 {
-                    case DS4Controls.GyroXPos:
+                    case DS4ControlItem.GyroXPos:
                         {
                             if (saControls && -eState.AccelX > SXD * 10)
                             {
@@ -5319,7 +5319,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.GyroXNeg:
+                    case DS4ControlItem.GyroXNeg:
                         {
                             if (saControls && -eState.AccelX < -SXD * 10)
                             {
@@ -5333,7 +5333,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.GyroZPos:
+                    case DS4ControlItem.GyroZPos:
                         {
                             if (saControls && eState.AccelZ > SZD * 10)
                             {
@@ -5353,7 +5353,7 @@ namespace DS4Windows
 
                             break;
                         }
-                    case DS4Controls.GyroZNeg:
+                    case DS4ControlItem.GyroZNeg:
                         {
                             if (saControls && eState.AccelZ < -SZD * 10)
                             {
@@ -5379,13 +5379,13 @@ namespace DS4Windows
             {
                 switch (control)
                 {
-                    case DS4Controls.Share:
+                    case DS4ControlItem.Share:
                         result = cState.Share ? trueVal : falseVal;
                         break;
-                    case DS4Controls.Options:
+                    case DS4ControlItem.Options:
                         result = cState.Options ? trueVal : falseVal;
                         break;
-                    case DS4Controls.PS:
+                    case DS4ControlItem.PS:
                         result = cState.PS ? trueVal : falseVal;
                         break;
                 }
@@ -5394,7 +5394,7 @@ namespace DS4Windows
             return result;
         }
 
-        private static void ResetToDefaultValue2(DS4Controls control, DS4State cState,
+        private static void ResetToDefaultValue2(DS4ControlItem control, DS4State cState,
             DS4StateFieldMapping fieldMap)
         {
             var controlNum = (int)control;
@@ -6043,10 +6043,10 @@ namespace DS4Windows
 
         private struct ControlToXInput
         {
-            public readonly DS4Controls ds4input;
-            public readonly DS4Controls xoutput;
+            public readonly DS4ControlItem ds4input;
+            public readonly DS4ControlItem xoutput;
 
-            public ControlToXInput(DS4Controls input, DS4Controls output)
+            public ControlToXInput(DS4ControlItem input, DS4ControlItem output)
             {
                 ds4input = input;
                 xoutput = output;

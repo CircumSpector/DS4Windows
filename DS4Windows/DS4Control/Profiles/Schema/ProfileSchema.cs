@@ -301,8 +301,8 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         ///     Collection of <see cref="DS4ControlSettingsV3"/>.
         /// </summary>
         public ControlSettingsGroup PerControlSettings { get; set; } = new(
-            (from DS4Controls dc in Enum.GetValues(typeof(DS4Controls))
-                where dc != DS4Controls.None
+            (from DS4ControlItem dc in Enum.GetValues(typeof(DS4ControlItem))
+                where dc != DS4ControlItem.None
                 select new DS4ControlSettingsV3(dc)).ToList());
 
         #endregion

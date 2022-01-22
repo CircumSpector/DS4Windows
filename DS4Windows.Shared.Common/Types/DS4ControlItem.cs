@@ -1,6 +1,6 @@
 ﻿namespace DS4Windows.Shared.Common.Types
 {
-    public enum DS4Controls : byte
+    public enum DS4ControlItem : byte
     {
         None,
         LXNeg,

@@ -17,7 +17,7 @@ namespace DS4Windows
 
         public const int MaxMacroValue = 286;
 
-        public DS4ControlSettingsV3(DS4Controls ctrl)
+        public DS4ControlSettingsV3(DS4ControlItem ctrl)
         {
             Control = ctrl;
         }
@@ -26,7 +26,7 @@ namespace DS4Windows
 
         public ActionType ControlActionType { get; set; } = ActionType.Default;
 
-        public DS4Controls Control { get; set; }
+        public DS4ControlItem Control { get; set; }
 
         public string Extras { get; set; }
 

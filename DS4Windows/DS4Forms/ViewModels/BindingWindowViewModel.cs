@@ -226,7 +226,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private int heavyRumble;
 
-        public DS4Controls Input;
+        public DS4ControlItem Input;
 
         private int lightRumble;
 

@@ -41,7 +41,7 @@ namespace DS4WinWPF.DS4Forms
 
         private readonly Dictionary<Button, ImageBrush> hoverImages = new();
 
-        private readonly Dictionary<Button, DS4Controls> hoverIndexes = new();
+        private readonly Dictionary<Button, DS4ControlItem> hoverIndexes = new();
 
         private readonly Dictionary<Button, HoverImageInfo> hoverLocations = new();
 
@@ -253,38 +253,38 @@ namespace DS4WinWPF.DS4Forms
 
         private void AssignTiltAssociation()
         {
-            gyroZNLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroZNeg];
-            gyroZPLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroZPos];
-            gyroXNLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroXNeg];
-            gyroXLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroXPos];
+            gyroZNLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroZNeg];
+            gyroZPLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroZPos];
+            gyroXNLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroXNeg];
+            gyroXLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroXPos];
         }
 
         private void AssignSwipeAssociation()
         {
-            swipeUpLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeUp];
-            swipeDownLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeDown];
-            swipeLeftLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeLeft];
-            swipeRightLb.DataContext = mappingListVm.ControlMap[DS4Controls.SwipeRight];
+            swipeUpLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.SwipeUp];
+            swipeDownLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.SwipeDown];
+            swipeLeftLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.SwipeLeft];
+            swipeRightLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.SwipeRight];
         }
 
         private void AssignTriggerFullPullAssociation()
         {
-            l2FullPullLb.DataContext = mappingListVm.ControlMap[DS4Controls.L2FullPull];
-            r2FullPullLb.DataContext = mappingListVm.ControlMap[DS4Controls.R2FullPull];
+            l2FullPullLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.L2FullPull];
+            r2FullPullLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.R2FullPull];
         }
 
         private void AssignStickOuterBindAssociation()
         {
-            lsOuterBindLb.DataContext = mappingListVm.ControlMap[DS4Controls.LSOuter];
-            rsOuterBindLb.DataContext = mappingListVm.ControlMap[DS4Controls.RSOuter];
+            lsOuterBindLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.LSOuter];
+            rsOuterBindLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.RSOuter];
         }
 
         private void AssignGyroSwipeAssociation()
         {
-            gyroSwipeLeftLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeLeft];
-            gyroSwipeRightLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeRight];
-            gyroSwipeUpLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeUp];
-            gyroSwipeDownLb.DataContext = mappingListVm.ControlMap[DS4Controls.GyroSwipeDown];
+            gyroSwipeLeftLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroSwipeLeft];
+            gyroSwipeRightLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroSwipeRight];
+            gyroSwipeUpLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroSwipeUp];
+            gyroSwipeDownLb.DataContext = mappingListVm.ControlMap[DS4ControlItem.GyroSwipeDown];
         }
         
         [Obsolete]
@@ -972,7 +972,7 @@ namespace DS4WinWPF.DS4Forms
         private void TiltControlsButton_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            var control = (DS4Controls)Convert.ToInt32(btn.Tag);
+            var control = (DS4ControlItem)Convert.ToInt32(btn.Tag);
             var mpControl = mappingListVm.ControlMap[control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
@@ -987,7 +987,7 @@ namespace DS4WinWPF.DS4Forms
         private void SwipeControlsButton_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            var control = (DS4Controls)Convert.ToInt32(btn.Tag);
+            var control = (DS4ControlItem)Convert.ToInt32(btn.Tag);
             var mpControl = mappingListVm.ControlMap[control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
@@ -1046,8 +1046,8 @@ namespace DS4WinWPF.DS4Forms
         {
             var btn = sender as Button;
             var tag = Convert.ToInt32(btn.Tag);
-            var ds4control = (DS4Controls)tag;
-            if (ds4control == DS4Controls.None) return;
+            var ds4control = (DS4ControlItem)tag;
+            if (ds4control == DS4ControlItem.None) return;
 
             //DS4ControlSettings setting = Global.getDS4CSetting(tag, ds4control);
             var mpControl = mappingListVm.ControlMap[ds4control];
@@ -1092,7 +1092,7 @@ namespace DS4WinWPF.DS4Forms
         private void GyroSwipeControlsBtn_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            var control = (DS4Controls)Convert.ToInt32(btn.Tag);
+            var control = (DS4ControlItem)Convert.ToInt32(btn.Tag);
             var mpControl = mappingListVm.ControlMap[control];
             var window = new BindingWindow(rootHub, DeviceNum, mpControl.Setting)
             {
@@ -1121,8 +1121,8 @@ namespace DS4WinWPF.DS4Forms
         {
             var btn = sender as Button;
             var tag = Convert.ToInt32(btn.Tag);
-            var ds4control = (DS4Controls)tag;
-            if (ds4control == DS4Controls.None) return;
+            var ds4control = (DS4ControlItem)tag;
+            if (ds4control == DS4ControlItem.None) return;
 
             //DS4ControlSettings setting = Global.getDS4CSetting(tag, ds4control);
             var mpControl = mappingListVm.ControlMap[ds4control];
@@ -1145,24 +1145,24 @@ namespace DS4WinWPF.DS4Forms
 
     public class ControlIndexCheck
     {
-        public int TiltUp => (int)DS4Controls.GyroZNeg;
-        public int TiltDown => (int)DS4Controls.GyroZPos;
-        public int TiltLeft => (int)DS4Controls.GyroXPos;
-        public int TiltRight => (int)DS4Controls.GyroXNeg;
+        public int TiltUp => (int)DS4ControlItem.GyroZNeg;
+        public int TiltDown => (int)DS4ControlItem.GyroZPos;
+        public int TiltLeft => (int)DS4ControlItem.GyroXPos;
+        public int TiltRight => (int)DS4ControlItem.GyroXNeg;
 
-        public int SwipeUp => (int)DS4Controls.SwipeUp;
-        public int SwipeDown => (int)DS4Controls.SwipeDown;
-        public int SwipeLeft => (int)DS4Controls.SwipeLeft;
-        public int SwipeRight => (int)DS4Controls.SwipeRight;
-        public int L2FullPull => (int)DS4Controls.L2FullPull;
-        public int R2FullPull => (int)DS4Controls.R2FullPull;
+        public int SwipeUp => (int)DS4ControlItem.SwipeUp;
+        public int SwipeDown => (int)DS4ControlItem.SwipeDown;
+        public int SwipeLeft => (int)DS4ControlItem.SwipeLeft;
+        public int SwipeRight => (int)DS4ControlItem.SwipeRight;
+        public int L2FullPull => (int)DS4ControlItem.L2FullPull;
+        public int R2FullPull => (int)DS4ControlItem.R2FullPull;
 
-        public int LSOuterBind => (int)DS4Controls.LSOuter;
-        public int RSOuterBind => (int)DS4Controls.RSOuter;
+        public int LSOuterBind => (int)DS4ControlItem.LSOuter;
+        public int RSOuterBind => (int)DS4ControlItem.RSOuter;
 
-        public int GyroSwipeLeft => (int)DS4Controls.GyroSwipeLeft;
-        public int GyroSwipeRight => (int)DS4Controls.GyroSwipeRight;
-        public int GyroSwipeUp => (int)DS4Controls.GyroSwipeUp;
-        public int GyroSwipeDown => (int)DS4Controls.GyroSwipeDown;
+        public int GyroSwipeLeft => (int)DS4ControlItem.GyroSwipeLeft;
+        public int GyroSwipeRight => (int)DS4ControlItem.GyroSwipeRight;
+        public int GyroSwipeUp => (int)DS4ControlItem.GyroSwipeUp;
+        public int GyroSwipeDown => (int)DS4ControlItem.GyroSwipeDown;
     }
 }

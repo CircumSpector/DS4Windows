@@ -37,35 +37,35 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public ControlSelection HighlightControl { get; private set; } = ControlSelection.None;
 
-        public ControlSelection PresetTagIndex(DS4Controls control)
+        public ControlSelection PresetTagIndex(DS4ControlItem control)
         {
             var controlInput = ControlSelection.None;
             switch (control)
             {
-                case DS4Controls.DpadUp:
-                case DS4Controls.DpadDown:
-                case DS4Controls.DpadLeft:
-                case DS4Controls.DpadRight:
+                case DS4ControlItem.DpadUp:
+                case DS4ControlItem.DpadDown:
+                case DS4ControlItem.DpadLeft:
+                case DS4ControlItem.DpadRight:
                     controlInput = ControlSelection.DPad;
                     break;
-                case DS4Controls.LXNeg:
-                case DS4Controls.LXPos:
-                case DS4Controls.LYNeg:
-                case DS4Controls.LYPos:
-                case DS4Controls.L3:
+                case DS4ControlItem.LXNeg:
+                case DS4ControlItem.LXPos:
+                case DS4ControlItem.LYNeg:
+                case DS4ControlItem.LYPos:
+                case DS4ControlItem.L3:
                     controlInput = ControlSelection.LeftStick;
                     break;
-                case DS4Controls.RXNeg:
-                case DS4Controls.RXPos:
-                case DS4Controls.RYNeg:
-                case DS4Controls.RYPos:
-                case DS4Controls.R3:
+                case DS4ControlItem.RXNeg:
+                case DS4ControlItem.RXPos:
+                case DS4ControlItem.RYNeg:
+                case DS4ControlItem.RYPos:
+                case DS4ControlItem.R3:
                     controlInput = ControlSelection.RightStick;
                     break;
-                case DS4Controls.Cross:
-                case DS4Controls.Circle:
-                case DS4Controls.Triangle:
-                case DS4Controls.Square:
+                case DS4ControlItem.Cross:
+                case DS4ControlItem.Circle:
+                case DS4ControlItem.Triangle:
+                case DS4ControlItem.Square:
                     controlInput = ControlSelection.FaceButtons;
                     break;
             }
@@ -74,16 +74,16 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             return controlInput;
         }
 
-        public void SetHighlightControl(DS4Controls control)
+        public void SetHighlightControl(DS4ControlItem control)
         {
             var controlInput = PresetTagIndex(control);
             HighlightControl = controlInput;
         }
 
-        public List<DS4Controls> ModifySettingWithPreset(int baseTag, int subTag)
+        public List<DS4ControlItem> ModifySettingWithPreset(int baseTag, int subTag)
         {
             var actionBtns = new List<object>(5);
-            var inputControls = new List<DS4Controls>(5);
+            var inputControls = new List<DS4ControlItem>(5);
             if (baseTag == 0)
                 actionBtns.AddRange(new object[5]
                 {
@@ -372,31 +372,31 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             switch (HighlightControl)
             {
                 case ControlSelection.DPad:
-                    inputControls.AddRange(new DS4Controls[4]
+                    inputControls.AddRange(new DS4ControlItem[4]
                     {
-                        DS4Controls.DpadUp, DS4Controls.DpadDown,
-                        DS4Controls.DpadLeft, DS4Controls.DpadRight
+                        DS4ControlItem.DpadUp, DS4ControlItem.DpadDown,
+                        DS4ControlItem.DpadLeft, DS4ControlItem.DpadRight
                     });
                     break;
                 case ControlSelection.LeftStick:
-                    inputControls.AddRange(new DS4Controls[5]
+                    inputControls.AddRange(new DS4ControlItem[5]
                     {
-                        DS4Controls.LYNeg, DS4Controls.LYPos,
-                        DS4Controls.LXNeg, DS4Controls.LXPos, DS4Controls.L3
+                        DS4ControlItem.LYNeg, DS4ControlItem.LYPos,
+                        DS4ControlItem.LXNeg, DS4ControlItem.LXPos, DS4ControlItem.L3
                     });
                     break;
                 case ControlSelection.RightStick:
-                    inputControls.AddRange(new DS4Controls[5]
+                    inputControls.AddRange(new DS4ControlItem[5]
                     {
-                        DS4Controls.RYNeg, DS4Controls.RYPos,
-                        DS4Controls.RXNeg, DS4Controls.RXPos, DS4Controls.R3
+                        DS4ControlItem.RYNeg, DS4ControlItem.RYPos,
+                        DS4ControlItem.RXNeg, DS4ControlItem.RXPos, DS4ControlItem.R3
                     });
                     break;
                 case ControlSelection.FaceButtons:
-                    inputControls.AddRange(new DS4Controls[4]
+                    inputControls.AddRange(new DS4ControlItem[4]
                     {
-                        DS4Controls.Triangle, DS4Controls.Cross,
-                        DS4Controls.Square, DS4Controls.Circle
+                        DS4ControlItem.Triangle, DS4ControlItem.Cross,
+                        DS4ControlItem.Square, DS4ControlItem.Circle
                     });
                     break;
                 case ControlSelection.None:

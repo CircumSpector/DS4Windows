@@ -9,35 +9,35 @@ namespace DS4Windows
 
         public ControlSettingsGroup(IList<DS4ControlSettingsV3> settingsList)
         {
-            LS.Add(settingsList[(int)DS4Controls.LSOuter - 1]);
-            for (var i = (int)DS4Controls.LXNeg; i <= (int)DS4Controls.LYPos; i++) LS.Add(settingsList[i - 1]);
+            LS.Add(settingsList[(int)DS4ControlItem.LSOuter - 1]);
+            for (var i = (int)DS4ControlItem.LXNeg; i <= (int)DS4ControlItem.LYPos; i++) LS.Add(settingsList[i - 1]);
 
-            LS.Add(settingsList[(int)DS4Controls.RSOuter - 1]);
-            for (var i = (int)DS4Controls.RXNeg; i <= (int)DS4Controls.RYPos; i++) RS.Add(settingsList[i - 1]);
+            LS.Add(settingsList[(int)DS4ControlItem.RSOuter - 1]);
+            for (var i = (int)DS4ControlItem.RXNeg; i <= (int)DS4ControlItem.RYPos; i++) RS.Add(settingsList[i - 1]);
 
-            L2 = settingsList[(int)DS4Controls.L2 - 1];
-            R2 = settingsList[(int)DS4Controls.R2 - 1];
+            L2 = settingsList[(int)DS4ControlItem.L2 - 1];
+            R2 = settingsList[(int)DS4ControlItem.R2 - 1];
 
-            L2FullPull = settingsList[(int)DS4Controls.L2FullPull - 1];
-            R2FullPull = settingsList[(int)DS4Controls.R2FullPull - 1];
+            L2FullPull = settingsList[(int)DS4ControlItem.L2FullPull - 1];
+            R2FullPull = settingsList[(int)DS4ControlItem.R2FullPull - 1];
 
-            GyroSwipeLeft = settingsList[(int)DS4Controls.GyroSwipeLeft - 1];
-            GyroSwipeRight = settingsList[(int)DS4Controls.GyroSwipeRight - 1];
-            GyroSwipeUp = settingsList[(int)DS4Controls.GyroSwipeUp - 1];
-            GyroSwipeDown = settingsList[(int)DS4Controls.GyroSwipeDown - 1];
+            GyroSwipeLeft = settingsList[(int)DS4ControlItem.GyroSwipeLeft - 1];
+            GyroSwipeRight = settingsList[(int)DS4ControlItem.GyroSwipeRight - 1];
+            GyroSwipeUp = settingsList[(int)DS4ControlItem.GyroSwipeUp - 1];
+            GyroSwipeDown = settingsList[(int)DS4ControlItem.GyroSwipeDown - 1];
 
-            ControlButtons.Add(settingsList[(int)DS4Controls.L1 - 1]);
-            ControlButtons.Add(settingsList[(int)DS4Controls.L3 - 1]);
-            ControlButtons.Add(settingsList[(int)DS4Controls.R1 - 1]);
-            ControlButtons.Add(settingsList[(int)DS4Controls.R3 - 1]);
+            ControlButtons.Add(settingsList[(int)DS4ControlItem.L1 - 1]);
+            ControlButtons.Add(settingsList[(int)DS4ControlItem.L3 - 1]);
+            ControlButtons.Add(settingsList[(int)DS4ControlItem.R1 - 1]);
+            ControlButtons.Add(settingsList[(int)DS4ControlItem.R3 - 1]);
 
-            for (var i = (int)DS4Controls.Square; i <= (int)DS4Controls.SwipeDown; i++)
+            for (var i = (int)DS4ControlItem.Square; i <= (int)DS4ControlItem.SwipeDown; i++)
                 ControlButtons.Add(settingsList[i - 1]);
 
             this.settingsList = settingsList;
         }
 
-        public DS4ControlSettingsV3 this[DS4Controls control] => settingsList[(int)control - 1];
+        public DS4ControlSettingsV3 this[DS4ControlItem control] => settingsList[(int)control - 1];
 
         public List<DS4ControlSettingsV3> ControlButtons => new();
 
@@ -63,7 +63,7 @@ namespace DS4Windows
 
         public List<DS4ControlSettingsV3> RS => new();
 
-        public void EstablishExtraButtons(List<DS4Controls> buttonList)
+        public void EstablishExtraButtons(List<DS4ControlItem> buttonList)
         {
             foreach (var control in buttonList) ExtraDeviceButtons.Add(settingsList[(int)control - 1]);
         }

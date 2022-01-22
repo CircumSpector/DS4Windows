@@ -53,7 +53,7 @@ namespace DS4WinWPF.DS4Forms
             this.expose = expose;
             bindingVM = new BindingWindowViewModel(deviceNum, settings);
 
-            Title = settings.Control != DS4Controls.None
+            Title = settings.Control != DS4ControlItem.None
                 ? $"Select action for {Global.Ds4InputNames[settings.Control]}"
                 : "Select action";
 

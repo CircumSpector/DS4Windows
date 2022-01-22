@@ -290,87 +290,87 @@ namespace DS4Windows
             [X360Controls.Unbound] = "Unbound"
         };
 
-        public static Dictionary<DS4Controls, string> Ds4InputNames => new()
+        public static Dictionary<DS4ControlItem, string> Ds4InputNames => new()
         {
-            [DS4Controls.LXNeg] = "Left X-Axis-",
-            [DS4Controls.LXPos] = "Left X-Axis+",
-            [DS4Controls.LYNeg] = "Left Y-Axis-",
-            [DS4Controls.LYPos] = "Left Y-Axis+",
-            [DS4Controls.RXNeg] = "Right X-Axis-",
-            [DS4Controls.RXPos] = "Right X-Axis+",
-            [DS4Controls.RYNeg] = "Right Y-Axis-",
-            [DS4Controls.RYPos] = "Right Y-Axis+",
-            [DS4Controls.L1] = "L1",
-            [DS4Controls.L2] = "L2",
-            [DS4Controls.L3] = "L3",
-            [DS4Controls.R1] = "R1",
-            [DS4Controls.R2] = "R2",
-            [DS4Controls.R3] = "R3",
-            [DS4Controls.Square] = "Square",
-            [DS4Controls.Triangle] = "Triangle",
-            [DS4Controls.Circle] = "Circle",
-            [DS4Controls.Cross] = "Cross",
-            [DS4Controls.DpadUp] = "Dpad Up",
-            [DS4Controls.DpadRight] = "Dpad Right",
-            [DS4Controls.DpadDown] = "Dpad Down",
-            [DS4Controls.DpadLeft] = "Dpad Left",
-            [DS4Controls.PS] = "PS",
-            [DS4Controls.Share] = "Share",
-            [DS4Controls.Options] = "Options",
-            [DS4Controls.Mute] = "Mute",
-            [DS4Controls.Capture] = "Capture",
-            [DS4Controls.SideL] = "Side L",
-            [DS4Controls.SideR] = "Side R",
-            [DS4Controls.TouchLeft] = "Left Touch",
-            [DS4Controls.TouchUpper] = "Upper Touch",
-            [DS4Controls.TouchMulti] = "Multitouch",
-            [DS4Controls.TouchRight] = "Right Touch",
-            [DS4Controls.GyroXPos] = "Gyro X+",
-            [DS4Controls.GyroXNeg] = "Gyro X-",
-            [DS4Controls.GyroZPos] = "Gyro Z+",
-            [DS4Controls.GyroZNeg] = "Gyro Z-",
-            [DS4Controls.SwipeLeft] = "Swipe Left",
-            [DS4Controls.SwipeRight] = "Swipe Right",
-            [DS4Controls.SwipeUp] = "Swipe Up",
-            [DS4Controls.SwipeDown] = "Swipe Down",
-            [DS4Controls.L2FullPull] = "L2 Full Pull",
-            [DS4Controls.R2FullPull] = "R2 Full Pull",
-            [DS4Controls.LSOuter] = "LS Outer",
-            [DS4Controls.RSOuter] = "RS Outer",
+            [DS4ControlItem.LXNeg] = "Left X-Axis-",
+            [DS4ControlItem.LXPos] = "Left X-Axis+",
+            [DS4ControlItem.LYNeg] = "Left Y-Axis-",
+            [DS4ControlItem.LYPos] = "Left Y-Axis+",
+            [DS4ControlItem.RXNeg] = "Right X-Axis-",
+            [DS4ControlItem.RXPos] = "Right X-Axis+",
+            [DS4ControlItem.RYNeg] = "Right Y-Axis-",
+            [DS4ControlItem.RYPos] = "Right Y-Axis+",
+            [DS4ControlItem.L1] = "L1",
+            [DS4ControlItem.L2] = "L2",
+            [DS4ControlItem.L3] = "L3",
+            [DS4ControlItem.R1] = "R1",
+            [DS4ControlItem.R2] = "R2",
+            [DS4ControlItem.R3] = "R3",
+            [DS4ControlItem.Square] = "Square",
+            [DS4ControlItem.Triangle] = "Triangle",
+            [DS4ControlItem.Circle] = "Circle",
+            [DS4ControlItem.Cross] = "Cross",
+            [DS4ControlItem.DpadUp] = "Dpad Up",
+            [DS4ControlItem.DpadRight] = "Dpad Right",
+            [DS4ControlItem.DpadDown] = "Dpad Down",
+            [DS4ControlItem.DpadLeft] = "Dpad Left",
+            [DS4ControlItem.PS] = "PS",
+            [DS4ControlItem.Share] = "Share",
+            [DS4ControlItem.Options] = "Options",
+            [DS4ControlItem.Mute] = "Mute",
+            [DS4ControlItem.Capture] = "Capture",
+            [DS4ControlItem.SideL] = "Side L",
+            [DS4ControlItem.SideR] = "Side R",
+            [DS4ControlItem.TouchLeft] = "Left Touch",
+            [DS4ControlItem.TouchUpper] = "Upper Touch",
+            [DS4ControlItem.TouchMulti] = "Multitouch",
+            [DS4ControlItem.TouchRight] = "Right Touch",
+            [DS4ControlItem.GyroXPos] = "Gyro X+",
+            [DS4ControlItem.GyroXNeg] = "Gyro X-",
+            [DS4ControlItem.GyroZPos] = "Gyro Z+",
+            [DS4ControlItem.GyroZNeg] = "Gyro Z-",
+            [DS4ControlItem.SwipeLeft] = "Swipe Left",
+            [DS4ControlItem.SwipeRight] = "Swipe Right",
+            [DS4ControlItem.SwipeUp] = "Swipe Up",
+            [DS4ControlItem.SwipeDown] = "Swipe Down",
+            [DS4ControlItem.L2FullPull] = "L2 Full Pull",
+            [DS4ControlItem.R2FullPull] = "R2 Full Pull",
+            [DS4ControlItem.LSOuter] = "LS Outer",
+            [DS4ControlItem.RSOuter] = "RS Outer",
 
-            [DS4Controls.GyroSwipeLeft] = "Gyro Swipe Left",
-            [DS4Controls.GyroSwipeRight] = "Gyro Swipe Right",
-            [DS4Controls.GyroSwipeUp] = "Gyro Swipe Up",
-            [DS4Controls.GyroSwipeDown] = "Gyro Swipe Down"
+            [DS4ControlItem.GyroSwipeLeft] = "Gyro Swipe Left",
+            [DS4ControlItem.GyroSwipeRight] = "Gyro Swipe Right",
+            [DS4ControlItem.GyroSwipeUp] = "Gyro Swipe Up",
+            [DS4ControlItem.GyroSwipeDown] = "Gyro Swipe Down"
         };
 
-        public static Dictionary<DS4Controls, int> MacroDs4Values => new()
+        public static Dictionary<DS4ControlItem, int> MacroDs4Values => new()
         {
-            [DS4Controls.Cross] = 261, [DS4Controls.Circle] = 262,
-            [DS4Controls.Square] = 263, [DS4Controls.Triangle] = 264,
-            [DS4Controls.Options] = 265, [DS4Controls.Share] = 266,
-            [DS4Controls.DpadUp] = 267, [DS4Controls.DpadDown] = 268,
-            [DS4Controls.DpadLeft] = 269, [DS4Controls.DpadRight] = 270,
-            [DS4Controls.PS] = 271, [DS4Controls.L1] = 272,
-            [DS4Controls.R1] = 273, [DS4Controls.L2] = 274,
-            [DS4Controls.R2] = 275, [DS4Controls.L3] = 276,
-            [DS4Controls.R3] = 277, [DS4Controls.LXPos] = 278,
-            [DS4Controls.LXNeg] = 279, [DS4Controls.LYPos] = 280,
-            [DS4Controls.LYNeg] = 281, [DS4Controls.RXPos] = 282,
-            [DS4Controls.RXNeg] = 283, [DS4Controls.RYPos] = 284,
-            [DS4Controls.RYNeg] = 285,
-            [DS4Controls.TouchLeft] = 286, [DS4Controls.TouchRight] = 286,
-            [DS4Controls.TouchUpper] = 286, [DS4Controls.TouchMulti] = 286
+            [DS4ControlItem.Cross] = 261, [DS4ControlItem.Circle] = 262,
+            [DS4ControlItem.Square] = 263, [DS4ControlItem.Triangle] = 264,
+            [DS4ControlItem.Options] = 265, [DS4ControlItem.Share] = 266,
+            [DS4ControlItem.DpadUp] = 267, [DS4ControlItem.DpadDown] = 268,
+            [DS4ControlItem.DpadLeft] = 269, [DS4ControlItem.DpadRight] = 270,
+            [DS4ControlItem.PS] = 271, [DS4ControlItem.L1] = 272,
+            [DS4ControlItem.R1] = 273, [DS4ControlItem.L2] = 274,
+            [DS4ControlItem.R2] = 275, [DS4ControlItem.L3] = 276,
+            [DS4ControlItem.R3] = 277, [DS4ControlItem.LXPos] = 278,
+            [DS4ControlItem.LXNeg] = 279, [DS4ControlItem.LYPos] = 280,
+            [DS4ControlItem.LYNeg] = 281, [DS4ControlItem.RXPos] = 282,
+            [DS4ControlItem.RXNeg] = 283, [DS4ControlItem.RYPos] = 284,
+            [DS4ControlItem.RYNeg] = 285,
+            [DS4ControlItem.TouchLeft] = 286, [DS4ControlItem.TouchRight] = 286,
+            [DS4ControlItem.TouchUpper] = 286, [DS4ControlItem.TouchMulti] = 286
         };
 
         // Create mapping array at runtime
-        public static DS4Controls[] ReverseX360ButtonMapping = new Func<DS4Controls[]>(() =>
+        public static DS4ControlItem[] ReverseX360ButtonMapping = new Func<DS4ControlItem[]>(() =>
         {
-            var temp = new DS4Controls[DefaultButtonMapping.Length];
+            var temp = new DS4ControlItem[DefaultButtonMapping.Length];
             for (int i = 0, arlen = DefaultButtonMapping.Length; i < arlen; i++)
             {
                 var mapping = DefaultButtonMapping[i];
-                if (mapping != X360Controls.None) temp[(int)mapping] = (DS4Controls)i;
+                if (mapping != X360Controls.None) temp[(int)mapping] = (DS4ControlItem)i;
             }
 
             return temp;

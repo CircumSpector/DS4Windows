@@ -9,53 +9,53 @@ namespace DS4WinWPF.DS4Forms
     public partial class ProfileEditor
     {
         /// <summary>
-        ///     Links <see cref="Button"/>s to the corresponding <see cref="DS4Controls"/>.
+        ///     Links <see cref="Button"/>s to the corresponding <see cref="DS4ControlItem"/>.
         /// </summary>
         private void PopulateHoverIndexes()
         {
-            hoverIndexes[crossConBtn] = DS4Controls.Cross;
-            hoverIndexes[circleConBtn] = DS4Controls.Circle;
-            hoverIndexes[squareConBtn] = DS4Controls.Square;
-            hoverIndexes[triangleConBtn] = DS4Controls.Triangle;
-            hoverIndexes[optionsConBtn] = DS4Controls.Options;
-            hoverIndexes[shareConBtn] = DS4Controls.Share;
-            hoverIndexes[upConBtn] = DS4Controls.DpadUp;
-            hoverIndexes[downConBtn] = DS4Controls.DpadDown;
-            hoverIndexes[leftConBtn] = DS4Controls.DpadLeft;
-            hoverIndexes[rightConBtn] = DS4Controls.DpadRight;
-            hoverIndexes[guideConBtn] = DS4Controls.PS;
-            hoverIndexes[muteConBtn] = DS4Controls.Mute;
-            hoverIndexes[l1ConBtn] = DS4Controls.L1;
-            hoverIndexes[r1ConBtn] = DS4Controls.R1;
-            hoverIndexes[l2ConBtn] = DS4Controls.L2;
-            hoverIndexes[r2ConBtn] = DS4Controls.R2;
-            hoverIndexes[l3ConBtn] = DS4Controls.L3;
-            hoverIndexes[r3ConBtn] = DS4Controls.R3;
+            hoverIndexes[crossConBtn] = DS4ControlItem.Cross;
+            hoverIndexes[circleConBtn] = DS4ControlItem.Circle;
+            hoverIndexes[squareConBtn] = DS4ControlItem.Square;
+            hoverIndexes[triangleConBtn] = DS4ControlItem.Triangle;
+            hoverIndexes[optionsConBtn] = DS4ControlItem.Options;
+            hoverIndexes[shareConBtn] = DS4ControlItem.Share;
+            hoverIndexes[upConBtn] = DS4ControlItem.DpadUp;
+            hoverIndexes[downConBtn] = DS4ControlItem.DpadDown;
+            hoverIndexes[leftConBtn] = DS4ControlItem.DpadLeft;
+            hoverIndexes[rightConBtn] = DS4ControlItem.DpadRight;
+            hoverIndexes[guideConBtn] = DS4ControlItem.PS;
+            hoverIndexes[muteConBtn] = DS4ControlItem.Mute;
+            hoverIndexes[l1ConBtn] = DS4ControlItem.L1;
+            hoverIndexes[r1ConBtn] = DS4ControlItem.R1;
+            hoverIndexes[l2ConBtn] = DS4ControlItem.L2;
+            hoverIndexes[r2ConBtn] = DS4ControlItem.R2;
+            hoverIndexes[l3ConBtn] = DS4ControlItem.L3;
+            hoverIndexes[r3ConBtn] = DS4ControlItem.R3;
 
-            hoverIndexes[leftTouchConBtn] = DS4Controls.TouchLeft;
-            hoverIndexes[rightTouchConBtn] = DS4Controls.TouchRight;
-            hoverIndexes[multiTouchConBtn] = DS4Controls.TouchMulti;
-            hoverIndexes[topTouchConBtn] = DS4Controls.TouchUpper;
+            hoverIndexes[leftTouchConBtn] = DS4ControlItem.TouchLeft;
+            hoverIndexes[rightTouchConBtn] = DS4ControlItem.TouchRight;
+            hoverIndexes[multiTouchConBtn] = DS4ControlItem.TouchMulti;
+            hoverIndexes[topTouchConBtn] = DS4ControlItem.TouchUpper;
 
-            hoverIndexes[lsuConBtn] = DS4Controls.LYPos;
-            hoverIndexes[lsdConBtn] = DS4Controls.LYNeg;
-            hoverIndexes[lslConBtn] = DS4Controls.LXNeg;
-            hoverIndexes[lsrConBtn] = DS4Controls.LXPos;
+            hoverIndexes[lsuConBtn] = DS4ControlItem.LYPos;
+            hoverIndexes[lsdConBtn] = DS4ControlItem.LYNeg;
+            hoverIndexes[lslConBtn] = DS4ControlItem.LXNeg;
+            hoverIndexes[lsrConBtn] = DS4ControlItem.LXPos;
 
-            hoverIndexes[rsuConBtn] = DS4Controls.RYPos;
-            hoverIndexes[rsdConBtn] = DS4Controls.RYNeg;
-            hoverIndexes[rslConBtn] = DS4Controls.RXNeg;
-            hoverIndexes[rsrConBtn] = DS4Controls.RYPos;
+            hoverIndexes[rsuConBtn] = DS4ControlItem.RYPos;
+            hoverIndexes[rsdConBtn] = DS4ControlItem.RYNeg;
+            hoverIndexes[rslConBtn] = DS4ControlItem.RXNeg;
+            hoverIndexes[rsrConBtn] = DS4ControlItem.RYPos;
 
-            hoverIndexes[gyroZNBtn] = DS4Controls.GyroZNeg;
-            hoverIndexes[gyroZPBtn] = DS4Controls.GyroZPos;
-            hoverIndexes[gyroXNBtn] = DS4Controls.GyroXNeg;
-            hoverIndexes[gyroXPBtn] = DS4Controls.GyroXPos;
+            hoverIndexes[gyroZNBtn] = DS4ControlItem.GyroZNeg;
+            hoverIndexes[gyroZPBtn] = DS4ControlItem.GyroZPos;
+            hoverIndexes[gyroXNBtn] = DS4ControlItem.GyroXNeg;
+            hoverIndexes[gyroXPBtn] = DS4ControlItem.GyroXPos;
 
-            hoverIndexes[swipeUpBtn] = DS4Controls.SwipeUp;
-            hoverIndexes[swipeDownBtn] = DS4Controls.SwipeDown;
-            hoverIndexes[swipeLeftBtn] = DS4Controls.SwipeLeft;
-            hoverIndexes[swipeRightBtn] = DS4Controls.SwipeRight;
+            hoverIndexes[swipeUpBtn] = DS4ControlItem.SwipeUp;
+            hoverIndexes[swipeDownBtn] = DS4ControlItem.SwipeDown;
+            hoverIndexes[swipeLeftBtn] = DS4ControlItem.SwipeLeft;
+            hoverIndexes[swipeRightBtn] = DS4ControlItem.SwipeRight;
         }
 
         /// <summary>

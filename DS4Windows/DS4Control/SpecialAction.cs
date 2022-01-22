@@ -40,9 +40,9 @@ namespace DS4WinWPF.DS4Control
         public string DisplayName { get; set; }
 
         /// <summary>
-        ///     On or more <see cref="DS4Controls"/> which may trigger execution of this <see cref="SpecialAction"/>.
+        ///     On or more <see cref="DS4ControlItem"/> which may trigger execution of this <see cref="SpecialAction"/>.
         /// </summary>
-        public List<DS4Controls> Trigger { get; } = new();
+        public List<DS4ControlItem> Trigger { get; } = new();
 
         protected SpecialAction() { }
 

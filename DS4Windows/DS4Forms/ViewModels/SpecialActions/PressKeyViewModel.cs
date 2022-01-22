@@ -76,7 +76,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettingsV3 PrepareSettings()
         {
-            var settings = new DS4ControlSettingsV3(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4ControlItem.None);
             settings.ActionData.ActionKey = value;
             settings.KeyType = KeyType;
             settings.ControlActionType = DS4ControlSettingsV3.ActionType.Key;

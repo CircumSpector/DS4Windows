@@ -63,7 +63,7 @@ namespace DS4Windows
 
         string SaTriggerCondString(bool value);
 
-        void RefreshExtrasButtons(int deviceNum, List<DS4Controls> devButtons);
+        void RefreshExtrasButtons(int deviceNum, List<DS4ControlItem> devButtons);
 
         bool LoadControllerConfigs(DS4Device device = null);
 
@@ -137,7 +137,7 @@ namespace DS4Windows
 
         Task<bool> SaveProfile(int device, string proName);
 
-        DS4Controls GetDs4ControlsByName(string key);
+        DS4ControlItem GetDs4ControlsByName(string key);
 
         X360Controls GetX360ControlsByName(string key);
 
@@ -165,7 +165,7 @@ namespace DS4Windows
 
         ControlActionData GetDs4Action(int deviceNum, string buttonName, bool shift);
 
-        ControlActionData GetDs4Action(int deviceNum, DS4Controls dc, bool shift);
+        ControlActionData GetDs4Action(int deviceNum, DS4ControlItem dc, bool shift);
 
         string GetDs4Extra(int deviceNum, string buttonName, bool shift);
 
@@ -173,11 +173,11 @@ namespace DS4Windows
 
         int GetDs4STrigger(int deviceNum, string buttonName);
 
-        int GetDs4STrigger(int deviceNum, DS4Controls dc);
+        int GetDs4STrigger(int deviceNum, DS4ControlItem dc);
 
         DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, string buttonName);
 
-        DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, DS4Controls dc);
+        DS4ControlSettingsV3 GetDs4ControllerSetting(int deviceNum, DS4ControlItem dc);
 
         bool HasCustomActions(int deviceNum);
 

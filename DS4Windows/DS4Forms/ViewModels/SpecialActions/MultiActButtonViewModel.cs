@@ -88,7 +88,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettingsV3 PrepareTapSettings()
         {
-            var settings = new DS4ControlSettingsV3(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4ControlItem.None);
             settings.ActionData.ActionMacro = TapMacro.ToArray();
             settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
@@ -97,7 +97,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettingsV3 PrepareHoldSettings()
         {
-            var settings = new DS4ControlSettingsV3(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4ControlItem.None);
             settings.ActionData.ActionMacro = HoldMacro.ToArray();
             settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
@@ -106,7 +106,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions
 
         public DS4ControlSettingsV3 PrepareDoubleTapSettings()
         {
-            var settings = new DS4ControlSettingsV3(DS4Controls.None);
+            var settings = new DS4ControlSettingsV3(DS4ControlItem.None);
             settings.ActionData.ActionMacro = DoubleTapMacro.ToArray();
             settings.ControlActionType = DS4ControlSettingsV3.ActionType.Macro;
             settings.KeyType = DS4KeyType.Macro;
