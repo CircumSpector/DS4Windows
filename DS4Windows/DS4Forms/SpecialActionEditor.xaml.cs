@@ -2,51 +2,43 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using DS4Windows;
-using DS4Windows.Shared.Common.Legacy;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.DS4Forms.ViewModels.SpecialActions;
 using Microsoft.Win32;
-using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
-using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
-using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
 using MessageBox = AdonisUI.Controls.MessageBox;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for SpecialActionEditor.xaml
+    ///     Interaction logic for SpecialActionEditor.xaml
     /// </summary>
     public partial class SpecialActionEditor : UserControl
     {
-        private List<CheckBox> triggerBoxes;
-        private List<CheckBox> unloadTriggerBoxes;
-
-        private SpecialActEditorViewModel specialActVM;
-        private MacroViewModel macroActVM;
-        private LaunchProgramViewModel launchProgVM;
-        private LoadProfileViewModel loadProfileVM;
-        private PressKeyViewModel pressKeyVM;
-        private DisconnectBTViewModel disconnectBtVM;
-        private CheckBatteryViewModel checkBatteryVM;
-        private MultiActButtonViewModel multiActButtonVM;
-        private SASteeringWheelViewModel saSteeringWheelVM;
-
-        public event EventHandler Cancel;
         public delegate void SaveHandler(object sender, string actionName);
-        public event SaveHandler Saved;
 
         private readonly ControlService rootHub;
+        private readonly CheckBatteryViewModel checkBatteryVM;
+        private readonly DisconnectBTViewModel disconnectBtVM;
+        private readonly LaunchProgramViewModel launchProgVM;
+        private readonly LoadProfileViewModel loadProfileVM;
+        private readonly MacroViewModel macroActVM;
+        private readonly MultiActButtonViewModel multiActButtonVM;
+        private readonly PressKeyViewModel pressKeyVM;
+        private readonly SASteeringWheelViewModel saSteeringWheelVM;
+
+        private readonly SpecialActEditorViewModel specialActVM;
+        private readonly List<CheckBox> triggerBoxes;
+        private readonly List<CheckBox> unloadTriggerBoxes;
 
         public SpecialActionEditor(ControlService service, int deviceNum, ProfileList profileList,
-            DS4Windows.SpecialActionV3 specialAction = null)
+            SpecialActionV3 specialAction = null)
         {
             rootHub = service;
 
             InitializeComponent();
 
-            triggerBoxes = new List<CheckBox>()
+            triggerBoxes = new List<CheckBox>
             {
                 crossTrigCk, circleTrigCk, squareTrigCk, triangleTrigCk,
                 optionsTrigCk, shareTrigCk, upTrigCk, downTrigCk,
@@ -57,21 +49,22 @@ namespace DS4WinWPF.DS4Forms
                 lsrTrigCk, rsuTrigCk, rsdTrigCk, rslTrigCk,
                 rsrTrigCk, swipeUpTrigCk, swipeDownTrigCk, swipeLeftTrigCk,
                 swipeRightTrigCk, tiltUpTrigCk, tiltDownTrigCk, tiltLeftTrigCk,
-                tiltRightTrigCk,
+                tiltRightTrigCk
             };
 
-            unloadTriggerBoxes = new List<CheckBox>()
+            unloadTriggerBoxes = new List<CheckBox>
             {
                 unloadCrossTrigCk, unloadCircleTrigCk, unloadSquareTrigCk, unloadTriangleTrigCk,
                 unloadOptionsTrigCk, unloadShareTrigCk, unloadUpTrigCk, unloadDownTrigCk,
                 unloadLeftTrigCk, unloadRightTrigCk, unloadPsTrigCk, unloadMuteTrigCk, unloadL1TrigCk,
-                unloadR1TrigCk, unloadL2TrigCk, unloadL2FullPullTrigCk, unloadR2TrigCk, unloadR2FullPullTrigCk, unloadL3TrigCk,
+                unloadR1TrigCk, unloadL2TrigCk, unloadL2FullPullTrigCk, unloadR2TrigCk, unloadR2FullPullTrigCk,
+                unloadL3TrigCk,
                 unloadR3TrigCk, unloadLeftTouchTrigCk, unloadUpperTouchTrigCk, unloadMultitouchTrigCk,
                 unloadRightTouchTrigCk, unloadLsuTrigCk, unloadLsdTrigCk, unloadLslTrigCk,
                 unloadLsrTrigCk, unloadRsuTrigCk, unloadRsdTrigCk, unloadRslTrigCk,
                 unloadRsrTrigCk, unloadSwipeUpTrigCk, unloadSwipeDownTrigCk, unloadSwipeLeftTrigCk,
                 unloadSwipeRightTrigCk, unloadTiltUpTrigCk, unloadTiltDownTrigCk, unloadTiltLeftTrigCk,
-                unloadTiltRightTrigCk,
+                unloadTiltRightTrigCk
             };
 
             specialActVM = new SpecialActEditorViewModel(deviceNum, specialAction);
@@ -95,10 +88,7 @@ namespace DS4WinWPF.DS4Forms
             multiActTab.Visibility = Visibility.Collapsed;
             sixaxisWheelCalibrateTab.Visibility = Visibility.Collapsed;
 
-            if (specialAction != null)
-            {
-                LoadAction(specialAction);
-            }
+            if (specialAction != null) LoadAction(specialAction);
 
             actionTypeTabControl.DataContext = specialActVM;
             actionTypeCombo.DataContext = specialActVM;
@@ -117,78 +107,71 @@ namespace DS4WinWPF.DS4Forms
             SetupLateEvents();
         }
 
+        public event EventHandler Cancel;
+        public event SaveHandler Saved;
+
         private void SetupLateEvents()
         {
             actionTypeCombo.SelectionChanged += ActionTypeCombo_SelectionChanged;
         }
 
-        private void LoadAction(DS4Windows.SpecialActionV3 specialAction)
+        private void LoadAction(SpecialActionV3 specialAction)
         {
             specialActVM.LoadAction(specialAction);
-            string[] tempTriggers = specialActVM.ControlTriggerList.ToArray();
-            foreach (string control in tempTriggers)
+            var tempTriggers = specialActVM.ControlTriggerList.ToArray();
+            foreach (var control in tempTriggers)
             {
-                bool found = false;
-                foreach (CheckBox box in triggerBoxes)
-                {
+                var found = false;
+                foreach (var box in triggerBoxes)
                     if (box.Tag.ToString() == control)
                     {
                         box.IsChecked = true;
                         found = true;
                         break;
                     }
-                }
 
-                if (!found)
-                {
-                    specialActVM.ControlTriggerList.Remove(control);
-                }
+                if (!found) specialActVM.ControlTriggerList.Remove(control);
             }
 
             tempTriggers = specialActVM.ControlUnloadTriggerList.ToArray();
-            foreach (string control in tempTriggers)
+            foreach (var control in tempTriggers)
             {
-                bool found = false;
-                foreach (CheckBox box in unloadTriggerBoxes)
-                {
+                var found = false;
+                foreach (var box in unloadTriggerBoxes)
                     if (box.Tag.ToString() == control)
                     {
                         box.IsChecked = true;
                         found = true;
                         break;
                     }
-                }
 
-                if (!found)
-                {
-                    specialActVM.ControlUnloadTriggerList.Remove(control);
-                }
+                if (!found) specialActVM.ControlUnloadTriggerList.Remove(control);
             }
 
             switch (specialAction.TypeId)
             {
-                case DS4Windows.SpecialActionV3.ActionTypeId.Macro:
+                case SpecialActionV3.ActionTypeId.Macro:
                     macroActVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.Program:
+                case SpecialActionV3.ActionTypeId.Program:
                     launchProgVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.Profile:
+                case SpecialActionV3.ActionTypeId.Profile:
                     loadProfileVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.Key:
+                case SpecialActionV3.ActionTypeId.Key:
                     pressKeyVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.DisconnectBT:
+                case SpecialActionV3.ActionTypeId.DisconnectBT:
                     disconnectBtVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.BatteryCheck:
+                case SpecialActionV3.ActionTypeId.BatteryCheck:
                     checkBatteryVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.MultiAction:
+                case SpecialActionV3.ActionTypeId.MultiAction:
                     multiActButtonVM.LoadAction(specialAction);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
+                case SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
                     saSteeringWheelVM.LoadAction(specialAction);
                     break;
             }
@@ -197,13 +180,9 @@ namespace DS4WinWPF.DS4Forms
         private void ActionTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (specialActVM.ActionTypeIndex <= 0)
-            {
                 saveBtn.IsEnabled = false;
-            }
             else
-            {
                 saveBtn.IsEnabled = true;
-            }
 
             triggersListView.Visibility = Visibility.Visible;
             unloadTriggersListView.Visibility = Visibility.Collapsed;
@@ -216,9 +195,9 @@ namespace DS4WinWPF.DS4Forms
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.SpecialActionV3.ActionTypeId typeId = specialActVM.TypeAssoc[specialActVM.ActionTypeIndex];
-            DS4Windows.SpecialActionV3 tempAct = new DS4Windows.SpecialActionV3("null", "null", "null", "null");
-            bool valid = specialActVM.IsValid(tempAct);
+            var typeId = specialActVM.TypeAssoc[specialActVM.ActionTypeIndex];
+            var tempAct = new SpecialActionV3("null", "null", "null", "null");
+            var valid = specialActVM.IsValid(tempAct);
             if (valid)
             {
                 specialActVM.SetAction(tempAct);
@@ -231,37 +210,37 @@ namespace DS4WinWPF.DS4Forms
 
             if (valid)
             {
-                bool editMode = specialActVM.EditMode;
+                var editMode = specialActVM.EditMode;
                 if (editMode && specialActVM.SavedAction.Name != specialActVM.ActionName)
                 {
-                    DS4Windows.Global.Instance.Config.RemoveAction(specialActVM.SavedAction.Name);
+                    Global.Instance.Config.RemoveAction(specialActVM.SavedAction.Name);
                     editMode = false;
                 }
 
                 switch (typeId)
                 {
-                    case DS4Windows.SpecialActionV3.ActionTypeId.Macro:
+                    case SpecialActionV3.ActionTypeId.Macro:
                         macroActVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialActionV3.ActionTypeId.Program:
+                    case SpecialActionV3.ActionTypeId.Program:
                         launchProgVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialActionV3.ActionTypeId.Profile:
+                    case SpecialActionV3.ActionTypeId.Profile:
                         loadProfileVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialActionV3.ActionTypeId.Key:
+                    case SpecialActionV3.ActionTypeId.Key:
                         pressKeyVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialActionV3.ActionTypeId.DisconnectBT:
+                    case SpecialActionV3.ActionTypeId.DisconnectBT:
                         disconnectBtVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialActionV3.ActionTypeId.BatteryCheck:
+                    case SpecialActionV3.ActionTypeId.BatteryCheck:
                         checkBatteryVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialActionV3.ActionTypeId.MultiAction:
+                    case SpecialActionV3.ActionTypeId.MultiAction:
                         multiActButtonVM.SaveAction(tempAct, editMode);
                         break;
-                    case DS4Windows.SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
+                    case SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
                         saSteeringWheelVM.SaveAction(tempAct, editMode);
                         break;
                 }
@@ -270,34 +249,34 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        private bool CheckActionValid(DS4Windows.SpecialActionV3 action,
-            DS4Windows.SpecialActionV3.ActionTypeId typeId)
+        private bool CheckActionValid(SpecialActionV3 action,
+            SpecialActionV3.ActionTypeId typeId)
         {
-            bool valid = false;
+            var valid = false;
             switch (typeId)
             {
-                case DS4Windows.SpecialActionV3.ActionTypeId.Macro:
+                case SpecialActionV3.ActionTypeId.Macro:
                     valid = macroActVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.Program:
+                case SpecialActionV3.ActionTypeId.Program:
                     valid = launchProgVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.Profile:
+                case SpecialActionV3.ActionTypeId.Profile:
                     valid = loadProfileVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.Key:
+                case SpecialActionV3.ActionTypeId.Key:
                     valid = pressKeyVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.DisconnectBT:
+                case SpecialActionV3.ActionTypeId.DisconnectBT:
                     valid = disconnectBtVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.BatteryCheck:
+                case SpecialActionV3.ActionTypeId.BatteryCheck:
                     valid = checkBatteryVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.MultiAction:
+                case SpecialActionV3.ActionTypeId.MultiAction:
                     valid = multiActButtonVM.IsValid(action);
                     break;
-                case DS4Windows.SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
+                case SpecialActionV3.ActionTypeId.SASteeringWheelEmulationCalibrate:
                     valid = saSteeringWheelVM.IsValid(action);
                     break;
             }
@@ -307,40 +286,32 @@ namespace DS4WinWPF.DS4Forms
 
         private void ControlTriggerCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox check = sender as CheckBox;
-            string name = check.Tag.ToString();
+            var check = sender as CheckBox;
+            var name = check.Tag.ToString();
             if (check.IsChecked == true)
-            {
                 specialActVM.ControlTriggerList.Add(name);
-            }
             else
-            {
                 specialActVM.ControlTriggerList.Remove(name);
-            }
         }
 
         private void ControlUnloadTriggerCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox check = sender as CheckBox;
-            string name = check.Tag.ToString();
+            var check = sender as CheckBox;
+            var name = check.Tag.ToString();
             if (check.IsChecked == true)
-            {
                 specialActVM.ControlUnloadTriggerList.Add(name);
-            }
             else
-            {
                 specialActVM.ControlUnloadTriggerList.Remove(name);
-            }
         }
 
         private void RecordMacroBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4ControlSettingsV3 settings = macroActVM.PrepareSettings();
-            RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings);
+            var settings = macroActVM.PrepareSettings();
+            var recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings);
             recordWin.Saved += (sender2, args) =>
             {
                 macroActVM.Macro.Clear();
-                macroActVM.Macro.AddRange((int[])settings.ActionData.ActionMacro);
+                macroActVM.Macro.AddRange(settings.ActionData.ActionMacro);
                 macroActVM.UpdateMacroString();
             };
 
@@ -349,7 +320,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void PressKeyToggleTriggerBtn_Click(object sender, RoutedEventArgs e)
         {
-            bool normalTrigger = pressKeyVM.NormalTrigger = !pressKeyVM.NormalTrigger;
+            var normalTrigger = pressKeyVM.NormalTrigger = !pressKeyVM.NormalTrigger;
             if (normalTrigger)
             {
                 pressKeyToggleTriggerBtn.Content = "Set Unload Trigger";
@@ -366,7 +337,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void LoadProfUnloadBtn_Click(object sender, RoutedEventArgs e)
         {
-            bool normalTrigger = loadProfileVM.NormalTrigger = !loadProfileVM.NormalTrigger;
+            var normalTrigger = loadProfileVM.NormalTrigger = !loadProfileVM.NormalTrigger;
             if (normalTrigger)
             {
                 loadProfUnloadBtn.Content = "Set Unload Trigger";
@@ -383,9 +354,9 @@ namespace DS4WinWPF.DS4Forms
 
         private void BatteryEmptyColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            ColorPickerWindow dialog = new ColorPickerWindow();
+            var dialog = new ColorPickerWindow();
             dialog.Owner = Application.Current.MainWindow;
-            Color tempcolor = checkBatteryVM.EmptyColor;
+            var tempcolor = checkBatteryVM.EmptyColor;
             dialog.colorPicker.SelectedColor = tempcolor;
             checkBatteryVM.StartForcedColor(tempcolor, specialActVM.DeviceNum);
             dialog.ColorChanged += (sender2, color) =>
@@ -399,9 +370,9 @@ namespace DS4WinWPF.DS4Forms
 
         private void BatteryFullColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            ColorPickerWindow dialog = new ColorPickerWindow();
+            var dialog = new ColorPickerWindow();
             dialog.Owner = Application.Current.MainWindow;
-            Color tempcolor = checkBatteryVM.FullColor;
+            var tempcolor = checkBatteryVM.FullColor;
             dialog.colorPicker.SelectedColor = tempcolor;
             checkBatteryVM.StartForcedColor(tempcolor, specialActVM.DeviceNum);
             dialog.ColorChanged += (sender2, color) =>
@@ -415,12 +386,12 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4ControlSettingsV3 settings = multiActButtonVM.PrepareTapSettings();
-            RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
+            var settings = multiActButtonVM.PrepareTapSettings();
+            var recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
                 multiActButtonVM.TapMacro.Clear();
-                multiActButtonVM.TapMacro.AddRange((int[])settings.ActionData.ActionMacro);
+                multiActButtonVM.TapMacro.AddRange(settings.ActionData.ActionMacro);
                 multiActButtonVM.UpdateTapDisplayText();
             };
 
@@ -429,12 +400,12 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiHoldTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4ControlSettingsV3 settings = multiActButtonVM.PrepareHoldSettings();
-            RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
+            var settings = multiActButtonVM.PrepareHoldSettings();
+            var recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
                 multiActButtonVM.HoldMacro.Clear();
-                multiActButtonVM.HoldMacro.AddRange((int[])settings.ActionData.ActionMacro);
+                multiActButtonVM.HoldMacro.AddRange(settings.ActionData.ActionMacro);
                 multiActButtonVM.UpdateHoldDisplayText();
             };
 
@@ -443,12 +414,12 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiDoubleTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4ControlSettingsV3 settings = multiActButtonVM.PrepareDoubleTapSettings();
-            RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
+            var settings = multiActButtonVM.PrepareDoubleTapSettings();
+            var recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
                 multiActButtonVM.DoubleTapMacro.Clear();
-                multiActButtonVM.DoubleTapMacro.AddRange((int[])settings.ActionData.ActionMacro);
+                multiActButtonVM.DoubleTapMacro.AddRange(settings.ActionData.ActionMacro);
                 multiActButtonVM.UpdateDoubleTapDisplayText();
             };
 
@@ -457,7 +428,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void LaunchProgBrowseBtn_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            var dialog = new OpenFileDialog
             {
                 Multiselect = false,
                 AddExtension = true,
@@ -467,19 +438,16 @@ namespace DS4WinWPF.DS4Forms
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
             };
 
-            if (dialog.ShowDialog() == true)
-            {
-                launchProgVM.SpecialAction.FilePath = dialog.FileName;
-            }
+            if (dialog.ShowDialog() == true) launchProgVM.SpecialAction.FilePath = dialog.FileName;
         }
 
         private void PressKeySelectBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4ControlSettingsV3 settings = pressKeyVM.PrepareSettings();
-            BindingWindow window = new BindingWindow(rootHub, specialActVM.DeviceNum, settings,
+            var settings = pressKeyVM.PrepareSettings();
+            var window = new BindingWindow(rootHub, specialActVM.DeviceNum, settings,
                 BindingWindow.ExposeMode.Keyboard)
             {
-                Owner = App.Current.MainWindow
+                Owner = Application.Current.MainWindow
             };
             window.ShowDialog();
             pressKeyVM.ReadSettings(settings);

@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
-using DS4Windows;
 using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
@@ -12,7 +11,7 @@ using DS4Windows.Shared.Configuration.Profiles.Types;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace DS4WinWPF.DS4Control.Profiles.Schema
+namespace DS4Windows.Shared.Configuration.Profiles.Schema
 {
     /// <summary>
     ///     Controller profile definition.

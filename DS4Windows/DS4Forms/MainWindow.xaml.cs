@@ -19,6 +19,7 @@ using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Configuration.Application.Services;
+using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;

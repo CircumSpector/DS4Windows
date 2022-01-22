@@ -7,6 +7,10 @@ namespace DS4Windows.Shared.Common.Types
     [XmlRoot(ElementName = "TouchpadAbsMouseSettings")]
     public class TouchpadAbsMouseSettings
     {
+        public const int DefaultMaxZoneX = 90;
+        public const int DefaultMaxZoneY = 90;
+        public const bool DefaultSnapCenter = false;
+
         [XmlElement(ElementName = "MaxZoneX")] public int MaxZoneX { get; set; }
 
         [XmlElement(ElementName = "MaxZoneY")] public int MaxZoneY { get; set; }

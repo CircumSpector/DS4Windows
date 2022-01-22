@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Types.DualSense;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Devices.HID;
-using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.Logging;
-using DS4WinWPF.DS4Control.Util;
-using DS4WinWPF.DS4Library.InputDevices;
 using DS4WinWPF.Translations;
-
 using PropertyChanged;
 
 namespace DS4Windows.InputDevices
@@ -20,8 +17,6 @@ namespace DS4Windows.InputDevices
     [AddINotifyPropertyChangedInterface]
     public partial class DualSenseDevice : DS4Device
     {
-        
-
         private const int BT_REPORT_OFFSET = 2;
         protected new const int BT_OUTPUT_REPORT_LENGTH = 78;
         private new const int BT_INPUT_REPORT_LENGTH = 78;
