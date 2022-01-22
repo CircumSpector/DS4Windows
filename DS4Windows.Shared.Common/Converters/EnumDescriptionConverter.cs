@@ -26,12 +26,13 @@ namespace DS4Windows.Shared.Common.Converters
             var attributes = fieldInfo?.GetCustomAttributes(false);
 
             if (attributes is null)
-                return null;
+                return string.Empty;
 
             if (attributes.Length == 0) return enumObj.ToString();
 
             var attribute = attributes[0] as DescriptionAttribute;
-            return attribute?.Description;
+
+            return attribute?.Description ?? string.Empty;
         }
     }
 }
