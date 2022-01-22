@@ -5,6 +5,7 @@ using DS4Windows;
 using DS4Windows.InputDevices;
 using DS4Windows.Shared.Common.Types.DualSense;
 using DS4Windows.Shared.Configuration.Application.Schema;
+using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 

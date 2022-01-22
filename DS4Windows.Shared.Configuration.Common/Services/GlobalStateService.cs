@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using DS4Windows;
 using DS4Windows.Shared.Common.Core;
 
-namespace DS4WinWPF.DS4Control.IoC.Services
+namespace DS4Windows.Shared.Common.Services
 {
     /// <summary>
     ///     Provides global properties that can change during runtime but will not be persisted to or restored from disk.

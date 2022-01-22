@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace DS4WinWPF.DS4Control.Attributes
+namespace DS4Windows.Shared.Common.Attributes
 {
     /// <summary>
     ///     Flag components which cause high memory allocations.
     /// </summary>
     [AttributeUsage(AttributeTargets.All)]
-    internal class HighMemoryPressureAttribute : Attribute
+    public class HighMemoryPressureAttribute : Attribute
     {
     }
 }

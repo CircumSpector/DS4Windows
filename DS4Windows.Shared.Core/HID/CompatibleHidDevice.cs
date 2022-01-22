@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Core.Telemetry;
 using DS4Windows.Shared.Core.Util;
 using JetBrains.Annotations;

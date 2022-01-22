@@ -1,5 +1,5 @@
 ﻿using System;
-using DS4WinWPF.DS4Control.Attributes;
+using DS4Windows.Shared.Common.Attributes;
 using Microsoft.Extensions.Logging;
 
 namespace DS4WinWPF.DS4Control.Logging

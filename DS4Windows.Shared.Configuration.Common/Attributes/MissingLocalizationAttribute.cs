@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace DS4WinWPF.DS4Control.Attributes
+namespace DS4Windows.Shared.Common.Attributes
 {
     /// <summary>
     ///     Section misses localization for non-English locales.
     /// </summary>
     [AttributeUsage(AttributeTargets.All)]
-    internal class MissingLocalizationAttribute : Attribute
+    public class MissingLocalizationAttribute : Attribute
     {
     }
 }

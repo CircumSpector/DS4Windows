@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Windows;
 using AdonisUI.Controls;
+using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.IoC.Services;
 using HttpProgress;
 using NonFormTimer = System.Timers.Timer;

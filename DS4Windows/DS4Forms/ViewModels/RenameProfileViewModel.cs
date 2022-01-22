@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Attributes;
+using DS4Windows.Shared.Common.Attributes;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {

@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Attributes;
+using DS4Windows.Shared.Common.Attributes;
 using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
 using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
 using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;

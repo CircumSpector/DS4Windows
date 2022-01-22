@@ -2,13 +2,14 @@
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Common.Attributes;
+using DS4Windows.Shared.Common.Services;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;
-using DS4Windows.Shared.Core.Util;
-using DS4WinWPF.DS4Control.Attributes;
 using Microsoft.Extensions.Logging;
 
-namespace DS4WinWPF.DS4Control.IoC.Services
+namespace DS4Windows.Shared.Configuration.Application.Services
 {
     public interface IAppSettingsService
     {
@@ -63,7 +64,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
     /// </summary>
     public sealed class AppSettingsService : IAppSettingsService
     {
-        private const string APPLICATION_SETTINGS_FILE_NAME = "ApplicationSettings.json";
+        private const string ApplicationSettingsFileName = "ApplicationSettings.json";
         private readonly IGlobalStateService global;
         private readonly ILogger<AppSettingsService> logger;
 
@@ -113,7 +114,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public async Task<bool> SaveAsync()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, ApplicationSettingsFileName);
 
             try
             {
@@ -134,7 +135,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public bool Save()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, ApplicationSettingsFileName);
 
             try
             {
@@ -155,7 +156,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public async Task<bool> LoadAsync()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, ApplicationSettingsFileName);
 
             if (!File.Exists(path))
             {
@@ -179,7 +180,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         /// </summary>
         public bool Load()
         {
-            var path = Path.Combine(global.RoamingAppDataPath, APPLICATION_SETTINGS_FILE_NAME);
+            var path = Path.Combine(global.RoamingAppDataPath, ApplicationSettingsFileName);
 
             if (!File.Exists(path))
             {

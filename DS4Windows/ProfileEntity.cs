@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using DS4Windows;
-using DS4WinWPF.DS4Control.Attributes;
+using DS4Windows.Shared.Common.Attributes;
 
 namespace DS4WinWPF
 {

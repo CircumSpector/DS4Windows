@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Common.Services;
+using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using Microsoft.Extensions.Logging;
 

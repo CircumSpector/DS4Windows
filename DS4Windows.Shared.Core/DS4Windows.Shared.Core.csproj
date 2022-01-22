@@ -32,4 +32,8 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="1.0.15-beta" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Common\DS4Windows.Shared.Common.csproj" />
+  </ItemGroup>
 </Project>

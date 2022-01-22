@@ -8,8 +8,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Core.HID;
-using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Properties;
@@ -1832,7 +1832,7 @@ namespace DS4Windows
             return X360Controls.Unbound;
         }
 
-        [HighMemoryPressure]
+        [Shared.Common.Attributes.HighMemoryPressure]
         public static void MapCustom(int device, DS4State cState, DS4State MappedState, DS4StateExposed eState,
             Mouse tp, ControlService ctrl)
         {

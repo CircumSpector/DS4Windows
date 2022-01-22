@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Windows.Documents;
 using DS4Windows;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.IoC.Services;
 using HttpProgress;
 using MarkdownEngine = MdXaml.Markdown;

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using DS4Windows;
+using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Types;
-using DS4WinWPF.DS4Control.Attributes;
+using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using DS4WinWPF.DS4Control.Profiles.Schema.Migrations;

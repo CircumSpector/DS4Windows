@@ -10,6 +10,7 @@ using DS4Windows.DS4Library;
 using DS4Windows.DS4Library.CoreAudio;
 using DS4Windows.InputDevices;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Core.HID;
 using DS4Windows.Shared.Core.Util;

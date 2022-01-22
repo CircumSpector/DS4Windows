@@ -33,7 +33,7 @@
 */
 using System;
 using System.Globalization;
-using DS4WinWPF.DS4Control.Attributes;
+using DS4Windows.Shared.Common.Attributes;
 using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4Windows

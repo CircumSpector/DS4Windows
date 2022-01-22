@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4WinWPF.DS4Forms.ViewModels

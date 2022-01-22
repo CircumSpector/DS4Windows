@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DS4Windows;
+using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
-using DS4WinWPF.DS4Control.Attributes;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 
 namespace DS4WinWPF.DS4Control
