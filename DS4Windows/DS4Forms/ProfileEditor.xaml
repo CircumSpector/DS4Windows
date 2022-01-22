@@ -10,6 +10,7 @@
              xmlns:System="clr-namespace:System;assembly=System.Runtime"
              xmlns:schema="clr-namespace:DS4WinWPF.DS4Control.Profiles.Schema"
              xmlns:converters="clr-namespace:DS4WinWPF.DS4Forms.Converters"
+             xmlns:types="clr-namespace:DS4Windows.Shared.Common.Types;assembly=DS4Windows.Shared.Common"
              lex:LocalizeDictionary.DesignCulture=""
              lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
@@ -23,7 +24,7 @@
         <ObjectDataProvider x:Key="CurveModes" MethodName="GetValues"
                             ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="schema:CurveMode"/>
+                <x:Type TypeName="types:CurveMode"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>
