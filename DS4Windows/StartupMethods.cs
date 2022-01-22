@@ -1,49 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Security;
 using DS4Windows;
 using DS4Windows.Shared.Common.Core;
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
-using Task = Microsoft.Win32.TaskScheduler.Task;
 
 namespace DS4WinWPF
 {
-    [System.Security.SuppressUnmanagedCodeSecurity]
+    [SuppressUnmanagedCodeSecurity]
     public static class StartupMethods
     {
-        public static string lnkpath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DS4Windows.lnk";
-        private static string taskBatPath = Path.Combine(DS4Windows.Global.ExecutableDirectory, "task.bat");
         private const string net5SubKey = @"SOFTWARE\dotnet\Setup\InstalledVersions";
+
+        public static string lnkpath =
+            Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DS4Windows.lnk";
+
+        private static readonly string taskBatPath = Path.Combine(Global.ExecutableDirectory, "task.bat");
 
         public static bool HasStartProgEntry()
         {
             // Exception handling should not be needed here. Method handles most cases
-            bool exists = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DS4Windows.lnk");
+            var exists = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DS4Windows.lnk");
             return exists;
         }
 
         public static bool HasTaskEntry()
         {
-            TaskService ts = new TaskService();
-            Task tasker = ts.FindTask("RunDS4Windows");
+            var ts = new TaskService();
+            var tasker = ts.FindTask("RunDS4Windows");
             return tasker != null;
         }
 
         public static void WriteStartProgEntry()
         {
-            Type t = Type.GetTypeFromCLSID(Constants.WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
+            var t = Type.GetTypeFromCLSID(Constants
+                .WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
             dynamic shell = Activator.CreateInstance(t);
             try
             {
                 var lnk = shell.CreateShortcut(lnkpath);
                 try
                 {
-                    string app = DS4Windows.Global.ExecutableLocation;
-                    lnk.TargetPath = DS4Windows.Global.ExecutableLocation;
+                    var app = Global.ExecutableLocation;
+                    lnk.TargetPath = Global.ExecutableLocation;
                     lnk.Arguments = "-m";
 
                     //lnk.TargetPath = Assembly.GetExecutingAssembly().Location;
@@ -64,40 +65,30 @@ namespace DS4WinWPF
 
         public static void DeleteStartProgEntry()
         {
-            if (File.Exists(lnkpath) && !new FileInfo(lnkpath).IsReadOnly)
-            {
-                File.Delete(lnkpath);
-            }
+            if (File.Exists(lnkpath) && !new FileInfo(lnkpath).IsReadOnly) File.Delete(lnkpath);
         }
 
         public static void DeleteOldTaskEntry()
         {
-            TaskService ts = new TaskService();
-            Task tasker = ts.FindTask("RunDS4Windows");
+            var ts = new TaskService();
+            var tasker = ts.FindTask("RunDS4Windows");
             if (tasker != null)
-            {
-                foreach(Microsoft.Win32.TaskScheduler.Action act in tasker.Definition.Actions)
-                {
+                foreach (var act in tasker.Definition.Actions)
                     if (act.ActionType == TaskActionType.Execute)
                     {
-                        ExecAction temp = act as ExecAction;
+                        var temp = act as ExecAction;
                         if (temp.Path != taskBatPath)
                         {
                             ts.RootFolder.DeleteTask("RunDS4Windows");
                             break;
                         }
                     }
-                }
-            }
         }
 
         public static bool CanWriteStartEntry()
         {
-            bool result = false;
-            if (!new FileInfo(lnkpath).IsReadOnly)
-            {
-                result = true;
-            }
+            var result = false;
+            if (!new FileInfo(lnkpath).IsReadOnly) result = true;
 
             return result;
         }
@@ -110,10 +101,10 @@ namespace DS4WinWPF
             // filename. Allow dynamic file
             RefreshTaskBat();
 
-            TaskService ts = new TaskService();
-            TaskDefinition td = ts.NewTask();
+            var ts = new TaskService();
+            var td = ts.NewTask();
             td.Triggers.Add(new LogonTrigger());
-            string dir = DS4Windows.Global.ExecutableDirectory;
+            var dir = Global.ExecutableDirectory;
             td.Actions.Add(new ExecAction($@"{dir}\task.bat",
                 "",
                 dir));
@@ -126,33 +117,27 @@ namespace DS4WinWPF
 
         public static void DeleteTaskEntry()
         {
-            TaskService ts = new TaskService();
-            Task tasker = ts.FindTask("RunDS4Windows");
-            if (tasker != null)
-            {
-                ts.RootFolder.DeleteTask("RunDS4Windows");
-            }
+            var ts = new TaskService();
+            var tasker = ts.FindTask("RunDS4Windows");
+            if (tasker != null) ts.RootFolder.DeleteTask("RunDS4Windows");
         }
 
         public static bool CheckStartupExeLocation()
         {
-            string lnkprogpath = ResolveShortcut(lnkpath);
-            return lnkprogpath != DS4Windows.Global.ExecutableLocation;
+            var lnkprogpath = ResolveShortcut(lnkpath);
+            return lnkprogpath != Global.ExecutableLocation;
         }
 
         public static Version NetVersionInstalled()
         {
-            Version result = new Version("0.0.0");
-            string archLookup = Environment.Is64BitProcess ? "x64" : "x86";
-            using (RegistryKey baseKey = Registry.LocalMachine.OpenSubKey($@"{net5SubKey}\{archLookup}\sharedhost"))
+            var result = new Version("0.0.0");
+            var archLookup = Environment.Is64BitProcess ? "x64" : "x86";
+            using (var baseKey = Registry.LocalMachine.OpenSubKey($@"{net5SubKey}\{archLookup}\sharedhost"))
             {
                 if (baseKey != null)
                 {
-                    string tempVersion = baseKey.GetValue("Version")?.ToString() ?? string.Empty;
-                    if (!string.IsNullOrEmpty(tempVersion))
-                    {
-                        result = new Version(tempVersion);
-                    }
+                    var tempVersion = baseKey.GetValue("Version")?.ToString() ?? string.Empty;
+                    if (!string.IsNullOrEmpty(tempVersion)) result = new Version(tempVersion);
                 }
             }
 
@@ -161,17 +146,15 @@ namespace DS4WinWPF
 
         public static void LaunchOldTask()
         {
-            TaskService ts = new TaskService();
-            Task tasker = ts.FindTask("RunDS4Windows");
-            if (tasker != null)
-            {
-                tasker.Run("");
-            }
+            var ts = new TaskService();
+            var tasker = ts.FindTask("RunDS4Windows");
+            if (tasker != null) tasker.Run("");
         }
 
         private static string ResolveShortcut(string filePath)
         {
-            Type t = Type.GetTypeFromCLSID(Constants.WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
+            var t = Type.GetTypeFromCLSID(Constants
+                .WindowsScriptHostShellObjectGuild); // Windows Script Host Shell Object
             dynamic shell = Activator.CreateInstance(t);
             string result;
 
