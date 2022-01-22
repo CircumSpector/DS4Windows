@@ -34,6 +34,16 @@ namespace DS4Windows.Shared.Common.Services
         ///     Absolute path to <see cref="Constants.LegacyAutoProfilesFileName" />
         /// </summary>
         string AutoSwitchingProfilesPath { get; }
+
+        /// <summary>
+        ///     Gets fired once the startup checks are done and the main window is ready to be rendered.
+        /// </summary>
+        event Action StartupTasksCompleted;
+
+        /// <summary>
+        ///     Triggers <see cref="StartupTasksCompleted" />.
+        /// </summary>
+        void InvokeStartupTasksCompleted();
     }
 
     /// <summary>
@@ -105,6 +115,15 @@ namespace DS4Windows.Shared.Common.Services
                     ? programFolderFile
                     : Path.Combine(RoamingAppDataPath, Constants.LegacyAutoProfilesFileName);
             }
+        }
+
+        /// <inheritdoc />
+        public event Action StartupTasksCompleted;
+
+        /// <inheritdoc />
+        public void InvokeStartupTasksCompleted()
+        {
+            StartupTasksCompleted?.Invoke();
         }
 
         /// <summary>

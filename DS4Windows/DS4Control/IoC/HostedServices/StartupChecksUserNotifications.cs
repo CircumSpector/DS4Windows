@@ -4,9 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using AdonisUI.Controls;
-using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Services;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.Translations;
@@ -31,16 +31,20 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
 
         private readonly IExternalDependenciesService dependenciesService;
 
+        private readonly IGlobalStateService globalStateService;
+
         private readonly ILogger<StartupChecksUserNotifications> logger;
 
         public StartupChecksUserNotifications(IAppSettingsService appSettings,
             ILogger<StartupChecksUserNotifications> logger,
-            IExternalDependenciesService dependenciesService, IConfiguration config)
+            IExternalDependenciesService dependenciesService, IConfiguration config,
+            IGlobalStateService globalStateService)
         {
             this.appSettings = appSettings;
             this.logger = logger;
             this.dependenciesService = dependenciesService;
             this.config = config;
+            this.globalStateService = globalStateService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -69,6 +73,11 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
             await CheckAppArchitecture();
 
             logger.LogInformation("Done performing startup tasks");
+
+            //
+            // Signal whoever is interested that we're ready
+            // 
+            globalStateService.InvokeStartupTasksCompleted();
         }
 
         [MissingLocalization]
@@ -163,6 +172,18 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                 !isEnabled)
                 return;
 
+            var lastConfirmed = appSettings.Settings.LastTracingConfirmationTimestamp;
+
+            //
+            // Don't nag for 24 hours
+            // 
+            if (DateTimeOffset.UtcNow < lastConfirmed.AddHours(24))
+            {
+                logger.LogDebug("User confirmed trace dialog at {Timestamp}, suppressing message",
+                    lastConfirmed);
+                return;
+            }
+
             var messageBox = new MessageBoxModel
             {
                 Text =
@@ -190,6 +211,9 @@ namespace DS4WinWPF.DS4Control.IoC.HostedServices
                 {
                     case MessageBoxResult.Custom:
                         DS4Windows.Util.StartProcessHelper(Constants.TracingGuideUri);
+                        break;
+                    case MessageBoxResult.Yes:
+                        appSettings.Settings.LastTracingConfirmationTimestamp = DateTimeOffset.UtcNow;
                         break;
                 }
             });

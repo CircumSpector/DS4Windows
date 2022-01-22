@@ -113,6 +113,11 @@ namespace DS4Windows.Shared.Configuration.Application.Schema
         public string EmbeddedWebServerUrl { get; set; } = "http://localhost:11838";
 
         /// <summary>
+        ///     Holds timestamp when user confirmed tracing message the last time.
+        /// </summary>
+        public DateTimeOffset LastTracingConfirmationTimestamp { get; set; }
+
+        /// <summary>
         ///     Gets slot to profile assignments.
         /// </summary>
         public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable

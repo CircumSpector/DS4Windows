@@ -42,6 +42,7 @@ using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
+using Swan;
 using WPFLocalizeExtension.Engine;
 
 namespace DS4WinWPF
@@ -70,6 +71,8 @@ namespace DS4WinWPF
         private bool exitComThread;
 
         private ILogger<App> logger;
+
+        private IGlobalStateService globalState;
 
         private IProfilesService profileService;
         private ControlService rootHub;
@@ -205,6 +208,9 @@ namespace DS4WinWPF
         protected override async void OnStartup(StartupEventArgs e)
         {
             logger = host.Services.GetRequiredService<ILogger<App>>();
+            globalState = host.Services.GetRequiredService<IGlobalStateService>();
+
+            globalState.StartupTasksCompleted += GlobalStateOnStartupTasksCompleted;
 
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -380,6 +386,13 @@ namespace DS4WinWPF
 
 
             base.OnStartup(e);
+        }
+
+        private void GlobalStateOnStartupTasksCompleted()
+        {
+            //
+            // TODO: move main window creation into here
+            // 
         }
 
         protected override async void OnExit(ExitEventArgs e)
