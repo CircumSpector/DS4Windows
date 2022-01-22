@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using DS4Windows;
+using DS4Windows.Shared.Common.Types;
 
 namespace DS4WinWPF.DS4Forms
 {

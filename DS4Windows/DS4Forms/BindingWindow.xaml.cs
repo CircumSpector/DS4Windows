@@ -8,6 +8,7 @@ using System.Windows.Media;
 using AdonisUI.Controls;
 using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Forms.ViewModels;
 
 namespace DS4WinWPF.DS4Forms

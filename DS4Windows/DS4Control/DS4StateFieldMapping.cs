@@ -1,4 +1,6 @@
-﻿namespace DS4Windows
+﻿using DS4Windows.Shared.Common.Types;
+
+namespace DS4Windows
 {
     public class DS4StateFieldMapping
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DS4Windows;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 
 namespace DS4WinWPF.DS4Forms.ViewModels.SpecialActions

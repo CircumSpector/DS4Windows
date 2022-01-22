@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DS4Windows.Shared.Common.Types;
+using System;
 
 namespace DS4Windows
 {
@@ -143,59 +144,6 @@ namespace DS4Windows
         }
     }
 
-    public enum DS4Controls : byte
-    {
-        None,
-        LXNeg,
-        LXPos,
-        LYNeg,
-        LYPos,
-        RXNeg,
-        RXPos,
-        RYNeg,
-        RYPos,
-        L1,
-        L2,
-        L3,
-        R1,
-        R2,
-        R3,
-        Square,
-        Triangle,
-        Circle,
-        Cross,
-        DpadUp,
-        DpadRight,
-        DpadDown,
-        DpadLeft,
-        PS,
-        TouchLeft,
-        TouchUpper,
-        TouchMulti,
-        TouchRight,
-        Share,
-        Options,
-        Mute,
-        GyroXPos,
-        GyroXNeg,
-        GyroZPos,
-        GyroZNeg,
-        SwipeLeft,
-        SwipeRight,
-        SwipeUp,
-        SwipeDown,
-        L2FullPull,
-        R2FullPull,
-        GyroSwipeLeft,
-        GyroSwipeRight,
-        GyroSwipeUp,
-        GyroSwipeDown,
-        Capture,
-        SideL,
-        SideR,
-        LSOuter,
-        RSOuter
-    }
 
     public enum X360Controls : byte
     {

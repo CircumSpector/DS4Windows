@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using DS4Windows;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.Profiles.Schema.Converters;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
