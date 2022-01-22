@@ -3,6 +3,7 @@ using System.Threading;
 
 namespace DS4Windows
 {
+    [Obsolete]
     public class ReadLocker : IDisposable
     {
         private ReaderWriterLockSlim _lockerInstance;
@@ -19,6 +20,7 @@ namespace DS4Windows
         }
     }
 
+    [Obsolete]
     public class WriteLocker : IDisposable
     {
         private ReaderWriterLockSlim _lockerInstance;

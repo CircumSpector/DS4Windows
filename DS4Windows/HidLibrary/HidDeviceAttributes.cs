@@ -1,5 +1,8 @@
-﻿namespace DS4Windows
+﻿using System;
+
+namespace DS4Windows
 {
+    [Obsolete]
     public class HidDeviceAttributes
     {
         internal HidDeviceAttributes(NativeMethods.HIDD_ATTRIBUTES attributes)
