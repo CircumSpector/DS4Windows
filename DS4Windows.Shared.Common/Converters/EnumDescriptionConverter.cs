@@ -19,6 +19,11 @@ namespace DS4Windows.Shared.Common.Converters
             return string.Empty;
         }
 
+        /// <summary>
+        ///     Lookup and return the value of the Description attribute of an Enum item.
+        /// </summary>
+        /// <param name="enumObj">The <see cref="Enum"/> item to lookup.</param>
+        /// <returns>The description string, if found. An Empty string otherwise.</returns>
         public static string GetEnumDescription(Enum enumObj)
         {
             var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());

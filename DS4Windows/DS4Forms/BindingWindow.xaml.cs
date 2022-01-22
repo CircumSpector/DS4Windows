@@ -120,7 +120,7 @@ namespace DS4WinWPF.DS4Forms
             if (bindingVM.Using360Mode)
             {
                 var xboxcontrol = associatedBindings[button].Control;
-                result = Global.XboxDefaultNames[xboxcontrol];
+                result = EnumDescriptionConverter.GetEnumDescription(xboxcontrol);
             }
             else
             {

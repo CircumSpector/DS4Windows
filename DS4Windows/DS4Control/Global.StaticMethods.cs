@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 using DS4Windows.DS4Control;
+using DS4Windows.Shared.Common.Converters;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Types;
 
@@ -188,7 +189,7 @@ namespace DS4Windows
             switch (conType)
             {
                 case OutputDeviceType.Xbox360Controller:
-                    XboxDefaultNames.TryGetValue(key, out result);
+                    result = EnumDescriptionConverter.GetEnumDescription(key);
                     break;
                 case OutputDeviceType.DualShock4Controller:
                     Ds4DefaultNames.TryGetValue(key, out result);

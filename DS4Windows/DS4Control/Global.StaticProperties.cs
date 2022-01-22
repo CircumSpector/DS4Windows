@@ -204,50 +204,6 @@ namespace DS4Windows
             X360ControlItem.None // DS4Controls.RSOuter
         };
 
-         public static Dictionary<X360ControlItem, string> XboxDefaultNames =>
-            new()
-            {
-                [X360ControlItem.LXNeg] = "Left X-Axis-",
-                [X360ControlItem.LXPos] = "Left X-Axis+",
-                [X360ControlItem.LYNeg] = "Left Y-Axis-",
-                [X360ControlItem.LYPos] = "Left Y-Axis+",
-                [X360ControlItem.RXNeg] = "Right X-Axis-",
-                [X360ControlItem.RXPos] = "Right X-Axis+",
-                [X360ControlItem.RYNeg] = "Right Y-Axis-",
-                [X360ControlItem.RYPos] = "Right Y-Axis+",
-                [X360ControlItem.LB] = "Left Bumper",
-                [X360ControlItem.LT] = "Left Trigger",
-                [X360ControlItem.LS] = "Left Stick",
-                [X360ControlItem.RB] = "Right Bumper",
-                [X360ControlItem.RT] = "Right Trigger",
-                [X360ControlItem.RS] = "Right Stick",
-                [X360ControlItem.X] = "X Button",
-                [X360ControlItem.Y] = "Y Button",
-                [X360ControlItem.B] = "B Button",
-                [X360ControlItem.A] = "A Button",
-                [X360ControlItem.DpadUp] = "Up Button",
-                [X360ControlItem.DpadRight] = "Right Button",
-                [X360ControlItem.DpadDown] = "Down Button",
-                [X360ControlItem.DpadLeft] = "Left Button",
-                [X360ControlItem.Guide] = "Guide",
-                [X360ControlItem.Back] = "Back",
-                [X360ControlItem.Start] = "Start",
-                [X360ControlItem.TouchpadClick] = "Touchpad Click",
-                [X360ControlItem.LeftMouse] = "Left Mouse Button",
-                [X360ControlItem.RightMouse] = "Right Mouse Button",
-                [X360ControlItem.MiddleMouse] = "Middle Mouse Button",
-                [X360ControlItem.FourthMouse] = "4th Mouse Button",
-                [X360ControlItem.FifthMouse] = "5th Mouse Button",
-                [X360ControlItem.WUP] = "Mouse Wheel Up",
-                [X360ControlItem.WDOWN] = "Mouse Wheel Down",
-                [X360ControlItem.MouseUp] = "Mouse Up",
-                [X360ControlItem.MouseDown] = "Mouse Down",
-                [X360ControlItem.MouseLeft] = "Mouse Left",
-                [X360ControlItem.MouseRight] = "Mouse Right",
-                [X360ControlItem.Unbound] = "Unbound",
-                [X360ControlItem.None] = "Unassigned"
-            };
-
         public static Dictionary<X360ControlItem, string> Ds4DefaultNames => new()
         {
             [X360ControlItem.LXNeg] = "Left X-Axis-",
