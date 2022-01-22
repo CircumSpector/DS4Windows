@@ -1,11 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
-using DS4WinWPF.DS4Control.IoC.Services;
 
 namespace DS4Windows
 {

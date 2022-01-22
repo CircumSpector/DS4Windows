@@ -29,7 +29,7 @@ namespace DS4Windows
         IList<string> OlderProfilePath { get; set; }
 
         IList<bool> DistanceProfiles { get; set; }
-        
+
         IList<BezierCurve> LSOutCurve { get; set; }
 
         IList<BezierCurve> RSOutCurve { get; set; }

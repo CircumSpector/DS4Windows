@@ -6,7 +6,6 @@ using System.Xml;
 using DS4Windows.DS4Control;
 using DS4Windows.Shared.Common.Types;
 
-
 namespace DS4Windows
 {
     public partial class Global
@@ -55,7 +54,7 @@ namespace DS4Windows
 
         public static VirtualKBMBase outputKBMHandler;
         public static VirtualKBMMapping outputKBMMapping;
-        
+
         public static Dictionary<TrayIconChoice, string> IconChoiceResources = new()
         {
             [TrayIconChoice.Default] = "/DS4Windows;component/Resources/DS4W.ico",
@@ -122,7 +121,7 @@ namespace DS4Windows
         }
 
         public bool[] TouchActive => TouchpadActive;
-        
+
         public static bool CreateAutoProfiles(string m_Profile)
         {
             var Saved = true;

@@ -26,17 +26,16 @@ namespace DS4Windows
         // 
         public SpecialActionV3()
         {
-
         }
 
         public SpecialActionV3(
-            string name, 
-            string controls, 
-            string type, 
-            string details, 
+            string name,
+            string controls,
+            string type,
+            string details,
             double delayTime = 0,
             string extras = ""
-            )
+        )
         {
             Name = name;
             Type = type;
@@ -273,7 +272,7 @@ namespace DS4Windows
                 "Tilt Down" => DS4ControlItem.GyroZPos,
                 "Tilt Left" => DS4ControlItem.GyroXPos,
                 "Tilt Right" => DS4ControlItem.GyroXNeg,
-                _ => 0,
+                _ => 0
             };
         }
     }
