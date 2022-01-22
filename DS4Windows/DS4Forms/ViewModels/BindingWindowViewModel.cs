@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using DS4Windows;
+using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.Properties;

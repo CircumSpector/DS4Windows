@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DS4Windows;
+using DS4Windows.Shared.Common.Legacy;
 using DS4WinWPF.Properties;
 using JetBrains.Annotations;
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 
 namespace DS4Windows

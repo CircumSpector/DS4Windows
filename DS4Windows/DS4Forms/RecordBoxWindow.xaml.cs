@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using DS4Windows;
+using DS4Windows.Shared.Common.Legacy;
 
 namespace DS4WinWPF.DS4Forms
 {

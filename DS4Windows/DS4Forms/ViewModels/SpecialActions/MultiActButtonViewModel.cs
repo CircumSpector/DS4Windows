@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DS4Windows;
+using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
 using DS4WinWPF.Properties;

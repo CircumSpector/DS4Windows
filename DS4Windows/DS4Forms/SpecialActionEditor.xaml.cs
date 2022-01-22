@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DS4Windows;
+using DS4Windows.Shared.Common.Legacy;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4WinWPF.DS4Forms.ViewModels.SpecialActions;
 using Microsoft.Win32;
@@ -334,7 +335,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void RecordMacroBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettingsV3 settings = macroActVM.PrepareSettings();
+            DS4ControlSettingsV3 settings = macroActVM.PrepareSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings);
             recordWin.Saved += (sender2, args) =>
             {
@@ -414,7 +415,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettingsV3 settings = multiActButtonVM.PrepareTapSettings();
+            DS4ControlSettingsV3 settings = multiActButtonVM.PrepareTapSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
@@ -428,7 +429,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiHoldTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettingsV3 settings = multiActButtonVM.PrepareHoldSettings();
+            DS4ControlSettingsV3 settings = multiActButtonVM.PrepareHoldSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
@@ -442,7 +443,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void MultiDoubleTapTrigBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettingsV3 settings = multiActButtonVM.PrepareDoubleTapSettings();
+            DS4ControlSettingsV3 settings = multiActButtonVM.PrepareDoubleTapSettings();
             RecordBoxWindow recordWin = new RecordBoxWindow(specialActVM.DeviceNum, settings, false);
             recordWin.Saved += (sender2, args) =>
             {
@@ -474,7 +475,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void PressKeySelectBtn_Click(object sender, RoutedEventArgs e)
         {
-            DS4Windows.DS4ControlSettingsV3 settings = pressKeyVM.PrepareSettings();
+            DS4ControlSettingsV3 settings = pressKeyVM.PrepareSettings();
             BindingWindow window = new BindingWindow(rootHub, specialActVM.DeviceNum, settings,
                 BindingWindow.ExposeMode.Keyboard)
             {

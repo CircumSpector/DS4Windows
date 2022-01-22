@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Xml;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
