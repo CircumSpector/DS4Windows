@@ -6,6 +6,7 @@ namespace DS4Windows
 {
     public partial class ControlService
     {
+        [Obsolete]
         private void OutputslotMan_ViGEmFailure(object sender, EventArgs e)
         {
             EventDispatcher.BeginInvoke((Action)(() =>

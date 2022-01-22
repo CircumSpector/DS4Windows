@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using DS4WinWPF.DS4Control;
 using static DS4Windows.Global;
@@ -7,6 +8,7 @@ namespace DS4Windows
 {
     public partial class ControlService
     {
+        [Obsolete]
         public void CheckHidHidePresence()
         {
             if (hidHideInstalled)
@@ -43,6 +45,7 @@ namespace DS4Windows
             }
         }
 
+        [Obsolete]
         public void UpdateHidHideAttributes()
         {
             if (hidHideInstalled)
@@ -65,11 +68,13 @@ namespace DS4Windows
             }
         }
 
+        [Obsolete]
         public void UpdateHidHiddenAttributes()
         {
             if (hidHideInstalled) UpdateHidHideAttributes();
         }
 
+        [Obsolete]
         private bool CheckAffected(DS4Device dev)
         {
             var result = false;

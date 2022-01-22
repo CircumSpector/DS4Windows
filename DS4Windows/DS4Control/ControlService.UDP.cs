@@ -8,8 +8,8 @@ namespace DS4Windows
 {
     public partial class ControlService
     {
-        private bool udpChangeStatus;
         public bool changingUDPPort;
+        private bool udpChangeStatus;
 
         public async void UseUDPPort()
         {
@@ -61,21 +61,6 @@ namespace DS4Windows
                 appSettings.Settings.UDPServerSmoothingOptions.Beta);
         }
 
-        private void ChangeUdpSmoothingAttrs()
-        {
-            foreach (var filter3D in udpEuroPairAccel)
-            {
-                filter3D.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
-                    appSettings.Settings.UDPServerSmoothingOptions.Beta);
-            }
-
-            foreach (var filter3D in udpEuroPairGyro)
-            {
-                filter3D.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
-                    appSettings.Settings.UDPServerSmoothingOptions.Beta);
-            }
-        }
-
         public void ChangeUDPStatus(bool state, bool openPort = true)
         {
             if (state && _udpServer == null)
@@ -123,6 +108,17 @@ namespace DS4Windows
                     for (var i = 0; i < UdpServer.NUMBER_SLOTS; i++) ResetUdpSmoothingFilters(i);
                 });
             }
+        }
+
+        private void ChangeUdpSmoothingAttrs()
+        {
+            foreach (var filter3D in udpEuroPairAccel)
+                filter3D.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
+                    appSettings.Settings.UDPServerSmoothingOptions.Beta);
+
+            foreach (var filter3D in udpEuroPairGyro)
+                filter3D.SetFilterAttrs(appSettings.Settings.UDPServerSmoothingOptions.MinCutoff,
+                    appSettings.Settings.UDPServerSmoothingOptions.Beta);
         }
     }
 }
