@@ -83,6 +83,8 @@ namespace DS4WinWPF
         private Thread testThread;
         private EventWaitHandle threadComEvent;
 
+        private readonly ActivitySource appActivitySource = new(Constants.ApplicationName);
+
         public App()
         {
             var configuration = new ConfigurationBuilder()
@@ -220,6 +222,9 @@ namespace DS4WinWPF
             // Boot all hosted services
             // 
             await host.StartAsync();
+
+            using var activity = appActivitySource.StartActivity(
+                $"{nameof(App)}:{nameof(OnStartup)}");
 
             var version = Global.ExecutableProductVersion;
 
