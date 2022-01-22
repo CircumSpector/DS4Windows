@@ -46,7 +46,7 @@ namespace DS4Windows.Shared.Devices.Services
         private readonly ObservableCollection<HidDevice> connectedDevices;
 
         private readonly IDeviceNotificationListenerSubscriber deviceNotificationListener;
-        private readonly Guid hidClassInterfaceGuid = Guid.Empty;
+        private readonly Guid hidClassInterfaceGuid;
 
         private readonly ILogger<HidDeviceEnumeratorService> logger;
 
