@@ -7,8 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows;
 using DS4Windows.Shared.Configuration.Application.Services;
-using DS4WinWPF.DS4Control.IoC.Services;
-using DS4WinWPF.DS4Control.Logging; // StopWatch
+using DS4WinWPF.DS4Control.Logging;
+
+// StopWatch
 // Sleep
 
 namespace DS4WinWPF
@@ -18,18 +19,18 @@ namespace DS4WinWPF
     {
         public delegate void ChangeServiceHandler(AutoProfileChecker sender, bool state);
 
+        private readonly IAppSettingsService appSettings;
+
         private readonly StringBuilder autoProfileCheckTextBuilder = new(1000);
+        private readonly AutoProfileHolder profileHolder;
+
+        private readonly ControlService rootHub;
         private uint prevForegroundProcessID;
         private string prevForegroundProcessName = string.Empty;
         private IntPtr prevForegroundWnd = IntPtr.Zero;
         private string prevForegroundWndTitleName = string.Empty;
-        private readonly AutoProfileHolder profileHolder;
         private AutoProfileEntity tempAutoProfile;
         private bool turnOffTemp;
-
-        private readonly ControlService rootHub;
-
-        private readonly IAppSettingsService appSettings;
 
         public AutoProfileChecker(IAppSettingsService appSettings, ControlService service, AutoProfileHolder holder)
         {
