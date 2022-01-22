@@ -187,10 +187,10 @@ namespace DS4Windows
 
             switch (conType)
             {
-                case OutputDeviceType.X360:
+                case OutputDeviceType.Xbox360Controller:
                     XboxDefaultNames.TryGetValue(key, out result);
                     break;
-                case OutputDeviceType.DS4:
+                case OutputDeviceType.DualShock4Controller:
                     Ds4DefaultNames.TryGetValue(key, out result);
                     break;
             }

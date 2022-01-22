@@ -189,10 +189,10 @@ namespace DS4WinWPF.DS4Forms
                                             ControlService.CurrentInstance.DetachUnboundOutDev(slotDevice);
                                         else if (strData[2] == "plugds4")
                                             ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice,
-                                                OutputDeviceType.DS4);
+                                                OutputDeviceType.DualShock4Controller);
                                         else if (strData[2] == "plugx360")
                                             ControlService.CurrentInstance.AttachUnboundOutDev(slotDevice,
-                                                OutputDeviceType.X360);
+                                                OutputDeviceType.Xbox360Controller);
                                     }
                                 }
                                 else if (strData[0] == "query" && strData.Length >= 3)

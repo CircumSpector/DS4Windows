@@ -5846,7 +5846,7 @@ namespace DS4Windows
                 var sxAntiDead = ProfilesService.Instance.ActiveProfiles.ElementAt(device).SXAntiDeadZone;
 
                 int outputAxisMax, outputAxisMin, outputAxisZero;
-                if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType == OutputDeviceType.DS4)
+                if (ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType == OutputDeviceType.DualShock4Controller)
                 {
                     // DS4 analog stick axis supports only 0...255 output value range (not the best one for steering wheel usage)
                     outputAxisMax = 255;

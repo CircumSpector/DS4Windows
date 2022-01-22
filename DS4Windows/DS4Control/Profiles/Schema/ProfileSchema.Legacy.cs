@@ -451,7 +451,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public TouchpadAbsMouseSettings TouchpadAbsMouseSettings { get; set; } = new();
 
         [XmlElement(ElementName = "OutputContDevice")]
-        public OutputDeviceType OutputContDevice { get; set; } = OutputDeviceType.X360;
+        public OutputDeviceType OutputContDevice { get; set; } = OutputDeviceType.Xbox360Controller;
         
         [XmlElement(ElementName = "Control")] 
         public Control Controls { get; set; } = new();

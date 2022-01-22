@@ -281,10 +281,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 case OutputDeviceType.None:
                     result = 0;
                     break;
-                case OutputDeviceType.X360:
+                case OutputDeviceType.Xbox360Controller:
                     result = 1;
                     break;
-                case OutputDeviceType.DS4:
+                case OutputDeviceType.DualShock4Controller:
                     result = 2;
                     break;
             }
@@ -317,10 +317,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                     result = OutputDeviceType.None;
                     break;
                 case 1:
-                    result = OutputDeviceType.X360;
+                    result = OutputDeviceType.Xbox360Controller;
                     break;
                 case 2:
-                    result = OutputDeviceType.DS4;
+                    result = OutputDeviceType.DualShock4Controller;
                     break;
             }
 

@@ -650,7 +650,7 @@ namespace DS4Windows
         {
             var devIndex = index;
 
-            if (contType == OutputDeviceType.X360)
+            if (contType == OutputDeviceType.Xbox360Controller)
             {
                 var tempXbox = outDevice as Xbox360OutDevice;
                 Xbox360FeedbackReceivedEventHandler p = (sender, args) =>
@@ -741,7 +741,7 @@ namespace DS4Windows
 
         public void RemoveOutFeedback(OutputDeviceType contType, OutputDevice outDevice, int inIdx)
         {
-            if (contType == OutputDeviceType.X360)
+            if (contType == OutputDeviceType.Xbox360Controller)
             {
                 var tempXbox = outDevice as Xbox360OutDevice;
                 tempXbox.RemoveFeedback(inIdx);
@@ -806,29 +806,29 @@ namespace DS4Windows
             var success = false;
             switch (contType)
             {
-                case OutputDeviceType.X360:
+                case OutputDeviceType.Xbox360Controller:
                 {
-                    ActiveOutDevType[index] = OutputDeviceType.X360;
+                    ActiveOutDevType[index] = OutputDeviceType.Xbox360Controller;
 
                     if (slotDevice == null)
                     {
                         slotDevice = OutputslotMan.FindOpenSlot();
                         if (slotDevice != null)
                         {
-                            var tempXbox = EstablishOutDevice(index, OutputDeviceType.X360)
+                            var tempXbox = EstablishOutDevice(index, OutputDeviceType.Xbox360Controller)
                                 as Xbox360OutDevice;
                             //outputDevices[index] = tempXbox;
 
                             // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                             if (profile.EnableOutputDataToDS4)
                             {
-                                EstablishOutFeedback(index, OutputDeviceType.X360, tempXbox, device);
+                                EstablishOutFeedback(index, OutputDeviceType.Xbox360Controller, tempXbox, device);
 
                                 if (device.JointDeviceSlotNumber != -1)
                                 {
                                     var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                     if (tempDS4Device != null)
-                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.X360, tempXbox,
+                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.Xbox360Controller, tempXbox,
                                             tempDS4Device);
                                 }
                             }
@@ -852,13 +852,13 @@ namespace DS4Windows
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                         if (profile.EnableOutputDataToDS4)
                         {
-                            EstablishOutFeedback(index, OutputDeviceType.X360, tempXbox, device);
+                            EstablishOutFeedback(index, OutputDeviceType.Xbox360Controller, tempXbox, device);
 
                             if (device.JointDeviceSlotNumber != -1)
                             {
                                 var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                 if (tempDS4Device != null)
-                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.X360, tempXbox,
+                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.Xbox360Controller, tempXbox,
                                         tempDS4Device);
                             }
                         }
@@ -876,27 +876,27 @@ namespace DS4Windows
                     //LogDebug("X360 Controller #" + (index + 1) + " connected");
                     break;
                 }
-                case OutputDeviceType.DS4:
+                case OutputDeviceType.DualShock4Controller:
                 {
-                    ActiveOutDevType[index] = OutputDeviceType.DS4;
+                    ActiveOutDevType[index] = OutputDeviceType.DualShock4Controller;
                     if (slotDevice == null)
                     {
                         slotDevice = OutputslotMan.FindOpenSlot();
                         if (slotDevice != null)
                         {
-                            var tempDS4 = EstablishOutDevice(index, OutputDeviceType.DS4)
+                            var tempDS4 = EstablishOutDevice(index, OutputDeviceType.DualShock4Controller)
                                 as DS4OutDevice;
 
                             // Enable ViGem feedback callback handler only if DS4 lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                             if (profile.EnableOutputDataToDS4)
                             {
-                                EstablishOutFeedback(index, OutputDeviceType.DS4, tempDS4, device);
+                                EstablishOutFeedback(index, OutputDeviceType.DualShock4Controller, tempDS4, device);
 
                                 if (device.JointDeviceSlotNumber != -1)
                                 {
                                     var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                     if (tempDS4Device != null)
-                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.DS4, tempDS4,
+                                        EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.DualShock4Controller, tempDS4,
                                             tempDS4Device);
                                 }
                             }
@@ -920,13 +920,13 @@ namespace DS4Windows
                         // Enable ViGem feedback callback handler only if lightbar/rumble data output is enabled (if those are disabled then no point enabling ViGem callback handler call)
                         if (profile.EnableOutputDataToDS4)
                         {
-                            EstablishOutFeedback(index, OutputDeviceType.DS4, tempDS4, device);
+                            EstablishOutFeedback(index, OutputDeviceType.DualShock4Controller, tempDS4, device);
 
                             if (device.JointDeviceSlotNumber != -1)
                             {
                                 var tempDS4Device = DS4Controllers[device.JointDeviceSlotNumber];
                                 if (tempDS4Device != null)
-                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.DS4, tempDS4,
+                                    EstablishOutFeedback(device.JointDeviceSlotNumber, OutputDeviceType.DualShock4Controller, tempDS4,
                                         tempDS4Device);
                             }
                         }

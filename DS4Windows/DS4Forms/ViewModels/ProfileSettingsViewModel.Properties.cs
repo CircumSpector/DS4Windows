@@ -436,11 +436,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 var type = 0;
                 switch (profileService.CurrentlyEditedProfile.OutputDeviceType)
                 {
-                    case OutputDeviceType.X360:
+                    case OutputDeviceType.Xbox360Controller:
                         type = 0;
                         break;
 
-                    case OutputDeviceType.DS4:
+                    case OutputDeviceType.DualShock4Controller:
                         type = 1;
                         break;
                 }
@@ -467,13 +467,13 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 switch (tempControllerIndex)
                 {
                     case 0:
-                        result = OutputDeviceType.X360;
+                        result = OutputDeviceType.Xbox360Controller;
                         break;
                     case 1:
-                        result = OutputDeviceType.DS4;
+                        result = OutputDeviceType.DualShock4Controller;
                         break;
                     default:
-                        result = OutputDeviceType.X360;
+                        result = OutputDeviceType.Xbox360Controller;
                         break;
                 }
 

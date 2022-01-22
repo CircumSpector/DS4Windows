@@ -413,7 +413,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             Device = device;
             FuncDevNum = device < ControlService.CURRENT_DS4_CONTROLLER_LIMIT ? device : 0;
             tempControllerIndex = ControllerTypeIndex;
-            Global.OutDevTypeTemp[device] = OutputDeviceType.X360;
+            Global.OutDevTypeTemp[device] = OutputDeviceType.Xbox360Controller;
             TempBTPollRateIndex = ProfilesService.Instance.ActiveProfiles.ElementAt(device).BluetoothPollRate;
 
             outputMouseSpeed = CalculateOutputMouseSpeed(ButtonMouseSensitivity);

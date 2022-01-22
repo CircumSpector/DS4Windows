@@ -285,7 +285,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
 
         public TouchPadRelMouseSettings TouchPadRelMouse { get; set; } = new();
 
-        public OutputDeviceType OutputDeviceType { get; set; } = OutputDeviceType.X360;
+        public OutputDeviceType OutputDeviceType { get; set; } = OutputDeviceType.Xbox360Controller;
 
         public bool Ds4Mapping { get; set; } = false;
 

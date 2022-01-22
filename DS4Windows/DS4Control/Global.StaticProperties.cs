@@ -131,11 +131,11 @@ namespace DS4Windows
         /// </summary>
         public static OutputDeviceType[] OutDevTypeTemp { get; set; } = new OutputDeviceType[TEST_PROFILE_ITEM_COUNT]
         {
-            OutputDeviceType.X360, OutputDeviceType.X360,
-            OutputDeviceType.X360, OutputDeviceType.X360,
-            OutputDeviceType.X360, OutputDeviceType.X360,
-            OutputDeviceType.X360, OutputDeviceType.X360,
-            OutputDeviceType.X360
+            OutputDeviceType.Xbox360Controller, OutputDeviceType.Xbox360Controller,
+            OutputDeviceType.Xbox360Controller, OutputDeviceType.Xbox360Controller,
+            OutputDeviceType.Xbox360Controller, OutputDeviceType.Xbox360Controller,
+            OutputDeviceType.Xbox360Controller, OutputDeviceType.Xbox360Controller,
+            OutputDeviceType.Xbox360Controller
         };
 
         /// <summary>

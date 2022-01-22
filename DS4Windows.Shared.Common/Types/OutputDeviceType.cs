@@ -3,7 +3,7 @@
     public enum OutputDeviceType : uint
     {
         None = 0,
-        X360,
-        DS4
+        Xbox360Controller,
+        DualShock4Controller
     }
 }

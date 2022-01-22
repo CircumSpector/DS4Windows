@@ -109,10 +109,10 @@ namespace DS4Windows
             OutputDevice outputDevice = null;
             switch (contType)
             {
-                case OutputDeviceType.X360:
+                case OutputDeviceType.Xbox360Controller:
                     outputDevice = new Xbox360OutDevice(Client);
                     break;
-                case OutputDeviceType.DS4:
+                case OutputDeviceType.DualShock4Controller:
                     outputDevice = DS4OutDeviceFactory.CreateDS4Device(Client, Global.ViGEmBusVersionInfo);
                     break;
                 case OutputDeviceType.None:

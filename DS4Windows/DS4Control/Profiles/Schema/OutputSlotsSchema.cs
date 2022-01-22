@@ -13,7 +13,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     public class Slot
     {
         [XmlElement(ElementName = "DeviceType")]
-        public OutputDeviceType DeviceType { get; set; } = OutputDeviceType.X360;
+        public OutputDeviceType DeviceType { get; set; } = OutputDeviceType.Xbox360Controller;
 
         [XmlAttribute(AttributeName = "idx")] public int Idx { get; set; }
     }

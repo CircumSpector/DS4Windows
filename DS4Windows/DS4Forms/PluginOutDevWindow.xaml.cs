@@ -27,10 +27,10 @@ namespace DS4WinWPF.DS4Forms
             switch (devTypeCombo.SelectedIndex)
             {
                 case 0:
-                    ContType = OutputDeviceType.X360;
+                    ContType = OutputDeviceType.Xbox360Controller;
                     break;
                 case 1:
-                    ContType = OutputDeviceType.DS4;
+                    ContType = OutputDeviceType.DualShock4Controller;
                     break;
             }
 

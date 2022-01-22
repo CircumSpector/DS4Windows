@@ -29,9 +29,9 @@ namespace DS4WinWPF.DS4Control.IoC.Services
         {
             switch (contType)
             {
-                case OutputDeviceType.X360:
+                case OutputDeviceType.Xbox360Controller:
                     return new Xbox360OutDevice(Emulator);
-                case OutputDeviceType.DS4:
+                case OutputDeviceType.DualShock4Controller:
                     return DS4OutDeviceFactory.CreateDS4Device(Emulator, Global.ViGEmBusVersionInfo);
                 case OutputDeviceType.None:
                 default:

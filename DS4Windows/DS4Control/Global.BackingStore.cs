@@ -2023,7 +2023,7 @@ namespace DS4Windows
                 var r2Info = ProfilesService.Instance.ActiveProfiles.ElementAt(device).R2ModInfo;
                 r2Info.DeadZone = (byte)(0.00 * 255);
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DualShock4Controller;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2135,7 +2135,7 @@ namespace DS4Windows
                 //GyroMouseStickInfo[device].UseSmoothing = true;
                 //GyroMouseStickInfo[device].Smoothing = DS4Windows.GyroMouseStickInfo.SmoothingMethod.OneEuro;
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DualShock4Controller;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2220,7 +2220,7 @@ namespace DS4Windows
                 ProfilesService.Instance.ActiveProfiles.ElementAt(device).GyroMouseInfo.Smoothing =
                     GyroMouseInfo.SmoothingMethod.OneEuro;
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DualShock4Controller;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2248,7 +2248,7 @@ namespace DS4Windows
                 rsInfo.AntiDeadZone = 0;
                 rsInfo.MaxZone = 90;
 
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DS4;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.DualShock4Controller;
 
                 // If a device exists, make sure to transfer relevant profile device
                 // options to device instance
@@ -2751,10 +2751,10 @@ namespace DS4Windows
                 switch (id)
                 {
                     case OutputDeviceType.None:
-                    case OutputDeviceType.X360:
+                    case OutputDeviceType.Xbox360Controller:
                         result = "X360";
                         break;
-                    case OutputDeviceType.DS4:
+                    case OutputDeviceType.DualShock4Controller:
                         result = "DS4";
                         break;
                 }
@@ -2764,15 +2764,15 @@ namespace DS4Windows
 
             private OutputDeviceType OutContDeviceId(string name)
             {
-                var id = OutputDeviceType.X360;
+                var id = OutputDeviceType.Xbox360Controller;
                 switch (name)
                 {
                     case "None":
                     case "X360":
-                        id = OutputDeviceType.X360;
+                        id = OutputDeviceType.Xbox360Controller;
                         break;
                     case "DS4":
-                        id = OutputDeviceType.DS4;
+                        id = OutputDeviceType.DualShock4Controller;
                         break;
                 }
 
@@ -2993,7 +2993,7 @@ namespace DS4Windows
                 //TrackballFriction[device] = 10.0;
                 //TouchPadAbsMouse[device].Reset();
                 //TouchPadRelMouse[device].Reset();
-                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.X360;
+                ProfilesService.Instance.ActiveProfiles.ElementAt(device).OutputDeviceType = OutputDeviceType.Xbox360Controller;
                 Ds4Mapping = false;
             }
 
