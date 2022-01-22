@@ -41,9 +41,8 @@ namespace DS4Windows.Shared.Devices.Services
     /// </summary>
     public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     {
-        protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
-
         private readonly ObservableCollection<HidDevice> connectedDevices;
+        protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
         private readonly IDeviceNotificationListenerSubscriber deviceNotificationListener;
         private readonly Guid hidClassInterfaceGuid;
@@ -107,8 +106,13 @@ namespace DS4Windows.Shared.Devices.Services
         /// </summary>
         /// <param name="path">The symbolic link path of the device instance.</param>
         /// <returns>The new <see cref="HidDevice" />.</returns>
-        private static HidDevice CreateNewHidDevice(string path)
+        private HidDevice CreateNewHidDevice(string path)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(CreateNewHidDevice)}");
+
+            activity?.SetTag("Path", path);
+
             var device = PnPDevice.GetDeviceByInterfaceId(path);
 
             //
@@ -142,8 +146,12 @@ namespace DS4Windows.Shared.Devices.Services
             };
         }
 
-        private static string GetHidManufacturerString(string path)
+        private string GetHidManufacturerString(string path)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidManufacturerString)}");
+            activity?.SetTag("Path", path);
+
             using var handle = Kernel32.CreateFile(path,
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
@@ -156,11 +164,18 @@ namespace DS4Windows.Shared.Devices.Services
             );
 
             Hid.HidD_GetManufacturerString(handle, out var manufacturerString);
+
+            activity?.SetTag("ManufacturerString", manufacturerString);
+
             return manufacturerString;
         }
 
-        private static string GetHidProductString(string path)
+        private string GetHidProductString(string path)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidProductString)}");
+            activity?.SetTag("Path", path);
+
             using var handle = Kernel32.CreateFile(path,
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
@@ -173,11 +188,18 @@ namespace DS4Windows.Shared.Devices.Services
             );
 
             Hid.HidD_GetProductString(handle, out var productName);
+
+            activity?.SetTag("ProductString", productName);
+
             return productName;
         }
 
-        private static string GetHidSerialNumberString(string path)
+        private string GetHidSerialNumberString(string path)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidSerialNumberString)}");
+            activity?.SetTag("Path", path);
+
             using var handle = Kernel32.CreateFile(path,
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
@@ -190,11 +212,18 @@ namespace DS4Windows.Shared.Devices.Services
             );
 
             Hid.HidD_GetSerialNumberString(handle, out var serialNumberString);
+
+            activity?.SetTag("SerialNumberString", serialNumberString);
+
             return serialNumberString;
         }
 
-        private static bool GetHidAttributes(string path, out Hid.HiddAttributes attributes)
+        private bool GetHidAttributes(string path, out Hid.HiddAttributes attributes)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidAttributes)}");
+            activity?.SetTag("Path", path);
+
             attributes = new Hid.HiddAttributes();
 
             using var handle = Kernel32.CreateFile(path,
@@ -208,11 +237,22 @@ namespace DS4Windows.Shared.Devices.Services
                 Kernel32.SafeObjectHandle.Null
             );
 
-            return Hid.HidD_GetAttributes(handle, ref attributes);
+            var ret =  Hid.HidD_GetAttributes(handle, ref attributes);
+
+            if (!ret) return false;
+
+            activity?.SetTag("VID", attributes.VendorId.ToString("X4"));
+            activity?.SetTag("PID", attributes.ProductId.ToString("X4"));
+
+            return true;
         }
 
-        private static bool GetHidCapabilities(string path, out Hid.HidpCaps caps)
+        private bool GetHidCapabilities(string path, out Hid.HidpCaps caps)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidCapabilities)}");
+            activity?.SetTag("Path", path);
+
             caps = new Hid.HidpCaps();
 
             using var handle = Kernel32.CreateFile(path,
@@ -230,6 +270,9 @@ namespace DS4Windows.Shared.Devices.Services
 
             Hid.HidP_GetCaps(data, ref caps);
             HidD_FreePreparsedData(data.DangerousGetHandle());
+
+            activity?.SetTag("InputReportByteLength", caps.InputReportByteLength);
+            activity?.SetTag("OutputReportByteLength", caps.OutputReportByteLength);
 
             return true;
         }
@@ -263,10 +306,8 @@ namespace DS4Windows.Shared.Devices.Services
             var entry = CreateNewHidDevice(symLink);
 
             if (IsVirtualDevice(device))
-            {
                 logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
                     device.InstanceId, symLink);
-            }
 
             if (!connectedDevices.Contains(entry))
                 connectedDevices.Add(entry);
@@ -276,6 +317,11 @@ namespace DS4Windows.Shared.Devices.Services
 
         private void DeviceNotificationListenerOnDeviceRemoved(string symLink)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceRemoved)}");
+
+            activity?.SetTag("Path", symLink);
+
             var device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom);
 
             logger.LogInformation("HID Device {Instance} ({Path}) removed",
@@ -316,8 +362,11 @@ namespace DS4Windows.Shared.Devices.Services
         /// <param name="device">The <see cref="PnPDevice" /> to test.</param>
         /// <param name="isRemoved">If true, look for a currently non-present device.</param>
         /// <returns>True if this devices originates from an emulator, false otherwise.</returns>
-        private static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
+        private bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
         {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(HidDeviceEnumeratorService)}:{nameof(IsVirtualDevice)}");
+
             while (device is not null)
             {
                 var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);

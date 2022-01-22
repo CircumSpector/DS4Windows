@@ -29,9 +29,9 @@ namespace DS4Windows.Shared.Devices.HID
 
         protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
-        protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
-
         protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+
+        protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
 
         /// <summary>
         ///     Managed input report array.
@@ -172,7 +172,7 @@ namespace DS4Windows.Shared.Devices.HID
         public int ReportsPerSecondRead { get; private set; }
 
         /// <summary>
-        ///      Metrics of how many input reports were processed in a second.
+        ///     Metrics of how many input reports were processed in a second.
         /// </summary>
         public int ReportsPerSecondProcessed { get; private set; }
 
@@ -228,7 +228,7 @@ namespace DS4Windows.Shared.Devices.HID
                 {
                     using var activity = CoreActivity.StartActivity(
                         $"{nameof(CompatibleHidDevice)}:{nameof(ProcessInputReportLoop)}",
-                        ActivityKind.Consumer);
+                        ActivityKind.Consumer, string.Empty);
 
                     activity?.SetTag(nameof(ReportsPerSecondProcessed), ReportsPerSecondProcessed);
 
@@ -276,7 +276,7 @@ namespace DS4Windows.Shared.Devices.HID
                 {
                     using var activity = CoreActivity.StartActivity(
                         $"{nameof(CompatibleHidDevice)}:{nameof(ReadInputReportLoop)}",
-                        ActivityKind.Producer);
+                        ActivityKind.Producer, string.Empty);
 
                     activity?.SetTag(nameof(ReportsPerSecondRead), ReportsPerSecondRead);
 
