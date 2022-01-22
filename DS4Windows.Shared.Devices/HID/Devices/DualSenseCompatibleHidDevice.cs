@@ -51,12 +51,7 @@ namespace DS4Windows.Shared.Devices.HID.Devices
         {
             InputReport.ParseFrom(inputReport, ReportStartOffset);
 
-            if (InputReport.TouchOneFingerActive && InputReport.TouchIsOnLeftSide)
-            {
-                Debug.WriteLine("Touch left active");
-            }
-
-            Debug.WriteLine("Processed");
+            
         }
     }
 }
