@@ -5,7 +5,7 @@ using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Util;
 using PropertyChanged;
 
-namespace DS4WinWPF.DS4Control.Profiles.Schema
+namespace DS4Windows.Shared.Configuration.Profiles.Schema
 {
     [AddINotifyPropertyChangedInterface]
     public class AutoSwitchingProfileEntry

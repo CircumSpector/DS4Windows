@@ -402,7 +402,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             {
                 using var stream = File.OpenRead(path);
 
-                var store = Profiles.Schema.LinkedProfiles.Deserialize(stream);
+                var store = DS4Windows.Shared.Configuration.Profiles.Schema.LinkedProfiles.Deserialize(stream);
 
                 linkedProfiles.Clear();
 
@@ -536,7 +536,7 @@ namespace DS4WinWPF.DS4Control.IoC.Services
             {
                 using var stream = File.OpenRead(path);
 
-                var store = Profiles.Schema.AutoSwitchingProfiles.Deserialize(stream);
+                var store = DS4Windows.Shared.Configuration.Profiles.Schema.AutoSwitchingProfiles.Deserialize(stream);
 
                 autoSwitchingProfiles.Clear();
 
