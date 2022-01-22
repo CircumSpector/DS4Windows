@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace DS4WinWPF.DS4Forms.Converters
+namespace DS4Windows.Shared.Common.Converters
 {
     public class EnumDescriptionConverter : IValueConverter
     {
@@ -19,19 +19,19 @@ namespace DS4WinWPF.DS4Forms.Converters
             return string.Empty;
         }
 
-        private string GetEnumDescription(Enum enumObj)
+        public static string GetEnumDescription(Enum enumObj)
         {
             var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
 
-            var attribArray = fieldInfo.GetCustomAttributes(false);
+            var attributes = fieldInfo?.GetCustomAttributes(false);
 
-            if (attribArray.Length == 0)
-            {
-                return enumObj.ToString();
-            }
+            if (attributes is null)
+                return null;
 
-            var attrib = attribArray[0] as DescriptionAttribute;
-            return attrib.Description;
+            if (attributes.Length == 0) return enumObj.ToString();
+
+            var attribute = attributes[0] as DescriptionAttribute;
+            return attribute?.Description;
         }
     }
 }
