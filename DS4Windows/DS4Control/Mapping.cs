@@ -13,7 +13,6 @@ using DS4Windows.Shared.Devices.HID;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Properties;
-using Sensorit.Base;
 using static DS4Windows.Global;
 // Point struct
 

@@ -27,7 +27,6 @@ using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Properties;
 using DS4WinWPF.Translations;
 using Nefarius.ViGEm.Client.Targets;
-using Sensorit.Base;
 using static DS4Windows.Global;
 using MessageBox = AdonisUI.Controls.MessageBox;
 using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;

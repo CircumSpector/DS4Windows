@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4Windows

@@ -1,4 +1,4 @@
-﻿using DS4Windows;
+﻿using DS4Windows.Shared.Common.Types;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema.Converters

@@ -311,6 +311,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj" />
   </ItemGroup>
 

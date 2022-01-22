@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control;
 using Nefarius.ViGEm.Client;
 

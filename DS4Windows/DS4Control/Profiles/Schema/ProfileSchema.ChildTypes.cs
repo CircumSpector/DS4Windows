@@ -1,31 +1,9 @@
-﻿using System.ComponentModel;
-using System.Xml.Serialization;
-using DS4Windows;
+﻿using System.Xml.Serialization;
+using DS4Windows.Shared.Common.Types;
 using PropertyChanged;
 
 namespace DS4WinWPF.DS4Control.Profiles.Schema
 {
-    /// <summary>
-    ///     Possible Bezier Curve Modes.
-    /// </summary>
-    public enum CurveMode
-    {
-        [Description("Linear")]
-        Linear = 0,
-        [Description("Enhanced Precision")]
-        EnhancedPrecision,
-        [Description("Quadratic")]
-        Quadratic,
-        [Description("Cubic")]
-        Cubic,
-        [Description("Easeout Quad")]
-        EaseoutQuad,
-        [Description("Easeout Cubic")]
-        EaseoutCubic,
-        [Description("Custom")]
-        Custom
-    }
-
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "LSAxialDeadOptions")]
     public class LSAxialDeadOptions
@@ -36,11 +14,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneX")]
-        public int MaxZoneX { get; set; }
+        [XmlElement(ElementName = "MaxZoneX")] public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")]
-        public int MaxZoneY { get; set; }
+        [XmlElement(ElementName = "MaxZoneY")] public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "AntiDeadZoneX")]
         public int AntiDeadZoneX { get; set; }
@@ -65,11 +41,9 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneX")]
-        public int MaxZoneX { get; set; }
+        [XmlElement(ElementName = "MaxZoneX")] public int MaxZoneX { get; set; }
 
-        [XmlElement(ElementName = "MaxZoneY")]
-        public int MaxZoneY { get; set; }
+        [XmlElement(ElementName = "MaxZoneY")] public int MaxZoneY { get; set; }
 
         [XmlElement(ElementName = "AntiDeadZoneX")]
         public int AntiDeadZoneX { get; set; }
@@ -102,8 +76,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     [XmlRoot(ElementName = "GyroControlsSettings")]
     public class GyroControlsSettings
     {
-        [XmlElement(ElementName = "Triggers")]
-        public string Triggers { get; set; } = "-1";
+        [XmlElement(ElementName = "Triggers")] public string Triggers { get; set; } = "-1";
 
         [XmlElement(ElementName = "TriggerCond")]
         public string TriggerCond { get; set; } = "and";
@@ -111,8 +84,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlElement(ElementName = "TriggerTurns")]
         public bool TriggerTurns { get; set; } = true;
 
-        [XmlElement(ElementName = "Toggle")] 
-        public bool Toggle { get; set; } = false;
+        [XmlElement(ElementName = "Toggle")] public bool Toggle { get; set; }
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -165,8 +137,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlElement(ElementName = "DeadZoneY")]
         public int DeadZoneY { get; set; } = 80;
 
-        [XmlElement(ElementName = "Triggers")]
-        public string Triggers { get; set; } = "-1";
+        [XmlElement(ElementName = "Triggers")] public string Triggers { get; set; } = "-1";
 
         [XmlElement(ElementName = "TriggerCond")]
         public string TriggerCond { get; set; } = "and";
@@ -178,7 +149,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public GyroDirectionalSwipeInfo.XAxisSwipe XAxis { get; set; } = GyroDirectionalSwipeInfo.XAxisSwipe.Yaw;
 
         [XmlElement(ElementName = "DelayTime")]
-        public int DelayTime { get; set; } = 0;
+        public int DelayTime { get; set; }
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -214,19 +185,7 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         public FlickStickSettings FlickStickSettings { get; set; } = new();
     }
 
-    [AddINotifyPropertyChangedInterface]
-    [XmlRoot(ElementName = "TouchpadAbsMouseSettings")]
-    public class TouchpadAbsMouseSettings
-    {
-        [XmlElement(ElementName = "MaxZoneX")]
-        public int MaxZoneX { get; set; }
-
-        [XmlElement(ElementName = "MaxZoneY")]
-        public int MaxZoneY { get; set; }
-
-        [XmlElement(ElementName = "SnapToCenter")]
-        public bool SnapToCenter { get; set; }
-    }
+    
 
     [AddINotifyPropertyChangedInterface]
     public class ControlsCollectionEntity
@@ -324,20 +283,15 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
     [XmlRoot(ElementName = "Control")]
     public class Control
     {
-        [XmlElement(ElementName = "Key")] 
-        public ControlKey Keys { get; set; } = new();
+        [XmlElement(ElementName = "Key")] public ControlKey Keys { get; set; } = new();
 
-        [XmlElement(ElementName = "KeyType")] 
-        public ControlKeyType KeyTypes { get; set; } = new();
+        [XmlElement(ElementName = "KeyType")] public ControlKeyType KeyTypes { get; set; } = new();
 
-        [XmlElement(ElementName = "Button")] 
-        public ControlButton Buttons { get; set; } = new();
+        [XmlElement(ElementName = "Button")] public ControlButton Buttons { get; set; } = new();
 
-        [XmlElement(ElementName = "Extras")] 
-        public ControlExtras Extras { get; set; } = new();
+        [XmlElement(ElementName = "Extras")] public ControlExtras Extras { get; set; } = new();
 
-        [XmlElement(ElementName = "Macro")] 
-        public ControlMacro Macros { get; set; } = new();
+        [XmlElement(ElementName = "Macro")] public ControlMacro Macros { get; set; } = new();
     }
 
     [AddINotifyPropertyChangedInterface]

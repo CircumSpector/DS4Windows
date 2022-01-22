@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.VJoyFeeder;
 using DS4WinWPF.DS4Control.IoC.Services;
 using Nefarius.ViGEm.Client;

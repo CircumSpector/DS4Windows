@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using DS4Windows;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.Profiles.Schema.Migrations;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
@@ -15,16 +15,14 @@ namespace DS4WinWPF.DS4Control.Profiles.Schema
         [XmlElement(ElementName = "DeviceType")]
         public OutContType DeviceType { get; set; } = OutContType.X360;
 
-        [XmlAttribute(AttributeName = "idx")] 
-        public int Idx { get; set; }
+        [XmlAttribute(AttributeName = "idx")] public int Idx { get; set; }
     }
 
     [AddINotifyPropertyChangedInterface]
     [XmlRoot(ElementName = "OutputSlots")]
     public class OutputSlots : XmlSerializable<OutputSlots>
     {
-        [XmlElement(ElementName = "Slot")] 
-        public List<Slot> Slot { get; set; } = new();
+        [XmlElement(ElementName = "Slot")] public List<Slot> Slot { get; set; } = new();
 
         [XmlAttribute(AttributeName = "app_version")]
         public string AppVersion { get; set; }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Xml;
 using DS4Windows.DS4Control;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Types;
 
 namespace DS4Windows
 {

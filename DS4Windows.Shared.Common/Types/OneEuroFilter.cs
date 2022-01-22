@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sensorit.Base
+namespace DS4Windows.Shared.Common.Types
 {
     public class OneEuroFilter
     {

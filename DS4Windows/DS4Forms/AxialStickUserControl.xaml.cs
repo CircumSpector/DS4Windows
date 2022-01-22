@@ -1,30 +1,25 @@
-﻿using System;
-using System.Windows.Controls;
-using DS4Windows;
+﻿using System.Windows.Controls;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Forms.ViewModels;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for AxialStickUserControl.xaml
+    ///     Interaction logic for AxialStickUserControl.xaml
     /// </summary>
     public partial class AxialStickUserControl : UserControl
     {
-        private AxialStickControlViewModel axialVM;
-        public AxialStickControlViewModel AxialVM
-        {
-            get => axialVM;
-        }
-
         public AxialStickUserControl()
         {
             InitializeComponent();
         }
 
+        public AxialStickControlViewModel AxialVM { get; private set; }
+
         public void UseDevice(StickDeadZoneInfo stickDeadInfo)
         {
-            axialVM = new AxialStickControlViewModel(stickDeadInfo);
-            mainGrid.DataContext = axialVM;
+            AxialVM = new AxialStickControlViewModel(stickDeadInfo);
+            mainGrid.DataContext = AxialVM;
         }
     }
 }

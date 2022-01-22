@@ -31,12 +31,13 @@
 *    BezierCurve.GetBezierEasing = Return re-mapped output value for an input axis value (or alternatively directly accessing the lookup table BezierCurve.arrayBezierLUT[inputVal] if even tiny CPU cycles matter)
 * 
 */
+
 using System;
 using System.Globalization;
 using DS4Windows.Shared.Common.Attributes;
-using DS4WinWPF.DS4Control.Logging;
+using DS4Windows.Shared.Common.Util;
 
-namespace DS4Windows
+namespace DS4Windows.Shared.Common.Types
 {
     public class BezierCurve
     {
@@ -154,7 +155,7 @@ namespace DS4Windows
             if (x1 < 0 || x1 > 1 || x2 < 0 || x2 > 1)
             {
                 // throw new Exception("INVALID VALUE. BezierCurve X1 and X2 should be in [0, 1] range");
-                AppLogger.Instance.LogToGui($"WARNING. Invalid custom bezier curve \"{x1}, {y1}, {x2}, {y2}\" in {gamepadAxisType} axis. x1 and x2 should be in 0..1 range. Using linear curve.", true);
+                //AppLogger.Instance.LogToGui($"WARNING. Invalid custom bezier curve \"{x1}, {y1}, {x2}, {y2}\" in {gamepadAxisType} axis. x1 and x2 should be in 0..1 range. Using linear curve.", true);
                 mX1 = mY1 = mX2 = mY2 = 0;
                 bRetValue = false;
             }
@@ -184,7 +185,7 @@ namespace DS4Windows
                 // Pre-populate lookup result table for GetBezierEasing function (performance optimization)
                 for (byte idx = 0; idx <= (byte)axisMaxDouble; idx++)
                 {
-                    arrayBezierLUT[idx + (byte)axisCenterPosDouble] = (byte)(Global.Clamp(0, Math.Round(CalcBezier(getTForX(idx / axisMaxDouble), mY1, mY2) * axisMaxDouble), axisMaxDouble) + axisCenterPosDouble);
+                    arrayBezierLUT[idx + (byte)axisCenterPosDouble] = (byte)(MathsUtils.Clamp(0, Math.Round(CalcBezier(getTForX(idx / axisMaxDouble), mY1, mY2) * axisMaxDouble), axisMaxDouble) + axisCenterPosDouble);
 
                     // Invert curve from a right side of the center position (128) to the left tilted stick axis (or from up tilt to down tilt)
                     if (gamepadAxisType == AxisType.LSRS)

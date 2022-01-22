@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DS4Windows;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.Properties;
 using JetBrains.Annotations;

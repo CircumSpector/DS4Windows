@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Principal;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Types;
 
 namespace DS4Windows
 {

@@ -240,47 +240,9 @@ namespace DS4Windows
         Unbound
     }
 
-    public enum SASteeringWheelEmulationAxisType : byte
-    {
-        None = 0,
-        LX,
-        LY,
-        RX,
-        RY,
-        L2R2,
-        VJoy1X,
-        VJoy1Y,
-        VJoy1Z,
-        VJoy2X,
-        VJoy2Y,
-        VJoy2Z
-    }
+    
 
-    public enum OutContType : uint
-    {
-        None = 0,
-        X360,
-        DS4
-    }
-
-    public enum GyroOutMode : uint
-    {
-        None,
-        Controls,
-        Mouse,
-        MouseJoystick,
-        DirectionalSwipe,
-        Passthru,
-    }
-
-    public enum TouchpadOutMode : uint
-    {
-        None,
-        Mouse,
-        Controls,
-        AbsoluteMouse,
-        Passthru,
-    }
+   
 
     
 

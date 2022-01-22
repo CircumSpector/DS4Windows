@@ -12,6 +12,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using DS4Windows;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.Util;

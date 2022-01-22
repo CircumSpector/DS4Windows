@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DS4Windows.Shared.Common.Types;
 using DS4WinWPF.DS4Forms.ViewModels;
 
 namespace DS4WinWPF.DS4Forms
@@ -76,7 +77,7 @@ namespace DS4WinWPF.DS4Forms
             if (tempEntry != null &&
                 tempEntry.OutSlotDevice.CurrentReserveStatus ==
                 DS4Control.OutSlotDevice.ReserveStatus.Permanent &&
-                tempEntry.OutSlotDevice.PermanentType != DS4Windows.OutContType.None)
+                tempEntry.OutSlotDevice.PermanentType != OutContType.None)
             {
                 tempEntry.OutSlotDevice.CurrentType = tempEntry.OutSlotDevice.PermanentType;
                 tempEntry.RequestPlugin();
