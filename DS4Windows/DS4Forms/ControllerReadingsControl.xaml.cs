@@ -1,140 +1,58 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using NonFormTimer = System.Timers.Timer;
 using DS4Windows;
+using DS4Windows.Shared.Common.Core;
+using DS4WinWPF.Translations;
+using NonFormTimer = System.Timers.Timer;
 
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for ControllerReadingsControl.xaml
+    ///     Interaction logic for ControllerReadingsControl.xaml
     /// </summary>
     public partial class ControllerReadingsControl : UserControl
     {
-        private enum LatencyWarnMode : uint
-        {
-            None,
-            Caution,
-            Warn,
-        }
+        private const int CANVAS_WIDTH = 130;
+        private const int CANVAS_MIDPOINT = CANVAS_WIDTH / 2;
+        private const double TRIG_LB_TRANSFORM_OFFSETY = 66.0;
+        private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+        private readonly DS4State baseState = new();
 
         private int deviceNum;
-        private int profileDeviceNum;
-        private event EventHandler DeviceNumChanged;
-        private NonFormTimer readingTimer;
-        private bool useTimer;
+        private readonly DS4StateExposed exposeState;
+        private readonly DS4State interState = new();
+        private double l2Dead;
         private double lsDeadX;
         private double lsDeadY;
+        private LatencyWarnMode prevWarnMode;
+        private int profileDeviceNum;
+        private double r2Dead;
+        private readonly NonFormTimer readingTimer;
         private double rsDeadX;
         private double rsDeadY;
 
         private double sixAxisXDead;
         private double sixAxisZDead;
-        private double l2Dead;
-        private double r2Dead;
-
-        public double LsDeadX
-        {
-            get => lsDeadX;
-            set
-            {
-                lsDeadX = value;
-                LsDeadXChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler LsDeadXChanged;
-
-        public double LsDeadY
-        {
-            get => lsDeadY;
-            set
-            {
-                lsDeadY = value;
-                LsDeadYChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler LsDeadYChanged;
-
-        public double RsDeadX
-        {
-            get => rsDeadX;
-            set
-            {
-                rsDeadX = value;
-                RsDeadXChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler RsDeadXChanged;
-
-        public double RsDeadY
-        {
-            get => rsDeadY;
-            set
-            {
-                rsDeadY = value;
-                RsDeadYChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler RsDeadYChanged;
-
-        public double SixAxisXDead
-        {
-            get => sixAxisXDead;
-            set
-            {
-                sixAxisXDead = value;
-                SixAxisDeadXChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler SixAxisDeadXChanged;
-
-        public double SixAxisZDead
-        {
-            get => sixAxisZDead;
-            set
-            {
-                sixAxisZDead = value;
-                SixAxisDeadZChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler SixAxisDeadZChanged;
-
-        public double L2Dead
-        {
-            get => l2Dead;
-            set
-            {
-                l2Dead = value;
-                L2DeadChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler L2DeadChanged;
-
-        public double R2Dead
-        {
-            get => r2Dead;
-            set
-            {
-                r2Dead = value;
-                R2DeadChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public event EventHandler R2DeadChanged;
+        private bool useTimer;
 
         private LatencyWarnMode warnMode;
-        private LatencyWarnMode prevWarnMode;
-        private DS4State baseState = new DS4State();
-        private DS4State interState = new DS4State();
-        private DS4StateExposed exposeState;
-        private const int CANVAS_WIDTH = 130;
-        private const int CANVAS_MIDPOINT = CANVAS_WIDTH / 2;
-        private const double TRIG_LB_TRANSFORM_OFFSETY = 66.0;
 
         public ControllerReadingsControl()
         {
-            InitializeComponent();
-            inputContNum.Content = $"#{deviceNum+1}";
+            using var activity = activitySource.StartActivity(
+                $"{nameof(ControllerReadingsControl)}:Constructor");
+
+            using (activitySource.StartActivity(
+                       $"{nameof(ControllerReadingsControl)}:{nameof(InitializeComponent)}"))
+            {
+                InitializeComponent();
+            }
+
+            inputContNum.Content = $"#{deviceNum + 1}";
             exposeState = new DS4StateExposed(baseState);
 
             readingTimer = new NonFormTimer();
@@ -151,33 +69,123 @@ namespace DS4WinWPF.DS4Forms
             DeviceNumChanged += ControllerReadingsControl_DeviceNumChanged;
         }
 
+        public double LsDeadX
+        {
+            get => lsDeadX;
+            set
+            {
+                lsDeadX = value;
+                LsDeadXChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public double LsDeadY
+        {
+            get => lsDeadY;
+            set
+            {
+                lsDeadY = value;
+                LsDeadYChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public double RsDeadX
+        {
+            get => rsDeadX;
+            set
+            {
+                rsDeadX = value;
+                RsDeadXChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public double RsDeadY
+        {
+            get => rsDeadY;
+            set
+            {
+                rsDeadY = value;
+                RsDeadYChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public double SixAxisXDead
+        {
+            get => sixAxisXDead;
+            set
+            {
+                sixAxisXDead = value;
+                SixAxisDeadXChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public double SixAxisZDead
+        {
+            get => sixAxisZDead;
+            set
+            {
+                sixAxisZDead = value;
+                SixAxisDeadZChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public double L2Dead
+        {
+            get => l2Dead;
+            set
+            {
+                l2Dead = value;
+                L2DeadChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public double R2Dead
+        {
+            get => r2Dead;
+            set
+            {
+                r2Dead = value;
+                R2DeadChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private event EventHandler DeviceNumChanged;
+        public event EventHandler LsDeadXChanged;
+        public event EventHandler LsDeadYChanged;
+        public event EventHandler RsDeadXChanged;
+        public event EventHandler RsDeadYChanged;
+        public event EventHandler SixAxisDeadXChanged;
+        public event EventHandler SixAxisDeadZChanged;
+        public event EventHandler L2DeadChanged;
+        public event EventHandler R2DeadChanged;
+
         private void ControllerReadingsControl_DeviceNumChanged(object sender, EventArgs e)
         {
-            inputContNum.Content = $"#{deviceNum+1}";
+            inputContNum.Content = $"#{deviceNum + 1}";
         }
 
         private void ChangeSixAxisDeadControls(object sender, EventArgs e)
         {
             sixAxisDeadEllipse.Width = sixAxisXDead * CANVAS_WIDTH;
             sixAxisDeadEllipse.Height = sixAxisZDead * CANVAS_WIDTH;
-            Canvas.SetLeft(sixAxisDeadEllipse, CANVAS_MIDPOINT - (sixAxisXDead * CANVAS_WIDTH / 2.0));
-            Canvas.SetTop(sixAxisDeadEllipse, CANVAS_MIDPOINT - (sixAxisZDead * CANVAS_WIDTH / 2.0));
+            Canvas.SetLeft(sixAxisDeadEllipse, CANVAS_MIDPOINT - sixAxisXDead * CANVAS_WIDTH / 2.0);
+            Canvas.SetTop(sixAxisDeadEllipse, CANVAS_MIDPOINT - sixAxisZDead * CANVAS_WIDTH / 2.0);
         }
 
         private void ChangeRsDeadControls(object sender, EventArgs e)
         {
             rsDeadEllipse.Width = rsDeadX * CANVAS_WIDTH;
             rsDeadEllipse.Height = rsDeadY * CANVAS_WIDTH;
-            Canvas.SetLeft(rsDeadEllipse, CANVAS_MIDPOINT - (rsDeadX * CANVAS_WIDTH / 2.0));
-            Canvas.SetTop(rsDeadEllipse, CANVAS_MIDPOINT - (rsDeadY * CANVAS_WIDTH / 2.0));
+            Canvas.SetLeft(rsDeadEllipse, CANVAS_MIDPOINT - rsDeadX * CANVAS_WIDTH / 2.0);
+            Canvas.SetTop(rsDeadEllipse, CANVAS_MIDPOINT - rsDeadY * CANVAS_WIDTH / 2.0);
         }
 
         private void ChangeLsDeadControls(object sender, EventArgs e)
         {
             lsDeadEllipse.Width = lsDeadX * CANVAS_WIDTH;
             lsDeadEllipse.Height = lsDeadY * CANVAS_WIDTH;
-            Canvas.SetLeft(lsDeadEllipse, CANVAS_MIDPOINT - (lsDeadX * CANVAS_WIDTH / 2.0));
-            Canvas.SetTop(lsDeadEllipse, CANVAS_MIDPOINT - (lsDeadY * CANVAS_WIDTH / 2.0));
+            Canvas.SetLeft(lsDeadEllipse, CANVAS_MIDPOINT - lsDeadX * CANVAS_WIDTH / 2.0);
+            Canvas.SetTop(lsDeadEllipse, CANVAS_MIDPOINT - lsDeadY * CANVAS_WIDTH / 2.0);
         }
 
         public void UseDevice(int index, int profileDevIdx)
@@ -205,18 +213,18 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        private void ControllerReadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void ControllerReadingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             readingTimer.Stop();
 
-            DS4Device ds = ControlService.CurrentInstance.DS4Controllers[deviceNum];
+            var ds = ControlService.CurrentInstance.DS4Controllers[deviceNum];
             if (ds != null)
             {
                 // Don't bother waiting for UI thread to grab references
                 //DS4StateExposed tmpexposeState = ControlService.CurrentInstance.ExposedState[deviceNum];
-                DS4State tmpbaseState = ControlService.CurrentInstance.GetDs4State(deviceNum);
-                DS4State tmpinterState = ControlService.CurrentInstance.GetDs4StateTemp(deviceNum);
-                long cntCalibrating = ds.SixAxis.CntCalibrating;
+                var tmpbaseState = ControlService.CurrentInstance.GetDs4State(deviceNum);
+                var tmpinterState = ControlService.CurrentInstance.GetDs4StateTemp(deviceNum);
+                var cntCalibrating = ds.SixAxis.CntCalibrating;
 
                 // Wait for controller to be in a wait period
                 ds.ReadWaitEv.Wait();
@@ -242,8 +250,8 @@ namespace DS4WinWPF.DS4Forms
                     //bool mappedLS = interState.LX != x || interState.LY != y;
                     //if (mappedLS)
                     //{
-                        Canvas.SetLeft(lsMapValRec, interState.LX / 255.0 * CANVAS_WIDTH - 3);
-                        Canvas.SetTop(lsMapValRec, interState.LY / 255.0 * CANVAS_WIDTH - 3);
+                    Canvas.SetLeft(lsMapValRec, interState.LX / 255.0 * CANVAS_WIDTH - 3);
+                    Canvas.SetTop(lsMapValRec, interState.LY / 255.0 * CANVAS_WIDTH - 3);
                     //}
 
                     x = baseState.RX;
@@ -257,38 +265,32 @@ namespace DS4WinWPF.DS4Forms
                     y = exposeState.getAccelZ() + 127;
                     Canvas.SetLeft(sixAxisValRec, x / 255.0 * CANVAS_WIDTH - 3);
                     Canvas.SetTop(sixAxisValRec, y / 255.0 * CANVAS_WIDTH - 3);
-                    Canvas.SetLeft(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.outputAccelX + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
-                    Canvas.SetTop(sixAxisMapValRec, Math.Min(Math.Max(interState.Motion.outputAccelZ + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH - 3);
+                    Canvas.SetLeft(sixAxisMapValRec,
+                        Math.Min(Math.Max(interState.Motion.outputAccelX + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH -
+                        3);
+                    Canvas.SetTop(sixAxisMapValRec,
+                        Math.Min(Math.Max(interState.Motion.outputAccelZ + 127.0, 0), 255.0) / 255.0 * CANVAS_WIDTH -
+                        3);
 
                     l2Slider.Value = baseState.L2;
-                    l2ValLbTrans.Y = Math.Min(interState.L2, Math.Max(0, 255)) / 255.0 * -70.0 + TRIG_LB_TRANSFORM_OFFSETY;
+                    l2ValLbTrans.Y = Math.Min(interState.L2, Math.Max(0, 255)) / 255.0 * -70.0 +
+                                     TRIG_LB_TRANSFORM_OFFSETY;
                     if (interState.L2 >= 255)
-                    {
                         l2ValLbBrush.Color = Colors.Green;
-                    }
                     else if (interState.L2 == 0)
-                    {
                         l2ValLbBrush.Color = Colors.Red;
-                    }
                     else
-                    {
                         l2ValLbBrush.Color = Colors.Black;
-                    }
 
                     r2Slider.Value = baseState.R2;
-                    r2ValLbTrans.Y = Math.Min(interState.R2, Math.Max(0, 255)) / 255.0 * -70.0 + TRIG_LB_TRANSFORM_OFFSETY;
+                    r2ValLbTrans.Y = Math.Min(interState.R2, Math.Max(0, 255)) / 255.0 * -70.0 +
+                                     TRIG_LB_TRANSFORM_OFFSETY;
                     if (interState.R2 >= 255)
-                    {
                         r2ValLbBrush.Color = Colors.Green;
-                    }
                     else if (interState.R2 == 0)
-                    {
                         r2ValLbBrush.Color = Colors.Red;
-                    }
                     else
-                    {
                         r2ValLbBrush.Color = Colors.Black;
-                    }
 
                     gyroYawSlider.Value = baseState.Motion.gyroYawFull;
                     gyroPitchSlider.Value = baseState.Motion.gyroPitchFull;
@@ -301,8 +303,8 @@ namespace DS4WinWPF.DS4Forms
                     touchXValLb.Content = baseState.TrackPadTouch0.X;
                     touchYValLb.Content = baseState.TrackPadTouch0.Y;
 
-                    double latency = ds.Latency;
-                    int warnInterval = ds.getWarnInterval();
+                    var latency = ds.Latency;
+                    var warnInterval = ds.getWarnInterval();
                     inputDelayLb.Content = string.Format(Properties.Resources.InputDelay,
                         latency.ToString());
 
@@ -312,7 +314,7 @@ namespace DS4WinWPF.DS4Forms
                         inpuDelayBackBrush.Color = Colors.Red;
                         inpuDelayForeBrush.Color = Colors.White;
                     }
-                    else if (latency > (warnInterval * 0.5))
+                    else if (latency > warnInterval * 0.5)
                     {
                         warnMode = LatencyWarnMode.Caution;
                         inpuDelayBackBrush.Color = Colors.Yellow;
@@ -327,16 +329,15 @@ namespace DS4WinWPF.DS4Forms
 
                     prevWarnMode = warnMode;
 
-                    batteryLvlLb.Content = $"{Translations.Strings.Battery}: {baseState.Battery}%";
-                    gyroCalEllipse.Visibility = cntCalibrating > 0 && ((cntCalibrating / 250) % 2 == 1) ? Visibility.Visible : Visibility.Hidden;
+                    batteryLvlLb.Content = $"{Strings.Battery}: {baseState.Battery}%";
+                    gyroCalEllipse.Visibility = cntCalibrating > 0 && cntCalibrating / 250 % 2 == 1
+                        ? Visibility.Visible
+                        : Visibility.Hidden;
                     UpdateCoordLabels(baseState, interState, exposeState);
                 });
             }
 
-            if (useTimer)
-            {
-                readingTimer.Start();
-            }
+            if (useTimer) readingTimer.Start();
         }
 
         private void UpdateCoordLabels(DS4State inState, DS4State mapState,
@@ -361,6 +362,13 @@ namespace DS4WinWPF.DS4Forms
             l2OutValLb.Content = mapState.L2;
             r2InValLb.Content = inState.R2;
             r2OutValLb.Content = mapState.R2;
+        }
+
+        private enum LatencyWarnMode : uint
+        {
+            None,
+            Caution,
+            Warn
         }
     }
 }
