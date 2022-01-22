@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -37,7 +36,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
     /// </summary>
     public class MappingListViewModel : INotifyPropertyChanged, IMappingListViewModel
     {
-        private readonly ObservableCollection<MappedControl> mappings = new();
         private readonly List<MappedControl> extraControls = new();
 
         private readonly MappedControl gyroSwipeDownControl;
@@ -45,6 +43,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         private readonly MappedControl gyroSwipeLeftControl;
         private readonly MappedControl gyroSwipeRightControl;
         private readonly MappedControl gyroSwipeUpControl;
+        private readonly ObservableCollection<MappedControl> mappings = new();
 
         public MappingListViewModel(IProfilesService profileService)
         {
@@ -157,8 +156,6 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public MappedControl RsOuterBindControl { get; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public void UpdateMappingDevType(OutputDeviceType devType)
         {
             foreach (var mapped in Mappings) mapped.DevType = devType;
@@ -172,6 +169,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
             foreach (var mapped in extraControls) mapped.UpdateMappingName();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
