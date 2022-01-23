@@ -6,8 +6,7 @@ using VidPidFeatureSet = DS4Windows.VidPidFeatureSet;
 
 namespace DS4WinWPF.DS4Library.InputDevices
 {
-    
-
+    [Obsolete]
     public interface IInputDeviceFactory
     {
         /// <summary>
@@ -29,6 +28,7 @@ namespace DS4WinWPF.DS4Library.InputDevices
     /// <summary>
     ///     Provides factory method to create new controller object.
     /// </summary>
+    [Obsolete]
     public class InputDeviceFactory : IInputDeviceFactory
     {
         /// <summary>
@@ -39,6 +39,7 @@ namespace DS4WinWPF.DS4Library.InputDevices
         /// <param name="displayName">The display name to use.</param>
         /// <param name="featureSet">Features altering device behaviour.</param>
         /// <returns>The new <see cref="DS4Device"/>.</returns>
+        [Obsolete]
         public DS4Device CreateDevice(
             InputDeviceType deviceType,
             HidDeviceV3 hidDevice,

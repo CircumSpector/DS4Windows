@@ -19,11 +19,9 @@ using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
-using DS4Windows.Shared.Devices.Util;
 using DS4Windows.VJoyFeeder;
 using DS4WinWPF;
 using DS4WinWPF.DS4Control;
-using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.Properties;
 using DS4WinWPF.Translations;
@@ -34,71 +32,7 @@ using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
 
 namespace DS4Windows
 {
-    public interface IControlService
-    {
-        Dispatcher EventDispatcher { get; }
-        IOutputSlotManager OutputslotMan { get; }
-        event EventHandler<LogEntryEventArgs> Debug;
-        event EventHandler ServiceStarted;
-        event EventHandler PreServiceStop;
-        event EventHandler ServiceStopped;
-        event EventHandler RunningChanged;
-        event ControlService.HotplugControllerHandler HotplugController;
-        IAppSettingsService GetAppSettings();
-        void PostDs4DeviceInit(DS4Device device);
-        bool CheckForSupportedDevice(HidDeviceV3 device, VidPidInfo metaInfo);
-        CheckVirtualInfo CheckForVirtualDevice(string deviceInstanceId);
-        void ShutDown();
-        Task LoadPermanentSlotsConfig();
-        void ChangeMotionEventStatus(bool state);
-        void AssignInitialDevices();
-
-        void EstablishOutFeedback(int index, OutputDeviceType contType,
-            OutputDevice outDevice, DS4Device device);
-
-        void RemoveOutFeedback(OutputDeviceType contType, OutputDevice outDevice, int inIdx);
-        void AttachNewUnboundOutDev(OutputDeviceType contType);
-        void AttachUnboundOutDev(OutSlotDevice slotDevice, OutputDeviceType contType);
-        void DetachUnboundOutDev(OutSlotDevice slotDevice);
-        void PluginOutDev(int index, DS4Device device);
-        void UnplugOutDev(int index, DS4Device device, bool immediate = false, bool force = false);
-        Task<bool> Start(bool showInLog = true);
-        void PrepareAbort();
-        bool Stop(bool showInLog = true, bool immediateUnplug = false);
-
-        /// <summary>
-        ///     Gets called when devices got "hot-plugged" (meaning inserted or removed during the lifetime of the application).
-        /// </summary>
-        Task<bool> HotPlug();
-
-        void CheckProfileOptions(int ind, DS4Device device, bool startUp = false);
-        void TouchPadOn(int ind, DS4Device device);
-        string GetDs4Battery(int index);
-        string getDS4Status(int index);
-        void LagFlashWarning(DS4Device device, int ind, bool on);
-        DS4ControlItem GetActiveInputControl(int ind);
-        void StartTPOff(int deviceID);
-        string TouchpadSlide(int ind);
-        void LogDebug(string data, bool isWarning = false);
-        void OnDebug(object sender, LogEntryEventArgs args);
-        void SetRumble(byte heavyMotor, byte lightMotor, int deviceNum);
-
-        void SetDevRumble(DS4Device device,
-            byte heavyMotor, byte lightMotor, int deviceNum);
-
-        DS4State GetDs4State(int ind);
-        DS4State GetDs4StateMapped(int ind);
-        DS4State GetDs4StateTemp(int ind);
-        void RefreshOutputKBMHandler();
-        void CheckHidHidePresence();
-        void UpdateHidHideAttributes();
-        void UpdateHidHiddenAttributes();
-        void UseUDPPort();
-        void ResetUdpSmoothingFilters(int idx);
-        void ChangeUDPStatus(bool state, bool openPort = true);
-    }
-
-    public partial class ControlService : IControlService
+    public partial class ControlService
     {
         /// <summary>
         ///     TODO: temporary!
