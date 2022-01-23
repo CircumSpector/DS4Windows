@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Devices.HID;
@@ -15,9 +16,9 @@ namespace DS4Windows.Shared.Devices.Services
 
         public int SlotIndex { get; init; }
 
-        public bool IsOccupied { get; set; }
+        public bool IsOccupied { get; internal set; }
 
-        [CanBeNull] public CompatibleHidDevice Device { get; set; }
+        [CanBeNull] public CompatibleHidDevice Device { get; internal set; }
     }
 
     public interface IControllerManagerService
@@ -40,6 +41,16 @@ namespace DS4Windows.Shared.Devices.Services
         /// <param name="device">The <see cref="CompatibleHidDevice"/> that departed.</param>
         /// <returns>The slot index it has previously occupied.</returns>
         int FreeSlotContaining(CompatibleHidDevice device);
+
+        /// <summary>
+        ///     Gets invoked when a slot got occupied.
+        /// </summary>
+        event Action<CompatibleHidDeviceSlot> ControllerSlotOccupied;
+
+        /// <summary>
+        ///     Gets invoked when a slot got freed.
+        /// </summary>
+        event Action<CompatibleHidDeviceSlot> ControllerSlotFreed;
     }
 
     public class ControllerManagerService : IControllerManagerService
@@ -73,6 +84,8 @@ namespace DS4Windows.Shared.Devices.Services
             slot.Device = device;
             slot.IsOccupied = true;
 
+            ControllerSlotOccupied?.Invoke(slot);
+
             return slot.SlotIndex;
         }
 
@@ -81,10 +94,18 @@ namespace DS4Windows.Shared.Devices.Services
         {
             var slot = activeControllers.First(s => Equals(s.Device, device));
 
+            ControllerSlotFreed?.Invoke(slot);
+
             slot.IsOccupied = false;
             slot.Device = null;
 
             return slot.SlotIndex;
         }
+
+        /// <inheritdoc />
+        public event Action<CompatibleHidDeviceSlot> ControllerSlotOccupied;
+
+        /// <inheritdoc />
+        public event Action<CompatibleHidDeviceSlot> ControllerSlotFreed;
     }
 }
