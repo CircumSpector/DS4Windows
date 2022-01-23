@@ -2,6 +2,7 @@
 {
     public enum ConnectionType : byte
     {
+        Unknown,
         Bluetooth,
         SonyWirelessAdapter,
         Usb

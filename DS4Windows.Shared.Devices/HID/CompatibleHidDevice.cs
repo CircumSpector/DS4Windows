@@ -66,7 +66,7 @@ namespace DS4Windows.Shared.Devices.HID
             // 
             Logger = Services.GetRequiredService<ILogger<CompatibleHidDevice>>();
 
-            if (!Connection.HasValue)
+            if (Connection == ConnectionType.Unknown)
                 throw new ArgumentException("Couldn't determine connection type.");
 
             if (FeatureSet != CompatibleHidDeviceFeatureSet.Default)
@@ -87,62 +87,71 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
         /// </summary>
-        public ConnectionType? Connection
+        public ConnectionType Connection
         {
             get
             {
-                var device = PnPDevice.GetDeviceByInterfaceId(Path);
-
-                //
-                // Walk up device tree
-                // 
-                while (device is not null)
+                try
                 {
-                    var deviceClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
+                    var device = PnPDevice.GetDeviceByInterfaceId(Path);
 
                     //
-                    // Parent is Bluetooth device
+                    // Walk up device tree
                     // 
-                    if (Equals(deviceClass, BluetoothDeviceClassGuid))
-                        return ConnectionType.Bluetooth;
-
-                    //
-                    // USB or via Sony Wireless Adapter
-                    // 
-                    if (Equals(deviceClass, UsbCompositeDeviceClassGuid))
+                    while (device is not null)
                     {
-                        //
-                        // Check if we find the composite audio device
-                        // 
-                        var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
-
-                        if (children.Count != 2)
-                            return ConnectionType.Usb;
-
-                        var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
-
-                        var friendlyName = audioDevice.GetProperty<string>(DevicePropertyDevice.FriendlyName);
-
-                        if (string.IsNullOrEmpty(friendlyName))
-                            return ConnectionType.Usb;
+                        var deviceClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
 
                         //
-                        // Match friendly name reported by Wireless Adapter
+                        // Parent is Bluetooth device
                         // 
-                        return friendlyName.Equals(SonyWirelessAdapterFriendlyName, StringComparison.OrdinalIgnoreCase)
-                            ? ConnectionType.SonyWirelessAdapter
-                            : ConnectionType.Usb;
+                        if (Equals(deviceClass, BluetoothDeviceClassGuid))
+                            return ConnectionType.Bluetooth;
+
+                        //
+                        // USB or via Sony Wireless Adapter
+                        // 
+                        if (Equals(deviceClass, UsbCompositeDeviceClassGuid))
+                        {
+                            //
+                            // Check if we find the composite audio device
+                            // 
+                            var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
+
+                            if (children.Count != 2)
+                                return ConnectionType.Usb;
+
+                            var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
+
+                            var friendlyName = audioDevice.GetProperty<string>(DevicePropertyDevice.FriendlyName);
+
+                            if (string.IsNullOrEmpty(friendlyName))
+                                return ConnectionType.Usb;
+
+                            //
+                            // Match friendly name reported by Wireless Adapter
+                            // 
+                            return friendlyName.Equals(SonyWirelessAdapterFriendlyName, StringComparison.OrdinalIgnoreCase)
+                                ? ConnectionType.SonyWirelessAdapter
+                                : ConnectionType.Usb;
+                        }
+
+                        var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                        if (parentId is null)
+                            break;
+
+                        device = PnPDevice.GetDeviceByInstanceId(parentId);
                     }
 
-                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
-
-                    if (parentId is null)
-                        break;
-
-                    device = PnPDevice.GetDeviceByInstanceId(parentId);
+                    return ConnectionType.Unknown;
                 }
+                catch (Exception e)
+                {
+                    Logger.LogError(e, "Connection type lookup failed");
 
-                return null;
+                    return ConnectionType.Unknown;
+                }
             }
         }
 
