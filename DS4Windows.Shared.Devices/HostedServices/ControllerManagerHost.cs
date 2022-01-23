@@ -1,34 +1,82 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using DS4Windows.Shared.Configuration.Profiles.Services;
+using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Devices.HostedServices
 {
+    /// <summary>
+    ///     Manages compatible input device detection and state handling.
+    /// </summary>
     public class ControllerManagerHost : IHostedService
     {
-        private readonly IControllersEnumeratorService enumeratorService;
+        private readonly IControllersEnumeratorService enumerator;
 
         private readonly ILogger<ControllerManagerHost> logger;
+        private readonly IControllerManagerService manager;
 
-        public ControllerManagerHost(IControllersEnumeratorService enumeratorService,
-            ILogger<ControllerManagerHost> logger)
+        private readonly IProfilesService profileService;
+
+        public ControllerManagerHost(IControllersEnumeratorService enumerator,
+            ILogger<ControllerManagerHost> logger, IProfilesService profileService,
+            IControllerManagerService manager)
         {
-            this.enumeratorService = enumeratorService;
+            this.enumerator = enumerator;
             this.logger = logger;
-        }
+            this.profileService = profileService;
+            this.manager = manager;
 
+            enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
+            enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
+        }
+        
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            //
+            // Make sure we're ready to rock
+            // 
+            profileService.Initialize();
+
             logger.LogInformation("Starting device enumeration");
 
-            await Task.Run(() => enumeratorService.EnumerateDevices(), cancellationToken);
+            //
+            // Run full enumeration only once at startup, during runtime arrival events are used
+            // 
+            await Task.Run(() => enumerator.EnumerateDevices(), cancellationToken);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        ///     Gets invoked when a new compatible device is detected.
+        /// </summary>
+        private void EnumeratorServiceOnControllerReady(CompatibleHidDevice device)
+        {
+            var slotIndex = manager.AssignFreeSlotWith(device);
+
+            if (slotIndex == -1)
+            {
+                logger.LogError("No free slot available");
+                return;
+            }
+
+            profileService.ControllerArrived(slotIndex, device.Serial);
+        }
+
+        /// <summary>
+        ///     Gets invoked when a compatible device has departed.
+        /// </summary>
+        private void EnumeratorOnControllerRemoved(CompatibleHidDevice device)
+        {
+            var slot = manager.FreeSlotContaining(device);
+
+            profileService.ControllerDeparted(slot, device.Serial);
         }
     }
 }

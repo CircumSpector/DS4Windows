@@ -126,6 +126,7 @@ namespace DS4WinWPF
                     .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; })
                 );
 
+            services.AddSingleton<IControllerManagerService, ControllerManagerService>();
             services.AddSingleton<IHidHideControlService, HidHideControlService>();
             services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
             services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
