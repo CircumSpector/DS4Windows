@@ -8,12 +8,11 @@ using System.Windows;
 using System.Windows.Controls;
 using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
-using DS4WinWPF.DS4Control.IoC.Services;
-using DS4WinWPF.DS4Control.Profiles.Schema;
 using JetBrains.Annotations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
@@ -24,6 +23,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public static string trayTitle = $"DS4Windows v{Global.ExecutableProductVersion}";
 
         [Obsolete] private readonly ReaderWriterLockSlim _colLocker = new();
+
+        private readonly ActivitySource appActivitySource = new(Constants.ApplicationName);
 
         private readonly IAppSettingsService appSettings;
         private readonly MenuItem changeServiceItem;
@@ -46,6 +47,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             IProfilesService profilesService
         )
         {
+            using var activity = appActivitySource.StartActivity(
+                $"{nameof(TrayIconViewModel)}:Constructor");
+
             this.appSettings = appSettings;
             controlService = service;
             this.profilesService = profilesService;
