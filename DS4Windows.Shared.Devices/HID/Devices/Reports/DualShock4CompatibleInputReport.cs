@@ -46,6 +46,7 @@
 
             var touchX = ((inputReport[35 + offset] & 0xF) << 8) | inputReport[34 + offset];
 
+            TouchClick = (inputReport[10 + offset] & (1 << 1)) != 0;
             Mute = (inputReport[10 + offset] & (1 << 2)) != 0;
 
             TrackPadTouch1 = new TrackPadTouch
