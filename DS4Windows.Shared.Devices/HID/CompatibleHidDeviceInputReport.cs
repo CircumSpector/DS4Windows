@@ -37,7 +37,7 @@
         public bool LeftTriggerButton { get; protected set; }
 
         public byte RightTrigger { get; protected set; }
-        
+
         public bool RightTriggerButton { get; protected set; }
 
         public bool LeftThumb { get; protected set; }
@@ -67,7 +67,7 @@
         public byte RightThumbY { get; protected set; } = 128;
 
         /// <summary>
-        ///     Parse a raw byte array into this <see cref="CompatibleHidDeviceInputReport"/>.
+        ///     Parse a raw byte array into this <see cref="CompatibleHidDeviceInputReport" />.
         /// </summary>
         /// <param name="inputReport">The raw input report buffer.</param>
         /// <param name="offset">An optional offset where to expect the start byte (report ID).</param>
@@ -99,6 +99,32 @@
             LeftShoulder = (inputReport[9 + offset] & (1 << 0)) != 0;
 
             PS = (inputReport[10 + offset] & (1 << 0)) != 0;
+        }
+
+        /// <summary>
+        ///     Gets idle state.
+        /// </summary>
+        /// <returns>True if none of the controls are engaged, false otherwise.</returns>
+        public virtual bool GetIsIdle()
+        {
+            if (Square || Cross || Circle || Triangle)
+                return false;
+            if (DPad != DPadDirection.Default)
+                return false;
+            if (LeftShoulder || RightShoulder || LeftThumb || RightThumb || Share || Options || PS)
+                return false;
+            if (LeftTriggerButton || RightTriggerButton)
+                return false;
+            if (LeftTrigger != 0 || RightTrigger != 0)
+                return false;
+
+            const int slop = 64;
+            if (LeftThumbX is <= 127 - slop or >= 128 + slop || LeftThumbY is <= 127 - slop or >= 128 + slop)
+                return false;
+            if (RightThumbX is <= 127 - slop or >= 128 + slop || RightThumbY is <= 127 - slop or >= 128 + slop)
+                return false;
+
+            return true;
         }
     }
 }

@@ -37,6 +37,9 @@
 
         public bool TouchIsOnRightSide { get; protected set; }
 
+        public bool TouchClick { get; protected set; }
+
+        /// <inheritdoc />
         public override void ParseFrom(byte[] inputReport, int offset)
         {
             base.ParseFrom(inputReport, offset);
@@ -70,6 +73,18 @@
             Touch2 = inputReport[37 + offset] >> 7 == 0;
             TouchIsOnLeftSide = !(touchX >= 1920 * 2 / 5); // TODO: port const
             TouchIsOnRightSide = !(touchX < 1920 * 2 / 5); // TODO: port const
+        }
+
+        /// <inheritdoc />
+        public override bool GetIsIdle()
+        {
+            if (!base.GetIsIdle())
+                return false;
+
+            if (Touch1 || Touch2 || TouchClick)
+                return false;
+
+            return true;
         }
     }
 }
