@@ -7,6 +7,9 @@ using JetBrains.Annotations;
 
 namespace DS4Windows.Shared.Devices.Services
 {
+    /// <summary>
+    ///     Describes a controller slot and the <see cref="CompatibleHidDevice"/> associated with it.
+    /// </summary>
     public class CompatibleHidDeviceSlot
     {
         public CompatibleHidDeviceSlot(int slotIndex)
@@ -14,10 +17,19 @@ namespace DS4Windows.Shared.Devices.Services
             SlotIndex = slotIndex;
         }
 
+        /// <summary>
+        ///     The zero-based slot index.
+        /// </summary>
         public int SlotIndex { get; init; }
 
+        /// <summary>
+        ///     Is this slot occupied with a <see cref="Device"/>?
+        /// </summary>
         public bool IsOccupied { get; internal set; }
 
+        /// <summary>
+        ///     The <see cref="CompatibleHidDevice"/> occupying this slot.
+        /// </summary>
         [CanBeNull] public CompatibleHidDevice Device { get; internal set; }
     }
 
