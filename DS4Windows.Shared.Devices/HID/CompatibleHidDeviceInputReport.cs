@@ -26,7 +26,7 @@
 
         public ushort Timestamp { get; protected set; }
 
-        public byte FrameCounter { get; protected set; } = byte.MaxValue;
+        public byte FrameCounter { get; protected set; }
 
         public bool LeftShoulder { get; protected set; }
 
@@ -66,7 +66,12 @@
 
         public byte RightThumbY { get; protected set; } = 128;
 
-        public virtual void ParseFrom(byte[] inputReport, int offset)
+        /// <summary>
+        ///     Parse a raw byte array into this <see cref="CompatibleHidDeviceInputReport"/>.
+        /// </summary>
+        /// <param name="inputReport">The raw input report buffer.</param>
+        /// <param name="offset">An optional offset where to expect the start byte (report ID).</param>
+        public virtual void ParseFrom(byte[] inputReport, int offset = 0)
         {
             ReportId = inputReport[0 + offset];
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using DS4Windows.Shared.Devices.HID.Devices.Reports;
 using Microsoft.Extensions.Logging;
@@ -13,8 +12,6 @@ namespace DS4Windows.Shared.Devices.HID.Devices
         private const int BthInputReportSize = 547;
 
         protected readonly int ReportStartOffset;
-
-        protected DualShock4CompatibleInputReport InputReport = new();
 
         public DualSenseCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
@@ -47,11 +44,11 @@ namespace DS4Windows.Shared.Devices.HID.Devices
             StartInputReportReader();
         }
 
+        protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
+
         protected override void ProcessInputReport(byte[] inputReport)
         {
             InputReport.ParseFrom(inputReport, ReportStartOffset);
-
-            
         }
     }
 }

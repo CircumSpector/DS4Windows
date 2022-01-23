@@ -179,13 +179,17 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     Fired when this device has been disconnected/unplugged.
         /// </summary>
-        public event Action Disconnected;
+        public event Action<CompatibleHidDevice> Disconnected;
+
+        public event Action<CompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
         /// <summary>
         ///     Process the input report read from the device.
         /// </summary>
         /// <param name="inputReport">The raw report buffer.</param>
         protected abstract void ProcessInputReport(byte[] inputReport);
+
+        protected abstract CompatibleHidDeviceInputReport InputReport { get; }
 
         /// <summary>
         ///     Start the asynchronous input report reading logic.
@@ -248,6 +252,8 @@ namespace DS4Windows.Shared.Devices.HID
                     // 
                     ProcessInputReport(buffer);
 
+                    InputReportAvailable?.Invoke(this, InputReport);
+
                     counter++;
                 }
             }
@@ -302,7 +308,7 @@ namespace DS4Windows.Shared.Devices.HID
 
                 inputReportToken.Cancel();
 
-                Disconnected?.Invoke();
+                Disconnected?.Invoke(this);
             }
             catch (Exception ex)
             {

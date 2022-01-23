@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using DS4Windows.Shared.Devices.HID.Devices.Reports;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Devices.HID.Devices
@@ -45,9 +46,10 @@ namespace DS4Windows.Shared.Devices.HID.Devices
             StartInputReportReader();
         }
 
+        protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
+
         protected override void ProcessInputReport(byte[] inputReport)
         {
-
         }
     }
 }

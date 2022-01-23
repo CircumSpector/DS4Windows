@@ -14,5 +14,7 @@ namespace DS4Windows.Shared.Devices.HID.Devices
         {
             throw new NotImplementedException();
         }
+
+        protected override CompatibleHidDeviceInputReport InputReport { get; }
     }
 }
