@@ -39,7 +39,7 @@ namespace DS4Windows.Shared.Devices.Services
         ///     Call when a <see cref="CompatibleHidDevice"/> had departed and its slot can be marked available.
         /// </summary>
         /// <param name="device">The <see cref="CompatibleHidDevice"/> that departed.</param>
-        /// <returns>The slot index it has previously occupied.</returns>
+        /// <returns>The zero-based slot index it has previously occupied.</returns>
         int FreeSlotContaining(CompatibleHidDevice device);
 
         /// <summary>
@@ -53,6 +53,9 @@ namespace DS4Windows.Shared.Devices.Services
         event Action<CompatibleHidDeviceSlot> ControllerSlotFreed;
     }
 
+    /// <summary>
+    ///     Handles currently active devices and occupied slots and takes care that profiles are loaded when required.
+    /// </summary>
     public class ControllerManagerService : IControllerManagerService
     {
         private readonly ObservableCollection<CompatibleHidDeviceSlot> activeControllers;
