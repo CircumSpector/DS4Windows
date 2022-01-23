@@ -5,6 +5,7 @@ namespace DS4Windows
     /// <summary>
     ///     Represents all the properties a <see cref="DS4Device" /> input report carries.
     /// </summary>
+    [Obsolete]
     public class DS4State
     {
         public static readonly int DEFAULT_AXISDIR_VALUE = 127;

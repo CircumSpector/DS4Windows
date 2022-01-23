@@ -181,6 +181,9 @@ namespace DS4Windows.Shared.Devices.HID
         /// </summary>
         public event Action<CompatibleHidDevice> Disconnected;
 
+        /// <summary>
+        ///     Fired when a new input report is read for further processing.
+        /// </summary>
         public event Action<CompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
         /// <summary>
@@ -189,6 +192,9 @@ namespace DS4Windows.Shared.Devices.HID
         /// <param name="inputReport">The raw report buffer.</param>
         protected abstract void ProcessInputReport(byte[] inputReport);
 
+        /// <summary>
+        ///     The parsed input report. Depends on device type.
+        /// </summary>
         protected abstract CompatibleHidDeviceInputReport InputReport { get; }
 
         /// <summary>
