@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
@@ -39,8 +39,12 @@
 
   <ItemGroup>
     <Reference Include="Nefarius.ViGEm.Client">
-      <HintPath>..\DS4Windows\libs\$(Platform)\Nefarius.ViGEm.Client\Nefarius.ViGEm.Client.dll</HintPath>
+      <HintPath>$(SolutionDir)DS4Windows\libs\$(Platform)\Nefarius.ViGEm.Client\Nefarius.ViGEm.Client.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

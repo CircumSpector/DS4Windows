@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DS4Windows.DS4Library;
 using DS4Windows.DS4Library.CoreAudio;
+using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;

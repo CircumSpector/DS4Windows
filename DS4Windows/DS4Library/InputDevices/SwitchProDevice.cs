@@ -6,10 +6,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Application.Schema;
 using DS4Windows.Shared.Devices.HID;
-using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.Logging;
 
 namespace DS4Windows.InputDevices
@@ -563,9 +563,9 @@ namespace DS4Windows.InputDevices
                     tempMotion.outputAccelZ = 0;
                     tempMotion.outputGyroControls = false;
                     //Console.WriteLine(gyroRoll);
-                    tempMotion.accelXG = accelX * 2 / DS4Windows.SixAxis.F_ACC_RES_PER_G;
-                    tempMotion.accelYG = -accelZ * 2 / DS4Windows.SixAxis.F_ACC_RES_PER_G;
-                    tempMotion.accelZG = -accelY * 2 / DS4Windows.SixAxis.F_ACC_RES_PER_G;
+                    tempMotion.accelXG = accelX * 2 / Shared.Common.Types.SixAxis.F_ACC_RES_PER_G;
+                    tempMotion.accelYG = -accelZ * 2 / Shared.Common.Types.SixAxis.F_ACC_RES_PER_G;
+                    tempMotion.accelZG = -accelY * 2 / Shared.Common.Types.SixAxis.F_ACC_RES_PER_G;
 
                     tempMotion.angVelYaw = gyroYaw * GYRO_IN_DEG_SEC_FACTOR;
                     tempMotion.angVelPitch = -gyroPitch * GYRO_IN_DEG_SEC_FACTOR;

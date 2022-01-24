@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 

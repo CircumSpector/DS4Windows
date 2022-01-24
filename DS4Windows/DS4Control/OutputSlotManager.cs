@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using DS4WinWPF.DS4Control;
 using Nefarius.ViGEm.Client;
 

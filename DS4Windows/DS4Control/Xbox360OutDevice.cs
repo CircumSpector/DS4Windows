@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Configuration.Profiles.Services;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using DS4Windows.VJoyFeeder;
-using DS4WinWPF.DS4Control.IoC.Services;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;

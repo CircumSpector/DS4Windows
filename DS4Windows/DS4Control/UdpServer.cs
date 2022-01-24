@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
+using DS4Windows.Shared.Common.Legacy;
 
 namespace DS4Windows
 {

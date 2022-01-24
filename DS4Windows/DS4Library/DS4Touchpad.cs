@@ -1,4 +1,5 @@
 ﻿using System;
+using DS4Windows.Shared.Common.Legacy;
 
 namespace DS4Windows
 {

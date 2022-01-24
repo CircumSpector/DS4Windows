@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4WinWPF.DS4Control.IoC.Services;

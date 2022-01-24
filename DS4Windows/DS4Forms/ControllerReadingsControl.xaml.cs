@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DS4Windows;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.Legacy;
 using DS4WinWPF.Translations;
 using NonFormTimer = System.Timers.Timer;
 
