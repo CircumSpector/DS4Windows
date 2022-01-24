@@ -44,7 +44,7 @@ namespace DS4Windows.Shared.Devices.HID.Devices
             StartInputReportReader();
         }
 
-        protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
+        protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
 
         protected override void ProcessInputReport(byte[] inputReport)
         {

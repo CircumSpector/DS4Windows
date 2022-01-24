@@ -16,7 +16,7 @@
     /// <summary>
     ///     Describes the bare minimum common properties an input report of any compatible device can deliver.
     /// </summary>
-    public class CompatibleHidDeviceInputReport
+    public abstract class CompatibleHidDeviceInputReport
     {
         public byte ReportId { get; protected set; }
 
@@ -71,35 +71,7 @@
         /// </summary>
         /// <param name="inputReport">The raw input report buffer.</param>
         /// <param name="offset">An optional offset where to expect the start byte (report ID).</param>
-        public virtual void ParseFrom(byte[] inputReport, int offset = 0)
-        {
-            ReportId = inputReport[0 + offset];
-
-            LeftThumbX = inputReport[1 + offset];
-            LeftThumbY = inputReport[2 + offset];
-            RightThumbX = inputReport[3 + offset];
-            RightThumbY = inputReport[4 + offset];
-            LeftTrigger = inputReport[5 + offset];
-            RightTrigger = inputReport[6 + offset];
-
-            Triangle = (inputReport[8 + offset] & (1 << 7)) != 0;
-            Circle = (inputReport[8 + offset] & (1 << 6)) != 0;
-            Cross = (inputReport[8 + offset] & (1 << 5)) != 0;
-            Square = (inputReport[8 + offset] & (1 << 4)) != 0;
-
-            DPad = (DPadDirection)(inputReport[8 + offset] & 0x0F);
-
-            LeftThumb = (inputReport[9 + offset] & (1 << 7)) != 0;
-            RightThumb = (inputReport[9 + offset] & (1 << 6)) != 0;
-            Options = (inputReport[9 + offset] & (1 << 5)) != 0;
-            Share = (inputReport[9 + offset] & (1 << 4)) != 0;
-            RightTriggerButton = (inputReport[9 + offset] & (1 << 3)) != 0;
-            LeftTriggerButton = (inputReport[9 + offset] & (1 << 2)) != 0;
-            RightShoulder = (inputReport[9 + offset] & (1 << 1)) != 0;
-            LeftShoulder = (inputReport[9 + offset] & (1 << 0)) != 0;
-
-            PS = (inputReport[10 + offset] & (1 << 0)) != 0;
-        }
+        public abstract void ParseFrom(byte[] inputReport, int offset = 0);
 
         /// <summary>
         ///     Gets idle state.

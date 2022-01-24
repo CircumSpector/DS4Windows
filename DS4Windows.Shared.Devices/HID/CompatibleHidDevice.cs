@@ -41,7 +41,7 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     Unmanaged input report buffer.
         /// </summary>
-        protected IntPtr InputReportBuffer;
+        protected IntPtr InputReportBuffer = IntPtr.Zero;
 
         private Task inputReportProcessor;
 
@@ -402,6 +402,11 @@ namespace DS4Windows.Shared.Devices.HID
         public override void Dispose()
         {
             StopInputReportReader();
+
+            if (InputReportBuffer != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(InputReportBuffer);
+            }
 
             base.Dispose();
         }

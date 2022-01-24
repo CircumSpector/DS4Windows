@@ -50,6 +50,7 @@ namespace DS4Windows.Shared.Devices.HID.Devices
 
         protected override void ProcessInputReport(byte[] inputReport)
         {
+            InputReport.ParseFrom(inputReport, ReportStartOffset);
         }
     }
 }
