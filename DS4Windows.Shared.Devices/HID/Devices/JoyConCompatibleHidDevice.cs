@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 
 namespace DS4Windows.Shared.Devices.HID.Devices
 {
@@ -8,6 +9,7 @@ namespace DS4Windows.Shared.Devices.HID.Devices
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
             featureSet, serviceProvider)
         {
+            Serial = PhysicalAddress.Parse(SerialNumberString);
         }
 
         protected override void ProcessInputReport(byte[] inputReport)
