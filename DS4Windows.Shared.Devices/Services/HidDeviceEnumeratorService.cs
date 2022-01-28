@@ -385,7 +385,8 @@ namespace DS4Windows.Shared.Devices.Services
             // TODO: test how others behave (reWASD, NVIDIA, ...)
             // 
             return device is not null &&
-                   device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase);
+                   (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase)
+                   || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
         }
     }
 }
