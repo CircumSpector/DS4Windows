@@ -212,7 +212,7 @@ namespace DS4Windows.Shared.Devices.Services
                 // Create new special input device
                 // 
                 var device = CompatibleHidDevice.CreateFrom(
-                    deviceMeta.InputDevType,
+                    deviceMeta.DeviceType,
                     hidDevice,
                     deviceMeta.FeatureSet,
                     serviceProvider
@@ -263,7 +263,7 @@ namespace DS4Windows.Shared.Devices.Services
             // Create new special input device
             // 
             var device = CompatibleHidDevice.CreateFrom(
-                deviceMeta.InputDevType, 
+                deviceMeta.DeviceType, 
                 hidDevice,
                 deviceMeta.FeatureSet,
                 serviceProvider

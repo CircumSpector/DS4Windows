@@ -40,7 +40,7 @@ namespace DS4Windows.Shared.Devices.HID
             Vid = vid;
             Pid = pid;
             Name = name;
-            InputDevType = inputDevType;
+            DeviceType = inputDevType;
             FeatureSet = featureSet;
         }
 
@@ -62,7 +62,7 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     The <see cref="InputDeviceType"/>.
         /// </summary>
-        public InputDeviceType InputDevType { get; }
+        public InputDeviceType DeviceType { get; }
 
         /// <summary>
         ///     The <see cref="CompatibleHidDeviceFeatureSet"/>.
