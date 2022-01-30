@@ -11,6 +11,8 @@ namespace DS4Windows.Shared.Devices.HID.Devices
 
         protected readonly int ReportStartOffset;
 
+        private bool isConnected = false;
+
         public DualShock4CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
             CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
             featureSet, serviceProvider)
@@ -46,6 +48,12 @@ namespace DS4Windows.Shared.Devices.HID.Devices
 
         protected override void ProcessInputReport(byte[] inputReport)
         {
+            if (Connection == ConnectionType.SonyWirelessAdapter && (inputReport[31] & 0x04) != 0)
+            {
+                
+                return;
+            }
+
             InputReport.ParseFrom(inputReport, ReportStartOffset);
         }
     }

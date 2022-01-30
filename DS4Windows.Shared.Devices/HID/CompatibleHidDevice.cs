@@ -33,6 +33,8 @@ namespace DS4Windows.Shared.Devices.HID
 
         protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
 
+        private ConnectionType? connection;
+
         /// <summary>
         ///     Managed input report array.
         /// </summary>
@@ -87,72 +89,9 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
         /// </summary>
-        public ConnectionType Connection
+        public ConnectionType? Connection
         {
-            get
-            {
-                try
-                {
-                    var device = PnPDevice.GetDeviceByInterfaceId(Path);
-
-                    //
-                    // Walk up device tree
-                    // 
-                    while (device is not null)
-                    {
-                        var deviceClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
-
-                        //
-                        // Parent is Bluetooth device
-                        // 
-                        if (Equals(deviceClass, BluetoothDeviceClassGuid))
-                            return ConnectionType.Bluetooth;
-
-                        //
-                        // USB or via Sony Wireless Adapter
-                        // 
-                        if (Equals(deviceClass, UsbCompositeDeviceClassGuid))
-                        {
-                            //
-                            // Check if we find the composite audio device
-                            // 
-                            var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
-
-                            if (children.Count != 2)
-                                return ConnectionType.Usb;
-
-                            var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
-
-                            var friendlyName = audioDevice.GetProperty<string>(DevicePropertyDevice.FriendlyName);
-
-                            if (string.IsNullOrEmpty(friendlyName))
-                                return ConnectionType.Usb;
-
-                            //
-                            // Match friendly name reported by Wireless Adapter
-                            // 
-                            return friendlyName.Equals(SonyWirelessAdapterFriendlyName, StringComparison.OrdinalIgnoreCase)
-                                ? ConnectionType.SonyWirelessAdapter
-                                : ConnectionType.Usb;
-                        }
-
-                        var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
-
-                        if (parentId is null)
-                            break;
-
-                        device = PnPDevice.GetDeviceByInstanceId(parentId);
-                    }
-
-                    return ConnectionType.Unknown;
-                }
-                catch (Exception e)
-                {
-                    Logger.LogError(e, "Connection type lookup failed");
-
-                    return ConnectionType.Unknown;
-                }
-            }
+            get { return connection ??= GetConnectionType(); }
         }
 
         /// <summary>
@@ -186,6 +125,80 @@ namespace DS4Windows.Shared.Devices.HID
         public int ReportsPerSecondProcessed { get; private set; }
 
         /// <summary>
+        ///     The parsed input report. Depends on device type.
+        /// </summary>
+        protected abstract CompatibleHidDeviceInputReport InputReport { get; }
+
+        /// <summary>
+        ///     Determine <see cref="ConnectionType"/> of this device.
+        /// </summary>
+        /// <returns>The discovered <see cref="ConnectionType"/>.</returns>
+        private ConnectionType GetConnectionType()
+        {
+            try
+            {
+                var device = PnPDevice.GetDeviceByInterfaceId(Path);
+
+                //
+                // Walk up device tree
+                // 
+                while (device is not null)
+                {
+                    var deviceClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
+
+                    //
+                    // Parent is Bluetooth device
+                    // 
+                    if (Equals(deviceClass, BluetoothDeviceClassGuid))
+                        return ConnectionType.Bluetooth;
+
+                    //
+                    // USB or via Sony Wireless Adapter
+                    // 
+                    if (Equals(deviceClass, UsbCompositeDeviceClassGuid))
+                    {
+                        //
+                        // Check if we find the composite audio device
+                        // 
+                        var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
+
+                        if (children.Count != 2)
+                            return ConnectionType.Usb;
+
+                        var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
+
+                        var friendlyName = audioDevice.GetProperty<string>(DevicePropertyDevice.FriendlyName);
+
+                        if (string.IsNullOrEmpty(friendlyName))
+                            return ConnectionType.Usb;
+
+                        //
+                        // Match friendly name reported by Wireless Adapter
+                        // 
+                        return friendlyName.Equals(SonyWirelessAdapterFriendlyName, StringComparison.OrdinalIgnoreCase)
+                            ? ConnectionType.SonyWirelessAdapter
+                            : ConnectionType.Usb;
+                    }
+
+                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                    if (parentId is null)
+                        break;
+
+                    device = PnPDevice.GetDeviceByInstanceId(parentId);
+                }
+
+                return ConnectionType.Unknown;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Connection type lookup failed");
+
+                return ConnectionType.Unknown;
+            }
+        }
+
+        /// <summary>
         ///     Fired when this device has been disconnected/unplugged.
         /// </summary>
         public event Action<CompatibleHidDevice> Disconnected;
@@ -200,11 +213,6 @@ namespace DS4Windows.Shared.Devices.HID
         /// </summary>
         /// <param name="inputReport">The raw report buffer.</param>
         protected abstract void ProcessInputReport(byte[] inputReport);
-
-        /// <summary>
-        ///     The parsed input report. Depends on device type.
-        /// </summary>
-        protected abstract CompatibleHidDeviceInputReport InputReport { get; }
 
         /// <summary>
         ///     Start the asynchronous input report reading logic.
@@ -403,10 +411,7 @@ namespace DS4Windows.Shared.Devices.HID
         {
             StopInputReportReader();
 
-            if (InputReportBuffer != IntPtr.Zero)
-            {
-                Marshal.FreeHGlobal(InputReportBuffer);
-            }
+            if (InputReportBuffer != IntPtr.Zero) Marshal.FreeHGlobal(InputReportBuffer);
 
             base.Dispose();
         }
