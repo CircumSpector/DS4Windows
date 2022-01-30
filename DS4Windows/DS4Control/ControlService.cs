@@ -369,7 +369,7 @@ namespace DS4Windows
         [MissingLocalization]
         private void PrepareDs4DeviceInit(DS4Device device)
         {
-            if (!IsWin8OrGreater) device.BTOutputMethod = DS4Device.BTOutputReportMethod.HidD_SetOutputReport;
+            if (!IsWin8OrGreater) device.BluetoothOutputMethod = BluetoothOutputReportMethod.HidD_SetOutputReport;
 
             if (device is DualSenseDevice dualSenseDevice)
                 dualSenseDevice.ProblematicFirmwareVersionDetected += async (ds4Device, version) =>

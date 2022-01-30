@@ -27,13 +27,7 @@ namespace DS4Windows
     public class DS4Device : IDisposable
     {
         public delegate void ReportHandler<TEventArgs>(DS4Device sender, TEventArgs args);
-
-        public enum BTOutputReportMethod : uint
-        {
-            WriteFile,
-            HidD_SetOutputReport
-        }
-
+        
         public enum ExclusiveStatus : byte
         {
             Shared = 0,
@@ -406,7 +400,7 @@ namespace DS4Windows
         public ManualResetEventSlim ReadWaitEv => readWaitEv;
 
         public virtual byte SerialReportID => SERIAL_FEATURE_ID;
-        public BTOutputReportMethod BTOutputMethod { get; set; }
+        public BluetoothOutputReportMethod BluetoothOutputMethod { get; set; }
 
         public InputDeviceType DeviceType { get; protected set; }
 
@@ -885,7 +879,7 @@ namespace DS4Windows
             {
                 if (ConnectionType == ConnectionType.Bluetooth)
                 {
-                    if (BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
+                    if (BluetoothOutputMethod == BluetoothOutputReportMethod.HidD_SetOutputReport)
                     {
                         ds4Output = new Thread(PerformDs4Output);
                         ds4Output.Priority = ThreadPriority.Normal;
@@ -967,7 +961,7 @@ namespace DS4Windows
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
 
-                if (BTOutputMethod == BTOutputReportMethod.WriteFile)
+                if (BluetoothOutputMethod == BluetoothOutputReportMethod.WriteFile)
                     // Use Interrupt endpoint for almost BT DS4 connected devices now
                     return hDevice.WriteOutputReportViaInterrupt(outputBuffer, READ_STREAM_TIMEOUT);
                 return hDevice.WriteOutputReportViaControl(outputBuffer);
@@ -982,7 +976,7 @@ namespace DS4Windows
                 //if ((this.featureSet & VidPidFeatureSet.OnlyOutputData0x05) == 0)
                 //    return hDevice.WriteOutputReportViaControl(outputReport);
 
-                return BTOutputMethod == BTOutputReportMethod.WriteFile
+                return BluetoothOutputMethod == BluetoothOutputReportMethod.WriteFile
                     ? hDevice.WriteOutputReportViaInterrupt(outputReport, READ_STREAM_TIMEOUT)
                     : hDevice.WriteOutputReportViaControl(outputReport);
 
@@ -1086,7 +1080,7 @@ namespace DS4Windows
                 ds4InactiveFrame = true;
                 idleInput = true;
                 var syncWriteReport = ConnectionType != ConnectionType.Bluetooth ||
-                                      BTOutputMethod == BTOutputReportMethod.WriteFile;
+                                      BluetoothOutputMethod == BluetoothOutputReportMethod.WriteFile;
                 //bool syncWriteReport = true;
                 var forceWrite = false;
 
@@ -1748,7 +1742,7 @@ namespace DS4Windows
             var haptime = output || standbySw.ElapsedMilliseconds >= 4000L;
 
             if (usingBT &&
-                BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
+                BluetoothOutputMethod == BluetoothOutputReportMethod.HidD_SetOutputReport)
                 Monitor.Enter(outReportBuffer);
 
             PrepareOutputReportInner(ref change, ref haptime);
@@ -1784,7 +1778,7 @@ namespace DS4Windows
 
                     if (usingBT)
                     {
-                        if (BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
+                        if (BluetoothOutputMethod == BluetoothOutputReportMethod.HidD_SetOutputReport)
                             Monitor.Enter(outputReport);
 
                         outReportBuffer.CopyTo(outputReport, 0);
@@ -1827,7 +1821,7 @@ namespace DS4Windows
 
                     if (usingBT)
                     {
-                        if (BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport) Monitor.Exit(outputReport);
+                        if (BluetoothOutputMethod == BluetoothOutputReportMethod.HidD_SetOutputReport) Monitor.Exit(outputReport);
                     }
                     else
                     {
@@ -1856,7 +1850,7 @@ namespace DS4Windows
             }
 
             if (usingBT &&
-                BTOutputMethod == BTOutputReportMethod.HidD_SetOutputReport)
+                BluetoothOutputMethod == BluetoothOutputReportMethod.HidD_SetOutputReport)
                 Monitor.Exit(outReportBuffer);
 
             if (quitOutputThread)
