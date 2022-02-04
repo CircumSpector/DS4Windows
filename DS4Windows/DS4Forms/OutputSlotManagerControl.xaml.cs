@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using DS4Windows;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using DS4WinWPF.DS4Forms.ViewModels;
@@ -19,11 +9,12 @@ using DS4WinWPF.DS4Forms.ViewModels;
 namespace DS4WinWPF.DS4Forms
 {
     /// <summary>
-    /// Interaction logic for OutputSlotManager.xaml
+    ///     Interaction logic for OutputSlotManager.xaml
     /// </summary>
     public partial class OutputSlotManagerControl : UserControl
     {
-        private DS4Windows.ControlService controlService;
+        private ControlService controlService;
+
         private CurrentOutDeviceViewModel currentOutDevVM;
         //private PermanentOutDevViewModel permanentDevVM;
 
@@ -32,8 +23,8 @@ namespace DS4WinWPF.DS4Forms
             InitializeComponent();
         }
 
-        public void SetupDataContext(DS4Windows.ControlService controlService,
-            DS4Windows.IOutputSlotManager outputMan)
+        public void SetupDataContext(ControlService controlService,
+            IOutputSlotManager outputMan)
         {
             this.controlService = controlService;
 
@@ -50,30 +41,22 @@ namespace DS4WinWPF.DS4Forms
 
         private void CurrentOutDevVM_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int idx = currentOutDevVM.SelectedIndex;
+            var idx = currentOutDevVM.SelectedIndex;
             if (idx >= 0)
-            {
                 outSlotStackPanel.DataContext = currentOutDevVM.SlotDeviceEntries[idx];
-            }
             else
-            {
                 outSlotStackPanel.DataContext = null;
-            }
         }
 
         public void SetupLateEvents()
         {
-
         }
 
         private void PluginBtn_Click(object sender, RoutedEventArgs e)
         {
-            int idx = currentOutDevVM.SelectedIndex;
+            var idx = currentOutDevVM.SelectedIndex;
             SlotDeviceEntry tempEntry = null;
-            if (idx >= 0)
-            {
-                tempEntry = currentOutDevVM.SlotDeviceEntries[idx];
-            }
+            if (idx >= 0) tempEntry = currentOutDevVM.SlotDeviceEntries[idx];
 
             if (tempEntry != null &&
                 tempEntry.OutSlotDevice.CurrentReserveStatus ==
@@ -85,18 +68,16 @@ namespace DS4WinWPF.DS4Forms
             }
             else
             {
-                PluginOutDevWindow devWindow = new PluginOutDevWindow();
+                var devWindow = new PluginOutDevWindow();
                 devWindow.ShowDialog();
-                MessageBoxResult result = devWindow.Result;
+                var result = devWindow.Result;
                 if (result == MessageBoxResult.OK)
                 {
                     tempEntry.OutSlotDevice.CurrentType = devWindow.ContType;
                     tempEntry.OutSlotDevice.CurrentReserveStatus = devWindow.ReserveType;
                     if (tempEntry.OutSlotDevice.CurrentReserveStatus ==
                         OutSlotDevice.ReserveStatus.Permanent)
-                    {
                         tempEntry.OutSlotDevice.PermanentType = devWindow.ContType;
-                    }
 
                     tempEntry.RequestPlugin();
                 }
@@ -105,20 +86,14 @@ namespace DS4WinWPF.DS4Forms
 
         private void UnplugBtn_Click(object sender, RoutedEventArgs e)
         {
-            int idx = currentOutDevVM.SelectedIndex;
-            if (idx >= 0)
-            {
-                currentOutDevVM.SlotDeviceEntries[idx].RequestUnplug();
-            }
+            var idx = currentOutDevVM.SelectedIndex;
+            if (idx >= 0) currentOutDevVM.SlotDeviceEntries[idx].RequestUnplug();
         }
 
         private void SlotChangeAcceptBtn_Click(object sender, RoutedEventArgs e)
         {
-            int idx = currentOutDevVM.SelectedIndex;
-            if (idx >= 0)
-            {
-                currentOutDevVM.SlotDeviceEntries[idx].ApplyChanges();
-            }
+            var idx = currentOutDevVM.SelectedIndex;
+            if (idx >= 0) currentOutDevVM.SlotDeviceEntries[idx].ApplyChanges();
         }
     }
 }
