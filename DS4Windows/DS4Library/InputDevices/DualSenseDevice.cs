@@ -1414,9 +1414,9 @@ namespace DS4Windows.InputDevices
 
             public GyroMouseSensDualSense()
             {
-                mouseCoefficient = MOUSE_COEFFICIENT;
-                mouseOffset = MOUSE_OFFSET;
-                mouseSmoothOffset = SMOOTH_MOUSE_OFFSET;
+                MouseCoefficient = MOUSE_COEFFICIENT;
+                MouseOffset = MOUSE_OFFSET;
+                MouseSmoothOffset = SMOOTH_MOUSE_OFFSET;
             }
         }
 

@@ -24,7 +24,7 @@ namespace DS4Windows
         private const int SMOOTH_BUFFER_LEN = 3;
         private readonly int deviceNumber;
 
-        private readonly DS4Device.GyroMouseSens gyroMouseSensSettings;
+        private readonly GyroMouseSens gyroMouseSensSettings;
         private readonly double[] xSmoothBuffer = new double[SMOOTH_BUFFER_LEN];
         private readonly double[] ySmoothBuffer = new double[SMOOTH_BUFFER_LEN];
 
@@ -50,7 +50,7 @@ namespace DS4Windows
         private int tempInt;
         private double verticalScale;
 
-        public MouseCursor(int deviceNum, DS4Device.GyroMouseSens gyroMouseSens)
+        public MouseCursor(int deviceNum, GyroMouseSens gyroMouseSens)
         {
             deviceNumber = deviceNum;
             gyroMouseSensSettings = gyroMouseSens;
@@ -99,9 +99,9 @@ namespace DS4Windows
             var gyroSmoothWeight = 0.0;
 
             coefficient = ProfilesService.Instance.ActiveProfiles.ElementAt(deviceNumber).GyroSensitivity * 0.01 *
-                          gyroMouseSensSettings.mouseCoefficient;
-            var offset = gyroMouseSensSettings.mouseOffset;
-            if (gyroSmooth) offset = gyroMouseSensSettings.mouseSmoothOffset;
+                          gyroMouseSensSettings.MouseCoefficient;
+            var offset = gyroMouseSensSettings.MouseOffset;
+            if (gyroSmooth) offset = gyroMouseSensSettings.MouseSmoothOffset;
 
             var tempAngle = Math.Atan2(-deltaY, deltaX);
             var normX = Math.Abs(Math.Cos(tempAngle));

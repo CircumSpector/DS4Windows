@@ -27,7 +27,7 @@ namespace DS4Windows
     public class DS4Device : IDisposable
     {
         public delegate void ReportHandler<TEventArgs>(DS4Device sender, TEventArgs args);
-        
+
         public enum ExclusiveStatus : byte
         {
             Shared = 0,
@@ -1821,7 +1821,8 @@ namespace DS4Windows
 
                     if (usingBT)
                     {
-                        if (BluetoothOutputMethod == BluetoothOutputReportMethod.HidD_SetOutputReport) Monitor.Exit(outputReport);
+                        if (BluetoothOutputMethod == BluetoothOutputReportMethod.HidD_SetOutputReport)
+                            Monitor.Exit(outputReport);
                     }
                     else
                     {
@@ -2203,13 +2204,6 @@ namespace DS4Windows
         ~DS4Device()
         {
             Dispose(false);
-        }
-
-        public class GyroMouseSens
-        {
-            public double mouseCoefficient = 0.012;
-            public double mouseOffset = 0.2;
-            public double mouseSmoothOffset = 0.2;
         }
     }
 }
