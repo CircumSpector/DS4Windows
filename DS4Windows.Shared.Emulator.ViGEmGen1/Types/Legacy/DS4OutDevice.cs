@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 
-namespace DS4Windows
+namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy
 {
-    internal abstract class DS4OutDevice : OutputDevice
+    public abstract class DS4OutDevice : OutputDevice
     {
         public const string devtype = "DS4";
 

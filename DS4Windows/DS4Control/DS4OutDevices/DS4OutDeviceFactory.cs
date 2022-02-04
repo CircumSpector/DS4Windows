@@ -1,4 +1,5 @@
 ﻿using System;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using Nefarius.ViGEm.Client;
 
 namespace DS4Windows
