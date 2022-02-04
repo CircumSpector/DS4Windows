@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 
 namespace DS4WinWPF.DS4Control

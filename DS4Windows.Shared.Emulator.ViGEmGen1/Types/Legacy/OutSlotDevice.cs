@@ -1,10 +1,7 @@
 ﻿using System;
-using DS4Windows;
 using DS4Windows.Shared.Common.Types;
-using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
-using DS4WinWPF.DS4Control.Logging;
 
-namespace DS4WinWPF.DS4Control
+namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy
 {
     public class OutSlotDevice
     {
@@ -85,9 +82,6 @@ namespace DS4WinWPF.DS4Control
             set
             {
                 if (permanentType == value) return;
-
-                if (value != OutputDeviceType.None)
-                    AppLogger.Instance.LogToGui($"Output slot #{Index + 1} has permanent type {value}", false);
 
                 permanentType = value;
                 PermanentTypeChanged?.Invoke(this, EventArgs.Empty);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using DS4Windows;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using DS4WinWPF.DS4Control;
 
 namespace DS4WinWPF.DS4Forms.ViewModels

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using DS4WinWPF.DS4Forms.ViewModels;
 
 namespace DS4WinWPF.DS4Forms
@@ -76,7 +77,7 @@ namespace DS4WinWPF.DS4Forms
 
             if (tempEntry != null &&
                 tempEntry.OutSlotDevice.CurrentReserveStatus ==
-                DS4Control.OutSlotDevice.ReserveStatus.Permanent &&
+                OutSlotDevice.ReserveStatus.Permanent &&
                 tempEntry.OutSlotDevice.PermanentType != OutputDeviceType.None)
             {
                 tempEntry.OutSlotDevice.CurrentType = tempEntry.OutSlotDevice.PermanentType;
@@ -92,7 +93,7 @@ namespace DS4WinWPF.DS4Forms
                     tempEntry.OutSlotDevice.CurrentType = devWindow.ContType;
                     tempEntry.OutSlotDevice.CurrentReserveStatus = devWindow.ReserveType;
                     if (tempEntry.OutSlotDevice.CurrentReserveStatus ==
-                        DS4Control.OutSlotDevice.ReserveStatus.Permanent)
+                        OutSlotDevice.ReserveStatus.Permanent)
                     {
                         tempEntry.OutSlotDevice.PermanentType = devWindow.ContType;
                     }

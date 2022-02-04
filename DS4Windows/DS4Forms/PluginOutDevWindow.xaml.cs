@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using AdonisUI.Controls;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 using DS4WinWPF.DS4Control;
 using MessageBoxResult = System.Windows.MessageBoxResult;
 
