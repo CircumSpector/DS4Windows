@@ -9,7 +9,7 @@
     <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
     <RootNamespace>DS4WinWPF</RootNamespace>
     <AssemblyName>DS4Windows</AssemblyName>
-    <ApplicationIcon>DS4W.ico</ApplicationIcon>
+    <ApplicationIcon>DS4Windows.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <StartupObject>DS4WinWPF.App</StartupObject>
     <NeutralLanguage>en</NeutralLanguage>
@@ -309,11 +309,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Splashscreen.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Emulator.ViGEmGen1\DS4Windows.Shared.Emulator.ViGEmGen1.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SplashScreen Include="Splashscreen.png" />
   </ItemGroup>
 
   <ItemGroup>
