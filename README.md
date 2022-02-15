@@ -1,3 +1,5 @@
+<img src="assets/DS4Windows-128x128.png" align="right" />
+
 # DS4Windows
 
 [![Build status](https://ci.appveyor.com/api/projects/status/gt6hhm5aqy04ou7u?svg=true)](https://ci.appveyor.com/project/nefarius/ds4windows)
