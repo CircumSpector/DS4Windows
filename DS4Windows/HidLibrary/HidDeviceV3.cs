@@ -11,6 +11,7 @@ using PInvoke;
 
 namespace DS4Windows
 {
+    [Obsolete]
     public class HidDeviceV3 : IDisposable
     {
         public enum ReadStatus

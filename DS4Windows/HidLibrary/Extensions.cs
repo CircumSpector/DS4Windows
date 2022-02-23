@@ -1,7 +1,9 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace DS4Windows
 {
+    [Obsolete]
     public static class Extensions
     {
         public static string ToUTF8String(this byte[] buffer)
