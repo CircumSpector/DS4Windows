@@ -4,9 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:lex="http://wpflocalizeextension.codeplex.com"
-             mc:Ignorable="d" 
+             xmlns:local="clr-namespace:DS4WinWPF.DS4Forms"
+             xmlns:localConverters="clr-namespace:DS4WinWPF.DS4Forms.Converters"
              xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+             xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+             lex:LocalizeDictionary.DesignCulture=""
+             lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
+             lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+             mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:ImageLocationPaths x:Key="ImgLocPaths" />
+    </UserControl.Resources>
     <Grid>
 
         <!-- Default info message when no controllers are found -->
