@@ -18,6 +18,7 @@ using AdonisUI.Controls;
 using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
+using DS4Windows.Shared.Common.ViewModel;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
@@ -26,6 +27,7 @@ using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Profiles.Schema;
 using DS4WinWPF.DS4Control.Util;
 using DS4WinWPF.DS4Forms.ViewModels;
+using DS4WinWPF.DS4Forms.Views;
 using DS4WinWPF.Translations;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.Logging;
@@ -85,9 +87,11 @@ namespace DS4WinWPF.DS4Forms
         private bool showAppInTaskbar;
         private readonly TrayIconViewModel trayIconVM;
         private bool wasrunning;
-        public ProfileList ProfileListHolder { get; } = new();
+        public IProfileList ProfileListHolder { get; private set; }
 
         private readonly ActivitySource activitySource = new(Constants.ApplicationName);
+
+        private IViewModelFactory viewModelFactory;
 
         public MainWindow(
             ICommandLineOptions parser,
@@ -99,7 +103,9 @@ namespace DS4WinWPF.DS4Forms
             ProfileEditor editor,
             TrayIconViewModel trayIconViewModel,
             IDeviceNotificationListener deviceNotificationListener,
-            ILogger<MainWindow> logger)
+            ILogger<MainWindow> logger,
+            IViewModelFactory viewModelFactory,
+            IProfileList profileList)
         {
             using var activity = activitySource.StartActivity(
                 $"{nameof(MainWindow)}:Constructor");
@@ -110,6 +116,8 @@ namespace DS4WinWPF.DS4Forms
             this.editor = editor;
             this.deviceNotificationListener = deviceNotificationListener;
             this.logger = logger;
+            this.viewModelFactory = viewModelFactory;
+            this.ProfileListHolder = profileList;
 
             using (activitySource.StartActivity(
                        $"{nameof(MainWindow)}:{nameof(InitializeComponent)}"))
@@ -134,15 +142,19 @@ namespace DS4WinWPF.DS4Forms
             
             StartStopBtn.Content = controlService.IsRunning ? Strings.StopText : Strings.StartText;
 
+            conLvViewModel = viewModelFactory.Create<ControllerListViewModel, IControllersView>();
+            /*
             conLvViewModel = new ControllerListViewModel(controlService, ProfileListHolder, appSettings);
             controllerLV.DataContext = conLvViewModel;
             controllerLV.ItemsSource = conLvViewModel.ControllerCol;
-            ChangeControllerPanel();
+            */
+
+            //ChangeControllerPanel();
             // Sort device by input slot number
-            var view = (CollectionView)CollectionViewSource.GetDefaultView(controllerLV.ItemsSource);
+            /*var view = (CollectionView)CollectionViewSource.GetDefaultView(controllerLV.ItemsSource);
             view.SortDescriptions.Clear();
             view.SortDescriptions.Add(new SortDescription("DevIndex", ListSortDirection.Ascending));
-            view.Refresh();
+            view.Refresh();*/
             
             if (appSettings.Settings.StartMinimized || parser.StartMinimized) WindowState = WindowState.Minimized;
 
@@ -154,8 +166,8 @@ namespace DS4WinWPF.DS4Forms
             WindowStartupLocation = WindowStartupLocation.Manual;
             Left = appSettings.Settings.FormLocationX;
             Top = appSettings.Settings.FormLocationY;
-            noContLb.Content = string.Format(Strings.NoControllersConnected,
-                ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
+            //noContLb.Content = string.Format(Strings.NoControllersConnected,
+            //    ControlService.CURRENT_DS4_CONTROLLER_LIMIT);
 
             autoProfileHolder = autoProfControl.AutoProfileHolder;
             autoProfControl.SetupDataContext(appSettings, ProfileListHolder);
@@ -500,19 +512,7 @@ Suspend support not enabled.", true);
             lastLogMsg.Warning = e.IsWarning;
         }
 
-        private void ChangeControllerPanel()
-        {
-            if (conLvViewModel.ControllerCol.Count == 0)
-            {
-                controllerLV.Visibility = Visibility.Hidden;
-                noContLb.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                controllerLV.Visibility = Visibility.Visible;
-                noContLb.Visibility = Visibility.Hidden;
-            }
-        }
+      
 
         private void ChangeAutoProfilesStatus(bool state)
         {
@@ -553,7 +553,8 @@ Suspend support not enabled.", true);
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                ChangeControllerPanel();
+                conLvViewModel.ChangeControllerPanel();
+                //ChangeControllerPanel();
                 var newitems = e.NewItems;
                 if (newitems != null)
                     foreach (CompositeDeviceModel item in newitems)
@@ -1134,7 +1135,8 @@ Suspend support not enabled.", true);
         {
             var temp = sender as Control;
             var idx = Convert.ToInt32(temp.Tag);
-            controllerLV.SelectedIndex = idx;
+            conLvViewModel.MainView.SetIndex(idx); conLvViewModel.MainView.SetIndex(idx);
+            //controllerLV.SelectedIndex = idx;
             var item = conLvViewModel.CurrentItem;
 
             if (item != null)
@@ -1158,7 +1160,8 @@ Suspend support not enabled.", true);
             var temp = sender as Control;
             var idx = Convert.ToInt32(temp.Tag);
 
-            controllerLV.SelectedIndex = idx;
+            conLvViewModel.MainView.SetIndex(idx);
+            //controllerLV.SelectedIndex = idx;
 
             profilesService.CurrentlyEditedProfile = profilesService.AvailableProfiles.ElementAt(idx);
 

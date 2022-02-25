@@ -19,6 +19,7 @@ using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Common.Services;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Common.ViewModel;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
@@ -145,7 +146,7 @@ namespace DS4WinWPF
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<TrayIconViewModel>();
 
-            services.AddTransient<IProfileList, ProfileList>();
+            services.AddSingleton<IProfileList, ProfileList>();
 
             //
             // ViGEm Client (Gen1) service
@@ -206,6 +207,12 @@ namespace DS4WinWPF
             services.AddHostedService<StartupChecksUserNotifications>();
             services.AddHostedService<ControllerManagerHost>();
             services.AddHostedService<WebServerHost>();
+
+            #region torinth viewmodel stuff
+
+            services.AddSingleton<IViewModelFactory, ViewModelFactory>();
+
+            #endregion
         }
 
         protected override async void OnStartup(StartupEventArgs e)

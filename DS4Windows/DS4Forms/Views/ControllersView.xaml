@@ -1,0 +1,164 @@
+﻿<UserControl x:Class="DS4WinWPF.DS4Forms.Views.ControllersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:lex="http://wpflocalizeextension.codeplex.com"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+
+        <!-- Default info message when no controllers are found -->
+        <Label x:Name="noContLb" Visibility="Hidden" Content="{lex:Loc NoControllersConnected}"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+
+        <!-- Controllers details list -->
+        <ListView x:Name="controllerLV" ItemsSource="{Binding ControllerCol}" SelectionMode="Single"
+                              SelectedIndex="{Binding CurrentIndex, Mode=OneWayToSource}" Margin="0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn x:Name="indexColumn" Header="#" Width="30">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="{Binding ElementName=indexColumn, Path=Width}">
+                                    <TextBlock Text="{Binding DisplayDevIndex}"
+                                                           HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn x:Name="idColumn" Header="ID" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock x:Name="idColumnTxtB" Text="{Binding IdText, Mode=OneWay}"
+                                                       ToolTip="{Binding TooltipIDText, Mode=OneWay}"
+                                                       ToolTipOpening="IdColumnTxtB_ToolTipOpening"
+                                                       Tag="{Binding DevIndex, Mode=OneTime}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="{lex:Loc Status}" x:Name="statusColumn" Width="40">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="{Binding ElementName=statusColumn, Path=Width}">
+                                    <Image x:Name="contStatusImg" Source="{Binding StatusSource}"
+                                                       Stretch="Uniform" Width="20" Height="20"
+                                                       HorizontalAlignment="Center"
+                                                       ToolTip="Right click to disconnect wireless"
+                                                       MouseRightButtonUp="ContStatusImg_MouseRightButtonUp"
+                                                       Tag="{Binding DevIndex}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="exclusiveColumn" Header="Ex" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="{Binding ElementName=exclusiveColumn, Path=Width}">
+                                    <Image Source="{Binding ExclusiveSource}" Stretch="Uniform" Width="20"
+                                                       Height="20" HorizontalAlignment="Center"
+                                                       ToolTip="{Binding IsExclusiveText}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="batteryColumn" Header="{lex:Loc Battery}" Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="{Binding ElementName=batteryColumn, Path=Width}">
+                                    <Label Content="{Binding BatteryState, Mode=OneWay}"
+                                                       HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="LinkProfColumn" Header="Link Profile/ID" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="{Binding ElementName=LinkProfColumn, Path=Width}">
+                                    <CheckBox IsChecked="{Binding LinkedProfile}"
+                                                          HorizontalAlignment="Center"
+                                                          IsEnabled="{Binding PrimaryDevice}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="selectProfileColumn" Header="Selected Profile" Width="130">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel
+                                                Width="{Binding Path=Width, ElementName=selectProfileColumn, Mode=OneWay}"
+                                                HorizontalAlignment="Center">
+                                    <ComboBox x:Name="selectProfCombo"
+                                                          Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=OneWay}"
+                                                          ItemsSource="{Binding ProfileListCol}"
+                                                          SelectedIndex="{Binding SelectedIndex}" Height="Auto"
+                                                          Tag="{Binding DevIndex, Mode=OneTime}"
+                                                          Visibility="{Binding PrimaryDevice, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                          Margin="0"
+                                                          SelectionChanged="SelectProfCombo_SelectionChanged"
+                                                          KeyDown="SelectProfCombo_KeyDown">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                                Text="{Binding Name,Mode=OneWay,FallbackValue=''}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="editColumn" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="{Binding ElementName=editColumn, Path=Width}">
+
+                                    <controls:SplitButton x:Name="ProfEditSBtn" Content="{lex:Loc Edit}"
+                                                                      MinWidth="60"
+                                                                      Visibility="{Binding PrimaryDevice, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                                      Tag="{Binding DevIndex, Mode=OneTime}"
+                                                                      Command="Properties"
+                                                                      HorizontalAlignment="Center">
+                                        <controls:SplitButton.SplitMenu>
+                                            <ContextMenu
+                                                            MinWidth="{Binding PlacementTarget.ActualWidth, RelativeSource={RelativeSource Self}}">
+                                                <Button x:Name="newProfBtn" Content="{lex:Loc NewProfile}"
+                                                                    MinWidth="120"
+                                                                    Tag="{Binding DevIndex, Mode=OneTime}"
+                                                                    Command="New" />
+                                            </ContextMenu>
+                                        </controls:SplitButton.SplitMenu>
+                                    </controls:SplitButton>
+
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="customColorColumn" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="{Binding ElementName=customColorColumn, Path=Width}">
+                                    <!--<xctk:ColorPicker x:Name="customColorPick" SelectedColor="{Binding LightColor, Mode=OneWay}" Width="150"
+                                                                  ShowTabHeaders="False" ColorMode="ColorCanvas" SelectedColorChanged="CustomColorPick_SelectedColorChanged" />-->
+                                    <Button x:Name="LightColorBtn" Width="120" Height="20"
+                                                        Background="{Binding LightColor, Mode=OneWay}"
+                                                        Tag="{Binding DevIndex, Mode=OneTime}"
+                                                        Click="LightColorBtn_Click">
+                                        <!--<Button.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem Header="Use Profile Color" IsCheckable="True" />
+                                                            <MenuItem Header="Use Custom Color" IsCheckable="True" />
+                                                        </ContextMenu>
+                                                    </Button.ContextMenu>-->
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

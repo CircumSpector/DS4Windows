@@ -27,7 +27,7 @@ namespace DS4WinWPF.DS4Forms
         private string steamgamesdir;
         private AutoProfilesViewModel autoProfVM;
         private AutoProfileHolder autoProfileHolder;
-        private ProfileList profileList;
+        private IProfileList profileList;
         private bool autoDebug;
 
         public AutoProfileHolder AutoProfileHolder { get => autoProfileHolder;
@@ -64,7 +64,7 @@ namespace DS4WinWPF.DS4Forms
             }
         }
 
-        public void SetupDataContext(IAppSettingsService appSettings, ProfileList profileList)
+        public void SetupDataContext(IAppSettingsService appSettings, IProfileList profileList)
         {
             autoProfVM = new AutoProfilesViewModel(appSettings, autoProfileHolder, profileList);
             programListLV.DataContext = autoProfVM;

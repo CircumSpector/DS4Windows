@@ -31,7 +31,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly IAppSettingsService appSettings;
 
-        public AutoProfilesViewModel(IAppSettingsService appSettings, AutoProfileHolder autoProfileHolder, ProfileList profileList)
+        public AutoProfilesViewModel(IAppSettingsService appSettings, AutoProfileHolder autoProfileHolder, IProfileList profileList)
         {
             this.appSettings = appSettings;
             ProgramColl = new ObservableCollection<ProgramItem>();

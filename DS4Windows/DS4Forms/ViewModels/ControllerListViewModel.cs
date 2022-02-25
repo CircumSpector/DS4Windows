@@ -13,6 +13,7 @@ using DS4Windows;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Common.Util;
+using DS4Windows.Shared.Common.ViewModel;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
@@ -20,12 +21,13 @@ using DS4Windows.Shared.Devices.Util;
 using DS4WinWPF.DS4Control.IoC.Services;
 using DS4WinWPF.DS4Control.Logging;
 using DS4WinWPF.DS4Control.Util;
+using DS4WinWPF.DS4Forms.Views;
 using DS4WinWPF.Properties;
 using DS4WinWPF.Translations;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
-    public class ControllerListViewModel
+    public class ControllerListViewModel : ViewModelBase<ControllerListViewModel, IControllersView>, IControllersListViewModel
     {
         private readonly IAppSettingsService appSettings;
 
@@ -34,10 +36,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly ControlService controlService;
 
-        private readonly ProfileList profileListHolder;
+        private readonly IProfileList profileListHolder;
 
         //public ControllerListViewModel(Tester tester, ProfileList profileListHolder)
-        public ControllerListViewModel(ControlService service, ProfileList profileListHolder,
+        public ControllerListViewModel(ControlService service, IProfileList profileListHolder,
             IAppSettingsService appSettings)
         {
             this.appSettings = appSettings;
@@ -63,6 +65,9 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             //BindingOperations.EnableCollectionSynchronization(controllerCol, _colLockobj);
             BindingOperations.EnableCollectionSynchronization(ControllerCol, _colListLocker,
                 ColLockCallback);
+
+            ChangeControllerPanel();
+            MainView.SetSort();
         }
 
         public ObservableCollection<CompositeDeviceModel> ControllerCol { get; set; } = new();
@@ -187,6 +192,11 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 _colListLocker.ExitWriteLock();
             }
         }
+
+        public void ChangeControllerPanel()
+        {
+            MainView.ChangeControllerPanel(ControllerCol.Count);
+        }
     }
 
     public class CompositeDeviceModel
@@ -202,7 +212,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public CompositeDeviceModel(IAppSettingsService appSettings, ControlService service, DS4Device device,
             int devIndex, string profile,
-            ProfileList collection)
+            IProfileList collection)
         {
             this.appSettings = appSettings;
             Device = device;
@@ -231,7 +241,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         public string SelectedProfile { get; set; }
 
-        public ProfileList ProfileEntities { get; set; }
+        public IProfileList ProfileEntities { get; set; }
 
         public ObservableCollection<ProfileEntity> ProfileListCol => ProfileEntities.ProfileListCollection;
 
@@ -267,7 +277,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
             get
             {
                 var imgName =
-                    (string) Application.Current.FindResource(Device.ConnectionType == ConnectionType.Usb
+                    (string)Application.Current.FindResource(Device.ConnectionType == ConnectionType.Usb
                         ? "UsbImg"
                         : "BtImg");
                 var source = $"/DS4Windows;component/Resources/{imgName}";
@@ -279,17 +289,17 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             get
             {
-                var imgName = (string) Application.Current.FindResource("CancelImg");
+                var imgName = (string)Application.Current.FindResource("CancelImg");
                 var source = $"/DS4Windows;component/Resources/{imgName}";
                 switch (Device.CurrentExclusiveStatus)
                 {
                     case DS4Device.ExclusiveStatus.Exclusive:
-                        imgName = (string) Application.Current.FindResource("CheckedImg");
+                        imgName = (string)Application.Current.FindResource("CheckedImg");
                         source = $"/DS4Windows;component/Resources/{imgName}";
                         break;
                     case DS4Device.ExclusiveStatus.HidHideAffected:
                     case DS4Device.ExclusiveStatus.HidGuardAffected:
-                        imgName = (string) Application.Current.FindResource("KeyImageImg");
+                        imgName = (string)Application.Current.FindResource("KeyImageImg");
                         source = $"/DS4Windows;component/Resources/{imgName}";
                         break;
                 }
@@ -416,10 +426,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         [MissingLocalization]
         public void AddLightContextItems()
         {
-            var thing = new MenuItem {Header = "Use Profile Color", IsChecked = !UseCustomColor};
+            var thing = new MenuItem { Header = "Use Profile Color", IsChecked = !UseCustomColor };
             thing.Click += ProfileColorMenuClick;
             LightContext.Items.Add(thing);
-            thing = new MenuItem {Header = "Use Custom Color", IsChecked = UseCustomColor};
+            thing = new MenuItem { Header = "Use Custom Color", IsChecked = UseCustomColor };
             thing.Click += CustomColorItemClick;
             LightContext.Items.Add(thing);
         }
@@ -469,5 +479,10 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 else if (Device.ConnectionType == ConnectionType.SonyWirelessAdapter) Device.DisconnectDongle();
             }
         }
+    }
+
+    public interface IControllersListViewModel : IViewModelBase<ControllerListViewModel, IControllersView>
+    {
+
     }
 }
