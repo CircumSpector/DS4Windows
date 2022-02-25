@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:lex="http://wpflocalizeextension.codeplex.com"
              mc:Ignorable="d" 
+             xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
 

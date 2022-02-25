@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DS4Windows.Shared.Common.ViewModel
 {
-    public class ViewModelBase<TViewModel, TMainView> : PropertyChangedBase<TViewModel>, IViewModelBase<TViewModel, TMainView>
+    public class ViewModelBase<TViewModel, TMainView> : IViewModelBase<TViewModel, TMainView>
         where TViewModel : ViewModelBase<TViewModel, TMainView>
         where TMainView : IView<TMainView>
     {
@@ -28,6 +28,8 @@ namespace DS4Windows.Shared.Common.ViewModel
                 return (TMainView)Views.FirstOrDefault();
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void AddView(IView view)
         {
