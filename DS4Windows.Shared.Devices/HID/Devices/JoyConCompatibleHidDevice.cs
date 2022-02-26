@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.NetworkInformation;
+using DS4Windows.Shared.Devices.HID.Devices.Reports;
 
 namespace DS4Windows.Shared.Devices.HID.Devices
 {
@@ -17,6 +18,6 @@ namespace DS4Windows.Shared.Devices.HID.Devices
             throw new NotImplementedException();
         }
 
-        protected override CompatibleHidDeviceInputReport InputReport { get; }
+        protected override CompatibleHidDeviceInputReport InputReport { get; } = new JoyConCompatibleInputReport();
     }
 }
