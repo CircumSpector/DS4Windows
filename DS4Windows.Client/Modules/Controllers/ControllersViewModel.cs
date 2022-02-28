@@ -3,9 +3,11 @@ using DS4Windows.Client.Modules.Controllers.Interfaces;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
-    public class ControllersViewModel : ViewModel<ControllersViewModel>,  IControllersViewModel
+    public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel, IControllersView>,  IControllersViewModel
     {
         //TODO: Change to pull localization values
-        public string? Header => "Controllers";
+        public override string? Header => "Controllers";
+
+        public override int TabIndex => 1;
     }
 }

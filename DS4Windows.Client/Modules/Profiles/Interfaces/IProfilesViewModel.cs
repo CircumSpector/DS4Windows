@@ -2,7 +2,7 @@
 
 namespace DS4Windows.Client.Modules.Profiles.Interfaces
 {
-    public interface IProfilesViewModel : IViewModel<IProfilesViewModel>
+    public interface IProfilesViewModel : INavigationTabViewModel<IProfilesViewModel, IProfilesView>
     {
     }
 }

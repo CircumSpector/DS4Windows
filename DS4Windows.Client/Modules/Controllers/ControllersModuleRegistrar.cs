@@ -1,4 +1,5 @@
 ﻿using DS4Windows.Client.Core.DependencyInjection;
+using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Client.Modules.Controllers.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

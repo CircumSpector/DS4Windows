@@ -5,8 +5,8 @@ using System.Linq;
 
 namespace DS4Windows.Client.Core.ViewModel
 {
-    public class ViewModel<TViewModel> : IViewModel<TViewModel>
-       where TViewModel : ViewModel<TViewModel>
+    public abstract class ViewModel<TViewModel> : IViewModel<TViewModel>
+       where TViewModel : IViewModel<TViewModel>
     {
         public List<IView> Views { get; } = new List<IView>();
         public object? MainView => Views.FirstOrDefault();

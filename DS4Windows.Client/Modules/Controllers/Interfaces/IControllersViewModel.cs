@@ -2,7 +2,7 @@
 
 namespace DS4Windows.Client.Modules.Controllers.Interfaces
 {
-    public interface IControllersViewModel : IViewModel<IControllersViewModel>
+    public interface IControllersViewModel : INavigationTabViewModel<IControllersViewModel, IControllersView>
     {
     }
 }

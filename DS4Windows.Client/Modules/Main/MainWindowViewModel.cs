@@ -1,27 +1,22 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
-using DS4Windows.Client.Modules.Controllers.Interfaces;
 using DS4Windows.Client.Modules.Main.Interfaces;
-using DS4Windows.Client.Modules.Profiles.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows.Navigation;
 
 namespace DS4Windows.Client.Modules.Main
 {
-    public class MainWindowViewModel : ViewModel<MainWindowViewModel>, IMainViewModel
+    public class MainWindowViewModel : ViewModel<IMainViewModel>, IMainViewModel
     {
         public MainWindowViewModel(IViewModelFactory viewModelFactory)
         {
             ViewModelFactory = viewModelFactory;
-            ControllersViewModel = viewModelFactory.Create<IControllersViewModel, IControllersView>();
-            ProfilesViewModel = viewModelFactory.Create<IProfilesViewModel, IProfilesView>();
+            var navigationViewModels = ViewModelFactory.CreateNavigationTabViewModels();
 
-            NavigationItems = new ObservableCollection<IViewModel> { ControllersViewModel, ProfilesViewModel };
-            SelectedPage = ControllersViewModel;
+            NavigationItems = new ObservableCollection<IViewModel>(navigationViewModels);
+            SelectedPage = NavigationItems[0];
         }
 
         public IViewModelFactory? ViewModelFactory { get; }
-        public IControllersViewModel? ControllersViewModel { get; }
-        public IProfilesViewModel? ProfilesViewModel { get; }
         
         #region Navigation
         public ObservableCollection<IViewModel> NavigationItems { get; private set; }
