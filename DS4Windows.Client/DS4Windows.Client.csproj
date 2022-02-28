@@ -68,7 +68,6 @@
 
   <ItemGroup>
     <Folder Include="Modules\Settings\" />
-    <Folder Include="Modules\Profiles\" />
   </ItemGroup>
 
 </Project>

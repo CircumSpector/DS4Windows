@@ -8,16 +8,14 @@ namespace DS4Windows.Client.Core.ViewModel
     public class ViewModel<TViewModel> : IViewModel<TViewModel>
        where TViewModel : ViewModel<TViewModel>
     {
-        private List<IView> viewCollection = new List<IView>();
+        public List<IView> Views { get; } = new List<IView>();
+        public object? MainView => Views.FirstOrDefault();
 
-        public List<IView> Views => viewCollection;
-        public object MainView => Views.FirstOrDefault();
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public void AddView(IView view)
         {
-            viewCollection.Add(view);
+            Views?.Add(view);
         }
 
     }
@@ -29,10 +27,10 @@ namespace DS4Windows.Client.Core.ViewModel
 
     public interface IViewModel
     {
-        void AddView(View.IView view);
+        void AddView(IView view);
 
-        List<View.IView> Views { get; }
+        List<IView> Views { get; }
 
-        object MainView { get; }
+        object? MainView { get; }
     }
 }

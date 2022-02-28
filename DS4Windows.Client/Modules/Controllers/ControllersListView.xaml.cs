@@ -1,27 +1,14 @@
-﻿using DS4Windows.Client.Core.View;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using DS4Windows.Client.Modules.Controllers.Interfaces;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
     /// <summary>
-    /// Interaction logic for ControllersListView.xaml
+    /// Interaction logic for ControllersView.xaml
     /// </summary>
-    public partial class ControllersListView : UserControl, IView<ControllersListView>
+    public partial class ControllersView : Page, IControllersView
     {
-        public ControllersListView()
+        public ControllersView()
         {
             InitializeComponent();
         }
