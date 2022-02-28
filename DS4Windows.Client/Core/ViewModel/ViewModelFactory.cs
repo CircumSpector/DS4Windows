@@ -17,42 +17,17 @@ namespace DS4Windows.Client.Core.ViewModel
 
         public List<INavigationTabViewModel> CreateNavigationTabViewModels()
         {
-            var navigationViewModelTypes = GetNavigationTabViewModelTypes();
+            var navigationTabViewModels = serviceProvider.GetServices<INavigationTabViewModel>();
 
-            var navigationTabViewModels = navigationViewModelTypes.Select(t =>
+            foreach (var navigationTabViewModel in navigationTabViewModels)
             {
-                var generics = t.BaseType.GetGenericArguments();
-                var viewModelInterfaceType = generics[0];
-                var viewInterfaceType = generics[1];
+                var tabView = serviceProvider.GetService(navigationTabViewModel.GetViewType());
+                Initialize(navigationTabViewModel, tabView);
+            }
 
-                var method = GetType()?.GetMethod("Create")?.MakeGenericMethod(viewModelInterfaceType, viewInterfaceType);
-
-                var viewModel = method.Invoke(this, null);
-
-                return (INavigationTabViewModel)viewModel;
-            })
+            return navigationTabViewModels
                 .OrderBy(vm => vm.TabIndex)
                 .ToList();
-
-            return navigationTabViewModels;
-        }
-
-        private IEnumerable<Type> GetNavigationTabViewModelTypes()
-        {
-            var interfaceType = typeof(INavigationTabViewModel<,>);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-              .SelectMany(s => s.GetTypes())
-              .Where(p => p.IsClass)
-              .Where(p =>
-              {
-                  if (p.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType).Any())
-                  {
-                      return true;
-                  }
-                  return false;
-              })
-              .Where(p => p != typeof(NavigationTabViewModel<,>));
-            return types;
         }
 
         public TViewModel Create<TViewModel, TView>()
@@ -60,17 +35,26 @@ namespace DS4Windows.Client.Core.ViewModel
             where TView : IView
         {
             var viewModel = serviceProvider.GetService<TViewModel>();
-            AddView<TView>(viewModel);
+            var view = CreateView<TView>();
+
+            Initialize(viewModel, view);
 
             return viewModel;
         }
 
-        public void AddView<TView>(IViewModel viewModel)
+        public TView CreateView<TView>()
             where TView : IView
         {
-            var view = serviceProvider.GetService<TView>();
-            view.DataContext = viewModel;
-            viewModel.AddView(view);
+            return serviceProvider.GetService<TView>();
+        }
+
+        private void Initialize(object viewModel, object view)
+        {
+            var internalViewModel = (IViewModel)viewModel;
+            var internalView = (IView)view;
+
+            internalViewModel.AddView(internalView);
+            internalView.DataContext = internalViewModel;
         }
     }
 
@@ -82,7 +66,7 @@ namespace DS4Windows.Client.Core.ViewModel
             where TViewModel : IViewModel
             where TView : IView;
 
-        public void AddView<TView>(IViewModel viewModel)
+        public TView CreateView<TView>()
             where TView : IView;
     }
 }

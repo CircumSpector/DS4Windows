@@ -10,7 +10,7 @@ namespace DS4Windows.Client.Modules.Controllers
     {
         public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            services.AddSingleton<IControllersViewModel, ControllersViewModel>();
+            services.AddSingletons<ControllersViewModel>(typeof(IControllersViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<IControllersView, ControllersView>();
         }
     }

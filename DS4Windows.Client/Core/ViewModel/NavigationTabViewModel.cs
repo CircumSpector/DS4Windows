@@ -13,6 +13,11 @@ namespace DS4Windows.Client.Core.ViewModel
     {
         public abstract int TabIndex { get; }
         public abstract string? Header { get; }
+
+        public Type GetViewType()
+        {
+            return typeof(TView);
+        }
     }
 
     public interface INavigationTabViewModel<TViewModel, TView> : INavigationTabViewModel, IViewModel<TViewModel>
@@ -27,5 +32,7 @@ namespace DS4Windows.Client.Core.ViewModel
         int TabIndex { get; }
 
         string? Header { get; }
+
+        Type GetViewType();
     }
 }
