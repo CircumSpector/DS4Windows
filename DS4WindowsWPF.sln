@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Client.Modules.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Client.Modules", "DS4Windows.Client.Modules\DS4Windows.Client.Modules.csproj", "{DCDC441E-CA60-4339-AFAC-31C41786A848}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{03A5466A-1522-4809-9A86-FA929957DA5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7A33E922-173C-4C43-9C15-3223D6581B34} = {03A5466A-1522-4809-9A86-FA929957DA5D}
+		{F37AEB55-8266-4B72-8863-14AECE51CC95} = {03A5466A-1522-4809-9A86-FA929957DA5D}
+		{BBA4E81F-FFBE-449D-B808-D179AB172EA7} = {03A5466A-1522-4809-9A86-FA929957DA5D}
+		{DCDC441E-CA60-4339-AFAC-31C41786A848} = {03A5466A-1522-4809-9A86-FA929957DA5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2BE30981-376A-4DEA-B2B1-247BADB864FC}
