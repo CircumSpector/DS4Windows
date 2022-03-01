@@ -11,8 +11,4 @@
     <ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Settings\" />
-  </ItemGroup>
-
 </Project>
