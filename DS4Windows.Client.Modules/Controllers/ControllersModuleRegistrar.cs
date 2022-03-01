@@ -1,11 +1,7 @@
 ﻿using DS4Windows.Client.Core.DependencyInjection;
+using DS4Windows.Client.Core.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
@@ -13,8 +9,8 @@ namespace DS4Windows.Client.Modules.Controllers
     {
         public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            services.AddSingleton<ControllersListViewModel>();
-            services.AddSingleton<ControllersListView>();
+            services.AddSingletons<ControllersViewModel>(typeof(IControllersViewModel), typeof(INavigationTabViewModel));
+            services.AddSingleton<IControllersView, ControllersView>();
         }
     }
 }

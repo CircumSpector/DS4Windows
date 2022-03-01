@@ -53,6 +53,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj" />
+    <ProjectReference Include="..\DS4Windows.Client.Modules.Interfaces\DS4Windows.Client.Modules.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Client.Modules\DS4Windows.Client.Modules.csproj">
+		<TreatAsUsed>true</TreatAsUsed>
+    </ProjectReference>
     <ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj" />
@@ -64,11 +69,6 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Modules\Settings\" />
-    <Folder Include="Modules\Profiles\" />
   </ItemGroup>
 
 </Project>
