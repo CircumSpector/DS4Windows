@@ -1,5 +1,4 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
-using DS4Windows.Client.Modules.Profiles.Interfaces;
 
 namespace DS4Windows.Client.Modules.Profiles
 {

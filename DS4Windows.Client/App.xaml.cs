@@ -1,5 +1,5 @@
 ﻿using DS4Windows.Client.Core;
-using DS4Windows.Client.Modules.Main.Interfaces;
+using DS4Windows.Client.Modules.Main;
 using System.Windows;
 
 namespace DS4Windows.Client

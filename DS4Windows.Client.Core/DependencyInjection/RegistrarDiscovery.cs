@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace DS4Windows.Client.Core.DependencyInjection
 {
@@ -10,10 +12,23 @@ namespace DS4Windows.Client.Core.DependencyInjection
         public static void RegisterRegistrars(IConfiguration configuration, IServiceCollection services)
         {
             var interfaceType = typeof(IServiceRegistrar);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-              .SelectMany(s => s.GetTypes())
-              .Where(p => interfaceType.IsAssignableFrom(p))
-              .Where(p => p != typeof(IServiceRegistrar));
+
+            var appDir = Directory.GetCurrentDirectory();
+
+            var assemblies = Directory.GetFiles(appDir)
+                .Where(d =>
+                {
+                    var fileName = Path.GetFileName(d);
+                    return fileName.StartsWith("DS4Windows.Client") && fileName.EndsWith(".dll");
+                })
+                .Select(d => Assembly.LoadFrom(d))
+                .ToList();
+
+            var types = assemblies
+                .SelectMany(s => s.GetTypes())
+                .Where(p => interfaceType.IsAssignableFrom(p))
+                .Where(p => p != typeof(IServiceRegistrar))
+                .ToList();
 
             foreach (var type in types)
             {

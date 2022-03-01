@@ -1,5 +1,4 @@
-﻿using DS4Windows.Client.Modules.Profiles.Interfaces;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace DS4Windows.Client.Modules.Profiles
 {

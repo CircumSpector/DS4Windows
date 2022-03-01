@@ -1,5 +1,4 @@
 ﻿using AdonisUI.Controls;
-using DS4Windows.Client.Modules.Main.Interfaces;
 using System.Windows;
 
 namespace DS4Windows.Client.Modules.Main

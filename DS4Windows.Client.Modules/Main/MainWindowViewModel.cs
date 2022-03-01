@@ -1,5 +1,4 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
-using DS4Windows.Client.Modules.Main.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows.Navigation;
 
