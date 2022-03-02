@@ -63,8 +63,15 @@ namespace DS4Windows.Client.Core
             where TViewModel : IViewModel
             where TView : IView
         {
+            host.Start();
             using (var scope = host.Services.CreateScope())
             {
+                var moduleRegistrars = scope.ServiceProvider.GetServices<IServiceRegistrar>();
+                foreach (var registrar in moduleRegistrars)
+                {
+                    registrar.Initialize(scope.ServiceProvider);
+                }
+
                 var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();
                 var viewModel = viewModelFactory.Create<TViewModel, TView>();
                 if (viewModel.MainView is Window windowViewModel)

@@ -2,6 +2,7 @@
 using DS4Windows.Client.Core.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
@@ -11,6 +12,10 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             services.AddSingletons<ControllersViewModel>(typeof(IControllersViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<IControllersView, ControllersView>();
+        }
+
+        public void Initialize(IServiceProvider services)
+        {
         }
     }
 }

@@ -19,7 +19,7 @@ namespace DS4Windows.Client.Core.DependencyInjection
                 .Where(d =>
                 {
                     var fileName = Path.GetFileName(d);
-                    return fileName.StartsWith("DS4Windows.Client") && fileName.EndsWith(".dll");
+                    return fileName.StartsWith("DS4Win") && fileName.EndsWith(".dll");
                 })
                 .Select(d => Assembly.LoadFrom(d))
                 .ToList();
@@ -36,6 +36,7 @@ namespace DS4Windows.Client.Core.DependencyInjection
                 if (instance != null)
                 {
                     services.AddSingleton(type, instance);
+                    services.AddSingleton(typeof(IServiceRegistrar), instance);
                     instance.ConfigureServices(configuration, services);
                 }
             }

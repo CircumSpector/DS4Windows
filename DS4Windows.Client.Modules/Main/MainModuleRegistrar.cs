@@ -1,7 +1,7 @@
 ﻿using DS4Windows.Client.Core.DependencyInjection;
-using DS4Windows.Client.Core.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DS4Windows.Client.Modules.Main
 {
@@ -11,6 +11,10 @@ namespace DS4Windows.Client.Modules.Main
         {
             services.AddSingleton<IMainView, MainWindow>();
             services.AddSingleton<IMainViewModel, MainWindowViewModel>();
+        }
+
+        public void Initialize(IServiceProvider services)
+        {
         }
     }
 }
