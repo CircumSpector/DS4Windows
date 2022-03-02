@@ -15,7 +15,6 @@ namespace DS4Windows.Shared.Configuration.Profiles
 
         public void Initialize(IServiceProvider services)
         {
-            services.GetRequiredService<IProfilesService>().Initialize();
         }
     }
 }
