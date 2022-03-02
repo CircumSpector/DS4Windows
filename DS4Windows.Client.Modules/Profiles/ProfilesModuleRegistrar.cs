@@ -2,6 +2,7 @@
 using DS4Windows.Client.Core.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DS4Windows.Client.Modules.Profiles
 {
@@ -11,6 +12,10 @@ namespace DS4Windows.Client.Modules.Profiles
         {
             services.AddSingletons<ProfilesViewModel>(typeof(IProfilesViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<IProfilesView, ProfilesView>();
+        }
+
+        public void Initialize(IServiceProvider services)
+        {
         }
     }
 }

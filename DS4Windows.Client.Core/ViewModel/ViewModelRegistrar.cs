@@ -15,5 +15,9 @@ namespace DS4Windows.Client.Core.ViewModel
         {
             services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         }
+
+        public void Initialize(IServiceProvider services)
+        {
+        }
     }
 }
