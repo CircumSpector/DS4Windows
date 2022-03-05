@@ -17,13 +17,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Emulator.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Client", "DS4Windows.Client\DS4Windows.Client.csproj", "{7A33E922-173C-4C43-9C15-3223D6581B34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Client.Core", "DS4Windows.Client.Core\DS4Windows.Client.Core.csproj", "{F37AEB55-8266-4B72-8863-14AECE51CC95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Client.Core", "DS4Windows.Client.Core\DS4Windows.Client.Core.csproj", "{F37AEB55-8266-4B72-8863-14AECE51CC95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Client.Modules.Interfaces", "DS4Windows.Client.Modules.Interfaces\DS4Windows.Client.Modules.Interfaces.csproj", "{BBA4E81F-FFBE-449D-B808-D179AB172EA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Client.Modules.Interfaces", "DS4Windows.Client.Modules.Interfaces\DS4Windows.Client.Modules.Interfaces.csproj", "{BBA4E81F-FFBE-449D-B808-D179AB172EA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Client.Modules", "DS4Windows.Client.Modules\DS4Windows.Client.Modules.csproj", "{DCDC441E-CA60-4339-AFAC-31C41786A848}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Client.Modules", "DS4Windows.Client.Modules\DS4Windows.Client.Modules.csproj", "{DCDC441E-CA60-4339-AFAC-31C41786A848}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{03A5466A-1522-4809-9A86-FA929957DA5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Client.Core.Interfaces", "DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj", "{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +155,18 @@ Global
 		{DCDC441E-CA60-4339-AFAC-31C41786A848}.Release|x64.Build.0 = Release|Any CPU
 		{DCDC441E-CA60-4339-AFAC-31C41786A848}.Release|x86.ActiveCfg = Release|Any CPU
 		{DCDC441E-CA60-4339-AFAC-31C41786A848}.Release|x86.Build.0 = Release|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Debug|x64.Build.0 = Debug|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Debug|x86.Build.0 = Debug|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|x64.ActiveCfg = Release|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|x64.Build.0 = Release|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|x86.ActiveCfg = Release|Any CPU
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,6 +176,7 @@ Global
 		{F37AEB55-8266-4B72-8863-14AECE51CC95} = {03A5466A-1522-4809-9A86-FA929957DA5D}
 		{BBA4E81F-FFBE-449D-B808-D179AB172EA7} = {03A5466A-1522-4809-9A86-FA929957DA5D}
 		{DCDC441E-CA60-4339-AFAC-31C41786A848} = {03A5466A-1522-4809-9A86-FA929957DA5D}
+		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90} = {03A5466A-1522-4809-9A86-FA929957DA5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2BE30981-376A-4DEA-B2B1-247BADB864FC}
