@@ -53,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
     <ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj" />
     <ProjectReference Include="..\DS4Windows.Client.Modules.Interfaces\DS4Windows.Client.Modules.Interfaces.csproj" />
     <ProjectReference Include="..\DS4Windows.Client.Modules\DS4Windows.Client.Modules.csproj">

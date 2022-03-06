@@ -57,16 +57,4 @@ namespace DS4Windows.Client.Core.ViewModel
             internalView.DataContext = internalViewModel;
         }
     }
-
-    public interface IViewModelFactory
-    {
-        List<INavigationTabViewModel> CreateNavigationTabViewModels();
-
-        public TViewModel Create<TViewModel, TView>()
-            where TViewModel : IViewModel
-            where TView : IView;
-
-        public TView CreateView<TView>()
-            where TView : IView;
-    }
 }

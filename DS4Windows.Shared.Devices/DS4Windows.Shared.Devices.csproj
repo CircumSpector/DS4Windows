@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj" />
+    <ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj" />
   </ItemGroup>

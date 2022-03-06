@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DS4Windows.Shared.Configuration.Application
 {
-    public class CoofnigurationRegistrar : IServiceRegistrar
+    public class ConfigurationRegistrar : IServiceRegistrar
     {
         public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
