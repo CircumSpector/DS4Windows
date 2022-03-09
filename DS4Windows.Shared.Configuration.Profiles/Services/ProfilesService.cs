@@ -328,6 +328,8 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
             if (!profiles.Any())
             {
                 File.Copy($"{Path.Combine(Environment.CurrentDirectory)}\\Schema\\default.json", $"{directory}\\default.json");
+                profiles = Directory
+                .GetFiles(directory, $"*{DS4WindowsProfile.FileExtension}", SearchOption.TopDirectoryOnly).ToList();
             }
 
             availableProfiles.Clear();
