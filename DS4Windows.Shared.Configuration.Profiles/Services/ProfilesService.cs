@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using DS4Windows.Shared.Common.Attributes;
 using DS4Windows.Shared.Common.Core;
@@ -316,11 +317,18 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         {
             var directory = global.ProfilesDirectory;
 
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
             var profiles = Directory
                 .GetFiles(directory, $"*{DS4WindowsProfile.FileExtension}", SearchOption.TopDirectoryOnly).ToList();
 
             if (!profiles.Any())
-                return;
+            {
+                File.Copy($"{Path.Combine(Environment.CurrentDirectory)}\\Schema\\default.json", $"{directory}\\default.json");
+            }
 
             availableProfiles.Clear();
 
