@@ -358,7 +358,7 @@ namespace DS4WinWPF.DS4Forms
         {
             var hidGuid = new Guid();
 
-            NativeMethods.HidD_GetHidGuid(ref hidGuid);
+            DS4Windows.NativeMethods.HidD_GetHidGuid(ref hidGuid);
 
             var result = Util.RegisterNotify(source.Handle, hidGuid, ref regHandle);
 

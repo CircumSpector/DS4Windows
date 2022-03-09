@@ -1,4 +1,6 @@
 ﻿using AdonisUI.Controls;
+using DS4Windows.Shared.Devices.Util;
+using System;
 using System.Windows;
 
 namespace DS4Windows.Client.Modules.Main
@@ -7,11 +9,25 @@ namespace DS4Windows.Client.Modules.Main
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : AdonisWindow, IMainView
-    { 
-        public MainWindow()
+    {
+        private readonly IDeviceNotificationListener deviceNotificationListener;
+
+        public MainWindow(IDeviceNotificationListener deviceNotificationListener)
         {
-            InitializeComponent();            
+            InitializeComponent();
+            this.deviceNotificationListener = deviceNotificationListener;
         }
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            var hidGuid = new Guid();
+
+            NativeMethods.HidD_GetHidGuid(ref hidGuid);
+
+            deviceNotificationListener.StartListen(this, hidGuid);
+        }
+
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
