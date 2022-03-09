@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Client.Modules",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{03A5466A-1522-4809-9A86-FA929957DA5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Client.Core.Interfaces", "DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj", "{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Client.Core.Interfaces", "DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj", "{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,7 +6,13 @@
              xmlns:local="clr-namespace:DS4Windows.Client.Modules.Controllers"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="kjdjdjdjdjdjksjk"/>
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ItemsControl ItemsSource="{Binding ControllerItems}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:ControllerItemViewModel}">
+                    <TextBlock Text="{Binding Device.InstanceId}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
 </Page>

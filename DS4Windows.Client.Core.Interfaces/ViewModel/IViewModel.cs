@@ -1,11 +1,11 @@
 ﻿using DS4Windows.Client.Core.View;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace DS4Windows.Client.Core.ViewModel
 {
-    public interface IViewModel<TViewModel> : IViewModel, INotifyPropertyChanged
+    public interface IViewModel<TViewModel> : IViewModel, INotifyPropertyChanged, IDisposable
         where TViewModel : IViewModel<TViewModel>
     {
     }

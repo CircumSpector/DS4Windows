@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj" />
   </ItemGroup>
 
 </Project>
