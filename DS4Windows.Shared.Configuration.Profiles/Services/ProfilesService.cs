@@ -469,7 +469,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// <param name="address">The <see cref="PhysicalAddress" /> from the arrived device.</param>
         public void ControllerArrived(int slot, PhysicalAddress address)
         {
-            if (slot < 0 || slot >= availableProfiles.Count)
+            if (slot < 0 || slot >= ActiveProfiles.Count)
                 throw new ArgumentOutOfRangeException(nameof(slot));
 
             //
