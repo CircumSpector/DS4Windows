@@ -6,13 +6,24 @@
              xmlns:local="clr-namespace:DS4Windows.Client.Modules.Controllers"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <Page.Resources>
+        <local:InputDeviceTypeToImageConverter x:Key="deviceTypeConverter"/>
+    </Page.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <ItemsControl ItemsSource="{Binding ControllerItems}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:ControllerItemViewModel}">
-                    <TextBlock Text="{Binding Device.InstanceId}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <DockPanel>
+            <ItemsControl ItemsSource="{Binding ControllerItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:ControllerItemViewModel}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="100" Source="{Binding Device.DeviceType, Converter={StaticResource deviceTypeConverter}}"/>
+
+                            <TextBlock Text="{Binding Device.InstanceId}"/>
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DockPanel>
+        
     </ScrollViewer>
 </Page>
