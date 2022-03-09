@@ -12,6 +12,7 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             services.AddSingletons<ControllersViewModel>(typeof(IControllersViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<IControllersView, ControllersView>();
+            services.AddTransient<IControllerItemViewModel, ControllerItemViewModel>();
         }
 
         public void Initialize(IServiceProvider services)
