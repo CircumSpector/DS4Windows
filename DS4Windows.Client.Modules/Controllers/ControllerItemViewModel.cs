@@ -2,10 +2,8 @@
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.NetworkInformation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -14,7 +12,7 @@ namespace DS4Windows.Client.Modules.Controllers
     public class ControllerItemViewModel : ViewModel<IControllerItemViewModel>, IControllerItemViewModel
     {
         private const string imageLocationRoot = "pack://application:,,,/DS4Windows.Client.Modules;component/Controllers/Images";
-        private readonly IProfilesService profilesService;
+        private IProfilesService profilesService;
         private static BitmapImage dualSenseImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/dualsense.jpg", UriKind.Absolute));
         private static BitmapImage dualShockV2ImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/dualshockv2.jpg", UriKind.Absolute));
         private static BitmapImage joyconLeftImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/joyconleft.jpg", UriKind.Absolute));
@@ -32,9 +30,9 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private CompatibleHidDevice? device;
 
-        public string? InstanceId { get; set; }
+        public PhysicalAddress? Serial { get; private set; }
 
-        public BitmapImage? DeviceImage { get; set; }
+        public BitmapImage? DeviceImage { get; private set; }
 
         public string? DisplayText { get; private set; }
 
@@ -59,6 +57,7 @@ namespace DS4Windows.Client.Modules.Controllers
         private void MapProperties()
         {
             DisplayText = $"{device.DeviceType} ({device.SerialNumberString})";
+            Serial = device.Serial;
 
             if (device.Connection == ConnectionType.Bluetooth)
             {
@@ -88,7 +87,18 @@ namespace DS4Windows.Client.Modules.Controllers
                     break;
             }
 
-            SelectedProfileId = this.profilesService.ActiveProfiles.Single(p => p.DeviceId == device.Serial).Id;
+            SelectedProfileId = profilesService.ActiveProfiles.Single(p => p.DeviceId == device.Serial).Id;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                device = null;
+                profilesService = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }
