@@ -1,4 +1,6 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
+using DS4Windows.Client.Modules.Profiles;
+using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,12 +12,25 @@ namespace DS4Windows.Client.Modules.Controllers
 {
     public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel, IControllersView>,  IControllersViewModel
     {
+        private readonly IControllersEnumeratorService controllersEnumeratorService;
+        private readonly IProfilesService profilesService;
         private readonly IServiceProvider serviceProvider;
 
-        public ControllersViewModel(IControllersEnumeratorService controllersEnumeratorService, IServiceProvider serviceProvider)
+        public ControllersViewModel(IControllersEnumeratorService controllersEnumeratorService, IProfilesService profilesService, IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
+            this.controllersEnumeratorService = controllersEnumeratorService;
+            this.profilesService = profilesService;
 
+            CreateSelectableProfileItems();
+            CreateControllerItems();
+        }
+
+        public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new ObservableCollection<IControllerItemViewModel>();
+        public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new ObservableCollection<ISelectableProfileItemViewModel>();
+
+        private void CreateControllerItems()
+        {
             foreach (var controller in controllersEnumeratorService.SupportedDevices)
             {
                 CreateControllerItem(controller);
@@ -23,11 +38,7 @@ namespace DS4Windows.Client.Modules.Controllers
 
             controllersEnumeratorService.ControllerReady += ControllersEnumeratorService_ControllerReady;
             controllersEnumeratorService.ControllerRemoved += ControllersEnumeratorService_ControllerRemoved;
-            ControllersEnumeratorService = controllersEnumeratorService;
         }
-
-        public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new ObservableCollection<IControllerItemViewModel>();
-        public IControllersEnumeratorService ControllersEnumeratorService { get; }
 
         private void ControllersEnumeratorService_ControllerRemoved(CompatibleHidDevice obj)
         {
@@ -41,21 +52,31 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private void CreateControllerItem(CompatibleHidDevice device)
         {
-            if (!ControllerItems.Any(i => i.Device.InstanceId == device.InstanceId))
+            if (!ControllerItems.Any(i => i.InstanceId == device.InstanceId))
             {
                 var deviceItem = serviceProvider.GetService<IControllerItemViewModel>();
-                deviceItem.Device = device;
+                deviceItem.SetDevice(device);
                 ControllerItems.Add(deviceItem);
             }
         }
 
         private void RemoveControllerItem(CompatibleHidDevice device)
         {
-            var existing = ControllerItems.SingleOrDefault(i => i.Device.InstanceId == device.InstanceId);
+            var existing = ControllerItems.SingleOrDefault(i => i.InstanceId == device.InstanceId);
             if (existing != null)
             {
                 ControllerItems.Remove(existing);
                 existing.Dispose();
+            }
+        }
+
+        private void CreateSelectableProfileItems()
+        {
+            foreach (var item in this.profilesService.AvailableProfiles)
+            {
+                var selectableProfileItem = serviceProvider.GetService<ISelectableProfileItemViewModel>();
+                selectableProfileItem.SetProfile(item);
+                SelectableProfileItems.Add(selectableProfileItem);
             }
         }
 
