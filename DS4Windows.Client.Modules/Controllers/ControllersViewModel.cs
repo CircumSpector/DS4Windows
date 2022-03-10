@@ -24,7 +24,6 @@ namespace DS4Windows.Client.Modules.Controllers
             controllersEnumeratorService.ControllerReady += ControllersEnumeratorService_ControllerReady;
             controllersEnumeratorService.ControllerRemoved += ControllersEnumeratorService_ControllerRemoved;
             ControllersEnumeratorService = controllersEnumeratorService;
-            
         }
 
         public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new ObservableCollection<IControllerItemViewModel>();

@@ -19,18 +19,8 @@ namespace DS4Windows.Client.Modules.Main
         
         #region Navigation
         public ObservableCollection<IViewModel> NavigationItems { get; private set; }
-        
-        public NavigationService? NavigationService { get; set; }
-        public void OnNavigationServiceChanged() => OnSelectedPageChanged();
-
         public IViewModel SelectedPage { get; set; }
-        public void OnSelectedPageChanged()
-        {
-            if (SelectedPage != null && NavigationService != null)
-            {
-                NavigationService.Navigate(SelectedPage.MainView);
-            }
-        }
+
         #endregion
     }
 }

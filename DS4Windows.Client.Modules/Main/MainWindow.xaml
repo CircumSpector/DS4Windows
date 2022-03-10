@@ -3,12 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
         mc:Ignorable="d"
         Title="MainWindow" WindowState="Maximized">
     <DockPanel>
-        <ListBox DockPanel.Dock="Top" ItemsSource="{Binding NavigationItems}" SelectedItem="{Binding SelectedPage, Mode=OneWayToSource}">
+        <ListBox DockPanel.Dock="Top" ItemsSource="{Binding NavigationItems}" SelectedItem="{Binding SelectedPage, Mode=TwoWay}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation='Horizontal'/>
@@ -20,6 +19,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+        <ContentControl Content="{Binding SelectedPage.MainView, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
     </DockPanel>
 </adonisControls:AdonisWindow>

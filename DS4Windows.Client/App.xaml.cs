@@ -14,7 +14,6 @@ namespace DS4Windows.Client
         {
             base.OnStartup(e);
             await ApplicationStartup.Start<IMainViewModel, IMainView>();
-
         }
 
         protected override async void OnExit(ExitEventArgs e)
