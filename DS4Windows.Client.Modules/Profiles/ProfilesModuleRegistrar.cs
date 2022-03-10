@@ -12,6 +12,7 @@ namespace DS4Windows.Client.Modules.Profiles
         {
             services.AddSingletons<ProfilesViewModel>(typeof(IProfilesViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<IProfilesView, ProfilesView>();
+            services.AddTransient<ISelectableProfileItemViewModel, SelectableProfileItemViewModel>();
         }
 
         public void Initialize(IServiceProvider services)

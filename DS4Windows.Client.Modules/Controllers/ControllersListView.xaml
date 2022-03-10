@@ -6,20 +6,21 @@
              xmlns:local="clr-namespace:DS4Windows.Client.Modules.Controllers"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <local:InputDeviceTypeToImageConverter x:Key="deviceTypeConverter"/>
-    </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <DockPanel>
             <ItemsControl ItemsSource="{Binding ControllerItems}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:ControllerItemViewModel}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Width="100" Source="{Binding Device.DeviceType, Converter={StaticResource deviceTypeConverter}}"/>
-
-                            <TextBlock Text="{Binding Device.InstanceId}"/>
+                            <Image Width="100" Source="{Binding DeviceImage}" Margin="0,20,0,0"/>
+                            <TextBlock Text="{Binding DisplayText}" Margin="0,20,0,0"/>
+                            <Image Source="{Binding ConnectionTypeImage}" Margin="0,20,0,0"/>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.SelectableProfileItems}"
+                                      SelectedValue="{Binding SelectedProfileId}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="Name">
+                            </ComboBox>
                         </StackPanel>
-
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

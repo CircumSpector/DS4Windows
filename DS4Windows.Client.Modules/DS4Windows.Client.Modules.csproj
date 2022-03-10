@@ -7,15 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\Images\BT_white.png" />
     <None Remove="Controllers\Images\dualsense.jpg" />
     <None Remove="Controllers\Images\dualshock.jpg" />
     <None Remove="Controllers\Images\dualshockv2.jpg" />
     <None Remove="Controllers\Images\joyconleft.jpg" />
     <None Remove="Controllers\Images\joyconright.jpg" />
     <None Remove="Controllers\Images\switchpro.jpg" />
+    <None Remove="Controllers\Images\USB_white.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Controllers\Images\BT_white.png" />
     <Resource Include="Controllers\Images\dualsense.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -31,6 +34,7 @@
     <Resource Include="Controllers\Images\joyconleft.jpg" />
     <Resource Include="Controllers\Images\joyconright.jpg" />
     <Resource Include="Controllers\Images\switchpro.jpg" />
+    <Resource Include="Controllers\Images\USB_white.png" />
   </ItemGroup>
 
   <ItemGroup>
