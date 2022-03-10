@@ -32,10 +32,4 @@
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Schema\Default.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
