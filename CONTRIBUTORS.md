@@ -1,0 +1,52 @@
+# Contributor list
+
+Contributors to this project (appearance in no particular order):
+
+- Travis Nickles (Ryochan7)
+- AnessZurba
+- avsha114
+- bernspedras
+- carloshbcabral
+- DandelionSprout
+- dante38
+- dondrakon
+- Flo082002
+- firodj
+- Geroyuni
+- Haamar
+- hpesoj
+- jdanders
+- jdfeng
+- jmg2k
+- joaopedrogomes
+- justalemon
+- Kamilczak020
+- Кладовая
+- Korney Czukowski (czukowski)
+- Leonardo Melati (Leomelati)
+- MakiseKurisu
+- mayawei
+- mika-n
+- MikeCZ23
+- Benjamin "Nefarius" Höglinger-Stelzer
+- nelitow
+- olokos
+- peter9811
+- Rajko Stojadinovic (rajkosto)
+- RedDevilus
+- RokasKil
+- sabihoshi
+- Sander0542
+- shikulja
+- sitiom
+- SyaoranChang
+- sergejkiller
+- SteelShot
+- stryblt
+- toshixm
+- tpneill
+- wingfixer
+- xLive
+- xrossb
+- Yuki-nyan
+- Torinth
