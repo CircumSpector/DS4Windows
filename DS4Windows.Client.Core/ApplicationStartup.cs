@@ -15,7 +15,7 @@ namespace DS4Windows.Client.Core
     public static class ApplicationStartup
     {
         private static IHost host = null;
-        public static async void Start<TViewModel, TView>()
+        public static async Task Start<TViewModel, TView>()
             where TViewModel : IViewModel
             where TView : IView
         {

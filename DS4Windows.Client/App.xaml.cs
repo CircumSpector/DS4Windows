@@ -10,10 +10,11 @@ namespace DS4Windows.Client
     /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            ApplicationStartup.Start<IMainViewModel, IMainView>();
+            await ApplicationStartup.Start<IMainViewModel, IMainView>();
+
         }
 
         protected override async void OnExit(ExitEventArgs e)
