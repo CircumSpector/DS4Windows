@@ -52,7 +52,7 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private void CreateControllerItem(CompatibleHidDevice device)
         {
-            if (!ControllerItems.Any(i => i.InstanceId == device.InstanceId))
+            if (!ControllerItems.Any(i => i.Serial == device.Serial))
             {
                 var deviceItem = serviceProvider.GetService<IControllerItemViewModel>();
                 deviceItem.SetDevice(device);
@@ -62,7 +62,7 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private void RemoveControllerItem(CompatibleHidDevice device)
         {
-            var existing = ControllerItems.SingleOrDefault(i => i.InstanceId == device.InstanceId);
+            var existing = ControllerItems.SingleOrDefault(i => i.Serial == device.Serial);
             if (existing != null)
             {
                 ControllerItems.Remove(existing);

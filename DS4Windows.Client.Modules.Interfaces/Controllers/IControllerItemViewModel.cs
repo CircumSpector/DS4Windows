@@ -1,6 +1,7 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Devices.HID;
 using System;
+using System.Net.NetworkInformation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -8,7 +9,7 @@ namespace DS4Windows.Client.Modules.Controllers
 {
     public interface IControllerItemViewModel : IViewModel<IControllerItemViewModel>
     {
-        string? InstanceId { get; }
+        PhysicalAddress? Serial { get; }
 
         BitmapImage? DeviceImage { get; }
 
