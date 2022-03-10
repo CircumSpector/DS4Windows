@@ -6,6 +6,5 @@ namespace DS4Windows.Client.Modules.Main
     public interface IMainViewModel : IViewModel<IMainViewModel>
     {
         IViewModelFactory? ViewModelFactory { get; }
-        NavigationService? NavigationService { get; set; }
     }
 }

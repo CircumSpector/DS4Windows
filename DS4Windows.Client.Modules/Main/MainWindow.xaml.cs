@@ -29,16 +29,6 @@ namespace DS4Windows.Client.Modules.Main
             deviceNotificationListener.StartListen(this, hidGuid);
         }
 
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (e.Property.Name == "DataContext")
-            {
-                ((IMainViewModel)DataContext).NavigationService = MainFrame.NavigationService;
-            }
-        }
-
         protected override void OnClosing(CancelEventArgs e)
         {
             deviceNotificationListener.EndListen();
