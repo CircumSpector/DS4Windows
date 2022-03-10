@@ -327,7 +327,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
 
             if (!profiles.Any())
             {
-                File.Copy($"{Path.Combine(Environment.CurrentDirectory)}\\Schema\\default.json", $"{directory}\\default.json");
+                PersistProfile(DS4WindowsProfile.CreateDefaultProfile(), directory);
             }
 
             availableProfiles.Clear();
@@ -506,6 +506,11 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
             controllerSlotProfiles[slot].DeviceId = address;
         }
 
+        /// <summary>
+        ///     Called upon controller departure.
+        /// </summary>
+        /// <param name="slot">The zero-based slot index.</param>
+        /// <param name="address">The <see cref="PhysicalAddress" /> from the departed device.</param>
         public void ControllerDeparted(int slot, PhysicalAddress address)
         {
             if (slot < 0 || slot >= controllerSlotProfiles.Count)
@@ -637,7 +642,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         }
 
         /// <summary>
-        ///     Persist the <see cref="DS4WindowsProfile" /> to disk as XML file.
+        ///     Persist the <see cref="DS4WindowsProfile" /> to disk.
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to persist.</param>
         /// <param name="directory">The parent directory where the file will be generated (or overwritten, if existent).</param>
