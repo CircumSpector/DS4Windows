@@ -1,6 +1,7 @@
 ﻿using AdonisUI.Controls;
 using DS4Windows.Shared.Devices.Util;
 using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace DS4Windows.Client.Modules.Main
@@ -36,6 +37,12 @@ namespace DS4Windows.Client.Modules.Main
             {
                 ((IMainViewModel)DataContext).NavigationService = MainFrame.NavigationService;
             }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            deviceNotificationListener.EndListen();
+            base.OnClosing(e);
         }
     }
 }

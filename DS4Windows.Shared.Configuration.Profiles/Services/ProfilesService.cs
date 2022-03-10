@@ -315,19 +315,29 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// </summary>
         public void LoadAvailableProfiles()
         {
-            var directory = global.ProfilesDirectory;
-
-            if (!Directory.Exists(directory))
+            if (!Directory.Exists(ProfileConstants.GlobalProfilesLocation))
             {
-                Directory.CreateDirectory(directory);
+                Directory.CreateDirectory(ProfileConstants.GlobalProfilesLocation);
+            }
+
+            if (!Directory.Exists(ProfileConstants.LocalProfilesLocation))
+            {
+                Directory.CreateDirectory(ProfileConstants.LocalProfilesLocation);
+            }
+
+            if (!File.Exists(ProfileConstants.GlobalDefaultProfileLocation))
+            {
+                PersistProfile(DS4WindowsProfile.CreateDefaultProfile(), ProfileConstants.GlobalProfilesLocation);
             }
 
             var profiles = Directory
-                .GetFiles(directory, $"*{DS4WindowsProfile.FileExtension}", SearchOption.TopDirectoryOnly).ToList();
+                .GetFiles(ProfileConstants.GlobalProfilesLocation, $"*{DS4WindowsProfile.FileExtension}", SearchOption.TopDirectoryOnly)
+                .Union(Directory
+                .GetFiles(ProfileConstants.LocalProfilesLocation, $"*{DS4WindowsProfile.FileExtension}", SearchOption.TopDirectoryOnly));
 
             if (!profiles.Any())
             {
-                PersistProfile(DS4WindowsProfile.CreateDefaultProfile(), directory);
+                throw new Exception("Something bad here");
             }
 
             availableProfiles.Clear();
