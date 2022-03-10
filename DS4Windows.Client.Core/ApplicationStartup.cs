@@ -7,21 +7,23 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace DS4Windows.Client.Core
 {
     public static class ApplicationStartup
     {
-        public static void Start<TViewModel, TView>()
+        private static IHost host = null;
+        public static async void Start<TViewModel, TView>()
             where TViewModel : IViewModel
             where TView : IView
         {
             var configuration = SetupConfiguration();
             SetupLogging(configuration);
-            var host = SetupHost();
+            host = SetupHost();
 
-            StartApplication<TViewModel, TView>(host, configuration);
+            await StartApplication<TViewModel, TView>(configuration);
         }
 
         private static IConfigurationRoot SetupConfiguration()
@@ -59,11 +61,11 @@ namespace DS4Windows.Client.Core
             services.AddOptions();
             RegistrarDiscovery.RegisterRegistrars(configuration, services);
         }
-        private static void StartApplication<TViewModel, TView>(IHost host, IConfiguration configuration)
+        private static async Task StartApplication<TViewModel, TView>(IConfiguration configuration)
             where TViewModel : IViewModel
             where TView : IView
         {
-            host.Start();
+            await host.StartAsync();
             using (var scope = host.Services.CreateScope())
             {
                 var moduleRegistrars = scope.ServiceProvider.GetServices<IServiceRegistrar>();
@@ -79,6 +81,12 @@ namespace DS4Windows.Client.Core
                     windowViewModel.Show();
                 }
             }
+        }
+
+        public static async Task Shutdown()
+        {
+            await host.StopAsync();
+            await host.WaitForShutdownAsync();
         }
     }
 }

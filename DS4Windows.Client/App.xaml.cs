@@ -1,5 +1,6 @@
 ﻿using DS4Windows.Client.Core;
 using DS4Windows.Client.Modules.Main;
+using System.Diagnostics;
 using System.Windows;
 
 namespace DS4Windows.Client
@@ -8,9 +9,18 @@ namespace DS4Windows.Client
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
-    {   public App()
+    {
+        protected override void OnStartup(StartupEventArgs e)
         {
+            base.OnStartup(e);
             ApplicationStartup.Start<IMainViewModel, IMainView>();
-        }        
+        }
+
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            await ApplicationStartup.Shutdown();
+            base.OnExit(e);
+            Process.GetCurrentProcess().Kill();
+        }
     }
 }
