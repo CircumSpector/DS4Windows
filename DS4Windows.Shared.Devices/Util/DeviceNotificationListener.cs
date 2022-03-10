@@ -1,12 +1,8 @@
 ﻿using DS4Windows.Shared.Devices.HID;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -80,13 +76,13 @@ namespace DS4Windows.Shared.Devices.Util
 
         #region Win32
 
-        [DllImport("User32.dll", SetLastError = true)]
+        [DllImport(nameof(PInvoke.User32), SetLastError = true)]
         private static extern IntPtr RegisterDeviceNotification(
             IntPtr hRecipient,
             IntPtr NotificationFilter,
             uint Flags);
 
-        [DllImport("User32.dll", SetLastError = true)]
+        [DllImport(nameof(PInvoke.User32), SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool UnregisterDeviceNotification(IntPtr Handle);
 
