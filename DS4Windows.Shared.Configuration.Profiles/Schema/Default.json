@@ -1,0 +1,334 @@
+{
+  "Id": "c74d58ea-058f-4d01-bf08-8d765cc145d1",
+  "DisplayName": "Default",
+  "IsImmutable": true,
+  "EnableTouchToggle": true,
+  "ButtonMouseInfo": {
+    "buttonSensitivity": 25,
+    "mouseAccel": false,
+    "activeButtonSensitivity": 25,
+    "tempButtonSensitivity": -1,
+    "mouseVelocityOffset": 0.008,
+    "buttonVerticalScale": 1.0,
+    "ButtonSensitivity": 25
+  },
+  "GyroControlsInfo": {
+    "Triggers": "-1",
+    "TriggerCond": true,
+    "TriggerTurns": true,
+    "TriggerToggle": false
+  },
+  "IdleDisconnectTimeout": 0,
+  "EnableOutputDataToDS4": true,
+  "TouchpadJitterCompensation": true,
+  "LowerRCOn": false,
+  "TouchClickPassthru": false,
+  "RumbleBoost": 100,
+  "RumbleAutostopTime": 0,
+  "TouchSensitivity": 100,
+  "LSModInfo": {
+    "DeadZone": 0,
+    "AntiDeadZone": 0,
+    "MaxZone": 100,
+    "MaxOutput": 100.0,
+    "MaxOutputForce": false,
+    "Fuzz": 0,
+    "VerticalScale": 100.0,
+    "DZType": 0,
+    "OuterBindDeadZone": 75.0,
+    "OuterBindInvert": false,
+    "XAxisDeadInfo": {
+      "DeadZone": 10,
+      "AntiDeadZone": 20,
+      "MaxZone": 100,
+      "MaxOutput": 100.0
+    },
+    "YAxisDeadInfo": {
+      "DeadZone": 10,
+      "AntiDeadZone": 20,
+      "MaxZone": 100,
+      "MaxOutput": 100.0
+    }
+  },
+  "RSModInfo": {
+    "DeadZone": 0,
+    "AntiDeadZone": 0,
+    "MaxZone": 100,
+    "MaxOutput": 100.0,
+    "MaxOutputForce": false,
+    "Fuzz": 0,
+    "VerticalScale": 100.0,
+    "DZType": 0,
+    "OuterBindDeadZone": 75.0,
+    "OuterBindInvert": false,
+    "XAxisDeadInfo": {
+      "DeadZone": 10,
+      "AntiDeadZone": 20,
+      "MaxZone": 100,
+      "MaxOutput": 100.0
+    },
+    "YAxisDeadInfo": {
+      "DeadZone": 10,
+      "AntiDeadZone": 20,
+      "MaxZone": 100,
+      "MaxOutput": 100.0
+    }
+  },
+  "L2ModInfo": {
+    "deadZone": 0,
+    "maxZone": 100,
+    "maxOutput": 100.0,
+    "DeadZone": 0,
+    "AntiDeadZone": 0,
+    "MaxZone": 100,
+    "MaxOutput": 100.0
+  },
+  "R2ModInfo": {
+    "deadZone": 0,
+    "maxZone": 100,
+    "maxOutput": 100.0,
+    "DeadZone": 0,
+    "AntiDeadZone": 0,
+    "MaxZone": 100,
+    "MaxOutput": 100.0
+  },
+  "LSRotation": 0.0,
+  "RSRotation": 0.0,
+  "SXDeadZone": 0.25,
+  "SZDeadZone": 0.25,
+  "SXMaxZone": 1.0,
+  "SZMaxZone": 1.0,
+  "SXAntiDeadZone": 0.0,
+  "SZAntiDeadZone": 0.0,
+  "L2Sens": 1.0,
+  "R2Sens": 1.0,
+  "LSSens": 1.0,
+  "RSSens": 1.0,
+  "SXSens": 1.0,
+  "SZSens": 1.0,
+  "TapSensitivity": 0,
+  "DoubleTap": false,
+  "ScrollSensitivity": 0,
+  "TouchPadInvert": 0,
+  "BluetoothPollRate": 4,
+  "LSOutputSettings": {
+    "Mode": 1,
+    "OutputSettings": {
+      "flickSettings": {
+        "flickThreshold": 0.9,
+        "flickTime": 0.1,
+        "realWorldCalibration": 5.3,
+        "minAngleThreshold": 0.0,
+        "minCutoff": 0.4,
+        "beta": 0.4,
+        "MinCutoff": 0.4,
+        "Beta": 0.4
+      },
+      "controlSettings": {}
+    }
+  },
+  "RSOutputSettings": {
+    "Mode": 1,
+    "OutputSettings": {
+      "flickSettings": {
+        "flickThreshold": 0.9,
+        "flickTime": 0.1,
+        "realWorldCalibration": 5.3,
+        "minAngleThreshold": 0.0,
+        "minCutoff": 0.4,
+        "beta": 0.4,
+        "MinCutoff": 0.4,
+        "Beta": 0.4
+      },
+      "controlSettings": {}
+    }
+  },
+  "L2OutputSettings": {
+    "twoStageMode": 0,
+    "hipFireMS": 100,
+    "triggerEffect": 0,
+    "effectSettings": {
+      "maxValue": 0,
+      "startValue": 0
+    },
+    "TwoStageMode": 0,
+    "TriggerEffect": 0
+  },
+  "R2OutputSettings": {
+    "twoStageMode": 0,
+    "hipFireMS": 100,
+    "triggerEffect": 0,
+    "effectSettings": {
+      "maxValue": 0,
+      "startValue": 0
+    },
+    "TwoStageMode": 0,
+    "TriggerEffect": 0
+  },
+  "LaunchProgram": null,
+  "DisableVirtualController": false,
+  "StartTouchpadOff": false,
+  "TouchOutMode": 1,
+  "SATriggers": "-1",
+  "SATriggerCondition": true,
+  "GyroOutputMode": 1,
+  "SAMouseStickTriggers": "-1",
+  "SAMouseStickTriggerCond": true,
+  "GyroMouseStickInfo": {
+    "minCutoff": 0.4,
+    "beta": 0.7,
+    "outputStick": 2,
+    "outputStickDir": 1,
+    "DeadZone": 0,
+    "MaxZone": 0,
+    "AntiDeadX": 0.0,
+    "AntiDeadY": 0.0,
+    "VertScale": 0,
+    "MaxOutputEnabled": false,
+    "MaxOutput": 100.0,
+    "Inverted": 0,
+    "UseSmoothing": false,
+    "SmoothWeight": 0.0,
+    "Smoothing": 0,
+    "MinCutoff": 0.4,
+    "Beta": 0.7
+  },
+  "GyroSwipeInfo": {
+    "deadzoneX": 80,
+    "deadzoneY": 80,
+    "triggers": "-1",
+    "triggerCond": true,
+    "triggerTurns": true,
+    "xAxis": 0,
+    "delayTime": 0
+  },
+  "GyroMouseStickToggle": false,
+  "GyroMouseStickTriggerTurns": true,
+  "GyroMouseStickHorizontalAxis": 0,
+  "SASteeringWheelEmulationAxis": 0,
+  "SASteeringWheelEmulationRange": 360,
+  "SAWheelFuzzValues": 0,
+  "WheelSmoothInfo": {
+    "enabled": false,
+    "MinCutoff": 0.1,
+    "Beta": 0.1,
+    "Enabled": false
+  },
+  "TouchDisInvertTriggers": [
+    -1
+  ],
+  "GyroSensitivity": 100,
+  "GyroSensVerticalScale": 100,
+  "GyroInvert": 0,
+  "GyroTriggerTurns": true,
+  "GyroMouseInfo": {
+    "enableSmoothing": false,
+    "smoothingWeight": 0.5,
+    "smoothingMethod": 0,
+    "minCutoff": 1.0,
+    "beta": 0.7,
+    "minThreshold": 1.0,
+    "MinCutoff": 1.0,
+    "Beta": 0.7
+  },
+  "GyroMouseHorizontalAxis": 0,
+  "GyroMouseToggle": false,
+  "SquStickInfo": {
+    "LSMode": false,
+    "RSMode": false,
+    "LSRoundness": 5.0,
+    "RSRoundness": 5.0
+  },
+  "LSAntiSnapbackInfo": {
+    "Enabled": false,
+    "Delta": 135.0,
+    "Timeout": 50
+  },
+  "RSAntiSnapbackInfo": {
+    "Enabled": false,
+    "Delta": 135.0,
+    "Timeout": 50
+  },
+  "LSOutCurve": {
+    "axisType": 0,
+    "arrayBezierLUT": null,
+    "AsString": "0, 0, 0, 0",
+    "CustomDefinition": ""
+  },
+  "RSOutCurve": {
+    "axisType": 0,
+    "arrayBezierLUT": null,
+    "AsString": "0, 0, 0, 0",
+    "CustomDefinition": ""
+  },
+  "L2OutCurve": {
+    "axisType": 0,
+    "arrayBezierLUT": null,
+    "AsString": "0, 0, 0, 0",
+    "CustomDefinition": ""
+  },
+  "R2OutCurve": {
+    "axisType": 0,
+    "arrayBezierLUT": null,
+    "AsString": "0, 0, 0, 0",
+    "CustomDefinition": ""
+  },
+  "SXOutCurve": {
+    "axisType": 0,
+    "arrayBezierLUT": null,
+    "AsString": "0, 0, 0, 0",
+    "CustomDefinition": ""
+  },
+  "SZOutCurve": {
+    "axisType": 0,
+    "arrayBezierLUT": null,
+    "AsString": "0, 0, 0, 0",
+    "CustomDefinition": ""
+  },
+  "TrackballMode": false,
+  "TrackballFriction": 10.0,
+  "TouchPadAbsMouse": {
+    "MaxZoneX": 0,
+    "MaxZoneY": 0,
+    "SnapToCenter": false
+  },
+  "TouchPadRelMouse": {
+    "Rotation": 0.0,
+    "MinThreshold": 1.0
+  },
+  "OutputDeviceType": 1,
+  "Ds4Mapping": false,
+  "LightbarSettingInfo": {
+    "Ds4WinSettings": {
+      "UseCustomLed": false,
+      "LedAsBattery": false,
+      "CustomLed": {
+        "Red": 0,
+        "Green": 0,
+        "Blue": 255
+      },
+      "Led": null,
+      "LowLed": {
+        "Red": 0,
+        "Green": 0,
+        "Blue": 0
+      },
+      "ChargingLed": {
+        "Red": 0,
+        "Green": 0,
+        "Blue": 0
+      },
+      "FlashLed": {
+        "Red": 0,
+        "Green": 0,
+        "Blue": 0
+      },
+      "Rainbow": 0.0,
+      "MaxRainbowSaturation": 1.0,
+      "FlashAt": 0,
+      "FlashType": 0,
+      "ChargingType": 0
+    },
+    "Mode": 1
+  }
+}
