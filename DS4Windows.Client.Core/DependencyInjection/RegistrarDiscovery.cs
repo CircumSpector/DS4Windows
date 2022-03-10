@@ -13,7 +13,7 @@ namespace DS4Windows.Client.Core.DependencyInjection
         {
             var interfaceType = typeof(IServiceRegistrar);
 
-            var appDir = Directory.GetCurrentDirectory();
+            var appDir = AppContext.BaseDirectory;
 
             var assemblies = Directory.GetFiles(appDir)
                 .Where(d =>
