@@ -13,7 +13,7 @@ branches:
     - gh-pages
 install:
 - cmd: git submodule -q update --init
-- cmd: vs_Community.exe modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Community" --add Microsoft.VisualStudio.ComponentGroup.WindowsAppSDK.Cs --quiet --wait
+- cmd: C:\projects\DS4Windows\vs_Community.exe modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Community" --add Microsoft.VisualStudio.ComponentGroup.WindowsAppSDK.Cs --quiet --wait
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
