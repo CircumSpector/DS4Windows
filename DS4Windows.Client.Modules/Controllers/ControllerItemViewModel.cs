@@ -87,7 +87,7 @@ namespace DS4Windows.Client.Modules.Controllers
                     break;
             }
 
-            SelectedProfileId = profilesService.ActiveProfiles.Single(p => p.DeviceId == device.Serial).Id;
+            SelectedProfileId = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(device.Serial)).Id;
         }
 
         protected override void Dispose(bool disposing)

@@ -1,5 +1,4 @@
-﻿using AdonisUI.Controls;
-using DS4Windows.Shared.Devices.Util;
+﻿using DS4Windows.Shared.Devices.Util;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -9,7 +8,7 @@ namespace DS4Windows.Client.Modules.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : AdonisWindow, IMainView
+    public partial class MainWindow : Window, IMainView
     {
         private readonly IDeviceNotificationListener deviceNotificationListener;
 

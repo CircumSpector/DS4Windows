@@ -173,11 +173,11 @@ namespace DS4Windows.Shared.Devices.Util
 
         private class VolumeMeta
         {
-            public string DriveLetter { get; init; }
+            public string DriveLetter { get; set; }
 
-            public string VolumeName { get; init; }
+            public string VolumeName { get; set; }
 
-            public string DevicePath { get; init; }
+            public string DevicePath { get; set; }
         }
     }
 }

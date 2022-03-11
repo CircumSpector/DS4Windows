@@ -84,7 +84,7 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     The <see cref="InputDeviceType" /> of this <see cref="CompatibleHidDevice" />.
         /// </summary>
-        public InputDeviceType DeviceType { get; init; }
+        public InputDeviceType DeviceType { get; set; }
 
         /// <summary>
         ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
@@ -358,7 +358,7 @@ namespace DS4Windows.Shared.Devices.HID
             {
                 try
                 {
-                    if (!string.IsNullOrEmpty(SerialNumberString)) serial = PhysicalAddress.Parse(SerialNumberString);
+                    if (!string.IsNullOrEmpty(SerialNumberString)) serial = PhysicalAddress.Parse(SerialNumberString.ToUpper());
                 }
                 catch
                 {
