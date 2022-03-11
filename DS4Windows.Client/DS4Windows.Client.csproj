@@ -2,14 +2,13 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+	  <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AdonisUI.ClassicTheme.NET5" Version="1.17.1" />
-    <PackageReference Include="AdonisUI.NET5" Version="1.17.1" />
     <PackageReference Include="AsyncErrorHandler.Fody" Version="1.3.0" />
     <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" />

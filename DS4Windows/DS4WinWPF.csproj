@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <UseWPF>true</UseWPF>
     <Platforms>x64;x86</Platforms>

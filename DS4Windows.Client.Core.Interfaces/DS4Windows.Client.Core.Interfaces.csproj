@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <RootNamespace>DS4Windows.Client.Core</RootNamespace>
+	  <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

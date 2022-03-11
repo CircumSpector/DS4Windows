@@ -20,7 +20,7 @@ namespace DS4Windows.Shared.Devices.Services
         /// <summary>
         ///     The zero-based slot index.
         /// </summary>
-        public int SlotIndex { get; init; }
+        public int SlotIndex { get; set; }
 
         /// <summary>
         ///     Is this slot occupied with a <see cref="Device"/>?

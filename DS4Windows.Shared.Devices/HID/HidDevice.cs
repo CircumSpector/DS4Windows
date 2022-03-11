@@ -29,7 +29,7 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     True if device originates from a software device.
         /// </summary>
-        public bool IsVirtual { get; init; }
+        public bool IsVirtual { get; set; }
 
         /// <summary>
         ///     Native handle to device.
@@ -39,54 +39,54 @@ namespace DS4Windows.Shared.Devices.HID
         /// <summary>
         ///     The Instance ID of this device.
         /// </summary>
-        public string InstanceId { get; init; }
+        public string InstanceId { get; set; }
 
         /// <summary>
         ///     The path (symbolic link) of the device instance.
         /// </summary>
-        public string Path { get; init; }
+        public string Path { get; set; }
 
         /// <summary>
         ///     Device description.
         /// </summary>
-        public string Description { get; init; }
+        public string Description { get; set; }
 
         /// <summary>
         ///     Device friendly name.
         /// </summary>
         [CanBeNull]
-        public string DisplayName { get; init; }
+        public string DisplayName { get; set; }
 
         /// <summary>
         ///     The Instance ID of the parent device.
         /// </summary>
-        public string ParentInstance { get; init; }
+        public string ParentInstance { get; set; }
 
         /// <summary>
         ///     HID Device Attributes.
         /// </summary>
-        public Hid.HiddAttributes Attributes { get; init; }
+        public Hid.HiddAttributes Attributes { get; set; }
 
         /// <summary>
         ///     HID Device Capabilities.
         /// </summary>
-        public Hid.HidpCaps Capabilities { get; init; }
+        public Hid.HidpCaps Capabilities { get; set; }
 
         /// <summary>
         ///     The manufacturer string.
         /// </summary>
-        public string ManufacturerString { get; init; }
+        public string ManufacturerString { get; set; }
 
         /// <summary>
         ///     The product name.
         /// </summary>
-        public string ProductString { get; init; }
+        public string ProductString { get; set; }
 
         /// <summary>
         ///     The serial number, if any.
         /// </summary>
         [CanBeNull]
-        public string SerialNumberString { get; init; }
+        public string SerialNumberString { get; set; }
 
         /// <summary>
         ///     Is this device currently open (for reading, writing).
