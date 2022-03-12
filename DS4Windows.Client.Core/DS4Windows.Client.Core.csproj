@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
 	<UseWPF>true</UseWPF>
 	<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
