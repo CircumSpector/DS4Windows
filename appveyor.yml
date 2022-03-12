@@ -13,7 +13,7 @@ branches:
     - gh-pages
 install:
 - cmd: git submodule -q update --init
-- choco install dotnet-sdk --pre 
+- cmd: choco install dotnet-sdk --pre 
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
