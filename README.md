@@ -39,6 +39,8 @@ There are none. Until this message changes, the rework is in constant motion and
 
 [Join our support server](https://ds4windows.app/support.html) 🐸
 
+<!--
+
 ## 3rd party credits
 
 This application benefits from these awesome projects (appearance in no special order):
@@ -81,3 +83,5 @@ This application benefits from these awesome projects (appearance in no special 
   - Managed wrappers around SetupAPI and Cfgmgr32
 - [P/Invoke](https://github.com/dotnet/pinvoke/)
   - A collection of libraries intended to contain all P/Invoke method signatures for popular operating systems
+
+-->
