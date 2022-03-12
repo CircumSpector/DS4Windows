@@ -13,7 +13,7 @@ branches:
     - gh-pages
 install:
 - cmd: git submodule -q update --init
-- cmd: C:\projects\DS4Windows\vs_Community.exe modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Community" --add Microsoft.VisualStudio.ComponentGroup.WindowsAppSDK.Cs --quiet --wait
+- choco install visualstudio2022-workload-manageddesktop --package-parameters "--includeOptional"
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
