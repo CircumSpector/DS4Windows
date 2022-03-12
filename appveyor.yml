@@ -14,6 +14,7 @@ branches:
 install:
 - cmd: git submodule -q update --init
 - choco install visualstudio2022-workload-manageddesktop --package-parameters "--includeOptional"
+- choco install visualstudio2022buildtools --package-parameters "--allWorkloads --includeRecommended --includeOptional --passive --locale en-US"
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
