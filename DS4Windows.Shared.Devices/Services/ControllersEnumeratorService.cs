@@ -291,10 +291,10 @@ namespace DS4Windows.Shared.Devices.Services
             var device = supportedDevices.First(d =>
                 d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
 
+            ControllerRemoved?.Invoke(device);
+
             if (supportedDevices.Contains(device))
                 supportedDevices.Remove(device);
-
-            ControllerRemoved?.Invoke(device);
         }
     }
 }
