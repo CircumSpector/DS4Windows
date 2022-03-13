@@ -16,6 +16,9 @@ namespace DS4Windows.Shared.Devices.Services
     {
         ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
 
+        /// <summary>
+        ///     Fired when <see cref="SupportedDevices"/> has been (re-)built.
+        /// </summary>
         event Action DeviceListReady;
 
         /// <summary>
