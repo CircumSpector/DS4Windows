@@ -3,9 +3,11 @@ using DS4Windows.Shared.Configuration.Profiles.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using JetBrains.Annotations;
 
 namespace DS4Windows.Shared.Configuration.Profiles
 {
+    [UsedImplicitly]
     public class ProfilesRegistrar : IServiceRegistrar
     {
         public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
