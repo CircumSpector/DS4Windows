@@ -6,10 +6,11 @@ using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Threading;
+using JetBrains.Annotations;
 
 namespace DS4Windows.Shared.Devices
 {
+    [UsedImplicitly]
     public class DevicesRegistrar : IServiceRegistrar
     {
         public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
