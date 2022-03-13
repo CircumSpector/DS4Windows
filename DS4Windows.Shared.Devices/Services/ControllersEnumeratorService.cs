@@ -22,7 +22,7 @@ namespace DS4Windows.Shared.Devices.Services
         event Action DeviceListReady;
 
         /// <summary>
-        ///     Fired every time a supported device is found and read.
+        ///     Fired every time a supported device is found and ready.
         /// </summary>
         event Action<CompatibleHidDevice> ControllerReady;
 
