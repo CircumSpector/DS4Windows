@@ -52,6 +52,14 @@ namespace DS4Windows.Shared.Common.Core
         
         public const string HidHideGuideUri = "https://docs.ds4windows.app/troubleshooting/hidhide-troubleshoot/";
 
+        /// <summary>
+        ///     Solution-wide maximum concurrent controller limit.
+        /// </summary>
         public const int MaxControllers = 8;
+
+        /// <summary>
+        ///     The maximum number of queued input reports before getting discarded.
+        /// </summary>
+        public const int MaxQueuedInputReports = 5;
     }
 }

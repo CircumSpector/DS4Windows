@@ -31,7 +31,7 @@ public abstract partial class CompatibleHidDevice : HidDevice
 
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(5);
+    protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(Common.Core.Constants.MaxQueuedInputReports);
 
     private ConnectionType? connection;
 
