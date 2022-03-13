@@ -274,6 +274,8 @@ namespace DS4Windows.Shared.Devices.Services
 
             if (!supportedDevices.Contains(device))
                 supportedDevices.Add(device);
+            else
+                throw new InvalidOperationException($"Device {device.InstanceId} already in list.");
 
             //
             // Notify compatible device found and ready
