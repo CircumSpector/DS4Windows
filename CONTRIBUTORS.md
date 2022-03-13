@@ -28,7 +28,7 @@ Contributors to this project (appearance in no particular order):
 - mayawei
 - mika-n
 - MikeCZ23
-- Benjamin "Nefarius" Höglinger-Stelzer
+- Benjamin Höglinger-Stelzer (nefarius)
 - nelitow
 - olokos
 - peter9811
@@ -50,3 +50,4 @@ Contributors to this project (appearance in no particular order):
 - xrossb
 - Yuki-nyan
 - Torinth
+- Kanuan
