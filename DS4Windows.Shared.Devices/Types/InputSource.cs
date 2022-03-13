@@ -22,7 +22,7 @@ public class InputSource : IInputSource
 {
     private readonly List<CompatibleHidDevice> sourceDevices;
 
-    public InputSource()
+    internal InputSource()
     {
         sourceDevices = new List<CompatibleHidDevice>();
 

@@ -266,19 +266,16 @@ namespace DS4Windows.Shared.Devices.Services
                 Kernel32.SafeObjectHandle.Null
             );
 
-            if (!Hid.HidD_GetPreparsedData(handle, out var data)) return false;
+            if (!Hid.HidD_GetPreparsedData(handle, out var dataHandle)) return false;
 
-            Hid.HidP_GetCaps(data, ref caps);
-            HidD_FreePreparsedData(data.DangerousGetHandle());
+            Hid.HidP_GetCaps(dataHandle, ref caps);
+            dataHandle.Dispose();
 
             activity?.SetTag("InputReportByteLength", caps.InputReportByteLength);
             activity?.SetTag("OutputReportByteLength", caps.OutputReportByteLength);
 
             return true;
         }
-
-        [DllImport("hid.dll")]
-        internal static extern bool HidD_FreePreparsedData(IntPtr preparsedData);
 
         private void DeviceNotificationListenerOnDeviceArrived(string symLink)
         {

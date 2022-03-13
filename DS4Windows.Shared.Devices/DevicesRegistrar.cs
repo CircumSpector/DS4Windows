@@ -19,6 +19,7 @@ namespace DS4Windows.Shared.Devices
             services.AddSingleton<IHidHideControlService, HidHideControlService>();
             services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
             services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
+            services.AddSingleton<IInputSourceService, InputSourceService>();
 
             services.AddSingleton<DeviceNotificationListener>();
             services.AddSingleton<IDeviceNotificationListener>(provider =>

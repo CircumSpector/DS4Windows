@@ -6,77 +6,80 @@ using DS4Windows.Shared.Devices.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace DS4Windows.Shared.Devices.HostedServices
+namespace DS4Windows.Shared.Devices.HostedServices;
+
+/// <summary>
+///     Manages compatible input device detection and state handling.
+/// </summary>
+public class ControllerManagerHost : IHostedService
 {
-    /// <summary>
-    ///     Manages compatible input device detection and state handling.
-    /// </summary>
-    public class ControllerManagerHost : IHostedService
+    private readonly IControllersEnumeratorService enumerator;
+
+    private readonly IInputSourceService inputSourceService;
+
+    private readonly ILogger<ControllerManagerHost> logger;
+
+    private readonly IControllerManagerService manager;
+
+    private readonly IProfilesService profileService;
+    
+    public ControllerManagerHost(IControllersEnumeratorService enumerator,
+        ILogger<ControllerManagerHost> logger, IProfilesService profileService,
+        IControllerManagerService manager, IInputSourceService inputSourceService)
     {
-        private readonly IControllersEnumeratorService enumerator;
+        this.enumerator = enumerator;
+        this.logger = logger;
+        this.profileService = profileService;
+        this.manager = manager;
+        this.inputSourceService = inputSourceService;
 
-        private readonly ILogger<ControllerManagerHost> logger;
-        private readonly IControllerManagerService manager;
+        enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
+        enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
+    }
 
-        private readonly IProfilesService profileService;
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        //
+        // Make sure we're ready to rock
+        // 
+        profileService.Initialize();
 
-        public ControllerManagerHost(IControllersEnumeratorService enumerator,
-            ILogger<ControllerManagerHost> logger, IProfilesService profileService,
-            IControllerManagerService manager)
+        logger.LogInformation("Starting device enumeration");
+
+        //
+        // Run full enumeration only once at startup, during runtime arrival events are used
+        // 
+        await Task.Run(() => enumerator.EnumerateDevices(), cancellationToken);
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Gets invoked when a new compatible device is detected.
+    /// </summary>
+    private void EnumeratorServiceOnControllerReady(CompatibleHidDevice device)
+    {
+        var slotIndex = manager.AssignFreeSlotWith(device);
+
+        if (slotIndex == -1)
         {
-            this.enumerator = enumerator;
-            this.logger = logger;
-            this.profileService = profileService;
-            this.manager = manager;
-
-            enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
-            enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
-        }
-        
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            //
-            // Make sure we're ready to rock
-            // 
-            profileService.Initialize();
-
-            logger.LogInformation("Starting device enumeration");
-
-            //
-            // Run full enumeration only once at startup, during runtime arrival events are used
-            // 
-            await Task.Run(() => enumerator.EnumerateDevices(), cancellationToken);
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        ///     Gets invoked when a new compatible device is detected.
-        /// </summary>
-        private void EnumeratorServiceOnControllerReady(CompatibleHidDevice device)
-        {
-            var slotIndex = manager.AssignFreeSlotWith(device);
-
-            if (slotIndex == -1)
-            {
-                logger.LogError("No free slot available");
-                return;
-            }
-
-            profileService.ControllerArrived(slotIndex, device.Serial);
+            logger.LogError("No free slot available");
+            return;
         }
 
-        /// <summary>
-        ///     Gets invoked when a compatible device has departed.
-        /// </summary>
-        private void EnumeratorOnControllerRemoved(CompatibleHidDevice device)
-        {
-            var slot = manager.FreeSlotContaining(device);
+        profileService.ControllerArrived(slotIndex, device.Serial);
+    }
 
-            profileService.ControllerDeparted(slot, device.Serial);
-        }
+    /// <summary>
+    ///     Gets invoked when a compatible device has departed.
+    /// </summary>
+    private void EnumeratorOnControllerRemoved(CompatibleHidDevice device)
+    {
+        var slot = manager.FreeSlotContaining(device);
+
+        profileService.ControllerDeparted(slot, device.Serial);
     }
 }
