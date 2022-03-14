@@ -34,6 +34,9 @@ public class CompatibleHidDeviceSlot
     public CompatibleHidDevice Device { get; internal set; }
 }
 
+/// <summary>
+///     Handles currently active devices and occupied slots and takes care that profiles are loaded when required.
+/// </summary>
 public interface IControllerManagerService
 {
     /// <summary>
