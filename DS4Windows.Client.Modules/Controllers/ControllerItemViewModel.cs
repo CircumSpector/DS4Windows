@@ -18,7 +18,7 @@ namespace DS4Windows.Client.Modules.Controllers
         private static BitmapImage joyconLeftImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/joyconleft.jpg", UriKind.Absolute));
         private static BitmapImage joyconRightImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/joyconright.jpg", UriKind.Absolute));
         private static BitmapImage switchProImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/switchpro.jpg", UriKind.Absolute));
-        private static BitmapImage BluetoothImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/BT_white.png", UriKind.Absolute));
+        private static BitmapImage BluetoothImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/BT.png", UriKind.Absolute));
         private static BitmapImage UsbImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/USB_white.png", UriKind.Absolute));
 
         public ControllerItemViewModel(IProfilesService profilesService)

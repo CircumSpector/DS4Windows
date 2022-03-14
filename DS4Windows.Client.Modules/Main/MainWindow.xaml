@@ -4,20 +4,47 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Style="{StaticResource MaterialDesignWindow}" 
         Title="MainWindow" WindowState="Maximized">
-    <DockPanel>
-        <ListBox DockPanel.Dock="Top" ItemsSource="{Binding NavigationItems}" SelectedItem="{Binding SelectedPage, Mode=TwoWay}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation='Horizontal'/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
+    <materialDesign:Card>
+        <TabControl ItemsSource="{Binding NavigationItems}"
+                    HorizontalContentAlignment="Center"
+                    materialDesign:ColorZoneAssist.Mode="PrimaryLight"
+                    materialDesign:NavigationRailAssist.SelectionCornerRadius="50"
+                    materialDesign:NavigationRailAssist.ShowSelectionBackground="True"
+                    Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+                    SelectedItem="{Binding SelectedPage, Mode=TwoWay}"
+                    TabStripPlacement="Bottom">
+
+            <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Header}"/>
+                    <StackPanel Width="auto" Height="auto">
+                        <materialDesign:PackIcon
+                                        Width="24"
+                                        Height="24"
+                                        HorizontalAlignment="Center"
+                                        Kind="MicrosoftXboxGamepad" />
+                        <TextBlock HorizontalAlignment="Center" Text="{Binding Header}" />
+                    </StackPanel>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ContentControl Content="{Binding SelectedPage.MainView, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-    </DockPanel>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding MainView}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </materialDesign:Card>
 </Window>
