@@ -20,7 +20,7 @@ public class CompatibleHidDeviceSlot
     /// <summary>
     ///     The zero-based slot index.
     /// </summary>
-    public int SlotIndex { get; set; }
+    public int SlotIndex { get; init; }
 
     /// <summary>
     ///     Is this slot occupied with a <see cref="Device" />?

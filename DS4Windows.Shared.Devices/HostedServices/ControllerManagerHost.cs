@@ -71,6 +71,7 @@ public class ControllerManagerHost : IHostedService
         }
 
         profileService.ControllerArrived(slotIndex, device.Serial);
+        inputSourceService.ControllerArrived(slotIndex, device);
     }
 
     /// <summary>
@@ -80,6 +81,7 @@ public class ControllerManagerHost : IHostedService
     {
         var slot = manager.FreeSlotContaining(device);
 
+        inputSourceService.ControllerDeparted(slot, device);
         profileService.ControllerDeparted(slot, device.Serial);
     }
 }

@@ -13,6 +13,11 @@ public interface IInputSource
     ///     One or more <see cref="CompatibleHidDevice" />s.
     /// </summary>
     IReadOnlyList<CompatibleHidDevice> SourceDevices { get; }
+
+    /// <summary>
+    ///     Gets whether there's only one primary device in <see cref="SourceDevices"/>.
+    /// </summary>
+    bool HasSingleSource { get; }
 }
 
 /// <summary>
@@ -31,4 +36,7 @@ public class InputSource : IInputSource
 
     /// <inheritdoc />
     public IReadOnlyList<CompatibleHidDevice> SourceDevices { get; }
+
+    /// <inheritdoc />
+    public bool HasSingleSource => sourceDevices.Count == 1;
 }

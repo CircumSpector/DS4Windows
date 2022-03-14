@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Types;
 
 namespace DS4Windows.Shared.Devices.Services;
@@ -6,6 +7,10 @@ namespace DS4Windows.Shared.Devices.Services;
 public interface IInputSourceService
 {
     ReadOnlyObservableCollection<IInputSource> InputSources { get; }
+
+    void ControllerArrived(int slot, CompatibleHidDevice device);
+
+    void ControllerDeparted(int slot, CompatibleHidDevice device);
 }
 
 public class InputSourceService : IInputSourceService
@@ -23,4 +28,12 @@ public class InputSourceService : IInputSourceService
     }
 
     public ReadOnlyObservableCollection<IInputSource> InputSources { get; }
+
+    public void ControllerArrived(int slot, CompatibleHidDevice device)
+    {
+    }
+
+    public void ControllerDeparted(int slot, CompatibleHidDevice device)
+    {
+    }
 }
