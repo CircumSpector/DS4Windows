@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>Observable Property</Title>
+			<Shortcut>obprop</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+				private $Type$ $FieldName$;
+				public $Type$ $PropertyName$
+				{
+					get => $FieldName$;
+					set => SetProperty(ref $FieldName$, value);
+				}$selected$ $end$
+				]]>
+            </Code>
+			<Declarations>
+				<Literal>
+					<ID>Type</ID>
+					<ToolTip>Replace with the property type</ToolTip>
+					<Default>TheType</Default>
+				</Literal>
+				<Literal>
+					<ID>PropertyName</ID>
+					<ToolTip>Replace with the property name</ToolTip>
+					<Default>ThePropertyName</Default>
+				</Literal>
+				<Literal>
+					<ID>FieldName</ID>
+					<ToolTip>Replace with the field name</ToolTip>
+					<Default>TheFieldName</Default>
+				</Literal>
+			</Declarations>
+        </Snippet>
+    </CodeSnippet>
+	<CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>Private Set Observable Property</Title>
+			<Shortcut>obpropg</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+				private $Type$ $FieldName$;
+				public $Type$ $PropertyName$
+				{
+					get => $FieldName$;
+					private set => SetProperty(ref $FieldName$, value);
+				}$selected$ $end$
+				]]>
+            </Code>
+			<Declarations>
+				<Literal>
+					<ID>Type</ID>
+					<ToolTip>Replace with the property type</ToolTip>
+					<Default>TheType</Default>
+				</Literal>
+				<Literal>
+					<ID>PropertyName</ID>
+					<ToolTip>Replace with the property name</ToolTip>
+					<Default>ThePropertyName</Default>
+				</Literal>
+				<Literal>
+					<ID>FieldName</ID>
+					<ToolTip>Replace with the field name</ToolTip>
+					<Default>TheFieldName</Default>
+				</Literal>
+			</Declarations>
+        </Snippet>
+    </CodeSnippet>
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Wrapped Observable Property</Title>
+			<Shortcut>obwprop</Shortcut>
+		</Header>
+		<Snippet>
+			<Code Language="CSharp">
+				<![CDATA[
+				public $Type$ $PropertyName$
+				{
+					get => $FieldName$.$ChildPropertyName$;
+					set => SetProperty($FieldName$.$ChildPropertyName$, value, $FieldName$, (obj, val) => obj.$FieldName$ = val);
+				}$selected$ $end$
+				]]>
+			</Code>
+			<Declarations>
+				<Literal>
+					<ID>Type</ID>
+					<ToolTip>Replace with the property type</ToolTip>
+					<Default></Default>
+				</Literal>
+				<Literal>
+					<ID>PropertyName</ID>
+					<ToolTip>Replace with the property name</ToolTip>
+					<Default></Default>
+				</Literal>
+				<Literal>
+					<ID>FieldName</ID>
+					<ToolTip>Replace with the field name</ToolTip>
+					<Default></Default>
+				</Literal>
+				<Literal>
+					<ID>ChildPropertyName</ID>
+					<ToolTip>Replace with the child name</ToolTip>
+					<Default></Default>
+				</Literal>
+			</Declarations>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

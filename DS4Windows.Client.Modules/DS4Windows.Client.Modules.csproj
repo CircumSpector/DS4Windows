@@ -18,6 +18,7 @@
     <None Remove="Controllers\Images\joyconright.jpg" />
     <None Remove="Controllers\Images\switchpro.jpg" />
     <None Remove="Controllers\Images\USB_white.png" />
+    <None Remove="Main\Images\DS4W.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,7 @@
     <Resource Include="Controllers\Images\joyconright.jpg" />
     <Resource Include="Controllers\Images\switchpro.jpg" />
     <Resource Include="Controllers\Images\USB_white.png" />
+    <Resource Include="Main\Images\DS4W.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +58,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MaterialDesignColors" Version="2.0.4" />
+    <PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
     <PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
     <PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
     <PackageReference Include="Microsoft.Toolkit.Diagnostics" Version="7.1.2" />

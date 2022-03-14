@@ -9,22 +9,20 @@ namespace DS4Windows.Client.Modules.Controllers
 {
     public interface IControllerItemViewModel : IViewModel<IControllerItemViewModel>
     {
-        PhysicalAddress? Serial { get; }
+        PhysicalAddress Serial { get; }
 
-        BitmapImage? DeviceImage { get; }
+        BitmapImage DeviceImage { get; }
 
         string? DisplayText { get; }
 
-        BitmapImage? ConnectionTypeImage { get; }
-
-        bool IsExclusive { get; }
+        BitmapImage ConnectionTypeImage { get; }
 
         decimal BatteryPercentage { get; }
 
-        Guid? SelectedProfileId { get; set; }
+        Guid SelectedProfileId { get; set; }
 
-        SolidColorBrush? CurrentColor { get; set; }
+        SolidColorBrush CurrentColor { get; set; }
 
-        void SetDevice(CompatibleHidDevice? device);
+        void SetDevice(CompatibleHidDevice device);
     }
 }

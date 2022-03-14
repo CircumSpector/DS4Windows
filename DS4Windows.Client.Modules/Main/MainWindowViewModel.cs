@@ -19,7 +19,13 @@ namespace DS4Windows.Client.Modules.Main
         
         #region Navigation
         public ObservableCollection<IViewModel> NavigationItems { get; private set; }
-        public IViewModel SelectedPage { get; set; }
+
+        private IViewModel selectedPage;
+        public IViewModel SelectedPage
+        {
+            get => selectedPage;
+            set => SetProperty(ref selectedPage, value);
+        } 
 
         #endregion
     }

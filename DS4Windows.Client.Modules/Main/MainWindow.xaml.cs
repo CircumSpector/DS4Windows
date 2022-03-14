@@ -1,4 +1,5 @@
 ﻿using DS4Windows.Shared.Devices.Util;
+using MaterialDesignExtensions.Controls;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -8,7 +9,7 @@ namespace DS4Windows.Client.Modules.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainView
+    public partial class MainWindow : MaterialWindow, IMainView
     {
         private readonly IDeviceNotificationListener deviceNotificationListener;
 
