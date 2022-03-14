@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace DS4Windows.Client.Core.ViewModel
 {
-    public interface IViewModel<TViewModel> : IViewModel, INotifyPropertyChanged, IDisposable
+    public interface IViewModel<TViewModel> : IViewModel, INotifyPropertyChanged, INotifyPropertyChanging, IDisposable
         where TViewModel : IViewModel<TViewModel>
     {
     }

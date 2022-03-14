@@ -30,25 +30,61 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private CompatibleHidDevice? device;
 
-        public PhysicalAddress? Serial { get; private set; }
 
-        public BitmapImage? DeviceImage { get; private set; }
 
-        public string? DisplayText { get; private set; }
+        private PhysicalAddress serial;
+        public PhysicalAddress Serial
+        {
+            get => serial;
+            private set => SetProperty(ref serial, value);
+        }
 
-        public BitmapImage? ConnectionTypeImage { get; private set; }
 
-        public bool IsExclusive { get; private set; }
+        private BitmapImage deviceImage;
+        public BitmapImage DeviceImage
+        {
+            get => deviceImage; 
+            private set => SetProperty(ref deviceImage, value); 
+        }
 
-        public decimal BatteryPercentage { get; private set; }
+        private string displayText;
+        public string DisplayText
+        {
+            get => displayText; 
+            private set => SetProperty(ref displayText, value); 
+        }
 
-        public Guid? SelectedProfileId { get; set; }
+        private BitmapImage connectionTypeImage;
+        public BitmapImage ConnectionTypeImage
+        {
+            get => connectionTypeImage; 
+            private set => SetProperty(ref connectionTypeImage, value); 
+        }
 
-        public SolidColorBrush? CurrentColor { get; set; }
+        private decimal batteryPercentage;
+        public decimal BatteryPercentage
+        {
+            get => batteryPercentage; 
+            private set => SetProperty(ref batteryPercentage, value); 
+        }
+
+        private Guid selectedProfileId;
+        public Guid SelectedProfileId
+        {
+            get => selectedProfileId; 
+            set => SetProperty(ref selectedProfileId, value); 
+        }
+
+        private SolidColorBrush currentColor;
+        public SolidColorBrush CurrentColor
+        {
+            get => currentColor;
+            set => SetProperty(ref currentColor, value);
+        } 
 
         #endregion
 
-        public void SetDevice(CompatibleHidDevice? device)
+        public void SetDevice(CompatibleHidDevice device)
         {
             this.device = device;
             MapProperties();
