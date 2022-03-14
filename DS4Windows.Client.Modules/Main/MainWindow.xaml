@@ -1,25 +1,21 @@
-﻿<Window x:Class="DS4Windows.Client.Modules.Main.MainWindow"
+﻿<mde:MaterialWindow x:Class="DS4Windows.Client.Modules.Main.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto"        
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
-        Style="{StaticResource MaterialDesignWindow}" 
-        Title="MainWindow" WindowState="Maximized">
-    <materialDesign:Card>
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
+                    mc:Ignorable="d"
+                    Title="DS4Windows" WindowStartupLocation="CenterScreen"
+                    Background="{DynamicResource MaterialDesignBackground}" Foreground="{DynamicResource MaterialDesignBody}"
+                    FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+                    TitleBarIcon="Images/ds4w.ico">
+    <md:Card>
         <TabControl ItemsSource="{Binding NavigationItems}"
                     HorizontalContentAlignment="Center"
-                    materialDesign:ColorZoneAssist.Mode="PrimaryLight"
-                    materialDesign:NavigationRailAssist.SelectionCornerRadius="50"
-                    materialDesign:NavigationRailAssist.ShowSelectionBackground="True"
+                    md:ColorZoneAssist.Mode="PrimaryLight"
+                    md:NavigationRailAssist.SelectionCornerRadius="50"
+                    md:NavigationRailAssist.ShowSelectionBackground="True"
                     Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
                     SelectedItem="{Binding SelectedPage, Mode=TwoWay}"
                     TabStripPlacement="Bottom">
@@ -27,7 +23,7 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Width="auto" Height="auto">
-                        <materialDesign:PackIcon
+                        <md:PackIcon
                                         Width="24"
                                         Height="24"
                                         HorizontalAlignment="Center"
@@ -46,5 +42,5 @@
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
-    </materialDesign:Card>
-</Window>
+    </md:Card>
+</mde:MaterialWindow>
