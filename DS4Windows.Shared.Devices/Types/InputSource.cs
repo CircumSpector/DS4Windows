@@ -1,7 +1,7 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using DS4Windows.Shared.Devices.HID;
 using JetBrains.Annotations;
-using PropertyChanged;
 
 namespace DS4Windows.Shared.Devices.Types;
 
@@ -19,8 +19,6 @@ public interface IInputSource
 public interface ICompositeInputSource : IInputSource
 {
     CompatibleHidDevice SecondarySourceDevice { get; }
-
-    event Action SecondarySourceDeviceArrived;
 }
 
 public class InputSource : IInputSource
@@ -34,8 +32,7 @@ public class InputSource : IInputSource
     public CompatibleHidDevice PrimarySourceDevice { get; }
 }
 
-[AddINotifyPropertyChangedInterface]
-public class CompositeInputSource : InputSource, ICompositeInputSource
+public class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
 {
     internal CompositeInputSource(CompatibleHidDevice primarySource)
         : base(primarySource)
@@ -45,11 +42,12 @@ public class CompositeInputSource : InputSource, ICompositeInputSource
     /// <inheritdoc />
     public CompatibleHidDevice SecondarySourceDevice { get; internal set; }
 
-    public event Action SecondarySourceDeviceArrived;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     [UsedImplicitly]
-    private void OnSecondarySourceDeviceChanged()
+    [NotifyPropertyChangedInvocator]
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
-        SecondarySourceDeviceArrived?.Invoke();
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
