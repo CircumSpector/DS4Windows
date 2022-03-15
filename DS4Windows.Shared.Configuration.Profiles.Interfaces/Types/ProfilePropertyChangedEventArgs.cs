@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DS4Windows.Shared.Configuration.Profiles.Types
+﻿namespace DS4Windows.Shared.Configuration.Profiles.Types
 {
     /// <summary>
     ///     Describes the state of a changed property.

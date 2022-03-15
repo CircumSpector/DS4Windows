@@ -30,17 +30,17 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// <summary>
         ///     A collection of all the available profiles.
         /// </summary>
-        ReadOnlyObservableCollection<DS4WindowsProfile> AvailableProfiles { get; }
+        ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; }
 
         /// <summary>
         ///     A collection of currently active profiles per controller slot.
         /// </summary>
-        ReadOnlyObservableCollection<DS4WindowsProfile> ActiveProfiles { get; }
+        ReadOnlyObservableCollection<IProfile> ActiveProfiles { get; }
 
         /// <summary>
         ///     The profile copy that is currently being edited.
         /// </summary>
-        DS4WindowsProfile CurrentlyEditedProfile { get; set; }
+        IProfile CurrentlyEditedProfile { get; set; }
 
         /// <summary>
         ///     A collection of profile IDs linked to a particular controller ID (MAC address).
@@ -67,13 +67,13 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         ///     disk.
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
-        void CreateProfile(DS4WindowsProfile profile = default);
+        void CreateProfile(IProfile profile = default);
 
         /// <summary>
         ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to delete.</param>
-        void DeleteProfile(DS4WindowsProfile profile);
+        void DeleteProfile(IProfile profile);
 
         /// <summary>
         ///     Delete a profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
@@ -86,7 +86,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to rename.</param>
         /// <param name="displayName">The new name.</param>
-        void RenameProfile(DS4WindowsProfile profile, string displayName);
+        void RenameProfile(IProfile profile, string displayName);
 
         /// <summary>
         ///     Renames a <see cref="DS4WindowsProfile" /> identified by <see cref="Guid" />.
@@ -142,7 +142,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// </summary>
         /// <param name="slot">The zero-based slot index.</param>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to switch to.</param>
-        void SetActiveTo(int slot, DS4WindowsProfile profile);
+        void SetActiveTo(int slot, IProfile profile);
 
         /// <summary>
         ///     Gets invoked when a change to <see cref="AvailableProfiles" /> happened.
@@ -163,11 +163,11 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
 
         private readonly ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
 
-        private readonly ObservableCollection<DS4WindowsProfile> availableProfiles;
+        private readonly ObservableCollection<IProfile> availableProfiles;
 
-        private readonly ObservableCollection<DS4WindowsProfile> controllerSlotProfiles;
+        private readonly ObservableCollection<IProfile> controllerSlotProfiles;
 
-        private readonly DS4WindowsProfile currentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
+        private readonly IProfile currentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
 
         private readonly IGlobalStateService global;
 
@@ -190,17 +190,17 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
             this.global = global;
             this.appSettings = appSettings;
 
-            availableProfiles = new ObservableCollection<DS4WindowsProfile>();
+            availableProfiles = new ObservableCollection<IProfile>();
 
             availableProfiles.CollectionChanged += (_, _) => AvailableProfilesChanged?.Invoke();
 
-            AvailableProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(availableProfiles);
+            AvailableProfiles = new ReadOnlyObservableCollection<IProfile>(availableProfiles);
 
-            controllerSlotProfiles = new ObservableCollection<DS4WindowsProfile>(Enumerable
+            controllerSlotProfiles = new ObservableCollection<IProfile>(Enumerable
                 .Range(0, Constants.MaxControllers)
                 .Select(DS4WindowsProfile.CreateDefaultProfile));
 
-            ActiveProfiles = new ReadOnlyObservableCollection<DS4WindowsProfile>(controllerSlotProfiles);
+            ActiveProfiles = new ReadOnlyObservableCollection<IProfile>(controllerSlotProfiles);
 
             autoSwitchingProfiles = new ObservableCollection<AutoSwitchingProfileEntry>();
 
@@ -223,7 +223,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// <summary>
         ///     The profile copy that is currently being edited.
         /// </summary>
-        public DS4WindowsProfile CurrentlyEditedProfile
+        public IProfile CurrentlyEditedProfile
         {
             get => currentlyEditedProfile;
             //
@@ -235,12 +235,12 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// <summary>
         ///     A collection of currently active profiles per controller slot.
         /// </summary>
-        public ReadOnlyObservableCollection<DS4WindowsProfile> ActiveProfiles { get; }
+        public ReadOnlyObservableCollection<IProfile> ActiveProfiles { get; }
 
         /// <summary>
         ///     A collection of all the available profiles.
         /// </summary>
-        public ReadOnlyObservableCollection<DS4WindowsProfile> AvailableProfiles { get; }
+        public ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; }
 
         /// <summary>
         ///     A collection of profile IDs linked to a particular controller ID (MAC address).
@@ -256,7 +256,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to delete.</param>
-        public void DeleteProfile(DS4WindowsProfile profile)
+        public void DeleteProfile(IProfile profile)
         {
             if (profile is null)
                 throw new ArgumentNullException(nameof(profile));
@@ -285,7 +285,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to rename.</param>
         /// <param name="displayName">The new name.</param>
-        public void RenameProfile(DS4WindowsProfile profile, string displayName)
+        public void RenameProfile(IProfile profile, string displayName)
         {
             //
             // File name is derived from old name, so delete the file to clean up
@@ -587,7 +587,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// </summary>
         /// <param name="slot">The zero-based slot index.</param>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to switch to.</param>
-        public void SetActiveTo(int slot, DS4WindowsProfile profile)
+        public void SetActiveTo(int slot, IProfile profile)
         {
             profile.DeepCloneTo(controllerSlotProfiles[slot]);
         }
@@ -602,7 +602,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         ///     disk.
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
-        public void CreateProfile(DS4WindowsProfile profile = default)
+        public void CreateProfile(IProfile profile = default)
         {
             profile ??= DS4WindowsProfile.CreateNewProfile();
 
@@ -645,7 +645,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// <summary>
         ///     Resolve the profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
         /// </summary>
-        private DS4WindowsProfile GetProfileFor(int slot, Guid? profileId)
+        private IProfile GetProfileFor(int slot, Guid? profileId)
         {
             return availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ??
                    DS4WindowsProfile.CreateDefaultProfile(slot);
@@ -656,7 +656,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// </summary>
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to persist.</param>
         /// <param name="directory">The parent directory where the file will be generated (or overwritten, if existent).</param>
-        private void PersistProfile(DS4WindowsProfile profile, string directory)
+        private void PersistProfile(IProfile profile, string directory)
         {
             var profilePath = profile.GetAbsoluteFilePath(directory);
 

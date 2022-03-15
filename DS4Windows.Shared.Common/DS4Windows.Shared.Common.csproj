@@ -41,5 +41,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
   </ItemGroup>
 </Project>
