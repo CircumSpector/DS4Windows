@@ -28,7 +28,7 @@ namespace DS4Windows.Client.Modules.Controllers
 
         #region Props
 
-        private CompatibleHidDevice? device;
+        private ICompatibleHidDevice? device;
 
 
 
@@ -84,7 +84,7 @@ namespace DS4Windows.Client.Modules.Controllers
 
         #endregion
 
-        public void SetDevice(CompatibleHidDevice device)
+        public void SetDevice(ICompatibleHidDevice device)
         {
             this.device = device;
             MapProperties();

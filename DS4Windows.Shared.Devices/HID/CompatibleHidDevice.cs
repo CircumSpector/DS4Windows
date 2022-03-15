@@ -19,7 +19,7 @@ namespace DS4Windows.Shared.Devices.HID;
 /// <summary>
 ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
 /// </summary>
-public abstract partial class CompatibleHidDevice : HidDevice
+public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDevice
 {
     protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
@@ -206,12 +206,12 @@ public abstract partial class CompatibleHidDevice : HidDevice
     /// <summary>
     ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
-    public event Action<CompatibleHidDevice> Disconnected;
+    public event Action<ICompatibleHidDevice> Disconnected;
 
     /// <summary>
     ///     Fired when a new input report is read for further processing.
     /// </summary>
-    public event Action<CompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
+    public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
     /// <summary>
     ///     Process the input report read from the device.

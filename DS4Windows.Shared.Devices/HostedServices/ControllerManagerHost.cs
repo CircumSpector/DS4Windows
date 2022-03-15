@@ -60,7 +60,7 @@ public class ControllerManagerHost : IHostedService
     /// <summary>
     ///     Gets invoked when a new compatible device is detected.
     /// </summary>
-    private void EnumeratorServiceOnControllerReady(CompatibleHidDevice device)
+    private void EnumeratorServiceOnControllerReady(ICompatibleHidDevice device)
     {
         var slotIndex = manager.AssignFreeSlotWith(device);
 
@@ -76,7 +76,7 @@ public class ControllerManagerHost : IHostedService
     /// <summary>
     ///     Gets invoked when a compatible device has departed.
     /// </summary>
-    private void EnumeratorOnControllerRemoved(CompatibleHidDevice device)
+    private void EnumeratorOnControllerRemoved(ICompatibleHidDevice device)
     {
         var slot = manager.FreeSlotContaining(device);
 

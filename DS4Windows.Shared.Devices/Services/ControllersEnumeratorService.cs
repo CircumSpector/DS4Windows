@@ -9,35 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Devices.Services
 {
-    /// <summary>
-    ///     Enumerates and watches hot-plugging of supported input devices (controllers).
-    /// </summary>
-    public interface IControllersEnumeratorService
-    {
-        ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
-
-        /// <summary>
-        ///     Fired when <see cref="SupportedDevices"/> has been (re-)built.
-        /// </summary>
-        event Action DeviceListReady;
-
-        /// <summary>
-        ///     Fired every time a supported device is found and ready.
-        /// </summary>
-        event Action<CompatibleHidDevice> ControllerReady;
-
-        /// <summary>
-        ///     Fired every time a supported device has departed.
-        /// </summary>
-        event Action<CompatibleHidDevice> ControllerRemoved;
-
-        /// <summary>
-        ///     Enumerate system for compatible devices. This rebuilds <see cref="SupportedDevices" />.
-        /// </summary>
-        void EnumerateDevices();
-    }
-
-    /// <summary>
+     /// <summary>
     ///     Enumerates and watches hot-plugging of supported input devices (controllers).
     /// </summary>
     public class ControllersEnumeratorService : IControllersEnumeratorService
@@ -143,7 +115,7 @@ namespace DS4Windows.Shared.Devices.Services
 
         private readonly IServiceProvider serviceProvider;
 
-        private readonly ObservableCollection<CompatibleHidDevice> supportedDevices;
+        private readonly ObservableCollection<ICompatibleHidDevice> supportedDevices;
 
         public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
             IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider)
@@ -155,22 +127,22 @@ namespace DS4Windows.Shared.Devices.Services
             enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
             enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
 
-            supportedDevices = new ObservableCollection<CompatibleHidDevice>();
+            supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
 
-            SupportedDevices = new ReadOnlyObservableCollection<CompatibleHidDevice>(supportedDevices);
+            SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(supportedDevices);
         }
 
         /// <inheritdoc />
-        public ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
+        public ReadOnlyObservableCollection<ICompatibleHidDevice> SupportedDevices { get; }
 
         /// <inheritdoc />
         public event Action DeviceListReady;
 
         /// <inheritdoc />
-        public event Action<CompatibleHidDevice> ControllerReady;
+        public event Action<ICompatibleHidDevice> ControllerReady;
 
         /// <inheritdoc />
-        public event Action<CompatibleHidDevice> ControllerRemoved;
+        public event Action<ICompatibleHidDevice> ControllerRemoved;
 
         /// <inheritdoc />
         public void EnumerateDevices()

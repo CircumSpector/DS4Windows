@@ -30,7 +30,7 @@ namespace DS4Windows.Shared.Devices.Services
         /// <summary>
         ///     The <see cref="CompatibleHidDevice"/> occupying this slot.
         /// </summary>
-        [CanBeNull] public CompatibleHidDevice Device { get; internal set; }
+        [CanBeNull] public ICompatibleHidDevice Device { get; internal set; }
     }
 
     public interface IControllerManagerService
@@ -45,14 +45,14 @@ namespace DS4Windows.Shared.Devices.Services
         /// </summary>
         /// <param name="device">The <see cref="CompatibleHidDevice"/> that arrived.</param>
         /// <returns>Zero-based slot index on success, -1 if no free slot available.</returns>
-        int AssignFreeSlotWith(CompatibleHidDevice device);
+        int AssignFreeSlotWith(ICompatibleHidDevice device);
 
         /// <summary>
         ///     Call when a <see cref="CompatibleHidDevice"/> had departed and its slot can be marked available.
         /// </summary>
         /// <param name="device">The <see cref="CompatibleHidDevice"/> that departed.</param>
         /// <returns>The zero-based slot index it has previously occupied.</returns>
-        int FreeSlotContaining(CompatibleHidDevice device);
+        int FreeSlotContaining(ICompatibleHidDevice device);
 
         /// <summary>
         ///     Gets invoked when a slot got occupied.
@@ -86,7 +86,7 @@ namespace DS4Windows.Shared.Devices.Services
         [ItemCanBeNull] public ReadOnlyObservableCollection<CompatibleHidDeviceSlot> ActiveControllers { get; }
 
         /// <inheritdoc />
-        public int AssignFreeSlotWith(CompatibleHidDevice device)
+        public int AssignFreeSlotWith(ICompatibleHidDevice device)
         {
             var slot = activeControllers.FirstOrDefault(s => !s.IsOccupied);
 
@@ -105,7 +105,7 @@ namespace DS4Windows.Shared.Devices.Services
         }
 
         /// <inheritdoc />
-        public int FreeSlotContaining(CompatibleHidDevice device)
+        public int FreeSlotContaining(ICompatibleHidDevice device)
         {
             var slot = activeControllers.First(s => Equals(s.Device, device));
 

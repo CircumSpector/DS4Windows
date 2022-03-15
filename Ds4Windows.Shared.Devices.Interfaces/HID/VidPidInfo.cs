@@ -29,7 +29,7 @@ namespace DS4Windows.Shared.Devices.HID
 
     public class VidPidInfo
     {
-        internal VidPidInfo(
+        public VidPidInfo(
             int vid,
             int pid,
             string name = "Generic DS4",

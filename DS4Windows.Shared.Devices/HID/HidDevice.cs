@@ -11,7 +11,7 @@ namespace DS4Windows.Shared.Devices.HID
     /// <summary>
     ///     Describes a HID device's basic properties.
     /// </summary>
-    public class HidDevice : IEquatable<HidDevice>, IDisposable
+    public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
     {
         private readonly IntPtr inputOverlapped;
 
