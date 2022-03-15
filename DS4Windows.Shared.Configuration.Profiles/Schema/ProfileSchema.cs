@@ -19,13 +19,13 @@ namespace DS4Windows.Shared.Configuration.Profiles.Schema
     public class DS4WindowsProfile :
         JsonSerializable<DS4WindowsProfile>,
         IEquatable<DS4WindowsProfile>,
-        INotifyPropertyChanged
+        INotifyPropertyChanged, IProfile
     {
         /// <summary>
         ///     The <see cref="Guid"/> identifying the default (always available) profile that is always ensured to exist.
         /// </summary>
         public static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
-        
+
         public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
             ProfilePropertyChangedEventArgs e);
 
@@ -87,7 +87,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Schema
         /// <remarks>This value is assigned at runtime and not persisted.</remarks>
         [JsonIgnore]
         public bool IsOutputDeviceEnabled { get; set; }
-        
+
         /// <summary>
         ///     Dynamically built display name (for use in UI).
         /// </summary>
@@ -107,7 +107,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Schema
         /// </summary>
         [JsonProperty]
         public Guid Id { get; private set; } = Guid.NewGuid();
-        
+
         /// <summary>
         ///     Friendly, user-changeable name of this profile.
         /// </summary>
@@ -302,8 +302,8 @@ namespace DS4Windows.Shared.Configuration.Profiles.Schema
         /// </summary>
         public ControlSettingsGroup PerControlSettings { get; set; } = new(
             (from DS4ControlItem dc in Enum.GetValues(typeof(DS4ControlItem))
-                where dc != DS4ControlItem.None
-                select new DS4ControlSettingsV3(dc)).ToList());
+             where dc != DS4ControlItem.None
+             select new DS4ControlSettingsV3(dc)).ToList());
 
         #endregion
 
@@ -364,7 +364,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Schema
             return new DS4WindowsProfile(index);
         }
 
-        [CanBeNull] public event ProfilePropertyChangedEventHandler ProfilePropertyChanged;
+        [CanBeNull] public event IProfile.ProfilePropertyChangedEventHandler ProfilePropertyChanged;
 
         [UsedImplicitly]
         public void OnPropertyChanged(string propertyName, object before, object after)
@@ -378,7 +378,7 @@ namespace DS4Windows.Shared.Configuration.Profiles.Schema
         /// </summary>
         /// <param name="handler">The <see cref="ProfilePropertyChangedEventHandler"/>.</param>
         /// <returns>This instance of <see cref="DS4WindowsProfile"/>.</returns>
-        public DS4WindowsProfile WithChangeNotification([CanBeNull] ProfilePropertyChangedEventHandler handler)
+        public IProfile WithChangeNotification([CanBeNull] IProfile.ProfilePropertyChangedEventHandler handler)
         {
             ProfilePropertyChanged += (sender, args) => { handler?.Invoke(sender, args); };
 
