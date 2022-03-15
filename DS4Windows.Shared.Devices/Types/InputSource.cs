@@ -1,34 +1,65 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using DS4Windows.Shared.Devices.HID;
+using JetBrains.Annotations;
 
 namespace DS4Windows.Shared.Devices.Types;
 
 /// <summary>
-///     Virtual composite input device with one or more source <see cref="CompatibleHidDevice" />s.
+///     Represents a logical input source baked by a hardware <see cref="CompatibleHidDevice" />.
 /// </summary>
 public interface IInputSource
 {
     /// <summary>
-    ///     One or more <see cref="CompatibleHidDevice" />s.
+    ///     The primary source <see cref="CompatibleHidDevice"/>.
     /// </summary>
-    IReadOnlyList<CompatibleHidDevice> SourceDevices { get; }
+    CompatibleHidDevice PrimarySourceDevice { get; }
 }
 
 /// <summary>
-///     Virtual composite input device with one or more source <see cref="CompatibleHidDevice" />s.
+///     Represents a logical input source baked by a two hardware <see cref="CompatibleHidDevice" />s.
+/// </summary>
+public interface ICompositeInputSource : IInputSource
+{
+    /// <summary>
+    ///     The secondary source <see cref="CompatibleHidDevice"/>.
+    /// </summary>
+    CompatibleHidDevice SecondarySourceDevice { get; }
+}
+
+/// <summary>
+///     Represents a logical input source baked by a hardware <see cref="CompatibleHidDevice" />.
 /// </summary>
 public class InputSource : IInputSource
 {
-    private readonly List<CompatibleHidDevice> sourceDevices;
-
-    internal InputSource()
+    internal InputSource(CompatibleHidDevice primarySource)
     {
-        sourceDevices = new List<CompatibleHidDevice>();
-
-        SourceDevices = new ReadOnlyCollection<CompatibleHidDevice>(sourceDevices);
+        PrimarySourceDevice = primarySource;
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<CompatibleHidDevice> SourceDevices { get; }
+    public CompatibleHidDevice PrimarySourceDevice { get; }
+}
+
+/// <summary>
+///     Represents a logical input source baked by a two hardware <see cref="CompatibleHidDevice" />s.
+/// </summary>
+public class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
+{
+    internal CompositeInputSource(CompatibleHidDevice primarySource)
+        : base(primarySource)
+    {
+    }
+
+    /// <inheritdoc />
+    public CompatibleHidDevice SecondarySourceDevice { get; internal set; }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    [UsedImplicitly]
+    [NotifyPropertyChangedInvocator]
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
