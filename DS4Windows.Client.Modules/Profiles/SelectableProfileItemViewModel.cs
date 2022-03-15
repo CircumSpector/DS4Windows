@@ -1,23 +1,23 @@
-﻿using DS4Windows.Client.Core.ViewModel;
+﻿using System;
+using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
-using System;
 
-namespace DS4Windows.Client.Modules.Profiles
+namespace DS4Windows.Client.Modules.Profiles;
+
+public class SelectableProfileItemViewModel : ViewModel<ISelectableProfileItemViewModel>,
+    ISelectableProfileItemViewModel
 {
-    public class SelectableProfileItemViewModel : ViewModel<ISelectableProfileItemViewModel>, ISelectableProfileItemViewModel
+    private IProfile? profile;
+
+    public string? Name { get; private set; }
+
+    public Guid? Id { get; private set; }
+
+    public void SetProfile(IProfile? profile)
     {
-        private IProfile? profile;
+        this.profile = profile;
 
-        public string? Name { get; private set; }
-
-        public Guid? Id { get; private set; }
-
-        public void SetProfile(IProfile? profile)
-        {
-            this.profile = profile;
-
-            Name = profile.DisplayName;
-            Id = profile.Id;
-        }
+        Name = profile.DisplayName;
+        Id = profile.Id;
     }
 }
