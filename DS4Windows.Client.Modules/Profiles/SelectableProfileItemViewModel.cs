@@ -6,13 +6,13 @@ namespace DS4Windows.Client.Modules.Profiles
 {
     public class SelectableProfileItemViewModel : ViewModel<ISelectableProfileItemViewModel>, ISelectableProfileItemViewModel
     {
-        private DS4WindowsProfile? profile;
+        private IProfile? profile;
 
         public string? Name { get; private set; }
 
         public Guid? Id { get; private set; }
 
-        public void SetProfile(DS4WindowsProfile? profile)
+        public void SetProfile(IProfile? profile)
         {
             this.profile = profile;
 
