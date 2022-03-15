@@ -134,22 +134,22 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable
         Handle?.Dispose();
     }
 
-    public bool WriteFeatureReport(byte[] data)
+    protected bool WriteFeatureReport(byte[] data)
     {
         return HidD_SetFeature(Handle.DangerousGetHandle(), data, data.Length);
     }
 
-    public bool WriteOutputReportViaControl(byte[] outputBuffer)
+    protected bool WriteOutputReportViaControl(byte[] outputBuffer)
     {
         return HidD_SetOutputReport(Handle.DangerousGetHandle(), outputBuffer, outputBuffer.Length);
     }
 
-    public bool ReadFeatureData(byte[] inputBuffer)
+    protected bool ReadFeatureData(byte[] inputBuffer)
     {
         return HidD_GetFeature(Handle.DangerousGetHandle(), inputBuffer, inputBuffer.Length);
     }
 
-    public bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
+    protected bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
     {
         var unmanagedBuffer = Marshal.AllocHGlobal(outputBuffer.Length);
 
@@ -167,7 +167,7 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable
         return true;
     }
 
-    public void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
+    protected void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
     {
         if (inputBuffer == IntPtr.Zero)
             throw new ArgumentNullException(nameof(inputBuffer), @"Passed uninitialized memory");
