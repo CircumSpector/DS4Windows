@@ -429,7 +429,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         {
             public int Slot { get; init; }
 
-            public DS4WindowsProfile Profile { get; init; }
+            public IProfile Profile { get; init; }
         }
     }
 

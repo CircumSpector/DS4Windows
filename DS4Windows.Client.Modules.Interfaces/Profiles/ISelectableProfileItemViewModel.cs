@@ -10,6 +10,6 @@ namespace DS4Windows.Client.Modules.Profiles
 
         Guid? Id { get; }
 
-        void SetProfile(DS4WindowsProfile? profile);
+        void SetProfile(IProfile? profile);
     }
 }
