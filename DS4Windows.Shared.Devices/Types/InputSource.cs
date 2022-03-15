@@ -10,6 +10,9 @@ namespace DS4Windows.Shared.Devices.Types;
 /// </summary>
 public interface IInputSource
 {
+    /// <summary>
+    ///     The primary source <see cref="CompatibleHidDevice"/>.
+    /// </summary>
     CompatibleHidDevice PrimarySourceDevice { get; }
 }
 
@@ -18,9 +21,15 @@ public interface IInputSource
 /// </summary>
 public interface ICompositeInputSource : IInputSource
 {
+    /// <summary>
+    ///     The secondary source <see cref="CompatibleHidDevice"/>.
+    /// </summary>
     CompatibleHidDevice SecondarySourceDevice { get; }
 }
 
+/// <summary>
+///     Represents a logical input source baked by a hardware <see cref="CompatibleHidDevice" />.
+/// </summary>
 public class InputSource : IInputSource
 {
     internal InputSource(CompatibleHidDevice primarySource)
@@ -32,6 +41,9 @@ public class InputSource : IInputSource
     public CompatibleHidDevice PrimarySourceDevice { get; }
 }
 
+/// <summary>
+///     Represents a logical input source baked by a two hardware <see cref="CompatibleHidDevice" />s.
+/// </summary>
 public class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
 {
     internal CompositeInputSource(CompatibleHidDevice primarySource)
