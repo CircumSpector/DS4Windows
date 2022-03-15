@@ -10,9 +10,9 @@ public interface IInputSourceService
 {
     ReadOnlyObservableCollection<IInputSource> InputSources { get; }
 
-    void ControllerArrived(int slot, CompatibleHidDevice device);
+    void ControllerArrived(int slot, ICompatibleHidDevice device);
 
-    void ControllerDeparted(int slot, CompatibleHidDevice device);
+    void ControllerDeparted(int slot, ICompatibleHidDevice device);
 }
 
 public class InputSourceService : IInputSourceService
@@ -28,7 +28,7 @@ public class InputSourceService : IInputSourceService
 
     public ReadOnlyObservableCollection<IInputSource> InputSources { get; }
 
-    public void ControllerArrived(int slot, CompatibleHidDevice device)
+    public void ControllerArrived(int slot, ICompatibleHidDevice device)
     {
         if (device is JoyConCompatibleHidDevice)
         {
@@ -48,7 +48,7 @@ public class InputSourceService : IInputSourceService
         inputSources.Add(new InputSource(device));
     }
 
-    public void ControllerDeparted(int slot, CompatibleHidDevice device)
+    public void ControllerDeparted(int slot, ICompatibleHidDevice device)
     {
         if (device is JoyConCompatibleHidDevice)
         {

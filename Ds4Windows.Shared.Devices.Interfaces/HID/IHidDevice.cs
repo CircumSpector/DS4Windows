@@ -24,11 +24,6 @@ namespace DS4Windows.Shared.Devices.HID
         bool Equals(object obj);
         int GetHashCode();
         void OpenDevice();
-        bool ReadFeatureData(byte[] inputBuffer);
-        void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned);
         string ToString();
-        bool WriteFeatureReport(byte[] data);
-        bool WriteOutputReportViaControl(byte[] outputBuffer);
-        bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout);
     }
 }

@@ -13,7 +13,7 @@ public interface IInputSource
     /// <summary>
     ///     The primary source <see cref="CompatibleHidDevice"/>.
     /// </summary>
-    CompatibleHidDevice PrimarySourceDevice { get; }
+    ICompatibleHidDevice PrimarySourceDevice { get; }
 }
 
 /// <summary>
@@ -24,7 +24,7 @@ public interface ICompositeInputSource : IInputSource
     /// <summary>
     ///     The secondary source <see cref="CompatibleHidDevice"/>.
     /// </summary>
-    CompatibleHidDevice SecondarySourceDevice { get; }
+    ICompatibleHidDevice SecondarySourceDevice { get; }
 }
 
 /// <summary>
@@ -32,13 +32,13 @@ public interface ICompositeInputSource : IInputSource
 /// </summary>
 public class InputSource : IInputSource
 {
-    internal InputSource(CompatibleHidDevice primarySource)
+    internal InputSource(ICompatibleHidDevice primarySource)
     {
         PrimarySourceDevice = primarySource;
     }
 
     /// <inheritdoc />
-    public CompatibleHidDevice PrimarySourceDevice { get; }
+    public ICompatibleHidDevice PrimarySourceDevice { get; }
 }
 
 /// <summary>
@@ -46,13 +46,13 @@ public class InputSource : IInputSource
 /// </summary>
 public class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
 {
-    internal CompositeInputSource(CompatibleHidDevice primarySource)
+    internal CompositeInputSource(ICompatibleHidDevice primarySource)
         : base(primarySource)
     {
     }
 
     /// <inheritdoc />
-    public CompatibleHidDevice SecondarySourceDevice { get; internal set; }
+    public ICompatibleHidDevice SecondarySourceDevice { get; internal set; }
 
     public event PropertyChangedEventHandler PropertyChanged;
 

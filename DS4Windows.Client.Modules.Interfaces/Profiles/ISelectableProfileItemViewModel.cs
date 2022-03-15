@@ -11,5 +11,4 @@ public interface ISelectableProfileItemViewModel : IViewModel<ISelectableProfile
     Guid? Id { get; }
 
         void SetProfile(IProfile? profile);
-    }
 }
