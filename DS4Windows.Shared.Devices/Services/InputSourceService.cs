@@ -1,5 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using DS4Windows.Shared.Devices.HID;
+using DS4Windows.Shared.Devices.HID.Devices;
 using DS4Windows.Shared.Devices.Types;
 
 namespace DS4Windows.Shared.Devices.Services;
@@ -15,13 +18,10 @@ public interface IInputSourceService
 
 public class InputSourceService : IInputSourceService
 {
-    private readonly IControllerManagerService controllerManagerService;
     private readonly ObservableCollection<IInputSource> inputSources;
 
-    public InputSourceService(IControllerManagerService controllerManagerService)
+    public InputSourceService()
     {
-        this.controllerManagerService = controllerManagerService;
-
         inputSources = new ObservableCollection<IInputSource>();
 
         InputSources = new ReadOnlyObservableCollection<IInputSource>(inputSources);
@@ -31,9 +31,26 @@ public class InputSourceService : IInputSourceService
 
     public void ControllerArrived(int slot, CompatibleHidDevice device)
     {
+        if (device is JoyConCompatibleHidDevice)
+        {
+            var composite = inputSources
+                .OfType<ICompositeInputSource>()
+                .Cast<CompositeInputSource>()
+                .FirstOrDefault(source => source.SecondarySourceDevice is null);
+
+            if (composite is not null)
+                composite.SecondarySourceDevice = device;
+            else
+                inputSources.Add(new CompositeInputSource(device));
+
+            return;
+        }
+
+        inputSources.Add(new InputSource(device));
     }
 
     public void ControllerDeparted(int slot, CompatibleHidDevice device)
     {
+        throw new NotImplementedException();
     }
 }

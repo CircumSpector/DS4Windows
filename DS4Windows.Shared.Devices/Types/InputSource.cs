@@ -1,42 +1,55 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System;
 using DS4Windows.Shared.Devices.HID;
+using JetBrains.Annotations;
+using PropertyChanged;
 
 namespace DS4Windows.Shared.Devices.Types;
 
 /// <summary>
-///     Virtual composite input device with one or more source <see cref="CompatibleHidDevice" />s.
+///     Represents a logical input source baked by a hardware <see cref="CompatibleHidDevice" />.
 /// </summary>
 public interface IInputSource
 {
-    /// <summary>
-    ///     One or more <see cref="CompatibleHidDevice" />s.
-    /// </summary>
-    IReadOnlyList<CompatibleHidDevice> SourceDevices { get; }
-
-    /// <summary>
-    ///     Gets whether there's only one primary device in <see cref="SourceDevices"/>.
-    /// </summary>
-    bool HasSingleSource { get; }
+    CompatibleHidDevice PrimarySourceDevice { get; }
 }
 
 /// <summary>
-///     Virtual composite input device with one or more source <see cref="CompatibleHidDevice" />s.
+///     Represents a logical input source baked by a two hardware <see cref="CompatibleHidDevice" />s.
 /// </summary>
+public interface ICompositeInputSource : IInputSource
+{
+    CompatibleHidDevice SecondarySourceDevice { get; }
+
+    event Action SecondarySourceDeviceArrived;
+}
+
 public class InputSource : IInputSource
 {
-    private readonly List<CompatibleHidDevice> sourceDevices;
-
-    internal InputSource()
+    internal InputSource(CompatibleHidDevice primarySource)
     {
-        sourceDevices = new List<CompatibleHidDevice>();
-
-        SourceDevices = new ReadOnlyCollection<CompatibleHidDevice>(sourceDevices);
+        PrimarySourceDevice = primarySource;
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<CompatibleHidDevice> SourceDevices { get; }
+    public CompatibleHidDevice PrimarySourceDevice { get; }
+}
+
+[AddINotifyPropertyChangedInterface]
+public class CompositeInputSource : InputSource, ICompositeInputSource
+{
+    internal CompositeInputSource(CompatibleHidDevice primarySource)
+        : base(primarySource)
+    {
+    }
 
     /// <inheritdoc />
-    public bool HasSingleSource => sourceDevices.Count == 1;
+    public CompatibleHidDevice SecondarySourceDevice { get; internal set; }
+
+    public event Action SecondarySourceDeviceArrived;
+
+    [UsedImplicitly]
+    private void OnSecondarySourceDeviceChanged()
+    {
+        SecondarySourceDeviceArrived?.Invoke();
+    }
 }
