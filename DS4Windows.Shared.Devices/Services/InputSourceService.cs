@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.HID.Devices;
@@ -51,6 +50,33 @@ public class InputSourceService : IInputSourceService
 
     public void ControllerDeparted(int slot, CompatibleHidDevice device)
     {
-        throw new NotImplementedException();
+        if (device is JoyConCompatibleHidDevice)
+        {
+            var primary = inputSources
+                .OfType<ICompositeInputSource>()
+                .Cast<CompositeInputSource>()
+                .FirstOrDefault(source => Equals(source.SecondarySourceDevice, device));
+
+            if (primary is not null)
+            {
+                inputSources.Remove(primary);
+                inputSources.Add(new CompositeInputSource(primary.PrimarySourceDevice));
+                return;
+            }
+
+            var secondary = inputSources
+                .OfType<ICompositeInputSource>()
+                .Cast<CompositeInputSource>()
+                .FirstOrDefault(source => Equals(source.PrimarySourceDevice, device));
+
+            if (secondary is not null)
+            {
+                inputSources.Remove(secondary);
+                inputSources.Add(new CompositeInputSource(secondary.SecondarySourceDevice));
+                return;
+            }
+        }
+
+        inputSources.Remove(inputSources.First(source => Equals(source.PrimarySourceDevice, device)));
     }
 }
