@@ -6,11 +6,13 @@
     <RootNamespace>DS4Windows.Client.Modules</RootNamespace>
 	<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
 	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+	  <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
-    <ProjectReference Include="..\DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />
+    <ProjectReference Include="..\Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

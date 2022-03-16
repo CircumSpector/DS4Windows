@@ -40,17 +40,17 @@ namespace DS4Windows.Client.Modules.Controllers
             controllersEnumeratorService.ControllerRemoved += ControllersEnumeratorService_ControllerRemoved;
         }
 
-        private void ControllersEnumeratorService_ControllerRemoved(CompatibleHidDevice obj)
+        private void ControllersEnumeratorService_ControllerRemoved(ICompatibleHidDevice obj)
         {
             RemoveControllerItem(obj);
         }
 
-        private void ControllersEnumeratorService_ControllerReady(CompatibleHidDevice obj)
+        private void ControllersEnumeratorService_ControllerReady(ICompatibleHidDevice obj)
         {
             CreateControllerItem(obj);
         }
 
-        private void CreateControllerItem(CompatibleHidDevice device)
+        private void CreateControllerItem(ICompatibleHidDevice device)
         {
             if (!ControllerItems.Any(i => i.Serial == device.Serial))
             {
@@ -60,7 +60,7 @@ namespace DS4Windows.Client.Modules.Controllers
             }
         }
 
-        private void RemoveControllerItem(CompatibleHidDevice device)
+        private void RemoveControllerItem(ICompatibleHidDevice device)
         {
             var existing = ControllerItems.SingleOrDefault(i => i.Serial == device.Serial);
             if (existing != null)

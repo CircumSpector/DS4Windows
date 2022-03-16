@@ -7,54 +7,26 @@ using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
 using Microsoft.Extensions.Logging;
 
-namespace DS4Windows.Shared.Devices.Services;
-
-/// <summary>
-///     Enumerates and watches hot-plugging of supported input devices (controllers).
-/// </summary>
-public interface IControllersEnumeratorService
+namespace DS4Windows.Shared.Devices.Services
 {
-    ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
-
     /// <summary>
-    ///     Fired when <see cref="SupportedDevices" /> has been (re-)built.
+    ///     Enumerates and watches hot-plugging of supported input devices (controllers).
     /// </summary>
-    event Action DeviceListReady;
+    public class ControllersEnumeratorService : IControllersEnumeratorService
+    {
+        private const int SonyVid = 0x054C;
+        private const int RazerVid = 0x1532;
+        private const int NaconVid = 0x146B;
+        private const int HoriVid = 0x0F0D;
+        private const int NintendoVendorId = 0x57e;
+        private const int SwitchProProductId = 0x2009;
+        private const int JoyconLProductId = 0x2006;
+        private const int JoyconRProductId = 0x2007;
 
-    /// <summary>
-    ///     Fired every time a supported device is found and ready.
-    /// </summary>
-    event Action<CompatibleHidDevice> ControllerReady;
+        private const int HidUsageJoystick = 0x04;
+        private const int HidUsageGamepad = 0x05;
 
-    /// <summary>
-    ///     Fired every time a supported device has departed.
-    /// </summary>
-    event Action<CompatibleHidDevice> ControllerRemoved;
-
-    /// <summary>
-    ///     Enumerate system for compatible devices. This rebuilds <see cref="SupportedDevices" />.
-    /// </summary>
-    void EnumerateDevices();
-}
-
-/// <summary>
-///     Enumerates and watches hot-plugging of supported input devices (controllers).
-/// </summary>
-public class ControllersEnumeratorService : IControllersEnumeratorService
-{
-    private const int SonyVid = 0x054C;
-    private const int RazerVid = 0x1532;
-    private const int NaconVid = 0x146B;
-    private const int HoriVid = 0x0F0D;
-    private const int NintendoVendorId = 0x57e;
-    private const int SwitchProProductId = 0x2009;
-    private const int JoyconLProductId = 0x2006;
-    private const int JoyconRProductId = 0x2007;
-
-    private const int HidUsageJoystick = 0x04;
-    private const int HidUsageGamepad = 0x05;
-
-    private static readonly IEnumerable<VidPidInfo> KnownDevices = new List<VidPidInfo>
+        private static readonly IEnumerable<VidPidInfo> KnownDevices = new List<VidPidInfo>
     {
         new(SonyVid, 0xBA0, "Sony WA",
             InputDeviceType.DualShock4,
@@ -138,75 +110,126 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
                 .VendorDefinedDevice) // Sony DualShock 3 using DsHidMini driver. DsHidMini uses vendor-defined HID device type when it's emulating DS3 using DS4 button layout
     };
 
-    protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+        protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    private readonly IHidDeviceEnumeratorService enumeratorService;
+        private readonly IHidDeviceEnumeratorService enumeratorService;
 
-    private readonly ILogger<ControllersEnumeratorService> logger;
+        private readonly ILogger<ControllersEnumeratorService> logger;
 
-    private readonly IServiceProvider serviceProvider;
+        private readonly IServiceProvider serviceProvider;
 
-    private readonly ObservableCollection<CompatibleHidDevice> supportedDevices;
+        private readonly ObservableCollection<ICompatibleHidDevice> supportedDevices;
 
-    public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-        IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider)
-    {
-        this.logger = logger;
-        this.enumeratorService = enumeratorService;
-        this.serviceProvider = serviceProvider;
-
-        enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
-        enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
-
-        supportedDevices = new ObservableCollection<CompatibleHidDevice>();
-
-        SupportedDevices = new ReadOnlyObservableCollection<CompatibleHidDevice>(supportedDevices);
-    }
-
-    /// <inheritdoc />
-    public ReadOnlyObservableCollection<CompatibleHidDevice> SupportedDevices { get; }
-
-    /// <inheritdoc />
-    public event Action DeviceListReady;
-
-    /// <inheritdoc />
-    public event Action<CompatibleHidDevice> ControllerReady;
-
-    /// <inheritdoc />
-    public event Action<CompatibleHidDevice> ControllerRemoved;
-
-    /// <inheritdoc />
-    public void EnumerateDevices()
-    {
-        using var activity = CoreActivity.StartActivity(
-            $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
-
-        enumeratorService.EnumerateDevices();
-
-        var hidDevices = enumeratorService.ConnectedDevices;
-
-        //
-        // Filter for supported devices
-        // 
-        var filtered = from hidDevice in hidDevices
-            let known =
-                KnownDevices.FirstOrDefault(d =>
-                    d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId)
-            where known is not null
-            where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
-                   known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
-                  !hidDevice.IsVirtual
-            select hidDevice;
-
-        supportedDevices.Clear();
-
-        //
-        // Cast to enriched class
-        // 
-        foreach (var hidDevice in filtered)
+        public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
+            IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider)
         {
-            logger.LogInformation("Adding supported input device {Device}",
-                hidDevice);
+            this.logger = logger;
+            this.enumeratorService = enumeratorService;
+            this.serviceProvider = serviceProvider;
+
+            enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
+            enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
+
+            supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
+
+            SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(supportedDevices);
+        }
+
+        /// <inheritdoc />
+        public ReadOnlyObservableCollection<ICompatibleHidDevice> SupportedDevices { get; }
+
+        /// <inheritdoc />
+        public event Action DeviceListReady;
+
+        /// <inheritdoc />
+        public event Action<ICompatibleHidDevice> ControllerReady;
+
+        /// <inheritdoc />
+        public event Action<ICompatibleHidDevice> ControllerRemoved;
+
+        /// <inheritdoc />
+        public void EnumerateDevices()
+        {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
+
+            enumeratorService.EnumerateDevices();
+
+            var hidDevices = enumeratorService.ConnectedDevices;
+
+            //
+            // Filter for supported devices
+            // 
+            var filtered = from hidDevice in hidDevices
+                           let known =
+                               KnownDevices.FirstOrDefault(d =>
+                                   d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId)
+                           where known is not null
+                           where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
+                                  known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
+                                 !hidDevice.IsVirtual
+                           select hidDevice;
+
+            supportedDevices.Clear();
+
+            //
+            // Cast to enriched class
+            // 
+            foreach (var hidDevice in filtered)
+            {
+                logger.LogInformation("Adding supported input device {Device}",
+                    hidDevice);
+
+                //
+                // Get device meta
+                // 
+                var deviceMeta = KnownDevices
+                    .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId);
+
+                //
+                // Create new special input device
+                // 
+                var device = CompatibleHidDevice.CreateFrom(
+                    deviceMeta.DeviceType,
+                    hidDevice,
+                    deviceMeta.FeatureSet,
+                    serviceProvider
+                );
+
+                supportedDevices.Add(device);
+
+                //
+                // Notify compatible device found and ready
+                // 
+                ControllerReady?.Invoke(device);
+
+                logger.LogInformation("Added identified input device {Device}",
+                    device.ToString());
+            }
+
+            //
+            // Notify list is built
+            // 
+            DeviceListReady?.Invoke();
+        }
+
+        private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
+        {
+            using var activity = CoreActivity.StartActivity(
+                $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnDeviceArrived)}");
+
+            activity?.SetTag("Path", hidDevice.Path);
+
+            var known = KnownDevices.FirstOrDefault(d =>
+                d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId);
+
+            if (known is null) return;
+
+            if (hidDevice.Capabilities.Usage is not (HidUsageGamepad or HidUsageJoystick) &&
+                !known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)
+                || hidDevice.IsVirtual) return;
+
+            logger.LogInformation("Compatible device {Device} got attached", hidDevice);
 
             //
             // Get device meta
@@ -224,7 +247,10 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
                 serviceProvider
             );
 
-            supportedDevices.Add(device);
+            if (!supportedDevices.Contains(device))
+                supportedDevices.Add(device);
+            else
+                throw new InvalidOperationException($"Device {device.InstanceId} already in list.");
 
             //
             // Notify compatible device found and ready
@@ -235,70 +261,17 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
                 device.ToString());
         }
 
-        //
-        // Notify list is built
-        // 
-        DeviceListReady?.Invoke();
-    }
+        private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
+        {
+            logger.LogInformation("Compatible device {Device} got removed", hidDevice);
 
-    private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
-    {
-        using var activity = CoreActivity.StartActivity(
-            $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnDeviceArrived)}");
+            var device = supportedDevices.First(d =>
+                d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
 
-        activity?.SetTag("Path", hidDevice.Path);
+            ControllerRemoved?.Invoke(device);
 
-        var known = KnownDevices.FirstOrDefault(d =>
-            d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId);
-
-        if (known is null) return;
-
-        if (hidDevice.Capabilities.Usage is not (HidUsageGamepad or HidUsageJoystick) &&
-            !known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)
-            || hidDevice.IsVirtual) return;
-
-        logger.LogInformation("Compatible device {Device} got attached", hidDevice);
-
-        //
-        // Get device meta
-        // 
-        var deviceMeta = KnownDevices
-            .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId);
-
-        //
-        // Create new special input device
-        // 
-        var device = CompatibleHidDevice.CreateFrom(
-            deviceMeta.DeviceType,
-            hidDevice,
-            deviceMeta.FeatureSet,
-            serviceProvider
-        );
-
-        if (!supportedDevices.Contains(device))
-            supportedDevices.Add(device);
-        else
-            throw new InvalidOperationException($"Device {device.InstanceId} already in list.");
-
-        //
-        // Notify compatible device found and ready
-        // 
-        ControllerReady?.Invoke(device);
-
-        logger.LogInformation("Added identified input device {Device}",
-            device.ToString());
-    }
-
-    private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
-    {
-        logger.LogInformation("Compatible device {Device} got removed", hidDevice);
-
-        var device = supportedDevices.First(d =>
-            d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
-
-        ControllerRemoved?.Invoke(device);
-
-        if (supportedDevices.Contains(device))
-            supportedDevices.Remove(device);
+            if (supportedDevices.Contains(device))
+                supportedDevices.Remove(device);
+        }
     }
 }

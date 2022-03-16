@@ -7,7 +7,47 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
 
-    <Grid>
-        <TextBlock Text="qwqwewqeqewqwewqe"/>
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+        <ListView ItemsSource="{Binding ControllerItems}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Focusable" Value="false"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Source="{Binding DeviceImage}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Connection">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                                    <Image Height="50" Source="{Binding ConnectionTypeImage}"/>
+                                </ContentControl>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding DisplayText}"/>
+                    <GridViewColumn Header="Profile">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.SelectableProfileItems}"
+                                      SelectedValue="{Binding SelectedProfileId}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="Name"
+                                          MinWidth="150">
+                                </ComboBox>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </ScrollViewer>
 </UserControl>

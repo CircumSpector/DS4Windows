@@ -315,6 +315,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj" />

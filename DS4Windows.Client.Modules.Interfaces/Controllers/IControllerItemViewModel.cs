@@ -23,6 +23,6 @@ namespace DS4Windows.Client.Modules.Controllers
 
         SolidColorBrush CurrentColor { get; set; }
 
-        void SetDevice(CompatibleHidDevice device);
+        void SetDevice(ICompatibleHidDevice device);
     }
 }

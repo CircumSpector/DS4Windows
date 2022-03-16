@@ -9,9 +9,7 @@
              xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
              xmlns:System="clr-namespace:System;assembly=System.Runtime"
              xmlns:schema="clr-namespace:DS4WinWPF.DS4Control.Profiles.Schema"
-             xmlns:types="clr-namespace:DS4Windows.Shared.Common.Types;assembly=DS4Windows.Shared.Common" xmlns:converters="clr-namespace:DS4Windows.Shared.Common.Converters;assembly=DS4Windows.Shared.Common"
-             xmlns:converters1="clr-namespace:DS4Windows.Shared.Common.Converters;assembly=DS4Windows.Shared.Common.Interfaces"
-             xmlns:types1="clr-namespace:DS4Windows.Shared.Common.Types;assembly=DS4Windows.Shared.Common.Interfaces"
+             xmlns:converters="clr-namespace:DS4Windows.Shared.Common.Converters;assembly=DS4Windows.Shared.Common.Interfaces"
              lex:LocalizeDictionary.DesignCulture=""
              lex:ResxLocalizationProvider.DefaultAssembly="DS4Windows"
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
@@ -20,7 +18,7 @@
     <UserControl.Resources>
         <xctk:InverseBoolConverter x:Key="InverseBoolConverter" />
         <local:ControlIndexCheck x:Key="controlIndexCheck" />
-        <converters1:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
 
         <ObjectDataProvider x:Key="CurveModes" MethodName="GetValues"
                             ObjectType="{x:Type System:Enum}">

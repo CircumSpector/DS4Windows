@@ -9,15 +9,6 @@ using System.Windows.Interop;
 namespace DS4Windows.Shared.Devices.Util
 {
     /// <summary>
-    ///     Utility interface to add device arrival/removal notifications to WPF window.
-    /// </summary>
-    public interface IDeviceNotificationListener : IDeviceNotificationListenerSubscriber
-    {
-        void StartListen(Window window, Guid interfaceGuid);
-        void EndListen();
-    }
-
-    /// <summary>
     ///     Utility class to add device arrival/removal notifications to WPF window.
     /// </summary>
     /// <remarks>Original source: https://gist.github.com/emoacht/73eff195317e387f4cda</remarks>
