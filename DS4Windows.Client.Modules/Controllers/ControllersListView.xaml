@@ -9,8 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-        <ListView
-  ItemsSource="{Binding ControllerItems}">
+        <ListView ItemsSource="{Binding ControllerItems}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Focusable" Value="false"/>

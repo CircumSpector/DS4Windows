@@ -56,6 +56,8 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
         /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
         void CreateProfile(IProfile profile = default);
 
+        IProfile CreateNewProfile(int index = default);
+
         /// <summary>
         ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
         /// </summary>

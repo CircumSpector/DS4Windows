@@ -486,6 +486,12 @@ namespace DS4Windows.Shared.Configuration.Profiles.Services
             PersistProfile(profile, global.ProfilesDirectory);
         }
 
+        public IProfile CreateNewProfile(int index = default)
+        {
+            var newProfile = DS4WindowsProfile.CreateNewProfile(index);
+            return newProfile;
+        }
+
         private void PropertyChangedHandler(object? sender, ProfilePropertyChangedEventArgs e)
         {
             if (sender is not DS4WindowsProfile p)

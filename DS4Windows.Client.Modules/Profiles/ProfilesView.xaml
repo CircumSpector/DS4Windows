@@ -3,51 +3,71 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:local="clr-namespace:DS4Windows.Client.Modules.Profiles"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+            <ListView x:Name="ProfileList" ItemsSource="{Binding ProfileItems}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Focusable" Value="false"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="Output" DisplayMemberBinding="{Binding OutputControllerType}" />
+                        <GridViewColumn Header="Touchpad Mode" DisplayMemberBinding="{Binding TouchpadMode}" />
+                        <GridViewColumn Header="Gyro Mode" DisplayMemberBinding="{Binding GyroMode}" />
+                        <GridViewColumn Header="Lightbar">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
+                                      Background="{Binding LightbarColor}"
+                                      Width="100"
+                                      Height="20"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button BorderBrush="{x:Null}" HorizontalAlignment="Left" Margin="0,0,10,0"
+                                            Command="{Binding ElementName=ProfileList, Path=DataContext.ShareCommand}"
+                                            CommandParameter="{Binding}">
+                                            <md:PackIcon Kind="Share" Width="15" Height="15" />
+                                        </Button>
+                                        <Button BorderBrush="{x:Null}" HorizontalAlignment="Left" Margin="0,0,10,0"
+                                            Command="{Binding ElementName=ProfileList, Path=DataContext.EditCommand}"
+                                            CommandParameter="{Binding}">
+                                            <md:PackIcon Kind="Edit" Width="15" Height="15" />
+                                        </Button>
+                                        <Button BorderBrush="{x:Null}" HorizontalAlignment="Left"
+                                            Command="{Binding ElementName=ProfileList, Path=DataContext.DeleteCommand}"
+                                            CommandParameter="{Binding}">
+                                            <md:PackIcon Kind="Delete" Width="15" Height="15" />
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
-        <ListView ItemsSource="{Binding ControllerItems}">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Focusable" Value="false"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Source="{Binding DeviceImage}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Connection">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ContentControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                    <Image Height="50" Source="{Binding ConnectionTypeImage}"/>
-                                </ContentControl>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding DisplayText}"/>
-                    <GridViewColumn Header="Profile">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.SelectableProfileItems}"
-                                      SelectedValue="{Binding SelectedProfileId}"
-                                      SelectedValuePath="Id"
-                                      DisplayMemberPath="Name"
-                                          MinWidth="150">
-                                </ComboBox>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+            <Button BorderBrush="{x:Null}" 
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Command="{Binding AddCommand}"
+                    Margin="0,12,10,0">
+                <md:PackIcon Kind="Add" Width="15" Height="15" />
+            </Button>
+        </Grid>
     </ScrollViewer>
 </UserControl>
