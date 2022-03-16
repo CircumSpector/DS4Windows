@@ -14,6 +14,8 @@ namespace DS4Windows.Client.Modules.Profiles
             services.AddSingleton<IProfilesView, ProfilesView>();
             services.AddTransient<ISelectableProfileItemViewModel, SelectableProfileItemViewModel>();
             services.AddTransient<IProfileListItemViewModel, ProfileListItemViewModel>();
+            services.AddTransient<IProfileEditViewModel, ProfileEditViewModel>();
+            services.AddTransient<IProfileEditView, ProfileEditView>();
         }
 
         public void Initialize(IServiceProvider services)

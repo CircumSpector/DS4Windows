@@ -1,6 +1,7 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
@@ -18,10 +19,15 @@ namespace DS4Windows.Client.Modules.Profiles
     {
         private readonly IProfilesService profilesService;
         private readonly IServiceProvider serviceProvider;
+        private readonly IViewModelFactory viewModelFactory;
 
-        public ProfilesViewModel(IProfilesService profilesService, IServiceProvider serviceProvider)
+        public ProfilesViewModel(
+            IProfilesService profilesService, 
+            IServiceProvider serviceProvider,
+            IViewModelFactory viewModelFactory)
         {
             this.serviceProvider = serviceProvider;
+            this.viewModelFactory = viewModelFactory;
             this.profilesService = profilesService;
 
             AddCommand = new RelayCommand(AddProfile);
@@ -43,8 +49,7 @@ namespace DS4Windows.Client.Modules.Profiles
         {
             var newProfile = profilesService.CreateNewProfile();
             newProfile.DisplayName = "Default2";
-
-            profilesService.CreateProfile(newProfile);
+            ShowProfile(newProfile);
         }
 
         private async void ShareProfile(IProfileListItemViewModel profile)
@@ -96,7 +101,7 @@ namespace DS4Windows.Client.Modules.Profiles
 
         private void EditProfile(IProfileListItemViewModel profile)
         {
-            MessageBox.Show($"Edit Profile Clicked {profile.Name}");
+            ShowProfile(profilesService.AvailableProfiles.SingleOrDefault(p => p.Id == profile.Id));
         }
 
         private void DeleteProfile(IProfileListItemViewModel profile)
@@ -150,6 +155,27 @@ namespace DS4Windows.Client.Modules.Profiles
                 existingProfile.Dispose();
                 ProfileItems.Remove(existingProfile);
             }
+        }
+
+        private void ShowProfile(IProfile profile)
+        {
+            var editViewModel = viewModelFactory.Create<IProfileEditViewModel, IProfileEditView>();
+            editViewModel.SetProfile(profile);
+            DialogHost.Show(editViewModel.MainView, "MainDialogHost", new DialogClosingEventHandler((o,e) =>
+            {
+                if (e.Parameter != null)
+                {
+                    SaveProfile((IProfile)e.Parameter);
+                }
+
+                editViewModel.Dispose();
+
+            }));
+        }
+
+        private void SaveProfile(IProfile profile)
+        {
+            MessageBox.Show("Profile Saved Executed");
         }
 
         protected override void Dispose(bool disposing)

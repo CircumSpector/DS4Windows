@@ -10,37 +10,39 @@
                     Background="{DynamicResource MaterialDesignBackground}" Foreground="{DynamicResource MaterialDesignBody}"
                     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
                     TitleBarIcon="Images/ds4w.ico">
-    <md:Card>
-        <TabControl ItemsSource="{Binding NavigationItems}"
-                    HorizontalContentAlignment="Center"
-                    md:ColorZoneAssist.Mode="PrimaryLight"
-                    md:NavigationRailAssist.SelectionCornerRadius="50"
-                    md:NavigationRailAssist.ShowSelectionBackground="True"
-                    Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
-                    SelectedItem="{Binding SelectedPage, Mode=TwoWay}"
-                    TabStripPlacement="Bottom">
+    <md:DialogHost Identifier="MainDialogHost">
+        <md:Card>
+            <TabControl ItemsSource="{Binding NavigationItems}"
+                        HorizontalContentAlignment="Center"
+                        md:ColorZoneAssist.Mode="PrimaryLight"
+                        md:NavigationRailAssist.SelectionCornerRadius="50"
+                        md:NavigationRailAssist.ShowSelectionBackground="True"
+                        Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+                        SelectedItem="{Binding SelectedPage, Mode=TwoWay}"
+                        TabStripPlacement="Bottom">
 
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Width="auto" Height="auto">
-                        <md:PackIcon
-                                        Width="24"
-                                        Height="24"
-                                        HorizontalAlignment="Center"
-                                        Kind="MicrosoftXboxGamepad" />
-                        <TextBlock HorizontalAlignment="Center" Text="{Binding Header}" />
-                    </StackPanel>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <ContentControl Content="{Binding MainView}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch"/>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
-    </md:Card>
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Width="auto" Height="auto">
+                            <md:PackIcon
+                                            Width="24"
+                                            Height="24"
+                                            HorizontalAlignment="Center"
+                                            Kind="MicrosoftXboxGamepad" />
+                            <TextBlock HorizontalAlignment="Center" Text="{Binding Header}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding MainView}"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch"/>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+        </md:Card>
+    </md:DialogHost>
 </mde:MaterialWindow>
