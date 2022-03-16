@@ -36,7 +36,10 @@ namespace DS4Windows.Client.Modules.Profiles
 
         private void AddProfile()
         {
-            MessageBox.Show("Add Profile Clicked");
+            var newProfile = profilesService.CreateNewProfile();
+            newProfile.DisplayName = "Default2";
+
+            profilesService.CreateProfile(newProfile);
         }
 
         private void EditProfile(IProfileListItemViewModel profile)
@@ -46,7 +49,7 @@ namespace DS4Windows.Client.Modules.Profiles
 
         private void DeleteProfile(IProfileListItemViewModel profile)
         {
-            MessageBox.Show($"Delete Profile Clicked {profile.Name}");
+            profilesService.DeleteProfile(profile.Id);
         }
 
         private void CreateProfileItems()
@@ -72,7 +75,7 @@ namespace DS4Windows.Client.Modules.Profiles
             {
                 foreach (IProfile profile in e.OldItems)
                 {
-                    RemoveProfile(profile);
+                    RemoveProfileItem(profile);
                 }
             }
         }
@@ -87,7 +90,7 @@ namespace DS4Windows.Client.Modules.Profiles
             }
         }
 
-        private void RemoveProfile(IProfile profile)
+        private void RemoveProfileItem(IProfile profile)
         {
             var existingProfile = ProfileItems.SingleOrDefault(p => p.Id == profile.Id);
             if (existingProfile != null)

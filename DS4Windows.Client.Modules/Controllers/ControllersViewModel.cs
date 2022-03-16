@@ -1,11 +1,13 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Client.Modules.Profiles;
+using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 
 namespace DS4Windows.Client.Modules.Controllers
@@ -72,12 +74,66 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private void CreateSelectableProfileItems()
         {
-            foreach (var item in this.profilesService.AvailableProfiles)
+            foreach (var item in profilesService.AvailableProfiles)
+            {
+                CreateProfileItem(item);
+            }
+
+            ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged += ControllersViewModel_CollectionChanged; ;
+        }
+
+        private void ControllersViewModel_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (IProfile profile in e.NewItems)
+                {
+                    CreateProfileItem(profile);
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (IProfile profile in e.OldItems)
+                {
+                    RemoveProfileItem(profile);
+                }
+            }
+        }
+
+
+        private void CreateProfileItem(IProfile profile)
+        {
+            if (!SelectableProfileItems.Any(p => p.Id == profile.Id))
             {
                 var selectableProfileItem = serviceProvider.GetService<ISelectableProfileItemViewModel>();
-                selectableProfileItem.SetProfile(item);
+                selectableProfileItem.SetProfile(profile);
                 SelectableProfileItems.Add(selectableProfileItem);
             }
+        }
+
+        private void RemoveProfileItem(IProfile profile)
+        {
+            var existing = SelectableProfileItems.SingleOrDefault(p => p.Id == profile.Id);
+            if (existing != null)
+            {
+                existing.Dispose();
+                SelectableProfileItems.Remove(existing);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged -= ControllersViewModel_CollectionChanged;
+                foreach (var profile in SelectableProfileItems.ToList())
+                {
+                    profile.Dispose();
+                    SelectableProfileItems.Remove(profile);
+                }
+            }
+
+            base.Dispose(disposing);
         }
 
         #region configuration properties
