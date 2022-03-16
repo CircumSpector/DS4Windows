@@ -3,10 +3,13 @@ using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 using System.Windows;
 
 namespace DS4Windows.Client.Modules.Profiles
@@ -22,6 +25,7 @@ namespace DS4Windows.Client.Modules.Profiles
             this.profilesService = profilesService;
 
             AddCommand = new RelayCommand(AddProfile);
+            ShareCommand = new RelayCommand<IProfileListItemViewModel>(ShareProfile);
             EditCommand = new RelayCommand<IProfileListItemViewModel>(EditProfile);
             DeleteCommand = new RelayCommand<IProfileListItemViewModel>(DeleteProfile);
 
@@ -31,6 +35,7 @@ namespace DS4Windows.Client.Modules.Profiles
         public ObservableCollection<IProfileListItemViewModel> ProfileItems { get; } = new ObservableCollection<IProfileListItemViewModel>();
 
         public RelayCommand AddCommand { get; }
+        public RelayCommand<IProfileListItemViewModel> ShareCommand { get; }
         public RelayCommand<IProfileListItemViewModel> EditCommand { get; }
         public RelayCommand<IProfileListItemViewModel> DeleteCommand { get; }
 
@@ -40,6 +45,53 @@ namespace DS4Windows.Client.Modules.Profiles
             newProfile.DisplayName = "Default2";
 
             profilesService.CreateProfile(newProfile);
+        }
+
+        private async void ShareProfile(IProfileListItemViewModel profile)
+        {
+            var sourceProfile = profilesService.AvailableProfiles.SingleOrDefault(p => p.Id == profile.Id);
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "JSON|*.json",
+                FileName = sourceProfile.FileName,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            var result = saveFileDialog.ShowDialog();
+            if (result != null && result.Value)
+            {
+                using (var stream = saveFileDialog.OpenFile())
+                {
+                    var text = JsonConvert.SerializeObject(sourceProfile);
+                    await stream.WriteAsync(UTF8Encoding.UTF8.GetBytes(text));
+                    stream.Close();
+                }
+            }
+
+            //TODO:  this is the windows 10 native file save picker.  cant get it to work though.  the initializewithwindow is supposed to fix it but doesnt
+            //       see https://docs.microsoft.com/en-us/windows/apps/develop/ui-input/display-ui-objects
+            //       in section WinUI 3 with C# (also WPF/WinForms with .NET 5 or later)
+            //       also see https://docs.microsoft.com/en-us/windows/apps/develop/ui-input/retrieve-hwnd#wpf-with-c
+
+            //var picker = new FileSavePicker();
+            //picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            //picker.DefaultFileExtension = ".json";
+            //picker.SuggestedFileName = sourceProfile.FileName;
+
+            //var handle = new WindowInteropHelper(Application.Current.MainWindow).Handle;
+            //InitializeWithWindow.Initialize(picker, handle);
+
+            //StorageFile file = await picker.PickSaveFileAsync();
+            //if (file != null)
+            //{
+            //    CachedFileManager.DeferUpdates(file);
+            //    await FileIO.WriteTextAsync(file, JsonConvert.SerializeObject(sourceProfile));
+            //    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+            //    if (status == FileUpdateStatus.Complete)
+            //    {
+            //    }
+            //}
         }
 
         private void EditProfile(IProfileListItemViewModel profile)

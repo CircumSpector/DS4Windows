@@ -39,6 +39,11 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Button BorderBrush="{x:Null}" HorizontalAlignment="Left" Margin="0,0,10,0"
+                                            Command="{Binding ElementName=ProfileList, Path=DataContext.ShareCommand}"
+                                            CommandParameter="{Binding}">
+                                            <md:PackIcon Kind="Share" Width="15" Height="15" />
+                                        </Button>
+                                        <Button BorderBrush="{x:Null}" HorizontalAlignment="Left" Margin="0,0,10,0"
                                             Command="{Binding ElementName=ProfileList, Path=DataContext.EditCommand}"
                                             CommandParameter="{Binding}">
                                             <md:PackIcon Kind="Edit" Width="15" Height="15" />
