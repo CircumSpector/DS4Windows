@@ -9,7 +9,8 @@
                     Title="DS4Windows" WindowStartupLocation="CenterScreen"
                     Background="{DynamicResource MaterialDesignBackground}" Foreground="{DynamicResource MaterialDesignBody}"
                     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-                    TitleBarIcon="Images/ds4w.ico">
+                    TitleBarIcon="Images/ds4w.ico"
+                    WindowState="Maximized">
     <md:DialogHost Identifier="MainDialogHost">
         <md:Card>
             <TabControl ItemsSource="{Binding NavigationItems}"
