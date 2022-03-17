@@ -473,7 +473,7 @@ namespace DS4WinWPF.DS4Forms
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            profileService.CreateProfile(profileService.CurrentlyEditedProfile.DeepClone());
+            profileService.CreateOrUpdateProfile(profileService.CurrentlyEditedProfile.DeepClone());
 
             Closed?.Invoke(this, EventArgs.Empty);
         }
