@@ -165,7 +165,7 @@ namespace DS4Windows.Client.Modules.Profiles
             {
                 if (e.Parameter != null)
                 {
-                    SaveProfile((IProfile)e.Parameter);
+                    SaveProfile((IProfileEditViewModel)e.Parameter);
                 }
 
                 editViewModel.Dispose();
@@ -173,7 +173,7 @@ namespace DS4Windows.Client.Modules.Profiles
             }));
         }
 
-        private void SaveProfile(IProfile profile)
+        private void SaveProfile(IProfileEditViewModel profile)
         {
             MessageBox.Show("Profile Saved Executed");
         }
