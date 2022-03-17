@@ -28,6 +28,16 @@
                       VerticalScrollBarVisibility="Auto">
             <md:Card>
                 <StackPanel>
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel HorizontalAlignment="Left" Margin="20">
+                            <TextBlock>Name</TextBlock>
+                            <TextBox Text="{Binding Name}" IsEnabled="{Binding IsNew}" Width="100" />
+                        </StackPanel>
+                    </Grid>
                     <Expander HorizontalAlignment="Stretch" Header="Left Stick" Content="{Binding LeftStick.MainView}" />
                     <Border Style="{StaticResource HorizontalDividerBorder}"/>
                     <Expander HorizontalAlignment="Stretch" Header="Right Stick" Content="{Binding RightStick.MainView}" />

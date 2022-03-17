@@ -48,8 +48,7 @@ namespace DS4Windows.Client.Modules.Profiles
         private void AddProfile()
         {
             var newProfile = profilesService.CreateNewProfile();
-            newProfile.DisplayName = "Default2";
-            ShowProfile(newProfile);
+            ShowProfile(newProfile, true);
         }
 
         private async void ShareProfile(IProfileListItemViewModel profile)
@@ -157,10 +156,10 @@ namespace DS4Windows.Client.Modules.Profiles
             }
         }
 
-        private void ShowProfile(IProfile profile)
+        private void ShowProfile(IProfile profile, bool isNew = false)
         {
             var editViewModel = viewModelFactory.Create<IProfileEditViewModel, IProfileEditView>();
-            editViewModel.SetProfile(profile);
+            editViewModel.SetProfile(profile, isNew);
             DialogHost.Show(editViewModel.MainView, Main.Constants.DialogHostName, new DialogClosingEventHandler((o,e) =>
             {
                 if (e.Parameter != null)
@@ -175,7 +174,8 @@ namespace DS4Windows.Client.Modules.Profiles
 
         private void SaveProfile(IProfileEditViewModel profile)
         {
-            MessageBox.Show("Profile Saved Executed");
+            var profileToSave = profile.GetUpdatedProfile();
+            profilesService.CreateOrUpdateProfile(profileToSave);
         }
 
         protected override void Dispose(bool disposing)
