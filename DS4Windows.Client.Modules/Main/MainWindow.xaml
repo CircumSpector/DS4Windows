@@ -5,13 +5,14 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
+                    xmlns:localInt="clr-namespace:DS4Windows.Client.Modules.Main;assembly=DS4Windows.Client.Modules.Interfaces"
                     mc:Ignorable="d"
                     Title="DS4Windows" WindowStartupLocation="CenterScreen"
                     Background="{DynamicResource MaterialDesignBackground}" Foreground="{DynamicResource MaterialDesignBody}"
                     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
                     TitleBarIcon="Images/ds4w.ico"
                     WindowState="Maximized">
-    <md:DialogHost Identifier="MainDialogHost">
+    <md:DialogHost Identifier="{x:Static localInt:Constants.DialogHostName}">
         <md:Card>
             <TabControl ItemsSource="{Binding NavigationItems}"
                         HorizontalContentAlignment="Center"

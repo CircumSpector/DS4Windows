@@ -161,7 +161,7 @@ namespace DS4Windows.Client.Modules.Profiles
         {
             var editViewModel = viewModelFactory.Create<IProfileEditViewModel, IProfileEditView>();
             editViewModel.SetProfile(profile);
-            DialogHost.Show(editViewModel.MainView, "MainDialogHost", new DialogClosingEventHandler((o,e) =>
+            DialogHost.Show(editViewModel.MainView, Main.Constants.DialogHostName, new DialogClosingEventHandler((o,e) =>
             {
                 if (e.Parameter != null)
                 {
