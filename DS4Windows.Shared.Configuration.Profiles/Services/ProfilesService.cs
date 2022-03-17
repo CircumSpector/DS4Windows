@@ -182,6 +182,12 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         RenameProfile(availableProfiles.First(p => Equals(p.Id, guid)), displayName);
     }
 
+    /// <inheritdoc />
+    public void SaveCurrentlyEditedProfile()
+    {
+        CreateOrUpdateProfile(CurrentlyEditedProfile.DeepClone());
+    }
+
     /// <summary>
     ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
     /// </summary>
