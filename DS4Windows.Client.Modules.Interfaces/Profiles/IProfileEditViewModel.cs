@@ -7,6 +7,8 @@ namespace DS4Windows.Client.Modules.Profiles
     {
         IProfile Profile { get; }
 
-        void SetProfile(IProfile profile);
+        void SetProfile(IProfile profile, bool isNew = false);
+
+        IProfile GetUpdatedProfile();
     }
 }

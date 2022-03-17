@@ -1,11 +1,7 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Client.Modules.Profiles.Controls;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FastDeepCloner;
 
 namespace DS4Windows.Client.Modules.Profiles
 {
@@ -24,6 +20,20 @@ namespace DS4Windows.Client.Modules.Profiles
             private set => SetProperty(ref profile, value);
         }
 
+        private bool isNew;
+        public bool IsNew
+        {
+            get => isNew;
+            private set => SetProperty(ref isNew, value);
+        } 
+
+        private string name;
+        public string Name
+        {
+            get => name;
+            set => SetProperty(ref name, value);
+        } 
+
         private IStickEditViewModel leftStick;
         public IStickEditViewModel LeftStick
         {
@@ -38,10 +48,12 @@ namespace DS4Windows.Client.Modules.Profiles
             private set => SetProperty(ref rightStick, value);
         }
 
-        public void SetProfile(IProfile profile)
+        public void SetProfile(IProfile profile, bool isNew = false)
         {
-            Profile = profile;
+            Profile = profile.Clone();
 
+            IsNew = isNew;
+            Name = profile.DisplayName;
             #region Set Left Stick
 
             leftStick.DeadZone = profile.LSModInfo.DeadZone;
@@ -59,6 +71,33 @@ namespace DS4Windows.Client.Modules.Profiles
             rightStick.MaxOutput = profile.RSModInfo.MaxOutput;
 
             #endregion  
+        }
+
+        public IProfile GetUpdatedProfile()
+        {
+            var profile = Profile;
+
+            profile.DisplayName = Name;
+
+            #region Set Left Stick
+
+            profile.LSModInfo.DeadZone = leftStick.DeadZone;
+            profile.LSModInfo.AntiDeadZone = leftStick.AntiDeadZone;
+            profile.LSModInfo.MaxZone = leftStick.MaxZone;
+            profile.LSModInfo.MaxOutput = leftStick.MaxOutput;
+
+            #endregion  
+
+            #region Set Right Stick
+
+            profile.RSModInfo.DeadZone = rightStick.DeadZone;
+            profile.RSModInfo.AntiDeadZone = rightStick.AntiDeadZone;
+            profile.RSModInfo.MaxZone = rightStick.MaxZone;
+            profile.RSModInfo.MaxOutput = rightStick.MaxOutput;
+
+            #endregion  
+
+            return profile;
         }
     }
 }
