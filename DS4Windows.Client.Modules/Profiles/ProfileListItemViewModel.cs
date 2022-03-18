@@ -1,4 +1,5 @@
-﻿using DS4Windows.Client.Core.ViewModel;
+﻿using AutoMapper;
+using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Types;
 using System;
@@ -9,17 +10,22 @@ namespace DS4Windows.Client.Modules.Profiles
     public class ProfileListItemViewModel : ViewModel<IProfileListItemViewModel>, IProfileListItemViewModel
     {
         private IProfile profile;
+        private readonly IMapper mapper;
+
+
+        public ProfileListItemViewModel(IMapper mapper)
+        {
+            this.mapper = mapper;
+        }
 
         #region Properties
-
 
         private Guid id;
         public Guid Id
         {
             get => id;
             private set => SetProperty(ref id, value);
-        } 
-
+        }
 
         private string name;
         public string Name
@@ -62,45 +68,13 @@ namespace DS4Windows.Client.Modules.Profiles
         {
             this.profile = profile;
             this.profile.ProfilePropertyChanged += Profile_ProfilePropertyChanged;
-            MapValue(nameof(IProfile.Id));
-            MapValue(nameof(IProfile.DisplayName));
-            MapValue(nameof(IProfile.OutputDeviceType));
-            MapValue(nameof(IProfile.LightbarSettingInfo));
-            MapValue(nameof(IProfile.TouchOutMode));
-            MapValue(nameof(IProfile.GyroOutputMode));
+
+            mapper.Map(profile, this);
         }
 
         private void Profile_ProfilePropertyChanged(object sender, ProfilePropertyChangedEventArgs e)
         {
-            MapValue(e.PropertyName);
-        }
-
-        private void MapValue(string propertyName)
-        {
-            if (propertyName == nameof(IProfile.Id))
-            {
-                Id = profile.Id;
-            }
-            else if (propertyName == nameof(IProfile.DisplayName))
-            {
-                Name = profile.DisplayName;
-            }
-            else if (propertyName == nameof(IProfile.OutputDeviceType))
-            {
-                OutputControllerType = profile.OutputDeviceType.ToString();
-            }
-            else if (propertyName == nameof(IProfile.LightbarSettingInfo))
-            {
-                LightbarColor = new SolidColorBrush(profile.LightbarSettingInfo.Ds4WinSettings.Led.ToColor());
-            }
-            else if (propertyName == nameof(IProfile.TouchOutMode))
-            {
-                TouchpadMode = profile.TouchOutMode.ToString();
-            }
-            else if (propertyName == nameof(IProfile.GyroOutputMode))
-            {
-                GyroMode = profile.GyroOutputMode.ToString();
-            }
+            mapper.Map(profile, this);
         }
 
         protected override void Dispose(bool disposing)

@@ -20,6 +20,8 @@ namespace DS4Windows.Client.Modules.Profiles
 
             services.AddTransient<IStickEditViewModel, StickEditViewModel>();
             services.AddTransient<IStickEditView, StickEditView>();
+
+            services.AddAutoMapper(cfg => cfg.AddProfile<ProfilesAutoMapper>());
         }
 
         public void Initialize(IServiceProvider services)
