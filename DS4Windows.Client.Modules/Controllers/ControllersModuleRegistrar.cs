@@ -13,6 +13,8 @@ namespace DS4Windows.Client.Modules.Controllers
             services.AddSingletons<ControllersViewModel>(typeof(IControllersViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<IControllersView, ControllersView>();
             services.AddTransient<IControllerItemViewModel, ControllerItemViewModel>();
+
+            services.AddAutoMapper(cfg => cfg.AddProfile<ControllersAutoMapper>());
         }
 
         public void Initialize(IServiceProvider services)

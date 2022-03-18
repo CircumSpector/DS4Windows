@@ -6,9 +6,9 @@ namespace DS4Windows.Client.Modules.Profiles;
 
 public interface ISelectableProfileItemViewModel : IViewModel<ISelectableProfileItemViewModel>
 {
-    string? Name { get; }
+    string Name { get; }
 
-    Guid? Id { get; }
+    Guid Id { get; }
 
-        void SetProfile(IProfile? profile);
+    void SetProfile(IProfile profile);
 }
