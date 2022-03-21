@@ -18,15 +18,12 @@ namespace DS4Windows.Client.Modules.Profiles
     public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IProfilesView>, IProfilesViewModel
     {
         private readonly IProfilesService profilesService;
-        private readonly IServiceProvider serviceProvider;
         private readonly IViewModelFactory viewModelFactory;
 
         public ProfilesViewModel(
             IProfilesService profilesService, 
-            IServiceProvider serviceProvider,
             IViewModelFactory viewModelFactory)
         {
-            this.serviceProvider = serviceProvider;
             this.viewModelFactory = viewModelFactory;
             this.profilesService = profilesService;
 
@@ -140,7 +137,7 @@ namespace DS4Windows.Client.Modules.Profiles
         {
             if (!ProfileItems.Any(p => p.Id == profile.Id))
             {
-                var profileItemViewModel = serviceProvider.GetService<IProfileListItemViewModel>();
+                var profileItemViewModel = viewModelFactory.CreateViewModel<IProfileListItemViewModel>();
                 profileItemViewModel.SetProfile(profile);
                 ProfileItems.Add(profileItemViewModel);
             }
@@ -196,7 +193,7 @@ namespace DS4Windows.Client.Modules.Profiles
         #region configuration properties
 
         //TODO: Change to pull localization values
-        public override string? Header => "Profiles";
+        public override string Header => "Profiles";
 
         public override int TabIndex => 2;
 

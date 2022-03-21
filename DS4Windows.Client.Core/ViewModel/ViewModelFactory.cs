@@ -34,12 +34,18 @@ namespace DS4Windows.Client.Core.ViewModel
             where TViewModel : IViewModel
             where TView : IView
         {
-            var viewModel = serviceProvider.GetService<TViewModel>();
+            var viewModel = CreateViewModel<TViewModel>();
             var view = CreateView<TView>();
 
             Initialize(viewModel, view);
 
             return viewModel;
+        }
+
+        public TViewModel CreateViewModel<TViewModel>()
+            where TViewModel : IViewModel
+        {
+            return serviceProvider.GetService<TViewModel>();
         }
 
         public TView CreateView<TView>()

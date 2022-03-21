@@ -12,7 +12,6 @@ namespace DS4Windows.Client.Modules.Profiles
         private IProfile profile;
         private readonly IMapper mapper;
 
-
         public ProfileListItemViewModel(IMapper mapper)
         {
             this.mapper = mapper;

@@ -8,17 +8,14 @@ namespace DS4Windows.Client.Modules.Main
     {
         public MainWindowViewModel(IViewModelFactory viewModelFactory)
         {
-            ViewModelFactory = viewModelFactory;
-            var navigationViewModels = ViewModelFactory.CreateNavigationTabViewModels();
+            var navigationViewModels = viewModelFactory.CreateNavigationTabViewModels();
 
             NavigationItems = new ObservableCollection<IViewModel>(navigationViewModels);
             SelectedPage = NavigationItems[0];
         }
-
-        public IViewModelFactory? ViewModelFactory { get; }
-        
+                
         #region Navigation
-        public ObservableCollection<IViewModel> NavigationItems { get; private set; }
+        public ObservableCollection<IViewModel> NavigationItems { get; }
 
         private IViewModel selectedPage;
         public IViewModel SelectedPage
