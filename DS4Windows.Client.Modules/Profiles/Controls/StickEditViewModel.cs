@@ -1,35 +1,43 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
+using DS4Windows.Shared.Common.Types;
+using System.ComponentModel;
+using System.Windows;
 
 namespace DS4Windows.Client.Modules.Profiles.Controls
 {
     public class StickEditViewModel : ViewModel<IStickEditViewModel>, IStickEditViewModel
     {
-        private int deadZone;
-        public int DeadZone
+        public StickEditViewModel(IViewModelFactory viewModelFactory)
         {
-            get => deadZone;
-            set => SetProperty(ref deadZone, value);
+            ControlModeSettings = viewModelFactory.Create<IStickControlModeSettingsViewModel, IStickControlModeSettingsView>();
         }
 
-        private int antiDeadZone;
-        public int AntiDeadZone
+        private StickMode outputSettings;
+        public StickMode OutputSettings
         {
-            get => antiDeadZone;
-            set => SetProperty(ref antiDeadZone, value);
+            get => outputSettings;
+            set => SetProperty(ref outputSettings, value);
         }
 
-        private int maxZone;
-        public int MaxZone
+        public Visibility IsControlModeSet => OutputSettings == StickMode.Controls ? Visibility.Visible : Visibility.Collapsed;
+        public IStickControlModeSettingsViewModel ControlModeSettings { get; }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            get => maxZone;
-            set => SetProperty(ref maxZone, value);
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(OutputSettings))
+            {
+                OnPropertyChanged(nameof(IsControlModeSet));
+            }
         }
 
-        private double maxOutput;
-        public double MaxOutput
+        protected override void Dispose(bool disposing)
         {
-            get => maxOutput;
-            set => SetProperty(ref maxOutput, value);
+            if (disposing)
+            {
+                ControlModeSettings.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

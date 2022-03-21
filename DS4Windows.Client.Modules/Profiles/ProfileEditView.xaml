@@ -25,7 +25,9 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                      VerticalScrollBarVisibility="Auto">
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
             <md:Card>
                 <StackPanel>
                     <Grid HorizontalAlignment="Stretch">
