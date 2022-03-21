@@ -32,8 +32,6 @@ namespace DS4Windows.Client.Modules.Controllers
 
         #region Props
 
-        private ICompatibleHidDevice? device;
-
         private PhysicalAddress serial;
         public PhysicalAddress Serial
         {
@@ -87,12 +85,6 @@ namespace DS4Windows.Client.Modules.Controllers
 
         public void SetDevice(ICompatibleHidDevice device)
         {
-            this.device = device;
-            MapProperties();
-        }
-
-        private void MapProperties()
-        {
             mapper.Map(device, this);
             selectedProfileId = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(device.Serial)).Id;
         }
@@ -101,7 +93,7 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             if (e.PropertyName == nameof(SelectedProfileId))
             {
-                var activeProfile = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(device.Serial));
+                var activeProfile = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(Serial));
                 var slotIndex = profilesService.ActiveProfiles.IndexOf(activeProfile);
                 profilesService.SetActiveTo(slotIndex, activeProfile);
             }
@@ -113,7 +105,6 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             if (disposing)
             {
-                device = null;
                 profilesService = null;
             }
 

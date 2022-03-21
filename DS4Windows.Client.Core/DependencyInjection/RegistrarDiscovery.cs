@@ -40,7 +40,6 @@ namespace DS4Windows.Client.Core.DependencyInjection
                     instance.ConfigureServices(configuration, services);
                 }
             }
-
         }
     }
 }

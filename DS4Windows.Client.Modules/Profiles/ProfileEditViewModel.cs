@@ -9,20 +9,13 @@ namespace DS4Windows.Client.Modules.Profiles
     public class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IProfileEditViewModel
     {
         private readonly IMapper mapper;
-
+        private IProfile profile;
 
         public ProfileEditViewModel(IViewModelFactory viewModelFactory, IMapper mapper)
         {
             leftStick = viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
             rightStick = viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
             this.mapper = mapper;
-        }
-
-        private IProfile profile;
-        public IProfile Profile
-        {
-            get => profile;
-            private set => SetProperty(ref profile, value);
         }
 
         private bool isNew;
@@ -55,14 +48,13 @@ namespace DS4Windows.Client.Modules.Profiles
 
         public void SetProfile(IProfile profile, bool isNew = false)
         {
-            Profile = profile.Clone();
+            this.profile = profile.Clone();
             IsNew = isNew;
-            mapper.Map(Profile, this);
+            mapper.Map(this.profile, this);
         }
 
         public IProfile GetUpdatedProfile()
         {
-            var profile = Profile;
             mapper.Map(this, profile);
             return profile;
         }
