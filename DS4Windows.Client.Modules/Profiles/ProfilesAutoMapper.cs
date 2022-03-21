@@ -25,7 +25,7 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.MaxOutput, cfg => cfg.MapFrom(src => src.LSModInfo.MaxOutput))
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.DeadZoneType, cfg => cfg.MapFrom(src => src.LSModInfo.DZType))
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.VerticalScale, cfg => cfg.MapFrom(src => src.LSModInfo.VerticalScale))
-                .ForPath(dest => dest.LeftStick.ControlModeSettings.Sensitivity, cfg => cfg.MapFrom(src => src.LSModInfo.Fuzz))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.Sensitivity, cfg => cfg.MapFrom(src => src.LSSens))
                 .ForPath(dest => dest.LeftStick.OutputSettings, cfg => cfg.MapFrom(src => src.LSOutputSettings.Mode))
             #endregion
             #region Right Stick
@@ -35,7 +35,7 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RightStick.ControlModeSettings.MaxOutput, cfg => cfg.MapFrom(src => src.RSModInfo.MaxOutput))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.DeadZoneType, cfg => cfg.MapFrom(src => src.RSModInfo.DZType))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.VerticalScale, cfg => cfg.MapFrom(src => src.RSModInfo.VerticalScale))
-                .ForPath(dest => dest.RightStick.ControlModeSettings.Sensitivity, cfg => cfg.MapFrom(src => src.RSModInfo.Fuzz))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.Sensitivity, cfg => cfg.MapFrom(src => src.RSSens))
                 .ForPath(dest => dest.RightStick.OutputSettings, cfg => cfg.MapFrom(src => src.RSOutputSettings.Mode));
             #endregion
 
@@ -48,7 +48,7 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LSModInfo.MaxOutput, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.MaxOutput))
                 .ForPath(dest => dest.LSModInfo.DZType, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.DeadZoneType))
                 .ForPath(dest => dest.LSModInfo.VerticalScale, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.VerticalScale))
-                .ForPath(dest => dest.LSModInfo.Fuzz, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.Sensitivity))
+                .ForPath(dest => dest.LSSens, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.Sensitivity))
                 .ForPath(dest => dest.LSOutputSettings.Mode, cfg => cfg.MapFrom(src => src.LeftStick.OutputSettings))
             #endregion
             #region Right Stick
@@ -58,7 +58,7 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RSModInfo.MaxOutput, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.MaxOutput))
                 .ForPath(dest => dest.RSModInfo.DZType, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.DeadZoneType))
                 .ForPath(dest => dest.RSModInfo.VerticalScale, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.VerticalScale))
-                .ForPath(dest => dest.RSModInfo.Fuzz, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.Sensitivity))
+                .ForPath(dest => dest.RSSens, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.Sensitivity))
                 .ForPath(dest => dest.RSOutputSettings.Mode, cfg => cfg.MapFrom(src => src.RightStick.OutputSettings));
             #endregion
         }
