@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:DS4Windows.Client.Modules.Profiles.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Padding="20">
@@ -13,27 +13,13 @@
         <Style TargetType="Slider" BasedOn="{StaticResource {x:Type Slider}}">
             <Setter Property="Margin" Value="5,0,5,5"/>
         </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="Margin" Value="5,0,5,5"/>
+        </Style>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">
-        <TextBlock>
-            <Run>Dead Zone </Run>
-            <Run Text="{Binding DeadZone}"/>
-        </TextBlock>
-        <Slider Minimum="0" Maximum="100" Value="{Binding DeadZone}"/>
-        <TextBlock>
-            <Run>Anti Dead Zone </Run>
-            <Run Text="{Binding AntiDeadZone}"/>
-        </TextBlock>
-        <Slider Minimum="0" Maximum="100" Value="{Binding AntiDeadZone}"/>
-        <TextBlock>
-            <Run>Max Zone </Run>
-            <Run Text="{Binding MaxZone}"/>
-        </TextBlock>
-        <Slider Minimum="0" Maximum="100" Value="{Binding MaxZone}"/>
-        <TextBlock>
-            <Run>Max Output </Run>
-            <Run Text="{Binding MaxOutput}"/>
-        </TextBlock>
-        <Slider Minimum="0" Maximum="100" Value="{Binding MaxOutput}"/>
+        <TextBlock Text="Output Mode"/>
+        <ComboBox ItemsSource="{Binding Source={StaticResource enmStickMode}}" SelectedItem="{Binding OutputSettings}"/>
+        <ContentControl Content="{Binding ControlModeSettings.MainView}" Visibility="{Binding IsControlModeSet}"/>
     </StackPanel>
 </UserControl>
