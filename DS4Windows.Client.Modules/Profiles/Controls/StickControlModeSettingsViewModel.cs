@@ -1,5 +1,6 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Common.Types;
+using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -61,6 +62,17 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             get => xDeadZone;
             set => SetProperty(ref xDeadZone, value);
         }
+
+        public double DeadZoneConverted
+        {
+            get => Math.Round(DeadZone / 127d, 2);
+            set
+            {
+                var temp = Math.Round(DeadZone / 127d, 2);
+                if (temp == value) return;
+                DeadZone = (int)Math.Round(value * 127d);
+            }
+        } 
 
         private int xMaxZone;
         public int XMaxZone
@@ -130,6 +142,10 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             if (e.PropertyName == nameof(DeadZoneType))
             {
                 OnPropertyChanged(nameof(IsRadialSet));
+            }
+            else if (e.PropertyName == nameof(DeadZone))
+            {
+                OnPropertyChanged(nameof(DeadZoneConverted));
             }
         }
     }
