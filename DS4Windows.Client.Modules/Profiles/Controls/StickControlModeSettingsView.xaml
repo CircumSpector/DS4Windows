@@ -21,7 +21,7 @@
         <ComboBox ItemsSource="{Binding Source={StaticResource enmDeadZoneType}}"
                   SelectedItem="{Binding DeadZoneType}" />
 
-        <ContentControl Visibility="{Binding IsRadialSet}" Margin="20">
+        <ContentControl Visibility="{Binding IsRadialSet, Converter={StaticResource trueIsVis}}" Margin="20">
             <StackPanel>
                 <TextBlock>
                     <Run>Dead Zone </Run>
@@ -55,6 +55,63 @@
                 <Slider Minimum="0" Maximum="100" Value="{Binding Sensitivity}"/>
             </StackPanel>
         </ContentControl>
-        
+        <ContentControl Visibility="{Binding IsRadialSet, Converter={StaticResource falseIsVis}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Dead Zone: " Grid.Row="1" Grid.Column="0"/>
+                <TextBlock Text="Max Zone: " Grid.Row="2" Grid.Column="0"/>
+                <TextBlock Text="Anti-dead Zone: " Grid.Row="3" Grid.Column="0"/>
+                <TextBlock Text="Max Output: " Grid.Row="4" Grid.Column="0"/>
+
+                <TextBlock Text="X" Grid.Row="0" Grid.Column="1"/>
+                <TextBlock Text="Y" Grid.Row="0" Grid.Column="2"/>
+
+                <StackPanel Grid.Row="1"  Grid.Column="1">
+                    <TextBlock Text="{Binding XDeadZone}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding XDeadZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2"  Grid.Column="1">
+                    <TextBlock Text="{Binding XMaxZone}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding XMaxZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3"  Grid.Column="1">
+                    <TextBlock Text="{Binding XAntiDeadZone}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding XAntiDeadZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4"  Grid.Column="1">
+                    <TextBlock Text="{Binding XMaxOutput}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding XMaxOutput}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"  Grid.Column="2">
+                    <TextBlock Text="{Binding YDeadZone}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding YDeadZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2"  Grid.Column="2">
+                    <TextBlock Text="{Binding YMaxZone}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding YMaxZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3"  Grid.Column="2">
+                    <TextBlock Text="{Binding YAntiDeadZone}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding YAntiDeadZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4"  Grid.Column="2">
+                    <TextBlock Text="{Binding YMaxOutput}" />
+                    <Slider Minimum="0" Maximum="100" Value="{Binding YMaxOutput}"/>
+                </StackPanel>
+            </Grid>
+        </ContentControl>
     </StackPanel>
 </UserControl>
