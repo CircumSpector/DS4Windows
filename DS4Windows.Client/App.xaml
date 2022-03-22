@@ -18,6 +18,9 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
+            <md:BooleanToVisibilityConverter x:Key="trueIsVis" TrueValue="Visible" FalseValue="Collapsed"/>
+            <md:BooleanToVisibilityConverter x:Key="falseIsVis" TrueValue="Collapsed" FalseValue="Visible"/>
+
             <ResourceDictionary.MergedDictionaries>
                 <!-- material design styles -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/Generic.xaml" />

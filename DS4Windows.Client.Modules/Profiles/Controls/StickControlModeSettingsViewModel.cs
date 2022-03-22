@@ -7,6 +7,8 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
 {
     public class StickControlModeSettingsViewModel : ViewModel<IStickControlModeSettingsViewModel>, IStickControlModeSettingsViewModel
     {
+        #region Radial Properties
+
         private int deadZone;
         public int DeadZone
         {
@@ -35,13 +37,6 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             set => SetProperty(ref maxOutput, value);
         }
 
-        private StickDeadZoneInfo.DeadZoneType deadZooneType;
-        public StickDeadZoneInfo.DeadZoneType DeadZoneType
-        {
-            get => deadZooneType;
-            set => SetProperty(ref deadZooneType, value);
-        }
-
         private double verticalScale;
         public double VerticalScale
         {
@@ -54,9 +49,80 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         {
             get => sensitivity;
             set => SetProperty(ref sensitivity, value);
-        } 
+        }
 
-        public Visibility IsRadialSet => DeadZoneType == StickDeadZoneInfo.DeadZoneType.Radial ? Visibility.Visible : Visibility.Collapsed;
+        #endregion
+
+        #region X Properties
+
+        private int xDeadZone;
+        public int XDeadZone
+        {
+            get => xDeadZone;
+            set => SetProperty(ref xDeadZone, value);
+        }
+
+        private int xMaxZone;
+        public int XMaxZone
+        {
+            get => xMaxZone;
+            set => SetProperty(ref xMaxZone, value);
+        }
+        private int xAntiDeadZone;
+        public int XAntiDeadZone
+        {
+            get => xAntiDeadZone;
+            set => SetProperty(ref xAntiDeadZone, value);
+        }
+        private int xMaxOutput;
+        public int XMaxOutput
+        {
+            get => xMaxOutput;
+            set => SetProperty(ref xMaxOutput, value);
+        }
+
+        #endregion
+
+        #region Y Properties
+
+        private int yDeadZone;
+        public int YDeadZone
+        {
+            get => yDeadZone;
+            set => SetProperty(ref yDeadZone, value);
+        }
+
+        private int yMaxZone;
+        public int YMaxZone
+        {
+            get => yMaxZone;
+            set => SetProperty(ref yMaxZone, value);
+        }
+
+        private int yAntiDeadZone;
+        public int YAntiDeadZone
+        {
+            get => yAntiDeadZone;
+            set => SetProperty(ref yAntiDeadZone, value);
+        }
+
+        private int yMaxOutput;
+        public int YMaxOutput
+        {
+            get => yMaxOutput;
+            set => SetProperty(ref yMaxOutput, value);
+        }
+
+        #endregion
+
+        private StickDeadZoneInfo.DeadZoneType deadZooneType;
+        public StickDeadZoneInfo.DeadZoneType DeadZoneType
+        {
+            get => deadZooneType;
+            set => SetProperty(ref deadZooneType, value);
+        }
+
+        public bool IsRadialSet => DeadZoneType == StickDeadZoneInfo.DeadZoneType.Radial;
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
