@@ -25,9 +25,9 @@
             <StackPanel>
                 <TextBlock>
                     <Run>Dead Zone </Run>
-                    <Run Text="{Binding DeadZone}"/>
+                    <Run Text="{Binding DeadZoneConverted}"/>
                 </TextBlock>
-                <Slider Minimum="0" Maximum="100" Value="{Binding DeadZone}"/>
+                <Slider Minimum="0" Maximum="1.0" Value="{Binding DeadZoneConverted}"/>
                 <TextBlock>
                     <Run>Anti Dead Zone </Run>
                     <Run Text="{Binding AntiDeadZone}"/>
