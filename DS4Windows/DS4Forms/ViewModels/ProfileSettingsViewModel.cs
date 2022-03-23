@@ -15,6 +15,7 @@ using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Configuration.Application.Services;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
+using DS4Windows.Shared.Devices.Services;
 using DS4WinWPF.DS4Control.Logging;
 using JetBrains.Annotations;
 using Microsoft.Win32;
@@ -310,6 +311,8 @@ namespace DS4WinWPF.DS4Forms.ViewModels
 
         private readonly ControlService rootHub;
 
+        private readonly IDeviceValueConverters deviceValueConverters;
+
         private readonly int[] saSteeringRangeValues =
             new int[9] { 90, 180, 270, 360, 450, 720, 900, 1080, 1440 };
 
@@ -333,13 +336,15 @@ namespace DS4WinWPF.DS4Forms.ViewModels
         public ProfileSettingsViewModel(
             IAppSettingsService appSettings,
             IProfilesService profileService,
-            ControlService service
+            ControlService service,
+            IDeviceValueConverters deviceValueConverters
         )
         {
             using var activity = activitySource.StartActivity(
                 $"{nameof(ProfileSettingsViewModel)}:Constructor");
 
             this.profileService = profileService;
+            this.deviceValueConverters = deviceValueConverters;
             this.appSettings = appSettings;
             rootHub = service;
             //Device = device;

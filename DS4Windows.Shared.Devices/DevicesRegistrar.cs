@@ -20,6 +20,7 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
+        services.AddSingleton<IDeviceValueConverters, DeviceValueConverters>();
 
         services.AddSingleton<DeviceNotificationListener>();
         services.AddSingleton<IDeviceNotificationListener>(provider =>
