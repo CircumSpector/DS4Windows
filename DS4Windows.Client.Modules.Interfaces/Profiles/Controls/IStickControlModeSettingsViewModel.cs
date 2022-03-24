@@ -8,10 +8,10 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         int DeadZone { get; set; }
         int AntiDeadZone { get; set; }
         int MaxZone { get; set; }
-        double MaxOutput { get; set; }
+        int MaxOutput { get; set; }
         StickDeadZoneInfo.DeadZoneType DeadZoneType { get; set; }
-        int Sensitivity { get; set; }
-        double VerticalScale { get; set; }
+        double Sensitivity { get; set; }
+        int VerticalScale { get; set; }
         int XDeadZone { get; set; }
         int XMaxZone { get; set; }
         int XAntiDeadZone { get; set; }
@@ -20,5 +20,6 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         int YMaxZone { get; set; }
         int YAntiDeadZone { get; set; }
         int YMaxOutput { get; set; }
+        bool ForceMaxOutput { get; set; }
     }
 }

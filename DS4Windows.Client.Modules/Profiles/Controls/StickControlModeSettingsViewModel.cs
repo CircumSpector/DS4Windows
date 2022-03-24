@@ -1,5 +1,6 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Devices.Services;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -8,13 +9,20 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
 {
     public class StickControlModeSettingsViewModel : ViewModel<IStickControlModeSettingsViewModel>, IStickControlModeSettingsViewModel
     {
+        private readonly IDeviceValueConverters deviceValueConverters;
+
+        public StickControlModeSettingsViewModel(IDeviceValueConverters deviceValueConverters)
+        {
+            this.deviceValueConverters = deviceValueConverters;
+        }
+
         #region Radial Properties
 
-        private int deadZone;
-        public int DeadZone
+        public int DeadZone { get; set; }
+        public double DeadZoneConverted
         {
-            get => deadZone;
-            set => SetProperty(ref deadZone, value);
+            get => deviceValueConverters.DeadZoneIntToDouble(DeadZone);
+            set => DeadZone = deviceValueConverters.DeadZoneDoubleToInt(value);
         }
 
         private int antiDeadZone;
@@ -31,48 +39,46 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             set => SetProperty(ref maxZone, value);
         }
 
-        private double maxOutput;
-        public double MaxOutput
+        private int maxOutput;
+        public int MaxOutput
         {
             get => maxOutput;
             set => SetProperty(ref maxOutput, value);
         }
 
-        private double verticalScale;
-        public double VerticalScale
+        private bool forceMaxOutput;
+        public bool ForceMaxOutput
+        {
+            get => forceMaxOutput;
+            set => SetProperty(ref forceMaxOutput, value);
+        } 
+
+        private int verticalScale;
+        public int VerticalScale
         {
             get => verticalScale;
             set => SetProperty(ref verticalScale, value);
         }
 
-        private int sensitivity;
-        public int Sensitivity
+        private double sensitivity;
+        public double Sensitivity
         {
             get => sensitivity;
-            set => SetProperty(ref sensitivity, value);
+            set => SetProperty(ref sensitivity, Math.Round(value,1)); 
+            //Math round needed because wpf slider control when binding to double and tick increment
+            //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
         }
 
         #endregion
 
         #region X Properties
 
-        private int xDeadZone;
-        public int XDeadZone
+        public int XDeadZone { get; set; }
+        public double XDeadZoneConverted
         {
-            get => xDeadZone;
-            set => SetProperty(ref xDeadZone, value);
+            get => deviceValueConverters.DeadZoneIntToDouble(XDeadZone);
+            set => XDeadZone = deviceValueConverters.DeadZoneDoubleToInt(value);
         }
-
-        public double DeadZoneConverted
-        {
-            get => Math.Round(DeadZone / 127d, 2);
-            set
-            {
-                var temp = Math.Round(DeadZone / 127d, 2);
-                if (temp == value) return;
-                DeadZone = (int)Math.Round(value * 127d);
-            }
-        } 
 
         private int xMaxZone;
         public int XMaxZone
@@ -97,11 +103,11 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
 
         #region Y Properties
 
-        private int yDeadZone;
-        public int YDeadZone
+        public int YDeadZone { get; set; }
+        public double YDeadZoneConverted
         {
-            get => yDeadZone;
-            set => SetProperty(ref yDeadZone, value);
+            get => deviceValueConverters.DeadZoneIntToDouble(YDeadZone);
+            set => YDeadZone = deviceValueConverters.DeadZoneDoubleToInt(value);
         }
 
         private int yMaxZone;
@@ -146,6 +152,14 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             else if (e.PropertyName == nameof(DeadZone))
             {
                 OnPropertyChanged(nameof(DeadZoneConverted));
+            }
+            else if (e.PropertyName == nameof(XDeadZone))
+            {
+                OnPropertyChanged(nameof(XDeadZoneConverted));
+            }
+            else if (e.PropertyName == nameof(YDeadZone))
+            {
+                OnPropertyChanged(nameof(YDeadZoneConverted));
             }
         }
     }
