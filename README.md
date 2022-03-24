@@ -39,6 +39,10 @@ There are none. Until this message changes, the rework is in constant motion and
 
 [Join our support server](https://ds4windows.app/support.html) 🐸
 
+## Sponsors
+
+[<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/)
+
 <!--
 
 ## 3rd party credits
