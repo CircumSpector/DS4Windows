@@ -38,7 +38,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.YAntiDeadZone, cfg => cfg.MapFrom(src => src.LSModInfo.YAxisDeadInfo.AntiDeadZone))
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.YMaxOutput, cfg => cfg.MapFrom(src => src.LSModInfo.YAxisDeadInfo.MaxOutput))
                 .ForPath(dest => dest.LeftStick.OutputSettings, cfg => cfg.MapFrom(src => src.LSOutputSettings.Mode))
-                
+                .ForPath(dest => dest.LeftStick.FlickRealWorldCalibtration, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration))
+                .ForPath(dest => dest.LeftStick.FlickThreshold, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold))
+                .ForPath(dest => dest.LeftStick.FlickTime, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.FlickTime))
+                .ForPath(dest => dest.LeftStick.FlickMinAngleThreshold, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold))
+
             #endregion
 
             #region Right Stick
@@ -59,7 +63,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RightStick.ControlModeSettings.YMaxZone, cfg => cfg.MapFrom(src => src.RSModInfo.YAxisDeadInfo.MaxZone))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.YAntiDeadZone, cfg => cfg.MapFrom(src => src.RSModInfo.YAxisDeadInfo.AntiDeadZone))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.YMaxOutput, cfg => cfg.MapFrom(src => src.RSModInfo.YAxisDeadInfo.MaxOutput))
-                .ForPath(dest => dest.RightStick.OutputSettings, cfg => cfg.MapFrom(src => src.RSOutputSettings.Mode));
+                .ForPath(dest => dest.RightStick.OutputSettings, cfg => cfg.MapFrom(src => src.RSOutputSettings.Mode))
+                .ForPath(dest => dest.RightStick.FlickRealWorldCalibtration, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration))
+                .ForPath(dest => dest.RightStick.FlickThreshold, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold))
+                .ForPath(dest => dest.RightStick.FlickTime, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.FlickTime))
+                .ForPath(dest => dest.RightStick.FlickMinAngleThreshold, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold));
 
             #endregion
 
@@ -85,6 +93,10 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LSModInfo.YAxisDeadInfo.AntiDeadZone, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.YAntiDeadZone))
                 .ForPath(dest => dest.LSModInfo.YAxisDeadInfo.MaxOutput, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.YMaxOutput))
                 .ForPath(dest => dest.LSOutputSettings.Mode, cfg => cfg.MapFrom(src => src.LeftStick.OutputSettings))
+                .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration, cfg => cfg.MapFrom(src => src.LeftStick.FlickRealWorldCalibtration))
+                .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold, cfg => cfg.MapFrom(src => src.LeftStick.FlickThreshold))
+                .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.FlickTime, cfg => cfg.MapFrom(src => src.LeftStick.FlickTime))
+                .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold, cfg => cfg.MapFrom(src => src.LeftStick.FlickMinAngleThreshold))
 
             #endregion
 
@@ -105,7 +117,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RSModInfo.YAxisDeadInfo.MaxZone, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.YMaxZone))
                 .ForPath(dest => dest.RSModInfo.YAxisDeadInfo.AntiDeadZone, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.YAntiDeadZone))
                 .ForPath(dest => dest.RSModInfo.YAxisDeadInfo.MaxOutput, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.YMaxOutput))
-                .ForPath(dest => dest.RSOutputSettings.Mode, cfg => cfg.MapFrom(src => src.RightStick.OutputSettings));
+                .ForPath(dest => dest.RSOutputSettings.Mode, cfg => cfg.MapFrom(src => src.RightStick.OutputSettings))
+                .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration, cfg => cfg.MapFrom(src => src.RightStick.FlickRealWorldCalibtration))
+                .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold, cfg => cfg.MapFrom(src => src.RightStick.FlickThreshold))
+                .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.FlickTime, cfg => cfg.MapFrom(src => src.RightStick.FlickTime))
+                .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold, cfg => cfg.MapFrom(src => src.RightStick.FlickMinAngleThreshold));
             #endregion
         }
     }

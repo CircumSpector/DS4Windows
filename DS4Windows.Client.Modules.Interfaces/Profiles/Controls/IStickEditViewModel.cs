@@ -7,5 +7,9 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
     {
         StickMode OutputSettings { get; set; }
         IStickControlModeSettingsViewModel ControlModeSettings { get; }
+        double FlickRealWorldCalibtration { get; set; }
+        double FlickThreshold { get; set; }
+        double FlickTime { get; set; }
+        double FlickMinAngleThreshold { get; set; }
     }
 }

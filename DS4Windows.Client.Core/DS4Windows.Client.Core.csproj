@@ -43,4 +43,8 @@
     <ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
+
 </Project>
