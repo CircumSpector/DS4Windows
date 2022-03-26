@@ -49,5 +49,27 @@
                 <md:PackIcon Kind="DotsHorizontal" Width="15" Height="15" />
             </Button>
         </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="0">
+                        <Run>Square Stick </Run>
+                        <Run Text="{Binding SquareStickRoundness}"/>
+            </TextBlock>
+
+            <CheckBox Grid.Column="1" IsChecked="{Binding IsSquareStick}" />
+            <Slider Minimum="0" Maximum="1000" TickFrequency="1" Value="{Binding SquareStickRoundness}"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    IsEnabled="{Binding IsSquareStick}"/>
+        </Grid>
+        
     </StackPanel>
 </UserControl>

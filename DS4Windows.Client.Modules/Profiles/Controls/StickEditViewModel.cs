@@ -79,6 +79,20 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             Process.Start(processStartInfo);
         }
 
+        private bool isSquareStick;
+        public bool IsSquareStick
+        {
+            get => isSquareStick;
+            set => SetProperty(ref isSquareStick, value);
+        }
+
+        private double squareStickRoundness;
+        public double SquareStickRoundness
+        {
+            get => squareStickRoundness;
+            set => SetProperty(ref squareStickRoundness, Math.Round(value, 0));
+        } 
+
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -94,6 +108,10 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
                 }
 
                 OnPropertyChanged(nameof(IsCustomCurveSelected));
+            }
+            else if (e.PropertyName == nameof(IsSquareStick) && !IsSquareStick)
+            {
+                SquareStickRoundness = SquareStickInfo.DefaultSquareStickRoundness;
             }
         }
 
