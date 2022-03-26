@@ -13,5 +13,7 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         double FlickMinAngleThreshold { get; set; }
         CurveMode OutputCurve { get; set; }
         BezierCurve CustomCurve { get; set; }
+        double SquareStickRoundness { get; set; }
+        bool IsSquareStick { get; set; }
     }
 }
