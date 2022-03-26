@@ -4,9 +4,11 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:common="clr-namespace:DS4Windows.Shared.Common.Types;assembly=DS4Windows.Shared.Common.Interfaces"
+             xmlns:profileConverters="clr-namespace:DS4Windows.Client.Modules.Profiles.Converters;assembly=DS4Windows.Client.Modules"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
         <ResourceDictionary>
+            <profileConverters:BezierCurveConverter x:Key="bezierCurveConverter"/>
             <ObjectDataProvider x:Key="enmStickMode" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                 <ObjectDataProvider.MethodParameters>
                     <x:Type TypeName="common:StickMode"></x:Type>
@@ -15,6 +17,11 @@
             <ObjectDataProvider x:Key="enmDeadZoneType" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                 <ObjectDataProvider.MethodParameters>
                     <x:Type TypeName="common:StickDeadZoneInfo+DeadZoneType"></x:Type>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+            <ObjectDataProvider x:Key="enmOutputCurve" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="common:CurveMode"></x:Type>
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 

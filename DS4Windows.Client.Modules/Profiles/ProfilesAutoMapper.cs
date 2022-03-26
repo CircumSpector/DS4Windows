@@ -42,6 +42,8 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LeftStick.FlickThreshold, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold))
                 .ForPath(dest => dest.LeftStick.FlickTime, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.FlickTime))
                 .ForPath(dest => dest.LeftStick.FlickMinAngleThreshold, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold))
+                .ForPath(dest => dest.LeftStick.OutputCurve, cfg => cfg.MapFrom(src => src.LSOutCurveMode))
+                .ForPath(dest => dest.LeftStick.CustomCurve, cfg => cfg.MapFrom(src => src.LSOutCurve))
 
             #endregion
 
@@ -67,7 +69,9 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RightStick.FlickRealWorldCalibtration, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration))
                 .ForPath(dest => dest.RightStick.FlickThreshold, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold))
                 .ForPath(dest => dest.RightStick.FlickTime, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.FlickTime))
-                .ForPath(dest => dest.RightStick.FlickMinAngleThreshold, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold));
+                .ForPath(dest => dest.RightStick.FlickMinAngleThreshold, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold))
+                .ForPath(dest => dest.RightStick.OutputCurve, cfg => cfg.MapFrom(src => src.RSOutCurveMode))
+                .ForPath(dest => dest.RightStick.CustomCurve, cfg => cfg.MapFrom(src => src.RSOutCurve));
 
             #endregion
 
@@ -97,10 +101,13 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold, cfg => cfg.MapFrom(src => src.LeftStick.FlickThreshold))
                 .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.FlickTime, cfg => cfg.MapFrom(src => src.LeftStick.FlickTime))
                 .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold, cfg => cfg.MapFrom(src => src.LeftStick.FlickMinAngleThreshold))
+                .ForPath(dest => dest.LSOutCurveMode, cfg => cfg.MapFrom(src => src.LeftStick.OutputCurve))
+                .ForPath(dest => dest.LSOutCurve, cfg => cfg.MapFrom(src => src.LeftStick.CustomCurve))
 
             #endregion
 
             #region Right Stick
+
                 .ForPath(dest => dest.RSModInfo.DeadZone, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.DeadZone))
                 .ForPath(dest => dest.RSModInfo.AntiDeadZone, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.AntiDeadZone))
                 .ForPath(dest => dest.RSModInfo.MaxZone, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.DeadZone))
@@ -121,7 +128,10 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.RealWorldCalibration, cfg => cfg.MapFrom(src => src.RightStick.FlickRealWorldCalibtration))
                 .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold, cfg => cfg.MapFrom(src => src.RightStick.FlickThreshold))
                 .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.FlickTime, cfg => cfg.MapFrom(src => src.RightStick.FlickTime))
-                .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold, cfg => cfg.MapFrom(src => src.RightStick.FlickMinAngleThreshold));
+                .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold, cfg => cfg.MapFrom(src => src.RightStick.FlickMinAngleThreshold))
+                .ForPath(dest => dest.RSOutCurveMode, cfg => cfg.MapFrom(src => src.RightStick.OutputCurve))
+                .ForPath(dest => dest.RSOutCurve, cfg => cfg.MapFrom(src => src.RightStick.CustomCurve));
+
             #endregion
         }
     }
