@@ -1,5 +1,6 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Common.Types;
+using DS4Windows.Shared.Devices.Services;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
@@ -11,8 +12,11 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
     {
         private string path = $"file:///{AppContext.BaseDirectory.Replace('\\', '/')}BezierCurveEditor/index.html";
 
-        public StickEditViewModel(IViewModelFactory viewModelFactory)
+        private readonly IDeviceValueConverters deviceValueConverters;
+
+        public StickEditViewModel(IViewModelFactory viewModelFactory, IDeviceValueConverters deviceValueConverters)
         {
+            this.deviceValueConverters = deviceValueConverters;
             ControlModeSettings = viewModelFactory.Create<IStickControlModeSettingsViewModel, IStickControlModeSettingsView>();
             ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
         }
@@ -91,7 +95,14 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         {
             get => squareStickRoundness;
             set => SetProperty(ref squareStickRoundness, Math.Round(value, 0));
-        } 
+        }
+
+        public double Rotation { get; set; }
+        public double RotationConverted
+        {
+            get => deviceValueConverters.RotationConvertFrom(Rotation);
+            set => Rotation = deviceValueConverters.RotationConvertTo(value);
+        }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -112,6 +123,10 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             else if (e.PropertyName == nameof(IsSquareStick) && !IsSquareStick)
             {
                 SquareStickRoundness = SquareStickInfo.DefaultSquareStickRoundness;
+            }
+            else if (e.PropertyName == nameof(Rotation))
+            {
+                OnPropertyChanged(nameof(RotationConverted));
             }
         }
 

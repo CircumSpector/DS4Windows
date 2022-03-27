@@ -13,5 +13,15 @@ namespace DS4Windows.Shared.Devices.Services
         {
             return (int)Math.Round(val * 127d, 1);
         }
+
+        public double RotationConvertFrom(double val)
+        {
+            return Math.Round(val * 180.0 / Math.PI);
+        }
+
+        public double RotationConvertTo(double val)
+        {
+            return val * Math.PI / 180.0;
+        }
     }
 }

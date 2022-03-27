@@ -46,6 +46,7 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LeftStick.CustomCurve, cfg => cfg.MapFrom(src => src.LSOutCurve))
                 .ForPath(dest => dest.LeftStick.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.LSMode))
                 .ForPath(dest => dest.LeftStick.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.LSRoundness))
+                .ForPath(dest => dest.LeftStick.Rotation, cfg => cfg.MapFrom(src => src.LSRotation))
 
             #endregion
 
@@ -75,7 +76,8 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RightStick.OutputCurve, cfg => cfg.MapFrom(src => src.RSOutCurveMode))
                 .ForPath(dest => dest.RightStick.CustomCurve, cfg => cfg.MapFrom(src => src.RSOutCurve))
                 .ForPath(dest => dest.RightStick.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.RSMode))
-                .ForPath(dest => dest.RightStick.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.RSRoundness));
+                .ForPath(dest => dest.RightStick.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.RSRoundness))
+                .ForPath(dest => dest.RightStick.Rotation, cfg => cfg.MapFrom(src => src.RSRotation));
 
             #endregion
 
@@ -109,6 +111,7 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LSOutCurve, cfg => cfg.MapFrom(src => src.LeftStick.CustomCurve))
                 .ForPath(dest => dest.SquStickInfo.LSMode, cfg => cfg.MapFrom(src => src.LeftStick.IsSquareStick))
                 .ForPath(dest => dest.SquStickInfo.LSRoundness, cfg => cfg.MapFrom(src => src.LeftStick.SquareStickRoundness))
+                .ForPath(dest => dest.LSRotation, cfg => cfg.MapFrom(src => src.LeftStick.Rotation))
 
             #endregion
 
@@ -138,7 +141,8 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RSOutCurveMode, cfg => cfg.MapFrom(src => src.RightStick.OutputCurve))
                 .ForPath(dest => dest.RSOutCurve, cfg => cfg.MapFrom(src => src.RightStick.CustomCurve))
                 .ForPath(dest => dest.SquStickInfo.RSMode, cfg => cfg.MapFrom(src => src.RightStick.IsSquareStick))
-                .ForPath(dest => dest.SquStickInfo.RSRoundness, cfg => cfg.MapFrom(src => src.RightStick.SquareStickRoundness));
+                .ForPath(dest => dest.SquStickInfo.RSRoundness, cfg => cfg.MapFrom(src => src.RightStick.SquareStickRoundness))
+                .ForPath(dest => dest.RSRotation, cfg => cfg.MapFrom(src => src.RightStick.Rotation));
 
             #endregion
         }
