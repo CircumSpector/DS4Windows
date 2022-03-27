@@ -70,6 +70,11 @@
                     Grid.ColumnSpan="2"
                     IsEnabled="{Binding IsSquareStick}"/>
         </Grid>
-        
+        <TextBlock>
+            <Run>Rotation </Run>
+            <Run Text="{Binding RotationConverted}"/>
+        </TextBlock>
+        <Slider Minimum="-180" Maximum="180" IsSnapToTickEnabled="True" Value="{Binding RotationConverted}" />
+
     </StackPanel>
 </UserControl>

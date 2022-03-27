@@ -15,5 +15,6 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         BezierCurve CustomCurve { get; set; }
         double SquareStickRoundness { get; set; }
         bool IsSquareStick { get; set; }
+        double Rotation { get; set; }
     }
 }
