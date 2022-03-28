@@ -1,8 +1,10 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Devices.Services;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 
 namespace DS4Windows.Client.Modules.Profiles.Controls
@@ -10,10 +12,12 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
     public class StickControlModeSettingsViewModel : ViewModel<IStickControlModeSettingsViewModel>, IStickControlModeSettingsViewModel
     {
         private readonly IDeviceValueConverters deviceValueConverters;
+        private string path = $"file:///{AppContext.BaseDirectory.Replace('\\', '/')}BezierCurveEditor/index.html";
 
         public StickControlModeSettingsViewModel(IDeviceValueConverters deviceValueConverters)
         {
             this.deviceValueConverters = deviceValueConverters;
+            ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
         }
 
         #region Radial Properties
@@ -142,6 +146,51 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
 
         public bool IsRadialSet => DeadZoneType == StickDeadZoneInfo.DeadZoneType.Radial;
 
+        private CurveMode outputCurve;
+        public CurveMode OutputCurve
+        {
+            get => outputCurve;
+            set => SetProperty(ref outputCurve, value);
+        }
+
+        private BezierCurve customCurve;
+        public BezierCurve CustomCurve
+        {
+            get => customCurve;
+            set => SetProperty(ref customCurve, value);
+        }
+
+        public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
+
+        public RelayCommand ShowCustomCurveCommand { get; }
+        private void OnShowCustomCurve()
+        {
+            var processStartInfo = new ProcessStartInfo(path);
+            processStartInfo.UseShellExecute = true;
+            Process.Start(processStartInfo);
+        }
+
+        private bool isSquareStick;
+        public bool IsSquareStick
+        {
+            get => isSquareStick;
+            set => SetProperty(ref isSquareStick, value);
+        }
+
+        private double squareStickRoundness;
+        public double SquareStickRoundness
+        {
+            get => squareStickRoundness;
+            set => SetProperty(ref squareStickRoundness, Math.Round(value, 0));
+        }
+
+        public double Rotation { get; set; }
+        public double RotationConverted
+        {
+            get => deviceValueConverters.RotationConvertFrom(Rotation);
+            set => Rotation = deviceValueConverters.RotationConvertTo(value);
+        }
+
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -160,6 +209,23 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             else if (e.PropertyName == nameof(YDeadZone))
             {
                 OnPropertyChanged(nameof(YDeadZoneConverted));
+            }
+            else if (e.PropertyName == nameof(OutputCurve))
+            {
+                if (OutputCurve != CurveMode.Custom)
+                {
+                    CustomCurve = null;
+                }
+
+                OnPropertyChanged(nameof(IsCustomCurveSelected));
+            }
+            else if (e.PropertyName == nameof(IsSquareStick) && !IsSquareStick)
+            {
+                SquareStickRoundness = SquareStickInfo.DefaultSquareStickRoundness;
+            }
+            else if (e.PropertyName == nameof(Rotation))
+            {
+                OnPropertyChanged(nameof(RotationConverted));
             }
         }
     }
