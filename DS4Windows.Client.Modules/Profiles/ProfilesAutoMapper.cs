@@ -47,6 +47,10 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.LSMode))
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.LSRoundness))
                 .ForPath(dest => dest.LeftStick.ControlModeSettings.Rotation, cfg => cfg.MapFrom(src => src.LSRotation))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.Fuzz, cfg => cfg.MapFrom(src => src.LSModInfo.Fuzz))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.IsAntiSnapback, cfg => cfg.MapFrom(src => src.LSAntiSnapbackInfo.Enabled))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.AntiSnapbackDelta, cfg => cfg.MapFrom(src => src.LSAntiSnapbackInfo.Delta))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.AntiSnapbackTimeout, cfg => cfg.MapFrom(src => src.LSAntiSnapbackInfo.Timeout))
 
             #endregion
 
@@ -77,7 +81,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RightStick.ControlModeSettings.CustomCurve, cfg => cfg.MapFrom(src => src.RSOutCurve))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.RSMode))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.RSRoundness))
-                .ForPath(dest => dest.RightStick.ControlModeSettings.Rotation, cfg => cfg.MapFrom(src => src.RSRotation));
+                .ForPath(dest => dest.RightStick.ControlModeSettings.Rotation, cfg => cfg.MapFrom(src => src.RSRotation))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.Fuzz, cfg => cfg.MapFrom(src => src.RSModInfo.Fuzz))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.IsAntiSnapback, cfg => cfg.MapFrom(src => src.RSAntiSnapbackInfo.Enabled))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.AntiSnapbackDelta, cfg => cfg.MapFrom(src => src.RSAntiSnapbackInfo.Delta))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.AntiSnapbackTimeout, cfg => cfg.MapFrom(src => src.RSAntiSnapbackInfo.Timeout));
 
             #endregion
 
@@ -112,6 +120,10 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.SquStickInfo.LSMode, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.IsSquareStick))
                 .ForPath(dest => dest.SquStickInfo.LSRoundness, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.SquareStickRoundness))
                 .ForPath(dest => dest.LSRotation, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.Rotation))
+                .ForPath(dest => dest.LSModInfo.Fuzz, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.Fuzz))
+                .ForPath(dest => dest.LSAntiSnapbackInfo.Enabled, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.IsAntiSnapback))
+                .ForPath(dest => dest.LSAntiSnapbackInfo.Delta, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.AntiSnapbackDelta))
+                .ForPath(dest => dest.LSAntiSnapbackInfo.Timeout, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.AntiSnapbackTimeout))
 
             #endregion
 
@@ -142,7 +154,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RSOutCurve, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.CustomCurve))
                 .ForPath(dest => dest.SquStickInfo.RSMode, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.IsSquareStick))
                 .ForPath(dest => dest.SquStickInfo.RSRoundness, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.SquareStickRoundness))
-                .ForPath(dest => dest.RSRotation, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.Rotation));
+                .ForPath(dest => dest.RSRotation, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.Rotation))
+                .ForPath(dest => dest.RSModInfo.Fuzz, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.Fuzz))
+                .ForPath(dest => dest.RSAntiSnapbackInfo.Enabled, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.IsAntiSnapback))
+                .ForPath(dest => dest.RSAntiSnapbackInfo.Delta, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.AntiSnapbackDelta))
+                .ForPath(dest => dest.RSAntiSnapbackInfo.Timeout, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.AntiSnapbackTimeout));
 
             #endregion
         }

@@ -174,5 +174,37 @@
             <Run Text="{Binding RotationConverted}"/>
         </TextBlock>
         <Slider Minimum="-180" Maximum="180" IsSnapToTickEnabled="True" Value="{Binding RotationConverted}" />
+        <TextBlock>
+            <Run>Fuzz </Run>
+            <Run Text="{Binding Fuzz}"/>
+        </TextBlock>
+        <Slider Minimum="0" Maximum="100" IsSnapToTickEnabled="True" Value="{Binding Fuzz}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="0">
+                <Run>Anti Snapback Delta </Run>
+                <Run Text="{Binding AntiSnapbackDelta}"/>
+            </TextBlock>
+
+            <CheckBox Grid.Column="1" IsChecked="{Binding IsAntiSnapback}" />
+            <Slider Minimum="0" Maximum="256" TickFrequency="1" Value="{Binding AntiSnapbackDelta}"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    IsEnabled="{Binding IsAntiSnapback}"/>
+        </Grid>
+        <TextBlock>
+            <Run>Anti Snapback Timeout </Run>
+            <Run Text="{Binding AntiSnapbackTimeout}"/>
+        </TextBlock>
+        <Slider Minimum="0" Maximum="1000" IsSnapToTickEnabled="True" Value="{Binding AntiSnapbackTimeout}"
+                IsEnabled="{Binding IsAntiSnapback}"/>
     </StackPanel>
 </UserControl>
