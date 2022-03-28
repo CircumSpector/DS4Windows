@@ -42,11 +42,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LeftStick.FlickThreshold, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold))
                 .ForPath(dest => dest.LeftStick.FlickTime, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.FlickTime))
                 .ForPath(dest => dest.LeftStick.FlickMinAngleThreshold, cfg => cfg.MapFrom(src => src.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold))
-                .ForPath(dest => dest.LeftStick.OutputCurve, cfg => cfg.MapFrom(src => src.LSOutCurveMode))
-                .ForPath(dest => dest.LeftStick.CustomCurve, cfg => cfg.MapFrom(src => src.LSOutCurve))
-                .ForPath(dest => dest.LeftStick.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.LSMode))
-                .ForPath(dest => dest.LeftStick.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.LSRoundness))
-                .ForPath(dest => dest.LeftStick.Rotation, cfg => cfg.MapFrom(src => src.LSRotation))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.OutputCurve, cfg => cfg.MapFrom(src => src.LSOutCurveMode))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.CustomCurve, cfg => cfg.MapFrom(src => src.LSOutCurve))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.LSMode))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.LSRoundness))
+                .ForPath(dest => dest.LeftStick.ControlModeSettings.Rotation, cfg => cfg.MapFrom(src => src.LSRotation))
 
             #endregion
 
@@ -73,11 +73,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RightStick.FlickThreshold, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold))
                 .ForPath(dest => dest.RightStick.FlickTime, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.FlickTime))
                 .ForPath(dest => dest.RightStick.FlickMinAngleThreshold, cfg => cfg.MapFrom(src => src.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold))
-                .ForPath(dest => dest.RightStick.OutputCurve, cfg => cfg.MapFrom(src => src.RSOutCurveMode))
-                .ForPath(dest => dest.RightStick.CustomCurve, cfg => cfg.MapFrom(src => src.RSOutCurve))
-                .ForPath(dest => dest.RightStick.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.RSMode))
-                .ForPath(dest => dest.RightStick.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.RSRoundness))
-                .ForPath(dest => dest.RightStick.Rotation, cfg => cfg.MapFrom(src => src.RSRotation));
+                .ForPath(dest => dest.RightStick.ControlModeSettings.OutputCurve, cfg => cfg.MapFrom(src => src.RSOutCurveMode))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.CustomCurve, cfg => cfg.MapFrom(src => src.RSOutCurve))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.IsSquareStick, cfg => cfg.MapFrom(src => src.SquStickInfo.RSMode))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.SquareStickRoundness, cfg => cfg.MapFrom(src => src.SquStickInfo.RSRoundness))
+                .ForPath(dest => dest.RightStick.ControlModeSettings.Rotation, cfg => cfg.MapFrom(src => src.RSRotation));
 
             #endregion
 
@@ -107,11 +107,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.FlickThreshold, cfg => cfg.MapFrom(src => src.LeftStick.FlickThreshold))
                 .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.FlickTime, cfg => cfg.MapFrom(src => src.LeftStick.FlickTime))
                 .ForPath(dest => dest.LSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold, cfg => cfg.MapFrom(src => src.LeftStick.FlickMinAngleThreshold))
-                .ForPath(dest => dest.LSOutCurveMode, cfg => cfg.MapFrom(src => src.LeftStick.OutputCurve))
-                .ForPath(dest => dest.LSOutCurve, cfg => cfg.MapFrom(src => src.LeftStick.CustomCurve))
-                .ForPath(dest => dest.SquStickInfo.LSMode, cfg => cfg.MapFrom(src => src.LeftStick.IsSquareStick))
-                .ForPath(dest => dest.SquStickInfo.LSRoundness, cfg => cfg.MapFrom(src => src.LeftStick.SquareStickRoundness))
-                .ForPath(dest => dest.LSRotation, cfg => cfg.MapFrom(src => src.LeftStick.Rotation))
+                .ForPath(dest => dest.LSOutCurveMode, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.OutputCurve))
+                .ForPath(dest => dest.LSOutCurve, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.CustomCurve))
+                .ForPath(dest => dest.SquStickInfo.LSMode, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.IsSquareStick))
+                .ForPath(dest => dest.SquStickInfo.LSRoundness, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.SquareStickRoundness))
+                .ForPath(dest => dest.LSRotation, cfg => cfg.MapFrom(src => src.LeftStick.ControlModeSettings.Rotation))
 
             #endregion
 
@@ -138,11 +138,11 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.FlickThreshold, cfg => cfg.MapFrom(src => src.RightStick.FlickThreshold))
                 .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.FlickTime, cfg => cfg.MapFrom(src => src.RightStick.FlickTime))
                 .ForPath(dest => dest.RSOutputSettings.OutputSettings.FlickSettings.MinAngleThreshold, cfg => cfg.MapFrom(src => src.RightStick.FlickMinAngleThreshold))
-                .ForPath(dest => dest.RSOutCurveMode, cfg => cfg.MapFrom(src => src.RightStick.OutputCurve))
-                .ForPath(dest => dest.RSOutCurve, cfg => cfg.MapFrom(src => src.RightStick.CustomCurve))
-                .ForPath(dest => dest.SquStickInfo.RSMode, cfg => cfg.MapFrom(src => src.RightStick.IsSquareStick))
-                .ForPath(dest => dest.SquStickInfo.RSRoundness, cfg => cfg.MapFrom(src => src.RightStick.SquareStickRoundness))
-                .ForPath(dest => dest.RSRotation, cfg => cfg.MapFrom(src => src.RightStick.Rotation));
+                .ForPath(dest => dest.RSOutCurveMode, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.OutputCurve))
+                .ForPath(dest => dest.RSOutCurve, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.CustomCurve))
+                .ForPath(dest => dest.SquStickInfo.RSMode, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.IsSquareStick))
+                .ForPath(dest => dest.SquStickInfo.RSRoundness, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.SquareStickRoundness))
+                .ForPath(dest => dest.RSRotation, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.Rotation));
 
             #endregion
         }

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
@@ -133,5 +134,45 @@
                 </StackPanel>
             </Grid>
         </ContentControl>
+        <TextBlock Text="Output Curve"/>
+        <ComboBox ItemsSource="{Binding Source={StaticResource enmOutputCurve}}" SelectedItem="{Binding OutputCurve}"/>
+        <Grid IsEnabled="{Binding IsCustomCurveSelected}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding CustomCurve, Converter={StaticResource bezierCurveConverter}, UpdateSourceTrigger=LostFocus, FallbackValue='0.00, 0.00, 1.00, 1.00'}" Grid.Column="0" />
+            <Button BorderBrush="{x:Null}"  
+                    Command="{Binding ShowCustomCurveCommand}"
+                    Grid.Column="1">
+                <md:PackIcon Kind="DotsHorizontal" Width="15" Height="15" />
+            </Button>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="0">
+                        <Run>Square Stick </Run>
+                        <Run Text="{Binding SquareStickRoundness}"/>
+            </TextBlock>
+
+            <CheckBox Grid.Column="1" IsChecked="{Binding IsSquareStick}" />
+            <Slider Minimum="0" Maximum="1000" TickFrequency="1" Value="{Binding SquareStickRoundness}"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    IsEnabled="{Binding IsSquareStick}"/>
+        </Grid>
+        <TextBlock>
+            <Run>Rotation </Run>
+            <Run Text="{Binding RotationConverted}"/>
+        </TextBlock>
+        <Slider Minimum="-180" Maximum="180" IsSnapToTickEnabled="True" Value="{Binding RotationConverted}" />
     </StackPanel>
 </UserControl>

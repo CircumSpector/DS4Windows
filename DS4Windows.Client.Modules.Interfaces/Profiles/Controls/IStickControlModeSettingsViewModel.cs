@@ -21,5 +21,10 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         int YAntiDeadZone { get; set; }
         int YMaxOutput { get; set; }
         bool ForceMaxOutput { get; set; }
+        CurveMode OutputCurve { get; set; }
+        BezierCurve CustomCurve { get; set; }
+        double SquareStickRoundness { get; set; }
+        bool IsSquareStick { get; set; }
+        double Rotation { get; set; }
     }
 }
