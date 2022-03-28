@@ -191,6 +191,34 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
             set => Rotation = deviceValueConverters.RotationConvertTo(value);
         }
 
+        private int fuzz;
+        public int Fuzz
+        {
+            get => fuzz;
+            set => SetProperty(ref fuzz, value);
+        }
+
+        private bool isAntiSnapback;
+        public bool IsAntiSnapback
+        {
+            get => isAntiSnapback;
+            set => SetProperty(ref isAntiSnapback, value);
+        }
+
+        private int antiSnapbackDelta;
+        public int AntiSnapbackDelta
+        {
+            get => antiSnapbackDelta;
+            set => SetProperty(ref antiSnapbackDelta, value);
+        }
+
+        private int antiSnapbackTimeout;
+        public int AntiSnapbackTimeout
+        {
+            get => antiSnapbackTimeout;
+            set => SetProperty(ref antiSnapbackTimeout, value);
+        }
+
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);

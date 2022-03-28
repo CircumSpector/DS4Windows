@@ -26,5 +26,9 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         double SquareStickRoundness { get; set; }
         bool IsSquareStick { get; set; }
         double Rotation { get; set; }
+        int AntiSnapbackTimeout { get; set; }
+        int AntiSnapbackDelta { get; set; }
+        bool IsAntiSnapback { get; set; }
+        int Fuzz { get; set; }
     }
 }
