@@ -17,6 +17,8 @@ namespace DS4Windows.Client.Modules.Profiles
             rightStick = viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
             l2Button = viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
             r2Button = viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
+            sixAxisX = viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
+            sixAxisY = viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
             this.mapper = mapper;
         }
 
@@ -60,6 +62,20 @@ namespace DS4Windows.Client.Modules.Profiles
         {
             get => r2Button;
             private set => SetProperty(ref r2Button, value);
+        }
+
+        private ISixAxisEditViewModel sixAxisX;
+        public ISixAxisEditViewModel SixAxisX
+        {
+            get => sixAxisX;
+            private set => SetProperty(ref sixAxisX, value);
+        }
+
+        private ISixAxisEditViewModel sixAxisY;
+        public ISixAxisEditViewModel SixAxisY
+        {
+            get => sixAxisY;
+            private set => SetProperty(ref sixAxisY, value);
         }
 
         public void SetProfile(IProfile profile, bool isNew = false)
