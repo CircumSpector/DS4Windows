@@ -24,6 +24,12 @@ namespace DS4Windows.Client.Modules.Profiles
             services.AddTransient<IStickControlModeSettingsViewModel, StickControlModeSettingsViewModel>();
             services.AddTransient<IStickControlModeSettingsView, StickControlModeSettingsView>();
 
+            services.AddTransient<ITriggerButtonsEditViewModel, TriggerButtonsEditViewModel>();
+            services.AddTransient<ITriggerButtonsEditView, TriggerButtonsEditView>();
+
+            services.AddTransient<ISixAxisEditViewModel, SixAxisEditViewModel>();
+            services.AddTransient<ISixAxisEditView, SixAxisEditView>();
+
             services.AddAutoMapper(cfg => cfg.AddProfile<ProfilesAutoMapper>());
         }
 

@@ -43,6 +43,14 @@
                     <Expander HorizontalAlignment="Stretch" Header="Left Stick" Content="{Binding LeftStick.MainView}" />
                     <Border Style="{StaticResource HorizontalDividerBorder}"/>
                     <Expander HorizontalAlignment="Stretch" Header="Right Stick" Content="{Binding RightStick.MainView}" />
+                    <Border Style="{StaticResource HorizontalDividerBorder}"/>
+                    <Expander HorizontalAlignment="Stretch" Header="L2 Button" Content="{Binding L2Button.MainView}" />
+                    <Border Style="{StaticResource HorizontalDividerBorder}"/>
+                    <Expander HorizontalAlignment="Stretch" Header="R2 Button" Content="{Binding R2Button.MainView}" />
+                    <Border Style="{StaticResource HorizontalDividerBorder}"/>
+                    <Expander HorizontalAlignment="Stretch" Header="Six Axis X" Content="{Binding SixAxisX.MainView}" />
+                    <Border Style="{StaticResource HorizontalDividerBorder}"/>
+                    <Expander HorizontalAlignment="Stretch" Header="Six Axis Y" Content="{Binding SixAxisY.MainView}" />
                 </StackPanel>
             </md:Card>
         </ScrollViewer>
