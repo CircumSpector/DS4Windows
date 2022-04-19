@@ -1,4 +1,5 @@
-﻿using DS4Windows.Client.Core.ViewModel;
+﻿using DS4Windows.Client.Core;
+using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Devices.Services;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -12,7 +13,6 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
     public class StickControlModeSettingsViewModel : ViewModel<IStickControlModeSettingsViewModel>, IStickControlModeSettingsViewModel
     {
         private readonly IDeviceValueConverters deviceValueConverters;
-        private string path = $"file:///{AppContext.BaseDirectory.Replace('\\', '/')}BezierCurveEditor/index.html";
 
         public StickControlModeSettingsViewModel(IDeviceValueConverters deviceValueConverters)
         {
@@ -165,7 +165,7 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
         public RelayCommand ShowCustomCurveCommand { get; }
         private void OnShowCustomCurve()
         {
-            var processStartInfo = new ProcessStartInfo(path);
+            var processStartInfo = new ProcessStartInfo(Constants.BezierCurveEditorPath);
             processStartInfo.UseShellExecute = true;
             Process.Start(processStartInfo);
         }

@@ -85,7 +85,58 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RightStick.ControlModeSettings.Fuzz, cfg => cfg.MapFrom(src => src.RSModInfo.Fuzz))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.IsAntiSnapback, cfg => cfg.MapFrom(src => src.RSAntiSnapbackInfo.Enabled))
                 .ForPath(dest => dest.RightStick.ControlModeSettings.AntiSnapbackDelta, cfg => cfg.MapFrom(src => src.RSAntiSnapbackInfo.Delta))
-                .ForPath(dest => dest.RightStick.ControlModeSettings.AntiSnapbackTimeout, cfg => cfg.MapFrom(src => src.RSAntiSnapbackInfo.Timeout));
+                .ForPath(dest => dest.RightStick.ControlModeSettings.AntiSnapbackTimeout, cfg => cfg.MapFrom(src => src.RSAntiSnapbackInfo.Timeout))
+
+            #endregion
+
+            #region L2 Button
+                .ForPath(dest => dest.L2Button.DeadZone, cfg => cfg.MapFrom(src => src.L2ModInfo.DeadZone))
+                .ForPath(dest => dest.L2Button.AntiDeadZone, cfg => cfg.MapFrom(src => src.L2ModInfo.AntiDeadZone))
+                .ForPath(dest => dest.L2Button.MaxZone, cfg => cfg.MapFrom(src => src.L2ModInfo.MaxZone))
+                .ForPath(dest => dest.L2Button.MaxOutput, cfg => cfg.MapFrom(src => src.L2ModInfo.MaxOutput))
+                .ForPath(dest => dest.L2Button.Sensitivity, cfg => cfg.MapFrom(src => src.L2Sens))
+                .ForPath(dest => dest.L2Button.HipFireDelay, cfg => cfg.MapFrom(src => src.L2OutputSettings.HipFireMs))
+                .ForPath(dest => dest.L2Button.OutputCurve, cfg => cfg.MapFrom(src => src.L2OutCurveMode))
+                .ForPath(dest => dest.L2Button.CustomCurve, cfg => cfg.MapFrom(src => src.L2OutCurve))
+                .ForPath(dest => dest.L2Button.TwoStageTriggerMode, cfg => cfg.MapFrom(src => src.L2OutputSettings.TwoStageMode))
+                .ForPath(dest => dest.L2Button.TriggerEffect, cfg => cfg.MapFrom(src => src.L2OutputSettings.TriggerEffect))
+
+            #endregion
+
+            #region R2 Button
+
+                .ForPath(dest => dest.R2Button.DeadZone, cfg => cfg.MapFrom(src => src.R2ModInfo.DeadZone))
+                .ForPath(dest => dest.R2Button.AntiDeadZone, cfg => cfg.MapFrom(src => src.R2ModInfo.AntiDeadZone))
+                .ForPath(dest => dest.R2Button.MaxZone, cfg => cfg.MapFrom(src => src.R2ModInfo.MaxZone))
+                .ForPath(dest => dest.R2Button.MaxOutput, cfg => cfg.MapFrom(src => src.R2ModInfo.MaxOutput))
+                .ForPath(dest => dest.R2Button.Sensitivity, cfg => cfg.MapFrom(src => src.R2Sens))
+                .ForPath(dest => dest.R2Button.HipFireDelay, cfg => cfg.MapFrom(src => src.R2OutputSettings.HipFireMs))
+                .ForPath(dest => dest.R2Button.OutputCurve, cfg => cfg.MapFrom(src => src.R2OutCurveMode))
+                .ForPath(dest => dest.R2Button.CustomCurve, cfg => cfg.MapFrom(src => src.R2OutCurve))
+                .ForPath(dest => dest.R2Button.TwoStageTriggerMode, cfg => cfg.MapFrom(src => src.R2OutputSettings.TwoStageMode))
+                .ForPath(dest => dest.R2Button.TriggerEffect, cfg => cfg.MapFrom(src => src.R2OutputSettings.TriggerEffect))
+
+            #endregion
+
+            #region SixAxisX
+                
+                .ForPath(dest => dest.SixAxisX.DeadZone, cfg => cfg.MapFrom(src => src.SXDeadZone))
+                .ForPath(dest => dest.SixAxisX.AntiDeadZone, cfg => cfg.MapFrom(src => src.SXAntiDeadZone))
+                .ForPath(dest => dest.SixAxisX.MaxZone, cfg => cfg.MapFrom(src => src.SXMaxZone))
+                .ForPath(dest => dest.SixAxisX.Sensitivity, cfg => cfg.MapFrom(src => src.SXSens))
+                .ForPath(dest => dest.SixAxisX.OutputCurve, cfg => cfg.MapFrom(src => src.SXOutCurveMode))
+                .ForPath(dest => dest.SixAxisX.CustomCurve, cfg => cfg.MapFrom(src => src.SXOutCurve))
+
+            #endregion
+
+            #region SixAxisZ
+
+                .ForPath(dest => dest.SixAxisZ.DeadZone, cfg => cfg.MapFrom(src => src.SZDeadZone))
+                .ForPath(dest => dest.SixAxisZ.AntiDeadZone, cfg => cfg.MapFrom(src => src.SZAntiDeadZone))
+                .ForPath(dest => dest.SixAxisZ.MaxZone, cfg => cfg.MapFrom(src => src.SZMaxZone))
+                .ForPath(dest => dest.SixAxisZ.Sensitivity, cfg => cfg.MapFrom(src => src.SZSens))
+                .ForPath(dest => dest.SixAxisZ.OutputCurve, cfg => cfg.MapFrom(src => src.SZOutCurveMode))
+                .ForPath(dest => dest.SixAxisZ.CustomCurve, cfg => cfg.MapFrom(src => src.SZOutCurve));
 
             #endregion
 
@@ -158,7 +209,59 @@ namespace DS4Windows.Client.Modules.Profiles
                 .ForPath(dest => dest.RSModInfo.Fuzz, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.Fuzz))
                 .ForPath(dest => dest.RSAntiSnapbackInfo.Enabled, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.IsAntiSnapback))
                 .ForPath(dest => dest.RSAntiSnapbackInfo.Delta, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.AntiSnapbackDelta))
-                .ForPath(dest => dest.RSAntiSnapbackInfo.Timeout, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.AntiSnapbackTimeout));
+                .ForPath(dest => dest.RSAntiSnapbackInfo.Timeout, cfg => cfg.MapFrom(src => src.RightStick.ControlModeSettings.AntiSnapbackTimeout))
+
+            #endregion
+
+            #region L2 Button
+
+                .ForPath(dest => dest.L2ModInfo.DeadZone, cfg => cfg.MapFrom(src => src.L2Button.DeadZone))
+                .ForPath(dest => dest.L2ModInfo.AntiDeadZone, cfg => cfg.MapFrom(src => src.L2Button.AntiDeadZone))
+                .ForPath(dest => dest.L2ModInfo.MaxZone, cfg => cfg.MapFrom(src => src.L2Button.MaxZone))
+                .ForPath(dest => dest.L2ModInfo.MaxOutput, cfg => cfg.MapFrom(src => src.L2Button.MaxOutput))
+                .ForPath(dest => dest.L2Sens, cfg => cfg.MapFrom(src => src.L2Button.Sensitivity))
+                .ForPath(dest => dest.L2OutputSettings.HipFireMs, cfg => cfg.MapFrom(src => src.L2Button.HipFireDelay))
+                .ForPath(dest => dest.L2OutCurveMode, cfg => cfg.MapFrom(src => src.L2Button.OutputCurve))
+                .ForPath(dest => dest.L2OutCurve, cfg => cfg.MapFrom(src => src.L2Button.CustomCurve))
+                .ForPath(dest => dest.L2OutputSettings.TwoStageMode, cfg => cfg.MapFrom(src => src.L2Button.TwoStageTriggerMode))
+                .ForPath(dest => dest.L2OutputSettings.TriggerEffect, cfg => cfg.MapFrom(src => src.L2Button.TriggerEffect))
+
+            #endregion
+
+            #region R2 Button
+
+                .ForPath(dest => dest.R2ModInfo.DeadZone, cfg => cfg.MapFrom(src => src.R2Button.DeadZone))
+                .ForPath(dest => dest.R2ModInfo.AntiDeadZone, cfg => cfg.MapFrom(src => src.R2Button.AntiDeadZone))
+                .ForPath(dest => dest.R2ModInfo.MaxZone, cfg => cfg.MapFrom(src => src.R2Button.MaxZone))
+                .ForPath(dest => dest.R2ModInfo.MaxOutput, cfg => cfg.MapFrom(src => src.R2Button.MaxOutput))
+                .ForPath(dest => dest.R2Sens, cfg => cfg.MapFrom(src => src.R2Button.Sensitivity))
+                .ForPath(dest => dest.R2OutputSettings.HipFireMs, cfg => cfg.MapFrom(src => src.R2Button.HipFireDelay))
+                .ForPath(dest => dest.R2OutCurveMode, cfg => cfg.MapFrom(src => src.R2Button.OutputCurve))
+                .ForPath(dest => dest.R2OutCurve, cfg => cfg.MapFrom(src => src.R2Button.CustomCurve))
+                .ForPath(dest => dest.R2OutputSettings.TwoStageMode, cfg => cfg.MapFrom(src => src.R2Button.TwoStageTriggerMode))
+                .ForPath(dest => dest.R2OutputSettings.TriggerEffect, cfg => cfg.MapFrom(src => src.R2Button.TriggerEffect))
+
+            #endregion
+
+            #region SixAxisX
+                
+                .ForPath(dest => dest.SXDeadZone, cfg => cfg.MapFrom(src => src.SixAxisX.DeadZone))
+                .ForPath(dest => dest.SXAntiDeadZone, cfg => cfg.MapFrom(src => src.SixAxisX.AntiDeadZone))
+                .ForPath(dest => dest.SXMaxZone, cfg => cfg.MapFrom(src => src.SixAxisX.MaxZone))
+                .ForPath(dest => dest.SXSens, cfg => cfg.MapFrom(src => src.SixAxisX.Sensitivity))
+                .ForPath(dest => dest.SXOutCurveMode, cfg => cfg.MapFrom(src => src.SixAxisX.OutputCurve))
+                .ForPath(dest => dest.SXOutCurve, cfg => cfg.MapFrom(src => src.SixAxisX.CustomCurve))
+
+            #endregion
+
+            #region SixAxisZ
+
+                .ForPath(dest => dest.SZDeadZone, cfg => cfg.MapFrom(src => src.SixAxisZ.DeadZone))
+                .ForPath(dest => dest.SZAntiDeadZone, cfg => cfg.MapFrom(src => src.SixAxisZ.AntiDeadZone))
+                .ForPath(dest => dest.SZMaxZone, cfg => cfg.MapFrom(src => src.SixAxisZ.MaxZone))
+                .ForPath(dest => dest.SZSens, cfg => cfg.MapFrom(src => src.SixAxisZ.Sensitivity))
+                .ForPath(dest => dest.SZOutCurveMode, cfg => cfg.MapFrom(src => src.SixAxisZ.OutputCurve))
+                .ForPath(dest => dest.SZOutCurve, cfg => cfg.MapFrom(src => src.SixAxisZ.CustomCurve));
 
             #endregion
         }
