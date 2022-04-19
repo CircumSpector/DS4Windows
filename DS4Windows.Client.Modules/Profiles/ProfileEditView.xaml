@@ -50,7 +50,7 @@
                     <Border Style="{StaticResource HorizontalDividerBorder}"/>
                     <Expander HorizontalAlignment="Stretch" Header="Six Axis X" Content="{Binding SixAxisX.MainView}" />
                     <Border Style="{StaticResource HorizontalDividerBorder}"/>
-                    <Expander HorizontalAlignment="Stretch" Header="Six Axis Y" Content="{Binding SixAxisY.MainView}" />
+                    <Expander HorizontalAlignment="Stretch" Header="Six Axis Z" Content="{Binding SixAxisZ.MainView}" />
                 </StackPanel>
             </md:Card>
         </ScrollViewer>

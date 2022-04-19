@@ -25,6 +25,18 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
+            <ObjectDataProvider x:Key="enmTwoStageMode" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="common:TwoStageTriggerMode"></x:Type>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
+            <ObjectDataProvider x:Key="enmTriggerEffect" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="common:TriggerEffects"></x:Type>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
             <md:BooleanToVisibilityConverter x:Key="trueIsVis" TrueValue="Visible" FalseValue="Collapsed"/>
             <md:BooleanToVisibilityConverter x:Key="falseIsVis" TrueValue="Collapsed" FalseValue="Visible"/>
 
