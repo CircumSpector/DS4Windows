@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.NetworkInformation;
 using DS4Windows.Shared.Devices.HID.Devices;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types;
 using PInvoke;
 
 namespace DS4Windows.Shared.Devices.HID;
@@ -16,21 +17,30 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <param name="services">The <see cref="IServiceProvider" />.</param>
     /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
     public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services)
+        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services, OutDevice outDevice)
     {
+        CompatibleHidDevice device;
         switch (deviceType)
         {
             case InputDeviceType.DualShock4:
-                return new DualShock4CompatibleHidDevice(deviceType, source, featureSet, services);
+                device = new DualShock4CompatibleHidDevice(deviceType, source, featureSet, services);
+                break;
             case InputDeviceType.DualSense:
-                return new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services);
+                device = new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services);
+                break;
             case InputDeviceType.SwitchPro:
-                return new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services);
+                device = new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services);
+                break;
             case InputDeviceType.JoyConL:
             case InputDeviceType.JoyConR:
-                return new JoyConCompatibleHidDevice(deviceType, source, featureSet, services);
+                device = new JoyConCompatibleHidDevice(deviceType, source, featureSet, services);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
         }
+
+        device.OutDevice = outDevice;
+
+        return device;
     }
 }

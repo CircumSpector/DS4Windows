@@ -40,5 +40,6 @@
     <ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />
     <ProjectReference Include="..\Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Emulator.ViGEmGen1\DS4Windows.Shared.Emulator.ViGEmGen1.csproj" />
   </ItemGroup>
 </Project>

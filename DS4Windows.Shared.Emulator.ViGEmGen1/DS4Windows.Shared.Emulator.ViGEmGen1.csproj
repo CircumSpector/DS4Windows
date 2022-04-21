@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
+    <ProjectReference Include="..\Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using DS4Windows.Shared.Common.Telemetry;
+using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Devices.HID;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Devices.Services
@@ -117,15 +119,19 @@ namespace DS4Windows.Shared.Devices.Services
         private readonly ILogger<ControllersEnumeratorService> logger;
 
         private readonly IServiceProvider serviceProvider;
+        private readonly IOutputSlotManager outputSlotManager;
 
         private readonly ObservableCollection<ICompatibleHidDevice> supportedDevices;
 
+
         public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-            IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider)
+            IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider,
+            IOutputSlotManager outputSlotManager)
         {
             this.logger = logger;
             this.enumeratorService = enumeratorService;
             this.serviceProvider = serviceProvider;
+            this.outputSlotManager = outputSlotManager;
 
             enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
             enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
@@ -189,12 +195,7 @@ namespace DS4Windows.Shared.Devices.Services
                 //
                 // Create new special input device
                 // 
-                var device = CompatibleHidDevice.CreateFrom(
-                    deviceMeta.DeviceType,
-                    hidDevice,
-                    deviceMeta.FeatureSet,
-                    serviceProvider
-                );
+                var device = CreateInputAndOutputDevices(hidDevice, deviceMeta);
 
                 supportedDevices.Add(device);
 
@@ -240,12 +241,7 @@ namespace DS4Windows.Shared.Devices.Services
             //
             // Create new special input device
             // 
-            var device = CompatibleHidDevice.CreateFrom(
-                deviceMeta.DeviceType,
-                hidDevice,
-                deviceMeta.FeatureSet,
-                serviceProvider
-            );
+            var device = CreateInputAndOutputDevices(hidDevice, deviceMeta);
 
             if (!supportedDevices.Contains(device))
                 supportedDevices.Add(device);
@@ -265,13 +261,35 @@ namespace DS4Windows.Shared.Devices.Services
         {
             logger.LogInformation("Compatible device {Device} got removed", hidDevice);
 
+            if (hidDevice.IsVirtual) return;
+
             var device = supportedDevices.First(d =>
                 d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
 
             ControllerRemoved?.Invoke(device);
 
             if (supportedDevices.Contains(device))
+            {
+                ((CompatibleHidDevice)device).OutDevice.Disconnect();
+
                 supportedDevices.Remove(device);
+            }
+        }
+
+        private CompatibleHidDevice CreateInputAndOutputDevices(HidDevice hidDevice, VidPidInfo deviceMeta)
+        {
+            var outDevice = outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
+            outDevice.Connect();
+
+            var device = CompatibleHidDevice.CreateFrom(
+                deviceMeta.DeviceType,
+                hidDevice,
+                deviceMeta.FeatureSet,
+                serviceProvider,
+                outDevice
+            );
+
+            return device;
         }
     }
 }
