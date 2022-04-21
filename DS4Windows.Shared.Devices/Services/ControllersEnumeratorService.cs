@@ -6,6 +6,7 @@ using System.Linq;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Devices.HID;
+using DS4Windows.Shared.Devices.Output;
 using DS4Windows.Shared.Emulator.ViGEmGen1.Types;
 using Microsoft.Extensions.Logging;
 
@@ -122,6 +123,7 @@ namespace DS4Windows.Shared.Devices.Services
         private readonly IOutputSlotManager outputSlotManager;
 
         private readonly ObservableCollection<ICompatibleHidDevice> supportedDevices;
+        private readonly Dictionary<string, IOutDevice> outDevices;
 
 
         public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
@@ -137,6 +139,7 @@ namespace DS4Windows.Shared.Devices.Services
             enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
 
             supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
+            outDevices = new Dictionary<string, IOutDevice>();
 
             SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(supportedDevices);
         }
@@ -270,26 +273,45 @@ namespace DS4Windows.Shared.Devices.Services
 
             if (supportedDevices.Contains(device))
             {
-                ((CompatibleHidDevice)device).OutDevice.Disconnect();
+                device.InputReportAvailable -= Device_InputReportAvailable;
 
+                if (outDevices.ContainsKey(hidDevice.InstanceId))
+                {
+                    var outDevice = outDevices[hidDevice.InstanceId];
+                    outDevice.Disconnect();
+                    outDevices.Remove(hidDevice.InstanceId);
+                }
+                
                 supportedDevices.Remove(device);
             }
         }
 
         private CompatibleHidDevice CreateInputAndOutputDevices(HidDevice hidDevice, VidPidInfo deviceMeta)
         {
-            var outDevice = outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
-            outDevice.Connect();
-
             var device = CompatibleHidDevice.CreateFrom(
                 deviceMeta.DeviceType,
                 hidDevice,
                 deviceMeta.FeatureSet,
-                serviceProvider,
-                outDevice
+                serviceProvider
             );
 
+            var outDevice = outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
+            outDevice.Connect();
+            if (!outDevices.ContainsKey(hidDevice.InstanceId))
+            {
+                outDevices.Add(hidDevice.InstanceId, outDevice);
+            }
+
+            device.InputReportAvailable += Device_InputReportAvailable;
+            device.IsInputReportAvailableInvoked = true;
+
             return device;
+        }
+
+        private void Device_InputReportAvailable(ICompatibleHidDevice device, CompatibleHidDeviceInputReport report)
+        {
+            var outDevice = outDevices[device.InstanceId];
+            outDevice.ConvertAndSendReport(report, 0);
         }
     }
 }

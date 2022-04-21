@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using DS4Windows.Shared.Devices.HID;
+using DS4Windows.Shared.Devices.Output;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
-namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types
+namespace DS4Windows.Shared.Devices.Output
 {
     public class Xbox360OutDevice : OutDevice
     {

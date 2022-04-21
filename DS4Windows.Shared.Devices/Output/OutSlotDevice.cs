@@ -1,32 +1,13 @@
 ﻿using System;
 using DS4Windows.Shared.Common.Types;
-using DS4Windows.Shared.Emulator.ViGEmGen1.Types.Legacy;
 
-namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types
+namespace DS4Windows.Shared.Devices.Output
 {
-    public class OutSlotDevice
+    public class OutSlotDevice : IOutSlotDevice
     {
-        public enum AttachedStatus : uint
-        {
-            UnAttached = 0,
-            Attached = 1
-        }
-
-        public enum InputBound : uint
-        {
-            Unbound = 0,
-            Bound = 1
-        }
-
-        public enum ReserveStatus : uint
-        {
-            Dynamic = 0,
-            Permanent = 1
-        }
-
-        private InputBound inputBound;
+        private IOutSlotDevice.InputBound inputBound;
         private OutputDeviceType permanentType;
-        private ReserveStatus reserveStatus;
+        private IOutSlotDevice.ReserveStatus reserveStatus;
 
         public OutSlotDevice(int idx)
         {
@@ -39,17 +20,17 @@ namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types
         /// <summary>
         ///     Connection status of virtual output controller
         /// </summary>
-        public AttachedStatus CurrentAttachedStatus { get; private set; }
+        public IOutSlotDevice.AttachedStatus CurrentAttachedStatus { get; private set; }
 
         /// <summary>
         ///     Reference to output controller
         /// </summary>
-        public OutDevice OutputDevice { get; private set; }
+        public IOutDevice OutputDevice { get; private set; }
 
         /// <summary>
         ///     Flag stating the connection preference of an output controller
         /// </summary>
-        public ReserveStatus CurrentReserveStatus
+        public IOutSlotDevice.ReserveStatus CurrentReserveStatus
         {
             get => reserveStatus;
             set
@@ -63,7 +44,7 @@ namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types
         /// <summary>
         ///     Whether an input controller is associated with the slot
         /// </summary>
-        public InputBound CurrentInputBound
+        public IOutSlotDevice.InputBound CurrentInputBound
         {
             get => inputBound;
             set
@@ -100,15 +81,15 @@ namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types
 
         private void OutSlotDevice_CurrentReserveStatusChanged(object sender, EventArgs e)
         {
-            if (reserveStatus == ReserveStatus.Dynamic)
+            if (reserveStatus == IOutSlotDevice.ReserveStatus.Dynamic)
                 PermanentType = OutputDeviceType.None;
             else if (CurrentType != OutputDeviceType.None) PermanentType = CurrentType;
         }
 
-        public void AttachedDevice(OutDevice outputDevice, OutputDeviceType contType)
+        public void AttachedDevice(IOutDevice outputDevice, OutputDeviceType contType)
         {
             OutputDevice = outputDevice;
-            CurrentAttachedStatus = AttachedStatus.Attached;
+            CurrentAttachedStatus = IOutSlotDevice.AttachedStatus.Attached;
             CurrentType = contType;
             //desiredType = contType;
         }
@@ -118,10 +99,10 @@ namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types
             if (OutputDevice != null)
             {
                 OutputDevice = null;
-                CurrentAttachedStatus = AttachedStatus.UnAttached;
+                CurrentAttachedStatus = IOutSlotDevice.AttachedStatus.UnAttached;
                 CurrentType = OutputDeviceType.None;
-                CurrentInputBound = InputBound.Unbound;
-                if (reserveStatus == ReserveStatus.Dynamic) PermanentType = OutputDeviceType.None;
+                CurrentInputBound = IOutSlotDevice.InputBound.Unbound;
+                if (reserveStatus == IOutSlotDevice.ReserveStatus.Dynamic) PermanentType = OutputDeviceType.None;
             }
         }
 
