@@ -326,6 +326,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         var entry = new HidDevice
         {
             Path = symLink,
+            IsVirtual = IsVirtualDevice(device, true),
             InstanceId = device.InstanceId.ToUpper()
         };
 

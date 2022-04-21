@@ -7,6 +7,7 @@ using DS4Windows.Shared.Devices.Util;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nefarius.ViGEm.Client;
 
 namespace DS4Windows.Shared.Devices;
 
@@ -21,6 +22,12 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
         services.AddSingleton<IDeviceValueConverters, DeviceValueConverters>();
+        services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
+
+        //
+        // ViGEm Client (Gen1) service
+        // 
+        services.AddSingleton<ViGEmClient>();
 
         services.AddSingleton<DeviceNotificationListener>();
         services.AddSingleton<IDeviceNotificationListener>(provider =>

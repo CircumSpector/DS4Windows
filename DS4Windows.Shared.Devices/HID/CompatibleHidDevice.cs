@@ -8,6 +8,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Util;
+using DS4Windows.Shared.Emulator.ViGEmGen1.Types;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -32,6 +33,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
     protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(Common.Core.Constants.MaxQueuedInputReports);
+    protected readonly Channel<CompatibleHidDeviceInputReport> OutputReportChannel = Channel.CreateBounded<CompatibleHidDeviceInputReport>(Common.Core.Constants.MaxQueuedInputReports);
 
     private ConnectionType? connection;
 
@@ -48,6 +50,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     private Task inputReportProcessor;
 
     private Task inputReportReader;
+
+    private Task outputReportReader;
 
     private CancellationTokenSource inputReportToken = new();
 
@@ -219,6 +223,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// <param name="inputReport">The raw report buffer.</param>
     protected abstract void ProcessInputReport(byte[] inputReport);
 
+    public OutDevice OutDevice { get; set; }
+
     /// <summary>
     ///     Start the asynchronous input report reading logic.
     /// </summary>
@@ -229,6 +235,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
         inputReportReader = Task.Run(ReadInputReportLoop, inputReportToken.Token);
         inputReportProcessor = Task.Run(ProcessInputReportLoop, inputReportToken.Token);
+
+        outputReportReader = Task.Run(ReadOutputReportLoop, inputReportToken.Token);
     }
 
     /// <summary>
@@ -238,7 +246,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     {
         inputReportToken.Cancel();
 
-        Task.WaitAll(inputReportReader, inputReportProcessor);
+        Task.WaitAll(inputReportReader, inputReportProcessor, outputReportReader);
     }
 
     /// <summary>
@@ -282,6 +290,9 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
                 if (IsInputReportAvailableInvoked)
                     InputReportAvailable?.Invoke(this, InputReport);
+
+
+                await OutputReportChannel.Writer.WriteAsync(InputReport, inputReportToken.Token);
 
                 counter++;
             }
@@ -329,6 +340,44 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                 await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
 
                 counter++;
+            }
+        }
+        catch (Win32Exception win32)
+        {
+            if (win32.NativeErrorCode != Win32ErrorCode.ERROR_DEVICE_NOT_CONNECTED) throw;
+
+            inputReportToken.Cancel();
+
+            Disconnected?.Invoke(this);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Fatal failure in input report reading");
+        }
+    }
+
+    protected async void ReadOutputReportLoop()
+    {
+        Logger.LogDebug("Started output report reading thread");
+
+        Stopwatch sw = new();
+
+        var counter = 0;
+
+        try
+        {
+            sw.Start();
+
+            while (!inputReportToken.IsCancellationRequested)
+            {
+                using var activity = CoreActivity.StartActivity(
+                    $"{nameof(CompatibleHidDevice)}:{nameof(ReadOutputReportLoop)}",
+                    ActivityKind.Producer, string.Empty);
+
+                if (!await OutputReportChannel.Reader.WaitToReadAsync()) continue;
+
+                var inputReport = await OutputReportChannel.Reader.ReadAsync();
+                OutDevice.ConvertAndSendReport(inputReport);
             }
         }
         catch (Win32Exception win32)
