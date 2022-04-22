@@ -1,8 +1,8 @@
 ﻿using DS4Windows.Shared.Devices.HID;
 
-namespace DS4Windows.Shared.Emulator.ViGEmGen1.Types
+namespace DS4Windows.Shared.Devices.Output
 {
-    public abstract class OutDevice
+    public abstract class OutDevice : IOutDevice
     {
         protected bool IsConnected;
 

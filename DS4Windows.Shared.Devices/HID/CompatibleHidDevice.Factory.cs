@@ -17,7 +17,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <param name="services">The <see cref="IServiceProvider" />.</param>
     /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
     public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services, OutDevice outDevice)
+        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services)
     {
         CompatibleHidDevice device;
         switch (deviceType)
@@ -38,8 +38,6 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
             default:
                 throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
         }
-
-        device.OutDevice = outDevice;
 
         return device;
     }
