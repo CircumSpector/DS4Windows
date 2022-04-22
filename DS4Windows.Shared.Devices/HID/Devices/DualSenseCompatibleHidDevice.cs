@@ -24,11 +24,16 @@ namespace DS4Windows.Shared.Devices.HID.Devices
 
             Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
+            var inputReportSize = Capabilities.InputReportByteLength;
+
+            InputReportArray = new byte[inputReportSize];
+            InputReportBuffer = Marshal.AllocHGlobal(inputReportSize);
+
             if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
             {
                 ReportStartOffset = 0;
-                InputReportArray = new byte[UsbInputReportSize];
-                InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
+                //InputReportArray = new byte[UsbInputReportSize];
+                //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
 
                 //
                 // TODO: finish me
@@ -37,8 +42,8 @@ namespace DS4Windows.Shared.Devices.HID.Devices
             else
             {
                 ReportStartOffset = 1;
-                InputReportArray = new byte[BthInputReportSize];
-                InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
+                //InputReportArray = new byte[BthInputReportSize];
+                //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
             }
 
             StartInputReportReader();
