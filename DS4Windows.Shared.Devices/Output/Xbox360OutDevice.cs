@@ -51,10 +51,10 @@ namespace DS4Windows.Shared.Devices.Output
             cont.SetSliderValue(Xbox360Slider.LeftTrigger, state.LeftTrigger);
             cont.SetSliderValue(Xbox360Slider.RightTrigger, state.RightTrigger);
 
-            cont.SetAxisValue(Xbox360Axis.LeftThumbX, state.LeftThumbX);
-            cont.SetAxisValue(Xbox360Axis.LeftThumbY, state.LeftThumbY);
-            cont.SetAxisValue(Xbox360Axis.RightThumbX, state.RightThumbX);
-            cont.SetAxisValue(Xbox360Axis.RightThumbY, state.RightThumbY);
+            cont.SetAxisValue(Xbox360Axis.LeftThumbX, AxisScale(state.LeftThumbX, false));
+            cont.SetAxisValue(Xbox360Axis.LeftThumbY, AxisScale(state.LeftThumbY, true));
+            cont.SetAxisValue(Xbox360Axis.RightThumbX, AxisScale(state.RightThumbX, false));
+            cont.SetAxisValue(Xbox360Axis.RightThumbY, AxisScale(state.RightThumbY, true));
 
             cont.SubmitReport();
         }
@@ -100,6 +100,22 @@ namespace DS4Windows.Shared.Devices.Output
             {
                 cont.FeedbackReceived -= handler;
                 forceFeedbacksDict.Remove(inIdx);
+            }
+        }
+
+        public short AxisScale(int Value, bool Flip)
+        {
+            unchecked
+            {
+                Value -= 0x80;
+                var recipRun = Value >= 0 ? recipInputPosResolution : recipInputNegResolution;
+
+                var temp = Value * recipRun;
+                //if (Flip) temp = (temp - 0.5f) * -1.0f + 0.5f;
+                if (Flip) temp = -temp;
+                temp = (temp + 1.0f) * 0.5f;
+
+                return (short)(temp * outputResolution + -32768);
             }
         }
     }
