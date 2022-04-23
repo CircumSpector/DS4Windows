@@ -39,6 +39,9 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         AllowSynchronousContinuations = true
     });
   
+    /// <summary>
+    ///     The connection type (wire, wireless).
+    /// </summary>
     private ConnectionType? connection;
 
     /// <summary>
