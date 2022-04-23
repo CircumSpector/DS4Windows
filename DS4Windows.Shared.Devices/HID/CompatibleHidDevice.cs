@@ -32,7 +32,12 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(Common.Core.Constants.MaxQueuedInputReports);
+    protected readonly Channel<byte[]> InputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
+    {
+        SingleReader = true,
+        SingleWriter = true,
+        AllowSynchronousContinuations = true
+    });
   
     private ConnectionType? connection;
 
@@ -46,9 +51,9 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// </summary>
     protected IntPtr InputReportBuffer = IntPtr.Zero;
 
-    private Task inputReportProcessor;
+    private Thread inputReportProcessor;
 
-    private Task inputReportReader;
+    private Thread inputReportReader;
 
     private CancellationTokenSource inputReportToken = new();
 
@@ -228,8 +233,14 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         if (inputReportToken.Token.IsCancellationRequested)
             inputReportToken = new CancellationTokenSource();
 
-        inputReportReader = Task.Run(ReadInputReportLoop, inputReportToken.Token);
-        inputReportProcessor = Task.Run(ProcessInputReportLoop, inputReportToken.Token);
+        inputReportReader = new Thread(ReadInputReportLoop);
+        inputReportReader.Priority = ThreadPriority.AboveNormal;
+        inputReportReader.IsBackground = true;
+        inputReportReader.Start();
+        inputReportProcessor = new Thread(ProcessInputReportLoop);
+        inputReportReader.Priority = ThreadPriority.AboveNormal;
+        inputReportReader.IsBackground = true;
+        inputReportProcessor.Start();
     }
 
     /// <summary>
@@ -239,8 +250,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     {
         inputReportToken.Cancel();
 
-        Task.WaitAll(inputReportReader, inputReportProcessor);
-    }
+        inputReportReader.Join();
+        inputReportProcessor.Join();}
 
     /// <summary>
     ///     Continuous input report processing thread.
@@ -271,8 +282,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     counter = 0;
                     sw.Restart();
                 }
-
-                if (!await InputReportChannel.Reader.WaitToReadAsync()) continue;
 
                 var buffer = await InputReportChannel.Reader.ReadAsync();
 

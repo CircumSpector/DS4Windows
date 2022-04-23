@@ -20,8 +20,8 @@
 
             DPad = (DPadDirection)(inputReport[8 + offset] & 0x0F);
 
-            LeftThumb = (inputReport[9 + offset] & (1 << 7)) != 0;
-            RightThumb = (inputReport[9 + offset] & (1 << 6)) != 0;
+            LeftThumb = (inputReport[9 + offset] & (1 << 6)) != 0;
+            RightThumb = (inputReport[9 + offset] & (1 << 7)) != 0;
             Options = (inputReport[9 + offset] & (1 << 5)) != 0;
             Share = (inputReport[9 + offset] & (1 << 4)) != 0;
             RightTriggerButton = (inputReport[9 + offset] & (1 << 3)) != 0;
