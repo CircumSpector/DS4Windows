@@ -303,7 +303,6 @@ namespace DS4Windows.Shared.Devices.Services
             }
 
             device.InputReportAvailable += Device_InputReportAvailable;
-            device.IsInputReportAvailableInvoked = true;
 
             return device;
         }

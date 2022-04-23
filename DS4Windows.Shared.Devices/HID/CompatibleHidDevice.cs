@@ -136,7 +136,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// <summary>
     ///     Gets whether <see cref="InputReportAvailable" /> will be invoked in the processing loop.
     /// </summary>
-    public bool IsInputReportAvailableInvoked { get; set; }
+    public bool IsInputReportAvailableInvoked { get; set; } = true;
 
     /// <summary>
     ///     The parsed input report. Depends on device type.
