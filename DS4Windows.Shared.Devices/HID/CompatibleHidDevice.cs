@@ -284,6 +284,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     ActivityKind.Consumer, string.Empty);
 
                 activity?.SetTag(nameof(ReportsPerSecondProcessed), ReportsPerSecondProcessed);
+                if (InputReportChannel.Reader.CanCount)
+                    activity?.SetTag("Reader.Count", InputReportChannel.Reader.Count);
 
                 if (sw.Elapsed >= TimeSpan.FromSeconds(1))
                 {
@@ -333,6 +335,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     ActivityKind.Producer, string.Empty);
 
                 activity?.SetTag(nameof(ReportsPerSecondRead), ReportsPerSecondRead);
+                if (InputReportChannel.Reader.CanCount)
+                    activity?.SetTag("Reader.Count", InputReportChannel.Reader.Count);
 
                 if (sw.Elapsed >= TimeSpan.FromSeconds(1))
                 {
