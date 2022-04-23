@@ -278,9 +278,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     counter = 0;
                     sw.Restart();
                 }
-
-                if (!await InputReportChannel.Reader.WaitToReadAsync()) continue;
-
+                
                 var buffer = await InputReportChannel.Reader.ReadAsync();
 
                 //
