@@ -50,7 +50,8 @@ namespace DS4Windows.Shared.Devices.HID.Devices
         {
             if (Connection == ConnectionType.SonyWirelessAdapter && (inputReport[31] & 0x04) != 0)
             {
-                
+                // TODO: implement me!
+
                 return;
             }
 
