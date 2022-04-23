@@ -233,13 +233,18 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         if (inputReportToken.Token.IsCancellationRequested)
             inputReportToken = new CancellationTokenSource();
 
-        inputReportReader = new Thread(ReadInputReportLoop);
-        inputReportReader.Priority = ThreadPriority.AboveNormal;
-        inputReportReader.IsBackground = true;
+        inputReportReader = new Thread(ReadInputReportLoop)
+        {
+            Priority = ThreadPriority.AboveNormal,
+            IsBackground = true
+        };
         inputReportReader.Start();
-        inputReportProcessor = new Thread(ProcessInputReportLoop);
-        inputReportReader.Priority = ThreadPriority.AboveNormal;
-        inputReportReader.IsBackground = true;
+
+        inputReportProcessor = new Thread(ProcessInputReportLoop)
+        {
+            Priority = ThreadPriority.AboveNormal,
+            IsBackground = true
+        };
         inputReportProcessor.Start();
     }
 
