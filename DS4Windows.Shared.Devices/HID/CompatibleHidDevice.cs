@@ -32,7 +32,12 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    protected readonly Channel<byte[]> InputReportChannel = Channel.CreateBounded<byte[]>(Common.Core.Constants.MaxQueuedInputReports);
+    protected readonly Channel<byte[]> InputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
+    {
+        SingleReader = true,
+        SingleWriter = true,
+        AllowSynchronousContinuations = true
+    });
   
     private ConnectionType? connection;
 
@@ -228,8 +233,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         if (inputReportToken.Token.IsCancellationRequested)
             inputReportToken = new CancellationTokenSource();
 
-        inputReportReader = Task.Run(ReadInputReportLoop, inputReportToken.Token);
-        inputReportProcessor = Task.Run(ProcessInputReportLoop, inputReportToken.Token);
+        inputReportReader = new Task(ReadInputReportLoop, TaskCreationOptions.LongRunning);
+        inputReportReader.Start();
+        inputReportProcessor = new Task(ProcessInputReportLoop, TaskCreationOptions.LongRunning);
+        inputReportProcessor.Start();
     }
 
     /// <summary>
