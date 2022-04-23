@@ -256,7 +256,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         inputReportToken.Cancel();
 
         inputReportReader.Join();
-        inputReportProcessor.Join();}
+        inputReportProcessor.Join();
+    }
 
     /// <summary>
     ///     Continuous input report processing thread.
