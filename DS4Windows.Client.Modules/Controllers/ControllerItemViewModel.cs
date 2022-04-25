@@ -79,7 +79,10 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             get => currentColor;
             set => SetProperty(ref currentColor, value);
-        } 
+        }
+
+        public string InstanceId { get; set; }
+        public string ParentInstance { get; set; }
 
         #endregion
 

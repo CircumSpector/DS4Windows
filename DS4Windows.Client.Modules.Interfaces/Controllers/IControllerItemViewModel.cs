@@ -22,6 +22,8 @@ namespace DS4Windows.Client.Modules.Controllers
         Guid SelectedProfileId { get; set; }
 
         SolidColorBrush CurrentColor { get; set; }
+        string InstanceId { get; set; }
+        string ParentInstance { get; set; }
 
         void SetDevice(ICompatibleHidDevice device);
     }
