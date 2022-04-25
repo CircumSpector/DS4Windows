@@ -23,7 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
     <PackageReference Include="MaterialDesignColors" Version="2.0.5" />
     <PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
     <PackageReference Include="MaterialDesignThemes" Version="4.4.0" />
@@ -35,7 +35,7 @@
     <PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.1.2" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.2.0" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.2" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.3" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />

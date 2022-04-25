@@ -20,7 +20,7 @@
     <PackageReference Include="WeakEventHandler.Fody" Version="1.7.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="all" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
