@@ -9,7 +9,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using DS4Windows.Client.Modules.Controllers.Driver;
+using DS4Windows.Shared.Devices.DriverManagement;
 using Microsoft.Toolkit.Mvvm.Input;
 
 namespace DS4Windows.Client.Modules.Controllers
@@ -19,10 +19,16 @@ namespace DS4Windows.Client.Modules.Controllers
         private readonly IControllersEnumeratorService controllersEnumeratorService;
         private readonly IProfilesService profilesService;
         private readonly IServiceProvider serviceProvider;
+        private readonly IControllerDriverManagementService controllerDriverManagementService;
 
-        public ControllersViewModel(IControllersEnumeratorService controllersEnumeratorService, IProfilesService profilesService, IServiceProvider serviceProvider)
+        public ControllersViewModel(
+            IControllersEnumeratorService controllersEnumeratorService, 
+            IProfilesService profilesService, 
+            IServiceProvider serviceProvider,
+            IControllerDriverManagementService controllerDriverManagementService)
         {
             this.serviceProvider = serviceProvider;
+            this.controllerDriverManagementService = controllerDriverManagementService;
             this.controllersEnumeratorService = controllersEnumeratorService;
             this.profilesService = profilesService;
 
@@ -130,12 +136,12 @@ namespace DS4Windows.Client.Modules.Controllers
 
         public void HideController(IControllerItemViewModel controller)
         {
-            WdiWrapper.Instance.HideController(controller.ParentInstance);
+            controllerDriverManagementService.HideController(controller.ParentInstance);
         }
 
         public void UnHideController(IControllerItemViewModel controller)
         {
-            WdiWrapper.Instance.UnhideController(controller.ParentInstance);
+            controllerDriverManagementService.UnhideController(controller.ParentInstance);
         }
 
         protected override void Dispose(bool disposing)

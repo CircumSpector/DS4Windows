@@ -4,6 +4,7 @@
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
 	<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
 	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+	  <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="PInvoke.NewDev" Version="0.7.104" />
+    <PackageReference Include="PInvoke.SetupApi" Version="0.7.104" />
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
       <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
@@ -41,5 +44,20 @@
     <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />
     <ProjectReference Include="..\Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj" />
     <ProjectReference Include="..\DS4Windows.Shared.Emulator.ViGEmGen1\DS4Windows.Shared.Emulator.ViGEmGen1.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="libwdi\amd64\libwdi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libwdi\amd64\wdi-simple.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libwdi\x86\libwdi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libwdi\x86\wdi-simple.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

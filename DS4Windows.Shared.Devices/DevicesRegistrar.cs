@@ -1,5 +1,6 @@
 ﻿using System;
 using DS4Windows.Client.Core.DependencyInjection;
+using DS4Windows.Shared.Devices.DriverManagement;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.HostedServices;
 using DS4Windows.Shared.Devices.Services;
@@ -23,6 +24,8 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IInputSourceService, InputSourceService>();
         services.AddSingleton<IDeviceValueConverters, DeviceValueConverters>();
         services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
+        services.AddSingleton<IWdiWrapper, WdiWrapper>();
+        services.AddSingleton<IControllerDriverManagementService, ControllerDriverManagementService>();
 
         //
         // ViGEm Client (Gen1) service
