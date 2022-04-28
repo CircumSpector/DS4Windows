@@ -33,8 +33,10 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             var pnpDevice = PnPDevice.GetDeviceByInstanceId(controllerInstanceId);
             var hardwareid = pnpDevice.GetProperty<string[]>(DevicePropertyDevice.HardwareIds).Last();
 
-            var vid = int.Parse(hardwareid.Substring(8, 4), NumberStyles.HexNumber);
-            var pid = int.Parse(hardwareid.Substring(17, hardwareid.LastIndexOf("&", StringComparison.InvariantCulture) - 17), NumberStyles.HexNumber);
+            var hardwareIdParts = hardwareid.Split("&");
+
+            var vid = int.Parse(hardwareIdParts[0].Remove(0,8), NumberStyles.HexNumber);
+            var pid = int.Parse(hardwareIdParts[1].Remove(0,4), NumberStyles.HexNumber);
 
             var deviceProductInfo = KnownDevices.List.SingleOrDefault(i => i.Vid == vid && i.Pid == pid);
 
