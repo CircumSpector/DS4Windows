@@ -12,7 +12,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
     {
         private readonly IWdiWrapper wdiWrapper;
         private const int IOCTL_USB_HUB_CYCLE_PORT = 0x220444;
-        private Guid usbHubGuid = new Guid("{F18A0E88-C30C-11D0-8815-00A0C906BED8}");
+        private Guid usbHubGuid = new("{F18A0E88-C30C-11D0-8815-00A0C906BED8}");
         private const string tempDriverPath = "c:\\temp\\";
         private const string tempDriverInf = "existingcontroller.inf";
         private const string tempDriverFullPath = $"{tempDriverPath}{tempDriverInf}";
@@ -43,7 +43,6 @@ namespace DS4Windows.Shared.Devices.DriverManagement
 
         private HubAndPort GetHubAndPort(string controllerInstanceId)
         {
-
             var hubInstanceIds = new List<string>();
             var hubIndex = 0;
             while (Devcon.FindByInterfaceGuid(usbHubGuid, out var path, out var hubInstanceId, hubIndex++))
@@ -122,7 +121,13 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                     );
 
                     devicePath = SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA.GetDevicePath(deviceDetailData);
+
+                    Marshal.FreeHGlobal(requiredLength);
+                    Marshal.DestroyStructure<SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA>((IntPtr)deviceDetailData);
                 }
+
+                Marshal.FreeHGlobal(num2);
+
                 memberIndex++;
             }
 
