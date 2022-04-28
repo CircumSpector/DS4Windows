@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Threading;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 
@@ -28,7 +30,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
 
             var prepareDriverResult = PrepareDriver(controllerInstanceId);
             InstallDriver(prepareDriverResult);
-            ResetPort(hubAndPath, hubAndPort.PortIndex);
+            ResetPort(hubAndPath, hubAndPort.PortNumber);
         }
 
         public void UnhideController(string controllerInstanceId)
@@ -58,10 +60,12 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                 device = PnPDevice.GetDeviceByInstanceId(parentId);
                 if (hubInstanceIds.Contains(parentId.ToUpper()))
                 {
+                    var hidLocationInfo = hidDevice.GetProperty<string>(DevicePropertyDevice.LocationInfo);
+                    var portNumber = Convert.ToInt32(hidLocationInfo.Split('.')[3]);
                     return new HubAndPort
                     {
                         hubDeviceId = device.DeviceId,
-                        //dont know how to fill this in yet   PortIndex = portDeviceIndex,
+                        PortNumber = portNumber,
                         HidDevice = hidDevice
                     };
                 }
@@ -174,7 +178,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             //for now just reset all ports, portindex right now is not correct
             var parameters = new USB_CYCLE_PORT_PARAMS
             {
-                ConnectionIndex = 1
+                ConnectionIndex = (ulong)portIndex
             };
 
             using var hubHandle = Kernel32.CreateFile(hubPath,
@@ -192,36 +196,23 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             var buffer = Marshal.AllocHGlobal(size);
 
             Marshal.StructureToPtr(parameters, buffer, false);
-
-            while (Kernel32.DeviceIoControl(
-                       hubHandle,
-                       IOCTL_USB_HUB_CYCLE_PORT,
-                       buffer,
-                       size,
-                       buffer,
-                       size,
-                       out var bytesReturned,
-                       IntPtr.Zero
-                   ))
-            {
-
-                var result = Marshal.PtrToStructure<USB_CYCLE_PORT_PARAMS>(buffer);
-
-                var error = Marshal.GetLastWin32Error();
-                if (result.StatusReturned != 0)
-                {
-                    throw new Exception($"There was a problem restarting usb port {parameters.ConnectionIndex} on hub with device path {hubPath}");
-                }
-                
-                parameters = new USB_CYCLE_PORT_PARAMS
-                {
-                    ConnectionIndex = parameters.ConnectionIndex + 1
-                };
-
-                Marshal.StructureToPtr(parameters, buffer, true);
-            }
+            var result = Kernel32.DeviceIoControl(
+                hubHandle,
+                IOCTL_USB_HUB_CYCLE_PORT,
+                buffer,
+                size,
+                buffer,
+                size,
+                out var bytesReturned,
+                IntPtr.Zero
+            );
 
             Marshal.FreeHGlobal(buffer);
+            if (!result)
+            {
+                var error = Marshal.GetLastWin32Error();
+                throw new Exception($"There was a problem restarting usb port {parameters.ConnectionIndex} on hub with device path {hubPath}");
+            }
         }
         
         [StructLayout(LayoutKind.Sequential)]
@@ -307,7 +298,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
         private class HubAndPort
         {
             public string hubDeviceId { get; set; }
-            public int PortIndex { get; set; }
+            public int PortNumber { get; set; }
             public PnPDevice HidDevice { get; set; }
         }
 

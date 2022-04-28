@@ -66,9 +66,6 @@ namespace DS4Windows.Shared.Devices.Services
         /// <inheritdoc />
         public void EnumerateDevices()
         {
-            try
-            {
-
             using var activity = CoreActivity.StartActivity(
                 $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
 
@@ -125,20 +122,10 @@ namespace DS4Windows.Shared.Devices.Services
             // Notify list is built
             // 
             DeviceListReady?.Invoke();
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
         }
 
         private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
         {
-            try
-            {
-
-           
             using var activity = CoreActivity.StartActivity(
                 $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnDeviceArrived)}");
 
@@ -178,19 +165,10 @@ namespace DS4Windows.Shared.Devices.Services
 
             logger.LogInformation("Added identified input device {Device}",
                 device.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
         }
 
         private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
         {
-            try
-            {
-
-            
             logger.LogInformation("Compatible device {Device} got removed", hidDevice);
 
             if (hidDevice.IsVirtual) return;
@@ -212,11 +190,6 @@ namespace DS4Windows.Shared.Devices.Services
                 }
                 
                 supportedDevices.Remove(device);
-            }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
             }
         }
 

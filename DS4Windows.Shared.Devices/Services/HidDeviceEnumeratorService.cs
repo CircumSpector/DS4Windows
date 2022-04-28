@@ -278,10 +278,6 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private void DeviceNotificationListenerOnDeviceArrived(string symLink)
     {
-        try
-        {
-
-       
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
 
@@ -313,11 +309,6 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
             connectedDevices.Add(entry);
 
         DeviceArrived?.Invoke(entry);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
     }
 
     private void DeviceNotificationListenerOnDeviceRemoved(string symLink)
