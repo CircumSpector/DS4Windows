@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using ABI.Windows.Media.Devices;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 
@@ -70,10 +68,10 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                 parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
             }
 
-            throw new Exception("couldnt find it");
+            throw new Exception($"Could not find a parent hub with instance id {controllerInstanceId}");
         }
 
-        private unsafe string GetHubPath(string hostControllerId)
+        private unsafe string GetHubPath(string hubId)
         {
             var controller = SetupApi.SetupDiGetClassDevs(usbHubGuid, null, IntPtr.Zero,
                 SetupApi.GetClassDevsFlags.DIGCF_DEVICEINTERFACE | SetupApi.GetClassDevsFlags.DIGCF_PRESENT);
@@ -82,6 +80,8 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             SetupApi.SP_DEVICE_INTERFACE_DATA deviceInterfaceData = SetupApi.SP_DEVICE_INTERFACE_DATA.Create();
             SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA* deviceDetailData;
 
+            uint num1 = 256;
+            IntPtr num2 = Marshal.AllocHGlobal((int)num1);
             string devicePath = null;
             var memberIndex = 0;
             while (devicePath == null && SetupApi.SetupDiEnumDeviceInfo(controller, memberIndex, ref deviceInfoData))
@@ -89,46 +89,64 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                 var success = SetupApi.SetupDiEnumDeviceInterfaces(controller, (SetupApi.SP_DEVINFO_DATA?)null, ref usbHubGuid, memberIndex,
                     ref deviceInterfaceData);
 
-                uint num1 = 256;
-                IntPtr num2 = Marshal.AllocHGlobal((int)num1);
-                var result = CM_Get_Device_ID(deviceInfoData.DevInst, num2, num1, 0u);
-                var deviceId = Marshal.PtrToStringUni(num2);
-
-                if (deviceId == hostControllerId)
+                if (success)
                 {
-                    deviceInterfaceData.Size = Marshal.SizeOf(deviceInterfaceData);
+                    var result = CM_Get_Device_ID(deviceInfoData.DevInst, num2, num1, 0u);
+                    if (result == 0)
+                    {
+                        var deviceId = Marshal.PtrToStringUni(num2);
 
-                    IntPtr requiredLength = Marshal.AllocHGlobal(2048);
-                    success = SetupApi.SetupDiGetDeviceInterfaceDetail(
-                        controller,
-                        ref deviceInterfaceData,
-                        IntPtr.Zero,
-                        0,
-                        requiredLength,
-                        IntPtr.Zero);
+                        if (deviceId == hubId)
+                        {
+                            deviceInterfaceData.Size = Marshal.SizeOf(deviceInterfaceData);
 
-                    var requiredLengthValue = Marshal.ReadInt32(requiredLength);
-                    deviceDetailData = (SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA*)Marshal.AllocHGlobal(requiredLengthValue);
-                    deviceDetailData->cbSize = Marshal.SizeOf<SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA>();
+                            IntPtr requiredLength = Marshal.AllocHGlobal(2048);
+                            success = SetupApi.SetupDiGetDeviceInterfaceDetail(
+                                controller,
+                                ref deviceInterfaceData,
+                                IntPtr.Zero,
+                                0,
+                                requiredLength,
+                                IntPtr.Zero);
 
-                    success = SetupApi.SetupDiGetDeviceInterfaceDetail(
-                        controller,
-                        ref deviceInterfaceData,
-                        (IntPtr)deviceDetailData,
-                        requiredLengthValue,
-                        requiredLength,
-                        IntPtr.Zero
-                    );
+                            if (success)
+                            {
+                                var requiredLengthValue = Marshal.ReadInt32(requiredLength);
+                                deviceDetailData =
+                                    (SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA*)Marshal.AllocHGlobal(
+                                        requiredLengthValue);
+                                deviceDetailData->cbSize = Marshal.SizeOf<SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA>();
 
-                    devicePath = SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA.GetDevicePath(deviceDetailData);
+                                success = SetupApi.SetupDiGetDeviceInterfaceDetail(
+                                    controller,
+                                    ref deviceInterfaceData,
+                                    (IntPtr)deviceDetailData,
+                                    requiredLengthValue,
+                                    requiredLength,
+                                    IntPtr.Zero
+                                );
 
-                    Marshal.FreeHGlobal(requiredLength);
-                    Marshal.DestroyStructure<SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA>((IntPtr)deviceDetailData);
+                                if (success)
+                                {
+                                    devicePath = SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA.GetDevicePath(deviceDetailData);
+                                }
+                                
+                                Marshal.DestroyStructure<SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA>((IntPtr)deviceDetailData);
+                            }
+
+                            Marshal.FreeHGlobal(requiredLength);
+                        }
+                    }
                 }
 
-                Marshal.FreeHGlobal(num2);
-
                 memberIndex++;
+            }
+
+            Marshal.FreeHGlobal(num2);
+
+            if (devicePath == null)
+            {
+                throw new Exception($"Could not get the device path to the usb hub with instance id {hubId}");
             }
 
             return devicePath;
@@ -141,11 +159,14 @@ namespace DS4Windows.Shared.Devices.DriverManagement
 
         private void InstallDriver(PrepareDriverResult prepareDriverResult)
         {
-            var rebootRequired = false;
-            var result = Devcon.Update(prepareDriverResult.HardwareId, prepareDriverResult.InfPath, out rebootRequired);
+            var result = Devcon.Update(prepareDriverResult.HardwareId, prepareDriverResult.InfPath, out var rebootRequired);
+            if (!result)
+            {
+                throw new Exception($"Could not update the driver for hardware id {prepareDriverResult.HardwareId}");
+            }
         }
 
-        private static void ResetPort(string hostControllerPath, int portIndex)
+        private static void ResetPort(string hubPath, int portIndex)
         {
             //for now just reset all ports, portindex right now is not correct
             var parameters = new USB_CYCLE_PORT_PARAMS
@@ -153,7 +174,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                 ConnectionIndex = 1
             };
 
-            using var hubHandle = Kernel32.CreateFile(hostControllerPath,
+            using var hubHandle = Kernel32.CreateFile(hubPath,
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
                 Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
                 Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
@@ -184,6 +205,10 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                 var result = Marshal.PtrToStructure<USB_CYCLE_PORT_PARAMS>(buffer);
 
                 var error = Marshal.GetLastWin32Error();
+                if (result.StatusReturned != 0)
+                {
+                    throw new Exception($"There was a problem restarting usb port {parameters.ConnectionIndex} on hub with device path {hubPath}");
+                }
                 
                 parameters = new USB_CYCLE_PORT_PARAMS
                 {
