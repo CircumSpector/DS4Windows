@@ -14,6 +14,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
         private const string tempDriverPath = "c:\\temp\\";
         private const string tempDriverInf = "existingcontroller.inf";
         private const string tempDriverFullPath = $"{tempDriverPath}{tempDriverInf}";
+        private const int expectedErrorCode = 122; //expected overflow of some sort when asking without required length
 
         public ControllerDriverManagementService(IWdiWrapper wdiWrapper)
         {
@@ -109,7 +110,9 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                                 requiredLength,
                                 IntPtr.Zero);
 
-                            if (success)
+                            var lastError = Marshal.GetLastWin32Error();
+
+                            if (success || lastError == expectedErrorCode)
                             {
                                 var requiredLengthValue = Marshal.ReadInt32(requiredLength);
                                 deviceDetailData =
