@@ -1,25 +1,25 @@
 ; DS4Windows-DualSense.inf
 ; Copyright (c) 2010-2016 Pete Batard <pete@akeo.ie> (GNU LGPL)
 [Strings]
-DeviceName = "DS4W DualSense Controller"
+DeviceName = "DS4 Controller"
 VendorName = "Sony Corp."
-SourceName = "DS4W Driver Installer"
-DeviceID   = "VID_054C&PID_0CE6"
+SourceName = "DS4Windows Driver Installer"
+DeviceID   = "VID_054C&PID_09CC&MI_03"
 DeviceGUID = "808993d8-02f4-4036-82df-9f412ff9f51f"
 
 [Version]
 Signature   = "$Windows NT$"
-Class       = "DS4WControllers"
+Class       = "DS4Controller"
 ClassGuid   = {caf9ec29-2eae-4aa6-b439-ca56bd4538e}
-Provider    = "DS4W"
-CatalogFile = DS4W-DualSense.cat
+Provider    = "DS4Windows"
+CatalogFile = DS4Windows-DualSense.cat
 DriverVer   = 04/27/2022, 6.1.7600.16385
 
 [ClassInstall32]
 Addreg = WinUSBDeviceClassReg
 
 [WinUSBDeviceClassReg]
-HKR,,,0,"DS4WControllers"
+HKR,,,0,"DS4Windows Controllers"
 HKR,,Icon,,-20
 
 [Manufacturer]

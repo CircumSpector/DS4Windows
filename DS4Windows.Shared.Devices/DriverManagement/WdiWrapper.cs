@@ -13,18 +13,15 @@ namespace DS4Windows.Shared.Devices.DriverManagement
 {
     public class WdiWrapper : IWdiWrapper
     {
-        private readonly IGlobalStateService globalStateService;
         private const string x86Path = @"libwdi\x86\libwdi.dll";
         private const string AMD64Path = @"libwdi\amd64\libwdi.dll";
         private static readonly string x86FullPath = Path.Combine(AppContext.BaseDirectory, x86Path);
         private static readonly string AMD64FullPath = Path.Combine(AppContext.BaseDirectory, AMD64Path);
-        private static readonly string templateInfPath = Path.Combine(AppContext.BaseDirectory, @"libwdi\winusb.inf.in");
         private readonly string tempDriverPath;
         private static readonly string ds4ControllerGuid = "808993d8-02f4-4036-82df-9f412ff9f51f";
 
         public WdiWrapper(IGlobalStateService globalStateService)
         {
-            this.globalStateService = globalStateService;
             tempDriverPath = Path.Combine(globalStateService.RoamingAppDataPath, @"libwdi\temp\");
             LoadWdi();
         }
@@ -48,7 +45,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             else
             {
                 var productName = deviceProductInfo.Name.Replace(" ", string.Empty).Replace(".", "_");
-                var driverName = $"DS4Windows-{productName}";
+                var driverName = $"DS4W-{productName}";
                 var driverInf = $"{driverName}.inf";
                 var driverPath = Path.Combine(tempDriverPath, driverName);
                 var driverInfFullPath = Path.Combine(driverPath, driverInf);
@@ -59,10 +56,8 @@ namespace DS4Windows.Shared.Devices.DriverManagement
                 }
                 //temp to help test
                 Directory.CreateDirectory(driverPath);
-                File.Copy(templateInfPath, driverInfFullPath);
                 var options = new wdi_options_prepare_driver();
                 var result = wdi_prepare_driver(ref foundDevice, driverPath, driverInf, ref options);
-                UpdateInfFile(driverInfFullPath);
                 return new PrepareDriverResult
                 {
                     HardwareId = hardwareid,
@@ -71,53 +66,6 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             }
 
             return null;
-        }
-
-        private void UpdateInfFile(string infFilePath)
-        {
-            var lines = File.ReadAllLines(infFilePath);
-
-            for (var i = 0; i < lines.Length; i++)
-            {
-                var line = lines[i];
-
-                if (line.StartsWith("DeviceName"))
-                {
-                    lines[i] = "DeviceName = \"DS4 Controller\"";
-                }
-
-                if (line.StartsWith("SourceName"))
-                {
-                    lines[i] = "SourceName = \"DS4Windows Driver Installer\"";
-                }
-
-                if (line.StartsWith("Class"))
-                {
-                    lines[i] = "Class       = \"DS4Controller\"";
-                }
-
-                if (line.StartsWith("ClassGuid"))
-                {
-                    lines[i] = "ClassGuid   = {caf9ec29-2eae-4aa6-b439-ca56bd4538e}";
-                }
-
-                if (line.StartsWith("Provider"))
-                {
-                    lines[i] = "Provider    = \"DS4Windows\"";
-                }
-
-                if (line.StartsWith("SourceName"))
-                {
-                    lines[i] = "SourceName = \"DS4Windows Driver Installer\"";
-                }
-
-                if (line == "HKR,,,0,\"Universal Serial Bus devices\"")
-                {
-                    lines[i] = "HKR,,,0,\"DS4Windows Controllers\"";
-                }
-            }
-
-            File.WriteAllLines(infFilePath, lines);
         }
 
         private void LoadWdi()

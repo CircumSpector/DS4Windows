@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using ABI.Windows.Media.Devices;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 
@@ -11,7 +12,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
     {
         private readonly IWdiWrapper wdiWrapper;
         private const int IOCTL_USB_HUB_CYCLE_PORT = 0x220444;
-        private Guid usbhostcontroller = new Guid("{F18A0E88-C30C-11D0-8815-00A0C906BED8}");
+        private Guid usbHubGuid = new Guid("{F18A0E88-C30C-11D0-8815-00A0C906BED8}");
         private const string tempDriverPath = "c:\\temp\\";
         private const string tempDriverInf = "existingcontroller.inf";
         private const string tempDriverFullPath = $"{tempDriverPath}{tempDriverInf}";
@@ -23,13 +24,12 @@ namespace DS4Windows.Shared.Devices.DriverManagement
 
         public void HideController(string controllerInstanceId)
         {
-            var hostControllerAndPort = GetHostControllerAndPort(controllerInstanceId);
-            var hostControllerPath = GetHostControllerPath(hostControllerAndPort.HostControllerDeviceId);
-
+            var hubAndPort = GetHubAndPort(controllerInstanceId);
+            var hubAndPath = GetHubPath(hubAndPort.hubDeviceId);
 
             var prepareDriverResult = PrepareDriver(controllerInstanceId);
             InstallDriver(prepareDriverResult);
-            ResetPort(hostControllerPath, hostControllerAndPort.PortIndex);
+            ResetPort(hubAndPath, hubAndPort.PortIndex);
         }
 
         public void UnhideController(string controllerInstanceId)
@@ -41,63 +41,42 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             //    0, out rebootRequired);
         }
 
-        private HostControllerAndPort GetHostControllerAndPort(string controllerInstanceId)
+        private HubAndPort GetHubAndPort(string controllerInstanceId)
         {
-            var hostControllerIndex = 0;
-            while (Devcon.FindByInterfaceGuid(usbhostcontroller, out var path, out var instanceId, hostControllerIndex++))
+
+            var hubInstanceIds = new List<string>();
+            var hubIndex = 0;
+            while (Devcon.FindByInterfaceGuid(usbHubGuid, out var path, out var hubInstanceId, hubIndex++))
             {
-                var hostControllerDevice = PnPDevice.GetDeviceByInstanceId(instanceId);
-                var children = hostControllerDevice.GetProperty<string[]>(DevicePropertyDevice.Children);
-                var portDeviceIndex = 0;
-                foreach (var portDeviceInstanceId in children)
+                hubInstanceIds.Add(hubInstanceId.ToUpper());
+            }
+
+            var hidDevice = PnPDevice.GetDeviceByInstanceId(controllerInstanceId); 
+            
+            var device = hidDevice;
+            var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+            while (!string.IsNullOrEmpty(parentId))
+            {
+                device = PnPDevice.GetDeviceByInstanceId(parentId);
+                if (hubInstanceIds.Contains(parentId.ToUpper()))
                 {
-                    var portDevice = PnPDevice.GetDeviceByInstanceId(portDeviceInstanceId);
-
-                    var hidDevice = FindHidChildByInstanceId(portDevice, controllerInstanceId);
-                    if (hidDevice != null)
+                    return new HubAndPort
                     {
-                        return new HostControllerAndPort
-                        {
-                            HostControllerDeviceId = hostControllerDevice.DeviceId,
-                            PortIndex = portDeviceIndex,
-                            HidDevice = hidDevice
-                        };
-                    }
-
-                    portDeviceIndex++;
+                        hubDeviceId = device.DeviceId,
+                        //dont know how to fill this in yet   PortIndex = portDeviceIndex,
+                        HidDevice = hidDevice
+                    };
                 }
+
+                parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
             }
 
             throw new Exception("couldnt find it");
         }
 
-        private PnPDevice FindHidChildByInstanceId(PnPDevice parentDevice, string hidInstanceId)
+        private unsafe string GetHubPath(string hostControllerId)
         {
-            var children = parentDevice.GetProperty<string[]>(DevicePropertyDevice.Children);
-            if (children == null || children.Length == 0)
-            {
-                return null;
-            }
-
-            PnPDevice foundDevice = null;
-            foreach (var childInstanceId in children)
-            {
-                var childDevice = PnPDevice.GetDeviceByInstanceId(childInstanceId);
-                if (childInstanceId == hidInstanceId)
-                {
-                    foundDevice = childDevice;
-                    break;
-                }
-
-                foundDevice = FindHidChildByInstanceId(childDevice, hidInstanceId);
-            }
-
-            return foundDevice;
-        }
-
-        private unsafe string GetHostControllerPath(string hostControllerId)
-        {
-            var controller = SetupApi.SetupDiGetClassDevs(usbhostcontroller, null, IntPtr.Zero,
+            var controller = SetupApi.SetupDiGetClassDevs(usbHubGuid, null, IntPtr.Zero,
                 SetupApi.GetClassDevsFlags.DIGCF_DEVICEINTERFACE | SetupApi.GetClassDevsFlags.DIGCF_PRESENT);
 
             var deviceInfoData = SetupApi.SP_DEVINFO_DATA.Create();
@@ -108,7 +87,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             var memberIndex = 0;
             while (devicePath == null && SetupApi.SetupDiEnumDeviceInfo(controller, memberIndex, ref deviceInfoData))
             {
-                var success = SetupApi.SetupDiEnumDeviceInterfaces(controller, (SetupApi.SP_DEVINFO_DATA?)null, ref usbhostcontroller, memberIndex,
+                var success = SetupApi.SetupDiEnumDeviceInterfaces(controller, (SetupApi.SP_DEVINFO_DATA?)null, ref usbHubGuid, memberIndex,
                     ref deviceInterfaceData);
 
                 uint num1 = 256;
@@ -163,9 +142,10 @@ namespace DS4Windows.Shared.Devices.DriverManagement
 
         private static void ResetPort(string hostControllerPath, int portIndex)
         {
+            //for now just reset all ports, portindex right now is not correct
             var parameters = new USB_CYCLE_PORT_PARAMS
             {
-                ConnectionIndex = 1u
+                ConnectionIndex = 1
             };
 
             using var hubHandle = Kernel32.CreateFile(hostControllerPath,
@@ -184,26 +164,33 @@ namespace DS4Windows.Shared.Devices.DriverManagement
 
             Marshal.StructureToPtr(parameters, buffer, false);
 
-            var isReset = Kernel32.DeviceIoControl(
-                hubHandle,
-                IOCTL_USB_HUB_CYCLE_PORT,
-                buffer,
-                size,
-                buffer,
-                size,
-                out var bytesReturned,
-                IntPtr.Zero
-            );
+            while (Kernel32.DeviceIoControl(
+                       hubHandle,
+                       IOCTL_USB_HUB_CYCLE_PORT,
+                       buffer,
+                       size,
+                       buffer,
+                       size,
+                       out var bytesReturned,
+                       IntPtr.Zero
+                   ))
+            {
 
-            var result = Marshal.PtrToStructure<USB_CYCLE_PORT_PARAMS>(buffer);
+                var result = Marshal.PtrToStructure<USB_CYCLE_PORT_PARAMS>(buffer);
 
-            var error = Marshal.GetLastWin32Error();
+                var error = Marshal.GetLastWin32Error();
+                
+                parameters = new USB_CYCLE_PORT_PARAMS
+                {
+                    ConnectionIndex = parameters.ConnectionIndex + 1
+                };
+
+                Marshal.StructureToPtr(parameters, buffer, true);
+            }
 
             Marshal.FreeHGlobal(buffer);
         }
-
         
-
         [StructLayout(LayoutKind.Sequential)]
         private struct USB_CYCLE_PORT_PARAMS
         {
@@ -284,9 +271,9 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             InvalidStructureSize = 59, // 0x0000003B
         }
 
-        private class HostControllerAndPort
+        private class HubAndPort
         {
-            public string HostControllerDeviceId { get; set; }
+            public string hubDeviceId { get; set; }
             public int PortIndex { get; set; }
             public PnPDevice HidDevice { get; set; }
         }

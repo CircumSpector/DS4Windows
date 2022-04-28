@@ -54,9 +54,11 @@
     <TargetPlatformVersion>10.0.22000.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NoWarn>$(NoWarn);NU1702</NoWarn>
     <EntryPointProjectUniqueName>..\DS4Windows.Client\DS4Windows.Client.csproj</EntryPointProjectUniqueName>
+    <PackageCertificateThumbprint>CEE0F29D3C20D33FDC364C4D29DB9E573029054D</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>Ds4Windows.Client.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -64,6 +66,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Ds4Windows.Client.Package_TemporaryKey.pfx" />
     <Content Include="Images\LargeTile.scale-100.png" />
     <Content Include="Images\LargeTile.scale-125.png" />
     <Content Include="Images\LargeTile.scale-150.png" />
