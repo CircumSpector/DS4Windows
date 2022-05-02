@@ -9,6 +9,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using DS4Windows.Shared.Devices.DriverManagement;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
@@ -17,17 +19,28 @@ namespace DS4Windows.Client.Modules.Controllers
         private readonly IControllersEnumeratorService controllersEnumeratorService;
         private readonly IProfilesService profilesService;
         private readonly IServiceProvider serviceProvider;
+        private readonly IControllerDriverManagementService controllerDriverManagementService;
 
-        public ControllersViewModel(IControllersEnumeratorService controllersEnumeratorService, IProfilesService profilesService, IServiceProvider serviceProvider)
+        public ControllersViewModel(
+            IControllersEnumeratorService controllersEnumeratorService, 
+            IProfilesService profilesService, 
+            IServiceProvider serviceProvider,
+            IControllerDriverManagementService controllerDriverManagementService)
         {
             this.serviceProvider = serviceProvider;
+            this.controllerDriverManagementService = controllerDriverManagementService;
             this.controllersEnumeratorService = controllersEnumeratorService;
             this.profilesService = profilesService;
 
+            HideCommand = new RelayCommand<IControllerItemViewModel>(HideController);
+            UnhideCommand = new RelayCommand<IControllerItemViewModel>(UnHideController);
+            
             CreateSelectableProfileItems();
             CreateControllerItems();
         }
 
+        public RelayCommand<IControllerItemViewModel> HideCommand { get; }
+        public RelayCommand<IControllerItemViewModel> UnhideCommand { get; }
         public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new ObservableCollection<IControllerItemViewModel>();
         public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new ObservableCollection<ISelectableProfileItemViewModel>();
 
@@ -119,6 +132,16 @@ namespace DS4Windows.Client.Modules.Controllers
                 existing.Dispose();
                 SelectableProfileItems.Remove(existing);
             }
+        }
+
+        public void HideController(IControllerItemViewModel controller)
+        {
+            controllerDriverManagementService.HideController(controller.ParentInstance);
+        }
+
+        public void UnHideController(IControllerItemViewModel controller)
+        {
+            controllerDriverManagementService.UnhideController(controller.ParentInstance);
         }
 
         protected override void Dispose(bool disposing)
