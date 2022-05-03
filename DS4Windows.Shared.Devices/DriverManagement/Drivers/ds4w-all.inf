@@ -1,0 +1,268 @@
+; #INF_FILENAME#
+; Copyright (c) 2010-2016 Pete Batard <pete@akeo.ie> (GNU LGPL)
+[Strings]
+VendorName = "DS4W"
+SourceName = "DS4W"
+DeviceGUID = "808993d8-02f4-4036-82df-9f412ff9f51f"
+
+# Sony
+DevName1 = "Dual Sense"
+DeviceID1   = "VID_7331&PID_C001"
+DevName2 = "Dual Shock 4 V1"
+DeviceID2  = "VID_7331&PID_C002"
+DevName3 = "Dual Shock 4 V2"
+DeviceID3  = "VID_7331&PID_C003"
+DevName4 = "Cronus Max PS4 Mode"
+DeviceID4  = "VID_7331&PID_C004"
+DevName5 = "Sony WA"
+DeviceID5  = "VID_7331&PID_C005"
+
+#Nintendo
+DevName6 = "JoyCon L"
+DeviceID6  = "VID_7331&PID_C006"
+DevName7 = "JoyCon R"
+DeviceID7  = "VID_7331&PID_C007"
+DevName8 = "Switch Pro"
+DeviceID8  = "VID_7331&PID_C008"
+
+#Razer
+DevName9 = "Razer Raiju PS4"
+DeviceID9  = "VID_7331&PID_C009"
+DevName10 = "Razer Raiju Tournament Edition"
+DeviceID10 = "VID_7331&PID_C00A"
+DevName11 = "Razer Raiju Tournament Edition BT"
+DeviceID11   = "VID_7331&PID_C00B"
+DevName12 = "Razer Raiju Ultimate Edition"
+DeviceID12  = "VID_7331&PID_C00C"
+DevName13 = "Razer Raiju Ultimate Edition BT"
+DeviceID13   = "VID_7331&PID_C00D"
+
+#Hori
+DevName14 = "Hori Fighting Commander"
+DeviceID14   = "VID_7331&PID_C00E"
+DevName15 = "Hori FPS Plus"
+DeviceID15   = "VID_7331&PID_C00F"
+DevName16 = "Hori Mini Hatsune Miku FT"
+DeviceID16   = "VID_7331&PID_C010"
+DevName17 = "Hori PS4 Mini"
+DeviceID17   = "VID_7331&PID_C011"
+DevName18 = "Hori Taiko"
+DeviceID18   = "VID_7331&PID_C012"
+
+#Nacon
+DevName19 = "Nacon Revol Infinite"
+DeviceID19   = "VID_7331&PID_C013"
+DevName20 = "Nacon Revol Pro V1"
+DeviceID20   = "VID_7331&PID_C014"
+DevName21 = "Nacon Revol Pro V2"
+DeviceID21   = "VID_7331&PID_C015"
+DevName22 = "Nacon Revol Pro V3"
+DeviceID22  = "VID_7331&PID_C016"
+DevName23 = "Nacon Revol Pro Ultimate"
+DeviceID23   = "VID_7331&PID_C017"
+
+#Zeroplus
+DevName24 = "Zeroplus Brook Mars"
+DeviceID24   = "VID_7331&PID_C018"
+DevName25 = "Zeroplus SnakeByte Gamepad 4S"
+DeviceID25   = "VID_7331&PID_C019"
+DevName26 = "Zeroplus Steel Play Metal Tech"
+DeviceID26   = "VID_7331&PID_C017A"
+DevName27 = "Zeroplus Warrior Joypad JS083"
+DeviceID27   = "VID_7331&PID_C01B"
+
+#other
+DevName28 = "Astro C40"
+DeviceID28   = "VID_7331&PID_C01C"
+DevName29 = "Betop PS4 Fun"
+DeviceID29   = "VID_7331&PID_C01D"
+DevName30 = "Gamo 2 Divaller"
+DeviceID30   = "VID_7331&PID_C01E"
+DevName31 = "Scuf Vantage"
+DeviceID31   = "VID_7331&PID_C01F"
+DevName32 = "Armor 3 Level Up Cobra"
+DeviceID32   = "VID_7331&PID_C020"
+DevName33 = "Giotek Vx4"
+DeviceID33   = "VID_7331&PID_C021"
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = "DS4W Controllers"
+ClassGuid   = {caf9ec29-2eae-4aa6-b439-ca56bd4538e8}
+Provider    = "DS4W"
+CatalogFile = DS4W-All.cat
+DriverVer   = 04/27/2022, 6.1.7600.16385
+
+[ClassInstall32]
+Addreg = WinUSBDeviceClassReg
+
+[WinUSBDeviceClassReg]
+HKR,,,0,"Universal Serial Bus devices"
+HKR,,Icon,,-20
+
+[Manufacturer]
+%VendorName% = libusbDevice_WinUSB,NTx86,NTamd64,NTarm
+
+[libusbDevice_WinUSB.NTx86]
+%DevName1% = USB_Install, USB\%DeviceID1%
+%DevName2% = USB_Install, USB\%DeviceID2%
+%DevName3% = USB_Install, USB\%DeviceID3%
+%DevName4% = USB_Install, USB\%DeviceID4%
+%DevName5% = USB_Install, USB\%DeviceID5%
+%DevName6% = USB_Install, USB\%DeviceID6%
+%DevName7% = USB_Install, USB\%DeviceID7%
+%DevName8% = USB_Install, USB\%DeviceID8%
+%DevName9% = USB_Install, USB\%DeviceID9%
+%DevName10% = USB_Install, USB\%DeviceID10%
+%DevName11% = USB_Install, USB\%DeviceID11%
+%DevName12% = USB_Install, USB\%DeviceID12%
+%DevName13% = USB_Install, USB\%DeviceID13%
+%DevName14% = USB_Install, USB\%DeviceID14%
+%DevName15% = USB_Install, USB\%DeviceID15%
+%DevName16% = USB_Install, USB\%DeviceID16%
+%DevName17% = USB_Install, USB\%DeviceID17%
+%DevName18% = USB_Install, USB\%DeviceID18%
+%DevName19% = USB_Install, USB\%DeviceID19%
+%DevName20% = USB_Install, USB\%DeviceID20%
+%DevName21% = USB_Install, USB\%DeviceID21%
+%DevName22% = USB_Install, USB\%DeviceID22%
+%DevName23% = USB_Install, USB\%DeviceID23%
+%DevName24% = USB_Install, USB\%DeviceID24%
+%DevName25% = USB_Install, USB\%DeviceID25%
+%DevName26% = USB_Install, USB\%DeviceID26%
+%DevName27% = USB_Install, USB\%DeviceID27%
+%DevName28% = USB_Install, USB\%DeviceID28%
+%DevName29% = USB_Install, USB\%DeviceID29%
+%DevName30% = USB_Install, USB\%DeviceID30%
+%DevName31% = USB_Install, USB\%DeviceID31%
+%DevName32% = USB_Install, USB\%DeviceID32%
+%DevName33% = USB_Install, USB\%DeviceID33%
+
+[libusbDevice_WinUSB.NTamd64]
+%DevName1% = USB_Install, USB\%DeviceID1%
+%DevName2% = USB_Install, USB\%DeviceID2%
+%DevName3% = USB_Install, USB\%DeviceID3%
+%DevName4% = USB_Install, USB\%DeviceID4%
+%DevName5% = USB_Install, USB\%DeviceID5%
+%DevName6% = USB_Install, USB\%DeviceID6%
+%DevName7% = USB_Install, USB\%DeviceID7%
+%DevName8% = USB_Install, USB\%DeviceID8%
+%DevName9% = USB_Install, USB\%DeviceID9%
+%DevName10% = USB_Install, USB\%DeviceID10%
+%DevName11% = USB_Install, USB\%DeviceID11%
+%DevName12% = USB_Install, USB\%DeviceID12%
+%DevName13% = USB_Install, USB\%DeviceID13%
+%DevName14% = USB_Install, USB\%DeviceID14%
+%DevName15% = USB_Install, USB\%DeviceID15%
+%DevName16% = USB_Install, USB\%DeviceID16%
+%DevName17% = USB_Install, USB\%DeviceID17%
+%DevName18% = USB_Install, USB\%DeviceID18%
+%DevName19% = USB_Install, USB\%DeviceID19%
+%DevName20% = USB_Install, USB\%DeviceID20%
+%DevName21% = USB_Install, USB\%DeviceID21%
+%DevName22% = USB_Install, USB\%DeviceID22%
+%DevName23% = USB_Install, USB\%DeviceID23%
+%DevName24% = USB_Install, USB\%DeviceID24%
+%DevName25% = USB_Install, USB\%DeviceID25%
+%DevName26% = USB_Install, USB\%DeviceID26%
+%DevName27% = USB_Install, USB\%DeviceID27%
+%DevName28% = USB_Install, USB\%DeviceID28%
+%DevName29% = USB_Install, USB\%DeviceID29%
+%DevName30% = USB_Install, USB\%DeviceID30%
+%DevName31% = USB_Install, USB\%DeviceID31%
+%DevName32% = USB_Install, USB\%DeviceID32%
+%DevName33% = USB_Install, USB\%DeviceID33%
+
+[libusbDevice_WinUSB.NTarm]
+%DevName1% = USB_Install, USB\%DeviceID1%
+%DevName2% = USB_Install, USB\%DeviceID2%
+%DevName3% = USB_Install, USB\%DeviceID3%
+%DevName4% = USB_Install, USB\%DeviceID4%
+%DevName5% = USB_Install, USB\%DeviceID5%
+%DevName6% = USB_Install, USB\%DeviceID6%
+%DevName7% = USB_Install, USB\%DeviceID7%
+%DevName8% = USB_Install, USB\%DeviceID8%
+%DevName9% = USB_Install, USB\%DeviceID9%
+%DevName10% = USB_Install, USB\%DeviceID10%
+%DevName11% = USB_Install, USB\%DeviceID11%
+%DevName12% = USB_Install, USB\%DeviceID12%
+%DevName13% = USB_Install, USB\%DeviceID13%
+%DevName14% = USB_Install, USB\%DeviceID14%
+%DevName15% = USB_Install, USB\%DeviceID15%
+%DevName16% = USB_Install, USB\%DeviceID16%
+%DevName17% = USB_Install, USB\%DeviceID17%
+%DevName18% = USB_Install, USB\%DeviceID18%
+%DevName19% = USB_Install, USB\%DeviceID19%
+%DevName20% = USB_Install, USB\%DeviceID20%
+%DevName21% = USB_Install, USB\%DeviceID21%
+%DevName22% = USB_Install, USB\%DeviceID22%
+%DevName23% = USB_Install, USB\%DeviceID23%
+%DevName24% = USB_Install, USB\%DeviceID24%
+%DevName25% = USB_Install, USB\%DeviceID25%
+%DevName26% = USB_Install, USB\%DeviceID26%
+%DevName27% = USB_Install, USB\%DeviceID27%
+%DevName28% = USB_Install, USB\%DeviceID28%
+%DevName29% = USB_Install, USB\%DeviceID29%
+%DevName30% = USB_Install, USB\%DeviceID30%
+%DevName31% = USB_Install, USB\%DeviceID31%
+%DevName32% = USB_Install, USB\%DeviceID32%
+%DevName33% = USB_Install, USB\%DeviceID33%
+
+[USB_Install]
+Include = winusb.inf
+Needs   = WINUSB.NT
+
+[USB_Install.Services]
+Include    = winusb.inf
+AddService = WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName   = "WinUSB - Kernel Driver 04/27/2022, 6.1.7600.16385"
+ServiceType   = 1
+StartType     = 3
+ErrorControl  = 1
+ServiceBinary = %12%\WinUSB.sys
+
+[USB_Install.Wdf]
+KmdfService = WINUSB, WinUsb_Install
+
+[WinUSB_Install]
+KmdfLibraryVersion = 1.11
+
+[USB_Install.HW]
+AddReg = AddDeviceInterfaceGUID
+
+[NoDeviceInterfaceGUID]
+; Avoids adding a DeviceInterfaceGUID for generic driver
+
+[AddDeviceInterfaceGUID]
+HKR,,DeviceInterfaceGUIDs,0x10000,%DeviceGUID%
+
+[USB_Install.CoInstallers]
+AddReg    = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller01011.dll,WdfCoInstaller","WinUSBCoInstaller2.dll"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller2.dll
+WdfCoInstaller01011.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %SourceName%
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller2.dll = 1,x86
+WdfCoInstaller01011.dll = 1,x86
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller2.dll = 1,amd64
+WdfCoInstaller01011.dll = 1,amd64
+
+[SourceDisksFiles.arm]
+WinUSBCoInstaller2.dll = 1,arm
+WdfCoInstaller01011.dll = 1,arm
