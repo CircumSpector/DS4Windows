@@ -47,6 +47,8 @@ There are none. Until this message changes, the rework is in constant motion and
 
 ## 3rd party credits
 
+TODO: don't forget to populate and update those
+
 This application benefits from these awesome projects (appearance in no special order):
 
 - [Adonis UI](https://benruehl.github.io/adonis-ui/)
