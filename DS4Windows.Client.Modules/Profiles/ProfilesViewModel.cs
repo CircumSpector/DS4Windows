@@ -2,7 +2,6 @@
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using MaterialDesignThemes.Wpf;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -11,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Windows;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Modules.Profiles
 {
@@ -31,8 +30,11 @@ namespace DS4Windows.Client.Modules.Profiles
             ShareCommand = new RelayCommand<IProfileListItemViewModel>(ShareProfile);
             EditCommand = new RelayCommand<IProfileListItemViewModel>(EditProfile);
             DeleteCommand = new RelayCommand<IProfileListItemViewModel>(DeleteProfile);
+        }
 
-            CreateProfileItems();
+        public override async Task Initialize()
+        {
+            await CreateProfileItems();
         }
 
         public ObservableCollection<IProfileListItemViewModel> ProfileItems { get; } = new ObservableCollection<IProfileListItemViewModel>();
@@ -105,23 +107,23 @@ namespace DS4Windows.Client.Modules.Profiles
             profilesService.DeleteProfile(profile.Id);
         }
 
-        private void CreateProfileItems()
+        private async Task CreateProfileItems()
         {
             foreach (var profile in profilesService.AvailableProfiles)
             {
-                CreateProfileItem(profile);
+                await CreateProfileItem(profile);
             }
 
             ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged += ProfilesViewModel_CollectionChanged;
         }
 
-        private void ProfilesViewModel_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void ProfilesViewModel_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 foreach (IProfile profile in e.NewItems)
                 {
-                    CreateProfileItem(profile);
+                    await CreateProfileItem(profile);
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -133,11 +135,11 @@ namespace DS4Windows.Client.Modules.Profiles
             }
         }
 
-        private void CreateProfileItem(IProfile profile)
+        private async Task CreateProfileItem(IProfile profile)
         {
             if (!ProfileItems.Any(p => p.Id == profile.Id))
             {
-                var profileItemViewModel = viewModelFactory.CreateViewModel<IProfileListItemViewModel>();
+                var profileItemViewModel = await viewModelFactory.CreateViewModel<IProfileListItemViewModel>();
                 profileItemViewModel.SetProfile(profile);
                 ProfileItems.Add(profileItemViewModel);
             }
@@ -153,11 +155,11 @@ namespace DS4Windows.Client.Modules.Profiles
             }
         }
 
-        private void ShowProfile(IProfile profile, bool isNew = false)
+        private async void ShowProfile(IProfile profile, bool isNew = false)
         {
-            var editViewModel = viewModelFactory.Create<IProfileEditViewModel, IProfileEditView>();
+            var editViewModel = await viewModelFactory.Create<IProfileEditViewModel, IProfileEditView>();
             editViewModel.SetProfile(profile, isNew);
-            DialogHost.Show(editViewModel.MainView, Main.Constants.DialogHostName, new DialogClosingEventHandler((o,e) =>
+            await DialogHost.Show(editViewModel.MainView, Main.Constants.DialogHostName, new DialogClosingEventHandler((o,e) =>
             {
                 if (e.Parameter != null)
                 {
@@ -165,7 +167,6 @@ namespace DS4Windows.Client.Modules.Profiles
                 }
 
                 editViewModel.Dispose();
-
             }));
         }
 

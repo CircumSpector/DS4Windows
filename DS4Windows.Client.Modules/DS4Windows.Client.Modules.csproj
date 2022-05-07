@@ -6,6 +6,7 @@
 	<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
 	<RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
 	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	<Nullable>disable</Nullable>
 </PropertyGroup>
 
   <ItemGroup>
@@ -69,6 +70,7 @@
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
+    <PackageReference Include="System.Net.WebSockets" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

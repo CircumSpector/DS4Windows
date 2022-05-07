@@ -75,7 +75,7 @@ namespace DS4Windows.Client.Core
                 }
 
                 var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();
-                var viewModel = viewModelFactory.Create<TViewModel, TView>();
+                var viewModel = await viewModelFactory.Create<TViewModel, TView>();
                 if (viewModel.MainView is Window windowViewModel)
                 {
                     windowViewModel.Show();

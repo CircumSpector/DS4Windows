@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Client.Modules.Profiles.Controls;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
@@ -8,18 +9,24 @@ namespace DS4Windows.Client.Modules.Profiles
 {
     public class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IProfileEditViewModel
     {
+        private readonly IViewModelFactory viewModelFactory;
         private readonly IMapper mapper;
         private IProfile profile;
 
         public ProfileEditViewModel(IViewModelFactory viewModelFactory, IMapper mapper)
         {
-            leftStick = viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
-            rightStick = viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
-            l2Button = viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
-            r2Button = viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
-            sixAxisX = viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
-            sixAxisZ = viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
+            this.viewModelFactory = viewModelFactory;
             this.mapper = mapper;
+        }
+
+        public override async  Task Initialize()
+        {
+            leftStick = await viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
+            rightStick = await viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
+            l2Button = await viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
+            r2Button = await viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
+            sixAxisX = await viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
+            sixAxisZ = await viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
         }
 
         private bool isNew;

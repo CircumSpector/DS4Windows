@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Services;
+using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +18,7 @@ public class ControllerManagerHost : IHostedService
     private readonly IControllersEnumeratorService enumerator;
 
     private readonly IInputSourceService inputSourceService;
+    private readonly IDeviceNotificationListener deviceNotificationListener;
 
     private readonly ILogger<ControllerManagerHost> logger;
 
@@ -25,13 +28,15 @@ public class ControllerManagerHost : IHostedService
     
     public ControllerManagerHost(IControllersEnumeratorService enumerator,
         ILogger<ControllerManagerHost> logger, IProfilesService profileService,
-        IControllerManagerService manager, IInputSourceService inputSourceService)
+        IControllerManagerService manager, IInputSourceService inputSourceService,
+        IDeviceNotificationListener deviceNotificationListener)
     {
         this.enumerator = enumerator;
         this.logger = logger;
         this.profileService = profileService;
         this.manager = manager;
         this.inputSourceService = inputSourceService;
+        this.deviceNotificationListener = deviceNotificationListener;
 
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
@@ -39,6 +44,11 @@ public class ControllerManagerHost : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        var hidGuid = new Guid();
+        NativeMethods.HidD_GetHidGuid(ref hidGuid);
+
+        deviceNotificationListener.StartListen(hidGuid);
+
         //
         // Make sure we're ready to rock
         // 
@@ -54,6 +64,7 @@ public class ControllerManagerHost : IHostedService
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
+        deviceNotificationListener.StopListen();
         return Task.CompletedTask;
     }
 

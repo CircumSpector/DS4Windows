@@ -9,6 +9,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net.WebSockets;
+using System.Threading.Tasks;
 using DS4Windows.Shared.Devices.DriverManagement;
 using Microsoft.Toolkit.Mvvm.Input;
 
@@ -43,6 +45,14 @@ namespace DS4Windows.Client.Modules.Controllers
         public RelayCommand<IControllerItemViewModel> UnhideCommand { get; }
         public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new ObservableCollection<IControllerItemViewModel>();
         public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new ObservableCollection<ISelectableProfileItemViewModel>();
+        
+        public override async Task Initialize()
+        {
+            ClientWebSocket client = new ClientWebSocket();
+
+            //await client.ConnectAsync(new Uri("wss://localhost:5001/controller/ws", UriKind.Absolute),
+              //  CancellationToken.None);
+        }
 
         private void CreateControllerItems()
         {
@@ -162,7 +172,7 @@ namespace DS4Windows.Client.Modules.Controllers
         #region configuration properties
 
         //TODO: Change to pull localization values
-        public override string? Header => "Controllers";
+        public override string Header => "Controllers";
 
         public override int TabIndex => 1;
 

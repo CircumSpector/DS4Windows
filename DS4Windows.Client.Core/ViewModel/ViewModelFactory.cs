@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Core.ViewModel
 {
@@ -15,12 +16,13 @@ namespace DS4Windows.Client.Core.ViewModel
             this.serviceProvider = serviceProvider;
         }
 
-        public List<INavigationTabViewModel> CreateNavigationTabViewModels()
+        public async Task<List<INavigationTabViewModel>> CreateNavigationTabViewModels()
         {
-            var navigationTabViewModels = serviceProvider.GetServices<INavigationTabViewModel>();
+            var navigationTabViewModels = serviceProvider.GetServices<INavigationTabViewModel>().ToList();
 
             foreach (var navigationTabViewModel in navigationTabViewModels)
             {
+                await navigationTabViewModel.Initialize();
                 var tabView = serviceProvider.GetService(navigationTabViewModel.GetViewType());
                 Initialize(navigationTabViewModel, tabView);
             }
@@ -30,22 +32,23 @@ namespace DS4Windows.Client.Core.ViewModel
                 .ToList();
         }
 
-        public TViewModel Create<TViewModel, TView>()
+        public async Task<TViewModel> Create<TViewModel, TView>()
             where TViewModel : IViewModel
             where TView : IView
         {
-            var viewModel = CreateViewModel<TViewModel>();
+            var viewModel = await CreateViewModel<TViewModel>();
             var view = CreateView<TView>();
-
             Initialize(viewModel, view);
 
             return viewModel;
         }
 
-        public TViewModel CreateViewModel<TViewModel>()
+        public async Task<TViewModel> CreateViewModel<TViewModel>()
             where TViewModel : IViewModel
         {
-            return serviceProvider.GetService<TViewModel>();
+            var viewModel = await Task.FromResult(serviceProvider.GetService<TViewModel>());
+            await viewModel.Initialize();
+            return viewModel;
         }
 
         public TView CreateView<TView>()
