@@ -59,7 +59,6 @@ namespace DS4Windows.Server
                     var data = new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(MapControllerConnected(hidDevice))));
                     await socket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
                 });
-                
             }
         }
 
