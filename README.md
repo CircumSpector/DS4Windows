@@ -39,6 +39,12 @@ There are none. Until this message changes, the rework is in constant motion and
 
 [Join our support server](https://ds4windows.app/support.html) 🐸
 
+## Contributing
+
+If you are a **developer** looking to join the team just drop @nefarius a message! ⌨️
+
+If you **want to see this project succeed** give it a GitHub star to show interest! ❤️
+
 ## Sponsors
 
 [<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/)
@@ -46,6 +52,8 @@ There are none. Until this message changes, the rework is in constant motion and
 <!--
 
 ## 3rd party credits
+
+TODO: don't forget to populate and update those
 
 This application benefits from these awesome projects (appearance in no special order):
 
