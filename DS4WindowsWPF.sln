@@ -35,9 +35,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Configura
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Common.Interfaces", "DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj", "{7310E296-9F83-41D6-BEC6-37C12D90F3C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Shared.Common.Util", "DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj", "{94A5CDAF-E0C5-4D48-8404-6051426417E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Common.Util", "DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj", "{94A5CDAF-E0C5-4D48-8404-6051426417E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ds4Windows.Shared.Devices.Interfaces", "Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj", "{4CE273C4-E1D7-4E41-8AD5-4209DA2E83AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ds4Windows.Shared.Devices.Interfaces", "Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj", "{4CE273C4-E1D7-4E41-8AD5-4209DA2E83AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{F66EA907-4349-40B7-9CDC-956AFEC8EB39}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Server.Host", "DS4Windows.Server.Host\DS4Windows.Server.Host.csproj", "{3F993F76-0AAC-453D-AB5E-53245C6F1109}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -383,6 +387,26 @@ Global
 		{4CE273C4-E1D7-4E41-8AD5-4209DA2E83AB}.Release|x64.Build.0 = Release|Any CPU
 		{4CE273C4-E1D7-4E41-8AD5-4209DA2E83AB}.Release|x86.ActiveCfg = Release|Any CPU
 		{4CE273C4-E1D7-4E41-8AD5-4209DA2E83AB}.Release|x86.Build.0 = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|ARM.Build.0 = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|x64.Build.0 = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Debug|x86.Build.0 = Debug|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|ARM.ActiveCfg = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|ARM.Build.0 = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|ARM64.Build.0 = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|x64.ActiveCfg = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|x64.Build.0 = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|x86.ActiveCfg = Release|Any CPU
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -403,6 +427,7 @@ Global
 		{7310E296-9F83-41D6-BEC6-37C12D90F3C2} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}
 		{94A5CDAF-E0C5-4D48-8404-6051426417E2} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}
 		{4CE273C4-E1D7-4E41-8AD5-4209DA2E83AB} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}
+		{3F993F76-0AAC-453D-AB5E-53245C6F1109} = {F66EA907-4349-40B7-9CDC-956AFEC8EB39}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2BE30981-376A-4DEA-B2B1-247BADB864FC}

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Core.ViewModel
 {
@@ -12,6 +13,8 @@ namespace DS4Windows.Client.Core.ViewModel
 
     public interface IViewModel
     {
+        Task Initialize();
+
         void AddView(IView view);
 
         List<IView> Views { get; }

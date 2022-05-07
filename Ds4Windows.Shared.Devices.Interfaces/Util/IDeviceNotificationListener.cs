@@ -15,5 +15,7 @@ namespace DS4Windows.Shared.Devices.Util
     {
         void StartListen(Window window, Guid interfaceGuid);
         void EndListen();
+        void StartListen(Guid interfaceGuid);
+        void StopListen();
     }
 }

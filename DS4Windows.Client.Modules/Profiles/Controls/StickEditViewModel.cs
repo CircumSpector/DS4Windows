@@ -2,14 +2,22 @@
 using DS4Windows.Shared.Common.Types;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Modules.Profiles.Controls
 {
     public class StickEditViewModel : ViewModel<IStickEditViewModel>, IStickEditViewModel
     {
+        private readonly IViewModelFactory viewModelFactory;
+
         public StickEditViewModel(IViewModelFactory viewModelFactory)
         {
-            ControlModeSettings = viewModelFactory.Create<IStickControlModeSettingsViewModel, IStickControlModeSettingsView>();
+            this.viewModelFactory = viewModelFactory;
+        }
+
+        public override async Task Initialize()
+        {
+            ControlModeSettings = await viewModelFactory.Create<IStickControlModeSettingsViewModel, IStickControlModeSettingsView>();
         }
 
         private StickMode outputSettings;
@@ -21,7 +29,7 @@ namespace DS4Windows.Client.Modules.Profiles.Controls
 
         public bool IsControlModeSet => OutputSettings == StickMode.Controls;
         public bool IsFlickStickSet => OutputSettings == StickMode.FlickStick;
-        public IStickControlModeSettingsViewModel ControlModeSettings { get; }
+        public IStickControlModeSettingsViewModel ControlModeSettings { get; private set; }
 
         private double flickRealWorldCalibration;
         public double FlickRealWorldCalibtration

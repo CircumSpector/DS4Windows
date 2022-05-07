@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-DS4Windows.Server.Host-AD961187-8826-4EF3-855F-61640042D53B</UserSecretsId>
+	  <OutputType>exe</OutputType>
+	  <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
+	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+	  <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Device.Net" Version="4.2.1" />
+    <PackageReference Include="Hid.Net" Version="4.2.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj" />
+    <ProjectReference Include="..\Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj" />
+    <ProjectReference Include="..\DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj" />
+  </ItemGroup>
+</Project>
