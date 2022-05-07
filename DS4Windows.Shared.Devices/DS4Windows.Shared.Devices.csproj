@@ -39,7 +39,7 @@
     <PackageReference Include="PInvoke.Hid" Version="0.7.104" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.104" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="1.4.42-beta" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="1.6.50" />
   </ItemGroup>
 
   <ItemGroup>
