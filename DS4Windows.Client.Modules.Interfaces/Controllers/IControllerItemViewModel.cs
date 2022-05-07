@@ -4,6 +4,7 @@ using System;
 using System.Net.NetworkInformation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using DS4Windows.Server;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
@@ -25,6 +26,6 @@ namespace DS4Windows.Client.Modules.Controllers
         string InstanceId { get; set; }
         string ParentInstance { get; set; }
 
-        void SetDevice(ICompatibleHidDevice device);
+        void SetDevice(ControllerConnectedMessage device);
     }
 }

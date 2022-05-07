@@ -1,44 +1,45 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Client.Modules.Profiles;
+using DS4Windows.Server;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
-using DS4Windows.Shared.Devices.HID;
-using DS4Windows.Shared.Devices.Services;
+using DS4Windows.Shared.Devices.DriverManagement;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
+using Newtonsoft.Json;
+using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Net.WebSockets;
+using System.Net.Http;
 using System.Threading.Tasks;
-using DS4Windows.Shared.Devices.DriverManagement;
-using Microsoft.Toolkit.Mvvm.Input;
+using System.Windows;
+using Websocket.Client;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
     public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel, IControllersView>,  IControllersViewModel
     {
-        private readonly IControllersEnumeratorService controllersEnumeratorService;
         private readonly IProfilesService profilesService;
         private readonly IServiceProvider serviceProvider;
         private readonly IControllerDriverManagementService controllerDriverManagementService;
 
-        public ControllersViewModel(
-            IControllersEnumeratorService controllersEnumeratorService, 
+        public ControllersViewModel( 
             IProfilesService profilesService, 
             IServiceProvider serviceProvider,
             IControllerDriverManagementService controllerDriverManagementService)
         {
             this.serviceProvider = serviceProvider;
             this.controllerDriverManagementService = controllerDriverManagementService;
-            this.controllersEnumeratorService = controllersEnumeratorService;
             this.profilesService = profilesService;
 
             HideCommand = new RelayCommand<IControllerItemViewModel>(HideController);
             UnhideCommand = new RelayCommand<IControllerItemViewModel>(UnHideController);
             
             CreateSelectableProfileItems();
-            CreateControllerItems();
+            
         }
 
         public RelayCommand<IControllerItemViewModel> HideCommand { get; }
@@ -48,36 +49,57 @@ namespace DS4Windows.Client.Modules.Controllers
         
         public override async Task Initialize()
         {
-            ClientWebSocket client = new ClientWebSocket();
+            await CreateControllerItems();
 
-            //await client.ConnectAsync(new Uri("wss://localhost:5001/controller/ws", UriKind.Absolute),
-              //  CancellationToken.None);
+            var client = new WebsocketClient(new Uri("wss://localhost:5001/controller/ws", UriKind.Absolute));
+            
+            client.ReconnectTimeout = TimeSpan.FromSeconds(30);
+            client.ReconnectionHappened.Subscribe(info => Log.Information($"Reconnection happened, type: {info.Type}"));
+
+            client.MessageReceived.Subscribe(ProcessControllerMessage);
+
+            client.Start();
         }
 
-        private void CreateControllerItems()
+        private async void ProcessControllerMessage(ResponseMessage msg)
         {
-            foreach (var controller in controllersEnumeratorService.SupportedDevices)
+            var messageBase = JsonConvert.DeserializeObject<MessageBase>(msg.Text);
+            if (messageBase.MessageName == ControllerConnectedMessage.Name)
             {
-                CreateControllerItem(controller);
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    var device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text); 
+                    CreateControllerItem(device);
+                });
             }
-
-            controllersEnumeratorService.ControllerReady += ControllersEnumeratorService_ControllerReady;
-            controllersEnumeratorService.ControllerRemoved += ControllersEnumeratorService_ControllerRemoved;
+            else if (messageBase.MessageName == ControllerDisconnectedMessage.Name)
+            {
+                await Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    var device = JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text); 
+                    RemoveControllerItem(device.ControllerDisconnectedId);
+                });
+            }
         }
 
-        private void ControllersEnumeratorService_ControllerRemoved(ICompatibleHidDevice obj)
+        private async Task CreateControllerItems()
         {
-            RemoveControllerItem(obj);
+            var client = new HttpClient();
+            var result = await client.GetAsync("https://localhost:5001/controller/list");
+            if (result.IsSuccessStatusCode)
+            {
+                var list = JsonConvert.DeserializeObject<List<ControllerConnectedMessage>>(
+                    await result.Content.ReadAsStringAsync());
+                foreach (var controller in list)
+                {
+                    CreateControllerItem(controller);
+                }
+            }
         }
 
-        private void ControllersEnumeratorService_ControllerReady(ICompatibleHidDevice obj)
+        private void CreateControllerItem(ControllerConnectedMessage device)
         {
-            CreateControllerItem(obj);
-        }
-
-        private void CreateControllerItem(ICompatibleHidDevice device)
-        {
-            if (!ControllerItems.Any(i => i.Serial == device.Serial))
+            if (!ControllerItems.Any(i => i.InstanceId == device.InstanceId))
             {
                 var deviceItem = serviceProvider.GetService<IControllerItemViewModel>();
                 deviceItem.SetDevice(device);
@@ -85,9 +107,9 @@ namespace DS4Windows.Client.Modules.Controllers
             }
         }
 
-        private void RemoveControllerItem(ICompatibleHidDevice device)
+        private void RemoveControllerItem(string instanceId)
         {
-            var existing = ControllerItems.SingleOrDefault(i => i.Serial == device.Serial);
+            var existing = ControllerItems.SingleOrDefault(i => i.InstanceId == instanceId);
             if (existing != null)
             {
                 ControllerItems.Remove(existing);
@@ -122,7 +144,6 @@ namespace DS4Windows.Client.Modules.Controllers
                 }
             }
         }
-
 
         private void CreateProfileItem(IProfile profile)
         {

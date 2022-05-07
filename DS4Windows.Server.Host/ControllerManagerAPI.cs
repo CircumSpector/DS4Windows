@@ -1,54 +1,63 @@
-﻿using System.Collections.ObjectModel;
-using System.Management;
-using System.Net.WebSockets;
-using DS4Windows.Shared.Devices.HID;
-using DS4Windows.Shared.Devices.Services;
-using DS4Windows.Shared.Devices.Util;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using DS4Windows.Shared.Devices.Services;
+using Newtonsoft.Json;
 
-namespace DS4Windows.Server.Host
+namespace DS4Windows.Server
 {
     public class ControllerManagerApi
     {
+        private readonly IControllerMessageForwarder controllerMessageForwarder;
+        private readonly IControllersEnumeratorService controllersEnumeratorService;
+        private readonly IControllerManagerService controllerManagerService;
+        private bool isReady;
+
         public static void RegisterRoutes(WebApplication app)
         {
-            app.MapGet("/controller/ws",
-                async (HttpContext context, ControllerManagerApi api) => await api.Get(context));
+            app.MapGet("/controller/ws", async (HttpContext context, ControllerManagerApi api) => await api.ConnectSocket(context));
+            app.MapGet("/controller/list", (HttpContext context, ControllerManagerApi api) => api.GetCurrentControllerList(context));
+            app.MapGet("/controller/ping", (ControllerManagerApi api) => api.CheckIsReady());
             app.Services.GetService<ControllerManagerApi>();
         }
 
-        private WebSocket controllerWebSocket;
-        public async Task<IResult> Get(HttpContext context)
+        public ControllerManagerApi(
+            IControllerMessageForwarder controllerMessageForwarder, 
+            IControllersEnumeratorService controllersEnumeratorService,
+            IControllerManagerService controllerManagerService)
         {
-            if (!context.WebSockets.IsWebSocketRequest) return Results.BadRequest();
-
-            controllerWebSocket = await context.WebSockets.AcceptWebSocketAsync();
-            return Results.Ok();
+            this.controllerMessageForwarder = controllerMessageForwarder;
+            this.controllersEnumeratorService = controllersEnumeratorService;
+            this.controllerManagerService = controllerManagerService;
+            this.controllersEnumeratorService.DeviceListReady += ControllersEnumeratorService_DeviceListReady;
         }
 
-        //private static async Task Echo(WebSocket webSocket)
-        //{
-        //    var buffer = new byte[1024 * 4];
-        //    var receiveResult = await webSocket.ReceiveAsync(
-        //        new ArraySegment<byte>(buffer), CancellationToken.None);
+        private void ControllersEnumeratorService_DeviceListReady()
+        {
+            isReady = true;
+        }
 
-        //    while (!receiveResult.CloseStatus.HasValue)
-        //    {
-        //        await webSocket.SendAsync(
-        //            new ArraySegment<byte>(buffer, 0, receiveResult.Count),
-        //            receiveResult.MessageType,
-        //            receiveResult.EndOfMessage,
-        //            CancellationToken.None);
+        private IResult CheckIsReady()
+        {
+            return isReady ? Results.Ok() : Results.NotFound();
+        }
 
-        //        receiveResult = await webSocket.ReceiveAsync(
-        //            new ArraySegment<byte>(buffer), CancellationToken.None);
-        //    }
+        private async Task<IResult> ConnectSocket(HttpContext context)
+        {
+            if (context.WebSockets.IsWebSocketRequest)
+            {
+                await controllerMessageForwarder.StartListening(await context.WebSockets.AcceptWebSocketAsync());
+                return Results.Ok();
+            }
 
-        //    await webSocket.CloseAsync(
-        //        receiveResult.CloseStatus.Value,
-        //        receiveResult.CloseStatusDescription,
-        //        CancellationToken.None);
-        //}
+            return Results.BadRequest();
+        }
+
+        private string GetCurrentControllerList(HttpContext context)
+        {
+            var list = controllerManagerService.ActiveControllers
+                .Where(c => c.Device != null)
+                .Select(c => controllerMessageForwarder.MapControllerConnected(c.Device))
+                .ToList();
+
+            return JsonConvert.SerializeObject(list);
+        }
     }
 }
