@@ -6,7 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
-using System.IO;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -74,12 +75,38 @@ namespace DS4Windows.Client.Core
                     registrar.Initialize(scope.ServiceProvider);
                 }
 
+                await WaitForService();
+
                 var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();
                 var viewModel = await viewModelFactory.Create<TViewModel, TView>();
                 if (viewModel.MainView is Window windowViewModel)
                 {
                     windowViewModel.Show();
                 }
+            }
+        }
+
+        private static async Task WaitForService()
+        {
+            var client = new HttpClient();
+
+            while (true)
+            {
+                try
+                {
+                    var result = await client.GetAsync("https://localhost:5001/controller/ping");
+                    if (result.IsSuccessStatusCode)
+                    {
+                        break;
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                Debug.WriteLine("Still Waiting on service");
+                await Task.Delay(500);
             }
         }
 

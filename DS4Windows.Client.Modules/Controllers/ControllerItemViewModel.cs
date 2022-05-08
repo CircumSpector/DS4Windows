@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using DS4Windows.Server;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
@@ -86,19 +87,18 @@ namespace DS4Windows.Client.Modules.Controllers
 
         #endregion
 
-        public void SetDevice(ICompatibleHidDevice device)
+        public void SetDevice(ControllerConnectedMessage device)
         {
             mapper.Map(device, this);
-            selectedProfileId = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(device.Serial)).Id;
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(SelectedProfileId))
             {
-                var activeProfile = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(Serial));
-                var slotIndex = profilesService.ActiveProfiles.IndexOf(activeProfile);
-                profilesService.SetActiveTo(slotIndex, activeProfile);
+                //var activeProfile = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(Serial));
+                //var slotIndex = profilesService.ActiveProfiles.IndexOf(activeProfile);
+                //profilesService.SetActiveTo(slotIndex, activeProfile);
             }
 
             base.OnPropertyChanged(e);

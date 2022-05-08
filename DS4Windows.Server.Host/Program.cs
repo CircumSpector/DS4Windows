@@ -1,4 +1,4 @@
-using DS4Windows.Server.Host;
+using DS4Windows.Server;
 using DS4Windows.Shared.Common;
 using DS4Windows.Shared.Configuration.Application;
 using DS4Windows.Shared.Configuration.Profiles;
@@ -20,9 +20,12 @@ new ProfilesRegistrar().ConfigureServices(builder.Configuration, builder.Service
 new ConfigurationRegistrar().ConfigureServices(builder.Configuration, builder.Services);
 new CommonRegistrar().ConfigureServices(builder.Configuration, builder.Services);
 builder.Services.AddSingleton<ControllerManagerApi>();
+builder.Services.AddSingleton<IControllerMessageForwarder, ControllerMessageForwarder>();
 builder.Services.AddHostedService<ControllerManagerHost>();
 
 builder.Host.UseWindowsService(c => c.ServiceName = "DS4WindowsService");
+
+ControllerManagerHost.IsEnabled = true;
 
 var app = builder.Build();
 

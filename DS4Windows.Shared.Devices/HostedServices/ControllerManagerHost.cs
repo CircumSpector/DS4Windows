@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using DS4Windows.Shared.Configuration.Profiles.Services;
+﻿using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Services;
 using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Shared.Devices.HostedServices;
 
@@ -25,6 +25,9 @@ public class ControllerManagerHost : IHostedService
     private readonly IControllerManagerService manager;
 
     private readonly IProfilesService profileService;
+
+    //temporary because the client still needs to run part of the host for now
+    public static bool IsEnabled = false;
     
     public ControllerManagerHost(IControllersEnumeratorService enumerator,
         ILogger<ControllerManagerHost> logger, IProfilesService profileService,
@@ -44,27 +47,33 @@ public class ControllerManagerHost : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var hidGuid = new Guid();
-        NativeMethods.HidD_GetHidGuid(ref hidGuid);
-
-        deviceNotificationListener.StartListen(hidGuid);
-
         //
         // Make sure we're ready to rock
         // 
         profileService.Initialize();
 
-        logger.LogInformation("Starting device enumeration");
+        if (IsEnabled)
+        {
+            var hidGuid = new Guid();
+            NativeMethods.HidD_GetHidGuid(ref hidGuid);
+            deviceNotificationListener.StartListen(hidGuid);
 
-        //
-        // Run full enumeration only once at startup, during runtime arrival events are used
-        // 
-        await Task.Run(() => enumerator.EnumerateDevices(), cancellationToken);
+            logger.LogInformation("Starting device enumeration");
+
+            //
+            // Run full enumeration only once at startup, during runtime arrival events are used
+            // 
+            await Task.Run(() => enumerator.EnumerateDevices(), cancellationToken);
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        deviceNotificationListener.StopListen();
+        if (IsEnabled)
+        {
+            deviceNotificationListener.StopListen();
+        }
+
         return Task.CompletedTask;
     }
 
