@@ -111,7 +111,7 @@
     <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="TaskScheduler" Version="2.10.1" />
     <PackageReference Include="WPFLocalizeExtension" Version="3.9.4" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="1.6.50" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.0.68" />
 
     <Reference Include="Nefarius.ViGEm.Client">
       <HintPath>..\libs\$(Platform)\Nefarius.ViGEm.Client\Nefarius.ViGEm.Client.dll</HintPath>
