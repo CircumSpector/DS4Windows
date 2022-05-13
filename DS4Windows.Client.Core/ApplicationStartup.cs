@@ -69,8 +69,6 @@ namespace DS4Windows.Client.Core
             await host.StartAsync();
             using (var scope = host.Services.CreateScope())
             {
-                await WaitForService();
-
                 var moduleRegistrars = scope.ServiceProvider.GetServices<IServiceRegistrar>();
                 foreach (var registrar in moduleRegistrars)
                 {
@@ -86,29 +84,7 @@ namespace DS4Windows.Client.Core
             }
         }
 
-        private static async Task WaitForService()
-        {
-            var client = new HttpClient();
-
-            while (true)
-            {
-                try
-                {
-                    var result = await client.GetAsync("https://localhost:5001/controller/ping");
-                    if (result.IsSuccessStatusCode)
-                    {
-                        break;
-                    }
-                }
-                catch
-                {
-                    // ignored
-                }
-
-                Debug.WriteLine("Still Waiting on service");
-                await Task.Delay(500);
-            }
-        }
+        
 
         public static async Task Shutdown()
         {

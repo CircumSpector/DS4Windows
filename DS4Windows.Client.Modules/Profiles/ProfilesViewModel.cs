@@ -13,6 +13,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DS4Windows.Client.Modules.Profiles.Edit;
+using DS4Windows.Client.Modules.Profiles.Utils;
 using DS4Windows.Server;
 
 namespace DS4Windows.Client.Modules.Profiles

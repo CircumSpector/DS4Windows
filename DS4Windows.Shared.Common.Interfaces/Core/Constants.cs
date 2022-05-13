@@ -61,5 +61,9 @@ namespace DS4Windows.Shared.Common.Core
         ///     The maximum number of queued input reports before getting discarded.
         /// </summary>
         public const int MaxQueuedInputReports = 5;
+
+        public const string HttpPort = "50317";
+        public const string HttpUrl = $"https://localhost:{HttpPort}";
+        public const string WebsocketUrl = $"wss://localhost:{HttpPort}";
     }
 }
