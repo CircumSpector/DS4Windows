@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
+using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
@@ -43,12 +44,12 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     private readonly ObservableCollection<HidDevice> connectedDevices;
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    private readonly IDeviceNotificationListenerSubscriber deviceNotificationListener;
+    private readonly IDeviceNotificationListener deviceNotificationListener;
     private readonly Guid hidClassInterfaceGuid;
 
     private readonly ILogger<HidDeviceEnumeratorService> logger;
 
-    public HidDeviceEnumeratorService(IDeviceNotificationListenerSubscriber deviceNotificationListener,
+    public HidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
         ILogger<HidDeviceEnumeratorService> logger)
     {
         this.deviceNotificationListener = deviceNotificationListener;
@@ -58,8 +59,10 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
         hidClassInterfaceGuid = interfaceGuid;
 
-        this.deviceNotificationListener.DeviceArrived += DeviceNotificationListenerOnDeviceArrived;
-        this.deviceNotificationListener.DeviceRemoved += DeviceNotificationListenerOnDeviceRemoved;
+        Guid hidGuid = Guid.Empty;
+        NativeMethods.HidD_GetHidGuid(ref hidGuid);
+        this.deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived, hidGuid);
+        this.deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved, hidGuid);
 
         connectedDevices = new ObservableCollection<HidDevice>();
 
@@ -276,11 +279,12 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         return true;
     }
 
-    private void DeviceNotificationListenerOnDeviceArrived(string symLink)
+    private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
     {
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
 
+        var symLink = args.SymLink;
         activity?.SetTag("Path", symLink);
 
         var device = PnPDevice.GetDeviceByInterfaceId(symLink);
@@ -311,8 +315,9 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         DeviceArrived?.Invoke(entry);
     }
 
-    private void DeviceNotificationListenerOnDeviceRemoved(string symLink)
+    private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
     {
+        var symLink = args.SymLink;
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceRemoved)}");
 
