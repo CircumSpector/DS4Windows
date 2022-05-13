@@ -91,7 +91,7 @@ namespace DS4Windows.Shared.Devices.Services
             //
             // Cast to enriched class
             // 
-            foreach (var hidDevice in filtered)
+            foreach (var hidDevice in filtered.ToList())
             {
                 logger.LogInformation("Adding supported input device {Device}",
                     hidDevice);

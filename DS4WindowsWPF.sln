@@ -43,7 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{F66EA9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Server.Host", "DS4Windows.Server.Host\DS4Windows.Server.Host.csproj", "{3F993F76-0AAC-453D-AB5E-53245C6F1109}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS4Windows.Server.Interfaces", "DS4Windows.Server.Interfaces\DS4Windows.Server.Interfaces.csproj", "{0957AD0B-D953-4FF6-8FE7-D3681F767039}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Server.Interfaces", "DS4Windows.Server.Interfaces\DS4Windows.Server.Interfaces.csproj", "{0957AD0B-D953-4FF6-8FE7-D3681F767039}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

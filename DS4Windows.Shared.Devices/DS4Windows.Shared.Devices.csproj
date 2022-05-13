@@ -14,6 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.2.85" />
     <PackageReference Include="PInvoke.NewDev" Version="0.7.104" />
     <PackageReference Include="PInvoke.SetupApi" Version="0.7.104" />
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
@@ -39,7 +40,6 @@
     <PackageReference Include="PInvoke.Hid" Version="0.7.104" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.104" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.1.74" />
   </ItemGroup>
 
   <ItemGroup>
