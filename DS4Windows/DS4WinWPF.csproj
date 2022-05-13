@@ -93,7 +93,7 @@
     </PackageReference>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="all" />
-    <PackageReference Include="MdXaml" Version="1.13.0" />
+    <PackageReference Include="MdXaml" Version="1.14.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
@@ -111,7 +111,7 @@
     <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="TaskScheduler" Version="2.10.1" />
     <PackageReference Include="WPFLocalizeExtension" Version="3.9.4" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="1.6.50" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.1.74" />
 
     <Reference Include="Nefarius.ViGEm.Client">
       <HintPath>..\libs\$(Platform)\Nefarius.ViGEm.Client\Nefarius.ViGEm.Client.dll</HintPath>
