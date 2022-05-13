@@ -69,13 +69,13 @@ namespace DS4Windows.Client.Core
             await host.StartAsync();
             using (var scope = host.Services.CreateScope())
             {
+                await WaitForService();
+
                 var moduleRegistrars = scope.ServiceProvider.GetServices<IServiceRegistrar>();
                 foreach (var registrar in moduleRegistrars)
                 {
-                    registrar.Initialize(scope.ServiceProvider);
+                    await registrar.Initialize(scope.ServiceProvider);
                 }
-
-                await WaitForService();
 
                 var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();
                 var viewModel = await viewModelFactory.Create<TViewModel, TView>();

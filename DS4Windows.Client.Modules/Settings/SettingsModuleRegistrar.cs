@@ -3,6 +3,7 @@ using DS4Windows.Client.Core.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Modules.Settings
 {
@@ -14,8 +15,9 @@ namespace DS4Windows.Client.Modules.Settings
             services.AddSingleton<ISettingsView, SettingsView>();
         }
 
-        public void Initialize(IServiceProvider services)
+        public Task Initialize(IServiceProvider services)
         {
+            return Task.FromResult(0);
         }
     }
 }

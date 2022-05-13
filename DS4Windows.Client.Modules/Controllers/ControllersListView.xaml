@@ -32,7 +32,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding DisplayText}"/>
-                    <GridViewColumn Header="Profile">
+                    <GridViewColumn Header="ProfileItem">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.SelectableProfileItems}"

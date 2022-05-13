@@ -3,6 +3,7 @@ using DS4Windows.Shared.Configuration.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace DS4Windows.Shared.Configuration.Application
@@ -15,8 +16,9 @@ namespace DS4Windows.Shared.Configuration.Application
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
         }
 
-        public void Initialize(IServiceProvider services)
+        public Task Initialize(IServiceProvider services)
         {
+            return Task.FromResult(0);
         }
     }
 }

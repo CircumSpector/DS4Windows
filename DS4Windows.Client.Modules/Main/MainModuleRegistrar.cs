@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Modules.Main
 {
@@ -13,8 +14,9 @@ namespace DS4Windows.Client.Modules.Main
             services.AddSingleton<IMainViewModel, MainWindowViewModel>();
         }
 
-        public void Initialize(IServiceProvider services)
+        public Task Initialize(IServiceProvider services)
         {
+            return Task.FromResult(0);
         }
     }
 }

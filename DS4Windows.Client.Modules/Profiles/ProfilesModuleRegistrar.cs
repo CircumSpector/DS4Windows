@@ -4,6 +4,7 @@ using DS4Windows.Client.Modules.Profiles.Controls;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Modules.Profiles
 {
@@ -17,6 +18,7 @@ namespace DS4Windows.Client.Modules.Profiles
             services.AddTransient<IProfileListItemViewModel, ProfileListItemViewModel>();
             services.AddTransient<IProfileEditViewModel, ProfileEditViewModel>();
             services.AddTransient<IProfileEditView, ProfileEditView>();
+            services.AddSingleton<IProfileServiceClient, ProfileServiceClient>();
 
             services.AddTransient<IStickEditViewModel, StickEditViewModel>();
             services.AddTransient<IStickEditView, StickEditView>();
@@ -33,8 +35,10 @@ namespace DS4Windows.Client.Modules.Profiles
             services.AddAutoMapper(cfg => cfg.AddProfile<ProfilesAutoMapper>());
         }
 
-        public void Initialize(IServiceProvider services)
+        public async Task Initialize(IServiceProvider services)
         {
+            var client = services.GetService<IProfileServiceClient>();
+            await client.Initialize();
         }
     }
 }

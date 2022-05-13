@@ -22,12 +22,12 @@ namespace DS4Windows.Client.Modules.Controllers
 {
     public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel, IControllersView>,  IControllersViewModel
     {
-        private readonly IProfilesService profilesService;
+        private readonly IProfileServiceClient profilesService;
         private readonly IServiceProvider serviceProvider;
         private readonly IControllerDriverManagementService controllerDriverManagementService;
 
         public ControllersViewModel( 
-            IProfilesService profilesService, 
+            IProfileServiceClient profilesService, 
             IServiceProvider serviceProvider,
             IControllerDriverManagementService controllerDriverManagementService)
         {
@@ -119,12 +119,12 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private void CreateSelectableProfileItems()
         {
-            foreach (var item in profilesService.AvailableProfiles)
+            foreach (var item in profilesService.ProfileList)
             {
                 CreateProfileItem(item);
             }
 
-            ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged += ControllersViewModel_CollectionChanged; ;
+            profilesService.ProfileList.CollectionChanged += ControllersViewModel_CollectionChanged;
         }
 
         private void ControllersViewModel_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -179,7 +179,6 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             if (disposing)
             {
-                ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged -= ControllersViewModel_CollectionChanged;
                 foreach (var profile in SelectableProfileItems.ToList())
                 {
                     profile.Dispose();

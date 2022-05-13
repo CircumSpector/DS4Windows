@@ -3,6 +3,7 @@ using DS4Windows.Client.Core.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
@@ -17,8 +18,9 @@ namespace DS4Windows.Client.Modules.Controllers
             services.AddAutoMapper(cfg => cfg.AddProfile<ControllersAutoMapper>());
         }
 
-        public void Initialize(IServiceProvider services)
+        public Task Initialize(IServiceProvider services)
         {
+            return Task.FromResult(0);
         }
     }
 }

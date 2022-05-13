@@ -20,18 +20,6 @@ namespace DS4Windows.Server
             var waitSource = new TaskCompletionSource<object>();
             await waitSource.Task;
         }
-
-        public ProfileItem MapProfileItem(IProfile profile)
-        {
-            var message = new ProfileItem
-            {
-              Id = profile.Id,
-              DisplayName = profile.DisplayName,
-              OutputDeviceType = profile.OutputDeviceType,
-
-            };
-
-            return message;
-        }
+        
     }
 }
