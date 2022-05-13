@@ -1,7 +1,6 @@
-﻿using System.Net.NetworkInformation;
-using DS4Windows.Shared.Devices.HID;
+﻿using DS4Windows.Shared.Devices.HID;
 
-namespace DS4Windows.Server
+namespace DS4Windows.Server.Controller
 {
     public class ControllerConnectedMessage : MessageBase
     {

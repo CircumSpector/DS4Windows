@@ -1,9 +1,8 @@
 ﻿using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace DS4Windows.Server
+namespace DS4Windows.Server.Profile
 {
     public class ProfileService
     {

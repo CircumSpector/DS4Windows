@@ -1,4 +1,6 @@
 using DS4Windows.Server;
+using DS4Windows.Server.Controller;
+using DS4Windows.Server.Profile;
 using DS4Windows.Shared.Common;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Configuration.Application;

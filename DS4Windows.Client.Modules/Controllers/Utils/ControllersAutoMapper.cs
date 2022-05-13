@@ -1,6 +1,7 @@
 ﻿using System.Windows.Media.Imaging;
 using AutoMapper;
 using DS4Windows.Server;
+using DS4Windows.Server.Controller;
 using DS4Windows.Shared.Devices.HID;
 
 namespace DS4Windows.Client.Modules.Controllers.Utils

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DS4Windows.Server;
+using DS4Windows.Server.Controller;
 
 namespace DS4Windows.Client.Modules.Controllers.Utils;
 

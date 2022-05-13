@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using DS4Windows.Client.Modules.Controllers.Utils;
 using DS4Windows.Client.Modules.Profiles.Utils;
+using DS4Windows.Server.Controller;
 using DS4Windows.Shared.Common.Core;
 using Websocket.Client;
 

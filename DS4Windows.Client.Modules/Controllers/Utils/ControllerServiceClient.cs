@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using DS4Windows.Server;
+using DS4Windows.Server.Controller;
 using DS4Windows.Shared.Common.Core;
 using Newtonsoft.Json;
 using Serilog;
