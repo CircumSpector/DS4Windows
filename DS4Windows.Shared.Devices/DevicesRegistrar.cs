@@ -1,13 +1,12 @@
 ﻿using System;
 using DS4Windows.Client.Core.DependencyInjection;
 using DS4Windows.Shared.Devices.DriverManagement;
-using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.HostedServices;
 using DS4Windows.Shared.Devices.Services;
-using DS4Windows.Shared.Devices.Util;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
 
 namespace DS4Windows.Shared.Devices;
@@ -31,12 +30,8 @@ public class DevicesRegistrar : IServiceRegistrar
         // ViGEm Client (Gen1) service
         // 
         services.AddSingleton<ViGEmClient>();
-
-        services.AddSingleton<DeviceNotificationListener>();
-        services.AddSingleton<IDeviceNotificationListener>(provider =>
-            provider.GetRequiredService<DeviceNotificationListener>());
-        services.AddSingleton<IDeviceNotificationListenerSubscriber>(provider =>
-            provider.GetRequiredService<DeviceNotificationListener>());
+        
+        services.AddSingleton<IDeviceNotificationListener, DeviceNotificationListener>();
 
         services.AddHostedService<ControllerManagerHost>();
     }
