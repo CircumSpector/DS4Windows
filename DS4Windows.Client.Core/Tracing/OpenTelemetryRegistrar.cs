@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using DS4Windows.Client.Core.DependencyInjection;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +45,8 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
             );
     }
 
-    public void Initialize(IServiceProvider services)
+    public Task Initialize(IServiceProvider services)
     {
+        return Task.FromResult(0);
     }
 }

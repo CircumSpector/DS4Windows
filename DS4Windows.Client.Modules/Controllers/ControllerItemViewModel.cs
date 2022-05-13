@@ -9,13 +9,13 @@ using System.Net.NetworkInformation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows.Server;
+using DS4Windows.Server.Controller;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
     public class ControllerItemViewModel : ViewModel<IControllerItemViewModel>, IControllerItemViewModel
     {
         private const string imageLocationRoot = "pack://application:,,,/DS4Windows.Client.Modules;component/Controllers/Images";
-        private IProfilesService profilesService;
         private readonly IMapper mapper;
         public static BitmapImage dualSenseImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/dualsense.jpg", UriKind.Absolute));
         public static BitmapImage dualShockV2ImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/dualshockv2.jpg", UriKind.Absolute));
@@ -25,9 +25,8 @@ namespace DS4Windows.Client.Modules.Controllers
         public static BitmapImage BluetoothImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/BT.png", UriKind.Absolute));
         public static BitmapImage UsbImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/USB_white.png", UriKind.Absolute));
 
-        public ControllerItemViewModel(IProfilesService profilesService, IMapper mapper)
+        public ControllerItemViewModel(IMapper mapper)
         {
-            this.profilesService = profilesService;
             this.mapper = mapper;
         }
 
@@ -102,16 +101,6 @@ namespace DS4Windows.Client.Modules.Controllers
             }
 
             base.OnPropertyChanged(e);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                profilesService = null;
-            }
-
-            base.Dispose(disposing);
         }
     }
 }

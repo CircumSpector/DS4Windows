@@ -14,7 +14,7 @@ namespace DS4Windows.Shared.Common.Util
         {
             var serializer = new JsonSerializer()
             {
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
             };
 
             using var sw = new StreamWriter(stream);

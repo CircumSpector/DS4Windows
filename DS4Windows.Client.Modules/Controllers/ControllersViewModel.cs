@@ -16,23 +16,30 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
+using DS4Windows.Client.Modules.Controllers.Utils;
+using DS4Windows.Client.Modules.Profiles.Utils;
+using DS4Windows.Server.Controller;
+using DS4Windows.Shared.Common.Core;
 using Websocket.Client;
 
 namespace DS4Windows.Client.Modules.Controllers
 {
     public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel, IControllersView>,  IControllersViewModel
     {
-        private readonly IProfilesService profilesService;
+        private readonly IProfileServiceClient profilesService;
         private readonly IServiceProvider serviceProvider;
         private readonly IControllerDriverManagementService controllerDriverManagementService;
+        private readonly IControllerServiceClient controllerService;
 
         public ControllersViewModel( 
-            IProfilesService profilesService, 
+            IProfileServiceClient profilesService, 
             IServiceProvider serviceProvider,
-            IControllerDriverManagementService controllerDriverManagementService)
+            IControllerDriverManagementService controllerDriverManagementService,
+            IControllerServiceClient controllerService)
         {
             this.serviceProvider = serviceProvider;
             this.controllerDriverManagementService = controllerDriverManagementService;
+            this.controllerService = controllerService;
             this.profilesService = profilesService;
 
             HideCommand = new RelayCommand<IControllerItemViewModel>(HideController);
@@ -51,49 +58,16 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             await CreateControllerItems();
 
-            var client = new WebsocketClient(new Uri("wss://localhost:5001/controller/ws", UriKind.Absolute));
-            
-            client.ReconnectTimeout = TimeSpan.FromSeconds(30);
-            client.ReconnectionHappened.Subscribe(info => Log.Information($"Reconnection happened, type: {info.Type}"));
-
-            client.MessageReceived.Subscribe(ProcessControllerMessage);
-
-            client.Start();
-        }
-
-        private async void ProcessControllerMessage(ResponseMessage msg)
-        {
-            var messageBase = JsonConvert.DeserializeObject<MessageBase>(msg.Text);
-            if (messageBase.MessageName == ControllerConnectedMessage.Name)
-            {
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    var device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text); 
-                    CreateControllerItem(device);
-                });
-            }
-            else if (messageBase.MessageName == ControllerDisconnectedMessage.Name)
-            {
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    var device = JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text); 
-                    RemoveControllerItem(device.ControllerDisconnectedId);
-                });
-            }
+            controllerService.StartWebSocket(CreateControllerItem, RemoveControllerItem);
         }
 
         private async Task CreateControllerItems()
         {
-            var client = new HttpClient();
-            var result = await client.GetAsync("https://localhost:5001/controller/list");
-            if (result.IsSuccessStatusCode)
+            var list = await controllerService.GetControllerList();
+            
+            foreach (var controller in list)
             {
-                var list = JsonConvert.DeserializeObject<List<ControllerConnectedMessage>>(
-                    await result.Content.ReadAsStringAsync());
-                foreach (var controller in list)
-                {
-                    CreateControllerItem(controller);
-                }
+                CreateControllerItem(controller);
             }
         }
 
@@ -107,9 +81,9 @@ namespace DS4Windows.Client.Modules.Controllers
             }
         }
 
-        private void RemoveControllerItem(string instanceId)
+        private void RemoveControllerItem(ControllerDisconnectedMessage device)
         {
-            var existing = ControllerItems.SingleOrDefault(i => i.InstanceId == instanceId);
+            var existing = ControllerItems.SingleOrDefault(i => i.InstanceId == device.ControllerDisconnectedId);
             if (existing != null)
             {
                 ControllerItems.Remove(existing);
@@ -119,12 +93,12 @@ namespace DS4Windows.Client.Modules.Controllers
 
         private void CreateSelectableProfileItems()
         {
-            foreach (var item in profilesService.AvailableProfiles)
+            foreach (var item in profilesService.ProfileList)
             {
                 CreateProfileItem(item);
             }
 
-            ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged += ControllersViewModel_CollectionChanged; ;
+            profilesService.ProfileList.CollectionChanged += ControllersViewModel_CollectionChanged;
         }
 
         private void ControllersViewModel_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -179,7 +153,6 @@ namespace DS4Windows.Client.Modules.Controllers
         {
             if (disposing)
             {
-                ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged -= ControllersViewModel_CollectionChanged;
                 foreach (var profile in SelectableProfileItems.ToList())
                 {
                     profile.Dispose();

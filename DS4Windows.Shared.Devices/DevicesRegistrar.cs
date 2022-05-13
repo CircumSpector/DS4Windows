@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using DS4Windows.Client.Core.DependencyInjection;
 using DS4Windows.Shared.Devices.DriverManagement;
 using DS4Windows.Shared.Devices.HostedServices;
@@ -36,7 +37,8 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddHostedService<ControllerManagerHost>();
     }
 
-    public void Initialize(IServiceProvider services)
+    public Task Initialize(IServiceProvider services)
     {
+        return Task.FromResult(0);
     }
 }

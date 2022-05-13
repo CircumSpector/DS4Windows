@@ -5,6 +5,7 @@ using System.Net.NetworkInformation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DS4Windows.Server;
+using DS4Windows.Server.Controller;
 
 namespace DS4Windows.Client.Modules.Controllers
 {

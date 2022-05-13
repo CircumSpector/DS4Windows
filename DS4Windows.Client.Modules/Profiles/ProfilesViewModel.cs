@@ -6,21 +6,26 @@ using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DS4Windows.Client.Modules.Profiles.Edit;
+using DS4Windows.Client.Modules.Profiles.Utils;
+using DS4Windows.Server;
 
 namespace DS4Windows.Client.Modules.Profiles
 {
     public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IProfilesView>, IProfilesViewModel
     {
-        private readonly IProfilesService profilesService;
         private readonly IViewModelFactory viewModelFactory;
+        private readonly IProfileServiceClient profilesService;
 
         public ProfilesViewModel(
-            IProfilesService profilesService, 
+            IProfileServiceClient profilesService, 
             IViewModelFactory viewModelFactory)
         {
             this.viewModelFactory = viewModelFactory;
@@ -44,15 +49,15 @@ namespace DS4Windows.Client.Modules.Profiles
         public RelayCommand<IProfileListItemViewModel> EditCommand { get; }
         public RelayCommand<IProfileListItemViewModel> DeleteCommand { get; }
 
-        private void AddProfile()
+        private async void AddProfile()
         {
-            var newProfile = profilesService.CreateNewProfile();
+            var newProfile = await profilesService.CreateNewProfile();
             ShowProfile(newProfile, true);
         }
 
         private async void ShareProfile(IProfileListItemViewModel profile)
         {
-            var sourceProfile = profilesService.AvailableProfiles.SingleOrDefault(p => p.Id == profile.Id);
+            var sourceProfile = profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id);
 
             var saveFileDialog = new SaveFileDialog
             {
@@ -99,39 +104,20 @@ namespace DS4Windows.Client.Modules.Profiles
 
         private void EditProfile(IProfileListItemViewModel profile)
         {
-            ShowProfile(profilesService.AvailableProfiles.SingleOrDefault(p => p.Id == profile.Id));
+            ShowProfile(profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id));
         }
 
-        private void DeleteProfile(IProfileListItemViewModel profile)
+        private async void DeleteProfile(IProfileListItemViewModel profile)
         {
-            profilesService.DeleteProfile(profile.Id);
+            await profilesService.DeleteProfile(profile.Id);
+            RemoveProfileItem(profile.Id);
         }
 
         private async Task CreateProfileItems()
         {
-            foreach (var profile in profilesService.AvailableProfiles)
+            foreach (var profile in profilesService.ProfileList)
             {
                 await CreateProfileItem(profile);
-            }
-
-            ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged += ProfilesViewModel_CollectionChanged;
-        }
-
-        private async void ProfilesViewModel_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (IProfile profile in e.NewItems)
-                {
-                    await CreateProfileItem(profile);
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (IProfile profile in e.OldItems)
-                {
-                    RemoveProfileItem(profile);
-                }
             }
         }
 
@@ -145,9 +131,9 @@ namespace DS4Windows.Client.Modules.Profiles
             }
         }
 
-        private void RemoveProfileItem(IProfile profile)
+        private void RemoveProfileItem(Guid id)
         {
-            var existingProfile = ProfileItems.SingleOrDefault(p => p.Id == profile.Id);
+            var existingProfile = ProfileItems.SingleOrDefault(p => p.Id == id);
             if (existingProfile != null)
             {
                 existingProfile.Dispose();
@@ -170,17 +156,18 @@ namespace DS4Windows.Client.Modules.Profiles
             }));
         }
 
-        private void SaveProfile(IProfileEditViewModel profile)
+        private async void SaveProfile(IProfileEditViewModel profile)
         {
             var profileToSave = profile.GetUpdatedProfile();
-            profilesService.CreateOrUpdateProfile(profileToSave);
+            var savedProfile = await profilesService.SaveProfile(profileToSave);
+            RemoveProfileItem(savedProfile.Id);
+            await CreateProfileItem(savedProfile);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                ((INotifyCollectionChanged)profilesService.AvailableProfiles).CollectionChanged -= ProfilesViewModel_CollectionChanged;
                 foreach (var profile in ProfileItems.ToList())
                 {
                     profile.Dispose();

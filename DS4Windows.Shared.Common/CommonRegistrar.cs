@@ -3,6 +3,7 @@ using DS4Windows.Shared.Common.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace DS4Windows.Shared.Common
@@ -15,8 +16,9 @@ namespace DS4Windows.Shared.Common
             services.AddSingleton<IGlobalStateService, GlobalStateService>();
         }
 
-        public void Initialize(IServiceProvider services)
+        public Task Initialize(IServiceProvider services)
         {
+            return Task.FromResult(0);
         }
     }
 }

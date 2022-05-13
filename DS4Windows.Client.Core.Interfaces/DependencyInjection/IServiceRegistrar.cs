@@ -2,12 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace DS4Windows.Client.Core.DependencyInjection
 {
     public interface IServiceRegistrar
     {
         void ConfigureServices(IConfiguration configuration, IServiceCollection services);
-        void Initialize(IServiceProvider services);
+        Task Initialize(IServiceProvider services);
     }
 }

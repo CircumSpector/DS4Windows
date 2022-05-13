@@ -1,5 +1,8 @@
 using DS4Windows.Server;
+using DS4Windows.Server.Controller;
+using DS4Windows.Server.Profile;
 using DS4Windows.Shared.Common;
+using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Configuration.Application;
 using DS4Windows.Shared.Configuration.Profiles;
 using DS4Windows.Shared.Devices;
@@ -19,8 +22,10 @@ new DevicesRegistrar().ConfigureServices(builder.Configuration, builder.Services
 new ProfilesRegistrar().ConfigureServices(builder.Configuration, builder.Services);
 new ConfigurationRegistrar().ConfigureServices(builder.Configuration, builder.Services);
 new CommonRegistrar().ConfigureServices(builder.Configuration, builder.Services);
-builder.Services.AddSingleton<ControllerManagerApi>();
+builder.Services.AddSingleton<ControllerService>();
+builder.Services.AddSingleton<ProfileService>();
 builder.Services.AddSingleton<IControllerMessageForwarder, ControllerMessageForwarder>();
+builder.Services.AddSingleton<IProfileMessageForwarder, ProfileMessageForwarder>();
 builder.Services.AddHostedService<ControllerManagerHost>();
 
 builder.Host.UseWindowsService(c => c.ServiceName = "DS4WindowsService");
@@ -42,6 +47,7 @@ var webSocketOptions = new WebSocketOptions
 
 app.UseWebSockets(webSocketOptions);
 
-ControllerManagerApi.RegisterRoutes(app);
+ControllerService.RegisterRoutes(app);
+ProfileService.RegisterRoutes(app);
 
-await app.RunAsync();
+await app.RunAsync(Constants.HttpUrl);
