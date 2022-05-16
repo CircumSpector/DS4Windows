@@ -82,7 +82,7 @@
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="AsyncErrorHandler.Fody" Version="1.3.0" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.2.85" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.4.91" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.2.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.3" />
       <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
