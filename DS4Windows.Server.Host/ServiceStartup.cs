@@ -44,11 +44,6 @@ namespace DS4Windows.Server
                 var controllerHost = app.Services.GetService<ControllerManagerHost>();
                 ControllerManagerHost.IsEnabled = true;
                 await controllerHost.StartAsync();
-
-                await Task.Delay(3000);
-                await controllerHost.StopAsync();
-                await Task.Delay(3000);
-                await controllerHost.StartAsync();
             }
 
             Log.Information("about to start app first time");
