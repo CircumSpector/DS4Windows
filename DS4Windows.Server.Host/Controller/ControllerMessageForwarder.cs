@@ -1,9 +1,8 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
-using System.Windows.Threading;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.HID;
-using DS4Windows.Shared.Devices.Services;
+using DS4Windows.Shared.Devices.HostedServices;
 using Newtonsoft.Json;
 
 namespace DS4Windows.Server.Controller
@@ -13,27 +12,30 @@ namespace DS4Windows.Server.Controller
         private readonly IProfilesService profilesService;
         private List<WebSocket> sockets = new List<WebSocket>();
 
-        public ControllerMessageForwarder(IControllersEnumeratorService controllersEnumeratorService, IProfilesService profilesService)
+        public ControllerMessageForwarder(ControllerManagerHost controllerManagerHost, IProfilesService profilesService)
         {
             this.profilesService = profilesService;
-            controllersEnumeratorService.ControllerReady += ControllersEnumeratorService_ControllerReady;
-            controllersEnumeratorService.ControllerRemoved += ControllersEnumeratorService_ControllerRemoved;
+            controllerManagerHost.ControllerReady += ControllersEnumeratorService_ControllerReady;
+            controllerManagerHost.ControllerRemoved += ControllersEnumeratorService_ControllerRemoved;
         }
 
         public async Task StartListening(WebSocket newSocket)
         {
             sockets.Add(newSocket);
 
-            var buffer = new byte[1024 * 4];
-            var result = await newSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-
-            while (!result.CloseStatus.HasValue)
+            await Task.Run(async () =>
             {
-                result = await newSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
+                var buffer = new byte[1024 * 4];
+                var result = await newSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
-            sockets.Remove(newSocket);
-            await newSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+                while (!result.CloseStatus.HasValue)
+                {
+                    result = await newSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                }
+
+                sockets.Remove(newSocket);
+                await newSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+            });
         }
 
         public ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice)
@@ -63,12 +65,9 @@ namespace DS4Windows.Server.Controller
             {
                 if (socket is { State: WebSocketState.Open })
                 {
-                    await Dispatcher.CurrentDispatcher.BeginInvoke(async () =>
-                    {
-                        var data = new ArraySegment<byte>(
-                            Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(MapControllerConnected(hidDevice))));
-                        await socket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
-                    });
+                    var data = new ArraySegment<byte>(
+                        Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(MapControllerConnected(hidDevice))));
+                    await socket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
             }
         }
@@ -79,15 +78,12 @@ namespace DS4Windows.Server.Controller
             {
                 if (socket is { State: WebSocketState.Open })
                 {
-                    await Dispatcher.CurrentDispatcher.BeginInvoke(async () =>
+                    var message = new ControllerDisconnectedMessage
                     {
-                        var message = new ControllerDisconnectedMessage
-                        {
-                            ControllerDisconnectedId = obj.InstanceId
-                        };
-                        var data = new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message)));
-                        await socket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
-                    });
+                        ControllerDisconnectedId = obj.InstanceId
+                    };
+                    var data = new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message)));
+                    await socket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
             }
         }

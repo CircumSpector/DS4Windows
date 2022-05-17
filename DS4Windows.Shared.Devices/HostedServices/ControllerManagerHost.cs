@@ -30,6 +30,16 @@ public class ControllerManagerHost
 
     //temporary because the client still needs to run part of the host for now
     public static bool IsEnabled = false;
+
+    /// <summary>
+    ///     Fired every time a supported device is found and ready.
+    /// </summary>
+    public event Action<ICompatibleHidDevice> ControllerReady;
+
+    /// <summary>
+    ///     Fired every time a supported device has departed.
+    /// </summary>
+    public event Action<ICompatibleHidDevice> ControllerRemoved;
     
     public ControllerManagerHost(
         IControllersEnumeratorService enumerator,
@@ -110,6 +120,8 @@ public class ControllerManagerHost
 
         profileService.ControllerArrived(slotIndex, device.Serial);
         inputSourceService.ControllerArrived(slotIndex, device);
+
+        ControllerReady?.Invoke(device);
     }
 
     /// <summary>
@@ -121,5 +133,7 @@ public class ControllerManagerHost
 
         inputSourceService.ControllerDeparted(slot, device);
         profileService.ControllerDeparted(slot, device.Serial);
+
+        ControllerRemoved?.Invoke(device);
     }
 }

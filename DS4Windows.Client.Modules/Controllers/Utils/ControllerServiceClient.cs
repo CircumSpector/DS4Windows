@@ -78,7 +78,11 @@ namespace DS4Windows.Client.Modules.Controllers.Utils
             websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
             
             websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
-            websocketClient.ReconnectionHappened.Subscribe(info => Log.Information($"Reconnection happened, type: {info.Type}"));
+            websocketClient.ReconnectionHappened.Subscribe(info =>
+            {
+                Log.Information($"Reconnection happened, type: {info.Type}");
+                websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
+            });
 
             websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
 
