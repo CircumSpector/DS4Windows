@@ -10,7 +10,7 @@ using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace DS4Windows.Client.Core.Tracing;
+namespace DS4Windows.Shared.Common.Tracing;
 
 [UsedImplicitly]
 public class OpenTelemetryRegistrar : IServiceRegistrar

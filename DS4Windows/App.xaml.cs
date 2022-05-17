@@ -204,7 +204,7 @@ namespace DS4WinWPF
             #endregion
 
             services.AddHostedService<StartupChecksUserNotifications>();
-            services.AddHostedService<ControllerManagerHost>();
+            //services.AddHostedService<ControllerManagerHost>();
             services.AddHostedService<WebServerHost>();
         }
 

@@ -27,14 +27,14 @@ namespace DS4Windows.Shared.Common.Services
         string LinkedProfilesPath { get; }
 
         /// <summary>
-        ///     Absolute path to <see cref="Constants.ProfilesSubDirectory" />
-        /// </summary>
-        string ProfilesDirectory { get; }
-
-        /// <summary>
         ///     Absolute path to <see cref="Constants.LegacyAutoProfilesFileName" />
         /// </summary>
         string AutoSwitchingProfilesPath { get; }
+
+        string CurrentUserName { get; set; }
+        string LocalProfilesDirectory { get; }
+        string GlobalProfilesDirectory { get; }
+        string GlobalDefaultProfileLocation { get; }
 
         /// <summary>
         ///     Gets fired once the startup checks are done and the main window is ready to be rendered.

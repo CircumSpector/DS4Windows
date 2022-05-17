@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Util;
@@ -34,6 +35,8 @@ public interface IHidDeviceEnumeratorService
     ///     Refreshes <see cref="ConnectedDevices" />. This clears out the list and repopulates is.
     /// </summary>
     void EnumerateDevices();
+
+    void ClearDevices();
 }
 
 /// <summary>
@@ -100,6 +103,14 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
             logger.LogInformation("Discovered HID device {Device}", entry);
 
             connectedDevices.Add(entry);
+        }
+    }
+
+    public void ClearDevices()
+    {
+        foreach (var connectedDevice in ConnectedDevices.ToList())
+        {
+            RemoveDevice(connectedDevice.Path);
         }
     }
 
@@ -317,7 +328,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
     {
-        var symLink = args.SymLink;
+        RemoveDevice(args.SymLink);
+    }
+
+    private void RemoveDevice(string symLink)
+    {
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceRemoved)}");
 
@@ -328,11 +343,14 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         logger.LogInformation("HID Device {Instance} ({Path}) removed",
             device.InstanceId, symLink);
 
+        GetHidAttributes(symLink, out var attributes);
+
         var entry = new HidDevice
         {
             Path = symLink,
             IsVirtual = IsVirtualDevice(device, true),
-            InstanceId = device.InstanceId.ToUpper()
+            InstanceId = device.InstanceId.ToUpper(),
+            Attributes = attributes
         };
 
         if (connectedDevices.Contains(entry))

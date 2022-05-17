@@ -1,0 +1,2 @@
+cd /d "C:\Dev\DS4Windows\DS4Windows.Server.Host" &msbuild "DS4Windows.Server.Host.csproj" /t:sdvViewer /p:configuration="Debug" /p:platform="Any CPU" /p:SolutionDir="C:\Dev\DS4Windows" 
+exit %errorlevel% 

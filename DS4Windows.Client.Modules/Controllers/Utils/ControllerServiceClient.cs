@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 using System.Windows;
 using DS4Windows.Server;
@@ -16,6 +17,21 @@ namespace DS4Windows.Client.Modules.Controllers.Utils
     {
         private Action<ControllerConnectedMessage> connectedAction;
         private Action<ControllerDisconnectedMessage> disconnectedAction;
+        private WebsocketClient websocketClient;
+
+        public ControllerServiceClient()
+        {
+            Application.Current.Exit += Current_Exit;
+        }
+
+        private async void Current_Exit(object sender, ExitEventArgs e)
+        {
+            if (websocketClient != null)
+            {
+                await websocketClient.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
+                websocketClient.Dispose();
+            }
+        }
 
         public async Task WaitForService()
         {
@@ -59,14 +75,14 @@ namespace DS4Windows.Client.Modules.Controllers.Utils
             connectedAction = connectedHandler;
             disconnectedAction = disconnectedHandler;
 
-            var client = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
+            websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
             
-            client.ReconnectTimeout = TimeSpan.FromSeconds(30);
-            client.ReconnectionHappened.Subscribe(info => Log.Information($"Reconnection happened, type: {info.Type}"));
+            websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
+            websocketClient.ReconnectionHappened.Subscribe(info => Log.Information($"Reconnection happened, type: {info.Type}"));
 
-            client.MessageReceived.Subscribe(ProcessControllerMessage);
+            websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
 
-            client.Start();
+            await websocketClient.Start();
         }
 
         private async void ProcessControllerMessage(ResponseMessage msg)

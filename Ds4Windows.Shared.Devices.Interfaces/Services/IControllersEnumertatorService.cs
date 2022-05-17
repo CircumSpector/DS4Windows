@@ -34,5 +34,7 @@ namespace DS4Windows.Shared.Devices.Services
         ///     Enumerate system for compatible devices. This rebuilds <see cref="SupportedDevices" />.
         /// </summary>
         void EnumerateDevices();
+
+        void ClearCurrentControllers();
     }
 }

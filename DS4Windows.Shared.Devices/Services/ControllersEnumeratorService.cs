@@ -124,6 +124,16 @@ namespace DS4Windows.Shared.Devices.Services
             DeviceListReady?.Invoke();
         }
 
+        public void ClearCurrentControllers()
+        {
+            foreach (var compatibleHidDevice in SupportedDevices)
+            {
+                compatibleHidDevice.Dispose();
+            }
+
+            supportedDevices.Clear();
+        }
+
         private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
         {
             using var activity = CoreActivity.StartActivity(
@@ -173,23 +183,26 @@ namespace DS4Windows.Shared.Devices.Services
 
             if (hidDevice.IsVirtual) return;
 
-            var device = supportedDevices.First(d =>
+            var device = supportedDevices.FirstOrDefault(d =>
                 d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
 
-            ControllerRemoved?.Invoke(device);
-
-            if (supportedDevices.Contains(device))
+            if (device != null)
             {
-                device.InputReportAvailable -= Device_InputReportAvailable;
+                ControllerRemoved?.Invoke(device);
 
-                if (outDevices.ContainsKey(hidDevice.InstanceId))
+                if (supportedDevices.Contains(device))
                 {
-                    var outDevice = outDevices[hidDevice.InstanceId];
-                    outDevice.Disconnect();
-                    outDevices.Remove(hidDevice.InstanceId);
+                    device.InputReportAvailable -= Device_InputReportAvailable;
+
+                    if (outDevices.ContainsKey(hidDevice.InstanceId))
+                    {
+                        var outDevice = outDevices[hidDevice.InstanceId];
+                        outDevice.Disconnect();
+                        outDevices.Remove(hidDevice.InstanceId);
+                    }
+
+                    supportedDevices.Remove(device);
                 }
-                
-                supportedDevices.Remove(device);
             }
         }
 
