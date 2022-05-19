@@ -7,17 +7,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-DS4Windows.Server.Host-AD961187-8826-4EF3-855F-61640042D53B</UserSecretsId>
 	  <OutputType>exe</OutputType>
-	  <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
 	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
 	  <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
 	  <RootNamespace>DS4Windows.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Device.Net" Version="4.2.1" />
-    <PackageReference Include="Hid.Net" Version="4.2.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.2.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.3" />
+    <PackageReference Include="PInvoke.Kernel32" Version="0.7.104" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
   </ItemGroup>
 

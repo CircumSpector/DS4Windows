@@ -14,12 +14,13 @@ namespace DS4Windows.Shared.Devices.HostedServices;
 /// <summary>
 ///     Manages compatible input device detection and state handling.
 /// </summary>
-public class ControllerManagerHost : IHostedService
+public class ControllerManagerHost
 {
     private readonly IControllersEnumeratorService enumerator;
 
     private readonly IInputSourceService inputSourceService;
     private readonly IDeviceNotificationListener deviceNotificationListener;
+    private readonly IHidDeviceEnumeratorService hidDeviceEnumeratorService;
 
     private readonly ILogger<ControllerManagerHost> logger;
 
@@ -29,11 +30,25 @@ public class ControllerManagerHost : IHostedService
 
     //temporary because the client still needs to run part of the host for now
     public static bool IsEnabled = false;
+
+    /// <summary>
+    ///     Fired every time a supported device is found and ready.
+    /// </summary>
+    public event Action<ICompatibleHidDevice> ControllerReady;
+
+    /// <summary>
+    ///     Fired every time a supported device has departed.
+    /// </summary>
+    public event Action<ICompatibleHidDevice> ControllerRemoved;
     
-    public ControllerManagerHost(IControllersEnumeratorService enumerator,
-        ILogger<ControllerManagerHost> logger, IProfilesService profileService,
-        IControllerManagerService manager, IInputSourceService inputSourceService,
-        IDeviceNotificationListener deviceNotificationListener)
+    public ControllerManagerHost(
+        IControllersEnumeratorService enumerator,
+        ILogger<ControllerManagerHost> logger, 
+        IProfilesService profileService,
+        IControllerManagerService manager, 
+        IInputSourceService inputSourceService,
+        IDeviceNotificationListener deviceNotificationListener,
+        IHidDeviceEnumeratorService hidDeviceEnumeratorService)
     {
         this.enumerator = enumerator;
         this.logger = logger;
@@ -41,13 +56,19 @@ public class ControllerManagerHost : IHostedService
         this.manager = manager;
         this.inputSourceService = inputSourceService;
         this.deviceNotificationListener = deviceNotificationListener;
+        this.hidDeviceEnumeratorService = hidDeviceEnumeratorService;
 
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public bool IsRunning { get; private set; }
+    private CancellationTokenSource controllerHostToken;
+
+    public async Task StartAsync()
     {
+        IsRunning = true;
+        controllerHostToken = new CancellationTokenSource();
         //
         // Make sure we're ready to rock
         // 
@@ -64,18 +85,24 @@ public class ControllerManagerHost : IHostedService
             //
             // Run full enumeration only once at startup, during runtime arrival events are used
             // 
-            await Task.Run(() => enumerator.EnumerateDevices(), cancellationToken);
+            enumerator.EnumerateDevices();
+            await Task.CompletedTask;
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync()
     {
         if (IsEnabled)
         {
             deviceNotificationListener.StopListen();
+            hidDeviceEnumeratorService.ClearDevices();
+            profileService.Shutdown();
+            controllerHostToken.Cancel();
         }
 
-        return Task.CompletedTask;
+        IsRunning = false;
+
+        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -93,6 +120,8 @@ public class ControllerManagerHost : IHostedService
 
         profileService.ControllerArrived(slotIndex, device.Serial);
         inputSourceService.ControllerArrived(slotIndex, device);
+
+        ControllerReady?.Invoke(device);
     }
 
     /// <summary>
@@ -104,5 +133,7 @@ public class ControllerManagerHost : IHostedService
 
         inputSourceService.ControllerDeparted(slot, device);
         profileService.ControllerDeparted(slot, device.Serial);
+
+        ControllerRemoved?.Invoke(device);
     }
 }

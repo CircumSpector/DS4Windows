@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -35,11 +36,11 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
 
     private readonly IAppSettingsService appSettings;
 
-    private readonly ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
+    private ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
 
-    private readonly ObservableCollection<IProfile> availableProfiles;
+    private ObservableCollection<IProfile> availableProfiles;
 
-    private readonly ObservableCollection<IProfile> controllerSlotProfiles;
+    private ObservableCollection<IProfile> controllerSlotProfiles;
 
     private readonly IProfile currentlyEditedProfile = DS4WindowsProfile.CreateNewProfile();
 
@@ -48,6 +49,8 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     private readonly IDictionary<PhysicalAddress, Guid> linkedProfiles = new Dictionary<PhysicalAddress, Guid>();
 
     private readonly ILogger<ProfilesService> logger;
+
+    private readonly NotifyCollectionChangedEventHandler availableHandler;
 
     public ProfilesService(
         ILogger<ProfilesService> logger,
@@ -62,21 +65,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         this.global = global;
         this.appSettings = appSettings;
 
-        availableProfiles = new ObservableCollection<IProfile>();
-
-        availableProfiles.CollectionChanged += (_, _) => AvailableProfilesChanged?.Invoke();
-
-        AvailableProfiles = new ReadOnlyObservableCollection<IProfile>(availableProfiles);
-
-        controllerSlotProfiles = new ObservableCollection<IProfile>(Enumerable
-            .Range(0, Constants.MaxControllers)
-            .Select(DS4WindowsProfile.CreateDefaultProfile));
-
-        ActiveProfiles = new ReadOnlyObservableCollection<IProfile>(controllerSlotProfiles);
-
-        autoSwitchingProfiles = new ObservableCollection<AutoSwitchingProfileEntry>();
-
-        AutoSwitchingProfiles = new ReadOnlyObservableCollection<AutoSwitchingProfileEntry>(autoSwitchingProfiles);
+        availableHandler = (_, _) => AvailableProfilesChanged?.Invoke();
 
         //
         // TODO: evil!
@@ -107,12 +96,12 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// <summary>
     ///     A collection of currently active profiles per controller slot.
     /// </summary>
-    public ReadOnlyObservableCollection<IProfile> ActiveProfiles { get; }
+    public ReadOnlyObservableCollection<IProfile> ActiveProfiles { get; private set; }
 
     /// <summary>
     ///     A collection of all the available profiles.
     /// </summary>
-    public ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; }
+    public ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; private set; }
 
     /// <summary>
     ///     A collection of profile IDs linked to a particular controller ID (MAC address).
@@ -122,7 +111,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// <summary>
     ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
     /// </summary>
-    public ReadOnlyObservableCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; }
+    public ReadOnlyObservableCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; private set; }
 
     /// <summary>
     ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
@@ -133,7 +122,8 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         if (profile is null)
             throw new ArgumentNullException(nameof(profile));
 
-        var profilePath = profile.GetAbsoluteFilePath(global.ProfilesDirectory);
+        //TODO: switch this off of whether or not the profile was global
+        var profilePath = profile.GetAbsoluteFilePath(global.LocalProfilesDirectory);
 
         //
         // Does nothing if it doesn't exist anymore for whatever reason
@@ -162,14 +152,14 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         //
         // File name is derived from old name, so delete the file to clean up
         // 
-        File.Delete(profile.GetAbsoluteFilePath(global.ProfilesDirectory));
+        File.Delete(profile.GetAbsoluteFilePath(global.LocalProfilesDirectory));
 
         profile.DisplayName = displayName;
 
         //
         // Will generate new file name
         // 
-        PersistProfile(profile, global.ProfilesDirectory);
+        PersistProfile(profile, global.LocalProfilesDirectory);
     }
 
     /// <summary>
@@ -193,20 +183,20 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// </summary>
     public void LoadAvailableProfiles()
     {
-        if (!Directory.Exists(ProfileConstants.GlobalProfilesLocation))
-            Directory.CreateDirectory(ProfileConstants.GlobalProfilesLocation);
+        if (!Directory.Exists(global.GlobalProfilesDirectory))
+            Directory.CreateDirectory(global.GlobalProfilesDirectory);
 
-        if (!Directory.Exists(ProfileConstants.LocalProfilesLocation))
-            Directory.CreateDirectory(ProfileConstants.LocalProfilesLocation);
+        if (!Directory.Exists(global.LocalProfilesDirectory))
+            Directory.CreateDirectory(global.LocalProfilesDirectory);
 
-        if (!File.Exists(ProfileConstants.GlobalDefaultProfileLocation))
-            PersistProfile(DS4WindowsProfile.CreateDefaultProfile(), ProfileConstants.GlobalProfilesLocation);
+        if (!File.Exists(global.GlobalDefaultProfileLocation))
+            PersistProfile(DS4WindowsProfile.CreateDefaultProfile(), global.GlobalProfilesDirectory);
 
         var profiles = Directory
-            .GetFiles(ProfileConstants.GlobalProfilesLocation, $"*{DS4WindowsProfile.FileExtension}",
+            .GetFiles(global.GlobalProfilesDirectory, $"*{DS4WindowsProfile.FileExtension}",
                 SearchOption.TopDirectoryOnly)
             .Union(Directory
-                .GetFiles(ProfileConstants.LocalProfilesLocation, $"*{DS4WindowsProfile.FileExtension}",
+                .GetFiles(global.LocalProfilesDirectory, $"*{DS4WindowsProfile.FileExtension}",
                     SearchOption.TopDirectoryOnly));
 
         if (!profiles.Any()) throw new Exception("Something bad here");
@@ -244,7 +234,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// </summary>
     public void SaveAvailableProfiles()
     {
-        var directory = global.ProfilesDirectory;
+        var directory = global.LocalProfilesDirectory;
 
         //
         // Does nothing if the path already exists
@@ -317,6 +307,20 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// </summary>
     public void Initialize()
     {
+        availableProfiles = new ObservableCollection<IProfile>();
+        availableProfiles.CollectionChanged += availableHandler;
+        AvailableProfiles = new ReadOnlyObservableCollection<IProfile>(availableProfiles);
+
+        controllerSlotProfiles = new ObservableCollection<IProfile>(Enumerable
+            .Range(0, Constants.MaxControllers)
+            .Select(DS4WindowsProfile.CreateDefaultProfile));
+
+        ActiveProfiles = new ReadOnlyObservableCollection<IProfile>(controllerSlotProfiles);
+        autoSwitchingProfiles = new ObservableCollection<AutoSwitchingProfileEntry>();
+        AutoSwitchingProfiles = new ReadOnlyObservableCollection<AutoSwitchingProfileEntry>(autoSwitchingProfiles);
+
+
+
         //
         // Get all the necessary info restored from disk
         // 
@@ -342,6 +346,8 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// </summary>
     public void Shutdown()
     {
+        availableProfiles.CollectionChanged -= availableHandler;
+
         appSettings.Settings.Profiles.Clear();
 
         var index = 0;
@@ -482,7 +488,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         else
             profile.DeepCloneTo(availableProfiles.First(p => Equals(p.Id, profile.Id)));
 
-        PersistProfile(profile, global.ProfilesDirectory);
+        PersistProfile(profile, global.LocalProfilesDirectory);
     }
 
     public IProfile CreateNewProfile(int index = default)
@@ -515,8 +521,8 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
             // 
             case nameof(p.DisplayName):
                 var oldName = (string)e.Before;
-                File.Delete(Path.Combine(global.ProfilesDirectory, DS4WindowsProfile.GetValidFileName(oldName)));
-                PersistProfile(p, global.ProfilesDirectory);
+                File.Delete(Path.Combine(global.LocalProfilesDirectory, DS4WindowsProfile.GetValidFileName(oldName)));
+                PersistProfile(p, global.LocalProfilesDirectory);
                 break;
         }
     }

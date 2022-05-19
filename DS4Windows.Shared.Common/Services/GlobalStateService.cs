@@ -22,21 +22,22 @@ namespace DS4Windows.Shared.Common.Services
                 $"{nameof(GlobalStateService)}:Constructor");
         }
 
-        /// <summary>
-        ///     Absolute path to <see cref="Constants.ProfilesSubDirectory" />
-        /// </summary>
-        public string ProfilesDirectory
+        public string LocalProfilesDirectory
         {
             get
             {
-                var programFolderFile = Path.Combine(appDirectory
-                    , Constants.ProfilesSubDirectory);
+                if (!string.IsNullOrEmpty(CurrentUserName))
+                {
+                    return
+                        $"c:\\Users\\{CurrentUserName}\\AppData\\Roaming\\{Constants.ApplicationName}\\{Constants.ProfilesSubDirectory}";
+                }
 
-                return File.Exists(programFolderFile)
-                    ? programFolderFile
-                    : Path.Combine(RoamingAppDataPath, Constants.ProfilesSubDirectory);
+                return Path.Combine(RoamingAppDataPath, Constants.ProfilesSubDirectory);
             }
         }
+
+        public string GlobalProfilesDirectory => Path.Combine(appDirectory, Constants.ProfilesSubDirectory);
+        public string GlobalDefaultProfileLocation => $"{GlobalProfilesDirectory}\\default.json";
 
         /// <summary>
         ///     Absolute path to <see cref="Constants.LegacyProfilesFileName" />
@@ -101,5 +102,7 @@ namespace DS4Windows.Shared.Common.Services
         public string RoamingAppDataPath =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 Constants.ApplicationName);
+
+        public string CurrentUserName { get; set; }
     }
 }

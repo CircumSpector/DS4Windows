@@ -34,7 +34,7 @@ public class DevicesRegistrar : IServiceRegistrar
         
         services.AddSingleton<IDeviceNotificationListener, DeviceNotificationListener>();
 
-        services.AddHostedService<ControllerManagerHost>();
+        services.AddSingleton<ControllerManagerHost>();
     }
 
     public Task Initialize(IServiceProvider services)
