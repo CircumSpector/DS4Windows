@@ -1,21 +1,16 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
+using DS4Windows.Client.Modules.Profiles.Edit;
+using DS4Windows.Client.ServiceClients;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
-using DS4Windows.Shared.Configuration.Profiles.Services;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using DS4Windows.Client.Modules.Profiles.Edit;
-using DS4Windows.Client.Modules.Profiles.Utils;
-using DS4Windows.Server;
 
 namespace DS4Windows.Client.Modules.Profiles
 {

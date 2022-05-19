@@ -38,6 +38,19 @@ namespace DS4Windows.Server.Controller
             });
         }
 
+        public async Task SendIsHostRunning(bool isRunning)
+        {
+            foreach (var socket in sockets)
+            {
+                if (socket is { State: WebSocketState.Open })
+                {
+                    var data = new ArraySegment<byte>(
+                        Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new IsHostRunningChangedMessage(isRunning))));
+                    await socket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+            }
+        }
+
         public ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice)
         {
             var message = new ControllerConnectedMessage

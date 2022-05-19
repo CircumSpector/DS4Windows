@@ -8,7 +8,7 @@ using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 using Newtonsoft.Json;
 
-namespace DS4Windows.Client.Modules.Profiles.Utils
+namespace DS4Windows.Client.ServiceClients
 {
     public class ProfileServiceClient : IProfileServiceClient
     {

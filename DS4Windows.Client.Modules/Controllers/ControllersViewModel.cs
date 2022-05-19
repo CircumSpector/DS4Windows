@@ -1,26 +1,16 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Client.Modules.Profiles;
-using DS4Windows.Server;
+using DS4Windows.Client.ServiceClients;
+using DS4Windows.Server.Controller;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
-using DS4Windows.Shared.Configuration.Profiles.Services;
 using DS4Windows.Shared.Devices.DriverManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
-using Newtonsoft.Json;
-using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Windows;
-using DS4Windows.Client.Modules.Controllers.Utils;
-using DS4Windows.Client.Modules.Profiles.Utils;
-using DS4Windows.Server.Controller;
-using DS4Windows.Shared.Common.Core;
-using Websocket.Client;
 
 namespace DS4Windows.Client.Modules.Controllers
 {

@@ -2,9 +2,8 @@
 using System.Threading.Tasks;
 using DS4Windows.Client.Core.DependencyInjection;
 using DS4Windows.Client.Core.ViewModel;
-using DS4Windows.Client.Modules.Controllers;
-using DS4Windows.Client.Modules.Controllers.Utils;
 using DS4Windows.Client.Modules.Profiles.Edit;
+using DS4Windows.Client.ServiceClients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,7 +19,6 @@ namespace DS4Windows.Client.Modules.Profiles.Utils
             services.AddTransient<IProfileListItemViewModel, ProfileListItemViewModel>();
             services.AddTransient<IProfileEditViewModel, ProfileEditViewModel>();
             services.AddTransient<IProfileEditView, ProfileEditView>();
-            services.AddSingleton<IProfileServiceClient, ProfileServiceClient>();
 
             services.AddTransient<IStickEditViewModel, StickEditViewModel>();
             services.AddTransient<IStickEditView, StickEditView>();

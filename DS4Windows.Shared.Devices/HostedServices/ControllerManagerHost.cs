@@ -40,6 +40,8 @@ public class ControllerManagerHost
     ///     Fired every time a supported device has departed.
     /// </summary>
     public event Action<ICompatibleHidDevice> ControllerRemoved;
+
+    public event EventHandler<bool> RunningChanged;
     
     public ControllerManagerHost(
         IControllersEnumeratorService enumerator,
@@ -68,6 +70,7 @@ public class ControllerManagerHost
     public async Task StartAsync()
     {
         IsRunning = true;
+        RunningChanged?.Invoke(this, IsRunning);
         controllerHostToken = new CancellationTokenSource();
         //
         // Make sure we're ready to rock
@@ -101,6 +104,7 @@ public class ControllerManagerHost
         }
 
         IsRunning = false;
+        RunningChanged?.Invoke(this, IsRunning);
 
         await Task.CompletedTask;
     }
