@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+	  <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <UseWPF>true</UseWPF>
     <Platforms>x64;x86</Platforms>
-    <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+	  <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
     <RootNamespace>DS4WinWPF</RootNamespace>
     <AssemblyName>DS4Windows</AssemblyName>
     <ApplicationIcon>DS4Windows.ico</ApplicationIcon>
@@ -24,7 +24,6 @@
     <Copyright>Copyright © Scarlet.Crush Productions 2012, 2013; InhexSTER, HecticSeptic, electrobrains 2013, 2014; Jays2Kings 2013, 2014, 2015, 2016; Ryochan7 2017, 2018, 2019, 2020, 2021</Copyright>
     <Description>Sony DualShock 4 to Microsoft Xinput controller mapper</Description>
     <Authors>Ryochan7</Authors>
-    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
