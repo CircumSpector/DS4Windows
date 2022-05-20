@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-DS4Windows.Server.Host-AD961187-8826-4EF3-855F-61640042D53B</UserSecretsId>
 	  <OutputType>exe</OutputType>
-	  <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
+	  
 	  <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
 	  <RootNamespace>DS4Windows.Server</RootNamespace>
   </PropertyGroup>

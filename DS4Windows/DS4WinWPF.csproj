@@ -6,7 +6,7 @@
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <UseWPF>true</UseWPF>
     <Platforms>x64;x86</Platforms>
-	  <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
+	  
     <RootNamespace>DS4WinWPF</RootNamespace>
     <AssemblyName>DS4Windows</AssemblyName>
     <ApplicationIcon>DS4Windows.ico</ApplicationIcon>

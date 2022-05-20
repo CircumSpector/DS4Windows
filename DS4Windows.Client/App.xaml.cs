@@ -1,6 +1,7 @@
 ﻿using DS4Windows.Client.Core;
 using DS4Windows.Client.Modules.Main;
 using System.Diagnostics;
+using System.Runtime.Versioning;
 using System.Windows;
 
 namespace DS4Windows.Client
