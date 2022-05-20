@@ -11,6 +11,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White">
     <StackPanel>
+        
         <ItemsControl ItemsSource="{Binding ConnectedControllers}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:ControllerConnectedMessage}">
