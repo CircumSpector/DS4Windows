@@ -7,10 +7,15 @@
 	  <UseWPF>true</UseWPF>
 	  <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
 	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+	  <ApplicationIcon>DS4W.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="DS4W.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="NotifyIconResources.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +37,7 @@
 
   <ItemGroup>
     <Resource Include="DS4W.ico" />
+    <Resource Include="NotifyIconResources.xaml" />
   </ItemGroup>
 
   <ItemGroup>
