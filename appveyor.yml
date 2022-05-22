@@ -14,6 +14,8 @@ branches:
 install:
 - cmd: git submodule -q update --init
 - cmd: choco install dotnet-sdk --pre 
+- cmd: msiexec /i "%APPVEYOR_BUILD_FOLDER%\Installer\advinst.msi" /qn
+- cmd: AdvancedInstaller.com /register a154fa587445df371a718f08290b7c2b
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -32,9 +34,11 @@ skip_commits:
     - '**/*.md'
 build_script:
 - cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\DS4WindowsWPF.sln" -c %CONFIGURATION% -r win-%PLATFORM% --no-self-contained -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%" -p:WapProjPath="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\DesktopBridge" 
+- ps: "%APPVEYOR_BUILD_FOLDER%\\publishall.ps1"
 after_build:
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
+- cmd: Advanceinstaller.com /build "%APPVEYOR_BUILD_FOLDER%\\Installer\Ds4Windows.Installer.aip"
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
