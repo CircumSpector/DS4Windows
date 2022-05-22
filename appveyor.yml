@@ -15,7 +15,8 @@ install:
 - cmd: git submodule -q update --init
 - cmd: choco install dotnet-sdk --pre 
 - cmd: choco install advanced-installer
-- cmd: "C:\\Program Files (x86)\\Caphyon\\Advanced Installer 19.4\\bin\\x86\\AdvancedInstaller.com /register a154fa587445df371a718f08290b7c2b"
+- cmd: set path="C:\\Program Files (x86)\\Caphyon\\Advanced Installer 19.4\\bin\\x86\\;%PATH%" 
+- cmd: AdvancedInstaller.com /register a154fa587445df371a718f08290b7c2b
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
