@@ -14,8 +14,8 @@ install:
 - cmd: git submodule -q update --init
 - cmd: choco install advanced-installer
 - ps: |
-    $env:publishPath = "%APPVEYOR_BUILD_FOLDER%/publishAll.ps1"
-    $env:adiInstallPath = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
+    $env:publishPath = $env:APPVEYOR_BUILD_FOLDER + "\\publishAll.ps1"
+    $env:adiInstallPath = "C:\\Program Files (x86)\\Caphyon\\Advanced Installer 19.4\\bin\\x86\\AdvancedInstaller.com"
     Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList "/register a154fa587445df371a718f08290b7c2b"
 - cmd: choco install dotnet-sdk --pre 
 dotnet_csproj:
@@ -39,11 +39,14 @@ build_script:
     & $env:publishPath
 after_build:
 - ps: |
-    $installerOutputPath = "%APPVEYOR_BUILD_FOLDER%/artifacts/"
-    $installerProjectDir = "%APPVEYOR_BUILD_FOLDER%/Installer"
-    $installerProjectPath = "/build %installerProjectDir%Ds4Windows.Installer.aip"
-    Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList $installerProjectPath
-    Move-Item -Path "%installerProjectDir%/Setup Files/DS4Windows.exe" -Destination "%installerOutputPath%/DS4Windows.Setupp.exe"
+    $installerOutputPath = $env:APPVEYOR_BUILD_FOLDER + "\\artifacts"
+    $installerProjectDir = $env:APPVEYOR_BUILD_FOLDER + "\\Installer"
+    $installerProjectPath = "/build " + $installerProjectDir + "\\Ds4Windows.Installer.aip"
+    Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList $installerProjectPath -NoNewWindow -Wait
+
+    $opath = $installerOutputPath + "\\DS4Windows.Setup.exe"
+    $inpath = $installerProjectDir + "\\Setup Files/DS4Windows.exe"
+    Move-Item -Path $inpath -Destination $opath
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
