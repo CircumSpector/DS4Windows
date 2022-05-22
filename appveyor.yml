@@ -3,7 +3,7 @@ image: Visual Studio 2022
 configuration:
 - Release
 platform:
-- x64
+- Any CPU
 branches:
   only:
     - master
@@ -41,10 +41,13 @@ after_build:
     $installerOutputPath = $env:APPVEYOR_BUILD_FOLDER + "/artifacts"
     $installerProjectDir = $env:APPVEYOR_BUILD_FOLDER + "/Installer"
     $installerProjectPath = $installerProjectDir + "/Ds4Windows.Installer.aip"
-    & "$env:adiInstallPath" /build $installerProjectPath
+    & "$env:adiInstallPath" /build $installerProjectPath 
 
     $opath = $installerOutputPath + "/DS4Windows.Setup.exe"
     $inpath = $installerProjectDir + "/Setup Files/DS4Windows.exe"
+
+    Write-Output "About to try and move"
+
     Move-Item -Path $inpath -Destination $opath -Force
 test: off
 cache:
