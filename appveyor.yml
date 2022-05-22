@@ -16,7 +16,7 @@ install:
 - ps: |
     $env:publishPath = $env:APPVEYOR_BUILD_FOLDER + "\\publishAll.ps1"
     $env:adiInstallPath = "C:\\Program Files (x86)\\Caphyon\\Advanced Installer 19.4\\bin\\x86\\AdvancedInstaller.com"
-    Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList "/register a154fa587445df371a718f08290b7c2b"
+    Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList "/register a154fa587445df371a718f08290b7c2b" -NoNewWindow -Wait
 - cmd: choco install dotnet-sdk --pre 
 dotnet_csproj:
   patch: true
@@ -45,8 +45,8 @@ after_build:
     Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList $installerProjectPath -NoNewWindow -Wait
 
     $opath = $installerOutputPath + "\\DS4Windows.Setup.exe"
-    $inpath = $installerProjectDir + "\\Setup Files/DS4Windows.exe"
-    Move-Item -Path $inpath -Destination $opath
+    $inpath = $installerProjectDir + "\\Setup Files\\DS4Windows.exe"
+    Move-Item -Path $inpath -Destination $opath -force
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
