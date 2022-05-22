@@ -15,7 +15,7 @@ install:
 - cmd: git submodule -q update --init
 - cmd: choco install dotnet-sdk --pre 
 - cmd: choco install advanced-installer
-- cmd: AdvancedInstaller.com /register a154fa587445df371a718f08290b7c2b
+- cmd: C:\\Program Files (x86)\\Caphyon\\Advanced Installer 19.4\\bin\\x86\\AdvancedInstaller.com /register a154fa587445df371a718f08290b7c2b
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -38,7 +38,7 @@ build_script:
 after_build:
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
-- cmd: Advanceinstaller.com /build "%APPVEYOR_BUILD_FOLDER%\\Installer\Ds4Windows.Installer.aip"
+- cmd: C:\\Program Files (x86)\\Caphyon\\Advanced Installer 19.4\\bin\\x86\\AdvancedInstaller.com /build "%APPVEYOR_BUILD_FOLDER%\\Installer\Ds4Windows.Installer.aip"
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
