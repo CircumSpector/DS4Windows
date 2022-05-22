@@ -6,8 +6,16 @@
 	  <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	  <Nullable>disable</Nullable>
 	  <RootNamespace>DS4Windows.Client.ServiceClients</RootNamespace>
+	  <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Server.Interfaces\DS4Windows.Server.Interfaces.csproj" />
   </ItemGroup>

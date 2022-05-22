@@ -4,8 +4,17 @@
 	  <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
     <RootNamespace>DS4Windows.Client.Modules</RootNamespace>
 	<UseWPF>true</UseWPF>
+	  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+	  <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
     <ProjectReference Include="..\DS4Windows.Server.Interfaces\DS4Windows.Server.Interfaces.csproj" />

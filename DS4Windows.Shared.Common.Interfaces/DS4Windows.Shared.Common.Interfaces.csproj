@@ -7,7 +7,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>DS4Windows.Shared.Common</RootNamespace>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	  <Platforms>x64;x86</Platforms>
   </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />

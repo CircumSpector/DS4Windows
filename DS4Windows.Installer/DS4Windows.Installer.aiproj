@@ -16,12 +16,7 @@
     <LoadFromTemplate>
     </LoadFromTemplate>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'DefaultBuild' " />
-  <ItemGroup>
-    <Compile Include="DS4Windows.Installer.aip">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'All' " />
   <Target Name="Build">
     <Error Text="This project requires Advanced Installer tool. Please download it from https://www.advancedinstaller.com/download.html" />
   </Target>
