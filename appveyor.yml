@@ -14,7 +14,7 @@ branches:
 install:
 - cmd: git submodule -q update --init
 - cmd: choco install dotnet-sdk --pre 
-- cmd: (New-Object Net.WebClient).DownloadFile('https://www.advancedinstaller.com/downloads/advinst.msi', '%APPVEYOR_BUILD_FOLDER%\Installer\advinst.msi')
+- ps: (New-Object Net.WebClient).DownloadFile('https://www.advancedinstaller.com/downloads/advinst.msi', '%APPVEYOR_BUILD_FOLDER%\Installer\advinst.msi')
 - cmd: msiexec /i "%APPVEYOR_BUILD_FOLDER%\Installer\advinst.msi" /qn
 - cmd: AdvancedInstaller.com /register a154fa587445df371a718f08290b7c2b
 dotnet_csproj:
