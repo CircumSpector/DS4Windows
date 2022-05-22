@@ -3,7 +3,6 @@ image: Visual Studio 2022
 configuration:
 - Release
 platform:
-- x86
 - x64
 branches:
   only:
@@ -15,7 +14,7 @@ install:
 - cmd: git submodule -q update --init
 - cmd: choco install advanced-installer
 - ps: |
-    $env:publishPath = %APPVEYOR_BUILD_FOLDER%/publishAll.ps1
+    $env:publishPath = "%APPVEYOR_BUILD_FOLDER%/publishAll.ps1"
     $env:adiInstallPath = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
     Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList "/register a154fa587445df371a718f08290b7c2b"
 - cmd: choco install dotnet-sdk --pre 
@@ -39,8 +38,6 @@ build_script:
 - ps: |
     & $env:publishPath
 after_build:
-- cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
-- cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
 - ps: |
     $installerOutputPath = "%APPVEYOR_BUILD_FOLDER%/artifacts/"
     $installerProjectDir = "%APPVEYOR_BUILD_FOLDER%/Installer"
