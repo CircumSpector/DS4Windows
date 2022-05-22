@@ -1,23 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
-	  
-    <ImplicitUsings>enable</ImplicitUsings>
-      
-	  <Platforms>x64;x86</Platforms>
-  </PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DebugType>none</DebugType>
+	<PropertyGroup>
 	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-		<DebugType>none</DebugType>
-	</PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="FastDeepCloner" Version="1.3.6" />
-    <PackageReference Include="PInvoke.Kernel32" Version="0.7.104" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="FastDeepCloner" Version="1.3.6" />
+		<PackageReference Include="PInvoke.Kernel32" Version="0.7.104" />
+	</ItemGroup>
 
 </Project>

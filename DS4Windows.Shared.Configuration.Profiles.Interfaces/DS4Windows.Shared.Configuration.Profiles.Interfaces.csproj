@@ -1,23 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
-	  <UseWPF>true</UseWPF>
-	  <Platforms>x64;x86</Platforms>
-	  
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>DS4Windows.Shared.Configuration.Profiles</RootNamespace>
-  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DebugType>none</DebugType>
+	<PropertyGroup>
+		<UseWPF>true</UseWPF>
+		<RootNamespace>DS4Windows.Shared.Configuration.Profiles</RootNamespace>
 	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-		<DebugType>none</DebugType>
-	</PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -2,23 +2,14 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<ApplicationIcon>DS4W.ico</ApplicationIcon>
 		<AssemblyName>DS4Windows</AssemblyName>
-		<Platforms>x64;x86</Platforms>
-		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-		<RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
 	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-	  <DebugType>none</DebugType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-	  <DebugType>none</DebugType>
-	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Splashscreen.png" />
 	</ItemGroup>
@@ -83,37 +74,19 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj" />
-		<ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
+		<ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj" />
 		<ProjectReference Include="..\DS4Windows.Client.Modules.Interfaces\DS4Windows.Client.Modules.Interfaces.csproj" />
-		<ProjectReference Include="..\DS4Windows.Client.Modules\DS4Windows.Client.Modules.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\DS4Windows.Client.ServiceClients\DS4Windows.Client.ServiceClients.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
+		<ProjectReference Include="..\DS4Windows.Client.Modules\DS4Windows.Client.Modules.csproj" />
+		<ProjectReference Include="..\DS4Windows.Client.ServiceClients\DS4Windows.Client.ServiceClients.csproj" />
 		<ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
-		<ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
+		<ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
+		<ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
+		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
 		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />
-		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
+		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles\DS4Windows.Shared.Configuration.Profiles.csproj" />
 		<ProjectReference Include="..\Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj" />
-		<ProjectReference Include="..\DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\DS4Windows.Shared.Emulator.ViGEmGen1\DS4Windows.Shared.Emulator.ViGEmGen1.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
+		<ProjectReference Include="..\DS4Windows.Shared.Devices\DS4Windows.Shared.Devices.csproj" />
+		<ProjectReference Include="..\DS4Windows.Shared.Emulator.ViGEmGen1\DS4Windows.Shared.Emulator.ViGEmGen1.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
