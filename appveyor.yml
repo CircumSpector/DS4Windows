@@ -15,8 +15,9 @@ install:
 - cmd: git submodule -q update --init
 - cmd: choco install advanced-installer
 - ps: |
-    $env:installPath = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
-    Start-Process -FilePath $env:installPath.ToString() -ArgumentList "/register a154fa587445df371a718f08290b7c2b"
+    $env:publishPath = "%APPVEYOR_BUILD_FOLDER%\publishAll.ps1"
+    $env:adiInstallPath = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
+    Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList "/register a154fa587445df371a718f08290b7c2b"
 - cmd: choco install dotnet-sdk --pre 
 dotnet_csproj:
   patch: true
@@ -35,13 +36,13 @@ skip_commits:
     - extras/*
     - '**/*.md'
 build_script:
-- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\DS4WindowsWPF.sln" -c %CONFIGURATION% -r win-%PLATFORM% --no-self-contained -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%" -p:WapProjPath="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\DesktopBridge" 
-- ps: "%APPVEYOR_BUILD_FOLDER%\\publishall.ps1"
+- ps: |
+    & $env:publishPath
 after_build:
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
 - cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
 - ps: |
-   Start-Process -FilePath $env:installPath.ToString() -ArgumentList "/build %APPVEYOR_BUILD_FOLDER%\\Installer\\Ds4Windows.Installer.aip"
+   Start-Process -FilePath $env:adiInstallPath.ToString() -ArgumentList "/build %APPVEYOR_BUILD_FOLDER%\\Installer\\Ds4Windows.Installer.aip"
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
