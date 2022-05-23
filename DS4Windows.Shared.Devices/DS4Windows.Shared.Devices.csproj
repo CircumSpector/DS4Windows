@@ -18,7 +18,7 @@
 		<PackageReference Include="PInvoke.SetupApi" Version="0.7.104" />
 		<PackageReference Include="PInvoke.User32" Version="0.7.104" />
 		<PackageReference Include="PInvoke.Win32" Version="0.7.104" />
-		<PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" ExcludeAssets="runtime" />
+		<PackageReference Include="PropertyChanged.Fody" Version="3.4.1" PrivateAssets="all" ExcludeAssets="runtime" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
