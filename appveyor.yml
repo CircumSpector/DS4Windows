@@ -53,7 +53,7 @@ test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
 artifacts:
-  - path: $(APPVEYOR_BUILD_FOLDER)/artifacts/DS4Windows.Setup.exe
+  - path: "artifacts\\DS4Windows.Setup.exe"
     name: $(APPVEYOR_PROJECT_NAME)
 deploy:
 - provider: Environment
