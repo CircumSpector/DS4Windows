@@ -14,7 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.4.92" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.4.94" />
     <PackageReference Include="PInvoke.NewDev" Version="0.7.104" />
     <PackageReference Include="PInvoke.SetupApi" Version="0.7.104" />
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
