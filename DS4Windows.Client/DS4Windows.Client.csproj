@@ -65,10 +65,6 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="System.Management" Version="6.0.0" />
 		<PackageReference Include="TaskScheduler" Version="2.10.1" />
-		<PackageReference Include="WeakEventHandler.Fody" Version="1.7.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="WPFLocalizeExtension" Version="3.9.4" />
 	</ItemGroup>
 

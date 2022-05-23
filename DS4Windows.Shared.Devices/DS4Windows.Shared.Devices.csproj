@@ -25,9 +25,6 @@
 		<PackageReference Include="System.Management" Version="6.0.0" />
 		<PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
 		<PackageReference Include="Usb.Net" Version="4.2.1" />
-		<PackageReference Include="WeakEventHandler.Fody" Version="1.7.0">
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
 		<PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
