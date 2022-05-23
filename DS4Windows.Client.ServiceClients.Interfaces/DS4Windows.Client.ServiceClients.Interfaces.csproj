@@ -4,6 +4,9 @@
 		<RootNamespace>DS4Windows.Client.ServiceClients</RootNamespace>
 		<UseWPF>true</UseWPF>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<AssemblyVersion>4.0.0</AssemblyVersion>
+		<FileVersion>4.0.0</FileVersion>
+		<Version>4.0.0</Version>
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
