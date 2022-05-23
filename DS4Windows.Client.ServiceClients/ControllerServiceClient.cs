@@ -11,12 +11,13 @@ using Newtonsoft.Json;
 using Serilog;
 using Websocket.Client;
 
-namespace DS4Windows.Client.Modules.Controllers.Utils
+namespace DS4Windows.Client.ServiceClients
 {
     public class ControllerServiceClient : IControllerServiceClient
     {
         private Action<ControllerConnectedMessage> connectedAction;
         private Action<ControllerDisconnectedMessage> disconnectedAction;
+        private Action<IsHostRunningChangedMessage> hostRunningHandler;
         private WebsocketClient websocketClient;
 
         public ControllerServiceClient()
@@ -70,10 +71,15 @@ namespace DS4Windows.Client.Modules.Controllers.Utils
             throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
         }
 
-        public async void StartWebSocket(Action<ControllerConnectedMessage> connectedHandler, Action<ControllerDisconnectedMessage> disconnectedHandler)
+        public async void StartWebSocket(
+            Action<ControllerConnectedMessage> connectedHandler, 
+            Action<ControllerDisconnectedMessage> disconnectedHandler,
+            Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null
+        )
         {
             connectedAction = connectedHandler;
             disconnectedAction = disconnectedHandler;
+            hostRunningHandler = hostRunningChangedHandler;
 
             websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
             
@@ -87,6 +93,45 @@ namespace DS4Windows.Client.Modules.Controllers.Utils
             websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
 
             await websocketClient.Start();
+        }
+
+        public async Task<bool> IsHostRunning()
+        {
+            var client = new HttpClient();
+            var result = await client.GetAsync($"{Constants.HttpUrl}/controller/ishostrunning");
+            if (result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return bool.Parse(content);
+            }
+
+            throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+        }
+
+        public async Task StartHost()
+        {
+            var client = new HttpClient();
+            var result = await client.GetAsync($"{Constants.HttpUrl}/controller/starthost");
+            if (result.IsSuccessStatusCode)
+            {
+            }
+            else
+            {
+                throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+            }
+        }
+
+        public async Task StopHost()
+        {
+            var client = new HttpClient();
+            var result = await client.GetAsync($"{Constants.HttpUrl}/controller/stophost");
+            if (result.IsSuccessStatusCode)
+            {
+            }
+            else
+            {
+                throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+            }
         }
 
         private async void ProcessControllerMessage(ResponseMessage msg)
@@ -113,6 +158,14 @@ namespace DS4Windows.Client.Modules.Controllers.Utils
                         disconnectedAction(device);
                     }
                 });
+            }
+            else if (messageBase.MessageName == IsHostRunningChangedMessage.Name)
+            {
+                if (hostRunningHandler != null)
+                {
+                    var isHostRunning = JsonConvert.DeserializeObject<IsHostRunningChangedMessage>(msg.Text);
+                    hostRunningHandler(isHostRunning);
+                }
             }
         }
     }

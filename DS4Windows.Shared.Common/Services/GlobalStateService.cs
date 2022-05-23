@@ -14,7 +14,7 @@ namespace DS4Windows.Shared.Common.Services
     {
         private readonly ActivitySource activitySource = new(TracingSources.CommonAssemblyActivitySourceName);
 
-        private readonly string appDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+        private readonly string appDirectory = Directory.GetParent(AppContext.BaseDirectory).FullName;
 
         public GlobalStateService()
         {

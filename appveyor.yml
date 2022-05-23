@@ -3,8 +3,7 @@ image: Visual Studio 2022
 configuration:
 - Release
 platform:
-- x86
-- x64
+- Any CPU
 branches:
   only:
     - master
@@ -13,7 +12,11 @@ branches:
     - gh-pages
 install:
 - cmd: git submodule -q update --init
-- cmd: choco install dotnet-sdk --pre 
+- cmd: choco install advanced-installer
+- ps: |
+    $env:publishPath = $env:APPVEYOR_BUILD_FOLDER + "/publishAll.ps1"
+    $env:adiInstallPath = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
+    & "$env:adiInstallPath" /register a154fa587445df371a718f08290b7c2b
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -31,15 +34,26 @@ skip_commits:
     - extras/*
     - '**/*.md'
 build_script:
-- cmd: dotnet publish "%APPVEYOR_BUILD_FOLDER%\DS4WindowsWPF.sln" -c %CONFIGURATION% -r win-%PLATFORM% --no-self-contained -o "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%" -p:WapProjPath="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\DesktopBridge" 
+- ps: |
+    & $env:publishPath
 after_build:
-- cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%-v%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
-- cmd: 7z a %APPVEYOR_PROJECT_NAME%-%PLATFORM%.zip "%APPVEYOR_BUILD_FOLDER%\artifacts\%PLATFORM%\*"
+- ps: |
+    $installerOutputPath = $env:APPVEYOR_BUILD_FOLDER + "/artifacts"
+    $installerProjectDir = $env:APPVEYOR_BUILD_FOLDER + "/Installer"
+    $installerProjectPath = $installerProjectDir + "/Ds4Windows.Installer.aip"
+    & "$env:adiInstallPath" /build $installerProjectPath 
+
+    $opath = $installerOutputPath + "/DS4Windows.Setup.exe"
+    $inpath = $installerProjectDir + "/Setup Files/DS4Windows.exe"
+
+    Write-Output "About to try and move"
+    New-Item $installerOutputPath -itemtype directory
+    Move-Item -Path $inpath -Destination $opath -Force
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
 artifacts:
-  - path: $(APPVEYOR_PROJECT_NAME)-*.zip
+  - path: "artifacts\\DS4Windows.Setup.exe"
     name: $(APPVEYOR_PROJECT_NAME)
 deploy:
 - provider: Environment

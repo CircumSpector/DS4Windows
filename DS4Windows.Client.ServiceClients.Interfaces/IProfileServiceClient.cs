@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
 
-namespace DS4Windows.Client.Modules.Profiles.Utils;
+namespace DS4Windows.Client.ServiceClients;
 
 public interface IProfileServiceClient
 {

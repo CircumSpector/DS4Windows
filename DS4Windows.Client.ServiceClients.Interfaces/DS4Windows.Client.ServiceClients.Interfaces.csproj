@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>DS4Windows.Client.ServiceClients</RootNamespace>
+		<UseWPF>true</UseWPF>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\DS4Windows.Server.Interfaces\DS4Windows.Server.Interfaces.csproj" />
+	</ItemGroup>
+
+</Project>

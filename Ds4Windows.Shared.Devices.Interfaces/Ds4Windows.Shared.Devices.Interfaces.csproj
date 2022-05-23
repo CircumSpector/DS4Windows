@@ -1,22 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
-	  <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>DS4Windows.Shared.Devices</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
 
-  <ItemGroup>
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.4.92" />
-    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
-    <PackageReference Include="PInvoke.Hid" Version="0.7.104" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.4.94" />
+		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
+		<PackageReference Include="PInvoke.Hid" Version="0.7.104" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
-    <ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
+		<ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
+	</ItemGroup>
 
 </Project>

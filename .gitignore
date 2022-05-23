@@ -333,4 +333,7 @@ ASALocalRun/
 !DS4Windows/libs/x86/
 
 /captures
-/DS4Windows.Installer
+/Installer/Ds4Windows.Installer-cache
+/Installer/Setup Files
+/Output
+/publish

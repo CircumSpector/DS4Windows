@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Common.Legacy;
 using DS4Windows.Shared.Common.Types;
-using DS4Windows.Shared.Common.Util;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
-using Newtonsoft.Json;
 
-namespace DS4Windows.Client.Modules.Profiles
+namespace DS4Windows.Client.ServiceClients
 {
     public class ProfileItem : IProfile
     {

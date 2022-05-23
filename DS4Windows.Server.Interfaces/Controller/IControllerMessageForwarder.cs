@@ -7,4 +7,5 @@ public interface IControllerMessageForwarder
 {
     Task StartListening(WebSocket newSocket);
     ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice);
+    Task SendIsHostRunning(bool isRunning);
 }

@@ -20,14 +20,20 @@ namespace DS4Windows.Client.Core
             where TViewModel : IViewModel
             where TView : IView
         {
-            var configuration = SetupConfiguration();
-            SetupLogging(configuration);
-            host = SetupHost();
-
-            await StartApplication<TViewModel, TView>(configuration);
+            var host = CreateInitialSetup(out var config);
+            await StartApplication<TViewModel, TView>(config);
         }
 
-        private static IConfigurationRoot SetupConfiguration()
+        public static IHost CreateInitialSetup(out IConfigurationRoot config)
+        {
+            config = SetupConfiguration();
+            SetupLogging(config);
+            host = SetupHost();
+
+            return host;
+        }
+
+        public static IConfigurationRoot SetupConfiguration()
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
@@ -40,14 +46,14 @@ namespace DS4Windows.Client.Core
             return configuration;
         }
 
-        private static void SetupLogging(IConfigurationRoot configuration)
+        public static void SetupLogging(IConfigurationRoot configuration)
         {
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }
 
-        private static IHost SetupHost()
+        public static IHost SetupHost()
         {
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) => { ConfigureServices(context.Configuration, services); })
