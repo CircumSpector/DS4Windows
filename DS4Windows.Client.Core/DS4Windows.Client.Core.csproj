@@ -2,9 +2,6 @@
 
 	<PropertyGroup>
 		<UseWPF>true</UseWPF>
-		<AssemblyVersion>4.0.0</AssemblyVersion>
-		<FileVersion>4.0.0</FileVersion>
-		<Version>4.0.0</Version>
 	</PropertyGroup>
 
 	<Import Project="..\CommonProjectProperties.targets" />

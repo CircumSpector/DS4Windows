@@ -4,9 +4,6 @@
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>DS4W.ico</ApplicationIcon>
-		<AssemblyVersion>4.0.0</AssemblyVersion>
-		<FileVersion>4.0.0</FileVersion>
-		<Version>4.0.0</Version>
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
