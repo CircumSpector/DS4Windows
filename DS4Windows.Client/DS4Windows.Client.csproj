@@ -6,6 +6,9 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<ApplicationIcon>DS4W.ico</ApplicationIcon>
 		<AssemblyName>DS4Windows</AssemblyName>
+		<AssemblyVersion>4.0.0</AssemblyVersion>
+		<FileVersion>4.0.0</FileVersion>
+		<Version>4.0.0</Version>
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
