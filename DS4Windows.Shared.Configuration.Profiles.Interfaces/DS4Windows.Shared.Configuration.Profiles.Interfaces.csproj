@@ -4,9 +4,6 @@
 	<PropertyGroup>
 		<UseWPF>true</UseWPF>
 		<RootNamespace>DS4Windows.Shared.Configuration.Profiles</RootNamespace>
-		<AssemblyVersion>4.0.0</AssemblyVersion>
-		<FileVersion>4.0.0</FileVersion>
-		<Version>4.0.0</Version>
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
