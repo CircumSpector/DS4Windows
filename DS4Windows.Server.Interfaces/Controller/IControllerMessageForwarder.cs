@@ -1,5 +1,5 @@
 ﻿using System.Net.WebSockets;
-using DS4Windows.Shared.Devices.HID;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 
 namespace DS4Windows.Server.Controller;
 

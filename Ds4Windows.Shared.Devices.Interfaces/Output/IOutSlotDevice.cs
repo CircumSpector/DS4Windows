@@ -1,7 +1,6 @@
-﻿using System;
-using DS4Windows.Shared.Common.Types;
+﻿using DS4Windows.Shared.Common.Types;
 
-namespace DS4Windows.Shared.Devices.Output;
+namespace Ds4Windows.Shared.Devices.Interfaces.Output;
 
 public interface IOutSlotDevice
 {

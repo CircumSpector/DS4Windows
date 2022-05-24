@@ -2,6 +2,7 @@
 using System.Linq;
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.HID.Devices;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 using DS4Windows.Shared.Devices.Types;
 
 namespace DS4Windows.Shared.Devices.Services;

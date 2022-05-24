@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Devices.HID;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 using JetBrains.Annotations;
 
 namespace DS4Windows.Shared.Devices.Services;

@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
-namespace DS4Windows.Shared.Devices.HID;
+namespace Ds4Windows.Shared.Devices.Interfaces.HID;
 
 /// <summary>
 ///     VidPidFeatureSet feature bit-flags (the default in VidPidInfo is zero value = standard DS4 behavior)

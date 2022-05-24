@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using DS4Windows.Shared.Common.Util;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 using JetBrains.Annotations;
 using PInvoke;
 

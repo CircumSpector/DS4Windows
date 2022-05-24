@@ -6,8 +6,10 @@ using System.Linq;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Types;
 using DS4Windows.Shared.Devices.HID;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
+using Ds4Windows.Shared.Devices.Interfaces.Output;
+using Ds4Windows.Shared.Devices.Interfaces.Services;
 using DS4Windows.Shared.Devices.Output;
-using DS4Windows.Shared.Emulator.ViGEmGen1.Types;
 using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Devices.Services

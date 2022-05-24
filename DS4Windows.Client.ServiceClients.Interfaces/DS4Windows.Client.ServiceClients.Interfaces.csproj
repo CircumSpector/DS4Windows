@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\DS4Windows.Server.Interfaces\DS4Windows.Server.Interfaces.csproj" />
+		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />
 	</ItemGroup>
 
 </Project>

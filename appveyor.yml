@@ -12,13 +12,17 @@ branches:
     - gh-pages
 install:
 - cmd: git submodule -q update --init
-- cmd: choco install advanced-installer
-- ps: |
-    $env:publishPath = $env:APPVEYOR_BUILD_FOLDER + "/publishAll.ps1"
-    $env:adiInstallPath = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
-    & "$env:adiInstallPath" /register a154fa587445df371a718f08290b7c2b
+- cmd: choco install advanced-installer 
 - ps: if ( $(Test-Path -Path .\vpatch.exe) -ne $True) { Invoke-WebRequest "https://github.com/nefarius/vpatch/releases/latest/download/vpatch.exe" -OutFile vpatch.exe }
 - cmd: .\vpatch.exe --stamp-version "%APPVEYOR_BUILD_VERSION%" --target-file ".\CommonProjectProperties.targets" --csproj.assembly-version --csproj.file-version --csproj.version
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 before_build:
 - nuget restore
 skip_commits:
@@ -28,21 +32,9 @@ skip_commits:
     - extras/*
     - '**/*.md'
 build_script:
-- ps: |
-    & $env:publishPath
+- ps: Installer/Build.ps1
 after_build:
-- ps: |
-    $installerOutputPath = $env:APPVEYOR_BUILD_FOLDER + "/artifacts"
-    $installerProjectDir = $env:APPVEYOR_BUILD_FOLDER + "/Installer"
-    $installerProjectPath = $installerProjectDir + "/Ds4Windows.Installer.aip"
-    & "$env:adiInstallPath" /build $installerProjectPath 
-
-    $opath = $installerOutputPath + "/DS4Windows.Setup.exe"
-    $inpath = $installerProjectDir + "/Setup Files/DS4Windows.exe"
-
-    Write-Output "About to try and move"
-    New-Item $installerOutputPath -itemtype directory
-    Move-Item -Path $inpath -Destination $opath -Force
+- ps: Installer/PostBuild.ps1
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
@@ -50,6 +42,8 @@ cache:
 artifacts:
   - path: "artifacts\\DS4Windows.Setup.exe"
     name: $(APPVEYOR_PROJECT_NAME)
+  - path: "artifacts\\Publish.zip"
+    name: "Source"
 deploy:
 - provider: Environment
   name: BUILDBOT

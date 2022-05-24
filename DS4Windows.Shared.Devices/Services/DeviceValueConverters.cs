@@ -1,4 +1,5 @@
 ﻿using System;
+using Ds4Windows.Shared.Devices.Interfaces.Services;
 
 namespace DS4Windows.Shared.Devices.Services
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.NetworkInformation;
 using DS4Windows.Shared.Devices.HID.Devices.Reports;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 
 namespace DS4Windows.Shared.Devices.HID.Devices
 {

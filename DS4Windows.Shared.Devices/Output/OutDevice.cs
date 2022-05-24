@@ -1,4 +1,6 @@
 ﻿using DS4Windows.Shared.Devices.HID;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
+using Ds4Windows.Shared.Devices.Interfaces.Output;
 
 namespace DS4Windows.Shared.Devices.Output
 {

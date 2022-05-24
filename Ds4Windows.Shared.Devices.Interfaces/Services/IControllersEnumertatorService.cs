@@ -1,12 +1,7 @@
-﻿using DS4Windows.Shared.Devices.HID;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 
-namespace DS4Windows.Shared.Devices.Services
+namespace Ds4Windows.Shared.Devices.Interfaces.Services
 {
     /// <summary>
     ///     Enumerates and watches hot-plugging of supported input devices (controllers).

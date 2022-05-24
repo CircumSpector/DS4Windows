@@ -1,4 +1,6 @@
 ﻿using DS4Windows.Server.Controller;
+using DS4Windows.Server.Host.Controller;
+using DS4Windows.Server.Host.Profile;
 using DS4Windows.Server.Profile;
 using DS4Windows.Shared.Common;
 using DS4Windows.Shared.Common.Core;
@@ -10,7 +12,7 @@ using DS4Windows.Shared.Devices.HostedServices;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Serilog;
 
-namespace DS4Windows.Server
+namespace DS4Windows.Server.Host
 {
     public static class ServiceStartup
     {

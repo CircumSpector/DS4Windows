@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DS4Windows.Shared.Devices.HID;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 using DS4Windows.Shared.Devices.Output;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;

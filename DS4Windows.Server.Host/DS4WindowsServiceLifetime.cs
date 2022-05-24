@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using PInvoke;
 using Serilog;
 
-namespace DS4Windows.Server
+namespace DS4Windows.Server.Host
 {
     public class DS4WindowsServiceLifetime : WindowsServiceLifetime
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DS4Windows.Shared.Devices.HID;
+﻿namespace Ds4Windows.Shared.Devices.Interfaces.HID;
 
 public interface IDeviceNotificationListenerSubscriber
 {

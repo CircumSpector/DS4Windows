@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
+using Ds4Windows.Shared.Devices.Interfaces.Util;
 using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;

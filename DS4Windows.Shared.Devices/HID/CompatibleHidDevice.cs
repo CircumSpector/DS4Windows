@@ -8,7 +8,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Util;
-using DS4Windows.Shared.Emulator.ViGEmGen1.Types;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Configuration.Profiles.Services;
-using DS4Windows.Shared.Devices.HID;
 using System;
 using System.ComponentModel;
 using System.Linq;

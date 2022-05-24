@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using DS4Windows.Client.Core.DependencyInjection;
 using DS4Windows.Shared.Devices.DriverManagement;
 using DS4Windows.Shared.Devices.HostedServices;
+using Ds4Windows.Shared.Devices.Interfaces.DriverManagement;
+using Ds4Windows.Shared.Devices.Interfaces.Services;
 using DS4Windows.Shared.Devices.Services;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;

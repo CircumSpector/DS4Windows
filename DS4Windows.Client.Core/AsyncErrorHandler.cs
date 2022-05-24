@@ -1,8 +1,7 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Serilog;
 
-namespace DS4Windows.Client
+namespace DS4Windows.Client.Core
 {
     /// <summary>
     ///     Catches unhandled async exceptions.

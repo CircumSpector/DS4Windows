@@ -68,8 +68,6 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
-		<PackageReference Include="Microsoft.Toolkit.Diagnostics" Version="7.1.2" />
-		<PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.1.2" />
 		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.16.0">

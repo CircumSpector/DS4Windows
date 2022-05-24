@@ -1,4 +1,4 @@
-﻿namespace DS4Windows.Shared.Devices.Services
+﻿namespace Ds4Windows.Shared.Devices.Interfaces.Services
 {
     public interface IDeviceValueConverters
     {

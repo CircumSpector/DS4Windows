@@ -1,6 +1,6 @@
-﻿using DS4Windows.Shared.Devices.HID;
+﻿using Ds4Windows.Shared.Devices.Interfaces.HID;
 
-namespace DS4Windows.Shared.Devices.Output;
+namespace Ds4Windows.Shared.Devices.Interfaces.Output;
 
 public interface IOutDevice
 {

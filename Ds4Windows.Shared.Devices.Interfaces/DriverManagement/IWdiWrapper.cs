@@ -1,4 +1,4 @@
-﻿namespace DS4Windows.Shared.Devices.DriverManagement;
+﻿namespace Ds4Windows.Shared.Devices.Interfaces.DriverManagement;
 
 public interface IWdiWrapper
 {

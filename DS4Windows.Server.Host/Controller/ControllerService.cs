@@ -1,8 +1,10 @@
-﻿using DS4Windows.Shared.Devices.HostedServices;
+﻿using DS4Windows.Server.Controller;
+using DS4Windows.Shared.Devices.HostedServices;
+using Ds4Windows.Shared.Devices.Interfaces.Services;
 using DS4Windows.Shared.Devices.Services;
 using Newtonsoft.Json;
 
-namespace DS4Windows.Server.Controller
+namespace DS4Windows.Server.Host.Controller
 {
     public class ControllerService
     {

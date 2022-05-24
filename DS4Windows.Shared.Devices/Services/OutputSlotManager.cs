@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DS4Windows.Shared.Common.Types;
+using Ds4Windows.Shared.Devices.Interfaces.Output;
+using Ds4Windows.Shared.Devices.Interfaces.Services;
 using DS4Windows.Shared.Devices.Output;
 using Nefarius.ViGEm.Client;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using DS4Windows.Shared.Common.Types;
+using Ds4Windows.Shared.Devices.Interfaces.Output;
 
 namespace DS4Windows.Shared.Devices.Output
 {
