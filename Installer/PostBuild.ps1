@@ -9,7 +9,7 @@ $installerProject = $installerDirectory + "/Ds4Windows.Installer." + $env:PlATFO
 $installerOutputExe = $installerDirectory + "/Setup Files " + $env:PlATFORM + "/DS4Windows Setup (" + $env:PlATFORM + ").exe"
 $installerOutputArtifact = $artifacts + "/DS4Windows Setup (" + $env:PlATFORM + ").exe"
 $publishOutputArtifact = $artifacts + "/Publish.zip"
-$adi = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
+$adi = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.5/bin/x86/AdvancedInstaller.com"
 
 if (Test-Path -Path $artifacts)
 {
