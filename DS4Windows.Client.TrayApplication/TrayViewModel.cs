@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
 using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Client.ServiceClients;
 using DS4Windows.Server.Controller;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace DS4Windows.Client.TrayApplication
 {

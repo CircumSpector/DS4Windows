@@ -1,8 +1,9 @@
-﻿using DS4Windows.Shared.Configuration.Profiles.Schema;
+﻿using DS4Windows.Server.Profile;
+using DS4Windows.Shared.Configuration.Profiles.Schema;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 using Newtonsoft.Json;
 
-namespace DS4Windows.Server.Profile
+namespace DS4Windows.Server.Host.Profile
 {
     public class ProfileService
     {

@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using DS4Windows.Shared.Common.Services;
 using DS4Windows.Shared.Devices.HID;
+using Ds4Windows.Shared.Devices.Interfaces.DriverManagement;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace DS4Windows.Shared.Devices.DriverManagement

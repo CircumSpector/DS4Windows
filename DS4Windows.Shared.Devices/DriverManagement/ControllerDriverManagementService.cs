@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Threading;
+using Ds4Windows.Shared.Devices.Interfaces.DriverManagement;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 

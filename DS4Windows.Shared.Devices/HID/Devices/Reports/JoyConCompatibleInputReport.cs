@@ -1,4 +1,6 @@
-﻿namespace DS4Windows.Shared.Devices.HID.Devices.Reports
+﻿using Ds4Windows.Shared.Devices.Interfaces.HID;
+
+namespace DS4Windows.Shared.Devices.HID.Devices.Reports
 {
     /// <summary>
     ///     TODO: unfinished!

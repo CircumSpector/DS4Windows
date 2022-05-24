@@ -2,11 +2,13 @@
 using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.Services;
 using DS4Windows.Shared.Devices.Util;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
+using Ds4Windows.Shared.Devices.Interfaces.Services;
+using Ds4Windows.Shared.Devices.Interfaces.Util;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace DS4Windows.Shared.Devices.HostedServices;

@@ -1,5 +1,4 @@
-﻿using DS4Windows.Shared.Devices.Util;
-using MaterialDesignExtensions.Controls;
+﻿using MaterialDesignExtensions.Controls;
 using System;
 using System.ComponentModel;
 using System.Windows;

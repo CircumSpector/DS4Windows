@@ -1,7 +1,8 @@
 ﻿using System.Net.WebSockets;
+using DS4Windows.Server.Profile;
 using DS4Windows.Shared.Configuration.Profiles.Services;
 
-namespace DS4Windows.Server.Profile
+namespace DS4Windows.Server.Host.Profile
 {
     public class ProfileMessageForwarder : IProfileMessageForwarder
     {

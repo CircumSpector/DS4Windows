@@ -25,8 +25,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{03A546
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Client.Core.Interfaces", "DS4Windows.Client.Core.Interfaces\DS4Windows.Client.Core.Interfaces.csproj", "{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4WinWPF", "DS4Windows\DS4WinWPF.csproj", "{21838A4C-12F3-4E87-ABD9-2A08601D0993}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{654BC1FC-FD86-432A-88F2-53F6AB2CE09D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS4Windows.Shared.Configuration.Profiles.Interfaces", "DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj", "{431FB4DA-B5CB-4B7B-AAC9-B676B02D9D4B}"
@@ -149,14 +147,6 @@ Global
 		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|x64.Build.0 = Release|x64
 		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|x86.ActiveCfg = Release|x86
 		{E450CA51-E6CD-4E16-9BC4-3BFAF4CF8F90}.Release|x86.Build.0 = Release|x86
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Debug|x64.ActiveCfg = Debug|x64
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Debug|x64.Build.0 = Debug|x64
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Debug|x86.ActiveCfg = Debug|x86
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Debug|x86.Build.0 = Debug|x86
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Release|x64.ActiveCfg = Release|x64
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Release|x64.Build.0 = Release|x64
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Release|x86.ActiveCfg = Release|x86
-		{21838A4C-12F3-4E87-ABD9-2A08601D0993}.Release|x86.Build.0 = Release|x86
 		{431FB4DA-B5CB-4B7B-AAC9-B676B02D9D4B}.Debug|x64.ActiveCfg = Debug|x64
 		{431FB4DA-B5CB-4B7B-AAC9-B676B02D9D4B}.Debug|x64.Build.0 = Debug|x64
 		{431FB4DA-B5CB-4B7B-AAC9-B676B02D9D4B}.Debug|x86.ActiveCfg = Debug|x86

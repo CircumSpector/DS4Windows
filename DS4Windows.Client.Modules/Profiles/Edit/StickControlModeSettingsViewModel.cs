@@ -4,7 +4,7 @@ using System.Diagnostics;
 using DS4Windows.Client.Core;
 using DS4Windows.Client.Core.ViewModel;
 using DS4Windows.Shared.Common.Types;
-using DS4Windows.Shared.Devices.Services;
+using Ds4Windows.Shared.Devices.Interfaces.Services;
 using Microsoft.Toolkit.Mvvm.Input;
 
 namespace DS4Windows.Client.Modules.Profiles.Edit

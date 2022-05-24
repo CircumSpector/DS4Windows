@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DS4Windows.Shared.Common.Types;
-using DS4Windows.Shared.Devices.Output;
+﻿using DS4Windows.Shared.Common.Types;
+using Ds4Windows.Shared.Devices.Interfaces.Output;
 using Nefarius.ViGEm.Client;
 
-namespace DS4Windows.Shared.Devices.Services
+namespace Ds4Windows.Shared.Devices.Interfaces.Services
 {
     public interface IOutputSlotManager
     {

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using Microsoft.Win32.SafeHandles; 
+using Microsoft.Win32.SafeHandles;
 
-namespace DS4Windows.Shared.Devices.Util
+namespace Ds4Windows.Shared.Devices.Interfaces.Util
 {
     [SuppressUnmanagedCodeSecurity]
     public static class NativeMethods

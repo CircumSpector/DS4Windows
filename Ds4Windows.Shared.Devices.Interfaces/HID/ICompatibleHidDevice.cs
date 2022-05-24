@@ -1,7 +1,6 @@
-﻿using System;
-using System.Net.NetworkInformation;
+﻿using System.Net.NetworkInformation;
 
-namespace DS4Windows.Shared.Devices.HID
+namespace Ds4Windows.Shared.Devices.Interfaces.HID
 {
     public interface ICompatibleHidDevice : IHidDevice
     {

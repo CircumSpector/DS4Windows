@@ -6,14 +6,12 @@
 	<Import Project="..\CommonProjectProperties.targets" />
 
 	<ItemGroup>
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.4.94" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
 		<PackageReference Include="PInvoke.Hid" Version="0.7.104" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
-		<ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
 	</ItemGroup>
 
 </Project>

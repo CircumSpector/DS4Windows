@@ -24,7 +24,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\DS4Windows.Server.Interfaces\DS4Windows.Server.Interfaces.csproj" />
 		<ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
-		<ProjectReference Include="..\DS4Windows.Shared.Common.Utils\DS4Windows.Shared.Common.Util.csproj" />
 		<ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
 		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Application\DS4Windows.Shared.Configuration.Application.csproj" />
 		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />

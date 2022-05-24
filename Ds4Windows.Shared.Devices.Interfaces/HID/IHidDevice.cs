@@ -1,8 +1,6 @@
-﻿using PInvoke;
-using System;
-using static PInvoke.Hid;
+﻿using static PInvoke.Hid;
 
-namespace DS4Windows.Shared.Devices.HID
+namespace Ds4Windows.Shared.Devices.Interfaces.HID
 {
     public interface IHidDevice
     {

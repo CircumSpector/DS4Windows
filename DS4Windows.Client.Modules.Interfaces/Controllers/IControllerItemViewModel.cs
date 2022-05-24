@@ -1,5 +1,4 @@
 ﻿using DS4Windows.Client.Core.ViewModel;
-using DS4Windows.Shared.Devices.HID;
 using System;
 using System.Net.NetworkInformation;
 using System.Windows.Media;

@@ -3,7 +3,6 @@ using DS4Windows.Client.Modules.Profiles;
 using DS4Windows.Client.ServiceClients;
 using DS4Windows.Server.Controller;
 using DS4Windows.Shared.Configuration.Profiles.Schema;
-using DS4Windows.Shared.Devices.DriverManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
@@ -18,17 +17,17 @@ namespace DS4Windows.Client.Modules.Controllers
     {
         private readonly IProfileServiceClient profilesService;
         private readonly IServiceProvider serviceProvider;
-        private readonly IControllerDriverManagementService controllerDriverManagementService;
+        //private readonly IControllerDriverManagementService controllerDriverManagementService;
         private readonly IControllerServiceClient controllerService;
 
         public ControllersViewModel( 
             IProfileServiceClient profilesService, 
             IServiceProvider serviceProvider,
-            IControllerDriverManagementService controllerDriverManagementService,
+            //IControllerDriverManagementService controllerDriverManagementService,
             IControllerServiceClient controllerService)
         {
             this.serviceProvider = serviceProvider;
-            this.controllerDriverManagementService = controllerDriverManagementService;
+            //this.controllerDriverManagementService = controllerDriverManagementService;
             this.controllerService = controllerService;
             this.profilesService = profilesService;
 
@@ -131,12 +130,12 @@ namespace DS4Windows.Client.Modules.Controllers
 
         public void HideController(IControllerItemViewModel controller)
         {
-            controllerDriverManagementService.HideController(controller.ParentInstance);
+            //controllerDriverManagementService.HideController(controller.ParentInstance);
         }
 
         public void UnHideController(IControllerItemViewModel controller)
         {
-            controllerDriverManagementService.UnhideController(controller.ParentInstance);
+            //controllerDriverManagementService.UnhideController(controller.ParentInstance);
         }
 
         protected override void Dispose(bool disposing)

@@ -1,11 +1,12 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
+using DS4Windows.Server.Controller;
 using DS4Windows.Shared.Configuration.Profiles.Services;
-using DS4Windows.Shared.Devices.HID;
 using DS4Windows.Shared.Devices.HostedServices;
+using Ds4Windows.Shared.Devices.Interfaces.HID;
 using Newtonsoft.Json;
 
-namespace DS4Windows.Server.Controller
+namespace DS4Windows.Server.Host.Controller
 {
     public class ControllerMessageForwarder : IControllerMessageForwarder
     {

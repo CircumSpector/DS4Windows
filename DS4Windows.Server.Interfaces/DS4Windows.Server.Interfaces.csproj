@@ -7,7 +7,6 @@
 	<Import Project="..\CommonProjectProperties.targets" />
 
 	<ItemGroup>
-		<ProjectReference Include="..\DS4Windows.Shared.Configuration.Profiles.Interfaces\DS4Windows.Shared.Configuration.Profiles.Interfaces.csproj" />
 		<ProjectReference Include="..\Ds4Windows.Shared.Devices.Interfaces\Ds4Windows.Shared.Devices.Interfaces.csproj" />
 	</ItemGroup>
 
