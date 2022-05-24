@@ -17,14 +17,8 @@ install:
     $env:publishPath = $env:APPVEYOR_BUILD_FOLDER + "/publishAll.ps1"
     $env:adiInstallPath = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.4/bin/x86/AdvancedInstaller.com"
     & "$env:adiInstallPath" /register a154fa587445df371a718f08290b7c2b
-dotnet_csproj:
-  patch: true
-  file: '**\*.csproj'
-  version: '{version}'
-  package_version: '{version}'
-  assembly_version: '{version}'
-  file_version: '{version}'
-  informational_version: '{version}'
+- ps: if ( $(Test-Path -Path .\vpatch.exe) -ne $True) { Invoke-WebRequest "https://github.com/nefarius/vpatch/releases/latest/download/vpatch.exe" -OutFile vpatch.exe }
+- cmd: .\vpatch.exe --stamp-version "%APPVEYOR_BUILD_VERSION%" --target-file ".\CommonProjectProperties.targets" --csproj.assembly-version --csproj.file-version --csproj.version
 before_build:
 - nuget restore
 skip_commits:
@@ -52,6 +46,7 @@ after_build:
 test: off
 cache:
 - '%USERPROFILE%\.nuget\packages'
+- .\vpatch.exe
 artifacts:
   - path: "artifacts\\DS4Windows.Setup.exe"
     name: $(APPVEYOR_PROJECT_NAME)

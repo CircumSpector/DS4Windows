@@ -55,7 +55,7 @@
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" />
 		<PackageReference Include="FastDeepCloner" Version="1.3.6" />
-		<PackageReference Include="Fody" Version="6.6.1">
+		<PackageReference Include="Fody" Version="6.6.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -72,11 +72,11 @@
 		<PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.1.2" />
 		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.15.10">
+		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.16.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
+		<PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
 		<PackageReference Include="System.Net.WebSockets" Version="4.3.0" />
 		<PackageReference Include="Websocket.Client" Version="4.4.43" />
 	</ItemGroup>
