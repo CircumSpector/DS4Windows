@@ -40,7 +40,7 @@ cache:
 - '%USERPROFILE%\.nuget\packages'
 - .\vpatch.exe
 artifacts:
-  - path: "artifacts\\DS4Windows Setup ($APPVEYOR_BUILD_VERSION).exe"
+  - path: "artifacts\\DS4Windows*.exe"
     name: $(APPVEYOR_PROJECT_NAME)
   - path: "artifacts\\Publish.zip"
     name: "Source"
