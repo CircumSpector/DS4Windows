@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using DS4Windows.Client.Core;
 using DS4Windows.Client.Core.ViewModel;
+using DS4Windows.Shared.Common;
 using DS4Windows.Shared.Common.Types;
 using Ds4Windows.Shared.Devices.Interfaces.Services;
 using Microsoft.Toolkit.Mvvm.Input;

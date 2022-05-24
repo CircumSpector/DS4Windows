@@ -5,20 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Hosting;
 
 namespace DS4Windows.Shared.Configuration.Application
 {
     [UsedImplicitly]
     public class ConfigurationRegistrar : IServiceRegistrar
     {
-        public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
+        public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
         {
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
-        }
-
-        public Task Initialize(IServiceProvider services)
-        {
-            return Task.FromResult(0);
         }
     }
 }
