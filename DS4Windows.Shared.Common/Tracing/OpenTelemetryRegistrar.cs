@@ -6,6 +6,7 @@ using DS4Windows.Client.Core.DependencyInjection;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -18,8 +19,8 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
     private const string AssemblyPrefix = "DS4Windows";
 
     private static readonly Regex Cleanup = new(", (Version|Culture|PublicKeyToken)=[0-9.\\w]+", RegexOptions.Compiled);
-
-    public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
+    
+    public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
         // Get list of assemblies, register them all as potential tracing sources
         var assemblyNames = AppDomain.CurrentDomain
@@ -32,7 +33,7 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
             .Select(assembly => Cleanup.Replace(assembly.GetName().Name!, string.Empty))
             .ToArray();
 
-        if (bool.TryParse(configuration.GetSection("OpenTelemetry:IsTracingEnabled").Value, out var isEnabled) &&
+        if (bool.TryParse(context.Configuration.GetSection("OpenTelemetry:IsTracingEnabled").Value, out var isEnabled) &&
             isEnabled)
             //
             // Initialize OpenTelemetry
@@ -43,10 +44,5 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
                 .AddSource(assemblyNames)
                 .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; })
             );
-    }
-
-    public Task Initialize(IServiceProvider services)
-    {
-        return Task.FromResult(0);
     }
 }

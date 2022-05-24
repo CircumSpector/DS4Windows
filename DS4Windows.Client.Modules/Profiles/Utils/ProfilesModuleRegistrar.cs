@@ -6,12 +6,13 @@ using DS4Windows.Client.Modules.Profiles.Edit;
 using DS4Windows.Client.ServiceClients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace DS4Windows.Client.Modules.Profiles.Utils
 {
     public class ProfilesModuleRegistrar : IServiceRegistrar
     {
-        public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
+        public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
         {
             services.AddSingletons<ProfilesViewModel>(typeof(IProfilesViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<IProfilesView, ProfilesView>();
@@ -33,14 +34,6 @@ namespace DS4Windows.Client.Modules.Profiles.Utils
             services.AddTransient<ISixAxisEditView, SixAxisEditView>();
 
             services.AddAutoMapper(cfg => cfg.AddProfile<ProfilesAutoMapper>());
-        }
-
-        public async Task Initialize(IServiceProvider services)
-        {
-            var controllerService = services.GetService<IControllerServiceClient>();
-            await controllerService.WaitForService();
-            var client = services.GetService<IProfileServiceClient>();
-            await client.Initialize();
         }
     }
 }

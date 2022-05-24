@@ -3,7 +3,7 @@ image: Visual Studio 2022
 configuration:
 - Release
 platform:
-- Any CPU
+- x64
 branches:
   only:
     - master
@@ -40,7 +40,7 @@ cache:
 - '%USERPROFILE%\.nuget\packages'
 - .\vpatch.exe
 artifacts:
-  - path: "artifacts\\DS4Windows.Setup.exe"
+  - path: "artifacts\\DS4Windows*.exe"
     name: $(APPVEYOR_PROJECT_NAME)
   - path: "artifacts\\Publish.zip"
     name: "Source"

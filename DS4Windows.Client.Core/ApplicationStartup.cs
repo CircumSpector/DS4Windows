@@ -15,22 +15,22 @@ namespace DS4Windows.Client.Core
 {
     public static class ApplicationStartup
     {
-        private static IHost host = null;
-        public static async Task Start<TViewModel, TView>()
-            where TViewModel : IViewModel
-            where TView : IView
+        private static IHost host;
+        public static async Task Start(Type[] registrarTypes, Func<IServiceScope, Task> onAfterStart = null, IHostBuilder existingHostBuilder = null)
         {
-            var host = CreateInitialSetup(out var config);
-            await StartApplication<TViewModel, TView>(config);
+            CreateInitialSetup();
+            SetupHost(registrarTypes, existingHostBuilder);
+
+            if (existingHostBuilder == null)
+            {
+                await StartApplication(onAfterStart);
+            }
         }
 
-        public static IHost CreateInitialSetup(out IConfigurationRoot config)
+        private static void CreateInitialSetup()
         {
-            config = SetupConfiguration();
+            var config = SetupConfiguration();
             SetupLogging(config);
-            host = SetupHost();
-
-            return host;
         }
 
         public static IConfigurationRoot SetupConfiguration()
@@ -53,45 +53,38 @@ namespace DS4Windows.Client.Core
                 .CreateLogger();
         }
 
-        public static IHost SetupHost()
+        public static void SetupHost(Type[] registrarTypes, IHostBuilder existingHostBuilder = null)
         {
-            var host = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) => { ConfigureServices(context.Configuration, services); })
-                .UseSerilog()
-                .Build();
+            var newHostBuilder = existingHostBuilder ?? Host.CreateDefaultBuilder();
+            newHostBuilder.ConfigureServices((context, services) =>
+                {
+                    ConfigureServices(newHostBuilder, context, services, registrarTypes);
+                })
+                .UseSerilog();
 
-            return host;
-        }
-
-        private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
-        {
-            services.AddOptions();
-            RegistrarDiscovery.RegisterRegistrars(configuration, services);
-        }
-        private static async Task StartApplication<TViewModel, TView>(IConfiguration configuration)
-            where TViewModel : IViewModel
-            where TView : IView
-        {
-            await host.StartAsync();
-            using (var scope = host.Services.CreateScope())
+            if (existingHostBuilder == null)
             {
-                var moduleRegistrars = scope.ServiceProvider.GetServices<IServiceRegistrar>();
-                foreach (var registrar in moduleRegistrars)
-                {
-                    await registrar.Initialize(scope.ServiceProvider);
-                }
-
-                var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();
-                var viewModel = await viewModelFactory.Create<TViewModel, TView>();
-                if (viewModel.MainView is Window windowViewModel)
-                {
-                    windowViewModel.Show();
-                }
+                host = newHostBuilder.Build();
             }
         }
 
-        
+        private static void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services, Type[] registrarTypes)
+        {
+            services.AddOptions();
+            RegistrarDiscovery.RegisterRegistrars(builder, context, services, registrarTypes);
+        }
 
+        private static async Task StartApplication(Func<IServiceScope, Task> onAfterStart = null)
+        {
+            await host.StartAsync();
+            using var scope = host.Services.CreateScope();
+
+            if (onAfterStart != null)
+            {
+                await onAfterStart(scope);
+            }
+        }
+        
         public static async Task Shutdown()
         {
             await host.StopAsync();

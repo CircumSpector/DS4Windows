@@ -4,20 +4,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 
 namespace DS4Windows.Client.Modules.Settings
 {
     public class SettingsModuleRegistrar : IServiceRegistrar
     {
-        public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
+        public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
         {
             services.AddSingletons<SettingsViewModel>(typeof(ISettingsViewModel), typeof(INavigationTabViewModel));
             services.AddSingleton<ISettingsView, SettingsView>();
-        }
-
-        public Task Initialize(IServiceProvider services)
-        {
-            return Task.FromResult(0);
         }
     }
 }

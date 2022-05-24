@@ -27,6 +27,7 @@
 		<ProjectReference Include="..\DS4Windows.Client.Core\DS4Windows.Client.Core.csproj" />
 		<ProjectReference Include="..\DS4Windows.Client.ServiceClients.Interfaces\DS4Windows.Client.ServiceClients.Interfaces.csproj" />
 		<ProjectReference Include="..\DS4Windows.Client.ServiceClients\DS4Windows.Client.ServiceClients.csproj" />
+		<ProjectReference Include="..\DS4Windows.Shared.Common\DS4Windows.Shared.Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
