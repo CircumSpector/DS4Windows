@@ -52,12 +52,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE80CE39-4E0C-48E1-AABA-080ADE640CC9}"
 	ProjectSection(SolutionItems) = preProject
 		CommonProjectProperties.targets = CommonProjectProperties.targets
-		publishall.ps1 = publishall.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{E0C6C856-E3FB-4381-ADFA-F2AC46301965}"
 	ProjectSection(SolutionItems) = preProject
+		Installer\Build.ps1 = Installer\Build.ps1
 		Installer\Ds4Windows.Installer.aip = Installer\Ds4Windows.Installer.aip
+		Installer\PostBuild.ps1 = Installer\PostBuild.ps1
 	EndProjectSection
 EndProject
 Global
