@@ -1,8 +1,5 @@
-﻿using System;
-using System.Net.NetworkInformation;
-using DS4Windows.Shared.Devices.HID.Devices;
+﻿using DS4Windows.Shared.Devices.HID.Devices;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
-using PInvoke;
 
 namespace DS4Windows.Shared.Devices.HID;
 
