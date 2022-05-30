@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using DS4Windows.Shared.Common.Core;
 using DS4Windows.Shared.Devices.HID;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
@@ -28,11 +26,12 @@ public class CompatibleHidDeviceSlot
     /// </summary>
     public bool IsOccupied { get; internal set; }
 
-        /// <summary>
-        ///     The <see cref="CompatibleHidDevice"/> occupying this slot.
-        /// </summary>
-        [CanBeNull] public ICompatibleHidDevice Device { get; internal set; }
-    }
+    /// <summary>
+    ///     The <see cref="CompatibleHidDevice" /> occupying this slot.
+    /// </summary>
+    [CanBeNull]
+    public ICompatibleHidDevice Device { get; internal set; }
+}
 
 /// <summary>
 ///     Handles currently active devices and occupied slots and takes care that profiles are loaded when required.
@@ -44,19 +43,19 @@ public interface IControllerManagerService
     /// </summary>
     ReadOnlyObservableCollection<CompatibleHidDeviceSlot> ActiveControllers { get; }
 
-        /// <summary>
-        ///     Call when a new <see cref="CompatibleHidDevice"/> has arrived and is ready to occupy a free slot.
-        /// </summary>
-        /// <param name="device">The <see cref="CompatibleHidDevice"/> that arrived.</param>
-        /// <returns>Zero-based slot index on success, -1 if no free slot available.</returns>
-        int AssignFreeSlotWith(ICompatibleHidDevice device);
+    /// <summary>
+    ///     Call when a new <see cref="CompatibleHidDevice" /> has arrived and is ready to occupy a free slot.
+    /// </summary>
+    /// <param name="device">The <see cref="CompatibleHidDevice" /> that arrived.</param>
+    /// <returns>Zero-based slot index on success, -1 if no free slot available.</returns>
+    int AssignFreeSlotWith(ICompatibleHidDevice device);
 
-        /// <summary>
-        ///     Call when a <see cref="CompatibleHidDevice"/> had departed and its slot can be marked available.
-        /// </summary>
-        /// <param name="device">The <see cref="CompatibleHidDevice"/> that departed.</param>
-        /// <returns>The zero-based slot index it has previously occupied.</returns>
-        int FreeSlotContaining(ICompatibleHidDevice device);
+    /// <summary>
+    ///     Call when a <see cref="CompatibleHidDevice" /> had departed and its slot can be marked available.
+    /// </summary>
+    /// <param name="device">The <see cref="CompatibleHidDevice" /> that departed.</param>
+    /// <returns>The zero-based slot index it has previously occupied.</returns>
+    int FreeSlotContaining(ICompatibleHidDevice device);
 
     /// <summary>
     ///     Gets invoked when a slot got occupied.
@@ -90,10 +89,10 @@ public class ControllerManagerService : IControllerManagerService
     [ItemCanBeNull]
     public ReadOnlyObservableCollection<CompatibleHidDeviceSlot> ActiveControllers { get; }
 
-        /// <inheritdoc />
-        public int AssignFreeSlotWith(ICompatibleHidDevice device)
-        {
-            var slot = activeControllers.FirstOrDefault(s => !s.IsOccupied);
+    /// <inheritdoc />
+    public int AssignFreeSlotWith(ICompatibleHidDevice device)
+    {
+        var slot = activeControllers.FirstOrDefault(s => !s.IsOccupied);
 
         //
         // No free slot
@@ -109,10 +108,10 @@ public class ControllerManagerService : IControllerManagerService
         return slot.SlotIndex;
     }
 
-        /// <inheritdoc />
-        public int FreeSlotContaining(ICompatibleHidDevice device)
-        {
-            var slot = activeControllers.First(s => Equals(s.Device, device));
+    /// <inheritdoc />
+    public int FreeSlotContaining(ICompatibleHidDevice device)
+    {
+        var slot = activeControllers.First(s => Equals(s.Device, device));
 
         ControllerSlotFreed?.Invoke(slot);
 

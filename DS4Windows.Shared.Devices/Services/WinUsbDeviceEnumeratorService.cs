@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
 using Ds4Windows.Shared.Devices.Interfaces.Util;
-using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
@@ -15,7 +12,7 @@ namespace DS4Windows.Shared.Devices.Services;
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public interface IHidDeviceEnumeratorService
+public interface IWinUsbDeviceEnumeratorService
 {
     /// <summary>
     ///     List of currently available (connected) HID devices.
@@ -43,7 +40,7 @@ public interface IHidDeviceEnumeratorService
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
+public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
 {
     private readonly ObservableCollection<HidDevice> connectedDevices;
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
@@ -53,7 +50,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private readonly ILogger<HidDeviceEnumeratorService> logger;
 
-    public HidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
+    public WinUsbDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
         ILogger<HidDeviceEnumeratorService> logger)
     {
         this.deviceNotificationListener = deviceNotificationListener;
