@@ -24,9 +24,7 @@ namespace DS4Windows.Shared.Devices.HID
                 inputOverlapped, false);
         }
 
-        /// <summary>
-        ///     True if device originates from a software device.
-        /// </summary>
+        /// <inheritdoc />
         public bool IsVirtual { get; set; }
 
         /// <summary>
@@ -34,61 +32,39 @@ namespace DS4Windows.Shared.Devices.HID
         /// </summary>
         protected Kernel32.SafeObjectHandle Handle { get; private set; }
 
-        /// <summary>
-        ///     The Instance ID of this device.
-        /// </summary>
+        /// <inheritdoc />
         public string InstanceId { get; set; }
 
-        /// <summary>
-        ///     The path (symbolic link) of the device instance.
-        /// </summary>
+        /// <inheritdoc />
         public string Path { get; set; }
 
-        /// <summary>
-        ///     Device description.
-        /// </summary>
+        /// <inheritdoc />
         public string Description { get; set; }
 
-        /// <summary>
-        ///     Device friendly name.
-        /// </summary>
+        /// <inheritdoc />
         [CanBeNull]
         public string DisplayName { get; set; }
 
-        /// <summary>
-        ///     The Instance ID of the parent device.
-        /// </summary>
+        /// <inheritdoc />
         public string ParentInstance { get; set; }
 
-        /// <summary>
-        ///     HID Device Attributes.
-        /// </summary>
+        /// <inheritdoc />
         public Hid.HiddAttributes Attributes { get; set; }
 
-        /// <summary>
-        ///     HID Device Capabilities.
-        /// </summary>
+        /// <inheritdoc />
         public Hid.HidpCaps Capabilities { get; set; }
 
-        /// <summary>
-        ///     The manufacturer string.
-        /// </summary>
+        /// <inheritdoc />
         public string ManufacturerString { get; set; }
 
-        /// <summary>
-        ///     The product name.
-        /// </summary>
+        /// <inheritdoc />
         public string ProductString { get; set; }
 
-        /// <summary>
-        ///     The serial number, if any.
-        /// </summary>
+        /// <inheritdoc />
         [CanBeNull]
         public string SerialNumberString { get; set; }
 
-        /// <summary>
-        ///     Is this device currently open (for reading, writing).
-        /// </summary>
+        /// <inheritdoc />
         public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;
 
         public virtual void Dispose()
@@ -115,9 +91,7 @@ namespace DS4Windows.Shared.Devices.HID
         private static extern bool HidD_GetFeature(IntPtr hidDeviceObject, byte[] lpReportBuffer,
             int reportBufferLength);
 
-        /// <summary>
-        ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.
-        /// </summary>
+        /// <inheritdoc />
         public void OpenDevice()
         {
             if (IsOpen)
@@ -126,6 +100,7 @@ namespace DS4Windows.Shared.Devices.HID
             Handle = OpenAsyncHandle(Path);
         }
 
+        /// <inheritdoc />
         public void CloseDevice()
         {
             if (!IsOpen) return;
@@ -133,17 +108,17 @@ namespace DS4Windows.Shared.Devices.HID
             Handle?.Dispose();
         }
 
-        protected bool WriteFeatureReport(byte[] data)
+        protected virtual bool WriteFeatureReport(byte[] data)
         {
             return HidD_SetFeature(Handle.DangerousGetHandle(), data, data.Length);
         }
 
-        protected bool WriteOutputReportViaControl(byte[] outputBuffer)
+        protected virtual bool WriteOutputReportViaControl(byte[] outputBuffer)
         {
             return HidD_SetOutputReport(Handle.DangerousGetHandle(), outputBuffer, outputBuffer.Length);
         }
 
-        protected bool ReadFeatureData(byte[] inputBuffer)
+        protected virtual bool ReadFeatureData(byte[] inputBuffer)
         {
             return HidD_GetFeature(Handle.DangerousGetHandle(), inputBuffer, inputBuffer.Length);
         }
@@ -166,7 +141,7 @@ namespace DS4Windows.Shared.Devices.HID
             return true;
         }
 
-        protected void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
+        protected virtual void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
         {
             if (inputBuffer == IntPtr.Zero)
                 throw new ArgumentNullException(nameof(inputBuffer), @"Passed uninitialized memory");
