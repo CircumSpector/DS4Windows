@@ -696,8 +696,7 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to IMPORTANT: Double click this message to expand it, then read it until the end.
-        ///1) DO NOT REMOVE ANY DRIVERS BY FORCE, as this can break your system. 2) It was detected that you have the HidGuardian driver installed, which can cause controllers to not be detected by DS4Windows and other apps. For info about this driver and how to safely proceed in case you need to uninstall it, read the HidGuardian SECTION in the following page: https://docs.ds4windows.app/troubleshooting/ds4w-controller-detection.
+        ///   Looks up a localized string similar to An outdated driver that can hide controllers was detected as installed (HidGuardian). DO NOT force-remove this driver. Instead, use Nefarius&apos; Legactinator Tool to safely uninstall it: https://github.com/nefarius/Legacinator/releases.
         /// </summary>
         public static string HidGuardianDetectedAuxMsg {
             get {
