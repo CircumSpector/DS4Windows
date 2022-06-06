@@ -539,7 +539,7 @@ Example: whyme_DS4Windows</value>
     <value>Throttle low end of Touchpad movement. Reduces accidental mouse cursor movement when holding a mostly fixed position on the Touchpad</value>
   </data>
   <data name="DS4BTPollRate" xml:space="preserve">
-    <value>DS4 BT Poll Rate</value>
+    <value>BT Poll Rate (DS4 controllers only)</value>
   </data>
   <data name="AboutTabDS4WinLatest" xml:space="preserve">
     <value>Click here to check for updates, read the changelog and for more info regarding the current state of the DS4Windows project</value>

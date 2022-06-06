@@ -488,7 +488,7 @@ namespace DS4WinWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DS4 BT Poll Rate.
+        ///   Looks up a localized string similar to BT Poll Rate (DS4 controllers only).
         /// </summary>
         public static string DS4BTPollRate {
             get {
