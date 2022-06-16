@@ -10,6 +10,11 @@ branches:
     - devel
   except:
     - gh-pages
+environment:
+  my_secret:
+    secure: YGaqkdOie3jHmiPzLfBcoQGdNaYYM+Zk/o1wwt2ic0s=
+  my_salt:
+    secure: rORyotKcYbZPwydKSo748LJ1wLS3A9N88DFmN0AjrDT6oTtideySaKNxAIyMCqaKqOxoplfUrCQSW2jUUOV+fQ==
 install:
 - cmd: git submodule -q update --init
 - cmd: choco install advanced-installer 
