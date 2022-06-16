@@ -10,13 +10,14 @@ $installerOutputExe = $installerDirectory + "/Setup Files " + $env:PlATFORM + "/
 $installerOutputArtifact = $artifacts + "/DS4Windows Setup (" + $env:PlATFORM + ").exe"
 $publishOutputArtifact = $artifacts + "/Publish.zip"
 $adi = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.5/bin/x86/AdvancedInstaller.com"
+$serial = $installerDirectory + "/AppVeyor_ProductKey.txt"
 
 if (Test-Path -Path $artifacts)
 {
 	Remove-Item -Path $artifacts -Recurse
 }
 
-& "$adi" /register $(gc $installerDirectory + "/AppVeyor_ProductKey.txt")
+& "$adi" /register $(gc $serial)
 & "$adi" /edit $installerProject /SetVersion $env:APPVEYOR_BUILD_VERSION
 & "$adi" /build $installerProject 
 
