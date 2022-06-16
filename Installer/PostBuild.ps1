@@ -16,7 +16,7 @@ if (Test-Path -Path $artifacts)
 	Remove-Item -Path $artifacts -Recurse
 }
 
-& "$adi" /register $(gc .\AppVeyor_ProductKey.txt)
+& "$adi" /register $(gc $installerDirectory + "/AppVeyor_ProductKey.txt")
 & "$adi" /edit $installerProject /SetVersion $env:APPVEYOR_BUILD_VERSION
 & "$adi" /build $installerProject 
 
