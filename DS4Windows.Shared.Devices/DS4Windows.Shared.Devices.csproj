@@ -12,7 +12,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.6.102" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.8.107" />
 		<PackageReference Include="PInvoke.SetupApi" Version="0.7.104" />
 		<PackageReference Include="PropertyChanged.Fody" Version="3.4.1" PrivateAssets="all" ExcludeAssets="runtime" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
