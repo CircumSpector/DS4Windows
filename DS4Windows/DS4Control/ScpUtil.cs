@@ -7176,7 +7176,7 @@ namespace DS4Windows
             touchClickPassthru[device] = false;
 
             rumble[device] = 100;
-            rumbleAutostopTime[device] = 10000;
+            //rumbleAutostopTime[device] = 30000;
             touchSensitivity[device] = 100;
 
             lsModInfo[device].Reset();
