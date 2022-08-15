@@ -6,7 +6,7 @@
 	<Import Project="..\CommonProjectProperties.targets" />
 
 	<ItemGroup>
-		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.197" />
+		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
 		<PackageReference Include="PInvoke.Hid" Version="0.7.124" />
 	</ItemGroup>
 
