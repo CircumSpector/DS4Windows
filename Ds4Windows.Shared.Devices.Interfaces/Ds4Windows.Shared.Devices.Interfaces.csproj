@@ -17,4 +17,8 @@
 		<ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Util\" />
+	</ItemGroup>
+
 </Project>
