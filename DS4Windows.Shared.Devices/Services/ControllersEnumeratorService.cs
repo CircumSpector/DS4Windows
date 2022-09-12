@@ -77,7 +77,7 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
         var filtered = from hidDevice in hidDevices
             let known =
                 KnownDevices.List.FirstOrDefault(d =>
-                    d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId)
+                    d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID)
             where known is not null
             where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
                    known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
@@ -98,7 +98,7 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
             // Get device meta
             // 
             var deviceMeta = KnownDevices.List
-                .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId);
+                .First(c => c.Vid == hidDevice.Attributes.VendorID && c.Pid == hidDevice.Attributes.ProductID);
 
             //
             // Create new special input device
@@ -137,7 +137,7 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
         activity?.SetTag("Path", hidDevice.Path);
 
         var known = KnownDevices.List.FirstOrDefault(d =>
-            d.Vid == hidDevice.Attributes.VendorId && d.Pid == hidDevice.Attributes.ProductId);
+            d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID);
 
         if (known is null) return;
 
@@ -151,7 +151,7 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
         // Get device meta
         // 
         var deviceMeta = KnownDevices.List
-            .First(c => c.Vid == hidDevice.Attributes.VendorId && c.Pid == hidDevice.Attributes.ProductId);
+            .First(c => c.Vid == hidDevice.Attributes.VendorID && c.Pid == hidDevice.Attributes.ProductID);
 
         //
         // Create new special input device

@@ -1,11 +1,11 @@
-﻿using static PInvoke.Hid;
+﻿using Windows.Win32.Devices.HumanInterfaceDevice;
 
 namespace Ds4Windows.Shared.Devices.Interfaces.HID
 {
     public interface IHidDevice
     {
-        HiddAttributes Attributes { get; set; }
-        HidpCaps Capabilities { get; set; }
+        HIDD_ATTRIBUTES Attributes { get; set; }
+        HIDP_CAPS Capabilities { get; set; }
         string Description { get; set; }
         string DisplayName { get; set; }
         string InstanceId { get; set; }

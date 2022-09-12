@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using DS4Windows.Shared.Devices.HID.Devices.Reports;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
 using Microsoft.Extensions.Logging;

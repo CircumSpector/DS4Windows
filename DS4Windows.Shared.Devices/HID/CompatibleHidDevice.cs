@@ -433,7 +433,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     + devPathItems[^1].TrimStart('0').ToUpper(),
             // Device and usb hub and port identifiers missing in devicePath string. Fallback to use vendor and product ID values and 
             // take a number from the last part of the devicePath. Hopefully the last part is a usb port number as it usually should be.
-            >= 1 => Attributes.VendorId.ToString("X4") + Attributes.ProductId.ToString("X4") +
+            >= 1 => Attributes.VendorID.ToString("X4") + Attributes.ProductID.ToString("X4") +
                     devPathItems[^1].TrimStart('0').ToUpper(),
             _ => address
         };
