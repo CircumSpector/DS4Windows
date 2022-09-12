@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Windows.Win32.Storage.FileSystem;
 using DS4Windows.Shared.Devices.Util;
 using PInvoke;
 
@@ -64,71 +65,64 @@ public class HidHideControlService : IHidHideControlService
     private const string ControlDeviceFilename = "\\\\.\\HidHide";
 
     /// <inheritdoc />
-    public bool IsActive
+    public unsafe bool IsActive
     {
         get
         {
-            using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-                Kernel32.SafeObjectHandle.Null
+            using var handle = Windows.Win32.PInvoke.CreateFile(
+                ControlDeviceFilename,
+                FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+                FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+                null,
+                FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+                FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+                null
             );
 
-            var buffer = Marshal.AllocHGlobal(sizeof(bool));
 
-            try
-            {
-                Kernel32.DeviceIoControl(
-                    handle,
-                    unchecked((int)IoctlGetActive),
-                    IntPtr.Zero,
-                    0,
-                    buffer,
-                    sizeof(bool),
-                    out _,
-                    IntPtr.Zero
-                );
+            var bufferLength = Marshal.SizeOf<bool>();
+            var buffer = stackalloc byte[bufferLength];
 
-                return Marshal.ReadByte(buffer) > 0;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
+            Windows.Win32.PInvoke.DeviceIoControl(
+                handle,
+                IoctlGetActive,
+                buffer,
+                (uint)bufferLength,
+                buffer,
+                (uint)bufferLength,
+                null,
+                null
+            );
+
+            return buffer[0] > 0;
         }
         set
         {
-            using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-                Kernel32.SafeObjectHandle.Null
+            using var handle = Windows.Win32.PInvoke.CreateFile(
+                ControlDeviceFilename,
+                FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+                FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+                null,
+                FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+                FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+                null
             );
 
-            var buffer = Marshal.AllocHGlobal(sizeof(bool));
+            var bufferLength = Marshal.SizeOf<bool>();
+            var buffer = stackalloc byte[bufferLength];
 
-            try
-            {
-                Marshal.WriteByte(buffer, value ? (byte)1 : (byte)0);
+            buffer[0] = value ? (byte)1 : (byte)0;
 
-                Kernel32.DeviceIoControl(
-                    handle,
-                    unchecked((int)IoctlSetActive),
-                    buffer,
-                    sizeof(bool),
-                    IntPtr.Zero,
-                    0,
-                    out _,
-                    IntPtr.Zero
-                );
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
+            Windows.Win32.PInvoke.DeviceIoControl(
+                handle,
+                IoctlSetActive,
+                buffer,
+                (uint)bufferLength,
+                null,
+                0,
+                null,
+                null
+            );
         }
     }
 

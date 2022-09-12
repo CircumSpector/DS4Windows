@@ -15,6 +15,7 @@ HIDP_CAPS
 ReadFile
 WriteFile
 CreateFile
+DeviceIoControl
 GetOverlappedResult
 GetOverlappedResultEx
 WIN32_ERROR
