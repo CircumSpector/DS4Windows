@@ -79,7 +79,6 @@ public class HidHideControlService : IHidHideControlService
                 null
             );
 
-
             var bufferLength = Marshal.SizeOf<bool>();
             var buffer = stackalloc byte[bufferLength];
 
