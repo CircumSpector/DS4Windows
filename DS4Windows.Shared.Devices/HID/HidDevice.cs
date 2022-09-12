@@ -12,9 +12,9 @@ namespace DS4Windows.Shared.Devices.HID;
 /// </summary>
 public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 {
-    private readonly AutoResetEvent readEvent = new(false);
+    private readonly ManualResetEvent readEvent = new(false);
 
-    private readonly AutoResetEvent writeEvent = new(false);
+    private readonly ManualResetEvent writeEvent = new(false);
 
     /// <summary>
     ///     Native handle to device.
@@ -181,13 +181,15 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 
         uint bytesRead = 0;
 
-        Windows.Win32.PInvoke.ReadFile(
+        var ret = Windows.Win32.PInvoke.ReadFile(
             Handle,
             inputBuffer.ToPointer(),
             (uint)bufferSize,
             &bytesRead,
             &overlapped
         );
+
+        var err = Marshal.GetLastWin32Error();
 
         if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
             throw new Exception("Reading input report failed.");
@@ -198,7 +200,7 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
     private static SafeFileHandle OpenAsyncHandle(string devicePathName, bool openExclusive = false,
         bool enumerateOnly = false)
     {
-        return Windows.Win32.PInvoke.CreateFile(
+        var ret =  Windows.Win32.PInvoke.CreateFile(
             devicePathName,
             enumerateOnly
                 ? 0
@@ -214,5 +216,9 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
             | FILE_FLAGS_AND_ATTRIBUTES.FILE_FLAG_OVERLAPPED,
             null
         );
+
+        var err = Marshal.GetLastWin32Error();
+
+        return ret;
     }
 }

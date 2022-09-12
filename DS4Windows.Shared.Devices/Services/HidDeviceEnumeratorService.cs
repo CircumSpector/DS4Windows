@@ -96,11 +96,18 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
         while (Devcon.FindByInterfaceGuid(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
         {
-            var entry = CreateNewHidDevice(path);
+            try
+            {
+                var entry = CreateNewHidDevice(path);
 
-            logger.LogInformation("Discovered HID device {Device}", entry);
+                logger.LogInformation("Discovered HID device {Device}", entry);
 
-            connectedDevices.Add(entry);
+                connectedDevices.Add(entry);
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, $"Failed to create HID device for {path}");
+            }
         }
     }
 
@@ -280,6 +287,9 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
             null
         );
 
+        if (handle.IsInvalid)
+            throw new Exception($"Couldn't open device handle, error {Marshal.GetLastWin32Error()}");
+
         if (!Windows.Win32.PInvoke.HidD_GetPreparsedData(handle, out var dataHandle))
             throw new Exception($"HidD_GetPreparsedData failed with error {Marshal.GetLastWin32Error()}");
 
@@ -298,32 +308,39 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         var symLink = args.SymLink;
         activity?.SetTag("Path", symLink);
 
-        var device = PnPDevice.GetDeviceByInterfaceId(symLink);
-
-        logger.LogInformation("HID Device {Instance} ({Path}) arrived",
-            device.InstanceId, symLink);
-
-        //
-        // This should never happen as we're only listening to HID Class Devices
-        // changes anyway but some extra safety and logging can't hurt :)
-        // 
-        if (!IsHidDevice(device))
+        try
         {
-            logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
+            var device = PnPDevice.GetDeviceByInterfaceId(symLink);
+
+            logger.LogInformation("HID Device {Instance} ({Path}) arrived",
                 device.InstanceId, symLink);
-            return;
+
+            //
+            // This should never happen as we're only listening to HID Class Devices
+            // changes anyway but some extra safety and logging can't hurt :)
+            // 
+            if (!IsHidDevice(device))
+            {
+                logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
+                    device.InstanceId, symLink);
+                return;
+            }
+
+            var entry = CreateNewHidDevice(symLink);
+
+            if (device.IsVirtual())
+                logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
+                    device.InstanceId, symLink);
+
+            if (!connectedDevices.Contains(entry))
+                connectedDevices.Add(entry);
+
+            DeviceArrived?.Invoke(entry);
         }
-
-        var entry = CreateNewHidDevice(symLink);
-
-        if (device.IsVirtual())
-            logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
-                device.InstanceId, symLink);
-
-        if (!connectedDevices.Contains(entry))
-            connectedDevices.Add(entry);
-
-        DeviceArrived?.Invoke(entry);
+        catch (ArgumentException ae)
+        {
+            logger.LogWarning(ae, "Failed to add new device");
+        }
     }
 
     private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
