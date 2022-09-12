@@ -5,6 +5,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Ds4Windows.Shared.Devices.Interfaces.Util
 {
+    [Obsolete]
     [SuppressUnmanagedCodeSecurity]
     public static class NativeMethods
     {

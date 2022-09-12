@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
 using Ds4Windows.Shared.Devices.Interfaces.Util;
-using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
@@ -63,7 +60,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
         hidClassInterfaceGuid = interfaceGuid;
 
-        Guid hidGuid = Guid.Empty;
+        var hidGuid = Guid.Empty;
         NativeMethods.HidD_GetHidGuid(ref hidGuid);
         this.deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived, hidGuid);
         this.deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved, hidGuid);
@@ -109,10 +106,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     public void ClearDevices()
     {
-        foreach (var connectedDevice in ConnectedDevices.ToList())
-        {
-            RemoveDevice(connectedDevice.Path);
-        }
+        foreach (var connectedDevice in ConnectedDevices.ToList()) RemoveDevice(connectedDevice.Path);
     }
 
     /// <summary>
@@ -132,8 +126,8 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         //
         // Try to get friendly display name (not always there)
         // 
-        var friendlyName = device.GetProperty<string>(DevicePropertyDevice.FriendlyName);
-        var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+        var friendlyName = device.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
+        var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
         //
         // Grab product string from device if property is missing
@@ -148,7 +142,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         {
             Path = path,
             InstanceId = device.InstanceId.ToUpper(),
-            Description = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc),
+            Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
             DisplayName = friendlyName,
             ParentInstance = parentId,
             Attributes = attributes,
@@ -367,7 +361,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     /// <returns>True if HIDClass device, false otherwise.</returns>
     private static bool IsHidDevice(PnPDevice device)
     {
-        var devClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
+        var devClass = device.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
 
         return Equals(devClass, HidDeviceClassGuid);
     }
@@ -390,7 +384,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
         while (device is not null)
         {
-            var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+            var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
             if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
                 break;

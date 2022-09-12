@@ -33,7 +33,7 @@ namespace DS4Windows.Shared.Devices.DriverManagement
             var foundDevice = GetDevice(controllerInstanceId);
             
             var pnpDevice = PnPDevice.GetDeviceByInstanceId(controllerInstanceId);
-            var hardwareid = pnpDevice.GetProperty<string[]>(DevicePropertyDevice.HardwareIds).Last();
+            var hardwareid = pnpDevice.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds).Last();
 
             var hardwareIdParts = hardwareid.Split("&");
 

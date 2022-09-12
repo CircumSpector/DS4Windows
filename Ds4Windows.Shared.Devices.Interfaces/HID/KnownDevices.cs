@@ -2,14 +2,14 @@
 {
     public static class KnownDevices
     {
-        public const int SonyVid = 0x054C;
-        public const int RazerVid = 0x1532;
-        public const int NaconVid = 0x146B;
-        public const int HoriVid = 0x0F0D;
-        public const int NintendoVendorId = 0x57e;
-        public const int SwitchProProductId = 0x2009;
-        public const int JoyconLProductId = 0x2006;
-        public const int JoyconRProductId = 0x2007;
+        private const int SonyVid = 0x054C;
+        private const int RazerVid = 0x1532;
+        private const int NaconVid = 0x146B;
+        private const int HoriVid = 0x0F0D;
+        private const int NintendoVendorId = 0x57e;
+        private const int SwitchProProductId = 0x2009;
+        private const int JoyconLProductId = 0x2006;
+        private const int JoyconRProductId = 0x2007;
         
         public static readonly IEnumerable<VidPidInfo> List = new List<VidPidInfo>
         {

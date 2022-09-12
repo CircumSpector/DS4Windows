@@ -1,11 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Util;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
@@ -38,7 +34,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         SingleWriter = true,
         AllowSynchronousContinuations = true
     });
-  
+
     /// <summary>
     ///     The connection type (wire, wireless).
     /// </summary>
@@ -91,6 +87,21 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     }
 
     /// <summary>
+    ///     Service provider for injected services.
+    /// </summary>
+    protected IServiceProvider Services { get; }
+
+    /// <summary>
+    ///     Logger instance.
+    /// </summary>
+    protected ILogger<CompatibleHidDevice> Logger { get; }
+
+    /// <summary>
+    ///     The parsed input report. Depends on device type.
+    /// </summary>
+    protected abstract CompatibleHidDeviceInputReport InputReport { get; }
+
+    /// <summary>
     ///     The <see cref="InputDeviceType" /> of this <see cref="CompatibleHidDevice" />.
     /// </summary>
     public InputDeviceType DeviceType { get; set; }
@@ -114,16 +125,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     public CompatibleHidDeviceFeatureSet FeatureSet { get; }
 
     /// <summary>
-    ///     Service provider for injected services.
-    /// </summary>
-    protected IServiceProvider Services { get; }
-
-    /// <summary>
-    ///     Logger instance.
-    /// </summary>
-    protected ILogger<CompatibleHidDevice> Logger { get; }
-
-    /// <summary>
     ///     Metrics of how many input reports were read in a second.
     /// </summary>
     public int ReportsPerSecondRead { get; private set; }
@@ -139,9 +140,28 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     public bool IsInputReportAvailableInvoked { get; set; } = true;
 
     /// <summary>
-    ///     The parsed input report. Depends on device type.
+    ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
-    protected abstract CompatibleHidDeviceInputReport InputReport { get; }
+    public event Action<ICompatibleHidDevice> Disconnected;
+
+    /// <summary>
+    ///     Fired when a new input report is read for further processing.
+    /// </summary>
+    public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
+
+    public override void Dispose()
+    {
+        StopInputReportReader();
+
+        if (InputReportBuffer != IntPtr.Zero) Marshal.FreeHGlobal(InputReportBuffer);
+
+        base.Dispose();
+    }
+
+    public override string ToString()
+    {
+        return $"{DisplayName} ({Serial}) via {Connection}";
+    }
 
     /// <summary>
     ///     Determine <see cref="ConnectionType" /> of this device.
@@ -158,7 +178,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
             // 
             while (device is not null)
             {
-                var deviceClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
+                var deviceClass = device.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
 
                 //
                 // Parent is Bluetooth device
@@ -174,14 +194,14 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     //
                     // Check if we find the composite audio device
                     // 
-                    var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
+                    var children = device.GetProperty<string[]>(DevicePropertyKey.Device_Children).ToList();
 
                     if (children.Count != 2)
                         return ConnectionType.Usb;
 
                     var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
 
-                    var friendlyName = audioDevice.GetProperty<string>(DevicePropertyDevice.FriendlyName);
+                    var friendlyName = audioDevice.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
 
                     if (string.IsNullOrEmpty(friendlyName))
                         return ConnectionType.Usb;
@@ -194,7 +214,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                         : ConnectionType.Usb;
                 }
 
-                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+                var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
                 if (parentId is null)
                     break;
@@ -211,16 +231,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
             return ConnectionType.Unknown;
         }
     }
-
-    /// <summary>
-    ///     Fired when this device has been disconnected/unplugged.
-    /// </summary>
-    public event Action<ICompatibleHidDevice> Disconnected;
-
-    /// <summary>
-    ///     Fired when a new input report is read for further processing.
-    /// </summary>
-    public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
     /// <summary>
     ///     Process the input report read from the device.
@@ -435,19 +445,5 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
             $"{address[0]}{address[1]}:{address[2]}{address[3]}:{address[4]}{address[5]}:{address[6]}{address[7]}:{address[8]}{address[9]}:{address[10]}{address[11]}";
 
         return PhysicalAddress.Parse(address);
-    }
-
-    public override void Dispose()
-    {
-        StopInputReportReader();
-
-        if (InputReportBuffer != IntPtr.Zero) Marshal.FreeHGlobal(InputReportBuffer);
-
-        base.Dispose();
-    }
-
-    public override string ToString()
-    {
-        return $"{DisplayName} ({Serial}) via {Connection}";
     }
 }
