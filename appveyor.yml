@@ -30,6 +30,9 @@ skip_commits:
     - .github/*
     - extras/*
     - '**/*.md'
+    - '**/*.png'
+    - '**/*.jpg'
+    - '**/*.aip'
 build_script:
 - ps: Installer/Build.ps1
 after_build:
