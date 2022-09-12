@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Windows.Win32.Devices.HumanInterfaceDevice;
+using Windows.Win32.Foundation;
 using Windows.Win32.Storage.FileSystem;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
 using JetBrains.Annotations;
@@ -7,14 +8,26 @@ using Microsoft.Win32.SafeHandles;
 
 namespace DS4Windows.Shared.Devices.HID;
 
+public class HidDeviceException : Exception
+{
+    internal HidDeviceException(string message) : base(message) { }
+
+    internal HidDeviceException(string message, WIN32_ERROR error) : this(message)
+    {
+        ErrorCode = (uint)error;
+    }
+
+    public uint ErrorCode { get; } = (uint)Marshal.GetLastWin32Error();
+}
+
 /// <summary>
 ///     Describes a HID device's basic properties.
 /// </summary>
 public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 {
-    private readonly ManualResetEvent readEvent = new(false);
+    private readonly AutoResetEvent readEvent = new(false);
 
-    private readonly ManualResetEvent writeEvent = new(false);
+    private readonly AutoResetEvent writeEvent = new(false);
 
     /// <summary>
     ///     Native handle to device.
@@ -174,7 +187,10 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
     protected unsafe void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
     {
         if (inputBuffer == IntPtr.Zero)
-            throw new ArgumentNullException(nameof(inputBuffer), @"Passed uninitialized memory");
+            throw new ArgumentNullException(nameof(inputBuffer), @"Passed uninitialized memory.");
+
+        if (Handle.IsInvalid || Handle.IsClosed)
+            throw new HidDeviceException("Device handle not open or invalid.");
 
         NativeOverlapped overlapped;
         overlapped.EventHandle = readEvent.SafeWaitHandle.DangerousGetHandle();
@@ -189,10 +205,11 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
             &overlapped
         );
 
-        var err = Marshal.GetLastWin32Error();
+        if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
+            throw new HidDeviceException("Unexpected return result on ReadFile.");
 
         if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
-            throw new Exception("Reading input report failed.");
+            throw new HidDeviceException("GetOverlappedResult on input report failed.");
 
         bytesReturned = (int)bytesRead;
     }
@@ -200,7 +217,7 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
     private static SafeFileHandle OpenAsyncHandle(string devicePathName, bool openExclusive = false,
         bool enumerateOnly = false)
     {
-        var ret =  Windows.Win32.PInvoke.CreateFile(
+        var ret = Windows.Win32.PInvoke.CreateFile(
             devicePathName,
             enumerateOnly
                 ? 0
@@ -211,13 +228,13 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
                 ? 0
                 : FILE_CREATION_DISPOSITION.OPEN_EXISTING,
             FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL
-            | FILE_FLAGS_AND_ATTRIBUTES.FILE_FLAG_NO_BUFFERING
             | FILE_FLAGS_AND_ATTRIBUTES.FILE_FLAG_WRITE_THROUGH
             | FILE_FLAGS_AND_ATTRIBUTES.FILE_FLAG_OVERLAPPED,
             null
         );
 
-        var err = Marshal.GetLastWin32Error();
+        if (ret.IsInvalid)
+            throw new HidDeviceException($"Failed to open handle to device {devicePathName}.");
 
         return ret;
     }

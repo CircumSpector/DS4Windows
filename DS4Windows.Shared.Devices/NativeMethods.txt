@@ -17,3 +17,4 @@ WriteFile
 CreateFile
 GetOverlappedResult
 GetOverlappedResultEx
+WIN32_ERROR
