@@ -61,7 +61,7 @@
 		</PackageReference>
 		<PackageReference Include="MaterialDesignColors" Version="2.0.7" />
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.6.0" />
 		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="6.0.9">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
