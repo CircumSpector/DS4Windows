@@ -1,33 +1,38 @@
 ﻿using System.Runtime.InteropServices;
-using DS4Windows.Shared.Common.Util;
+using Windows.Win32.Devices.HumanInterfaceDevice;
+using Windows.Win32.Foundation;
+using Windows.Win32.Storage.FileSystem;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
 using JetBrains.Annotations;
-using PInvoke;
+using Microsoft.Win32.SafeHandles;
 
 namespace DS4Windows.Shared.Devices.HID;
+
+public class HidDeviceException : Exception
+{
+    internal HidDeviceException(string message) : base(message) { }
+
+    internal HidDeviceException(string message, WIN32_ERROR error) : this(message)
+    {
+        ErrorCode = (uint)error;
+    }
+
+    public uint ErrorCode { get; } = (uint)Marshal.GetLastWin32Error();
+}
 
 /// <summary>
 ///     Describes a HID device's basic properties.
 /// </summary>
 public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 {
-    private readonly IntPtr inputOverlapped;
+    private readonly AutoResetEvent readEvent = new(false);
 
-    private readonly ManualResetEvent inputReportEvent;
-
-    public HidDevice()
-    {
-        inputReportEvent = new ManualResetEvent(false);
-        inputOverlapped = Marshal.AllocHGlobal(Marshal.SizeOf<NativeOverlapped>());
-        Marshal.StructureToPtr(
-            new NativeOverlapped { EventHandle = inputReportEvent.SafeWaitHandle.DangerousGetHandle() },
-            inputOverlapped, false);
-    }
+    private readonly AutoResetEvent writeEvent = new(false);
 
     /// <summary>
     ///     Native handle to device.
     /// </summary>
-    protected Kernel32.SafeObjectHandle Handle { get; private set; }
+    private SafeHandle Handle { get; set; }
 
     public virtual void Dispose()
     {
@@ -75,12 +80,12 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
     /// <summary>
     ///     HID Device Attributes.
     /// </summary>
-    public Hid.HiddAttributes Attributes { get; set; }
+    public HIDD_ATTRIBUTES Attributes { get; set; }
 
     /// <summary>
     ///     HID Device Capabilities.
     /// </summary>
-    public Hid.HidpCaps Capabilities { get; set; }
+    public HIDP_CAPS Capabilities { get; set; }
 
     /// <summary>
     ///     The manufacturer string.
@@ -136,83 +141,101 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
         return $"{DisplayName ?? "<no name>"} ({InstanceId})";
     }
 
-    [DllImport("hid.dll")]
-    private static extern bool HidD_SetOutputReport(IntPtr hidDeviceObject, byte[] lpReportBuffer,
-        int reportBufferLength);
-
-    [DllImport("hid.dll")]
-    private static extern bool HidD_SetFeature(IntPtr hidDeviceObject, byte[] lpReportBuffer,
-        int reportBufferLength);
-
-    [DllImport("hid.dll")]
-    private static extern bool HidD_GetFeature(IntPtr hidDeviceObject, byte[] lpReportBuffer,
-        int reportBufferLength);
-
-    protected bool WriteFeatureReport(byte[] data)
+    protected unsafe bool WriteFeatureReport(byte[] data)
     {
-        return HidD_SetFeature(Handle.DangerousGetHandle(), data, data.Length);
-    }
-
-    protected bool WriteOutputReportViaControl(byte[] outputBuffer)
-    {
-        return HidD_SetOutputReport(Handle.DangerousGetHandle(), outputBuffer, outputBuffer.Length);
-    }
-
-    protected bool ReadFeatureData(byte[] inputBuffer)
-    {
-        return HidD_GetFeature(Handle.DangerousGetHandle(), inputBuffer, inputBuffer.Length);
-    }
-
-    protected bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
-    {
-        var unmanagedBuffer = Marshal.AllocHGlobal(outputBuffer.Length);
-
-        Marshal.Copy(outputBuffer, 0, unmanagedBuffer, outputBuffer.Length);
-
-        try
+        fixed (byte* ptr = data)
         {
-            Handle.OverlappedWriteFile(unmanagedBuffer, outputBuffer.Length, out _);
+            return Windows.Win32.PInvoke.HidD_SetFeature(Handle, ptr, (uint)data.Length);
         }
-        finally
-        {
-            Marshal.FreeHGlobal(unmanagedBuffer);
-        }
-
-        return true;
     }
 
-    protected void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
+    protected unsafe bool WriteOutputReportViaControl(byte[] outputBuffer)
     {
-        if (inputBuffer == IntPtr.Zero)
-            throw new ArgumentNullException(nameof(inputBuffer), @"Passed uninitialized memory");
-
-        int? bytesRead = 0;
-
-        Kernel32.ReadFile(
-            Handle,
-            inputBuffer,
-            bufferSize,
-            ref bytesRead,
-            inputOverlapped);
-
-        if (!Kernel32.GetOverlappedResult(Handle, inputOverlapped, out bytesReturned, true))
-            throw new Win32Exception(Kernel32.GetLastError(), "Reading input report failed.");
+        fixed (byte* ptr = outputBuffer)
+        {
+            return Windows.Win32.PInvoke.HidD_SetOutputReport(Handle, ptr, (uint)outputBuffer.Length);
+        }
     }
 
-    private Kernel32.SafeObjectHandle OpenAsyncHandle(string devicePathName, bool openExclusive = false,
+    protected unsafe bool ReadFeatureData(byte[] inputBuffer)
+    {
+        fixed (byte* ptr = inputBuffer)
+        {
+            return Windows.Win32.PInvoke.HidD_GetFeature(Handle, ptr, (uint)inputBuffer.Length);
+        }
+    }
+
+    protected unsafe bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
+    {
+        NativeOverlapped overlapped;
+        overlapped.EventHandle = writeEvent.SafeWaitHandle.DangerousGetHandle();
+
+        fixed (byte* ptr = outputBuffer)
+        {
+            Windows.Win32.PInvoke.WriteFile(
+                Handle,
+                ptr,
+                (uint)outputBuffer.Length,
+                null,
+                &overlapped
+            );
+
+            return Windows.Win32.PInvoke.GetOverlappedResultEx(Handle, overlapped, out _, (uint)timeout, false);
+        }
+    }
+
+    protected unsafe void ReadInputReport(byte[] inputBuffer, out int bytesReturned)
+    {
+        if (Handle.IsInvalid || Handle.IsClosed)
+            throw new HidDeviceException("Device handle not open or invalid.");
+
+        NativeOverlapped overlapped;
+        overlapped.EventHandle = readEvent.SafeWaitHandle.DangerousGetHandle();
+
+        uint bytesRead = 0;
+
+        fixed (byte* ptr = inputBuffer)
+        {
+            var ret = Windows.Win32.PInvoke.ReadFile(
+                Handle,
+                ptr,
+                (uint)inputBuffer.Length,
+                &bytesRead,
+                &overlapped
+            );
+
+            if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
+                throw new HidDeviceException("Unexpected return result on ReadFile.");
+
+            if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
+                throw new HidDeviceException("GetOverlappedResult on input report failed.");
+
+            bytesReturned = (int)bytesRead;
+        }
+    }
+
+    private static SafeFileHandle OpenAsyncHandle(string devicePathName, bool openExclusive = false,
         bool enumerateOnly = false)
     {
-        return Kernel32.CreateFile(devicePathName,
+        var ret = Windows.Win32.PInvoke.CreateFile(
+            devicePathName,
             enumerateOnly
                 ? 0
-                : Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ | Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, openExclusive ? 0 : Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH
-            | Kernel32.CreateFileFlags.FILE_FLAG_OVERLAPPED,
-            Kernel32.SafeObjectHandle.Null
+                : FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            openExclusive
+                ? 0
+                : FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL
+            | FILE_FLAGS_AND_ATTRIBUTES.FILE_FLAG_WRITE_THROUGH
+            | FILE_FLAGS_AND_ATTRIBUTES.FILE_FLAG_OVERLAPPED,
+            null
         );
+
+        if (ret.IsInvalid)
+            throw new HidDeviceException($"Failed to open handle to device {devicePathName}.");
+
+        return ret;
     }
 }

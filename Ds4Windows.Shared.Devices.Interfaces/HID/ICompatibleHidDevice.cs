@@ -14,8 +14,5 @@ namespace Ds4Windows.Shared.Devices.Interfaces.HID
 
         event Action<ICompatibleHidDevice> Disconnected;
         event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
-
-        void Dispose();
-        string ToString();
     }
 }

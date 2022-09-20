@@ -1,60 +1,50 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using DS4Windows.Shared.Devices.HID.Devices.Reports;
+﻿using DS4Windows.Shared.Devices.HID.Devices.Reports;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
 using Microsoft.Extensions.Logging;
 
-namespace DS4Windows.Shared.Devices.HID.Devices
+namespace DS4Windows.Shared.Devices.HID.Devices;
+
+public class DualSenseCompatibleHidDevice : CompatibleHidDevice
 {
-    public class DualSenseCompatibleHidDevice : CompatibleHidDevice
+    private const byte SerialFeatureId = 9;
+    private const int UsbInputReportSize = 64;
+    private const int BthInputReportSize = 547;
+
+    protected readonly int ReportStartOffset;
+
+    public DualSenseCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
+        featureSet, serviceProvider)
     {
-        private const byte SerialFeatureId = 9;
-        private const int UsbInputReportSize = 64;
-        private const int BthInputReportSize = 547;
+        Serial = ReadSerial(SerialFeatureId);
 
-        protected readonly int ReportStartOffset;
+        if (Serial is null)
+            throw new ArgumentException("Could not retrieve a valid serial number.");
 
-        public DualSenseCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
-            CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
-            featureSet, serviceProvider)
-        {
-            Serial = ReadSerial(SerialFeatureId);
+        Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-            if (Serial is null)
-                throw new ArgumentException("Could not retrieve a valid serial number.");
+        var inputReportSize = Capabilities.InputReportByteLength;
 
-            Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
+        InputReportArray = new byte[inputReportSize];
 
-            var inputReportSize = Capabilities.InputReportByteLength;
+        if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
+            ReportStartOffset = 0;
+        //InputReportArray = new byte[UsbInputReportSize];
+        //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
+        //
+        // TODO: finish me
+        // 
+        else
+            ReportStartOffset = 1;
+        //InputReportArray = new byte[BthInputReportSize];
+        //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
+        StartInputReportReader();
+    }
 
-            InputReportArray = new byte[inputReportSize];
-            InputReportBuffer = Marshal.AllocHGlobal(inputReportSize);
+    protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
 
-            if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-            {
-                ReportStartOffset = 0;
-                //InputReportArray = new byte[UsbInputReportSize];
-                //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
-
-                //
-                // TODO: finish me
-                // 
-            }
-            else
-            {
-                ReportStartOffset = 1;
-                //InputReportArray = new byte[BthInputReportSize];
-                //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
-            }
-
-            StartInputReportReader();
-        }
-
-        protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
-
-        protected override void ProcessInputReport(byte[] inputReport)
-        {
-            InputReport.ParseFrom(inputReport, ReportStartOffset);
-        }
+    protected override void ProcessInputReport(byte[] inputReport)
+    {
+        InputReport.ParseFrom(inputReport, ReportStartOffset);
     }
 }
