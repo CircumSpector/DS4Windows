@@ -42,7 +42,7 @@ public static class ServiceStartup
 
 
         var app = builder.Build();
-        EnableSwagger(app);
+
         SetupWebSocket(app);
 
         ControllerService.RegisterRoutes(app);
@@ -50,7 +50,7 @@ public static class ServiceStartup
 
         if (app.Environment.IsDevelopment())
         {
-            var controllerHost = app.Services.GetService<ControllerManagerHost>();
+            var controllerHost = app.Services.GetRequiredService<ControllerManagerHost>();
             ControllerManagerHost.IsEnabled = true;
             await controllerHost.StartAsync();
         }
@@ -59,16 +59,7 @@ public static class ServiceStartup
         await app.RunAsync(Constants.HttpUrl);
     }
 
-    private static void EnableSwagger(WebApplication app)
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            //app.UseSwagger();
-            //app.UseSwaggerUI();
-        }
-    }
-
-    private static void SetupWebSocket(WebApplication app)
+    private static void SetupWebSocket(IApplicationBuilder app)
     {
         var webSocketOptions = new WebSocketOptions
         {

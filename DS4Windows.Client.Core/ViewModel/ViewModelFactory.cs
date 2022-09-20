@@ -42,7 +42,7 @@ public class ViewModelFactory : IViewModelFactory
     public async Task<TViewModel> CreateViewModel<TViewModel>()
         where TViewModel : IViewModel
     {
-        var viewModel = await Task.FromResult(serviceProvider.GetService<TViewModel>());
+        var viewModel = await Task.FromResult(serviceProvider.GetRequiredService<TViewModel>());
         await viewModel.Initialize();
         return viewModel;
     }
