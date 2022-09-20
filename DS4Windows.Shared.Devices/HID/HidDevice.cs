@@ -184,11 +184,8 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
         }
     }
 
-    protected unsafe void ReadInputReport(IntPtr inputBuffer, int bufferSize, out int bytesReturned)
+    protected unsafe void ReadInputReport(byte[] inputBuffer, out int bytesReturned)
     {
-        if (inputBuffer == IntPtr.Zero)
-            throw new ArgumentNullException(nameof(inputBuffer), @"Passed uninitialized memory.");
-
         if (Handle.IsInvalid || Handle.IsClosed)
             throw new HidDeviceException("Device handle not open or invalid.");
 
@@ -197,21 +194,24 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 
         uint bytesRead = 0;
 
-        var ret = Windows.Win32.PInvoke.ReadFile(
-            Handle,
-            inputBuffer.ToPointer(),
-            (uint)bufferSize,
-            &bytesRead,
-            &overlapped
-        );
+        fixed (byte* ptr = inputBuffer)
+        {
+            var ret = Windows.Win32.PInvoke.ReadFile(
+                Handle,
+                ptr,
+                (uint)inputBuffer.Length,
+                &bytesRead,
+                &overlapped
+            );
 
-        if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
-            throw new HidDeviceException("Unexpected return result on ReadFile.");
+            if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
+                throw new HidDeviceException("Unexpected return result on ReadFile.");
 
-        if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
-            throw new HidDeviceException("GetOverlappedResult on input report failed.");
+            if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
+                throw new HidDeviceException("GetOverlappedResult on input report failed.");
 
-        bytesReturned = (int)bytesRead;
+            bytesReturned = (int)bytesRead;
+        }
     }
 
     private static SafeFileHandle OpenAsyncHandle(string devicePathName, bool openExclusive = false,

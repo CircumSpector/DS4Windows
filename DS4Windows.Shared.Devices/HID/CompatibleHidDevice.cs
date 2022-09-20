@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 using System.Threading.Channels;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Util;
@@ -44,11 +43,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     ///     Managed input report array.
     /// </summary>
     protected byte[] InputReportArray;
-
-    /// <summary>
-    ///     Unmanaged input report buffer.
-    /// </summary>
-    protected IntPtr InputReportBuffer = IntPtr.Zero;
 
     private Thread inputReportProcessor;
 
@@ -117,7 +111,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// <summary>
     ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice" />.
     /// </summary>
-    public PhysicalAddress Serial { get; protected set; }
+    public PhysicalAddress Serial { get; protected init; }
 
     /// <summary>
     ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
@@ -152,8 +146,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     public override void Dispose()
     {
         StopInputReportReader();
-
-        if (InputReportBuffer != IntPtr.Zero) Marshal.FreeHGlobal(InputReportBuffer);
 
         base.Dispose();
     }
@@ -355,9 +347,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     sw.Restart();
                 }
 
-                ReadInputReport(InputReportBuffer, InputReportArray.Length, out var written);
-
-                Marshal.Copy(InputReportBuffer, InputReportArray, 0, written);
+                ReadInputReport(InputReportArray, out _);
 
                 await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
 
