@@ -11,9 +11,6 @@ public static class HostingExtensions
     ///     Adds a singleton implementation to the <see cref="IServiceCollection" />,
     ///     registered as the additional type definitions passed.
     /// </summary>
-    /// <typeparam name="TImplementation"></typeparam>
-    /// <param name="services"></param>
-    /// <param name="definitions"></param>
     public static void AddSingletons<TImplementation>(this IServiceCollection services, params Type[] definitions)
         where TImplementation : class
     {
@@ -29,9 +26,6 @@ public static class HostingExtensions
     ///     Adds the specified implementation to the <see cref="IServiceCollection" />,
     ///     registered as the additional type definitions passed.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="implementation"></param>
-    /// <param name="definitions"></param>
     public static void AddSingletons(this IServiceCollection services, object implementation, params Type[] definitions)
     {
         // add the singleton for the implementation
@@ -46,9 +40,6 @@ public static class HostingExtensions
     ///     Adds a transient implementation to the <see cref="IServiceCollection" />,
     ///     registered as the additional type definitions passed.
     /// </summary>
-    /// <typeparam name="TImplementation"></typeparam>
-    /// <param name="services"></param>
-    /// <param name="definitions"></param>
     public static void AddTransients<TImplementation>(this IServiceCollection services, params Type[] definitions)
         where TImplementation : class
     {
