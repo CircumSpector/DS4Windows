@@ -4,6 +4,12 @@
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
+	
+	<ItemGroup>
+	  <Compile Remove="Util\**" />
+	  <EmbeddedResource Remove="Util\**" />
+	  <None Remove="Util\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
@@ -14,10 +20,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\DS4Windows.Shared.Common.Interfaces\DS4Windows.Shared.Common.Interfaces.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Util\" />
 	</ItemGroup>
 
 </Project>
