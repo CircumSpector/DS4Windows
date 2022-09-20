@@ -9,7 +9,6 @@
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.46-beta">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 	</ItemGroup>
 
