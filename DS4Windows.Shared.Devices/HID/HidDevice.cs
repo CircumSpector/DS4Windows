@@ -23,8 +23,10 @@ public class HidDeviceException : Exception
 /// <summary>
 ///     Describes a HID device's basic properties.
 /// </summary>
-public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
+public class HidDevice : IEquatable<HidDevice>, IHidDevice
 {
+    private bool disposed;
+
     private readonly AutoResetEvent readEvent = new(false);
 
     private readonly AutoResetEvent writeEvent = new(false);
@@ -33,18 +35,6 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
     ///     Native handle to device.
     /// </summary>
     private SafeHandle Handle { get; set; }
-
-    public virtual void Dispose()
-    {
-        Handle?.Dispose();
-    }
-
-    public bool Equals(HidDevice other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return string.Equals(InstanceId, other.InstanceId, StringComparison.OrdinalIgnoreCase);
-    }
 
     /// <summary>
     ///     True if device originates from a software device.
@@ -124,21 +114,6 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
         if (!IsOpen) return;
 
         Handle?.Dispose();
-    }
-
-    public override bool Equals(object obj)
-    {
-        return ReferenceEquals(this, obj) || (obj is HidDevice other && Equals(other));
-    }
-
-    public override int GetHashCode()
-    {
-        return StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
-    }
-
-    public override string ToString()
-    {
-        return $"{DisplayName ?? "<no name>"} ({InstanceId})";
     }
 
     protected unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
@@ -243,4 +218,35 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 
         return ret;
     }
+
+    public bool Equals(HidDevice other)
+        => ReferenceEquals(this, other) || InstanceId.Equals(other.InstanceId, StringComparison.OrdinalIgnoreCase);
+
+    public override bool Equals(object obj)
+        => obj is HidDevice other && Equals(other);
+
+    public override int GetHashCode()
+        => StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed) return;
+
+        if (disposing)
+        {
+            Handle?.Dispose();
+
+            readEvent.Dispose();
+            writeEvent.Dispose();
+        }
+
+        disposed = true;
+    }
+
+    public override string ToString() => $"{DisplayName ?? "<no name>"} ({InstanceId})";
 }
