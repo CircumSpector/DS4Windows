@@ -14,7 +14,7 @@ namespace DS4Windows.Shared.Devices.HID.Devices
             Serial = PhysicalAddress.Parse(SerialNumberString);
         }
 
-        protected override void ProcessInputReport(byte[] inputReport)
+        protected override void ProcessInputReport(ReadOnlySpan<byte> input)
         {
             throw new NotImplementedException();
         }

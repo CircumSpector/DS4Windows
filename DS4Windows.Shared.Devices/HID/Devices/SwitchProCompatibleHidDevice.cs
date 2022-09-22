@@ -11,7 +11,7 @@ namespace DS4Windows.Shared.Devices.HID.Devices
         {
         }
 
-        protected override void ProcessInputReport(byte[] inputReport)
+        protected override void ProcessInputReport(ReadOnlySpan<byte> input)
         {
             throw new NotImplementedException();
         }

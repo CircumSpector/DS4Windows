@@ -223,8 +223,8 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// <summary>
     ///     Process the input report read from the device.
     /// </summary>
-    /// <param name="inputReport">The raw report buffer.</param>
-    protected abstract void ProcessInputReport(byte[] inputReport);
+    /// <param name="input">The raw report buffer.</param>
+    protected abstract void ProcessInputReport(ReadOnlySpan<byte> input);
 
     /// <summary>
     ///     Start the asynchronous input report reading logic.

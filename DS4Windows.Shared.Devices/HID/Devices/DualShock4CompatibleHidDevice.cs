@@ -40,12 +40,12 @@ public class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
 
-    protected override void ProcessInputReport(byte[] inputReport)
+    protected override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        if (Connection == ConnectionType.SonyWirelessAdapter && (inputReport[31] & 0x04) != 0)
+        if (Connection == ConnectionType.SonyWirelessAdapter && (input[31] & 0x04) != 0)
             // TODO: implement me!
             return;
 
-        InputReport.ParseFrom(inputReport, ReportStartOffset);
+        InputReport.Parse(input.Slice(ReportStartOffset));
     }
 }
