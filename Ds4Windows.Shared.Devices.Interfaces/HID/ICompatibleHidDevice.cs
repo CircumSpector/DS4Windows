@@ -8,8 +8,6 @@ namespace Ds4Windows.Shared.Devices.Interfaces.HID
         InputDeviceType DeviceType { get; set; }
         CompatibleHidDeviceFeatureSet FeatureSet { get; }
         bool IsInputReportAvailableInvoked { get; }
-        int ReportsPerSecondProcessed { get; }
-        int ReportsPerSecondRead { get; }
         PhysicalAddress Serial { get; }
 
         event Action<ICompatibleHidDevice> Disconnected;

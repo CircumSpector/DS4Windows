@@ -1,13 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using DS4Windows.Client.Core.DependencyInjection;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -22,7 +19,7 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
     
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
-        // Get list of assemblies, register them all as potential tracing sources
+        // Get list of assemblies, register them all as potential tracing and metric sources
         var assemblyNames = AppDomain.CurrentDomain
             .GetAssemblies()
             .Where(assembly =>
@@ -33,16 +30,23 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
             .Select(assembly => Cleanup.Replace(assembly.GetName().Name!, string.Empty))
             .ToArray();
 
-        if (bool.TryParse(context.Configuration.GetSection("OpenTelemetry:IsTracingEnabled").Value, out var isEnabled) &&
-            isEnabled)
-            //
-            // Initialize OpenTelemetry
-            // 
+        if (bool.TryParse(context.Configuration.GetSection("OpenTelemetry:IsTracingEnabled").Value, out var isTracingEnabled) &&
+            isTracingEnabled)
+        {
+            // Add OpenTelemetry tracing
             services.AddOpenTelemetryTracing(builder => builder
                 .SetSampler(new AlwaysOnSampler())
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(AssemblyPrefix))
                 .AddSource(assemblyNames)
                 .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; })
             );
+        }
+
+        if (bool.TryParse(context.Configuration.GetSection("OpenTelemetry:IsMetricsEnabled").Value, out var isMetricsEnabled) &&
+            isMetricsEnabled)
+        {
+            // Add OpenTelemetry metrics
+            services.AddOpenTelemetryMetrics(builder => builder.AddMeter(assemblyNames));
+        }
     }
 }
