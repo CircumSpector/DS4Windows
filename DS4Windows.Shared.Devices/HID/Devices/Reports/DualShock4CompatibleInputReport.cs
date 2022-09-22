@@ -13,9 +13,9 @@ namespace DS4Windows.Shared.Devices.HID.Devices.Reports
 
     public class DualShock4CompatibleInputReport : CompatibleHidDeviceInputReport
     {
-        public TrackPadTouch TrackPadTouch1;
+        public TrackPadTouch TrackPadTouch1 { get; protected set; }
 
-        public TrackPadTouch TrackPadTouch2;
+        public TrackPadTouch TrackPadTouch2 { get; protected set; }
 
         public byte TouchPacketCounter { get; protected set; }
 
@@ -42,63 +42,66 @@ namespace DS4Windows.Shared.Devices.HID.Devices.Reports
         public bool TouchClick { get; protected set; }
 
         /// <inheritdoc />
-        public override void ParseFrom(byte[] inputReport, int offset = 0)
+        public override void Parse(ReadOnlySpan<byte> input)
         {
-            ReportId = inputReport[0 + offset];
+            // Eliminate bounds checks
+            input = input.Slice(0, 43);
 
-            LeftThumbX = inputReport[1 + offset];
-            LeftThumbY = inputReport[2 + offset];
-            RightThumbX = inputReport[3 + offset];
-            RightThumbY = inputReport[4 + offset];
-            LeftTrigger = inputReport[8 + offset];
-            RightTrigger = inputReport[9 + offset];
+            ReportId = input[0];
 
-            Triangle = (inputReport[5 + offset] & (1 << 7)) != 0;
-            Circle = (inputReport[5 + offset] & (1 << 6)) != 0;
-            Cross = (inputReport[5 + offset] & (1 << 5)) != 0;
-            Square = (inputReport[5 + offset] & (1 << 4)) != 0;
+            LeftThumbX = input[1];
+            LeftThumbY = input[2];
+            RightThumbX = input[3];
+            RightThumbY = input[4];
+            LeftTrigger = input[8];
+            RightTrigger = input[9];
 
-            DPad = (DPadDirection)(inputReport[5 + offset] & 0x0F);
+            Triangle = (input[5] & (1 << 7)) != 0;
+            Circle = (input[5] & (1 << 6)) != 0;
+            Cross = (input[5] & (1 << 5)) != 0;
+            Square = (input[5] & (1 << 4)) != 0;
 
-            LeftThumb = (inputReport[6 + offset] & (1 << 6)) != 0;
-            RightThumb = (inputReport[6 + offset] & (1 << 7)) != 0;
-            Options = (inputReport[6 + offset] & (1 << 5)) != 0;
-            Share = (inputReport[6 + offset] & (1 << 4)) != 0;
-            RightTriggerButton = (inputReport[6 + offset] & (1 << 3)) != 0;
-            LeftTriggerButton = (inputReport[6 + offset] & (1 << 2)) != 0;
-            RightShoulder = (inputReport[6 + offset] & (1 << 1)) != 0;
-            LeftShoulder = (inputReport[6 + offset] & (1 << 0)) != 0;
+            DPad = (DPadDirection)(input[5] & 0x0F);
 
-            PS = (inputReport[7 + offset] & (1 << 0)) != 0;
-            TouchClick = (inputReport[7 + offset] & (1 << 1)) != 0;
+            LeftThumb = (input[6] & (1 << 6)) != 0;
+            RightThumb = (input[6] & (1 << 7)) != 0;
+            Options = (input[6] & (1 << 5)) != 0;
+            Share = (input[6] & (1 << 4)) != 0;
+            RightTriggerButton = (input[6] & (1 << 3)) != 0;
+            LeftTriggerButton = (input[6] & (1 << 2)) != 0;
+            RightShoulder = (input[6] & (1 << 1)) != 0;
+            LeftShoulder = (input[6] & (1 << 0)) != 0;
 
-            FrameCounter = (byte)(inputReport[7 + offset] >> 2);
+            PS = (input[7] & (1 << 0)) != 0;
+            TouchClick = (input[7] & (1 << 1)) != 0;
 
-            var touchX = ((inputReport[35 + offset] & 0xF) << 8) | inputReport[34 + offset];
+            FrameCounter = (byte)(input[7] >> 2);
+
+            var touchX = ((input[35] & 0xF) << 8) | input[34];
             
             TrackPadTouch1 = new TrackPadTouch
             {
-                RawTrackingNum = inputReport[35 + offset],
-                Id = (byte)(inputReport[35 + offset] & 0x7f),
-                IsActive = (inputReport[35 + offset] & 0x80) == 0,
-                X = (short)(((ushort)(inputReport[37 + offset] & 0x0f) << 8) |
-                            inputReport[36 + offset]),
-                Y = (short)((inputReport[39 + offset] << 4) |
-                            ((ushort)(inputReport[37 + offset] & 0xf0) >> 4))
+                RawTrackingNum = input[35],
+                Id = (byte)(input[35] & 0x7f),
+                IsActive = (input[35] & 0x80) == 0,
+                X = (short)(((ushort)(input[37] & 0x0f) << 8) |
+                            input[36]),
+                Y = (short)((input[39] << 4) |
+                            ((ushort)(input[37] & 0xf0) >> 4))
             };
             TrackPadTouch2 = new TrackPadTouch
             {
-                RawTrackingNum = inputReport[39 + offset],
-                Id = (byte)(inputReport[39 + offset] & 0x7f),
-                IsActive = (inputReport[39 + offset] & 0x80) == 0,
-                X = (short)(((ushort)(inputReport[41 + offset] & 0x0f) << 8) |
-                            inputReport[40 + offset]),
-                Y = (short)((inputReport[42 + offset] << 4) |
-                            ((ushort)(inputReport[41 + offset] & 0xf0) >> 4))
+                RawTrackingNum = input[39],
+                Id = (byte)(input[39] & 0x7f),
+                IsActive = (input[39] & 0x80) == 0,
+                X = (short)(((ushort)(input[41] & 0x0f) << 8) |
+                            input[40]),
+                Y = (short)((input[42] << 4) |
+                            ((ushort)(input[41] & 0xf0) >> 4))
             };
-            TouchPacketCounter = inputReport[34 + offset];
-            Touch1 = inputReport[35 + offset] >> 7 == 0;
-            Touch2 = inputReport[39 + offset] >> 7 == 0;
+            TouchPacketCounter = input[34];
+            Touch1 = input[35] >> 7 == 0;
+            Touch2 = input[39] >> 7 == 0;
             TouchIsOnLeftSide = !(touchX >= 1920 * 2 / 5); // TODO: port const
             TouchIsOnRightSide = !(touchX < 1920 * 2 / 5); // TODO: port const
         }

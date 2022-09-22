@@ -67,11 +67,10 @@ public abstract class CompatibleHidDeviceInputReport
     public byte RightThumbY { get; protected set; } = 128;
 
     /// <summary>
-    ///     Parse a raw byte array into this <see cref="CompatibleHidDeviceInputReport" />.
+    ///     Parse a raw byte buffer into <see cref="CompatibleHidDeviceInputReport" />.
     /// </summary>
-    /// <param name="inputReport">The raw input report buffer.</param>
-    /// <param name="offset">An optional offset where to expect the start byte (report ID).</param>
-    public abstract void ParseFrom(byte[] inputReport, int offset = 0);
+    /// <param name="input">The raw input report buffer.</param>
+    public abstract void Parse(ReadOnlySpan<byte> input);
 
     /// <summary>
     ///     Gets idle state.

@@ -43,8 +43,8 @@ public class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
 
-    protected override void ProcessInputReport(byte[] inputReport)
+    protected override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        InputReport.ParseFrom(inputReport, ReportStartOffset);
+        InputReport.Parse(input.Slice(ReportStartOffset));
     }
 }
