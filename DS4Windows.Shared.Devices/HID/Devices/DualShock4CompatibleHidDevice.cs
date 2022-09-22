@@ -4,13 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Devices.HID.Devices;
 
-public class DualShock4CompatibleHidDevice : CompatibleHidDevice
+public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 18;
 
-    protected readonly int ReportStartOffset;
-
-    private bool isConnected = false;
+    private readonly int reportStartOffset;
 
     public DualShock4CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
@@ -23,17 +21,15 @@ public class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-        var inputReportSize = Capabilities.InputReportByteLength;
-
-        InputReportArray = new byte[inputReportSize];
+        InputReportArray = new byte[Capabilities.InputReportByteLength];
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-            ReportStartOffset = 0;
+            reportStartOffset = 0;
         //
         // TODO: finish me
         // 
         else
-            ReportStartOffset = 1;
+            reportStartOffset = 1;
 
         StartInputReportReader();
     }
@@ -46,6 +42,6 @@ public class DualShock4CompatibleHidDevice : CompatibleHidDevice
             // TODO: implement me!
             return;
 
-        InputReport.Parse(input.Slice(ReportStartOffset));
+        InputReport.Parse(input.Slice(reportStartOffset));
     }
 }

@@ -16,26 +16,14 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, HidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services)
     {
-        CompatibleHidDevice device;
-        switch (deviceType)
+        return deviceType switch
         {
-            case InputDeviceType.DualShock4:
-                device = new DualShock4CompatibleHidDevice(deviceType, source, featureSet, services);
-                break;
-            case InputDeviceType.DualSense:
-                device = new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services);
-                break;
-            case InputDeviceType.SwitchPro:
-                device = new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services);
-                break;
-            case InputDeviceType.JoyConL:
-            case InputDeviceType.JoyConR:
-                device = new JoyConCompatibleHidDevice(deviceType, source, featureSet, services);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
-        }
-
-        return device;
+            InputDeviceType.DualShock4 => new DualShock4CompatibleHidDevice(deviceType, source, featureSet, services),
+            InputDeviceType.DualSense => new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services),
+            InputDeviceType.SwitchPro => new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services),
+            InputDeviceType.JoyConL or InputDeviceType.JoyConR => new JoyConCompatibleHidDevice(deviceType, source, featureSet, services),
+            
+            _ => throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null)
+        };
     }
 }
