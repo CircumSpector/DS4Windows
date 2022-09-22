@@ -309,7 +309,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         {
             while (!inputReportToken.IsCancellationRequested)
             {
-                ReadInputReport(InputReportArray, out _);
+                ReadInputReport(InputReportArray);
 
                 _reportsReadCounter.Add(1);
 
@@ -333,32 +333,31 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
-        PhysicalAddress serial = null;
-
         if (Capabilities.InputReportByteLength == 64)
         {
-            var buffer = new byte[64];
+            Span<byte> buffer = stackalloc byte[64];
             buffer[0] = featureId;
 
             if (ReadFeatureData(buffer))
-                serial = PhysicalAddress.Parse(
-                    $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
-                );
+            {
+                var serialBytes = buffer.Slice(1, 6);
+                serialBytes.Reverse();
+                return new PhysicalAddress(serialBytes.ToArray());
+            }
         }
         else
         {
             try
             {
                 if (!string.IsNullOrEmpty(SerialNumberString))
-                    serial = PhysicalAddress.Parse(SerialNumberString.ToUpper());
+                    return PhysicalAddress.Parse(SerialNumberString.ToUpper());
             }
             catch
             {
-                serial = GenerateFakeHwSerial();
+                return GenerateFakeHwSerial();
             }
         }
-
-        return serial;
+        return null;
     }
 
     /// <summary>

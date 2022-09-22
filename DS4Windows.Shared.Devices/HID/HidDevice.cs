@@ -141,41 +141,41 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
         return $"{DisplayName ?? "<no name>"} ({InstanceId})";
     }
 
-    protected unsafe bool WriteFeatureReport(byte[] data)
+    protected unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
     {
-        fixed (byte* ptr = data)
+        fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_SetFeature(Handle, ptr, (uint)data.Length);
+            return Windows.Win32.PInvoke.HidD_SetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
-    protected unsafe bool WriteOutputReportViaControl(byte[] outputBuffer)
+    protected unsafe bool WriteOutputReportViaControl(ReadOnlySpan<byte> buffer)
     {
-        fixed (byte* ptr = outputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_SetOutputReport(Handle, ptr, (uint)outputBuffer.Length);
+            return Windows.Win32.PInvoke.HidD_SetOutputReport(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
-    protected unsafe bool ReadFeatureData(byte[] inputBuffer)
+    protected unsafe bool ReadFeatureData(Span<byte> buffer)
     {
-        fixed (byte* ptr = inputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_GetFeature(Handle, ptr, (uint)inputBuffer.Length);
+            return Windows.Win32.PInvoke.HidD_GetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
-    protected unsafe bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
+    protected unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
     {
         NativeOverlapped overlapped;
         overlapped.EventHandle = writeEvent.SafeWaitHandle.DangerousGetHandle();
 
-        fixed (byte* ptr = outputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
             Windows.Win32.PInvoke.WriteFile(
                 Handle,
-                ptr,
-                (uint)outputBuffer.Length,
+                bufferPtr,
+                (uint)buffer.Length,
                 null,
                 &overlapped
             );
@@ -184,7 +184,12 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
         }
     }
 
-    protected unsafe void ReadInputReport(byte[] inputBuffer, out int bytesReturned)
+    /// <summary>
+    /// Reads data from the device to specified byte buffer.
+    /// </summary>
+    /// <param name="buffer">The buffer to read into.</param>
+    /// <returns>The number of bytes read.</returns>
+    protected unsafe int ReadInputReport(Span<byte> buffer)
     {
         if (Handle.IsInvalid || Handle.IsClosed)
             throw new HidDeviceException("Device handle not open or invalid.");
@@ -194,12 +199,12 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 
         uint bytesRead = 0;
 
-        fixed (byte* ptr = inputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
             var ret = Windows.Win32.PInvoke.ReadFile(
                 Handle,
-                ptr,
-                (uint)inputBuffer.Length,
+                bufferPtr,
+                (uint)buffer.Length,
                 &bytesRead,
                 &overlapped
             );
@@ -210,7 +215,7 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
             if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
                 throw new HidDeviceException("GetOverlappedResult on input report failed.");
 
-            bytesReturned = (int)bytesRead;
+            return (int)bytesRead;
         }
     }
 
