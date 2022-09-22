@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
 using DS4Windows.Shared.Common.Telemetry;
@@ -17,6 +18,11 @@ namespace DS4Windows.Shared.Devices.HID;
 /// </summary>
 public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDevice
 {
+    private static readonly Meter _meter = new Meter(TracingSources.DevicesAssemblyActivitySourceName);
+
+    private static readonly Counter<int> _reportsReadCounter = _meter.CreateCounter<int>("reports-read", description: "The number of reports read.");
+    private static readonly Counter<int> _reportsProcessedCounter = _meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
+
     protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
 
@@ -26,7 +32,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
-
+    
     protected readonly Channel<byte[]> InputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
         SingleReader = true,
@@ -117,16 +123,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
     /// </summary>
     public CompatibleHidDeviceFeatureSet FeatureSet { get; }
-
-    /// <summary>
-    ///     Metrics of how many input reports were read in a second.
-    /// </summary>
-    public int ReportsPerSecondRead { get; private set; }
-
-    /// <summary>
-    ///     Metrics of how many input reports were processed in a second.
-    /// </summary>
-    public int ReportsPerSecondProcessed { get; private set; }
 
     /// <summary>
     ///     Gets whether <see cref="InputReportAvailable" /> will be invoked in the processing loop.
@@ -271,31 +267,14 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     {
         Logger.LogDebug("Started input report processing thread");
 
-        Stopwatch sw = new();
-
-        var counter = 0;
+        using var activity = CoreActivity.StartActivity(
+            $"{nameof(CompatibleHidDevice)}:{nameof(ProcessInputReportLoop)}",
+            ActivityKind.Consumer, string.Empty);
 
         try
         {
-            sw.Start();
-
             while (!inputReportToken.IsCancellationRequested)
             {
-                using var activity = CoreActivity.StartActivity(
-                    $"{nameof(CompatibleHidDevice)}:{nameof(ProcessInputReportLoop)}",
-                    ActivityKind.Consumer, string.Empty);
-
-                activity?.SetTag(nameof(ReportsPerSecondProcessed), ReportsPerSecondProcessed);
-                if (InputReportChannel.Reader.CanCount)
-                    activity?.SetTag("Reader.Count", InputReportChannel.Reader.Count);
-
-                if (sw.Elapsed >= TimeSpan.FromSeconds(1))
-                {
-                    ReportsPerSecondProcessed = counter;
-                    counter = 0;
-                    sw.Restart();
-                }
-
                 var buffer = await InputReportChannel.Reader.ReadAsync();
 
                 //
@@ -303,10 +282,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                 // 
                 ProcessInputReport(buffer);
 
+                _reportsProcessedCounter.Add(1);
+
                 if (IsInputReportAvailableInvoked)
                     InputReportAvailable?.Invoke(this, InputReport);
-
-                counter++;
             }
         }
         catch (Exception ex)
@@ -322,36 +301,19 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     {
         Logger.LogDebug("Started input report reading thread");
 
-        Stopwatch sw = new();
-
-        var counter = 0;
+        using var activity = CoreActivity.StartActivity(
+            $"{nameof(CompatibleHidDevice)}:{nameof(ReadInputReportLoop)}",
+            ActivityKind.Producer, string.Empty);
 
         try
         {
-            sw.Start();
-
             while (!inputReportToken.IsCancellationRequested)
             {
-                using var activity = CoreActivity.StartActivity(
-                    $"{nameof(CompatibleHidDevice)}:{nameof(ReadInputReportLoop)}",
-                    ActivityKind.Producer, string.Empty);
-
-                activity?.SetTag(nameof(ReportsPerSecondRead), ReportsPerSecondRead);
-                if (InputReportChannel.Reader.CanCount)
-                    activity?.SetTag("Reader.Count", InputReportChannel.Reader.Count);
-
-                if (sw.Elapsed >= TimeSpan.FromSeconds(1))
-                {
-                    ReportsPerSecondRead = counter;
-                    counter = 0;
-                    sw.Restart();
-                }
-
                 ReadInputReport(InputReportArray, out _);
 
-                await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
+                _reportsReadCounter.Add(1);
 
-                counter++;
+                await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
             }
         }
         catch (Win32Exception win32)
