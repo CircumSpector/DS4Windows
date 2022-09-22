@@ -23,8 +23,10 @@ public class HidDeviceException : Exception
 /// <summary>
 ///     Describes a HID device's basic properties.
 /// </summary>
-public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
+public class HidDevice : IEquatable<HidDevice>, IHidDevice
 {
+    private bool disposed;
+
     private readonly AutoResetEvent readEvent = new(false);
 
     private readonly AutoResetEvent writeEvent = new(false);
@@ -33,18 +35,6 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
     ///     Native handle to device.
     /// </summary>
     private SafeHandle Handle { get; set; }
-
-    public virtual void Dispose()
-    {
-        Handle?.Dispose();
-    }
-
-    public bool Equals(HidDevice other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return string.Equals(InstanceId, other.InstanceId, StringComparison.OrdinalIgnoreCase);
-    }
 
     /// <summary>
     ///     True if device originates from a software device.
@@ -126,56 +116,41 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
         Handle?.Dispose();
     }
 
-    public override bool Equals(object obj)
+    protected unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
     {
-        return ReferenceEquals(this, obj) || (obj is HidDevice other && Equals(other));
-    }
-
-    public override int GetHashCode()
-    {
-        return StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
-    }
-
-    public override string ToString()
-    {
-        return $"{DisplayName ?? "<no name>"} ({InstanceId})";
-    }
-
-    protected unsafe bool WriteFeatureReport(byte[] data)
-    {
-        fixed (byte* ptr = data)
+        fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_SetFeature(Handle, ptr, (uint)data.Length);
+            return Windows.Win32.PInvoke.HidD_SetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
-    protected unsafe bool WriteOutputReportViaControl(byte[] outputBuffer)
+    protected unsafe bool WriteOutputReportViaControl(ReadOnlySpan<byte> buffer)
     {
-        fixed (byte* ptr = outputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_SetOutputReport(Handle, ptr, (uint)outputBuffer.Length);
+            return Windows.Win32.PInvoke.HidD_SetOutputReport(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
-    protected unsafe bool ReadFeatureData(byte[] inputBuffer)
+    protected unsafe bool ReadFeatureData(Span<byte> buffer)
     {
-        fixed (byte* ptr = inputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_GetFeature(Handle, ptr, (uint)inputBuffer.Length);
+            return Windows.Win32.PInvoke.HidD_GetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
-    protected unsafe bool WriteOutputReportViaInterrupt(byte[] outputBuffer, int timeout)
+    protected unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
     {
         NativeOverlapped overlapped;
         overlapped.EventHandle = writeEvent.SafeWaitHandle.DangerousGetHandle();
 
-        fixed (byte* ptr = outputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
             Windows.Win32.PInvoke.WriteFile(
                 Handle,
-                ptr,
-                (uint)outputBuffer.Length,
+                bufferPtr,
+                (uint)buffer.Length,
                 null,
                 &overlapped
             );
@@ -184,7 +159,12 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
         }
     }
 
-    protected unsafe void ReadInputReport(byte[] inputBuffer, out int bytesReturned)
+    /// <summary>
+    /// Reads data from the device to specified byte buffer.
+    /// </summary>
+    /// <param name="buffer">The buffer to read into.</param>
+    /// <returns>The number of bytes read.</returns>
+    protected unsafe int ReadInputReport(Span<byte> buffer)
     {
         if (Handle.IsInvalid || Handle.IsClosed)
             throw new HidDeviceException("Device handle not open or invalid.");
@@ -194,12 +174,12 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 
         uint bytesRead = 0;
 
-        fixed (byte* ptr = inputBuffer)
+        fixed (byte* bufferPtr = buffer)
         {
             var ret = Windows.Win32.PInvoke.ReadFile(
                 Handle,
-                ptr,
-                (uint)inputBuffer.Length,
+                bufferPtr,
+                (uint)buffer.Length,
                 &bytesRead,
                 &overlapped
             );
@@ -210,7 +190,7 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
             if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
                 throw new HidDeviceException("GetOverlappedResult on input report failed.");
 
-            bytesReturned = (int)bytesRead;
+            return (int)bytesRead;
         }
     }
 
@@ -238,4 +218,35 @@ public class HidDevice : IEquatable<HidDevice>, IDisposable, IHidDevice
 
         return ret;
     }
+
+    public bool Equals(HidDevice other)
+        => ReferenceEquals(this, other) || InstanceId.Equals(other.InstanceId, StringComparison.OrdinalIgnoreCase);
+
+    public override bool Equals(object obj)
+        => obj is HidDevice other && Equals(other);
+
+    public override int GetHashCode()
+        => StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed) return;
+
+        if (disposing)
+        {
+            Handle?.Dispose();
+
+            readEvent.Dispose();
+            writeEvent.Dispose();
+        }
+
+        disposed = true;
+    }
+
+    public override string ToString() => $"{DisplayName ?? "<no name>"} ({InstanceId})";
 }

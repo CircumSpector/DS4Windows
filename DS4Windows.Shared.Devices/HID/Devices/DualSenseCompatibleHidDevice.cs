@@ -4,13 +4,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DS4Windows.Shared.Devices.HID.Devices;
 
-public class DualSenseCompatibleHidDevice : CompatibleHidDevice
+public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 9;
     private const int UsbInputReportSize = 64;
     private const int BthInputReportSize = 547;
 
-    protected readonly int ReportStartOffset;
+    private readonly int reportStartOffset;
 
     public DualSenseCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
@@ -28,14 +28,14 @@ public class DualSenseCompatibleHidDevice : CompatibleHidDevice
         InputReportArray = new byte[inputReportSize];
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-            ReportStartOffset = 0;
+            reportStartOffset = 0;
         //InputReportArray = new byte[UsbInputReportSize];
         //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
         //
         // TODO: finish me
         // 
         else
-            ReportStartOffset = 1;
+            reportStartOffset = 1;
         //InputReportArray = new byte[BthInputReportSize];
         //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
         StartInputReportReader();
@@ -45,6 +45,6 @@ public class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     protected override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        InputReport.Parse(input.Slice(ReportStartOffset));
+        InputReport.Parse(input.Slice(reportStartOffset));
     }
 }

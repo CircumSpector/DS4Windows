@@ -18,17 +18,17 @@ namespace DS4Windows.Shared.Devices.HID;
 /// </summary>
 public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDevice
 {
+    private bool disposed;
+
     private static readonly Meter _meter = new Meter(TracingSources.DevicesAssemblyActivitySourceName);
 
     private static readonly Counter<int> _reportsReadCounter = _meter.CreateCounter<int>("reports-read", description: "The number of reports read.");
     private static readonly Counter<int> _reportsProcessedCounter = _meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
 
     protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
+    
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
-
-    protected static readonly Guid UsbCompositeDeviceClassGuid =
-        Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
-
+    protected static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
     protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
@@ -109,10 +109,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// <summary>
     ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
     /// </summary>
-    public ConnectionType? Connection
-    {
-        get { return connection ??= GetConnectionType(); }
-    }
+    public ConnectionType? Connection => connection ??= GetConnectionType();
 
     /// <summary>
     ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice" />.
@@ -138,18 +135,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     ///     Fired when a new input report is read for further processing.
     /// </summary>
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
-
-    public override void Dispose()
-    {
-        StopInputReportReader();
-
-        base.Dispose();
-    }
-
-    public override string ToString()
-    {
-        return $"{DisplayName} ({Serial}) via {Connection}";
-    }
 
     /// <summary>
     ///     Determine <see cref="ConnectionType" /> of this device.
@@ -309,7 +294,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         {
             while (!inputReportToken.IsCancellationRequested)
             {
-                ReadInputReport(InputReportArray, out _);
+                ReadInputReport(InputReportArray);
 
                 _reportsReadCounter.Add(1);
 
@@ -333,32 +318,31 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
-        PhysicalAddress serial = null;
-
         if (Capabilities.InputReportByteLength == 64)
         {
-            var buffer = new byte[64];
+            Span<byte> buffer = stackalloc byte[64];
             buffer[0] = featureId;
 
             if (ReadFeatureData(buffer))
-                serial = PhysicalAddress.Parse(
-                    $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
-                );
+            {
+                var serialBytes = buffer.Slice(1, 6);
+                serialBytes.Reverse();
+                return new PhysicalAddress(serialBytes.ToArray());
+            }
         }
         else
         {
             try
             {
                 if (!string.IsNullOrEmpty(SerialNumberString))
-                    serial = PhysicalAddress.Parse(SerialNumberString.ToUpper());
+                    return PhysicalAddress.Parse(SerialNumberString.ToUpper());
             }
             catch
             {
-                serial = GenerateFakeHwSerial();
+                return GenerateFakeHwSerial();
             }
         }
-
-        return serial;
+        return null;
     }
 
     /// <summary>
@@ -398,4 +382,23 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
         return PhysicalAddress.Parse(address);
     }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (!disposed)
+        {
+            if (disposing)
+            {
+                CoreActivity.Dispose();
+
+                inputReportToken?.Dispose();
+            }
+
+            disposed = true;
+        }
+
+        base.Dispose(disposing);
+    }
+
+    public override string ToString() => $"{DisplayName} ({Serial}) via {Connection}";
 }
