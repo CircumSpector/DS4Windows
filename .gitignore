@@ -337,3 +337,5 @@ ASALocalRun/
 /Installer/Setup Files
 /Output
 /publish
+/Installer/AppVeyor_ProductKey.txt
+/appveyor-tools

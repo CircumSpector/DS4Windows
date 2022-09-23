@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 using System.Threading.Channels;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Common.Util;
@@ -18,23 +18,28 @@ namespace DS4Windows.Shared.Devices.HID;
 /// </summary>
 public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDevice
 {
+    private bool disposed;
+
+    private static readonly Meter _meter = new Meter(TracingSources.DevicesAssemblyActivitySourceName);
+
+    private static readonly Counter<int> _reportsReadCounter = _meter.CreateCounter<int>("reports-read", description: "The number of reports read.");
+    private static readonly Counter<int> _reportsProcessedCounter = _meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
+
     protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
+    
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
-
-    protected static readonly Guid UsbCompositeDeviceClassGuid =
-        Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
-
+    protected static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
     protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
-
+    
     protected readonly Channel<byte[]> InputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
         SingleReader = true,
         SingleWriter = true,
         AllowSynchronousContinuations = true
     });
-  
+
     /// <summary>
     ///     The connection type (wire, wireless).
     /// </summary>
@@ -44,11 +49,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     ///     Managed input report array.
     /// </summary>
     protected byte[] InputReportArray;
-
-    /// <summary>
-    ///     Unmanaged input report buffer.
-    /// </summary>
-    protected IntPtr InputReportBuffer = IntPtr.Zero;
 
     private Thread inputReportProcessor;
 
@@ -87,29 +87,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     }
 
     /// <summary>
-    ///     The <see cref="InputDeviceType" /> of this <see cref="CompatibleHidDevice" />.
-    /// </summary>
-    public InputDeviceType DeviceType { get; set; }
-
-    /// <summary>
-    ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
-    /// </summary>
-    public ConnectionType? Connection
-    {
-        get { return connection ??= GetConnectionType(); }
-    }
-
-    /// <summary>
-    ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice" />.
-    /// </summary>
-    public PhysicalAddress Serial { get; protected set; }
-
-    /// <summary>
-    ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
-    /// </summary>
-    public CompatibleHidDeviceFeatureSet FeatureSet { get; }
-
-    /// <summary>
     ///     Service provider for injected services.
     /// </summary>
     protected IServiceProvider Services { get; }
@@ -120,14 +97,29 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     protected ILogger<CompatibleHidDevice> Logger { get; }
 
     /// <summary>
-    ///     Metrics of how many input reports were read in a second.
+    ///     The parsed input report. Depends on device type.
     /// </summary>
-    public int ReportsPerSecondRead { get; private set; }
+    protected abstract CompatibleHidDeviceInputReport InputReport { get; }
 
     /// <summary>
-    ///     Metrics of how many input reports were processed in a second.
+    ///     The <see cref="InputDeviceType" /> of this <see cref="CompatibleHidDevice" />.
     /// </summary>
-    public int ReportsPerSecondProcessed { get; private set; }
+    public InputDeviceType DeviceType { get; set; }
+
+    /// <summary>
+    ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
+    /// </summary>
+    public ConnectionType? Connection => connection ??= GetConnectionType();
+
+    /// <summary>
+    ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice" />.
+    /// </summary>
+    public PhysicalAddress Serial { get; protected init; }
+
+    /// <summary>
+    ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
+    /// </summary>
+    public CompatibleHidDeviceFeatureSet FeatureSet { get; }
 
     /// <summary>
     ///     Gets whether <see cref="InputReportAvailable" /> will be invoked in the processing loop.
@@ -135,9 +127,14 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     public bool IsInputReportAvailableInvoked { get; set; } = true;
 
     /// <summary>
-    ///     The parsed input report. Depends on device type.
+    ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
-    protected abstract CompatibleHidDeviceInputReport InputReport { get; }
+    public event Action<ICompatibleHidDevice> Disconnected;
+
+    /// <summary>
+    ///     Fired when a new input report is read for further processing.
+    /// </summary>
+    public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
     /// <summary>
     ///     Determine <see cref="ConnectionType" /> of this device.
@@ -154,7 +151,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
             // 
             while (device is not null)
             {
-                var deviceClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
+                var deviceClass = device.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
 
                 //
                 // Parent is Bluetooth device
@@ -170,14 +167,14 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     //
                     // Check if we find the composite audio device
                     // 
-                    var children = device.GetProperty<string[]>(DevicePropertyDevice.Children).ToList();
+                    var children = device.GetProperty<string[]>(DevicePropertyKey.Device_Children).ToList();
 
                     if (children.Count != 2)
                         return ConnectionType.Usb;
 
                     var audioDevice = PnPDevice.GetDeviceByInstanceId(children.First());
 
-                    var friendlyName = audioDevice.GetProperty<string>(DevicePropertyDevice.FriendlyName);
+                    var friendlyName = audioDevice.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
 
                     if (string.IsNullOrEmpty(friendlyName))
                         return ConnectionType.Usb;
@@ -190,7 +187,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                         : ConnectionType.Usb;
                 }
 
-                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+                var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
                 if (parentId is null)
                     break;
@@ -209,20 +206,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     }
 
     /// <summary>
-    ///     Fired when this device has been disconnected/unplugged.
-    /// </summary>
-    public event Action<ICompatibleHidDevice> Disconnected;
-
-    /// <summary>
-    ///     Fired when a new input report is read for further processing.
-    /// </summary>
-    public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
-
-    /// <summary>
     ///     Process the input report read from the device.
     /// </summary>
-    /// <param name="inputReport">The raw report buffer.</param>
-    protected abstract void ProcessInputReport(byte[] inputReport);
+    /// <param name="input">The raw report buffer.</param>
+    protected abstract void ProcessInputReport(ReadOnlySpan<byte> input);
 
     /// <summary>
     ///     Start the asynchronous input report reading logic.
@@ -265,31 +252,14 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     {
         Logger.LogDebug("Started input report processing thread");
 
-        Stopwatch sw = new();
-
-        var counter = 0;
+        using var activity = CoreActivity.StartActivity(
+            $"{nameof(CompatibleHidDevice)}:{nameof(ProcessInputReportLoop)}",
+            ActivityKind.Consumer, string.Empty);
 
         try
         {
-            sw.Start();
-
             while (!inputReportToken.IsCancellationRequested)
             {
-                using var activity = CoreActivity.StartActivity(
-                    $"{nameof(CompatibleHidDevice)}:{nameof(ProcessInputReportLoop)}",
-                    ActivityKind.Consumer, string.Empty);
-
-                activity?.SetTag(nameof(ReportsPerSecondProcessed), ReportsPerSecondProcessed);
-                if (InputReportChannel.Reader.CanCount)
-                    activity?.SetTag("Reader.Count", InputReportChannel.Reader.Count);
-
-                if (sw.Elapsed >= TimeSpan.FromSeconds(1))
-                {
-                    ReportsPerSecondProcessed = counter;
-                    counter = 0;
-                    sw.Restart();
-                }
-
                 var buffer = await InputReportChannel.Reader.ReadAsync();
 
                 //
@@ -297,10 +267,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                 // 
                 ProcessInputReport(buffer);
 
+                _reportsProcessedCounter.Add(1);
+
                 if (IsInputReportAvailableInvoked)
                     InputReportAvailable?.Invoke(this, InputReport);
-
-                counter++;
             }
         }
         catch (Exception ex)
@@ -316,38 +286,19 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     {
         Logger.LogDebug("Started input report reading thread");
 
-        Stopwatch sw = new();
-
-        var counter = 0;
+        using var activity = CoreActivity.StartActivity(
+            $"{nameof(CompatibleHidDevice)}:{nameof(ReadInputReportLoop)}",
+            ActivityKind.Producer, string.Empty);
 
         try
         {
-            sw.Start();
-
             while (!inputReportToken.IsCancellationRequested)
             {
-                using var activity = CoreActivity.StartActivity(
-                    $"{nameof(CompatibleHidDevice)}:{nameof(ReadInputReportLoop)}",
-                    ActivityKind.Producer, string.Empty);
+                ReadInputReport(InputReportArray);
 
-                activity?.SetTag(nameof(ReportsPerSecondRead), ReportsPerSecondRead);
-                if (InputReportChannel.Reader.CanCount)
-                    activity?.SetTag("Reader.Count", InputReportChannel.Reader.Count);
-
-                if (sw.Elapsed >= TimeSpan.FromSeconds(1))
-                {
-                    ReportsPerSecondRead = counter;
-                    counter = 0;
-                    sw.Restart();
-                }
-
-                ReadInputReport(InputReportBuffer, InputReportArray.Length, out var written);
-
-                Marshal.Copy(InputReportBuffer, InputReportArray, 0, written);
+                _reportsReadCounter.Add(1);
 
                 await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
-
-                counter++;
             }
         }
         catch (Win32Exception win32)
@@ -367,32 +318,31 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
-        PhysicalAddress serial = null;
-
         if (Capabilities.InputReportByteLength == 64)
         {
-            var buffer = new byte[64];
+            Span<byte> buffer = stackalloc byte[64];
             buffer[0] = featureId;
 
             if (ReadFeatureData(buffer))
-                serial = PhysicalAddress.Parse(
-                    $"{buffer[6]:X02}:{buffer[5]:X02}:{buffer[4]:X02}:{buffer[3]:X02}:{buffer[2]:X02}:{buffer[1]:X02}"
-                );
+            {
+                var serialBytes = buffer.Slice(1, 6);
+                serialBytes.Reverse();
+                return new PhysicalAddress(serialBytes.ToArray());
+            }
         }
         else
         {
             try
             {
                 if (!string.IsNullOrEmpty(SerialNumberString))
-                    serial = PhysicalAddress.Parse(SerialNumberString.ToUpper());
+                    return PhysicalAddress.Parse(SerialNumberString.ToUpper());
             }
             catch
             {
-                serial = GenerateFakeHwSerial();
+                return GenerateFakeHwSerial();
             }
         }
-
-        return serial;
+        return null;
     }
 
     /// <summary>
@@ -419,7 +369,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     + devPathItems[^1].TrimStart('0').ToUpper(),
             // Device and usb hub and port identifiers missing in devicePath string. Fallback to use vendor and product ID values and 
             // take a number from the last part of the devicePath. Hopefully the last part is a usb port number as it usually should be.
-            >= 1 => Attributes.VendorId.ToString("X4") + Attributes.ProductId.ToString("X4") +
+            >= 1 => Attributes.VendorID.ToString("X4") + Attributes.ProductID.ToString("X4") +
                     devPathItems[^1].TrimStart('0').ToUpper(),
             _ => address
         };
@@ -433,17 +383,22 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         return PhysicalAddress.Parse(address);
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        StopInputReportReader();
+        if (!disposed)
+        {
+            if (disposing)
+            {
+                CoreActivity.Dispose();
 
-        if (InputReportBuffer != IntPtr.Zero) Marshal.FreeHGlobal(InputReportBuffer);
+                inputReportToken?.Dispose();
+            }
 
-        base.Dispose();
+            disposed = true;
+        }
+
+        base.Dispose(disposing);
     }
 
-    public override string ToString()
-    {
-        return $"{DisplayName} ({Serial}) via {Connection}";
-    }
+    public override string ToString() => $"{DisplayName} ({Serial}) via {Connection}";
 }

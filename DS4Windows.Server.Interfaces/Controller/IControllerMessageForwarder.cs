@@ -6,6 +6,8 @@ namespace DS4Windows.Server.Controller;
 public interface IControllerMessageForwarder
 {
     Task StartListening(WebSocket newSocket);
+
     ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice);
+
     Task SendIsHostRunning(bool isRunning);
 }

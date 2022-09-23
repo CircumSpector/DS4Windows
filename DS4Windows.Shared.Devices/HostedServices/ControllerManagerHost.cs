@@ -1,14 +1,8 @@
 ﻿using DS4Windows.Shared.Configuration.Profiles.Services;
-using DS4Windows.Shared.Devices.HID;
-using DS4Windows.Shared.Devices.Services;
-using DS4Windows.Shared.Devices.Util;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
 using Ds4Windows.Shared.Devices.Interfaces.Services;
-using Ds4Windows.Shared.Devices.Interfaces.Util;
+using DS4Windows.Shared.Devices.Services;
+using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace DS4Windows.Shared.Devices.HostedServices;
@@ -18,38 +12,26 @@ namespace DS4Windows.Shared.Devices.HostedServices;
 /// </summary>
 public class ControllerManagerHost
 {
+    //temporary because the client still needs to run part of the host for now
+    public static bool IsEnabled = false;
+    private readonly IDeviceNotificationListener deviceNotificationListener;
     private readonly IControllersEnumeratorService enumerator;
+    private readonly IHidDeviceEnumeratorService hidDeviceEnumeratorService;
 
     private readonly IInputSourceService inputSourceService;
-    private readonly IDeviceNotificationListener deviceNotificationListener;
-    private readonly IHidDeviceEnumeratorService hidDeviceEnumeratorService;
 
     private readonly ILogger<ControllerManagerHost> logger;
 
     private readonly IControllerManagerService manager;
 
     private readonly IProfilesService profileService;
+    private CancellationTokenSource controllerHostToken;
 
-    //temporary because the client still needs to run part of the host for now
-    public static bool IsEnabled = false;
-
-    /// <summary>
-    ///     Fired every time a supported device is found and ready.
-    /// </summary>
-    public event Action<ICompatibleHidDevice> ControllerReady;
-
-    /// <summary>
-    ///     Fired every time a supported device has departed.
-    /// </summary>
-    public event Action<ICompatibleHidDevice> ControllerRemoved;
-
-    public event EventHandler<bool> RunningChanged;
-    
     public ControllerManagerHost(
         IControllersEnumeratorService enumerator,
-        ILogger<ControllerManagerHost> logger, 
+        ILogger<ControllerManagerHost> logger,
         IProfilesService profileService,
-        IControllerManagerService manager, 
+        IControllerManagerService manager,
         IInputSourceService inputSourceService,
         IDeviceNotificationListener deviceNotificationListener,
         IHidDeviceEnumeratorService hidDeviceEnumeratorService)
@@ -67,7 +49,18 @@ public class ControllerManagerHost
     }
 
     public bool IsRunning { get; private set; }
-    private CancellationTokenSource controllerHostToken;
+
+    /// <summary>
+    ///     Fired every time a supported device is found and ready.
+    /// </summary>
+    public event Action<ICompatibleHidDevice> ControllerReady;
+
+    /// <summary>
+    ///     Fired every time a supported device has departed.
+    /// </summary>
+    public event Action<ICompatibleHidDevice> ControllerRemoved;
+
+    public event EventHandler<bool> RunningChanged;
 
     public async Task StartAsync()
     {
@@ -81,8 +74,7 @@ public class ControllerManagerHost
 
         if (IsEnabled)
         {
-            var hidGuid = new Guid();
-            NativeMethods.HidD_GetHidGuid(ref hidGuid);
+            Windows.Win32.PInvoke.HidD_GetHidGuid(out var hidGuid);
             deviceNotificationListener.StartListen(hidGuid);
 
             logger.LogInformation("Starting device enumeration");

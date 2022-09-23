@@ -10,11 +10,18 @@ branches:
     - devel
   except:
     - gh-pages
+environment:
+  my_secret:
+    secure: YGaqkdOie3jHmiPzLfBcoQGdNaYYM+Zk/o1wwt2ic0s=
+  my_salt:
+    secure: rORyotKcYbZPwydKSo748LJ1wLS3A9N88DFmN0AjrDT6oTtideySaKNxAIyMCqaKqOxoplfUrCQSW2jUUOV+fQ==
 install:
 - cmd: git submodule -q update --init
 - cmd: choco install advanced-installer 
 - ps: if ( $(Test-Path -Path .\vpatch.exe) -ne $True) { Invoke-WebRequest "https://github.com/nefarius/vpatch/releases/latest/download/vpatch.exe" -OutFile vpatch.exe }
 - cmd: .\vpatch.exe --stamp-version "%APPVEYOR_BUILD_VERSION%" --target-file ".\CommonProjectProperties.targets" --csproj.assembly-version --csproj.file-version --csproj.version
+- ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+- cmd: appveyor-tools\secure-file -decrypt .\Installer\AppVeyor_ProductKey.txt.enc -secret %my_secret% -salt %my_salt%
 before_build:
 - nuget restore
 skip_commits:
@@ -23,6 +30,9 @@ skip_commits:
     - .github/*
     - extras/*
     - '**/*.md'
+    - '**/*.png'
+    - '**/*.jpg'
+    - '**/*.aip'
 build_script:
 - ps: Installer/Build.ps1
 after_build:

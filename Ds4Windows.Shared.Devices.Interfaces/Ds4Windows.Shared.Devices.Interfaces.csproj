@@ -4,10 +4,18 @@
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
+	
+	<ItemGroup>
+	  <Compile Remove="Util\**" />
+	  <EmbeddedResource Remove="Util\**" />
+	  <None Remove="Util\**" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
-		<PackageReference Include="PInvoke.Hid" Version="0.7.104" />
+		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.46-beta">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>

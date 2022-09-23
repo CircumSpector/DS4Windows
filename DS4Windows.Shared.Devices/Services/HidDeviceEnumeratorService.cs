@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
+using System.Runtime.InteropServices;
+using Windows.Win32.Devices.HumanInterfaceDevice;
+using Windows.Win32.Storage.FileSystem;
 using DS4Windows.Shared.Common.Telemetry;
 using DS4Windows.Shared.Devices.HID;
-using Ds4Windows.Shared.Devices.Interfaces.Util;
-using DS4Windows.Shared.Devices.Util;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using PInvoke;
 
 namespace DS4Windows.Shared.Devices.Services;
 
@@ -59,12 +57,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         this.deviceNotificationListener = deviceNotificationListener;
         this.logger = logger;
 
-        Hid.HidD_GetHidGuid(out var interfaceGuid);
+        Windows.Win32.PInvoke.HidD_GetHidGuid(out var interfaceGuid);
 
         hidClassInterfaceGuid = interfaceGuid;
 
-        Guid hidGuid = Guid.Empty;
-        NativeMethods.HidD_GetHidGuid(ref hidGuid);
+        Windows.Win32.PInvoke.HidD_GetHidGuid(out var hidGuid);
         this.deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived, hidGuid);
         this.deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved, hidGuid);
 
@@ -97,22 +94,26 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
         connectedDevices.Clear();
 
-        while (Devcon.FindByInterfaceGuid(hidClassInterfaceGuid, out var path, out _, deviceIndex++))
+        while (Devcon.FindByInterfaceGuid(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
         {
-            var entry = CreateNewHidDevice(path);
+            try
+            {
+                var entry = CreateNewHidDevice(path);
 
-            logger.LogInformation("Discovered HID device {Device}", entry);
+                logger.LogInformation("Discovered HID device {Device}", entry);
 
-            connectedDevices.Add(entry);
+                connectedDevices.Add(entry);
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, $"Failed to create HID device for {path}");
+            }
         }
     }
 
     public void ClearDevices()
     {
-        foreach (var connectedDevice in ConnectedDevices.ToList())
-        {
-            RemoveDevice(connectedDevice.Path);
-        }
+        foreach (var connectedDevice in ConnectedDevices.ToList()) RemoveDevice(connectedDevice.Path);
     }
 
     /// <summary>
@@ -132,8 +133,8 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         //
         // Try to get friendly display name (not always there)
         // 
-        var friendlyName = device.GetProperty<string>(DevicePropertyDevice.FriendlyName);
-        var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+        var friendlyName = device.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
+        var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
         //
         // Grab product string from device if property is missing
@@ -148,147 +149,155 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         {
             Path = path,
             InstanceId = device.InstanceId.ToUpper(),
-            Description = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc),
+            Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
             DisplayName = friendlyName,
             ParentInstance = parentId,
             Attributes = attributes,
             Capabilities = caps,
-            IsVirtual = IsVirtualDevice(device),
+            IsVirtual = device.IsVirtual(),
             ManufacturerString = GetHidManufacturerString(path),
             ProductString = GetHidProductString(path),
             SerialNumberString = GetHidSerialNumberString(path)
         };
     }
 
-    private string GetHidManufacturerString(string path)
+    private unsafe string GetHidManufacturerString(string path)
     {
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidManufacturerString)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Kernel32.CreateFile(path,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = Windows.Win32.PInvoke.CreateFile(
+            path,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
-        Hid.HidD_GetManufacturerString(handle, out var manufacturerString);
+        const uint bufferLength = 4093; // max allowed/possible size according to MSDN
+        var buffer = stackalloc char[(int)bufferLength];
+
+        Windows.Win32.PInvoke.HidD_GetManufacturerString(handle, buffer, bufferLength);
+
+        var manufacturerString = new string(buffer);
 
         activity?.SetTag("ManufacturerString", manufacturerString);
 
         return manufacturerString;
     }
 
-    private string GetHidProductString(string path)
+    private unsafe string GetHidProductString(string path)
     {
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidProductString)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Kernel32.CreateFile(path,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = Windows.Win32.PInvoke.CreateFile(
+            path,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
-        Hid.HidD_GetProductString(handle, out var productName);
+        const uint bufferLength = 4093; // max allowed/possible size according to MSDN
+        var buffer = stackalloc char[(int)bufferLength];
+
+        Windows.Win32.PInvoke.HidD_GetProductString(handle, buffer, bufferLength);
+
+        var productName = new string(buffer);
 
         activity?.SetTag("ProductString", productName);
 
         return productName;
     }
 
-    private string GetHidSerialNumberString(string path)
+    private unsafe string GetHidSerialNumberString(string path)
     {
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidSerialNumberString)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Kernel32.CreateFile(path,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = Windows.Win32.PInvoke.CreateFile(
+            path,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
-        Hid.HidD_GetSerialNumberString(handle, out var serialNumberString);
+        const uint bufferLength = 4093; // max allowed/possible size according to MSDN
+        var buffer = stackalloc char[(int)bufferLength];
+
+        Windows.Win32.PInvoke.HidD_GetSerialNumberString(handle, buffer, bufferLength);
+
+        var serialNumberString = new string(buffer);
 
         activity?.SetTag("SerialNumberString", serialNumberString);
 
         return serialNumberString;
     }
 
-    private bool GetHidAttributes(string path, out Hid.HiddAttributes attributes)
+    private bool GetHidAttributes(string path, out HIDD_ATTRIBUTES attributes)
     {
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidAttributes)}");
         activity?.SetTag("Path", path);
 
-        attributes = new Hid.HiddAttributes();
-
-        using var handle = Kernel32.CreateFile(path,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = Windows.Win32.PInvoke.CreateFile(
+            path,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
-        var ret = Hid.HidD_GetAttributes(handle, ref attributes);
+        var ret = Windows.Win32.PInvoke.HidD_GetAttributes(handle, out attributes);
 
         if (!ret) return false;
 
-        activity?.SetTag("VID", attributes.VendorId.ToString("X4"));
-        activity?.SetTag("PID", attributes.ProductId.ToString("X4"));
+        activity?.SetTag("VID", attributes.VendorID.ToString("X4"));
+        activity?.SetTag("PID", attributes.ProductID.ToString("X4"));
 
         return true;
     }
 
-    private bool GetHidCapabilities(string path, out Hid.HidpCaps caps)
+    private void GetHidCapabilities(string path, out HIDP_CAPS caps)
     {
         using var activity = CoreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidCapabilities)}");
         activity?.SetTag("Path", path);
 
-        caps = new Hid.HidpCaps();
-
-        using var handle = Kernel32.CreateFile(path,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = Windows.Win32.PInvoke.CreateFile(
+            path,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
-        if (!Hid.HidD_GetPreparsedData(handle, out var dataHandle)) return false;
+        if (handle.IsInvalid)
+            throw new Exception($"Couldn't open device handle, error {Marshal.GetLastWin32Error()}");
 
-        Hid.HidP_GetCaps(dataHandle, ref caps);
-        dataHandle.Dispose();
+        if (!Windows.Win32.PInvoke.HidD_GetPreparsedData(handle, out var dataHandle))
+            throw new Exception($"HidD_GetPreparsedData failed with error {Marshal.GetLastWin32Error()}");
+
+        Windows.Win32.PInvoke.HidP_GetCaps(dataHandle, out caps);
+        Windows.Win32.PInvoke.HidD_FreePreparsedData(dataHandle);
 
         activity?.SetTag("InputReportByteLength", caps.InputReportByteLength);
         activity?.SetTag("OutputReportByteLength", caps.OutputReportByteLength);
-
-        return true;
     }
 
     private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
@@ -299,32 +308,39 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         var symLink = args.SymLink;
         activity?.SetTag("Path", symLink);
 
-        var device = PnPDevice.GetDeviceByInterfaceId(symLink);
-
-        logger.LogInformation("HID Device {Instance} ({Path}) arrived",
-            device.InstanceId, symLink);
-
-        //
-        // This should never happen as we're only listening to HID Class Devices
-        // changes anyway but some extra safety and logging can't hurt :)
-        // 
-        if (!IsHidDevice(device))
+        try
         {
-            logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
+            var device = PnPDevice.GetDeviceByInterfaceId(symLink);
+
+            logger.LogInformation("HID Device {Instance} ({Path}) arrived",
                 device.InstanceId, symLink);
-            return;
+
+            //
+            // This should never happen as we're only listening to HID Class Devices
+            // changes anyway but some extra safety and logging can't hurt :)
+            // 
+            if (!IsHidDevice(device))
+            {
+                logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
+                    device.InstanceId, symLink);
+                return;
+            }
+
+            var entry = CreateNewHidDevice(symLink);
+
+            if (device.IsVirtual())
+                logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
+                    device.InstanceId, symLink);
+
+            if (!connectedDevices.Contains(entry))
+                connectedDevices.Add(entry);
+
+            DeviceArrived?.Invoke(entry);
         }
-
-        var entry = CreateNewHidDevice(symLink);
-
-        if (IsVirtualDevice(device))
-            logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
-                device.InstanceId, symLink);
-
-        if (!connectedDevices.Contains(entry))
-            connectedDevices.Add(entry);
-
-        DeviceArrived?.Invoke(entry);
+        catch (ArgumentException ae)
+        {
+            logger.LogWarning(ae, "Failed to add new device");
+        }
     }
 
     private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
@@ -349,7 +365,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         var entry = new HidDevice
         {
             Path = symLink,
-            IsVirtual = IsVirtualDevice(device, true),
+            IsVirtual = device.IsVirtual(),
             InstanceId = device.InstanceId.ToUpper(),
             Attributes = attributes
         };
@@ -367,46 +383,8 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     /// <returns>True if HIDClass device, false otherwise.</returns>
     private static bool IsHidDevice(PnPDevice device)
     {
-        var devClass = device.GetProperty<Guid>(DevicePropertyDevice.ClassGuid);
+        var devClass = device.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
 
         return Equals(devClass, HidDeviceClassGuid);
-    }
-
-    /// <summary>
-    ///     Walks up the <see cref="PnPDevice" />s parents chain to determine if the top most device is root enumerated.
-    /// </summary>
-    /// <remarks>
-    ///     This is achieved by walking up the node tree until the top most parent and check if the last parent below the
-    ///     tree root is a software device. Hardware devices originate from a PCI(e) bus while virtual devices originate from a
-    ///     root enumerated device.
-    /// </remarks>
-    /// <param name="device">The <see cref="PnPDevice" /> to test.</param>
-    /// <param name="isRemoved">If true, look for a currently non-present device.</param>
-    /// <returns>True if this devices originates from an emulator, false otherwise.</returns>
-    private bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
-    {
-        using var activity = CoreActivity.StartActivity(
-            $"{nameof(HidDeviceEnumeratorService)}:{nameof(IsVirtualDevice)}");
-
-        while (device is not null)
-        {
-            var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
-
-            if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
-                break;
-
-            device = PnPDevice.GetDeviceByInstanceId(parentId,
-                isRemoved
-                    ? DeviceLocationFlags.Phantom
-                    : DeviceLocationFlags.Normal
-            );
-        }
-
-        //
-        // TODO: test how others behave (reWASD, NVIDIA, ...)
-        // 
-        return device is not null &&
-               (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase)
-                || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
     }
 }

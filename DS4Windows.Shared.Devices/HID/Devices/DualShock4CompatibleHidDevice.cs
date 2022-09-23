@@ -1,62 +1,47 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using DS4Windows.Shared.Devices.HID.Devices.Reports;
+﻿using DS4Windows.Shared.Devices.HID.Devices.Reports;
 using Ds4Windows.Shared.Devices.Interfaces.HID;
 using Microsoft.Extensions.Logging;
 
-namespace DS4Windows.Shared.Devices.HID.Devices
+namespace DS4Windows.Shared.Devices.HID.Devices;
+
+public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 {
-    public class DualShock4CompatibleHidDevice : CompatibleHidDevice
+    private const byte SerialFeatureId = 18;
+
+    private readonly int reportStartOffset;
+
+    public DualShock4CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
+        featureSet, serviceProvider)
     {
-        private const byte SerialFeatureId = 18;
+        Serial = ReadSerial(SerialFeatureId);
 
-        protected readonly int ReportStartOffset;
+        if (Serial is null)
+            throw new ArgumentException("Could not retrieve a valid serial number.");
 
-        private bool isConnected = false;
+        Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-        public DualShock4CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
-            CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
-            featureSet, serviceProvider)
-        {
-            Serial = ReadSerial(SerialFeatureId);
+        InputReportArray = new byte[Capabilities.InputReportByteLength];
 
-            if (Serial is null)
-                throw new ArgumentException("Could not retrieve a valid serial number.");
+        if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
+            reportStartOffset = 0;
+        //
+        // TODO: finish me
+        // 
+        else
+            reportStartOffset = 1;
 
-            Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
+        StartInputReportReader();
+    }
 
-            var inputReportSize = Capabilities.InputReportByteLength;
+    protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
 
-            InputReportArray = new byte[inputReportSize];
-            InputReportBuffer = Marshal.AllocHGlobal(inputReportSize);
+    protected override void ProcessInputReport(ReadOnlySpan<byte> input)
+    {
+        if (Connection == ConnectionType.SonyWirelessAdapter && (input[31] & 0x04) != 0)
+            // TODO: implement me!
+            return;
 
-            if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-            {
-                ReportStartOffset = 0;
-                //
-                // TODO: finish me
-                // 
-            }
-            else
-            {
-                ReportStartOffset = 1;
-            }
-
-            StartInputReportReader();
-        }
-
-        protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
-
-        protected override void ProcessInputReport(byte[] inputReport)
-        {
-            if (Connection == ConnectionType.SonyWirelessAdapter && (inputReport[31] & 0x04) != 0)
-            {
-                // TODO: implement me!
-
-                return;
-            }
-
-            InputReport.ParseFrom(inputReport, ReportStartOffset);
-        }
+        InputReport.Parse(input.Slice(reportStartOffset));
     }
 }
