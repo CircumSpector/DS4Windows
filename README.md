@@ -1,6 +1,8 @@
 <img src="assets/DS4Windows-128x128.png" align="right" />
 
-# DS4Windows
+# Codename: Vapour Input
+
+A reimagination of DS4Windows.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/gt6hhm5aqy04ou7u?svg=true)](https://ci.appveyor.com/project/nefarius/ds4windows)
 [![Requirements](https://img.shields.io/badge/Requirements-.NET%206.0-blue.svg)](https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md) ![Lines of code](https://img.shields.io/tokei/lines/github/CircumSpector/DS4Windows) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/bug) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/enhancement)
@@ -14,7 +16,6 @@
 - ⚠️ Might crash your system (BSOD)!
 - ⚠️ May or may not launch/work/crash!
 - ⚠️ Use at your own risk!
-- ⚠️ May damage/corrupt your existing v3.x (or older) installation!
 - ⚠️ No support provided whatsoever!
 
 ## About this fork
@@ -27,17 +28,20 @@ Over its lifespan of of *nearly a decade* DS4Windows has seen many contributors,
 
 [CircumSpector](https://github.com/CircumSpector) is a collective of enthusiasts craving to see DS4Windows continued. We attempt to rewrite major sections of the dated code segments to make maintenance and new feature additions fun again. This will take some time and a lot will probably break - intentionally or unintentionally so sooner or later we need a bigger test squad. For now, the issue tracker and discussions remain *collaborators only* to avoid bug reports for things we already know so we can focus on the code and nothing else.
 
+In October 2022 we started a rebranding which includes an intermediate project name change to further distance this work from the current dominant and maintained DS4Windows version(s). An official new app name is yet to be settled on.
+
+<!--
 ### What this is NOT
 
 As of time of writing we don't strife to be considered the "new maintainers" and dethrone [Ryochan7](https://github.com/Ryochan7/DS4Windows) who's on a well-deserved hiatus from the project for a yet to be known duration (disclaimer: we don't speak on behalf of Ryochan7, we're merely observers as well). Time will tell if Ryochan7 comes back from a vacation and continues working on DS4Windows with help from the members of [CircumSpector](https://github.com/CircumSpector).
-
+-->
 ## Where are the download links
 
 There are none. Until this message changes, the rework is in constant motion and there is no value for us to provide binaries at this point. Feel free to clone and build yourself if you're brave 😜
 
-## Where can I get help
+## Where can I get more information
 
-[Join our support server](https://ds4windows.app/support.html) 🐸
+[Join our Discord server](https://discord.vigem.org/) 🎉
 
 ## Contributing
 
@@ -53,10 +57,13 @@ If you **want to see this project succeed** give it a GitHub star to show intere
 - Install latest [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 - Build the solution in Visual Studio
   - Dependencies are pulled in automatically via NuGet
+- To create a production release, use the command line:  
+  `dotnet publish /p:PublishProfile=Properties\PublishProfiles\release-win-x64.pubxml`  
+  ⚠️ this will fail when triggered via Visual Studio due to a pending issue ⚠️
 
 ## Sponsors
 
-[<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/)
+[<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/) [<img src="assets/AiLogoColorRightText.png" title="Advanced Installer" alt="Advanced Instzaller" height="120"/>](https://www.advancedinstaller.com/)
 
 <!--
 

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Vapour.Client.Modules</RootNamespace>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vapour.Client.Core.Interfaces\Vapour.Client.Core.Interfaces.csproj" />
+		<ProjectReference Include="..\Vapour.Server.Interfaces\Vapour.Server.Interfaces.csproj" />
+		<ProjectReference Include="..\Vapour.Shared.Configuration.Profiles.Interfaces\Vapour.Shared.Configuration.Profiles.Interfaces.csproj" />
+	</ItemGroup>
+
+</Project>

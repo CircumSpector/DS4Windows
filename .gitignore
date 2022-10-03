@@ -339,3 +339,6 @@ ASALocalRun/
 /publish
 /Installer/AppVeyor_ProductKey.txt
 /appveyor-tools
+/Installer/Setup Files x64
+/Installer/Vapour.Installer.x64-cache
+*.aip

@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Vapour.Client.TrayApplication.TrayPopup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Vapour.Server.Controller;assembly=Vapour.Server.Interfaces"
+             xmlns:l="clr-namespace:Vapour.Client.TrayApplication"
+             mc:Ignorable="d" 
+             Width="400"
+             Height="400"
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="White">
+    <StackPanel>
+        
+        <ItemsControl ItemsSource="{Binding ConnectedControllers}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:ControllerConnectedMessage}">
+                    <TextBlock Text="{Binding DeviceType}"></TextBlock>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button Content="{Binding HostButtonText}" Command="{Binding ChangeHostStateCommand}"/>
+        <Button Width="200" Content="Open" Command="{Binding ShowClientCommand}"></Button>
+    </StackPanel>
+</UserControl>

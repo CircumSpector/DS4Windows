@@ -1,0 +1,210 @@
+﻿<UserControl x:Class="Vapour.Client.Modules.Profiles.Edit.StickControlModeSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <StackPanel>
+        <TextBlock Text="Dead Zone Type"/>
+        <ComboBox ItemsSource="{Binding Source={StaticResource enmDeadZoneType}}"
+                  SelectedItem="{Binding DeadZoneType}" />
+        <ContentControl Visibility="{Binding IsRadialSet, Converter={StaticResource trueIsVis}}" Margin="20">
+            <StackPanel>
+                <TextBlock>
+                    <Run>Dead Zone </Run>
+                    <Run Text="{Binding DeadZoneConverted}"/>
+                </TextBlock>
+                <Slider Minimum="0" Maximum="1.0" TickFrequency="0.1" Value="{Binding DeadZoneConverted}"/>
+                <TextBlock>
+                    <Run>Anti Dead Zone </Run>
+                    <Run Text="{Binding AntiDeadZone}"/>
+                    <Run>%</Run>
+                </TextBlock>
+                <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding AntiDeadZone}"/>
+                <TextBlock>
+                    <Run>Max Zone </Run>
+                    <Run Text="{Binding MaxZone}"/>
+                    <Run>%</Run>
+                </TextBlock>
+                <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding MaxZone}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock HorizontalAlignment="Left" Grid.Column="0">
+                        <Run>Max Output </Run>
+                        <Run Text="{Binding MaxOutput}"/>
+                        <Run>%</Run>
+                    </TextBlock>
+
+                    <TextBlock Text="Force? " Grid.Column="1"/>
+                    <CheckBox Grid.Column="2" IsChecked="{Binding ForceMaxOutput}" />
+                </Grid>
+                
+                <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding MaxOutput}"/>
+                <TextBlock>
+                    <Run>Vertical Scale </Run>
+                    <Run Text="{Binding VerticalScale}"/>
+                </TextBlock>
+                <Slider Minimum="0" Maximum="200" TickFrequency="10" Value="{Binding VerticalScale}"/>
+                <TextBlock>
+                    <Run>Sensitivity </Run>
+                    <Run Text="{Binding Sensitivity}"/>
+                </TextBlock>
+                <Slider Minimum="0.5" Maximum="5.0" TickFrequency="0.1" Value="{Binding Sensitivity}"/>
+            </StackPanel>
+        </ContentControl>
+        <ContentControl Visibility="{Binding IsRadialSet, Converter={StaticResource falseIsVis}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Dead Zone: " Grid.Row="1" Grid.Column="0"/>
+                <TextBlock Text="Max Zone: " Grid.Row="2" Grid.Column="0"/>
+                <TextBlock Text="Anti-dead Zone: " Grid.Row="3" Grid.Column="0"/>
+                <TextBlock Text="Max Output: " Grid.Row="4" Grid.Column="0"/>
+
+                <TextBlock Text="X" Grid.Row="0" Grid.Column="1"/>
+                <TextBlock Text="Y" Grid.Row="0" Grid.Column="2"/>
+
+                <StackPanel Grid.Row="1"  Grid.Column="1">
+                    <TextBlock Text="{Binding XDeadZoneConverted}" />
+                    <Slider  Minimum="0" Maximum="1.0" TickFrequency="0.1"  Value="{Binding XDeadZoneConverted}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2"  Grid.Column="1">
+                    <TextBlock>
+                        <Run Text="{Binding XMaxZone}"/>
+                        <Run>%</Run>
+                    </TextBlock>
+                    <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding XMaxZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3"  Grid.Column="1">
+                    <TextBlock>
+                        <Run Text="{Binding XAntiDeadZone}"/>
+                        <Run>%</Run>
+                    </TextBlock>
+                    <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding XAntiDeadZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4"  Grid.Column="1">
+                    <TextBlock>
+                        <Run Text="{Binding XMaxOutput}"/>
+                        <Run>%</Run>
+                    </TextBlock>
+                    <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding XMaxOutput}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"  Grid.Column="2">
+                    <TextBlock Text="{Binding YDeadZoneConverted}" />
+                    <Slider  Minimum="0" Maximum="1.0" TickFrequency="0.1" Value="{Binding YDeadZoneConverted}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2"  Grid.Column="2">
+                    <TextBlock>
+                        <Run Text="{Binding YMaxZone}"/>
+                        <Run>%</Run>
+                    </TextBlock>
+                    <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding YMaxZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3"  Grid.Column="2">
+                    <TextBlock>
+                        <Run Text="{Binding YAntiDeadZone}"/>
+                        <Run>%</Run>
+                    </TextBlock>
+                    <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding YAntiDeadZone}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4"  Grid.Column="2">
+                    <TextBlock>
+                        <Run Text="{Binding YMaxOutput}"/>
+                        <Run>%</Run>
+                    </TextBlock>
+                    <Slider Minimum="0" Maximum="100" TickFrequency="10" Value="{Binding YMaxOutput}"/>
+                </StackPanel>
+            </Grid>
+        </ContentControl>
+        <TextBlock Text="Output Curve"/>
+        <ComboBox ItemsSource="{Binding Source={StaticResource enmOutputCurve}}" SelectedItem="{Binding OutputCurve}"/>
+        <Grid IsEnabled="{Binding IsCustomCurveSelected}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding CustomCurve, Converter={StaticResource bezierCurveConverter}, UpdateSourceTrigger=LostFocus, FallbackValue='0.00, 0.00, 1.00, 1.00'}" Grid.Column="0" />
+            <Button BorderBrush="{x:Null}"  
+                    Command="{Binding ShowCustomCurveCommand}"
+                    Grid.Column="1">
+                <md:PackIcon Kind="DotsHorizontal" Width="15" Height="15" />
+            </Button>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="0">
+                        <Run>Square Stick </Run>
+                        <Run Text="{Binding SquareStickRoundness}"/>
+            </TextBlock>
+
+            <CheckBox Grid.Column="1" IsChecked="{Binding IsSquareStick}" />
+            <Slider Minimum="0" Maximum="1000" TickFrequency="1" Value="{Binding SquareStickRoundness}"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    IsEnabled="{Binding IsSquareStick}"/>
+        </Grid>
+        <TextBlock>
+            <Run>Rotation </Run>
+            <Run Text="{Binding RotationConverted}"/>
+        </TextBlock>
+        <Slider Minimum="-180" Maximum="180" IsSnapToTickEnabled="True" Value="{Binding RotationConverted}" />
+        <TextBlock>
+            <Run>Fuzz </Run>
+            <Run Text="{Binding Fuzz}"/>
+        </TextBlock>
+        <Slider Minimum="0" Maximum="100" IsSnapToTickEnabled="True" Value="{Binding Fuzz}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="0">
+                <Run>Anti Snapback Delta </Run>
+                <Run Text="{Binding AntiSnapbackDelta}"/>
+            </TextBlock>
+
+            <CheckBox Grid.Column="1" IsChecked="{Binding IsAntiSnapback}" />
+            <Slider Minimum="0" Maximum="256" TickFrequency="1" Value="{Binding AntiSnapbackDelta}"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    IsEnabled="{Binding IsAntiSnapback}"/>
+        </Grid>
+        <TextBlock>
+            <Run>Anti Snapback Timeout </Run>
+            <Run Text="{Binding AntiSnapbackTimeout}"/>
+        </TextBlock>
+        <Slider Minimum="0" Maximum="1000" IsSnapToTickEnabled="True" Value="{Binding AntiSnapbackTimeout}"
+                IsEnabled="{Binding IsAntiSnapback}"/>
+    </StackPanel>
+</UserControl>
