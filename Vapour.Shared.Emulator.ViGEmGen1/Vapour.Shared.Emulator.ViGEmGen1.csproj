@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="FastDeepCloner" Version="1.3.6" />
-		<PackageReference Include="Fody" Version="6.6.3" ExcludeAssets="runtime">
+		<PackageReference Include="Fody" Version="6.6.4" ExcludeAssets="runtime">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
