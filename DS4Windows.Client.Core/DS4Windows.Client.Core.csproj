@@ -24,7 +24,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
-		<PackageReference Include="MaterialDesignColors" Version="2.0.7" />
+		<PackageReference Include="MaterialDesignColors" Version="2.0.9" />
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
 		<PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
