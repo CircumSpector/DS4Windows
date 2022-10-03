@@ -2,6 +2,8 @@
 
 # Codename: Vapour Input
 
+A reimagination of DS4Windows.
+
 [![Build status](https://ci.appveyor.com/api/projects/status/gt6hhm5aqy04ou7u?svg=true)](https://ci.appveyor.com/project/nefarius/ds4windows)
 [![Requirements](https://img.shields.io/badge/Requirements-.NET%206.0-blue.svg)](https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md) ![Lines of code](https://img.shields.io/tokei/lines/github/CircumSpector/DS4Windows) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/bug) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/enhancement)
 
@@ -25,6 +27,8 @@
 Over its lifespan of of *nearly a decade* DS4Windows has seen many contributors, changes, fixes, feature additions and has grown and kept relevant to gamers who'd love more control over their beloved peripherals. Beginning with the PS4 Controller (DualShock 4) it nowadays also supports its successor the PS5 DualSense and even the Nintendo JoyCons. With age and popularity come new challenges. The code has become more powerful, but also more troublesome to maintain and carries a lot of legacy design patterns and restraints from an outdated .NET universe. Here's where we step in.
 
 [CircumSpector](https://github.com/CircumSpector) is a collective of enthusiasts craving to see DS4Windows continued. We attempt to rewrite major sections of the dated code segments to make maintenance and new feature additions fun again. This will take some time and a lot will probably break - intentionally or unintentionally so sooner or later we need a bigger test squad. For now, the issue tracker and discussions remain *collaborators only* to avoid bug reports for things we already know so we can focus on the code and nothing else.
+
+In October 2022 we started a rebranding which includes an intermediate project name change to further distance this work from the current dominant and maintained DS4Windows version(s). An official new app name is yet to be settled on.
 
 <!--
 ### What this is NOT
