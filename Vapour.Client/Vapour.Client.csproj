@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<UseWPF>true</UseWPF>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>DS4W.ico</ApplicationIcon>
+		<AssemblyName>Vapour</AssemblyName>
+	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
+
+	<ItemGroup>
+		<None Remove="Splashscreen.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="DS4W.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AsyncErrorHandler.Fody" Version="1.3.0" />
+		<PackageReference Include="AutoMapper" Version="12.0.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" />
+		<PackageReference Include="Fody" Version="6.6.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+		<PackageReference Include="MaterialDesignColors" Version="2.0.9" />
+		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
+		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.2.184" />
+		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.3.1" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.7" />
+		<PackageReference Include="PInvoke.Hid" Version="0.7.124" />
+		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
+		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Vapour.Client.Core\Vapour.Client.Core.csproj" />
+	  <ProjectReference Include="..\Vapour.Client.Modules.Interfaces\Vapour.Client.Modules.Interfaces.csproj" />
+	  <ProjectReference Include="..\Vapour.Client.Modules\Vapour.Client.Modules.csproj" />
+	  <ProjectReference Include="..\Vapour.Client.ServiceClients.Interfaces\Vapour.Client.ServiceClients.Interfaces.csproj" />
+	  <ProjectReference Include="..\Vapour.Client.ServiceClients\Vapour.Client.ServiceClients.csproj" />
+	  <ProjectReference Include="..\Vapour.Shared.Common\Vapour.Shared.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SplashScreen Include="Splashscreen.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

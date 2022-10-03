@@ -1,6 +1,6 @@
 <img src="assets/DS4Windows-128x128.png" align="right" />
 
-# DS4Windows
+# Codename: Vapour Input
 
 [![Build status](https://ci.appveyor.com/api/projects/status/gt6hhm5aqy04ou7u?svg=true)](https://ci.appveyor.com/project/nefarius/ds4windows)
 [![Requirements](https://img.shields.io/badge/Requirements-.NET%206.0-blue.svg)](https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md) ![Lines of code](https://img.shields.io/tokei/lines/github/CircumSpector/DS4Windows) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/bug) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/enhancement)
@@ -27,10 +27,11 @@ Over its lifespan of of *nearly a decade* DS4Windows has seen many contributors,
 
 [CircumSpector](https://github.com/CircumSpector) is a collective of enthusiasts craving to see DS4Windows continued. We attempt to rewrite major sections of the dated code segments to make maintenance and new feature additions fun again. This will take some time and a lot will probably break - intentionally or unintentionally so sooner or later we need a bigger test squad. For now, the issue tracker and discussions remain *collaborators only* to avoid bug reports for things we already know so we can focus on the code and nothing else.
 
+<!--
 ### What this is NOT
 
 As of time of writing we don't strife to be considered the "new maintainers" and dethrone [Ryochan7](https://github.com/Ryochan7/DS4Windows) who's on a well-deserved hiatus from the project for a yet to be known duration (disclaimer: we don't speak on behalf of Ryochan7, we're merely observers as well). Time will tell if Ryochan7 comes back from a vacation and continues working on DS4Windows with help from the members of [CircumSpector](https://github.com/CircumSpector).
-
+-->
 ## Where are the download links
 
 There are none. Until this message changes, the rework is in constant motion and there is no value for us to provide binaries at this point. Feel free to clone and build yourself if you're brave 😜

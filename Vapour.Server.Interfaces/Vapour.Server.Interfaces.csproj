@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Vapour.Server</RootNamespace>
+	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vapour.Shared.Devices.Interfaces\Vapour.Shared.Devices.Interfaces.csproj" />
+	</ItemGroup>
+
+</Project>

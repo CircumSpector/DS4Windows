@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>DS4W.ico</ApplicationIcon>
+	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
+
+	<ItemGroup>
+		<None Remove="DS4W.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vapour.Client.Core.Interfaces\Vapour.Client.Core.Interfaces.csproj" />
+		<ProjectReference Include="..\Vapour.Client.Core\Vapour.Client.Core.csproj" />
+		<ProjectReference Include="..\Vapour.Client.ServiceClients.Interfaces\Vapour.Client.ServiceClients.Interfaces.csproj" />
+		<ProjectReference Include="..\Vapour.Client.ServiceClients\Vapour.Client.ServiceClients.csproj" />
+		<ProjectReference Include="..\Vapour.Shared.Common\Vapour.Shared.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="DS4W.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

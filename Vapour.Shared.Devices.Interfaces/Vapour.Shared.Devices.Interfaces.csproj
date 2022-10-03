@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+	</PropertyGroup>
+	
+	<Import Project="..\CommonProjectProperties.targets" />
+	
+	<ItemGroup>
+	  <Compile Remove="Util\**" />
+	  <EmbeddedResource Remove="Util\**" />
+	  <None Remove="Util\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.46-beta">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vapour.Shared.Common.Interfaces\Vapour.Shared.Common.Interfaces.csproj" />
+	</ItemGroup>
+
+</Project>

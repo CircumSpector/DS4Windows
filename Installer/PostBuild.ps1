@@ -1,13 +1,13 @@
-#$env:APPVEYOR_BUILD_FOLDER = "c:/dev/DS4Windows"
+#$env:APPVEYOR_BUILD_FOLDER = "c:/dev/Vapour"
 #$env:APPVEYOR_BUILD_VERSION = 1.0.1
 #$env:PlATFORM = "x64"
 
 $publishFolder = $env:APPVEYOR_BUILD_FOLDER + "/Publish/" + $env:PlATFORM
 $artifacts = $env:APPVEYOR_BUILD_FOLDER + "/artifacts"
 $installerDirectory = $env:APPVEYOR_BUILD_FOLDER + "/Installer"
-$installerProject = $installerDirectory + "/Ds4Windows.Installer." + $env:PlATFORM + ".aip"
-$installerOutputExe = $installerDirectory + "/Setup Files " + $env:PlATFORM + "/DS4Windows Setup (" + $env:PlATFORM + ").exe"
-$installerOutputArtifact = $artifacts + "/DS4Windows Setup (" + $env:PlATFORM + ").exe"
+$installerProject = $installerDirectory + "/Vapour.Installer." + $env:PlATFORM + ".aip"
+$installerOutputExe = $installerDirectory + "/Setup Files " + $env:PlATFORM + "/Vapour Setup (" + $env:PlATFORM + ").exe"
+$installerOutputArtifact = $artifacts + "/Vapour Setup (" + $env:PlATFORM + ").exe"
 $publishOutputArtifact = $artifacts + "/Publish.zip"
 $adi = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.9/bin/x86/AdvancedInstaller.com"
 $serial = $installerDirectory + "/AppVeyor_ProductKey.txt"

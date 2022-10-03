@@ -42,7 +42,7 @@ cache:
 - '%USERPROFILE%\.nuget\packages'
 - .\vpatch.exe
 artifacts:
-  - path: "artifacts\\DS4Windows*.exe"
+  - path: "artifacts\\Vapour*.exe"
     name: $(APPVEYOR_PROJECT_NAME)
   - path: "artifacts\\Publish.zip"
     name: "Source"
