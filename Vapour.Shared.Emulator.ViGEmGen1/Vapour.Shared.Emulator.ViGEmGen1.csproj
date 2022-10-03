@@ -19,7 +19,7 @@
 		</PackageReference>
 		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.2.184" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
-		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3" PrivateAssets="all" ExcludeAssets="runtime" />
+		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3"/>
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>

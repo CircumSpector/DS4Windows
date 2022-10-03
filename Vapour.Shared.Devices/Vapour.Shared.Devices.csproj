@@ -27,7 +27,7 @@
 		  <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 		<PackageReference Include="PInvoke.SetupApi" Version="0.7.124" />
-		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3" PrivateAssets="all" ExcludeAssets="runtime" />
+		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3"/>
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
