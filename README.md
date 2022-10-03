@@ -14,7 +14,6 @@
 - ⚠️ Might crash your system (BSOD)!
 - ⚠️ May or may not launch/work/crash!
 - ⚠️ Use at your own risk!
-- ⚠️ May damage/corrupt your existing v3.x (or older) installation!
 - ⚠️ No support provided whatsoever!
 
 ## About this fork
@@ -36,9 +35,9 @@ As of time of writing we don't strife to be considered the "new maintainers" and
 
 There are none. Until this message changes, the rework is in constant motion and there is no value for us to provide binaries at this point. Feel free to clone and build yourself if you're brave 😜
 
-## Where can I get help
+## Where can I get more information
 
-[Join our support server](https://ds4windows.app/support.html) 🐸
+[Join our Discord server](https://discord.vigem.org/) 🎉
 
 ## Contributing
 
@@ -61,7 +60,6 @@ If you **want to see this project succeed** give it a GitHub star to show intere
 ## Sponsors
 
 [<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/) [<img src="assets/AiLogoColorRightText.png" title="Advanced Installer" alt="Advanced Instzaller" height="120"/>](https://www.advancedinstaller.com/)
-
 
 <!--
 
