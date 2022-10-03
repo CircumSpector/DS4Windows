@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="19.4" Modules="professional" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="19.9" Modules="professional" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
-    <ROW Name="HiddenItems" Value="AppXProductDetailsComponent;AppXDependenciesComponent;AppXAppDetailsComponent;AppXVisualAssetsComponent;AppXCapabilitiesComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;MsiDriverPackagesComponent;UserAccountsComponent;ScheduledTasksComponent;SqlConnectionComponent;AutorunComponent;FirewallExceptionComponent;GameUxComponent;MsiDirectEditorComponent;SharePointSlnComponent;SilverlightSlnComponent;MultipleInstancesComponent;SccmComponent;ActSyncAppComponent;AutorunComponent;CPLAppletComponent;GameUxComponent;SilverlightSlnComponent;FixupComponent;MsiXDiffComponent;MsixManifestEditorComponent"/>
+    <ROW Name="HiddenItems" Value="ActSyncAppComponent;CPLAppletComponent;AppXAppDetailsComponent;FixupComponent;AppXCapabilitiesComponent;AppXDependenciesComponent;AppXProductDetailsComponent;AppXVisualAssetsComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;MsiXDiffComponent;MsixManifestEditorComponent"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
@@ -11,7 +11,7 @@
     <ROW Property="AI_CLEAN_RESOURCES_USER_PROMPT_FULL_UI" Value="0"/>
     <ROW Property="AI_CURRENT_YEAR" Value="2022" ValueLocId="-"/>
     <ROW Property="AI_FINDEXE_TITLE" Value="Select the installation package for [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
-    <ROW Property="AI_PACKAGING_TOOL" Value="Advanced Installer 19.4 build 4648ec91" ValueLocId="-"/>
+    <ROW Property="AI_PACKAGING_TOOL" Value="Advanced Installer 19.9 build de6d6401" ValueLocId="-"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_INTERNET_CONNECTION"/>
     <ROW Property="AI_ThemeStyle" Value="aero" MultiBuildValue="DefaultBuild:classic" MsiKey="AI_ThemeStyle"/>
     <ROW Property="ALLUSERS" Value="1"/>
@@ -19,10 +19,10 @@
     <ROW Property="ARPNOREPAIR" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPPRODUCTICON" Value="DS4W.exe" Type="8"/>
     <ROW Property="AiPreventAutoPin" Value="System.AppUserModel.ExcludeFromShowInNewInstall"/>
-    <ROW Property="Manufacturer" Value="DS4Windows Collective"/>
+    <ROW Property="Manufacturer" Value="Vapour Collective"/>
     <ROW Property="ProductCode" Value="1033:{136DDF28-40B8-444B-8EC3-EF269580F185} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
-    <ROW Property="ProductName" Value="DS4Windows"/>
+    <ROW Property="ProductName" Value="Vapour"/>
     <ROW Property="ProductVersion" Value="1.0.0"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{1AE96879-0427-46CD-B311-E3AA95A3F3D7}"/>
@@ -42,10 +42,10 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
     <ROW Directory="BezierCurveEditor_Dir" Directory_Parent="x64_Dir" DefaultDir="BEZIER~1|BezierCurveEditor"/>
-    <ROW Directory="DS4Windows_Dir" Directory_Parent="ProgramMenuFolder" DefaultDir="DS4WIN~1|DS4Windows"/>
     <ROW Directory="DriverManagement_Dir" Directory_Parent="x64_Dir" DefaultDir="DRIVER~1|DriverManagement"/>
     <ROW Directory="Drivers_Dir" Directory_Parent="DriverManagement_Dir" DefaultDir="Drivers"/>
     <ROW Directory="Hori_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Hori"/>
+    <ROW Directory="Logs_Dir" Directory_Parent="x64_Dir" DefaultDir="Logs"/>
     <ROW Directory="Nacon_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Nacon"/>
     <ROW Directory="Nintendo_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Nintendo"/>
     <ROW Directory="Other_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Other"/>
@@ -55,6 +55,7 @@
     <ROW Directory="Sony_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Sony"/>
     <ROW Directory="StartupFolder" Directory_Parent="TARGETDIR" DefaultDir="STARTU~1|StartupFolder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="Vapour_Dir" Directory_Parent="ProgramMenuFolder" DefaultDir="DS4WIN~1|Vapour"/>
     <ROW Directory="Zeroplus_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Zeroplus"/>
     <ROW Directory="amd64_Dir" Directory_Parent="libwdi_Dir" DefaultDir="amd64"/>
     <ROW Directory="arDZ_Dir" Directory_Parent="x64_Dir" DefaultDir="ar-DZ"/>
@@ -85,28 +86,7 @@
     <ROW Component="DS4WNaconRevolInfinite.inf" ComponentId="{2ED34D05-7873-4AA0-A76C-A9BC8175EBBC}" Directory_="Nacon_Dir" Attributes="0" KeyPath="DS4WNaconRevolInfinite.inf" Type="0"/>
     <ROW Component="DS4WRazerRaijuPS4.inf" ComponentId="{4FFC8F10-33A7-403C-8996-B24C6091F324}" Directory_="Razer_Dir" Attributes="0" KeyPath="DS4WRazerRaijuPS4.inf" Type="0"/>
     <ROW Component="DS4WZeroplusBrookMars.inf" ComponentId="{5754CB9E-BF37-40D5-96A5-67847D115A62}" Directory_="Zeroplus_Dir" Attributes="0" KeyPath="DS4WZeroplusBrookMars.inf" Type="0"/>
-    <ROW Component="DS4Windows" ComponentId="{2BBDD45F-22D9-428C-A914-2B88C0711C40}" Directory_="DS4Windows_Dir" Attributes="0"/>
-    <ROW Component="DS4Windows.Client.Core.Interfaces.dll" ComponentId="{5874FC18-2371-4A7E-A9C1-16EFE36ACF1F}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.Core.Interfaces.dll"/>
-    <ROW Component="DS4Windows.Client.Core.dll" ComponentId="{F967F330-85FF-4C76-9CD2-E4F15D8AE1BF}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.Core.dll"/>
-    <ROW Component="DS4Windows.Client.Modules.Interfaces.dll" ComponentId="{21778BC1-E59D-4317-9B5F-C9719DE5F304}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.Modules.Interfaces.dll"/>
-    <ROW Component="DS4Windows.Client.Modules.dll" ComponentId="{0CCEF390-F6AD-41C1-B680-BEFBB1F56BA2}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.Modules.dll"/>
-    <ROW Component="DS4Windows.Client.ServiceClients.Interfaces.dll" ComponentId="{A5447B2A-2D1E-4DFE-83BD-C9AA5EB74D09}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.ServiceClients.Interfaces.dll"/>
-    <ROW Component="DS4Windows.Client.ServiceClients.dll" ComponentId="{15A9BB17-CE69-40F1-ACB1-B7646211B2E8}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.ServiceClients.dll"/>
-    <ROW Component="DS4Windows.Client.TrayApplication.dll" ComponentId="{28B97327-1DA3-47D2-817E-4C7ECE52E850}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.TrayApplication.dll"/>
-    <ROW Component="DS4Windows.Client.TrayApplication.exe" ComponentId="{912FF3FF-8B1B-4DC2-8446-65690239A51D}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Client.TrayApplication.exe"/>
-    <ROW Component="DS4Windows.Server.Host.dll" ComponentId="{48558201-BCCC-4442-A023-58195482BB1E}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Server.Host.dll"/>
-    <ROW Component="DS4Windows.Server.Host.exe" ComponentId="{901031F7-9B87-4679-8121-277D7DE6C65B}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Server.Host.exe"/>
-    <ROW Component="DS4Windows.Server.Interfaces.dll" ComponentId="{2EEAE682-D068-493B-B5BA-283CD20EC2DF}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Server.Interfaces.dll"/>
-    <ROW Component="DS4Windows.Shared.Common.Interfaces.dll" ComponentId="{33B9B355-C19C-4E99-AA0B-954869E9FFE8}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Shared.Common.Interfaces.dll"/>
-    <ROW Component="DS4Windows.Shared.Common.Util.dll" ComponentId="{B7DFF5BD-39E2-4193-9400-D4160836BEE4}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Shared.Common.Util.dll"/>
-    <ROW Component="DS4Windows.Shared.Common.dll" ComponentId="{1FC993C4-F4F4-4935-8B37-DEA51CA9CB67}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Shared.Common.dll"/>
-    <ROW Component="DS4Windows.Shared.Configuration.Application.dll" ComponentId="{239A4E7B-6084-4A51-8A27-5BC1CEBEC4ED}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Shared.Configuration.Application.dll"/>
-    <ROW Component="DS4Windows.Shared.Configuration.Profiles.Interfaces.dll" ComponentId="{9F2D6693-B4AE-4A51-B6DD-1D12F51D7804}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Shared.Configuration.Profiles.Interfaces.dll"/>
-    <ROW Component="DS4Windows.Shared.Configuration.Profiles.dll" ComponentId="{54FAA12B-E985-4486-BCAD-F64E9AE4DFB8}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Shared.Configuration.Profiles.dll"/>
-    <ROW Component="DS4Windows.Shared.Devices.dll" ComponentId="{20676FA0-0370-431C-B5D2-95846F7028D1}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.Shared.Devices.dll"/>
-    <ROW Component="DS4Windows.dll" ComponentId="{A9092669-E96B-490D-892C-ED834B8980A2}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.dll"/>
-    <ROW Component="DS4Windows.exe" ComponentId="{323424F2-9AF0-4FE8-989D-9C3A6E7D3A23}" Directory_="x64_Dir" Attributes="256" KeyPath="DS4Windows.exe"/>
-    <ROW Component="Ds4Windows.Shared.Devices.Interfaces.dll" ComponentId="{04FA842C-4F71-45BF-99B3-DDBC150AA23B}" Directory_="x64_Dir" Attributes="256" KeyPath="Ds4Windows.Shared.Devices.Interfaces.dll"/>
+    <ROW Component="DS4WindowsClient20221003.log" ComponentId="{447FE579-56E6-46E1-B60C-3CBD590F65B6}" Directory_="Logs_Dir" Attributes="0" KeyPath="DS4WindowsClient20221003.log" Type="0"/>
     <ROW Component="FastDeepCloner.dll" ComponentId="{214525EB-8305-4CF2-8FAB-47606B950D7B}" Directory_="x64_Dir" Attributes="256" KeyPath="FastDeepCloner.dll"/>
     <ROW Component="Hardcodet.NotifyIcon.Wpf.dll" ComponentId="{AC7FBAE4-E53E-48CC-8922-913AA65D7497}" Directory_="x64_Dir" Attributes="256" KeyPath="Hardcodet.NotifyIcon.Wpf.dll"/>
     <ROW Component="JetBrains.Annotations.dll" ComponentId="{9DED28AF-0723-4A94-AC2A-BCF0B4DAF439}" Directory_="x64_Dir" Attributes="256" KeyPath="JetBrains.Annotations.dll"/>
@@ -165,24 +145,47 @@
     <ROW Component="PInvoke.Hid.dll" ComponentId="{084F12AB-4CB3-4E33-984B-79149DEC9D3E}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.Hid.dll"/>
     <ROW Component="PInvoke.Kernel32.dll" ComponentId="{816854D3-2DB1-4DBB-8598-F12DDCBC9C5A}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.Kernel32.dll"/>
     <ROW Component="PInvoke.SetupApi.dll" ComponentId="{60F4C14F-0EFD-4DF7-A151-C525F676BF4D}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.SetupApi.dll"/>
-    <ROW Component="PInvoke.User32.dll" ComponentId="{88858484-4C85-4378-B346-7DDC66286B46}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.User32.dll"/>
     <ROW Component="PInvoke.Windows.Core.dll" ComponentId="{13D46037-86B6-4FFA-8268-B93004C32C6B}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.Windows.Core.dll"/>
-    <ROW Component="PInvoke.Windows.ShellScalingApi.dll" ComponentId="{E4A92FBA-CFC6-4974-91C2-C41C4C72DC9D}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.Windows.ShellScalingApi.dll"/>
     <ROW Component="ProductInformation" ComponentId="{83A89B78-D8C5-4B52-A020-2CA071F7693E}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
     <ROW Component="PropertyChanged.dll" ComponentId="{FF4D785A-AAAD-4A87-983D-3A9DEF9518A9}" Directory_="x64_Dir" Attributes="256" KeyPath="PropertyChanged.dll"/>
+    <ROW Component="Serilog.AspNetCore.dll" ComponentId="{E35A82CD-4D8C-44CC-BD7C-11233F9E7E44}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.AspNetCore.dll"/>
     <ROW Component="Serilog.Extensions.Hosting.dll" ComponentId="{DAD37020-8F17-487E-8C08-7D33D00F42EB}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Extensions.Hosting.dll"/>
     <ROW Component="Serilog.Extensions.Logging.dll" ComponentId="{E3BDD923-AD35-41CE-99C9-08620AA0EBEC}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Extensions.Logging.dll"/>
+    <ROW Component="Serilog.Formatting.Compact.dll" ComponentId="{C053AC50-86E0-4097-9B2F-252A45718D82}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Formatting.Compact.dll"/>
     <ROW Component="Serilog.Settings.Configuration.dll" ComponentId="{9A3CB27D-8AA8-4DF7-B9E2-6BC86870A4AF}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Settings.Configuration.dll"/>
     <ROW Component="Serilog.Sinks.Console.dll" ComponentId="{F3184B46-2179-4926-B5C7-462646786416}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Sinks.Console.dll"/>
+    <ROW Component="Serilog.Sinks.Debug.dll" ComponentId="{4614AF8D-65F6-4319-B767-9B149D26232D}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Sinks.Debug.dll"/>
     <ROW Component="Serilog.Sinks.File.dll" ComponentId="{A7F0C69F-5A99-4C08-B83D-39C3A8DE707E}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Sinks.File.dll"/>
     <ROW Component="Serilog.dll" ComponentId="{A07ABF2F-2D3F-4C27-9894-525D7AD9F9E1}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.dll"/>
     <ROW Component="Swashbuckle.AspNetCore.Swagger.dll" ComponentId="{5AC9B4ED-28C1-4210-BAF0-E668FA2A35FB}" Directory_="x64_Dir" Attributes="256" KeyPath="Swashbuckle.AspNetCore.Swagger.dll"/>
     <ROW Component="Swashbuckle.AspNetCore.SwaggerGen.dll" ComponentId="{6E46E7BF-6010-4B58-9A55-2CC1C035DE30}" Directory_="x64_Dir" Attributes="256" KeyPath="Swashbuckle.AspNetCore.SwaggerGen.dll"/>
     <ROW Component="Swashbuckle.AspNetCore.SwaggerUI.dll" ComponentId="{E6FB17EB-E2C0-431E-91AC-678CA9A14C62}" Directory_="x64_Dir" Attributes="256" KeyPath="Swashbuckle.AspNetCore.SwaggerUI.dll"/>
+    <ROW Component="System.Diagnostics.DiagnosticSource.dll" ComponentId="{A73AE3A1-A25E-411D-87DF-6D13A5DEF06F}" Directory_="x64_Dir" Attributes="256" KeyPath="System.Diagnostics.DiagnosticSource.dll"/>
     <ROW Component="System.Diagnostics.EventLog.Messages.dll" ComponentId="{472B379C-D741-4584-B11F-A597FEE4730B}" Directory_="x64_Dir" Attributes="0" KeyPath="System.Diagnostics.EventLog.Messages.dll"/>
     <ROW Component="System.Reactive.dll" ComponentId="{55806EE5-1B04-4322-B0FC-6E6DE1A37DAC}" Directory_="x64_Dir" Attributes="256" KeyPath="System.Reactive.dll"/>
     <ROW Component="System.ServiceProcess.ServiceController.dll" ComponentId="{337CE73A-B68E-4337-A6DA-4057E415E78E}" Directory_="x64_Dir" Attributes="256" KeyPath="System.ServiceProcess.ServiceController.dll"/>
-    <ROW Component="Validation.dll" ComponentId="{9556C7A5-1C6A-49B6-9F3E-DA6458C29F82}" Directory_="x64_Dir" Attributes="256" KeyPath="Validation.dll"/>
+    <ROW Component="Vapour" ComponentId="{2BBDD45F-22D9-428C-A914-2B88C0711C40}" Directory_="Vapour_Dir" Attributes="0"/>
+    <ROW Component="Vapour.Client.Core.Interfaces.dll" ComponentId="{5874FC18-2371-4A7E-A9C1-16EFE36ACF1F}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.Core.Interfaces.dll"/>
+    <ROW Component="Vapour.Client.Core.dll" ComponentId="{F967F330-85FF-4C76-9CD2-E4F15D8AE1BF}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.Core.dll"/>
+    <ROW Component="Vapour.Client.Modules.Interfaces.dll" ComponentId="{21778BC1-E59D-4317-9B5F-C9719DE5F304}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.Modules.Interfaces.dll"/>
+    <ROW Component="Vapour.Client.Modules.dll" ComponentId="{0CCEF390-F6AD-41C1-B680-BEFBB1F56BA2}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.Modules.dll"/>
+    <ROW Component="Vapour.Client.ServiceClients.Interfaces.dll" ComponentId="{A5447B2A-2D1E-4DFE-83BD-C9AA5EB74D09}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.ServiceClients.Interfaces.dll"/>
+    <ROW Component="Vapour.Client.ServiceClients.dll" ComponentId="{15A9BB17-CE69-40F1-ACB1-B7646211B2E8}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.ServiceClients.dll"/>
+    <ROW Component="Vapour.Client.TrayApplication.dll" ComponentId="{28B97327-1DA3-47D2-817E-4C7ECE52E850}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.TrayApplication.dll"/>
+    <ROW Component="Vapour.Client.TrayApplication.exe" ComponentId="{912FF3FF-8B1B-4DC2-8446-65690239A51D}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.TrayApplication.exe"/>
+    <ROW Component="Vapour.Server.Host.dll" ComponentId="{48558201-BCCC-4442-A023-58195482BB1E}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Server.Host.dll"/>
+    <ROW Component="Vapour.Server.Host.exe" ComponentId="{901031F7-9B87-4679-8121-277D7DE6C65B}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Server.Host.exe"/>
+    <ROW Component="Vapour.Server.Interfaces.dll" ComponentId="{2EEAE682-D068-493B-B5BA-283CD20EC2DF}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Server.Interfaces.dll"/>
+    <ROW Component="Vapour.Shared.Common.Interfaces.dll" ComponentId="{33B9B355-C19C-4E99-AA0B-954869E9FFE8}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Common.Interfaces.dll"/>
+    <ROW Component="Vapour.Shared.Common.Util.dll" ComponentId="{B7DFF5BD-39E2-4193-9400-D4160836BEE4}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Common.Util.dll"/>
+    <ROW Component="Vapour.Shared.Common.dll" ComponentId="{1FC993C4-F4F4-4935-8B37-DEA51CA9CB67}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Common.dll"/>
+    <ROW Component="Vapour.Shared.Configuration.Application.dll" ComponentId="{239A4E7B-6084-4A51-8A27-5BC1CEBEC4ED}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Configuration.Application.dll"/>
+    <ROW Component="Vapour.Shared.Configuration.Profiles.Interfaces.dll" ComponentId="{9F2D6693-B4AE-4A51-B6DD-1D12F51D7804}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Configuration.Profiles.Interfaces.dll"/>
+    <ROW Component="Vapour.Shared.Configuration.Profiles.dll" ComponentId="{54FAA12B-E985-4486-BCAD-F64E9AE4DFB8}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Configuration.Profiles.dll"/>
+    <ROW Component="Vapour.Shared.Devices.Interfaces.dll" ComponentId="{04FA842C-4F71-45BF-99B3-DDBC150AA23B}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Devices.Interfaces.dll"/>
+    <ROW Component="Vapour.Shared.Devices.dll" ComponentId="{20676FA0-0370-431C-B5D2-95846F7028D1}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Devices.dll"/>
+    <ROW Component="Vapour.dll" ComponentId="{A9092669-E96B-490D-892C-ED834B8980A2}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.dll"/>
+    <ROW Component="Vapour.exe" ComponentId="{323424F2-9AF0-4FE8-989D-9C3A6E7D3A23}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.exe"/>
     <ROW Component="Websocket.Client.dll" ComponentId="{05ABBAE3-63E3-454E-B6CD-3093B0F0C59A}" Directory_="x64_Dir" Attributes="256" KeyPath="Websocket.Client.dll"/>
     <ROW Component="WinRT.Runtime.dll" ComponentId="{37CBDB08-77D5-4071-A0B9-9D36C651E602}" Directory_="x64_Dir" Attributes="0" KeyPath="WinRT.Runtime.dll"/>
     <ROW Component="appsettings.Development.json" ComponentId="{2D676E5C-5E48-4243-8FC4-359EB118AA86}" Directory_="x64_Dir" Attributes="0" KeyPath="appsettings.Development.json" Type="0"/>
@@ -242,51 +245,51 @@
     <ROW File="DS4WZeroplusSnakeByteGamePad4S.inf" Component_="DS4WZeroplusBrookMars.inf" FileName="DS4W-Z~2.INF|DS4W-ZeroplusSnakeByteGamePad4S.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Zeroplus\DS4W-ZeroplusSnakeByteGamePad4S.inf" SelfReg="false"/>
     <ROW File="DS4WZeroplusSteelPlayMetalTech.inf" Component_="DS4WZeroplusBrookMars.inf" FileName="DS4W-Z~3.INF|DS4W-ZeroplusSteelPlayMetalTech.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Zeroplus\DS4W-ZeroplusSteelPlayMetalTech.inf" SelfReg="false"/>
     <ROW File="DS4WZeroplusWarriorJoypadJS083.inf" Component_="DS4WZeroplusBrookMars.inf" FileName="DS4W-Z~4.INF|DS4W-ZeroplusWarriorJoypadJS083.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Zeroplus\DS4W-ZeroplusWarriorJoypadJS083.inf" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Core.dll" Component_="DS4Windows.Client.Core.dll" FileName="DS4WIN~1.DLL|DS4Windows.Client.Core.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Core.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Core.Interfaces.dll" Component_="DS4Windows.Client.Core.Interfaces.dll" FileName="DS4WIN~2.DLL|DS4Windows.Client.Core.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Core.Interfaces.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Core.Interfaces.pdb" Component_="DS4Windows.Client.Core.Interfaces.dll" FileName="DS4WIN~1.PDB|DS4Windows.Client.Core.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Core.Interfaces.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Core.pdb" Component_="DS4Windows.Client.Core.dll" FileName="DS4WIN~2.PDB|DS4Windows.Client.Core.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Core.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Modules.dll" Component_="DS4Windows.Client.Modules.dll" FileName="DS4WIN~3.DLL|DS4Windows.Client.Modules.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Modules.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Modules.Interfaces.dll" Component_="DS4Windows.Client.Modules.Interfaces.dll" FileName="DS4WIN~4.DLL|DS4Windows.Client.Modules.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Modules.Interfaces.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Modules.Interfaces.pdb" Component_="DS4Windows.Client.Modules.Interfaces.dll" FileName="DS4WIN~3.PDB|DS4Windows.Client.Modules.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Modules.Interfaces.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.Modules.pdb" Component_="DS4Windows.Client.Modules.dll" FileName="DS4WIN~4.PDB|DS4Windows.Client.Modules.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.Modules.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.ServiceClients.dll" Component_="DS4Windows.Client.ServiceClients.dll" FileName="DS4WIN~5.DLL|DS4Windows.Client.ServiceClients.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.ServiceClients.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.ServiceClients.Interfaces.dll" Component_="DS4Windows.Client.ServiceClients.Interfaces.dll" FileName="DS4WIN~6.DLL|DS4Windows.Client.ServiceClients.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.ServiceClients.Interfaces.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.ServiceClients.Interfaces.pdb" Component_="DS4Windows.Client.ServiceClients.Interfaces.dll" FileName="DS4WIN~5.PDB|DS4Windows.Client.ServiceClients.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.ServiceClients.Interfaces.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.ServiceClients.pdb" Component_="DS4Windows.Client.ServiceClients.dll" FileName="DS4WIN~6.PDB|DS4Windows.Client.ServiceClients.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.ServiceClients.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.TrayApplication.deps.json" Component_="appsettings.Development.json" FileName="DS4WIN~1.JSO|DS4Windows.Client.TrayApplication.deps.json" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.TrayApplication.deps.json" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.TrayApplication.dll" Component_="DS4Windows.Client.TrayApplication.dll" FileName="DS4WIN~7.DLL|DS4Windows.Client.TrayApplication.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.TrayApplication.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.TrayApplication.exe" Component_="DS4Windows.Client.TrayApplication.exe" FileName="DS4WIN~1.EXE|DS4Windows.Client.TrayApplication.exe" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.TrayApplication.exe" SelfReg="false" DigSign="true"/>
-    <ROW File="DS4Windows.Client.TrayApplication.pdb" Component_="DS4Windows.Client.TrayApplication.exe" FileName="DS4WIN~7.PDB|DS4Windows.Client.TrayApplication.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.TrayApplication.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Client.TrayApplication.runtimeconfig.json" Component_="appsettings.Development.json" FileName="DS4WIN~2.JSO|DS4Windows.Client.TrayApplication.runtimeconfig.json" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Client.TrayApplication.runtimeconfig.json" SelfReg="false"/>
-    <ROW File="DS4Windows.deps.json" Component_="appsettings.Development.json" FileName="DS4WIN~3.JSO|DS4Windows.deps.json" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.deps.json" SelfReg="false"/>
-    <ROW File="DS4Windows.dll" Component_="DS4Windows.dll" FileName="DS4WIN~8.DLL|DS4Windows.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.exe" Component_="DS4Windows.exe" FileName="DS4WIN~2.EXE|DS4Windows.exe" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.exe" SelfReg="false" DigSign="true"/>
-    <ROW File="DS4Windows.pdb" Component_="DS4Windows.exe" FileName="DS4WIN~8.PDB|DS4Windows.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.runtimeconfig.json" Component_="appsettings.Development.json" FileName="DS4WIN~4.JSO|DS4Windows.runtimeconfig.json" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.runtimeconfig.json" SelfReg="false"/>
-    <ROW File="DS4Windows.Server.Host.deps.json" Component_="appsettings.Development.json" FileName="DS4WIN~5.JSO|DS4Windows.Server.Host.deps.json" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Server.Host.deps.json" SelfReg="false"/>
-    <ROW File="DS4Windows.Server.Host.dll" Component_="DS4Windows.Server.Host.dll" FileName="DS4WIN~9.DLL|DS4Windows.Server.Host.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Server.Host.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Server.Host.exe" Component_="DS4Windows.Server.Host.exe" FileName="DS4WIN~3.EXE|DS4Windows.Server.Host.exe" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Server.Host.exe" SelfReg="false" DigSign="true"/>
-    <ROW File="DS4Windows.Server.Host.pdb" Component_="DS4Windows.Server.Host.exe" FileName="DS4WIN~9.PDB|DS4Windows.Server.Host.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Server.Host.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Server.Host.runtimeconfig.json" Component_="appsettings.Development.json" FileName="DS4WIN~6.JSO|DS4Windows.Server.Host.runtimeconfig.json" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Server.Host.runtimeconfig.json" SelfReg="false"/>
-    <ROW File="DS4Windows.Server.Interfaces.dll" Component_="DS4Windows.Server.Interfaces.dll" FileName="DS4WI~10.DLL|DS4Windows.Server.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Server.Interfaces.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Server.Interfaces.pdb" Component_="DS4Windows.Server.Interfaces.dll" FileName="DS4WI~10.PDB|DS4Windows.Server.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Server.Interfaces.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Common.dll" Component_="DS4Windows.Shared.Common.dll" FileName="DS4WI~11.DLL|DS4Windows.Shared.Common.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Common.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Common.Interfaces.dll" Component_="DS4Windows.Shared.Common.Interfaces.dll" FileName="DS4WI~12.DLL|DS4Windows.Shared.Common.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Common.Interfaces.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Common.Interfaces.pdb" Component_="DS4Windows.Shared.Common.Interfaces.dll" FileName="DS4WI~11.PDB|DS4Windows.Shared.Common.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Common.Interfaces.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Common.pdb" Component_="DS4Windows.Shared.Common.dll" FileName="DS4WI~12.PDB|DS4Windows.Shared.Common.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Common.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Common.Util.dll" Component_="DS4Windows.Shared.Common.Util.dll" FileName="DS4WI~13.DLL|DS4Windows.Shared.Common.Util.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Common.Util.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Common.Util.pdb" Component_="DS4Windows.Shared.Common.Util.dll" FileName="DS4WI~13.PDB|DS4Windows.Shared.Common.Util.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Common.Util.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Configuration.Application.dll" Component_="DS4Windows.Shared.Configuration.Application.dll" FileName="DS4WI~14.DLL|DS4Windows.Shared.Configuration.Application.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Configuration.Application.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Configuration.Application.pdb" Component_="DS4Windows.Shared.Configuration.Application.dll" FileName="DS4WI~14.PDB|DS4Windows.Shared.Configuration.Application.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Configuration.Application.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Configuration.Profiles.dll" Component_="DS4Windows.Shared.Configuration.Profiles.dll" FileName="DS4WI~15.DLL|DS4Windows.Shared.Configuration.Profiles.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Configuration.Profiles.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Configuration.Profiles.Interfaces.dll" Component_="DS4Windows.Shared.Configuration.Profiles.Interfaces.dll" FileName="DS4WI~16.DLL|DS4Windows.Shared.Configuration.Profiles.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Configuration.Profiles.Interfaces.dll" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Configuration.Profiles.Interfaces.pdb" Component_="DS4Windows.Shared.Configuration.Profiles.Interfaces.dll" FileName="DS4WI~15.PDB|DS4Windows.Shared.Configuration.Profiles.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Configuration.Profiles.Interfaces.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Configuration.Profiles.pdb" Component_="DS4Windows.Shared.Configuration.Profiles.dll" FileName="DS4WI~16.PDB|DS4Windows.Shared.Configuration.Profiles.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Configuration.Profiles.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Devices.dll" Component_="DS4Windows.Shared.Devices.dll" FileName="DS4WI~17.DLL|DS4Windows.Shared.Devices.dll" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Devices.dll" SelfReg="false"/>
-    <ROW File="Ds4Windows.Shared.Devices.Interfaces.dll" Component_="Ds4Windows.Shared.Devices.Interfaces.dll" FileName="DS4WI~18.DLL|Ds4Windows.Shared.Devices.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Ds4Windows.Shared.Devices.Interfaces.dll" SelfReg="false"/>
-    <ROW File="Ds4Windows.Shared.Devices.Interfaces.pdb" Component_="Ds4Windows.Shared.Devices.Interfaces.dll" FileName="DS4WI~17.PDB|Ds4Windows.Shared.Devices.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Ds4Windows.Shared.Devices.Interfaces.pdb" SelfReg="false"/>
-    <ROW File="DS4Windows.Shared.Devices.pdb" Component_="DS4Windows.Shared.Devices.dll" FileName="DS4WI~18.PDB|DS4Windows.Shared.Devices.pdb" Attributes="0" SourcePath="..\Publish\x64\DS4Windows.Shared.Devices.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.Core.dll" Component_="Vapour.Client.Core.dll" FileName="DS4WIN~1.DLL|Vapour.Client.Core.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Core.dll" SelfReg="false"/>
+    <ROW File="Vapour.Client.Core.Interfaces.dll" Component_="Vapour.Client.Core.Interfaces.dll" FileName="DS4WIN~2.DLL|Vapour.Client.Core.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Core.Interfaces.dll" SelfReg="false"/>
+    <ROW File="Vapour.Client.Core.Interfaces.pdb" Component_="Vapour.Client.Core.Interfaces.dll" FileName="DS4WIN~1.PDB|Vapour.Client.Core.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Core.Interfaces.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.Core.pdb" Component_="Vapour.Client.Core.dll" FileName="DS4WIN~2.PDB|Vapour.Client.Core.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Core.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.Modules.dll" Component_="Vapour.Client.Modules.dll" FileName="DS4WIN~3.DLL|Vapour.Client.Modules.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Modules.dll" SelfReg="false"/>
+    <ROW File="Vapour.Client.Modules.Interfaces.dll" Component_="Vapour.Client.Modules.Interfaces.dll" FileName="DS4WIN~4.DLL|Vapour.Client.Modules.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Modules.Interfaces.dll" SelfReg="false"/>
+    <ROW File="Vapour.Client.Modules.Interfaces.pdb" Component_="Vapour.Client.Modules.Interfaces.dll" FileName="DS4WIN~3.PDB|Vapour.Client.Modules.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Modules.Interfaces.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.Modules.pdb" Component_="Vapour.Client.Modules.dll" FileName="DS4WIN~4.PDB|Vapour.Client.Modules.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Modules.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.ServiceClients.dll" Component_="Vapour.Client.ServiceClients.dll" FileName="DS4WIN~5.DLL|Vapour.Client.ServiceClients.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.ServiceClients.dll" SelfReg="false"/>
+    <ROW File="Vapour.Client.ServiceClients.Interfaces.dll" Component_="Vapour.Client.ServiceClients.Interfaces.dll" FileName="DS4WIN~6.DLL|Vapour.Client.ServiceClients.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.ServiceClients.Interfaces.dll" SelfReg="false"/>
+    <ROW File="Vapour.Client.ServiceClients.Interfaces.pdb" Component_="Vapour.Client.ServiceClients.Interfaces.dll" FileName="DS4WIN~5.PDB|Vapour.Client.ServiceClients.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.ServiceClients.Interfaces.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.ServiceClients.pdb" Component_="Vapour.Client.ServiceClients.dll" FileName="DS4WIN~6.PDB|Vapour.Client.ServiceClients.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.ServiceClients.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.TrayApplication.deps.json" Component_="appsettings.Development.json" FileName="DS4WIN~1.JSO|Vapour.Client.TrayApplication.deps.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.TrayApplication.deps.json" SelfReg="false"/>
+    <ROW File="Vapour.Client.TrayApplication.dll" Component_="Vapour.Client.TrayApplication.dll" FileName="DS4WIN~7.DLL|Vapour.Client.TrayApplication.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.TrayApplication.dll" SelfReg="false"/>
+    <ROW File="Vapour.Client.TrayApplication.exe" Component_="Vapour.Client.TrayApplication.exe" FileName="DS4WIN~1.EXE|Vapour.Client.TrayApplication.exe" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.TrayApplication.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="Vapour.Client.TrayApplication.pdb" Component_="Vapour.Client.TrayApplication.exe" FileName="DS4WIN~7.PDB|Vapour.Client.TrayApplication.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.TrayApplication.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Client.TrayApplication.runtimeconfig.json" Component_="appsettings.Development.json" FileName="DS4WIN~2.JSO|Vapour.Client.TrayApplication.runtimeconfig.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.TrayApplication.runtimeconfig.json" SelfReg="false"/>
+    <ROW File="Vapour.deps.json" Component_="appsettings.Development.json" FileName="DS4WIN~3.JSO|Vapour.deps.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.deps.json" SelfReg="false"/>
+    <ROW File="Vapour.dll" Component_="Vapour.dll" FileName="DS4WIN~8.DLL|Vapour.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.dll" SelfReg="false"/>
+    <ROW File="Vapour.exe" Component_="Vapour.exe" FileName="DS4WIN~2.EXE|Vapour.exe" Attributes="0" SourcePath="..\Publish\x64\Vapour.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="Vapour.pdb" Component_="Vapour.exe" FileName="DS4WIN~8.PDB|Vapour.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.pdb" SelfReg="false"/>
+    <ROW File="Vapour.runtimeconfig.json" Component_="appsettings.Development.json" FileName="DS4WIN~4.JSO|Vapour.runtimeconfig.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.runtimeconfig.json" SelfReg="false"/>
+    <ROW File="Vapour.Server.Host.deps.json" Component_="appsettings.Development.json" FileName="DS4WIN~5.JSO|Vapour.Server.Host.deps.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.deps.json" SelfReg="false"/>
+    <ROW File="Vapour.Server.Host.dll" Component_="Vapour.Server.Host.dll" FileName="DS4WIN~9.DLL|Vapour.Server.Host.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.dll" SelfReg="false"/>
+    <ROW File="Vapour.Server.Host.exe" Component_="Vapour.Server.Host.exe" FileName="DS4WIN~3.EXE|Vapour.Server.Host.exe" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="Vapour.Server.Host.pdb" Component_="Vapour.Server.Host.exe" FileName="DS4WIN~9.PDB|Vapour.Server.Host.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Server.Host.runtimeconfig.json" Component_="appsettings.Development.json" FileName="DS4WIN~6.JSO|Vapour.Server.Host.runtimeconfig.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.runtimeconfig.json" SelfReg="false"/>
+    <ROW File="Vapour.Server.Interfaces.dll" Component_="Vapour.Server.Interfaces.dll" FileName="DS4WI~10.DLL|Vapour.Server.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Interfaces.dll" SelfReg="false"/>
+    <ROW File="Vapour.Server.Interfaces.pdb" Component_="Vapour.Server.Interfaces.dll" FileName="DS4WI~10.PDB|Vapour.Server.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Interfaces.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Common.dll" Component_="Vapour.Shared.Common.dll" FileName="DS4WI~11.DLL|Vapour.Shared.Common.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Common.Interfaces.dll" Component_="Vapour.Shared.Common.Interfaces.dll" FileName="DS4WI~12.DLL|Vapour.Shared.Common.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.Interfaces.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Common.Interfaces.pdb" Component_="Vapour.Shared.Common.Interfaces.dll" FileName="DS4WI~11.PDB|Vapour.Shared.Common.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.Interfaces.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Common.pdb" Component_="Vapour.Shared.Common.dll" FileName="DS4WI~12.PDB|Vapour.Shared.Common.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Common.Util.dll" Component_="Vapour.Shared.Common.Util.dll" FileName="DS4WI~13.DLL|Vapour.Shared.Common.Util.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.Util.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Common.Util.pdb" Component_="Vapour.Shared.Common.Util.dll" FileName="DS4WI~13.PDB|Vapour.Shared.Common.Util.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.Util.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Configuration.Application.dll" Component_="Vapour.Shared.Configuration.Application.dll" FileName="DS4WI~14.DLL|Vapour.Shared.Configuration.Application.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Application.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Configuration.Application.pdb" Component_="Vapour.Shared.Configuration.Application.dll" FileName="DS4WI~14.PDB|Vapour.Shared.Configuration.Application.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Application.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Configuration.Profiles.dll" Component_="Vapour.Shared.Configuration.Profiles.dll" FileName="DS4WI~15.DLL|Vapour.Shared.Configuration.Profiles.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Profiles.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Configuration.Profiles.Interfaces.dll" Component_="Vapour.Shared.Configuration.Profiles.Interfaces.dll" FileName="DS4WI~16.DLL|Vapour.Shared.Configuration.Profiles.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Profiles.Interfaces.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Configuration.Profiles.Interfaces.pdb" Component_="Vapour.Shared.Configuration.Profiles.Interfaces.dll" FileName="DS4WI~15.PDB|Vapour.Shared.Configuration.Profiles.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Profiles.Interfaces.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Configuration.Profiles.pdb" Component_="Vapour.Shared.Configuration.Profiles.dll" FileName="DS4WI~16.PDB|Vapour.Shared.Configuration.Profiles.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Profiles.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Devices.dll" Component_="Vapour.Shared.Devices.dll" FileName="DS4WI~17.DLL|Vapour.Shared.Devices.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Devices.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Devices.Interfaces.dll" Component_="Vapour.Shared.Devices.Interfaces.dll" FileName="DS4WI~18.DLL|Vapour.Shared.Devices.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Devices.Interfaces.dll" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Devices.Interfaces.pdb" Component_="Vapour.Shared.Devices.Interfaces.dll" FileName="DS4WI~17.PDB|Vapour.Shared.Devices.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Devices.Interfaces.pdb" SelfReg="false"/>
+    <ROW File="Vapour.Shared.Devices.pdb" Component_="Vapour.Shared.Devices.dll" FileName="DS4WI~18.PDB|Vapour.Shared.Devices.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Devices.pdb" SelfReg="false"/>
     <ROW File="FastDeepCloner.dll" Component_="FastDeepCloner.dll" FileName="FASTDE~1.DLL|FastDeepCloner.dll" Attributes="0" SourcePath="..\Publish\x64\FastDeepCloner.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_14" Component_="MaterialDesignExtensions.resources.dll_14" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\fr\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_15" Component_="MaterialDesignExtensions.resources.dll_15" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\fr-FR\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
@@ -340,9 +343,7 @@
     <ROW File="PInvoke.Hid.dll" Component_="PInvoke.Hid.dll" FileName="PINVOK~1.DLL|PInvoke.Hid.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.Hid.dll" SelfReg="false"/>
     <ROW File="PInvoke.Kernel32.dll" Component_="PInvoke.Kernel32.dll" FileName="PINVOK~2.DLL|PInvoke.Kernel32.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.Kernel32.dll" SelfReg="false"/>
     <ROW File="PInvoke.SetupApi.dll" Component_="PInvoke.SetupApi.dll" FileName="PINVOK~3.DLL|PInvoke.SetupApi.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.SetupApi.dll" SelfReg="false"/>
-    <ROW File="PInvoke.User32.dll" Component_="PInvoke.User32.dll" FileName="PINVOK~4.DLL|PInvoke.User32.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.User32.dll" SelfReg="false"/>
     <ROW File="PInvoke.Windows.Core.dll" Component_="PInvoke.Windows.Core.dll" FileName="PINVOK~5.DLL|PInvoke.Windows.Core.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.Windows.Core.dll" SelfReg="false"/>
-    <ROW File="PInvoke.Windows.ShellScalingApi.dll" Component_="PInvoke.Windows.ShellScalingApi.dll" FileName="PINVOK~6.DLL|PInvoke.Windows.ShellScalingApi.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.Windows.ShellScalingApi.dll" SelfReg="false"/>
     <ROW File="PropertyChanged.dll" Component_="PropertyChanged.dll" FileName="PROPER~1.DLL|PropertyChanged.dll" Attributes="0" SourcePath="..\Publish\x64\PropertyChanged.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_16" Component_="MaterialDesignExtensions.resources.dll_16" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\pt\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_17" Component_="MaterialDesignExtensions.resources.dll_17" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\pt-BR\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
@@ -362,14 +363,18 @@
     <ROW File="System.Reactive.xml" Component_="appsettings.Development.json" FileName="SYSTEM~1.XML|System.Reactive.xml" Attributes="0" SourcePath="..\Publish\x64\System.Reactive.xml" SelfReg="false"/>
     <ROW File="System.ServiceProcess.ServiceController.dll" Component_="System.ServiceProcess.ServiceController.dll" FileName="SYSTEM~3.DLL|System.ServiceProcess.ServiceController.dll" Attributes="0" SourcePath="..\Publish\x64\System.ServiceProcess.ServiceController.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_20" Component_="MaterialDesignExtensions.resources.dll_20" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\uz-Latn-UZ\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
-    <ROW File="Validation.dll" Component_="Validation.dll" FileName="VALIDA~1.DLL|Validation.dll" Attributes="0" SourcePath="..\Publish\x64\Validation.dll" SelfReg="false"/>
     <ROW File="Websocket.Client.dll" Component_="Websocket.Client.dll" FileName="WEBSOC~1.DLL|Websocket.Client.dll" Attributes="0" SourcePath="..\Publish\x64\Websocket.Client.dll" SelfReg="false"/>
     <ROW File="WinRT.Runtime.dll" Component_="WinRT.Runtime.dll" FileName="WINRTR~1.DLL|WinRT.Runtime.dll" Attributes="0" SourcePath="..\Publish\x64\WinRT.Runtime.dll" SelfReg="false"/>
+    <ROW File="DS4WindowsClient20221003.log" Component_="DS4WindowsClient20221003.log" FileName="DS4WIN~1.LOG|DS4Windows-Client20221003.log" Attributes="0" SourcePath="..\Publish\x64\Logs\DS4Windows-Client20221003.log" SelfReg="false"/>
+    <ROW File="Serilog.AspNetCore.dll" Component_="Serilog.AspNetCore.dll" FileName="SERILO~6.DLL|Serilog.AspNetCore.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.AspNetCore.dll" SelfReg="false"/>
+    <ROW File="Serilog.Formatting.Compact.dll" Component_="Serilog.Formatting.Compact.dll" FileName="SERILO~7.DLL|Serilog.Formatting.Compact.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.Formatting.Compact.dll" SelfReg="false"/>
+    <ROW File="Serilog.Sinks.Debug.dll" Component_="Serilog.Sinks.Debug.dll" FileName="SERILO~8.DLL|Serilog.Sinks.Debug.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.Sinks.Debug.dll" SelfReg="false"/>
+    <ROW File="System.Diagnostics.DiagnosticSource.dll" Component_="System.Diagnostics.DiagnosticSource.dll" FileName="SYSTEM~4.DLL|System.Diagnostics.DiagnosticSource.dll" Attributes="0" SourcePath="..\Publish\x64\System.Diagnostics.DiagnosticSource.dll" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
-    <ROW MsiShortcutProperty="DS4Windows.Client.TrayApplication0" Shortcut_="DS4Windows.Client.TrayApplication" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
-    <ROW MsiShortcutProperty="DS4Windows.Client.TrayApplication_11" Shortcut_="DS4Windows.Client.TrayApplication_1" PropertyKey="[AiPreventAutoPin]" PropVariantValue="1"/>
-    <ROW MsiShortcutProperty="DS4Windows.Client.TrayApplication_10" Shortcut_="DS4Windows.Client.TrayApplication_1" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
+    <ROW MsiShortcutProperty="Vapour.Client.TrayApplication0" Shortcut_="Vapour.Client.TrayApplication" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
+    <ROW MsiShortcutProperty="Vapour.Client.TrayApplication_11" Shortcut_="Vapour.Client.TrayApplication_1" PropertyKey="[AiPreventAutoPin]" PropVariantValue="1"/>
+    <ROW MsiShortcutProperty="Vapour.Client.TrayApplication_10" Shortcut_="Vapour.Client.TrayApplication_1" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
@@ -381,7 +386,7 @@
     <ROW Action="AI_DetectSoftware" Sequence="151"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="Setup Files x64" Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="Images\DS4W.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" ExtUI="true" UseLargeSchema="true" ExeName="DS4Windows Setup (x64)" MsiPackageType="x64" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="Setup Files x64" Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="Images\DS4W.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" ExtUI="true" UseLargeSchema="true" ExeName="Vapour Setup (x64)" MsiPackageType="x64" UACExecutionLevel="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
     <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
@@ -414,6 +419,9 @@
     <ROW Action="AI_AiRemoveFilesDeferred_Undoable" Description="Preparing files for removal" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred_Undoable" Template="Preparing file: [1]" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred_Undoable"/>
     <ROW Action="AI_AiRemoveFilesDeferred_Undoable_Impersonate" Description="Preparing files for removal" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred_Undoable" Template="Preparing file: [1]" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred_Undoable"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Description="Preparing files for removal" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesImmediate" Template="Preparing file: [1]" TemplateLocId="ActionText.Template.AI_AiRemoveFilesImmediate"/>
+    <ROW Action="AI_AiRemoveFilesRebootDeferred" Description="ActionText.Description.AI_AiRemoveFilesRebootDeferred" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRebootDeferred"/>
+    <ROW Action="AI_AiRemoveFilesRebootImmediate" Description="ActionText.Description.AI_AiRemoveFilesRebootImmediate" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRebootImmediate"/>
+    <ROW Action="AI_AiRemoveFilesRebootRollback" Description="ActionText.Description.AI_AiRemoveFilesRebootRollback" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRebootRollback"/>
     <ROW Action="AI_AiRemoveFilesRollback" Description="Restoring removed files" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRollback" Template="Restoring file: [1]" TemplateLocId="ActionText.Template.AI_AiRemoveFilesRollback"/>
     <ROW Action="AI_AiRemoveFilesRollback_Impersonate" Description="Restoring removed files" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRollback" Template="Restoring file: [1]" TemplateLocId="ActionText.Template.AI_AiRemoveFilesRollback"/>
     <ROW Action="AI_DeleteLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
@@ -461,7 +469,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="APPDIR" Component_="APPDIR" ManualDelete="true"/>
-    <ROW Directory_="DS4Windows_Dir" Component_="DS4Windows" ManualDelete="false"/>
+    <ROW Directory_="Vapour_Dir" Component_="Vapour" ManualDelete="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesCommit" WithoutSeq="true"/>
@@ -471,13 +479,16 @@
     <ROW Action="AI_AiRemoveFilesDeferred_Undoable" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesUndoable" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesDeferred_Undoable_Impersonate" Type="9217" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesUndoableImpersonate" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesImmediate"/>
+    <ROW Action="AI_AiRemoveFilesRebootDeferred" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesRebootDeferred" WithoutSeq="true"/>
+    <ROW Action="AI_AiRemoveFilesRebootImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesRebootImmediate"/>
+    <ROW Action="AI_AiRemoveFilesRebootRollback" Type="11521" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesRebootRollback" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesRollback" Type="11521" Source="ResourceCleaner.dll" Target="OnAiUndoRemoveFiles" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesRollback_Impersonate" Type="9473" Source="ResourceCleaner.dll" Target="OnAiUndoRemoveFilesImpersonate" WithoutSeq="true"/>
     <ROW Action="AI_AppSearchEx" Type="1" Source="Prereq.dll" Target="DoAppSearchEx"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="CustomActionData" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="DS4Windows.exe"/>
-    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="DS4Windows.Client.TrayApplication.exe"/>
+    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Vapour.exe"/>
+    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="Vapour.Client.TrayApplication.exe"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -499,11 +510,11 @@
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="AI_SelectAutoPinOption" Type="51" Source="AiPreventAutoPin" Target="System.AppUserModel.StartPinOption"/>
     <ROW Action="CloseApplication" Type="1" Source="aicustact.dll" Target="CloseApplication" Options="1" AdditionalSeq="AI_DATA_SETTER_1"/>
-    <ROW Action="DS4Windows.Client.TrayApplication.exe" Type="1234" Source="DS4Windows.Client.TrayApplication.exe"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFiles64Folder][Manufacturer]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
     <ROW Action="StopProcess" Type="1" Source="aicustact.dll" Target="StopProcess" Options="1" AdditionalSeq="AI_DATA_SETTER_2"/>
+    <ROW Action="Vapour.Client.TrayApplication.exe" Type="1234" Source="Vapour.Client.TrayApplication.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatCompsComponent">
     <ROW Feature_="MainFeature" Component_="APPDIR"/>
@@ -525,27 +536,27 @@
     <ROW Feature_="MainFeature" Component_="DS4WRazerRaijuPS4.inf"/>
     <ROW Feature_="MainFeature" Component_="DS4WCronusMaxPS4Mode.inf"/>
     <ROW Feature_="MainFeature" Component_="DS4WZeroplusBrookMars.inf"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.Core.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.Core.Interfaces.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.Modules.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.Modules.Interfaces.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.ServiceClients.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.ServiceClients.Interfaces.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.TrayApplication.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Client.TrayApplication.exe"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.exe"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Server.Host.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Server.Host.exe"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Server.Interfaces.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Shared.Common.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Shared.Common.Interfaces.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Shared.Common.Util.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Shared.Configuration.Application.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Shared.Configuration.Profiles.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Shared.Configuration.Profiles.Interfaces.dll"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows.Shared.Devices.dll"/>
-    <ROW Feature_="MainFeature" Component_="Ds4Windows.Shared.Devices.Interfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.Core.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.Core.Interfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.Modules.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.Modules.Interfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.ServiceClients.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.ServiceClients.Interfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.TrayApplication.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Client.TrayApplication.exe"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.exe"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Server.Host.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Server.Host.exe"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Server.Interfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Common.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Common.Interfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Common.Util.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Configuration.Application.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Configuration.Profiles.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Configuration.Profiles.Interfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Devices.dll"/>
+    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Devices.Interfaces.dll"/>
     <ROW Feature_="MainFeature" Component_="FastDeepCloner.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_14"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_15"/>
@@ -599,9 +610,7 @@
     <ROW Feature_="MainFeature" Component_="PInvoke.Hid.dll"/>
     <ROW Feature_="MainFeature" Component_="PInvoke.Kernel32.dll"/>
     <ROW Feature_="MainFeature" Component_="PInvoke.SetupApi.dll"/>
-    <ROW Feature_="MainFeature" Component_="PInvoke.User32.dll"/>
     <ROW Feature_="MainFeature" Component_="PInvoke.Windows.Core.dll"/>
-    <ROW Feature_="MainFeature" Component_="PInvoke.Windows.ShellScalingApi.dll"/>
     <ROW Feature_="MainFeature" Component_="PropertyChanged.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_16"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_17"/>
@@ -620,11 +629,15 @@
     <ROW Feature_="MainFeature" Component_="System.Reactive.dll"/>
     <ROW Feature_="MainFeature" Component_="System.ServiceProcess.ServiceController.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_20"/>
-    <ROW Feature_="MainFeature" Component_="Validation.dll"/>
     <ROW Feature_="MainFeature" Component_="Websocket.Client.dll"/>
     <ROW Feature_="MainFeature" Component_="WinRT.Runtime.dll"/>
     <ROW Feature_="MainFeature" Component_="AI_ExePath"/>
-    <ROW Feature_="MainFeature" Component_="DS4Windows"/>
+    <ROW Feature_="MainFeature" Component_="Vapour"/>
+    <ROW Feature_="MainFeature" Component_="DS4WindowsClient20221003.log"/>
+    <ROW Feature_="MainFeature" Component_="Serilog.AspNetCore.dll"/>
+    <ROW Feature_="MainFeature" Component_="Serilog.Formatting.Compact.dll"/>
+    <ROW Feature_="MainFeature" Component_="Serilog.Sinks.Debug.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Diagnostics.DiagnosticSource.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="DS4W.exe" SourcePath="Images\DS4W.ico" Index="0"/>
@@ -650,13 +663,14 @@
     <ROW Action="AI_DATA_SETTER" Sequence="1398"/>
     <ROW Action="AI_AppSearchEx" Sequence="102"/>
     <ROW Action="AI_DetectSoftware" Sequence="101"/>
-    <ROW Action="DS4Windows.Client.TrayApplication.exe" Condition="( ( NOT Installed ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) )" Sequence="6401"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
+    <ROW Action="Vapour.Client.TrayApplication.exe" Condition="( ( NOT Installed ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) )" Sequence="6401"/>
     <ROW Action="AI_SelectAutoPinOption" Condition="VersionNT &gt; 601" Sequence="1401"/>
     <ROW Action="CloseApplication" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1202"/>
     <ROW Action="AI_DATA_SETTER_1" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1201"/>
     <ROW Action="StopProcess" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1204"/>
     <ROW Action="AI_DATA_SETTER_2" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1203"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3498"/>
+    <ROW Action="AI_AiRemoveFilesRebootImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -696,18 +710,18 @@
     <ROW Registry="Version" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
-    <ROW FileKey="_" Component_="DS4Windows.Shared.Common.Util.dll" DirProperty="APPDIR" InstallMode="2"/>
+    <ROW FileKey="_" Component_="Vapour.Shared.Common.Util.dll" DirProperty="APPDIR" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiServCtrlComponent">
-    <ROW ServiceControl="DS4Windows.Server.Host.exe" Name="DS4WService" Event="161" Wait="0" Component_="DS4Windows.Server.Host.exe"/>
+    <ROW ServiceControl="Vapour.Server.Host.exe" Name="DS4WService" Event="161" Wait="0" Component_="Vapour.Server.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiServInstComponent">
-    <ROW ServiceInstall="DS4Windows.Server.Host.exe" Name="DS4WService" DisplayName="DS4WService" ServiceType="16" StartType="2" ErrorControl="1" Component_="DS4Windows.Server.Host.exe"/>
+    <ROW ServiceInstall="Vapour.Server.Host.exe" Name="DS4WService" DisplayName="DS4WService" ServiceType="16" StartType="2" ErrorControl="1" Component_="Vapour.Server.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
-    <ROW Shortcut="DS4Windows" Directory_="DS4Windows_Dir" Name="DS4WIN~1|DS4Windows" Component_="DS4Windows.exe" Target="[#DS4Windows.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="x64_Dir"/>
-    <ROW Shortcut="DS4Windows.Client.TrayApplication" Directory_="StartupFolder" Name="DS4WIN~2|DS4Windows Tray Startup" Component_="DS4Windows.Client.TrayApplication.exe" Target="[#DS4Windows.Client.TrayApplication.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="x64_Dir"/>
-    <ROW Shortcut="DS4Windows.Client.TrayApplication_1" Directory_="DS4Windows_Dir" Name="DS4WIN~1|DS4Windows Tray" Component_="DS4Windows.Client.TrayApplication.exe" Target="[#DS4Windows.Client.TrayApplication.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="x64_Dir"/>
+    <ROW Shortcut="Vapour" Directory_="Vapour_Dir" Name="DS4WIN~1|Vapour" Component_="Vapour.exe" Target="[#Vapour.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="x64_Dir"/>
+    <ROW Shortcut="Vapour.Client.TrayApplication" Directory_="StartupFolder" Name="DS4WIN~2|Vapour Tray Startup" Component_="Vapour.Client.TrayApplication.exe" Target="[#Vapour.Client.TrayApplication.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="x64_Dir"/>
+    <ROW Shortcut="Vapour.Client.TrayApplication_1" Directory_="Vapour_Dir" Name="DS4WIN~1|Vapour Tray" Component_="Vapour.Client.TrayApplication.exe" Target="[#Vapour.Client.TrayApplication.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="x64_Dir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="classic"/>
