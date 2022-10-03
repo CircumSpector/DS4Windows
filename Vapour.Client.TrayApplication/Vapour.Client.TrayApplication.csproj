@@ -4,6 +4,7 @@
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>DS4W.ico</ApplicationIcon>
+		<AssemblyName>Vapour.Client.TrayApplication</AssemblyName>
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
