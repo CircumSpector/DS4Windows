@@ -39,7 +39,7 @@ after_build:
 - ps: Installer/PostBuild.ps1
 test: off
 cache:
-- '%USERPROFILE%\.nuget\packages' -> appveyor.yml
+- '%USERPROFILE%\.nuget\packages -> appveyor.yml'
 - .\vpatch.exe
 artifacts:
   - path: "artifacts\\Vapour*.exe"
