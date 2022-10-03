@@ -55,8 +55,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{E0C6C856-E3FB-4381-ADFA-F2AC46301965}"
 	ProjectSection(SolutionItems) = preProject
 		Installer\Build.ps1 = Installer\Build.ps1
-		Installer\Vapour.Installer.aip = Installer\Vapour.Installer.aip
 		Installer\PostBuild.ps1 = Installer\PostBuild.ps1
+		Installer\Vapour.Installer.aip = Installer\Vapour.Installer.aip
 	EndProjectSection
 EndProject
 Global
