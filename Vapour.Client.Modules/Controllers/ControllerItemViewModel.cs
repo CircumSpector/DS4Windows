@@ -14,7 +14,7 @@ namespace Vapour.Client.Modules.Controllers
 {
     public class ControllerItemViewModel : ViewModel<IControllerItemViewModel>, IControllerItemViewModel
     {
-        private const string imageLocationRoot = "pack://application:,,,/DS4Windows.Client.Modules;component/Controllers/Images";
+        private const string imageLocationRoot = "pack://application:,,,/Vapour.Client.Modules;component/Controllers/Images";
         private readonly IMapper mapper;
         public static BitmapImage dualSenseImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/dualsense.jpg", UriKind.Absolute));
         public static BitmapImage dualShockV2ImageLocation = new BitmapImage(new Uri($"{imageLocationRoot}/dualshockv2.jpg", UriKind.Absolute));
