@@ -9,4 +9,4 @@ if (Test-Path -Path $publishFolder)
 	Remove-Item -Path $publishFolder -Recurse
 }
 
-dotnet publish ($env:APPVEYOR_BUILD_FOLDER + "/DS4WindowsWPF.sln") /p:PlatformTarget=$env:PlATFORM /p:PublishProfile=release-win-$env:PlATFORM
+dotnet publish ($env:APPVEYOR_BUILD_FOLDER + "/Vapour.sln") /p:PlatformTarget=$env:PlATFORM /p:PublishProfile=release-win-$env:PlATFORM
