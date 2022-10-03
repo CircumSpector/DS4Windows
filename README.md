@@ -54,6 +54,9 @@ If you **want to see this project succeed** give it a GitHub star to show intere
 - Install latest [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 - Build the solution in Visual Studio
   - Dependencies are pulled in automatically via NuGet
+- To create a production release, use the command line:  
+  `dotnet publish /p:PublishProfile=Properties\PublishProfiles\release-win-x64.pubxml`  
+  ⚠️ this will fail when triggered via Visual Studio due to a pending issue ⚠️
 
 ## Sponsors
 
