@@ -1,5 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Text;
+using Windows.Win32;
 
 namespace Vapour.Shared.Devices.Util;
 
@@ -8,61 +8,51 @@ namespace Vapour.Shared.Devices.Util;
 /// </summary>
 public static class VolumeHelper
 {
-    [DllImport("kernel32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetVolumePathNamesForVolumeNameW(
-        [MarshalAs(UnmanagedType.LPWStr)] string lpszVolumeName,
-        [MarshalAs(UnmanagedType.LPWStr)] [Out]
-        StringBuilder lpszVolumeNamePaths, uint cchBuferLength,
-        ref uint lpcchReturnLength);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern IntPtr FindFirstVolume([Out] StringBuilder lpszVolumeName,
-        uint cchBufferLength);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool FindNextVolume(IntPtr hFindVolume, [Out] StringBuilder lpszVolumeName,
-        uint cchBufferLength);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern uint QueryDosDevice(string lpDeviceName, StringBuilder lpTargetPath, int ucchMax);
-
     /// <summary>
     ///     Curates and returns a collection of volume to path mappings.
     /// </summary>
     /// <returns>A collection of <see cref="VolumeMeta" />.</returns>
-    private static IEnumerable<VolumeMeta> GetVolumeMappings()
+    private static unsafe IEnumerable<VolumeMeta> GetVolumeMappings()
     {
-        var volumeName = new StringBuilder(ushort.MaxValue);
-        var pathName = new StringBuilder(ushort.MaxValue);
-        var mountPoint = new StringBuilder(ushort.MaxValue);
-        uint returnLength = 0;
+        var volumeName = stackalloc char[ushort.MaxValue];
+        var pathName = stackalloc char[ushort.MaxValue];
+        var mountPoint = stackalloc char[ushort.MaxValue];
 
-        var volumeHandle = FindFirstVolume(volumeName, ushort.MaxValue);
+        var volumeHandle = PInvoke.FindFirstVolume(volumeName, ushort.MaxValue);
+
+        var list = new List<VolumeMeta>();
 
         do
         {
-            var volume = volumeName.ToString();
+            var volume = new string(volumeName);
 
-            if (!GetVolumePathNamesForVolumeNameW(volume, mountPoint, ushort.MaxValue, ref returnLength))
+            if (!PInvoke.GetVolumePathNamesForVolumeName(
+                    volume,
+                    mountPoint,
+                    ushort.MaxValue,
+                    out var returnLength
+                )
+               )
                 continue;
 
             // Extract volume name for use with QueryDosDevice
             var deviceName = volume.Substring(4, volume.Length - 1 - 4);
 
             // Grab device path
-            returnLength = QueryDosDevice(deviceName, pathName, ushort.MaxValue);
+            returnLength = PInvoke.QueryDosDevice(deviceName, pathName, ushort.MaxValue);
 
             if (returnLength <= 0)
                 continue;
 
-            yield return new VolumeMeta
+            list.Add(new VolumeMeta
             {
-                DriveLetter = mountPoint.ToString(),
+                DriveLetter = new string(mountPoint),
                 VolumeName = volume,
-                DevicePath = pathName.ToString()
-            };
-        } while (FindNextVolume(volumeHandle, volumeName, ushort.MaxValue));
+                DevicePath = new string(pathName)
+            });
+        } while (PInvoke.FindNextVolume(volumeHandle, volumeName, ushort.MaxValue));
+
+        return list.ToArray();
     }
 
     /// <summary>
@@ -169,10 +159,10 @@ public static class VolumeHelper
 
     private class VolumeMeta
     {
-        public string DriveLetter { get; set; }
+        public string DriveLetter { get; init; }
 
-        public string VolumeName { get; set; }
+        public string VolumeName { get; init; }
 
-        public string DevicePath { get; set; }
+        public string DevicePath { get; init; }
     }
 }

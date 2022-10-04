@@ -20,3 +20,7 @@ GetOverlappedResult
 GetOverlappedResultEx
 WIN32_ERROR
 CM_Get_Device_ID
+GetVolumePathNamesForVolumeName
+FindFirstVolume
+FindNextVolume
+QueryDosDevice
