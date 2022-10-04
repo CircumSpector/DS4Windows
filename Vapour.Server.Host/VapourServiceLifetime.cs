@@ -1,5 +1,9 @@
 ﻿using System.ServiceProcess;
 
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.System.RemoteDesktop;
+
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.Extensions.Options;
 
@@ -9,17 +13,14 @@ using Vapour.Server.Controller;
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Devices.HostedServices;
 
-using Windows.Win32;
-using Windows.Win32.System.RemoteDesktop;
-
 namespace Vapour.Server.Host;
 
 public sealed class DS4WindowsServiceLifetime : WindowsServiceLifetime
 {
     private const string SYSTEM = "SYSTEM";
-    private readonly ControllerManagerHost controllerHost;
-    private readonly IGlobalStateService globalStateService;
-    private readonly IControllerMessageForwarder controllerMessageForwarder;
+    private readonly ControllerManagerHost _controllerHost;
+    private readonly IControllerMessageForwarder _controllerMessageForwarder;
+    private readonly IGlobalStateService _globalStateService;
 
     public DS4WindowsServiceLifetime(
         IHostEnvironment environment,
@@ -29,24 +30,25 @@ public sealed class DS4WindowsServiceLifetime : WindowsServiceLifetime
         IOptions<WindowsServiceLifetimeOptions> windowsServiceOptionsAccessor,
         ControllerManagerHost controllerHost,
         IGlobalStateService globalStateService,
-        IControllerMessageForwarder controllerMessageForwarder) : base(environment, applicationLifetime, loggerFactory, optionsAccessor, windowsServiceOptionsAccessor)
+        IControllerMessageForwarder controllerMessageForwarder) : base(environment, applicationLifetime, loggerFactory,
+        optionsAccessor, windowsServiceOptionsAccessor)
     {
         ControllerManagerHost.IsEnabled = true;
         CanHandleSessionChangeEvent = true;
         CanShutdown = true;
         CanStop = true;
-        this.controllerHost = controllerHost;
-        this.globalStateService = globalStateService;
-        this.controllerMessageForwarder = controllerMessageForwarder;
+        _controllerHost = controllerHost;
+        _globalStateService = globalStateService;
+        _controllerMessageForwarder = controllerMessageForwarder;
     }
 
     protected override void OnStart(string[] args)
     {
         base.OnStart(args);
-        var currentSession = PInvoke.WTSGetActiveConsoleSessionId();
+        uint currentSession = PInvoke.WTSGetActiveConsoleSessionId();
         if (currentSession != 0)
         {
-            var userName = GetUsername((int)currentSession);
+            string userName = GetUsername((int)currentSession);
             Log.Debug($"On start user session {userName} found");
             if (userName != SYSTEM)
             {
@@ -56,7 +58,7 @@ public sealed class DS4WindowsServiceLifetime : WindowsServiceLifetime
         }
         else
         {
-            Log.Debug($"No user session found on start, do not start controller host");
+            Log.Debug("No user session found on start, do not start controller host");
         }
     }
 
@@ -71,12 +73,12 @@ public sealed class DS4WindowsServiceLifetime : WindowsServiceLifetime
         Log.Debug($"lifetime session change {changeDescription.Reason}");
         base.OnSessionChange(changeDescription);
 
-        if (changeDescription.Reason == SessionChangeReason.SessionLogon || changeDescription.Reason == SessionChangeReason.SessionUnlock)
+        if (changeDescription.Reason == SessionChangeReason.SessionLogon ||
+            changeDescription.Reason == SessionChangeReason.SessionUnlock)
         {
-            var userName = GetUsername(changeDescription.SessionId);
+            string userName = GetUsername(changeDescription.SessionId);
             Log.Debug($"found current user {userName}");
             StartHost(userName);
-
         }
         else if (changeDescription.Reason == SessionChangeReason.SessionLogoff ||
                  changeDescription.Reason == SessionChangeReason.SessionLock)
@@ -87,31 +89,33 @@ public sealed class DS4WindowsServiceLifetime : WindowsServiceLifetime
 
     private async void StartHost(string currentUserName)
     {
-        if (!controllerHost.IsRunning)
+        if (!_controllerHost.IsRunning)
         {
-            globalStateService.CurrentUserName = currentUserName;
+            _globalStateService.CurrentUserName = currentUserName;
             Log.Debug("starting controller host");
-            await controllerHost.StartAsync();
+            await _controllerHost.StartAsync();
         }
     }
 
     private async Task StopHost()
     {
-        if (controllerHost.IsRunning)
+        if (_controllerHost.IsRunning)
         {
             Log.Debug("stopping controller host");
-            await controllerHost.StopAsync();
+            await _controllerHost.StopAsync();
         }
     }
 
     private static unsafe string GetUsername(int sessionId)
     {
         string username = "SYSTEM";
-        if (PInvoke.WTSQuerySessionInformation(null, (uint)sessionId, WTS_INFO_CLASS.WTSUserName, out var buffer, out var strLen) && strLen > 1)
+        if (PInvoke.WTSQuerySessionInformation(null, (uint)sessionId, WTS_INFO_CLASS.WTSUserName, out PWSTR buffer,
+                out uint strLen) && strLen > 1)
         {
             username = new string(buffer.Value);
             PInvoke.WTSFreeMemory(buffer);
         }
+
         return username;
     }
 }

@@ -16,28 +16,31 @@ namespace Vapour.Client.ServiceClients;
 
 public class ControllerServiceClient : IControllerServiceClient
 {
-    private readonly IHttpClientFactory clientFactory;
-    private Action<ControllerConnectedMessage> connectedAction;
-    private Action<ControllerDisconnectedMessage> disconnectedAction;
-    private Action<IsHostRunningChangedMessage> hostRunningHandler;
-    private WebsocketClient websocketClient;
+    private readonly IHttpClientFactory _clientFactory;
+    private Action<ControllerConnectedMessage> _connectedAction;
+    private Action<ControllerDisconnectedMessage> _disconnectedAction;
+    private Action<IsHostRunningChangedMessage> _hostRunningHandler;
+    private WebsocketClient _websocketClient;
 
     public ControllerServiceClient(IHttpClientFactory clientFactory)
     {
-        this.clientFactory = clientFactory;
+        _clientFactory = clientFactory;
         Application.Current.Exit += Current_Exit;
     }
 
     public async Task WaitForService()
     {
-        using var client = clientFactory.CreateClient();
+        using HttpClient client = _clientFactory.CreateClient();
 
         while (true)
         {
             try
             {
-                var result = await client.GetAsync($"{Constants.HttpUrl}/controller/ping");
-                if (result.IsSuccessStatusCode) break;
+                HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/ping");
+                if (result.IsSuccessStatusCode)
+                {
+                    break;
+                }
             }
             catch
             {
@@ -50,12 +53,13 @@ public class ControllerServiceClient : IControllerServiceClient
 
     public async Task<List<ControllerConnectedMessage>> GetControllerList()
     {
-        using var client = clientFactory.CreateClient();
-        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/list");
+        using HttpClient client = _clientFactory.CreateClient();
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/list");
         if (result.IsSuccessStatusCode)
         {
-            var content = await result.Content.ReadAsStringAsync();
-            var list = JsonConvert.DeserializeObject<List<ControllerConnectedMessage>>(content);
+            string content = await result.Content.ReadAsStringAsync();
+            List<ControllerConnectedMessage> list =
+                JsonConvert.DeserializeObject<List<ControllerConnectedMessage>>(content);
 
             return list;
         }
@@ -69,31 +73,31 @@ public class ControllerServiceClient : IControllerServiceClient
         Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null
     )
     {
-        connectedAction = connectedHandler;
-        disconnectedAction = disconnectedHandler;
-        hostRunningHandler = hostRunningChangedHandler;
+        _connectedAction = connectedHandler;
+        _disconnectedAction = disconnectedHandler;
+        _hostRunningHandler = hostRunningChangedHandler;
 
-        websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
+        _websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
 
-        websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
-        websocketClient.ReconnectionHappened.Subscribe(info =>
+        _websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
+        _websocketClient.ReconnectionHappened.Subscribe(info =>
         {
             Log.Information($"Reconnection happened, type: {info.Type}");
-            websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
+            _websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
         });
 
-        websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
+        _websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
 
-        await websocketClient.Start();
+        await _websocketClient.Start();
     }
 
     public async Task<bool> IsHostRunning()
     {
-        using var client = clientFactory.CreateClient();
-        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/ishostrunning");
+        using HttpClient client = _clientFactory.CreateClient();
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/ishostrunning");
         if (result.IsSuccessStatusCode)
         {
-            var content = await result.Content.ReadAsStringAsync();
+            string content = await result.Content.ReadAsStringAsync();
             return bool.Parse(content);
         }
 
@@ -102,8 +106,8 @@ public class ControllerServiceClient : IControllerServiceClient
 
     public async Task StartHost()
     {
-        using var client = clientFactory.CreateClient();
-        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/starthost");
+        using HttpClient client = _clientFactory.CreateClient();
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/starthost");
         if (result.IsSuccessStatusCode)
         {
         }
@@ -115,8 +119,8 @@ public class ControllerServiceClient : IControllerServiceClient
 
     public async Task StopHost()
     {
-        using var client = clientFactory.CreateClient();
-        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/stophost");
+        using HttpClient client = _clientFactory.CreateClient();
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/stophost");
         if (result.IsSuccessStatusCode)
         {
         }
@@ -128,33 +132,47 @@ public class ControllerServiceClient : IControllerServiceClient
 
     private async void Current_Exit(object sender, ExitEventArgs e)
     {
-        if (websocketClient != null)
+        if (_websocketClient != null)
         {
-            await websocketClient.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
-            websocketClient.Dispose();
+            await _websocketClient.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
+            _websocketClient.Dispose();
         }
     }
 
     private async void ProcessControllerMessage(ResponseMessage msg)
     {
-        var messageBase = JsonConvert.DeserializeObject<MessageBase>(msg.Text);
+        MessageBase messageBase = JsonConvert.DeserializeObject<MessageBase>(msg.Text);
         if (messageBase.MessageName == ControllerConnectedMessage.Name)
+        {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                var device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text);
-                if (connectedAction != null) connectedAction(device);
+                ControllerConnectedMessage device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text);
+                if (_connectedAction != null)
+                {
+                    _connectedAction(device);
+                }
             });
+        }
         else if (messageBase.MessageName == ControllerDisconnectedMessage.Name)
+        {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                var device = JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text);
-                if (disconnectedAction != null) disconnectedAction(device);
+                ControllerDisconnectedMessage device =
+                    JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text);
+                if (_disconnectedAction != null)
+                {
+                    _disconnectedAction(device);
+                }
             });
+        }
         else if (messageBase.MessageName == IsHostRunningChangedMessage.Name)
-            if (hostRunningHandler != null)
+        {
+            if (_hostRunningHandler != null)
             {
-                var isHostRunning = JsonConvert.DeserializeObject<IsHostRunningChangedMessage>(msg.Text);
-                hostRunningHandler(isHostRunning);
+                IsHostRunningChangedMessage isHostRunning =
+                    JsonConvert.DeserializeObject<IsHostRunningChangedMessage>(msg.Text);
+                _hostRunningHandler(isHostRunning);
             }
+        }
     }
 }

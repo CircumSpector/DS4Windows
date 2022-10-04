@@ -9,11 +9,11 @@ namespace Vapour.Server.Host.Controller;
 
 public sealed class ControllerService
 {
-    private readonly ControllerManagerHost controllerManagerHost;
-    private readonly IControllerManagerService controllerManagerService;
-    private readonly IControllerMessageForwarder controllerMessageForwarder;
-    private readonly IControllersEnumeratorService controllersEnumeratorService;
-    private bool isReady;
+    private readonly ControllerManagerHost _controllerManagerHost;
+    private readonly IControllerManagerService _controllerManagerService;
+    private readonly IControllerMessageForwarder _controllerMessageForwarder;
+    private readonly IControllersEnumeratorService _controllersEnumeratorService;
+    private bool _isReady;
 
     public ControllerService(
         IControllerMessageForwarder controllerMessageForwarder,
@@ -21,12 +21,12 @@ public sealed class ControllerService
         IControllerManagerService controllerManagerService,
         ControllerManagerHost controllerManagerHost)
     {
-        this.controllerMessageForwarder = controllerMessageForwarder;
-        this.controllersEnumeratorService = controllersEnumeratorService;
-        this.controllerManagerService = controllerManagerService;
-        this.controllerManagerHost = controllerManagerHost;
-        this.controllersEnumeratorService.DeviceListReady += ControllersEnumeratorService_DeviceListReady;
-        this.controllerManagerHost.RunningChanged += ControllerManagerHost_RunningChanged;
+        _controllerMessageForwarder = controllerMessageForwarder;
+        _controllersEnumeratorService = controllersEnumeratorService;
+        _controllerManagerService = controllerManagerService;
+        _controllerManagerHost = controllerManagerHost;
+        _controllersEnumeratorService.DeviceListReady += ControllersEnumeratorService_DeviceListReady;
+        _controllerManagerHost.RunningChanged += ControllerManagerHost_RunningChanged;
     }
 
     public static void RegisterRoutes(WebApplication app)
@@ -44,24 +44,24 @@ public sealed class ControllerService
 
     private async void ControllerManagerHost_RunningChanged(object sender, bool e)
     {
-        await controllerMessageForwarder.SendIsHostRunning(e);
+        await _controllerMessageForwarder.SendIsHostRunning(e);
     }
 
     private void ControllersEnumeratorService_DeviceListReady()
     {
-        isReady = true;
+        _isReady = true;
     }
 
     private IResult CheckIsReady()
     {
-        return isReady ? Results.Ok() : Results.NotFound();
+        return _isReady ? Results.Ok() : Results.NotFound();
     }
 
     private async Task<IResult> ConnectSocket(HttpContext context)
     {
         if (context.WebSockets.IsWebSocketRequest)
         {
-            await controllerMessageForwarder.StartListening(await context.WebSockets.AcceptWebSocketAsync());
+            await _controllerMessageForwarder.StartListening(await context.WebSockets.AcceptWebSocketAsync());
             return Results.Ok();
         }
 
@@ -70,9 +70,9 @@ public sealed class ControllerService
 
     private string GetCurrentControllerList(HttpContext context)
     {
-        var list = controllerManagerService.ActiveControllers
+        List<ControllerConnectedMessage> list = _controllerManagerService.ActiveControllers
             .Where(c => c.Device != null)
-            .Select(c => controllerMessageForwarder.MapControllerConnected(c.Device))
+            .Select(c => _controllerMessageForwarder.MapControllerConnected(c.Device))
             .ToList();
 
         return JsonConvert.SerializeObject(list);
@@ -80,19 +80,25 @@ public sealed class ControllerService
 
     private bool IsControllerHostRunning()
     {
-        return controllerManagerHost.IsRunning;
+        return _controllerManagerHost.IsRunning;
     }
 
     private async Task<IResult> StartHost()
     {
-        if (!controllerManagerHost.IsRunning) await controllerManagerHost.StartAsync();
+        if (!_controllerManagerHost.IsRunning)
+        {
+            await _controllerManagerHost.StartAsync();
+        }
 
         return Results.Ok();
     }
 
     private async Task<IResult> StopHost()
     {
-        if (controllerManagerHost.IsRunning) await controllerManagerHost.StopAsync();
+        if (_controllerManagerHost.IsRunning)
+        {
+            await _controllerManagerHost.StopAsync();
+        }
 
         return Results.Ok();
     }
