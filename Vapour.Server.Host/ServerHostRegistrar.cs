@@ -28,7 +28,7 @@ namespace Vapour.Server.Host
         {
             if (!context.HostingEnvironment.IsDevelopment() && !Environment.UserInteractive)
             {
-                builder.UseWindowsService(c => c.ServiceName = "DS4WindowsService");
+                builder.UseWindowsService(c => c.ServiceName = "Vapour.Input.Service");
                 services.AddSingleton<IHostLifetime, DS4WindowsServiceLifetime>();
             }
         }
