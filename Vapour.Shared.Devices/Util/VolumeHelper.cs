@@ -14,45 +14,49 @@ public static class VolumeHelper
     /// <returns>A collection of <see cref="VolumeMeta" />.</returns>
     private static unsafe IEnumerable<VolumeMeta> GetVolumeMappings()
     {
-        var volumeName = stackalloc char[ushort.MaxValue];
-        var pathName = stackalloc char[ushort.MaxValue];
-        var mountPoint = stackalloc char[ushort.MaxValue];
+        var volumeName = new char[ushort.MaxValue];
+        var pathName = new char[ushort.MaxValue];
+        var mountPoint = new char[ushort.MaxValue];
 
-        var volumeHandle = PInvoke.FindFirstVolume(volumeName, ushort.MaxValue);
-
-        var list = new List<VolumeMeta>();
-
-        do
+        fixed (char* pVolumeName = volumeName)
+        fixed (char* pPathName = pathName)
+        fixed (char* pMountPoint = mountPoint)
         {
-            var volume = new string(volumeName);
+            var volumeHandle = PInvoke.FindFirstVolume(pVolumeName, ushort.MaxValue);
 
-            if (!PInvoke.GetVolumePathNamesForVolumeName(
-                    volume,
-                    mountPoint,
-                    ushort.MaxValue,
-                    out var returnLength
-                )
-               )
-                continue;
+            var list = new List<VolumeMeta>();
 
-            // Extract volume name for use with QueryDosDevice
-            var deviceName = volume.Substring(4, volume.Length - 1 - 4);
-
-            // Grab device path
-            returnLength = PInvoke.QueryDosDevice(deviceName, pathName, ushort.MaxValue);
-
-            if (returnLength <= 0)
-                continue;
-
-            list.Add(new VolumeMeta
+            do
             {
-                DriveLetter = new string(mountPoint),
-                VolumeName = volume,
-                DevicePath = new string(pathName)
-            });
-        } while (PInvoke.FindNextVolume(volumeHandle, volumeName, ushort.MaxValue));
+                var volume = new string(volumeName);
 
-        return list.ToArray();
+                if (!PInvoke.GetVolumePathNamesForVolumeName(
+                        volume,
+                        pMountPoint,
+                        ushort.MaxValue,
+                        out var returnLength
+                    ))
+                    continue;
+
+                // Extract volume name for use with QueryDosDevice
+                var deviceName = volume.Substring(4, volume.Length - 1 - 4);
+
+                // Grab device path
+                returnLength = PInvoke.QueryDosDevice(deviceName, pPathName, ushort.MaxValue);
+
+                if (returnLength <= 0)
+                    continue;
+
+                list.Add(new VolumeMeta
+                {
+                    DriveLetter = new string(mountPoint),
+                    VolumeName = volume,
+                    DevicePath = new string(pathName)
+                });
+            } while (PInvoke.FindNextVolume(volumeHandle, pVolumeName, ushort.MaxValue));
+
+            return list.ToArray();
+        }
     }
 
     /// <summary>
