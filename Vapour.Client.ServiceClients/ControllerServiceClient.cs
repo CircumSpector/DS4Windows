@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.WebSockets;
-using System.Threading.Tasks;
 using System.Windows;
 using Vapour.Server;
 using Vapour.Server.Controller;

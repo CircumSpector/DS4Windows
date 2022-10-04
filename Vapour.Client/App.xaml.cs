@@ -40,9 +40,9 @@ namespace Vapour.Client
 
         private async Task StartMainView(IServiceScope scope)
         {
-            var controllerService = scope.ServiceProvider.GetService<IControllerServiceClient>();
+            var controllerService = scope.ServiceProvider.GetRequiredService<IControllerServiceClient>();
             await controllerService.WaitForService();
-            var client = scope.ServiceProvider.GetService<IProfileServiceClient>();
+            var client = scope.ServiceProvider.GetRequiredService<IProfileServiceClient>();
             await client.Initialize();
 
             var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();

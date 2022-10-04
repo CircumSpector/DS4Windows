@@ -26,7 +26,7 @@ namespace Vapour.Server.Host
 
         private static void SetupWindowsService(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
         {
-            if (!context.HostingEnvironment.IsDevelopment())
+            if (!context.HostingEnvironment.IsDevelopment() && !Environment.UserInteractive)
             {
                 builder.UseWindowsService(c => c.ServiceName = "DS4WindowsService");
                 services.AddSingleton<IHostLifetime, DS4WindowsServiceLifetime>();
