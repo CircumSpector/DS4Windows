@@ -1,12 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Windows.Win32.Devices.HumanInterfaceDevice;
-using Windows.Win32.Storage.FileSystem;
+
+using Microsoft.Extensions.Logging;
+
+using Nefarius.Utilities.DeviceManagement.PnP;
+
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
-using Microsoft.Extensions.Logging;
-using Nefarius.Utilities.DeviceManagement.PnP;
+
+using Windows.Win32.Devices.HumanInterfaceDevice;
+using Windows.Win32.Storage.FileSystem;
 
 namespace Vapour.Shared.Devices.Services;
 

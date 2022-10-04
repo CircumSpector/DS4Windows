@@ -1,8 +1,7 @@
 ﻿using Vapour.Client.Core.View;
 
-namespace Vapour.Client.Modules.Profiles.Edit
+namespace Vapour.Client.Modules.Profiles.Edit;
+
+public interface ITriggerButtonsEditView : IView<ITriggerButtonsEditView>
 {
-    public interface ITriggerButtonsEditView : IView<ITriggerButtonsEditView>
-    {
-    }
 }

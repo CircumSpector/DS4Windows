@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http;
+
 using Newtonsoft.Json;
+
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Configuration.Profiles.Schema;
 

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Net.NetworkInformation;
+
 using Vapour.Shared.Common.Legacy;
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Configuration.Profiles.Types;

@@ -1,5 +1,7 @@
 ﻿using System.Windows.Media;
+
 using AutoMapper;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Types;

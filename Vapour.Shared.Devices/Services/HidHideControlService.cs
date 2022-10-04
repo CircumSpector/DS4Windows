@@ -1,7 +1,9 @@
 ﻿using System.Runtime.InteropServices;
+
+using Vapour.Shared.Devices.Util;
+
 using Windows.Win32;
 using Windows.Win32.Storage.FileSystem;
-using Vapour.Shared.Devices.Util;
 
 namespace Vapour.Shared.Devices.Services;
 

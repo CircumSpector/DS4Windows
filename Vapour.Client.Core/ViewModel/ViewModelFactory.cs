@@ -1,5 +1,6 @@
-﻿using Vapour.Client.Core.View;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using Vapour.Client.Core.View;
 
 namespace Vapour.Client.Core.ViewModel;
 

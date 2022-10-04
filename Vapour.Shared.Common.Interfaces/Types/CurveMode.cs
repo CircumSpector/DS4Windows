@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel;
 
-namespace Vapour.Shared.Common.Types
+namespace Vapour.Shared.Common.Types;
+
+/// <summary>
+///     Possible Bezier Curve Modes.
+/// </summary>
+public enum CurveMode
 {
-    /// <summary>
-    ///     Possible Bezier Curve Modes.
-    /// </summary>
-    public enum CurveMode
-    {
-        [Description("Linear")] Linear = 0,
-        [Description("Enhanced Precision")] EnhancedPrecision,
-        [Description("Quadratic")] Quadratic,
-        [Description("Cubic")] Cubic,
-        [Description("Easeout Quad")] EaseoutQuad,
-        [Description("Easeout Cubic")] EaseoutCubic,
-        [Description("Custom")] Custom
-    }
+    [Description("Linear")] Linear = 0,
+    [Description("Enhanced Precision")] EnhancedPrecision,
+    [Description("Quadratic")] Quadratic,
+    [Description("Cubic")] Cubic,
+    [Description("Easeout Quad")] EaseoutQuad,
+    [Description("Easeout Cubic")] EaseoutCubic,
+    [Description("Custom")] Custom
 }

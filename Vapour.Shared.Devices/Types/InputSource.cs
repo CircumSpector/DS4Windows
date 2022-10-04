@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+
+using JetBrains.Annotations;
+
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Interfaces.HID;
-using JetBrains.Annotations;
 
 namespace Vapour.Shared.Devices.Types;
 

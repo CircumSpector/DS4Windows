@@ -1,4 +1,5 @@
 ﻿using System.Text;
+
 using Windows.Win32;
 
 namespace Vapour.Shared.Devices.Util;

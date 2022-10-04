@@ -1,10 +1,9 @@
-﻿namespace Vapour.Shared.Common.Types
+﻿namespace Vapour.Shared.Common.Types;
+
+public enum TrayIconChoice : uint
 {
-    public enum TrayIconChoice : uint
-    {
-        Default,
-        Colored,
-        White,
-        Black
-    }
+    Default,
+    Colored,
+    White,
+    Black
 }

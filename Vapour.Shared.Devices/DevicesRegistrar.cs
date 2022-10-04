@@ -1,14 +1,17 @@
-﻿using Vapour.Client.Core.DependencyInjection;
+﻿using JetBrains.Annotations;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+using Nefarius.Utilities.DeviceManagement.PnP;
+using Nefarius.ViGEm.Client;
+
+using Vapour.Client.Core.DependencyInjection;
 using Vapour.Shared.Devices.DriverManagement;
 using Vapour.Shared.Devices.HostedServices;
 using Vapour.Shared.Devices.Interfaces.DriverManagement;
 using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
-using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using Nefarius.ViGEm.Client;
 
 namespace Vapour.Shared.Devices;
 

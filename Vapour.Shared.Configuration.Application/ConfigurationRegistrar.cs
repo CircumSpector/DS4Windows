@@ -1,20 +1,18 @@
-﻿using Vapour.Client.Core.DependencyInjection;
-using Vapour.Shared.Configuration.Application.Services;
-using Microsoft.Extensions.Configuration;
+﻿using JetBrains.Annotations;
+
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Hosting;
 
-namespace Vapour.Shared.Configuration.Application
+using Vapour.Client.Core.DependencyInjection;
+using Vapour.Shared.Configuration.Application.Services;
+
+namespace Vapour.Shared.Configuration.Application;
+
+[UsedImplicitly]
+public class ConfigurationRegistrar : IServiceRegistrar
 {
-    [UsedImplicitly]
-    public class ConfigurationRegistrar : IServiceRegistrar
+    public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
-        public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
-        {
-            services.AddSingleton<IAppSettingsService, AppSettingsService>();
-        }
+        services.AddSingleton<IAppSettingsService, AppSettingsService>();
     }
 }

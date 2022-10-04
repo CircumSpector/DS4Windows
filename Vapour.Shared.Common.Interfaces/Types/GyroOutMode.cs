@@ -1,12 +1,11 @@
-﻿namespace Vapour.Shared.Common.Types
+﻿namespace Vapour.Shared.Common.Types;
+
+public enum GyroOutMode : uint
 {
-    public enum GyroOutMode : uint
-    {
-        None,
-        Controls,
-        Mouse,
-        MouseJoystick,
-        DirectionalSwipe,
-        Passthru
-    }
+    None,
+    Controls,
+    Mouse,
+    MouseJoystick,
+    DirectionalSwipe,
+    Passthru
 }

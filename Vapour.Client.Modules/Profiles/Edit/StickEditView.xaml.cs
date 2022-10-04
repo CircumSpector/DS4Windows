@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace Vapour.Client.Modules.Profiles.Edit
+namespace Vapour.Client.Modules.Profiles.Edit;
+
+/// <summary>
+/// Interaction logic for StickEditView.xaml
+/// </summary>
+public partial class StickEditView : UserControl, IStickEditView
 {
-    /// <summary>
-    /// Interaction logic for StickEditView.xaml
-    /// </summary>
-    public partial class StickEditView : UserControl, IStickEditView
+    public StickEditView()
     {
-        public StickEditView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

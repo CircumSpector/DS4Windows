@@ -1,4 +1,5 @@
 ﻿using System.Net.WebSockets;
+
 using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Server.Controller;

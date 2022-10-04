@@ -1,25 +1,24 @@
-﻿namespace Vapour.Shared.Common
+﻿namespace Vapour.Shared.Common;
+
+public class DeviceValueConverters : IDeviceValueConverters
 {
-    public class DeviceValueConverters : IDeviceValueConverters
+    public double DeadZoneIntToDouble(int inVal)
     {
-        public double DeadZoneIntToDouble(int inVal)
-        {
-            return Math.Round(inVal / 127d, 1);
-        }
+        return Math.Round(inVal / 127d, 1);
+    }
 
-        public int DeadZoneDoubleToInt(double val)
-        {
-            return (int)Math.Round(val * 127d, 1);
-        }
+    public int DeadZoneDoubleToInt(double val)
+    {
+        return (int)Math.Round(val * 127d, 1);
+    }
 
-        public double RotationConvertFrom(double val)
-        {
-            return Math.Round(val * 180.0 / Math.PI);
-        }
+    public double RotationConvertFrom(double val)
+    {
+        return Math.Round(val * 180.0 / Math.PI);
+    }
 
-        public double RotationConvertTo(double val)
-        {
-            return val * Math.PI / 180.0;
-        }
+    public double RotationConvertTo(double val)
+    {
+        return val * Math.PI / 180.0;
     }
 }

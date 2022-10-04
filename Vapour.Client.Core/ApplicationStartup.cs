@@ -1,8 +1,10 @@
-﻿using Vapour.Client.Core.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using Serilog;
+
+using Vapour.Client.Core.DependencyInjection;
 
 namespace Vapour.Client.Core;
 

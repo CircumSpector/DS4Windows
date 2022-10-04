@@ -1,12 +1,16 @@
 ﻿using System.Text.RegularExpressions;
-using Vapour.Client.Core.DependencyInjection;
+
 using JetBrains.Annotations;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+
+using Vapour.Client.Core.DependencyInjection;
 
 namespace Vapour.Shared.Common.Tracing;
 
@@ -16,7 +20,7 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
     private const string AssemblyPrefix = "DS4Windows";
 
     private static readonly Regex Cleanup = new(", (Version|Culture|PublicKeyToken)=[0-9.\\w]+", RegexOptions.Compiled);
-    
+
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
         // Get list of assemblies, register them all as potential tracing and metric sources

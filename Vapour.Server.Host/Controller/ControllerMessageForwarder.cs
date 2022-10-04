@@ -1,10 +1,12 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
+
+using Newtonsoft.Json;
+
 using Vapour.Server.Controller;
 using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HostedServices;
 using Vapour.Shared.Devices.Interfaces.HID;
-using Newtonsoft.Json;
 
 namespace Vapour.Server.Host.Controller;
 

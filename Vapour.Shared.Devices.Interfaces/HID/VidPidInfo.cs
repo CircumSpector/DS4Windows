@@ -40,22 +40,22 @@ public enum CompatibleHidDeviceFeatureSet : ushort
     VendorDefinedDevice = 1 << 7
 }
 
-    public class VidPidInfo
+public class VidPidInfo
+{
+    public VidPidInfo(
+        int vid,
+        int pid,
+        string name = "Generic DS4",
+        InputDeviceType inputDevType = InputDeviceType.DualShock4,
+        CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.Default
+    )
     {
-        public VidPidInfo(
-            int vid,
-            int pid,
-            string name = "Generic DS4",
-            InputDeviceType inputDevType = InputDeviceType.DualShock4,
-            CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.Default
-        )
-        {
-            Vid = vid;
-            Pid = pid;
-            Name = name;
-            DeviceType = inputDevType;
-            FeatureSet = featureSet;
-        }
+        Vid = vid;
+        Pid = pid;
+        Name = name;
+        DeviceType = inputDevType;
+        FeatureSet = featureSet;
+    }
 
     /// <summary>
     ///     The Vendor ID.

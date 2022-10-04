@@ -1,6 +1,7 @@
-﻿using Vapour.Shared.Devices.HID.Devices.Reports;
+﻿using Microsoft.Extensions.Logging;
+
+using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.Interfaces.HID;
-using Microsoft.Extensions.Logging;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 

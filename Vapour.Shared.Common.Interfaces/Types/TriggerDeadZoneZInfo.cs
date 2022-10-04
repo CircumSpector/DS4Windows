@@ -1,58 +1,57 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+
 using PropertyChanged;
 
-namespace Vapour.Shared.Common.Types
+namespace Vapour.Shared.Common.Types;
+
+[AddINotifyPropertyChangedInterface]
+public class TriggerDeadZoneZInfo
 {
-    [AddINotifyPropertyChangedInterface]
-    public class TriggerDeadZoneZInfo
+    // Trigger deadzone is expressed in axis units (bad old convention)
+    public byte DeadZone { get; set; }
+
+    public int AntiDeadZone { get; set; }
+
+    public int MaxZone { get; set; } = 100;
+
+    public double MaxOutput { get; set; } = 100.0;
+
+    [UsedImplicitly]
+    private void OnDeadZoneChanged()
     {
-        // Trigger deadzone is expressed in axis units (bad old convention)
-        public byte DeadZone { get; set; }
+        DeadZoneChanged?.Invoke(this, EventArgs.Empty);
+    }
 
-        public int AntiDeadZone { get; set; }
+    public event EventHandler DeadZoneChanged;
 
-        public int MaxZone { get; set; } = 100;
+    [UsedImplicitly]
+    private void OnMaxZoneChanged()
+    {
+        MaxZoneChanged?.Invoke(this, EventArgs.Empty);
+    }
 
-        public double MaxOutput { get; set; } = 100.0;
+    public event EventHandler MaxZoneChanged;
 
-        [UsedImplicitly]
-        private void OnDeadZoneChanged()
-        {
-            DeadZoneChanged?.Invoke(this, EventArgs.Empty);
-        }
+    [UsedImplicitly]
+    private void OnMaxOutputChanged()
+    {
+        MaxOutputChanged?.Invoke(this, EventArgs.Empty);
+    }
 
-        public event EventHandler DeadZoneChanged;
+    public event EventHandler MaxOutputChanged;
 
-        [UsedImplicitly]
-        private void OnMaxZoneChanged()
-        {
-            MaxZoneChanged?.Invoke(this, EventArgs.Empty);
-        }
+    public void Reset()
+    {
+        DeadZone = 0;
+        AntiDeadZone = 0;
+        MaxZone = 100;
+        MaxOutput = 100.0;
+    }
 
-        public event EventHandler MaxZoneChanged;
-
-        [UsedImplicitly]
-        private void OnMaxOutputChanged()
-        {
-            MaxOutputChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        public event EventHandler MaxOutputChanged;
-
-        public void Reset()
-        {
-            DeadZone = 0;
-            AntiDeadZone = 0;
-            MaxZone = 100;
-            MaxOutput = 100.0;
-        }
-
-        public void ResetEvents()
-        {
-            MaxZoneChanged = null;
-            MaxOutputChanged = null;
-            DeadZoneChanged = null;
-        }
+    public void ResetEvents()
+    {
+        MaxZoneChanged = null;
+        MaxOutputChanged = null;
+        DeadZoneChanged = null;
     }
 }

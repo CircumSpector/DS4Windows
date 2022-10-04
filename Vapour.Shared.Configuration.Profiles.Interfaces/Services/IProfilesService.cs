@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.NetworkInformation;
+
 using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Shared.Configuration.Profiles.Services;

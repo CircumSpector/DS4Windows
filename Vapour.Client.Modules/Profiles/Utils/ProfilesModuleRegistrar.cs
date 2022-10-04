@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using Vapour.Client.Core.DependencyInjection;
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles.Edit;

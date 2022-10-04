@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace Vapour.Client.Modules.Profiles.Edit
+namespace Vapour.Client.Modules.Profiles.Edit;
+
+/// <summary>
+/// Interaction logic for ProfileEditView.xaml
+/// </summary>
+public partial class ProfileEditView : UserControl, IProfileEditView
 {
-    /// <summary>
-    /// Interaction logic for ProfileEditView.xaml
-    /// </summary>
-    public partial class ProfileEditView : UserControl, IProfileEditView
+    public ProfileEditView()
     {
-        public ProfileEditView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

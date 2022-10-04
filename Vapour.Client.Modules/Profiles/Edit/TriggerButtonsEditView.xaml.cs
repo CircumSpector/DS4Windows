@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace Vapour.Client.Modules.Profiles.Edit
+namespace Vapour.Client.Modules.Profiles.Edit;
+
+/// <summary>
+/// Interaction logic for TriggerButtonsEditView.xaml
+/// </summary>
+public partial class TriggerButtonsEditView : UserControl, ITriggerButtonsEditView
 {
-    /// <summary>
-    /// Interaction logic for TriggerButtonsEditView.xaml
-    /// </summary>
-    public partial class TriggerButtonsEditView : UserControl, ITriggerButtonsEditView
+    public TriggerButtonsEditView()
     {
-        public TriggerButtonsEditView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -1,23 +1,20 @@
-﻿using System;
+﻿namespace Vapour.Shared.Common.Attributes;
 
-namespace Vapour.Shared.Common.Attributes
+/// <summary>
+///     Attribute used to keep track of code loading from or writing to disk. Slap this attribute on every method reading,
+///     writing or modifying the current XML-based configuration system to ease finding sections required to migrate.
+/// </summary>
+[AttributeUsage(AttributeTargets.All)]
+public class ConfigurationSystemComponentAttribute : Attribute
 {
     /// <summary>
-    ///     Attribute used to keep track of code loading from or writing to disk. Slap this attribute on every method reading,
-    ///     writing or modifying the current XML-based configuration system to ease finding sections required to migrate.
+    ///     Instantiate attribute.
     /// </summary>
-    [AttributeUsage(AttributeTargets.All)]
-    public class ConfigurationSystemComponentAttribute : Attribute
+    /// <param name="remark">Optional remark to add.</param>
+    public ConfigurationSystemComponentAttribute(string remark = null)
     {
-        /// <summary>
-        ///     Instantiate attribute.
-        /// </summary>
-        /// <param name="remark">Optional remark to add.</param>
-        public ConfigurationSystemComponentAttribute(string remark = null)
-        {
-            Remark = remark;
-        }
-
-        public string Remark { get; }
+        Remark = remark;
     }
+
+    public string Remark { get; }
 }

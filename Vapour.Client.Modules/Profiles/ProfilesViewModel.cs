@@ -1,13 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
+
 using MaterialDesignThemes.Wpf;
+
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
+
 using Newtonsoft.Json;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles.Edit;
 using Vapour.Client.ServiceClients;
 using Vapour.Shared.Configuration.Profiles.Schema;
+
 using Constants = Vapour.Client.Modules.Main.Constants;
 
 namespace Vapour.Client.Modules.Profiles;

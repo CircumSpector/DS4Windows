@@ -25,7 +25,7 @@ public class ControllerConnectedMessage : MessageBase
     public ConnectionType Connection { get; init; }
 
     public InputDeviceType DeviceType { get; init; }
-    
+
     public Guid SelectedProfileId { get; init; }
 
     public override string MessageName => Name;
