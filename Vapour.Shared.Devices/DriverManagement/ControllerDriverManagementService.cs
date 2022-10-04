@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Nefarius.Utilities.DeviceManagement.Extensions;
 using Vapour.Shared.Devices.Interfaces.DriverManagement;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
@@ -7,7 +8,6 @@ namespace Vapour.Shared.Devices.DriverManagement;
 
 public class ControllerDriverManagementService : IControllerDriverManagementService
 {
-    private const int IOCTL_USB_HUB_CYCLE_PORT = 0x220444;
     private const string tempDriverPath = "c:\\temp\\";
     private const string tempDriverInf = "existingcontroller.inf";
     private const string tempDriverFullPath = $"{tempDriverPath}{tempDriverInf}";
@@ -27,7 +27,8 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
 
         var prepareDriverResult = PrepareDriver(controllerInstanceId);
         InstallDriver(prepareDriverResult);
-        ResetPort(hubAndPath, hubAndPort.PortNumber);
+
+        PnPDevice.GetDeviceByInstanceId(controllerInstanceId).ToUsbPnPDevice().CyclePort();
     }
 
     public void UnhideController(string controllerInstanceId)
@@ -162,49 +163,6 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
         var result = Devcon.Update(prepareDriverResult.HardwareId, prepareDriverResult.InfPath, out var rebootRequired);
         if (!result)
             throw new Exception($"Could not update the driver for hardware id {prepareDriverResult.HardwareId}");
-    }
-
-    private static void ResetPort(string hubPath, int portIndex)
-    {
-        //for now just reset all ports, portindex right now is not correct
-        var parameters = new USB_CYCLE_PORT_PARAMS
-        {
-            ConnectionIndex = (ulong)portIndex
-        };
-
-        using var hubHandle = Kernel32.CreateFile(hubPath,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
-            Kernel32.SafeObjectHandle.Null
-        );
-
-        var size = Marshal.SizeOf<USB_CYCLE_PORT_PARAMS>();
-        var buffer = Marshal.AllocHGlobal(size);
-
-        Marshal.StructureToPtr(parameters, buffer, false);
-        var result = Kernel32.DeviceIoControl(
-            hubHandle,
-            IOCTL_USB_HUB_CYCLE_PORT,
-            buffer,
-            size,
-            buffer,
-            size,
-            out var bytesReturned,
-            IntPtr.Zero
-        );
-
-        Marshal.FreeHGlobal(buffer);
-        if (!result)
-        {
-            var error = Marshal.GetLastWin32Error();
-            throw new Exception(
-                $"There was a problem restarting usb port {parameters.ConnectionIndex} on hub with device path {hubPath}");
-        }
     }
 
     [DllImport("Cfgmgr32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
