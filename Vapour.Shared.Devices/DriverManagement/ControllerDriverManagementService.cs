@@ -1,8 +1,9 @@
 ﻿using System.Runtime.InteropServices;
+using Windows.Win32.Foundation;
 using Nefarius.Utilities.DeviceManagement.Extensions;
-using Vapour.Shared.Devices.Interfaces.DriverManagement;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
+using Vapour.Shared.Devices.Interfaces.DriverManagement;
 
 namespace Vapour.Shared.Devices.DriverManagement;
 
@@ -81,8 +82,8 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
         var deviceInterfaceData = SetupApi.SP_DEVICE_INTERFACE_DATA.Create();
         SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA* deviceDetailData;
 
-        uint num1 = 256;
-        var num2 = Marshal.AllocHGlobal((int)num1);
+        const uint num1 = 256;
+        var num2 = stackalloc char[(int)num1];
         string devicePath = null;
         var memberIndex = 0;
         while (devicePath == null && SetupApi.SetupDiEnumDeviceInfo(controller, memberIndex, ref deviceInfoData))
@@ -93,10 +94,10 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
 
             if (success)
             {
-                var result = CM_Get_Device_ID(deviceInfoData.DevInst, num2, num1, 0u);
+                var result = Windows.Win32.PInvoke.CM_Get_Device_IDW(deviceInfoData.DevInst, new PWSTR(num2), num1, 0u);
                 if (result == 0)
                 {
-                    var deviceId = Marshal.PtrToStringUni(num2);
+                    var deviceId = new string(num2);
 
                     if (deviceId == hubId)
                     {
@@ -145,8 +146,6 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
             memberIndex++;
         }
 
-        Marshal.FreeHGlobal(num2);
-
         if (devicePath == null)
             throw new Exception($"Could not get the device path to the usb hub with instance id {hubId}");
 
@@ -163,86 +162,6 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
         var result = Devcon.Update(prepareDriverResult.HardwareId, prepareDriverResult.InfPath, out var rebootRequired);
         if (!result)
             throw new Exception($"Could not update the driver for hardware id {prepareDriverResult.HardwareId}");
-    }
-
-    [DllImport("Cfgmgr32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    internal static extern ConfigManagerResult CM_Get_Device_ID(
-        uint DevInst,
-        IntPtr Buffer,
-        uint BufferLen,
-        uint Flags);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct USB_CYCLE_PORT_PARAMS
-    {
-        public ulong ConnectionIndex { get; set; }
-        public ulong StatusReturned { get; set; }
-    }
-
-    internal enum ConfigManagerResult : uint
-    {
-        Success = 0,
-        Default = 1,
-        OutOfMemory = 2,
-        InvalidPointer = 3,
-        InvalidFlag = 4,
-        InvalidDevinst = 5,
-        InvalidDevnode = 5,
-        InvalidResDes = 6,
-        InvalidLogConf = 7,
-        InvalidArbitrator = 8,
-        InvalidNodelist = 9,
-        DevinstHasReqs = 10, // 0x0000000A
-        DevnodeHasReqs = 10, // 0x0000000A
-        InvalidResourceid = 11, // 0x0000000B
-        NoSuchDevinst = 13, // 0x0000000D
-        NoSuchDevnode = 13, // 0x0000000D
-        NoMoreLogConf = 14, // 0x0000000E
-        NoMoreResDes = 15, // 0x0000000F
-        AlreadySuchDevinst = 16, // 0x00000010
-        AlreadySuchDevnode = 16, // 0x00000010
-        InvalidRangeList = 17, // 0x00000011
-        InvalidRange = 18, // 0x00000012
-        Failure = 19, // 0x00000013
-        NoSuchLogicalDev = 20, // 0x00000014
-        CreateBlocked = 21, // 0x00000015
-        RemoveVetoed = 23, // 0x00000017
-        ApmVetoed = 24, // 0x00000018
-        InvalidLoadType = 25, // 0x00000019
-        BufferSmall = 26, // 0x0000001A
-        NoArbitrator = 27, // 0x0000001B
-        NoRegistryHandle = 28, // 0x0000001C
-        RegistryError = 29, // 0x0000001D
-        InvalidDeviceId = 30, // 0x0000001E
-        InvalidData = 31, // 0x0000001F
-        InvalidApi = 32, // 0x00000020
-        DevloaderNotReady = 33, // 0x00000021
-        NeedRestart = 34, // 0x00000022
-        NoMoreHwProfiles = 35, // 0x00000023
-        DeviceNotThere = 36, // 0x00000024
-        NoSuchValue = 37, // 0x00000025
-        WrongType = 38, // 0x00000026
-        InvalidPriority = 39, // 0x00000027
-        NotDisableable = 40, // 0x00000028
-        FreeResources = 41, // 0x00000029
-        QueryVetoed = 42, // 0x0000002A
-        CantShareIrq = 43, // 0x0000002B
-        NoDependent = 44, // 0x0000002C
-        SameResources = 45, // 0x0000002D
-        NoSuchRegistryKey = 46, // 0x0000002E
-        InvalidMachinename = 47, // 0x0000002F
-        RemoteCommFailure = 48, // 0x00000030
-        MachineUnavailable = 49, // 0x00000031
-        NoCmServices = 50, // 0x00000032
-        AccessDenied = 51, // 0x00000033
-        CallNotImplemented = 52, // 0x00000034
-        InvalidProperty = 53, // 0x00000035
-        DeviceInterfaceActive = 54, // 0x00000036
-        NoSuchDeviceInterface = 55, // 0x00000037
-        InvalidReferenceString = 56, // 0x00000038
-        InvalidConflictList = 57, // 0x00000039
-        InvalidIndex = 58, // 0x0000003A
-        InvalidStructureSize = 59 // 0x0000003B
     }
 
     private class HubAndPort
