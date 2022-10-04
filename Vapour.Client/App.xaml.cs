@@ -1,7 +1,6 @@
 ﻿using Vapour.Client.Core;
 using Vapour.Client.Modules.Main;
 using System.Diagnostics;
-using System.Runtime.Versioning;
 using System.Windows;
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Controllers.Utils;
@@ -11,7 +10,6 @@ using Vapour.Client.ServiceClients;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Vapour.Client
 {

@@ -1,169 +1,156 @@
 ﻿using System.Net.Http;
 using System.Net.WebSockets;
 using System.Windows;
+using Newtonsoft.Json;
+using Serilog;
 using Vapour.Server;
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Core;
-using Newtonsoft.Json;
-using Serilog;
 using Websocket.Client;
 
-namespace Vapour.Client.ServiceClients
+namespace Vapour.Client.ServiceClients;
+
+public class ControllerServiceClient : IControllerServiceClient
 {
-    public class ControllerServiceClient : IControllerServiceClient
+    private readonly IHttpClientFactory clientFactory;
+    private Action<ControllerConnectedMessage> connectedAction;
+    private Action<ControllerDisconnectedMessage> disconnectedAction;
+    private Action<IsHostRunningChangedMessage> hostRunningHandler;
+    private WebsocketClient websocketClient;
+
+    public ControllerServiceClient(IHttpClientFactory clientFactory)
     {
-        private Action<ControllerConnectedMessage> connectedAction;
-        private Action<ControllerDisconnectedMessage> disconnectedAction;
-        private Action<IsHostRunningChangedMessage> hostRunningHandler;
-        private WebsocketClient websocketClient;
+        this.clientFactory = clientFactory;
+        Application.Current.Exit += Current_Exit;
+    }
 
-        public ControllerServiceClient()
-        {
-            Application.Current.Exit += Current_Exit;
-        }
+    public async Task WaitForService()
+    {
+        using var client = clientFactory.CreateClient();
 
-        private async void Current_Exit(object sender, ExitEventArgs e)
+        while (true)
         {
-            if (websocketClient != null)
+            try
             {
-                await websocketClient.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
-                websocketClient.Dispose();
+                var result = await client.GetAsync($"{Constants.HttpUrl}/controller/ping");
+                if (result.IsSuccessStatusCode) break;
             }
-        }
-
-        public async Task WaitForService()
-        {
-            var client = new HttpClient();
-
-            while (true)
+            catch
             {
-                try
-                {
-                    var result = await client.GetAsync($"{Constants.HttpUrl}/controller/ping");
-                    if (result.IsSuccessStatusCode)
-                    {
-                        break;
-                    }
-                }
-                catch
-                {
-                    // ignored
-                }
-                await Task.Delay(500);
-            }
-        }
-
-        public async Task<List<ControllerConnectedMessage>> GetControllerList()
-        {
-            var client = new HttpClient();
-            var result = await client.GetAsync($"{Constants.HttpUrl}/controller/list");
-            if (result.IsSuccessStatusCode)
-            {
-                var content = await result.Content.ReadAsStringAsync();
-                var list = JsonConvert.DeserializeObject<List<ControllerConnectedMessage>>(content);
-
-                return list;
+                // ignored
             }
 
-            throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+            await Task.Delay(500);
+        }
+    }
+
+    public async Task<List<ControllerConnectedMessage>> GetControllerList()
+    {
+        using var client = clientFactory.CreateClient();
+        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/list");
+        if (result.IsSuccessStatusCode)
+        {
+            var content = await result.Content.ReadAsStringAsync();
+            var list = JsonConvert.DeserializeObject<List<ControllerConnectedMessage>>(content);
+
+            return list;
         }
 
-        public async void StartWebSocket(
-            Action<ControllerConnectedMessage> connectedHandler, 
-            Action<ControllerDisconnectedMessage> disconnectedHandler,
-            Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null
-        )
+        throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+    }
+
+    public async void StartWebSocket(
+        Action<ControllerConnectedMessage> connectedHandler,
+        Action<ControllerDisconnectedMessage> disconnectedHandler,
+        Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null
+    )
+    {
+        connectedAction = connectedHandler;
+        disconnectedAction = disconnectedHandler;
+        hostRunningHandler = hostRunningChangedHandler;
+
+        websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
+
+        websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
+        websocketClient.ReconnectionHappened.Subscribe(info =>
         {
-            connectedAction = connectedHandler;
-            disconnectedAction = disconnectedHandler;
-            hostRunningHandler = hostRunningChangedHandler;
-
-            websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
-            
-            websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
-            websocketClient.ReconnectionHappened.Subscribe(info =>
-            {
-                Log.Information($"Reconnection happened, type: {info.Type}");
-                websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
-            });
-
+            Log.Information($"Reconnection happened, type: {info.Type}");
             websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
+        });
 
-            await websocketClient.Start();
+        websocketClient.MessageReceived.Subscribe(ProcessControllerMessage);
+
+        await websocketClient.Start();
+    }
+
+    public async Task<bool> IsHostRunning()
+    {
+        using var client = clientFactory.CreateClient();
+        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/ishostrunning");
+        if (result.IsSuccessStatusCode)
+        {
+            var content = await result.Content.ReadAsStringAsync();
+            return bool.Parse(content);
         }
 
-        public async Task<bool> IsHostRunning()
-        {
-            var client = new HttpClient();
-            var result = await client.GetAsync($"{Constants.HttpUrl}/controller/ishostrunning");
-            if (result.IsSuccessStatusCode)
-            {
-                var content = await result.Content.ReadAsStringAsync();
-                return bool.Parse(content);
-            }
+        throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+    }
 
+    public async Task StartHost()
+    {
+        using var client = clientFactory.CreateClient();
+        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/starthost");
+        if (result.IsSuccessStatusCode)
+        {
+        }
+        else
+        {
             throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
         }
+    }
 
-        public async Task StartHost()
+    public async Task StopHost()
+    {
+        using var client = clientFactory.CreateClient();
+        var result = await client.GetAsync($"{Constants.HttpUrl}/controller/stophost");
+        if (result.IsSuccessStatusCode)
         {
-            var client = new HttpClient();
-            var result = await client.GetAsync($"{Constants.HttpUrl}/controller/starthost");
-            if (result.IsSuccessStatusCode)
-            {
-            }
-            else
-            {
-                throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
-            }
         }
+        else
+        {
+            throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+        }
+    }
 
-        public async Task StopHost()
+    private async void Current_Exit(object sender, ExitEventArgs e)
+    {
+        if (websocketClient != null)
         {
-            var client = new HttpClient();
-            var result = await client.GetAsync($"{Constants.HttpUrl}/controller/stophost");
-            if (result.IsSuccessStatusCode)
-            {
-            }
-            else
-            {
-                throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
-            }
+            await websocketClient.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
+            websocketClient.Dispose();
         }
+    }
 
-        private async void ProcessControllerMessage(ResponseMessage msg)
-        {
-            var messageBase = JsonConvert.DeserializeObject<MessageBase>(msg.Text);
-            if (messageBase.MessageName == ControllerConnectedMessage.Name)
+    private async void ProcessControllerMessage(ResponseMessage msg)
+    {
+        var messageBase = JsonConvert.DeserializeObject<MessageBase>(msg.Text);
+        if (messageBase.MessageName == ControllerConnectedMessage.Name)
+            await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    var device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text);
-                    if (connectedAction != null)
-                    {
-                        connectedAction(device);
-                    }
-                });
-            }
-            else if (messageBase.MessageName == ControllerDisconnectedMessage.Name)
+                var device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text);
+                if (connectedAction != null) connectedAction(device);
+            });
+        else if (messageBase.MessageName == ControllerDisconnectedMessage.Name)
+            await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                await Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    var device = JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text);
-                    if (disconnectedAction != null)
-                    {
-                        disconnectedAction(device);
-                    }
-                });
-            }
-            else if (messageBase.MessageName == IsHostRunningChangedMessage.Name)
+                var device = JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text);
+                if (disconnectedAction != null) disconnectedAction(device);
+            });
+        else if (messageBase.MessageName == IsHostRunningChangedMessage.Name)
+            if (hostRunningHandler != null)
             {
-                if (hostRunningHandler != null)
-                {
-                    var isHostRunning = JsonConvert.DeserializeObject<IsHostRunningChangedMessage>(msg.Text);
-                    hostRunningHandler(isHostRunning);
-                }
+                var isHostRunning = JsonConvert.DeserializeObject<IsHostRunningChangedMessage>(msg.Text);
+                hostRunningHandler(isHostRunning);
             }
-        }
     }
 }
