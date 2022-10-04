@@ -1,9 +1,10 @@
-﻿using Vapour.Client.Core.View;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Vapour.Client.Core.View;
 
 namespace Vapour.Client.Core.ViewModel
 {

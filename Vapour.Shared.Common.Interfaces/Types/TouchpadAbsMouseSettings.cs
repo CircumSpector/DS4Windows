@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types

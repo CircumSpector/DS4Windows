@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Vapour.Shared.Common.Types.DualSense;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
+
 using PropertyChanged;
+
+using Vapour.Shared.Common.Types.DualSense;
 
 namespace Vapour.Shared.Configuration.Application.Schema
 {

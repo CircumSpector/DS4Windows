@@ -1,15 +1,17 @@
-﻿using Vapour.Client.Core;
-using Vapour.Client.Modules.Main;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Controllers.Utils;
+using Vapour.Client.Modules.Main;
 using Vapour.Client.Modules.Profiles.Utils;
 using Vapour.Client.Modules.Settings;
 using Vapour.Client.ServiceClients;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Vapour.Client
 {

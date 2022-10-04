@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Nefarius.ViGEm.Client;
+
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.Interfaces.Output;
 using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Output;
-using Nefarius.ViGEm.Client;
 
 namespace Vapour.Shared.Devices.Services
 {

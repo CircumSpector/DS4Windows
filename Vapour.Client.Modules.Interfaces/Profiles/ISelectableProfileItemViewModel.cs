@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Shared.Configuration.Profiles.Schema;
 

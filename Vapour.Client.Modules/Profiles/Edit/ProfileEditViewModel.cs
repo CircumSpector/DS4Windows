@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
+
 using AutoMapper;
+
+using FastDeepCloner;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Shared.Configuration.Profiles.Schema;
-using FastDeepCloner;
 
 namespace Vapour.Client.Modules.Profiles.Edit
 {

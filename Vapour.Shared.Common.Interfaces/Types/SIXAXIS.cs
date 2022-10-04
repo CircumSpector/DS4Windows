@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+
 using Vapour.Shared.Common.Legacy;
 
 namespace Vapour.Shared.Common.Types

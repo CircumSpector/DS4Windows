@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles;
 using Vapour.Client.ServiceClients;

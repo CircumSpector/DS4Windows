@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.Devices;
 using Vapour.Shared.Devices.Interfaces.HID;

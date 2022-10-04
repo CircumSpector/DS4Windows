@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+
+using JetBrains.Annotations;
+
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Interfaces.HID;
-using JetBrains.Annotations;
 
 namespace Vapour.Shared.Devices.Services;
 

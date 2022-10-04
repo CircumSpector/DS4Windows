@@ -1,5 +1,7 @@
 ﻿using System;
+
 using JetBrains.Annotations;
+
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types

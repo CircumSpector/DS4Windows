@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Vapour.Shared.Common.Converters;
 using Vapour.Shared.Common.Types;
 

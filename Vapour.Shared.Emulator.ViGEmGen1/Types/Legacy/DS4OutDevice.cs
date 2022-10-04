@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 

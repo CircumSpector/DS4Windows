@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
-using Vapour.Shared.Common.Util;
+
 using PropertyChanged;
+
+using Vapour.Shared.Common.Util;
 
 namespace Vapour.Shared.Configuration.Profiles.Schema
 {

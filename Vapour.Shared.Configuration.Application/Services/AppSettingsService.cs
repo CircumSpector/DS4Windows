@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
+
 using Vapour.Shared.Common.Attributes;
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Common.Services;
@@ -10,7 +13,6 @@ using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Application.Schema;
-using Microsoft.Extensions.Logging;
 
 namespace Vapour.Shared.Configuration.Application.Services
 {

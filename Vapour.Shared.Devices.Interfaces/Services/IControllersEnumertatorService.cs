@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+
 using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Shared.Devices.Interfaces.Services

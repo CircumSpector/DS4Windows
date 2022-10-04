@@ -1,6 +1,7 @@
-﻿using Vapour.Shared.Common.Types;
+﻿using Nefarius.ViGEm.Client;
+
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.Interfaces.Output;
-using Nefarius.ViGEm.Client;
 
 namespace Vapour.Shared.Devices.Interfaces.Services
 {

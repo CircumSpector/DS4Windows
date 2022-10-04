@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+
 using Vapour.Shared.Common.Legacy;
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Configuration.Profiles.Schema;

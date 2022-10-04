@@ -1,10 +1,12 @@
-﻿using Vapour.Client.Core.DependencyInjection;
-using Vapour.Client.Core.ViewModel;
+﻿using System;
+using System.Threading.Tasks;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+
+using Vapour.Client.Core.DependencyInjection;
+using Vapour.Client.Core.ViewModel;
 
 namespace Vapour.Client.Modules.Settings
 {

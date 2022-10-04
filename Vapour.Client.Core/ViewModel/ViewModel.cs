@@ -1,5 +1,6 @@
-﻿using Vapour.Client.Core.View;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+
+using Vapour.Client.Core.View;
 
 namespace Vapour.Client.Core.ViewModel;
 

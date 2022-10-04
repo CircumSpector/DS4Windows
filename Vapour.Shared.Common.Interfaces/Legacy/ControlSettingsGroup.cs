@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using Vapour.Shared.Common.Types;
 
 namespace Vapour.Shared.Common.Legacy

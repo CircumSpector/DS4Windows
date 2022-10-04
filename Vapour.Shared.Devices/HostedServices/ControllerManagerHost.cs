@@ -1,9 +1,11 @@
-﻿using Vapour.Shared.Configuration.Profiles.Services;
+﻿using Microsoft.Extensions.Logging;
+
+using Nefarius.Utilities.DeviceManagement.PnP;
+
+using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.Interfaces.HID;
 using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
-using Microsoft.Extensions.Logging;
-using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace Vapour.Shared.Devices.HostedServices;
 

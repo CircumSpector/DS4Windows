@@ -1,4 +1,5 @@
 ﻿using System;
+
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types

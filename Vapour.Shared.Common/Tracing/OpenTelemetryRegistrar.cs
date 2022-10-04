@@ -1,12 +1,16 @@
 ﻿using System.Text.RegularExpressions;
-using Vapour.Client.Core.DependencyInjection;
+
 using JetBrains.Annotations;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+
+using Vapour.Client.Core.DependencyInjection;
 
 namespace Vapour.Shared.Common.Tracing;
 

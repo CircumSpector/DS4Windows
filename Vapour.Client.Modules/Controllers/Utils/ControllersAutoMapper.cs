@@ -1,5 +1,7 @@
 ﻿using System.Windows.Media.Imaging;
+
 using AutoMapper;
+
 using Vapour.Server.Controller;
 using Vapour.Shared.Devices.Interfaces.HID;
 

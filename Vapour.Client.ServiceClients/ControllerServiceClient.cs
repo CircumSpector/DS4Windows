@@ -1,11 +1,15 @@
 ﻿using System.Net.Http;
 using System.Net.WebSockets;
 using System.Windows;
+
 using Newtonsoft.Json;
+
 using Serilog;
+
 using Vapour.Server;
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Core;
+
 using Websocket.Client;
 
 namespace Vapour.Client.ServiceClients;

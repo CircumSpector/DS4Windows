@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+
+using Microsoft.Toolkit.Mvvm.Input;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
-using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Vapour.Client.TrayApplication
 {

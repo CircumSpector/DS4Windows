@@ -1,8 +1,9 @@
-﻿using Vapour.Server.Controller;
+﻿using Newtonsoft.Json;
+
+using Vapour.Server.Controller;
 using Vapour.Shared.Devices.HostedServices;
 using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
-using Newtonsoft.Json;
 
 namespace Vapour.Server.Host.Controller;
 

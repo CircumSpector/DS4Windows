@@ -34,6 +34,7 @@
 
 using System;
 using System.Globalization;
+
 using Vapour.Shared.Common.Attributes;
 using Vapour.Shared.Common.Util;
 
@@ -43,15 +44,15 @@ namespace Vapour.Shared.Common.Types
     {
         public enum AxisType { LSRS, L2R2, SA };
 
-        private static int kSplineTableSize = 11;
-        private static double kSampleStepSize = 1.0 / (kSplineTableSize - 1.0);
+        private static readonly int kSplineTableSize = 11;
+        private static readonly double kSampleStepSize = 1.0 / (kSplineTableSize - 1.0);
         private double[] arraySampleValues;
 
         // These values are established by empiricism with tests (tradeoff: performance VS precision) (comment by GRE)
-        private static int NEWTON_ITERATIONS = 4;
-        private static double NEWTON_MIN_SLOPE = 0.001;
-        private static double SUBDIVISION_PRECISION = 0.0000001;
-        private static int SUBDIVISION_MAX_ITERATIONS = 10;
+        private static readonly int NEWTON_ITERATIONS = 4;
+        private static readonly double NEWTON_MIN_SLOPE = 0.001;
+        private static readonly double SUBDIVISION_PRECISION = 0.0000001;
+        private static readonly int SUBDIVISION_MAX_ITERATIONS = 10;
 
         private double mX1 = 0, mY1 = 0, mX2 = 0, mY2 = 0;  // Bezier curve definition (0, 0, 0, 0 = Linear. 99, 99, 0, 0 = Pre-defined hard-coded EnhancedPrecision curve)
 

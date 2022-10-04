@@ -2,14 +2,19 @@
 using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
-using Windows.Win32.Foundation;
+
+using JetBrains.Annotations;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+using Nefarius.Utilities.DeviceManagement.PnP;
+
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.Interfaces.HID;
-using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Nefarius.Utilities.DeviceManagement.PnP;
+
+using Windows.Win32.Foundation;
 
 namespace Vapour.Shared.Devices.HID;
 

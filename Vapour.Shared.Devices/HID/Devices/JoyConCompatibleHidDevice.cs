@@ -1,4 +1,5 @@
 ﻿using System.Net.NetworkInformation;
+
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.Interfaces.HID;
 

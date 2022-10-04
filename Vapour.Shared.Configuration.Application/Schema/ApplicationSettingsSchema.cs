@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
+
+using Newtonsoft.Json;
+
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Common.Util;
-using Newtonsoft.Json;
 
 namespace Vapour.Shared.Configuration.Application.Schema
 {

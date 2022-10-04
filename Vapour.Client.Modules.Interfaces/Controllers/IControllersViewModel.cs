@@ -1,6 +1,7 @@
-﻿using Vapour.Client.Core.ViewModel;
+﻿using System.Collections.ObjectModel;
+
+using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles;
-using System.Collections.ObjectModel;
 
 namespace Vapour.Client.Modules.Controllers
 {

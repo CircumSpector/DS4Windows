@@ -1,10 +1,12 @@
-﻿using Vapour.Shared.Common.Core;
-using PropertyChanged;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using PropertyChanged;
+
+using Vapour.Shared.Common.Core;
 
 namespace Vapour.Shared.Configuration.Profiles.Schema
 {

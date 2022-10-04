@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
-using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Interfaces.HID;
-using Vapour.Shared.Devices.Output;
+
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
+
+using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Interfaces.HID;
+using Vapour.Shared.Devices.Output;
 
 namespace Vapour.Shared.Devices.Output
 {

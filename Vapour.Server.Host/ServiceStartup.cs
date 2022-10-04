@@ -1,4 +1,8 @@
-﻿using Vapour.Client.Core;
+﻿using Microsoft.Extensions.Hosting.WindowsServices;
+
+using Serilog;
+
+using Vapour.Client.Core;
 using Vapour.Server.Host.Controller;
 using Vapour.Server.Host.Profile;
 using Vapour.Shared.Common;
@@ -7,8 +11,7 @@ using Vapour.Shared.Configuration.Application;
 using Vapour.Shared.Configuration.Profiles;
 using Vapour.Shared.Devices;
 using Vapour.Shared.Devices.HostedServices;
-using Microsoft.Extensions.Hosting.WindowsServices;
-using Serilog;
+
 using Constants = Vapour.Shared.Common.Core.Constants;
 
 namespace Vapour.Server.Host;

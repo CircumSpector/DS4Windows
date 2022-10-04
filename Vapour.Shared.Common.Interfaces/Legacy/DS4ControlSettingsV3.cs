@@ -1,6 +1,8 @@
 ﻿using System;
-using Vapour.Shared.Common.Types;
+
 using PropertyChanged;
+
+using Vapour.Shared.Common.Types;
 
 namespace Vapour.Shared.Common.Legacy
 {

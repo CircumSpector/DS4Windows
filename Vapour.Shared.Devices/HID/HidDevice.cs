@@ -1,10 +1,14 @@
 ﻿using System.Runtime.InteropServices;
+
+using JetBrains.Annotations;
+
+using Microsoft.Win32.SafeHandles;
+
+using Vapour.Shared.Devices.Interfaces.HID;
+
 using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
 using Windows.Win32.Storage.FileSystem;
-using Vapour.Shared.Devices.Interfaces.HID;
-using JetBrains.Annotations;
-using Microsoft.Win32.SafeHandles;
 
 namespace Vapour.Shared.Devices.HID;
 

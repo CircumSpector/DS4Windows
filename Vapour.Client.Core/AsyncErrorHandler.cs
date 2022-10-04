@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+
 using Serilog;
 
 namespace Vapour.Client.Core

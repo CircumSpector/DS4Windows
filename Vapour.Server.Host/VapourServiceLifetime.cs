@@ -1,12 +1,16 @@
 ﻿using System.ServiceProcess;
-using Windows.Win32;
-using Windows.Win32.System.RemoteDesktop;
+
+using Microsoft.Extensions.Hosting.WindowsServices;
+using Microsoft.Extensions.Options;
+
+using Serilog;
+
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Devices.HostedServices;
-using Microsoft.Extensions.Hosting.WindowsServices;
-using Microsoft.Extensions.Options;
-using Serilog;
+
+using Windows.Win32;
+using Windows.Win32.System.RemoteDesktop;
 
 namespace Vapour.Server.Host
 {

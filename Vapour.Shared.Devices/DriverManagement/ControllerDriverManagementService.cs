@@ -1,5 +1,6 @@
 ﻿using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+
 using Vapour.Shared.Devices.Interfaces.DriverManagement;
 
 namespace Vapour.Shared.Devices.DriverManagement;

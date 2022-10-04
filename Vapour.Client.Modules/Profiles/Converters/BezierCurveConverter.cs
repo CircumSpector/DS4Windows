@@ -1,11 +1,12 @@
-﻿using Vapour.Shared.Common.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+
+using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Converters
 {

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Windows;
+
+using Hardcodet.Wpf.TaskbarNotification;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
-using Hardcodet.Wpf.TaskbarNotification;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Vapour.Client.TrayApplication
 {
@@ -17,7 +20,7 @@ namespace Vapour.Client.TrayApplication
     public partial class App : Application
     {
         private TaskbarIcon notifyIcon;
-        private IHost host;
+        private readonly IHost host;
 
         protected override async void OnStartup(StartupEventArgs e)
         {

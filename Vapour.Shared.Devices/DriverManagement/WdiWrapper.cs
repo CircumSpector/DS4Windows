@@ -5,11 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+using Nefarius.Utilities.DeviceManagement.PnP;
+
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Interfaces.DriverManagement;
 using Vapour.Shared.Devices.Interfaces.HID;
-using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace Vapour.Shared.Devices.DriverManagement
 {

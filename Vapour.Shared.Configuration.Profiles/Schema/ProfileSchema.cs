@@ -4,12 +4,15 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+
+using JetBrains.Annotations;
+
+using Newtonsoft.Json;
+
 using Vapour.Shared.Common.Legacy;
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Profiles.Types;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace Vapour.Shared.Configuration.Profiles.Schema
 {

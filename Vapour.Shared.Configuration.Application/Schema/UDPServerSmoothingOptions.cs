@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+
 using PropertyChanged;
 
 namespace Vapour.Shared.Configuration.Application.Schema

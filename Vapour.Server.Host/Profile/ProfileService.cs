@@ -1,7 +1,8 @@
-﻿using Vapour.Server.Profile;
+﻿using Newtonsoft.Json;
+
+using Vapour.Server.Profile;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
-using Newtonsoft.Json;
 
 namespace Vapour.Server.Host.Profile
 {

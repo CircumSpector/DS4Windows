@@ -1,4 +1,5 @@
 ﻿using System.Net.WebSockets;
+
 using Vapour.Server.Profile;
 using Vapour.Shared.Configuration.Profiles.Services;
 

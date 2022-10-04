@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using PropertyChanged;
+
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Common.Util;
-using PropertyChanged;
 
 namespace Vapour.Shared.Configuration.Profiles.Schema
 {
