@@ -6,7 +6,7 @@ using Vapour.Server.Profile;
 
 namespace Vapour.Server.Host
 {
-    public class ServerHostRegistrar : IServiceRegistrar
+    public sealed class ServerHostRegistrar : IServiceRegistrar
     {
         public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
         {

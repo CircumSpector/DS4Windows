@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Vapour.Server.Host.Profile
 {
-    public class ProfileService
+    public sealed class ProfileService
     {
         private readonly IProfileMessageForwarder profileMessageForwarder;
         private readonly IProfilesService profilesService;

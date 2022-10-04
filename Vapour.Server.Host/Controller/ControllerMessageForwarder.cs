@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Vapour.Server.Host.Controller;
 
-public class ControllerMessageForwarder : IControllerMessageForwarder
+public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 {
     private readonly IProfilesService profilesService;
     private readonly List<WebSocket> sockets = new();

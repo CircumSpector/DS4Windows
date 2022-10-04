@@ -4,7 +4,7 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Server.Host.Profile
 {
-    public class ProfileMessageForwarder : IProfileMessageForwarder
+    public sealed class ProfileMessageForwarder : IProfileMessageForwarder
     {
         private readonly IProfilesService profilesService;
         private WebSocket socket;

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Vapour.Server.Host.Controller;
 
-public class ControllerService
+public sealed class ControllerService
 {
     private readonly ControllerManagerHost controllerManagerHost;
     private readonly IControllerManagerService controllerManagerService;
