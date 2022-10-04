@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
-using System.ServiceProcess;
+﻿using System.ServiceProcess;
 using Windows.Win32;
+using Windows.Win32.System.RemoteDesktop;
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Devices.HostedServices;
@@ -10,7 +10,7 @@ using Serilog;
 
 namespace Vapour.Server.Host
 {
-    public class DS4WindowsServiceLifetime : WindowsServiceLifetime
+    public sealed class DS4WindowsServiceLifetime : WindowsServiceLifetime
     {
         private const string SYSTEM = "SYSTEM";
         private readonly ControllerManagerHost controllerHost;
@@ -100,25 +100,15 @@ namespace Vapour.Server.Host
             }
         }
         
-        private static string GetUsername(int sessionId)
+        private static unsafe string GetUsername(int sessionId)
         {
             string username = "SYSTEM";
-            if (WTSQuerySessionInformation(IntPtr.Zero, sessionId, WtsInfoClass.WTSUserName, out var buffer, out var strLen) && strLen > 1)
+            if (PInvoke.WTSQuerySessionInformation(null, (uint)sessionId, WTS_INFO_CLASS.WTSUserName, out var buffer, out var strLen) && strLen > 1)
             {
-                username = Marshal.PtrToStringAnsi(buffer);
-                WTSFreeMemory(buffer);
+                username = new string(buffer.Value);
+                PInvoke.WTSFreeMemory(buffer);
             }
             return username;
-        }
-
-        [DllImport("Wtsapi32.dll")]
-        private static extern bool WTSQuerySessionInformation(IntPtr hServer, int sessionId, WtsInfoClass wtsInfoClass, out IntPtr ppBuffer, out int pBytesReturned);
-        [DllImport("Wtsapi32.dll")]
-        private static extern void WTSFreeMemory(IntPtr pointer);
-
-        private enum WtsInfoClass
-        {
-            WTSUserName = 5
         }
     }
 }

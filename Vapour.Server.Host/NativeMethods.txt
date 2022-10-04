@@ -1,1 +1,4 @@
 ﻿WTSGetActiveConsoleSessionId
+WTSQuerySessionInformation
+WTSFreeMemory
+WTS_INFO_CLASS
