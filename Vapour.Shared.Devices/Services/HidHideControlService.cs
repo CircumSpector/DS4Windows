@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
+using Windows.Win32;
 using Windows.Win32.Storage.FileSystem;
 using Vapour.Shared.Devices.Util;
-using PInvoke;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -69,7 +69,7 @@ public class HidHideControlService : IHidHideControlService
     {
         get
         {
-            using var handle = Windows.Win32.PInvoke.CreateFile(
+            using var handle = PInvoke.CreateFile(
                 ControlDeviceFilename,
                 FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
                 FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
@@ -82,7 +82,7 @@ public class HidHideControlService : IHidHideControlService
             var bufferLength = Marshal.SizeOf<bool>();
             var buffer = stackalloc byte[bufferLength];
 
-            Windows.Win32.PInvoke.DeviceIoControl(
+            PInvoke.DeviceIoControl(
                 handle,
                 IoctlGetActive,
                 buffer,
@@ -97,7 +97,7 @@ public class HidHideControlService : IHidHideControlService
         }
         set
         {
-            using var handle = Windows.Win32.PInvoke.CreateFile(
+            using var handle = PInvoke.CreateFile(
                 ControlDeviceFilename,
                 FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
                 FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
@@ -112,7 +112,7 @@ public class HidHideControlService : IHidHideControlService
 
             buffer[0] = value ? (byte)1 : (byte)0;
 
-            Windows.Win32.PInvoke.DeviceIoControl(
+            PInvoke.DeviceIoControl(
                 handle,
                 IoctlSetActive,
                 buffer,
@@ -126,52 +126,56 @@ public class HidHideControlService : IHidHideControlService
     }
 
     /// <inheritdoc />
-    public IEnumerable<string> BlockedInstanceIds
+    public unsafe IEnumerable<string> BlockedInstanceIds
     {
         get
         {
-            using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-                Kernel32.SafeObjectHandle.Null
+            using var handle = PInvoke.CreateFile(
+                ControlDeviceFilename,
+                FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+                FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+                null,
+                FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+                FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+                null
             );
 
             var buffer = IntPtr.Zero;
 
             try
             {
+                uint required = 0;
+
                 // Get required buffer size
                 // Check return value for success
-                Kernel32.DeviceIoControl(
+                PInvoke.DeviceIoControl(
                     handle,
-                    unchecked((int)IoctlGetBlacklist),
-                    IntPtr.Zero,
+                    IoctlGetBlacklist,
+                    null,
                     0,
-                    IntPtr.Zero,
+                    null,
                     0,
-                    out var required,
-                    IntPtr.Zero
+                    &required,
+                    null
                 );
 
-                buffer = Marshal.AllocHGlobal(required);
+                buffer = Marshal.AllocHGlobal((int)required);
 
                 // Get actual buffer content
                 // Check return value for success
-                Kernel32.DeviceIoControl(
+                PInvoke.DeviceIoControl(
                     handle,
-                    unchecked((int)IoctlGetBlacklist),
-                    IntPtr.Zero,
+                    IoctlGetBlacklist,
+                    null,
                     0,
-                    buffer,
+                    buffer.ToPointer(),
                     required,
-                    out _,
-                    IntPtr.Zero
+                    null,
+                    null
                 );
 
                 // Store existing block-list in a more manageable "C#" fashion
-                return buffer.MultiSzPointerToStringArray(required).ToList();
+                return buffer.MultiSzPointerToStringArray((int)required).ToList();
             }
             finally
             {
@@ -181,52 +185,56 @@ public class HidHideControlService : IHidHideControlService
     }
 
     /// <inheritdoc />
-    public IEnumerable<string> AllowedApplicationPaths
+    public unsafe IEnumerable<string> AllowedApplicationPaths
     {
         get
         {
-            using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-                Kernel32.SafeObjectHandle.Null
+            using var handle = PInvoke.CreateFile(
+                ControlDeviceFilename,
+                FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+                FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+                null,
+                FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+                FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+                null
             );
 
             var buffer = IntPtr.Zero;
 
             try
             {
+                uint required = 0;
+
                 // Get required buffer size
                 // Check return value for success
-                Kernel32.DeviceIoControl(
+                PInvoke.DeviceIoControl(
                     handle,
-                    unchecked((int)IoctlGetWhitelist),
-                    IntPtr.Zero,
+                    IoctlGetWhitelist,
+                    null,
                     0,
-                    IntPtr.Zero,
+                    null,
                     0,
-                    out var required,
-                    IntPtr.Zero
+                    &required,
+                    null
                 );
 
-                buffer = Marshal.AllocHGlobal(required);
+                buffer = Marshal.AllocHGlobal((int)required);
 
                 // Get actual buffer content
                 // Check return value for success
-                Kernel32.DeviceIoControl(
+                PInvoke.DeviceIoControl(
                     handle,
-                    unchecked((int)IoctlGetWhitelist),
-                    IntPtr.Zero,
+                    IoctlGetWhitelist,
+                    null,
                     0,
-                    buffer,
+                    buffer.ToPointer(),
                     required,
-                    out _,
-                    IntPtr.Zero
+                    null,
+                    null
                 );
 
                 // Store existing block-list in a more manageable "C#" fashion
-                return buffer.MultiSzPointerToStringArray(required).ToList();
+                return buffer.MultiSzPointerToStringArray((int)required).ToList();
             }
             finally
             {
@@ -236,14 +244,16 @@ public class HidHideControlService : IHidHideControlService
     }
 
     /// <inheritdoc />
-    public void AddBlockedInstanceId(string instanceId)
+    public unsafe void AddBlockedInstanceId(string instanceId)
     {
-        using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = PInvoke.CreateFile(
+            ControlDeviceFilename,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
         var buffer = IntPtr.Zero;
@@ -260,15 +270,15 @@ public class HidHideControlService : IHidHideControlService
 
             // Submit new list
             // Check return value for success
-            Kernel32.DeviceIoControl(
+            PInvoke.DeviceIoControl(
                 handle,
-                unchecked((int)IoctlSetBlacklist),
-                buffer,
-                length,
-                IntPtr.Zero,
+                IoctlSetBlacklist,
+                buffer.ToPointer(),
+                (uint)length,
+                null,
                 0,
-                out _,
-                IntPtr.Zero
+                null,
+                null
             );
         }
         finally
@@ -278,14 +288,16 @@ public class HidHideControlService : IHidHideControlService
     }
 
     /// <inheritdoc />
-    public void RemoveBlockedInstanceId(string instanceId)
+    public unsafe void RemoveBlockedInstanceId(string instanceId)
     {
-        using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = PInvoke.CreateFile(
+            ControlDeviceFilename,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
         var buffer = IntPtr.Zero;
@@ -299,15 +311,15 @@ public class HidHideControlService : IHidHideControlService
 
             // Submit new list
             // Check return value for success
-            Kernel32.DeviceIoControl(
+            PInvoke.DeviceIoControl(
                 handle,
-                unchecked((int)IoctlSetBlacklist),
-                buffer,
-                length,
-                IntPtr.Zero,
+                IoctlSetBlacklist,
+                buffer.ToPointer(),
+                (uint)length,
+                null,
                 0,
-                out _,
-                IntPtr.Zero
+                null,
+                null
             );
         }
         finally
@@ -317,14 +329,16 @@ public class HidHideControlService : IHidHideControlService
     }
 
     /// <inheritdoc />
-    public void AddAllowedApplicationPath(string path)
+    public unsafe void AddAllowedApplicationPath(string path)
     {
-        using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = PInvoke.CreateFile(
+            ControlDeviceFilename,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
         var buffer = IntPtr.Zero;
@@ -341,15 +355,15 @@ public class HidHideControlService : IHidHideControlService
 
             // Submit new list
             // Check return value for success
-            Kernel32.DeviceIoControl(
+            PInvoke.DeviceIoControl(
                 handle,
-                unchecked((int)IoctlSetWhitelist),
-                buffer,
-                length,
-                IntPtr.Zero,
+                IoctlSetWhitelist,
+                buffer.ToPointer(),
+                (uint)length,
+                null,
                 0,
-                out _,
-                IntPtr.Zero
+                null,
+                null
             );
         }
         finally
@@ -359,14 +373,16 @@ public class HidHideControlService : IHidHideControlService
     }
 
     /// <inheritdoc />
-    public void RemoveAllowedApplicationPath(string path)
+    public unsafe void RemoveAllowedApplicationPath(string path)
     {
-        using var handle = Kernel32.CreateFile(ControlDeviceFilename,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ,
-            Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
-            Kernel32.SafeObjectHandle.Null
+        using var handle = PInvoke.CreateFile(
+            ControlDeviceFilename,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
         );
 
         var buffer = IntPtr.Zero;
@@ -380,15 +396,15 @@ public class HidHideControlService : IHidHideControlService
 
             // Submit new list
             // Check return value for success
-            Kernel32.DeviceIoControl(
+            PInvoke.DeviceIoControl(
                 handle,
-                unchecked((int)IoctlSetWhitelist),
-                buffer,
-                length,
-                IntPtr.Zero,
+                IoctlSetWhitelist,
+                buffer.ToPointer(),
+                (uint)length,
+                null,
                 0,
-                out _,
-                IntPtr.Zero
+                null,
+                null
             );
         }
         finally

@@ -1,11 +1,11 @@
 ﻿using System.Runtime.InteropServices;
 using System.ServiceProcess;
+using Windows.Win32;
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Devices.HostedServices;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.Extensions.Options;
-using PInvoke;
 using Serilog;
 
 namespace Vapour.Server.Host
@@ -39,7 +39,7 @@ namespace Vapour.Server.Host
         protected override void OnStart(string[] args)
         {
             base.OnStart(args);
-            var currentSession = Kernel32.WTSGetActiveConsoleSessionId();
+            var currentSession = PInvoke.WTSGetActiveConsoleSessionId();
             if (currentSession != 0)
             {
                 var userName = GetUsername((int)currentSession);

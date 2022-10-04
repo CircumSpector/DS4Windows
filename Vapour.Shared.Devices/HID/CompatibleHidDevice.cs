@@ -2,6 +2,7 @@
 using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
+using Windows.Win32.Foundation;
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.Interfaces.HID;
@@ -9,7 +10,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using PInvoke;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -301,9 +301,9 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                 await InputReportChannel.Writer.WriteAsync(InputReportArray, inputReportToken.Token);
             }
         }
-        catch (Win32Exception win32)
+        catch (HidDeviceException win32)
         {
-            if (win32.NativeErrorCode != Win32ErrorCode.ERROR_DEVICE_NOT_CONNECTED) throw;
+            if (win32.ErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED) throw;
 
             inputReportToken.Cancel();
 
