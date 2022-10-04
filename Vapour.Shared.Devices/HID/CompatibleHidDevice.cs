@@ -26,13 +26,13 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     private static readonly Counter<int> _reportsProcessedCounter = _meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
 
     protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
-    
+
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
     protected static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
     protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
     protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
-    
+
     protected readonly Channel<byte[]> InputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
         SingleReader = true,

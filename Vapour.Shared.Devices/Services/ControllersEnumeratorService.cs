@@ -75,14 +75,14 @@ public class ControllersEnumeratorService : IControllersEnumeratorService
         // Filter for supported devices
         // 
         var filtered = from hidDevice in hidDevices
-            let known =
-                KnownDevices.List.FirstOrDefault(d =>
-                    d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID)
-            where known is not null
-            where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
-                   known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
-                  !hidDevice.IsVirtual
-            select hidDevice;
+                       let known =
+                           KnownDevices.List.FirstOrDefault(d =>
+                               d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID)
+                       where known is not null
+                       where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
+                              known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
+                             !hidDevice.IsVirtual
+                       select hidDevice;
 
         supportedDevices.Clear();
 

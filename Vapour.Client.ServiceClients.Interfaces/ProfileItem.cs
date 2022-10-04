@@ -62,8 +62,8 @@ namespace Vapour.Client.ServiceClients
         public OutputDeviceType OutputDeviceType { get; set; }
         public ControlSettingsGroup PerControlSettings { get; set; } = new(
         (from DS4ControlItem dc in Enum.GetValues(typeof(DS4ControlItem))
-        where dc != DS4ControlItem.None
-            select new DS4ControlSettingsV3(dc)).ToList());
+         where dc != DS4ControlItem.None
+         select new DS4ControlSettingsV3(dc)).ToList());
         public TriggerDeadZoneZInfo R2ModInfo { get; set; }
         public BezierCurve R2OutCurve { get; set; }
         public CurveMode R2OutCurveMode { get; set; }

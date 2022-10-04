@@ -17,7 +17,7 @@ namespace Vapour.Shared.Devices.Services
     {
         public static int CURRENT_DS4_CONTROLLER_LIMIT = 8;
 
-        
+
 
         public const int DELAY_TIME = 500; // measured in ms
 
@@ -78,8 +78,8 @@ namespace Vapour.Shared.Devices.Services
                     outputDevice = new Xbox360OutDevice(Client);
                     break;
                 case OutputDeviceType.DualShock4Controller:
-                    //outputDevice = DS4OutDeviceFactory.CreateDS4Device(Client, Global.ViGEmBusVersionInfo);
-                    //break;
+                //outputDevice = DS4OutDeviceFactory.CreateDS4Device(Client, Global.ViGEmBusVersionInfo);
+                //break;
                 case OutputDeviceType.None:
                 default:
                     break;

@@ -18,7 +18,7 @@ namespace Vapour.Client.Modules.Profiles.Edit
             this.mapper = mapper;
         }
 
-        public override async  Task Initialize()
+        public override async Task Initialize()
         {
             leftStick = await viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
             rightStick = await viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
@@ -33,14 +33,14 @@ namespace Vapour.Client.Modules.Profiles.Edit
         {
             get => isNew;
             private set => SetProperty(ref isNew, value);
-        } 
+        }
 
         private string name;
         public string Name
         {
             get => name;
             set => SetProperty(ref name, value);
-        } 
+        }
 
         private IStickEditViewModel leftStick;
         public IStickEditViewModel LeftStick

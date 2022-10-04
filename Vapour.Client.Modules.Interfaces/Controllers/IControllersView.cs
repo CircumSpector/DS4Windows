@@ -2,7 +2,7 @@
 
 namespace Vapour.Client.Modules.Controllers
 {
-    public interface IControllersView  : IView<IControllersView>
+    public interface IControllersView : IView<IControllersView>
     {
     }
 }

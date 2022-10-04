@@ -12,7 +12,7 @@ namespace Vapour.Client.TrayApplication
 
     }
 
-    public class TrayViewModel :ViewModel<ITrayViewModel>, ITrayViewModel
+    public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
     {
         private readonly IControllerServiceClient controllerServiceClient;
         private readonly IProfileServiceClient profileServiceClient;
@@ -82,7 +82,7 @@ namespace Vapour.Client.TrayApplication
 
         private void OnShowClient()
         {
-            
+
         }
 
         public IRelayCommand ChangeHostStateCommand { get; }

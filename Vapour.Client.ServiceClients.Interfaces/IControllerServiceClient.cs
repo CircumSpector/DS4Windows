@@ -9,7 +9,7 @@ public interface IControllerServiceClient
 {
     Task<List<ControllerConnectedMessage>> GetControllerList();
     void StartWebSocket(
-        Action<ControllerConnectedMessage> connectedHandler, 
+        Action<ControllerConnectedMessage> connectedHandler,
         Action<ControllerDisconnectedMessage> disconnectedHandler,
         Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null);
     Task WaitForService();

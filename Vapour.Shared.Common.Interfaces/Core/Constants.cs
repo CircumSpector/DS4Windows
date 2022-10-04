@@ -11,7 +11,7 @@ namespace Vapour.Shared.Common.Core
         public const string ApplicationName = "DS4Windows";
 
         public const string LegacyProfilesFileName = "Profiles.xml";
-        
+
         public const string LegacyActionsFileName = "Actions.xml";
 
         public const string LegacyLinkedProfilesFileName = "LinkedProfiles.xml";
@@ -21,7 +21,7 @@ namespace Vapour.Shared.Common.Core
         public const string LegacyAutoProfilesFileName = "Auto Profiles.xml";
 
         public static Guid ViGemBusGen1InterfaceGuid = new("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
-        
+
         public static Guid HidHideInterfaceGuid = new("{0C320FF7-BD9B-42B6-BDAF-49FEB9C91649}");
 
         public static Guid SystemDeviceClassGuid = new("{4d36e97d-e325-11ce-bfc1-08002be10318}");
@@ -41,15 +41,15 @@ namespace Vapour.Shared.Common.Core
         public const string ChangelogUri = "https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/Changelog.min.json";
 
         public const string SteamTroubleshootingUri = "https://docs.ds4windows.app/troubleshooting/steam-related/";
-        
+
         public const string TracingGuideUri = "https://docs.ds4windows.app/troubleshooting/tracing-guide/";
 
         public const string ViGEmBusGen1DownloadUri = "https://github.com/ViGEm/ViGEmBus/releases/latest";
-        
+
         public const string ViGEmBusGen1GuideUri = "https://vigem.org/projects/ViGEm/How-to-Install/#troubleshooting";
 
         public const string HidHideDownloadUri = "https://github.com/ViGEm/HidHide/releases/latest";
-        
+
         public const string HidHideGuideUri = "https://docs.ds4windows.app/troubleshooting/hidhide-troubleshoot/";
 
         /// <summary>

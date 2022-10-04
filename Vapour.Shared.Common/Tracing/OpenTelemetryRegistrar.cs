@@ -16,7 +16,7 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
     private const string AssemblyPrefix = "DS4Windows";
 
     private static readonly Regex Cleanup = new(", (Version|Culture|PublicKeyToken)=[0-9.\\w]+", RegexOptions.Compiled);
-    
+
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
         // Get list of assemblies, register them all as potential tracing and metric sources

@@ -22,7 +22,7 @@ namespace Vapour.Client
         {
             base.OnStartup(e);
             await ApplicationStartup.Start(
-                new []
+                new[]
                 {
                     typeof(ViewModelRegistrar),
                     typeof(ProfilesModuleRegistrar),

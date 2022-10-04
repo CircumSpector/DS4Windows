@@ -48,10 +48,10 @@ namespace Vapour.Shared.Common.Types
         private double[] arraySampleValues;
 
         // These values are established by empiricism with tests (tradeoff: performance VS precision) (comment by GRE)
-        private static int    NEWTON_ITERATIONS = 4;
+        private static int NEWTON_ITERATIONS = 4;
         private static double NEWTON_MIN_SLOPE = 0.001;
         private static double SUBDIVISION_PRECISION = 0.0000001;
-        private static int    SUBDIVISION_MAX_ITERATIONS = 10;
+        private static int SUBDIVISION_MAX_ITERATIONS = 10;
 
         private double mX1 = 0, mY1 = 0, mX2 = 0, mY2 = 0;  // Bezier curve definition (0, 0, 0, 0 = Linear. 99, 99, 0, 0 = Pre-defined hard-coded EnhancedPrecision curve)
 
@@ -69,7 +69,7 @@ namespace Vapour.Shared.Common.Types
                 // The input string is expected to be always in "en-US" data format (ie. period as decimal separator and comma as list separator) and the string value should not have thousand separator chars
                 string[] bezierDef = value.Split(new Char[] { ',' }, 4);
                 CultureInfo usDataFormatCulture = CultureInfo.CreateSpecificCulture("en-US");
-                if (bezierDef.Length < 4 || !Double.TryParse(bezierDef[0], NumberStyles.Float, usDataFormatCulture, out mX1) || !Double.TryParse(bezierDef[1], NumberStyles.Float, usDataFormatCulture, out mY1) || !Double.TryParse(bezierDef[2], NumberStyles.Float, usDataFormatCulture, out mX2) || !Double.TryParse(bezierDef[3], NumberStyles.Float, usDataFormatCulture, out mY2) )
+                if (bezierDef.Length < 4 || !Double.TryParse(bezierDef[0], NumberStyles.Float, usDataFormatCulture, out mX1) || !Double.TryParse(bezierDef[1], NumberStyles.Float, usDataFormatCulture, out mY1) || !Double.TryParse(bezierDef[2], NumberStyles.Float, usDataFormatCulture, out mX2) || !Double.TryParse(bezierDef[3], NumberStyles.Float, usDataFormatCulture, out mY2))
                     mX1 = mY1 = mX2 = mY2 = 0;
             }
         }
@@ -91,7 +91,7 @@ namespace Vapour.Shared.Common.Types
         private double axisCenterPosDouble;     // Center pos of axis (LS/RS has 128 as "stick center", other axies has 0 as zero center point)
 
         // Lookup result table is always either in 0..128 or 0..255 range depending on the DS4 analog axis range. LUT table set as public to let DS4Win reading thread to access it directly (every CPU cycle matters)
-        public byte[] arrayBezierLUT = null;  
+        public byte[] arrayBezierLUT = null;
 
         public BezierCurve()
         {
@@ -210,7 +210,7 @@ namespace Vapour.Shared.Common.Types
 
             for (byte idx = 0; idx <= axisMaxDouble; idx++)
             {
-                abs = idx / axisMaxDouble; 
+                abs = idx / axisMaxDouble;
                 if (abs <= 0.4)
                     output = 0.55 * abs;
                 else if (abs <= 0.75)
@@ -304,7 +304,7 @@ namespace Vapour.Shared.Common.Types
             return true;
         }
 
-        public byte GetBezierEasing(byte inputXValue) 
+        public byte GetBezierEasing(byte inputXValue)
         {
             unchecked
             {

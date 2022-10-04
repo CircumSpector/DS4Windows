@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Vapour.Shared.Common.Types
 {
-     public class DS4Color : IEquatable<DS4Color>, ICloneable
+    public class DS4Color : IEquatable<DS4Color>, ICloneable
     {
         public DS4Color()
         {

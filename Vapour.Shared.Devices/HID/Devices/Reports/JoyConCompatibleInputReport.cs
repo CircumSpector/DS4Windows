@@ -72,7 +72,7 @@ public sealed class JoyConCompatibleInputReport : CompatibleHidDeviceInputReport
         FrameCounter = (byte)(input[7] >> 2);
 
         var touchX = ((input[35] & 0xF) << 8) | input[34];
-        
+
         TrackPadTouch1 = new TrackPadTouch
         {
             RawTrackingNum = input[35],

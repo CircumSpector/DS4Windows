@@ -75,14 +75,14 @@ namespace Vapour.Shared.Common.Legacy
                         ActionData.ActionKey = Convert.ToInt32(act);
                         break;
                     case string or X360ControlItem:
-                    {
-                        ControlActionType = ActionType.Button;
-                        if (act is X360ControlItem controls)
-                            ActionData.ActionButton = controls;
-                        else
-                            Enum.TryParse(act.ToString(), out ActionData.ActionButton);
-                        break;
-                    }
+                        {
+                            ControlActionType = ActionType.Button;
+                            if (act is X360ControlItem controls)
+                                ActionData.ActionButton = controls;
+                            else
+                                Enum.TryParse(act.ToString(), out ActionData.ActionButton);
+                            break;
+                        }
                     case int[] values:
                         ControlActionType = ActionType.Macro;
                         ActionData.ActionMacro = values;
@@ -107,14 +107,14 @@ namespace Vapour.Shared.Common.Legacy
                         break;
                     case string:
                     case X360ControlItem:
-                    {
-                        ShiftActionType = ActionType.Button;
-                        if (act is X360ControlItem controls)
-                            ShiftAction.ActionButton = controls;
-                        else
-                            Enum.TryParse(act.ToString(), out ShiftAction.ActionButton);
-                        break;
-                    }
+                        {
+                            ShiftActionType = ActionType.Button;
+                            if (act is X360ControlItem controls)
+                                ShiftAction.ActionButton = controls;
+                            else
+                                Enum.TryParse(act.ToString(), out ShiftAction.ActionButton);
+                            break;
+                        }
                     case int[] values:
                         ShiftActionType = ActionType.Macro;
                         ShiftAction.ActionMacro = values;

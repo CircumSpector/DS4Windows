@@ -20,6 +20,6 @@ namespace Vapour.Server.Host.Profile
             var waitSource = new TaskCompletionSource<object>();
             await waitSource.Task;
         }
-        
+
     }
 }

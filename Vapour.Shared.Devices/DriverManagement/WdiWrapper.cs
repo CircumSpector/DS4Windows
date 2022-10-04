@@ -31,14 +31,14 @@ namespace Vapour.Shared.Devices.DriverManagement
         public PrepareDriverResult PrepareDriver(string controllerInstanceId)
         {
             var foundDevice = GetDevice(controllerInstanceId);
-            
+
             var pnpDevice = PnPDevice.GetDeviceByInstanceId(controllerInstanceId);
             var hardwareid = pnpDevice.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds).Last();
 
             var hardwareIdParts = hardwareid.Split("&");
 
-            var vid = int.Parse(hardwareIdParts[0].Remove(0,8), NumberStyles.HexNumber);
-            var pid = int.Parse(hardwareIdParts[1].Remove(0,4), NumberStyles.HexNumber);
+            var vid = int.Parse(hardwareIdParts[0].Remove(0, 8), NumberStyles.HexNumber);
+            var pid = int.Parse(hardwareIdParts[1].Remove(0, 4), NumberStyles.HexNumber);
 
             var deviceProductInfo = KnownDevices.List.SingleOrDefault(i => i.Vid == vid && i.Pid == pid);
 
@@ -56,7 +56,7 @@ namespace Vapour.Shared.Devices.DriverManagement
                 if (Directory.Exists(driverPath))
                 {
                     Directory.Delete(driverPath, true);
-                    
+
                 }
                 //temp to help test
                 Directory.CreateDirectory(driverPath);
@@ -76,7 +76,7 @@ namespace Vapour.Shared.Devices.DriverManagement
         {
             Kernel32.LoadLibrary(Environment.Is64BitProcess ? AMD64FullPath : x86FullPath);
         }
-        
+
         /// <summary>
         ///     The Usb driver solution to install.
         /// </summary>
@@ -84,7 +84,7 @@ namespace Vapour.Shared.Devices.DriverManagement
         {
             [Description("WinUSB")] WDI_WINUSB
         }
-        
+
         private wdi_device_info GetDevice(string id)
         {
             id = id.ToUpper();
@@ -126,7 +126,7 @@ namespace Vapour.Shared.Devices.DriverManagement
             wdi_destroy_list(devices);
             return foundDevice;
         }
-        
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         private struct wdi_device_info
         {
@@ -176,7 +176,7 @@ namespace Vapour.Shared.Devices.DriverManagement
             private readonly bool use_wcid_driver;
             private readonly bool external_inf;
         }
-        
+
         [DllImport("libwdi.dll", EntryPoint = "wdi_create_list", ExactSpelling = false)]
         private static extern int wdi_create_list(ref IntPtr list,
             ref wdi_options_create_list options);

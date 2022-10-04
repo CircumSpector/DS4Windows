@@ -24,7 +24,7 @@ namespace Vapour.Client.Modules.Profiles.Edit
         {
             get => deadZone;
             set => SetProperty(ref deadZone, Math.Round(value, 1));
-        } 
+        }
 
         private double antiDeadZone;
         public double AntiDeadZone

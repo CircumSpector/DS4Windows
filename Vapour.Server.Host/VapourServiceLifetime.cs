@@ -18,11 +18,11 @@ namespace Vapour.Server.Host
         private readonly IControllerMessageForwarder controllerMessageForwarder;
 
         public DS4WindowsServiceLifetime(
-            IHostEnvironment environment, 
-            IHostApplicationLifetime applicationLifetime, 
-            ILoggerFactory loggerFactory, 
-            IOptions<HostOptions> optionsAccessor, 
-            IOptions<WindowsServiceLifetimeOptions> windowsServiceOptionsAccessor, 
+            IHostEnvironment environment,
+            IHostApplicationLifetime applicationLifetime,
+            ILoggerFactory loggerFactory,
+            IOptions<HostOptions> optionsAccessor,
+            IOptions<WindowsServiceLifetimeOptions> windowsServiceOptionsAccessor,
             ControllerManagerHost controllerHost,
             IGlobalStateService globalStateService,
             IControllerMessageForwarder controllerMessageForwarder) : base(environment, applicationLifetime, loggerFactory, optionsAccessor, windowsServiceOptionsAccessor)
@@ -80,7 +80,7 @@ namespace Vapour.Server.Host
                 await StopHost();
             }
         }
-        
+
         private async void StartHost(string currentUserName)
         {
             if (!controllerHost.IsRunning)
@@ -99,7 +99,7 @@ namespace Vapour.Server.Host
                 await controllerHost.StopAsync();
             }
         }
-        
+
         private static unsafe string GetUsername(int sessionId)
         {
             string username = "SYSTEM";

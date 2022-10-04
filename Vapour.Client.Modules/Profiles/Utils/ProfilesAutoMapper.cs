@@ -120,7 +120,7 @@ namespace Vapour.Client.Modules.Profiles.Utils
             #endregion
 
             #region SixAxisX
-                
+
                 .ForPath(dest => dest.SixAxisX.DeadZone, cfg => cfg.MapFrom(src => src.SXDeadZone))
                 .ForPath(dest => dest.SixAxisX.AntiDeadZone, cfg => cfg.MapFrom(src => src.SXAntiDeadZone))
                 .ForPath(dest => dest.SixAxisX.MaxZone, cfg => cfg.MapFrom(src => src.SXMaxZone))
@@ -245,7 +245,7 @@ namespace Vapour.Client.Modules.Profiles.Utils
             #endregion
 
             #region SixAxisX
-                
+
                 .ForPath(dest => dest.SXDeadZone, cfg => cfg.MapFrom(src => src.SixAxisX.DeadZone))
                 .ForPath(dest => dest.SXAntiDeadZone, cfg => cfg.MapFrom(src => src.SixAxisX.AntiDeadZone))
                 .ForPath(dest => dest.SXMaxZone, cfg => cfg.MapFrom(src => src.SixAxisX.MaxZone))

@@ -55,7 +55,7 @@ namespace Vapour.Client.Modules.Profiles.Edit
         {
             get => forceMaxOutput;
             set => SetProperty(ref forceMaxOutput, value);
-        } 
+        }
 
         private int verticalScale;
         public int VerticalScale
@@ -68,7 +68,7 @@ namespace Vapour.Client.Modules.Profiles.Edit
         public double Sensitivity
         {
             get => sensitivity;
-            set => SetProperty(ref sensitivity, Math.Round(value,1)); 
+            set => SetProperty(ref sensitivity, Math.Round(value, 1));
             //Math round needed because wpf slider control when binding to double and tick increment
             //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
         }

@@ -10,7 +10,7 @@
         private const int SwitchProProductId = 0x2009;
         private const int JoyconLProductId = 0x2006;
         private const int JoyconRProductId = 0x2007;
-        
+
         public static readonly IEnumerable<VidPidInfo> List = new List<VidPidInfo>
         {
             new(SonyVid, 0xBA0, "Sony WA",
