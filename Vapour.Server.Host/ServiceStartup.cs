@@ -48,7 +48,8 @@ public static class ServiceStartup
         ControllerService.RegisterRoutes(app);
         ProfileService.RegisterRoutes(app);
 
-        if (app.Environment.IsDevelopment())
+        // running under debugger or in a console session
+        if (app.Environment.IsDevelopment() || Environment.UserInteractive)
         {
             var controllerHost = app.Services.GetRequiredService<ControllerManagerHost>();
             ControllerManagerHost.IsEnabled = true;
