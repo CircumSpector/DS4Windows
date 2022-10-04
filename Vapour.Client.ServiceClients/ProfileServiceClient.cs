@@ -8,18 +8,18 @@ namespace Vapour.Client.ServiceClients;
 
 public class ProfileServiceClient : IProfileServiceClient
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHttpClientFactory httpClientFactory;
 
     public ProfileServiceClient(IHttpClientFactory httpClientFactory)
     {
-        _httpClientFactory = httpClientFactory;
+        this.httpClientFactory = httpClientFactory;
     }
 
     public ObservableCollection<IProfile> ProfileList { get; private set; }
 
     public async Task Initialize()
     {
-        using var client = _httpClientFactory.CreateClient();
+        using var client = httpClientFactory.CreateClient();
         var result = await client.GetAsync(new Uri($"{Constants.HttpUrl}/profile/list"));
         if (result.IsSuccessStatusCode)
         {
@@ -36,7 +36,7 @@ public class ProfileServiceClient : IProfileServiceClient
 
     public async Task<IProfile> CreateNewProfile()
     {
-        using var client = _httpClientFactory.CreateClient();
+        using var client = httpClientFactory.CreateClient();
         var result = await client.GetAsync(new Uri($"{Constants.HttpUrl}/profile/new", UriKind.Absolute));
         if (result.IsSuccessStatusCode)
         {
@@ -51,7 +51,7 @@ public class ProfileServiceClient : IProfileServiceClient
 
     public async Task DeleteProfile(Guid id)
     {
-        using var client = _httpClientFactory.CreateClient();
+        using var client = httpClientFactory.CreateClient();
         var result = await client.PostAsync(new Uri($"{Constants.HttpUrl}/profile/delete", UriKind.Absolute),
             new StringContent(id.ToString()));
         if (!result.IsSuccessStatusCode) throw new Exception($"Could not delete profile {result.ReasonPhrase}");
@@ -62,7 +62,7 @@ public class ProfileServiceClient : IProfileServiceClient
     public async Task<IProfile> SaveProfile(IProfile profile)
     {
         var content = JsonConvert.SerializeObject(profile);
-        using var client = _httpClientFactory.CreateClient();
+        using var client = httpClientFactory.CreateClient();
         var result = await client.PostAsync(new Uri($"{Constants.HttpUrl}/profile/save", UriKind.Absolute),
             new StringContent(content));
         if (result.IsSuccessStatusCode)
