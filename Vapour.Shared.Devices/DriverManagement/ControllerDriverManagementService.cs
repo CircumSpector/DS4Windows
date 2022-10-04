@@ -24,7 +24,7 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
     public void HideController(string controllerInstanceId)
     {
         var hubAndPort = GetHubAndPort(controllerInstanceId);
-        var hubAndPath = GetHubPath(hubAndPort.hubDeviceId);
+        var hubAndPath = GetHubPath(hubAndPort.HubDeviceId);
 
         var prepareDriverResult = PrepareDriver(controllerInstanceId);
         InstallDriver(prepareDriverResult);
@@ -61,7 +61,7 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
                 var portNumber = Convert.ToInt32(hidLocationInfo.Split('.')[3]);
                 return new HubAndPort
                 {
-                    hubDeviceId = device.DeviceId,
+                    HubDeviceId = device.DeviceId,
                     PortNumber = portNumber,
                     HidDevice = hidDevice
                 };
@@ -157,7 +157,7 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
         return wdiWrapper.PrepareDriver(controllerInstanceId);
     }
 
-    private void InstallDriver(PrepareDriverResult prepareDriverResult)
+    private static void InstallDriver(PrepareDriverResult prepareDriverResult)
     {
         var result = Devcon.Update(prepareDriverResult.HardwareId, prepareDriverResult.InfPath, out var rebootRequired);
         if (!result)
@@ -166,7 +166,7 @@ public class ControllerDriverManagementService : IControllerDriverManagementServ
 
     private class HubAndPort
     {
-        public string hubDeviceId { get; set; }
+        public string HubDeviceId { get; init; }
         public int PortNumber { get; set; }
         public PnPDevice HidDevice { get; set; }
     }
