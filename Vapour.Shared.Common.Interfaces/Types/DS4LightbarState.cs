@@ -1,34 +1,33 @@
 ﻿using System;
 
-namespace Vapour.Shared.Common.Types
+namespace Vapour.Shared.Common.Types;
+
+public class DS4LightbarState : IEquatable<DS4LightbarState>, ICloneable
 {
-    public class DS4LightbarState : IEquatable<DS4LightbarState>, ICloneable
+    public bool LightBarExplicitlyOff;
+
+    public byte LightBarFlashDurationOn, LightBarFlashDurationOff;
+    public DS4Color LightBarColor { get; set; } = new();
+
+    public object Clone()
     {
-        public bool LightBarExplicitlyOff;
+        var state = (DS4LightbarState)MemberwiseClone();
+        state.LightBarColor = (DS4Color)LightBarColor.Clone();
 
-        public byte LightBarFlashDurationOn, LightBarFlashDurationOff;
-        public DS4Color LightBarColor { get; set; } = new();
+        return state;
+    }
 
-        public object Clone()
-        {
-            var state = (DS4LightbarState)MemberwiseClone();
-            state.LightBarColor = (DS4Color)LightBarColor.Clone();
+    public bool Equals(DS4LightbarState other)
+    {
+        return LightBarColor.Equals(other.LightBarColor) &&
+               LightBarExplicitlyOff == other.LightBarExplicitlyOff &&
+               LightBarFlashDurationOn == other.LightBarFlashDurationOn &&
+               LightBarFlashDurationOff == other.LightBarFlashDurationOff;
+    }
 
-            return state;
-        }
-
-        public bool Equals(DS4LightbarState other)
-        {
-            return LightBarColor.Equals(other.LightBarColor) &&
-                   LightBarExplicitlyOff == other.LightBarExplicitlyOff &&
-                   LightBarFlashDurationOn == other.LightBarFlashDurationOn &&
-                   LightBarFlashDurationOff == other.LightBarFlashDurationOff;
-        }
-
-        public bool IsLightBarSet()
-        {
-            return LightBarExplicitlyOff || LightBarColor.Red != 0 || LightBarColor.Green != 0 ||
-                   LightBarColor.Blue != 0;
-        }
+    public bool IsLightBarSet()
+    {
+        return LightBarExplicitlyOff || LightBarColor.Red != 0 || LightBarColor.Green != 0 ||
+               LightBarColor.Blue != 0;
     }
 }

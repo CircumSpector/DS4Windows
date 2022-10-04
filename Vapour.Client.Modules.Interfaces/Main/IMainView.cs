@@ -1,8 +1,7 @@
 ﻿using Vapour.Client.Core.View;
 
-namespace Vapour.Client.Modules.Main
+namespace Vapour.Client.Modules.Main;
+
+public interface IMainView : IView<IMainView>
 {
-    public interface IMainView : IView<IMainView>
-    {
-    }
 }

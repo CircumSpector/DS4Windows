@@ -1,10 +1,9 @@
-﻿namespace Vapour.Shared.Common.Util
+﻿namespace Vapour.Shared.Common.Util;
+
+public static class MathsUtils
 {
-    public static class MathsUtils
+    public static double Clamp(double min, double value, double max)
     {
-        public static double Clamp(double min, double value, double max)
-        {
-            return value < min ? min : value > max ? max : value;
-        }
+        return value < min ? min : value > max ? max : value;
     }
 }

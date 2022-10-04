@@ -8,35 +8,34 @@ using System.Windows.Data;
 
 using Vapour.Shared.Common.Types;
 
-namespace Vapour.Client.Modules.Profiles.Converters
-{
-    public class BezierCurveConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-            {
-                return null;
-            }
-            else
-            {
-                var bezierCurve = (BezierCurve)value;
-                return bezierCurve.AsString;
-            }
-        }
+namespace Vapour.Client.Modules.Profiles.Converters;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+public class BezierCurveConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value == null)
         {
-            if (value == null)
-            {
-                return null;
-            }
-            else
-            {
-                var bezierCurve = new BezierCurve();
-                bezierCurve.InitBezierCurve((string)value, BezierCurve.AxisType.LSRS, true);
-                return bezierCurve;
-            }
+            return null;
+        }
+        else
+        {
+            var bezierCurve = (BezierCurve)value;
+            return bezierCurve.AsString;
+        }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value == null)
+        {
+            return null;
+        }
+        else
+        {
+            var bezierCurve = new BezierCurve();
+            bezierCurve.InitBezierCurve((string)value, BezierCurve.AxisType.LSRS, true);
+            return bezierCurve;
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace Vapour.Shared.Common.Types
+﻿namespace Vapour.Shared.Common.Types;
+
+public class StickControlSettings
 {
-    public class StickControlSettings
+    public void Reset()
     {
-        public void Reset()
-        {
-        }
     }
 }

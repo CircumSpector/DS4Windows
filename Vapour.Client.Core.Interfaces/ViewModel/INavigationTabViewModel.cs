@@ -6,21 +6,20 @@ using System.Threading.Tasks;
 
 using Vapour.Client.Core.View;
 
-namespace Vapour.Client.Core.ViewModel
+namespace Vapour.Client.Core.ViewModel;
+
+public interface INavigationTabViewModel<TViewModel, TView> : INavigationTabViewModel, IViewModel<TViewModel>
+    where TViewModel : INavigationTabViewModel<TViewModel, TView>
+    where TView : IView<TView>
 {
-    public interface INavigationTabViewModel<TViewModel, TView> : INavigationTabViewModel, IViewModel<TViewModel>
-        where TViewModel : INavigationTabViewModel<TViewModel, TView>
-        where TView : IView<TView>
-    {
 
-    }
+}
 
-    public interface INavigationTabViewModel : IViewModel
-    {
-        int TabIndex { get; }
+public interface INavigationTabViewModel : IViewModel
+{
+    int TabIndex { get; }
 
-        string? Header { get; }
+    string? Header { get; }
 
-        Type GetViewType();
-    }
+    Type GetViewType();
 }

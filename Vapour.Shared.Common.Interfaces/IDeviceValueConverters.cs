@@ -1,10 +1,9 @@
-﻿namespace Vapour.Shared.Common
+﻿namespace Vapour.Shared.Common;
+
+public interface IDeviceValueConverters
 {
-    public interface IDeviceValueConverters
-    {
-        int DeadZoneDoubleToInt(double val);
-        double DeadZoneIntToDouble(int inVal);
-        double RotationConvertFrom(double val);
-        double RotationConvertTo(double val);
-    }
+    int DeadZoneDoubleToInt(double val);
+    double DeadZoneIntToDouble(int inVal);
+    double RotationConvertFrom(double val);
+    double RotationConvertTo(double val);
 }

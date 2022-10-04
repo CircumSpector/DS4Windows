@@ -10,13 +10,12 @@ using Microsoft.Extensions.Hosting;
 
 using Vapour.Client.Core.DependencyInjection;
 
-namespace Vapour.Client.TrayApplication
+namespace Vapour.Client.TrayApplication;
+
+public class TrayApplicationRegistrar : IServiceRegistrar
 {
-    public class TrayApplicationRegistrar : IServiceRegistrar
+    public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
-        public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
-        {
-            services.AddSingleton<ITrayViewModel, TrayViewModel>();
-        }
+        services.AddSingleton<ITrayViewModel, TrayViewModel>();
     }
 }

@@ -13,51 +13,50 @@ using Vapour.Client.ServiceClients;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
 
-namespace Vapour.Client
+namespace Vapour.Client;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    protected override async void OnStartup(StartupEventArgs e)
     {
-        protected override async void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-            await ApplicationStartup.Start(
-                new[]
-                {
-                    typeof(ViewModelRegistrar),
-                    typeof(ProfilesModuleRegistrar),
-                    typeof(ControllersModuleRegistrar),
-                    typeof(MainModuleRegistrar),
-                    typeof(SettingsModuleRegistrar),
-                    typeof(ServiceClientsRegistrar),
-                    typeof(OpenTelemetryRegistrar),
-                    typeof(CommonRegistrar)
-                },
-                StartMainView);
-        }
-
-        private async Task StartMainView(IServiceScope scope)
-        {
-            var controllerService = scope.ServiceProvider.GetRequiredService<IControllerServiceClient>();
-            await controllerService.WaitForService();
-            var client = scope.ServiceProvider.GetRequiredService<IProfileServiceClient>();
-            await client.Initialize();
-
-            var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();
-            var viewModel = await viewModelFactory.Create<IMainViewModel, IMainView>();
-            if (viewModel.MainView is Window windowViewModel)
+        base.OnStartup(e);
+        await ApplicationStartup.Start(
+            new[]
             {
-                windowViewModel.Show();
-            }
-        }
+                typeof(ViewModelRegistrar),
+                typeof(ProfilesModuleRegistrar),
+                typeof(ControllersModuleRegistrar),
+                typeof(MainModuleRegistrar),
+                typeof(SettingsModuleRegistrar),
+                typeof(ServiceClientsRegistrar),
+                typeof(OpenTelemetryRegistrar),
+                typeof(CommonRegistrar)
+            },
+            StartMainView);
+    }
 
-        protected override async void OnExit(ExitEventArgs e)
+    private async Task StartMainView(IServiceScope scope)
+    {
+        var controllerService = scope.ServiceProvider.GetRequiredService<IControllerServiceClient>();
+        await controllerService.WaitForService();
+        var client = scope.ServiceProvider.GetRequiredService<IProfileServiceClient>();
+        await client.Initialize();
+
+        var viewModelFactory = scope.ServiceProvider.GetRequiredService<IViewModelFactory>();
+        var viewModel = await viewModelFactory.Create<IMainViewModel, IMainView>();
+        if (viewModel.MainView is Window windowViewModel)
         {
-            await ApplicationStartup.Shutdown();
-            base.OnExit(e);
-            Process.GetCurrentProcess().Kill();
+            windowViewModel.Show();
         }
+    }
+
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        await ApplicationStartup.Shutdown();
+        base.OnExit(e);
+        Process.GetCurrentProcess().Kill();
     }
 }

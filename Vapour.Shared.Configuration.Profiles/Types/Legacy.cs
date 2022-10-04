@@ -4,7 +4,4 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Vapour.Shared.Configuration.Profiles.Types
-{
-
-}
+namespace Vapour.Shared.Configuration.Profiles.Types;

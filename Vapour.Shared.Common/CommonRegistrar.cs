@@ -10,15 +10,14 @@ using Microsoft.Extensions.Hosting;
 using Vapour.Client.Core.DependencyInjection;
 using Vapour.Shared.Common.Services;
 
-namespace Vapour.Shared.Common
+namespace Vapour.Shared.Common;
+
+[UsedImplicitly]
+public class CommonRegistrar : IServiceRegistrar
 {
-    [UsedImplicitly]
-    public class CommonRegistrar : IServiceRegistrar
+    public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
-        public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
-        {
-            services.AddSingleton<IGlobalStateService, GlobalStateService>();
-            services.AddSingleton<IDeviceValueConverters, DeviceValueConverters>();
-        }
+        services.AddSingleton<IGlobalStateService, GlobalStateService>();
+        services.AddSingleton<IDeviceValueConverters, DeviceValueConverters>();
     }
 }

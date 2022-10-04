@@ -7,26 +7,25 @@ using Vapour.Client.Core.ViewModel;
 using Vapour.Server;
 using Vapour.Server.Controller;
 
-namespace Vapour.Client.Modules.Controllers
+namespace Vapour.Client.Modules.Controllers;
+
+public interface IControllerItemViewModel : IViewModel<IControllerItemViewModel>
 {
-    public interface IControllerItemViewModel : IViewModel<IControllerItemViewModel>
-    {
-        PhysicalAddress Serial { get; }
+    PhysicalAddress Serial { get; }
 
-        BitmapImage DeviceImage { get; }
+    BitmapImage DeviceImage { get; }
 
-        string? DisplayText { get; }
+    string? DisplayText { get; }
 
-        BitmapImage ConnectionTypeImage { get; }
+    BitmapImage ConnectionTypeImage { get; }
 
-        decimal BatteryPercentage { get; }
+    decimal BatteryPercentage { get; }
 
-        Guid SelectedProfileId { get; set; }
+    Guid SelectedProfileId { get; set; }
 
-        SolidColorBrush CurrentColor { get; set; }
-        string InstanceId { get; set; }
-        string ParentInstance { get; set; }
+    SolidColorBrush CurrentColor { get; set; }
+    string InstanceId { get; set; }
+    string ParentInstance { get; set; }
 
-        void SetDevice(ControllerConnectedMessage device);
-    }
+    void SetDevice(ControllerConnectedMessage device);
 }

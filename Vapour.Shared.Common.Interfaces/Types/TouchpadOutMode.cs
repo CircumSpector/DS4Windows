@@ -1,11 +1,10 @@
-﻿namespace Vapour.Shared.Common.Types
+﻿namespace Vapour.Shared.Common.Types;
+
+public enum TouchpadOutMode : uint
 {
-    public enum TouchpadOutMode : uint
-    {
-        None,
-        Mouse,
-        Controls,
-        AbsoluteMouse,
-        Passthru
-    }
+    None,
+    Mouse,
+    Controls,
+    AbsoluteMouse,
+    Passthru
 }

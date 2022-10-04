@@ -4,7 +4,4 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Vapour.Shared.Common.Types
-{
-
-}
+namespace Vapour.Shared.Common.Types;

@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace Vapour.Client.Modules.Profiles.Edit
+namespace Vapour.Client.Modules.Profiles.Edit;
+
+/// <summary>
+/// Interaction logic for SixAxisEditView.xaml
+/// </summary>
+public partial class SixAxisEditView : UserControl, ISixAxisEditView
 {
-    /// <summary>
-    /// Interaction logic for SixAxisEditView.xaml
-    /// </summary>
-    public partial class SixAxisEditView : UserControl, ISixAxisEditView
+    public SixAxisEditView()
     {
-        public SixAxisEditView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

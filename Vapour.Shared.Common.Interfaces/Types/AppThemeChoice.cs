@@ -1,8 +1,7 @@
-﻿namespace Vapour.Shared.Common.Types
+﻿namespace Vapour.Shared.Common.Types;
+
+public enum AppThemeChoice : uint
 {
-    public enum AppThemeChoice : uint
-    {
-        Default,
-        Dark
-    }
+    Default,
+    Dark
 }

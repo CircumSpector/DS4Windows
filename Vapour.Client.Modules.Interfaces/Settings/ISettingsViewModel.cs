@@ -1,8 +1,7 @@
 ﻿using Vapour.Client.Core.ViewModel;
 
-namespace Vapour.Client.Modules.Settings
+namespace Vapour.Client.Modules.Settings;
+
+public interface ISettingsViewModel : INavigationTabViewModel<ISettingsViewModel, ISettingsView>
 {
-    public interface ISettingsViewModel : INavigationTabViewModel<ISettingsViewModel, ISettingsView>
-    {
-    }
 }

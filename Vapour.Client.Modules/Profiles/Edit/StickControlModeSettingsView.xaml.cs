@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace Vapour.Client.Modules.Profiles.Edit
+namespace Vapour.Client.Modules.Profiles.Edit;
+
+/// <summary>
+/// Interaction logic for StickControlModeSettings.xaml
+/// </summary>
+public partial class StickControlModeSettingsView : UserControl, IStickControlModeSettingsView
 {
-    /// <summary>
-    /// Interaction logic for StickControlModeSettings.xaml
-    /// </summary>
-    public partial class StickControlModeSettingsView : UserControl, IStickControlModeSettingsView
+    public StickControlModeSettingsView()
     {
-        public StickControlModeSettingsView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

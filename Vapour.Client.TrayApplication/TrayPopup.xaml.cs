@@ -13,16 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Vapour.Client.TrayApplication
+namespace Vapour.Client.TrayApplication;
+
+/// <summary>
+/// Interaction logic for TrayPopup.xaml
+/// </summary>
+public partial class TrayPopup : UserControl
 {
-    /// <summary>
-    /// Interaction logic for TrayPopup.xaml
-    /// </summary>
-    public partial class TrayPopup : UserControl
+    public TrayPopup()
     {
-        public TrayPopup()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
