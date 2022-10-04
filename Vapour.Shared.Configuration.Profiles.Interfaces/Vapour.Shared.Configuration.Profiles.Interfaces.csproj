@@ -9,6 +9,10 @@
 	<Import Project="..\CommonProjectProperties.targets" />
 
 	<ItemGroup>
+    <PackageReference Include="PropertyChanged.Fody" Version="4.0.3" PrivateAssets="All"/>
+  </ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Vapour.Shared.Common.Interfaces\Vapour.Shared.Common.Interfaces.csproj" />
 	</ItemGroup>
 
