@@ -210,7 +210,7 @@ dotnet_naming_rule.local_variables_should_be_camelcase.style = camelcase
 
 dotnet_naming_rule.local_constants_should_be_camelcase.severity = warning
 dotnet_naming_rule.local_constants_should_be_camelcase.symbols = local_constants
-dotnet_naming_rule.local_constants_should_be_camelcase.style = camelcase
+dotnet_naming_rule.local_constants_should_be_camelcase.style = all_caps
 
 dotnet_naming_rule.parameters_should_be_camelcase.severity = warning
 dotnet_naming_rule.parameters_should_be_camelcase.symbols = parameters
@@ -365,6 +365,12 @@ dotnet_naming_style.s_camelcase.required_prefix = s_
 dotnet_naming_style.s_camelcase.required_suffix = 
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
+
+dotnet_naming_style.all_caps.required_prefix = 
+dotnet_naming_style.all_caps.required_suffix = 
+dotnet_naming_style.all_caps.word_separator = _
+dotnet_naming_style.all_caps.capitalization = all_caps
+
 tab_width = 4
 indent_size = 4
 end_of_line = crlf
