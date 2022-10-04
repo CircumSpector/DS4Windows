@@ -53,7 +53,7 @@ public interface IHidHideControlService
 /// <summary>
 ///     Provides a managed wrapper for communicating with HidHide driver.
 /// </summary>
-public class HidHideControlService : IHidHideControlService
+public sealed class HidHideControlService : IHidHideControlService
 {
     private const uint IoctlGetWhitelist = 0x80016000;
     private const uint IoctlSetWhitelist = 0x80016004;
