@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Vapour.Shared.Common.Attributes;
+﻿namespace Vapour.Shared.Common.Attributes;
 
 /// <summary>
 ///     Flag components which cause high memory allocations.

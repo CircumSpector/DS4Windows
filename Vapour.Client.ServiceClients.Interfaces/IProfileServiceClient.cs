@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 using Vapour.Shared.Configuration.Profiles.Schema;
 

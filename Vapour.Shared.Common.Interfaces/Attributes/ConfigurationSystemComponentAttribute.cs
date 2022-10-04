@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Vapour.Shared.Common.Attributes;
+﻿namespace Vapour.Shared.Common.Attributes;
 
 /// <summary>
 ///     Attribute used to keep track of code loading from or writing to disk. Slap this attribute on every method reading,

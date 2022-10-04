@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Vapour.Shared.Common.Attributes;
+﻿namespace Vapour.Shared.Common.Attributes;
 
 /// <summary>
 ///     Section misses localization for non-English locales.

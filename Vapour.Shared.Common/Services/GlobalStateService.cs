@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Common.Telemetry;

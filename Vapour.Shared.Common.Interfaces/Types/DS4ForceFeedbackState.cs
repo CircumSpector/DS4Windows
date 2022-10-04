@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Vapour.Shared.Common.Types;
+﻿namespace Vapour.Shared.Common.Types;
 
 /**
  * The haptics engine uses a stack of these states representing the light bar and rumble motor settings.

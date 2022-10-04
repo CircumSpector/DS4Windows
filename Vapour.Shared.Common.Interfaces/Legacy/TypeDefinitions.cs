@@ -1,6 +1,4 @@
-﻿using System;
-
-using Vapour.Shared.Common.Converters;
+﻿using Vapour.Shared.Common.Converters;
 using Vapour.Shared.Common.Types;
 
 namespace Vapour.Shared.Common.Legacy;

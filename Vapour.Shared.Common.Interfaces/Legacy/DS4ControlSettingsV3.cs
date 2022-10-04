@@ -1,6 +1,4 @@
-﻿using System;
-
-using PropertyChanged;
+﻿using PropertyChanged;
 
 using Vapour.Shared.Common.Types;
 

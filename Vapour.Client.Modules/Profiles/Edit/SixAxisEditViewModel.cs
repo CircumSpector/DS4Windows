@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 using Microsoft.Toolkit.Mvvm.Input;
 
@@ -7,7 +6,6 @@ using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.Interfaces.Services;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 

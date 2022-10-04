@@ -1,6 +1,4 @@
-﻿using System;
-
-using Vapour.Shared.Common.Types;
+﻿using Vapour.Shared.Common.Types;
 
 namespace Vapour.Shared.Emulator.ViGEmGen1.Types.Legacy;
 

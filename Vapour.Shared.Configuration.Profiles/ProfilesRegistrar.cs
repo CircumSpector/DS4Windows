@@ -1,9 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using JetBrains.Annotations;
 
-using JetBrains.Annotations;
-
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

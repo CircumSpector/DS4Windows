@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Vapour.Shared.Common.Attributes;
+﻿namespace Vapour.Shared.Common.Attributes;
 
 /// <summary>
 ///     Marks components that engage in logging.

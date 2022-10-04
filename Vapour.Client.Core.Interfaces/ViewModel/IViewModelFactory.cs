@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using Vapour.Client.Core.View;
+﻿using Vapour.Client.Core.View;
 
 namespace Vapour.Client.Core.ViewModel;
 

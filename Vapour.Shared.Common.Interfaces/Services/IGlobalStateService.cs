@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Vapour.Shared.Common.Services;
+﻿namespace Vapour.Shared.Common.Services;
 
 /// <summary>
 ///     Provides global properties that can change during runtime but will not be persisted to or restored from disk.

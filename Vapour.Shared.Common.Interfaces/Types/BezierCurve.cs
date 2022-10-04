@@ -32,7 +32,6 @@
 * 
 */
 
-using System;
 using System.Globalization;
 
 using Vapour.Shared.Common.Attributes;
@@ -102,9 +101,9 @@ public class BezierCurve
     public bool InitBezierCurve(string bezierCurveDefinition, AxisType gamepadAxisType, bool setCustomDefinitionProperty = false)
     {
         if (setCustomDefinitionProperty)
-            this.CustomDefinition = bezierCurveDefinition;
+            CustomDefinition = bezierCurveDefinition;
 
-        this.AsString = bezierCurveDefinition;
+        AsString = bezierCurveDefinition;
         return InitBezierCurve(mX1, mY1, mX2, mY2, gamepadAxisType);
     }
 
@@ -222,7 +221,7 @@ public class BezierCurve
             arrayBezierLUT[idx + (byte)axisCenterPosDouble] = (byte)(output * axisMaxDouble + axisCenterPosDouble);
 
             // Invert curve from a right side of the center position (128) to the left tilted stick axis (or from up tilt to down tilt)
-            if (this.axisType == AxisType.LSRS)
+            if (axisType == AxisType.LSRS)
                 arrayBezierLUT[127 - idx] = (byte)(255 - arrayBezierLUT[idx + (byte)axisCenterPosDouble]);
 
             // If the axisMaxDouble is 255 then we need this to break the look (byte is unsigned 0..255, so the FOR loop never reaches 256 idx value. C# would throw an overflow exceptio)
@@ -240,7 +239,7 @@ public class BezierCurve
             arrayBezierLUT[idx + (byte)axisCenterPosDouble] = (byte)((temp * temp * axisMaxDouble) + axisCenterPosDouble);
 
             // Invert curve from a right side of the center position (128) to the left tilted stick axis (or from up tilt to down tilt)
-            if (this.axisType == AxisType.LSRS)
+            if (axisType == AxisType.LSRS)
                 arrayBezierLUT[127 - idx] = (byte)(255 - arrayBezierLUT[idx + (byte)axisCenterPosDouble]);
 
             // If the axisMaxDouble is 255 then we need this to break the look (byte is unsigned 0..255, so the FOR loop never reaches 256 idx value. C# would throw an overflow exceptio)
@@ -258,7 +257,7 @@ public class BezierCurve
             arrayBezierLUT[idx + (byte)axisCenterPosDouble] = (byte)((temp * temp * temp * axisMaxDouble) + axisCenterPosDouble);
 
             // Invert curve from a right side of the center position (128) to the left tilted stick axis (or from up tilt to down tilt)
-            if (this.axisType == AxisType.LSRS)
+            if (axisType == AxisType.LSRS)
                 arrayBezierLUT[127 - idx] = (byte)(255 - arrayBezierLUT[idx + (byte)axisCenterPosDouble]);
 
             // If the axisMaxDouble is 255 then we need this to break the look (byte is unsigned 0..255, so the FOR loop never reaches 256 idx value. C# would throw an overflow exceptio)
@@ -277,7 +276,7 @@ public class BezierCurve
             arrayBezierLUT[idx + (byte)axisCenterPosDouble] = (byte)((-1.0 * output * axisMaxDouble) + axisCenterPosDouble);
 
             // Invert curve from a right side of the center position (128) to the left tilted stick axis (or from up tilt to down tilt)
-            if (this.axisType == AxisType.LSRS)
+            if (axisType == AxisType.LSRS)
                 arrayBezierLUT[127 - idx] = (byte)(255 - arrayBezierLUT[idx + (byte)axisCenterPosDouble]);
 
             // If the axisMaxDouble is 255 then we need this to break the look (byte is unsigned 0..255, so the FOR loop never reaches 256 idx value. C# would throw an overflow exceptio)
@@ -296,7 +295,7 @@ public class BezierCurve
             arrayBezierLUT[idx + (byte)axisCenterPosDouble] = (byte)((1.0 * output * axisMaxDouble) + axisCenterPosDouble);
 
             // Invert curve from a right side of the center position (128) to the left tilted stick axis (or from up tilt to down tilt)
-            if (this.axisType == AxisType.LSRS)
+            if (axisType == AxisType.LSRS)
                 arrayBezierLUT[127 - idx] = (byte)(255 - arrayBezierLUT[idx + (byte)axisCenterPosDouble]);
 
             // If the axisMaxDouble is 255 then we need this to break the look (byte is unsigned 0..255, so the FOR loop never reaches 256 idx value. C# would throw an overflow exceptio)

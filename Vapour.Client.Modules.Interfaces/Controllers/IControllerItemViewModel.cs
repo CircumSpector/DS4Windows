@@ -1,10 +1,8 @@
-﻿using System;
-using System.Net.NetworkInformation;
+﻿using System.Net.NetworkInformation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using Vapour.Client.Core.ViewModel;
-using Vapour.Server;
 using Vapour.Server.Controller;
 
 namespace Vapour.Client.Modules.Controllers;

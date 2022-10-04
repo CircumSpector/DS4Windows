@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Vapour.Client.Core;
+﻿namespace Vapour.Client.Core;
 
 public static class Constants
 {

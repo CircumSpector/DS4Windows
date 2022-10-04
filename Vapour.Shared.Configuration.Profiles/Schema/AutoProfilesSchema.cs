@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PropertyChanged;
 
-using PropertyChanged;
-
-using Vapour.Shared.Common.Core;
 using Vapour.Shared.Common.Util;
 
 namespace Vapour.Shared.Configuration.Profiles.Schema;

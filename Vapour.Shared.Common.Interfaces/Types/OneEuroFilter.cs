@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Vapour.Shared.Common.Types;
+﻿namespace Vapour.Shared.Common.Types;
 
 public class OneEuroFilter
 {
