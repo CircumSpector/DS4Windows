@@ -1,4 +1,6 @@
-﻿using FastEndpoints;
+﻿using System.Net.WebSockets;
+
+using FastEndpoints;
 
 using Vapour.Server.Controller;
 
@@ -28,7 +30,14 @@ public sealed class ControllerWebSocketEndpoint : EndpointWithoutRequest
             return;
         }
 
-        await _controllerMessageForwarder.StartListening(await HttpContext.WebSockets.AcceptWebSocketAsync());
-        await SendOkAsync(ct);
+        try
+        {
+            await _controllerMessageForwarder.StartListening(await HttpContext.WebSockets.AcceptWebSocketAsync());
+        }
+        catch (WebSocketException ex)
+        {
+            if (ex.WebSocketErrorCode != WebSocketError.ConnectionClosedPrematurely)
+                throw;
+        }
     }
 }
