@@ -2,23 +2,23 @@
 
 using FastEndpoints;
 
-using Vapour.Server.Controller;
+using Vapour.Server.Profile;
 
-namespace Vapour.Server.Host.Controller.Endpoints;
+namespace Vapour.Server.Host.Profile.Endpoints;
 
-public sealed class ControllerWebSocketEndpoint : EndpointWithoutRequest
+public class ProfileWebSocketEndpoint : EndpointWithoutRequest
 {
-    private readonly IControllerMessageForwarder _controllerMessageForwarder;
+    private readonly IProfileMessageForwarder _profileMessageForwarder;
 
-    public ControllerWebSocketEndpoint(IControllerMessageForwarder controllerMessageForwarder)
+    public ProfileWebSocketEndpoint(IProfileMessageForwarder profileMessageForwarder)
     {
-        _controllerMessageForwarder = controllerMessageForwarder;
+        _profileMessageForwarder = profileMessageForwarder;
     }
 
     public override void Configure()
     {
         Verbs(Http.GET);
-        Routes("/controller/ws");
+        Routes("/profile/ws");
         AllowAnonymous();
     }
 
@@ -32,7 +32,7 @@ public sealed class ControllerWebSocketEndpoint : EndpointWithoutRequest
 
         try
         {
-            await _controllerMessageForwarder.StartListening(await HttpContext.WebSockets.AcceptWebSocketAsync());
+            await _profileMessageForwarder.StartListening(await HttpContext.WebSockets.AcceptWebSocketAsync());
         }
         catch (WebSocketException ex)
         {

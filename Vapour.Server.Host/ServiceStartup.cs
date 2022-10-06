@@ -53,7 +53,6 @@ public static class ServiceStartup
         app.UseFastEndpoints();
 
         ControllerService.RegisterRoutes(app);
-        ProfileService.RegisterRoutes(app);
 
         // running under debugger or in a console session
         if (app.Environment.IsDevelopment() || Environment.UserInteractive)

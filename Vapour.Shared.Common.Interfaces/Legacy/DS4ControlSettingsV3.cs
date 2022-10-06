@@ -17,6 +17,8 @@ public class DS4ControlSettingsV3
 
     public const int MaxMacroValue = 286;
 
+    public DS4ControlSettingsV3() { }
+
     public DS4ControlSettingsV3(DS4ControlItem ctrl)
     {
         Control = ctrl;
@@ -78,9 +80,14 @@ public class DS4ControlSettingsV3
                     {
                         ControlActionType = ActionType.Button;
                         if (act is X360ControlItem controls)
+                        {
                             ActionData.ActionButton = controls;
+                        }
                         else
+                        {
                             Enum.TryParse(act.ToString(), out ActionData.ActionButton);
+                        }
+
                         break;
                     }
                 case int[] values:
@@ -110,9 +117,14 @@ public class DS4ControlSettingsV3
                     {
                         ShiftActionType = ActionType.Button;
                         if (act is X360ControlItem controls)
+                        {
                             ShiftAction.ActionButton = controls;
+                        }
                         else
+                        {
                             Enum.TryParse(act.ToString(), out ShiftAction.ActionButton);
+                        }
+
                         break;
                     }
                 case int[] values:

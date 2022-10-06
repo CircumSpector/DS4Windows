@@ -39,7 +39,6 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
     {
         services.AddFastEndpoints();
         services.AddSingleton<ControllerService>();
-        services.AddSingleton<ProfileService>();
         services.AddSingleton<IControllerMessageForwarder, ControllerMessageForwarder>();
         services.AddSingleton<IProfileMessageForwarder, ProfileMessageForwarder>();
     }
