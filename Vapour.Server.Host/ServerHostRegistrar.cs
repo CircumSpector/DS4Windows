@@ -1,4 +1,6 @@
-﻿using Vapour.Client.Core.DependencyInjection;
+﻿using FastEndpoints;
+
+using Vapour.Client.Core.DependencyInjection;
 using Vapour.Server.Controller;
 using Vapour.Server.Host.Controller;
 using Vapour.Server.Host.Profile;
@@ -35,6 +37,7 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
 
     private static void SetupWebServices(IServiceCollection services)
     {
+        services.AddFastEndpoints();
         services.AddSingleton<ControllerService>();
         services.AddSingleton<ProfileService>();
         services.AddSingleton<IControllerMessageForwarder, ControllerMessageForwarder>();

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Hosting.WindowsServices;
+﻿using FastEndpoints;
+
+using Microsoft.Extensions.Hosting.WindowsServices;
 
 using Serilog;
 
@@ -47,6 +49,8 @@ public static class ServiceStartup
         var app = builder.Build();
 
         SetupWebSocket(app);
+
+        app.UseFastEndpoints();
 
         ControllerService.RegisterRoutes(app);
         ProfileService.RegisterRoutes(app);
