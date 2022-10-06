@@ -4,7 +4,7 @@ using FastEndpoints;
 
 using Vapour.Server.Controller;
 
-namespace Vapour.Server.Host.Endpoints;
+namespace Vapour.Server.Host.Controller.Endpoints;
 
 public sealed class ControllerWebSocketEndpoint : EndpointWithoutRequest
 {

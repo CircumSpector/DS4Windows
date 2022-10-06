@@ -2,13 +2,13 @@
 
 using Vapour.Shared.Devices.HostedServices;
 
-namespace Vapour.Server.Host.Endpoints;
+namespace Vapour.Server.Host.Controller.Endpoints;
 
-public class ControllerStartHostEndpoint : EndpointWithoutRequest
+public class ControllerStopHostEndpoint : EndpointWithoutRequest
 {
     private readonly ControllerManagerHost _controllerManagerHost;
 
-    public ControllerStartHostEndpoint(ControllerManagerHost controllerManagerHost)
+    public ControllerStopHostEndpoint(ControllerManagerHost controllerManagerHost)
     {
         _controllerManagerHost = controllerManagerHost;
     }
@@ -16,15 +16,15 @@ public class ControllerStartHostEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("/controller/host/start");
+        Routes("/controller/host/stop");
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        if (!_controllerManagerHost.IsRunning)
+        if (_controllerManagerHost.IsRunning)
         {
-            await _controllerManagerHost.StartAsync();
+            await _controllerManagerHost.StopAsync();
         }
 
         await SendOkAsync(ct);

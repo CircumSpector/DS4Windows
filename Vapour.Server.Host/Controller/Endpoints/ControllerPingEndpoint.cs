@@ -1,8 +1,6 @@
 ﻿using FastEndpoints;
 
-using Vapour.Server.Host.Controller;
-
-namespace Vapour.Server.Host.Endpoints;
+namespace Vapour.Server.Host.Controller.Endpoints;
 
 public class ControllerPingEndpoint : EndpointWithoutRequest
 {

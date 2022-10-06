@@ -3,7 +3,7 @@
 using Vapour.Server.Controller;
 using Vapour.Shared.Devices.Services;
 
-namespace Vapour.Server.Host.Endpoints;
+namespace Vapour.Server.Host.Controller.Endpoints;
 
 public class ControllerListEndpoint : EndpointWithoutRequest<List<ControllerConnectedMessage>>
 {
