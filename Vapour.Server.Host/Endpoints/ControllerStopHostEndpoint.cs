@@ -15,8 +15,8 @@ public class ControllerStopHostEndpoint : EndpointWithoutRequest
 
     public override void Configure()
     {
-        Verbs(Http.GET);
-        Routes("/controller/stophost");
+        Verbs(Http.POST);
+        Routes("/controller/host/stop");
         AllowAnonymous();
     }
 

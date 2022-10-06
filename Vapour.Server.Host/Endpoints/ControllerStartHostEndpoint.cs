@@ -15,8 +15,8 @@ public class ControllerStartHostEndpoint : EndpointWithoutRequest
 
     public override void Configure()
     {
-        Verbs(Http.GET);
-        Routes("/controller/starthost");
+        Verbs(Http.POST);
+        Routes("/controller/host/start");
         AllowAnonymous();
     }
 

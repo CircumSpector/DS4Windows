@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Windows;
 
@@ -57,11 +58,7 @@ public class ControllerServiceClient : IControllerServiceClient
         HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/list");
         if (result.IsSuccessStatusCode)
         {
-            string content = await result.Content.ReadAsStringAsync();
-            List<ControllerConnectedMessage> list =
-                JsonConvert.DeserializeObject<List<ControllerConnectedMessage>>(content);
-
-            return list;
+            return await result.Content.ReadFromJsonAsync<List<ControllerConnectedMessage>>();
         }
 
         throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
@@ -94,37 +91,32 @@ public class ControllerServiceClient : IControllerServiceClient
     public async Task<bool> IsHostRunning()
     {
         using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/ishostrunning");
-        if (result.IsSuccessStatusCode)
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/host/status");
+        
+        if (!result.IsSuccessStatusCode)
         {
-            string content = await result.Content.ReadAsStringAsync();
-            return bool.Parse(content);
+            throw new Exception($"Could not get the controller host status {result.ReasonPhrase}");
         }
 
-        throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+        var response = await result.Content.ReadFromJsonAsync<ControllerHostStatusResponse>();
+        return response?.IsRunning ?? false;
     }
 
     public async Task StartHost()
     {
         using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/starthost");
-        if (result.IsSuccessStatusCode)
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/controller/host/start", null);
+        if (!result.IsSuccessStatusCode)
         {
-        }
-        else
-        {
-            throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+            throw new Exception($"Could not start the host {result.ReasonPhrase}");
         }
     }
 
     public async Task StopHost()
     {
         using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/stophost");
-        if (result.IsSuccessStatusCode)
-        {
-        }
-        else
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/controller/host/stop", null);
+        if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
         }
