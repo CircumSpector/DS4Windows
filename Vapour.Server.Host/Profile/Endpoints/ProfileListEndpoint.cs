@@ -5,7 +5,7 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Server.Host.Profile.Endpoints;
 
-public class ProfileListEndpoint : EndpointWithoutRequest<List<IProfile>>
+public sealed class ProfileListEndpoint : EndpointWithoutRequest<List<IProfile>>
 {
     private readonly IProfilesService _profilesService;
 

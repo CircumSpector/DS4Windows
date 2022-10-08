@@ -4,7 +4,7 @@ using Vapour.Shared.Devices.HostedServices;
 
 namespace Vapour.Server.Host.Controller.Endpoints;
 
-public class ControllerStopHostEndpoint : EndpointWithoutRequest
+public sealed class ControllerStopHostEndpoint : EndpointWithoutRequest
 {
     private readonly ControllerManagerHost _controllerManagerHost;
 

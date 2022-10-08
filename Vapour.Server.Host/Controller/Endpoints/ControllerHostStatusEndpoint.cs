@@ -4,7 +4,7 @@ using Vapour.Server.Controller;
 
 namespace Vapour.Server.Host.Controller.Endpoints;
 
-public class ControllerHostStatusEndpoint : EndpointWithoutRequest<ControllerHostStatusResponse>
+public sealed class ControllerHostStatusEndpoint : EndpointWithoutRequest<ControllerHostStatusResponse>
 {
     private readonly ControllerService _controllerService;
 

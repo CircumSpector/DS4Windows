@@ -2,7 +2,7 @@
 
 namespace Vapour.Server.Host.Controller.Endpoints;
 
-public class ControllerPingEndpoint : EndpointWithoutRequest
+public sealed class ControllerPingEndpoint : EndpointWithoutRequest
 {
     private readonly ControllerService _controllerService;
 

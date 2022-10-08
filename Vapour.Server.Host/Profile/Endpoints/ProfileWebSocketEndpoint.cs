@@ -6,7 +6,7 @@ using Vapour.Server.Profile;
 
 namespace Vapour.Server.Host.Profile.Endpoints;
 
-public class ProfileWebSocketEndpoint : EndpointWithoutRequest
+public sealed class ProfileWebSocketEndpoint : EndpointWithoutRequest
 {
     private readonly IProfileMessageForwarder _profileMessageForwarder;
 

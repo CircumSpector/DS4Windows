@@ -5,7 +5,7 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Server.Host.Profile.Endpoints;
 
-public class ProfileDeleteEndpoint : Endpoint<ProfileDeleteRequest>
+public sealed class ProfileDeleteEndpoint : Endpoint<ProfileDeleteRequest>
 {
     private readonly IProfilesService _profilesService;
 

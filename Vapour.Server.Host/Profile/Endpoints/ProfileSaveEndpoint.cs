@@ -5,7 +5,7 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Server.Host.Profile.Endpoints;
 
-public class ProfileSaveEndpoint : Endpoint<DS4WindowsProfile, DS4WindowsProfile>
+public sealed class ProfileSaveEndpoint : Endpoint<DS4WindowsProfile, DS4WindowsProfile>
 {
     private readonly IProfilesService _profilesService;
 

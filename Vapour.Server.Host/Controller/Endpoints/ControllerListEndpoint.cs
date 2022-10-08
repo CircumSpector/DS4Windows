@@ -5,7 +5,7 @@ using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host.Controller.Endpoints;
 
-public class ControllerListEndpoint : EndpointWithoutRequest<List<ControllerConnectedMessage>>
+public sealed class ControllerListEndpoint : EndpointWithoutRequest<List<ControllerConnectedMessage>>
 {
     private readonly IControllerManagerService _controllerManagerService;
     private readonly IControllerMessageForwarder _controllerMessageForwarder;
