@@ -139,10 +139,7 @@ public class ControllerServiceClient : IControllerServiceClient
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 ControllerConnectedMessage device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text);
-                if (_connectedAction != null)
-                {
-                    _connectedAction(device);
-                }
+                _connectedAction?.Invoke(device);
             });
         }
         else if (messageBase.MessageName == ControllerDisconnectedMessage.Name)
@@ -151,10 +148,7 @@ public class ControllerServiceClient : IControllerServiceClient
             {
                 ControllerDisconnectedMessage device =
                     JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text);
-                if (_disconnectedAction != null)
-                {
-                    _disconnectedAction(device);
-                }
+                _disconnectedAction?.Invoke(device);
             });
         }
         else if (messageBase.MessageName == IsHostRunningChangedMessage.Name)
