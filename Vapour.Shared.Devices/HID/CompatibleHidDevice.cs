@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.DeviceManagement.PnP;
+using Nefarius.ViGEm.Client.Exceptions;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Util;
@@ -277,6 +278,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                 if (IsInputReportAvailableInvoked)
                     InputReportAvailable?.Invoke(this, InputReport);
             }
+        }
+        catch (VigemBusNotFoundException)
+        {
+            StopInputReportReader();
         }
         catch (Exception ex)
         {

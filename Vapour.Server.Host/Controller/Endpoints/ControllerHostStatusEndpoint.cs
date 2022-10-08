@@ -18,6 +18,11 @@ public class ControllerHostStatusEndpoint : EndpointWithoutRequest<ControllerHos
         Verbs(Http.GET);
         Routes("/controller/host/status");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Queries the controller host status";
+            s.Description = "Returns various runtime status values about the controller host service";
+            s.Responses[200] = "Status response was delivered";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)

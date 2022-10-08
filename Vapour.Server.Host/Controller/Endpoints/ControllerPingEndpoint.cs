@@ -16,6 +16,12 @@ public class ControllerPingEndpoint : EndpointWithoutRequest
         Verbs(Http.GET);
         Routes("/controller/ping");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Queries the controller host for ready status";
+            s.Description = "Returns Success when ready, otherwise Not Found";
+            s.Responses[200] = "Controller host is ready";
+            s.Responses[404] = "Controller host not ready";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)
