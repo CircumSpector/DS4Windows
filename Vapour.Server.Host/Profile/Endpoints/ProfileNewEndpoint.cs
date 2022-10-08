@@ -19,6 +19,11 @@ public class ProfileNewEndpoint : EndpointWithoutRequest<IProfile>
         Verbs(Http.POST);
         Routes("/profile/new");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Creates a new profile";
+            s.Description = "Creates a new profile and returns its content as a response";
+            s.Responses[200] = "A new profile got created and returned successfully";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)

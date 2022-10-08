@@ -19,6 +19,11 @@ public class ProfileDeleteEndpoint : Endpoint<ProfileDeleteRequest>
         Verbs(Http.DELETE);
         Routes("/profile/delete/{ProfileId}");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Deletes a given profile by provided ID";
+            s.Description = "Deletes a given profile by provided ID";
+            s.Responses[200] = "The profile has been deleted successfully";
+        });
     }
 
     public override async Task HandleAsync(ProfileDeleteRequest req, CancellationToken ct)

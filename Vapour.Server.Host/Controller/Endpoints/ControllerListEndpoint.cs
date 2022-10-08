@@ -22,6 +22,11 @@ public class ControllerListEndpoint : EndpointWithoutRequest<List<ControllerConn
         Verbs(Http.GET);
         Routes("/controller/list");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Gets a list of connected controllers details";
+            s.Description = "Returns a list of all currently connected supported controllers, if any";
+            s.Responses[200] = "Controller list was delivered";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)

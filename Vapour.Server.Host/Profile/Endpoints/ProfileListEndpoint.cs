@@ -19,6 +19,11 @@ public class ProfileListEndpoint : EndpointWithoutRequest<List<IProfile>>
         Verbs(Http.GET);
         Routes("/profile/list");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Returns a list of available profiles";
+            s.Description = "Returns a list of available profiles";
+            s.Responses[200] = "The profile list got returned successfully";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)

@@ -20,6 +20,10 @@ public class ProfileWebSocketEndpoint : EndpointWithoutRequest
         Verbs(Http.GET);
         Routes("/profile/ws");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Establishes a profile websocket connection";
+            s.Description = "Establishes a profile websocket connection";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)

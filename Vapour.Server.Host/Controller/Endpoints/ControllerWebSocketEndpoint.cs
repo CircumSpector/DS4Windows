@@ -20,6 +20,10 @@ public sealed class ControllerWebSocketEndpoint : EndpointWithoutRequest
         Verbs(Http.GET);
         Routes("/controller/ws");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Establishes a controller websocket connection";
+            s.Description = "Establishes a controller websocket connection";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)

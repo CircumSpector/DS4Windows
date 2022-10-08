@@ -18,6 +18,11 @@ public class ControllerStartHostEndpoint : EndpointWithoutRequest
         Verbs(Http.POST);
         Routes("/controller/host/start");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Requests the controller host to start, if stopped";
+            s.Description = "Requests the controller host to start, if stopped";
+            s.Responses[200] = "Controller host has been started successfully";
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)

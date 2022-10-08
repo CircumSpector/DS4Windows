@@ -19,6 +19,11 @@ public class ProfileSaveEndpoint : Endpoint<DS4WindowsProfile, DS4WindowsProfile
         Verbs(Http.PUT);
         Routes("/profile/save");
         AllowAnonymous();
+        Summary(s => {
+            s.Summary = "Saves a given profile";
+            s.Description = "Saves/overwrites a profile or creates a new one, if the ID wasn't known";
+            s.Responses[200] = "The profile has been saved successfully";
+        });
     }
 
     public override async Task HandleAsync(DS4WindowsProfile req, CancellationToken ct)
