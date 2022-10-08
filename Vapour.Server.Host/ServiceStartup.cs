@@ -46,7 +46,7 @@ public static class ServiceStartup
 
         SetupWebSocket(app);
 
-        app.UseFastEndpoints();
+        app.UseFastEndpoints(config => config.Endpoints.RoutePrefix = "api");
         app.UseOpenApi();
         app.UseSwaggerUi3(s => s.ConfigureDefaults());
 

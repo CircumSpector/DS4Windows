@@ -37,7 +37,7 @@ public class ControllerServiceClient : IControllerServiceClient
         {
             try
             {
-                HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/ping");
+                HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/ping");
                 if (result.IsSuccessStatusCode)
                 {
                     break;
@@ -55,7 +55,7 @@ public class ControllerServiceClient : IControllerServiceClient
     public async Task<List<ControllerConnectedMessage>> GetControllerList()
     {
         using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/list");
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/list");
         if (result.IsSuccessStatusCode)
         {
             return await result.Content.ReadFromJsonAsync<List<ControllerConnectedMessage>>();
@@ -74,7 +74,7 @@ public class ControllerServiceClient : IControllerServiceClient
         _disconnectedAction = disconnectedHandler;
         _hostRunningHandler = hostRunningChangedHandler;
 
-        _websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/controller/ws", UriKind.Absolute));
+        _websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/api/controller/ws", UriKind.Absolute));
 
         _websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
         _websocketClient.ReconnectionHappened.Subscribe(info =>
@@ -91,7 +91,7 @@ public class ControllerServiceClient : IControllerServiceClient
     public async Task<bool> IsHostRunning()
     {
         using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/controller/host/status");
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/host/status");
         
         if (!result.IsSuccessStatusCode)
         {
@@ -105,7 +105,7 @@ public class ControllerServiceClient : IControllerServiceClient
     public async Task StartHost()
     {
         using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/controller/host/start", null);
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/start", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not start the host {result.ReasonPhrase}");
@@ -115,7 +115,7 @@ public class ControllerServiceClient : IControllerServiceClient
     public async Task StopHost()
     {
         using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/controller/host/stop", null);
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/stop", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not get the controller list {result.ReasonPhrase}");

@@ -23,7 +23,7 @@ public class ProfileServiceClient : IProfileServiceClient
     public async Task Initialize()
     {
         using HttpClient client = _httpClientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync(new Uri($"{Constants.HttpUrl}/profile/list"));
+        HttpResponseMessage result = await client.GetAsync(new Uri($"{Constants.HttpUrl}/api/profile/list"));
         if (result.IsSuccessStatusCode)
         {
             ProfileList =
@@ -39,7 +39,7 @@ public class ProfileServiceClient : IProfileServiceClient
     {
         using HttpClient client = _httpClientFactory.CreateClient();
         HttpResponseMessage result =
-            await client.PostAsync(new Uri($"{Constants.HttpUrl}/profile/new", UriKind.Absolute), null);
+            await client.PostAsync(new Uri($"{Constants.HttpUrl}/api/profile/new", UriKind.Absolute), null);
         if (result.IsSuccessStatusCode)
         {
             return await result.Content.ReadFromJsonAsync<ProfileItem>();
@@ -52,7 +52,7 @@ public class ProfileServiceClient : IProfileServiceClient
     {
         using HttpClient client = _httpClientFactory.CreateClient();
         HttpResponseMessage result =
-            await client.DeleteAsync(new Uri($"{Constants.HttpUrl}/profile/delete/{id}", UriKind.Absolute));
+            await client.DeleteAsync(new Uri($"{Constants.HttpUrl}/api/profile/delete/{id}", UriKind.Absolute));
 
         if (!result.IsSuccessStatusCode)
         {
@@ -69,7 +69,7 @@ public class ProfileServiceClient : IProfileServiceClient
         string content = JsonConvert.SerializeObject(profile);
 
         HttpResponseMessage result = await client.PutAsync(
-            new Uri($"{Constants.HttpUrl}/profile/save", UriKind.Absolute),
+            new Uri($"{Constants.HttpUrl}/api/profile/save", UriKind.Absolute),
             new StringContent(content));
 
         if (result.IsSuccessStatusCode)
