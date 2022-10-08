@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using FastEndpoints.Swagger;
 
 using Vapour.Client.Core.DependencyInjection;
 using Vapour.Server.Controller;
@@ -12,18 +13,8 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
-        SetupSwagger(context.HostingEnvironment, services);
         SetupWindowsService(builder, context, services);
         SetupWebServices(services);
-    }
-
-    private static void SetupSwagger(IHostEnvironment env, IServiceCollection services)
-    {
-        if (env.IsDevelopment())
-        {
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
-        }
     }
 
     private static void SetupWindowsService(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
@@ -38,6 +29,7 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
     private static void SetupWebServices(IServiceCollection services)
     {
         services.AddFastEndpoints();
+        services.AddSwaggerDoc();
         services.AddSingleton<ControllerService>();
         services.AddSingleton<IControllerMessageForwarder, ControllerMessageForwarder>();
         services.AddSingleton<IProfileMessageForwarder, ProfileMessageForwarder>();

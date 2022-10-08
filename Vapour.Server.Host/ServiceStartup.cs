@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using FastEndpoints.Swagger;
 
 using Microsoft.Extensions.Hosting.WindowsServices;
 
@@ -6,7 +7,6 @@ using Serilog;
 
 using Vapour.Client.Core;
 using Vapour.Server.Host.Controller;
-using Vapour.Server.Host.Profile;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
 using Vapour.Shared.Configuration.Application;
@@ -24,40 +24,38 @@ public static class ServiceStartup
     {
         Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
-        var options = new WebApplicationOptions
+        WebApplicationOptions options = new WebApplicationOptions
         {
             Args = args,
             ContentRootPath = WindowsServiceHelpers.IsWindowsService() ? AppContext.BaseDirectory : default
         };
 
-        var builder = WebApplication.CreateBuilder(options);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(options);
 
         await ApplicationStartup.Start(
             new[]
             {
-                typeof(ServerHostRegistrar),
-                typeof(DevicesRegistrar),
-                typeof(ProfilesRegistrar),
-                typeof(ConfigurationRegistrar),
-                typeof(CommonRegistrar),
-                typeof(OpenTelemetryRegistrar)
+                typeof(ServerHostRegistrar), typeof(DevicesRegistrar), typeof(ProfilesRegistrar),
+                typeof(ConfigurationRegistrar), typeof(CommonRegistrar), typeof(OpenTelemetryRegistrar)
             },
             null,
             builder.Host);
 
 
-        var app = builder.Build();
+        WebApplication app = builder.Build();
 
         SetupWebSocket(app);
 
         app.UseFastEndpoints();
+        app.UseOpenApi();
+        app.UseSwaggerUi3(s => s.ConfigureDefaults());
 
         ControllerService.RegisterRoutes(app);
 
         // running under debugger or in a console session
         if (app.Environment.IsDevelopment() || Environment.UserInteractive)
         {
-            var controllerHost = app.Services.GetRequiredService<ControllerManagerHost>();
+            ControllerManagerHost controllerHost = app.Services.GetRequiredService<ControllerManagerHost>();
             ControllerManagerHost.IsEnabled = true;
             await controllerHost.StartAsync();
         }
@@ -68,10 +66,7 @@ public static class ServiceStartup
 
     private static void SetupWebSocket(IApplicationBuilder app)
     {
-        var webSocketOptions = new WebSocketOptions
-        {
-            KeepAliveInterval = TimeSpan.FromMinutes(2)
-        };
+        WebSocketOptions webSocketOptions = new WebSocketOptions { KeepAliveInterval = TimeSpan.FromMinutes(2) };
 
         app.UseWebSockets(webSocketOptions);
     }
