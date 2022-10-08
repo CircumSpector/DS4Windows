@@ -12,7 +12,7 @@ using Windows.Win32.Storage.FileSystem;
 
 namespace Vapour.Shared.Devices.HID;
 
-public class HidDeviceException : Exception
+public sealed class HidDeviceException : Exception
 {
     internal HidDeviceException(string message) : base(message) { }
 
@@ -29,11 +29,11 @@ public class HidDeviceException : Exception
 /// </summary>
 public class HidDevice : IEquatable<HidDevice>, IHidDevice
 {
-    private bool disposed;
+    private bool _disposed;
 
-    private readonly AutoResetEvent readEvent = new(false);
+    private readonly AutoResetEvent _readEvent = new(false);
 
-    private readonly AutoResetEvent writeEvent = new(false);
+    private readonly AutoResetEvent _writeEvent = new(false);
 
     /// <summary>
     ///     Native handle to device.
@@ -147,7 +147,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     protected unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
     {
         NativeOverlapped overlapped;
-        overlapped.EventHandle = writeEvent.SafeWaitHandle.DangerousGetHandle();
+        overlapped.EventHandle = _writeEvent.SafeWaitHandle.DangerousGetHandle();
 
         fixed (byte* bufferPtr = buffer)
         {
@@ -174,7 +174,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
             throw new HidDeviceException("Device handle not open or invalid.");
 
         NativeOverlapped overlapped;
-        overlapped.EventHandle = readEvent.SafeWaitHandle.DangerousGetHandle();
+        overlapped.EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle();
 
         uint bytesRead = 0;
 
@@ -239,17 +239,17 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     }
     protected virtual void Dispose(bool disposing)
     {
-        if (disposed) return;
+        if (_disposed) return;
 
         if (disposing)
         {
             Handle?.Dispose();
 
-            readEvent.Dispose();
-            writeEvent.Dispose();
+            _readEvent.Dispose();
+            _writeEvent.Dispose();
         }
 
-        disposed = true;
+        _disposed = true;
     }
 
     public override string ToString() => $"{DisplayName ?? "<no name>"} ({InstanceId})";

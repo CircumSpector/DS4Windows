@@ -1,12 +1,11 @@
-﻿using MadWizard.WinUSBNet;
+﻿using Nefarius.Drivers.WinUSB;
 
-namespace Vapour.Shared.Devices.HID
+namespace Vapour.Shared.Devices.HID;
+
+/// <summary>
+///     Describes a <see cref="HidDevice" /> running under WinUSB drivers.
+/// </summary>
+public class HidDeviceOverWinUsb : HidDevice
 {
-    /// <summary>
-    ///     Describes a <see cref="HidDevice"/> running under WinUSB drivers.
-    /// </summary>
-    public class HidDeviceOverWinUsb : HidDevice
-    {
-        protected USBPipe InputReportPipe { get; set; }
-    }
+    protected USBPipe InputReportPipe { get; set; }
 }

@@ -26,7 +26,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
         var inputReportSize = Capabilities.InputReportByteLength;
 
-        InputReportArray = new byte[inputReportSize];
+        _inputReportArray = new byte[inputReportSize];
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
             reportStartOffset = 0;
