@@ -15,15 +15,15 @@ public interface IInputSourceService
     void ControllerDeparted(int slot, ICompatibleHidDevice device);
 }
 
-public class InputSourceService : IInputSourceService
+public sealed class InputSourceService : IInputSourceService
 {
-    private readonly ObservableCollection<IInputSource> inputSources;
+    private readonly ObservableCollection<IInputSource> _inputSources;
 
     public InputSourceService()
     {
-        inputSources = new ObservableCollection<IInputSource>();
+        _inputSources = new ObservableCollection<IInputSource>();
 
-        InputSources = new ReadOnlyObservableCollection<IInputSource>(inputSources);
+        InputSources = new ReadOnlyObservableCollection<IInputSource>(_inputSources);
     }
 
     public ReadOnlyObservableCollection<IInputSource> InputSources { get; }
@@ -32,7 +32,7 @@ public class InputSourceService : IInputSourceService
     {
         if (device is JoyConCompatibleHidDevice)
         {
-            var composite = inputSources
+            var composite = _inputSources
                 .OfType<ICompositeInputSource>()
                 .Cast<CompositeInputSource>()
                 .FirstOrDefault(source => source.SecondarySourceDevice is null);
@@ -40,43 +40,43 @@ public class InputSourceService : IInputSourceService
             if (composite is not null)
                 composite.SecondarySourceDevice = device;
             else
-                inputSources.Add(new CompositeInputSource(device));
+                _inputSources.Add(new CompositeInputSource(device));
 
             return;
         }
 
-        inputSources.Add(new InputSource(device));
+        _inputSources.Add(new InputSource(device));
     }
 
     public void ControllerDeparted(int slot, ICompatibleHidDevice device)
     {
         if (device is JoyConCompatibleHidDevice)
         {
-            var primary = inputSources
+            var primary = _inputSources
                 .OfType<ICompositeInputSource>()
                 .Cast<CompositeInputSource>()
                 .FirstOrDefault(source => Equals(source.SecondarySourceDevice, device));
 
             if (primary is not null)
             {
-                inputSources.Remove(primary);
-                inputSources.Add(new CompositeInputSource(primary.PrimarySourceDevice));
+                _inputSources.Remove(primary);
+                _inputSources.Add(new CompositeInputSource(primary.PrimarySourceDevice));
                 return;
             }
 
-            var secondary = inputSources
+            var secondary = _inputSources
                 .OfType<ICompositeInputSource>()
                 .Cast<CompositeInputSource>()
                 .FirstOrDefault(source => Equals(source.PrimarySourceDevice, device));
 
             if (secondary is not null)
             {
-                inputSources.Remove(secondary);
-                inputSources.Add(new CompositeInputSource(secondary.SecondarySourceDevice));
+                _inputSources.Remove(secondary);
+                _inputSources.Add(new CompositeInputSource(secondary.SecondarySourceDevice));
                 return;
             }
         }
 
-        inputSources.Remove(inputSources.First(source => Equals(source.PrimarySourceDevice, device)));
+        _inputSources.Remove(_inputSources.First(source => Equals(source.PrimarySourceDevice, device)));
     }
 }

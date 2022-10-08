@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Windows.Win32;
+
+using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.DeviceManagement.PnP;
 
@@ -12,22 +14,22 @@ namespace Vapour.Shared.Devices.HostedServices;
 /// <summary>
 ///     Manages compatible input device detection and state handling.
 /// </summary>
-public class ControllerManagerHost
+public sealed class ControllerManagerHost
 {
     //temporary because the client still needs to run part of the host for now
     public static bool IsEnabled = false;
-    private readonly IDeviceNotificationListener deviceNotificationListener;
-    private readonly IControllersEnumeratorService enumerator;
-    private readonly IHidDeviceEnumeratorService hidDeviceEnumeratorService;
+    private readonly IDeviceNotificationListener _deviceNotificationListener;
+    private readonly IControllersEnumeratorService _enumerator;
+    private readonly IHidDeviceEnumeratorService _hidDeviceEnumeratorService;
 
-    private readonly IInputSourceService inputSourceService;
+    private readonly IInputSourceService _inputSourceService;
 
-    private readonly ILogger<ControllerManagerHost> logger;
+    private readonly ILogger<ControllerManagerHost> _logger;
 
-    private readonly IControllerManagerService manager;
+    private readonly IControllerManagerService _manager;
 
-    private readonly IProfilesService profileService;
-    private CancellationTokenSource controllerHostToken;
+    private readonly IProfilesService _profileService;
+    private CancellationTokenSource _controllerHostToken;
 
     public ControllerManagerHost(
         IControllersEnumeratorService enumerator,
@@ -38,13 +40,13 @@ public class ControllerManagerHost
         IDeviceNotificationListener deviceNotificationListener,
         IHidDeviceEnumeratorService hidDeviceEnumeratorService)
     {
-        this.enumerator = enumerator;
-        this.logger = logger;
-        this.profileService = profileService;
-        this.manager = manager;
-        this.inputSourceService = inputSourceService;
-        this.deviceNotificationListener = deviceNotificationListener;
-        this.hidDeviceEnumeratorService = hidDeviceEnumeratorService;
+        _enumerator = enumerator;
+        _logger = logger;
+        _profileService = profileService;
+        _manager = manager;
+        _inputSourceService = inputSourceService;
+        _deviceNotificationListener = deviceNotificationListener;
+        _hidDeviceEnumeratorService = hidDeviceEnumeratorService;
 
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
@@ -68,23 +70,23 @@ public class ControllerManagerHost
     {
         IsRunning = true;
         RunningChanged?.Invoke(this, IsRunning);
-        controllerHostToken = new CancellationTokenSource();
+        _controllerHostToken = new CancellationTokenSource();
         //
         // Make sure we're ready to rock
         // 
-        profileService.Initialize();
+        _profileService.Initialize();
 
         if (IsEnabled)
         {
-            Windows.Win32.PInvoke.HidD_GetHidGuid(out var hidGuid);
-            deviceNotificationListener.StartListen(hidGuid);
+            PInvoke.HidD_GetHidGuid(out Guid hidGuid);
+            _deviceNotificationListener.StartListen(hidGuid);
 
-            logger.LogInformation("Starting device enumeration");
+            _logger.LogInformation("Starting device enumeration");
 
             //
             // Run full enumeration only once at startup, during runtime arrival events are used
             // 
-            enumerator.EnumerateDevices();
+            _enumerator.EnumerateDevices();
             await Task.CompletedTask;
         }
     }
@@ -93,10 +95,10 @@ public class ControllerManagerHost
     {
         if (IsEnabled)
         {
-            deviceNotificationListener.StopListen();
-            hidDeviceEnumeratorService.ClearDevices();
-            profileService.Shutdown();
-            controllerHostToken.Cancel();
+            _deviceNotificationListener.StopListen();
+            _hidDeviceEnumeratorService.ClearDevices();
+            _profileService.Shutdown();
+            _controllerHostToken.Cancel();
         }
 
         IsRunning = false;
@@ -110,16 +112,16 @@ public class ControllerManagerHost
     /// </summary>
     private void EnumeratorServiceOnControllerReady(ICompatibleHidDevice device)
     {
-        var slotIndex = manager.AssignFreeSlotWith(device);
+        int slotIndex = _manager.AssignFreeSlotWith(device);
 
         if (slotIndex == -1)
         {
-            logger.LogError("No free slot available");
+            _logger.LogError("No free slot available");
             return;
         }
 
-        profileService.ControllerArrived(slotIndex, device.Serial);
-        inputSourceService.ControllerArrived(slotIndex, device);
+        _profileService.ControllerArrived(slotIndex, device.Serial);
+        _inputSourceService.ControllerArrived(slotIndex, device);
 
         ControllerReady?.Invoke(device);
     }
@@ -129,10 +131,10 @@ public class ControllerManagerHost
     /// </summary>
     private void EnumeratorOnControllerRemoved(ICompatibleHidDevice device)
     {
-        var slot = manager.FreeSlotContaining(device);
+        int slot = _manager.FreeSlotContaining(device);
 
-        inputSourceService.ControllerDeparted(slot, device);
-        profileService.ControllerDeparted(slot, device.Serial);
+        _inputSourceService.ControllerDeparted(slot, device);
+        _profileService.ControllerDeparted(slot, device.Serial);
 
         ControllerRemoved?.Invoke(device);
     }

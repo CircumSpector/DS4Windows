@@ -11,7 +11,7 @@ namespace Vapour.Shared.Devices.Services;
 /// <summary>
 ///     Describes a controller slot and the <see cref="CompatibleHidDevice" /> associated with it.
 /// </summary>
-public class CompatibleHidDeviceSlot
+public sealed class CompatibleHidDeviceSlot
 {
     public CompatibleHidDeviceSlot(int slotIndex)
     {
@@ -73,18 +73,18 @@ public interface IControllerManagerService
 /// <summary>
 ///     Handles currently active devices and occupied slots and takes care that profiles are loaded when required.
 /// </summary>
-public class ControllerManagerService : IControllerManagerService
+public sealed class ControllerManagerService : IControllerManagerService
 {
-    private readonly ObservableCollection<CompatibleHidDeviceSlot> activeControllers;
+    private readonly ObservableCollection<CompatibleHidDeviceSlot> _activeControllers;
 
     public ControllerManagerService()
     {
-        activeControllers = new ObservableCollection<CompatibleHidDeviceSlot>(Enumerable
+        _activeControllers = new ObservableCollection<CompatibleHidDeviceSlot>(Enumerable
             .Range(0, Constants.MaxControllers)
             .Select(i => new CompatibleHidDeviceSlot(i))
         );
 
-        ActiveControllers = new ReadOnlyObservableCollection<CompatibleHidDeviceSlot>(activeControllers);
+        ActiveControllers = new ReadOnlyObservableCollection<CompatibleHidDeviceSlot>(_activeControllers);
     }
 
     /// <inheritdoc />
@@ -94,7 +94,7 @@ public class ControllerManagerService : IControllerManagerService
     /// <inheritdoc />
     public int AssignFreeSlotWith(ICompatibleHidDevice device)
     {
-        var slot = activeControllers.FirstOrDefault(s => !s.IsOccupied);
+        var slot = _activeControllers.FirstOrDefault(s => !s.IsOccupied);
 
         //
         // No free slot
@@ -113,7 +113,7 @@ public class ControllerManagerService : IControllerManagerService
     /// <inheritdoc />
     public int FreeSlotContaining(ICompatibleHidDevice device)
     {
-        var slot = activeControllers.First(s => Equals(s.Device, device));
+        var slot = _activeControllers.First(s => Equals(s.Device, device));
 
         ControllerSlotFreed?.Invoke(slot);
 

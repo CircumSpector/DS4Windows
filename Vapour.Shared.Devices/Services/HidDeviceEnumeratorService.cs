@@ -2,15 +2,18 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
+using Windows.Win32;
+using Windows.Win32.Devices.HumanInterfaceDevice;
+using Windows.Win32.Foundation;
+using Windows.Win32.Storage.FileSystem;
+
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32.SafeHandles;
 
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
-
-using Windows.Win32.Devices.HumanInterfaceDevice;
-using Windows.Win32.Storage.FileSystem;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -45,33 +48,33 @@ public interface IHidDeviceEnumeratorService
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
+public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 {
-    private readonly ObservableCollection<HidDevice> connectedDevices;
-    protected readonly ActivitySource CoreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private readonly ObservableCollection<HidDevice> _connectedDevices;
+    private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    private readonly IDeviceNotificationListener deviceNotificationListener;
-    private readonly Guid hidClassInterfaceGuid;
+    private readonly IDeviceNotificationListener _deviceNotificationListener;
+    private readonly Guid _hidClassInterfaceGuid;
 
-    private readonly ILogger<HidDeviceEnumeratorService> logger;
+    private readonly ILogger<HidDeviceEnumeratorService> _logger;
 
     public HidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
         ILogger<HidDeviceEnumeratorService> logger)
     {
-        this.deviceNotificationListener = deviceNotificationListener;
-        this.logger = logger;
+        _deviceNotificationListener = deviceNotificationListener;
+        _logger = logger;
 
-        Windows.Win32.PInvoke.HidD_GetHidGuid(out var interfaceGuid);
+        PInvoke.HidD_GetHidGuid(out Guid interfaceGuid);
 
-        hidClassInterfaceGuid = interfaceGuid;
+        _hidClassInterfaceGuid = interfaceGuid;
 
-        Windows.Win32.PInvoke.HidD_GetHidGuid(out var hidGuid);
-        this.deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived, hidGuid);
-        this.deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved, hidGuid);
+        PInvoke.HidD_GetHidGuid(out Guid hidGuid);
+        _deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived, hidGuid);
+        _deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved, hidGuid);
 
-        connectedDevices = new ObservableCollection<HidDevice>();
+        _connectedDevices = new ObservableCollection<HidDevice>();
 
-        ConnectedDevices = new ReadOnlyObservableCollection<HidDevice>(connectedDevices);
+        ConnectedDevices = new ReadOnlyObservableCollection<HidDevice>(_connectedDevices);
     }
 
     /// <summary>
@@ -91,33 +94,37 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     /// <inheritdoc />
     public void EnumerateDevices()
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
 
-        var deviceIndex = 0;
+        int deviceIndex = 0;
 
-        connectedDevices.Clear();
+        _connectedDevices.Clear();
 
-        while (Devcon.FindByInterfaceGuid(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
+        while (Devcon.FindByInterfaceGuid(_hidClassInterfaceGuid, out string path, out string instanceId,
+                   deviceIndex++))
         {
             try
             {
-                var entry = CreateNewHidDevice(path);
+                HidDevice entry = CreateNewHidDevice(path);
 
-                logger.LogInformation("Discovered HID device {Device}", entry);
+                _logger.LogInformation("Discovered HID device {Device}", entry);
 
-                connectedDevices.Add(entry);
+                _connectedDevices.Add(entry);
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, $"Failed to create HID device for {path}");
+                _logger.LogWarning(ex, $"Failed to create HID device for {path}");
             }
         }
     }
 
     public void ClearDevices()
     {
-        foreach (var connectedDevice in ConnectedDevices.ToList()) RemoveDevice(connectedDevice.Path);
+        foreach (HidDevice connectedDevice in ConnectedDevices.ToList())
+        {
+            RemoveDevice(connectedDevice.Path);
+        }
     }
 
     /// <summary>
@@ -127,27 +134,30 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     /// <returns>The new <see cref="HidDevice" />.</returns>
     private HidDevice CreateNewHidDevice(string path)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(CreateNewHidDevice)}");
 
         activity?.SetTag("Path", path);
 
-        var device = PnPDevice.GetDeviceByInterfaceId(path);
+        PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
 
         //
         // Try to get friendly display name (not always there)
         // 
-        var friendlyName = device.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
-        var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
+        string friendlyName = device.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
+        string parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
         //
         // Grab product string from device if property is missing
         // 
-        if (string.IsNullOrEmpty(friendlyName)) friendlyName = GetHidProductString(path);
+        if (string.IsNullOrEmpty(friendlyName))
+        {
+            friendlyName = GetHidProductString(path);
+        }
 
-        GetHidAttributes(path, out var attributes);
+        GetHidAttributes(path, out HIDD_ATTRIBUTES attributes);
 
-        GetHidCapabilities(path, out var caps);
+        GetHidCapabilities(path, out HIDP_CAPS caps);
 
         return new HidDevice
         {
@@ -167,11 +177,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private unsafe string GetHidManufacturerString(string path)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidManufacturerString)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Windows.Win32.PInvoke.CreateFile(
+        using SafeFileHandle handle = PInvoke.CreateFile(
             path,
             FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
             FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
@@ -182,11 +192,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         );
 
         const uint bufferLength = 4093; // max allowed/possible size according to MSDN
-        var buffer = stackalloc char[(int)bufferLength];
+        char* buffer = stackalloc char[(int)bufferLength];
 
-        Windows.Win32.PInvoke.HidD_GetManufacturerString(handle, buffer, bufferLength);
+        PInvoke.HidD_GetManufacturerString(handle, buffer, bufferLength);
 
-        var manufacturerString = new string(buffer);
+        string manufacturerString = new(buffer);
 
         activity?.SetTag("ManufacturerString", manufacturerString);
 
@@ -195,11 +205,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private unsafe string GetHidProductString(string path)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidProductString)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Windows.Win32.PInvoke.CreateFile(
+        using SafeFileHandle handle = PInvoke.CreateFile(
             path,
             FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
             FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
@@ -210,11 +220,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         );
 
         const uint bufferLength = 4093; // max allowed/possible size according to MSDN
-        var buffer = stackalloc char[(int)bufferLength];
+        char* buffer = stackalloc char[(int)bufferLength];
 
-        Windows.Win32.PInvoke.HidD_GetProductString(handle, buffer, bufferLength);
+        PInvoke.HidD_GetProductString(handle, buffer, bufferLength);
 
-        var productName = new string(buffer);
+        string productName = new(buffer);
 
         activity?.SetTag("ProductString", productName);
 
@@ -223,11 +233,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private unsafe string GetHidSerialNumberString(string path)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidSerialNumberString)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Windows.Win32.PInvoke.CreateFile(
+        using SafeFileHandle handle = PInvoke.CreateFile(
             path,
             FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
             FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
@@ -238,11 +248,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         );
 
         const uint bufferLength = 4093; // max allowed/possible size according to MSDN
-        var buffer = stackalloc char[(int)bufferLength];
+        char* buffer = stackalloc char[(int)bufferLength];
 
-        Windows.Win32.PInvoke.HidD_GetSerialNumberString(handle, buffer, bufferLength);
+        PInvoke.HidD_GetSerialNumberString(handle, buffer, bufferLength);
 
-        var serialNumberString = new string(buffer);
+        string serialNumberString = new(buffer);
 
         activity?.SetTag("SerialNumberString", serialNumberString);
 
@@ -251,11 +261,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private bool GetHidAttributes(string path, out HIDD_ATTRIBUTES attributes)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidAttributes)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Windows.Win32.PInvoke.CreateFile(
+        using SafeFileHandle handle = PInvoke.CreateFile(
             path,
             FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
             FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
@@ -265,9 +275,12 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
             null
         );
 
-        var ret = Windows.Win32.PInvoke.HidD_GetAttributes(handle, out attributes);
+        BOOLEAN ret = PInvoke.HidD_GetAttributes(handle, out attributes);
 
-        if (!ret) return false;
+        if (!ret)
+        {
+            return false;
+        }
 
         activity?.SetTag("VID", attributes.VendorID.ToString("X4"));
         activity?.SetTag("PID", attributes.ProductID.ToString("X4"));
@@ -277,11 +290,11 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private void GetHidCapabilities(string path, out HIDP_CAPS caps)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(GetHidCapabilities)}");
         activity?.SetTag("Path", path);
 
-        using var handle = Windows.Win32.PInvoke.CreateFile(
+        using SafeFileHandle handle = PInvoke.CreateFile(
             path,
             FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
             FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
@@ -292,13 +305,17 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         );
 
         if (handle.IsInvalid)
+        {
             throw new Exception($"Couldn't open device handle, error {Marshal.GetLastWin32Error()}");
+        }
 
-        if (!Windows.Win32.PInvoke.HidD_GetPreparsedData(handle, out var dataHandle))
+        if (!PInvoke.HidD_GetPreparsedData(handle, out nint dataHandle))
+        {
             throw new Exception($"HidD_GetPreparsedData failed with error {Marshal.GetLastWin32Error()}");
+        }
 
-        Windows.Win32.PInvoke.HidP_GetCaps(dataHandle, out caps);
-        Windows.Win32.PInvoke.HidD_FreePreparsedData(dataHandle);
+        PInvoke.HidP_GetCaps(dataHandle, out caps);
+        PInvoke.HidD_FreePreparsedData(dataHandle);
 
         activity?.SetTag("InputReportByteLength", caps.InputReportByteLength);
         activity?.SetTag("OutputReportByteLength", caps.OutputReportByteLength);
@@ -306,17 +323,17 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
 
-        var symLink = args.SymLink;
+        string symLink = args.SymLink;
         activity?.SetTag("Path", symLink);
 
         try
         {
-            var device = PnPDevice.GetDeviceByInterfaceId(symLink);
+            PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink);
 
-            logger.LogInformation("HID Device {Instance} ({Path}) arrived",
+            _logger.LogInformation("HID Device {Instance} ({Path}) arrived",
                 device.InstanceId, symLink);
 
             //
@@ -325,25 +342,29 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
             // 
             if (!IsHidDevice(device))
             {
-                logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
+                _logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
                     device.InstanceId, symLink);
                 return;
             }
 
-            var entry = CreateNewHidDevice(symLink);
+            HidDevice entry = CreateNewHidDevice(symLink);
 
             if (device.IsVirtual())
-                logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
+            {
+                _logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
                     device.InstanceId, symLink);
+            }
 
-            if (!connectedDevices.Contains(entry))
-                connectedDevices.Add(entry);
+            if (!_connectedDevices.Contains(entry))
+            {
+                _connectedDevices.Add(entry);
+            }
 
             DeviceArrived?.Invoke(entry);
         }
         catch (ArgumentException ae)
         {
-            logger.LogWarning(ae, "Failed to add new device");
+            _logger.LogWarning(ae, "Failed to add new device");
         }
     }
 
@@ -354,19 +375,19 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
 
     private void RemoveDevice(string symLink)
     {
-        using var activity = CoreActivity.StartActivity(
+        using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceRemoved)}");
 
         activity?.SetTag("Path", symLink);
 
-        var device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom);
+        PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom);
 
-        logger.LogInformation("HID Device {Instance} ({Path}) removed",
+        _logger.LogInformation("HID Device {Instance} ({Path}) removed",
             device.InstanceId, symLink);
 
-        GetHidAttributes(symLink, out var attributes);
+        GetHidAttributes(symLink, out HIDD_ATTRIBUTES attributes);
 
-        var entry = new HidDevice
+        HidDevice entry = new()
         {
             Path = symLink,
             IsVirtual = device.IsVirtual(),
@@ -374,8 +395,10 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
             Attributes = attributes
         };
 
-        if (connectedDevices.Contains(entry))
-            connectedDevices.Remove(entry);
+        if (_connectedDevices.Contains(entry))
+        {
+            _connectedDevices.Remove(entry);
+        }
 
         DeviceRemoved?.Invoke(entry);
     }
@@ -387,7 +410,7 @@ public class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     /// <returns>True if HIDClass device, false otherwise.</returns>
     private static bool IsHidDevice(PnPDevice device)
     {
-        var devClass = device.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+        Guid devClass = device.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
 
         return Equals(devClass, HidDeviceClassGuid);
     }

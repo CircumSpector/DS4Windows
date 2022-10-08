@@ -47,6 +47,7 @@ public class InputSource : IInputSource
 /// <summary>
 ///     Represents a logical input source baked by a two hardware <see cref="CompatibleHidDevice" />s.
 /// </summary>
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
 {
     internal CompositeInputSource(ICompatibleHidDevice primarySource)

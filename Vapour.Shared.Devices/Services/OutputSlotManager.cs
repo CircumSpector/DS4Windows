@@ -9,42 +9,41 @@ using Vapour.Shared.Devices.Output;
 
 namespace Vapour.Shared.Devices.Services;
 
-public class OutputSlotManager : IOutputSlotManager
+[Obsolete]
+public sealed class OutputSlotManager : IOutputSlotManager
 {
+    public const int DELAY_TIME = 500; // measured in ms
     public static int CURRENT_DS4_CONTROLLER_LIMIT = 8;
 
+    private readonly Dictionary<int, IOutDevice> _deviceDict = new();
+    private readonly int _lastSlotIndex;
+    private readonly IOutDevice[] _outputDevices = new IOutDevice[CURRENT_DS4_CONTROLLER_LIMIT];
+    private readonly ReaderWriterLockSlim _queueLocker;
+    private readonly Dictionary<IOutDevice, int> _revDeviceDict = new();
 
-
-    public const int DELAY_TIME = 500; // measured in ms
-
-    private readonly Dictionary<int, IOutDevice> deviceDict = new();
-    private readonly int lastSlotIndex;
-    private readonly IOutDevice[] outputDevices = new IOutDevice[CURRENT_DS4_CONTROLLER_LIMIT];
-    private readonly ReaderWriterLockSlim queueLocker;
-    private readonly Dictionary<IOutDevice, int> revDeviceDict = new();
-
-    private int queuedTasks;
+    private int _queuedTasks;
 
     public OutputSlotManager(ViGEmClient client)
     {
         Client = client;
 
         OutputSlots = new IOutSlotDevice[CURRENT_DS4_CONTROLLER_LIMIT];
-        for (var i = 0; i < CURRENT_DS4_CONTROLLER_LIMIT; i++) OutputSlots[i] = new OutSlotDevice(i);
+        for (int i = 0; i < CURRENT_DS4_CONTROLLER_LIMIT; i++)
+        {
+            OutputSlots[i] = new OutSlotDevice(i);
+        }
 
-        lastSlotIndex = OutputSlots.Count > 0 ? OutputSlots.Count - 1 : 0;
+        _lastSlotIndex = OutputSlots.Count > 0 ? OutputSlots.Count - 1 : 0;
 
-        queueLocker = new ReaderWriterLockSlim();
+        _queueLocker = new ReaderWriterLockSlim();
     }
 
-    public int NumAttachedDevices
-    {
-        get { return OutputSlots.Count(tmp => tmp.CurrentAttachedStatus == IOutSlotDevice.AttachedStatus.Attached); }
-    }
+    public int NumAttachedDevices =>
+        OutputSlots.Count(tmp => tmp.CurrentAttachedStatus == IOutSlotDevice.AttachedStatus.Attached);
 
     public ViGEmClient Client { get; }
 
-    public bool RunningQueue => queuedTasks > 0;
+    public bool RunningQueue => _queuedTasks > 0;
     public IList<IOutSlotDevice> OutputSlots { get; }
 
     public event IOutputSlotManager.SlotAssignedDelegate SlotAssigned;
@@ -59,10 +58,13 @@ public class OutputSlotManager : IOutputSlotManager
     public void Stop(bool immediate = false)
     {
         UnplugRemainingControllers(immediate);
-        while (RunningQueue) Thread.SpinWait(500);
+        while (RunningQueue)
+        {
+            Thread.SpinWait(500);
+        }
 
-        deviceDict.Clear();
-        revDeviceDict.Clear();
+        _deviceDict.Clear();
+        _revDeviceDict.Clear();
     }
 
     public IOutDevice AllocateController(OutputDeviceType contType)
@@ -87,11 +89,11 @@ public class OutputSlotManager : IOutputSlotManager
     public void DeferredPlugin(IOutDevice outputDevice, int inIdx, IOutDevice[] outdevs,
         OutputDeviceType contType)
     {
-        queueLocker.EnterWriteLock();
-        queuedTasks++;
+        _queueLocker.EnterWriteLock();
+        _queuedTasks++;
         //Action tempAction = new Action(() =>
         {
-            var slot = FindEmptySlot();
+            int slot = FindEmptySlot();
             if (slot != -1)
             {
                 try
@@ -105,9 +107,9 @@ public class OutputSlotManager : IOutputSlotManager
                     return;
                 }
 
-                outputDevices[slot] = outputDevice;
-                deviceDict.Add(slot, outputDevice);
-                revDeviceDict.Add(outputDevice, slot);
+                _outputDevices[slot] = outputDevice;
+                _deviceDict.Add(slot, outputDevice);
+                _revDeviceDict.Add(outputDevice, slot);
                 OutputSlots[slot].AttachedDevice(outputDevice, contType);
                 if (inIdx != -1)
                 {
@@ -119,8 +121,8 @@ public class OutputSlotManager : IOutputSlotManager
             }
         }
 
-        queuedTasks--;
-        queueLocker.ExitWriteLock();
+        _queuedTasks--;
+        _queueLocker.ExitWriteLock();
     }
 
     public void DeferredRemoval(IOutDevice outputDevice, int inIdx,
@@ -128,18 +130,21 @@ public class OutputSlotManager : IOutputSlotManager
     {
         _ = immediate;
 
-        queueLocker.EnterWriteLock();
-        queuedTasks++;
+        _queueLocker.EnterWriteLock();
+        _queuedTasks++;
 
         {
-            if (revDeviceDict.TryGetValue(outputDevice, out var slot))
+            if (_revDeviceDict.TryGetValue(outputDevice, out int slot))
             {
                 //int slot = revDeviceDict[outputDevice];
-                outputDevices[slot] = null;
-                deviceDict.Remove(slot);
-                revDeviceDict.Remove(outputDevice);
+                _outputDevices[slot] = null;
+                _deviceDict.Remove(slot);
+                _revDeviceDict.Remove(outputDevice);
                 outputDevice.Disconnect();
-                if (inIdx != -1) outdevs[inIdx] = null;
+                if (inIdx != -1)
+                {
+                    outdevs[inIdx] = null;
+                }
 
                 OutputSlots[slot].DetachDevice();
                 SlotUnassigned?.Invoke(this, slot, OutputSlots[slot]);
@@ -152,16 +157,16 @@ public class OutputSlotManager : IOutputSlotManager
         }
         ;
 
-        queuedTasks--;
-        queueLocker.ExitWriteLock();
+        _queuedTasks--;
+        _queueLocker.ExitWriteLock();
     }
 
     public IOutSlotDevice FindOpenSlot()
     {
         IOutSlotDevice temp = null;
-        for (var i = 0; i < OutputSlots.Count; i++)
+        for (int i = 0; i < OutputSlots.Count; i++)
         {
-            var tmp = OutputSlots[i];
+            IOutSlotDevice tmp = OutputSlots[i];
             if (tmp.CurrentInputBound == IOutSlotDevice.InputBound.Unbound &&
                 tmp.CurrentAttachedStatus == IOutSlotDevice.AttachedStatus.UnAttached)
             {
@@ -177,8 +182,10 @@ public class OutputSlotManager : IOutputSlotManager
     {
         IOutSlotDevice temp = null;
         if (outputDevice != null &&
-            revDeviceDict.TryGetValue(outputDevice, out var slotNum))
+            _revDeviceDict.TryGetValue(outputDevice, out int slotNum))
+        {
             temp = OutputSlots[slotNum];
+        }
 
         return temp;
     }
@@ -195,15 +202,15 @@ public class OutputSlotManager : IOutputSlotManager
     {
         _ = immediate;
 
-        queueLocker.EnterWriteLock();
-        queuedTasks++;
+        _queueLocker.EnterWriteLock();
+        _queuedTasks++;
         {
-            var slotIdx = 0;
-            foreach (var device in OutputSlots)
+            int slotIdx = 0;
+            foreach (IOutSlotDevice device in OutputSlots)
             {
                 if (device.OutputDevice != null)
                 {
-                    outputDevices[slotIdx] = null;
+                    _outputDevices[slotIdx] = null;
                     device.OutputDevice.Disconnect();
 
                     device.DetachDevice();
@@ -218,17 +225,20 @@ public class OutputSlotManager : IOutputSlotManager
             }
         }
 
-        queuedTasks--;
-        queueLocker.ExitWriteLock();
+        _queuedTasks--;
+        _queueLocker.ExitWriteLock();
     }
 
     private int FindEmptySlot()
     {
-        var result = -1;
-        for (var i = 0; i < outputDevices.Length && result == -1; i++)
+        int result = -1;
+        for (int i = 0; i < _outputDevices.Length && result == -1; i++)
         {
-            var tempdev = outputDevices[i];
-            if (tempdev == null) result = i;
+            IOutDevice tempdev = _outputDevices[i];
+            if (tempdev == null)
+            {
+                result = i;
+            }
         }
 
         return result;
@@ -237,7 +247,10 @@ public class OutputSlotManager : IOutputSlotManager
     public bool SlotAvailable(int slotNum)
     {
         bool result;
-        if (slotNum < 0 && slotNum > lastSlotIndex) throw new ArgumentOutOfRangeException("Invalid slot number");
+        if (slotNum < 0 && slotNum > _lastSlotIndex)
+        {
+            throw new ArgumentOutOfRangeException("Invalid slot number");
+        }
 
         //slotNum -= 1;
         result = OutputSlots[slotNum].CurrentAttachedStatus == IOutSlotDevice.AttachedStatus.UnAttached;
@@ -247,7 +260,10 @@ public class OutputSlotManager : IOutputSlotManager
     public IOutSlotDevice GetOutSlotDevice(int slotNum)
     {
         IOutSlotDevice temp;
-        if (slotNum < 0 && slotNum > lastSlotIndex) throw new ArgumentOutOfRangeException("Invalid slot number");
+        if (slotNum < 0 && slotNum > _lastSlotIndex)
+        {
+            throw new ArgumentOutOfRangeException("Invalid slot number");
+        }
 
         //slotNum -= 1;
         temp = OutputSlots[slotNum];
