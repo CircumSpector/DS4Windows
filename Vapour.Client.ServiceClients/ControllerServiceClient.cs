@@ -76,7 +76,7 @@ public class ControllerServiceClient : IControllerServiceClient
 
         _websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/api/controller/ws", UriKind.Absolute));
 
-        _websocketClient.ReconnectTimeout = TimeSpan.FromMinutes(2);
+        _websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
         _websocketClient.ReconnectionHappened.Subscribe(info =>
         {
             Log.Information($"Reconnection happened, type: {info.Type}");
