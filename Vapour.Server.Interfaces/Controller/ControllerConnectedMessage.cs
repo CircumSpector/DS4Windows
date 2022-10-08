@@ -2,7 +2,7 @@
 
 namespace Vapour.Server.Controller;
 
-public class ControllerConnectedMessage : MessageBase
+public sealed class ControllerConnectedMessage : MessageBase
 {
     public const string Name = "ControllerConnected";
 

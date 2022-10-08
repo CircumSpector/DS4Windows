@@ -1,6 +1,6 @@
 ﻿namespace Vapour.Server.Controller;
 
-public class ControllerHostStatusResponse
+public sealed class ControllerHostStatusResponse
 {
     /// <summary>
     ///     Gets if the host is running.

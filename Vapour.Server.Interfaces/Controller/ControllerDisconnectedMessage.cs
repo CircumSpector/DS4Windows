@@ -1,6 +1,6 @@
 ﻿namespace Vapour.Server.Controller;
 
-public class ControllerDisconnectedMessage : MessageBase
+public sealed class ControllerDisconnectedMessage : MessageBase
 {
     public const string Name = "ControllerDisconnected";
 

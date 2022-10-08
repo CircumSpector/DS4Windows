@@ -15,7 +15,7 @@ using Websocket.Client;
 
 namespace Vapour.Client.ServiceClients;
 
-public class ControllerServiceClient : IControllerServiceClient
+public sealed class ControllerServiceClient : IControllerServiceClient
 {
     private readonly IHttpClientFactory _clientFactory;
     private Action<ControllerConnectedMessage> _connectedAction;

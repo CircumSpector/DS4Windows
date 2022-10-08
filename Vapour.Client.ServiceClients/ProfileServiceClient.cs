@@ -9,7 +9,7 @@ using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Client.ServiceClients;
 
-public class ProfileServiceClient : IProfileServiceClient
+public sealed class ProfileServiceClient : IProfileServiceClient
 {
     private readonly IHttpClientFactory _httpClientFactory;
 

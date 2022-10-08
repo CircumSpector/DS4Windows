@@ -1,6 +1,6 @@
 ﻿namespace Vapour.Server.Controller;
 
-public class IsHostRunningChangedMessage : MessageBase
+public sealed class IsHostRunningChangedMessage : MessageBase
 {
     public const string Name = "IsHostRunningChanged";
 

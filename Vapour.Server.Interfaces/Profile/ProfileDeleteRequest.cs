@@ -1,6 +1,6 @@
 ﻿namespace Vapour.Server.Profile;
 
-public class ProfileDeleteRequest
+public sealed class ProfileDeleteRequest
 {
     public Guid ProfileId { get; set; }
 }

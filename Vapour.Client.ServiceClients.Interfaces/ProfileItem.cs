@@ -7,7 +7,7 @@ using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Client.ServiceClients;
 
-public class ProfileItem : IProfile
+public sealed class ProfileItem : IProfile
 {
     public int BluetoothPollRate { get; set; }
     public ButtonMouseInfo ButtonMouseInfo { get; set; }
