@@ -66,7 +66,7 @@ public static class ServiceStartup
 
     private static void SetupWebSocket(IApplicationBuilder app)
     {
-        WebSocketOptions webSocketOptions = new WebSocketOptions { KeepAliveInterval = TimeSpan.FromMinutes(2) };
+        WebSocketOptions webSocketOptions = new() { KeepAliveInterval = TimeSpan.FromMinutes(1) };
 
         app.UseWebSockets(webSocketOptions);
     }
