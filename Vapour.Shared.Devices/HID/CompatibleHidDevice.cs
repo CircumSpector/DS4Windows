@@ -3,6 +3,7 @@ using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
 
+using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
 
 using JetBrains.Annotations;
@@ -14,7 +15,6 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client.Exceptions;
 
 using Vapour.Shared.Common.Telemetry;
-using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Shared.Devices.HID;
@@ -22,9 +22,9 @@ namespace Vapour.Shared.Devices.HID;
 /// <summary>
 ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
 /// </summary>
-public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDevice
+public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 {
-    protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
+    private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
 
     private static readonly Meter Meter = new(TracingSources.DevicesAssemblyActivitySourceName);
 
@@ -35,15 +35,17 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         Meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
 
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
-    protected static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
-    protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
+    private static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
+    private static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
-    protected readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    protected readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
+    private readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
         SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
     });
+
+    private readonly HidDevice _sourceDevice;
 
     /// <summary>
     ///     The connection type (wire, wireless).
@@ -66,10 +68,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider)
     {
-        //
-        // This makes this instance independent
-        // 
-        source.DeepCloneTo(this);
+        _sourceDevice = source;
 
         Services = serviceProvider;
         DeviceType = deviceType;
@@ -94,8 +93,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         //
         // Open handle
         // 
-        OpenDevice();
+        _sourceDevice.OpenDevice();
     }
+
+    protected HIDP_CAPS Capabilities => _sourceDevice.Capabilities;
 
     /// <summary>
     ///     Service provider for injected services.
@@ -117,15 +118,46 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// </summary>
     public InputDeviceType DeviceType { get; set; }
 
+    /// <inheritdoc />
+    public string InstanceId => _sourceDevice.InstanceId;
+
     /// <summary>
     ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
     /// </summary>
     public ConnectionType? Connection => _connection ??= GetConnectionType();
 
-    /// <summary>
-    ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice" />.
-    /// </summary>
+    /// <inheritdoc />
     public PhysicalAddress Serial { get; protected init; }
+
+    /// <inheritdoc />
+    public ushort VendorId => _sourceDevice.Attributes.VendorID;
+
+    /// <inheritdoc />
+    public ushort ProductId => _sourceDevice.Attributes.ProductID;
+
+    /// <inheritdoc />
+    public ushort? Version => _sourceDevice.Attributes.VersionNumber;
+
+    /// <inheritdoc />
+    public string ManufacturerString => _sourceDevice.ManufacturerString;
+
+    /// <inheritdoc />
+    public string ParentInstance => _sourceDevice.ParentInstance;
+
+    /// <inheritdoc />
+    public string Path => _sourceDevice.Path;
+
+    /// <inheritdoc />
+    public string ProductString => _sourceDevice.ProductString;
+
+    /// <inheritdoc />
+    public string SerialNumberString => _sourceDevice.SerialNumberString;
+
+    /// <inheritdoc />
+    public string Description => _sourceDevice.Description;
+
+    /// <inheritdoc />
+    public string DisplayName => _sourceDevice.DisplayName;
 
     /// <summary>
     ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
@@ -146,6 +178,11 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     ///     Fired when a new input report is read for further processing.
     /// </summary>
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
+
+    public void Dispose()
+    {
+        Dispose(true);
+    }
 
     /// <summary>
     ///     Determine <see cref="ConnectionType" /> of this device.
@@ -256,7 +293,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// <summary>
     ///     Stop the asynchronous input report reading logic.
     /// </summary>
-    protected void StopInputReportReader()
+    private void StopInputReportReader()
     {
         _inputReportToken.Cancel();
 
@@ -319,7 +356,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         {
             while (!_inputReportToken.IsCancellationRequested)
             {
-                ReadInputReport(_inputReportArray);
+                _sourceDevice.ReadInputReport(_inputReportArray);
 
                 ReportsReadCounter.Add(1);
 
@@ -346,12 +383,12 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
-        if (Capabilities.InputReportByteLength == 64)
+        if (_sourceDevice.Capabilities.InputReportByteLength == 64)
         {
             Span<byte> buffer = stackalloc byte[64];
             buffer[0] = featureId;
 
-            if (ReadFeatureData(buffer))
+            if (_sourceDevice.ReadFeatureData(buffer))
             {
                 Span<byte> serialBytes = buffer.Slice(1, 6);
                 serialBytes.Reverse();
@@ -402,7 +439,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     + devPathItems[^1].TrimStart('0').ToUpper(),
             // Device and usb hub and port identifiers missing in devicePath string. Fallback to use vendor and product ID values and 
             // take a number from the last part of the devicePath. Hopefully the last part is a usb port number as it usually should be.
-            >= 1 => Attributes.VendorID.ToString("X4") + Attributes.ProductID.ToString("X4") +
+            >= 1 => VendorId.ToString("X4") + ProductId.ToString("X4") +
                     devPathItems[^1].TrimStart('0').ToUpper(),
             _ => address
         };
@@ -419,7 +456,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         return PhysicalAddress.Parse(address);
     }
 
-    protected override void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!_disposed)
         {
@@ -432,8 +469,6 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
             _disposed = true;
         }
-
-        base.Dispose(disposing);
     }
 
     public override string ToString()

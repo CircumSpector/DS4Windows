@@ -155,7 +155,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
     }
 
-    protected unsafe bool ReadFeatureData(Span<byte> buffer)
+    public unsafe bool ReadFeatureData(Span<byte> buffer)
     {
         fixed (byte* bufferPtr = buffer)
         {
@@ -187,7 +187,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// </summary>
     /// <param name="buffer">The buffer to read into.</param>
     /// <returns>The number of bytes read.</returns>
-    protected unsafe int ReadInputReport(Span<byte> buffer)
+    public unsafe int ReadInputReport(Span<byte> buffer)
     {
         if (Handle.IsInvalid || Handle.IsClosed)
         {
