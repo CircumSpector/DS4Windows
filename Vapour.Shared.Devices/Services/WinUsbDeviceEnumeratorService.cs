@@ -60,10 +60,19 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
             new()
             {
                 {
+                    // Collective Minds Strike Pack Eliminator Mod Pack - PlayStation 4
                     new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x05C5 },
                     new HidDeviceOverWinUsbEndpoints
                     {
                         InterruptInEndpointAddress = 0x81, InterruptOutEndpointAddress = 0x01
+                    }
+                },
+                {
+                    // Sony DualShock 4 Rev1
+                    new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x05C4 },
+                    new HidDeviceOverWinUsbEndpoints
+                    {
+                        InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
                     }
                 }
             };
@@ -114,6 +123,14 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
         while (Devcon.FindByInterfaceGuid(FilterDriver.FilteredDeviceInterfaceId, out string path, out _,
                    deviceIndex++))
         {
+            string service = PnPDevice.GetDeviceByInterfaceId(path)
+                .GetProperty<string>(DevicePropertyKey.Device_Service);
+
+            if (service is null || !service.ToUpper().Equals("WINUSB"))
+            {
+                continue;
+            }
+
             HidDeviceOverWinUsb entry = CreateNewHidDeviceOverWinUsb(path);
 
             if (entry is null)
@@ -196,7 +213,7 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
         }
         catch (USBException ex)
         {
-            _logger.LogWarning(ex, "Couldn't access WinUSB device");
+            _logger.LogWarning(ex, "Couldn't access WinUSB device ({Path})", path);
             return null;
         }
     }
@@ -276,6 +293,11 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
             }
 
             return VendorId == other.VendorId && ProductId == other.ProductId;
+        }
+
+        public override string ToString()
+        {
+            return $"VID: 0x{VendorId:X4}, PID: 0x{ProductId:X4}";
         }
 
         public static HidDeviceOverWinUsbIdentification FromDescriptor(USBDeviceDescriptor descriptor)

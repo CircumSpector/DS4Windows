@@ -36,12 +36,4 @@ public class HidDeviceOverWinUsb : HidDevice
     protected USBPipe InterruptInPipe { get; }
 
     protected USBPipe InterruptOutPipe { get; }
-
-    public override void OpenDevice()
-    {
-    }
-
-    public override void CloseDevice()
-    {
-    }
 }

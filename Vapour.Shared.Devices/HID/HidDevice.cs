@@ -113,7 +113,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.
     /// </summary>
-    public virtual void OpenDevice()
+    public void OpenDevice()
     {
         if (IsOpen)
         {
@@ -123,7 +123,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         Handle = OpenAsyncHandle(Path);
     }
 
-    public virtual void CloseDevice()
+    public void CloseDevice()
     {
         if (!IsOpen)
         {
