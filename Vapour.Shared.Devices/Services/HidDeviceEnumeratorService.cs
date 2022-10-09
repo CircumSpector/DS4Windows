@@ -42,6 +42,9 @@ public interface IHidDeviceEnumeratorService
     /// </summary>
     void EnumerateDevices();
 
+    /// <summary>
+    ///     Drops all devices from <see cref="ConnectedDevices"/>.
+    /// </summary>
     void ClearDevices();
 }
 
@@ -53,6 +56,7 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
     private readonly ObservableCollection<HidDevice> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
+    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly IDeviceNotificationListener _deviceNotificationListener;
     private readonly Guid _hidClassInterfaceGuid;
 
@@ -119,6 +123,7 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
         }
     }
 
+    /// <inheritdoc />
     public void ClearDevices()
     {
         foreach (HidDevice connectedDevice in ConnectedDevices.ToList())
