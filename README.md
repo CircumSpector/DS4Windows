@@ -1,4 +1,4 @@
-<img src="assets/DS4Windows-128x128.png" align="right" />
+<img src="assets/Vapour-128x128.png" align="right" />
 
 # Codename: Vapour Input
 

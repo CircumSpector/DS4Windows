@@ -3,13 +3,13 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
-		<ApplicationIcon>DS4W.ico</ApplicationIcon>
+		<ApplicationIcon>Vapour.ico</ApplicationIcon>
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
 
 	<ItemGroup>
-		<None Remove="DS4W.ico" />
+		<None Remove="Vapour.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="DS4W.ico" />
+		<Resource Include="Vapour.ico" />
 	</ItemGroup>
 
 	<ItemGroup>

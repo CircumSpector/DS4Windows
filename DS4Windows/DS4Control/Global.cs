@@ -57,8 +57,8 @@ namespace DS4Windows
 
         public static Dictionary<TrayIconChoice, string> IconChoiceResources = new()
         {
-            [TrayIconChoice.Default] = "/DS4Windows;component/Resources/DS4W.ico",
-            [TrayIconChoice.Colored] = "/DS4Windows;component/Resources/DS4W.ico",
+            [TrayIconChoice.Default] = "/DS4Windows;component/Resources/Vapour.ico",
+            [TrayIconChoice.Colored] = "/DS4Windows;component/Resources/Vapour.ico",
             [TrayIconChoice.White] = "/DS4Windows;component/Resources/DS4W - White.ico",
             [TrayIconChoice.Black] = "/DS4Windows;component/Resources/DS4W - Black.ico"
         };

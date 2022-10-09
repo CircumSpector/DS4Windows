@@ -10,7 +10,7 @@
                     Title="DS4Windows" WindowStartupLocation="CenterScreen"
                     Background="{DynamicResource MaterialDesignBackground}" Foreground="{DynamicResource MaterialDesignBody}"
                     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-                    TitleBarIcon="Images/ds4w.ico"
+                    TitleBarIcon="Images/Vapour.ico"
                     WindowState="Maximized">
     <md:DialogHost Identifier="{x:Static localInt:Constants.DialogHostName}" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
         <md:Card>
