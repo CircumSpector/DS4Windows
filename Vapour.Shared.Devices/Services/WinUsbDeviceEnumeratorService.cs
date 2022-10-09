@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 
+using Windows.Win32.Devices.HumanInterfaceDevice;
+
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.WinUSB;
@@ -94,7 +96,7 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
 
         while (Devcon.FindByInterfaceGuid(DeviceInterfaceGuid, out string path, out _, deviceIndex++))
         {
-            HidDeviceOverWinUsb entry = CreateNewHidDevice(path);
+            HidDeviceOverWinUsb entry = CreateNewHidDeviceOverWinUsb(path);
 
             _logger.LogInformation("Discovered WinUSB device {Device}", entry);
 
@@ -116,10 +118,10 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
     /// </summary>
     /// <param name="path">The symbolic link path of the device instance.</param>
     /// <returns>The new <see cref="HidDeviceOverWinUsb" />.</returns>
-    private HidDeviceOverWinUsb CreateNewHidDevice(string path)
+    private HidDeviceOverWinUsb CreateNewHidDeviceOverWinUsb(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(CreateNewHidDevice)}");
+            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(CreateNewHidDeviceOverWinUsb)}");
 
         activity?.SetTag("Path", path);
 
@@ -149,7 +151,17 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
             ParentInstance = parentId,
             ManufacturerString = winUsbDevice.Descriptor.Manufacturer,
             ProductString = winUsbDevice.Descriptor.Product,
-            SerialNumberString = winUsbDevice.Descriptor.SerialNumber
+            SerialNumberString = winUsbDevice.Descriptor.SerialNumber,
+            Attributes = new HIDD_ATTRIBUTES()
+            {
+                VendorID = (ushort)winUsbDevice.Descriptor.VID,
+                ProductID =  (ushort)winUsbDevice.Descriptor.PID
+            },
+            Capabilities = new HIDP_CAPS()
+            {
+                Usage = HidDevice.HidUsageGamepad,
+                // TODO: finish me!
+            }
         };
     }
 
@@ -166,7 +178,7 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
         _logger.LogInformation("WinUSB Device {Instance} ({Path}) arrived",
             device.InstanceId, symLink);
 
-        HidDeviceOverWinUsb entry = CreateNewHidDevice(symLink);
+        HidDeviceOverWinUsb entry = CreateNewHidDeviceOverWinUsb(symLink);
 
         if (!_connectedDevices.Contains(entry))
         {

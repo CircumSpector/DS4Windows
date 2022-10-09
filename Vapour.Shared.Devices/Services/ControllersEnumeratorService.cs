@@ -17,12 +17,11 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
-    private const int HidUsageJoystick = 0x04;
-    private const int HidUsageGamepad = 0x05;
+    
 
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    private readonly IHidDeviceEnumeratorService _enumeratorService;
+    private readonly IHidDeviceEnumeratorService _hidEnumeratorService;
 
     private readonly ILogger<ControllersEnumeratorService> _logger;
     private readonly Dictionary<string, IOutDevice> _outDevices;
@@ -33,16 +32,16 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-        IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider,
+        IHidDeviceEnumeratorService hidEnumeratorService, IServiceProvider serviceProvider,
         IOutputSlotManager outputSlotManager)
     {
         _logger = logger;
-        _enumeratorService = enumeratorService;
+        _hidEnumeratorService = hidEnumeratorService;
         _serviceProvider = serviceProvider;
         _outputSlotManager = outputSlotManager;
 
-        enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
-        enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
+        hidEnumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
+        hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
 
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
         _outDevices = new Dictionary<string, IOutDevice>();
@@ -68,9 +67,9 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         using Activity activity = _coreActivity.StartActivity(
             $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
 
-        _enumeratorService.EnumerateDevices();
+        _hidEnumeratorService.EnumerateDevices();
 
-        ReadOnlyObservableCollection<HidDevice> hidDevices = _enumeratorService.ConnectedDevices;
+        ReadOnlyObservableCollection<HidDevice> hidDevices = _hidEnumeratorService.ConnectedDevices;
 
         //
         // Filter for supported devices
@@ -80,7 +79,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
                 KnownDevices.List.FirstOrDefault(d =>
                     d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID)
             where known is not null
-            where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
+            where (hidDevice.Capabilities.Usage is HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick ||
                    known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
                   !hidDevice.IsVirtual
             select hidDevice;
@@ -148,7 +147,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             return;
         }
 
-        if ((hidDevice.Capabilities.Usage is not (HidUsageGamepad or HidUsageJoystick) &&
+        if ((hidDevice.Capabilities.Usage is not (HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick) &&
              !known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice))
             || hidDevice.IsVirtual)
         {

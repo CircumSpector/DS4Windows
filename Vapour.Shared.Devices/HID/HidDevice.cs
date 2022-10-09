@@ -1,14 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 
+using Windows.Win32;
+using Windows.Win32.Devices.HumanInterfaceDevice;
+using Windows.Win32.Foundation;
+using Windows.Win32.Storage.FileSystem;
+
 using JetBrains.Annotations;
 
 using Microsoft.Win32.SafeHandles;
 
 using Vapour.Shared.Devices.Interfaces.HID;
-
-using Windows.Win32.Devices.HumanInterfaceDevice;
-using Windows.Win32.Foundation;
-using Windows.Win32.Storage.FileSystem;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -29,16 +30,23 @@ public sealed class HidDeviceException : Exception
 /// </summary>
 public class HidDevice : IEquatable<HidDevice>, IHidDevice
 {
-    private bool _disposed;
+    public const int HidUsageJoystick = 0x04;
+    public const int HidUsageGamepad = 0x05;
 
     private readonly AutoResetEvent _readEvent = new(false);
 
     private readonly AutoResetEvent _writeEvent = new(false);
+    private bool _disposed;
 
     /// <summary>
     ///     Native handle to device.
     /// </summary>
     private SafeHandle Handle { get; set; }
+
+    public bool Equals(HidDevice other)
+    {
+        return ReferenceEquals(this, other) || InstanceId.Equals(other.InstanceId, StringComparison.OrdinalIgnoreCase);
+    }
 
     /// <summary>
     ///     True if device originates from a software device.
@@ -108,23 +116,34 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     public void OpenDevice()
     {
         if (IsOpen)
+        {
             Handle.Close();
+        }
 
         Handle = OpenAsyncHandle(Path);
     }
 
     public void CloseDevice()
     {
-        if (!IsOpen) return;
+        if (!IsOpen)
+        {
+            return;
+        }
 
         Handle?.Dispose();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     protected unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
     {
         fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_SetFeature(Handle, bufferPtr, (uint)buffer.Length);
+            return PInvoke.HidD_SetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
@@ -132,7 +151,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     {
         fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_SetOutputReport(Handle, bufferPtr, (uint)buffer.Length);
+            return PInvoke.HidD_SetOutputReport(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
@@ -140,7 +159,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     {
         fixed (byte* bufferPtr = buffer)
         {
-            return Windows.Win32.PInvoke.HidD_GetFeature(Handle, bufferPtr, (uint)buffer.Length);
+            return PInvoke.HidD_GetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
 
@@ -151,7 +170,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
 
         fixed (byte* bufferPtr = buffer)
         {
-            Windows.Win32.PInvoke.WriteFile(
+            PInvoke.WriteFile(
                 Handle,
                 bufferPtr,
                 (uint)buffer.Length,
@@ -159,19 +178,21 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
                 &overlapped
             );
 
-            return Windows.Win32.PInvoke.GetOverlappedResultEx(Handle, overlapped, out _, (uint)timeout, false);
+            return PInvoke.GetOverlappedResultEx(Handle, overlapped, out _, (uint)timeout, false);
         }
     }
 
     /// <summary>
-    /// Reads data from the device to specified byte buffer.
+    ///     Reads data from the device to specified byte buffer.
     /// </summary>
     /// <param name="buffer">The buffer to read into.</param>
     /// <returns>The number of bytes read.</returns>
     protected unsafe int ReadInputReport(Span<byte> buffer)
     {
         if (Handle.IsInvalid || Handle.IsClosed)
+        {
             throw new HidDeviceException("Device handle not open or invalid.");
+        }
 
         NativeOverlapped overlapped;
         overlapped.EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle();
@@ -180,7 +201,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
 
         fixed (byte* bufferPtr = buffer)
         {
-            var ret = Windows.Win32.PInvoke.ReadFile(
+            BOOL ret = PInvoke.ReadFile(
                 Handle,
                 bufferPtr,
                 (uint)buffer.Length,
@@ -189,10 +210,14 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
             );
 
             if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
+            {
                 throw new HidDeviceException("Unexpected return result on ReadFile.");
+            }
 
-            if (!Windows.Win32.PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
+            if (!PInvoke.GetOverlappedResult(Handle, overlapped, out bytesRead, true))
+            {
                 throw new HidDeviceException("GetOverlappedResult on input report failed.");
+            }
 
             return (int)bytesRead;
         }
@@ -201,7 +226,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     private static SafeFileHandle OpenAsyncHandle(string devicePathName, bool openExclusive = false,
         bool enumerateOnly = false)
     {
-        var ret = Windows.Win32.PInvoke.CreateFile(
+        SafeFileHandle ret = PInvoke.CreateFile(
             devicePathName,
             enumerateOnly
                 ? 0
@@ -218,28 +243,29 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         );
 
         if (ret.IsInvalid)
+        {
             throw new HidDeviceException($"Failed to open handle to device {devicePathName}.");
+        }
 
         return ret;
     }
 
-    public bool Equals(HidDevice other)
-        => ReferenceEquals(this, other) || InstanceId.Equals(other.InstanceId, StringComparison.OrdinalIgnoreCase);
-
     public override bool Equals(object obj)
-        => obj is HidDevice other && Equals(other);
+    {
+        return obj is HidDevice other && Equals(other);
+    }
 
     public override int GetHashCode()
-        => StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
-
-    public void Dispose()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+        return StringComparer.OrdinalIgnoreCase.GetHashCode(InstanceId);
     }
+
     protected virtual void Dispose(bool disposing)
     {
-        if (_disposed) return;
+        if (_disposed)
+        {
+            return;
+        }
 
         if (disposing)
         {
@@ -252,5 +278,8 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         _disposed = true;
     }
 
-    public override string ToString() => $"{DisplayName ?? "<no name>"} ({InstanceId})";
+    public override string ToString()
+    {
+        return $"{DisplayName ?? "<no name>"} ({InstanceId})";
+    }
 }
