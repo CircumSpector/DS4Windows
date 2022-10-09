@@ -6,6 +6,7 @@ public interface IHidDevice : IDisposable
 {
     HIDD_ATTRIBUTES Attributes { get; set; }
     HIDP_CAPS Capabilities { get; set; }
+    InputDeviceService Service { get; set; }
     string Description { get; set; }
     string DisplayName { get; set; }
     string InstanceId { get; set; }

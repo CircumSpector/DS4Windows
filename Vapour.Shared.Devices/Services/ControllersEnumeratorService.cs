@@ -230,8 +230,6 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             _serviceProvider
         );
 
-        //device.OpenDevice();
-
         IOutDevice outDevice = _outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
         outDevice.Connect();
         if (!_outDevices.ContainsKey(hidDevice.InstanceId))

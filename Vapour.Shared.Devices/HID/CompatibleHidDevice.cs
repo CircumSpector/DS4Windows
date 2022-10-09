@@ -2,6 +2,7 @@
 using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
+using System.Windows.Input;
 
 using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
@@ -42,7 +43,9 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     private readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
-        SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
+        SingleReader = true,
+        SingleWriter = true,
+        AllowSynchronousContinuations = true
     });
 
     private readonly HidDevice _sourceDevice;
@@ -279,13 +282,15 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
         _inputReportReader = new Thread(ReadInputReportLoop)
         {
-            Priority = ThreadPriority.AboveNormal, IsBackground = true
+            Priority = ThreadPriority.AboveNormal,
+            IsBackground = true
         };
         _inputReportReader.Start();
 
         _inputReportProcessor = new Thread(ProcessInputReportLoop)
         {
-            Priority = ThreadPriority.AboveNormal, IsBackground = true
+            Priority = ThreadPriority.AboveNormal,
+            IsBackground = true
         };
         _inputReportProcessor.Start();
     }
@@ -383,33 +388,44 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
-        if (_sourceDevice.Capabilities.InputReportByteLength == 64)
+        switch (_sourceDevice.Service)
         {
-            Span<byte> buffer = stackalloc byte[64];
-            buffer[0] = featureId;
-
-            if (_sourceDevice.ReadFeatureData(buffer))
-            {
-                Span<byte> serialBytes = buffer.Slice(1, 6);
-                serialBytes.Reverse();
-                return new PhysicalAddress(serialBytes.ToArray());
-            }
-        }
-        else
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(SerialNumberString))
+            case InputDeviceService.HidUsb:
+                if (_sourceDevice.Capabilities.InputReportByteLength == 64)
                 {
-                    return PhysicalAddress.Parse(SerialNumberString.ToUpper());
-                }
-            }
-            catch
-            {
-                return GenerateFakeHwSerial();
-            }
-        }
+                    Span<byte> buffer = stackalloc byte[64];
+                    buffer[0] = featureId;
 
+                    if (_sourceDevice.ReadFeatureData(buffer))
+                    {
+                        Span<byte> serialBytes = buffer.Slice(1, 6);
+                        serialBytes.Reverse();
+                        return new PhysicalAddress(serialBytes.ToArray());
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(SerialNumberString))
+                        {
+                            return PhysicalAddress.Parse(SerialNumberString.ToUpper());
+                        }
+                    }
+                    catch
+                    {
+                        return GenerateFakeHwSerial();
+                    }
+                }
+                break;
+
+            case InputDeviceService.WinUsb:
+                // TODO: implement me properly!
+                return GenerateFakeHwSerial();
+            default:
+                return null;
+        }
+        
         return null;
     }
 

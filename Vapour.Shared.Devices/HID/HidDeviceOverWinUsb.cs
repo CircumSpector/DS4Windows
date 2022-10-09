@@ -2,6 +2,8 @@
 
 using Nefarius.Drivers.WinUSB;
 
+using Vapour.Shared.Devices.Interfaces.HID;
+
 namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
@@ -20,6 +22,7 @@ public class HidDeviceOverWinUsb : HidDevice
         ManufacturerString = UsbDevice.Descriptor.Manufacturer;
         ProductString = UsbDevice.Descriptor.Product;
         SerialNumberString = UsbDevice.Descriptor.SerialNumber;
+
         Attributes = new HIDD_ATTRIBUTES
         {
             VendorID = (ushort)UsbDevice.Descriptor.VID, ProductID = (ushort)UsbDevice.Descriptor.PID
@@ -29,11 +32,34 @@ public class HidDeviceOverWinUsb : HidDevice
         {
             Usage = HidUsageGamepad, InputReportByteLength = (ushort)InterruptInPipe.MaximumPacketSize
         };
+
+        Service = InputDeviceService.WinUsb;
     }
 
-    protected USBDevice UsbDevice { get; }
+    private USBDevice UsbDevice { get; }
 
-    protected USBPipe InterruptInPipe { get; }
+    private USBPipe InterruptInPipe { get; }
 
-    protected USBPipe InterruptOutPipe { get; }
+    private USBPipe InterruptOutPipe { get; }
+
+    public override void OpenDevice()
+    {
+    }
+
+    public override void CloseDevice()
+    {
+        UsbDevice.Dispose();
+    }
+
+    public override int ReadInputReport(Span<byte> buffer)
+    {
+        var buf = new byte[buffer.Length];
+
+        // TODO: update WinUSB lib to directly support spans!
+        var ret =  InterruptInPipe.Read(buf);
+
+        buf.CopyTo(buffer);
+
+        return ret;
+    }
 }

@@ -63,6 +63,8 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// </summary>
     public string Path { get; set; }
 
+    public InputDeviceService Service { get; set; } = InputDeviceService.HidUsb;
+
     /// <summary>
     ///     Device description.
     /// </summary>
@@ -113,7 +115,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.
     /// </summary>
-    public void OpenDevice()
+    public virtual void OpenDevice()
     {
         if (IsOpen)
         {
@@ -123,7 +125,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         Handle = OpenAsyncHandle(Path);
     }
 
-    public void CloseDevice()
+    public virtual void CloseDevice()
     {
         if (!IsOpen)
         {
@@ -155,7 +157,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
     }
 
-    public unsafe bool ReadFeatureData(Span<byte> buffer)
+    public unsafe virtual bool ReadFeatureData(Span<byte> buffer)
     {
         fixed (byte* bufferPtr = buffer)
         {
@@ -187,7 +189,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// </summary>
     /// <param name="buffer">The buffer to read into.</param>
     /// <returns>The number of bytes read.</returns>
-    public unsafe int ReadInputReport(Span<byte> buffer)
+    public unsafe virtual int ReadInputReport(Span<byte> buffer)
     {
         if (Handle.IsInvalid || Handle.IsClosed)
         {
