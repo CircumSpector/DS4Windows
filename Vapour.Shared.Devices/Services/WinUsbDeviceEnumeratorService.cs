@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-using Windows.Win32.Devices.HumanInterfaceDevice;
+using JetBrains.Annotations;
 
 using Microsoft.Extensions.Logging;
 
@@ -50,6 +50,22 @@ public interface IWinUsbDeviceEnumeratorService
 public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
 {
     private static readonly Guid DeviceInterfaceGuid = Guid.Parse("{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}");
+
+    /// <summary>
+    ///     Maps VID/PID pair to endpoint addresses where input and output reports are expected.
+    /// </summary>
+    private static readonly Dictionary<HidDeviceOverWinUsbIdentification, HidDeviceOverWinUsbEndpoints>
+        DeviceOverWinUsbEndpointsMap =
+            new()
+            {
+                {
+                    new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x05C5 },
+                    new HidDeviceOverWinUsbEndpoints
+                    {
+                        InterruptInEndpointAddress = 0x81, InterruptOutEndpointAddress = 0x01
+                    }
+                }
+            };
 
     private readonly ObservableCollection<HidDeviceOverWinUsb> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
@@ -118,6 +134,7 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
     /// </summary>
     /// <param name="path">The symbolic link path of the device instance.</param>
     /// <returns>The new <see cref="HidDeviceOverWinUsb" />.</returns>
+    [CanBeNull]
     private HidDeviceOverWinUsb CreateNewHidDeviceOverWinUsb(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -125,7 +142,16 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
 
         activity?.SetTag("Path", path);
 
-        USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
+        using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
+
+        HidDeviceOverWinUsbIdentification key =
+            HidDeviceOverWinUsbIdentification.FromDescriptor(winUsbDevice.Descriptor);
+
+        if (!DeviceOverWinUsbEndpointsMap.ContainsKey(key))
+        {
+            return null;
+        }
+
         PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
 
         //
@@ -142,26 +168,18 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
             friendlyName = winUsbDevice.Descriptor.PathName;
         }
 
-        return new HidDeviceOverWinUsb
+        HidDeviceOverWinUsbEndpoints identification = DeviceOverWinUsbEndpointsMap[key];
+
+        return new HidDeviceOverWinUsb(
+            path,
+            identification.InterruptInEndpointAddress,
+            identification.InterruptOutEndpointAddress
+        )
         {
-            Path = path,
             InstanceId = device.InstanceId.ToUpper(),
             Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
             DisplayName = friendlyName,
-            ParentInstance = parentId,
-            ManufacturerString = winUsbDevice.Descriptor.Manufacturer,
-            ProductString = winUsbDevice.Descriptor.Product,
-            SerialNumberString = winUsbDevice.Descriptor.SerialNumber,
-            Attributes = new HIDD_ATTRIBUTES()
-            {
-                VendorID = (ushort)winUsbDevice.Descriptor.VID,
-                ProductID =  (ushort)winUsbDevice.Descriptor.PID
-            },
-            Capabilities = new HIDP_CAPS()
-            {
-                Usage = HidDevice.HidUsageGamepad,
-                // TODO: finish me!
-            }
+            ParentInstance = parentId
         };
     }
 
@@ -202,19 +220,89 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
 
         PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom);
 
-        _logger.LogInformation("HID Device {Instance} ({Path}) removed",
+        _logger.LogInformation("WinUSB Device {Instance} ({Path}) removed",
             device.InstanceId, symLink);
 
-        HidDeviceOverWinUsb entry = new()
-        {
-            Path = symLink, InstanceId = device.InstanceId.ToUpper()
-        };
+        HidDeviceOverWinUsb entry = _connectedDevices.FirstOrDefault(entry => entry.InstanceId == device.InstanceId);
 
-        if (_connectedDevices.Contains(entry))
+        if (entry is null)
         {
-            _connectedDevices.Remove(entry);
+            return;
         }
 
         DeviceRemoved?.Invoke(entry);
+        _connectedDevices.Remove(entry);
+    }
+
+    private class HidDeviceOverWinUsbIdentification : IEquatable<HidDeviceOverWinUsbIdentification>
+    {
+        public ushort VendorId { get; init; }
+
+        public ushort ProductId { get; init; }
+
+        public bool Equals(HidDeviceOverWinUsbIdentification other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return VendorId == other.VendorId && ProductId == other.ProductId;
+        }
+
+        public static HidDeviceOverWinUsbIdentification FromDescriptor(USBDeviceDescriptor descriptor)
+        {
+            return new HidDeviceOverWinUsbIdentification
+            {
+                VendorId = (ushort)descriptor.VID, ProductId = (ushort)descriptor.PID
+            };
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
+            return Equals((HidDeviceOverWinUsbIdentification)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(VendorId, ProductId);
+        }
+
+        public static bool operator ==(HidDeviceOverWinUsbIdentification left, HidDeviceOverWinUsbIdentification right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(HidDeviceOverWinUsbIdentification left, HidDeviceOverWinUsbIdentification right)
+        {
+            return !Equals(left, right);
+        }
+    }
+
+    private class HidDeviceOverWinUsbEndpoints
+    {
+        public byte InterruptInEndpointAddress { get; init; }
+
+        public byte InterruptOutEndpointAddress { get; init; }
     }
 }
