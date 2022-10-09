@@ -17,8 +17,6 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
-    
-
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
     private readonly IHidDeviceEnumeratorService _hidEnumeratorService;
@@ -30,18 +28,20 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly IServiceProvider _serviceProvider;
 
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
+    private readonly IWinUsbDeviceEnumeratorService _winUsbDeviceEnumeratorService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
         IHidDeviceEnumeratorService hidEnumeratorService, IServiceProvider serviceProvider,
-        IOutputSlotManager outputSlotManager)
+        IOutputSlotManager outputSlotManager, IWinUsbDeviceEnumeratorService winUsbDeviceEnumeratorService)
     {
         _logger = logger;
         _hidEnumeratorService = hidEnumeratorService;
         _serviceProvider = serviceProvider;
         _outputSlotManager = outputSlotManager;
+        _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
 
-        hidEnumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
-        hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
+        hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
+        hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
 
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
         _outDevices = new Dictionary<string, IOutDevice>();
@@ -68,8 +68,11 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
 
         _hidEnumeratorService.EnumerateDevices();
+        _winUsbDeviceEnumeratorService.EnumerateDevices();
 
-        ReadOnlyObservableCollection<HidDevice> hidDevices = _hidEnumeratorService.ConnectedDevices;
+        IEnumerable<HidDevice> hidDevices = _hidEnumeratorService.ConnectedDevices
+            .ToList()
+            .Concat(_winUsbDeviceEnumeratorService.ConnectedDevices);
 
         //
         // Filter for supported devices
@@ -122,6 +125,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         DeviceListReady?.Invoke();
     }
 
+    /// <inheritdoc />
     public void ClearCurrentControllers()
     {
         foreach (ICompatibleHidDevice compatibleHidDevice in SupportedDevices)
@@ -132,10 +136,10 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _supportedDevices.Clear();
     }
 
-    private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
+    private void EnumeratorServiceOnHidDeviceArrived(HidDevice hidDevice)
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnDeviceArrived)}");
+            $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnHidDeviceArrived)}");
 
         activity?.SetTag("Path", hidDevice.Path);
 
@@ -185,7 +189,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             device.ToString());
     }
 
-    private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
+    private void EnumeratorServiceOnHidDeviceRemoved(HidDevice hidDevice)
     {
         _logger.LogInformation("Compatible device {Device} got removed", hidDevice);
 
@@ -225,6 +229,8 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             deviceMeta.FeatureSet,
             _serviceProvider
         );
+
+        //device.OpenDevice();
 
         IOutDevice outDevice = _outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
         outDevice.Connect();

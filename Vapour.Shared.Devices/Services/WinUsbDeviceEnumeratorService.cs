@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Drivers.Identinator;
 using Nefarius.Drivers.WinUSB;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
@@ -82,9 +83,9 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
         _logger = logger;
 
         _deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived,
-            DeviceInterfaceGuid);
+            FilterDriver.FilteredDeviceInterfaceId);
         _deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved,
-            DeviceInterfaceGuid);
+            FilterDriver.FilteredDeviceInterfaceId);
 
         _connectedDevices = new ObservableCollection<HidDeviceOverWinUsb>();
 
@@ -110,9 +111,15 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
 
         _connectedDevices.Clear();
 
-        while (Devcon.FindByInterfaceGuid(DeviceInterfaceGuid, out string path, out _, deviceIndex++))
+        while (Devcon.FindByInterfaceGuid(FilterDriver.FilteredDeviceInterfaceId, out string path, out _,
+                   deviceIndex++))
         {
             HidDeviceOverWinUsb entry = CreateNewHidDeviceOverWinUsb(path);
+
+            if (entry is null)
+            {
+                continue;
+            }
 
             _logger.LogInformation("Discovered WinUSB device {Device}", entry);
 
@@ -142,45 +149,56 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
 
         activity?.SetTag("Path", path);
 
-        using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
-
-        HidDeviceOverWinUsbIdentification key =
-            HidDeviceOverWinUsbIdentification.FromDescriptor(winUsbDevice.Descriptor);
-
-        if (!DeviceOverWinUsbEndpointsMap.ContainsKey(key))
+        try
         {
+            using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
+
+            HidDeviceOverWinUsbIdentification key =
+                HidDeviceOverWinUsbIdentification.FromDescriptor(winUsbDevice.Descriptor);
+
+            // Filter out devices we don't know about
+            if (!DeviceOverWinUsbEndpointsMap.ContainsKey(key))
+            {
+                return null;
+            }
+
+            PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
+
+            //
+            // Try to get friendly display name (not always there)
+            // 
+            string friendlyName = device.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
+            string parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
+
+            //
+            // Grab product string from device if property is missing
+            // 
+            if (string.IsNullOrEmpty(friendlyName))
+            {
+                friendlyName = winUsbDevice.Descriptor.PathName;
+            }
+
+            HidDeviceOverWinUsbEndpoints identification = DeviceOverWinUsbEndpointsMap[key];
+
+            winUsbDevice.Dispose();
+
+            return new HidDeviceOverWinUsb(
+                path,
+                identification.InterruptInEndpointAddress,
+                identification.InterruptOutEndpointAddress
+            )
+            {
+                InstanceId = device.InstanceId.ToUpper(),
+                Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
+                DisplayName = friendlyName,
+                ParentInstance = parentId
+            };
+        }
+        catch (USBException ex)
+        {
+            _logger.LogWarning(ex, "Couldn't access WinUSB device");
             return null;
         }
-
-        PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
-
-        //
-        // Try to get friendly display name (not always there)
-        // 
-        string friendlyName = device.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
-        string parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
-
-        //
-        // Grab product string from device if property is missing
-        // 
-        if (string.IsNullOrEmpty(friendlyName))
-        {
-            friendlyName = winUsbDevice.Descriptor.PathName;
-        }
-
-        HidDeviceOverWinUsbEndpoints identification = DeviceOverWinUsbEndpointsMap[key];
-
-        return new HidDeviceOverWinUsb(
-            path,
-            identification.InterruptInEndpointAddress,
-            identification.InterruptOutEndpointAddress
-        )
-        {
-            InstanceId = device.InstanceId.ToUpper(),
-            Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
-            DisplayName = friendlyName,
-            ParentInstance = parentId
-        };
     }
 
     private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
@@ -197,6 +215,11 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
             device.InstanceId, symLink);
 
         HidDeviceOverWinUsb entry = CreateNewHidDeviceOverWinUsb(symLink);
+
+        if (entry is null)
+        {
+            return;
+        }
 
         if (!_connectedDevices.Contains(entry))
         {
