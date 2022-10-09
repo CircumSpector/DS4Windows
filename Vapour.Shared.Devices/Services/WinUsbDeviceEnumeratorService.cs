@@ -86,7 +86,7 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
     public void EnumerateDevices()
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(HidDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
+            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
 
         int deviceIndex = 0;
 
@@ -156,7 +156,7 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
     private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
+            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
 
         string symLink = args.SymLink;
         activity?.SetTag("Path", symLink);
@@ -184,7 +184,7 @@ public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
     private void RemoveDevice(string symLink)
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceRemoved)}");
+            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(RemoveDevice)}");
 
         activity?.SetTag("Path", symLink);
 

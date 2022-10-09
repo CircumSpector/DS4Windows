@@ -23,6 +23,7 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IControllerManagerService, ControllerManagerService>();
         services.AddSingleton<IHidHideControlService, HidHideControlService>();
         services.AddSingleton<IHidDeviceEnumeratorService, HidDeviceEnumeratorService>();
+        services.AddSingleton<IWinUsbDeviceEnumeratorService, WinUsbDeviceEnumeratorService>();
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
         services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
