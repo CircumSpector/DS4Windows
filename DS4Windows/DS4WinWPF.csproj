@@ -188,7 +188,7 @@
     <Resource Include="Resources\checked.png" />
     <Resource Include="Resources\copy.png" />
     <Resource Include="Resources\DS4W - White.ico" />
-    <Resource Include="Resources\DS4W.ico" />
+    <Resource Include="Resources\Vapour.ico" />
     <Resource Include="Resources\edit.png" />
     <Resource Include="Resources\delete.png" />
     <Resource Include="Resources\export.png" />

@@ -8,7 +8,7 @@
         
         <ResourceDictionary>
             <tb:TaskbarIcon x:Key="NotifyIcon"
-                            IconSource="DS4W.ico">
+                            IconSource="Vapour.ico">
                 <tb:TaskbarIcon.TrayPopup>
                     <trayApplication:TrayPopup/>
                 </tb:TaskbarIcon.TrayPopup>

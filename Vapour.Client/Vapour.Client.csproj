@@ -4,7 +4,7 @@
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<ApplicationIcon>DS4W.ico</ApplicationIcon>
+		<ApplicationIcon>Vapour.ico</ApplicationIcon>
 		<AssemblyName>Vapour</AssemblyName>
 	</PropertyGroup>
 	
@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="DS4W.ico" />
+		<Content Include="Vapour.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
