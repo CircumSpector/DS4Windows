@@ -2,9 +2,7 @@
 using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
-using System.Windows.Input;
 
-using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
 
 using JetBrains.Annotations;
@@ -43,13 +41,8 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     private readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
-        SingleReader = true,
-        SingleWriter = true,
-        AllowSynchronousContinuations = true
+        SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
     });
-
-    /// <inheritdoc />
-    public IHidDevice SourceDevice { get; }
 
     /// <summary>
     ///     The connection type (wire, wireless).
@@ -114,6 +107,9 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     ///     The parsed input report. Depends on device type.
     /// </summary>
     protected abstract CompatibleHidDeviceInputReport InputReport { get; }
+
+    /// <inheritdoc />
+    public IHidDevice SourceDevice { get; }
 
     /// <summary>
     ///     The <see cref="InputDeviceType" /> of this <see cref="CompatibleHidDevice" />.
@@ -248,15 +244,13 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
         _inputReportReader = new Thread(ReadInputReportLoop)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _inputReportReader.Start();
 
         _inputReportProcessor = new Thread(ProcessInputReportLoop)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _inputReportProcessor.Start();
     }
@@ -383,6 +377,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
                         return GenerateFakeHwSerial();
                     }
                 }
+
                 break;
 
             case InputDeviceService.WinUsb:
@@ -391,7 +386,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
             default:
                 return null;
         }
-        
+
         return null;
     }
 
@@ -411,7 +406,8 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
         }
 
         // String array: \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001# -> [0]=\\?\hidvid_054c, [1]=pid_09cc, [2]=mi_037, [3]=1f882A25, [4]=0, [5]=0001
-        string[] devPathItems = SourceDevice.Path.Substring(0, endPos).Replace("#", "").Replace("-", "").Replace("{", "")
+        string[] devPathItems = SourceDevice.Path.Substring(0, endPos).Replace("#", "").Replace("-", "")
+            .Replace("{", "")
             .Replace("}", "").Split('&');
 
         address = devPathItems.Length switch

@@ -1,5 +1,8 @@
 ﻿namespace Vapour.Shared.Devices.Interfaces.HID;
 
+/// <summary>
+///     Describes possible driver services (primary driver) a device can operate under.
+/// </summary>
 public enum InputDeviceService
 {
     /// <summary>

@@ -48,43 +48,35 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         return ReferenceEquals(this, other) || InstanceId.Equals(other.InstanceId, StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>
-    ///     True if device originates from a software device.
-    /// </summary>
+    /// <inheritdoc />
     public bool IsVirtual { get; set; }
 
-    /// <summary>
-    ///     The Instance ID of this device.
-    /// </summary>
+    /// <inheritdoc />
     public string InstanceId { get; set; }
 
+    /// <inheritdoc />
     public ushort VendorId => Attributes.VendorID;
 
+    /// <inheritdoc />
     public ushort ProductId => Attributes.ProductID;
 
+    /// <inheritdoc />
     public ushort? Version => Attributes.VersionNumber;
 
-    /// <summary>
-    ///     The path (symbolic link) of the device instance.
-    /// </summary>
+    /// <inheritdoc />
     public string Path { get; set; }
 
+    /// <inheritdoc />
     public InputDeviceService Service { get; set; } = InputDeviceService.HidUsb;
 
-    /// <summary>
-    ///     Device description.
-    /// </summary>
+    /// <inheritdoc />
     public string Description { get; set; }
 
-    /// <summary>
-    ///     Device friendly name.
-    /// </summary>
+    /// <inheritdoc />
     [CanBeNull]
     public string DisplayName { get; set; }
 
-    /// <summary>
-    ///     The Instance ID of the parent device.
-    /// </summary>
+    /// <inheritdoc />
     public string ParentInstance { get; set; }
 
     /// <summary>
@@ -97,30 +89,20 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// </summary>
     public HIDP_CAPS Capabilities { get; set; }
 
-    /// <summary>
-    ///     The manufacturer string.
-    /// </summary>
+    /// <inheritdoc />
     public string ManufacturerString { get; set; }
 
-    /// <summary>
-    ///     The product name.
-    /// </summary>
+    /// <inheritdoc />
     public string ProductString { get; set; }
 
-    /// <summary>
-    ///     The serial number, if any.
-    /// </summary>
+    /// <inheritdoc />
     [CanBeNull]
     public string SerialNumberString { get; set; }
 
-    /// <summary>
-    ///     Is this device currently open (for reading, writing).
-    /// </summary>
+    /// <inheritdoc />
     public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;
 
-    /// <summary>
-    ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.
-    /// </summary>
+    /// <inheritdoc />
     public virtual void OpenDevice()
     {
         if (IsOpen)
@@ -131,6 +113,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         Handle = OpenAsyncHandle(Path);
     }
 
+    /// <inheritdoc />
     public virtual void CloseDevice()
     {
         if (!IsOpen)
@@ -141,6 +124,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         Handle?.Dispose();
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         Dispose(true);
@@ -163,6 +147,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
     }
 
+    /// <inheritdoc />
     public unsafe virtual bool ReadFeatureData(Span<byte> buffer)
     {
         fixed (byte* bufferPtr = buffer)
@@ -170,7 +155,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
             return PInvoke.HidD_GetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
-
+    
     protected unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
     {
         NativeOverlapped overlapped;
@@ -190,11 +175,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
     }
 
-    /// <summary>
-    ///     Reads data from the device to specified byte buffer.
-    /// </summary>
-    /// <param name="buffer">The buffer to read into.</param>
-    /// <returns>The number of bytes read.</returns>
+    /// <inheritdoc />
     public unsafe virtual int ReadInputReport(Span<byte> buffer)
     {
         if (Handle.IsInvalid || Handle.IsClosed)

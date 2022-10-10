@@ -44,6 +44,7 @@ public class HidDeviceOverWinUsb : HidDevice
 
     public override void OpenDevice()
     {
+        // WinUSB devices are opened in the constructor so no need to do this
     }
 
     public override void CloseDevice()
