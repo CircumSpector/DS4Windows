@@ -11,44 +11,14 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Interfaces.Services;
 
 namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public interface IWinUsbDeviceEnumeratorService
-{
-    /// <summary>
-    ///     List of currently available (connected) HID devices.
-    /// </summary>
-    ReadOnlyObservableCollection<HidDeviceOverWinUsb> ConnectedDevices { get; }
-
-    /// <summary>
-    ///     Gets fired when a new HID device has been detected.
-    /// </summary>
-    event Action<HidDeviceOverWinUsb> DeviceArrived;
-
-    /// <summary>
-    ///     Gets fired when an existing HID device has been removed.
-    /// </summary>
-    event Action<HidDeviceOverWinUsb> DeviceRemoved;
-
-    /// <summary>
-    ///     Refreshes <see cref="ConnectedDevices" />. This clears out the list and repopulates is.
-    /// </summary>
-    void EnumerateDevices();
-
-    /// <summary>
-    ///     Drops all devices from <see cref="ConnectedDevices" />.
-    /// </summary>
-    void ClearDevices();
-}
-
-/// <summary>
-///     Single point of truth of states for all connected and handled HID devices.
-/// </summary>
-public class WinUsbDeviceEnumeratorService : IWinUsbDeviceEnumeratorService
+public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
 {
     private static readonly Guid DeviceInterfaceGuid = Guid.Parse("{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}");
 

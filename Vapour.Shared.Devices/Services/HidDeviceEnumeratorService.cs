@@ -14,44 +14,14 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Interfaces.Services;
 
 namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public interface IHidDeviceEnumeratorService
-{
-    /// <summary>
-    ///     List of currently available (connected) HID devices.
-    /// </summary>
-    ReadOnlyObservableCollection<HidDevice> ConnectedDevices { get; }
-
-    /// <summary>
-    ///     Gets fired when a new HID device has been detected.
-    /// </summary>
-    event Action<HidDevice> DeviceArrived;
-
-    /// <summary>
-    ///     Gets fired when an existing HID device has been removed.
-    /// </summary>
-    event Action<HidDevice> DeviceRemoved;
-
-    /// <summary>
-    ///     Refreshes <see cref="ConnectedDevices" />. This clears out the list and repopulates is.
-    /// </summary>
-    void EnumerateDevices();
-
-    /// <summary>
-    ///     Drops all devices from <see cref="ConnectedDevices"/>.
-    /// </summary>
-    void ClearDevices();
-}
-
-/// <summary>
-///     Single point of truth of states for all connected and handled HID devices.
-/// </summary>
-public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService
+public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevice>
 {
     private readonly ObservableCollection<HidDevice> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);

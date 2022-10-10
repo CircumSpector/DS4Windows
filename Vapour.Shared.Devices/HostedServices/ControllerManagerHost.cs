@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Configuration.Profiles.Services;
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Interfaces.HID;
 using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
@@ -21,8 +22,8 @@ public sealed class ControllerManagerHost
     private readonly IDeviceNotificationListener _deviceNotificationListener;
     private readonly IControllersEnumeratorService _enumerator;
 
-    private readonly IHidDeviceEnumeratorService _hidDeviceEnumeratorService;
-    private readonly IWinUsbDeviceEnumeratorService _winUsbDeviceEnumeratorService;
+    private readonly IHidDeviceEnumeratorService<HidDevice> _hidDeviceEnumeratorService;
+    private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
 
     private readonly IInputSourceService _inputSourceService;
 
@@ -40,8 +41,8 @@ public sealed class ControllerManagerHost
         IControllerManagerService manager,
         IInputSourceService inputSourceService,
         IDeviceNotificationListener deviceNotificationListener,
-        IHidDeviceEnumeratorService hidDeviceEnumeratorService, 
-        IWinUsbDeviceEnumeratorService winUsbDeviceEnumeratorService
+        IHidDeviceEnumeratorService<HidDevice> hidDeviceEnumeratorService, 
+        IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService
         )
     {
         _enumerator = enumerator;

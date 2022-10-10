@@ -19,7 +19,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    private readonly IHidDeviceEnumeratorService _hidEnumeratorService;
+    private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
 
     private readonly ILogger<ControllersEnumeratorService> _logger;
     private readonly Dictionary<string, IOutDevice> _outDevices;
@@ -28,11 +28,11 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly IServiceProvider _serviceProvider;
 
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
-    private readonly IWinUsbDeviceEnumeratorService _winUsbDeviceEnumeratorService;
+    private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-        IHidDeviceEnumeratorService hidEnumeratorService, IServiceProvider serviceProvider,
-        IOutputSlotManager outputSlotManager, IWinUsbDeviceEnumeratorService winUsbDeviceEnumeratorService)
+        IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, IServiceProvider serviceProvider,
+        IOutputSlotManager outputSlotManager, IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService)
     {
         _logger = logger;
         _hidEnumeratorService = hidEnumeratorService;
