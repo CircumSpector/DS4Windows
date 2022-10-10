@@ -9,7 +9,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 18;
 
-    private readonly int reportStartOffset;
+    private readonly int _reportStartOffset;
 
     public DualShock4CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
@@ -25,12 +25,12 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         _inputReportArray = new byte[((HidDevice)SourceDevice).Capabilities.InputReportByteLength];
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-            reportStartOffset = 0;
+            _reportStartOffset = 0;
         //
         // TODO: finish me
         // 
         else
-            reportStartOffset = 1;
+            _reportStartOffset = 1;
 
         StartInputReportReader();
     }
@@ -43,6 +43,6 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
             // TODO: implement me!
             return;
 
-        InputReport.Parse(input.Slice(reportStartOffset));
+        InputReport.Parse(input.Slice(_reportStartOffset));
     }
 }

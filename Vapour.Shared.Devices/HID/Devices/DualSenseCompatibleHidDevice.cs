@@ -11,7 +11,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
     private const int UsbInputReportSize = 64;
     private const int BthInputReportSize = 547;
 
-    private readonly int reportStartOffset;
+    private readonly int _reportStartOffset;
 
     public DualSenseCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
@@ -29,14 +29,14 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         _inputReportArray = new byte[inputReportSize];
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-            reportStartOffset = 0;
+            _reportStartOffset = 0;
         //InputReportArray = new byte[UsbInputReportSize];
         //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
         //
         // TODO: finish me
         // 
         else
-            reportStartOffset = 1;
+            _reportStartOffset = 1;
         //InputReportArray = new byte[BthInputReportSize];
         //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
         StartInputReportReader();
@@ -46,6 +46,6 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     protected override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        InputReport.Parse(input.Slice(reportStartOffset));
+        InputReport.Parse(input.Slice(_reportStartOffset));
     }
 }
