@@ -1,11 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 
+using Vapour.Shared.Devices.Interfaces.HID;
+
 namespace Vapour.Shared.Devices.Interfaces.Services;
 
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public interface IHidDeviceEnumeratorService<TDevice>
+public interface IHidDeviceEnumeratorService<TDevice> where TDevice : IHidDevice
 {
     /// <summary>
     ///     List of currently available (connected) HID devices.
