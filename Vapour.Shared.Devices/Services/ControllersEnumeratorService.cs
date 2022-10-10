@@ -177,7 +177,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         }
         else
         {
-            throw new InvalidOperationException($"Device {device.InstanceId} already in list.");
+            throw new InvalidOperationException($"Device {device.SourceDevice.InstanceId} already in list.");
         }
 
         //
@@ -199,7 +199,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         }
 
         ICompatibleHidDevice device = _supportedDevices.FirstOrDefault(d =>
-            d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
+            d.SourceDevice.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
 
         if (device != null)
         {
@@ -244,7 +244,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 
     private void Device_InputReportAvailable(ICompatibleHidDevice device, CompatibleHidDeviceInputReport report)
     {
-        IOutDevice outDevice = _outDevices[device.InstanceId];
+        IOutDevice outDevice = _outDevices[device.SourceDevice.InstanceId];
         outDevice.ConvertAndSendReport(report);
     }
 }

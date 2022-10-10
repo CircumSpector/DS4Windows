@@ -57,17 +57,17 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 
     public ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice)
     {
-        ControllerConnectedMessage message = new ControllerConnectedMessage
+        ControllerConnectedMessage message = new()
         {
-            Description = hidDevice.Description,
+            Description = hidDevice.SourceDevice.Description,
             DeviceType = hidDevice.DeviceType,
-            DisplayName = hidDevice.DisplayName,
-            InstanceId = hidDevice.InstanceId,
-            ManufacturerString = hidDevice.ManufacturerString,
-            ParentInstance = hidDevice.ParentInstance,
-            Path = hidDevice.Path,
-            ProductString = hidDevice.ProductString,
-            SerialNumberString = hidDevice.SerialNumberString,
+            DisplayName = hidDevice.SourceDevice.DisplayName,
+            InstanceId = hidDevice.SourceDevice.InstanceId,
+            ManufacturerString = hidDevice.SourceDevice.ManufacturerString,
+            ParentInstance = hidDevice.SourceDevice.ParentInstance,
+            Path = hidDevice.SourceDevice.Path,
+            ProductString = hidDevice.SourceDevice.ProductString,
+            SerialNumberString = hidDevice.SourceDevice.SerialNumberString,
             //Serial = hidDevice.Serial,
             Connection = hidDevice.Connection.GetValueOrDefault(),
             SelectedProfileId = _profilesService.ActiveProfiles
@@ -96,9 +96,9 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
         {
             if (socket is { State: WebSocketState.Open })
             {
-                ControllerDisconnectedMessage message = new ControllerDisconnectedMessage
+                ControllerDisconnectedMessage message = new()
                 {
-                    ControllerDisconnectedId = obj.InstanceId
+                    ControllerDisconnectedId = obj.SourceDevice.InstanceId
                 };
                 ArraySegment<byte> data =
                     new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message)));

@@ -58,6 +58,12 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// </summary>
     public string InstanceId { get; set; }
 
+    public ushort VendorId => Attributes.VendorID;
+
+    public ushort ProductId => Attributes.ProductID;
+
+    public ushort? Version => Attributes.VersionNumber;
+
     /// <summary>
     ///     The path (symbolic link) of the device instance.
     /// </summary>

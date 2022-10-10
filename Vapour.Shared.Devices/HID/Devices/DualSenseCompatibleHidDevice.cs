@@ -24,7 +24,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-        var inputReportSize = Capabilities.InputReportByteLength;
+        var inputReportSize = ((HidDevice)SourceDevice).Capabilities.InputReportByteLength;
 
         _inputReportArray = new byte[inputReportSize];
 

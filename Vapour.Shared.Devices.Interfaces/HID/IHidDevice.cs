@@ -1,23 +1,42 @@
-﻿using Windows.Win32.Devices.HumanInterfaceDevice;
-
-namespace Vapour.Shared.Devices.Interfaces.HID;
+﻿namespace Vapour.Shared.Devices.Interfaces.HID;
 
 public interface IHidDevice : IDisposable
 {
-    HIDD_ATTRIBUTES Attributes { get; set; }
-    HIDP_CAPS Capabilities { get; set; }
-    InputDeviceService Service { get; set; }
-    string Description { get; set; }
-    string DisplayName { get; set; }
-    string InstanceId { get; set; }
+    /// <summary>
+    ///     Gets the service the device operates under.
+    /// </summary>
+    InputDeviceService Service { get; }
+    string Description { get; }
+    string DisplayName { get; }
+    string InstanceId { get; }
+
+    /// <summary>
+    ///     Gets the Vendor ID.
+    /// </summary>
+    ushort VendorId { get; }
+
+    /// <summary>
+    ///     Gets the Product ID.
+    /// </summary>
+    ushort ProductId { get; }
+
+    /// <summary>
+    ///     Gets the (optional) version number.
+    /// </summary>
+    ushort? Version { get; }
+
     bool IsOpen { get; }
     bool IsVirtual { get; set; }
-    string ManufacturerString { get; set; }
-    string ParentInstance { get; set; }
-    string Path { get; set; }
-    string ProductString { get; set; }
-    string SerialNumberString { get; set; }
+
+    string ManufacturerString { get; }
+    string ParentInstance { get; }
+    string Path { get; }
+    string ProductString { get; }
+    string SerialNumberString { get; }
 
     void CloseDevice();
     void OpenDevice();
+
+    int ReadInputReport(Span<byte> buffer);
+    bool ReadFeatureData(Span<byte> buffer);
 }
