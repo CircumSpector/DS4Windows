@@ -345,12 +345,18 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
         }
     }
 
+    /// <summary>
+    ///     Invokes a GET_FEATURE request to query for the device serial (MAC address).
+    /// </summary>
+    /// <param name="featureId">The report ID of the GET_REPORT request.</param>
+    /// <returns>The MAC address of the device.</returns>
     [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
         switch (SourceDevice.Service)
         {
             case InputDeviceService.HidUsb:
+            case InputDeviceService.WinUsb:
                 if (((HidDevice)SourceDevice).Capabilities.InputReportByteLength == 64)
                 {
                     Span<byte> buffer = stackalloc byte[64];
@@ -379,22 +385,18 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
                 }
 
                 break;
-
-            case InputDeviceService.WinUsb:
-                // TODO: implement me properly!
-                return GenerateFakeHwSerial();
             default:
-                return null;
+                return GenerateFakeHwSerial();
         }
 
-        return null;
+        return GenerateFakeHwSerial();
     }
 
     /// <summary>
     ///     Generate <see cref="Serial" /> from <see cref="HidDevice.Path" />.
     /// </summary>
     /// <returns></returns>
-    protected PhysicalAddress GenerateFakeHwSerial()
+    private PhysicalAddress GenerateFakeHwSerial()
     {
         string address = string.Empty;
 
