@@ -113,37 +113,25 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <inheritdoc />
     public IHidDevice SourceDevice { get; }
 
-    /// <summary>
-    ///     The <see cref="InputDeviceType" /> of this <see cref="CompatibleHidDevice" />.
-    /// </summary>
+    /// <inheritdoc />
     public InputDeviceType DeviceType { get; set; }
 
-    /// <summary>
-    ///     The <see cref="ConnectionType" /> of this <see cref="CompatibleHidDevice" />.
-    /// </summary>
+    /// <inheritdoc />
     public ConnectionType? Connection => _connection ??= GetConnectionType();
 
     /// <inheritdoc />
     public PhysicalAddress Serial { get; protected init; }
 
-    /// <summary>
-    ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
-    /// </summary>
+    /// <inheritdoc />
     public CompatibleHidDeviceFeatureSet FeatureSet { get; }
 
-    /// <summary>
-    ///     Gets whether <see cref="InputReportAvailable" /> will be invoked in the processing loop.
-    /// </summary>
+    /// <inheritdoc />
     public bool IsInputReportAvailableInvoked { get; set; } = true;
 
-    /// <summary>
-    ///     Fired when this device has been disconnected/unplugged.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<ICompatibleHidDevice> Disconnected;
 
-    /// <summary>
-    ///     Fired when a new input report is read for further processing.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
     public void Dispose()

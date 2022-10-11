@@ -19,8 +19,14 @@ public interface ICompatibleHidDevice : IDisposable
     /// </summary>
     InputDeviceType DeviceType { get; }
 
+    /// <summary>
+    ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
+    /// </summary>
     CompatibleHidDeviceFeatureSet FeatureSet { get; }
 
+    /// <summary>
+    ///     Gets or sets whether <see cref="InputReportAvailable" /> will be invoked in the processing loop.
+    /// </summary>
     bool IsInputReportAvailableInvoked { get; }
 
     /// <summary>
@@ -28,7 +34,13 @@ public interface ICompatibleHidDevice : IDisposable
     /// </summary>
     PhysicalAddress Serial { get; }
 
+    /// <summary>
+    ///     Fired when this device has been disconnected/unplugged.
+    /// </summary>
     event Action<ICompatibleHidDevice> Disconnected;
 
+    /// <summary>
+    ///     Fired when a new input report is read for further processing.
+    /// </summary>
     event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 }
