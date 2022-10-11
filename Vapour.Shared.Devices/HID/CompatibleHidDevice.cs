@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
@@ -10,6 +11,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Drivers.WinUSB;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client.Exceptions;
 
@@ -331,6 +333,29 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
         catch (HidDeviceException win32)
         {
             if (win32.ErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)
+            {
+                throw;
+            }
+
+            _inputReportToken.Cancel();
+
+            Disconnected?.Invoke(this);
+        }
+        catch (USBException ex)
+        {
+            Exception apiException = ex.InnerException;
+
+            if (apiException is null)
+            {
+                throw;
+            }
+
+            if (apiException.InnerException is not Win32Exception win32Exception)
+            {
+                throw;
+            }
+
+            if (win32Exception.NativeErrorCode != (int)WIN32_ERROR.ERROR_NO_SUCH_DEVICE)
             {
                 throw;
             }

@@ -54,28 +54,17 @@ public class HidDeviceOverWinUsb : HidDevice
 
     public override int ReadInputReport(Span<byte> buffer)
     {
-        var buf = new byte[buffer.Length];
-
-        // TODO: update WinUSB lib to directly support spans!
-        var ret =  InterruptInPipe.Read(buf);
-
-        buf.CopyTo(buffer);
-
+        var ret =  InterruptInPipe.Read(buffer);
+        
         return ret;
     }
 
     public override bool ReadFeatureData(Span<byte> buffer)
     {
-        var buf = new byte[buffer.Length];
-        buf[0] = buffer[0];
-
         var wValue = 0x0300 | buffer[0];
-
-        // TODO: update WinUSB lib to directly support spans!
-        var ret =  UsbDevice.ControlIn(0xA1, 0x01, wValue, 0, buf);
-
-        buf.CopyTo(buffer);
-
+        
+        var ret =  UsbDevice.ControlIn(0xA1, 0x01, wValue, 0, buffer);
+        
         return ret > 0;
     }
 }
