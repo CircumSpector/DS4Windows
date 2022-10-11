@@ -40,13 +40,26 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _outputSlotManager = outputSlotManager;
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
 
-        hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
-        hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
+        _hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
+        _hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
+
+        _winUsbDeviceEnumeratorService.DeviceArrived += WinUsbDeviceEnumeratorServiceOnDeviceArrived;
+        _winUsbDeviceEnumeratorService.DeviceRemoved += WinUsbDeviceEnumeratorServiceOnDeviceRemoved;
 
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
         _outDevices = new Dictionary<string, IOutDevice>();
 
         SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(_supportedDevices);
+    }
+
+    private void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(HidDeviceOverWinUsb obj)
+    {
+        EnumeratorServiceOnHidDeviceRemoved(obj);
+    }
+
+    private void WinUsbDeviceEnumeratorServiceOnDeviceArrived(HidDeviceOverWinUsb obj)
+    {
+        EnumeratorServiceOnHidDeviceArrived(obj);
     }
 
     /// <inheritdoc />

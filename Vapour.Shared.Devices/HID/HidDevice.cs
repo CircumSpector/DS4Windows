@@ -52,7 +52,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     public bool IsVirtual { get; set; }
 
     /// <inheritdoc />
-    public string InstanceId { get; set; }
+    public string InstanceId { get; init; }
 
     /// <inheritdoc />
     public ushort VendorId => Attributes.VendorID;
@@ -67,37 +67,37 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     public string Path { get; set; }
 
     /// <inheritdoc />
-    public InputDeviceService Service { get; set; } = InputDeviceService.HidUsb;
+    public InputDeviceService Service { get; init; } = InputDeviceService.HidUsb;
 
     /// <inheritdoc />
-    public string Description { get; set; }
+    public string Description { get; init; }
 
     /// <inheritdoc />
     [CanBeNull]
-    public string DisplayName { get; set; }
+    public string DisplayName { get; init; }
 
     /// <inheritdoc />
-    public string ParentInstance { get; set; }
+    public string ParentInstance { get; init; }
 
     /// <summary>
     ///     HID Device Attributes.
     /// </summary>
-    public HIDD_ATTRIBUTES Attributes { get; set; }
+    public HIDD_ATTRIBUTES Attributes { get; init; }
 
     /// <summary>
     ///     HID Device Capabilities.
     /// </summary>
-    public HIDP_CAPS Capabilities { get; set; }
+    public HIDP_CAPS Capabilities { get; init; }
 
     /// <inheritdoc />
-    public string ManufacturerString { get; set; }
+    public string ManufacturerString { get; init; }
 
     /// <inheritdoc />
-    public string ProductString { get; set; }
+    public string ProductString { get; init; }
 
     /// <inheritdoc />
     [CanBeNull]
-    public string SerialNumberString { get; set; }
+    public string SerialNumberString { get; init; }
 
     /// <inheritdoc />
     public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;

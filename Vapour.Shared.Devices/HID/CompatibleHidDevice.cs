@@ -343,6 +343,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
                 throw;
             }
 
+            // expected error when the device got surprise-removed (unplugged)
             if (win32Exception.NativeErrorCode != (int)WIN32_ERROR.ERROR_NO_SUCH_DEVICE)
             {
                 throw;
@@ -361,6 +362,10 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <summary>
     ///     Invokes a GET_FEATURE request to query for the device serial (MAC address).
     /// </summary>
+    /// <remarks>
+    ///     If the request fails in an expected way or isn't supported at all, an auto-generated value based on the device
+    ///     path will be calculated and returned.
+    /// </remarks>
     /// <param name="featureId">The report ID of the GET_REPORT request.</param>
     /// <returns>The MAC address of the device.</returns>
     [CanBeNull]
@@ -408,7 +413,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <summary>
     ///     Generate <see cref="Serial" /> from <see cref="HidDevice.Path" />.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The calculated <see cref="PhysicalAddress"/>.</returns>
     private PhysicalAddress GenerateFakeHwSerial()
     {
         string address = string.Empty;

@@ -42,16 +42,19 @@ public class HidDeviceOverWinUsb : HidDevice
 
     private USBPipe InterruptOutPipe { get; }
 
+    /// <inheritdoc />
     public override void OpenDevice()
     {
         // WinUSB devices are opened in the constructor so no need to do this
     }
 
+    /// <inheritdoc />
     public override void CloseDevice()
     {
         UsbDevice.Dispose();
     }
 
+    /// <inheritdoc />
     public override int ReadInputReport(Span<byte> buffer)
     {
         var ret =  InterruptInPipe.Read(buffer);
@@ -59,6 +62,7 @@ public class HidDeviceOverWinUsb : HidDevice
         return ret;
     }
 
+    /// <inheritdoc />
     public override bool ReadFeatureData(Span<byte> buffer)
     {
         var wValue = 0x0300 | buffer[0];

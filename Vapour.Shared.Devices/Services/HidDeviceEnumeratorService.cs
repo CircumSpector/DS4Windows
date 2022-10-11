@@ -42,9 +42,10 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
 
         _hidClassInterfaceGuid = interfaceGuid;
 
-        PInvoke.HidD_GetHidGuid(out Guid hidGuid);
-        _deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived, hidGuid);
-        _deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved, hidGuid);
+        _deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived,
+            _hidClassInterfaceGuid);
+        _deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved,
+            _hidClassInterfaceGuid);
 
         _connectedDevices = new ObservableCollection<HidDevice>();
 
@@ -75,8 +76,7 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
 
         _connectedDevices.Clear();
 
-        while (Devcon.FindByInterfaceGuid(_hidClassInterfaceGuid, out string path, out string instanceId,
-                   deviceIndex++))
+        while (Devcon.FindByInterfaceGuid(_hidClassInterfaceGuid, out string path, out _, deviceIndex++))
         {
             try
             {
