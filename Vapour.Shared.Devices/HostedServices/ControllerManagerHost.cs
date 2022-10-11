@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Configuration.Profiles.Services;
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Interfaces.HID;
 using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
@@ -20,7 +21,9 @@ public sealed class ControllerManagerHost
     public static bool IsEnabled = false;
     private readonly IDeviceNotificationListener _deviceNotificationListener;
     private readonly IControllersEnumeratorService _enumerator;
-    private readonly IHidDeviceEnumeratorService _hidDeviceEnumeratorService;
+
+    private readonly IHidDeviceEnumeratorService<HidDevice> _hidDeviceEnumeratorService;
+    private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
 
     private readonly IInputSourceService _inputSourceService;
 
@@ -38,7 +41,9 @@ public sealed class ControllerManagerHost
         IControllerManagerService manager,
         IInputSourceService inputSourceService,
         IDeviceNotificationListener deviceNotificationListener,
-        IHidDeviceEnumeratorService hidDeviceEnumeratorService)
+        IHidDeviceEnumeratorService<HidDevice> hidDeviceEnumeratorService, 
+        IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService
+        )
     {
         _enumerator = enumerator;
         _logger = logger;
@@ -47,6 +52,7 @@ public sealed class ControllerManagerHost
         _inputSourceService = inputSourceService;
         _deviceNotificationListener = deviceNotificationListener;
         _hidDeviceEnumeratorService = hidDeviceEnumeratorService;
+        _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
 
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
@@ -97,6 +103,7 @@ public sealed class ControllerManagerHost
         {
             _deviceNotificationListener.StopListen();
             _hidDeviceEnumeratorService.ClearDevices();
+            _winUsbDeviceEnumeratorService.ClearDevices();
             _profileService.Shutdown();
             _controllerHostToken.Cancel();
         }

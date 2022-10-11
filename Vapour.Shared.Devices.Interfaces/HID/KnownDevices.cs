@@ -17,7 +17,8 @@ public static class KnownDevices
             InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet.MonitorAudio
         ),
-        new(SonyVid, 0x5C4, "DS4 v.1"),
+        new(SonyVid, 0x05C4, "DS4 v.1"),
+        new(SonyVid, 0x05C5, "DS4 Strike Pack Eliminator"),
         new(SonyVid, 0x09CC, "DS4 v.2",
             InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet.MonitorAudio

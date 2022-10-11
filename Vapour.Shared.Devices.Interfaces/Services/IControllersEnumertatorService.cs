@@ -31,5 +31,8 @@ public interface IControllersEnumeratorService
     /// </summary>
     void EnumerateDevices();
 
+    /// <summary>
+    ///     Clears <see cref="SupportedDevices"/>.
+    /// </summary>
     void ClearCurrentControllers();
 }

@@ -11,7 +11,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
         featureSet, serviceProvider)
     {
-        Serial = PhysicalAddress.Parse(SerialNumberString);
+        Serial = PhysicalAddress.Parse(SourceDevice.SerialNumberString);
     }
 
     protected override void ProcessInputReport(ReadOnlySpan<byte> input)

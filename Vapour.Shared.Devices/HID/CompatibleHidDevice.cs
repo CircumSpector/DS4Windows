@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
@@ -10,11 +11,11 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Drivers.WinUSB;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client.Exceptions;
 
 using Vapour.Shared.Common.Telemetry;
-using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Shared.Devices.HID;
@@ -22,9 +23,9 @@ namespace Vapour.Shared.Devices.HID;
 /// <summary>
 ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
 /// </summary>
-public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDevice
+public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 {
-    protected const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
+    private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
 
     private static readonly Meter Meter = new(TracingSources.DevicesAssemblyActivitySourceName);
 
@@ -35,12 +36,12 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         Meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
 
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
-    protected static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
-    protected static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
+    private static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
+    private static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
-    protected readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    protected readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
+    private readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
         SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
     });
@@ -63,13 +64,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
     private CancellationTokenSource _inputReportToken = new();
 
-    protected CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+    protected CompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider)
     {
-        //
-        // This makes this instance independent
-        // 
-        source.DeepCloneTo(this);
+        SourceDevice = source;
 
         Services = serviceProvider;
         DeviceType = deviceType;
@@ -94,7 +92,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         //
         // Open handle
         // 
-        OpenDevice();
+        SourceDevice.OpenDevice();
     }
 
     /// <summary>
@@ -112,6 +110,9 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// </summary>
     protected abstract CompatibleHidDeviceInputReport InputReport { get; }
 
+    /// <inheritdoc />
+    public IHidDevice SourceDevice { get; }
+
     /// <summary>
     ///     The <see cref="InputDeviceType" /> of this <see cref="CompatibleHidDevice" />.
     /// </summary>
@@ -122,9 +123,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// </summary>
     public ConnectionType? Connection => _connection ??= GetConnectionType();
 
-    /// <summary>
-    ///     The serial number (MAC address) of this <see cref="CompatibleHidDevice" />.
-    /// </summary>
+    /// <inheritdoc />
     public PhysicalAddress Serial { get; protected init; }
 
     /// <summary>
@@ -147,6 +146,11 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// </summary>
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+
     /// <summary>
     ///     Determine <see cref="ConnectionType" /> of this device.
     /// </summary>
@@ -155,7 +159,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     {
         try
         {
-            PnPDevice device = PnPDevice.GetDeviceByInterfaceId(Path);
+            PnPDevice device = PnPDevice.GetDeviceByInterfaceId(SourceDevice.Path);
 
             //
             // Walk up device tree
@@ -256,7 +260,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
     /// <summary>
     ///     Stop the asynchronous input report reading logic.
     /// </summary>
-    protected void StopInputReportReader()
+    private void StopInputReportReader()
     {
         _inputReportToken.Cancel();
 
@@ -319,7 +323,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         {
             while (!_inputReportToken.IsCancellationRequested)
             {
-                ReadInputReport(_inputReportArray);
+                SourceDevice.ReadInputReport(_inputReportArray);
 
                 ReportsReadCounter.Add(1);
 
@@ -337,62 +341,100 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
             Disconnected?.Invoke(this);
         }
+        catch (USBException ex)
+        {
+            Exception apiException = ex.InnerException;
+
+            if (apiException is null)
+            {
+                throw;
+            }
+
+            if (apiException.InnerException is not Win32Exception win32Exception)
+            {
+                throw;
+            }
+
+            if (win32Exception.NativeErrorCode != (int)WIN32_ERROR.ERROR_NO_SUCH_DEVICE)
+            {
+                throw;
+            }
+
+            _inputReportToken.Cancel();
+
+            Disconnected?.Invoke(this);
+        }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Fatal failure in input report reading");
         }
     }
 
+    /// <summary>
+    ///     Invokes a GET_FEATURE request to query for the device serial (MAC address).
+    /// </summary>
+    /// <param name="featureId">The report ID of the GET_REPORT request.</param>
+    /// <returns>The MAC address of the device.</returns>
     [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
-        if (Capabilities.InputReportByteLength == 64)
+        switch (SourceDevice.Service)
         {
-            Span<byte> buffer = stackalloc byte[64];
-            buffer[0] = featureId;
-
-            if (ReadFeatureData(buffer))
-            {
-                Span<byte> serialBytes = buffer.Slice(1, 6);
-                serialBytes.Reverse();
-                return new PhysicalAddress(serialBytes.ToArray());
-            }
-        }
-        else
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(SerialNumberString))
+            case InputDeviceService.HidUsb:
+            case InputDeviceService.WinUsb:
+                if (((HidDevice)SourceDevice).Capabilities.InputReportByteLength == 64)
                 {
-                    return PhysicalAddress.Parse(SerialNumberString.ToUpper());
+                    Span<byte> buffer = stackalloc byte[64];
+                    buffer[0] = featureId;
+
+                    if (SourceDevice.ReadFeatureData(buffer))
+                    {
+                        Span<byte> serialBytes = buffer.Slice(1, 6);
+                        serialBytes.Reverse();
+                        return new PhysicalAddress(serialBytes.ToArray());
+                    }
                 }
-            }
-            catch
-            {
+                else
+                {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(SourceDevice.SerialNumberString))
+                        {
+                            return PhysicalAddress.Parse(SourceDevice.SerialNumberString.ToUpper());
+                        }
+                    }
+                    catch
+                    {
+                        return GenerateFakeHwSerial();
+                    }
+                }
+
+                break;
+            default:
                 return GenerateFakeHwSerial();
-            }
         }
 
-        return null;
+        return GenerateFakeHwSerial();
     }
 
     /// <summary>
     ///     Generate <see cref="Serial" /> from <see cref="HidDevice.Path" />.
     /// </summary>
     /// <returns></returns>
-    protected PhysicalAddress GenerateFakeHwSerial()
+    private PhysicalAddress GenerateFakeHwSerial()
     {
         string address = string.Empty;
 
         // Substring: \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030} -> \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001#
-        int endPos = Path.LastIndexOf('{');
+        int endPos = SourceDevice.Path.LastIndexOf('{');
         if (endPos < 0)
         {
-            endPos = Path.Length;
+            endPos = SourceDevice.Path.Length;
         }
 
         // String array: \\?\hid#vid_054c&pid_09cc&mi_03#7&1f882A25&0&0001# -> [0]=\\?\hidvid_054c, [1]=pid_09cc, [2]=mi_037, [3]=1f882A25, [4]=0, [5]=0001
-        string[] devPathItems = Path.Substring(0, endPos).Replace("#", "").Replace("-", "").Replace("{", "")
+        string[] devPathItems = SourceDevice.Path.Substring(0, endPos).Replace("#", "").Replace("-", "")
+            .Replace("{", "")
             .Replace("}", "").Split('&');
 
         address = devPathItems.Length switch
@@ -402,7 +444,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
                     + devPathItems[^1].TrimStart('0').ToUpper(),
             // Device and usb hub and port identifiers missing in devicePath string. Fallback to use vendor and product ID values and 
             // take a number from the last part of the devicePath. Hopefully the last part is a usb port number as it usually should be.
-            >= 1 => Attributes.VendorID.ToString("X4") + Attributes.ProductID.ToString("X4") +
+            >= 1 => SourceDevice.VendorId.ToString("X4") + SourceDevice.ProductId.ToString("X4") +
                     devPathItems[^1].TrimStart('0').ToUpper(),
             _ => address
         };
@@ -419,7 +461,7 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
         return PhysicalAddress.Parse(address);
     }
 
-    protected override void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!_disposed)
         {
@@ -432,12 +474,10 @@ public abstract partial class CompatibleHidDevice : HidDevice, ICompatibleHidDev
 
             _disposed = true;
         }
-
-        base.Dispose(disposing);
     }
 
     public override string ToString()
     {
-        return $"{DisplayName} ({Serial}) via {Connection}";
+        return $"{SourceDevice.DisplayName} ({Serial}) via {Connection}";
     }
 }

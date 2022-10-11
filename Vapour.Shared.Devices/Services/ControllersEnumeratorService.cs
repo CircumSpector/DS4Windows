@@ -17,12 +17,9 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
-    private const int HidUsageJoystick = 0x04;
-    private const int HidUsageGamepad = 0x05;
-
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
-    private readonly IHidDeviceEnumeratorService _enumeratorService;
+    private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
 
     private readonly ILogger<ControllersEnumeratorService> _logger;
     private readonly Dictionary<string, IOutDevice> _outDevices;
@@ -31,18 +28,20 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly IServiceProvider _serviceProvider;
 
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
+    private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-        IHidDeviceEnumeratorService enumeratorService, IServiceProvider serviceProvider,
-        IOutputSlotManager outputSlotManager)
+        IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, IServiceProvider serviceProvider,
+        IOutputSlotManager outputSlotManager, IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService)
     {
         _logger = logger;
-        _enumeratorService = enumeratorService;
+        _hidEnumeratorService = hidEnumeratorService;
         _serviceProvider = serviceProvider;
         _outputSlotManager = outputSlotManager;
+        _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
 
-        enumeratorService.DeviceArrived += EnumeratorServiceOnDeviceArrived;
-        enumeratorService.DeviceRemoved += EnumeratorServiceOnDeviceRemoved;
+        hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
+        hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
 
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
         _outDevices = new Dictionary<string, IOutDevice>();
@@ -68,9 +67,12 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         using Activity activity = _coreActivity.StartActivity(
             $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
 
-        _enumeratorService.EnumerateDevices();
+        _hidEnumeratorService.EnumerateDevices();
+        _winUsbDeviceEnumeratorService.EnumerateDevices();
 
-        ReadOnlyObservableCollection<HidDevice> hidDevices = _enumeratorService.ConnectedDevices;
+        IEnumerable<HidDevice> hidDevices = _hidEnumeratorService.ConnectedDevices
+            .ToList()
+            .Concat(_winUsbDeviceEnumeratorService.ConnectedDevices);
 
         //
         // Filter for supported devices
@@ -80,7 +82,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
                 KnownDevices.List.FirstOrDefault(d =>
                     d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID)
             where known is not null
-            where (hidDevice.Capabilities.Usage is HidUsageGamepad or HidUsageJoystick ||
+            where (hidDevice.Capabilities.Usage is HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick ||
                    known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
                   !hidDevice.IsVirtual
             select hidDevice;
@@ -123,6 +125,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         DeviceListReady?.Invoke();
     }
 
+    /// <inheritdoc />
     public void ClearCurrentControllers()
     {
         foreach (ICompatibleHidDevice compatibleHidDevice in SupportedDevices)
@@ -133,10 +136,10 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _supportedDevices.Clear();
     }
 
-    private void EnumeratorServiceOnDeviceArrived(HidDevice hidDevice)
+    private void EnumeratorServiceOnHidDeviceArrived(HidDevice hidDevice)
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnDeviceArrived)}");
+            $"{nameof(ControllersEnumeratorService)}:{nameof(EnumeratorServiceOnHidDeviceArrived)}");
 
         activity?.SetTag("Path", hidDevice.Path);
 
@@ -148,7 +151,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             return;
         }
 
-        if ((hidDevice.Capabilities.Usage is not (HidUsageGamepad or HidUsageJoystick) &&
+        if ((hidDevice.Capabilities.Usage is not (HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick) &&
              !known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice))
             || hidDevice.IsVirtual)
         {
@@ -174,7 +177,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         }
         else
         {
-            throw new InvalidOperationException($"Device {device.InstanceId} already in list.");
+            throw new InvalidOperationException($"Device {device.SourceDevice.InstanceId} already in list.");
         }
 
         //
@@ -186,7 +189,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             device.ToString());
     }
 
-    private void EnumeratorServiceOnDeviceRemoved(HidDevice hidDevice)
+    private void EnumeratorServiceOnHidDeviceRemoved(HidDevice hidDevice)
     {
         _logger.LogInformation("Compatible device {Device} got removed", hidDevice);
 
@@ -196,7 +199,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         }
 
         ICompatibleHidDevice device = _supportedDevices.FirstOrDefault(d =>
-            d.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
+            d.SourceDevice.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
 
         if (device != null)
         {
@@ -241,7 +244,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 
     private void Device_InputReportAvailable(ICompatibleHidDevice device, CompatibleHidDeviceInputReport report)
     {
-        IOutDevice outDevice = _outDevices[device.InstanceId];
+        IOutDevice outDevice = _outDevices[device.SourceDevice.InstanceId];
         outDevice.ConvertAndSendReport(report);
     }
 }
