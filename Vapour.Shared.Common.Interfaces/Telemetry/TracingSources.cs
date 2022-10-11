@@ -5,12 +5,12 @@
 /// </summary>
 public static class TracingSources
 {
-    public const string DevicesAssemblyActivitySourceName = "DS4Windows.Shared.Devices";
-    public const string CommonAssemblyActivitySourceName = "DS4Windows.Shared.Common";
+    public const string DevicesAssemblyActivitySourceName = "Vapour.Shared.Devices";
+    public const string CommonAssemblyActivitySourceName = "Vapour.Shared.Common";
 
     public const string ConfigurationApplicationAssemblyActivitySourceName =
-        "DS4Windows.Shared.Configuration.Application";
+        "Vapour.Shared.Configuration.Application";
 
     public const string ConfigurationProfilesAssemblyActivitySourceName =
-        "DS4Windows.Shared.Configuration.Profiles";
+        "Vapour.Shared.Configuration.Profiles";
 }
