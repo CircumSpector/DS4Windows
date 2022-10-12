@@ -17,13 +17,15 @@
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
     <ROW Property="ARPNOREPAIR" MultiBuildValue="DefaultBuild:1"/>
-    <ROW Property="ARPPRODUCTICON" Value="DS4W.exe" Type="8"/>
+    <ROW Property="ARPPRODUCTICON" Value="Vapour.exe" Type="8"/>
+    <ROW Property="AiFeatIcoMainFeature" Value="Vapour.exe" Type="8"/>
     <ROW Property="AiPreventAutoPin" Value="System.AppUserModel.ExcludeFromShowInNewInstall"/>
     <ROW Property="Manufacturer" Value="Vapour Collective"/>
     <ROW Property="ProductCode" Value="1033:{136DDF28-40B8-444B-8EC3-EF269580F185} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Vapour"/>
     <ROW Property="ProductVersion" Value="1.0.0"/>
+    <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{1AE96879-0427-46CD-B311-E3AA95A3F3D7}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -45,7 +47,6 @@
     <ROW Directory="DriverManagement_Dir" Directory_Parent="x64_Dir" DefaultDir="DRIVER~1|DriverManagement"/>
     <ROW Directory="Drivers_Dir" Directory_Parent="DriverManagement_Dir" DefaultDir="Drivers"/>
     <ROW Directory="Hori_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Hori"/>
-    <ROW Directory="Logs_Dir" Directory_Parent="x64_Dir" DefaultDir="Logs"/>
     <ROW Directory="Nacon_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Nacon"/>
     <ROW Directory="Nintendo_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Nintendo"/>
     <ROW Directory="Other_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Other"/>
@@ -70,7 +71,6 @@
     <ROW Directory="ruru_Dir" Directory_Parent="x64_Dir" DefaultDir="ru-ru"/>
     <ROW Directory="uzLatnUZ_Dir" Directory_Parent="x64_Dir" DefaultDir="UZ-LAT~1|uz-Latn-UZ"/>
     <ROW Directory="x64_Dir" Directory_Parent="APPDIR" DefaultDir=".:x64"/>
-    <ROW Directory="x86_Dir" Directory_Parent="libwdi_Dir" DefaultDir="x86"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AI_ExePath" ComponentId="{985FD1A7-FCCE-4091-A9E1-F23D26AF8693}" Directory_="APPDIR" Attributes="260" KeyPath="AI_ExePath"/>
@@ -86,8 +86,10 @@
     <ROW Component="DS4WNaconRevolInfinite.inf" ComponentId="{2ED34D05-7873-4AA0-A76C-A9BC8175EBBC}" Directory_="Nacon_Dir" Attributes="0" KeyPath="DS4WNaconRevolInfinite.inf" Type="0"/>
     <ROW Component="DS4WRazerRaijuPS4.inf" ComponentId="{4FFC8F10-33A7-403C-8996-B24C6091F324}" Directory_="Razer_Dir" Attributes="0" KeyPath="DS4WRazerRaijuPS4.inf" Type="0"/>
     <ROW Component="DS4WZeroplusBrookMars.inf" ComponentId="{5754CB9E-BF37-40D5-96A5-67847D115A62}" Directory_="Zeroplus_Dir" Attributes="0" KeyPath="DS4WZeroplusBrookMars.inf" Type="0"/>
-    <ROW Component="DS4WindowsClient20221003.log" ComponentId="{447FE579-56E6-46E1-B60C-3CBD590F65B6}" Directory_="Logs_Dir" Attributes="0" KeyPath="DS4WindowsClient20221003.log" Type="0"/>
     <ROW Component="FastDeepCloner.dll" ComponentId="{214525EB-8305-4CF2-8FAB-47606B950D7B}" Directory_="x64_Dir" Attributes="256" KeyPath="FastDeepCloner.dll"/>
+    <ROW Component="FastEndpoints.Swagger.dll" ComponentId="{5FBB9E88-86D1-4015-ADC4-0B5944316C22}" Directory_="x64_Dir" Attributes="256" KeyPath="FastEndpoints.Swagger.dll"/>
+    <ROW Component="FastEndpoints.dll" ComponentId="{2548D4FA-6240-425A-BECD-6ADC3CC9EF26}" Directory_="x64_Dir" Attributes="256" KeyPath="FastEndpoints.dll"/>
+    <ROW Component="FluentValidation.dll" ComponentId="{150BE7D1-071A-425F-B06F-6DCA6D541F69}" Directory_="x64_Dir" Attributes="256" KeyPath="FluentValidation.dll"/>
     <ROW Component="Hardcodet.NotifyIcon.Wpf.dll" ComponentId="{AC7FBAE4-E53E-48CC-8922-913AA65D7497}" Directory_="x64_Dir" Attributes="256" KeyPath="Hardcodet.NotifyIcon.Wpf.dll"/>
     <ROW Component="JetBrains.Annotations.dll" ComponentId="{9DED28AF-0723-4A94-AC2A-BCF0B4DAF439}" Directory_="x64_Dir" Attributes="256" KeyPath="JetBrains.Annotations.dll"/>
     <ROW Component="MaterialDesignColors.dll" ComponentId="{F35E33AD-62EB-41C5-9BA4-0FD1AB9BDA5B}" Directory_="x64_Dir" Attributes="256" KeyPath="MaterialDesignColors.dll"/>
@@ -121,6 +123,7 @@
     <ROW Component="Microsoft.Extensions.Hosting.Abstractions.dll" ComponentId="{5A623519-C0BE-4E9E-A3E9-ED80FE85CCB7}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Hosting.Abstractions.dll"/>
     <ROW Component="Microsoft.Extensions.Hosting.WindowsServices.dll" ComponentId="{52A01CBF-58B8-41C7-A6EE-C7561CCB8904}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Hosting.WindowsServices.dll"/>
     <ROW Component="Microsoft.Extensions.Hosting.dll" ComponentId="{0F9B88D9-52E2-4F13-BC67-F78E22E818C3}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Hosting.dll"/>
+    <ROW Component="Microsoft.Extensions.Http.dll" ComponentId="{0D277461-978F-4238-875F-BA8BE4EA0DE6}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Http.dll"/>
     <ROW Component="Microsoft.Extensions.Logging.Abstractions.dll" ComponentId="{F503F26E-3091-47BF-9953-1E8390CD4748}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Logging.Abstractions.dll"/>
     <ROW Component="Microsoft.Extensions.Logging.Configuration.dll" ComponentId="{346B0E43-3477-44D9-AAA6-D3EDE4412EB0}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Logging.Configuration.dll"/>
     <ROW Component="Microsoft.Extensions.Logging.Console.dll" ComponentId="{22AE97CD-3FD0-477C-9F85-B599CAD1B4D0}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Logging.Console.dll"/>
@@ -135,6 +138,17 @@
     <ROW Component="Microsoft.Toolkit.Mvvm.dll" ComponentId="{520BC9C6-2A51-4382-9AB9-523163F3A590}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Toolkit.Mvvm.dll"/>
     <ROW Component="Microsoft.Toolkit.dll" ComponentId="{D718154D-E69B-4900-955C-FBF8DEC4BBBD}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Toolkit.dll"/>
     <ROW Component="Microsoft.Windows.SDK.NET.dll" ComponentId="{C8167D4F-2A68-40C5-90AE-F354D7624A5B}" Directory_="x64_Dir" Attributes="0" KeyPath="Microsoft.Windows.SDK.NET.dll"/>
+    <ROW Component="NJsonSchema.Yaml.dll" ComponentId="{D86AEC21-70FB-43B7-9AB6-218486791EE6}" Directory_="x64_Dir" Attributes="256" KeyPath="NJsonSchema.Yaml.dll"/>
+    <ROW Component="NJsonSchema.dll" ComponentId="{6B216092-CCF9-4814-A0CD-7C46D705FFC6}" Directory_="x64_Dir" Attributes="256" KeyPath="NJsonSchema.dll"/>
+    <ROW Component="NSwag.Annotations.dll" ComponentId="{02A4018A-FC2E-43AD-80C2-47F3EEEF517D}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Annotations.dll"/>
+    <ROW Component="NSwag.AspNetCore.dll" ComponentId="{D8D8D87B-6143-4887-BD3B-CA434A867848}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.AspNetCore.dll"/>
+    <ROW Component="NSwag.Core.Yaml.dll" ComponentId="{590E2968-D7DF-4738-8E72-B9C9D4BA40F6}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Core.Yaml.dll"/>
+    <ROW Component="NSwag.Core.dll" ComponentId="{E5ACE680-5633-4879-98A8-F4A4581691EF}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Core.dll"/>
+    <ROW Component="NSwag.Generation.AspNetCore.dll" ComponentId="{3631A3EB-5801-4696-82F9-14E2BD83BB93}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Generation.AspNetCore.dll"/>
+    <ROW Component="NSwag.Generation.dll" ComponentId="{0C77FE19-5072-45F7-8958-CB54B3DD265A}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Generation.dll"/>
+    <ROW Component="Namotion.Reflection.dll" ComponentId="{B8E6A89E-7A86-4288-BC73-80FB6728A4D4}" Directory_="x64_Dir" Attributes="256" KeyPath="Namotion.Reflection.dll"/>
+    <ROW Component="Nefarius.Drivers.Identinator.dll" ComponentId="{797D8AB3-2906-4C7C-B637-FF2D4BD64949}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Drivers.Identinator.dll"/>
+    <ROW Component="Nefarius.Drivers.WinUSB.dll" ComponentId="{B4418D7B-F187-4C63-B347-AA2C6D2B05FF}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Drivers.WinUSB.dll"/>
     <ROW Component="Nefarius.Utilities.DeviceManagement.dll" ComponentId="{5E70927E-6DA9-4A19-B509-E44EB6670438}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Utilities.DeviceManagement.dll"/>
     <ROW Component="Nefarius.ViGEm.Client.dll" ComponentId="{7AFBB1D8-F032-4EDC-AE86-CBCB6A4EFD72}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.ViGEm.Client.dll"/>
     <ROW Component="Newtonsoft.Json.dll" ComponentId="{E47D3BAA-41B2-4476-B537-CCA5FEF7A9AA}" Directory_="x64_Dir" Attributes="256" KeyPath="Newtonsoft.Json.dll"/>
@@ -142,10 +156,6 @@
     <ROW Component="OpenTelemetry.Exporter.Jaeger.dll" ComponentId="{E5CD156C-724E-403D-8A6C-BB7E98B81822}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.Exporter.Jaeger.dll"/>
     <ROW Component="OpenTelemetry.Extensions.Hosting.dll" ComponentId="{1531F73C-EAFB-4C99-965E-4BF5FF1C6172}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.Extensions.Hosting.dll"/>
     <ROW Component="OpenTelemetry.dll" ComponentId="{E8C015D2-C602-4678-8952-B6ED417D9567}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.dll"/>
-    <ROW Component="PInvoke.Hid.dll" ComponentId="{084F12AB-4CB3-4E33-984B-79149DEC9D3E}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.Hid.dll"/>
-    <ROW Component="PInvoke.Kernel32.dll" ComponentId="{816854D3-2DB1-4DBB-8598-F12DDCBC9C5A}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.Kernel32.dll"/>
-    <ROW Component="PInvoke.SetupApi.dll" ComponentId="{60F4C14F-0EFD-4DF7-A151-C525F676BF4D}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.SetupApi.dll"/>
-    <ROW Component="PInvoke.Windows.Core.dll" ComponentId="{13D46037-86B6-4FFA-8268-B93004C32C6B}" Directory_="x64_Dir" Attributes="256" KeyPath="PInvoke.Windows.Core.dll"/>
     <ROW Component="ProductInformation" ComponentId="{83A89B78-D8C5-4B52-A020-2CA071F7693E}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
     <ROW Component="PropertyChanged.dll" ComponentId="{FF4D785A-AAAD-4A87-983D-3A9DEF9518A9}" Directory_="x64_Dir" Attributes="256" KeyPath="PropertyChanged.dll"/>
     <ROW Component="Serilog.AspNetCore.dll" ComponentId="{E35A82CD-4D8C-44CC-BD7C-11233F9E7E44}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.AspNetCore.dll"/>
@@ -188,12 +198,11 @@
     <ROW Component="Vapour.exe" ComponentId="{323424F2-9AF0-4FE8-989D-9C3A6E7D3A23}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.exe"/>
     <ROW Component="Websocket.Client.dll" ComponentId="{05ABBAE3-63E3-454E-B6CD-3093B0F0C59A}" Directory_="x64_Dir" Attributes="256" KeyPath="Websocket.Client.dll"/>
     <ROW Component="WinRT.Runtime.dll" ComponentId="{37CBDB08-77D5-4071-A0B9-9D36C651E602}" Directory_="x64_Dir" Attributes="0" KeyPath="WinRT.Runtime.dll"/>
+    <ROW Component="YamlDotNet.dll" ComponentId="{0FFCFFC4-963B-4AE1-860D-164B9895632A}" Directory_="x64_Dir" Attributes="256" KeyPath="YamlDotNet.dll"/>
     <ROW Component="appsettings.Development.json" ComponentId="{2D676E5C-5E48-4243-8FC4-359EB118AA86}" Directory_="x64_Dir" Attributes="0" KeyPath="appsettings.Development.json" Type="0"/>
     <ROW Component="build.js" ComponentId="{CB129E53-5DB9-43A9-8D60-561CEBCCEC8F}" Directory_="BezierCurveEditor_Dir" Attributes="0" KeyPath="build.js" Type="0"/>
     <ROW Component="libwdi.dll" ComponentId="{A857D713-953B-4C45-94FD-A5A5482AE78D}" Directory_="amd64_Dir" Attributes="256" KeyPath="libwdi.dll"/>
-    <ROW Component="libwdi.dll_2" ComponentId="{369B89A8-0915-4156-8D03-659B837005DA}" Directory_="x86_Dir" Attributes="0" KeyPath="libwdi.dll_2"/>
     <ROW Component="wdisimple.exe" ComponentId="{1AD2E895-A693-49F0-932C-130E3F2DA9FE}" Directory_="amd64_Dir" Attributes="256" KeyPath="wdisimple.exe"/>
-    <ROW Component="wdisimple.exe_2" ComponentId="{5BBE1980-1242-4F93-8AF2-739E4F053013}" Directory_="x86_Dir" Attributes="0" KeyPath="wdisimple.exe_2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0"/>
@@ -297,8 +306,6 @@
     <ROW File="JetBrains.Annotations.dll" Component_="JetBrains.Annotations.dll" FileName="JETBRA~1.DLL|JetBrains.Annotations.dll" Attributes="0" SourcePath="..\Publish\x64\JetBrains.Annotations.dll" SelfReg="false"/>
     <ROW File="libwdi.dll" Component_="libwdi.dll" FileName="libwdi.dll" Attributes="0" SourcePath="..\Publish\x64\libwdi\amd64\libwdi.dll" SelfReg="false"/>
     <ROW File="wdisimple.exe" Component_="wdisimple.exe" FileName="WDI-SI~1.EXE|wdi-simple.exe" Attributes="0" SourcePath="..\Publish\x64\libwdi\amd64\wdi-simple.exe" SelfReg="false" DigSign="true"/>
-    <ROW File="libwdi.dll_2" Component_="libwdi.dll_2" FileName="libwdi.dll" Attributes="0" SourcePath="..\Publish\x64\libwdi\x86\libwdi.dll" SelfReg="false"/>
-    <ROW File="wdisimple.exe_2" Component_="wdisimple.exe_2" FileName="WDI-SI~1.EXE|wdi-simple.exe" Attributes="0" SourcePath="..\Publish\x64\libwdi\x86\wdi-simple.exe" SelfReg="false" DigSign="true"/>
     <ROW File="MaterialDesignColors.dll" Component_="MaterialDesignColors.dll" FileName="MATERI~1.DLL|MaterialDesignColors.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignColors.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.dll" Component_="MaterialDesignExtensions.dll" FileName="MATERI~2.DLL|MaterialDesignExtensions.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignExtensions.dll" SelfReg="false"/>
     <ROW File="MaterialDesignThemes.Wpf.dll" Component_="MaterialDesignThemes.Wpf.dll" FileName="MATERI~3.DLL|MaterialDesignThemes.Wpf.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignThemes.Wpf.dll" SelfReg="false"/>
@@ -340,10 +347,6 @@
     <ROW File="OpenTelemetry.dll" Component_="OpenTelemetry.dll" FileName="OPENTE~2.DLL|OpenTelemetry.dll" Attributes="0" SourcePath="..\Publish\x64\OpenTelemetry.dll" SelfReg="false"/>
     <ROW File="OpenTelemetry.Exporter.Jaeger.dll" Component_="OpenTelemetry.Exporter.Jaeger.dll" FileName="OPENTE~3.DLL|OpenTelemetry.Exporter.Jaeger.dll" Attributes="0" SourcePath="..\Publish\x64\OpenTelemetry.Exporter.Jaeger.dll" SelfReg="false"/>
     <ROW File="OpenTelemetry.Extensions.Hosting.dll" Component_="OpenTelemetry.Extensions.Hosting.dll" FileName="OPENTE~4.DLL|OpenTelemetry.Extensions.Hosting.dll" Attributes="0" SourcePath="..\Publish\x64\OpenTelemetry.Extensions.Hosting.dll" SelfReg="false"/>
-    <ROW File="PInvoke.Hid.dll" Component_="PInvoke.Hid.dll" FileName="PINVOK~1.DLL|PInvoke.Hid.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.Hid.dll" SelfReg="false"/>
-    <ROW File="PInvoke.Kernel32.dll" Component_="PInvoke.Kernel32.dll" FileName="PINVOK~2.DLL|PInvoke.Kernel32.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.Kernel32.dll" SelfReg="false"/>
-    <ROW File="PInvoke.SetupApi.dll" Component_="PInvoke.SetupApi.dll" FileName="PINVOK~3.DLL|PInvoke.SetupApi.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.SetupApi.dll" SelfReg="false"/>
-    <ROW File="PInvoke.Windows.Core.dll" Component_="PInvoke.Windows.Core.dll" FileName="PINVOK~5.DLL|PInvoke.Windows.Core.dll" Attributes="0" SourcePath="..\Publish\x64\PInvoke.Windows.Core.dll" SelfReg="false"/>
     <ROW File="PropertyChanged.dll" Component_="PropertyChanged.dll" FileName="PROPER~1.DLL|PropertyChanged.dll" Attributes="0" SourcePath="..\Publish\x64\PropertyChanged.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_16" Component_="MaterialDesignExtensions.resources.dll_16" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\pt\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_17" Component_="MaterialDesignExtensions.resources.dll_17" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\pt-BR\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
@@ -365,11 +368,28 @@
     <ROW File="MaterialDesignExtensions.resources.dll_20" Component_="MaterialDesignExtensions.resources.dll_20" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\uz-Latn-UZ\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="Websocket.Client.dll" Component_="Websocket.Client.dll" FileName="WEBSOC~1.DLL|Websocket.Client.dll" Attributes="0" SourcePath="..\Publish\x64\Websocket.Client.dll" SelfReg="false"/>
     <ROW File="WinRT.Runtime.dll" Component_="WinRT.Runtime.dll" FileName="WINRTR~1.DLL|WinRT.Runtime.dll" Attributes="0" SourcePath="..\Publish\x64\WinRT.Runtime.dll" SelfReg="false"/>
-    <ROW File="DS4WindowsClient20221003.log" Component_="DS4WindowsClient20221003.log" FileName="DS4WIN~1.LOG|DS4Windows-Client20221003.log" Attributes="0" SourcePath="..\Publish\x64\Logs\DS4Windows-Client20221003.log" SelfReg="false"/>
     <ROW File="Serilog.AspNetCore.dll" Component_="Serilog.AspNetCore.dll" FileName="SERILO~6.DLL|Serilog.AspNetCore.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.AspNetCore.dll" SelfReg="false"/>
     <ROW File="Serilog.Formatting.Compact.dll" Component_="Serilog.Formatting.Compact.dll" FileName="SERILO~7.DLL|Serilog.Formatting.Compact.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.Formatting.Compact.dll" SelfReg="false"/>
     <ROW File="Serilog.Sinks.Debug.dll" Component_="Serilog.Sinks.Debug.dll" FileName="SERILO~8.DLL|Serilog.Sinks.Debug.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.Sinks.Debug.dll" SelfReg="false"/>
     <ROW File="System.Diagnostics.DiagnosticSource.dll" Component_="System.Diagnostics.DiagnosticSource.dll" FileName="SYSTEM~4.DLL|System.Diagnostics.DiagnosticSource.dll" Attributes="0" SourcePath="..\Publish\x64\System.Diagnostics.DiagnosticSource.dll" SelfReg="false"/>
+    <ROW File="FastEndpoints.dll" Component_="FastEndpoints.dll" FileName="FASTEN~1.DLL|FastEndpoints.dll" Attributes="0" SourcePath="..\Publish\x64\FastEndpoints.dll" SelfReg="false"/>
+    <ROW File="FastEndpoints.Swagger.dll" Component_="FastEndpoints.Swagger.dll" FileName="FASTEN~2.DLL|FastEndpoints.Swagger.dll" Attributes="0" SourcePath="..\Publish\x64\FastEndpoints.Swagger.dll" SelfReg="false"/>
+    <ROW File="FluentValidation.dll" Component_="FluentValidation.dll" FileName="FLUENT~1.DLL|FluentValidation.dll" Attributes="0" SourcePath="..\Publish\x64\FluentValidation.dll" SelfReg="false"/>
+    <ROW File="Microsoft.Extensions.Http.dll" Component_="Microsoft.Extensions.Http.dll" FileName="MICRO~32.DLL|Microsoft.Extensions.Http.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Extensions.Http.dll" SelfReg="false"/>
+    <ROW File="Namotion.Reflection.dll" Component_="Namotion.Reflection.dll" FileName="NAMOTI~1.DLL|Namotion.Reflection.dll" Attributes="0" SourcePath="..\Publish\x64\Namotion.Reflection.dll" SelfReg="false"/>
+    <ROW File="Nefarius.Drivers.Identinator.dll" Component_="Nefarius.Drivers.Identinator.dll" FileName="NEFARI~3.DLL|Nefarius.Drivers.Identinator.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.Drivers.Identinator.dll" SelfReg="false"/>
+    <ROW File="Nefarius.Drivers.WinUSB.dll" Component_="Nefarius.Drivers.WinUSB.dll" FileName="NEFARI~4.DLL|Nefarius.Drivers.WinUSB.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.Drivers.WinUSB.dll" SelfReg="false"/>
+    <ROW File="NJsonSchema.dll" Component_="NJsonSchema.dll" FileName="NJSONS~1.DLL|NJsonSchema.dll" Attributes="0" SourcePath="..\Publish\x64\NJsonSchema.dll" SelfReg="false"/>
+    <ROW File="NJsonSchema.Yaml.dll" Component_="NJsonSchema.Yaml.dll" FileName="NJSONS~2.DLL|NJsonSchema.Yaml.dll" Attributes="0" SourcePath="..\Publish\x64\NJsonSchema.Yaml.dll" SelfReg="false"/>
+    <ROW File="NSwag.Annotations.dll" Component_="NSwag.Annotations.dll" FileName="NSWAGA~1.DLL|NSwag.Annotations.dll" Attributes="0" SourcePath="..\Publish\x64\NSwag.Annotations.dll" SelfReg="false"/>
+    <ROW File="NSwag.AspNetCore.dll" Component_="NSwag.AspNetCore.dll" FileName="NSWAGA~2.DLL|NSwag.AspNetCore.dll" Attributes="0" SourcePath="..\Publish\x64\NSwag.AspNetCore.dll" SelfReg="false"/>
+    <ROW File="NSwag.Core.dll" Component_="NSwag.Core.dll" FileName="NSWAGC~1.DLL|NSwag.Core.dll" Attributes="0" SourcePath="..\Publish\x64\NSwag.Core.dll" SelfReg="false"/>
+    <ROW File="NSwag.Core.Yaml.dll" Component_="NSwag.Core.Yaml.dll" FileName="NSWAGC~2.DLL|NSwag.Core.Yaml.dll" Attributes="0" SourcePath="..\Publish\x64\NSwag.Core.Yaml.dll" SelfReg="false"/>
+    <ROW File="NSwag.Generation.AspNetCore.dll" Component_="NSwag.Generation.AspNetCore.dll" FileName="NSWAGG~1.DLL|NSwag.Generation.AspNetCore.dll" Attributes="0" SourcePath="..\Publish\x64\NSwag.Generation.AspNetCore.dll" SelfReg="false"/>
+    <ROW File="NSwag.Generation.dll" Component_="NSwag.Generation.dll" FileName="NSWAGG~2.DLL|NSwag.Generation.dll" Attributes="0" SourcePath="..\Publish\x64\NSwag.Generation.dll" SelfReg="false"/>
+    <ROW File="Vapour.Server.Host.xml" Component_="appsettings.Development.json" FileName="VAPOUR~1.XML|Vapour.Server.Host.xml" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.xml" SelfReg="false"/>
+    <ROW File="Vapour.Server.Interfaces.xml" Component_="appsettings.Development.json" FileName="VAPOUR~2.XML|Vapour.Server.Interfaces.xml" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Interfaces.xml" SelfReg="false"/>
+    <ROW File="YamlDotNet.dll" Component_="YamlDotNet.dll" FileName="YAMLDO~1.DLL|YamlDotNet.dll" Attributes="0" SourcePath="..\Publish\x64\YamlDotNet.dll" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
     <ROW MsiShortcutProperty="Vapour.Client.TrayApplication0" Shortcut_="Vapour.Client.TrayApplication" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
@@ -386,7 +406,7 @@
     <ROW Action="AI_DetectSoftware" Sequence="151"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="Setup Files x64" Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="Images\DS4W.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" ExtUI="true" UseLargeSchema="true" ExeName="Vapour Setup (x64)" MsiPackageType="x64" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="Setup Files x64" Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="Images\Vapour.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" ExtUI="true" UseLargeSchema="true" ExeName="Vapour Setup (x64)" MsiPackageType="x64" UACExecutionLevel="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
     <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
@@ -564,8 +584,6 @@
     <ROW Feature_="MainFeature" Component_="JetBrains.Annotations.dll"/>
     <ROW Feature_="MainFeature" Component_="libwdi.dll"/>
     <ROW Feature_="MainFeature" Component_="wdisimple.exe"/>
-    <ROW Feature_="MainFeature" Component_="libwdi.dll_2"/>
-    <ROW Feature_="MainFeature" Component_="wdisimple.exe_2"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignColors.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignThemes.Wpf.dll"/>
@@ -607,10 +625,6 @@
     <ROW Feature_="MainFeature" Component_="OpenTelemetry.dll"/>
     <ROW Feature_="MainFeature" Component_="OpenTelemetry.Exporter.Jaeger.dll"/>
     <ROW Feature_="MainFeature" Component_="OpenTelemetry.Extensions.Hosting.dll"/>
-    <ROW Feature_="MainFeature" Component_="PInvoke.Hid.dll"/>
-    <ROW Feature_="MainFeature" Component_="PInvoke.Kernel32.dll"/>
-    <ROW Feature_="MainFeature" Component_="PInvoke.SetupApi.dll"/>
-    <ROW Feature_="MainFeature" Component_="PInvoke.Windows.Core.dll"/>
     <ROW Feature_="MainFeature" Component_="PropertyChanged.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_16"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_17"/>
@@ -633,14 +647,29 @@
     <ROW Feature_="MainFeature" Component_="WinRT.Runtime.dll"/>
     <ROW Feature_="MainFeature" Component_="AI_ExePath"/>
     <ROW Feature_="MainFeature" Component_="Vapour"/>
-    <ROW Feature_="MainFeature" Component_="DS4WindowsClient20221003.log"/>
     <ROW Feature_="MainFeature" Component_="Serilog.AspNetCore.dll"/>
     <ROW Feature_="MainFeature" Component_="Serilog.Formatting.Compact.dll"/>
     <ROW Feature_="MainFeature" Component_="Serilog.Sinks.Debug.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Diagnostics.DiagnosticSource.dll"/>
+    <ROW Feature_="MainFeature" Component_="FastEndpoints.dll"/>
+    <ROW Feature_="MainFeature" Component_="FastEndpoints.Swagger.dll"/>
+    <ROW Feature_="MainFeature" Component_="FluentValidation.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.Extensions.Http.dll"/>
+    <ROW Feature_="MainFeature" Component_="Namotion.Reflection.dll"/>
+    <ROW Feature_="MainFeature" Component_="Nefarius.Drivers.Identinator.dll"/>
+    <ROW Feature_="MainFeature" Component_="Nefarius.Drivers.WinUSB.dll"/>
+    <ROW Feature_="MainFeature" Component_="NJsonSchema.dll"/>
+    <ROW Feature_="MainFeature" Component_="NJsonSchema.Yaml.dll"/>
+    <ROW Feature_="MainFeature" Component_="NSwag.Annotations.dll"/>
+    <ROW Feature_="MainFeature" Component_="NSwag.AspNetCore.dll"/>
+    <ROW Feature_="MainFeature" Component_="NSwag.Core.dll"/>
+    <ROW Feature_="MainFeature" Component_="NSwag.Core.Yaml.dll"/>
+    <ROW Feature_="MainFeature" Component_="NSwag.Generation.AspNetCore.dll"/>
+    <ROW Feature_="MainFeature" Component_="NSwag.Generation.dll"/>
+    <ROW Feature_="MainFeature" Component_="YamlDotNet.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
-    <ROW Name="DS4W.exe" SourcePath="Images\DS4W.ico" Index="0"/>
+    <ROW Name="Vapour.exe" SourcePath="Images\Vapour.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
@@ -669,8 +698,8 @@
     <ROW Action="AI_DATA_SETTER_1" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1201"/>
     <ROW Action="StopProcess" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1204"/>
     <ROW Action="AI_DATA_SETTER_2" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1203"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3498"/>
-    <ROW Action="AI_AiRemoveFilesRebootImmediate" Sequence="3499"/>
+    <ROW Action="AI_AiRemoveFilesRebootImmediate" Sequence="3498"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -713,10 +742,10 @@
     <ROW FileKey="_" Component_="Vapour.Shared.Common.Util.dll" DirProperty="APPDIR" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiServCtrlComponent">
-    <ROW ServiceControl="Vapour.Server.Host.exe" Name="DS4WService" Event="161" Wait="0" Component_="Vapour.Server.Host.exe"/>
+    <ROW ServiceControl="Vapour.Server.Host.exe" Name="VapourService" Event="161" Wait="0" Component_="Vapour.Server.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiServInstComponent">
-    <ROW ServiceInstall="Vapour.Server.Host.exe" Name="DS4WService" DisplayName="DS4WService" ServiceType="16" StartType="2" ErrorControl="1" Component_="Vapour.Server.Host.exe"/>
+    <ROW ServiceInstall="Vapour.Server.Host.exe" Name="VapourService" DisplayName="VapourService" ServiceType="16" StartType="2" ErrorControl="1" Component_="Vapour.Server.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="Vapour" Directory_="Vapour_Dir" Name="DS4WIN~1|Vapour" Component_="Vapour.exe" Target="[#Vapour.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="x64_Dir"/>
@@ -731,15 +760,17 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="[|ProductVersion]" Attributes="2" ActionProperty="AI_NEWERPRODUCTFOUND"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqComponent">
-    <ROW PrereqKey="E25D6A62194038942640BDE651049C" DisplayName="ASP.NET Core Runtime 6.0.2 x64" VersionMin="6.0" SetupFileUrl="https://download.visualstudio.microsoft.com/download/pr/f9c340ac-df04-4690-a434-111f9558941c/568ed66a3e32b22e3645a99e100008fe/aspnetcore-runtime-6.0.2-win-x64.exe" Location="1" ExactSize="8971936" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows Vista x64, Windows Server 2008 x64, Windows 7 RTM x64, Windows Server 2008 R2 x64, Windows 8 x64, Windows Server 2012 x64, Windows 10 version 1507 x64, Windows 10 version 1511 x64" Operator="1" NoUiComLine="/q /norestart" Options="xy" MD5="83e27c2d061c4d09fc52e6725b2afe0a" TargetName="ASP.NET Core 6.0"/>
-    <ROW PrereqKey="FAC9C433D3044829E6669A2C6FF54E6" DisplayName=".NET Desktop Runtime 6.0.2 x64" VersionMin="6.0" SetupFileUrl="https://download.visualstudio.microsoft.com/download/pr/efa32b7a-6eec-4d97-9cdc-c7336a29a749/3df4296170397cf60884dae1be3d103b/windowsdesktop-runtime-6.0.2-win-x64.exe" Location="1" ExactSize="57296456" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows Vista x64, Windows Server 2008 x64, Windows 7 RTM x64, Windows Server 2008 R2 x64, Windows 8 x64, Windows Server 2012 x64, Windows 10 version 1507 x64, Windows 10 version 1511 x64" Operator="1" NoUiComLine="/q /norestart" Options="xy" MD5="ce032ed3b098ceb4054eaf9c9158e2f5" TargetName=".NET 6.0"/>
-    <ROW PrereqKey="RequiredApplication" DisplayName="Nefarius Virtual Gamepad Emulator" VersionMin="1.17.333" SetupFileUrl="https://github.com/ViGEm/ViGEmBus/releases/download/setup-v1.17.333/ViGEmBusSetup_x64.msi" Location="1" ExactSize="876544" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" Options="y" MD5="d8d2cff2eae7f1d956e3f8a2edaf891d" TargetName="Nefarius Virtual Gamepad Emulator"/>
-    <ATTRIBUTE name="PrereqsOrder" value="FAC9C433D3044829E6669A2C6FF54E6 E25D6A62194038942640BDE651049C RequiredApplication"/>
+    <ROW PrereqKey="E25D6A62194038942640BDE651049C" DisplayName="ASP.NET Core Runtime 6.0.8 x64" VersionMin="6.0" SetupFileUrl="https://download.visualstudio.microsoft.com/download/pr/f5ef50c0-4dd1-4301-857f-768834d5a006/852c6470e4e5f602eee280c1e4e4e4c3/aspnetcore-runtime-6.0.8-win-x64.exe" Location="1" ExactSize="8927760" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows Vista x64, Windows Server 2008 x64, Windows 7 RTM x64, Windows Server 2008 R2 x64, Windows 8 x64, Windows Server 2012 x64, Windows 10 version 1507 x64, Windows 10 version 1511 x64" Operator="1" NoUiComLine="/q /norestart" Options="xym" MD5="a37cf823f6ed9dcdceb5e486dbe0fd79" TargetName="ASP.NET Core 6.0"/>
+    <ROW PrereqKey="FAC9C433D3044829E6669A2C6FF54E6" DisplayName=".NET Desktop Runtime 6.0.8 x64" VersionMin="6.0" SetupFileUrl="https://download.visualstudio.microsoft.com/download/pr/b4a17a47-2fe8-498d-b817-30ad2e23f413/00020402af25ba40990c6cc3db5cb270/windowsdesktop-runtime-6.0.8-win-x64.exe" Location="1" ExactSize="57909296" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows Vista x64, Windows Server 2008 x64, Windows 7 RTM x64, Windows Server 2008 R2 x64, Windows 8 x64, Windows Server 2012 x64, Windows 10 version 1507 x64, Windows 10 version 1511 x64" Operator="1" NoUiComLine="/q /norestart" Options="xym" MD5="3093812bb6e69c4b88007435595d16ff" TargetName=".NET 6.0"/>
+    <ROW PrereqKey="RequiredApplication" DisplayName="Nefarius Virtual Gamepad Emulator" VersionMin="1.21.442" SetupFileUrl="https://github.com/ViGEm/ViGEmBus/releases/download/v1.21.442.0/ViGEmBus_1.21.442_x64_x86_arm64.exe" Location="1" ExactSize="6288904" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" ComLine="/norestart" Options="y" MD5="660b3b7f2f5f28bc13059b0ee977a1e8" TargetName="Nefarius Virtual Gamepad Emulator"/>
+    <ROW PrereqKey="RequiredApplication_1" DisplayName="Identinator" VersionMin="1.14.1" SetupFileUrl="https://github.com/nefarius/Identinator/releases/download/v1.14.1/Identinator_1.14.1_x64.exe" Location="1" ExactSize="13405872" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" ComLine="/norestart" Options="y" MD5="5de5b7fefe4b72c9ed68833edef6004d" TargetName="Identinator"/>
+    <ATTRIBUTE name="PrereqsOrder" value="RequiredApplication FAC9C433D3044829E6669A2C6FF54E6 E25D6A62194038942640BDE651049C RequiredApplication_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">
-    <ROW SearchKey="E25D6A62194038942640BDE651049CASP.N" Prereq="E25D6A62194038942640BDE651049C" SearchType="1" SearchString="HKLM\SOFTWARE\Microsoft\ASP.NET Core\Shared Framework\v6.0" VerMin="6.0.2" Order="1" Property="PreReqSearch_E25D6A62194038942640BD"/>
-    <ROW SearchKey="FAC9C433D3044829E6669A2C6FF54E6Micr" Prereq="FAC9C433D3044829E6669A2C6FF54E6" SearchType="14" SearchString="[ProgramFiles64Folder]dotnet\shared\Microsoft.WindowsDesktop.App" VerMin="6.0.2" Order="1" Property="PreReqSearch_FAC9C433D3044829E6669A"/>
-    <ROW SearchKey="SystemFolderfile.dll" Prereq="RequiredApplication" SearchType="0" SearchString="[ProgramFiles64Folder]\Nefarius Software Solutions\Virtual Gamepad Emulation Bus Driver\ViGEmBus.sys" VerMin="1.17.333" Order="1" Property="PreReqSearch"/>
+    <ROW SearchKey="E25D6A62194038942640BDE651049CASP.N" Prereq="E25D6A62194038942640BDE651049C" SearchType="1" SearchString="HKLM\SOFTWARE\Microsoft\ASP.NET Core\Shared Framework\v6.0" VerMin="6.0.8" Order="1" Property="PreReqSearch_E25D6A62194038942640BD"/>
+    <ROW SearchKey="FAC9C433D3044829E6669A2C6FF54E6Micr" Prereq="FAC9C433D3044829E6669A2C6FF54E6" SearchType="14" SearchString="[ProgramFiles64Folder]dotnet\shared\Microsoft.WindowsDesktop.App" VerMin="6.0.8" Order="1" Property="PreReqSearch_FAC9C433D3044829E6669A"/>
+    <ROW SearchKey="SystemFolderfile.dll" Prereq="RequiredApplication" SearchType="0" SearchString="[ProgramFiles64Folder]\Nefarius Software Solutions\Virtual Gamepad Emulation Bus Driver\ViGEmBus.sys" VerMin="1.21.442" Order="1" Property="PreReqSearch"/>
+    <ROW SearchKey="SystemFolderfile.dll_1" Prereq="RequiredApplication_1" SearchType="0" SearchString="[ProgramFilesFolder]\Nefarius Software Solutions\Nefarius&apos; Identinator\Identinator.exe" VerMin="1.14.1.0" Order="1" Property="PreReqSearch_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
     <ROW Directory_="x64_Dir" SourcePath="..\Publish\x64" Feature="MainFeature" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6" FileAddOptions="4"/>
