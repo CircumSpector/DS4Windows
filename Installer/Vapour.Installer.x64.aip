@@ -44,28 +44,17 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
     <ROW Directory="BezierCurveEditor_Dir" Directory_Parent="x64_Dir" DefaultDir="BEZIER~1|BezierCurveEditor"/>
-    <ROW Directory="DriverManagement_Dir" Directory_Parent="x64_Dir" DefaultDir="DRIVER~1|DriverManagement"/>
-    <ROW Directory="Drivers_Dir" Directory_Parent="DriverManagement_Dir" DefaultDir="Drivers"/>
-    <ROW Directory="Hori_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Hori"/>
-    <ROW Directory="Nacon_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Nacon"/>
-    <ROW Directory="Nintendo_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Nintendo"/>
-    <ROW Directory="Other_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Other"/>
     <ROW Directory="ProgramMenuFolder" Directory_Parent="TARGETDIR" DefaultDir="PROGRA~1|ProgramMenuFolder" IsPseudoRoot="1"/>
-    <ROW Directory="Razer_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Razer"/>
     <ROW Directory="Ru_Dir" Directory_Parent="x64_Dir" DefaultDir="Ru"/>
-    <ROW Directory="Sony_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Sony"/>
     <ROW Directory="StartupFolder" Directory_Parent="TARGETDIR" DefaultDir="STARTU~1|StartupFolder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
     <ROW Directory="Vapour_Dir" Directory_Parent="ProgramMenuFolder" DefaultDir="DS4WIN~1|Vapour"/>
-    <ROW Directory="Zeroplus_Dir" Directory_Parent="Drivers_Dir" DefaultDir="Zeroplus"/>
-    <ROW Directory="amd64_Dir" Directory_Parent="libwdi_Dir" DefaultDir="amd64"/>
     <ROW Directory="arDZ_Dir" Directory_Parent="x64_Dir" DefaultDir="ar-DZ"/>
     <ROW Directory="csCZ_Dir" Directory_Parent="x64_Dir" DefaultDir="cs-CZ"/>
     <ROW Directory="cs_Dir" Directory_Parent="x64_Dir" DefaultDir="cs"/>
     <ROW Directory="de_Dir" Directory_Parent="x64_Dir" DefaultDir="de"/>
     <ROW Directory="frFR_Dir" Directory_Parent="x64_Dir" DefaultDir="fr-FR"/>
     <ROW Directory="fr_Dir" Directory_Parent="x64_Dir" DefaultDir="fr"/>
-    <ROW Directory="libwdi_Dir" Directory_Parent="x64_Dir" DefaultDir="libwdi"/>
     <ROW Directory="ptBR_Dir" Directory_Parent="x64_Dir" DefaultDir="pt-BR"/>
     <ROW Directory="pt_Dir" Directory_Parent="x64_Dir" DefaultDir="pt"/>
     <ROW Directory="ruru_Dir" Directory_Parent="x64_Dir" DefaultDir="ru-ru"/>
@@ -79,13 +68,6 @@
     <ROW Component="AutoMapper.Extensions.Microsoft.DependencyInjection.dll" ComponentId="{53EDDCA5-7A9A-44DD-BA00-2D808C40BA08}" Directory_="x64_Dir" Attributes="256" KeyPath="AutoMapper.Extensions.Microsoft.DependencyInjection.dll"/>
     <ROW Component="AutoMapper.dll" ComponentId="{ECF68FEB-CAB8-40A9-9DB7-AD24214F65E7}" Directory_="x64_Dir" Attributes="256" KeyPath="AutoMapper.dll"/>
     <ROW Component="ConfigureAwait.dll" ComponentId="{34FF7C0D-EBCC-43DF-A31C-D49A595BF1C6}" Directory_="x64_Dir" Attributes="256" KeyPath="ConfigureAwait.dll"/>
-    <ROW Component="DS4WAGAstroC40.inf" ComponentId="{52F4DD8E-60AF-48D2-94A1-529D37D91888}" Directory_="Other_Dir" Attributes="0" KeyPath="DS4WAGAstroC40.inf" Type="0"/>
-    <ROW Component="DS4WCronusMaxPS4Mode.inf" ComponentId="{8ABBE299-E858-49CE-A74A-BDB9B4F6234E}" Directory_="Sony_Dir" Attributes="0" KeyPath="DS4WCronusMaxPS4Mode.inf" Type="0"/>
-    <ROW Component="DS4WHoriFightingCommander.inf" ComponentId="{05828287-4F3A-4B61-968C-5968198F8116}" Directory_="Hori_Dir" Attributes="0" KeyPath="DS4WHoriFightingCommander.inf" Type="0"/>
-    <ROW Component="DS4WJoyConL.inf" ComponentId="{34435583-3AFA-4186-BF31-BB29D5A6F027}" Directory_="Nintendo_Dir" Attributes="0" KeyPath="DS4WJoyConL.inf" Type="0"/>
-    <ROW Component="DS4WNaconRevolInfinite.inf" ComponentId="{2ED34D05-7873-4AA0-A76C-A9BC8175EBBC}" Directory_="Nacon_Dir" Attributes="0" KeyPath="DS4WNaconRevolInfinite.inf" Type="0"/>
-    <ROW Component="DS4WRazerRaijuPS4.inf" ComponentId="{4FFC8F10-33A7-403C-8996-B24C6091F324}" Directory_="Razer_Dir" Attributes="0" KeyPath="DS4WRazerRaijuPS4.inf" Type="0"/>
-    <ROW Component="DS4WZeroplusBrookMars.inf" ComponentId="{5754CB9E-BF37-40D5-96A5-67847D115A62}" Directory_="Zeroplus_Dir" Attributes="0" KeyPath="DS4WZeroplusBrookMars.inf" Type="0"/>
     <ROW Component="FastDeepCloner.dll" ComponentId="{214525EB-8305-4CF2-8FAB-47606B950D7B}" Directory_="x64_Dir" Attributes="256" KeyPath="FastDeepCloner.dll"/>
     <ROW Component="FastEndpoints.Swagger.dll" ComponentId="{5FBB9E88-86D1-4015-ADC4-0B5944316C22}" Directory_="x64_Dir" Attributes="256" KeyPath="FastEndpoints.Swagger.dll"/>
     <ROW Component="FastEndpoints.dll" ComponentId="{2548D4FA-6240-425A-BECD-6ADC3CC9EF26}" Directory_="x64_Dir" Attributes="256" KeyPath="FastEndpoints.dll"/>
@@ -157,7 +139,6 @@
     <ROW Component="OpenTelemetry.Extensions.Hosting.dll" ComponentId="{1531F73C-EAFB-4C99-965E-4BF5FF1C6172}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.Extensions.Hosting.dll"/>
     <ROW Component="OpenTelemetry.dll" ComponentId="{E8C015D2-C602-4678-8952-B6ED417D9567}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.dll"/>
     <ROW Component="ProductInformation" ComponentId="{83A89B78-D8C5-4B52-A020-2CA071F7693E}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
-    <ROW Component="PropertyChanged.dll" ComponentId="{FF4D785A-AAAD-4A87-983D-3A9DEF9518A9}" Directory_="x64_Dir" Attributes="256" KeyPath="PropertyChanged.dll"/>
     <ROW Component="Serilog.AspNetCore.dll" ComponentId="{E35A82CD-4D8C-44CC-BD7C-11233F9E7E44}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.AspNetCore.dll"/>
     <ROW Component="Serilog.Extensions.Hosting.dll" ComponentId="{DAD37020-8F17-487E-8C08-7D33D00F42EB}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Extensions.Hosting.dll"/>
     <ROW Component="Serilog.Extensions.Logging.dll" ComponentId="{E3BDD923-AD35-41CE-99C9-08620AA0EBEC}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Extensions.Logging.dll"/>
@@ -201,8 +182,6 @@
     <ROW Component="YamlDotNet.dll" ComponentId="{0FFCFFC4-963B-4AE1-860D-164B9895632A}" Directory_="x64_Dir" Attributes="256" KeyPath="YamlDotNet.dll"/>
     <ROW Component="appsettings.Development.json" ComponentId="{2D676E5C-5E48-4243-8FC4-359EB118AA86}" Directory_="x64_Dir" Attributes="0" KeyPath="appsettings.Development.json" Type="0"/>
     <ROW Component="build.js" ComponentId="{CB129E53-5DB9-43A9-8D60-561CEBCCEC8F}" Directory_="BezierCurveEditor_Dir" Attributes="0" KeyPath="build.js" Type="0"/>
-    <ROW Component="libwdi.dll" ComponentId="{A857D713-953B-4C45-94FD-A5A5482AE78D}" Directory_="amd64_Dir" Attributes="256" KeyPath="libwdi.dll"/>
-    <ROW Component="wdisimple.exe" ComponentId="{1AD2E895-A693-49F0-932C-130E3F2DA9FE}" Directory_="amd64_Dir" Attributes="256" KeyPath="wdisimple.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0"/>
@@ -221,39 +200,6 @@
     <ROW File="MaterialDesignExtensions.resources.dll_11" Component_="MaterialDesignExtensions.resources.dll_11" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\cs\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_12" Component_="MaterialDesignExtensions.resources.dll_12" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\cs-CZ\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_13" Component_="MaterialDesignExtensions.resources.dll_13" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\de\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
-    <ROW File="DS4WHoriFightingCommander.inf" Component_="DS4WHoriFightingCommander.inf" FileName="DS4W-H~1.INF|DS4W-HoriFightingCommander.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Hori\DS4W-HoriFightingCommander.inf" SelfReg="false"/>
-    <ROW File="DS4WHoriFPSPlus.inf" Component_="DS4WHoriFightingCommander.inf" FileName="DS4W-H~2.INF|DS4W-HoriFPS Plus.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Hori\DS4W-HoriFPS Plus.inf" SelfReg="false"/>
-    <ROW File="DS4WHoriMiniHatsuneMikuFT.inf" Component_="DS4WHoriFightingCommander.inf" FileName="DS4W-H~3.INF|DS4W-HoriMiniHatsuneMikuFT.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Hori\DS4W-HoriMiniHatsuneMikuFT.inf" SelfReg="false"/>
-    <ROW File="DS4WHoriPS4Mini.inf" Component_="DS4WHoriFightingCommander.inf" FileName="DS4W-H~4.INF|DS4W-HoriPS4Mini.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Hori\DS4W-HoriPS4Mini.inf" SelfReg="false"/>
-    <ROW File="DS4WHoriTaiko.inf" Component_="DS4WHoriFightingCommander.inf" FileName="DS4W-H~5.INF|DS4W-HoriTaiko.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Hori\DS4W-HoriTaiko.inf" SelfReg="false"/>
-    <ROW File="DS4WNaconRevolInfinite.inf" Component_="DS4WNaconRevolInfinite.inf" FileName="DS4W-N~1.INF|DS4W-NaconRevolInfinite.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nacon\DS4W-NaconRevolInfinite.inf" SelfReg="false"/>
-    <ROW File="DS4WNaconRevolProv1.inf" Component_="DS4WNaconRevolInfinite.inf" FileName="DS4W-N~2.INF|DS4W-NaconRevolProv1.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nacon\DS4W-NaconRevolProv1.inf" SelfReg="false"/>
-    <ROW File="DS4WNaconRevolProv2.inf" Component_="DS4WNaconRevolInfinite.inf" FileName="DS4W-N~3.INF|DS4W-NaconRevolProv2.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nacon\DS4W-NaconRevolProv2.inf" SelfReg="false"/>
-    <ROW File="DS4WNaconRevolProv3.inf" Component_="DS4WNaconRevolInfinite.inf" FileName="DS4W-N~4.INF|DS4W-NaconRevolProv3.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nacon\DS4W-NaconRevolProv3.inf" SelfReg="false"/>
-    <ROW File="DS4WNaconRevolUPro.inf" Component_="DS4WNaconRevolInfinite.inf" FileName="DS4W-N~5.INF|DS4W-NaconRevolUPro.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nacon\DS4W-NaconRevolUPro.inf" SelfReg="false"/>
-    <ROW File="DS4WJoyConL.inf" Component_="DS4WJoyConL.inf" FileName="DS4W-J~1.INF|DS4W-JoyConL.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nintendo\DS4W-JoyConL.inf" SelfReg="false"/>
-    <ROW File="DS4WJoyConR.inf" Component_="DS4WJoyConL.inf" FileName="DS4W-J~2.INF|DS4W-JoyConR.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nintendo\DS4W-JoyConR.inf" SelfReg="false"/>
-    <ROW File="DS4WSwitchPro.inf" Component_="DS4WJoyConL.inf" FileName="DS4W-S~1.INF|DS4W-SwitchPro.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Nintendo\DS4W-SwitchPro.inf" SelfReg="false"/>
-    <ROW File="DS4WAGAstroC40.inf" Component_="DS4WAGAstroC40.inf" FileName="DS4W-A~1.INF|DS4W-AGAstroC40.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Other\DS4W-AGAstroC40.inf" SelfReg="false"/>
-    <ROW File="DS4WBetopPS4Fun.inf" Component_="DS4WAGAstroC40.inf" FileName="DS4W-B~1.INF|DS4W-BetopPS4Fun.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Other\DS4W-BetopPS4Fun.inf" SelfReg="false"/>
-    <ROW File="DS4WGreenAsiaGamo2Divaller.inf" Component_="DS4WAGAstroC40.inf" FileName="DS4W-G~1.INF|DS4W-GreenAsiaGamo2Divaller.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Other\DS4W-GreenAsiaGamo2Divaller.inf" SelfReg="false"/>
-    <ROW File="DS4WScufVantage.inf" Component_="DS4WAGAstroC40.inf" FileName="DS4W-S~1.INF|DS4W-ScufVantage.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Other\DS4W-ScufVantage.inf" SelfReg="false"/>
-    <ROW File="DS4WSZArmor3LevelUpCobra.inf" Component_="DS4WAGAstroC40.inf" FileName="DS4W-S~2.INF|DS4W-SZArmor3LevelUpCobra.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Other\DS4W-SZArmor3LevelUpCobra.inf" SelfReg="false"/>
-    <ROW File="DS4WSZGioteckVX4.inf" Component_="DS4WAGAstroC40.inf" FileName="DS4W-S~3.INF|DS4W-SZGioteckVX4.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Other\DS4W-SZGioteckVX4.inf" SelfReg="false"/>
-    <ROW File="DS4WRazerRaijuPS4.inf" Component_="DS4WRazerRaijuPS4.inf" FileName="DS4W-R~1.INF|DS4W-RazerRaijuPS4.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Razer\DS4W-RazerRaijuPS4.inf" SelfReg="false"/>
-    <ROW File="DS4WRazerRaijuTE.inf" Component_="DS4WRazerRaijuPS4.inf" FileName="DS4W-R~2.INF|DS4W-RazerRaijuTE.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Razer\DS4W-RazerRaijuTE.inf" SelfReg="false"/>
-    <ROW File="DS4WRazerRaijuTEBT.inf" Component_="DS4WRazerRaijuPS4.inf" FileName="DS4W-R~3.INF|DS4W-RazerRaijuTEBT.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Razer\DS4W-RazerRaijuTEBT.inf" SelfReg="false"/>
-    <ROW File="DS4WRazerRaijuUE.inf" Component_="DS4WRazerRaijuPS4.inf" FileName="DS4W-R~4.INF|DS4W-RazerRaijuUE.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Razer\DS4W-RazerRaijuUE.inf" SelfReg="false"/>
-    <ROW File="DS4WRazerRaijuUEBT.inf" Component_="DS4WRazerRaijuPS4.inf" FileName="DS4W-R~5.INF|DS4W-RazerRaijuUEBT.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Razer\DS4W-RazerRaijuUEBT.inf" SelfReg="false"/>
-    <ROW File="DS4WCronusMaxPS4Mode.inf" Component_="DS4WCronusMaxPS4Mode.inf" FileName="DS4W-C~1.INF|DS4W-CronusMaxPS4Mode.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Sony\DS4W-CronusMaxPS4Mode.inf" SelfReg="false"/>
-    <ROW File="DS4WDualSense.inf" Component_="DS4WCronusMaxPS4Mode.inf" FileName="DS4W-D~1.INF|DS4W-DualSense.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Sony\DS4W-DualSense.inf" SelfReg="false"/>
-    <ROW File="DS4WDualShock4v1.inf" Component_="DS4WCronusMaxPS4Mode.inf" FileName="DS4W-D~2.INF|DS4W-DualShock4v1.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Sony\DS4W-DualShock4v1.inf" SelfReg="false"/>
-    <ROW File="DS4WDualShock4v2.inf" Component_="DS4WCronusMaxPS4Mode.inf" FileName="DS4W-D~3.INF|DS4W-DualShock4v2.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Sony\DS4W-DualShock4v2.inf" SelfReg="false"/>
-    <ROW File="DS4WSonyWA.inf" Component_="DS4WCronusMaxPS4Mode.inf" FileName="DS4W-S~1.INF|DS4W-SonyWA.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Sony\DS4W-SonyWA.inf" SelfReg="false"/>
-    <ROW File="DS4WZeroplusBrookMars.inf" Component_="DS4WZeroplusBrookMars.inf" FileName="DS4W-Z~1.INF|DS4W-ZeroplusBrookMars.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Zeroplus\DS4W-ZeroplusBrookMars.inf" SelfReg="false"/>
-    <ROW File="DS4WZeroplusSnakeByteGamePad4S.inf" Component_="DS4WZeroplusBrookMars.inf" FileName="DS4W-Z~2.INF|DS4W-ZeroplusSnakeByteGamePad4S.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Zeroplus\DS4W-ZeroplusSnakeByteGamePad4S.inf" SelfReg="false"/>
-    <ROW File="DS4WZeroplusSteelPlayMetalTech.inf" Component_="DS4WZeroplusBrookMars.inf" FileName="DS4W-Z~3.INF|DS4W-ZeroplusSteelPlayMetalTech.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Zeroplus\DS4W-ZeroplusSteelPlayMetalTech.inf" SelfReg="false"/>
-    <ROW File="DS4WZeroplusWarriorJoypadJS083.inf" Component_="DS4WZeroplusBrookMars.inf" FileName="DS4W-Z~4.INF|DS4W-ZeroplusWarriorJoypadJS083.inf" Attributes="0" SourcePath="..\Publish\x64\DriverManagement\Drivers\Zeroplus\DS4W-ZeroplusWarriorJoypadJS083.inf" SelfReg="false"/>
     <ROW File="Vapour.Client.Core.dll" Component_="Vapour.Client.Core.dll" FileName="DS4WIN~1.DLL|Vapour.Client.Core.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Core.dll" SelfReg="false"/>
     <ROW File="Vapour.Client.Core.Interfaces.dll" Component_="Vapour.Client.Core.Interfaces.dll" FileName="DS4WIN~2.DLL|Vapour.Client.Core.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Core.Interfaces.dll" SelfReg="false"/>
     <ROW File="Vapour.Client.Core.Interfaces.pdb" Component_="Vapour.Client.Core.Interfaces.dll" FileName="DS4WIN~1.PDB|Vapour.Client.Core.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.Core.Interfaces.pdb" SelfReg="false"/>
@@ -304,8 +250,6 @@
     <ROW File="MaterialDesignExtensions.resources.dll_15" Component_="MaterialDesignExtensions.resources.dll_15" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\fr-FR\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="Hardcodet.NotifyIcon.Wpf.dll" Component_="Hardcodet.NotifyIcon.Wpf.dll" FileName="HARDCO~1.DLL|Hardcodet.NotifyIcon.Wpf.dll" Attributes="0" SourcePath="..\Publish\x64\Hardcodet.NotifyIcon.Wpf.dll" SelfReg="false"/>
     <ROW File="JetBrains.Annotations.dll" Component_="JetBrains.Annotations.dll" FileName="JETBRA~1.DLL|JetBrains.Annotations.dll" Attributes="0" SourcePath="..\Publish\x64\JetBrains.Annotations.dll" SelfReg="false"/>
-    <ROW File="libwdi.dll" Component_="libwdi.dll" FileName="libwdi.dll" Attributes="0" SourcePath="..\Publish\x64\libwdi\amd64\libwdi.dll" SelfReg="false"/>
-    <ROW File="wdisimple.exe" Component_="wdisimple.exe" FileName="WDI-SI~1.EXE|wdi-simple.exe" Attributes="0" SourcePath="..\Publish\x64\libwdi\amd64\wdi-simple.exe" SelfReg="false" DigSign="true"/>
     <ROW File="MaterialDesignColors.dll" Component_="MaterialDesignColors.dll" FileName="MATERI~1.DLL|MaterialDesignColors.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignColors.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.dll" Component_="MaterialDesignExtensions.dll" FileName="MATERI~2.DLL|MaterialDesignExtensions.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignExtensions.dll" SelfReg="false"/>
     <ROW File="MaterialDesignThemes.Wpf.dll" Component_="MaterialDesignThemes.Wpf.dll" FileName="MATERI~3.DLL|MaterialDesignThemes.Wpf.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignThemes.Wpf.dll" SelfReg="false"/>
@@ -347,7 +291,6 @@
     <ROW File="OpenTelemetry.dll" Component_="OpenTelemetry.dll" FileName="OPENTE~2.DLL|OpenTelemetry.dll" Attributes="0" SourcePath="..\Publish\x64\OpenTelemetry.dll" SelfReg="false"/>
     <ROW File="OpenTelemetry.Exporter.Jaeger.dll" Component_="OpenTelemetry.Exporter.Jaeger.dll" FileName="OPENTE~3.DLL|OpenTelemetry.Exporter.Jaeger.dll" Attributes="0" SourcePath="..\Publish\x64\OpenTelemetry.Exporter.Jaeger.dll" SelfReg="false"/>
     <ROW File="OpenTelemetry.Extensions.Hosting.dll" Component_="OpenTelemetry.Extensions.Hosting.dll" FileName="OPENTE~4.DLL|OpenTelemetry.Extensions.Hosting.dll" Attributes="0" SourcePath="..\Publish\x64\OpenTelemetry.Extensions.Hosting.dll" SelfReg="false"/>
-    <ROW File="PropertyChanged.dll" Component_="PropertyChanged.dll" FileName="PROPER~1.DLL|PropertyChanged.dll" Attributes="0" SourcePath="..\Publish\x64\PropertyChanged.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_16" Component_="MaterialDesignExtensions.resources.dll_16" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\pt\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_17" Component_="MaterialDesignExtensions.resources.dll_17" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\pt-BR\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_18" Component_="MaterialDesignExtensions.resources.dll_18" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\Ru\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
@@ -549,13 +492,6 @@
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_11"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_12"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_13"/>
-    <ROW Feature_="MainFeature" Component_="DS4WHoriFightingCommander.inf"/>
-    <ROW Feature_="MainFeature" Component_="DS4WNaconRevolInfinite.inf"/>
-    <ROW Feature_="MainFeature" Component_="DS4WJoyConL.inf"/>
-    <ROW Feature_="MainFeature" Component_="DS4WAGAstroC40.inf"/>
-    <ROW Feature_="MainFeature" Component_="DS4WRazerRaijuPS4.inf"/>
-    <ROW Feature_="MainFeature" Component_="DS4WCronusMaxPS4Mode.inf"/>
-    <ROW Feature_="MainFeature" Component_="DS4WZeroplusBrookMars.inf"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Client.Core.dll"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Client.Core.Interfaces.dll"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Client.Modules.dll"/>
@@ -582,8 +518,6 @@
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_15"/>
     <ROW Feature_="MainFeature" Component_="Hardcodet.NotifyIcon.Wpf.dll"/>
     <ROW Feature_="MainFeature" Component_="JetBrains.Annotations.dll"/>
-    <ROW Feature_="MainFeature" Component_="libwdi.dll"/>
-    <ROW Feature_="MainFeature" Component_="wdisimple.exe"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignColors.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignThemes.Wpf.dll"/>
@@ -625,7 +559,6 @@
     <ROW Feature_="MainFeature" Component_="OpenTelemetry.dll"/>
     <ROW Feature_="MainFeature" Component_="OpenTelemetry.Exporter.Jaeger.dll"/>
     <ROW Feature_="MainFeature" Component_="OpenTelemetry.Extensions.Hosting.dll"/>
-    <ROW Feature_="MainFeature" Component_="PropertyChanged.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_16"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_17"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_18"/>
