@@ -36,4 +36,10 @@ public interface IControllerManagerService
     ///     Gets invoked when a slot got freed.
     /// </summary>
     event Action<CompatibleHidDeviceSlot> ControllerSlotFreed;
+
+    /// <summary>
+    /// Identinates the passed controller
+    /// </summary>
+    /// <param name="instanceId">The instanceId of the controller to identinate</param>
+    void IdentinateController(string instanceId);
 }

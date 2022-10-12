@@ -115,7 +115,7 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
 
     public void HideController(IControllerItemViewModel controller)
     {
-        //controllerDriverManagementService.HideController(controller.ParentInstance);
+        controllerService.IdentinateController(controller.ParentInstance);
     }
 
     public void UnHideController(IControllerItemViewModel controller)

@@ -2,6 +2,10 @@
 
 using JetBrains.Annotations;
 
+using Nefarius.Drivers.Identinator;
+using Nefarius.Utilities.DeviceManagement.Extensions;
+using Nefarius.Utilities.DeviceManagement.PnP;
+
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Devices.HID;
 
@@ -13,9 +17,12 @@ namespace Vapour.Shared.Devices.Services;
 public sealed class ControllerManagerService : IControllerManagerService
 {
     private readonly ObservableCollection<CompatibleHidDeviceSlot> _activeControllers;
+    private readonly FilterDriver _filterDriver = new();
 
     public ControllerManagerService()
     {
+        _filterDriver.IsEnabled = true;
+
         _activeControllers = new ObservableCollection<CompatibleHidDeviceSlot>(Enumerable
             .Range(0, Constants.MaxControllers)
             .Select(i => new CompatibleHidDeviceSlot(i))
@@ -65,4 +72,22 @@ public sealed class ControllerManagerService : IControllerManagerService
 
     /// <inheritdoc />
     public event Action<CompatibleHidDeviceSlot> ControllerSlotFreed;
+
+    /// <inheritdoc />
+    public void IdentinateController(string instanceId)
+    {
+        var device = PnPDevice.GetDeviceByInstanceId(instanceId);
+        var hardwareIds= device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
+
+        var entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareIds[0]);
+        entry.CompatibleIds = new[]
+        {
+            @"USB\MS_COMP_WINUSB",
+            @"USB\Class_FF&SubClass_5D&Prot_01",
+            @"USB\Class_FF&SubClass_5D",
+            @"USB\Class_FF"
+        };
+
+        device.ToUsbPnPDevice().CyclePort();
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
+using System.Web;
 using System.Windows;
 
 using Newtonsoft.Json;
@@ -119,6 +120,17 @@ public sealed class ControllerServiceClient : IControllerServiceClient
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+        }
+    }
+
+    public async Task IdentinateController(string instanceId)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/identinate/{HttpUtility.UrlEncode(instanceId)}", null);
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not identinate the controller {result.ReasonPhrase}");
         }
     }
 
