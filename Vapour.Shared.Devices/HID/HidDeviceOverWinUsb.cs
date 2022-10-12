@@ -2,8 +2,6 @@
 
 using Nefarius.Drivers.WinUSB;
 
-using Vapour.Shared.Devices.Interfaces.HID;
-
 namespace Vapour.Shared.Devices.HID;
 
 /// <summary>

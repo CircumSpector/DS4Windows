@@ -3,8 +3,6 @@
 using Nefarius.ViGEm.Client;
 
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.Interfaces.Output;
-using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Output;
 
 namespace Vapour.Shared.Devices.Services;

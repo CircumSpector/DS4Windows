@@ -6,9 +6,7 @@ using Microsoft.Extensions.Logging;
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Interfaces.HID;
-using Vapour.Shared.Devices.Interfaces.Output;
-using Vapour.Shared.Devices.Interfaces.Services;
+using Vapour.Shared.Devices.Output;
 
 namespace Vapour.Shared.Devices.Services;
 

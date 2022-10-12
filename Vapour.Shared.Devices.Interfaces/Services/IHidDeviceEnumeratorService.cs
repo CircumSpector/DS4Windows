@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 
-using Vapour.Shared.Devices.Interfaces.HID;
+using Vapour.Shared.Devices.HID;
 
-namespace Vapour.Shared.Devices.Interfaces.Services;
+namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.

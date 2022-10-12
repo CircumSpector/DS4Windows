@@ -1,6 +1,4 @@
-﻿using Vapour.Shared.Devices.Interfaces.HID;
-
-namespace Vapour.Shared.Devices.HID.Devices.Reports;
+﻿namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 public struct TrackPadTouch
 {

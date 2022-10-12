@@ -2,7 +2,7 @@
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
-using Vapour.Shared.Devices.Interfaces.HID;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
 

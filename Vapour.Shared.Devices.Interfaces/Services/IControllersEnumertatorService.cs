@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 
-using Vapour.Shared.Devices.Interfaces.HID;
+using Vapour.Shared.Devices.HID;
 
-namespace Vapour.Shared.Devices.Interfaces.Services;
+namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
 ///     Enumerates and watches hot-plugging of supported input devices (controllers).

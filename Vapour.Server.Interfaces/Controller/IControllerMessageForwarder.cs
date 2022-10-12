@@ -1,6 +1,6 @@
 ﻿using System.Net.WebSockets;
 
-using Vapour.Shared.Devices.Interfaces.HID;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Server.Controller;
 

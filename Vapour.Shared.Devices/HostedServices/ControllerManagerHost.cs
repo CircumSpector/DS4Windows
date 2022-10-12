@@ -6,8 +6,6 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Interfaces.HID;
-using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.HostedServices;

@@ -1,5 +1,4 @@
-﻿using Vapour.Shared.Devices.Interfaces.HID;
-using Vapour.Shared.Devices.Interfaces.Output;
+﻿using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
 

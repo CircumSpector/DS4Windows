@@ -11,7 +11,6 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Interfaces.Services;
 
 namespace Vapour.Shared.Devices.Services;
 

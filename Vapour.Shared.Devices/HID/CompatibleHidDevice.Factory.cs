@@ -1,5 +1,4 @@
 ﻿using Vapour.Shared.Devices.HID.Devices;
-using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Shared.Devices.HID;
 

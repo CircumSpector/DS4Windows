@@ -1,6 +1,4 @@
-﻿using Vapour.Shared.Devices.Interfaces.HID;
-
-namespace Vapour.Shared.Devices.HID.Devices;
+﻿namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
 {

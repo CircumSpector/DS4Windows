@@ -1,5 +1,4 @@
 ﻿using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.Interfaces.Output;
 
 namespace Vapour.Shared.Devices.Output;
 

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+	  <RootNamespace>Vapour.Shared.Devices</RootNamespace>
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
@@ -18,7 +19,13 @@
     </PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Vapour.Shared.Devices</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
 		<ProjectReference Include="..\Vapour.Shared.Common.Interfaces\Vapour.Shared.Common.Interfaces.csproj" />
 	</ItemGroup>
 

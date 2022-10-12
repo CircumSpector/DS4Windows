@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Shared.Devices.Types;
 

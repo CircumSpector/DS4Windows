@@ -9,7 +9,6 @@ using Nefarius.ViGEm.Client;
 using Vapour.Client.Core.DependencyInjection;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HostedServices;
-using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices;
