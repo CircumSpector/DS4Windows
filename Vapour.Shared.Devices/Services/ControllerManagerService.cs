@@ -80,6 +80,7 @@ public sealed class ControllerManagerService : IControllerManagerService
         var hardwareIds= device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
 
         var entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareIds[0]);
+        entry.IsReplacingEnabled = true;
         entry.CompatibleIds = new[]
         {
             @"USB\MS_COMP_WINUSB",
