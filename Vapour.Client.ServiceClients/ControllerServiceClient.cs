@@ -134,6 +134,17 @@ public sealed class ControllerServiceClient : IControllerServiceClient
         }
     }
 
+    public async Task UnfilterController(string instanceId)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/unfilter/{HttpUtility.UrlEncode(instanceId)}", null);
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not unfilter the controller {result.ReasonPhrase}");
+        }
+    }
+
     private async void Current_Exit(object sender, ExitEventArgs e)
     {
         if (_websocketClient != null)

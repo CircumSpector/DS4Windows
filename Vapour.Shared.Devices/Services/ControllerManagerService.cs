@@ -17,11 +17,14 @@ namespace Vapour.Shared.Devices.Services;
 public sealed class ControllerManagerService : IControllerManagerService
 {
     private readonly ObservableCollection<CompatibleHidDeviceSlot> _activeControllers;
-    private readonly FilterDriver _filterDriver = new();
+    //private readonly FilterDriver _filterDriver = new();
 
     public ControllerManagerService()
     {
-        _filterDriver.IsEnabled = true;
+        // thinking we should enable/disable on service host stop/start and based on a config entry
+        // that would allow for cleanup while not running
+        // and allow different users of the same computer to choose whether to use it
+        //_filterDriver.IsEnabled = true;
 
         _activeControllers = new ObservableCollection<CompatibleHidDeviceSlot>(Enumerable
             .Range(0, Constants.MaxControllers)
@@ -79,6 +82,9 @@ public sealed class ControllerManagerService : IControllerManagerService
         var device = PnPDevice.GetDeviceByInstanceId(instanceId);
         var hardwareIds= device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
 
+        //TODO: filter the controller and cycle the port
+
+        /*
         var entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareIds[0]);
         entry.IsReplacingEnabled = true;
         entry.CompatibleIds = new[]
@@ -90,5 +96,15 @@ public sealed class ControllerManagerService : IControllerManagerService
         };
 
         device.ToUsbPnPDevice().CyclePort();
+        */
+    }
+
+    /// <inheritdoc />
+    public void UnfilterController(string instanceId)
+    {
+        var device = PnPDevice.GetDeviceByInstanceId(instanceId);
+        var hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
+
+        //TODO: fill in the unfilter
     }
 }

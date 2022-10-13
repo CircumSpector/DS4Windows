@@ -15,7 +15,6 @@ namespace Vapour.Client.Modules.Controllers;
 public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel, IControllersView>,
     IControllersViewModel
 {
-    //private readonly IControllerDriverManagementService controllerDriverManagementService;
     private readonly IControllerServiceClient controllerService;
     private readonly IProfileServiceClient profilesService;
     private readonly IServiceProvider serviceProvider;
@@ -23,22 +22,20 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
     public ControllersViewModel(
         IProfileServiceClient profilesService,
         IServiceProvider serviceProvider,
-        //IControllerDriverManagementService controllerDriverManagementService,
         IControllerServiceClient controllerService)
     {
         this.serviceProvider = serviceProvider;
-        //this.controllerDriverManagementService = controllerDriverManagementService;
         this.controllerService = controllerService;
         this.profilesService = profilesService;
 
-        HideCommand = new RelayCommand<IControllerItemViewModel>(HideController);
-        UnhideCommand = new RelayCommand<IControllerItemViewModel>(UnHideController);
+        FilterCommand = new RelayCommand<IControllerItemViewModel>(FilterController);
+        UnfilterCommand = new RelayCommand<IControllerItemViewModel>(UnfilterController);
 
         CreateSelectableProfileItems();
     }
 
-    public RelayCommand<IControllerItemViewModel> HideCommand { get; }
-    public RelayCommand<IControllerItemViewModel> UnhideCommand { get; }
+    public RelayCommand<IControllerItemViewModel> FilterCommand { get; }
+    public RelayCommand<IControllerItemViewModel> UnfilterCommand { get; }
     public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new();
     public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new();
 
@@ -113,14 +110,14 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
         }
     }
 
-    public void HideController(IControllerItemViewModel controller)
+    public void FilterController(IControllerItemViewModel controller)
     {
-        controllerService.FilterController(controller.ParentInstance);
+        controllerService.FilterController(controller.InstanceId);
     }
 
-    public void UnHideController(IControllerItemViewModel controller)
+    public void UnfilterController(IControllerItemViewModel controller)
     {
-        //controllerDriverManagementService.UnhideController(controller.ParentInstance);
+        controllerService.UnfilterController(controller.InstanceId);
     }
 
     protected override void Dispose(bool disposing)

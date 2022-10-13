@@ -42,4 +42,10 @@ public interface IControllerManagerService
     /// </summary>
     /// <param name="instanceId">The instanceId of the controller to filter</param>
     void FilterController(string instanceId);
+
+    /// <summary>
+    /// Unfilters the passed controller
+    /// </summary>
+    /// <param name="instanceId">The instanceId of the controller to unfilter</param>
+    void UnfilterController(string instanceId);
 }
