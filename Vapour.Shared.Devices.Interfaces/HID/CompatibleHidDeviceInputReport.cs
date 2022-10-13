@@ -1,4 +1,4 @@
-﻿namespace Vapour.Shared.Devices.Interfaces.HID;
+﻿namespace Vapour.Shared.Devices.HID;
 
 public enum DPadDirection
 {

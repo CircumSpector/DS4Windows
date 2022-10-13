@@ -1,9 +1,9 @@
 ﻿using Nefarius.ViGEm.Client;
 
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.Interfaces.Output;
+using Vapour.Shared.Devices.Output;
 
-namespace Vapour.Shared.Devices.Interfaces.Services;
+namespace Vapour.Shared.Devices.Services;
 
 public interface IOutputSlotManager
 {

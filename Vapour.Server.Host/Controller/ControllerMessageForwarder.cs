@@ -5,8 +5,8 @@ using Newtonsoft.Json;
 
 using Vapour.Server.Controller;
 using Vapour.Shared.Configuration.Profiles.Services;
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HostedServices;
-using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Server.Host.Controller;
 

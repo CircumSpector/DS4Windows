@@ -1,4 +1,4 @@
-﻿namespace Vapour.Shared.Devices.Interfaces.HID;
+﻿namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
 ///     Describes possible driver services (primary driver) a device can operate under.

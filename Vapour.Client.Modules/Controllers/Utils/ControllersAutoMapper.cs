@@ -3,7 +3,7 @@
 using AutoMapper;
 
 using Vapour.Server.Controller;
-using Vapour.Shared.Devices.Interfaces.HID;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Client.Modules.Controllers.Utils;
 

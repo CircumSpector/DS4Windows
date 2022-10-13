@@ -1,6 +1,6 @@
 ﻿using Vapour.Shared.Common.Types;
 
-namespace Vapour.Shared.Devices.Interfaces.Output;
+namespace Vapour.Shared.Devices.Output;
 
 public interface IOutSlotDevice
 {

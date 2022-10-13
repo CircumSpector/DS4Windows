@@ -9,8 +9,6 @@ using JetBrains.Annotations;
 
 using Microsoft.Win32.SafeHandles;
 
-using Vapour.Shared.Devices.Interfaces.HID;
-
 namespace Vapour.Shared.Devices.HID;
 
 public sealed class HidDeviceException : Exception

@@ -1,6 +1,6 @@
-﻿using Vapour.Shared.Devices.Interfaces.HID;
+﻿using Vapour.Shared.Devices.HID;
 
-namespace Vapour.Shared.Devices.Interfaces.Output;
+namespace Vapour.Shared.Devices.Output;
 
 public interface IOutDevice
 {

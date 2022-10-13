@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.Devices;
-using Vapour.Shared.Devices.Interfaces.HID;
 using Vapour.Shared.Devices.Types;
 
 namespace Vapour.Shared.Devices.Services;

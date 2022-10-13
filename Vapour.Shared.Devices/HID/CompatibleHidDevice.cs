@@ -16,7 +16,6 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client.Exceptions;
 
 using Vapour.Shared.Common.Telemetry;
-using Vapour.Shared.Devices.Interfaces.HID;
 
 namespace Vapour.Shared.Devices.HID;
 

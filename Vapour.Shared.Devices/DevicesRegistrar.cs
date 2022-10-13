@@ -7,11 +7,8 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
 
 using Vapour.Client.Core.DependencyInjection;
-using Vapour.Shared.Devices.DriverManagement;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HostedServices;
-using Vapour.Shared.Devices.Interfaces.DriverManagement;
-using Vapour.Shared.Devices.Interfaces.Services;
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices;
@@ -28,9 +25,6 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
         services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
-        services.AddSingleton<IWdiWrapper, WdiWrapper>();
-        services.AddSingleton<IControllerDriverManagementService, ControllerDriverManagementService>();
-
         //
         // ViGEm Client (Gen1) service
         // 

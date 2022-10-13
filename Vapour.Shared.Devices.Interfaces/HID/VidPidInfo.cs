@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Vapour.Shared.Devices.Interfaces.HID;
+namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
 ///     VidPidFeatureSet feature bit-flags (the default in VidPidInfo is zero value = standard DS4 behavior)
