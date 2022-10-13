@@ -11,10 +11,6 @@
 	<Import Project="..\CommonProjectProperties.targets" />
 
 	<ItemGroup>
-		<None Remove="Splashscreen.png" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="Vapour.ico" />
 	</ItemGroup>
 
@@ -58,10 +54,6 @@
 	  <ProjectReference Include="..\Vapour.Client.ServiceClients.Interfaces\Vapour.Client.ServiceClients.Interfaces.csproj" />
 	  <ProjectReference Include="..\Vapour.Client.ServiceClients\Vapour.Client.ServiceClients.csproj" />
 	  <ProjectReference Include="..\Vapour.Shared.Common\Vapour.Shared.Common.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<SplashScreen Include="Splashscreen.png" />
 	</ItemGroup>
 
 	<ItemGroup>
