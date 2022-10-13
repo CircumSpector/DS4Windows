@@ -74,7 +74,7 @@ public sealed class ControllerManagerService : IControllerManagerService
     public event Action<CompatibleHidDeviceSlot> ControllerSlotFreed;
 
     /// <inheritdoc />
-    public void IdentinateController(string instanceId)
+    public void FilterController(string instanceId)
     {
         var device = PnPDevice.GetDeviceByInstanceId(instanceId);
         var hardwareIds= device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);

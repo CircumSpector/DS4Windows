@@ -1,5 +1,5 @@
 ﻿namespace Vapour.Server.Controller;
-public class IdentinateControllerRequest
+public class FilterControllerRequest
 {
     public string InstanceId { get; set; }
 }

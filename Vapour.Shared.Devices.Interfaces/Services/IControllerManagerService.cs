@@ -38,8 +38,8 @@ public interface IControllerManagerService
     event Action<CompatibleHidDeviceSlot> ControllerSlotFreed;
 
     /// <summary>
-    /// Identinates the passed controller
+    /// Filters the passed controller
     /// </summary>
-    /// <param name="instanceId">The instanceId of the controller to identinate</param>
-    void IdentinateController(string instanceId);
+    /// <param name="instanceId">The instanceId of the controller to filter</param>
+    void FilterController(string instanceId);
 }

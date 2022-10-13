@@ -123,14 +123,14 @@ public sealed class ControllerServiceClient : IControllerServiceClient
         }
     }
 
-    public async Task IdentinateController(string instanceId)
+    public async Task FilterController(string instanceId)
     {
         using HttpClient client = _clientFactory.CreateClient();
 
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/identinate/{HttpUtility.UrlEncode(instanceId)}", null);
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/filter/{HttpUtility.UrlEncode(instanceId)}", null);
         if (!result.IsSuccessStatusCode)
         {
-            throw new Exception($"Could not identinate the controller {result.ReasonPhrase}");
+            throw new Exception($"Could not filter the controller {result.ReasonPhrase}");
         }
     }
 
