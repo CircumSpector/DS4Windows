@@ -57,10 +57,11 @@ public class ControllerFilterService : IControllerFilterService
     public void FilterController(string instanceId)
     {
         Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
-
+        var usbDevice = device.Item1.ToUsbPnPDevice();
+        var hardwareId = device.Item2;
         //TODO: filter the controller and cycle the port
 
-        RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(device.Item2);
+        RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
         entry.IsReplacingEnabled = true;
         entry.CompatibleIds = new[]
         {
@@ -68,22 +69,25 @@ public class ControllerFilterService : IControllerFilterService
         };
         entry.Dispose();
 
-        device.Item1.ToUsbPnPDevice().CyclePort();
+        usbDevice.CyclePort();
     }
 
     /// <inheritdoc />
     public void UnfilterController(string instanceId)
     {
         Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
-
+        var usbDevice = device.Item1.ToUsbPnPDevice();
+        var hardwareId = device.Item2;
         //TODO: fill in the unfilter
 
-        RewriteEntry entry = _filterDriver.GetRewriteEntryFor(device.Item2);
+        RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
         if (entry != null)
         {
             entry.IsReplacingEnabled = false;
             entry.Dispose();
         }
+
+        usbDevice.CyclePort();
     }
 
     private static string? GetLocalDriverVersion()
