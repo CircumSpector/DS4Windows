@@ -13,4 +13,6 @@ public interface IControllerServiceClient
     Task<bool> IsHostRunning();
     Task StartHost();
     Task StopHost();
+    Task FilterController(string instanceId);
+    Task UnfilterController(string instanceId);
 }

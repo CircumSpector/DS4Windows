@@ -6,6 +6,13 @@
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
+	
+	<ItemGroup>
+	  <Compile Remove="Properties\**" />
+	  <EmbeddedResource Remove="Properties\**" />
+	  <None Remove="Properties\**" />
+	  <Page Remove="Properties\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="Controllers\Images\BT.png" />
@@ -74,7 +81,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3" PrivateAssets="All"/>
+		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3" PrivateAssets="All" />
     <PackageReference Include="System.Net.WebSockets" Version="4.3.0" />
 		<PackageReference Include="Websocket.Client" Version="4.4.43" />
 	</ItemGroup>
@@ -110,10 +117,6 @@
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 			<SubType>Designer</SubType>
 		</Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\PublishProfiles\" />
 	</ItemGroup>
 
 </Project>
