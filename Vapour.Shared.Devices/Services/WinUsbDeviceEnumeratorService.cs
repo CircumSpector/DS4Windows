@@ -43,6 +43,14 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
                     {
                         InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
                     }
+                },
+                {
+                    // Sony DualSense
+                    new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x0CE6 },
+                    new HidDeviceOverWinUsbEndpoints
+                    {
+                        InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
+                    }
                 }
             };
 
