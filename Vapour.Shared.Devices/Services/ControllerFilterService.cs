@@ -27,6 +27,10 @@ public class ControllerFilterService : IControllerFilterService
         try
         {
             _filterDriver = new FilterDriver();
+            if (GetFilterDriverInstalled())
+            {
+                SetFilterDriverEnabled(true);
+            }
         }
         catch (SecurityException ex)
         {
