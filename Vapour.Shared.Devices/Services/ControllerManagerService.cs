@@ -1,6 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.Security;
 
 using JetBrains.Annotations;
+
+using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.Identinator;
 using Nefarius.Utilities.DeviceManagement.Extensions;
@@ -17,14 +20,29 @@ namespace Vapour.Shared.Devices.Services;
 public sealed class ControllerManagerService : IControllerManagerService
 {
     private readonly ObservableCollection<CompatibleHidDeviceSlot> _activeControllers;
-    private readonly FilterDriver _filterDriver = new();
+    private readonly FilterDriver _filterDriver;
+    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+    private readonly ILogger<ControllerManagerService> _logger;
 
-    public ControllerManagerService()
+    public ControllerManagerService(ILogger<ControllerManagerService> logger)
     {
-        // thinking we should enable/disable on service host stop/start and based on a config entry
-        // that would allow for cleanup while not running
-        // and allow different users of the same computer to choose whether to use it
-        _filterDriver.IsEnabled = true;
+        _logger = logger;
+
+        try
+        {
+            _filterDriver = new FilterDriver
+            {
+                // and allow different users of the same computer to choose whether to use it
+                // that would allow for cleanup while not running
+                // thinking we should enable/disable on service host stop/start and based on a config entry
+                IsEnabled = true
+            };
+        }
+        catch (SecurityException ex)
+        {
+            _logger.LogError(ex, "To use the rewrite feature, the service must be run as Administrator!");
+            throw;
+        }
 
         _activeControllers = new ObservableCollection<CompatibleHidDeviceSlot>(Enumerable
             .Range(0, Constants.MaxControllers)
@@ -41,13 +59,15 @@ public sealed class ControllerManagerService : IControllerManagerService
     /// <inheritdoc />
     public int AssignFreeSlotWith(ICompatibleHidDevice device)
     {
-        var slot = _activeControllers.FirstOrDefault(s => !s.IsOccupied);
+        CompatibleHidDeviceSlot slot = _activeControllers.FirstOrDefault(s => !s.IsOccupied);
 
         //
         // No free slot
         // 
         if (slot is null)
+        {
             return -1;
+        }
 
         slot.Device = device;
         slot.IsOccupied = true;
@@ -60,7 +80,7 @@ public sealed class ControllerManagerService : IControllerManagerService
     /// <inheritdoc />
     public int FreeSlotContaining(ICompatibleHidDevice device)
     {
-        var slot = _activeControllers.First(s => Equals(s.Device, device));
+        CompatibleHidDeviceSlot slot = _activeControllers.First(s => Equals(s.Device, device));
 
         ControllerSlotFreed?.Invoke(slot);
 
@@ -79,18 +99,15 @@ public sealed class ControllerManagerService : IControllerManagerService
     /// <inheritdoc />
     public void FilterController(string instanceId)
     {
-        var device = GetDeviceToFilter(instanceId);
+        Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
 
         //TODO: filter the controller and cycle the port
 
-        var entry = _filterDriver.AddOrUpdateRewriteEntry(device.Item2);
+        RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(device.Item2);
         entry.IsReplacingEnabled = true;
         entry.CompatibleIds = new[]
         {
-            @"USB\MS_COMP_WINUSB",
-            @"USB\Class_FF&SubClass_5D&Prot_01",
-            @"USB\Class_FF&SubClass_5D",
-            @"USB\Class_FF"
+            @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D", @"USB\Class_FF"
         };
         entry.Dispose();
 
@@ -100,11 +117,11 @@ public sealed class ControllerManagerService : IControllerManagerService
     /// <inheritdoc />
     public void UnfilterController(string instanceId)
     {
-        var device = GetDeviceToFilter(instanceId);
+        Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
 
         //TODO: fill in the unfilter
 
-        var entry = _filterDriver.GetRewriteEntryFor(device.Item2);
+        RewriteEntry entry = _filterDriver.GetRewriteEntryFor(device.Item2);
         if (entry != null)
         {
             entry.IsReplacingEnabled = false;
@@ -114,11 +131,11 @@ public sealed class ControllerManagerService : IControllerManagerService
 
     private Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
     {
-        var device = PnPDevice.GetDeviceByInstanceId(instanceId);
-        var hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
+        PnPDevice device = PnPDevice.GetDeviceByInstanceId(instanceId);
+        string[] hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
         if (hardwareIds[0].StartsWith("HID"))
         {
-            var parentInputDeviceId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            string parentInputDeviceId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
             device = PnPDevice.GetDeviceByInstanceId(parentInputDeviceId);
             hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
         }
