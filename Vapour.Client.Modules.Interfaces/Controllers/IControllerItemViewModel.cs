@@ -24,6 +24,7 @@ public interface IControllerItemViewModel : IViewModel<IControllerItemViewModel>
     SolidColorBrush CurrentColor { get; set; }
     string InstanceId { get; set; }
     string ParentInstance { get; set; }
+    bool IsFiltered { get; set; }
 
     void SetDevice(ControllerConnectedMessage device);
 }

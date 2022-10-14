@@ -28,5 +28,7 @@ public sealed class ControllerConnectedMessage : MessageBase
 
     public Guid SelectedProfileId { get; init; }
 
+    public bool IsFiltered { get; set; }
+
     public override string MessageName => Name;
 }

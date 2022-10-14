@@ -128,6 +128,9 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     public bool IsInputReportAvailableInvoked { get; set; } = true;
 
     /// <inheritdoc />
+    public bool IsFiltered { get; set; }
+
+    /// <inheritdoc />
     public event Action<ICompatibleHidDevice> Disconnected;
 
     /// <inheritdoc />

@@ -113,7 +113,14 @@ public class ControllerItemViewModel : ViewModel<IControllerItemViewModel>, ICon
         get => currentColor;
         set => SetProperty(ref currentColor, value);
     }
-
+    
+    private bool _isFiltered;
+    public bool IsFiltered
+    {
+        get => _isFiltered;
+        set => SetProperty(ref _isFiltered, value);
+    } 
+    
     public string InstanceId { get; set; }
     public string ParentInstance { get; set; }
 
