@@ -47,9 +47,9 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.HideCommand}"
+                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.FilterCommand}"
                                         CommandParameter="{Binding}"
-                                          Content="Hide">
+                                          Content="Filter">
                                 </Button>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -57,9 +57,9 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.UnhideCommand}"
+                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.UnfilterCommand}"
                                         CommandParameter="{Binding}"
-                                        Content="Unhide">
+                                          Content="Unfilter">
                                 </Button>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
+using System.Web;
 using System.Windows;
 
 using Newtonsoft.Json;
@@ -119,6 +120,28 @@ public sealed class ControllerServiceClient : IControllerServiceClient
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
+        }
+    }
+
+    public async Task FilterController(string instanceId)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/filter/{HttpUtility.UrlEncode(instanceId)}", null);
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not filter the controller {result.ReasonPhrase}");
+        }
+    }
+
+    public async Task UnfilterController(string instanceId)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/unfilter/{HttpUtility.UrlEncode(instanceId)}", null);
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not unfilter the controller {result.ReasonPhrase}");
         }
     }
 

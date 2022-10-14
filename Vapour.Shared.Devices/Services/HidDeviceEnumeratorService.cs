@@ -7,6 +7,8 @@ using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
 using Windows.Win32.Storage.FileSystem;
 
+using JetBrains.Annotations;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 
@@ -81,6 +83,11 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
             {
                 HidDevice entry = CreateNewHidDevice(path);
 
+                if (entry is null)
+                {
+                    continue;
+                }
+
                 _logger.LogInformation("Discovered HID device {Device}", entry);
 
                 _connectedDevices.Add(entry);
@@ -106,12 +113,20 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
     /// </summary>
     /// <param name="path">The symbolic link path of the device instance.</param>
     /// <returns>The new <see cref="HidDevice" />.</returns>
+    [CanBeNull]
     private HidDevice CreateNewHidDevice(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(CreateNewHidDevice)}");
 
         activity?.SetTag("Path", path);
+
+        if (!TestDeviceAccess(path))
+        {
+            _logger.LogWarning(
+                "Device {Path} couldn't be opened, it's probably in use exclusively by some other process", path);
+            return null;
+        }
 
         PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
 
@@ -146,6 +161,32 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
             ManufacturerString = GetHidManufacturerString(path),
             ProductString = GetHidProductString(path),
             SerialNumberString = GetHidSerialNumberString(path)
+        };
+    }
+
+    /// <summary>
+    ///     Attempts to open device.
+    /// </summary>
+    /// <param name="path">The symbolic link path of the device instance.</param>
+    /// <returns>True if successful, false if opened exclusively already.</returns>
+    /// <exception cref="Exception">Throws exception on any other unexpected error case.</exception>
+    private static bool TestDeviceAccess(string path)
+    {
+        using SafeFileHandle handle = PInvoke.CreateFile(
+            path,
+            FILE_ACCESS_FLAGS.FILE_GENERIC_READ | FILE_ACCESS_FLAGS.FILE_GENERIC_WRITE,
+            FILE_SHARE_MODE.FILE_SHARE_READ | FILE_SHARE_MODE.FILE_SHARE_WRITE,
+            null,
+            FILE_CREATION_DISPOSITION.OPEN_EXISTING,
+            FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL,
+            null
+        );
+
+        return handle.IsInvalid switch
+        {
+            true when Marshal.GetLastWin32Error() == (int)WIN32_ERROR.ERROR_ACCESS_DENIED => false,
+            true => throw new Exception($"Couldn't open device handle, error {Marshal.GetLastWin32Error()}"),
+            _ => true
         };
     }
 
@@ -322,6 +363,11 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
             }
 
             HidDevice entry = CreateNewHidDevice(symLink);
+
+            if (entry is null)
+            {
+                return;
+            }
 
             if (device.IsVirtual())
             {

@@ -60,7 +60,8 @@ public static class ServiceStartup
             await controllerHost.StartAsync();
         }
 
-        Log.Information("about to start app first time");
+        Log.Information("About to start app first time");
+
         await app.RunAsync(Constants.HttpUrl);
     }
 
