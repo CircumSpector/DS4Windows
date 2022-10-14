@@ -240,7 +240,7 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         _logger.LogInformation("WinUSB Device {Instance} ({Path}) removed",
             device.InstanceId, symLink);
 
-        HidDeviceOverWinUsb entry = _connectedDevices.FirstOrDefault(entry => entry.InstanceId == device.InstanceId);
+        HidDeviceOverWinUsb entry = _connectedDevices.FirstOrDefault(entry => entry.InstanceId.ToUpper() == device.InstanceId.ToUpper());
 
         if (entry is null)
         {
