@@ -241,6 +241,11 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             _serviceProvider
         );
 
+        if (hidDevice is HidDeviceOverWinUsb)
+        {
+            device.IsFiltered = true;
+        }
+
         IOutDevice outDevice = _outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
         outDevice.Connect();
         if (!_outDevices.ContainsKey(hidDevice.InstanceId))

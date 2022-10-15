@@ -43,6 +43,14 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
                     {
                         InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
                     }
+                },
+                {
+                    // Sony DualSense
+                    new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x0CE6 },
+                    new HidDeviceOverWinUsbEndpoints
+                    {
+                        InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
+                    }
                 }
             };
 
@@ -232,7 +240,7 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         _logger.LogInformation("WinUSB Device {Instance} ({Path}) removed",
             device.InstanceId, symLink);
 
-        HidDeviceOverWinUsb entry = _connectedDevices.FirstOrDefault(entry => entry.InstanceId == device.InstanceId);
+        HidDeviceOverWinUsb entry = _connectedDevices.FirstOrDefault(entry => entry.InstanceId.ToUpper() == device.InstanceId.ToUpper());
 
         if (entry is null)
         {

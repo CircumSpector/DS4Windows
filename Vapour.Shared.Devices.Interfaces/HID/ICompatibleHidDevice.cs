@@ -35,6 +35,11 @@ public interface ICompatibleHidDevice : IDisposable
     PhysicalAddress Serial { get; }
 
     /// <summary>
+    /// Whether or not the device is a filtered device
+    /// </summary>
+    bool IsFiltered { get; set; }
+
+    /// <summary>
     ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
     event Action<ICompatibleHidDevice> Disconnected;

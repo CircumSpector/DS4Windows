@@ -1,21 +1,20 @@
 ﻿using FastEndpoints;
-using Vapour.Server.Controller;
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host.Controller.Endpoints;
 
-public sealed class UnfilterControllerEndpoint : Endpoint<UnfilterControllerRequest>
+public sealed class UnfilterControllerEndpoint : EndpointWithoutRequest
 {
-    private readonly IControllerManagerService _controllerManagerService;
+    private readonly IControllerFilterService _controllerFilterService;
 
-    public UnfilterControllerEndpoint(IControllerManagerService controllerManagerService)
+    public UnfilterControllerEndpoint(IControllerFilterService controllerFilterService)
     {
-        _controllerManagerService = controllerManagerService;
+        _controllerFilterService = controllerFilterService;
     }
 
     public override void Configure()
     {
-        Post("/controller/host/unfilter/{instanceId}");
+        Post("/controller/unfilter/{instanceId}");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Unfilters the controller";
@@ -24,9 +23,10 @@ public sealed class UnfilterControllerEndpoint : Endpoint<UnfilterControllerRequ
         });
     }
 
-    public override async Task HandleAsync(UnfilterControllerRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
-        _controllerManagerService.UnfilterController(req.InstanceId);
+        var instanceId = Route<string>("instanceId");
+        _controllerFilterService.UnfilterController(instanceId);
 
         await SendOkAsync(ct);
     }

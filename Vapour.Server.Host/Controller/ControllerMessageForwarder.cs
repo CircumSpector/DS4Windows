@@ -71,7 +71,8 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             //Serial = hidDevice.Serial,
             Connection = hidDevice.Connection.GetValueOrDefault(),
             SelectedProfileId = _profilesService.ActiveProfiles
-                .Single(p => p.DeviceId != null && p.DeviceId.Equals(hidDevice.Serial)).Id
+                .Single(p => p.DeviceId != null && p.DeviceId.Equals(hidDevice.Serial)).Id,
+            IsFiltered = hidDevice.IsFiltered
         };
 
         return message;

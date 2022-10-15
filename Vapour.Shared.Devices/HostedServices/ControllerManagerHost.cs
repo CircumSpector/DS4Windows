@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Drivers.Identinator;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Configuration.Profiles.Services;
@@ -84,6 +85,7 @@ public sealed class ControllerManagerHost
         {
             PInvoke.HidD_GetHidGuid(out Guid hidGuid);
             _deviceNotificationListener.StartListen(hidGuid);
+            _deviceNotificationListener.StartListen(FilterDriver.FilteredDeviceInterfaceId);
 
             _logger.LogInformation("Starting device enumeration");
 

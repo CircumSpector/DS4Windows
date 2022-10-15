@@ -123,11 +123,36 @@ public sealed class ControllerServiceClient : IControllerServiceClient
         }
     }
 
+    public async Task<ControllerFilterDriverStatusResponse> GetFilterDriverStatus()
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/filterdriver/status");
+
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not get the controller filter driver status {result.ReasonPhrase}");
+        }
+
+        var response = await result.Content.ReadFromJsonAsync<ControllerFilterDriverStatusResponse>();
+        return response;
+    }
+
+    public async Task ControllerFilterSetDriverEnabled(bool isEnabled)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/filterdriver/setenable/{isEnabled}", null);
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not set the filter driver enabled {result.ReasonPhrase}");
+        }
+    }
+
     public async Task FilterController(string instanceId)
     {
         using HttpClient client = _clientFactory.CreateClient();
 
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/filter/{HttpUtility.UrlEncode(instanceId)}", null);
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/filter/{HttpUtility.UrlEncode(instanceId)}", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not filter the controller {result.ReasonPhrase}");
@@ -138,7 +163,7 @@ public sealed class ControllerServiceClient : IControllerServiceClient
     {
         using HttpClient client = _clientFactory.CreateClient();
 
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/unfilter/{HttpUtility.UrlEncode(instanceId)}", null);
+        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/unfilter/{HttpUtility.UrlEncode(instanceId)}", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not unfilter the controller {result.ReasonPhrase}");

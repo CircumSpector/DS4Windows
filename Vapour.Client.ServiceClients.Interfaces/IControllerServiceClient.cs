@@ -15,4 +15,6 @@ public interface IControllerServiceClient
     Task StopHost();
     Task FilterController(string instanceId);
     Task UnfilterController(string instanceId);
+    Task<ControllerFilterDriverStatusResponse> GetFilterDriverStatus();
+    Task ControllerFilterSetDriverEnabled(bool isEnabled);
 }

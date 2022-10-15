@@ -6,6 +6,7 @@ using Vapour.Server.Controller;
 using Vapour.Server.Host.Controller;
 using Vapour.Server.Host.Profile;
 using Vapour.Server.Profile;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host;
 
@@ -33,5 +34,6 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
         services.AddSingleton<ControllerService>();
         services.AddSingleton<IControllerMessageForwarder, ControllerMessageForwarder>();
         services.AddSingleton<IProfileMessageForwarder, ProfileMessageForwarder>();
+        services.AddSingleton<IControllerFilterService, ControllerFilterService>();
     }
 }
