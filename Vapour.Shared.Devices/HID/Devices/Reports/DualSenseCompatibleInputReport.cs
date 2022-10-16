@@ -5,7 +5,7 @@ public sealed class DualSenseCompatibleInputReport : DualShock4CompatibleInputRe
     public override void Parse(ReadOnlySpan<byte> input)
     {
         // Eliminate bounds checks
-        input = input.Slice(0, 41);
+        input = input.Slice(0, 42);
 
         ReportId = input[0];
 
