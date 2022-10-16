@@ -30,17 +30,17 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
 		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.2.184" />
-		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.2.189" />
+		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.229" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.3.1" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.7" />
-		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3" PrivateAssets="All"/>
+		<PackageReference Include="PropertyChanged.Fody" Version="4.0.5" PrivateAssets="All" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />

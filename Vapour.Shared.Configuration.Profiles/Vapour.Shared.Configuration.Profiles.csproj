@@ -11,7 +11,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="PropertyChanged.Fody" Version="4.0.3" PrivateAssets="All"/>
+		<PackageReference Include="PropertyChanged.Fody" Version="4.0.5" PrivateAssets="All" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
@@ -19,7 +19,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
