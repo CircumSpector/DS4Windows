@@ -1,9 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Security;
 
 using JetBrains.Annotations;
 
-using Microsoft.Extensions.Logging;
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Devices.HID;
 
@@ -15,13 +13,9 @@ namespace Vapour.Shared.Devices.Services;
 public sealed class ControllerManagerService : IControllerManagerService
 {
     private readonly ObservableCollection<CompatibleHidDeviceSlot> _activeControllers;
-    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly ILogger<ControllerManagerService> _logger;
 
-    public ControllerManagerService(ILogger<ControllerManagerService> logger)
+    public ControllerManagerService()
     {
-        _logger = logger;
-
         _activeControllers = new ObservableCollection<CompatibleHidDeviceSlot>(Enumerable
             .Range(0, Constants.MaxControllers)
             .Select(i => new CompatibleHidDeviceSlot(i))
