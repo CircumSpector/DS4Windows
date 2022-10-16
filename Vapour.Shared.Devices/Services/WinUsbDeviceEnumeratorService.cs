@@ -205,6 +205,13 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
 
         PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink);
 
+        string service = device.GetProperty<string>(DevicePropertyKey.Device_Service);
+
+        if (service is null || !service.ToUpper().Equals("WINUSB"))
+        {
+            return;
+        }
+
         _logger.LogInformation("WinUSB Device {Instance} ({Path}) arrived",
             device.InstanceId, symLink);
 
