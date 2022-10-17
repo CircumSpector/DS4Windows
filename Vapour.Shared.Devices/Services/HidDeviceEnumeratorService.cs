@@ -32,12 +32,15 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
     private readonly Guid _hidClassInterfaceGuid;
 
     private readonly ILogger<HidDeviceEnumeratorService> _logger;
+    private readonly IControllerFilterService _controllerFilterService;
 
     public HidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
-        ILogger<HidDeviceEnumeratorService> logger)
+        ILogger<HidDeviceEnumeratorService> logger,
+        IControllerFilterService controllerFilterService)
     {
         _deviceNotificationListener = deviceNotificationListener;
         _logger = logger;
+        _controllerFilterService = controllerFilterService;
 
         PInvoke.HidD_GetHidGuid(out Guid interfaceGuid);
 
@@ -145,6 +148,21 @@ public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<Hid
         }
 
         GetHidAttributes(path, out HIDD_ATTRIBUTES attributes);
+
+        if (_controllerFilterService.GetFilterDriverEnabled())
+        {
+            var supportsWinUsbRewrite =
+                KnownDevices.IsWinUsbRewriteSupported(attributes.VendorID, attributes.ProductID);
+            if (supportsWinUsbRewrite != null)
+            {
+                _controllerFilterService.FilterController(device.InstanceId);
+
+                //Give it time to cycle the port
+                Thread.Sleep(250);
+
+                return null;
+            }
+        }
 
         GetHidCapabilities(path, out HIDP_CAPS caps);
 

@@ -112,9 +112,8 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         {
             using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
 
-            var supportedDevice = KnownDevices.List.SingleOrDefault(i =>
-                i.WinUsbEndpoints != null && i.Vid == winUsbDevice.Descriptor.VID &&
-                i.Pid == winUsbDevice.Descriptor.PID);
+            var supportedDevice =
+                KnownDevices.IsWinUsbRewriteSupported(winUsbDevice.Descriptor.VID, winUsbDevice.Descriptor.PID);
             
             // Filter out devices we don't know about
             if (supportedDevice == null)

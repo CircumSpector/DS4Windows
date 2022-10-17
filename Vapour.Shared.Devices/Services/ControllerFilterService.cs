@@ -19,10 +19,13 @@ public class ControllerFilterService : IControllerFilterService
     private readonly FilterDriver _filterDriver;
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<ControllerFilterService> _logger;
+    private readonly IControllerManagerService _controllerManagerService;
+    private bool _isInitializing = true;
 
-    public ControllerFilterService(ILogger<ControllerFilterService> logger)
+    public ControllerFilterService(ILogger<ControllerFilterService> logger, IControllerManagerService controllerManagerService)
     {
         _logger = logger;
+        _controllerManagerService = controllerManagerService;
 
         try
         {
@@ -31,6 +34,8 @@ public class ControllerFilterService : IControllerFilterService
             {
                 SetFilterDriverEnabled(true);
             }
+
+            _isInitializing = false;
         }
         catch (SecurityException ex)
         {
@@ -55,6 +60,22 @@ public class ControllerFilterService : IControllerFilterService
     public void SetFilterDriverEnabled(bool isEnabled)
     {
         _filterDriver.IsEnabled = isEnabled;
+
+        foreach (var activeController in _controllerManagerService.ActiveControllers.Where(c => c.Device != null))
+        {
+            var instanceId = activeController.Device.SourceDevice.InstanceId;
+
+            if (!isEnabled)
+            {
+                UnfilterController(instanceId);
+            }
+
+            var usbDevice = PnPDevice.GetDeviceByInstanceId(instanceId)
+                .ToUsbPnPDevice();
+            usbDevice.CyclePort();
+
+            Thread.Sleep(250);
+        }
     }
 
     /// <inheritdoc />

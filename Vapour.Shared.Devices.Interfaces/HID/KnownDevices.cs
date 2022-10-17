@@ -13,6 +13,15 @@ public static class KnownDevices
     private const int JoyconLProductId = 0x2006;
     private const int JoyconRProductId = 0x2007;
 
+    public static VidPidInfo IsWinUsbRewriteSupported(int vid, int pid)
+    {
+        var supportedDevice = KnownDevices.List.SingleOrDefault(i =>
+            i.WinUsbEndpoints != null && i.Vid == vid &&
+            i.Pid == pid);
+
+        return supportedDevice;
+    }
+
     public static readonly IEnumerable<VidPidInfo> List = new List<VidPidInfo>
     {
         new(SonyVid, 0xBA0, "Sony WA",
