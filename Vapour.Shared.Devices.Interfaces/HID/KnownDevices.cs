@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID;
+﻿using Vapour.Shared.Devices.Services;
+
+namespace Vapour.Shared.Devices.HID;
 
 public static class KnownDevices
 {
@@ -17,14 +19,26 @@ public static class KnownDevices
             InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet.MonitorAudio
         ),
-        new(SonyVid, 0x05C4, "DS4 v.1"),
-        new(SonyVid, 0x05C5, "DS4 Strike Pack Eliminator"),
+        new(SonyVid, 0x05C4, "DS4 v.1",
+             winUsbEndpoints: new HidDeviceOverWinUsbEndpoints
+            {
+                InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
+            }),
+        new(SonyVid, 0x05C5, "DS4 Strike Pack Eliminator",
+            winUsbEndpoints: new HidDeviceOverWinUsbEndpoints
+            {
+                InterruptInEndpointAddress = 0x81, InterruptOutEndpointAddress = 0x01
+            }),
         new(SonyVid, 0x09CC, "DS4 v.2",
             InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet.MonitorAudio
         ),
         new(SonyVid, 0x0CE6, "DualSense",
-            InputDeviceType.DualSense
+            InputDeviceType.DualSense,
+            winUsbEndpoints: new HidDeviceOverWinUsbEndpoints
+            {
+                InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
+            }
         ),
         new(RazerVid, 0x1000, "Razer Raiju PS4"),
         new(NaconVid, 0x0D01, "Nacon Revol Pro v.1",
