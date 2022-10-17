@@ -19,41 +19,6 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
 {
-    private static readonly Guid DeviceInterfaceGuid = Guid.Parse("{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}");
-
-    /// <summary>
-    ///     Maps VID/PID pair to endpoint addresses where input and output reports are expected.
-    /// </summary>
-    private static readonly Dictionary<HidDeviceOverWinUsbIdentification, HidDeviceOverWinUsbEndpoints>
-        DeviceOverWinUsbEndpointsMap =
-            new()
-            {
-                {
-                    // Collective Minds Strike Pack Eliminator Mod Pack - PlayStation 4
-                    new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x05C5 },
-                    new HidDeviceOverWinUsbEndpoints
-                    {
-                        InterruptInEndpointAddress = 0x81, InterruptOutEndpointAddress = 0x01
-                    }
-                },
-                {
-                    // Sony DualShock 4 Rev1
-                    new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x05C4 },
-                    new HidDeviceOverWinUsbEndpoints
-                    {
-                        InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
-                    }
-                },
-                {
-                    // Sony DualSense
-                    new HidDeviceOverWinUsbIdentification { VendorId = 0x054C, ProductId = 0x0CE6 },
-                    new HidDeviceOverWinUsbEndpoints
-                    {
-                        InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
-                    }
-                }
-            };
-
     private readonly ObservableCollection<HidDeviceOverWinUsb> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
 
@@ -147,11 +112,12 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         {
             using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
 
-            HidDeviceOverWinUsbIdentification key =
-                HidDeviceOverWinUsbIdentification.FromDescriptor(winUsbDevice.Descriptor);
-
+            var supportedDevice = KnownDevices.List.SingleOrDefault(i =>
+                i.WinUsbEndpoints != null && i.Vid == winUsbDevice.Descriptor.VID &&
+                i.Pid == winUsbDevice.Descriptor.PID);
+            
             // Filter out devices we don't know about
-            if (!DeviceOverWinUsbEndpointsMap.ContainsKey(key))
+            if (supportedDevice == null)
             {
                 return null;
             }
@@ -172,7 +138,7 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
                 friendlyName = winUsbDevice.Descriptor.PathName;
             }
 
-            HidDeviceOverWinUsbEndpoints identification = DeviceOverWinUsbEndpointsMap[key];
+            HidDeviceOverWinUsbEndpoints identification = supportedDevice.WinUsbEndpoints;
 
             winUsbDevice.Dispose();
 
@@ -256,82 +222,5 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
 
         DeviceRemoved?.Invoke(entry);
         _connectedDevices.Remove(entry);
-    }
-
-    private class HidDeviceOverWinUsbIdentification : IEquatable<HidDeviceOverWinUsbIdentification>
-    {
-        public ushort VendorId { get; init; }
-
-        public ushort ProductId { get; init; }
-
-        public bool Equals(HidDeviceOverWinUsbIdentification other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return VendorId == other.VendorId && ProductId == other.ProductId;
-        }
-
-        public override string ToString()
-        {
-            return $"VID: 0x{VendorId:X4}, PID: 0x{ProductId:X4}";
-        }
-
-        public static HidDeviceOverWinUsbIdentification FromDescriptor(USBDeviceDescriptor descriptor)
-        {
-            return new HidDeviceOverWinUsbIdentification
-            {
-                VendorId = (ushort)descriptor.VID, ProductId = (ushort)descriptor.PID
-            };
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((HidDeviceOverWinUsbIdentification)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(VendorId, ProductId);
-        }
-
-        public static bool operator ==(HidDeviceOverWinUsbIdentification left, HidDeviceOverWinUsbIdentification right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(HidDeviceOverWinUsbIdentification left, HidDeviceOverWinUsbIdentification right)
-        {
-            return !Equals(left, right);
-        }
-    }
-
-    private class HidDeviceOverWinUsbEndpoints
-    {
-        public byte InterruptInEndpointAddress { get; init; }
-
-        public byte InterruptOutEndpointAddress { get; init; }
     }
 }

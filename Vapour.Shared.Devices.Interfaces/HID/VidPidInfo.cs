@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 
+using Vapour.Shared.Devices.Services;
+
 namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
@@ -47,7 +49,8 @@ public class VidPidInfo
         int pid,
         string name = "Generic DS4",
         InputDeviceType inputDevType = InputDeviceType.DualShock4,
-        CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.Default
+        CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.Default,
+        HidDeviceOverWinUsbEndpoints winUsbEndpoints = null
     )
     {
         Vid = vid;
@@ -55,6 +58,7 @@ public class VidPidInfo
         Name = name;
         DeviceType = inputDevType;
         FeatureSet = featureSet;
+        WinUsbEndpoints = winUsbEndpoints;
     }
 
     /// <summary>
@@ -81,4 +85,9 @@ public class VidPidInfo
     ///     The <see cref="CompatibleHidDeviceFeatureSet" />.
     /// </summary>
     public CompatibleHidDeviceFeatureSet FeatureSet { get; }
+
+    /// <summary>
+    ///     The winusb endpoints for devices that support winusb rewrite
+    /// </summary>
+    public HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; }
 }
