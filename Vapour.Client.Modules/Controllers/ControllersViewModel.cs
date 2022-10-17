@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Input;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles;
@@ -28,14 +27,9 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
         this.controllerService = controllerService;
         this.profilesService = profilesService;
 
-        FilterCommand = new RelayCommand<IControllerItemViewModel>(FilterController);
-        UnfilterCommand = new RelayCommand<IControllerItemViewModel>(UnfilterController);
-
         CreateSelectableProfileItems();
     }
-
-    public RelayCommand<IControllerItemViewModel> FilterCommand { get; }
-    public RelayCommand<IControllerItemViewModel> UnfilterCommand { get; }
+    
     public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new();
     public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new();
 
@@ -108,16 +102,6 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
             existing.Dispose();
             SelectableProfileItems.Remove(existing);
         }
-    }
-
-    public void FilterController(IControllerItemViewModel controller)
-    {
-        controllerService.FilterController(controller.InstanceId);
-    }
-
-    public void UnfilterController(IControllerItemViewModel controller)
-    {
-        controllerService.UnfilterController(controller.InstanceId);
     }
 
     protected override void Dispose(bool disposing)

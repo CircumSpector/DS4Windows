@@ -122,4 +122,6 @@ public class DS4WindowsAppSettings : JsonSerializable<DS4WindowsAppSettings>
     public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
         .Range(0, Constants.MaxControllers)
         .Select(i => new KeyValuePair<int, Guid?>(i, null)));
+
+    public bool? IsFilteringEnabled { get; set; }
 }

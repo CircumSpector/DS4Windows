@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using System.Configuration;
+using System.Security;
 using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,9 @@ using Nefarius.Drivers.Identinator;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+
+using Vapour.Shared.Configuration.Application.Services;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services;
 public class ControllerFilterService : IControllerFilterService
@@ -19,18 +23,34 @@ public class ControllerFilterService : IControllerFilterService
     private readonly FilterDriver _filterDriver;
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<ControllerFilterService> _logger;
+    private readonly IControllerManagerService _controllerManagerService;
+    private readonly IAppSettingsService _appSettingsService;
+    private bool _isInitializing = true;
 
-    public ControllerFilterService(ILogger<ControllerFilterService> logger)
+    public ControllerFilterService(ILogger<ControllerFilterService> logger, 
+        IControllerManagerService controllerManagerService,
+        IAppSettingsService appSettingsService)
     {
         _logger = logger;
+        _controllerManagerService = controllerManagerService;
+        _appSettingsService = appSettingsService;
 
         try
         {
             _filterDriver = new FilterDriver();
             if (GetFilterDriverInstalled())
             {
-                SetFilterDriverEnabled(true);
+                _appSettingsService.Load();
+                SetFilterDriverEnabled(_appSettingsService.Settings.IsFilteringEnabled.HasValue
+                    ? _appSettingsService.Settings.IsFilteringEnabled.Value
+                    : true);
             }
+            else
+            {
+                SetFilterDriverEnabled(false);
+            }
+
+            _isInitializing = false;
         }
         catch (SecurityException ex)
         {
@@ -55,6 +75,31 @@ public class ControllerFilterService : IControllerFilterService
     public void SetFilterDriverEnabled(bool isEnabled)
     {
         _filterDriver.IsEnabled = isEnabled;
+        _appSettingsService.Settings.IsFilteringEnabled = isEnabled;
+        _appSettingsService.Save();
+
+        if (!_isInitializing)
+        {
+            foreach (var sourceDevice in _controllerManagerService.ActiveControllers.Where(c => c.Device != null).ToList().Select(activeController => activeController.Device.SourceDevice))
+            {
+                if (!isEnabled)
+                {
+                    UnfilterController(sourceDevice.InstanceId);
+                }
+                else if (KnownDevices.IsWinUsbRewriteSupported(sourceDevice.VendorId, sourceDevice.ProductId) != null)
+                {
+                    FilterController(sourceDevice.InstanceId);
+                }
+                else
+                {
+                    var usbDevice = PnPDevice.GetDeviceByInstanceId(sourceDevice.InstanceId)
+                        .ToUsbPnPDevice();
+                    usbDevice.CyclePort();
+                }
+
+                Thread.Sleep(250);
+            }
+        }
     }
 
     /// <inheritdoc />

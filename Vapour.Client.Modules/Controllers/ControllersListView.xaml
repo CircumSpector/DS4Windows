@@ -44,28 +44,6 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.FilterCommand}"
-                                        CommandParameter="{Binding}"
-                                          Content="Filter"
-                                        Visibility="{Binding IsFiltered, Converter={StaticResource falseIsVis}}">
-                                </Button>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.UnfilterCommand}"
-                                        CommandParameter="{Binding}"
-                                          Content="Unfilter"
-                                        Visibility="{Binding IsFiltered, Converter={StaticResource trueIsVis}}">
-                                </Button>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

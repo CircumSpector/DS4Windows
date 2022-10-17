@@ -37,6 +37,7 @@
 		<ProjectReference Include="..\Vapour.Client.Core.Interfaces\Vapour.Client.Core.Interfaces.csproj" />
 		<ProjectReference Include="..\Vapour.Shared.Common.Interfaces\Vapour.Shared.Common.Interfaces.csproj" />
 		<ProjectReference Include="..\Vapour.Shared.Common.Utils\Vapour.Shared.Common.Util.csproj" />
+		<ProjectReference Include="..\Vapour.Shared.Configuration.Application\Vapour.Shared.Configuration.Application.csproj" />
 		<ProjectReference Include="..\Vapour.Shared.Configuration.Profiles.Interfaces\Vapour.Shared.Configuration.Profiles.Interfaces.csproj" />
 		<ProjectReference Include="..\Vapour.Shared.Devices.Interfaces\Vapour.Shared.Devices.Interfaces.csproj" />
 	</ItemGroup>
