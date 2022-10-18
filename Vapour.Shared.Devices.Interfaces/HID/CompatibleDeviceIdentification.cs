@@ -5,7 +5,7 @@ using Vapour.Shared.Devices.Services;
 namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
-///     VidPidFeatureSet feature bit-flags (the default in VidPidInfo is zero value = standard DS4 behavior)
+///     Possible VidPidFeatureSet feature bit-flags.
 /// </summary>
 [Flags]
 public enum CompatibleHidDeviceFeatureSet : ushort
@@ -42,9 +42,12 @@ public enum CompatibleHidDeviceFeatureSet : ushort
     VendorDefinedDevice = 1 << 7
 }
 
-public class VidPidInfo
+/// <summary>
+///     Describes properties to identify a compatible input source device.
+/// </summary>
+public class CompatibleDeviceIdentification
 {
-    public VidPidInfo(
+    public CompatibleDeviceIdentification(
         int vid,
         int pid,
         string name = "Generic DS4",
