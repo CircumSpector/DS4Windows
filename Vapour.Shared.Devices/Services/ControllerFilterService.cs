@@ -44,9 +44,7 @@ public class ControllerFilterService : IControllerFilterService
             if (GetFilterDriverInstalled())
             {
                 _appSettingsService.Load();
-                SetFilterDriverEnabled(_appSettingsService.Settings.IsFilteringEnabled.HasValue
-                    ? _appSettingsService.Settings.IsFilteringEnabled.Value
-                    : true);
+                SetFilterDriverEnabled(_appSettingsService.Settings.IsFilteringEnabled ?? true);
             }
             else
             {
@@ -114,13 +112,12 @@ public class ControllerFilterService : IControllerFilterService
         string hardwareId = device.Item2;
         //TODO: filter the controller and cycle the port
 
-        RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
+        using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
         entry.IsReplacingEnabled = true;
         entry.CompatibleIds = new[]
         {
             @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D", @"USB\Class_FF"
         };
-        entry.Dispose();
 
         usbDevice.CyclePort();
     }
@@ -133,11 +130,10 @@ public class ControllerFilterService : IControllerFilterService
         string hardwareId = device.Item2;
         //TODO: fill in the unfilter
 
-        RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
-        if (entry != null)
+        using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
+        if (entry is not null)
         {
             entry.IsReplacingEnabled = false;
-            entry.Dispose();
         }
 
         usbDevice.CyclePort();
