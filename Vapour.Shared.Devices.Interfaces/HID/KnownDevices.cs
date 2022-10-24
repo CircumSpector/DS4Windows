@@ -40,7 +40,7 @@ public static class KnownDevices
             }),
         new(SonyVid, 0x09CC, "DS4 v.2",
             InputDeviceType.DualShock4,
-            CompatibleHidDeviceFeatureSet.MonitorAudio
+            CompatibleHidDeviceFeatureSet.MonitorAudio | CompatibleHidDeviceFeatureSet.VendorDefinedDevice
         ),
         new(SonyVid, 0x0CE6, "DualSense",
             InputDeviceType.DualSense,
