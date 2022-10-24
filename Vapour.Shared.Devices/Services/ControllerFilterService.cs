@@ -1,8 +1,8 @@
-﻿using System.Configuration;
-using System.Security;
+﻿using System.Security;
 using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Logging;
+
 using Nefarius.Drivers.Identinator;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
@@ -12,6 +12,7 @@ using Vapour.Shared.Configuration.Application.Services;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services;
+
 public class ControllerFilterService : IControllerFilterService
 {
     /// <summary>
@@ -20,14 +21,16 @@ public class ControllerFilterService : IControllerFilterService
     private static readonly Regex DriverVersionRegex =
         new(@"^DriverVer *=.*,(\d*\.\d*\.\d*\.\d*)", RegexOptions.Multiline);
 
+    private readonly IAppSettingsService _appSettingsService;
+    private readonly IControllerManagerService _controllerManagerService;
+
     private readonly FilterDriver _filterDriver;
+
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<ControllerFilterService> _logger;
-    private readonly IControllerManagerService _controllerManagerService;
-    private readonly IAppSettingsService _appSettingsService;
-    private bool _isInitializing = true;
+    private readonly bool _isInitializing = true;
 
-    public ControllerFilterService(ILogger<ControllerFilterService> logger, 
+    public ControllerFilterService(ILogger<ControllerFilterService> logger,
         IControllerManagerService controllerManagerService,
         IAppSettingsService appSettingsService)
     {
@@ -80,7 +83,8 @@ public class ControllerFilterService : IControllerFilterService
 
         if (!_isInitializing)
         {
-            foreach (var sourceDevice in _controllerManagerService.ActiveControllers.Where(c => c.Device != null).ToList().Select(activeController => activeController.Device.SourceDevice))
+            foreach (IHidDevice sourceDevice in _controllerManagerService.ActiveControllers.Where(c => c.Device != null)
+                         .ToList().Select(activeController => activeController.Device.SourceDevice))
             {
                 if (!isEnabled)
                 {
@@ -92,7 +96,7 @@ public class ControllerFilterService : IControllerFilterService
                 }
                 else
                 {
-                    var usbDevice = PnPDevice.GetDeviceByInstanceId(sourceDevice.InstanceId)
+                    UsbPnPDevice usbDevice = PnPDevice.GetDeviceByInstanceId(sourceDevice.InstanceId)
                         .ToUsbPnPDevice();
                     usbDevice.CyclePort();
                 }
@@ -106,8 +110,8 @@ public class ControllerFilterService : IControllerFilterService
     public void FilterController(string instanceId)
     {
         Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
-        var usbDevice = device.Item1.ToUsbPnPDevice();
-        var hardwareId = device.Item2;
+        UsbPnPDevice usbDevice = device.Item1.ToUsbPnPDevice();
+        string hardwareId = device.Item2;
         //TODO: filter the controller and cycle the port
 
         RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
@@ -125,8 +129,8 @@ public class ControllerFilterService : IControllerFilterService
     public void UnfilterController(string instanceId)
     {
         Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
-        var usbDevice = device.Item1.ToUsbPnPDevice();
-        var hardwareId = device.Item2;
+        UsbPnPDevice usbDevice = device.Item1.ToUsbPnPDevice();
+        string hardwareId = device.Item2;
         //TODO: fill in the unfilter
 
         RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
@@ -154,7 +158,7 @@ public class ControllerFilterService : IControllerFilterService
     /// <returns>The detected <see cref="Version" />.</returns>
     private static Version GetInfDriverVersion(string infContent)
     {
-        var match = DriverVersionRegex.Match(infContent);
+        Match match = DriverVersionRegex.Match(infContent);
 
         return Version.Parse(match.Groups[1].Value);
     }
