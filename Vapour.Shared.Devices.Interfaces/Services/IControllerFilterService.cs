@@ -31,4 +31,6 @@ public interface IControllerFilterService
     /// </summary>
     /// <param name="isEnabled">A bool representing whether or not to enable the filter driver</param>
     void SetFilterDriverEnabled(bool isEnabled);
+
+    void Initialize();
 }

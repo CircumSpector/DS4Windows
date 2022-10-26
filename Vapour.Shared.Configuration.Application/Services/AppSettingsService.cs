@@ -242,4 +242,9 @@ public sealed class AppSettingsService : IAppSettingsService
         // 
         SettingsRefreshed?.Invoke();
     }
+
+    private void EnsureSettingsExist()
+    {
+
+    }
 }

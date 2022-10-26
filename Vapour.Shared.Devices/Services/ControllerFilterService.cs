@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Security;
+﻿using System.Security;
 using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Logging;
@@ -8,7 +7,6 @@ using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
-using Vapour.Shared.Configuration.Application.Services;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services;
@@ -20,29 +18,31 @@ public class ControllerFilterService : IControllerFilterService
     private static readonly Regex DriverVersionRegex =
         new(@"^DriverVer *=.*,(\d*\.\d*\.\d*\.\d*)", RegexOptions.Multiline);
 
-    private readonly FilterDriver _filterDriver;
+    private FilterDriver _filterDriver;
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<ControllerFilterService> _logger;
     private readonly IControllerManagerService _controllerManagerService;
-    private readonly IAppSettingsService _appSettingsService;
+    private readonly IDeviceSettingsService _deviceSettingsService;
     private bool _isInitializing = true;
 
     public ControllerFilterService(ILogger<ControllerFilterService> logger, 
         IControllerManagerService controllerManagerService,
-        IAppSettingsService appSettingsService)
+        IDeviceSettingsService deviceSettingsService)
     {
         _logger = logger;
         _controllerManagerService = controllerManagerService;
-        _appSettingsService = appSettingsService;
+        _deviceSettingsService = deviceSettingsService;
+    }
 
+    public void Initialize()
+    {
         try
         {
             _filterDriver = new FilterDriver();
             if (GetFilterDriverInstalled())
             {
-                _appSettingsService.Load();
-                SetFilterDriverEnabled(_appSettingsService.Settings.IsFilteringEnabled.HasValue
-                    ? _appSettingsService.Settings.IsFilteringEnabled.Value
+                SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled.HasValue
+                    ? _deviceSettingsService.Settings.IsFilteringEnabled.Value
                     : true);
             }
             else
@@ -75,8 +75,8 @@ public class ControllerFilterService : IControllerFilterService
     public void SetFilterDriverEnabled(bool isEnabled)
     {
         _filterDriver.IsEnabled = isEnabled;
-        _appSettingsService.Settings.IsFilteringEnabled = isEnabled;
-        _appSettingsService.Save();
+        _deviceSettingsService.Settings.IsFilteringEnabled = isEnabled;
+        _deviceSettingsService.SaveSettings();
 
         if (!_isInitializing)
         {

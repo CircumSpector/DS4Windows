@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nefarius.Drivers.Identinator;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
+using Vapour.Shared.Common.Services;
 using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services;
@@ -23,6 +24,9 @@ public sealed class ControllerManagerHost
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidDeviceEnumeratorService;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
+    private readonly IDeviceSettingsService _deviceSettingsService;
+    private readonly IControllerFilterService _controllerFilter;
+    private readonly IGlobalStateService _globalStateService;
 
     private readonly IInputSourceService _inputSourceService;
 
@@ -41,8 +45,10 @@ public sealed class ControllerManagerHost
         IInputSourceService inputSourceService,
         IDeviceNotificationListener deviceNotificationListener,
         IHidDeviceEnumeratorService<HidDevice> hidDeviceEnumeratorService, 
-        IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService
-        )
+        IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
+        IDeviceSettingsService deviceSettingsService,
+        IControllerFilterService controllerFilter,
+        IGlobalStateService globalStateService)
     {
         _enumerator = enumerator;
         _logger = logger;
@@ -52,6 +58,9 @@ public sealed class ControllerManagerHost
         _deviceNotificationListener = deviceNotificationListener;
         _hidDeviceEnumeratorService = hidDeviceEnumeratorService;
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
+        _deviceSettingsService = deviceSettingsService;
+        _controllerFilter = controllerFilter;
+        _globalStateService = globalStateService;
 
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
@@ -76,6 +85,12 @@ public sealed class ControllerManagerHost
         IsRunning = true;
         RunningChanged?.Invoke(this, IsRunning);
         _controllerHostToken = new CancellationTokenSource();
+
+        _globalStateService.EnsureRoamingDataPath();
+
+        _deviceSettingsService.LoadSettings();
+        _controllerFilter.Initialize();
+
         //
         // Make sure we're ready to rock
         // 

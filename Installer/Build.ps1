@@ -1,6 +1,6 @@
-#$env:APPVEYOR_BUILD_FOLDER = "c:/dev/DS4Windows"
-#$env:APPVEYOR_BUILD_VERSION = 1.0.1
-#$env:PlATFORM = "x64"
+$env:APPVEYOR_BUILD_FOLDER = "c:/dev/Vapour"
+$env:APPVEYOR_BUILD_VERSION = 1.0.1
+$env:PlATFORM = "x64"
 
 $publishFolder = $env:APPVEYOR_BUILD_FOLDER + "/Publish"
 

@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
-
-using Newtonsoft.Json;
+using System.Text.Json;
 
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Configuration.Profiles.Schema;
@@ -66,7 +65,7 @@ public sealed class ProfileServiceClient : IProfileServiceClient
     {
         using HttpClient client = _httpClientFactory.CreateClient();
 
-        string content = JsonConvert.SerializeObject(profile);
+        string content = JsonSerializer.Serialize(profile);
 
         HttpResponseMessage result = await client.PutAsync(
             new Uri($"{Constants.HttpUrl}/api/profile/save", UriKind.Absolute),
@@ -74,7 +73,7 @@ public sealed class ProfileServiceClient : IProfileServiceClient
 
         if (result.IsSuccessStatusCode)
         {
-            ProfileItem savedProfile = JsonConvert.DeserializeObject<ProfileItem>(
+            ProfileItem savedProfile = JsonSerializer.Deserialize<ProfileItem>(
                 await result.Content.ReadAsStringAsync());
 
             IProfile existing = ProfileList.SingleOrDefault(i => i.Id == savedProfile.Id);

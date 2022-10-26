@@ -119,6 +119,4 @@ public interface IProfile
     string ToString();
     IProfile WithChangeNotification(ProfilePropertyChangedEventHandler handler);
 
-    void Serialize(Stream stream);
-    Task SerializeAsync(Stream stream);
 }

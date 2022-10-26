@@ -1,6 +1,6 @@
-#$env:APPVEYOR_BUILD_FOLDER = "c:/dev/Vapour"
-#$env:APPVEYOR_BUILD_VERSION = 1.0.1
-#$env:PlATFORM = "x64"
+$env:APPVEYOR_BUILD_FOLDER = "c:/dev/Vapour"
+$env:APPVEYOR_BUILD_VERSION = 1.0.1
+$env:PlATFORM = "x64"
 
 $publishFolder = $env:APPVEYOR_BUILD_FOLDER + "/Publish/" + $env:PlATFORM
 $artifacts = $env:APPVEYOR_BUILD_FOLDER + "/artifacts"
@@ -9,7 +9,7 @@ $installerProject = $installerDirectory + "/Vapour.Installer." + $env:PlATFORM +
 $installerOutputExe = $installerDirectory + "/Setup Files " + $env:PlATFORM + "/Vapour Setup (" + $env:PlATFORM + ").exe"
 $installerOutputArtifact = $artifacts + "/Vapour Setup (" + $env:PlATFORM + ").exe"
 $publishOutputArtifact = $artifacts + "/Publish.zip"
-$adi = "C:/Program Files (x86)/Caphyon/Advanced Installer 19.9/bin/x86/AdvancedInstaller.com"
+$adi = "C:/Program Files (x86)/Caphyon/Advanced Installer 20.0/bin/x86/AdvancedInstaller.com"
 $serial = $installerDirectory + "/AppVeyor_ProductKey.txt"
 
 if (Test-Path -Path $artifacts)

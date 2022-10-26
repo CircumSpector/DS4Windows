@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
+using System.Text.Json;
 
 using MaterialDesignThemes.Wpf;
 
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
-
-using Newtonsoft.Json;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles.Edit;
@@ -68,7 +67,7 @@ public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IPro
         if (result != null && result.Value)
             using (var stream = saveFileDialog.OpenFile())
             {
-                var text = JsonConvert.SerializeObject(sourceProfile);
+                var text = JsonSerializer.Serialize(sourceProfile);
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(text));
                 stream.Close();
             }

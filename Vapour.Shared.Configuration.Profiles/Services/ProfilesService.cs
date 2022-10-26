@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 using JetBrains.Annotations;
 
@@ -15,7 +16,6 @@ using Vapour.Shared.Common.Core;
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Util;
-using Vapour.Shared.Configuration.Application.Services;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Types;
 
@@ -26,16 +26,10 @@ namespace Vapour.Shared.Configuration.Profiles.Services;
 /// </summary>
 public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
 {
-    private const string LinkedProfilesFileName = "LinkedProfiles.json";
-
-    private const string AutoProfilesFileName = "AutoSwitchingProfiles.json";
-
     private readonly ActivitySource
         activitySource = new(TracingSources.ConfigurationProfilesAssemblyActivitySourceName);
 
-    private readonly IAppSettingsService appSettings;
-
-    private ObservableCollection<AutoSwitchingProfileEntry> autoSwitchingProfiles;
+    private readonly IGlobalStateService globalStateService;
 
     private ObservableCollection<IProfile> availableProfiles;
 
@@ -45,8 +39,6 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
 
     private readonly IGlobalStateService global;
 
-    private readonly IDictionary<PhysicalAddress, Guid> linkedProfiles = new Dictionary<PhysicalAddress, Guid>();
-
     private readonly ILogger<ProfilesService> logger;
 
     private readonly NotifyCollectionChangedEventHandler availableHandler;
@@ -54,7 +46,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     public ProfilesService(
         ILogger<ProfilesService> logger,
         IGlobalStateService global,
-        IAppSettingsService appSettings
+        IGlobalStateService globalStateService
     )
     {
         using var activity = activitySource.StartActivity(
@@ -62,7 +54,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
 
         this.logger = logger;
         this.global = global;
-        this.appSettings = appSettings;
+        this.globalStateService = globalStateService;
 
         availableHandler = (_, _) => AvailableProfilesChanged?.Invoke();
 
@@ -77,6 +69,13 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// </summary>
     [IntermediateSolution]
     public static ProfilesService Instance { get; private set; }
+
+    /// <summary>
+    ///     Gets slot to profile assignments.
+    /// </summary>
+    public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
+        .Range(0, Constants.MaxControllers)
+        .Select(i => new KeyValuePair<int, Guid?>(i, null)));
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -101,16 +100,6 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     ///     A collection of all the available profiles.
     /// </summary>
     public ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; private set; }
-
-    /// <summary>
-    ///     A collection of profile IDs linked to a particular controller ID (MAC address).
-    /// </summary>
-    public IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles => linkedProfiles.ToImmutableDictionary();
-
-    /// <summary>
-    ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
-    /// </summary>
-    public ReadOnlyObservableCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; private set; }
 
     /// <summary>
     ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
@@ -182,21 +171,16 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// </summary>
     public void LoadAvailableProfiles()
     {
-        if (!Directory.Exists(global.GlobalProfilesDirectory))
-            Directory.CreateDirectory(global.GlobalProfilesDirectory);
 
         if (!Directory.Exists(global.LocalProfilesDirectory))
             Directory.CreateDirectory(global.LocalProfilesDirectory);
 
-        if (!File.Exists(global.GlobalDefaultProfileLocation))
-            PersistProfile(DS4WindowsProfile.CreateDefaultProfile(), global.GlobalProfilesDirectory);
+        if (!File.Exists(global.LocalDefaultProfileLocation))
+            PersistProfile(DS4WindowsProfile.CreateDefaultProfile(), global.LocalProfilesDirectory);
 
         var profiles = Directory
-            .GetFiles(global.GlobalProfilesDirectory, $"*{DS4WindowsProfile.FileExtension}",
-                SearchOption.TopDirectoryOnly)
-            .Union(Directory
                 .GetFiles(global.LocalProfilesDirectory, $"*{DS4WindowsProfile.FileExtension}",
-                    SearchOption.TopDirectoryOnly));
+                    SearchOption.TopDirectoryOnly);
 
         if (!profiles.Any()) throw new Exception("Something bad here");
 
@@ -206,9 +190,8 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         {
             logger.LogDebug("Processing profile {Profile}", file);
 
-            using var stream = File.OpenRead(file);
-
-            var profile = DS4WindowsProfile.Deserialize(stream);
+            var stream = File.ReadAllText(file);
+            var profile = JsonSerializer.Deserialize<DS4WindowsProfile>(stream);
 
             if (profile is null)
             {
@@ -244,64 +227,6 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     }
 
     /// <summary>
-    ///     Persist the current settings to disk.
-    /// </summary>
-    public bool SaveLinkedProfiles()
-    {
-        var path = Path.Combine(global.RoamingAppDataPath, LinkedProfilesFileName);
-
-        try
-        {
-            using var stream = File.Open(path, FileMode.Create);
-
-            var store = new LinkedProfiles
-            {
-                Assignments = linkedProfiles.ToDictionary(pair => pair.Key, pair => pair.Value)
-            };
-
-            store.Serialize(stream);
-
-            return true;
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return false;
-        }
-    }
-
-    /// <summary>
-    ///     Load the persisted settings from disk.
-    /// </summary>
-    public bool LoadLinkedProfiles()
-    {
-        var path = Path.Combine(global.RoamingAppDataPath, LinkedProfilesFileName);
-
-        if (!File.Exists(path))
-        {
-            logger.LogDebug("File {File} doesn't exist, skipping", path);
-            return false;
-        }
-
-        try
-        {
-            using var stream = File.OpenRead(path);
-
-            var store = Schema.LinkedProfiles.Deserialize(stream);
-
-            linkedProfiles.Clear();
-
-            foreach (var (physicalAddress, guid) in store.Assignments) linkedProfiles.Add(physicalAddress, guid);
-        }
-        catch (InvalidOperationException)
-        {
-            logger.LogWarning("Incompatible file {LinkedProfiles} found, couldn't read", path);
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
     ///     Performs all tasks necessary to get the service ready to operate.
     /// </summary>
     public void Initialize()
@@ -315,23 +240,16 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
             .Select(DS4WindowsProfile.CreateDefaultProfile));
 
         ActiveProfiles = new ReadOnlyObservableCollection<IProfile>(controllerSlotProfiles);
-        autoSwitchingProfiles = new ObservableCollection<AutoSwitchingProfileEntry>();
-        AutoSwitchingProfiles = new ReadOnlyObservableCollection<AutoSwitchingProfileEntry>(autoSwitchingProfiles);
-
-
 
         //
         // Get all the necessary info restored from disk
         // 
-        appSettings.Load();
         LoadAvailableProfiles();
-        LoadLinkedProfiles();
-        LoadAutoSwitchingProfiles();
 
         //
         // Populate slots from application configuration, if existent
         // 
-        foreach (var (slot, profileId) in appSettings.Settings.Profiles)
+        foreach (var (slot, profileId) in Profiles)
         {
             var profile = GetProfileFor(slot, profileId);
 
@@ -347,12 +265,12 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     {
         availableProfiles.CollectionChanged -= availableHandler;
 
-        appSettings.Settings.Profiles.Clear();
+        Profiles.Clear();
 
         var index = 0;
 
         foreach (var controllerSlotProfile in controllerSlotProfiles)
-            appSettings.Settings.Profiles.Add(index++, controllerSlotProfile.Id);
+            Profiles.Add(index++, controllerSlotProfile.Id);
     }
 
     /// <summary>
@@ -366,26 +284,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         if (slot < 0 || slot >= controllerSlotProfiles.Count)
             throw new ArgumentOutOfRangeException(nameof(slot));
 
-        //
-        // Finding a MAC-coupled profile wins over slot from application settings
-        // 
-        if (linkedProfiles.ContainsKey(address))
-        {
-            var linkedProfileId = linkedProfiles[address];
-
-            //
-            // Skip over as no custom profile was loaded from disk
-            // 
-            if (linkedProfileId != DS4WindowsProfile.DefaultProfileId)
-            {
-                availableProfiles.First(p => Equals(p.Id, linkedProfileId))
-                    .DeepCloneTo(controllerSlotProfiles[slot]);
-                controllerSlotProfiles[slot].DeviceId = address;
-                return;
-            }
-        }
-
-        var profileId = appSettings.Settings.Profiles[slot];
+        var profileId = Profiles[slot];
         var profile = GetProfileFor(slot, profileId);
 
         profile.DeepCloneTo(controllerSlotProfiles[slot]);
@@ -406,58 +305,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         // TODO: implement
         // 
     }
-
-    /// <summary>
-    ///     Persist the current settings to disk.
-    /// </summary>
-    public void SaveAutoSwitchingProfiles()
-    {
-        var path = Path.Combine(global.RoamingAppDataPath, AutoProfilesFileName);
-
-        using var stream = File.Open(path, FileMode.Create);
-
-        var store = new AutoSwitchingProfiles
-        {
-            AutoSwitchingProfileEntries = autoSwitchingProfiles.ToList()
-        };
-
-        store.Serialize(stream);
-    }
-
-    /// <summary>
-    ///     Load the persisted settings from disk.
-    /// </summary>
-    public void LoadAutoSwitchingProfiles()
-    {
-        var path = Path.Combine(global.RoamingAppDataPath, AutoProfilesFileName);
-
-        if (!File.Exists(path))
-        {
-            logger.LogDebug("File {File} doesn't exist, skipping", path);
-            return;
-        }
-
-        try
-        {
-            using var stream = File.OpenRead(path);
-
-            var store = Schema.AutoSwitchingProfiles.Deserialize(stream);
-
-            autoSwitchingProfiles.Clear();
-
-            store.AutoSwitchingProfileEntries.ForEach(autoSwitchingProfiles.Add);
-        }
-        catch (InvalidOperationException)
-        {
-            logger.LogWarning("Incompatible file {AutoSwitchingProfiles} found, couldn't read", path);
-        }
-    }
-
-    public void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile)
-    {
-        autoSwitchingProfiles.Add(profile);
-    }
-
+    
     /// <summary>
     ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="DS4WindowsProfile" />.
     /// </summary>
@@ -507,15 +355,6 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         switch (e.PropertyName)
         {
             //
-            // Automatically refresh linked profiles when this property changes
-            // 
-            case nameof(p.IsLinkedProfile):
-                if (p.IsLinkedProfile)
-                    linkedProfiles[p.DeviceId] = p.Id;
-                else if (linkedProfiles.ContainsKey(p.DeviceId))
-                    linkedProfiles.Remove(p.DeviceId);
-                break;
-            //
             // Display name changed, remove old file and persist new one
             // 
             case nameof(p.DisplayName):
@@ -547,9 +386,16 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         logger.LogDebug("Persisting profile {Profile} to file {File}",
             profile, profilePath);
 
-        using var stream = File.Open(profilePath, FileMode.Create);
+        var profileData = JsonSerializer.Serialize(profile);
+        
+        if (File.Exists(profilePath))
+        {
+            File.Delete(profilePath);
+        }
 
-        profile.Serialize(stream);
+        var file = File.Create(profilePath);
+        file.Dispose();
+        File.WriteAllText(profilePath, profileData);
     }
 
     [UsedImplicitly]
