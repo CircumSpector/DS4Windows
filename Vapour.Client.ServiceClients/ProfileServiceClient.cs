@@ -64,17 +64,14 @@ public sealed class ProfileServiceClient : IProfileServiceClient
     public async Task<IProfile> SaveProfile(IProfile profile)
     {
         using HttpClient client = _httpClientFactory.CreateClient();
-
-        string content = JsonSerializer.Serialize(profile);
-
-        HttpResponseMessage result = await client.PutAsync(
+        
+        HttpResponseMessage result = await client.PostAsync(
             new Uri($"{Constants.HttpUrl}/api/profile/save", UriKind.Absolute),
-            new StringContent(content));
+            JsonContent.Create(profile));
 
         if (result.IsSuccessStatusCode)
         {
-            ProfileItem savedProfile = JsonSerializer.Deserialize<ProfileItem>(
-                await result.Content.ReadAsStringAsync());
+            ProfileItem savedProfile = await result.Content.ReadFromJsonAsync<ProfileItem>();
 
             IProfile existing = ProfileList.SingleOrDefault(i => i.Id == savedProfile.Id);
             if (existing != null)

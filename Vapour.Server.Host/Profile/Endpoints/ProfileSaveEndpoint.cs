@@ -16,8 +16,7 @@ public sealed class ProfileSaveEndpoint : Endpoint<DS4WindowsProfile, DS4Windows
 
     public override void Configure()
     {
-        Verbs(Http.PUT);
-        Routes("/profile/save");
+        Post("/profile/save");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Saves a given profile";

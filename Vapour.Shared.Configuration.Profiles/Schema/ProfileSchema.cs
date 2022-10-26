@@ -100,6 +100,7 @@ public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
     /// <summary>
     ///     Auto-generated unique ID for this profile.
     /// </summary>
+    [JsonInclude]
     public Guid Id { get; private set; } = Guid.NewGuid();
 
     /// <summary>
