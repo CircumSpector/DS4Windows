@@ -1,10 +1,9 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
+using System.Text.Json;
 using System.Web;
 using System.Windows;
-
-using Newtonsoft.Json;
 
 using Serilog;
 
@@ -181,12 +180,12 @@ public sealed class ControllerServiceClient : IControllerServiceClient
 
     private async void ProcessControllerMessage(ResponseMessage msg)
     {
-        MessageBase messageBase = JsonConvert.DeserializeObject<MessageBase>(msg.Text);
+        MessageBase messageBase = JsonSerializer.Deserialize<MessageBase>(msg.Text);
         if (messageBase.MessageName == ControllerConnectedMessage.Name)
         {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                ControllerConnectedMessage device = JsonConvert.DeserializeObject<ControllerConnectedMessage>(msg.Text);
+                ControllerConnectedMessage device = JsonSerializer.Deserialize<ControllerConnectedMessage>(msg.Text);
                 _connectedAction?.Invoke(device);
             });
         }
@@ -195,7 +194,7 @@ public sealed class ControllerServiceClient : IControllerServiceClient
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 ControllerDisconnectedMessage device =
-                    JsonConvert.DeserializeObject<ControllerDisconnectedMessage>(msg.Text);
+                    JsonSerializer.Deserialize<ControllerDisconnectedMessage>(msg.Text);
                 _disconnectedAction?.Invoke(device);
             });
         }
@@ -204,7 +203,7 @@ public sealed class ControllerServiceClient : IControllerServiceClient
             if (_hostRunningHandler != null)
             {
                 IsHostRunningChangedMessage isHostRunning =
-                    JsonConvert.DeserializeObject<IsHostRunningChangedMessage>(msg.Text);
+                    JsonSerializer.Deserialize<IsHostRunningChangedMessage>(msg.Text);
                 _hostRunningHandler(isHostRunning);
             }
         }

@@ -26,16 +26,6 @@ public interface IProfilesService
     IProfile CurrentlyEditedProfile { get; set; }
 
     /// <summary>
-    ///     A collection of profile IDs linked to a particular controller ID (MAC address).
-    /// </summary>
-    IReadOnlyDictionary<PhysicalAddress, Guid> LinkedProfiles { get; }
-
-    /// <summary>
-    ///     A collection of <see cref="AutoSwitchingProfileEntry" />s.
-    /// </summary>
-    ReadOnlyObservableCollection<AutoSwitchingProfileEntry> AutoSwitchingProfiles { get; }
-
-    /// <summary>
     ///     Either writes back the changes to the originating profile copy or stores a new profile on disk.
     /// </summary>
     void SaveCurrentlyEditedProfile();
@@ -86,16 +76,6 @@ public interface IProfilesService
     void RenameProfile(Guid guid, string displayName);
 
     /// <summary>
-    ///     Persist the current settings to disk.
-    /// </summary>
-    bool SaveLinkedProfiles();
-
-    /// <summary>
-    ///     Load the persisted settings from disk.
-    /// </summary>
-    bool LoadLinkedProfiles();
-
-    /// <summary>
     ///     Performs all tasks necessary to get the service ready to operate.
     /// </summary>
     void Initialize();
@@ -114,18 +94,6 @@ public interface IProfilesService
     void ControllerArrived(int slot, PhysicalAddress address);
 
     void ControllerDeparted(int slot, PhysicalAddress address);
-
-    /// <summary>
-    ///     Persist the current settings to disk.
-    /// </summary>
-    void SaveAutoSwitchingProfiles();
-
-    /// <summary>
-    ///     Load the persisted settings from disk.
-    /// </summary>
-    void LoadAutoSwitchingProfiles();
-
-    void AddAutoSwitchingProfile(AutoSwitchingProfileEntry profile);
 
     /// <summary>
     ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="DS4WindowsProfile" />.

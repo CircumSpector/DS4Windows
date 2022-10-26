@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="20.0" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="20.0" Modules="enterprise" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="ActSyncAppComponent;CPLAppletComponent;AppXAppDetailsComponent;FixupComponent;AppXCapabilitiesComponent;AppXDependenciesComponent;AppXProductDetailsComponent;AppXVisualAssetsComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;MsiXDiffComponent;MsixManifestEditorComponent"/>
   </COMPONENT>
@@ -343,7 +343,7 @@
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
-    <ROW BootstrOptKey="GlobalOptions" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" Options="2"/>
+    <ROW BootstrOptKey="GlobalOptions" GeneralOptions="o" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" Options="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrapperUISequenceComponent">
     <ROW Action="AI_DetectSoftware" Sequence="151"/>
@@ -402,6 +402,19 @@
     <ROW Name="SoftwareDetector.dll" SourcePath="&lt;AI_CUSTACTS&gt;SoftwareDetector.dll"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
+    <ROW Property="TermsLicenseAcceptCHK" Value="CheckBox"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
+    <ROW Dialog_="PrerequisitesDlg" Control="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Attributes="1" Text="[ButtonText_Next]" Order="100" TextLocId="-" MsiKey="PrerequisitesDlg#Next" Options="1"/>
+    <ROW Dialog_="PrerequisitesDlg" Control="PrerequisiteSelector" Type="PrerequisiteSelector" X="15" Y="57" Width="250" Height="74" Attributes="3" Property="PREREQUISITESDLGPREREQUISITESELECTOR_0_PROP" Text="{110}{80}{70}{70}Name,Required,Found,Action" Order="1000" TextLocId="Control.Text.PrerequisitesDlg#PrerequisiteSelector" MsiKey="PrerequisitesDlg#PrerequisiteSelector" ExtType="PrerequisiteSelector"/>
+    <ROW Dialog_="PrerequisitesDlg" Control="ViGEMbusTermsLicense" Type="Hyperlink" X="15" Y="144" Width="167" Height="11" Attributes="65539" Property="HYPERLINK_1_PROP" Text="&lt;a href=&quot;https://github.com/ViGEm/ViGEmBus/blob/master/LICENSE&quot;&gt;ViGEmbus Terms License and Conditions&lt;/a&gt;" Order="1100"/>
+    <ROW Dialog_="PrerequisitesDlg" Control="TermsLicenseAccept" Type="CheckBox" X="15" Y="184" Width="205" Height="13" Attributes="3" Property="TermsLicenseAcceptCHK" Text="I agree to the above Terms License and Conditions" Order="1200"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
+    <ROW Dialog_="PrerequisitesDlg" Control_="Next" Action="Enable" Condition="NOT TermsLicenseAcceptCHK = &quot;&quot;"/>
+    <ROW Dialog_="PrerequisitesDlg" Control_="Next" Action="Disable" Condition="TermsLicenseAcceptCHK = &quot;&quot;"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
@@ -695,15 +708,13 @@
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqComponent">
     <ROW PrereqKey="E25D6A62194038942640BDE651049C" DisplayName="ASP.NET Core Runtime 6.0.8 x64" VersionMin="6.0" SetupFileUrl="https://download.visualstudio.microsoft.com/download/pr/f5ef50c0-4dd1-4301-857f-768834d5a006/852c6470e4e5f602eee280c1e4e4e4c3/aspnetcore-runtime-6.0.8-win-x64.exe" Location="1" ExactSize="8927760" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows Vista x64, Windows Server 2008 x64, Windows 7 RTM x64, Windows Server 2008 R2 x64, Windows 8 x64, Windows Server 2012 x64, Windows 10 version 1507 x64, Windows 10 version 1511 x64" Operator="1" NoUiComLine="/q /norestart" Options="xym" MD5="a37cf823f6ed9dcdceb5e486dbe0fd79" TargetName="ASP.NET Core 6.0"/>
     <ROW PrereqKey="FAC9C433D3044829E6669A2C6FF54E6" DisplayName=".NET Desktop Runtime 6.0.8 x64" VersionMin="6.0" SetupFileUrl="https://download.visualstudio.microsoft.com/download/pr/b4a17a47-2fe8-498d-b817-30ad2e23f413/00020402af25ba40990c6cc3db5cb270/windowsdesktop-runtime-6.0.8-win-x64.exe" Location="1" ExactSize="57909296" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" WinNT64Versions="Windows Vista x64, Windows Server 2008 x64, Windows 7 RTM x64, Windows Server 2008 R2 x64, Windows 8 x64, Windows Server 2012 x64, Windows 10 version 1507 x64, Windows 10 version 1511 x64" Operator="1" NoUiComLine="/q /norestart" Options="xym" MD5="3093812bb6e69c4b88007435595d16ff" TargetName=".NET 6.0"/>
-    <ROW PrereqKey="RequiredApplication" DisplayName="Nefarius Virtual Gamepad Emulator" VersionMin="1.21.442" SetupFileUrl="https://github.com/ViGEm/ViGEmBus/releases/download/v1.21.442.0/ViGEmBus_1.21.442_x64_x86_arm64.exe" Location="1" ExactSize="6288904" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" ComLine="/norestart" Options="y" MD5="660b3b7f2f5f28bc13059b0ee977a1e8" TargetName="Nefarius Virtual Gamepad Emulator"/>
-    <ROW PrereqKey="RequiredApplication_1" DisplayName="Identinator" VersionMin="1.14.1" SetupFileUrl="https://github.com/nefarius/Identinator/releases/download/v1.14.1/Identinator_1.14.1_x64.exe" Location="1" ExactSize="13405872" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" ComLine="/norestart" Options="y" MD5="5de5b7fefe4b72c9ed68833edef6004d" TargetName="Identinator"/>
-    <ATTRIBUTE name="PrereqsOrder" value="RequiredApplication FAC9C433D3044829E6669A2C6FF54E6 E25D6A62194038942640BDE651049C RequiredApplication_1"/>
+    <ROW PrereqKey="RequiredApplication" DisplayName="Nefarius Virtual Gamepad Emulator" VersionMin="1.21.442" SetupFileUrl="https://github.com/ViGEm/ViGEmBus/releases/download/v1.21.442.0/ViGEmBus_1.21.442_x64_x86_arm64.exe" Location="1" ExactSize="6288904" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" ComLine="/q /norestart" Options="y" MD5="660b3b7f2f5f28bc13059b0ee977a1e8" TargetName="Nefarius Virtual Gamepad Emulator"/>
+    <ATTRIBUTE name="PrereqsOrder" value="RequiredApplication FAC9C433D3044829E6669A2C6FF54E6 E25D6A62194038942640BDE651049C"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">
     <ROW SearchKey="E25D6A62194038942640BDE651049CASP.N" Prereq="E25D6A62194038942640BDE651049C" SearchType="1" SearchString="HKLM\SOFTWARE\Microsoft\ASP.NET Core\Shared Framework\v6.0" VerMin="6.0.8" Order="1" Property="PreReqSearch_E25D6A62194038942640BD"/>
     <ROW SearchKey="FAC9C433D3044829E6669A2C6FF54E6Micr" Prereq="FAC9C433D3044829E6669A2C6FF54E6" SearchType="14" SearchString="[ProgramFiles64Folder]dotnet\shared\Microsoft.WindowsDesktop.App" VerMin="6.0.8" Order="1" Property="PreReqSearch_FAC9C433D3044829E6669A"/>
     <ROW SearchKey="SystemFolderfile.dll" Prereq="RequiredApplication" SearchType="0" SearchString="[ProgramFiles64Folder]\Nefarius Software Solutions\Virtual Gamepad Emulation Bus Driver\ViGEmBus.sys" VerMin="1.21.442" Order="1" Property="PreReqSearch"/>
-    <ROW SearchKey="SystemFolderfile.dll_1" Prereq="RequiredApplication_1" SearchType="0" SearchString="[ProgramFilesFolder]\Nefarius Software Solutions\Nefarius&apos; Identinator\Identinator.exe" VerMin="1.14.1.0" Order="1" Property="PreReqSearch_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
     <ROW Directory_="x64_Dir" SourcePath="..\Publish\x64" Feature="MainFeature" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6" FileAddOptions="4"/>

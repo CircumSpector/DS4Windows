@@ -1,13 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Net.NetworkInformation;
+using System.Text.Json.Serialization;
 
 using JetBrains.Annotations;
 
-using Newtonsoft.Json;
-
 using Vapour.Shared.Common.Legacy;
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Profiles.Types;
 
 namespace Vapour.Shared.Configuration.Profiles.Schema;
@@ -15,9 +13,7 @@ namespace Vapour.Shared.Configuration.Profiles.Schema;
 /// <summary>
 ///     Controller profile definition.
 /// </summary>
-public class DS4WindowsProfile :
-    JsonSerializable<DS4WindowsProfile>,
-    IEquatable<DS4WindowsProfile>,
+public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
     INotifyPropertyChanged, IProfile
 {
     /// <summary>
@@ -104,7 +100,6 @@ public class DS4WindowsProfile :
     /// <summary>
     ///     Auto-generated unique ID for this profile.
     /// </summary>
-    [JsonProperty]
     public Guid Id { get; private set; } = Guid.NewGuid();
 
     /// <summary>

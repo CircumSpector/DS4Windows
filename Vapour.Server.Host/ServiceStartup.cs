@@ -9,7 +9,6 @@ using Vapour.Client.Core;
 using Vapour.Server.Host.Controller;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
-using Vapour.Shared.Configuration.Application;
 using Vapour.Shared.Configuration.Profiles;
 using Vapour.Shared.Devices;
 using Vapour.Shared.Devices.HostedServices;
@@ -36,7 +35,7 @@ public static class ServiceStartup
             new[]
             {
                 typeof(ServerHostRegistrar), typeof(DevicesRegistrar), typeof(ProfilesRegistrar),
-                typeof(ConfigurationRegistrar), typeof(CommonRegistrar), typeof(OpenTelemetryRegistrar)
+                typeof(CommonRegistrar), typeof(OpenTelemetryRegistrar)
             },
             null,
             builder.Host);

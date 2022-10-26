@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vapour.Shared.Devices", "Vapour.Shared.Devices\Vapour.Shared.Devices.csproj", "{2C1F44F5-AFAE-4659-B595-ACE507816D9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vapour.Shared.Configuration.Application", "Vapour.Shared.Configuration.Application\Vapour.Shared.Configuration.Application.csproj", "{7947FA69-EF8C-4911-BD56-B0C47A8BD972}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vapour.Shared.Common", "Vapour.Shared.Common\Vapour.Shared.Common.csproj", "{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vapour.Shared.Configuration.Profiles", "Vapour.Shared.Configuration.Profiles\Vapour.Shared.Configuration.Profiles.csproj", "{884F1AB2-3ACE-4DFC-BD21-AA45223F6662}"
@@ -76,14 +74,6 @@ Global
 		{2C1F44F5-AFAE-4659-B595-ACE507816D9E}.Release|x64.Build.0 = Release|x64
 		{2C1F44F5-AFAE-4659-B595-ACE507816D9E}.Release|x86.ActiveCfg = Release|x86
 		{2C1F44F5-AFAE-4659-B595-ACE507816D9E}.Release|x86.Build.0 = Release|x86
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Debug|x64.ActiveCfg = Debug|x64
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Debug|x64.Build.0 = Debug|x64
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Debug|x86.ActiveCfg = Debug|x86
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Debug|x86.Build.0 = Debug|x86
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Release|x64.ActiveCfg = Release|x64
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Release|x64.Build.0 = Release|x64
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Release|x86.ActiveCfg = Release|x86
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972}.Release|x86.Build.0 = Release|x86
 		{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}.Debug|x64.ActiveCfg = Debug|x64
 		{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}.Debug|x64.Build.0 = Debug|x64
 		{F3A0788B-1C89-4433-8E41-D36D05DFBE5C}.Debug|x86.ActiveCfg = Debug|x86
@@ -226,7 +216,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2C1F44F5-AFAE-4659-B595-ACE507816D9E} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}
-		{7947FA69-EF8C-4911-BD56-B0C47A8BD972} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}
 		{F3A0788B-1C89-4433-8E41-D36D05DFBE5C} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}
 		{884F1AB2-3ACE-4DFC-BD21-AA45223F6662} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}
 		{2C298DD9-B324-4BF1-AC28-75D7AF222DCD} = {654BC1FC-FD86-432A-88F2-53F6AB2CE09D}

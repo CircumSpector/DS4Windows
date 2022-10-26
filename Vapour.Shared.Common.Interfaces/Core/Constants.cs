@@ -7,7 +7,7 @@ namespace Vapour.Shared.Common.Core;
 /// </summary>
 public static class Constants
 {
-    public const string ApplicationName = "DS4Windows";
+    public const string ApplicationName = "Vapour";
 
     public const string LegacyProfilesFileName = "Profiles.xml";
 
