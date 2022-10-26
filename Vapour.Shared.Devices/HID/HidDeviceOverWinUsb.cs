@@ -1,6 +1,7 @@
 ﻿using Windows.Win32.Devices.HumanInterfaceDevice;
 
 using Nefarius.Drivers.WinUSB;
+using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -11,6 +12,7 @@ public class HidDeviceOverWinUsb : HidDevice
 {
     public HidDeviceOverWinUsb(string path, ushort interruptInAddress, ushort interruptOutAddress)
     {
+        InstanceId = PnPDevice.GetInstanceIdFromInterfaceId(path);
         Path = path;
         UsbDevice = USBDevice.GetSingleDeviceByPath(path);
 
