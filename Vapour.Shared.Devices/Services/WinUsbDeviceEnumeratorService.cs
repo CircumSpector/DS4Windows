@@ -12,6 +12,8 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
 
+using static System.String;
+
 namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
@@ -62,14 +64,23 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
 
         _connectedDevices.Clear();
 
-        while (Devcon.FindByInterfaceGuid(FilterDriver.FilteredDeviceInterfaceId, out string path, out _,
+        while (Devcon.FindByInterfaceGuid(FilterDriver.FilteredDeviceInterfaceId, out string path,
+                   out string instanceId,
                    deviceIndex++))
         {
             string service = PnPDevice.GetDeviceByInterfaceId(path)
                 .GetProperty<string>(DevicePropertyKey.Device_Service);
 
+            // skip those with unexpected service
             if (service is null || !service.ToUpper().Equals("WINUSB"))
             {
+                continue;
+            }
+
+            // skip already discovered ones
+            if (_connectedDevices.Any(d => String.Equals(d.InstanceId, instanceId, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                _logger.LogWarning("Skipping duplicate for WinUSB {InstanceId}", instanceId);
                 continue;
             }
 
@@ -112,9 +123,9 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         {
             using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
 
-            var supportedDevice =
+            CompatibleDeviceIdentification supportedDevice =
                 KnownDevices.IsWinUsbRewriteSupported(winUsbDevice.Descriptor.VID, winUsbDevice.Descriptor.PID);
-            
+
             // Filter out devices we don't know about
             if (supportedDevice == null)
             {
@@ -132,7 +143,7 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
             //
             // Grab product string from device if property is missing
             // 
-            if (string.IsNullOrEmpty(friendlyName))
+            if (IsNullOrEmpty(friendlyName))
             {
                 friendlyName = winUsbDevice.Descriptor.PathName;
             }
@@ -172,8 +183,16 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
 
         string service = device.GetProperty<string>(DevicePropertyKey.Device_Service);
 
+        // skip those with unexpected service
         if (service is null || !service.ToUpper().Equals("WINUSB"))
         {
+            return;
+        }
+
+        // skip already discovered ones
+        if (_connectedDevices.Any(d => String.Equals(d.InstanceId, device.InstanceId, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            _logger.LogWarning("Skipping duplicate for WinUSB {InstanceId}", device.InstanceId);
             return;
         }
 
@@ -185,11 +204,6 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         if (entry is null)
         {
             return;
-        }
-
-        if (!_connectedDevices.Contains(entry))
-        {
-            _connectedDevices.Add(entry);
         }
 
         DeviceArrived?.Invoke(entry);
@@ -212,7 +226,8 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         _logger.LogInformation("WinUSB Device {Instance} ({Path}) removed",
             device.InstanceId, symLink);
 
-        HidDeviceOverWinUsb entry = _connectedDevices.FirstOrDefault(entry => entry.InstanceId.ToUpper() == device.InstanceId.ToUpper());
+        HidDeviceOverWinUsb entry =
+            _connectedDevices.FirstOrDefault(entry => entry.InstanceId.ToUpper() == device.InstanceId.ToUpper());
 
         if (entry is null)
         {

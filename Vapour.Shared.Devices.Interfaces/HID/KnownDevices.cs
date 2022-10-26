@@ -13,7 +13,7 @@ public static class KnownDevices
     private const int JoyconLProductId = 0x2006;
     private const int JoyconRProductId = 0x2007;
 
-    public static VidPidInfo IsWinUsbRewriteSupported(int vid, int pid)
+    public static CompatibleDeviceIdentification IsWinUsbRewriteSupported(int vid, int pid)
     {
         var supportedDevice = KnownDevices.List.SingleOrDefault(i =>
             i.WinUsbEndpoints != null && i.Vid == vid &&
@@ -22,7 +22,7 @@ public static class KnownDevices
         return supportedDevice;
     }
 
-    public static readonly IEnumerable<VidPidInfo> List = new List<VidPidInfo>
+    public static readonly IEnumerable<CompatibleDeviceIdentification> List = new List<CompatibleDeviceIdentification>
     {
         new(SonyVid, 0xBA0, "Sony WA",
             InputDeviceType.DualShock4,
@@ -40,7 +40,7 @@ public static class KnownDevices
             }),
         new(SonyVid, 0x09CC, "DS4 v.2",
             InputDeviceType.DualShock4,
-            CompatibleHidDeviceFeatureSet.MonitorAudio
+            CompatibleHidDeviceFeatureSet.MonitorAudio | CompatibleHidDeviceFeatureSet.VendorDefinedDevice
         ),
         new(SonyVid, 0x0CE6, "DualSense",
             InputDeviceType.DualSense,

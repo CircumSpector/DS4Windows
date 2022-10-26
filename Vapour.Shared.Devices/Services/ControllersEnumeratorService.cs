@@ -111,13 +111,13 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             //
             // Get device meta
             // 
-            VidPidInfo deviceMeta = KnownDevices.List
+            CompatibleDeviceIdentification deviceIdentification = KnownDevices.List
                 .First(c => c.Vid == hidDevice.Attributes.VendorID && c.Pid == hidDevice.Attributes.ProductID);
 
             //
             // Create new special input device
             // 
-            CompatibleHidDevice device = CreateInputAndOutputDevices(hidDevice, deviceMeta);
+            CompatibleHidDevice device = CreateInputAndOutputDevices(hidDevice, deviceIdentification);
 
             _supportedDevices.Add(device);
 
@@ -154,7 +154,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 
         activity?.SetTag("Path", hidDevice.Path);
 
-        VidPidInfo known = KnownDevices.List.FirstOrDefault(d =>
+        CompatibleDeviceIdentification known = KnownDevices.List.FirstOrDefault(d =>
             d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID);
 
         if (known is null)
@@ -174,13 +174,13 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         //
         // Get device meta
         // 
-        VidPidInfo deviceMeta = KnownDevices.List
+        CompatibleDeviceIdentification deviceIdentification = KnownDevices.List
             .First(c => c.Vid == hidDevice.Attributes.VendorID && c.Pid == hidDevice.Attributes.ProductID);
 
         //
         // Create new special input device
         // 
-        CompatibleHidDevice device = CreateInputAndOutputDevices(hidDevice, deviceMeta);
+        CompatibleHidDevice device = CreateInputAndOutputDevices(hidDevice, deviceIdentification);
 
         if (!_supportedDevices.Contains(device))
         {
@@ -232,12 +232,12 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         }
     }
 
-    private CompatibleHidDevice CreateInputAndOutputDevices(HidDevice hidDevice, VidPidInfo deviceMeta)
+    private CompatibleHidDevice CreateInputAndOutputDevices(HidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
     {
         CompatibleHidDevice device = CompatibleHidDevice.CreateFrom(
-            deviceMeta.DeviceType,
+            deviceIdentification.DeviceType,
             hidDevice,
-            deviceMeta.FeatureSet,
+            deviceIdentification.FeatureSet,
             _serviceProvider
         );
 

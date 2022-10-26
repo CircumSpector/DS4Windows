@@ -29,7 +29,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         // TODO: finish me
         // 
         else
-            _reportStartOffset = 1;
+            _reportStartOffset = 0; // TODO: this works, investigate why :D
 
         StartInputReportReader();
     }
