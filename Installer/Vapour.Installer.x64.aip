@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="20.0" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="20.0" Modules="enterprise" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="ActSyncAppComponent;CPLAppletComponent;AppXAppDetailsComponent;FixupComponent;AppXCapabilitiesComponent;AppXDependenciesComponent;AppXProductDetailsComponent;AppXVisualAssetsComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;MsiXDiffComponent;MsixManifestEditorComponent"/>
   </COMPONENT>
@@ -343,7 +343,7 @@
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
-    <ROW BootstrOptKey="GlobalOptions" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" Options="2"/>
+    <ROW BootstrOptKey="GlobalOptions" GeneralOptions="o" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" Options="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrapperUISequenceComponent">
     <ROW Action="AI_DetectSoftware" Sequence="151"/>
@@ -402,6 +402,20 @@
     <ROW Name="SoftwareDetector.dll" SourcePath="&lt;AI_CUSTACTS&gt;SoftwareDetector.dll"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
+    <ROW Property="TermsLicenseAcceptCHK" Value="CheckBox"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
+    <ROW Dialog_="PrerequisitesDlg" Control="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Attributes="1" Text="[ButtonText_Next]" Order="100" TextLocId="-" MsiKey="PrerequisitesDlg#Next" Options="1"/>
+    <ROW Dialog_="PrerequisitesDlg" Control="PrerequisiteSelector" Type="PrerequisiteSelector" X="15" Y="57" Width="250" Height="74" Attributes="3" Property="PREREQUISITESDLGPREREQUISITESELECTOR_0_PROP" Text="{110}{80}{70}{70}Name,Required,Found,Action" Order="1000" TextLocId="Control.Text.PrerequisitesDlg#PrerequisiteSelector" MsiKey="PrerequisitesDlg#PrerequisiteSelector" ExtType="PrerequisiteSelector"/>
+    <ROW Dialog_="PrerequisitesDlg" Control="ViGEMbusTermsLicense" Type="Hyperlink" X="15" Y="144" Width="167" Height="11" Attributes="65539" Property="HYPERLINK_1_PROP" Text="&lt;a href=&quot;https://github.com/ViGEm/ViGEmBus/blob/master/LICENSE&quot;&gt;ViGEmbus Terms License and Conditions&lt;/a&gt;" Order="1100"/>
+    <ROW Dialog_="PrerequisitesDlg" Control="IdentinatorTermsLicense" Type="Hyperlink" X="15" Y="160" Width="186" Height="11" Attributes="65539" Property="HYPERLINK_1_PROP_1" Text="&lt;a href=&quot;https://github.com/nefarius/Identinator/blob/master/LICENSE.md&quot;&gt;Identinator Terms License and Conditions&lt;/a&gt;" Order="1200"/>
+    <ROW Dialog_="PrerequisitesDlg" Control="TermsLicenseAccept" Type="CheckBox" X="15" Y="184" Width="205" Height="13" Attributes="3" Property="TermsLicenseAcceptCHK" Text="I agree to the above Terms License and Conditions" Order="1300"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
+    <ROW Dialog_="PrerequisitesDlg" Control_="Next" Action="Enable" Condition="NOT TermsLicenseAcceptCHK = &quot;&quot;"/>
+    <ROW Dialog_="PrerequisitesDlg" Control_="Next" Action="Disable" Condition="TermsLicenseAcceptCHK = &quot;&quot;"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
