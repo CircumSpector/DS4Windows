@@ -9,7 +9,8 @@ $installerProject = $installerDirectory + "/Vapour.Installer." + $env:PlATFORM +
 $installerOutputExe = $installerDirectory + "/Setup Files " + $env:PlATFORM + "/Vapour Setup (" + $env:PlATFORM + ").exe"
 $installerOutputArtifact = $artifacts + "/Vapour Setup (" + $env:PlATFORM + ").exe"
 $publishOutputArtifact = $artifacts + "/Publish.zip"
-$adi = "C:/Program Files (x86)/Caphyon/Advanced Installer 20.0/bin/x86/AdvancedInstaller.com"
+$aiInstallRoot = (Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Caphyon\Advanced Installer" -Name "InstallRoot").InstallRoot
+$adi = "$aiInstallRoot\bin\x86\AdvancedInstaller.com"
 $serial = $installerDirectory + "/AppVeyor_ProductKey.txt"
 
 if (Test-Path -Path $artifacts)
