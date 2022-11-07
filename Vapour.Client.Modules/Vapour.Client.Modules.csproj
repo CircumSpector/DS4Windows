@@ -80,7 +80,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="PropertyChanged.Fody" Version="4.0.5" PrivateAssets="All" />
+		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
     <PackageReference Include="System.Net.WebSockets" Version="4.3.0" />
 		<PackageReference Include="Websocket.Client" Version="4.4.43" />
 	</ItemGroup>
