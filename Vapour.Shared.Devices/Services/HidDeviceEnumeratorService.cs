@@ -25,7 +25,7 @@ namespace Vapour.Shared.Devices.Services;
 public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevice>
 {
     private readonly ObservableCollection<HidDevice> _connectedDevices;
-    private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly IDeviceNotificationListener _deviceNotificationListener;

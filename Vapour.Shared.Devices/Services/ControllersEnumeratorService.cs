@@ -15,7 +15,7 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
-    private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
 

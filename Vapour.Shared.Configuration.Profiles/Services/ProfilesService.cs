@@ -25,7 +25,7 @@ namespace Vapour.Shared.Configuration.Profiles.Services;
 public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
 {
     private readonly ActivitySource
-        _activitySource = new(TracingSources.ConfigurationProfilesAssemblyActivitySourceName);
+        _activitySource = new(TracingSources.AssemblyName);
 
     private readonly NotifyCollectionChangedEventHandler _availableHandler;
 

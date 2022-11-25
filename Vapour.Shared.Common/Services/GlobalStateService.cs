@@ -11,12 +11,12 @@ namespace Vapour.Shared.Common.Services;
 /// </summary>
 public sealed class GlobalStateService : IGlobalStateService
 {
-    private readonly ActivitySource activitySource = new(TracingSources.CommonAssemblyActivitySourceName);
+    private readonly ActivitySource _activitySource = new(TracingSources.AssemblyName);
 
 
     public GlobalStateService()
     {
-        using var activity = activitySource.StartActivity(
+        using var activity = _activitySource.StartActivity(
             $"{nameof(GlobalStateService)}:Constructor");
     }
 

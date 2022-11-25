@@ -22,7 +22,7 @@ namespace Vapour.Shared.Devices.Services;
 public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
 {
     private readonly ObservableCollection<HidDeviceOverWinUsb> _connectedDevices;
-    private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly IDeviceNotificationListener _deviceNotificationListener;

@@ -26,7 +26,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 {
     private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
 
-    private static readonly Meter Meter = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private static readonly Meter Meter = new(TracingSources.AssemblyName);
 
     private static readonly Counter<int> ReportsReadCounter =
         Meter.CreateCounter<int>("reports-read", description: "The number of reports read.");
@@ -38,7 +38,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     private static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
     private static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
-    private readonly ActivitySource _coreActivity = new(TracingSources.DevicesAssemblyActivitySourceName);
+    private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     private readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
