@@ -31,4 +31,8 @@
 		<ProjectReference Include="..\Vapour.Shared.Configuration.Profiles.Interfaces\Vapour.Shared.Configuration.Profiles.Interfaces.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Types\" />
+	</ItemGroup>
+
 </Project>

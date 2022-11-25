@@ -5,7 +5,7 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Server.Host.Profile.Endpoints;
 
-public sealed class ProfileSaveEndpoint : Endpoint<DS4WindowsProfile, DS4WindowsProfile>
+public sealed class ProfileSaveEndpoint : Endpoint<VapourProfile, VapourProfile>
 {
     private readonly IProfilesService _profilesService;
 
@@ -25,7 +25,7 @@ public sealed class ProfileSaveEndpoint : Endpoint<DS4WindowsProfile, DS4Windows
         });
     }
 
-    public override async Task HandleAsync(DS4WindowsProfile req, CancellationToken ct)
+    public override async Task HandleAsync(VapourProfile req, CancellationToken ct)
     {
         _profilesService.CreateOrUpdateProfile(req);
 

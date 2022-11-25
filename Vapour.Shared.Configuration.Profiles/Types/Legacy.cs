@@ -1,1 +1,0 @@
-﻿namespace Vapour.Shared.Configuration.Profiles.Types;

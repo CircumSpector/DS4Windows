@@ -13,7 +13,7 @@ namespace Vapour.Shared.Configuration.Profiles.Schema;
 /// <summary>
 ///     Controller profile definition.
 /// </summary>
-public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
+public class VapourProfile : IEquatable<VapourProfile>,
     INotifyPropertyChanged, IProfile
 {
     /// <summary>
@@ -30,13 +30,13 @@ public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
     public const string FileExtension = ".json";
 
     /// <summary>
-    ///     Create new <see cref="DS4WindowsProfile" />. Constructor must remain public for deep cloning to work.
+    ///     Create new <see cref="VapourProfile" />. Constructor must remain public for deep cloning to work.
     /// </summary>
-    public DS4WindowsProfile()
+    public VapourProfile()
     {
     }
 
-    protected DS4WindowsProfile(int index) : this()
+    protected VapourProfile(int index) : this()
     {
         Index = index;
     }
@@ -302,7 +302,7 @@ public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
 
     #endregion
 
-    public bool Equals(DS4WindowsProfile other)
+    public bool Equals(VapourProfile other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -337,26 +337,26 @@ public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
     }
 
     /// <summary>
-    ///     Returns a new copy of the default <see cref="DS4WindowsProfile"/> with default settings.
+    ///     Returns a new copy of the default <see cref="VapourProfile"/> with default settings.
     /// </summary>
     /// <param name="index">An optional slot index.</param>
-    /// <returns>The new <see cref="DS4WindowsProfile"/>.</returns>
-    public static DS4WindowsProfile CreateDefaultProfile(int index = default)
+    /// <returns>The new <see cref="VapourProfile"/>.</returns>
+    public static VapourProfile CreateDefaultProfile(int index = default)
     {
-        return new DS4WindowsProfile(index)
+        return new VapourProfile(index)
         {
             Id = DefaultProfileId
         };
     }
 
     /// <summary>
-    ///     Returns a new unique <see cref="DS4WindowsProfile"/> with default settings.
+    ///     Returns a new unique <see cref="VapourProfile"/> with default settings.
     /// </summary>
     /// <param name="index">An optional slot index.</param>
-    /// <returns>The new <see cref="DS4WindowsProfile"/>.</returns>
-    public static DS4WindowsProfile CreateNewProfile(int index = default)
+    /// <returns>The new <see cref="VapourProfile"/>.</returns>
+    public static VapourProfile CreateNewProfile(int index = default)
     {
-        return new DS4WindowsProfile(index);
+        return new VapourProfile(index);
     }
 
     [CanBeNull] public event IProfile.ProfilePropertyChangedEventHandler ProfilePropertyChanged;
@@ -369,10 +369,10 @@ public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
     }
 
     /// <summary>
-    ///     Register a <see cref="ProfilePropertyChangedEventHandler"/> for this <see cref="DS4WindowsProfile"/>.
+    ///     Register a <see cref="ProfilePropertyChangedEventHandler"/> for this <see cref="VapourProfile"/>.
     /// </summary>
     /// <param name="handler">The <see cref="ProfilePropertyChangedEventHandler"/>.</param>
-    /// <returns>This instance of <see cref="DS4WindowsProfile"/>.</returns>
+    /// <returns>This instance of <see cref="VapourProfile"/>.</returns>
     public IProfile WithChangeNotification([CanBeNull] IProfile.ProfilePropertyChangedEventHandler handler)
     {
         ProfilePropertyChanged += (sender, args) => { handler?.Invoke(sender, args); };
@@ -381,7 +381,7 @@ public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
     }
 
     /// <summary>
-    ///     Builds an absolute file system path to this <see cref="DS4WindowsProfile"/>.
+    ///     Builds an absolute file system path to this <see cref="VapourProfile"/>.
     /// </summary>
     /// <param name="parentDirectory">The parent directory.</param>
     /// <returns>The resulting absolute path.</returns>
@@ -395,7 +395,7 @@ public class DS4WindowsProfile : IEquatable<DS4WindowsProfile>,
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((DS4WindowsProfile)obj);
+        return Equals((VapourProfile)obj);
     }
 
     public override int GetHashCode()
