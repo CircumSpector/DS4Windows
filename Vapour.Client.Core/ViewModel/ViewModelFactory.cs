@@ -6,21 +6,22 @@ namespace Vapour.Client.Core.ViewModel;
 
 public class ViewModelFactory : IViewModelFactory
 {
-    private readonly IServiceProvider serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     public ViewModelFactory(IServiceProvider serviceProvider)
     {
-        this.serviceProvider = serviceProvider;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task<List<INavigationTabViewModel>> CreateNavigationTabViewModels()
     {
-        var navigationTabViewModels = serviceProvider.GetServices<INavigationTabViewModel>().ToList();
+        List<INavigationTabViewModel> navigationTabViewModels =
+            _serviceProvider.GetServices<INavigationTabViewModel>().ToList();
 
-        foreach (var navigationTabViewModel in navigationTabViewModels)
+        foreach (INavigationTabViewModel navigationTabViewModel in navigationTabViewModels)
         {
             await navigationTabViewModel.Initialize();
-            var tabView = serviceProvider.GetService(navigationTabViewModel.GetViewType());
+            object tabView = _serviceProvider.GetService(navigationTabViewModel.GetViewType());
             Initialize(navigationTabViewModel, tabView);
         }
 
@@ -33,8 +34,8 @@ public class ViewModelFactory : IViewModelFactory
         where TViewModel : IViewModel
         where TView : IView
     {
-        var viewModel = await CreateViewModel<TViewModel>();
-        var view = CreateView<TView>();
+        TViewModel viewModel = await CreateViewModel<TViewModel>();
+        TView view = CreateView<TView>();
         Initialize(viewModel, view);
 
         return viewModel;
@@ -43,7 +44,7 @@ public class ViewModelFactory : IViewModelFactory
     public async Task<TViewModel> CreateViewModel<TViewModel>()
         where TViewModel : IViewModel
     {
-        var viewModel = await Task.FromResult(serviceProvider.GetRequiredService<TViewModel>());
+        TViewModel viewModel = await Task.FromResult(_serviceProvider.GetRequiredService<TViewModel>());
         await viewModel.Initialize();
         return viewModel;
     }
@@ -51,13 +52,13 @@ public class ViewModelFactory : IViewModelFactory
     public TView CreateView<TView>()
         where TView : IView
     {
-        return serviceProvider.GetService<TView>();
+        return _serviceProvider.GetService<TView>();
     }
 
     private void Initialize(object viewModel, object view)
     {
-        var internalViewModel = (IViewModel)viewModel;
-        var internalView = (IView)view;
+        IViewModel internalViewModel = (IViewModel)viewModel;
+        IView internalView = (IView)view;
 
         internalViewModel.AddView(internalView);
         internalView.DataContext = internalViewModel;
