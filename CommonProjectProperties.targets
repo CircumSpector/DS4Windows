@@ -6,6 +6,8 @@
 		<RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+        <!-- TODO: figure out how to handle WPF -->
+        <!--<PublishAot>true</PublishAot>-->
 	</PropertyGroup>
 
 </Project>
