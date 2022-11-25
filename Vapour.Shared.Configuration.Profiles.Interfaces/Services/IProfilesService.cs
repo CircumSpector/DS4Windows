@@ -41,10 +41,10 @@ public interface IProfilesService
     void SaveAvailableProfiles();
 
     /// <summary>
-    ///     Adds a pre-existing or new <see cref="DS4WindowsProfile" /> to <see cref="AvailableProfiles" /> and persists it to
+    ///     Adds a pre-existing or new <see cref="VapourProfile" /> to <see cref="AvailableProfiles" /> and persists it to
     ///     disk.
     /// </summary>
-    /// <param name="profile">The <see cref="DS4WindowsProfile" /> to save.</param>
+    /// <param name="profile">The <see cref="VapourProfile" /> to save.</param>
     void CreateOrUpdateProfile(IProfile profile = default);
 
     IProfile CreateNewProfile(int index = default);
@@ -52,26 +52,26 @@ public interface IProfilesService
     /// <summary>
     ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
     /// </summary>
-    /// <param name="profile">The <see cref="DS4WindowsProfile" /> to delete.</param>
+    /// <param name="profile">The <see cref="VapourProfile" /> to delete.</param>
     void DeleteProfile(IProfile profile);
 
     /// <summary>
     ///     Delete a profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
     /// </summary>
-    /// <param name="guid">The <see cref="Guid" /> of the <see cref="DS4WindowsProfile" /> to look for.</param>
+    /// <param name="guid">The <see cref="Guid" /> of the <see cref="VapourProfile" /> to look for.</param>
     void DeleteProfile(Guid guid);
 
     /// <summary>
-    ///     Renames a <see cref="DS4WindowsProfile" />.
+    ///     Renames a <see cref="VapourProfile" />.
     /// </summary>
-    /// <param name="profile">The <see cref="DS4WindowsProfile" /> to rename.</param>
+    /// <param name="profile">The <see cref="VapourProfile" /> to rename.</param>
     /// <param name="displayName">The new name.</param>
     void RenameProfile(IProfile profile, string displayName);
 
     /// <summary>
-    ///     Renames a <see cref="DS4WindowsProfile" /> identified by <see cref="Guid" />.
+    ///     Renames a <see cref="VapourProfile" /> identified by <see cref="Guid" />.
     /// </summary>
-    /// <param name="guid">The <see cref="Guid" /> of the <see cref="DS4WindowsProfile" />.</param>
+    /// <param name="guid">The <see cref="Guid" /> of the <see cref="VapourProfile" />.</param>
     /// <param name="displayName">The new name.</param>
     void RenameProfile(Guid guid, string displayName);
 
@@ -93,13 +93,18 @@ public interface IProfilesService
     /// <param name="address">The <see cref="PhysicalAddress" /> from the arrived device.</param>
     void ControllerArrived(int slot, PhysicalAddress address);
 
+    /// <summary>
+    ///     Called upon departure of an existing controller device.
+    /// </summary>
+    /// <param name="slot">The zero-based slot index.</param>
+    /// <param name="address">The <see cref="PhysicalAddress" /> from the departed device.</param>
     void ControllerDeparted(int slot, PhysicalAddress address);
 
     /// <summary>
-    ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="DS4WindowsProfile" />.
+    ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="VapourProfile" />.
     /// </summary>
     /// <param name="slot">The zero-based slot index.</param>
-    /// <param name="profile">The <see cref="DS4WindowsProfile" /> to switch to.</param>
+    /// <param name="profile">The <see cref="VapourProfile" /> to switch to.</param>
     void SetActiveTo(int slot, IProfile profile);
 
     /// <summary>

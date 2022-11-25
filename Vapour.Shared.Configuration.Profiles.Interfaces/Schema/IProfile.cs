@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Net.NetworkInformation;
+﻿using System.Net.NetworkInformation;
 
 using Vapour.Shared.Common.Legacy;
 using Vapour.Shared.Common.Types;
@@ -118,5 +117,4 @@ public interface IProfile
     void OnPropertyChanged(string propertyName, object before, object after);
     string ToString();
     IProfile WithChangeNotification(ProfilePropertyChangedEventHandler handler);
-
 }

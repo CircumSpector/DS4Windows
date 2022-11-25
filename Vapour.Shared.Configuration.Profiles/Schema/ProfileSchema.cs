@@ -13,8 +13,10 @@ namespace Vapour.Shared.Configuration.Profiles.Schema;
 /// <summary>
 ///     Controller profile definition.
 /// </summary>
-public class VapourProfile : IEquatable<VapourProfile>,
-    INotifyPropertyChanged, IProfile
+public class VapourProfile : 
+    IEquatable<VapourProfile>,
+    INotifyPropertyChanged, 
+    IProfile
 {
     /// <summary>
     ///     The <see cref="Guid"/> identifying the default (always available) profile that is always ensured to exist.
