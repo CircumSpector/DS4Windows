@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Configuration.Profiles.Schema;
@@ -26,7 +25,8 @@ public sealed class ProfileServiceClient : IProfileServiceClient
         if (result.IsSuccessStatusCode)
         {
             ProfileList =
-                new ObservableCollection<IProfile>(await result.Content.ReadFromJsonAsync<List<ProfileItem>>());
+                new ObservableCollection<IProfile>(await result.Content.ReadFromJsonAsync<List<ProfileItem>>() ??
+                                                   Enumerable.Empty<ProfileItem>());
         }
         else
         {
@@ -64,7 +64,7 @@ public sealed class ProfileServiceClient : IProfileServiceClient
     public async Task<IProfile> SaveProfile(IProfile profile)
     {
         using HttpClient client = _httpClientFactory.CreateClient();
-        
+
         HttpResponseMessage result = await client.PostAsync(
             new Uri($"{Constants.HttpUrl}/api/profile/save", UriKind.Absolute),
             JsonContent.Create(profile));

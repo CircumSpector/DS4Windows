@@ -7,7 +7,7 @@ using Vapour.Client.Modules.Profiles.Edit;
 
 namespace Vapour.Client.Modules.Profiles.Utils;
 
-public class ProfilesModuleRegistrar : IServiceRegistrar
+public sealed class ProfilesModuleRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {

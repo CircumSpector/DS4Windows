@@ -8,7 +8,9 @@ using Vapour.Shared.Configuration.Profiles.Types;
 
 namespace Vapour.Client.Modules.Profiles;
 
-public class ProfileListItemViewModel : ViewModel<IProfileListItemViewModel>, IProfileListItemViewModel
+public sealed class ProfileListItemViewModel :
+    ViewModel<IProfileListItemViewModel>,
+    IProfileListItemViewModel
 {
     private readonly IMapper mapper;
     private IProfile profile;

@@ -5,7 +5,7 @@ using Vapour.Client.Core.DependencyInjection;
 
 namespace Vapour.Client.Modules.Main;
 
-public class MainModuleRegistrar : IServiceRegistrar
+public sealed class MainModuleRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {

@@ -9,15 +9,8 @@ public class BezierCurveConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value == null)
-        {
-            return null;
-        }
-        else
-        {
-            var bezierCurve = (BezierCurve)value;
-            return bezierCurve.AsString;
-        }
+        var bezierCurve = (BezierCurve)value;
+        return bezierCurve?.AsString;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

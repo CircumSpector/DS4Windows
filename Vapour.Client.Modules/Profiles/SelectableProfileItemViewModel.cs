@@ -3,7 +3,8 @@ using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Client.Modules.Profiles;
 
-public class SelectableProfileItemViewModel : ViewModel<ISelectableProfileItemViewModel>,
+public sealed class SelectableProfileItemViewModel :
+    ViewModel<ISelectableProfileItemViewModel>,
     ISelectableProfileItemViewModel
 {
     public string Name { get; private set; }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
+using JetBrains.Annotations;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using Vapour.Client.Core.ViewModel;
@@ -11,25 +13,27 @@ using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Client.Modules.Controllers;
 
-public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel, IControllersView>,
+[UsedImplicitly]
+public sealed class ControllersViewModel :
+    NavigationTabViewModel<IControllersViewModel, IControllersView>,
     IControllersViewModel
 {
-    private readonly IControllerServiceClient controllerService;
-    private readonly IProfileServiceClient profilesService;
-    private readonly IServiceProvider serviceProvider;
+    private readonly IControllerServiceClient _controllerService;
+    private readonly IProfileServiceClient _profilesService;
+    private readonly IServiceProvider _serviceProvider;
 
     public ControllersViewModel(
         IProfileServiceClient profilesService,
         IServiceProvider serviceProvider,
         IControllerServiceClient controllerService)
     {
-        this.serviceProvider = serviceProvider;
-        this.controllerService = controllerService;
-        this.profilesService = profilesService;
+        _serviceProvider = serviceProvider;
+        _controllerService = controllerService;
+        _profilesService = profilesService;
 
         CreateSelectableProfileItems();
     }
-    
+
     public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new();
     public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new();
 
@@ -37,21 +41,24 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
     {
         await CreateControllerItems();
 
-        controllerService.StartWebSocket(CreateControllerItem, RemoveControllerItem);
+        _controllerService.StartWebSocket(CreateControllerItem, RemoveControllerItem);
     }
 
     private async Task CreateControllerItems()
     {
-        var list = await controllerService.GetControllerList();
+        List<ControllerConnectedMessage> list = await _controllerService.GetControllerList();
 
-        foreach (var controller in list) CreateControllerItem(controller);
+        foreach (ControllerConnectedMessage controller in list)
+        {
+            CreateControllerItem(controller);
+        }
     }
 
     private void CreateControllerItem(ControllerConnectedMessage device)
     {
-        if (!ControllerItems.Any(i => i.InstanceId == device.InstanceId))
+        if (ControllerItems.All(i => i.InstanceId != device.InstanceId))
         {
-            var deviceItem = serviceProvider.GetService<IControllerItemViewModel>();
+            IControllerItemViewModel deviceItem = _serviceProvider.GetService<IControllerItemViewModel>();
             deviceItem.SetDevice(device);
             ControllerItems.Add(deviceItem);
         }
@@ -59,7 +66,8 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
 
     private void RemoveControllerItem(ControllerDisconnectedMessage device)
     {
-        var existing = ControllerItems.SingleOrDefault(i => i.InstanceId == device.ControllerDisconnectedId);
+        IControllerItemViewModel existing =
+            ControllerItems.SingleOrDefault(i => i.InstanceId == device.ControllerDisconnectedId);
         if (existing != null)
         {
             ControllerItems.Remove(existing);
@@ -69,26 +77,38 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
 
     private void CreateSelectableProfileItems()
     {
-        foreach (var item in profilesService.ProfileList) CreateProfileItem(item);
+        foreach (IProfile item in _profilesService.ProfileList)
+        {
+            CreateProfileItem(item);
+        }
 
-        profilesService.ProfileList.CollectionChanged += ControllersViewModel_CollectionChanged;
+        _profilesService.ProfileList.CollectionChanged += ControllersViewModel_CollectionChanged;
     }
 
     private void ControllersViewModel_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.Action == NotifyCollectionChangedAction.Add)
+        {
             foreach (IProfile profile in e.NewItems)
+            {
                 CreateProfileItem(profile);
+            }
+        }
         else if (e.Action == NotifyCollectionChangedAction.Remove)
+        {
             foreach (IProfile profile in e.OldItems)
+            {
                 RemoveProfileItem(profile);
+            }
+        }
     }
 
     private void CreateProfileItem(IProfile profile)
     {
-        if (!SelectableProfileItems.Any(p => p.Id == profile.Id))
+        if (SelectableProfileItems.All(p => p.Id != profile.Id))
         {
-            var selectableProfileItem = serviceProvider.GetService<ISelectableProfileItemViewModel>();
+            ISelectableProfileItemViewModel selectableProfileItem =
+                _serviceProvider.GetService<ISelectableProfileItemViewModel>();
             selectableProfileItem.SetProfile(profile);
             SelectableProfileItems.Add(selectableProfileItem);
         }
@@ -96,7 +116,7 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
 
     private void RemoveProfileItem(IProfile profile)
     {
-        var existing = SelectableProfileItems.SingleOrDefault(p => p.Id == profile.Id);
+        ISelectableProfileItemViewModel existing = SelectableProfileItems.SingleOrDefault(p => p.Id == profile.Id);
         if (existing != null)
         {
             existing.Dispose();
@@ -107,11 +127,13 @@ public class ControllersViewModel : NavigationTabViewModel<IControllersViewModel
     protected override void Dispose(bool disposing)
     {
         if (disposing)
-            foreach (var profile in SelectableProfileItems.ToList())
+        {
+            foreach (ISelectableProfileItemViewModel profile in SelectableProfileItems.ToList())
             {
                 profile.Dispose();
                 SelectableProfileItems.Remove(profile);
             }
+        }
 
         base.Dispose(disposing);
     }

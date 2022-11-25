@@ -10,213 +10,108 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public class StickControlModeSettingsViewModel : ViewModel<IStickControlModeSettingsViewModel>, IStickControlModeSettingsViewModel
+public sealed class StickControlModeSettingsViewModel :
+    ViewModel<IStickControlModeSettingsViewModel>,
+    IStickControlModeSettingsViewModel
 {
-    private readonly IDeviceValueConverters deviceValueConverters;
+    private readonly IDeviceValueConverters _deviceValueConverters;
+
+    private int _antiSnapbackDelta;
+
+    private int _antiSnapbackTimeout;
+
+    private BezierCurve _customCurve;
+
+    private StickDeadZoneInfo.DeadZoneType _deadZoneType;
+
+    private int _fuzz;
+
+    private bool _isAntiSnapback;
+
+    private bool _isSquareStick;
+
+    private CurveMode _outputCurve;
+
+    private double _squareStickRoundness;
 
     public StickControlModeSettingsViewModel(IDeviceValueConverters deviceValueConverters)
     {
-        this.deviceValueConverters = deviceValueConverters;
+        _deviceValueConverters = deviceValueConverters;
         ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
-    }
-
-    #region Radial Properties
-
-    public int DeadZone { get; set; }
-    public double DeadZoneConverted
-    {
-        get => deviceValueConverters.DeadZoneIntToDouble(DeadZone);
-        set => DeadZone = deviceValueConverters.DeadZoneDoubleToInt(value);
-    }
-
-    private int antiDeadZone;
-    public int AntiDeadZone
-    {
-        get => antiDeadZone;
-        set => SetProperty(ref antiDeadZone, value);
-    }
-
-    private int maxZone;
-    public int MaxZone
-    {
-        get => maxZone;
-        set => SetProperty(ref maxZone, value);
-    }
-
-    private int maxOutput;
-    public int MaxOutput
-    {
-        get => maxOutput;
-        set => SetProperty(ref maxOutput, value);
-    }
-
-    private bool forceMaxOutput;
-    public bool ForceMaxOutput
-    {
-        get => forceMaxOutput;
-        set => SetProperty(ref forceMaxOutput, value);
-    }
-
-    private int verticalScale;
-    public int VerticalScale
-    {
-        get => verticalScale;
-        set => SetProperty(ref verticalScale, value);
-    }
-
-    private double sensitivity;
-    public double Sensitivity
-    {
-        get => sensitivity;
-        set => SetProperty(ref sensitivity, Math.Round(value, 1));
-        //Math round needed because wpf slider control when binding to double and tick increment
-        //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
-    }
-
-    #endregion
-
-    #region X Properties
-
-    public int XDeadZone { get; set; }
-    public double XDeadZoneConverted
-    {
-        get => deviceValueConverters.DeadZoneIntToDouble(XDeadZone);
-        set => XDeadZone = deviceValueConverters.DeadZoneDoubleToInt(value);
-    }
-
-    private int xMaxZone;
-    public int XMaxZone
-    {
-        get => xMaxZone;
-        set => SetProperty(ref xMaxZone, value);
-    }
-    private int xAntiDeadZone;
-    public int XAntiDeadZone
-    {
-        get => xAntiDeadZone;
-        set => SetProperty(ref xAntiDeadZone, value);
-    }
-    private int xMaxOutput;
-    public int XMaxOutput
-    {
-        get => xMaxOutput;
-        set => SetProperty(ref xMaxOutput, value);
-    }
-
-    #endregion
-
-    #region Y Properties
-
-    public int YDeadZone { get; set; }
-    public double YDeadZoneConverted
-    {
-        get => deviceValueConverters.DeadZoneIntToDouble(YDeadZone);
-        set => YDeadZone = deviceValueConverters.DeadZoneDoubleToInt(value);
-    }
-
-    private int yMaxZone;
-    public int YMaxZone
-    {
-        get => yMaxZone;
-        set => SetProperty(ref yMaxZone, value);
-    }
-
-    private int yAntiDeadZone;
-    public int YAntiDeadZone
-    {
-        get => yAntiDeadZone;
-        set => SetProperty(ref yAntiDeadZone, value);
-    }
-
-    private int yMaxOutput;
-    public int YMaxOutput
-    {
-        get => yMaxOutput;
-        set => SetProperty(ref yMaxOutput, value);
-    }
-
-    #endregion
-
-    private StickDeadZoneInfo.DeadZoneType deadZooneType;
-    public StickDeadZoneInfo.DeadZoneType DeadZoneType
-    {
-        get => deadZooneType;
-        set => SetProperty(ref deadZooneType, value);
     }
 
     public bool IsRadialSet => DeadZoneType == StickDeadZoneInfo.DeadZoneType.Radial;
 
-    private CurveMode outputCurve;
-    public CurveMode OutputCurve
-    {
-        get => outputCurve;
-        set => SetProperty(ref outputCurve, value);
-    }
-
-    private BezierCurve customCurve;
-    public BezierCurve CustomCurve
-    {
-        get => customCurve;
-        set => SetProperty(ref customCurve, value);
-    }
-
     public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
 
     public RelayCommand ShowCustomCurveCommand { get; }
-    private void OnShowCustomCurve()
+
+    public double RotationConverted
     {
-        var processStartInfo = new ProcessStartInfo(Constants.BezierCurveEditorPath);
-        processStartInfo.UseShellExecute = true;
-        Process.Start(processStartInfo);
+        get => _deviceValueConverters.RotationConvertFrom(Rotation);
+        set => Rotation = _deviceValueConverters.RotationConvertTo(value);
     }
 
-    private bool isSquareStick;
+    public StickDeadZoneInfo.DeadZoneType DeadZoneType
+    {
+        get => _deadZoneType;
+        set => SetProperty(ref _deadZoneType, value);
+    }
+
+    public CurveMode OutputCurve
+    {
+        get => _outputCurve;
+        set => SetProperty(ref _outputCurve, value);
+    }
+
+    public BezierCurve CustomCurve
+    {
+        get => _customCurve;
+        set => SetProperty(ref _customCurve, value);
+    }
+
     public bool IsSquareStick
     {
-        get => isSquareStick;
-        set => SetProperty(ref isSquareStick, value);
+        get => _isSquareStick;
+        set => SetProperty(ref _isSquareStick, value);
     }
 
-    private double squareStickRoundness;
     public double SquareStickRoundness
     {
-        get => squareStickRoundness;
-        set => SetProperty(ref squareStickRoundness, Math.Round(value, 0));
+        get => _squareStickRoundness;
+        set => SetProperty(ref _squareStickRoundness, Math.Round(value, 0));
     }
 
     public double Rotation { get; set; }
-    public double RotationConverted
-    {
-        get => deviceValueConverters.RotationConvertFrom(Rotation);
-        set => Rotation = deviceValueConverters.RotationConvertTo(value);
-    }
 
-    private int fuzz;
     public int Fuzz
     {
-        get => fuzz;
-        set => SetProperty(ref fuzz, value);
+        get => _fuzz;
+        set => SetProperty(ref _fuzz, value);
     }
 
-    private bool isAntiSnapback;
     public bool IsAntiSnapback
     {
-        get => isAntiSnapback;
-        set => SetProperty(ref isAntiSnapback, value);
+        get => _isAntiSnapback;
+        set => SetProperty(ref _isAntiSnapback, value);
     }
 
-    private int antiSnapbackDelta;
     public int AntiSnapbackDelta
     {
-        get => antiSnapbackDelta;
-        set => SetProperty(ref antiSnapbackDelta, value);
+        get => _antiSnapbackDelta;
+        set => SetProperty(ref _antiSnapbackDelta, value);
     }
 
-    private int antiSnapbackTimeout;
     public int AntiSnapbackTimeout
     {
-        get => antiSnapbackTimeout;
-        set => SetProperty(ref antiSnapbackTimeout, value);
+        get => _antiSnapbackTimeout;
+        set => SetProperty(ref _antiSnapbackTimeout, value);
+    }
+
+    private void OnShowCustomCurve()
+    {
+        ProcessStartInfo processStartInfo = new(Constants.BezierCurveEditorPath) { UseShellExecute = true };
+        Process.Start(processStartInfo);
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -256,4 +151,138 @@ public class StickControlModeSettingsViewModel : ViewModel<IStickControlModeSett
             OnPropertyChanged(nameof(RotationConverted));
         }
     }
+
+    #region Radial Properties
+
+    public int DeadZone { get; set; }
+
+    public double DeadZoneConverted
+    {
+        get => _deviceValueConverters.DeadZoneIntToDouble(DeadZone);
+        set => DeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
+    }
+
+    private int _antiDeadZone;
+
+    public int AntiDeadZone
+    {
+        get => _antiDeadZone;
+        set => SetProperty(ref _antiDeadZone, value);
+    }
+
+    private int _maxZone;
+
+    public int MaxZone
+    {
+        get => _maxZone;
+        set => SetProperty(ref _maxZone, value);
+    }
+
+    private int _maxOutput;
+
+    public int MaxOutput
+    {
+        get => _maxOutput;
+        set => SetProperty(ref _maxOutput, value);
+    }
+
+    private bool _forceMaxOutput;
+
+    public bool ForceMaxOutput
+    {
+        get => _forceMaxOutput;
+        set => SetProperty(ref _forceMaxOutput, value);
+    }
+
+    private int _verticalScale;
+
+    public int VerticalScale
+    {
+        get => _verticalScale;
+        set => SetProperty(ref _verticalScale, value);
+    }
+
+    private double _sensitivity;
+
+    public double Sensitivity
+    {
+        get => _sensitivity;
+        set => SetProperty(ref _sensitivity, Math.Round(value, 1));
+        //Math round needed because wpf slider control when binding to double and tick increment
+        //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
+    }
+
+    #endregion
+
+    #region X Properties
+
+    public int XDeadZone { get; set; }
+
+    public double XDeadZoneConverted
+    {
+        get => _deviceValueConverters.DeadZoneIntToDouble(XDeadZone);
+        set => XDeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
+    }
+
+    private int _xMaxZone;
+
+    public int XMaxZone
+    {
+        get => _xMaxZone;
+        set => SetProperty(ref _xMaxZone, value);
+    }
+
+    private int _xAntiDeadZone;
+
+    public int XAntiDeadZone
+    {
+        get => _xAntiDeadZone;
+        set => SetProperty(ref _xAntiDeadZone, value);
+    }
+
+    private int _xMaxOutput;
+
+    public int XMaxOutput
+    {
+        get => _xMaxOutput;
+        set => SetProperty(ref _xMaxOutput, value);
+    }
+
+    #endregion
+
+    #region Y Properties
+
+    public int YDeadZone { get; set; }
+
+    public double YDeadZoneConverted
+    {
+        get => _deviceValueConverters.DeadZoneIntToDouble(YDeadZone);
+        set => YDeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
+    }
+
+    private int _yMaxZone;
+
+    public int YMaxZone
+    {
+        get => _yMaxZone;
+        set => SetProperty(ref _yMaxZone, value);
+    }
+
+    private int _yAntiDeadZone;
+
+    public int YAntiDeadZone
+    {
+        get => _yAntiDeadZone;
+        set => SetProperty(ref _yAntiDeadZone, value);
+    }
+
+    private int _yMaxOutput;
+
+    public int YMaxOutput
+    {
+        get => _yMaxOutput;
+        set => SetProperty(ref _yMaxOutput, value);
+    }
+
+    #endregion
 }

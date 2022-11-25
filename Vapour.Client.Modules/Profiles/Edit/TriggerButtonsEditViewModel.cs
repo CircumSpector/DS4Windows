@@ -10,96 +10,109 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public class TriggerButtonsEditViewModel : ViewModel<ITriggerButtonsEditViewModel>, ITriggerButtonsEditViewModel
+public sealed class TriggerButtonsEditViewModel :
+    ViewModel<ITriggerButtonsEditViewModel>,
+    ITriggerButtonsEditViewModel
 {
-    private readonly IDeviceValueConverters deviceValueConverters;
+    private readonly IDeviceValueConverters _deviceValueConverters;
+
+    private int _antiDeadZone;
+
+    private BezierCurve _customCurve;
+
+    private int _hipFireDelay;
+
+    private int _maxOutput;
+
+    private int _maxZone;
+
+    private CurveMode _outputCurve;
+
+    private double _sensitivity;
+
+    private TriggerEffects _triggerEffect;
+
+    private TwoStageTriggerMode _twoStageTriggerMode;
 
     public TriggerButtonsEditViewModel(IDeviceValueConverters deviceValueConverters)
     {
-        this.deviceValueConverters = deviceValueConverters;
+        _deviceValueConverters = deviceValueConverters;
         ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
-    }
-
-    public int DeadZone { get; set; }
-    public double DeadZoneConverted
-    {
-        get => deviceValueConverters.DeadZoneIntToDouble(DeadZone);
-        set => DeadZone = deviceValueConverters.DeadZoneDoubleToInt(value);
-    }
-
-    private int antiDeadZone;
-    public int AntiDeadZone
-    {
-        get => antiDeadZone;
-        set => SetProperty(ref antiDeadZone, value);
-    }
-
-    private int maxZone;
-    public int MaxZone
-    {
-        get => maxZone;
-        set => SetProperty(ref maxZone, value);
-    }
-
-    private int maxOutput;
-    public int MaxOutput
-    {
-        get => maxOutput;
-        set => SetProperty(ref maxOutput, value);
-    }
-
-    private double sensitivity;
-    public double Sensitivity
-    {
-        get => sensitivity;
-        set => SetProperty(ref sensitivity, Math.Round(value, 1));
-        //Math round needed because wpf slider control when binding to double and tick increment
-        //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
-    }
-
-    private int hipFireDelay;
-    public int HipFireDelay
-    {
-        get => hipFireDelay;
-        set => SetProperty(ref hipFireDelay, value);
-    }
-
-    private CurveMode outputCurve;
-    public CurveMode OutputCurve
-    {
-        get => outputCurve;
-        set => SetProperty(ref outputCurve, value);
-    }
-
-    private BezierCurve customCurve;
-    public BezierCurve CustomCurve
-    {
-        get => customCurve;
-        set => SetProperty(ref customCurve, value);
     }
 
     public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
 
     public RelayCommand ShowCustomCurveCommand { get; }
-    private void OnShowCustomCurve()
+
+    public int DeadZone { get; set; }
+
+    public double DeadZoneConverted
     {
-        var processStartInfo = new ProcessStartInfo(Constants.BezierCurveEditorPath);
-        processStartInfo.UseShellExecute = true;
-        Process.Start(processStartInfo);
+        get => _deviceValueConverters.DeadZoneIntToDouble(DeadZone);
+        set => DeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
     }
 
-    private TwoStageTriggerMode twoStageTriggerMode;
+    public int AntiDeadZone
+    {
+        get => _antiDeadZone;
+        set => SetProperty(ref _antiDeadZone, value);
+    }
+
+    public int MaxZone
+    {
+        get => _maxZone;
+        set => SetProperty(ref _maxZone, value);
+    }
+
+    public int MaxOutput
+    {
+        get => _maxOutput;
+        set => SetProperty(ref _maxOutput, value);
+    }
+
+    public double Sensitivity
+    {
+        get => _sensitivity;
+        set => SetProperty(ref _sensitivity, Math.Round(value, 1));
+        //Math round needed because wpf slider control when binding to double and tick increment
+        //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
+    }
+
+    public int HipFireDelay
+    {
+        get => _hipFireDelay;
+        set => SetProperty(ref _hipFireDelay, value);
+    }
+
+    public CurveMode OutputCurve
+    {
+        get => _outputCurve;
+        set => SetProperty(ref _outputCurve, value);
+    }
+
+    public BezierCurve CustomCurve
+    {
+        get => _customCurve;
+        set => SetProperty(ref _customCurve, value);
+    }
+
     public TwoStageTriggerMode TwoStageTriggerMode
     {
-        get => twoStageTriggerMode;
-        set => SetProperty(ref twoStageTriggerMode, value);
+        get => _twoStageTriggerMode;
+        set => SetProperty(ref _twoStageTriggerMode, value);
     }
 
-    private TriggerEffects triggerEffect;
     public TriggerEffects TriggerEffect
     {
-        get => triggerEffect;
-        set => SetProperty(ref triggerEffect, value);
+        get => _triggerEffect;
+        set => SetProperty(ref _triggerEffect, value);
+    }
+
+    private void OnShowCustomCurve()
+    {
+        ProcessStartInfo processStartInfo = new ProcessStartInfo(Constants.BezierCurveEditorPath);
+        processStartInfo.UseShellExecute = true;
+        Process.Start(processStartInfo);
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

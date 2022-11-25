@@ -10,38 +10,40 @@ using Vapour.Server.Controller;
 
 namespace Vapour.Client.Modules.Controllers;
 
-public class ControllerItemViewModel : ViewModel<IControllerItemViewModel>, IControllerItemViewModel
+public sealed class ControllerItemViewModel :
+    ViewModel<IControllerItemViewModel>,
+    IControllerItemViewModel
 {
-    private const string imageLocationRoot =
+    private const string ImageLocationRoot =
         "pack://application:,,,/Vapour.Client.Modules;component/Controllers/Images";
 
-    public static BitmapImage dualSenseImageLocation =
-        new(new Uri($"{imageLocationRoot}/dualsense.jpg", UriKind.Absolute));
+    public static BitmapImage DualSenseImageLocation =
+        new(new Uri($"{ImageLocationRoot}/dualsense.jpg", UriKind.Absolute));
 
-    public static BitmapImage dualShockV2ImageLocation =
-        new(new Uri($"{imageLocationRoot}/dualshockv2.jpg", UriKind.Absolute));
+    public static BitmapImage DualShockV2ImageLocation =
+        new(new Uri($"{ImageLocationRoot}/dualshockv2.jpg", UriKind.Absolute));
 
-    public static BitmapImage joyconLeftImageLocation =
-        new(new Uri($"{imageLocationRoot}/joyconleft.jpg", UriKind.Absolute));
+    public static BitmapImage JoyconLeftImageLocation =
+        new(new Uri($"{ImageLocationRoot}/joyconleft.jpg", UriKind.Absolute));
 
-    public static BitmapImage joyconRightImageLocation =
-        new(new Uri($"{imageLocationRoot}/joyconright.jpg", UriKind.Absolute));
+    public static BitmapImage JoyconRightImageLocation =
+        new(new Uri($"{ImageLocationRoot}/joyconright.jpg", UriKind.Absolute));
 
-    public static BitmapImage switchProImageLocation =
-        new(new Uri($"{imageLocationRoot}/switchpro.jpg", UriKind.Absolute));
+    public static BitmapImage SwitchProImageLocation =
+        new(new Uri($"{ImageLocationRoot}/switchpro.jpg", UriKind.Absolute));
 
-    public static BitmapImage BluetoothImageLocation = new(new Uri($"{imageLocationRoot}/BT.png", UriKind.Absolute));
-    public static BitmapImage UsbImageLocation = new(new Uri($"{imageLocationRoot}/USB_white.png", UriKind.Absolute));
-    private readonly IMapper mapper;
+    public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
+    public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB_white.png", UriKind.Absolute));
+    private readonly IMapper _mapper;
 
     public ControllerItemViewModel(IMapper mapper)
     {
-        this.mapper = mapper;
+        _mapper = mapper;
     }
 
     public void SetDevice(ControllerConnectedMessage device)
     {
-        mapper.Map(device, this);
+        _mapper.Map(device, this);
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -58,69 +60,70 @@ public class ControllerItemViewModel : ViewModel<IControllerItemViewModel>, ICon
 
     #region Props
 
-    private PhysicalAddress serial;
+    private PhysicalAddress _serial;
 
     public PhysicalAddress Serial
     {
-        get => serial;
-        private set => SetProperty(ref serial, value);
+        get => _serial;
+        private set => SetProperty(ref _serial, value);
     }
 
-    private BitmapImage deviceImage;
+    private BitmapImage _deviceImage;
 
     public BitmapImage DeviceImage
     {
-        get => deviceImage;
-        private set => SetProperty(ref deviceImage, value);
+        get => _deviceImage;
+        private set => SetProperty(ref _deviceImage, value);
     }
 
-    private string displayText;
+    private string _displayText;
 
     public string DisplayText
     {
-        get => displayText;
-        private set => SetProperty(ref displayText, value);
+        get => _displayText;
+        private set => SetProperty(ref _displayText, value);
     }
 
-    private BitmapImage connectionTypeImage;
+    private BitmapImage _connectionTypeImage;
 
     public BitmapImage ConnectionTypeImage
     {
-        get => connectionTypeImage;
-        private set => SetProperty(ref connectionTypeImage, value);
+        get => _connectionTypeImage;
+        private set => SetProperty(ref _connectionTypeImage, value);
     }
 
-    private decimal batteryPercentage;
+    private decimal _batteryPercentage;
 
     public decimal BatteryPercentage
     {
-        get => batteryPercentage;
-        private set => SetProperty(ref batteryPercentage, value);
+        get => _batteryPercentage;
+        private set => SetProperty(ref _batteryPercentage, value);
     }
 
-    private Guid selectedProfileId;
+    private Guid _selectedProfileId;
 
     public Guid SelectedProfileId
     {
-        get => selectedProfileId;
-        set => SetProperty(ref selectedProfileId, value);
+        get => _selectedProfileId;
+        set => SetProperty(ref _selectedProfileId, value);
     }
 
-    private SolidColorBrush currentColor;
+    private SolidColorBrush _currentColor;
 
     public SolidColorBrush CurrentColor
     {
-        get => currentColor;
-        set => SetProperty(ref currentColor, value);
+        get => _currentColor;
+        set => SetProperty(ref _currentColor, value);
     }
-    
+
     private bool _isFiltered;
+
     public bool IsFiltered
     {
         get => _isFiltered;
         set => SetProperty(ref _isFiltered, value);
-    } 
-    
+    }
+
     public string InstanceId { get; set; }
     public string ParentInstance { get; set; }
 

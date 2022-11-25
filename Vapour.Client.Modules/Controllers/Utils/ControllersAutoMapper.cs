@@ -29,19 +29,19 @@ public class ControllersAutoMapper : Profile
                 switch (src.DeviceType)
                 {
                     case InputDeviceType.DualSense:
-                        deviceImage = ControllerItemViewModel.dualSenseImageLocation;
+                        deviceImage = ControllerItemViewModel.DualSenseImageLocation;
                         break;
                     case InputDeviceType.DualShock4:
-                        deviceImage = ControllerItemViewModel.dualShockV2ImageLocation;
+                        deviceImage = ControllerItemViewModel.DualShockV2ImageLocation;
                         break;
                     case InputDeviceType.JoyConL:
-                        deviceImage = ControllerItemViewModel.joyconLeftImageLocation;
+                        deviceImage = ControllerItemViewModel.JoyconLeftImageLocation;
                         break;
                     case InputDeviceType.JoyConR:
-                        deviceImage = ControllerItemViewModel.joyconRightImageLocation;
+                        deviceImage = ControllerItemViewModel.JoyconRightImageLocation;
                         break;
                     case InputDeviceType.SwitchPro:
-                        deviceImage = ControllerItemViewModel.switchProImageLocation;
+                        deviceImage = ControllerItemViewModel.SwitchProImageLocation;
                         break;
                 }
 

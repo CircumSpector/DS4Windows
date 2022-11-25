@@ -4,18 +4,20 @@ using Vapour.Client.Core.ViewModel;
 
 namespace Vapour.Client.Modules.Main;
 
-public class MainWindowViewModel : ViewModel<IMainViewModel>, IMainViewModel
+public sealed class MainWindowViewModel : 
+    ViewModel<IMainViewModel>, 
+    IMainViewModel
 {
-    private readonly IViewModelFactory viewModelFactory;
+    private readonly IViewModelFactory _viewModelFactory;
 
     public MainWindowViewModel(IViewModelFactory viewModelFactory)
     {
-        this.viewModelFactory = viewModelFactory;
+        _viewModelFactory = viewModelFactory;
     }
 
     public override async Task Initialize()
     {
-        var navigationViewModels = await viewModelFactory.CreateNavigationTabViewModels();
+        List<INavigationTabViewModel> navigationViewModels = await _viewModelFactory.CreateNavigationTabViewModels();
 
         NavigationItems = new ObservableCollection<IViewModel>(navigationViewModels);
         SelectedPage = NavigationItems[0];
@@ -25,12 +27,12 @@ public class MainWindowViewModel : ViewModel<IMainViewModel>, IMainViewModel
 
     public ObservableCollection<IViewModel> NavigationItems { get; private set; }
 
-    private IViewModel selectedPage;
+    private IViewModel _selectedPage;
 
     public IViewModel SelectedPage
     {
-        get => selectedPage;
-        set => SetProperty(ref selectedPage, value);
+        get => _selectedPage;
+        set => SetProperty(ref _selectedPage, value);
     }
 
     #endregion

@@ -7,94 +7,102 @@ using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IProfileEditViewModel
+public sealed class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IProfileEditViewModel
 {
-    private readonly IViewModelFactory viewModelFactory;
-    private readonly IMapper mapper;
-    private IProfile profile;
+    private readonly IMapper _mapper;
+    private readonly IViewModelFactory _viewModelFactory;
+
+    private bool _isNew;
+
+    private ITriggerButtonsEditViewModel _l2Button;
+
+    private IStickEditViewModel _leftStick;
+
+    private string _name;
+    private IProfile _profile;
+
+    private ITriggerButtonsEditViewModel _r2Button;
+
+    private IStickEditViewModel _rightStick;
+
+    private ISixAxisEditViewModel _sixAxisX;
+
+    private ISixAxisEditViewModel _sixAxisZ;
 
     public ProfileEditViewModel(IViewModelFactory viewModelFactory, IMapper mapper)
     {
-        this.viewModelFactory = viewModelFactory;
-        this.mapper = mapper;
+        _viewModelFactory = viewModelFactory;
+        _mapper = mapper;
+    }
+
+    public ITriggerButtonsEditViewModel L2Button
+    {
+        get => _l2Button;
+        private set => SetProperty(ref _l2Button, value);
+    }
+
+    public ITriggerButtonsEditViewModel R2Button
+    {
+        get => _r2Button;
+        private set => SetProperty(ref _r2Button, value);
+    }
+
+    public ISixAxisEditViewModel SixAxisX
+    {
+        get => _sixAxisX;
+        private set => SetProperty(ref _sixAxisX, value);
+    }
+
+    public ISixAxisEditViewModel SixAxisZ
+    {
+        get => _sixAxisZ;
+        private set => SetProperty(ref _sixAxisZ, value);
     }
 
     public override async Task Initialize()
     {
-        leftStick = await viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
-        rightStick = await viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
-        l2Button = await viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
-        r2Button = await viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
-        sixAxisX = await viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
-        sixAxisZ = await viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
+        _leftStick = await _viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
+        _rightStick = await _viewModelFactory.Create<IStickEditViewModel, IStickEditView>();
+        _l2Button = await _viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
+        _r2Button = await _viewModelFactory.Create<ITriggerButtonsEditViewModel, ITriggerButtonsEditView>();
+        _sixAxisX = await _viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
+        _sixAxisZ = await _viewModelFactory.Create<ISixAxisEditViewModel, ISixAxisEditView>();
     }
 
-    private bool isNew;
     public bool IsNew
     {
-        get => isNew;
-        private set => SetProperty(ref isNew, value);
+        get => _isNew;
+        private set => SetProperty(ref _isNew, value);
     }
 
-    private string name;
     public string Name
     {
-        get => name;
-        set => SetProperty(ref name, value);
+        get => _name;
+        set => SetProperty(ref _name, value);
     }
 
-    private IStickEditViewModel leftStick;
     public IStickEditViewModel LeftStick
     {
-        get => leftStick;
-        private set => SetProperty(ref leftStick, value);
+        get => _leftStick;
+        private set => SetProperty(ref _leftStick, value);
     }
 
-    private IStickEditViewModel rightStick;
     public IStickEditViewModel RightStick
     {
-        get => rightStick;
-        private set => SetProperty(ref rightStick, value);
-    }
-
-    private ITriggerButtonsEditViewModel l2Button;
-    public ITriggerButtonsEditViewModel L2Button
-    {
-        get => l2Button;
-        private set => SetProperty(ref l2Button, value);
-    }
-
-    private ITriggerButtonsEditViewModel r2Button;
-    public ITriggerButtonsEditViewModel R2Button
-    {
-        get => r2Button;
-        private set => SetProperty(ref r2Button, value);
-    }
-
-    private ISixAxisEditViewModel sixAxisX;
-    public ISixAxisEditViewModel SixAxisX
-    {
-        get => sixAxisX;
-        private set => SetProperty(ref sixAxisX, value);
-    }
-
-    private ISixAxisEditViewModel sixAxisZ;
-    public ISixAxisEditViewModel SixAxisZ
-    {
-        get => sixAxisZ;
-        private set => SetProperty(ref sixAxisZ, value);
+        get => _rightStick;
+        private set => SetProperty(ref _rightStick, value);
     }
 
     public void SetProfile(IProfile profile, bool isNew = false)
     {
-        this.profile = profile.Clone();
+        _profile = profile.Clone();
         IsNew = isNew;
-        mapper.Map(this.profile, this);
+        _mapper.Map(_profile, this);
     }
 
     public IProfile GetUpdatedProfile()
     {
-        mapper.Map(this, profile);
-        return profile;
+        _mapper.Map(this, _profile);
+        return _profile;
     }
 }

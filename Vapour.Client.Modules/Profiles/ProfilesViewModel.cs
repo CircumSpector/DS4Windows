@@ -1,6 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Text.Json;
+
+using JetBrains.Annotations;
 
 using MaterialDesignThemes.Wpf;
 
@@ -16,17 +19,20 @@ using Constants = Vapour.Client.Modules.Main.Constants;
 
 namespace Vapour.Client.Modules.Profiles;
 
-public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IProfilesView>, IProfilesViewModel
+[UsedImplicitly]
+public sealed class ProfilesViewModel :
+    NavigationTabViewModel<IProfilesViewModel, IProfilesView>,
+    IProfilesViewModel
 {
-    private readonly IProfileServiceClient profilesService;
-    private readonly IViewModelFactory viewModelFactory;
+    private readonly IProfileServiceClient _profilesService;
+    private readonly IViewModelFactory _viewModelFactory;
 
     public ProfilesViewModel(
         IProfileServiceClient profilesService,
         IViewModelFactory viewModelFactory)
     {
-        this.viewModelFactory = viewModelFactory;
-        this.profilesService = profilesService;
+        _viewModelFactory = viewModelFactory;
+        _profilesService = profilesService;
 
         AddCommand = new RelayCommand(AddProfile);
         ShareCommand = new RelayCommand<IProfileListItemViewModel>(ShareProfile);
@@ -48,29 +54,31 @@ public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IPro
 
     private async void AddProfile()
     {
-        var newProfile = await profilesService.CreateNewProfile();
+        IProfile newProfile = await _profilesService.CreateNewProfile();
         ShowProfile(newProfile, true);
     }
 
     private async void ShareProfile(IProfileListItemViewModel profile)
     {
-        var sourceProfile = profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id);
+        IProfile sourceProfile = _profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id);
 
-        var saveFileDialog = new SaveFileDialog
+        SaveFileDialog saveFileDialog = new()
         {
             Filter = "JSON|*.json",
             FileName = sourceProfile.FileName,
             InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
         };
 
-        var result = saveFileDialog.ShowDialog();
+        bool? result = saveFileDialog.ShowDialog();
         if (result != null && result.Value)
-            using (var stream = saveFileDialog.OpenFile())
+        {
+            using (Stream stream = saveFileDialog.OpenFile())
             {
-                var text = JsonSerializer.Serialize(sourceProfile);
+                string text = JsonSerializer.Serialize(sourceProfile);
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(text));
                 stream.Close();
             }
+        }
 
         //TODO:  this is the windows 10 native file save picker.  cant get it to work though.  the initializewithwindow is supposed to fix it but doesnt
         //       see https://docs.microsoft.com/en-us/windows/apps/develop/ui-input/display-ui-objects
@@ -99,25 +107,29 @@ public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IPro
 
     private void EditProfile(IProfileListItemViewModel profile)
     {
-        ShowProfile(profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id));
+        ShowProfile(_profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id));
     }
 
     private async void DeleteProfile(IProfileListItemViewModel profile)
     {
-        await profilesService.DeleteProfile(profile.Id);
+        await _profilesService.DeleteProfile(profile.Id);
         RemoveProfileItem(profile.Id);
     }
 
     private async Task CreateProfileItems()
     {
-        foreach (var profile in profilesService.ProfileList) await CreateProfileItem(profile);
+        foreach (IProfile profile in _profilesService.ProfileList)
+        {
+            await CreateProfileItem(profile);
+        }
     }
 
     private async Task CreateProfileItem(IProfile profile)
     {
-        if (!ProfileItems.Any(p => p.Id == profile.Id))
+        if (ProfileItems.All(p => p.Id != profile.Id))
         {
-            var profileItemViewModel = await viewModelFactory.CreateViewModel<IProfileListItemViewModel>();
+            IProfileListItemViewModel profileItemViewModel =
+                await _viewModelFactory.CreateViewModel<IProfileListItemViewModel>();
             profileItemViewModel.SetProfile(profile);
             ProfileItems.Add(profileItemViewModel);
         }
@@ -125,7 +137,7 @@ public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IPro
 
     private void RemoveProfileItem(Guid id)
     {
-        var existingProfile = ProfileItems.SingleOrDefault(p => p.Id == id);
+        IProfileListItemViewModel existingProfile = ProfileItems.SingleOrDefault(p => p.Id == id);
         if (existingProfile != null)
         {
             existingProfile.Dispose();
@@ -135,11 +147,14 @@ public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IPro
 
     private async void ShowProfile(IProfile profile, bool isNew = false)
     {
-        var editViewModel = await viewModelFactory.Create<IProfileEditViewModel, IProfileEditView>();
+        IProfileEditViewModel editViewModel = await _viewModelFactory.Create<IProfileEditViewModel, IProfileEditView>();
         editViewModel.SetProfile(profile, isNew);
         await DialogHost.Show(editViewModel.MainView, Constants.DialogHostName, (o, e) =>
         {
-            if (e.Parameter != null) SaveProfile((IProfileEditViewModel)e.Parameter);
+            if (e.Parameter != null)
+            {
+                SaveProfile((IProfileEditViewModel)e.Parameter);
+            }
 
             editViewModel.Dispose();
         });
@@ -147,8 +162,8 @@ public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IPro
 
     private async void SaveProfile(IProfileEditViewModel profile)
     {
-        var profileToSave = profile.GetUpdatedProfile();
-        var savedProfile = await profilesService.SaveProfile(profileToSave);
+        IProfile profileToSave = profile.GetUpdatedProfile();
+        IProfile savedProfile = await _profilesService.SaveProfile(profileToSave);
         RemoveProfileItem(savedProfile.Id);
         await CreateProfileItem(savedProfile);
     }
@@ -156,11 +171,13 @@ public class ProfilesViewModel : NavigationTabViewModel<IProfilesViewModel, IPro
     protected override void Dispose(bool disposing)
     {
         if (disposing)
-            foreach (var profile in ProfileItems.ToList())
+        {
+            foreach (IProfileListItemViewModel profile in ProfileItems.ToList())
             {
                 profile.Dispose();
                 ProfileItems.Remove(profile);
             }
+        }
 
         base.Dispose(disposing);
     }

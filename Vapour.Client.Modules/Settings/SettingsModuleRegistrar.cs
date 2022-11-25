@@ -6,7 +6,7 @@ using Vapour.Client.Core.ViewModel;
 
 namespace Vapour.Client.Modules.Settings;
 
-public class SettingsModuleRegistrar : IServiceRegistrar
+public sealed class SettingsModuleRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
