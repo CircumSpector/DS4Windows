@@ -12,18 +12,21 @@ namespace Vapour.Shared.Common.Services;
 public sealed class GlobalStateService : IGlobalStateService
 {
     private readonly ActivitySource _activitySource = new(TracingSources.AssemblyName);
-
-
+    
     public GlobalStateService()
     {
-        using var activity = _activitySource.StartActivity(
+        using Activity activity = _activitySource.StartActivity(
             $"{nameof(GlobalStateService)}:Constructor");
     }
 
     public string CurrentUserName { get; set; }
-    public string RoamingAppDataPath => !string.IsNullOrEmpty(CurrentUserName) ? $"c:\\Users\\{CurrentUserName}\\AppData\\Roaming\\{Constants.ApplicationName}" : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Constants.ApplicationName);
+
+    public string RoamingAppDataPath => !string.IsNullOrEmpty(CurrentUserName)
+        ? $"c:\\Users\\{CurrentUserName}\\AppData\\Roaming\\{Constants.ApplicationName}"
+        : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Constants.ApplicationName);
 
     public string LocalProfilesDirectory => Path.Combine(RoamingAppDataPath, Constants.ProfilesSubDirectory);
+
     public string LocalDefaultProfileLocation => Path.Combine(LocalProfilesDirectory, "Default.json");
 
     public void EnsureRoamingDataPath()
