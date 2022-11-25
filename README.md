@@ -56,7 +56,7 @@ If you **want to see this project succeed** give it a GitHub star to show intere
 - Get [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/) (Community Edition is fine)
 - Install ".NET desktop development" workload  
   ![setup_Z38OdfI0YX.png](assets/setup_Z38OdfI0YX.png)
-- Install latest [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- Install latest [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 - Build the solution in Visual Studio
   - Dependencies are pulled in automatically via NuGet
 - To create a production release, use the command line:  
