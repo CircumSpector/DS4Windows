@@ -44,9 +44,7 @@ public class ControllerFilterService : IControllerFilterService
             _filterDriver = new FilterDriver();
             if (GetFilterDriverInstalled())
             {
-                SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled.HasValue
-                    ? _deviceSettingsService.Settings.IsFilteringEnabled.Value
-                    : true);
+                SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled ?? true);
             }
             else
             {
@@ -109,9 +107,8 @@ public class ControllerFilterService : IControllerFilterService
     /// <inheritdoc />
     public void FilterController(string instanceId)
     {
-        Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
-        UsbPnPDevice usbDevice = device.Item1.ToUsbPnPDevice();
-        string hardwareId = device.Item2;
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
+        UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
         //TODO: filter the controller and cycle the port
 
         using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
@@ -127,9 +124,8 @@ public class ControllerFilterService : IControllerFilterService
     /// <inheritdoc />
     public void UnfilterController(string instanceId)
     {
-        Tuple<PnPDevice, string> device = GetDeviceToFilter(instanceId);
-        UsbPnPDevice usbDevice = device.Item1.ToUsbPnPDevice();
-        string hardwareId = device.Item2;
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
+        UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
         //TODO: fill in the unfilter
 
         using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
@@ -161,7 +157,7 @@ public class ControllerFilterService : IControllerFilterService
         return Version.Parse(match.Groups[1].Value);
     }
 
-    private Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
+    private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
     {
         PnPDevice device = PnPDevice.GetDeviceByInstanceId(instanceId);
         string[] hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
