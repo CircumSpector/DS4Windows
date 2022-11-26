@@ -152,11 +152,7 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
 
             winUsbDevice.Dispose();
 
-            return new HidDeviceOverWinUsb(
-                path,
-                identification.InterruptInEndpointAddress,
-                identification.InterruptOutEndpointAddress
-            )
+            return new HidDeviceOverWinUsb(path, identification)
             {
                 InstanceId = device.InstanceId.ToUpper(),
                 Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),

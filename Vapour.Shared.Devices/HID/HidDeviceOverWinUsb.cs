@@ -3,6 +3,8 @@
 using Nefarius.Drivers.WinUSB;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
+using Vapour.Shared.Devices.Services;
+
 namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
@@ -10,14 +12,36 @@ namespace Vapour.Shared.Devices.HID;
 /// </summary>
 public class HidDeviceOverWinUsb : HidDevice
 {
-    public HidDeviceOverWinUsb(string path, ushort interruptInAddress, ushort interruptOutAddress)
+    public HidDeviceOverWinUsb(string path, HidDeviceOverWinUsbEndpoints endpoints)
     {
         InstanceId = PnPDevice.GetInstanceIdFromInterfaceId(path);
         Path = path;
         UsbDevice = USBDevice.GetSingleDeviceByPath(path);
 
-        InterruptInPipe = UsbDevice.Pipes.First(pipe => pipe.Address == interruptInAddress);
-        InterruptOutPipe = UsbDevice.Pipes.First(pipe => pipe.Address == interruptOutAddress);
+        InterruptInPipe = UsbDevice.Pipes.FirstOrDefault(pipe => pipe.Address == endpoints.InterruptInEndpointAddress);
+        if (endpoints.AllowAutoDetection && InterruptInPipe is null)
+        {
+            // try to auto-detect endpoint if config doesn't match
+            InterruptInPipe = UsbDevice.Pipes.FirstOrDefault(pipe => pipe.IsIn);
+        }
+
+        if (InterruptInPipe is null)
+        {
+            throw new HidDeviceException("Failed to find Interrupt IN pipe.");
+        }
+
+        InterruptOutPipe =
+            UsbDevice.Pipes.FirstOrDefault(pipe => pipe.Address == endpoints.InterruptOutEndpointAddress);
+        if (endpoints.AllowAutoDetection && InterruptOutPipe is null)
+        {
+            // try to auto-detect endpoint if config doesn't match
+            InterruptOutPipe = UsbDevice.Pipes.FirstOrDefault(pipe => pipe.IsOut);
+        }
+
+        if (InterruptOutPipe is null)
+        {
+            throw new HidDeviceException("Failed to find Interrupt OUT pipe.");
+        }
 
         ManufacturerString = UsbDevice.Descriptor.Manufacturer;
         ProductString = UsbDevice.Descriptor.Product;
@@ -57,18 +81,18 @@ public class HidDeviceOverWinUsb : HidDevice
     /// <inheritdoc />
     public override int ReadInputReport(Span<byte> buffer)
     {
-        var ret =  InterruptInPipe.Read(buffer);
-        
+        int ret = InterruptInPipe.Read(buffer);
+
         return ret;
     }
 
     /// <inheritdoc />
     public override bool ReadFeatureData(Span<byte> buffer)
     {
-        var wValue = 0x0300 | buffer[0];
-        
-        var ret =  UsbDevice.ControlIn(0xA1, 0x01, wValue, 0, buffer);
-        
+        int wValue = 0x0300 | buffer[0];
+
+        int ret = UsbDevice.ControlIn(0xA1, 0x01, wValue, 0, buffer);
+
         return ret > 0;
     }
 }
