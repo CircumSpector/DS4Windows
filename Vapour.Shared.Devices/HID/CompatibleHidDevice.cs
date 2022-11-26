@@ -345,6 +345,12 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
                 throw;
             }
 
+            if (win32Exception.NativeErrorCode == (int)WIN32_ERROR.ERROR_SEM_TIMEOUT)
+            {
+                throw new HidDeviceException("Device communication timed out.", 
+                    (WIN32_ERROR)win32Exception.NativeErrorCode);
+            }
+
             // expected error when the device got surprise-removed (unplugged)
             if (win32Exception.NativeErrorCode != (int)WIN32_ERROR.ERROR_NO_SUCH_DEVICE)
             {

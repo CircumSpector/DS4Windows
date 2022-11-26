@@ -30,6 +30,8 @@ public class HidDeviceOverWinUsb : HidDevice
             throw new HidDeviceException("Failed to find Interrupt IN pipe.");
         }
 
+        InterruptInPipe.Policy.PipeTransferTimeout = 1000;
+
         InterruptOutPipe =
             UsbDevice.Pipes.FirstOrDefault(pipe => pipe.Address == endpoints.InterruptOutEndpointAddress);
         if (endpoints.AllowAutoDetection && InterruptOutPipe is null)
