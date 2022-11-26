@@ -16,7 +16,7 @@ public interface IHidDevice : IDisposable
     ///     Device friendly name.
     /// </summary>
     string DisplayName { get; }
-    
+
     /// <summary>
     ///     The Instance ID of this device.
     /// </summary>
@@ -71,14 +71,14 @@ public interface IHidDevice : IDisposable
     ///     The serial number, if any.
     /// </summary>
     string SerialNumberString { get; }
-    
+
     /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.
     /// </summary>
     void OpenDevice();
 
     /// <summary>
-    ///     Closes the handle opened in <see cref="OpenDevice"/>.
+    ///     Closes the handle opened in <see cref="OpenDevice" />.
     /// </summary>
     void CloseDevice();
 
@@ -95,4 +95,26 @@ public interface IHidDevice : IDisposable
     /// <param name="buffer">The report buffer to send and populate on return.</param>
     /// <returns>True on success, false otherwise.</returns>
     bool ReadFeatureData(Span<byte> buffer);
+
+    /// <summary>
+    ///     Writes a feature report identified by report ID in the first byte of the provided buffer.
+    /// </summary>
+    /// <param name="buffer">The report buffer to send.</param>
+    /// <returns>True on success, false otherwise.</returns>
+    bool WriteFeatureReport(ReadOnlySpan<byte> buffer);
+
+    /// <summary>
+    ///     Writes an output report via control endpoint of the device.
+    /// </summary>
+    /// <param name="buffer">The report buffer to send.</param>
+    /// <returns>True on success, false otherwise.</returns>
+    bool WriteOutputReportViaControl(ReadOnlySpan<byte> buffer);
+
+    /// <summary>
+    ///     Writes an output report via interrupt out endpoint of the device.
+    /// </summary>
+    /// <param name="buffer">The report buffer to send.</param>
+    /// <param name="timeout">A timeout in milliseconds.</param>
+    /// <returns>True on success, false otherwise.</returns>
+    bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout);
 }

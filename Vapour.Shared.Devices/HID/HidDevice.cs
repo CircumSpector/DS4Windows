@@ -181,7 +181,8 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
     }
 
-    protected unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
+    /// <inheritdoc />
+    public unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
     {
         fixed (byte* bufferPtr = buffer)
         {
@@ -189,7 +190,8 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
     }
 
-    protected unsafe bool WriteOutputReportViaControl(ReadOnlySpan<byte> buffer)
+    /// <inheritdoc />
+    public unsafe bool WriteOutputReportViaControl(ReadOnlySpan<byte> buffer)
     {
         fixed (byte* bufferPtr = buffer)
         {
@@ -197,7 +199,8 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
     }
 
-    protected unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
+    /// <inheritdoc />
+    public unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
     {
         NativeOverlapped overlapped;
         overlapped.EventHandle = _writeEvent.SafeWaitHandle.DangerousGetHandle();
@@ -212,7 +215,13 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
                 &overlapped
             );
 
-            return PInvoke.GetOverlappedResultEx(Handle, overlapped, out _, (uint)timeout, false);
+            return PInvoke.GetOverlappedResultEx(
+                Handle,
+                overlapped,
+                out _,
+                (uint)timeout,
+                false
+            );
         }
     }
 
