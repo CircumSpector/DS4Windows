@@ -41,6 +41,16 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// </summary>
     private SafeHandle Handle { get; set; }
 
+    /// <summary>
+    ///     HID Device Attributes.
+    /// </summary>
+    public HIDD_ATTRIBUTES Attributes { get; init; }
+
+    /// <summary>
+    ///     HID Device Capabilities.
+    /// </summary>
+    public HIDP_CAPS Capabilities { get; init; }
+
     public bool Equals(HidDevice other)
     {
         return ReferenceEquals(this, other) || InstanceId.Equals(other.InstanceId, StringComparison.OrdinalIgnoreCase);
@@ -77,16 +87,6 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public string ParentInstance { get; init; }
 
-    /// <summary>
-    ///     HID Device Attributes.
-    /// </summary>
-    public HIDD_ATTRIBUTES Attributes { get; init; }
-
-    /// <summary>
-    ///     HID Device Capabilities.
-    /// </summary>
-    public HIDP_CAPS Capabilities { get; init; }
-
     /// <inheritdoc />
     public string ManufacturerString { get; init; }
 
@@ -109,6 +109,12 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
 
         Handle = OpenAsyncHandle(Path);
+
+        if (!PInvoke.HidD_SetNumInputBuffers(Handle, 3))
+        {
+            throw new HidDeviceException("Failed to set the number of input buffers",
+                (WIN32_ERROR)Marshal.GetLastWin32Error());
+        }
     }
 
     /// <inheritdoc />
@@ -129,52 +135,17 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         GC.SuppressFinalize(this);
     }
 
-    protected unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
-    {
-        fixed (byte* bufferPtr = buffer)
-        {
-            return PInvoke.HidD_SetFeature(Handle, bufferPtr, (uint)buffer.Length);
-        }
-    }
-
-    protected unsafe bool WriteOutputReportViaControl(ReadOnlySpan<byte> buffer)
-    {
-        fixed (byte* bufferPtr = buffer)
-        {
-            return PInvoke.HidD_SetOutputReport(Handle, bufferPtr, (uint)buffer.Length);
-        }
-    }
-
     /// <inheritdoc />
-    public unsafe virtual bool ReadFeatureData(Span<byte> buffer)
+    public virtual unsafe bool ReadFeatureData(Span<byte> buffer)
     {
         fixed (byte* bufferPtr = buffer)
         {
             return PInvoke.HidD_GetFeature(Handle, bufferPtr, (uint)buffer.Length);
         }
     }
-    
-    protected unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
-    {
-        NativeOverlapped overlapped;
-        overlapped.EventHandle = _writeEvent.SafeWaitHandle.DangerousGetHandle();
-
-        fixed (byte* bufferPtr = buffer)
-        {
-            PInvoke.WriteFile(
-                Handle,
-                bufferPtr,
-                (uint)buffer.Length,
-                null,
-                &overlapped
-            );
-
-            return PInvoke.GetOverlappedResultEx(Handle, overlapped, out _, (uint)timeout, false);
-        }
-    }
 
     /// <inheritdoc />
-    public unsafe virtual int ReadInputReport(Span<byte> buffer)
+    public virtual unsafe int ReadInputReport(Span<byte> buffer)
     {
         if (Handle.IsInvalid || Handle.IsClosed)
         {
@@ -207,6 +178,41 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
             }
 
             return (int)bytesRead;
+        }
+    }
+
+    protected unsafe bool WriteFeatureReport(ReadOnlySpan<byte> buffer)
+    {
+        fixed (byte* bufferPtr = buffer)
+        {
+            return PInvoke.HidD_SetFeature(Handle, bufferPtr, (uint)buffer.Length);
+        }
+    }
+
+    protected unsafe bool WriteOutputReportViaControl(ReadOnlySpan<byte> buffer)
+    {
+        fixed (byte* bufferPtr = buffer)
+        {
+            return PInvoke.HidD_SetOutputReport(Handle, bufferPtr, (uint)buffer.Length);
+        }
+    }
+
+    protected unsafe bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
+    {
+        NativeOverlapped overlapped;
+        overlapped.EventHandle = _writeEvent.SafeWaitHandle.DangerousGetHandle();
+
+        fixed (byte* bufferPtr = buffer)
+        {
+            PInvoke.WriteFile(
+                Handle,
+                bufferPtr,
+                (uint)buffer.Length,
+                null,
+                &overlapped
+            );
+
+            return PInvoke.GetOverlappedResultEx(Handle, overlapped, out _, (uint)timeout, false);
         }
     }
 
