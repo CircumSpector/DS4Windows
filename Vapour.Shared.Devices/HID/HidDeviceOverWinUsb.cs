@@ -30,6 +30,7 @@ public class HidDeviceOverWinUsb : HidDevice
             throw new HidDeviceException("Failed to find Interrupt IN pipe.");
         }
 
+        // set timeout to detect fault condition and not stall reads indefinitely
         InterruptInPipe.Policy.PipeTransferTimeout = 1000;
 
         InterruptOutPipe =
@@ -62,10 +63,19 @@ public class HidDeviceOverWinUsb : HidDevice
         Service = InputDeviceService.WinUsb;
     }
 
+    /// <summary>
+    ///     The underlying WinUSB device.
+    /// </summary>
     private USBDevice UsbDevice { get; }
 
+    /// <summary>
+    ///     The Interrupt IN endpoint.
+    /// </summary>
     private USBPipe InterruptInPipe { get; }
 
+    /// <summary>
+    ///     The Interrupt OUT endpoint.
+    /// </summary>
     private USBPipe InterruptOutPipe { get; }
 
     /// <inheritdoc />
@@ -96,5 +106,14 @@ public class HidDeviceOverWinUsb : HidDevice
         int ret = UsbDevice.ControlIn(0xA1, 0x01, wValue, 0, buffer);
 
         return ret > 0;
+    }
+
+    /// <inheritdoc />
+    public override bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout)
+    {
+        InterruptOutPipe.Policy.PipeTransferTimeout = timeout;
+        InterruptOutPipe.Write(buffer.ToArray() /* TODO: optimize */);
+
+        return true;
     }
 }

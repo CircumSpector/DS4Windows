@@ -38,6 +38,25 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
 
         StartInputReportReader();
+
+        /*
+         * TODO
+         * migrate and implement properly, this is a workaround to get devices to work
+         * that power off themselves or stop sending reports if they don't receive at
+         * least one of these output report packets.
+         */
+        if (SourceDevice.Service == InputDeviceService.WinUsb)
+        {
+            byte[] initialOutBuffer =
+            {
+                0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+            };
+
+            SourceDevice.WriteOutputReportViaInterrupt(initialOutBuffer, 500);
+        }
     }
 
     protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
