@@ -17,19 +17,25 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         Serial = ReadSerial(SerialFeatureId);
 
         if (Serial is null)
+        {
             throw new ArgumentException("Could not retrieve a valid serial number.");
+        }
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
         _inputReportArray = new byte[((HidDevice)SourceDevice).Capabilities.InputReportByteLength];
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
+        {
             _reportStartOffset = 0;
+        }
         //
         // TODO: finish me
         // 
         else
+        {
             _reportStartOffset = 0; // TODO: this works, investigate why :D
+        }
 
         StartInputReportReader();
     }
@@ -40,7 +46,9 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
     {
         if (Connection == ConnectionType.SonyWirelessAdapter && (input[31] & 0x04) != 0)
             // TODO: implement me!
+        {
             return;
+        }
 
         InputReport.Parse(input.Slice(_reportStartOffset));
     }
