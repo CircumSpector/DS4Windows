@@ -17,7 +17,7 @@ using static System.String;
 namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
-///     Single point of truth of states for all connected and handled HID devices.
+///     Single point of truth of states for all connected and handled WinUSB devices.
 /// </summary>
 public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
 {
