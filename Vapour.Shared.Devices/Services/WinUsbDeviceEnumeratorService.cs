@@ -78,7 +78,8 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
             }
 
             // skip already discovered ones
-            if (_connectedDevices.Any(d => String.Equals(d.InstanceId, instanceId, StringComparison.CurrentCultureIgnoreCase)))
+            if (_connectedDevices.Any(d =>
+                    String.Equals(d.InstanceId, instanceId, StringComparison.CurrentCultureIgnoreCase)))
             {
                 _logger.LogWarning("Skipping duplicate for WinUSB {InstanceId}", instanceId);
                 continue;
@@ -186,7 +187,8 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
         }
 
         // skip already discovered ones
-        if (_connectedDevices.Any(d => String.Equals(d.InstanceId, device.InstanceId, StringComparison.CurrentCultureIgnoreCase)))
+        if (_connectedDevices.Any(d =>
+                String.Equals(d.InstanceId, device.InstanceId, StringComparison.CurrentCultureIgnoreCase)))
         {
             _logger.LogWarning("Skipping duplicate for WinUSB {InstanceId}", device.InstanceId);
             return;
@@ -223,7 +225,8 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
             device.InstanceId, symLink);
 
         HidDeviceOverWinUsb entry =
-            _connectedDevices.FirstOrDefault(entry => entry.InstanceId.ToUpper() == device.InstanceId.ToUpper());
+            _connectedDevices.FirstOrDefault(entry =>
+                String.Equals(entry.InstanceId, device.InstanceId, StringComparison.CurrentCultureIgnoreCase));
 
         if (entry is null)
         {
