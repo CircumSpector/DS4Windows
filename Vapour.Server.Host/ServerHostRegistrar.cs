@@ -23,7 +23,7 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
         if (!context.HostingEnvironment.IsDevelopment() && !Environment.UserInteractive)
         {
             builder.UseWindowsService(c => c.ServiceName = "Vapour.Input.Service");
-            services.AddSingleton<IHostLifetime, DS4WindowsServiceLifetime>();
+            services.AddSingleton<IHostLifetime, VapourServiceLifetime>();
         }
     }
 

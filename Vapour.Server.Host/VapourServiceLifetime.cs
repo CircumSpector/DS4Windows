@@ -15,14 +15,14 @@ using Vapour.Shared.Devices.HostedServices;
 
 namespace Vapour.Server.Host;
 
-public sealed class DS4WindowsServiceLifetime : WindowsServiceLifetime
+public sealed class VapourServiceLifetime : WindowsServiceLifetime
 {
     private const string SYSTEM = "SYSTEM";
     private readonly ControllerManagerHost _controllerHost;
     private readonly IControllerMessageForwarder _controllerMessageForwarder;
     private readonly IGlobalStateService _globalStateService;
 
-    public DS4WindowsServiceLifetime(
+    public VapourServiceLifetime(
         IHostEnvironment environment,
         IHostApplicationLifetime applicationLifetime,
         ILoggerFactory loggerFactory,
