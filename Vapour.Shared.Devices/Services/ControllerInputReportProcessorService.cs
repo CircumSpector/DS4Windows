@@ -22,35 +22,21 @@ public class ControllerInputReportProcessorService : IControllerInputReportProce
         _outDevices = new Dictionary<string, IOutDevice>();
     }
 
-    public ICompatibleHidDevice CreateReportProcessor(IHidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
+    public void StartProcessing(ICompatibleHidDevice device, CompatibleDeviceIdentification deviceIdentification)
     {
-        CompatibleHidDevice device = CompatibleHidDevice.CreateFrom(
-            deviceIdentification.DeviceType,
-            hidDevice,
-            deviceIdentification.FeatureSet,
-            _serviceProvider
-        );
-
-        if (hidDevice is HidDeviceOverWinUsb)
-        {
-            device.IsFiltered = true;
-        }
-
         IOutDevice outDevice = _outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
         outDevice.Connect();
-        if (!_outDevices.ContainsKey(hidDevice.InstanceId))
+        if (!_outDevices.ContainsKey(device.SourceDevice.InstanceId))
         {
-            _outDevices.Add(hidDevice.InstanceId, outDevice);
+            _outDevices.Add(device.SourceDevice.InstanceId, outDevice);
         }
 
         var inputReportProcessor = new ControllerInputReportProcessor(device, _serviceProvider);
-        _controllerInputReportProcessors.Add(hidDevice.InstanceId, inputReportProcessor);
+        _controllerInputReportProcessors.Add(device.SourceDevice.InstanceId, inputReportProcessor);
         inputReportProcessor.InputReportAvailable += InputReportProcessor_InputReportAvailable;
 
         inputReportProcessor.StartInputReportReader();
         device.OnAfterStartListening();
-
-        return device;
     }
 
     public void StopProcessing(ICompatibleHidDevice hidDevice)

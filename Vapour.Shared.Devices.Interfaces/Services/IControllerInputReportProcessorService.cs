@@ -3,6 +3,6 @@
 namespace Vapour.Shared.Devices.Services;
 public interface IControllerInputReportProcessorService
 {
-    ICompatibleHidDevice CreateReportProcessor(IHidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification);
+    void StartProcessing(ICompatibleHidDevice device, CompatibleDeviceIdentification deviceIdentification);
     void StopProcessing(ICompatibleHidDevice hidDevice);
 }

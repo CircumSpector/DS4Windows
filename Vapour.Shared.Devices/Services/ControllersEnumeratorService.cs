@@ -4,7 +4,9 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Telemetry;
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Output;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -114,7 +116,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             //
             // Create new special input device
             // 
-            ICompatibleHidDevice device = _controllerInputReportProcessorService.CreateReportProcessor(hidDevice, deviceIdentification);
+            ICompatibleHidDevice device = CreateDevice(hidDevice, deviceIdentification);
 
             _supportedDevices.Add(device);
 
@@ -178,7 +180,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         //
         // Create new special input device
         // 
-        ICompatibleHidDevice device = _controllerInputReportProcessorService.CreateReportProcessor(hidDevice, deviceIdentification);
+        ICompatibleHidDevice device = CreateDevice(hidDevice, deviceIdentification);
 
         if (!_supportedDevices.Contains(device))
         {
@@ -221,5 +223,24 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
                 _supportedDevices.Remove(device);
             }
         }
+    }
+
+    public ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
+    {
+        CompatibleHidDevice device = CompatibleHidDevice.CreateFrom(
+            deviceIdentification.DeviceType,
+            hidDevice,
+            deviceIdentification.FeatureSet,
+            _serviceProvider
+        );
+
+        if (hidDevice is HidDeviceOverWinUsb)
+        {
+            device.IsFiltered = true;
+        }
+
+        _controllerInputReportProcessorService.StartProcessing(device, deviceIdentification);
+
+        return device;
     }
 }
