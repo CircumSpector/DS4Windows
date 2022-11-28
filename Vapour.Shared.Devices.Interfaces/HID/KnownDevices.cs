@@ -13,31 +13,27 @@ public static class KnownDevices
     private const int JoyconLProductId = 0x2006;
     private const int JoyconRProductId = 0x2007;
 
-    public static CompatibleDeviceIdentification IsWinUsbRewriteSupported(int vid, int pid)
-    {
-        var supportedDevice = KnownDevices.List.SingleOrDefault(i =>
-            i.WinUsbEndpoints != null && i.Vid == vid &&
-            i.Pid == pid);
-
-        return supportedDevice;
-    }
-
     public static readonly IEnumerable<CompatibleDeviceIdentification> List = new List<CompatibleDeviceIdentification>
     {
-        new(SonyVid, 0xBA0, "Sony WA",
+        // Sony Wireless Adapter "DUALSHOCK®4 USB Wireless Adaptor"
+        new(SonyVid, 0x0BA0, "Sony WA",
             InputDeviceType.DualShock4,
-            CompatibleHidDeviceFeatureSet.MonitorAudio
+            CompatibleHidDeviceFeatureSet.MonitorAudio,
+            new HidDeviceOverWinUsbEndpoints { InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03 }
         ),
+        // Sony DualShock 4 Rev1
         new(SonyVid, 0x05C4, "DS4 v.1",
-             winUsbEndpoints: new HidDeviceOverWinUsbEndpoints
+            winUsbEndpoints: new HidDeviceOverWinUsbEndpoints
             {
                 InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
             }),
+        // DS4 Strike Pack Eliminator
         new(SonyVid, 0x05C5, "DS4 Strike Pack Eliminator",
             winUsbEndpoints: new HidDeviceOverWinUsbEndpoints
             {
                 InterruptInEndpointAddress = 0x81, InterruptOutEndpointAddress = 0x01
             }),
+        // Sony DualShock 4 Rev2
         new(SonyVid, 0x09CC, "DS4 v.2",
             InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet.MonitorAudio | CompatibleHidDeviceFeatureSet.VendorDefinedDevice
@@ -95,7 +91,7 @@ public static class KnownDevices
                 .NoGyroCalib), // Horipad FPS Plus (wired only. No light bar, rumble and Gyro/Accel sensor. Cannot Hide "HID-compliant vendor-defined device" in USB Composite Device. Other feature works fine.)
         new(0x9886, 0x0025, "Astro C40", InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet
-                .NoGyroCalib), // Astro C40 (wired and BT. Works if Astro specific xinput drivers haven't been installed. Uninstall those to use the pad as dinput device)
+                .NoGyroCalib), // Astro C40 (wired and BT. Works if Astro specific XInput drivers haven't been installed. Uninstall those to use the pad as dinput device)
         new(0x0E8F, 0x1114, "Gamo2 Divaller", InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet
                 .NoGyroCalib), // Gamo2 Divaller (wired only. Light bar not controllable. No touchpad, gyro or rumble)
@@ -112,10 +108,19 @@ public static class KnownDevices
         new(NintendoVendorId, SwitchProProductId, "Switch Pro", InputDeviceType.SwitchPro),
         new(NintendoVendorId, JoyconLProductId, "JoyCon (L)", InputDeviceType.JoyConL),
         new(NintendoVendorId, JoyconRProductId, "JoyCon (R)", InputDeviceType.JoyConR),
-        new(0x7545, 0x1122, "Gioteck VX4"), // Gioteck VX4 (no real lightbar, only some RGB leds)
+        new(0x7545, 0x1122, "Gioteck VX4"), // Gioteck VX4 (no real lightbar, only some RGB LEDs)
         new(0x7331, 0x0001, "DualShock 3 (DS4 Emulation)", InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet.NoGyroCalib |
             CompatibleHidDeviceFeatureSet
                 .VendorDefinedDevice) // Sony DualShock 3 using DsHidMini driver. DsHidMini uses vendor-defined HID device type when it's emulating DS3 using DS4 button layout
     };
+
+    public static CompatibleDeviceIdentification IsWinUsbRewriteSupported(int vid, int pid)
+    {
+        CompatibleDeviceIdentification supportedDevice = List.SingleOrDefault(i =>
+            i.WinUsbEndpoints != null && i.Vid == vid &&
+            i.Pid == pid);
+
+        return supportedDevice;
+    }
 }
