@@ -3,41 +3,30 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
-
-using JetBrains.Annotations;
 
 using Microsoft.Extensions.Logging;
 
-using Vapour.Shared.Common.Core;
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Profiles.Schema;
-using Vapour.Shared.Configuration.Profiles.Types;
 
 namespace Vapour.Shared.Configuration.Profiles.Services;
 
 /// <summary>
 ///     Single point of truth for managing profiles.
 /// </summary>
-public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
+public sealed class ProfilesService : IProfilesService
 {
     private readonly ActivitySource
         _activitySource = new(TracingSources.AssemblyName);
-
-    private readonly NotifyCollectionChangedEventHandler _availableHandler;
-
-    private readonly IProfile _currentlyEditedProfile = VapourProfile.CreateNewProfile();
 
     private readonly IGlobalStateService _global;
 
     private readonly ILogger<ProfilesService> _logger;
 
     private ObservableCollection<IProfile> _availableProfiles;
-
-    private ObservableCollection<IProfile> _controllerSlotProfiles;
 
     public ProfilesService(
         ILogger<ProfilesService> logger,
@@ -49,36 +38,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
 
         _logger = logger;
         _global = global;
-
-        _availableHandler = (_, _) => AvailableProfilesChanged?.Invoke();
     }
-
-    /// <summary>
-    ///     Gets slot to profile assignments.
-    /// </summary>
-    [UsedImplicitly]
-    public Dictionary<int, Guid?> Profiles { get; set; } = new(Enumerable
-        .Range(0, Constants.MaxControllers)
-        .Select(i => new KeyValuePair<int, Guid?>(i, null)));
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    /// <summary>
-    ///     The profile copy that is currently being edited.
-    /// </summary>
-    public IProfile CurrentlyEditedProfile
-    {
-        get => _currentlyEditedProfile;
-        //
-        // Use cloning here to not change the active copy of the profile until the user decides to apply the changes
-        // 
-        set => value.DeepCloneTo(_currentlyEditedProfile);
-    }
-
-    /// <summary>
-    ///     A collection of currently active profiles per controller slot.
-    /// </summary>
-    public ReadOnlyObservableCollection<IProfile> ActiveProfiles { get; private set; }
 
     /// <summary>
     ///     A collection of all the available profiles.
@@ -146,12 +106,6 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         RenameProfile(_availableProfiles.First(p => Equals(p.Id, guid)), displayName);
     }
 
-    /// <inheritdoc />
-    public void SaveCurrentlyEditedProfile()
-    {
-        CreateOrUpdateProfile(CurrentlyEditedProfile.DeepClone());
-    }
-
     /// <summary>
     ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
     /// </summary>
@@ -199,7 +153,7 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
                 continue;
             }
 
-            _availableProfiles.Add(profile.WithChangeNotification(PropertyChangedHandler));
+            _availableProfiles.Add(profile);
         }
     }
 
@@ -227,30 +181,13 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     public void Initialize()
     {
         _availableProfiles = new ObservableCollection<IProfile>();
-        _availableProfiles.CollectionChanged += _availableHandler;
         AvailableProfiles = new ReadOnlyObservableCollection<IProfile>(_availableProfiles);
-
-        _controllerSlotProfiles = new ObservableCollection<IProfile>(Enumerable
-            .Range(0, Constants.MaxControllers)
-            .Select(VapourProfile.CreateDefaultProfile));
-
-        ActiveProfiles = new ReadOnlyObservableCollection<IProfile>(_controllerSlotProfiles);
 
         //
         // Get all the necessary info restored from disk
         // 
         LoadAvailableProfiles();
 
-        //
-        // Populate slots from application configuration, if existent
-        // 
-        foreach ((int slot, Guid? profileId) in Profiles)
-        {
-            IProfile profile = GetProfileFor(slot, profileId);
-
-            profile.DeepCloneTo(_controllerSlotProfiles[slot]);
-            _controllerSlotProfiles[slot].WithChangeNotification(PropertyChangedHandler);
-        }
     }
 
     /// <summary>
@@ -258,69 +195,8 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     /// </summary>
     public void Shutdown()
     {
-        _availableProfiles.CollectionChanged -= _availableHandler;
-
-        Profiles.Clear();
-
-        int index = 0;
-
-        foreach (IProfile controllerSlotProfile in _controllerSlotProfiles)
-        {
-            Profiles.Add(index++, controllerSlotProfile.Id);
-        }
+        _availableProfiles.Clear();
     }
-
-    /// <summary>
-    ///     Called upon arrival of new controller device. Loads an ID/MAC-linked profile (if any), the profile stored in the
-    ///     application settings or the default shipped profile to the provided slot.
-    /// </summary>
-    /// <param name="slot">The zero-based slot index.</param>
-    /// <param name="address">The <see cref="PhysicalAddress" /> from the arrived device.</param>
-    public void ControllerArrived(int slot, PhysicalAddress address)
-    {
-        if (slot < 0 || slot >= _controllerSlotProfiles.Count)
-        {
-            throw new ArgumentOutOfRangeException(nameof(slot));
-        }
-
-        Guid? profileId = Profiles[slot];
-        IProfile profile = GetProfileFor(slot, profileId);
-
-        profile.DeepCloneTo(_controllerSlotProfiles[slot]);
-        _controllerSlotProfiles[slot].DeviceId = address;
-    }
-
-    /// <summary>
-    ///     Called upon controller departure.
-    /// </summary>
-    /// <param name="slot">The zero-based slot index.</param>
-    /// <param name="address">The <see cref="PhysicalAddress" /> from the departed device.</param>
-    public void ControllerDeparted(int slot, PhysicalAddress address)
-    {
-        if (slot < 0 || slot >= _controllerSlotProfiles.Count)
-        {
-            throw new ArgumentOutOfRangeException(nameof(slot));
-        }
-
-        //
-        // TODO: implement
-        // 
-    }
-
-    /// <summary>
-    ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="VapourProfile" />.
-    /// </summary>
-    /// <param name="slot">The zero-based slot index.</param>
-    /// <param name="profile">The <see cref="VapourProfile" /> to switch to.</param>
-    public void SetActiveTo(int slot, IProfile profile)
-    {
-        profile.DeepCloneTo(_controllerSlotProfiles[slot]);
-    }
-
-    /// <summary>
-    ///     Gets invoked when a change to <see cref="AvailableProfiles" /> happened.
-    /// </summary>
-    public event Action AvailableProfilesChanged;
 
     /// <summary>
     ///     Adds a pre-existing or new <see cref="VapourProfile" /> to <see cref="AvailableProfiles" /> and persists it to
@@ -347,27 +223,6 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
     {
         VapourProfile newProfile = VapourProfile.CreateNewProfile(index);
         return newProfile;
-    }
-
-    private void PropertyChangedHandler(object? sender, ProfilePropertyChangedEventArgs e)
-    {
-        if (sender is not VapourProfile p)
-        {
-            _logger.LogWarning("Failed to react to property change in profile");
-            return;
-        }
-
-        switch (e.PropertyName)
-        {
-            //
-            // Display name changed, remove old file and persist new one
-            // 
-            case nameof(p.DisplayName):
-                string oldName = (string)e.Before;
-                File.Delete(Path.Combine(_global.LocalProfilesDirectory, VapourProfile.GetValidFileName(oldName)));
-                PersistProfile(p, _global.LocalProfilesDirectory);
-                break;
-        }
     }
 
     /// <summary>
@@ -401,12 +256,5 @@ public sealed class ProfilesService : IProfilesService, INotifyPropertyChanged
         FileStream file = File.Create(profilePath);
         file.Dispose();
         File.WriteAllText(profilePath, profileData);
-    }
-
-    [UsedImplicitly]
-    [NotifyPropertyChangedInvocator]
-    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

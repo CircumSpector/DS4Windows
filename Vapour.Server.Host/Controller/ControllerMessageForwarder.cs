@@ -70,8 +70,8 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             SerialNumberString = hidDevice.SourceDevice.SerialNumberString,
             //Serial = hidDevice.Serial,
             Connection = hidDevice.Connection.GetValueOrDefault(),
-            SelectedProfileId = _profilesService.ActiveProfiles
-                .Single(p => p.DeviceId != null && p.DeviceId.Equals(hidDevice.Serial)).Id,
+            //SelectedProfileId = _profilesService.ActiveProfiles
+            //    .Single(p => p.DeviceId != null && p.DeviceId.Equals(hidDevice.Serial)).Id,
             IsFiltered = hidDevice.IsFiltered
         };
 

@@ -142,7 +142,7 @@ public sealed class ControllerManagerHost
             return;
         }
 
-        _profileService.ControllerArrived(slotIndex, device.Serial);
+        //_profileService.ControllerArrived(slotIndex, device.Serial);
         _inputSourceService.ControllerArrived(slotIndex, device);
 
         ControllerReady?.Invoke(device);
@@ -156,7 +156,7 @@ public sealed class ControllerManagerHost
         int slot = _manager.FreeSlotContaining(device);
 
         _inputSourceService.ControllerDeparted(slot, device);
-        _profileService.ControllerDeparted(slot, device.Serial);
+        //_profileService.ControllerDeparted(slot, device.Serial);
 
         ControllerRemoved?.Invoke(device);
     }

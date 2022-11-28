@@ -16,21 +16,6 @@ public interface IProfilesService
     ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; }
 
     /// <summary>
-    ///     A collection of currently active profiles per controller slot.
-    /// </summary>
-    ReadOnlyObservableCollection<IProfile> ActiveProfiles { get; }
-
-    /// <summary>
-    ///     The profile copy that is currently being edited.
-    /// </summary>
-    IProfile CurrentlyEditedProfile { get; set; }
-
-    /// <summary>
-    ///     Either writes back the changes to the originating profile copy or stores a new profile on disk.
-    /// </summary>
-    void SaveCurrentlyEditedProfile();
-
-    /// <summary>
     ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
     /// </summary>
     void LoadAvailableProfiles();
@@ -84,31 +69,4 @@ public interface IProfilesService
     ///     Performs tasks prior to app shutdown.
     /// </summary>
     void Shutdown();
-
-    /// <summary>
-    ///     Called upon arrival of new controller device. Loads an ID/MAC-linked profile (if any), the profile stored in the
-    ///     application settings or the default shipped profile to the provided slot.
-    /// </summary>
-    /// <param name="slot">The zero-based slot index.</param>
-    /// <param name="address">The <see cref="PhysicalAddress" /> from the arrived device.</param>
-    void ControllerArrived(int slot, PhysicalAddress address);
-
-    /// <summary>
-    ///     Called upon departure of an existing controller device.
-    /// </summary>
-    /// <param name="slot">The zero-based slot index.</param>
-    /// <param name="address">The <see cref="PhysicalAddress" /> from the departed device.</param>
-    void ControllerDeparted(int slot, PhysicalAddress address);
-
-    /// <summary>
-    ///     Switch the <see cref="ActiveProfiles" /> for slot to <see cref="VapourProfile" />.
-    /// </summary>
-    /// <param name="slot">The zero-based slot index.</param>
-    /// <param name="profile">The <see cref="VapourProfile" /> to switch to.</param>
-    void SetActiveTo(int slot, IProfile profile);
-
-    /// <summary>
-    ///     Gets invoked when a change to <see cref="AvailableProfiles" /> happened.
-    /// </summary>
-    event Action AvailableProfilesChanged;
 }
