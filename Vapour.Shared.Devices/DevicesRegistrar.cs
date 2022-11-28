@@ -28,7 +28,6 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IHidDeviceEnumeratorService<HidDeviceOverWinUsb>, WinUsbDeviceEnumeratorService>();
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
-        services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
         services.AddSingleton<IDeviceSettingsService, DeviceSettingsService>();
         services.AddSingleton<IControllerInputReportProcessorService, ControllerInputReportProcessorService>();
         //

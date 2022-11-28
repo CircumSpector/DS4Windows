@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using Nefarius.ViGEm.Client;
+
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Output;
@@ -9,25 +11,26 @@ public class ControllerInputReportProcessorService : IControllerInputReportProce
 {
     private readonly Dictionary<string, IOutDevice> _outDevices;
     private readonly Dictionary<string, IControllerInputReportProcessor> _controllerInputReportProcessors;
-    private readonly IOutputSlotManager _outputSlotManager;
+    private readonly ViGEmClient _client;
     private readonly IServiceProvider _serviceProvider;
 
-    public ControllerInputReportProcessorService(ILogger<ControllerInputReportProcessorService> logger,
+    public ControllerInputReportProcessorService(
+        ILogger<ControllerInputReportProcessorService> logger,
         IServiceProvider serviceProvider,
-        IOutputSlotManager outputSlotManager)
+        ViGEmClient client)
     {
         _serviceProvider = serviceProvider;
-        _outputSlotManager = outputSlotManager;
+        _client = client;
         _controllerInputReportProcessors = new Dictionary<string, IControllerInputReportProcessor>();
         _outDevices = new Dictionary<string, IOutDevice>();
     }
 
     public void StartProcessing(ICompatibleHidDevice device, CompatibleDeviceIdentification deviceIdentification)
     {
-        IOutDevice outDevice = _outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
-        outDevice.Connect();
         if (!_outDevices.ContainsKey(device.SourceDevice.InstanceId))
         {
+            IOutDevice outDevice = GetOutputController();
+            outDevice.Connect();
             _outDevices.Add(device.SourceDevice.InstanceId, outDevice);
         }
 
@@ -61,5 +64,11 @@ public class ControllerInputReportProcessorService : IControllerInputReportProce
     {
         IOutDevice outDevice = _outDevices[device.SourceDevice.InstanceId];
         outDevice.ConvertAndSendReport(report);
+    }
+
+    private IOutDevice GetOutputController()
+    {
+        //TODO:  change to look at profile for current controller and return necessary output device
+        return new Xbox360OutDevice(_client);
     }
 }
