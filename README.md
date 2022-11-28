@@ -63,6 +63,18 @@ If you **want to see this project succeed** give it a GitHub star to show intere
   `dotnet publish /p:PublishProfile=Properties\PublishProfiles\release-win-x64.pubxml`  
   ⚠️ this will fail when triggered via Visual Studio due to a pending issue ⚠️
 
+## Diagnostics
+
+### Performance counters
+
+Make sure to have the [`dotnet-counters`](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-counters#install) installed. If the server service runs as Windows Service or in an elevated shell, make sure to run the following command in an elevated terminal as well:
+
+```PowerShell
+dotnet counters monitor -n Vapour.Server.Host --counters Vapour.Shared.Devices
+```
+
+This will display snapshots of the captured metrics.
+
 ## Sponsors
 
 [<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/) [<img src="assets/AiLogoColorRightText.png" title="Advanced Installer" alt="Advanced Instzaller" height="120"/>](https://www.advancedinstaller.com/)
