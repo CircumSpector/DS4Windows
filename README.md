@@ -75,6 +75,10 @@ dotnet counters monitor -n Vapour.Server.Host --counters Vapour.Shared.Devices
 
 This will display snapshots of the captured metrics.
 
+![counters.png](assets/counters.png)
+
+This example shows that we're reading and processing 507 input reports per second, so one report roughly every 2 milliseconds.
+
 ## Sponsors
 
 [<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/) [<img src="assets/AiLogoColorRightText.png" title="Advanced Installer" alt="Advanced Instzaller" height="120"/>](https://www.advancedinstaller.com/)
