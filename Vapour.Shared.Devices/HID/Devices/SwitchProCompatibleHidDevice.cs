@@ -2,16 +2,16 @@
 
 public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
 {
-    public SwitchProCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+    public SwitchProCompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
         featureSet, serviceProvider)
     {
     }
 
-    protected override void ProcessInputReport(ReadOnlySpan<byte> input)
+    public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         throw new NotImplementedException();
     }
 
-    protected override CompatibleHidDeviceInputReport InputReport { get; }
+    public override CompatibleHidDeviceInputReport InputReport { get; }
 }

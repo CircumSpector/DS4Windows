@@ -6,17 +6,17 @@ namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 {
-    public JoyConCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+    public JoyConCompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
         featureSet, serviceProvider)
     {
         Serial = PhysicalAddress.Parse(SourceDevice.SerialNumberString);
     }
 
-    protected override void ProcessInputReport(ReadOnlySpan<byte> input)
+    public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         throw new NotImplementedException();
     }
 
-    protected override CompatibleHidDeviceInputReport InputReport { get; } = new JoyConCompatibleInputReport();
+    public override CompatibleHidDeviceInputReport InputReport { get; } = new JoyConCompatibleInputReport();
 }

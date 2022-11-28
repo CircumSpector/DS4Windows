@@ -30,6 +30,7 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IInputSourceService, InputSourceService>();
         services.AddSingleton<IOutputSlotManager, OutputSlotManager>();
         services.AddSingleton<IDeviceSettingsService, DeviceSettingsService>();
+        services.AddSingleton<IControllerInputReportProcessorService, ControllerInputReportProcessorService>();
         //
         // ViGEm Client (Gen1) service
         // 
