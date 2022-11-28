@@ -138,6 +138,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     {
         foreach (ICompatibleHidDevice compatibleHidDevice in SupportedDevices)
         {
+            _controllerInputReportProcessorService.StopProcessing(compatibleHidDevice);
             compatibleHidDevice.Dispose();
         }
 
