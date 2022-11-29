@@ -3,6 +3,8 @@
 using Nefarius.ViGEm.Client;
 
 using Vapour.Shared.Common.Types;
+using Vapour.Shared.Configuration.Profiles.Schema;
+using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Output;
 
@@ -63,6 +65,7 @@ public class ControllerInputReportProcessorService : IControllerInputReportProce
     private void InputReportProcessor_InputReportAvailable(ICompatibleHidDevice device, CompatibleHidDeviceInputReport report)
     {
         IOutDevice outDevice = _outDevices[device.SourceDevice.InstanceId];
+        report = UpdateBasedOnProfile(device.CurrentProfile, report);
         outDevice.ConvertAndSendReport(report);
     }
 
@@ -70,5 +73,12 @@ public class ControllerInputReportProcessorService : IControllerInputReportProce
     {
         //TODO:  change to look at profile for current controller and return necessary output device
         return new Xbox360OutDevice(_client);
+    }
+
+    private CompatibleHidDeviceInputReport UpdateBasedOnProfile(IProfile profile, CompatibleHidDeviceInputReport report)
+    {
+        //TODO: fill in processing the profile against the current report
+        var profileId = profile.Id;
+        return report;
     }
 }

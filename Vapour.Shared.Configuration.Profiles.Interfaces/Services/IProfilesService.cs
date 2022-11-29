@@ -10,10 +10,9 @@ namespace Vapour.Shared.Configuration.Profiles.Services;
 /// </summary>
 public interface IProfilesService
 {
-    /// <summary>
-    ///     A collection of all the available profiles.
-    /// </summary>
-    ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; }
+    Dictionary<Guid, IProfile> AvailableProfiles { get; }
+
+    event EventHandler<ProfileChangedEventArgs> OnActiveProfileChanged;
 
     /// <summary>
     ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
@@ -41,26 +40,6 @@ public interface IProfilesService
     void DeleteProfile(IProfile profile);
 
     /// <summary>
-    ///     Delete a profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
-    /// </summary>
-    /// <param name="guid">The <see cref="Guid" /> of the <see cref="VapourProfile" /> to look for.</param>
-    void DeleteProfile(Guid guid);
-
-    /// <summary>
-    ///     Renames a <see cref="VapourProfile" />.
-    /// </summary>
-    /// <param name="profile">The <see cref="VapourProfile" /> to rename.</param>
-    /// <param name="displayName">The new name.</param>
-    void RenameProfile(IProfile profile, string displayName);
-
-    /// <summary>
-    ///     Renames a <see cref="VapourProfile" /> identified by <see cref="Guid" />.
-    /// </summary>
-    /// <param name="guid">The <see cref="Guid" /> of the <see cref="VapourProfile" />.</param>
-    /// <param name="displayName">The new name.</param>
-    void RenameProfile(Guid guid, string displayName);
-
-    /// <summary>
     ///     Performs all tasks necessary to get the service ready to operate.
     /// </summary>
     void Initialize();
@@ -69,4 +48,7 @@ public interface IProfilesService
     ///     Performs tasks prior to app shutdown.
     /// </summary>
     void Shutdown();
+    void SetProfile(string controllerKey, Guid profileId);
+    IProfile GetActiveProfile(string controllerKey);
+    void DeleteProfile(Guid profileId);
 }

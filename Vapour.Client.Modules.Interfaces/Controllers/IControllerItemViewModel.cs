@@ -9,7 +9,7 @@ namespace Vapour.Client.Modules.Controllers;
 
 public interface IControllerItemViewModel : IViewModel<IControllerItemViewModel>
 {
-    PhysicalAddress Serial { get; }
+    string Serial { get; }
 
     BitmapImage DeviceImage { get; }
 

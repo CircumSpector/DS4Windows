@@ -42,6 +42,7 @@ public sealed class ControllersViewModel :
         await CreateControllerItems();
 
         _controllerService.StartWebSocket(CreateControllerItem, RemoveControllerItem);
+        _profilesService.StartWebSocket(OnProfileChanged);
     }
 
     private async Task CreateControllerItems()
@@ -121,6 +122,15 @@ public sealed class ControllersViewModel :
         {
             existing.Dispose();
             SelectableProfileItems.Remove(existing);
+        }
+    }
+
+    private void OnProfileChanged(ProfileChangedMessage profileChangedMessage)
+    {
+        var controller = ControllerItems.SingleOrDefault(i => i.Serial == profileChangedMessage.ControllerKey);
+        if (controller != null)
+        {
+            controller.SelectedProfileId = profileChangedMessage.NewProfileId;
         }
     }
 

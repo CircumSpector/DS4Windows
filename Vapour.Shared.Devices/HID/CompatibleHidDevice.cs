@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
+using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -93,11 +94,32 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <inheritdoc />
     public PhysicalAddress Serial { get; protected init; }
 
+    public string SerialString
+    {
+        get
+        {
+            return Serial != null ? Serial.ToString() : null;
+        }
+    }
+
     /// <inheritdoc />
     public CompatibleHidDeviceFeatureSet FeatureSet { get; }
 
     /// <inheritdoc />
     public bool IsFiltered { get; set; }
+
+    public IProfile CurrentProfile { get; private set; }
+    public void SetProfile(IProfile profile)
+    {
+        var oldProfile = CurrentProfile;
+        CurrentProfile = profile;
+        OnProfileChanged(oldProfile, profile);
+    }
+
+    protected virtual void OnProfileChanged(IProfile oldProfile, IProfile newProfile)
+    {
+
+    }
 
     /// <inheritdoc />
     public event Action<ICompatibleHidDevice> Disconnected;

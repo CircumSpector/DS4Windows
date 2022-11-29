@@ -28,6 +28,6 @@ public sealed class ProfileListEndpoint : EndpointWithoutRequest<List<IProfile>>
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        await SendOkAsync(_profilesService.AvailableProfiles.ToList(), ct);
+        await SendOkAsync(_profilesService.AvailableProfiles.Values.ToList(), ct);
     }
 }

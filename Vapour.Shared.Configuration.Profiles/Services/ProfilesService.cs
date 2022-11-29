@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
+using System.DirectoryServices.ActiveDirectory;
 using System.Text.Json;
 
 using Microsoft.Extensions.Logging;
@@ -26,7 +25,8 @@ public sealed class ProfilesService : IProfilesService
 
     private readonly ILogger<ProfilesService> _logger;
 
-    private ObservableCollection<IProfile> _availableProfiles;
+    private Dictionary<Guid, IProfile> _availableProfiles;
+    private Dictionary<string, IProfile> _activeProfiles;
 
     public ProfilesService(
         ILogger<ProfilesService> logger,
@@ -40,10 +40,16 @@ public sealed class ProfilesService : IProfilesService
         _global = global;
     }
 
-    /// <summary>
-    ///     A collection of all the available profiles.
-    /// </summary>
-    public ReadOnlyObservableCollection<IProfile> AvailableProfiles { get; private set; }
+    public Dictionary<Guid, IProfile> AvailableProfiles { get { return _availableProfiles; } }
+    public event EventHandler<ProfileChangedEventArgs> OnActiveProfileChanged;
+
+    public void DeleteProfile(Guid profileId)
+    {
+        if (_availableProfiles.ContainsKey(profileId))
+        {
+            DeleteProfile(_availableProfiles[profileId]);
+        }
+    }
 
     /// <summary>
     ///     Delete a profile from <see cref="AvailableProfiles" /> and from disk.
@@ -56,6 +62,18 @@ public sealed class ProfilesService : IProfilesService
             throw new ArgumentNullException(nameof(profile));
         }
 
+        var profilesChanged = new List<ProfileChangedEventArgs>();
+        var defaultProfile = _availableProfiles[VapourProfile.DefaultProfileId];
+        foreach (var item in _activeProfiles.Where(i => i.Value.Id == profile.Id).ToList())
+        {
+            var profileChangedEventArgs = new ProfileChangedEventArgs(
+                item.Key, 
+                GetActiveProfile(item.Key), 
+                defaultProfile);
+            profilesChanged.Add(profileChangedEventArgs);
+            _activeProfiles[item.Key] = defaultProfile;
+        }
+
         //TODO: switch this off of whether or not the profile was global
         string profilePath = profile.GetAbsoluteFilePath(_global.LocalProfilesDirectory);
 
@@ -64,46 +82,16 @@ public sealed class ProfilesService : IProfilesService
         // 
         File.Delete(profilePath);
 
-        _availableProfiles.Remove(profile);
-    }
+        _availableProfiles.Remove(profile.Id);
 
-    /// <summary>
-    ///     Delete a profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
-    /// </summary>
-    /// <param name="guid">The <see cref="Guid" /> of the <see cref="VapourProfile" /> to look for.</param>
-    public void DeleteProfile(Guid guid)
-    {
-        DeleteProfile(_availableProfiles.First(p => Equals(p.Id, guid)));
-    }
-
-    /// <summary>
-    ///     Renames a <see cref="VapourProfile" />.
-    /// </summary>
-    /// <param name="profile">The <see cref="VapourProfile" /> to rename.</param>
-    /// <param name="displayName">The new name.</param>
-    public void RenameProfile(IProfile profile, string displayName)
-    {
-        //
-        // File name is derived from old name, so delete the file to clean up
-        // 
-        File.Delete(profile.GetAbsoluteFilePath(_global.LocalProfilesDirectory));
-
-        profile.DisplayName = displayName;
-
-        //
-        // Will generate new file name
-        // 
-        PersistProfile(profile, _global.LocalProfilesDirectory);
-    }
-
-    /// <summary>
-    ///     Renames a <see cref="VapourProfile" /> identified by <see cref="Guid" />.
-    /// </summary>
-    /// <param name="guid">The <see cref="Guid" /> of the <see cref="VapourProfile" />.</param>
-    /// <param name="displayName">The new name.</param>
-    public void RenameProfile(Guid guid, string displayName)
-    {
-        RenameProfile(_availableProfiles.First(p => Equals(p.Id, guid)), displayName);
+        if (profilesChanged.Any())
+        {
+            SaveActiveProfiles();
+            foreach (var profileChanged in profilesChanged)
+            {
+                OnActiveProfileChanged?.Invoke(this, profileChanged);
+            }
+        }
     }
 
     /// <summary>
@@ -146,14 +134,14 @@ public sealed class ProfilesService : IProfilesService
                 continue;
             }
 
-            if (_availableProfiles.Any(p => Equals(p.Id, profile.Id)))
+            if (_availableProfiles.ContainsKey(profile.Id))
             {
                 _logger.LogWarning("Profile \"{Name}\" with ID {Id} already loaded, skipping",
                     profile.DisplayName, profile.Id);
                 continue;
             }
 
-            _availableProfiles.Add(profile);
+            _availableProfiles.Add(profile.Id, profile);
         }
     }
 
@@ -169,7 +157,7 @@ public sealed class ProfilesService : IProfilesService
         // 
         Directory.CreateDirectory(directory);
 
-        foreach (IProfile profile in _availableProfiles)
+        foreach (IProfile profile in _availableProfiles.Values)
         {
             PersistProfile(profile, directory);
         }
@@ -180,14 +168,13 @@ public sealed class ProfilesService : IProfilesService
     /// </summary>
     public void Initialize()
     {
-        _availableProfiles = new ObservableCollection<IProfile>();
-        AvailableProfiles = new ReadOnlyObservableCollection<IProfile>(_availableProfiles);
+        _availableProfiles = new Dictionary<Guid, IProfile>();
 
         //
         // Get all the necessary info restored from disk
         // 
         LoadAvailableProfiles();
-
+        LoadActiveProfiles();
     }
 
     /// <summary>
@@ -196,6 +183,7 @@ public sealed class ProfilesService : IProfilesService
     public void Shutdown()
     {
         _availableProfiles.Clear();
+        _activeProfiles.Clear();
     }
 
     /// <summary>
@@ -207,13 +195,13 @@ public sealed class ProfilesService : IProfilesService
     {
         profile ??= VapourProfile.CreateNewProfile();
 
-        if (!_availableProfiles.Contains(profile))
+        if (!_availableProfiles.ContainsKey(profile.Id))
         {
-            _availableProfiles.Add(profile);
+            _availableProfiles.Add(profile.Id, profile);
         }
         else
         {
-            profile.DeepCloneTo(_availableProfiles.First(p => Equals(p.Id, profile.Id)));
+            _availableProfiles[profile.Id] = profile;
         }
 
         PersistProfile(profile, _global.LocalProfilesDirectory);
@@ -225,13 +213,55 @@ public sealed class ProfilesService : IProfilesService
         return newProfile;
     }
 
-    /// <summary>
-    ///     Resolve the profile from <see cref="AvailableProfiles" /> identified by <see cref="Guid" />.
-    /// </summary>
-    private IProfile GetProfileFor(int slot, Guid? profileId)
+    public void SetProfile(string controllerKey, Guid profileId)
     {
-        return _availableProfiles.FirstOrDefault(p => Equals(p.Id, profileId)) ??
-               VapourProfile.CreateDefaultProfile(slot);
+        if (_availableProfiles.ContainsKey(profileId))
+        {
+            var profile = _availableProfiles[profileId];
+            IProfile previousProfile = null;
+            if (_activeProfiles.ContainsKey(controllerKey))
+            {
+                if (_activeProfiles[controllerKey].Id == profileId)
+                {
+                    //setting the same profile do not do anything
+                    return;
+                }
+
+                previousProfile = _activeProfiles[controllerKey];
+                _activeProfiles[controllerKey] = _availableProfiles[profileId];
+            }
+            else
+            {
+                _activeProfiles.Add(controllerKey, profile);
+            }
+
+            SaveActiveProfiles();
+            OnActiveProfileChanged?.Invoke(this, 
+                new ProfileChangedEventArgs(controllerKey, previousProfile, profile));
+        }
+    }
+
+    public IProfile GetActiveProfile(string controllerKey)
+    {
+        if (_activeProfiles.ContainsKey(controllerKey))
+        {
+            if (_availableProfiles.ContainsKey(_activeProfiles[controllerKey].Id))
+            {
+                return _activeProfiles[controllerKey];
+            }
+            else
+            {
+                _activeProfiles[controllerKey] = _availableProfiles[VapourProfile.DefaultProfileId];
+                SaveActiveProfiles();
+                return _activeProfiles[controllerKey];
+            }
+        }
+        else
+        {
+            _activeProfiles.Add(controllerKey, _availableProfiles[VapourProfile.DefaultProfileId]);
+            SaveActiveProfiles();
+            return _activeProfiles[controllerKey];
+        }
     }
 
     /// <summary>
@@ -256,5 +286,36 @@ public sealed class ProfilesService : IProfilesService
         FileStream file = File.Create(profilePath);
         file.Dispose();
         File.WriteAllText(profilePath, profileData);
+    }
+
+    private void LoadActiveProfiles()
+    {
+        if (File.Exists(_global.LocalActiveProfilesLocation))
+        {
+            var data = File.ReadAllText(_global.LocalActiveProfilesLocation);
+            var activeProfiles = JsonSerializer.Deserialize<Dictionary<string, Guid>>(data)
+                .Where(i => _availableProfiles.ContainsKey(i.Value))
+                .ToDictionary(i => i.Key, i => _availableProfiles[i.Value]);
+            
+            _activeProfiles = activeProfiles;
+        }
+        else
+        {
+            _activeProfiles = new Dictionary<string, IProfile>();
+        }
+    }
+
+    private void SaveActiveProfiles()
+    {
+        var activeProfileKeys = _activeProfiles.ToDictionary(i => i.Key, i => i.Value.Id);
+        string data = JsonSerializer.Serialize(activeProfileKeys);
+        if (File.Exists(_global.LocalActiveProfilesLocation))
+        {
+            File.Delete(_global.LocalActiveProfilesLocation);
+        }
+
+        FileStream file = File.Create(_global.LocalActiveProfilesLocation);
+        file.Dispose();
+        File.WriteAllText(_global.LocalActiveProfilesLocation, data);
     }
 }

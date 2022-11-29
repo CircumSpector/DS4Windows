@@ -27,6 +27,7 @@
 
     <ItemGroup>
 		<ProjectReference Include="..\Vapour.Shared.Common.Interfaces\Vapour.Shared.Common.Interfaces.csproj" />
+		<ProjectReference Include="..\Vapour.Shared.Configuration.Profiles.Interfaces\Vapour.Shared.Configuration.Profiles.Interfaces.csproj" />
 	</ItemGroup>
 
 </Project>

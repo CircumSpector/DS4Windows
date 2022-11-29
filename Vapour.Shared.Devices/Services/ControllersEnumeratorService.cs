@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Types;
+using Vapour.Shared.Configuration.Profiles.Schema;
+using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Output;
 
@@ -26,18 +28,22 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
     private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
+    private readonly IProfilesService _profilesService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
         IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, 
         IServiceProvider serviceProvider,
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
-        IControllerInputReportProcessorService controllerInputReportProcessorService)
+        IControllerInputReportProcessorService controllerInputReportProcessorService,
+        IProfilesService profilesService)
     {
         _logger = logger;
         _hidEnumeratorService = hidEnumeratorService;
         _serviceProvider = serviceProvider;
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
         _controllerInputReportProcessorService = controllerInputReportProcessorService;
+        _profilesService = profilesService;
+        _profilesService.OnActiveProfileChanged += _profilesService_OnActiveProfileChanged;
         _hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
 
@@ -47,6 +53,15 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
 
         SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(_supportedDevices);
+    }
+
+    private void _profilesService_OnActiveProfileChanged(object sender, ProfileChangedEventArgs e)
+    {
+        var existingDevice = SupportedDevices.SingleOrDefault(i => i.SerialString == e.ControllerKey);
+        if (existingDevice != null)
+        {
+            existingDevice.SetProfile(e.NewProfile);
+        }
     }
 
     private void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(HidDeviceOverWinUsb obj)
@@ -233,6 +248,8 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             deviceIdentification.FeatureSet,
             _serviceProvider
         );
+
+        device.SetProfile(_profilesService.GetActiveProfile(device.SerialString));
 
         if (hidDevice is HidDeviceOverWinUsb)
         {

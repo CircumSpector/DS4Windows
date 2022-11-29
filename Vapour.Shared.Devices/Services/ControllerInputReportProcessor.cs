@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Threading.Channels;
 using Vapour.Shared.Common.Telemetry;
+using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Devices.HID;
 
 using Windows.Win32.Foundation;
@@ -29,6 +30,8 @@ public class ControllerInputReportProcessor : IControllerInputReportProcessor
         SingleWriter = true,
         AllowSynchronousContinuations = true
     });
+
+    private IProfile _currentProfile;
 
     private static readonly Meter Meter = new(TracingSources.AssemblyName);
     private static readonly Counter<int> ReportsReadCounter =
