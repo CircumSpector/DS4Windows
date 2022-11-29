@@ -1,15 +1,19 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel;
+
+using AutoMapper;
 
 using FastDeepCloner;
 
 using Vapour.Client.Core.ViewModel;
+using Vapour.Client.ServiceClients;
 using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IProfileEditViewModel
+public sealed class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IProfileEditViewModel, IDataErrorInfo
 {
     private readonly IMapper _mapper;
+    private readonly IProfileServiceClient _profileServiceClient;
     private readonly IViewModelFactory _viewModelFactory;
 
     private bool _isNew;
@@ -29,10 +33,14 @@ public sealed class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IPr
 
     private ISixAxisEditViewModel _sixAxisZ;
 
-    public ProfileEditViewModel(IViewModelFactory viewModelFactory, IMapper mapper)
+    public ProfileEditViewModel(
+        IViewModelFactory viewModelFactory, 
+        IMapper mapper,
+        IProfileServiceClient profileServiceClient)
     {
         _viewModelFactory = viewModelFactory;
         _mapper = mapper;
+        _profileServiceClient = profileServiceClient;
     }
 
     public ITriggerButtonsEditViewModel L2Button
@@ -91,6 +99,40 @@ public sealed class ProfileEditViewModel : ViewModel<IProfileEditViewModel>, IPr
     {
         get => _rightStick;
         private set => SetProperty(ref _rightStick, value);
+    }
+
+    public string Error { get; private set; }
+
+    public string this[string columnName]
+    {
+        get
+        {
+            string result = null;
+            if (columnName == nameof(Name))
+            {
+                if (string.IsNullOrWhiteSpace(Name))
+                {
+                    result = "Name is required";
+                }
+                else if (_profileServiceClient.ProfileList.Any(i => i.Id != _profile.Id && i.DisplayName.ToUpper() == Name.ToUpper()))
+                {
+                    result = "Name must be unique";
+                }
+            }
+            Error = result;
+
+            OnPropertyChanged(nameof(NoErrors));
+
+            return result;
+        }
+    }
+
+    public bool NoErrors
+    {
+        get
+        {
+            return string.IsNullOrEmpty(Error);
+        }
     }
 
     public void SetProfile(IProfile profile, bool isNew = false)

@@ -3,6 +3,7 @@
 using AutoMapper;
 
 using Vapour.Client.Core.ViewModel;
+using Vapour.Shared.Configuration.Profiles;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Types;
 
@@ -92,6 +93,14 @@ public sealed class ProfileListItemViewModel :
     {
         get => gyroMode;
         private set => SetProperty(ref gyroMode, value);
+    }
+
+    public bool NotIsDefaultProfile
+    {
+        get
+        {
+            return Id != Constants.DefaultProfileId;
+        }
     }
 
     #endregion

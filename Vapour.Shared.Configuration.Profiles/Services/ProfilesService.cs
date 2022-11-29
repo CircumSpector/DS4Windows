@@ -63,7 +63,7 @@ public sealed class ProfilesService : IProfilesService
         }
 
         var profilesChanged = new List<ProfileChangedEventArgs>();
-        var defaultProfile = _availableProfiles[VapourProfile.DefaultProfileId];
+        var defaultProfile = _availableProfiles[Constants.DefaultProfileId];
         foreach (var item in _activeProfiles.Where(i => i.Value.Id == profile.Id).ToList())
         {
             var profileChangedEventArgs = new ProfileChangedEventArgs(
@@ -251,14 +251,14 @@ public sealed class ProfilesService : IProfilesService
             }
             else
             {
-                _activeProfiles[controllerKey] = _availableProfiles[VapourProfile.DefaultProfileId];
+                _activeProfiles[controllerKey] = _availableProfiles[Constants.DefaultProfileId];
                 SaveActiveProfiles();
                 return _activeProfiles[controllerKey];
             }
         }
         else
         {
-            _activeProfiles.Add(controllerKey, _availableProfiles[VapourProfile.DefaultProfileId]);
+            _activeProfiles.Add(controllerKey, _availableProfiles[Constants.DefaultProfileId]);
             SaveActiveProfiles();
             return _activeProfiles[controllerKey];
         }
