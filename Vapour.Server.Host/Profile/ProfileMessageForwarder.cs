@@ -1,5 +1,4 @@
-﻿using System.Net.Sockets;
-using System.Net.WebSockets;
+﻿using System.Net.WebSockets;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -50,7 +49,7 @@ public sealed class ProfileMessageForwarder : IProfileMessageForwarder
         {
             if (socket is { State: WebSocketState.Open })
             {
-                ArraySegment<byte> data = new ArraySegment<byte>(
+                ArraySegment<byte> data = new(
                     Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new ProfileChangedMessage
                     {
                         ControllerKey = e.ControllerKey,

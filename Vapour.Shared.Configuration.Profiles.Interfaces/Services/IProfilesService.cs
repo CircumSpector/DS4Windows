@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.NetworkInformation;
-
-using Vapour.Shared.Configuration.Profiles.Schema;
+﻿using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Shared.Configuration.Profiles.Services;
 
@@ -48,7 +45,10 @@ public interface IProfilesService
     ///     Performs tasks prior to app shutdown.
     /// </summary>
     void Shutdown();
+
     void SetProfile(string controllerKey, Guid profileId);
+
     IProfile GetActiveProfile(string controllerKey);
+
     void DeleteProfile(Guid profileId);
 }
