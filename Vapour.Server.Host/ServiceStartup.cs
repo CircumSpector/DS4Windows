@@ -7,6 +7,7 @@ using Serilog;
 
 using Vapour.Client.Core;
 using Vapour.Server.Host.Controller;
+using Vapour.Server.Host.Profile;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
 using Vapour.Shared.Configuration.Profiles;
@@ -45,6 +46,8 @@ public static class ServiceStartup
 
         SetupWebSocket(app);
 
+        app.MapHub<ControllerMessageHub>("/ControllerMessages");
+        app.MapHub<ProfileMessageHub>("/ProfileMessages");
         app.UseFastEndpoints(config => config.Endpoints.RoutePrefix = "api");
         app.UseOpenApi();
         app.UseSwaggerUi3(s => s.ConfigureDefaults());
@@ -64,6 +67,7 @@ public static class ServiceStartup
         await app.RunAsync(Constants.HttpUrl);
     }
 
+    [Obsolete]
     private static void SetupWebSocket(IApplicationBuilder app)
     {
         WebSocketOptions webSocketOptions = new WebSocketOptions { KeepAliveInterval = TimeSpan.FromMinutes(2) };
