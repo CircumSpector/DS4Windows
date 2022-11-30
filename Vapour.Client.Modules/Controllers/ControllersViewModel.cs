@@ -42,7 +42,7 @@ public sealed class ControllersViewModel :
         await CreateControllerItems();
 
         _controllerService.StartListening(CreateControllerItem, RemoveControllerItem);
-        _profilesService.StartWebSocket(OnProfileChanged);
+        _profilesService.StartListening(OnProfileChanged);
     }
 
     private async Task CreateControllerItems()
