@@ -1,14 +1,12 @@
-﻿using System.Net.WebSockets;
-
-using Vapour.Shared.Devices.HID;
+﻿using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Server.Controller;
 
-[Obsolete]
+/// <summary>
+///     Dispatches controller events to clients.
+/// </summary>
 public interface IControllerMessageForwarder
 {
-    Task StartListening(WebSocket newSocket);
-
     ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice);
 
     Task SendIsHostRunning(bool isRunning);
