@@ -29,6 +29,7 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
 
     private static void SetupWebServices(IServiceCollection services)
     {
+        services.AddSignalR();
         services.AddFastEndpoints();
         services.AddSwaggerDoc();
         services.AddSingleton<ControllerService>();
