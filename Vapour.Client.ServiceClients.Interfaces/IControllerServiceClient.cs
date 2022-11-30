@@ -5,10 +5,14 @@ namespace Vapour.Client.ServiceClients;
 public interface IControllerServiceClient
 {
     Task<List<ControllerConnectedMessage>> GetControllerList();
-    void StartWebSocket(
+
+    void StartListening(
         Action<ControllerConnectedMessage> connectedHandler,
         Action<ControllerDisconnectedMessage> disconnectedHandler,
-        Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null);
+        Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null,
+        CancellationToken ct = default
+    );
+
     Task WaitForService(CancellationToken ct = default);
     Task<bool> IsHostRunning();
     Task StartHost();
