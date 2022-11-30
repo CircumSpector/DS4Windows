@@ -67,6 +67,11 @@ public sealed partial class ProfileServiceClient
 
     public async Task SetProfile(string controllerKey, Guid profileId)
     {
+        if (string.IsNullOrEmpty(controllerKey))
+        {
+            return;
+        }
+
         using HttpClient client = _httpClientFactory.CreateClient();
         HttpResponseMessage result =
             await client.PutAsync(

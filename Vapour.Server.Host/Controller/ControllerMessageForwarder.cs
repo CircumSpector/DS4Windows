@@ -37,7 +37,6 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             Path = hidDevice.SourceDevice.Path,
             ProductString = hidDevice.SourceDevice.ProductString,
             SerialNumberString = hidDevice.SerialString,
-            //Serial = hidDevice.Serial,
             Connection = hidDevice.Connection.GetValueOrDefault(),
             SelectedProfileId = hidDevice.CurrentProfile.Id,
             IsFiltered = hidDevice.IsFiltered
