@@ -4,7 +4,14 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Server.Host.Profile.Endpoints;
 
-public sealed class ProfileSetEndpoint : EndpointWithoutRequest
+public sealed class ProfileSetEndpointRequest
+{
+    public string ControllerKey { get; set; }
+
+    public Guid ProfileId { get; set; }
+}
+
+public sealed class ProfileSetEndpoint : Endpoint<ProfileSetEndpointRequest>
 {
     private readonly IProfilesService _profilesService;
 
@@ -15,7 +22,7 @@ public sealed class ProfileSetEndpoint : EndpointWithoutRequest
 
     public override void Configure()
     {
-        Get("/profile/set/{controllerKey}/{profileId}");
+        Put("/profile/set/{ControllerKey}/{ProfileId}");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Sets a profile to a controller";
@@ -24,11 +31,9 @@ public sealed class ProfileSetEndpoint : EndpointWithoutRequest
         });
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(ProfileSetEndpointRequest req, CancellationToken ct)
     {
-        var controllerKey = Route<string>("controllerKey");
-        var profileId = Route<Guid>("profileId");
-        _profilesService.SetProfile(controllerKey, profileId);
+        _profilesService.SetProfile(req.ControllerKey, req.ProfileId);
         await SendOkAsync(ct);
     }
 }

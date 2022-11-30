@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Web;
 using System.Windows;
@@ -108,19 +107,22 @@ public sealed class ProfileServiceClient : IProfileServiceClient
     {
         using HttpClient client = _httpClientFactory.CreateClient();
         HttpResponseMessage result =
-            await client.GetAsync(
-                new Uri($"{Constants.HttpUrl}/api/profile/set/{HttpUtility.UrlEncode(controllerKey)}/{HttpUtility.UrlEncode(profileId.ToString())}", UriKind.Absolute));
+            await client.PutAsync(
+                new Uri(
+                    $"{Constants.HttpUrl}/api/profile/set/{HttpUtility.UrlEncode(controllerKey)}/{HttpUtility.UrlEncode(profileId.ToString())}",
+                    UriKind.Absolute), null);
 
         if (!result.IsSuccessStatusCode)
         {
-            throw new Exception($"Could not set profile {profileId} to controller {controllerKey} {result.ReasonPhrase}");
+            throw new Exception(
+                $"Could not set profile {profileId} to controller {controllerKey} {result.ReasonPhrase}");
         }
     }
 
     public async void StartWebSocket(Action<ProfileChangedMessage> profileChangedHandler)
     {
         _profileChangedHandler = profileChangedHandler;
-        
+
         _websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/api/profile/ws", UriKind.Absolute));
 
         _websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
