@@ -34,8 +34,10 @@ public sealed partial class ProfileServiceClient : IProfileServiceClient
         if (result.IsSuccessStatusCode)
         {
             ProfileList =
-                new ObservableCollection<IProfile>(await result.Content.ReadFromJsonAsync<List<ProfileItem>>() ??
-                                                   Enumerable.Empty<ProfileItem>());
+                new ObservableCollection<IProfile>(
+                    await result.Content.ReadFromJsonAsync<List<ProfileItem>>() ??
+                    Enumerable.Empty<ProfileItem>()
+                );
         }
         else
         {
