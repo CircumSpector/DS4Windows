@@ -43,7 +43,7 @@ public sealed class StickEditViewModel :
 
     public IStickControlModeSettingsViewModel ControlModeSettings { get; private set; }
 
-    public double FlickRealWorldCalibtration
+    public double FlickRealWorldCalibration
     {
         get => _flickRealWorldCalibration;
         set => SetProperty(ref _flickRealWorldCalibration, value);

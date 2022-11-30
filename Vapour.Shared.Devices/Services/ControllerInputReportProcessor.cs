@@ -1,43 +1,49 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Nefarius.Drivers.WinUSB;
-using Nefarius.ViGEm.Client.Exceptions;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Threading.Channels;
+
+using Windows.Win32.Foundation;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+using Nefarius.Drivers.WinUSB;
+using Nefarius.ViGEm.Client.Exceptions;
+
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Devices.HID;
 
-using Windows.Win32.Foundation;
-
 namespace Vapour.Shared.Devices.Services;
-public class ControllerInputReportProcessor : IControllerInputReportProcessor
+
+public sealed class ControllerInputReportProcessor : IControllerInputReportProcessor
 {
+    private static readonly Meter Meter = new(TracingSources.AssemblyName);
+
+    private static readonly Counter<int> ReportsReadCounter =
+        Meter.CreateCounter<int>("reports-read", description: "The number of reports read.");
+
+    private static readonly Counter<int> ReportsProcessedCounter =
+        Meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
+
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     /// <summary>
     ///     Managed input report array.
     /// </summary>
-    protected byte[] _inputReportArray;
-    private Thread _inputReportProcessor;
-    private Thread _inputReportReader;
-    private CancellationTokenSource _inputReportToken = new();
+    private readonly byte[] _inputReportArray;
+
     private readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
     {
-        SingleReader = true,
-        SingleWriter = true,
-        AllowSynchronousContinuations = true
+        SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
     });
 
     private IProfile _currentProfile;
 
-    private static readonly Meter Meter = new(TracingSources.AssemblyName);
-    private static readonly Counter<int> ReportsReadCounter =
-        Meter.CreateCounter<int>("reports-read", description: "The number of reports read.");
-    private static readonly Counter<int> ReportsProcessedCounter =
-        Meter.CreateCounter<int>("reports-processed", description: "The number of reports processed.");
+    private Thread _inputReportProcessor;
+    private Thread _inputReportReader;
+    private CancellationTokenSource _inputReportToken = new();
 
     public ControllerInputReportProcessor(ICompatibleHidDevice hidDevice, IServiceProvider serviceProvider)
     {
@@ -45,13 +51,13 @@ public class ControllerInputReportProcessor : IControllerInputReportProcessor
         Logger = Services.GetRequiredService<ILogger<ControllerInputReportProcessor>>();
         HidDevice = hidDevice;
 
-        var inputReportSize = ((HidDevice)HidDevice.SourceDevice).Capabilities.InputReportByteLength;
+        ushort inputReportSize = ((HidDevice)HidDevice.SourceDevice).Capabilities.InputReportByteLength;
 
         _inputReportArray = new byte[inputReportSize];
     }
 
-    protected IServiceProvider Services { get; }
-    protected ILogger<ControllerInputReportProcessor> Logger { get; }
+    private IServiceProvider Services { get; }
+    private ILogger<ControllerInputReportProcessor> Logger { get; }
     public ICompatibleHidDevice HidDevice { get; }
     public bool IsInputReportAvailableInvoked { get; set; } = true;
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
@@ -65,15 +71,13 @@ public class ControllerInputReportProcessor : IControllerInputReportProcessor
 
         _inputReportReader = new Thread(ReadInputReportLoop)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _inputReportReader.Start();
 
         _inputReportProcessor = new Thread(ProcessInputReportLoop)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _inputReportProcessor.Start();
     }
@@ -87,7 +91,7 @@ public class ControllerInputReportProcessor : IControllerInputReportProcessor
         _inputReportProcessor.Join();
     }
 
-    protected async void ProcessInputReportLoop()
+    private async void ProcessInputReportLoop()
     {
         Logger.LogDebug("Started input report processing thread");
 
@@ -124,7 +128,7 @@ public class ControllerInputReportProcessor : IControllerInputReportProcessor
         }
     }
 
-    protected async void ReadInputReportLoop()
+    private async void ReadInputReportLoop()
     {
         Logger.LogDebug("Started input report reading thread");
 

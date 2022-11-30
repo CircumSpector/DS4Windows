@@ -1,15 +1,14 @@
 ﻿using Vapour.Shared.Devices.HID;
 
-namespace Vapour.Shared.Devices.Services
+namespace Vapour.Shared.Devices.Services;
+
+public interface IControllerInputReportProcessor
 {
-    public interface IControllerInputReportProcessor
-    {
-        ICompatibleHidDevice HidDevice { get; }
-        bool IsInputReportAvailableInvoked { get; set; }
+    ICompatibleHidDevice HidDevice { get; }
+    bool IsInputReportAvailableInvoked { get; set; }
 
-        event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
+    event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
-        void StartInputReportReader();
-        void StopInputReportReader();
-    }
+    void StartInputReportReader();
+    void StopInputReportReader();
 }

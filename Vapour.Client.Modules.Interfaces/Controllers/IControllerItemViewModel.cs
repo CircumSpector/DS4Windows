@@ -1,5 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using Vapour.Client.Core.ViewModel;
