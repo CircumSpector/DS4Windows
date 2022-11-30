@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.Metrics;
+﻿using System.Diagnostics;
 using System.Net.NetworkInformation;
 
 using JetBrains.Annotations;
@@ -22,9 +20,10 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 {
     private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
 
-   
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
+
     private static readonly Guid UsbCompositeDeviceClassGuid = Guid.Parse("{36fc9e60-c465-11cf-8056-444553540000}");
+
     private static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
@@ -94,13 +93,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <inheritdoc />
     public PhysicalAddress Serial { get; protected init; }
 
-    public string SerialString
-    {
-        get
-        {
-            return Serial != null ? Serial.ToString() : null;
-        }
-    }
+    public string SerialString => Serial?.ToString();
 
     /// <inheritdoc />
     public CompatibleHidDeviceFeatureSet FeatureSet { get; }
@@ -109,20 +102,17 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     public bool IsFiltered { get; set; }
 
     public IProfile CurrentProfile { get; private set; }
+
     public void SetProfile(IProfile profile)
     {
-        var oldProfile = CurrentProfile;
+        IProfile oldProfile = CurrentProfile;
         CurrentProfile = profile;
         OnProfileChanged(oldProfile, profile);
     }
 
-    protected virtual void OnProfileChanged(IProfile oldProfile, IProfile newProfile)
-    {
-
-    }
-
     /// <inheritdoc />
     public event Action<ICompatibleHidDevice> Disconnected;
+
     public void FireDisconnected()
     {
         Disconnected?.Invoke(this);
@@ -131,6 +121,20 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     public void Dispose()
     {
         Dispose(true);
+    }
+
+    /// <summary>
+    ///     Process the input report read from the device.
+    /// </summary>
+    /// <param name="input">The raw report buffer.</param>
+    public abstract void ProcessInputReport(ReadOnlySpan<byte> input);
+
+    public virtual void OnAfterStartListening()
+    {
+    }
+
+    protected virtual void OnProfileChanged(IProfile oldProfile, IProfile newProfile)
+    {
     }
 
     /// <summary>
@@ -211,12 +215,6 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     }
 
     /// <summary>
-    ///     Process the input report read from the device.
-    /// </summary>
-    /// <param name="input">The raw report buffer.</param>
-    public abstract void ProcessInputReport(ReadOnlySpan<byte> input);
-
-    /// <summary>
     ///     Invokes a GET_FEATURE request to query for the device serial (MAC address).
     /// </summary>
     /// <remarks>
@@ -270,7 +268,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <summary>
     ///     Generate <see cref="Serial" /> from <see cref="HidDevice.Path" />.
     /// </summary>
-    /// <returns>The calculated <see cref="PhysicalAddress"/>.</returns>
+    /// <returns>The calculated <see cref="PhysicalAddress" />.</returns>
     private PhysicalAddress GenerateFakeHwSerial()
     {
         string address = string.Empty;
@@ -326,11 +324,8 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     public override string ToString()
     {
-        return $"{SourceDevice.DisplayName} ({Serial}) via {Connection}";
-    }
-
-    public virtual void OnAfterStartListening()
-    {
-
+        return Serial is null
+            ? $"{SourceDevice.DisplayName} via {Connection}"
+            : $"{SourceDevice.DisplayName} ({Serial}) via {Connection}";
     }
 }
