@@ -24,7 +24,7 @@ public static class ServiceStartup
     {
         Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
-        WebApplicationOptions options = new WebApplicationOptions
+        WebApplicationOptions options = new()
         {
             Args = args,
             ContentRootPath = WindowsServiceHelpers.IsWindowsService() ? AppContext.BaseDirectory : default
@@ -49,8 +49,7 @@ public static class ServiceStartup
         app.MapHub<ControllerMessageHub>("/ControllerMessages");
         app.MapHub<ProfileMessageHub>("/ProfileMessages");
         app.UseFastEndpoints(config => config.Endpoints.RoutePrefix = "api");
-        app.UseOpenApi();
-        app.UseSwaggerUi3(s => s.ConfigureDefaults());
+        app.UseSwaggerGen();
 
         ControllerService.RegisterRoutes(app);
 
@@ -70,7 +69,7 @@ public static class ServiceStartup
     [Obsolete]
     private static void SetupWebSocket(IApplicationBuilder app)
     {
-        WebSocketOptions webSocketOptions = new WebSocketOptions { KeepAliveInterval = TimeSpan.FromMinutes(2) };
+        WebSocketOptions webSocketOptions = new() { KeepAliveInterval = TimeSpan.FromMinutes(2) };
 
         app.UseWebSockets(webSocketOptions);
     }

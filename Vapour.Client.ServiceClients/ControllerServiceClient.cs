@@ -21,7 +21,8 @@ public sealed class ControllerServiceClient : IControllerServiceClient
     private Action<ControllerConnectedMessage> _connectedAction;
     private Action<ControllerDisconnectedMessage> _disconnectedAction;
     private Action<IsHostRunningChangedMessage> _hostRunningHandler;
-    private WebsocketClient _websocketClient;
+
+    [Obsolete] private WebsocketClient _websocketClient;
 
     public ControllerServiceClient(IHttpClientFactory clientFactory)
     {
@@ -29,15 +30,15 @@ public sealed class ControllerServiceClient : IControllerServiceClient
         Application.Current.Exit += Current_Exit;
     }
 
-    public async Task WaitForService()
+    public async Task WaitForService(CancellationToken ct = default)
     {
         using HttpClient client = _clientFactory.CreateClient();
 
-        while (true)
+        while (!ct.IsCancellationRequested)
         {
             try
             {
-                HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/ping");
+                HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/ping", ct);
                 if (result.IsSuccessStatusCode)
                 {
                     break;
@@ -48,7 +49,12 @@ public sealed class ControllerServiceClient : IControllerServiceClient
                 // ignored
             }
 
-            await Task.Delay(500);
+            try
+            {
+                await Task.Delay(500, ct);
+            }
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch { }
         }
     }
 
@@ -74,7 +80,8 @@ public sealed class ControllerServiceClient : IControllerServiceClient
         _disconnectedAction = disconnectedHandler;
         _hostRunningHandler = hostRunningChangedHandler;
 
-        _websocketClient = new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/api/controller/ws", UriKind.Absolute));
+        _websocketClient =
+            new WebsocketClient(new Uri($"{Constants.WebsocketUrl}/api/controller/ws", UriKind.Absolute));
 
         _websocketClient.ReconnectTimeout = TimeSpan.FromSeconds(30);
         _websocketClient.ReconnectionHappened.Subscribe(info =>
@@ -92,13 +99,13 @@ public sealed class ControllerServiceClient : IControllerServiceClient
     {
         using HttpClient client = _clientFactory.CreateClient();
         HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/host/status");
-        
+
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not get the controller host status {result.ReasonPhrase}");
         }
 
-        var response = await result.Content.ReadFromJsonAsync<ControllerHostStatusResponse>();
+        ControllerHostStatusResponse response = await result.Content.ReadFromJsonAsync<ControllerHostStatusResponse>();
         return response?.IsRunning ?? false;
     }
 
@@ -132,7 +139,8 @@ public sealed class ControllerServiceClient : IControllerServiceClient
             throw new Exception($"Could not get the controller filter driver status {result.ReasonPhrase}");
         }
 
-        var response = await result.Content.ReadFromJsonAsync<ControllerFilterDriverStatusResponse>();
+        ControllerFilterDriverStatusResponse response =
+            await result.Content.ReadFromJsonAsync<ControllerFilterDriverStatusResponse>();
         return response;
     }
 
@@ -140,7 +148,8 @@ public sealed class ControllerServiceClient : IControllerServiceClient
     {
         using HttpClient client = _clientFactory.CreateClient();
 
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/filterdriver/setenable/{isEnabled}", null);
+        HttpResponseMessage result =
+            await client.PostAsync($"{Constants.HttpUrl}/api/controller/filterdriver/setenable/{isEnabled}", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not set the filter driver enabled {result.ReasonPhrase}");
@@ -151,7 +160,9 @@ public sealed class ControllerServiceClient : IControllerServiceClient
     {
         using HttpClient client = _clientFactory.CreateClient();
 
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/filter/{HttpUtility.UrlEncode(instanceId)}", null);
+        HttpResponseMessage result =
+            await client.PostAsync($"{Constants.HttpUrl}/api/controller/filter/{HttpUtility.UrlEncode(instanceId)}",
+                null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not filter the controller {result.ReasonPhrase}");
@@ -162,7 +173,9 @@ public sealed class ControllerServiceClient : IControllerServiceClient
     {
         using HttpClient client = _clientFactory.CreateClient();
 
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/unfilter/{HttpUtility.UrlEncode(instanceId)}", null);
+        HttpResponseMessage result =
+            await client.PostAsync($"{Constants.HttpUrl}/api/controller/unfilter/{HttpUtility.UrlEncode(instanceId)}",
+                null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not unfilter the controller {result.ReasonPhrase}");

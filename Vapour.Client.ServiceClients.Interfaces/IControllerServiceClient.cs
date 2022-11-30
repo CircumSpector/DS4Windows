@@ -9,7 +9,7 @@ public interface IControllerServiceClient
         Action<ControllerConnectedMessage> connectedHandler,
         Action<ControllerDisconnectedMessage> disconnectedHandler,
         Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null);
-    Task WaitForService();
+    Task WaitForService(CancellationToken ct = default);
     Task<bool> IsHostRunning();
     Task StartHost();
     Task StopHost();
