@@ -2,6 +2,7 @@
 
 namespace Vapour.Server.Profile;
 
+[Obsolete]
 public interface IProfileMessageForwarder
 {
     Task StartListening(WebSocket newSocket);

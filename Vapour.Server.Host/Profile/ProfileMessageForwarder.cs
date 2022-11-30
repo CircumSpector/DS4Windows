@@ -11,6 +11,7 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Server.Host.Profile;
 
+[Obsolete]
 public sealed class ProfileMessageForwarder : IProfileMessageForwarder
 {
     private readonly IProfilesService _profilesService;

@@ -10,6 +10,7 @@ using Vapour.Shared.Devices.HostedServices;
 
 namespace Vapour.Server.Host.Controller;
 
+[Obsolete]
 public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 {
     private readonly IProfilesService _profilesService;
