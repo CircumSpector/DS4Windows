@@ -14,6 +14,8 @@ public class ControllersAutoMapper : Profile
         CreateMap<ControllerConnectedMessage, ControllerItemViewModel>()
             .ForMember(dest => dest.DisplayText,
                 cfg => cfg.MapFrom(src => $"{src.DeviceType} ({src.SerialNumberString})"))
+            .ForMember(dest => dest.Serial,
+                cfg => cfg.MapFrom(src => src.SerialNumberString))
             .ForMember(dest => dest.ConnectionTypeImage,
                 cfg => cfg.MapFrom(src =>
                     src.Connection == ConnectionType.Bluetooth

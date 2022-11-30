@@ -12,5 +12,7 @@ public interface IGlobalStateService
     string CurrentUserName { get; set; }
     string LocalProfilesDirectory { get; }
     string LocalDefaultProfileLocation { get; }
+    string LocalActiveProfilesLocation { get; }
+
     void EnsureRoamingDataPath();
 }

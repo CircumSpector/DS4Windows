@@ -18,11 +18,6 @@ public class VapourProfile :
     INotifyPropertyChanged, 
     IProfile
 {
-    /// <summary>
-    ///     The <see cref="Guid"/> identifying the default (always available) profile that is always ensured to exist.
-    /// </summary>
-    public static readonly Guid DefaultProfileId = Guid.Parse("C74D58EA-058F-4D01-BF08-8D765CC145D1");
-
     public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
         ProfilePropertyChangedEventArgs e);
 
@@ -69,7 +64,7 @@ public class VapourProfile :
     ///     If true, is the default profile. There can only be one.
     /// </summary>
     [JsonIgnore]
-    public bool IsDefaultProfile => Equals(Id, DefaultProfileId);
+    public bool IsDefaultProfile => Equals(Id, Constants.DefaultProfileId);
 
     /// <summary>
     ///     If true, this profile is linked to the current slots device' MAC/ID.
@@ -347,7 +342,7 @@ public class VapourProfile :
     {
         return new VapourProfile(index)
         {
-            Id = DefaultProfileId
+            Id = Constants.DefaultProfileId
         };
     }
 

@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Common.Types;
+using Vapour.Shared.Configuration.Profiles.Schema;
+using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Output;
 
@@ -20,24 +22,28 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
 
     private readonly ILogger<ControllersEnumeratorService> _logger;
-    private readonly Dictionary<string, IOutDevice> _outDevices;
-    private readonly IOutputSlotManager _outputSlotManager;
 
     private readonly IServiceProvider _serviceProvider;
 
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
+    private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
+    private readonly IProfilesService _profilesService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-        IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, IServiceProvider serviceProvider,
-        IOutputSlotManager outputSlotManager, IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService)
+        IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, 
+        IServiceProvider serviceProvider,
+        IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
+        IControllerInputReportProcessorService controllerInputReportProcessorService,
+        IProfilesService profilesService)
     {
         _logger = logger;
         _hidEnumeratorService = hidEnumeratorService;
         _serviceProvider = serviceProvider;
-        _outputSlotManager = outputSlotManager;
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
-
+        _controllerInputReportProcessorService = controllerInputReportProcessorService;
+        _profilesService = profilesService;
+        _profilesService.OnActiveProfileChanged += _profilesService_OnActiveProfileChanged;
         _hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
 
@@ -45,9 +51,17 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _winUsbDeviceEnumeratorService.DeviceRemoved += WinUsbDeviceEnumeratorServiceOnDeviceRemoved;
 
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
-        _outDevices = new Dictionary<string, IOutDevice>();
 
         SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(_supportedDevices);
+    }
+
+    private void _profilesService_OnActiveProfileChanged(object sender, ProfileChangedEventArgs e)
+    {
+        var existingDevice = SupportedDevices.SingleOrDefault(i => i.SerialString == e.ControllerKey);
+        if (existingDevice != null)
+        {
+            existingDevice.SetProfile(e.NewProfile);
+        }
     }
 
     private void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(HidDeviceOverWinUsb obj)
@@ -117,7 +131,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             //
             // Create new special input device
             // 
-            CompatibleHidDevice device = CreateInputAndOutputDevices(hidDevice, deviceIdentification);
+            ICompatibleHidDevice device = CreateDevice(hidDevice, deviceIdentification);
 
             _supportedDevices.Add(device);
 
@@ -141,6 +155,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     {
         foreach (ICompatibleHidDevice compatibleHidDevice in SupportedDevices)
         {
+            _controllerInputReportProcessorService.StopProcessing(compatibleHidDevice);
             compatibleHidDevice.Dispose();
         }
 
@@ -180,7 +195,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         //
         // Create new special input device
         // 
-        CompatibleHidDevice device = CreateInputAndOutputDevices(hidDevice, deviceIdentification);
+        ICompatibleHidDevice device = CreateDevice(hidDevice, deviceIdentification);
 
         if (!_supportedDevices.Contains(device))
         {
@@ -218,21 +233,14 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 
             if (_supportedDevices.Contains(device))
             {
-                device.InputReportAvailable -= Device_InputReportAvailable;
-
-                if (_outDevices.ContainsKey(hidDevice.InstanceId))
-                {
-                    IOutDevice outDevice = _outDevices[hidDevice.InstanceId];
-                    outDevice.Disconnect();
-                    _outDevices.Remove(hidDevice.InstanceId);
-                }
+                _controllerInputReportProcessorService.StopProcessing(device);
 
                 _supportedDevices.Remove(device);
             }
         }
     }
 
-    private CompatibleHidDevice CreateInputAndOutputDevices(HidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
+    public ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
     {
         CompatibleHidDevice device = CompatibleHidDevice.CreateFrom(
             deviceIdentification.DeviceType,
@@ -241,26 +249,15 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             _serviceProvider
         );
 
+        device.SetProfile(_profilesService.GetActiveProfile(device.SerialString));
+
         if (hidDevice is HidDeviceOverWinUsb)
         {
             device.IsFiltered = true;
         }
 
-        IOutDevice outDevice = _outputSlotManager.AllocateController(OutputDeviceType.Xbox360Controller);
-        outDevice.Connect();
-        if (!_outDevices.ContainsKey(hidDevice.InstanceId))
-        {
-            _outDevices.Add(hidDevice.InstanceId, outDevice);
-        }
-
-        device.InputReportAvailable += Device_InputReportAvailable;
+        _controllerInputReportProcessorService.StartProcessing(device, deviceIdentification);
 
         return device;
-    }
-
-    private void Device_InputReportAvailable(ICompatibleHidDevice device, CompatibleHidDeviceInputReport report)
-    {
-        IOutDevice outDevice = _outDevices[device.SourceDevice.InstanceId];
-        outDevice.ConvertAndSendReport(report);
     }
 }

@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using AutoMapper;
 
 using Vapour.Client.Core.ViewModel;
+using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
 
 namespace Vapour.Client.Modules.Controllers;
@@ -35,10 +36,12 @@ public sealed class ControllerItemViewModel :
     public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
     public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB_white.png", UriKind.Absolute));
     private readonly IMapper _mapper;
+    private readonly IProfileServiceClient _profileServiceClient;
 
-    public ControllerItemViewModel(IMapper mapper)
+    public ControllerItemViewModel(IMapper mapper, IProfileServiceClient profileServiceClient)
     {
         _mapper = mapper;
+        _profileServiceClient = profileServiceClient;
     }
 
     public void SetDevice(ControllerConnectedMessage device)
@@ -50,9 +53,10 @@ public sealed class ControllerItemViewModel :
     {
         if (e.PropertyName == nameof(SelectedProfileId))
         {
-            //var activeProfile = profilesService.ActiveProfiles.Single(p => p.DeviceId != null && p.DeviceId.Equals(Serial));
-            //var slotIndex = profilesService.ActiveProfiles.IndexOf(activeProfile);
-            //profilesService.SetActiveTo(slotIndex, activeProfile);
+            if (ProfileSetFromUser)
+            {
+                _profileServiceClient.SetProfile(Serial, SelectedProfileId);
+            }
         }
 
         base.OnPropertyChanged(e);
@@ -60,9 +64,11 @@ public sealed class ControllerItemViewModel :
 
     #region Props
 
-    private PhysicalAddress _serial;
+    public bool ProfileSetFromUser { get; set; } = true;
 
-    public PhysicalAddress Serial
+    private string _serial;
+
+    public string Serial
     {
         get => _serial;
         private set => SetProperty(ref _serial, value);

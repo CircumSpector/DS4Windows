@@ -1,5 +1,7 @@
 ﻿using System.Net.NetworkInformation;
 
+using Vapour.Shared.Configuration.Profiles.Schema;
+
 namespace Vapour.Shared.Devices.HID;
 
 public interface ICompatibleHidDevice : IDisposable
@@ -25,11 +27,6 @@ public interface ICompatibleHidDevice : IDisposable
     CompatibleHidDeviceFeatureSet FeatureSet { get; }
 
     /// <summary>
-    ///     Gets or sets whether <see cref="InputReportAvailable" /> will be invoked in the processing loop.
-    /// </summary>
-    bool IsInputReportAvailableInvoked { get; }
-
-    /// <summary>
     ///     The serial number (MAC address) of this <see cref="ICompatibleHidDevice" />.
     /// </summary>
     PhysicalAddress Serial { get; }
@@ -43,9 +40,14 @@ public interface ICompatibleHidDevice : IDisposable
     ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
     event Action<ICompatibleHidDevice> Disconnected;
+    void FireDisconnected();
 
-    /// <summary>
-    ///     Fired when a new input report is read for further processing.
-    /// </summary>
-    event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
+    void ProcessInputReport(ReadOnlySpan<byte> input);
+    CompatibleHidDeviceInputReport InputReport { get; }
+    IProfile CurrentProfile { get; }
+    string SerialString { get; }
+
+    void SetProfile(IProfile profile);
+
+    void OnAfterStartListening();
 }

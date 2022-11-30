@@ -37,7 +37,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel HorizontalAlignment="Left" Margin="20">
                             <TextBlock>Name</TextBlock>
-                            <TextBox Text="{Binding Name}" IsEnabled="{Binding IsNew}" Width="100" />
+                            <TextBox x:Name="txtName" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, NotifyOnValidationError=true}" IsEnabled="{Binding IsNew}" Width="100"/>
                         </StackPanel>
                     </Grid>
                     <Expander HorizontalAlignment="Stretch" Header="Left Stick" Content="{Binding LeftStick.MainView}" />
@@ -58,7 +58,8 @@
         <StackPanel Orientation="Horizontal" Grid.Row="1"
                     HorizontalAlignment="Right"
                     Margin="20">
-            <Button Content="Save" Command="{x:Static md:DialogHost.CloseDialogCommand}" CommandParameter="{Binding}" Margin="0,0,5,0"/>
+            <Button Content="Save" Command="{x:Static md:DialogHost.CloseDialogCommand}" CommandParameter="{Binding}" Margin="0,0,5,0"
+                    IsEnabled="{Binding NoErrors}"/>
             <Button Content="Cancel" Command="{x:Static md:DialogHost.CloseDialogCommand}" IsCancel="True"/>
         </StackPanel>
     </Grid>

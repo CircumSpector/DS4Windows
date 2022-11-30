@@ -10,7 +10,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     private readonly int _reportStartOffset;
 
-    public DualShock4CompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+    public DualShock4CompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
         featureSet, serviceProvider)
     {
@@ -23,8 +23,6 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-        _inputReportArray = new byte[((HidDevice)SourceDevice).Capabilities.InputReportByteLength];
-
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
         {
             _reportStartOffset = 0;
@@ -36,9 +34,10 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         {
             _reportStartOffset = 0; // TODO: this works, investigate why :D
         }
+    }
 
-        StartInputReportReader();
-
+    public override void OnAfterStartListening()
+    {
         /*
          * TODO
          * migrate and implement properly, this is a workaround to get devices to work
@@ -49,9 +48,9 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         {
             byte[] initialOutBuffer =
             {
-                0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+                0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
             };
 
@@ -59,9 +58,9 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
     }
 
-    protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
+    public override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
 
-    protected override void ProcessInputReport(ReadOnlySpan<byte> input)
+    public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         if (Connection == ConnectionType.SonyWirelessAdapter && (input[31] & 0x04) != 0)
             // TODO: implement me!

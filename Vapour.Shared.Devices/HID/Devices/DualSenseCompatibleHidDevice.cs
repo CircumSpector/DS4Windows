@@ -12,7 +12,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private readonly int _reportStartOffset;
 
-    public DualSenseCompatibleHidDevice(InputDeviceType deviceType, HidDevice source,
+    public DualSenseCompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
         CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
         featureSet, serviceProvider)
     {
@@ -22,10 +22,6 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             throw new ArgumentException("Could not retrieve a valid serial number.");
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
-
-        var inputReportSize = ((HidDevice)SourceDevice).Capabilities.InputReportByteLength;
-
-        _inputReportArray = new byte[inputReportSize];
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
             _reportStartOffset = 0;
@@ -38,12 +34,16 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             _reportStartOffset = 1;
         //InputReportArray = new byte[BthInputReportSize];
         //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
-        StartInputReportReader();
     }
 
-    protected override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
+    public override void OnAfterStartListening()
+    {
+        //dont do the ds4 base one here
+    }
 
-    protected override void ProcessInputReport(ReadOnlySpan<byte> input)
+    public override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
+
+    public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         InputReport.Parse(input.Slice(_reportStartOffset));
     }

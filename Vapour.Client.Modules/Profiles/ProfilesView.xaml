@@ -11,7 +11,11 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
-            <ListView x:Name="ProfileList" ItemsSource="{Binding ProfileItems}">
+            <ListView x:Name="ProfileList" ItemsSource="{Binding ProfileItems}"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      VerticalContentAlignment="Stretch">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Focusable" Value="false"/>
@@ -37,7 +41,8 @@
                         <GridViewColumn>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Stretch">
                                         <Button BorderBrush="{x:Null}" HorizontalAlignment="Left" Margin="0,0,10,0"
                                             Command="{Binding ElementName=ProfileList, Path=DataContext.ShareCommand}"
                                             CommandParameter="{Binding}">
@@ -50,7 +55,8 @@
                                         </Button>
                                         <Button BorderBrush="{x:Null}" HorizontalAlignment="Left"
                                             Command="{Binding ElementName=ProfileList, Path=DataContext.DeleteCommand}"
-                                            CommandParameter="{Binding}">
+                                            CommandParameter="{Binding}"
+                                            IsEnabled="{Binding NotIsDefaultProfile}">
                                             <md:PackIcon Kind="Delete" Width="15" Height="15" />
                                         </Button>
                                     </StackPanel>
