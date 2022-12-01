@@ -15,8 +15,19 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
         IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext)
     {
         _hubContext = hubContext;
-        controllerManagerHost.ControllerReady += ControllersEnumeratorService_ControllerReady;
-        controllerManagerHost.ControllerRemoved += ControllersEnumeratorService_ControllerRemoved;
+
+        controllerManagerHost.ControllerReady += async device =>
+        {
+            await _hubContext.Clients.All.ControllerConnected(MapControllerConnected(device));
+        };
+        
+        controllerManagerHost.ControllerRemoved += async device =>
+        {
+            await _hubContext.Clients.All.ControllerDisconnected(new ControllerDisconnectedMessage
+            {
+                ControllerDisconnectedId = device.SourceDevice.InstanceId
+            });
+        };
     }
 
     public async Task SendIsHostRunning(bool isRunning)
@@ -43,18 +54,5 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
         };
 
         return message;
-    }
-
-    private async void ControllersEnumeratorService_ControllerReady(ICompatibleHidDevice hidDevice)
-    {
-        await _hubContext.Clients.All.ControllerConnected(MapControllerConnected(hidDevice));
-    }
-
-    private async void ControllersEnumeratorService_ControllerRemoved(ICompatibleHidDevice obj)
-    {
-        await _hubContext.Clients.All.ControllerDisconnected(new ControllerDisconnectedMessage
-        {
-            ControllerDisconnectedId = obj.SourceDevice.InstanceId
-        });
     }
 }
