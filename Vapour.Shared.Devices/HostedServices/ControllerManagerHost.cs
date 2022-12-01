@@ -80,6 +80,9 @@ public sealed class ControllerManagerHost
 
     public event EventHandler<bool> RunningChanged;
 
+    /// <summary>
+    ///     Initializes and starts services.
+    /// </summary>
     public async Task StartAsync()
     {
         IsRunning = true;
@@ -112,6 +115,9 @@ public sealed class ControllerManagerHost
         }
     }
 
+    /// <summary>
+    ///     Stops and disposes services.
+    /// </summary>
     public async Task StopAsync()
     {
         if (IsEnabled)
