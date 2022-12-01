@@ -21,7 +21,10 @@ public class ControllerConfigurationService : IControllerConfigurationService
         _globalStateService = globalStateService;
         _profilesService = profilesService;
         _profilesService.OnProfileDeleted += _profilesService_OnProfileDeleted;
+        _profilesService.OnProfileUpdated += _profilesService_OnProfileUpdated;
     }
+
+    
 
     public event EventHandler<ControllerConfigurationChangedEventArgs> OnActiveConfigurationChanged;
 
@@ -222,5 +225,18 @@ public class ControllerConfigurationService : IControllerConfigurationService
         }
 
         SaveControllerConfigurations();
+    }
+
+    private void _profilesService_OnProfileUpdated(object sender, Guid e)
+    {
+        foreach (var controllerConfiguration in _activeConfigurations.Where(i => i.Value.ProfileId == e))
+        {
+            _activeConfigurations[controllerConfiguration.Key].Profile = _profilesService.AvailableProfiles[e];
+            OnActiveConfigurationChanged?.Invoke(this, new ControllerConfigurationChangedEventArgs
+            {
+                ControllerKey = controllerConfiguration.Key,
+                ControllerConfiguration = controllerConfiguration.Value
+            });
+        }
     }
 }

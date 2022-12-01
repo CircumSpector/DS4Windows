@@ -46,4 +46,5 @@ public interface IProfilesService
 
     void DeleteProfile(Guid profileId);
     event EventHandler<Guid> OnProfileDeleted;
+    event EventHandler<Guid> OnProfileUpdated;
 }

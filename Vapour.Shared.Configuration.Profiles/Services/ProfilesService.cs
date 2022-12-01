@@ -40,6 +40,7 @@ public sealed class ProfilesService : IProfilesService
 
     public Dictionary<Guid, IProfile> AvailableProfiles { get { return _availableProfiles; } }
     public event EventHandler<Guid> OnProfileDeleted;
+    public event EventHandler<Guid> OnProfileUpdated;
 
     public void DeleteProfile(Guid profileId)
     {
@@ -179,6 +180,7 @@ public sealed class ProfilesService : IProfilesService
         else
         {
             _availableProfiles[profile.Id] = profile;
+            OnProfileUpdated?.Invoke(this, profile.Id);
         }
 
         PersistProfile(profile, _global.LocalProfilesDirectory);
