@@ -2,11 +2,8 @@
 
 namespace Vapour.Server.Controller;
 
-public sealed class ControllerConnectedMessage : MessageBase
+public sealed class ControllerConnectedMessage
 {
-    [Obsolete]
-    public const string Name = "ControllerConnected";
-
     public string Description { get; set; }
 
     public string DisplayName { get; set; }
@@ -30,7 +27,4 @@ public sealed class ControllerConnectedMessage : MessageBase
     public Guid SelectedProfileId { get; init; }
 
     public bool IsFiltered { get; set; }
-
-    [Obsolete]
-    public override string MessageName => Name;
 }

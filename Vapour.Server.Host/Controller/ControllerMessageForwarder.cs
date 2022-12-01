@@ -32,7 +32,10 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 
     public async Task SendIsHostRunning(bool isRunning)
     {
-        await _hubContext.Clients.All.IsHostRunningChanged(new IsHostRunningChangedMessage(isRunning));
+        await _hubContext.Clients.All.IsHostRunningChanged(new IsHostRunningChangedMessage
+        {
+            IsRunning = isRunning
+        });
     }
 
     public ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice)

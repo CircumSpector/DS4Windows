@@ -44,8 +44,6 @@ public static class ServiceStartup
 
         WebApplication app = builder.Build();
 
-        SetupWebSocket(app);
-
         app.MapHub<ControllerMessageHub>("/ControllerMessages");
         app.MapHub<ProfileMessageHub>("/ProfileMessages");
         app.UseFastEndpoints(config => config.Endpoints.RoutePrefix = "api");
@@ -61,16 +59,10 @@ public static class ServiceStartup
             await controllerHost.StartAsync();
         }
 
-        Log.Information("About to start app first time");
+        Log.Information("Starting server host");
 
         await app.RunAsync(Constants.HttpUrl);
-    }
 
-    [Obsolete]
-    private static void SetupWebSocket(IApplicationBuilder app)
-    {
-        WebSocketOptions webSocketOptions = new() { KeepAliveInterval = TimeSpan.FromMinutes(2) };
-
-        app.UseWebSockets(webSocketOptions);
+        Log.Information("Shutting down server host");
     }
 }
