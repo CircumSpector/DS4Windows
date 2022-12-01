@@ -1,4 +1,6 @@
-﻿namespace Vapour.Server.Controller;
+﻿using Vapour.Shared.Devices.Services;
+
+namespace Vapour.Server.Controller;
 
 /// <summary>
 ///     Describes controller events exchangeable between client and server.
@@ -10,4 +12,6 @@ public interface IControllerMessageClient
     Task ControllerDisconnected(ControllerDisconnectedMessage message);
 
     Task IsHostRunningChanged(IsHostRunningChangedMessage message);
+
+    Task ControllerConfigurationChanged(ControllerConfigurationChangedMessage controllerConfiguration);
 }

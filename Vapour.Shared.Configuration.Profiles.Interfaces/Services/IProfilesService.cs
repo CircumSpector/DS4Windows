@@ -8,9 +8,7 @@ namespace Vapour.Shared.Configuration.Profiles.Services;
 public interface IProfilesService
 {
     Dictionary<Guid, IProfile> AvailableProfiles { get; }
-
-    event EventHandler<ProfileChangedEventArgs> OnActiveProfileChanged;
-
+    
     /// <summary>
     ///     Refreshes all <see cref="AvailableProfiles" /> from compatible profile files found in profile directory.
     /// </summary>
@@ -46,9 +44,6 @@ public interface IProfilesService
     /// </summary>
     void Shutdown();
 
-    void SetProfile(string controllerKey, Guid profileId);
-
-    IProfile GetActiveProfile(string controllerKey);
-
     void DeleteProfile(Guid profileId);
+    event EventHandler<Guid> OnProfileDeleted;
 }

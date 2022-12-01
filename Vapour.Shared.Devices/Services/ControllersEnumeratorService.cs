@@ -29,13 +29,15 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
     private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
     private readonly IProfilesService _profilesService;
+    private readonly IControllerConfigurationService _controllerConfigurationService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
         IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, 
         IServiceProvider serviceProvider,
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IControllerInputReportProcessorService controllerInputReportProcessorService,
-        IProfilesService profilesService)
+        IProfilesService profilesService,
+        IControllerConfigurationService controllerConfigurationService)
     {
         _logger = logger;
         _hidEnumeratorService = hidEnumeratorService;
@@ -43,7 +45,8 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
         _controllerInputReportProcessorService = controllerInputReportProcessorService;
         _profilesService = profilesService;
-        _profilesService.OnActiveProfileChanged += _profilesService_OnActiveProfileChanged;
+        _controllerConfigurationService = controllerConfigurationService;
+        _controllerConfigurationService.OnActiveConfigurationChanged += _controllerConfigurationService_OnActiveConfigurationChanged;
         _hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
 
@@ -55,12 +58,12 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(_supportedDevices);
     }
 
-    private void _profilesService_OnActiveProfileChanged(object sender, ProfileChangedEventArgs e)
+    private void _controllerConfigurationService_OnActiveConfigurationChanged(object sender, ControllerConfigurationChangedEventArgs e)
     {
         var existingDevice = SupportedDevices.SingleOrDefault(i => i.SerialString == e.ControllerKey);
         if (existingDevice != null)
         {
-            existingDevice.SetProfile(e.NewProfile);
+            existingDevice.SetConfiguration(e.ControllerConfiguration);
         }
     }
 
@@ -249,7 +252,7 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             _serviceProvider
         );
 
-        device.SetProfile(_profilesService.GetActiveProfile(device.SerialString));
+        device.SetConfiguration(_controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString));
 
         if (hidDevice is HidDeviceOverWinUsb)
         {

@@ -1,4 +1,5 @@
 ﻿using Vapour.Server.Controller;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Client.ServiceClients;
 
@@ -9,6 +10,7 @@ public interface IControllerServiceClient
     void StartListening(
         Action<ControllerConnectedMessage> connectedHandler,
         Action<ControllerDisconnectedMessage> disconnectedHandler,
+        Action<ControllerConfigurationChangedMessage> controllerConfigurationChangedHandler,
         Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null,
         CancellationToken ct = default
     );
@@ -21,4 +23,7 @@ public interface IControllerServiceClient
     Task UnfilterController(string instanceId);
     Task<ControllerFilterDriverStatusResponse> GetFilterDriverStatus();
     Task ControllerFilterSetDriverEnabled(bool isEnabled);
+
+    Task SaveDefaultControllerConfiguration(string controllerKey,
+        ControllerConfiguration controllerConfiguration);
 }

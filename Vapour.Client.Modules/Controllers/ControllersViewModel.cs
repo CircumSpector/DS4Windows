@@ -41,8 +41,8 @@ public sealed class ControllersViewModel :
     {
         await CreateControllerItems();
 
-        _controllerService.StartListening(CreateControllerItem, RemoveControllerItem);
-        _profilesService.StartListening(OnProfileChanged);
+        _controllerService.StartListening(CreateControllerItem, RemoveControllerItem, OnControllerConfigurationChanged);
+        //_profilesService.StartListening();
     }
 
     private async Task CreateControllerItems()
@@ -125,12 +125,14 @@ public sealed class ControllersViewModel :
         }
     }
 
-    private void OnProfileChanged(ProfileChangedMessage profileChangedMessage)
+    private void OnControllerConfigurationChanged(ControllerConfigurationChangedMessage controllerConfigurationChangedMessage)
     {
-        var controller = ControllerItems.SingleOrDefault(i => i.Serial == profileChangedMessage.ControllerKey);
+        var controller = ControllerItems.SingleOrDefault(i => i.Serial == controllerConfigurationChangedMessage.ControllerKey);
         if (controller != null)
         {
-            controller.SelectedProfileId = profileChangedMessage.NewProfileId;
+            controller.ConfigurationSetFromUser = false;
+            controller.CurrentConfiguration = controllerConfigurationChangedMessage.ControllerConfiguration;
+            controller.ConfigurationSetFromUser = true;
         }
     }
 

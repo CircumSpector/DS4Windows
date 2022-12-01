@@ -3,6 +3,7 @@ using System.Windows.Media.Imaging;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Server.Controller;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Client.Modules.Controllers;
 
@@ -24,6 +25,8 @@ public interface IControllerItemViewModel : IViewModel<IControllerItemViewModel>
     string InstanceId { get; set; }
     string ParentInstance { get; set; }
     bool IsFiltered { get; set; }
+    ControllerConfiguration CurrentConfiguration { get; set; }
+    bool ConfigurationSetFromUser { get; set; }
 
     void SetDevice(ControllerConnectedMessage device);
 }

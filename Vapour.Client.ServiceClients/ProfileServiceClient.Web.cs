@@ -64,25 +64,4 @@ public sealed partial class ProfileServiceClient
 
         throw new Exception($"Could not save profile {result.ReasonPhrase}");
     }
-
-    public async Task SetProfile(string controllerKey, Guid profileId)
-    {
-        if (string.IsNullOrEmpty(controllerKey))
-        {
-            return;
-        }
-
-        using HttpClient client = _httpClientFactory.CreateClient();
-        HttpResponseMessage result =
-            await client.PutAsync(
-                new Uri(
-                    $"{Constants.HttpUrl}/api/profile/set/{HttpUtility.UrlEncode(controllerKey)}/{HttpUtility.UrlEncode(profileId.ToString())}",
-                    UriKind.Absolute), null);
-
-        if (!result.IsSuccessStatusCode)
-        {
-            throw new Exception(
-                $"Could not set profile {profileId} to controller {controllerKey} {result.ReasonPhrase}");
-        }
-    }
 }

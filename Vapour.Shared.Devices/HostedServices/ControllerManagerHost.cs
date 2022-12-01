@@ -27,6 +27,7 @@ public sealed class ControllerManagerHost
     private readonly IDeviceSettingsService _deviceSettingsService;
     private readonly IControllerFilterService _controllerFilter;
     private readonly IGlobalStateService _globalStateService;
+    private readonly IControllerConfigurationService _controllerConfigurationService;
 
     private readonly IInputSourceService _inputSourceService;
 
@@ -48,7 +49,8 @@ public sealed class ControllerManagerHost
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IDeviceSettingsService deviceSettingsService,
         IControllerFilterService controllerFilter,
-        IGlobalStateService globalStateService)
+        IGlobalStateService globalStateService,
+        IControllerConfigurationService controllerConfigurationService)
     {
         _enumerator = enumerator;
         _logger = logger;
@@ -61,6 +63,7 @@ public sealed class ControllerManagerHost
         _deviceSettingsService = deviceSettingsService;
         _controllerFilter = controllerFilter;
         _globalStateService = globalStateService;
+        _controllerConfigurationService = controllerConfigurationService;
 
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
@@ -98,6 +101,7 @@ public sealed class ControllerManagerHost
         // Make sure we're ready to rock
         // 
         _profileService.Initialize();
+        _controllerConfigurationService.Initialize();
 
         if (IsEnabled)
         {

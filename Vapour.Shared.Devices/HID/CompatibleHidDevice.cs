@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
-using Vapour.Shared.Configuration.Profiles.Schema;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -101,13 +101,13 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <inheritdoc />
     public bool IsFiltered { get; set; }
 
-    public IProfile CurrentProfile { get; private set; }
+    public ControllerConfiguration CurrentConfiguration { get; private set; }
 
-    public void SetProfile(IProfile profile)
+    public void SetConfiguration(ControllerConfiguration configuration)
     {
-        IProfile oldProfile = CurrentProfile;
-        CurrentProfile = profile;
-        OnProfileChanged(oldProfile, profile);
+        ControllerConfiguration oldConfiguration = CurrentConfiguration;
+        CurrentConfiguration = configuration;
+        OnConfigurationChanged(oldConfiguration, configuration);
     }
 
     /// <inheritdoc />
@@ -133,7 +133,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     {
     }
 
-    protected virtual void OnProfileChanged(IProfile oldProfile, IProfile newProfile)
+    protected virtual void OnConfigurationChanged(ControllerConfiguration oldProfile, ControllerConfiguration newProfile)
     {
     }
 

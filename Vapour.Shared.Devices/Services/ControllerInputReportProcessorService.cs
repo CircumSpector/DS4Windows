@@ -65,20 +65,20 @@ public sealed class ControllerInputReportProcessorService : IControllerInputRepo
         CompatibleHidDeviceInputReport report)
     {
         IOutDevice outDevice = _outDevices[device.SourceDevice.InstanceId];
-        report = UpdateBasedOnProfile(device.CurrentProfile, report);
+        report = UpdateBasedOnConfiguration(device.CurrentConfiguration, report);
         outDevice.ConvertAndSendReport(report);
     }
 
     private IOutDevice GetOutputController()
     {
-        //TODO:  change to look at profile for current controller and return necessary output device
+        //TODO:  change to look at configuration for current controller and return necessary output device
         return new Xbox360OutDevice(_client);
     }
 
-    private CompatibleHidDeviceInputReport UpdateBasedOnProfile(IProfile profile, CompatibleHidDeviceInputReport report)
+    private CompatibleHidDeviceInputReport UpdateBasedOnConfiguration(ControllerConfiguration configuration, CompatibleHidDeviceInputReport report)
     {
-        //TODO: fill in processing the profile against the current report
-        Guid profileId = profile.Id;
+        //TODO: fill in processing the configuration against the current report
+        Guid profileId = configuration.ProfileId;
         return report;
     }
 }

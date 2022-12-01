@@ -1,4 +1,5 @@
 ﻿using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Controller;
 
@@ -24,7 +25,7 @@ public sealed class ControllerConnectedMessage
 
     public InputDeviceType DeviceType { get; init; }
 
-    public Guid SelectedProfileId { get; init; }
+    public ControllerConfiguration CurrentConfiguration { get; set; }
 
     public bool IsFiltered { get; set; }
 }
