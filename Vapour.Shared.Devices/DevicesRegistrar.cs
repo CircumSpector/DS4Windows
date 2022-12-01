@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Nefarius.Drivers.HidHide;
@@ -14,7 +12,9 @@ using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices;
 
-[UsedImplicitly]
+/// <summary>
+///     Registers services related to input device discovery and event routing.
+/// </summary>
 public class DevicesRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
@@ -24,6 +24,7 @@ public class DevicesRegistrar : IServiceRegistrar
         // HidHide API wrapper
         //
         services.AddSingleton<IHidHideControlService, HidHideControlService>();
+
         services.AddSingleton<IHidDeviceEnumeratorService<HidDevice>, HidDeviceEnumeratorService>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDeviceOverWinUsb>, WinUsbDeviceEnumeratorService>();
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();

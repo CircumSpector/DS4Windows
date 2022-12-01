@@ -10,6 +10,9 @@ using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host;
 
+/// <summary>
+///     Registers services required for serving REST and WS endpoints.
+/// </summary>
 public sealed class ServerHostRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
