@@ -147,6 +147,12 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
                 await _inputReportChannel.Writer.WriteAsync(_inputReportArray, _inputReportToken.Token);
             }
         }
+        catch (ObjectDisposedException)
+        {
+            _inputReportToken.Cancel();
+
+            HidDevice.FireDisconnected();
+        }
         catch (HidDeviceException win32)
         {
             if (win32.ErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)

@@ -56,13 +56,19 @@ public static class ServiceStartup
         {
             ControllerManagerHost controllerHost = app.Services.GetRequiredService<ControllerManagerHost>();
             ControllerManagerHost.IsEnabled = true;
+            
+            app.Lifetime.ApplicationStopping.Register(async () =>
+            {
+                Log.Information("Shutting down server host");
+
+                await controllerHost.StopAsync();
+            }, true);
+            
             await controllerHost.StartAsync();
         }
 
         Log.Information("Starting server host");
 
         await app.RunAsync(Constants.HttpUrl);
-
-        Log.Information("Shutting down server host");
     }
 }
