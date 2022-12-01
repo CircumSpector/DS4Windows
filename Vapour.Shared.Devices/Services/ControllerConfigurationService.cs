@@ -20,6 +20,7 @@ public class ControllerConfigurationService : IControllerConfigurationService
     {
         _globalStateService = globalStateService;
         _profilesService = profilesService;
+        _profilesService.OnProfileDeleted += _profilesService_OnProfileDeleted;
     }
 
     public event EventHandler<ControllerConfigurationChangedEventArgs> OnActiveConfigurationChanged;
@@ -195,5 +196,31 @@ public class ControllerConfigurationService : IControllerConfigurationService
             Lightbar = defaultProfile.LightbarSettingInfo.Ds4WinSettings.Led.ToColorA.ToHexString(),
             OutputDeviceType = defaultProfile.OutputDeviceType
         };
+    }
+
+    private void _profilesService_OnProfileDeleted(object sender, Guid e)
+    {
+        foreach (var controllerConfiguration in _activeConfigurations.Where(i => i.Value.ProfileId == e).ToList())
+        {
+            var defaultControllerConfiguration = GetDefaultControllerConfiguration();
+            var existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
+            existingConfiguration.Profile = defaultControllerConfiguration.Profile;
+            existingConfiguration.ProfileId = defaultControllerConfiguration.ProfileId;
+            OnActiveConfigurationChanged?.Invoke(this, new ControllerConfigurationChangedEventArgs
+            {
+                ControllerKey = controllerConfiguration.Key,
+                ControllerConfiguration = existingConfiguration
+            });
+        }
+
+        foreach (var controllerConfiguration in _controllerConfigurations.Where(i => i.Value.ProfileId == e).ToList())
+        {
+            var defaultControllerConfiguration = GetDefaultControllerConfiguration();
+            var existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
+            existingConfiguration.Profile = defaultControllerConfiguration.Profile;
+            existingConfiguration.ProfileId = defaultControllerConfiguration.ProfileId;
+        }
+
+        SaveControllerConfigurations();
     }
 }
