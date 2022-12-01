@@ -1,7 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 
-using JetBrains.Annotations;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,11 +11,19 @@ using Vapour.Client.Core.DependencyInjection;
 
 namespace Vapour.Shared.Common.Tracing;
 
-[UsedImplicitly]
+/// <summary>
+///     Registers services required for telemetry and performance metrics.
+/// </summary>
 public class OpenTelemetryRegistrar : IServiceRegistrar
 {
-    private const string AssemblyPrefix = "DS4Windows";
+    /// <summary>
+    ///     Only scan assemblies starting with this name.
+    /// </summary>
+    private const string AssemblyPrefix = "Vapour";
 
+    /// <summary>
+    ///     Regex to remove meta details from full assembly names.
+    /// </summary>
     private static readonly Regex Cleanup = new(", (Version|Culture|PublicKeyToken)=[0-9.\\w]+", RegexOptions.Compiled);
 
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)

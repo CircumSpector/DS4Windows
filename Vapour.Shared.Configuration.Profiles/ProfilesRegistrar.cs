@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Vapour.Client.Core.DependencyInjection;
@@ -8,7 +6,9 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Shared.Configuration.Profiles;
 
-[UsedImplicitly]
+/// <summary>
+///     Registers services handling profiles.
+/// </summary>
 public class ProfilesRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)

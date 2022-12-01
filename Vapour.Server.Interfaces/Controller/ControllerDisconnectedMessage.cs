@@ -1,10 +1,6 @@
 ﻿namespace Vapour.Server.Controller;
 
-public sealed class ControllerDisconnectedMessage : MessageBase
+public sealed class ControllerDisconnectedMessage
 {
-    public const string Name = "ControllerDisconnected";
-
     public string ControllerDisconnectedId { get; init; }
-
-    public override string MessageName => Name;
 }

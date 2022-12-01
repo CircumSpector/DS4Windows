@@ -58,7 +58,7 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         }
 
         IsHostRunning = await _controllerServiceClient.IsHostRunning();
-        _controllerServiceClient.StartWebSocket(OnControllerConnected, OnControllerDisconnected, OnHostRunningChanged);
+        _controllerServiceClient.StartListening(OnControllerConnected, OnControllerDisconnected, OnHostRunningChanged);
     }
 
     private void OnHostRunningChanged(IsHostRunningChangedMessage obj)
