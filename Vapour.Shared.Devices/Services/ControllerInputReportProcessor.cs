@@ -149,7 +149,10 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
         }
         catch (ObjectDisposedException)
         {
-            _inputReportToken.Cancel();
+            if (!_inputReportToken.IsCancellationRequested)
+            {
+                _inputReportToken.Cancel();
+            }
 
             HidDevice.FireDisconnected();
         }
