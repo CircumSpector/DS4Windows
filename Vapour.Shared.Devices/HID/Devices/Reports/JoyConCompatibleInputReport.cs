@@ -1,7 +1,7 @@
 ﻿namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 /// <summary>
-///     TODO: unfinished!
+///     TODO: unfinished! Currently just copied over from DualShock
 /// </summary>
 public sealed class JoyConCompatibleInputReport : CompatibleHidDeviceInputReport
 {
