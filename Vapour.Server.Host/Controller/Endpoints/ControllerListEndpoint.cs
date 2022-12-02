@@ -19,8 +19,7 @@ public sealed class ControllerListEndpoint : EndpointWithoutRequest<List<Control
 
     public override void Configure()
     {
-        Verbs(Http.GET);
-        Routes("/controller/list");
+        Get("/controller/list");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Gets a list of connected controllers details";

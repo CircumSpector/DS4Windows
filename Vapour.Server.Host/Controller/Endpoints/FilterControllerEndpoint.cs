@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host.Controller.Endpoints;
@@ -16,7 +17,8 @@ public sealed class FilterControllerEndpoint : EndpointWithoutRequest
     {
         Post("/controller/filter/{instanceId}");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Filters the controller";
             s.Description = "Filters the controller";
             s.Responses[200] = "Controller filtered properly";
@@ -25,7 +27,7 @@ public sealed class FilterControllerEndpoint : EndpointWithoutRequest
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var instanceId = Route<string>("instanceId");
+        string instanceId = Route<string>("instanceId");
         _controllerFilterService.FilterController(instanceId);
 
         await SendOkAsync(ct);

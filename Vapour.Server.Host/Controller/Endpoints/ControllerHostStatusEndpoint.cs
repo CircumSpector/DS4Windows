@@ -15,8 +15,7 @@ public sealed class ControllerHostStatusEndpoint : EndpointWithoutRequest<Contro
 
     public override void Configure()
     {
-        Verbs(Http.GET);
-        Routes("/controller/host/status");
+        Get("/controller/host/status");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Queries the controller host status";

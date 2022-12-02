@@ -16,8 +16,7 @@ public class ControllerFilterDriverStatusEndpoint : EndpointWithoutRequest<Contr
 
     public override void Configure()
     {
-        Verbs(Http.GET);
-        Routes("/controller/filterdriver/status");
+        Get("/controller/filterdriver/status");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Queries the controller filter driver status";

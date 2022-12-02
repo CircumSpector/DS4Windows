@@ -13,8 +13,7 @@ public sealed class ControllerPingEndpoint : EndpointWithoutRequest
 
     public override void Configure()
     {
-        Verbs(Http.GET);
-        Routes("/controller/ping");
+        Get("/controller/ping");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Queries the controller host for ready status";

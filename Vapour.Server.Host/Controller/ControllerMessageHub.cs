@@ -7,6 +7,6 @@ namespace Vapour.Server.Host.Controller;
 /// <summary>
 ///     SignalR hub to exchange controller events.
 /// </summary>
-public class ControllerMessageHub : Hub<IControllerMessageClient>
+public sealed class ControllerMessageHub : Hub<IControllerMessageClient>
 {
 }

@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host.Controller.Endpoints;
@@ -16,7 +17,8 @@ public sealed class UnfilterControllerEndpoint : EndpointWithoutRequest
     {
         Post("/controller/unfilter/{instanceId}");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Unfilters the controller";
             s.Description = "Unfilters the controller";
             s.Responses[200] = "Controller unfiltered properly";
@@ -25,7 +27,7 @@ public sealed class UnfilterControllerEndpoint : EndpointWithoutRequest
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var instanceId = Route<string>("instanceId");
+        string instanceId = Route<string>("instanceId");
         _controllerFilterService.UnfilterController(instanceId);
 
         await SendOkAsync(ct);

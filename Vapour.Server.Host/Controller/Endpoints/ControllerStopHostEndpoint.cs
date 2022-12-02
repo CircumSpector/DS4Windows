@@ -15,10 +15,10 @@ public sealed class ControllerStopHostEndpoint : EndpointWithoutRequest
 
     public override void Configure()
     {
-        Verbs(Http.POST);
-        Routes("/controller/host/stop");
+        Post("/controller/host/stop");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Requests the controller host to stop, if started";
             s.Description = "Requests the controller host to stop, if started";
             s.Responses[200] = "Controller host has been stopped successfully";

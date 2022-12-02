@@ -10,21 +10,19 @@ namespace Vapour.Server.Host.Controller;
 /// <inheritdoc />
 public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 {
-    private readonly IControllerConfigurationService _controllerConfigurationService;
     private readonly IHubContext<ControllerMessageHub, IControllerMessageClient> _hubContext;
 
     public ControllerMessageForwarder(ControllerManagerHost controllerManagerHost,
         IControllerConfigurationService controllerConfigurationService,
         IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext)
     {
-        _controllerConfigurationService = controllerConfigurationService;
         _hubContext = hubContext;
 
         controllerManagerHost.ControllerReady += async device =>
         {
             await _hubContext.Clients.All.ControllerConnected(MapControllerConnected(device));
         };
-        
+
         controllerManagerHost.ControllerRemoved += async device =>
         {
             await _hubContext.Clients.All.ControllerDisconnected(new ControllerDisconnectedMessage
@@ -37,18 +35,14 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
         {
             await _hubContext.Clients.All.ControllerConfigurationChanged(new ControllerConfigurationChangedMessage
             {
-                ControllerKey = e.ControllerKey,
-                ControllerConfiguration = e.ControllerConfiguration
+                ControllerKey = e.ControllerKey, ControllerConfiguration = e.ControllerConfiguration
             });
         };
     }
 
     public async Task SendIsHostRunning(bool isRunning)
     {
-        await _hubContext.Clients.All.IsHostRunningChanged(new IsHostRunningChangedMessage
-        {
-            IsRunning = isRunning
-        });
+        await _hubContext.Clients.All.IsHostRunningChanged(new IsHostRunningChangedMessage { IsRunning = isRunning });
     }
 
     public ControllerConnectedMessage MapControllerConnected(ICompatibleHidDevice hidDevice)
