@@ -12,8 +12,8 @@ public sealed partial class ControllerServiceClient
 {
     public async Task<List<ControllerConnectedMessage>> GetControllerList()
     {
-        using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/list");
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
+        HttpResponseMessage result = await client.GetAsync("/api/controller/list");
         if (result.IsSuccessStatusCode)
         {
             return await result.Content.ReadFromJsonAsync<List<ControllerConnectedMessage>>();
@@ -24,8 +24,8 @@ public sealed partial class ControllerServiceClient
 
     public async Task<bool> IsHostRunning()
     {
-        using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/host/status");
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
+        HttpResponseMessage result = await client.GetAsync("/api/controller/host/status");
 
         if (!result.IsSuccessStatusCode)
         {
@@ -38,8 +38,8 @@ public sealed partial class ControllerServiceClient
 
     public async Task StartHost()
     {
-        using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/start", null);
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
+        HttpResponseMessage result = await client.PostAsync("/api/controller/host/start", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not start the host {result.ReasonPhrase}");
@@ -48,8 +48,8 @@ public sealed partial class ControllerServiceClient
 
     public async Task StopHost()
     {
-        using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.PostAsync($"{Constants.HttpUrl}/api/controller/host/stop", null);
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
+        HttpResponseMessage result = await client.PostAsync("/api/controller/host/stop", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not get the controller list {result.ReasonPhrase}");
@@ -58,8 +58,8 @@ public sealed partial class ControllerServiceClient
 
     public async Task<ControllerFilterDriverStatusResponse> GetFilterDriverStatus()
     {
-        using HttpClient client = _clientFactory.CreateClient();
-        HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/controller/filterdriver/status");
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
+        HttpResponseMessage result = await client.GetAsync("/api/controller/filterdriver/status");
 
         if (!result.IsSuccessStatusCode)
         {
@@ -73,10 +73,10 @@ public sealed partial class ControllerServiceClient
 
     public async Task ControllerFilterSetDriverEnabled(bool isEnabled)
     {
-        using HttpClient client = _clientFactory.CreateClient();
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
 
         HttpResponseMessage result =
-            await client.PostAsync($"{Constants.HttpUrl}/api/controller/filterdriver/setenable/{isEnabled}", null);
+            await client.PostAsync($"/api/controller/filterdriver/setenable/{isEnabled}", null);
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not set the filter driver enabled {result.ReasonPhrase}");
@@ -85,10 +85,10 @@ public sealed partial class ControllerServiceClient
 
     public async Task FilterController(string instanceId)
     {
-        using HttpClient client = _clientFactory.CreateClient();
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
 
         HttpResponseMessage result =
-            await client.PostAsync($"{Constants.HttpUrl}/api/controller/filter/{HttpUtility.UrlEncode(instanceId)}",
+            await client.PostAsync($"/api/controller/filter/{HttpUtility.UrlEncode(instanceId)}",
                 null);
         if (!result.IsSuccessStatusCode)
         {
@@ -98,10 +98,10 @@ public sealed partial class ControllerServiceClient
 
     public async Task UnfilterController(string instanceId)
     {
-        using HttpClient client = _clientFactory.CreateClient();
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
 
         HttpResponseMessage result =
-            await client.PostAsync($"{Constants.HttpUrl}/api/controller/unfilter/{HttpUtility.UrlEncode(instanceId)}",
+            await client.PostAsync($"/api/controller/unfilter/{HttpUtility.UrlEncode(instanceId)}",
                 null);
         if (!result.IsSuccessStatusCode)
         {
@@ -112,10 +112,10 @@ public sealed partial class ControllerServiceClient
     public async Task SaveDefaultControllerConfiguration(string controllerKey,
         ControllerConfiguration controllerConfiguration)
     {
-        using HttpClient client = _clientFactory.CreateClient();
+        using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
 
         HttpResponseMessage result =
-            await client.PutAsync($"{Constants.HttpUrl}/api/controller/configuration",
+            await client.PutAsync($"/api/controller/configuration",
                 JsonContent.Create(new ControllerSetConfigRequest
                 {
                     ControllerKey = controllerKey, ControllerConfiguration = controllerConfiguration
