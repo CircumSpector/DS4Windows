@@ -75,26 +75,28 @@ public abstract class CompatibleHidDeviceInputReport
     /// <summary>
     ///     Gets idle state.
     /// </summary>
-    /// <returns>True if none of the controls are engaged, false otherwise.</returns>
-    public virtual bool GetIsIdle()
+    public virtual bool IsIdle
     {
-        if (Square || Cross || Circle || Triangle)
-            return false;
-        if (DPad != DPadDirection.Default)
-            return false;
-        if (LeftShoulder || RightShoulder || LeftThumb || RightThumb || Share || Options || PS)
-            return false;
-        if (LeftTriggerButton || RightTriggerButton)
-            return false;
-        if (LeftTrigger != 0 || RightTrigger != 0)
-            return false;
+        get
+        {
+            if (Square || Cross || Circle || Triangle)
+                return false;
+            if (DPad != DPadDirection.Default)
+                return false;
+            if (LeftShoulder || RightShoulder || LeftThumb || RightThumb || Share || Options || PS)
+                return false;
+            if (LeftTriggerButton || RightTriggerButton)
+                return false;
+            if (LeftTrigger != 0 || RightTrigger != 0)
+                return false;
 
-        const int slop = 64;
-        if (LeftThumbX is <= 127 - slop or >= 128 + slop || LeftThumbY is <= 127 - slop or >= 128 + slop)
-            return false;
-        if (RightThumbX is <= 127 - slop or >= 128 + slop || RightThumbY is <= 127 - slop or >= 128 + slop)
-            return false;
+            const int slop = 64;
+            if (LeftThumbX is <= 127 - slop or >= 128 + slop || LeftThumbY is <= 127 - slop or >= 128 + slop)
+                return false;
+            if (RightThumbX is <= 127 - slop or >= 128 + slop || RightThumbY is <= 127 - slop or >= 128 + slop)
+                return false;
 
-        return true;
+            return true;
+        }
     }
 }

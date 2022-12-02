@@ -105,14 +105,21 @@ public class DualShock4CompatibleInputReport : CompatibleHidDeviceInputReport
     }
 
     /// <inheritdoc />
-    public override bool GetIsIdle()
+    public override bool IsIdle
     {
-        if (!base.GetIsIdle())
-            return false;
+        get
+        {
+            if (!base.IsIdle)
+            {
+                return false;
+            }
 
-        if (Touch1 || Touch2 || TouchClick)
-            return false;
+            if (Touch1 || Touch2 || TouchClick)
+            {
+                return false;
+            }
 
-        return true;
+            return true;
+        }
     }
 }
