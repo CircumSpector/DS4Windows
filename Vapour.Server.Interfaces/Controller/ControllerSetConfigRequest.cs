@@ -1,8 +1,10 @@
 ﻿using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Controller;
-public class ControllerSetConfigRequest
+
+public sealed class ControllerSetConfigRequest
 {
-    public string ControllerKey { get; set; }
-    public ControllerConfiguration ControllerConfiguration { get; set; }
+    public string ControllerKey { get; init; }
+
+    public ControllerConfiguration ControllerConfiguration { get; init; }
 }

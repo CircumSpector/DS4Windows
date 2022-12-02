@@ -115,11 +115,10 @@ public sealed partial class ControllerServiceClient
         using HttpClient client = _clientFactory.CreateClient();
 
         HttpResponseMessage result =
-            await client.PostAsync($"{Constants.HttpUrl}/api/controller/setconfig/",
+            await client.PutAsync($"{Constants.HttpUrl}/api/controller/configuration",
                 JsonContent.Create(new ControllerSetConfigRequest
                 {
-                    ControllerKey = controllerKey,
-                    ControllerConfiguration = controllerConfiguration
+                    ControllerKey = controllerKey, ControllerConfiguration = controllerConfiguration
                 }));
         if (!result.IsSuccessStatusCode)
         {

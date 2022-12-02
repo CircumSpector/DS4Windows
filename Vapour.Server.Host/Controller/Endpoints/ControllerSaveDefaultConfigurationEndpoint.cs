@@ -16,9 +16,10 @@ public sealed class ControllerSaveDefaultConfigurationEndpoint : Endpoint<Contro
 
     public override void Configure()
     {
-        Post("/controller/setconfig");
+        Put("/controller/configuration");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Updates a controllers default configuration";
             s.Responses[200] = "The controller config has been set correctly";
         });
@@ -26,7 +27,8 @@ public sealed class ControllerSaveDefaultConfigurationEndpoint : Endpoint<Contro
 
     public override async Task HandleAsync(ControllerSetConfigRequest req, CancellationToken ct)
     {
-        _controllerConfigurationService.SetControllerConfiguration(req.ControllerKey, req.ControllerConfiguration, true);
+        _controllerConfigurationService.SetControllerConfiguration(req.ControllerKey, req.ControllerConfiguration,
+            true);
 
         await SendOkAsync(req, ct);
     }
