@@ -7,6 +7,7 @@ using AutoMapper;
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Client.Modules.Controllers;
 
@@ -35,26 +36,28 @@ public sealed class ControllerItemViewModel :
     public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
     public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB_white.png", UriKind.Absolute));
     private readonly IMapper _mapper;
-    private readonly IProfileServiceClient _profileServiceClient;
+    private readonly IControllerServiceClient _controllerServiceClient;
 
-    public ControllerItemViewModel(IMapper mapper, IProfileServiceClient profileServiceClient)
+    public ControllerItemViewModel(IMapper mapper, IControllerServiceClient controllerServiceClient)
     {
         _mapper = mapper;
-        _profileServiceClient = profileServiceClient;
+        _controllerServiceClient = controllerServiceClient;
     }
 
     public void SetDevice(ControllerConnectedMessage device)
     {
+        ConfigurationSetFromUser = false;
         _mapper.Map(device, this);
+        ConfigurationSetFromUser = true;
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(SelectedProfileId))
         {
-            if (ProfileSetFromUser)
+            if (ConfigurationSetFromUser)
             {
-                _profileServiceClient.SetProfile(Serial, SelectedProfileId);
+                _controllerServiceClient.SaveDefaultControllerConfiguration(Serial, CurrentConfiguration);
             }
         }
 
@@ -63,7 +66,7 @@ public sealed class ControllerItemViewModel :
 
     #region Props
 
-    public bool ProfileSetFromUser { get; set; } = true;
+    public bool ConfigurationSetFromUser { get; set; } = true;
 
     private string _serial;
 
@@ -104,13 +107,18 @@ public sealed class ControllerItemViewModel :
         get => _batteryPercentage;
         private set => SetProperty(ref _batteryPercentage, value);
     }
-
-    private Guid _selectedProfileId;
-
+    
     public Guid SelectedProfileId
     {
-        get => _selectedProfileId;
-        set => SetProperty(ref _selectedProfileId, value);
+        get => CurrentConfiguration.ProfileId;
+        set
+        {
+            if (CurrentConfiguration.ProfileId != value)
+            {
+                CurrentConfiguration.ProfileId = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
     private SolidColorBrush _currentColor;
@@ -131,6 +139,19 @@ public sealed class ControllerItemViewModel :
 
     public string InstanceId { get; set; }
     public string ParentInstance { get; set; }
+
+
+    private ControllerConfiguration _currentConfiguration;
+    public ControllerConfiguration CurrentConfiguration
+    {
+        get => _currentConfiguration;
+        set
+        {
+            SetProperty(ref _currentConfiguration, value);
+            OnPropertyChanged(nameof(SelectedProfileId));
+        }
+    } 
+
 
     #endregion
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 
-using Vapour.Server.Controller;
 using Vapour.Shared.Configuration.Profiles.Schema;
 
 namespace Vapour.Client.ServiceClients;
@@ -16,8 +15,6 @@ public interface IProfileServiceClient
     Task DeleteProfile(Guid id);
 
     Task<IProfile> SaveProfile(IProfile profile);
-
-    Task SetProfile(string controllerKey, Guid profileId);
-
-    void StartListening(Action<ProfileChangedMessage> profileChangedHandler, CancellationToken ct = default);
+    
+    void StartListening(CancellationToken ct = default);
 }

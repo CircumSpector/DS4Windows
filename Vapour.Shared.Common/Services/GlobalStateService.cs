@@ -28,7 +28,8 @@ public sealed class GlobalStateService : IGlobalStateService
     public string LocalProfilesDirectory => Path.Combine(RoamingAppDataPath, Constants.ProfilesSubDirectory);
 
     public string LocalDefaultProfileLocation => Path.Combine(LocalProfilesDirectory, "Default.json");
-    public string LocalActiveProfilesLocation => Path.Combine(RoamingAppDataPath, "ActiveProfiles.json");
+    public string LocalControllerConfigurationsLocation => Path.Combine(RoamingAppDataPath, "ControllerConfigurations.json");
+    public string LocalControllerGameConfigurationsLocation => Path.Combine(RoamingAppDataPath, "ControllerGameConfigurations.json");
 
     public void EnsureRoamingDataPath()
     {

@@ -4,6 +4,7 @@ using System.Web;
 
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Core;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Client.ServiceClients;
 
@@ -105,6 +106,24 @@ public sealed partial class ControllerServiceClient
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not unfilter the controller {result.ReasonPhrase}");
+        }
+    }
+
+    public async Task SaveDefaultControllerConfiguration(string controllerKey,
+        ControllerConfiguration controllerConfiguration)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result =
+            await client.PostAsync($"{Constants.HttpUrl}/api/controller/setconfig/",
+                JsonContent.Create(new ControllerSetConfigRequest
+                {
+                    ControllerKey = controllerKey,
+                    ControllerConfiguration = controllerConfiguration
+                }));
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not save default controller config {result.ReasonPhrase}");
         }
     }
 }

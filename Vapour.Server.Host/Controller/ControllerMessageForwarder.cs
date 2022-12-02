@@ -3,17 +3,21 @@
 using Vapour.Server.Controller;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HostedServices;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host.Controller;
 
 /// <inheritdoc />
 public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 {
+    private readonly IControllerConfigurationService _controllerConfigurationService;
     private readonly IHubContext<ControllerMessageHub, IControllerMessageClient> _hubContext;
 
     public ControllerMessageForwarder(ControllerManagerHost controllerManagerHost,
+        IControllerConfigurationService controllerConfigurationService,
         IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext)
     {
+        _controllerConfigurationService = controllerConfigurationService;
         _hubContext = hubContext;
 
         controllerManagerHost.ControllerReady += async device =>
@@ -26,6 +30,15 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             await _hubContext.Clients.All.ControllerDisconnected(new ControllerDisconnectedMessage
             {
                 ControllerDisconnectedId = device.SourceDevice.InstanceId
+            });
+        };
+
+        controllerConfigurationService.OnActiveConfigurationChanged += async (o, e) =>
+        {
+            await _hubContext.Clients.All.ControllerConfigurationChanged(new ControllerConfigurationChangedMessage
+            {
+                ControllerKey = e.ControllerKey,
+                ControllerConfiguration = e.ControllerConfiguration
             });
         };
     }
@@ -52,7 +65,7 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             ProductString = hidDevice.SourceDevice.ProductString,
             SerialNumberString = hidDevice.SerialString,
             Connection = hidDevice.Connection.GetValueOrDefault(),
-            SelectedProfileId = hidDevice.CurrentProfile.Id,
+            CurrentConfiguration = hidDevice.CurrentConfiguration,
             IsFiltered = hidDevice.IsFiltered
         };
 

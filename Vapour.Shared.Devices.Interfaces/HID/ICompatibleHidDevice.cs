@@ -1,6 +1,7 @@
 ﻿using System.Net.NetworkInformation;
 
 using Vapour.Shared.Configuration.Profiles.Schema;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -44,10 +45,10 @@ public interface ICompatibleHidDevice : IDisposable
 
     void ProcessInputReport(ReadOnlySpan<byte> input);
     CompatibleHidDeviceInputReport InputReport { get; }
-    IProfile CurrentProfile { get; }
+    ControllerConfiguration CurrentConfiguration { get; }
     string SerialString { get; }
 
-    void SetProfile(IProfile profile);
+    void SetConfiguration(ControllerConfiguration profile);
 
     void OnAfterStartListening();
 }
