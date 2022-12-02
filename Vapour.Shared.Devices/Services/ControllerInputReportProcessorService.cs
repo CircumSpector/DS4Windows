@@ -2,7 +2,7 @@
 
 using Nefarius.ViGEm.Client;
 
-using Vapour.Shared.Configuration.Profiles.Schema;
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Output;
 
@@ -10,75 +10,71 @@ namespace Vapour.Shared.Devices.Services;
 
 public sealed class ControllerInputReportProcessorService : IControllerInputReportProcessorService
 {
-    private readonly ViGEmClient _client;
+    private readonly IControllerConfigurationService _controllerConfigurationService;
     private readonly Dictionary<string, IControllerInputReportProcessor> _controllerInputReportProcessors;
-    private readonly Dictionary<string, IOutDevice> _outDevices;
+    private readonly Dictionary<string, IOutputProcessor> _outputProcessors;
     private readonly IServiceProvider _serviceProvider;
 
     public ControllerInputReportProcessorService(
         ILogger<ControllerInputReportProcessorService> logger,
         IServiceProvider serviceProvider,
-        ViGEmClient client)
+        IControllerConfigurationService controllerConfigurationService)
     {
         _serviceProvider = serviceProvider;
-        _client = client;
+        _controllerConfigurationService = controllerConfigurationService;
         _controllerInputReportProcessors = new Dictionary<string, IControllerInputReportProcessor>();
-        _outDevices = new Dictionary<string, IOutDevice>();
+        _outputProcessors = new Dictionary<string, IOutputProcessor>();
+
+        _controllerConfigurationService.OnActiveConfigurationChanged += _controllerConfigurationService_OnActiveConfigurationChanged;
     }
 
-    public void StartProcessing(ICompatibleHidDevice device, CompatibleDeviceIdentification deviceIdentification)
+    public void StartProcessing(ICompatibleHidDevice device)
     {
-        if (!_outDevices.ContainsKey(device.SourceDevice.InstanceId))
+        device.SetConfiguration(_controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString));
+
+        IControllerInputReportProcessor inputReportProcessor;
+        IOutputProcessor outputProcessor;
+        string controllerKey = device.SerialString;
+        if (!_controllerInputReportProcessors.ContainsKey(controllerKey))
         {
-            IOutDevice outDevice = GetOutputController();
-            outDevice.Connect();
-            _outDevices.Add(device.SourceDevice.InstanceId, outDevice);
+            inputReportProcessor = new ControllerInputReportProcessor(device, _serviceProvider);
+            outputProcessor = new OutputProcessor(device, inputReportProcessor, _serviceProvider);
+            _controllerInputReportProcessors.Add(controllerKey, inputReportProcessor);
+            _outputProcessors.Add(controllerKey, outputProcessor);
+        }
+        else
+        {
+            inputReportProcessor = _controllerInputReportProcessors[controllerKey];
+            outputProcessor = _outputProcessors[controllerKey];
         }
 
-        ControllerInputReportProcessor inputReportProcessor = new(device, _serviceProvider);
-        _controllerInputReportProcessors.Add(device.SourceDevice.InstanceId, inputReportProcessor);
-        inputReportProcessor.InputReportAvailable += InputReportProcessor_InputReportAvailable;
-
-        inputReportProcessor.StartInputReportReader();
-        device.OnAfterStartListening();
+        if (device.CurrentConfiguration.OutputDeviceType != OutputDeviceType.None)
+        {
+            inputReportProcessor.StartInputReportReader();
+            device.OnAfterStartListening();
+            outputProcessor.StartOutputProcessing();
+        }
     }
 
     public void StopProcessing(ICompatibleHidDevice hidDevice)
     {
-        string instanceId = hidDevice.SourceDevice.InstanceId;
-        if (_controllerInputReportProcessors.ContainsKey(instanceId))
+        string controllerKey = hidDevice.SerialString;
+        if (_controllerInputReportProcessors.ContainsKey(controllerKey))
         {
-            IControllerInputReportProcessor inputReportProcessor = _controllerInputReportProcessors[instanceId];
+            IControllerInputReportProcessor inputReportProcessor = _controllerInputReportProcessors[controllerKey];
             inputReportProcessor.StopInputReportReader();
-            inputReportProcessor.InputReportAvailable -= InputReportProcessor_InputReportAvailable;
-
-            if (_outDevices.ContainsKey(instanceId))
-            {
-                IOutDevice outDevice = _outDevices[instanceId];
-                outDevice.Disconnect();
-                _outDevices.Remove(instanceId);
-            }
+            var outputProcessor = _outputProcessors[controllerKey];
+            outputProcessor.StopOutputProcessing();
         }
     }
 
-    private void InputReportProcessor_InputReportAvailable(ICompatibleHidDevice device,
-        CompatibleHidDeviceInputReport report)
+    private void _controllerConfigurationService_OnActiveConfigurationChanged(object sender, ControllerConfigurationChangedEventArgs e)
     {
-        IOutDevice outDevice = _outDevices[device.SourceDevice.InstanceId];
-        report = UpdateBasedOnConfiguration(device.CurrentConfiguration, report);
-        outDevice.ConvertAndSendReport(report);
-    }
-
-    private IOutDevice GetOutputController()
-    {
-        //TODO:  change to look at configuration for current controller and return necessary output device
-        return new Xbox360OutDevice(_client);
-    }
-
-    private CompatibleHidDeviceInputReport UpdateBasedOnConfiguration(ControllerConfiguration configuration, CompatibleHidDeviceInputReport report)
-    {
-        //TODO: fill in processing the configuration against the current report
-        Guid profileId = configuration.ProfileId;
-        return report;
+        if (_controllerInputReportProcessors.ContainsKey(e.ControllerKey))
+        {
+            var existingDevice = _controllerInputReportProcessors[e.ControllerKey].HidDevice;
+            StopProcessing(existingDevice);
+            StartProcessing(existingDevice);
+        }
     }
 }

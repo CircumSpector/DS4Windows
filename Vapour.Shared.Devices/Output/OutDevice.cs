@@ -1,4 +1,5 @@
-﻿using Vapour.Shared.Devices.HID;
+﻿using Vapour.Shared.Common.Types;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
 
@@ -14,7 +15,7 @@ public abstract class OutDevice : IOutDevice
 
     public abstract void ResetState(bool submit = true);
 
-    public abstract string GetDeviceType();
+    public abstract OutputDeviceType GetDeviceType();
 
     public abstract void RemoveFeedbacks();
 

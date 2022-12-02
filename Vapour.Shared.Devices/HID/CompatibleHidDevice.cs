@@ -101,6 +101,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <inheritdoc />
     public bool IsFiltered { get; set; }
 
+    public event EventHandler ConfigurationChanged;
     public ControllerConfiguration CurrentConfiguration { get; private set; }
 
     public void SetConfiguration(ControllerConfiguration configuration)
@@ -108,6 +109,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
         ControllerConfiguration oldConfiguration = CurrentConfiguration;
         CurrentConfiguration = configuration;
         OnConfigurationChanged(oldConfiguration, configuration);
+        ConfigurationChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <inheritdoc />

@@ -1,6 +1,5 @@
 ﻿using System.Net.NetworkInformation;
 
-using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.HID;
@@ -51,4 +50,5 @@ public interface ICompatibleHidDevice : IDisposable
     void SetConfiguration(ControllerConfiguration profile);
 
     void OnAfterStartListening();
+    event EventHandler ConfigurationChanged;
 }
