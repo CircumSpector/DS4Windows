@@ -5,6 +5,8 @@ using JetBrains.Annotations;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using PropertyChanged;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles;
 using Vapour.Client.ServiceClients;
@@ -125,6 +127,7 @@ public sealed class ControllersViewModel :
         }
     }
 
+    [SuppressPropertyChangedWarnings]
     private void OnControllerConfigurationChanged(ControllerConfigurationChangedMessage controllerConfigurationChangedMessage)
     {
         var controller = ControllerItems.SingleOrDefault(i => i.Serial == controllerConfigurationChangedMessage.ControllerKey);
