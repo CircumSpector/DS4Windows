@@ -1,5 +1,8 @@
 ﻿namespace Vapour.Shared.Devices.HID;
 
+/// <summary>
+///     Possible D-Pad directions.
+/// </summary>
 public enum DPadDirection
 {
     Default = 0x8,
@@ -14,56 +17,122 @@ public enum DPadDirection
 }
 
 /// <summary>
-///     Describes the bare minimum common properties an input report of any compatible device can deliver.
+///     Describes the bare minimum common properties an input report of any <see cref="ICompatibleHidDevice"/> can deliver.
 /// </summary>
 public abstract class CompatibleHidDeviceInputReport
 {
+    /// <summary>
+    ///     Gets the report ID.
+    /// </summary>
     public byte ReportId { get; protected set; }
 
+    /// <summary>
+    ///     Gets the battery state.
+    /// </summary>
     public byte? Battery { get; protected set; }
 
+    /// <summary>
+    ///     Gets the D-Pad state.
+    /// </summary>
     public DPadDirection DPad { get; protected set; }
 
     public ushort Timestamp { get; protected set; }
 
     public byte FrameCounter { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether the Left Shoulder button is pressed or not.
+    /// </summary>
     public bool LeftShoulder { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether the Right Shoulder button is pressed or not.
+    /// </summary>
     public bool RightShoulder { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether L2 button is pressed or not.
+    /// </summary>
     public byte LeftTrigger { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether the Left Trigger Button button is pressed or not.
+    /// </summary>
     public bool LeftTriggerButton { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether R2 button is pressed or not.
+    /// </summary>
     public byte RightTrigger { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether the Right Trigger Button button is pressed or not.
+    /// </summary>
     public bool RightTriggerButton { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether L3 button is pressed or not.
+    /// </summary>
     public bool LeftThumb { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether R3 button is pressed or not.
+    /// </summary>
     public bool RightThumb { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether Share button is pressed or not.
+    /// </summary>
     public bool Share { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether Options button is pressed or not.
+    /// </summary>
     public bool Options { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether PS button is pressed or not.
+    /// </summary>
     public bool PS { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether Square button is pressed or not.
+    /// </summary>
     public bool Square { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether Triangle button is pressed or not.
+    /// </summary>
     public bool Triangle { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether Circle button is pressed or not.
+    /// </summary>
     public bool Circle { get; protected set; }
 
+    /// <summary>
+    ///     Gets whether Cross button is pressed or not.
+    /// </summary>
     public bool Cross { get; protected set; }
 
+    /// <summary>
+    ///     Gets the Left Thumb X axis value.
+    /// </summary>
     public byte LeftThumbX { get; protected set; } = 128;
 
+    /// <summary>
+    ///     Gets the Left Thumb Y axis value.
+    /// </summary>
     public byte LeftThumbY { get; protected set; } = 128;
 
+    /// <summary>
+    ///     Gets the Right Thumb X axis value.
+    /// </summary>
     public byte RightThumbX { get; protected set; } = 128;
 
+    /// <summary>
+    ///     Gets the Right Thumb Y axis value.
+    /// </summary>
     public byte RightThumbY { get; protected set; } = 128;
 
     /// <summary>
