@@ -64,4 +64,5 @@ public static class Constants
     public const string HttpPort = "50317";
     public const string HttpUrl = $"http://localhost:{HttpPort}";
     public const string WebsocketUrl = $"ws://localhost:{HttpPort}";
+    public const string ServerHostHttpClientName = "ServerHost";
 }
