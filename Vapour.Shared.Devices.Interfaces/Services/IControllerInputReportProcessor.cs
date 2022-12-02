@@ -6,6 +6,7 @@ public interface IControllerInputReportProcessor
 {
     ICompatibleHidDevice HidDevice { get; }
     bool IsInputReportAvailableInvoked { get; set; }
+    bool IsProcessing { get; }
 
     event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 

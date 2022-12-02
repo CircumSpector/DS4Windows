@@ -2,6 +2,7 @@
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
@@ -13,7 +14,6 @@ public class Xbox360OutDevice : OutDevice
     private const float recipInputPosResolution = 1 / 127f;
     private const float recipInputNegResolution = 1 / 128f;
     private const int outputResolution = 32767 - -32768;
-    public const string devType = "X360";
 
     public IXbox360Controller cont;
 
@@ -75,9 +75,9 @@ public class Xbox360OutDevice : OutDevice
         cont = null;
     }
 
-    public override string GetDeviceType()
+    public override OutputDeviceType GetDeviceType()
     {
-        return devType;
+        return OutputDeviceType.Xbox360Controller;
     }
 
     public override void ResetState(bool submit = true)

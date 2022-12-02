@@ -7,6 +7,7 @@ using AutoMapper;
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Client.Modules.Controllers;
@@ -53,7 +54,9 @@ public sealed class ControllerItemViewModel :
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SelectedProfileId))
+        if (e.PropertyName == nameof(SelectedProfileId) || 
+            e.PropertyName == nameof(IsPassthru) ||
+            e.PropertyName == nameof(OutputDeviceType))
         {
             if (ConfigurationSetFromUser)
             {
@@ -140,6 +143,31 @@ public sealed class ControllerItemViewModel :
     public string InstanceId { get; set; }
     public string ParentInstance { get; set; }
 
+    public bool IsPassthru
+    {
+        get => CurrentConfiguration.IsPassthru;
+        set
+        {
+            if (CurrentConfiguration.IsPassthru != value)
+            {
+                CurrentConfiguration.IsPassthru = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public OutputDeviceType OutputDeviceType
+    {
+        get => CurrentConfiguration.OutputDeviceType;
+        set
+        {
+            if (CurrentConfiguration.OutputDeviceType != value)
+            {
+                CurrentConfiguration.OutputDeviceType = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     private ControllerConfiguration _currentConfiguration;
     public ControllerConfiguration CurrentConfiguration
@@ -149,9 +177,10 @@ public sealed class ControllerItemViewModel :
         {
             SetProperty(ref _currentConfiguration, value);
             OnPropertyChanged(nameof(SelectedProfileId));
+            OnPropertyChanged(nameof(IsPassthru));
+            OnPropertyChanged(nameof(OutputDeviceType));
         }
-    } 
-
+    }
 
     #endregion
 }

@@ -43,7 +43,7 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
 
     private Thread _inputReportProcessor;
     private Thread _inputReportReader;
-    private CancellationTokenSource _inputReportToken = new();
+    private CancellationTokenSource _inputReportToken;
 
     public ControllerInputReportProcessor(ICompatibleHidDevice hidDevice, IServiceProvider serviceProvider)
     {
@@ -60,35 +60,48 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
     private ILogger<ControllerInputReportProcessor> Logger { get; }
     public ICompatibleHidDevice HidDevice { get; }
     public bool IsInputReportAvailableInvoked { get; set; } = true;
+    public bool IsProcessing { get; private set; }
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
     public void StartInputReportReader()
     {
-        if (_inputReportToken.Token.IsCancellationRequested)
+        if (!IsProcessing)
         {
-            _inputReportToken = new CancellationTokenSource();
+            if (_inputReportToken == null || _inputReportToken.Token.IsCancellationRequested)
+            {
+                _inputReportToken = new CancellationTokenSource();
+            }
+
+            _inputReportReader = new Thread(ReadInputReportLoop)
+            {
+                Priority = ThreadPriority.AboveNormal, IsBackground = true
+            };
+            _inputReportReader.Start();
+
+            _inputReportProcessor = new Thread(ProcessInputReportLoop)
+            {
+                Priority = ThreadPriority.AboveNormal, IsBackground = true
+            };
+            _inputReportProcessor.Start();
+
+            IsProcessing = true;
         }
-
-        _inputReportReader = new Thread(ReadInputReportLoop)
-        {
-            Priority = ThreadPriority.AboveNormal, IsBackground = true
-        };
-        _inputReportReader.Start();
-
-        _inputReportProcessor = new Thread(ProcessInputReportLoop)
-        {
-            Priority = ThreadPriority.AboveNormal, IsBackground = true
-        };
-        _inputReportProcessor.Start();
     }
 
     public void StopInputReportReader()
     {
-        _inputReportToken.Cancel();
-        _inputReportToken.Dispose();
+        if (IsProcessing)
+        {
+            _inputReportToken.Cancel();
 
-        _inputReportReader.Join();
-        _inputReportProcessor.Join();
+            _inputReportReader.Join();
+            _inputReportProcessor.Join();
+
+            _inputReportToken.Dispose();
+            _inputReportToken = null;
+
+            IsProcessing = false;
+        }
     }
 
     private async void ProcessInputReportLoop()

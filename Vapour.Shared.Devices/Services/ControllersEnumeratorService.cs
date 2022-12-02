@@ -28,8 +28,6 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
     private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
-    private readonly IProfilesService _profilesService;
-    private readonly IControllerConfigurationService _controllerConfigurationService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
         IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, 
@@ -44,9 +42,6 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _serviceProvider = serviceProvider;
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
         _controllerInputReportProcessorService = controllerInputReportProcessorService;
-        _profilesService = profilesService;
-        _controllerConfigurationService = controllerConfigurationService;
-        _controllerConfigurationService.OnActiveConfigurationChanged += _controllerConfigurationService_OnActiveConfigurationChanged;
         _hidEnumeratorService.DeviceArrived += EnumeratorServiceOnHidDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += EnumeratorServiceOnHidDeviceRemoved;
 
@@ -56,15 +51,6 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
 
         SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(_supportedDevices);
-    }
-
-    private void _controllerConfigurationService_OnActiveConfigurationChanged(object sender, ControllerConfigurationChangedEventArgs e)
-    {
-        var existingDevice = SupportedDevices.SingleOrDefault(i => i.SerialString == e.ControllerKey);
-        if (existingDevice != null)
-        {
-            existingDevice.SetConfiguration(e.ControllerConfiguration);
-        }
     }
 
     private void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(HidDeviceOverWinUsb obj)
@@ -252,14 +238,12 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
             _serviceProvider
         );
 
-        device.SetConfiguration(_controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString));
-
         if (hidDevice is HidDeviceOverWinUsb)
         {
             device.IsFiltered = true;
         }
 
-        _controllerInputReportProcessorService.StartProcessing(device, deviceIdentification);
+        _controllerInputReportProcessorService.StartProcessing(device);
 
         return device;
     }

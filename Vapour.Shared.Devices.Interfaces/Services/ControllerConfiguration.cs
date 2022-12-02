@@ -11,6 +11,7 @@ public class ControllerConfiguration
     public OutputDeviceType OutputDeviceType { get; set; }
     public string Lightbar { get; set; }
     public bool IsRumbleEnabled { get; set; }
+    public bool IsPassthru { get; set; }
 
     [JsonIgnore]
     public IProfile Profile { get; set; }

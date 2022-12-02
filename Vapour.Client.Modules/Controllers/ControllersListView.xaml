@@ -32,6 +32,22 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding DisplayText}"/>
+                    <GridViewColumn Header="Passthru">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsPassthru}"></CheckBox>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Output">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding Source={StaticResource enmOutputDeviceTypes}}"
+                                          SelectedItem="{Binding OutputDeviceType}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="ProfileItem">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

@@ -23,9 +23,7 @@ public class ControllerConfigurationService : IControllerConfigurationService
         _profilesService.OnProfileDeleted += _profilesService_OnProfileDeleted;
         _profilesService.OnProfileUpdated += _profilesService_OnProfileUpdated;
     }
-
     
-
     public event EventHandler<ControllerConfigurationChangedEventArgs> OnActiveConfigurationChanged;
 
     public void Initialize()

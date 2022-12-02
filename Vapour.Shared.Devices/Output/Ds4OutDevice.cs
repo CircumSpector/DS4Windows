@@ -4,13 +4,12 @@ using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
 public class DS4OutDevice : OutDevice
 {
-    public const string devtype = "DS4";
-
     public IDualShock4Controller cont;
     //public DualShock4FeedbackReceivedEventHandler forceFeedbackCall;
     public Dictionary<int, DualShock4FeedbackReceivedEventHandler> forceFeedbacksDict =
@@ -37,7 +36,7 @@ public class DS4OutDevice : OutDevice
 
         cont = null;
     }
-    public override string GetDeviceType() => devtype;
+    public override OutputDeviceType GetDeviceType() => OutputDeviceType.DualShock4Controller;
 
     public override void RemoveFeedbacks()
     {
