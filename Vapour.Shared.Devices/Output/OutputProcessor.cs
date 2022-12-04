@@ -1,27 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices.ActiveDirectory;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.ViGEm.Client;
+
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.Output;
+
 public class OutputProcessor : IOutputProcessor
 {
     private readonly IControllerInputReportProcessor _inputReportProcessor;
     private IOutDevice _controllerDevice;
-    public OutputProcessor(ICompatibleHidDevice hidDevice, IControllerInputReportProcessor inputReportProcessor, IServiceProvider serviceProvider)
+
+    public OutputProcessor(ICompatibleHidDevice hidDevice, IControllerInputReportProcessor inputReportProcessor,
+        IServiceProvider serviceProvider)
     {
         _inputReportProcessor = inputReportProcessor;
-        
+
         Services = serviceProvider;
         Logger = Services.GetRequiredService<ILogger<OutputProcessor>>();
         HidDevice = hidDevice;
@@ -51,7 +48,8 @@ public class OutputProcessor : IOutputProcessor
         }
     }
 
-    private void _inputReportProcessor_InputReportAvailable(ICompatibleHidDevice arg1, CompatibleHidDeviceInputReport report)
+    private void _inputReportProcessor_InputReportAvailable(ICompatibleHidDevice arg1,
+        CompatibleHidDeviceInputReport report)
     {
         if (HidDevice.CurrentConfiguration.OutputDeviceType != OutputDeviceType.None && _controllerDevice != null)
         {
@@ -60,12 +58,14 @@ public class OutputProcessor : IOutputProcessor
         }
     }
 
-    private CompatibleHidDeviceInputReport UpdateBasedOnConfiguration(ControllerConfiguration configuration, CompatibleHidDeviceInputReport report)
+    private CompatibleHidDeviceInputReport UpdateBasedOnConfiguration(ControllerConfiguration configuration,
+        CompatibleHidDeviceInputReport report)
     {
         if (configuration.IsPassthru)
         {
             return report;
         }
+
         //TODO: fill in processing the configuration against the current report
         Guid profileId = configuration.ProfileId;
         return report;
@@ -74,7 +74,7 @@ public class OutputProcessor : IOutputProcessor
     private IOutDevice CreateControllerOutDevice()
     {
         IOutDevice outDevice;
-        var client = Services.GetService<ViGEmClient>();
+        ViGEmClient client = Services.GetService<ViGEmClient>();
         if (HidDevice.CurrentConfiguration.OutputDeviceType == OutputDeviceType.Xbox360Controller)
         {
             outDevice = new Xbox360OutDevice(client);
@@ -83,6 +83,7 @@ public class OutputProcessor : IOutputProcessor
         {
             outDevice = new DS4OutDevice(client);
         }
+
         return outDevice;
     }
 }

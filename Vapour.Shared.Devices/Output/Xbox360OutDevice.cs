@@ -11,9 +11,9 @@ public class Xbox360OutDevice : OutDevice
 {
     //private const int inputResolution = 127 - (-128);
     //private const float reciprocalInputResolution = 1 / (float)inputResolution;
-    private const float recipInputPosResolution = 1 / 127f;
-    private const float recipInputNegResolution = 1 / 128f;
-    private const int outputResolution = 32767 - -32768;
+    private const float RecipInputPosResolution = 1 / 127f;
+    private const float RecipInputNegResolution = 1 / 128f;
+    private const int OutputResolution = 32767 - -32768;
 
     public IXbox360Controller cont;
 
@@ -30,7 +30,10 @@ public class Xbox360OutDevice : OutDevice
 
     public override void ConvertAndSendReport(CompatibleHidDeviceInputReport state, int device = 0)
     {
-        if (!IsConnected) return;
+        if (!IsConnected)
+        {
+            return;
+        }
 
         cont.SetButtonState(Xbox360Button.Back, state.Share);
         cont.SetButtonState(Xbox360Button.LeftThumb, state.LeftThumb);
@@ -66,7 +69,10 @@ public class Xbox360OutDevice : OutDevice
 
     public override void Disconnect()
     {
-        foreach (var pair in forceFeedbacksDict) cont.FeedbackReceived -= pair.Value;
+        foreach (KeyValuePair<int, Xbox360FeedbackReceivedEventHandler> pair in forceFeedbacksDict)
+        {
+            cont.FeedbackReceived -= pair.Value;
+        }
 
         forceFeedbacksDict.Clear();
 
@@ -83,19 +89,25 @@ public class Xbox360OutDevice : OutDevice
     public override void ResetState(bool submit = true)
     {
         cont.ResetReport();
-        if (submit) cont.SubmitReport();
+        if (submit)
+        {
+            cont.SubmitReport();
+        }
     }
 
     public override void RemoveFeedbacks()
     {
-        foreach (var pair in forceFeedbacksDict) cont.FeedbackReceived -= pair.Value;
+        foreach (KeyValuePair<int, Xbox360FeedbackReceivedEventHandler> pair in forceFeedbacksDict)
+        {
+            cont.FeedbackReceived -= pair.Value;
+        }
 
         forceFeedbacksDict.Clear();
     }
 
     public override void RemoveFeedback(int inIdx)
     {
-        if (forceFeedbacksDict.TryGetValue(inIdx, out var handler))
+        if (forceFeedbacksDict.TryGetValue(inIdx, out Xbox360FeedbackReceivedEventHandler handler))
         {
             cont.FeedbackReceived -= handler;
             forceFeedbacksDict.Remove(inIdx);
@@ -107,14 +119,18 @@ public class Xbox360OutDevice : OutDevice
         unchecked
         {
             Value -= 0x80;
-            var recipRun = Value >= 0 ? recipInputPosResolution : recipInputNegResolution;
+            float recipRun = Value >= 0 ? RecipInputPosResolution : RecipInputNegResolution;
 
-            var temp = Value * recipRun;
+            float temp = Value * recipRun;
             //if (Flip) temp = (temp - 0.5f) * -1.0f + 0.5f;
-            if (Flip) temp = -temp;
+            if (Flip)
+            {
+                temp = -temp;
+            }
+
             temp = (temp + 1.0f) * 0.5f;
 
-            return (short)(temp * outputResolution + -32768);
+            return (short)((temp * OutputResolution) + -32768);
         }
     }
 }

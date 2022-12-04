@@ -67,7 +67,7 @@ public sealed class ControllerManagerHost
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
     }
 
-    //temporary because the client still needs to run part of the host for now
+    // TODO: temporary because the client still needs to run part of the host for now
     public bool IsEnabled { get; set; }
 
     public bool IsRunning { get; private set; }

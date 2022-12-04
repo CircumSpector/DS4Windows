@@ -8,18 +8,18 @@ using Vapour.Shared.Devices.HID;
 namespace Vapour.Shared.Devices.Types;
 
 /// <summary>
-///     Represents a logical input source baked by a hardware <see cref="CompatibleHidDevice" />.
+///     Represents a logical input source baked by a hardware <see cref="ICompatibleHidDevice" />.
 /// </summary>
 public interface IInputSource
 {
     /// <summary>
-    ///     The primary source <see cref="CompatibleHidDevice"/>.
+    ///     The primary source <see cref="ICompatibleHidDevice"/>.
     /// </summary>
     ICompatibleHidDevice PrimarySourceDevice { get; }
 }
 
 /// <summary>
-///     Represents a logical input source baked by a two hardware <see cref="CompatibleHidDevice" />s.
+///     Represents a logical input source baked by a two hardware <see cref="ICompatibleHidDevice" />s.
 /// </summary>
 public interface ICompositeInputSource : IInputSource
 {
@@ -30,7 +30,7 @@ public interface ICompositeInputSource : IInputSource
 }
 
 /// <summary>
-///     Represents a logical input source baked by a hardware <see cref="CompatibleHidDevice" />.
+///     Represents a logical input source baked by a hardware <see cref="ICompatibleHidDevice" />.
 /// </summary>
 public class InputSource : IInputSource
 {
@@ -44,7 +44,7 @@ public class InputSource : IInputSource
 }
 
 /// <summary>
-///     Represents a logical input source baked by a two hardware <see cref="CompatibleHidDevice" />s.
+///     Represents a logical input source baked by two hardware <see cref="ICompatibleHidDevice" />s.
 /// </summary>
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
