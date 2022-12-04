@@ -45,6 +45,10 @@ public interface ICompatibleHidDevice : IDisposable
     void ProcessInputReport(ReadOnlySpan<byte> input);
     CompatibleHidDeviceInputReport InputReport { get; }
     ControllerConfiguration CurrentConfiguration { get; }
+
+    /// <summary>
+    ///     The <see cref="Serial"/> as string.
+    /// </summary>
     string SerialString { get; }
 
     void SetConfiguration(ControllerConfiguration profile);

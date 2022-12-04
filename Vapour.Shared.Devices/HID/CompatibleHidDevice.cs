@@ -91,8 +91,9 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     public ConnectionType? Connection => _connection ??= GetConnectionType();
 
     /// <inheritdoc />
-    public PhysicalAddress Serial { get; protected init; }
+    public PhysicalAddress Serial { get; protected set; }
 
+    /// <inheritdoc />
     public string SerialString => Serial?.ToString();
 
     /// <inheritdoc />

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net.NetworkInformation;
+
+using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Devices.HID.Devices.Reports;
 
@@ -6,6 +8,8 @@ namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 {
+    private static readonly PhysicalAddress BlankSerial = PhysicalAddress.Parse("00:00:00:00:00:00");
+
     private const byte SerialFeatureId = 18;
 
     private readonly int _reportStartOffset;
@@ -36,6 +40,8 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
     }
 
+    public override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
+
     public override void OnAfterStartListening()
     {
         /*
@@ -48,24 +54,35 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         {
             byte[] initialOutBuffer =
             {
-                0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+                0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
             };
 
             SourceDevice.WriteOutputReportViaInterrupt(initialOutBuffer, 500);
         }
     }
 
-    public override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
-
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        if (Connection == ConnectionType.SonyWirelessAdapter && (input[31] & 0x04) != 0)
-            // TODO: implement me!
+        // invalid input report ID
+        if (input[0] == 0x00)
         {
             return;
+        }
+
+        // device is Sony Wireless Adapter but controller is not connected
+        if (Connection == ConnectionType.SonyWirelessAdapter)
+        {
+            if ((input[31] & 0x04) != 0)
+            {
+                return;
+            }
+            
+            // controller connected, refresh serial
+            if (Equals(Serial, BlankSerial))
+            {
+                Serial = ReadSerial(SerialFeatureId);
+            }
         }
 
         InputReport.Parse(input.Slice(_reportStartOffset));
