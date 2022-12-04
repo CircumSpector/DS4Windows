@@ -70,9 +70,10 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
             return;
         }
 
-        // device is Sony Wireless Adapter but controller is not connected
+        // device is Sony Wireless Adapter...
         if (Connection == ConnectionType.SonyWirelessAdapter)
         {
+            // ...but controller is not connected
             if ((input[31] & 0x04) != 0)
             {
                 return;
