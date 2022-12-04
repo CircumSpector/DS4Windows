@@ -22,7 +22,7 @@ namespace Vapour.Shared.Devices.Services;
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevice>
+internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevice>
 {
     private readonly ObservableCollection<HidDevice> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);

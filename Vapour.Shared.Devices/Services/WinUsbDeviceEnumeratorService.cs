@@ -12,14 +12,12 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
 
-using static System.String;
-
 namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
 ///     Single point of truth of states for all connected and handled WinUSB devices.
 /// </summary>
-public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
+internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
 {
     private readonly ObservableCollection<HidDeviceOverWinUsb> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
@@ -144,7 +142,7 @@ public class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevi
             //
             // Grab product string from device if property is missing
             // 
-            if (IsNullOrEmpty(friendlyName))
+            if (string.IsNullOrEmpty(friendlyName))
             {
                 friendlyName = winUsbDevice.Descriptor.PathName;
             }
