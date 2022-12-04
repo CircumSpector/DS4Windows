@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using Nefarius.ViGEm.Client;
-
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Output;
 
 namespace Vapour.Shared.Devices.Services;
 
+/// <summary>
+///     Processes input reports for <see cref="ICompatibleHidDevice"/>s.
+/// </summary>
 public sealed class ControllerInputReportProcessorService : IControllerInputReportProcessorService
 {
     private readonly IControllerConfigurationService _controllerConfigurationService;
@@ -25,7 +26,8 @@ public sealed class ControllerInputReportProcessorService : IControllerInputRepo
         _controllerInputReportProcessors = new Dictionary<string, IControllerInputReportProcessor>();
         _outputProcessors = new Dictionary<string, IOutputProcessor>();
 
-        _controllerConfigurationService.OnActiveConfigurationChanged += _controllerConfigurationService_OnActiveConfigurationChanged;
+        _controllerConfigurationService.OnActiveConfigurationChanged +=
+            OnActiveConfigurationChanged;
     }
 
     public void StartProcessing(ICompatibleHidDevice device)
@@ -63,16 +65,17 @@ public sealed class ControllerInputReportProcessorService : IControllerInputRepo
         {
             IControllerInputReportProcessor inputReportProcessor = _controllerInputReportProcessors[controllerKey];
             inputReportProcessor.StopInputReportReader();
-            var outputProcessor = _outputProcessors[controllerKey];
+            IOutputProcessor outputProcessor = _outputProcessors[controllerKey];
             outputProcessor.StopOutputProcessing();
         }
     }
 
-    private void _controllerConfigurationService_OnActiveConfigurationChanged(object sender, ControllerConfigurationChangedEventArgs e)
+    private void OnActiveConfigurationChanged(object sender,
+        ControllerConfigurationChangedEventArgs e)
     {
         if (_controllerInputReportProcessors.ContainsKey(e.ControllerKey))
         {
-            var existingDevice = _controllerInputReportProcessors[e.ControllerKey].HidDevice;
+            ICompatibleHidDevice existingDevice = _controllerInputReportProcessors[e.ControllerKey].HidDevice;
             StopProcessing(existingDevice);
             StartProcessing(existingDevice);
         }
