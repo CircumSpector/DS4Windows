@@ -68,7 +68,8 @@ public sealed class CompatibleDeviceIdentification
         string name = "Generic DS4",
         InputDeviceType inputDevType = InputDeviceType.DualShock4,
         CompatibleHidDeviceFeatureSet featureSet = CompatibleHidDeviceFeatureSet.Default,
-        HidDeviceOverWinUsbEndpoints winUsbEndpoints = null
+        HidDeviceOverWinUsbEndpoints winUsbEndpoints = null,
+        bool isDongle = false
     )
     {
         Vid = vid;
@@ -77,6 +78,7 @@ public sealed class CompatibleDeviceIdentification
         DeviceType = inputDevType;
         FeatureSet = featureSet;
         WinUsbEndpoints = winUsbEndpoints;
+        IsDongle = isDongle;
     }
 
     /// <summary>
@@ -108,4 +110,9 @@ public sealed class CompatibleDeviceIdentification
     ///     The winusb endpoints for devices that support winusb rewrite
     /// </summary>
     public HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; }
+
+    /// <summary>
+    ///     Gets whether the device is a dongle masquerading a wireless device.
+    /// </summary>
+    public bool IsDongle { get; }
 }
