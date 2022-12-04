@@ -65,45 +65,52 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
 
     public void StartInputReportReader()
     {
-        if (!IsProcessing)
+        if (IsProcessing)
         {
-            if (_inputReportToken == null || _inputReportToken.Token.IsCancellationRequested)
-            {
-                _inputReportToken = new CancellationTokenSource();
-            }
-
-            _inputReportReader = new Thread(ReadInputReportLoop)
-            {
-                Priority = ThreadPriority.AboveNormal, IsBackground = true
-            };
-            _inputReportReader.Start();
-
-            _inputReportProcessor = new Thread(ProcessInputReportLoop)
-            {
-                Priority = ThreadPriority.AboveNormal, IsBackground = true
-            };
-            _inputReportProcessor.Start();
-
-            IsProcessing = true;
+            return;
         }
+
+        if (_inputReportToken == null || _inputReportToken.Token.IsCancellationRequested)
+        {
+            _inputReportToken = new CancellationTokenSource();
+        }
+
+        _inputReportReader = new Thread(ReadInputReportLoop)
+        {
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
+        };
+        _inputReportReader.Start();
+
+        _inputReportProcessor = new Thread(ProcessInputReportLoop)
+        {
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
+        };
+        _inputReportProcessor.Start();
+
+        IsProcessing = true;
     }
 
     public void StopInputReportReader()
     {
-        if (IsProcessing)
+        if (!IsProcessing)
         {
-            _inputReportToken.Cancel();
-
-            _inputReportReader.Join();
-            _inputReportProcessor.Join();
-
-            _inputReportToken.Dispose();
-            _inputReportToken = null;
-
-            IsProcessing = false;
+            return;
         }
+
+        _inputReportToken.Cancel();
+
+        _inputReportReader.Join();
+        _inputReportProcessor.Join();
+
+        _inputReportToken.Dispose();
+        _inputReportToken = null;
+
+        IsProcessing = false;
     }
 
+    /// <summary>
+    ///     Background thread dequeueing and dispatching read input reports.
+    /// </summary>
     private async void ProcessInputReportLoop()
     {
         Logger.LogDebug("Started input report processing thread");
@@ -141,6 +148,9 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
         }
     }
 
+    /// <summary>
+    ///     Background thread reading input reports from the device.
+    /// </summary>
     private async void ReadInputReportLoop()
     {
         Logger.LogDebug("Started input report reading thread");
