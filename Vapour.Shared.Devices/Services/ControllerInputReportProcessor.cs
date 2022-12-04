@@ -17,6 +17,9 @@ using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services;
 
+/// <summary>
+///     Handles reading input reports from a compatible input device and dispatches them.
+/// </summary>
 public sealed class ControllerInputReportProcessor : IControllerInputReportProcessor
 {
     private static readonly Meter Meter = new(TracingSources.AssemblyName);
@@ -63,6 +66,7 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
     public bool IsProcessing { get; private set; }
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
+    /// <inheritdoc />
     public void StartInputReportReader()
     {
         if (IsProcessing)
@@ -90,6 +94,7 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
         IsProcessing = true;
     }
 
+    /// <inheritdoc />
     public void StopInputReportReader()
     {
         if (!IsProcessing)
@@ -138,6 +143,7 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
                 }
             }
         }
+        // TODO: possibly handle this somewhere else
         catch (VigemBusNotFoundException)
         {
             StopInputReportReader();
