@@ -17,17 +17,14 @@ namespace Vapour.Shared.Devices.HostedServices;
 /// </summary>
 public sealed class ControllerManagerHost
 {
-    //temporary because the client still needs to run part of the host for now
-    public static bool IsEnabled = false;
+    private readonly IControllerConfigurationService _controllerConfigurationService;
+    private readonly IControllerFilterService _controllerFilter;
     private readonly IDeviceNotificationListener _deviceNotificationListener;
+    private readonly IDeviceSettingsService _deviceSettingsService;
     private readonly IControllersEnumeratorService _enumerator;
+    private readonly IGlobalStateService _globalStateService;
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidDeviceEnumeratorService;
-    private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
-    private readonly IDeviceSettingsService _deviceSettingsService;
-    private readonly IControllerFilterService _controllerFilter;
-    private readonly IGlobalStateService _globalStateService;
-    private readonly IControllerConfigurationService _controllerConfigurationService;
 
     private readonly IInputSourceService _inputSourceService;
 
@@ -36,6 +33,7 @@ public sealed class ControllerManagerHost
     private readonly IControllerManagerService _manager;
 
     private readonly IProfilesService _profileService;
+    private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
     private CancellationTokenSource _controllerHostToken;
 
     public ControllerManagerHost(
@@ -45,7 +43,7 @@ public sealed class ControllerManagerHost
         IControllerManagerService manager,
         IInputSourceService inputSourceService,
         IDeviceNotificationListener deviceNotificationListener,
-        IHidDeviceEnumeratorService<HidDevice> hidDeviceEnumeratorService, 
+        IHidDeviceEnumeratorService<HidDevice> hidDeviceEnumeratorService,
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IDeviceSettingsService deviceSettingsService,
         IControllerFilterService controllerFilter,
@@ -68,6 +66,9 @@ public sealed class ControllerManagerHost
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
     }
+
+    //temporary because the client still needs to run part of the host for now
+    public bool IsEnabled { get; set; }
 
     public bool IsRunning { get; private set; }
 

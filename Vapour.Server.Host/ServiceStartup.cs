@@ -55,7 +55,7 @@ public static class ServiceStartup
         if (app.Environment.IsDevelopment() || Environment.UserInteractive)
         {
             ControllerManagerHost controllerHost = app.Services.GetRequiredService<ControllerManagerHost>();
-            ControllerManagerHost.IsEnabled = true;
+            controllerHost.IsEnabled = true;
             
             app.Lifetime.ApplicationStopping.Register(async () =>
             {
