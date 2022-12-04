@@ -2,6 +2,9 @@
 
 namespace Vapour.Shared.Devices.HID;
 
+/// <summary>
+///     Utility class holding meta-data about compatible device detection and configuration.
+/// </summary>
 public static class KnownDevices
 {
     private const int SonyVid = 0x054C;
@@ -13,6 +16,9 @@ public static class KnownDevices
     private const int JoyconLProductId = 0x2006;
     private const int JoyconRProductId = 0x2007;
 
+    /// <summary>
+    ///     Gets a list of all supported input devices' meta-data.
+    /// </summary>
     public static readonly IEnumerable<CompatibleDeviceIdentification> List = new List<CompatibleDeviceIdentification>
     {
         // Sony Wireless Adapter "DUALSHOCK®4 USB Wireless Adaptor"
@@ -115,6 +121,12 @@ public static class KnownDevices
                 .VendorDefinedDevice) // Sony DualShock 3 using DsHidMini driver. DsHidMini uses vendor-defined HID device type when it's emulating DS3 using DS4 button layout
     };
 
+    /// <summary>
+    ///     Checks whether a device identified by VId & PID supports being run under WinUSB.
+    /// </summary>
+    /// <param name="vid">The Vendor ID.</param>
+    /// <param name="pid">The Product ID.</param>
+    /// <returns>True if supported, false otherwise.</returns>
     public static CompatibleDeviceIdentification IsWinUsbRewriteSupported(int vid, int pid)
     {
         CompatibleDeviceIdentification supportedDevice = List.SingleOrDefault(i =>

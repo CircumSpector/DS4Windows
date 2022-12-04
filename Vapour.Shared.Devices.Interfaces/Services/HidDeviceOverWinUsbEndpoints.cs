@@ -1,6 +1,6 @@
 ﻿namespace Vapour.Shared.Devices.Services;
 
-public class HidDeviceOverWinUsbEndpoints
+public sealed class HidDeviceOverWinUsbEndpoints
 {
     /// <summary>
     ///     Gets the address of the Interrupt IN endpoint (where input reports are to be expected).

@@ -60,7 +60,7 @@ public enum CompatibleHidDeviceFeatureSet : ushort
 /// <summary>
 ///     Describes properties to identify a compatible input source device.
 /// </summary>
-public class CompatibleDeviceIdentification
+public sealed class CompatibleDeviceIdentification
 {
     internal CompatibleDeviceIdentification(
         int vid,
