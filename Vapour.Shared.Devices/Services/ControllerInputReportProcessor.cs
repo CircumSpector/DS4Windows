@@ -170,6 +170,17 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
                 await _inputReportChannel.Writer.WriteAsync(_inputReportArray, _inputReportToken.Token);
             }
         }
+        // general cancellation case
+        catch (TaskCanceledException)
+        {
+            if (!_inputReportToken.IsCancellationRequested)
+            {
+                _inputReportToken.Cancel();
+            }
+
+            HidDevice.FireDisconnected();
+        }
+        // general cancellation case
         catch (ObjectDisposedException)
         {
             if (!_inputReportToken.IsCancellationRequested)
@@ -179,6 +190,7 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
 
             HidDevice.FireDisconnected();
         }
+        // HID-API errors
         catch (HidDeviceException win32)
         {
             if (win32.ErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)
@@ -190,6 +202,7 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
 
             HidDevice.FireDisconnected();
         }
+        // WinUSB errors
         catch (USBException ex)
         {
             Exception apiException = ex.InnerException;
@@ -220,6 +233,7 @@ public sealed class ControllerInputReportProcessor : IControllerInputReportProce
 
             HidDevice.FireDisconnected();
         }
+        // unaccounted error
         catch (Exception ex)
         {
             Logger.LogError(ex, "Fatal failure in input report reading");
