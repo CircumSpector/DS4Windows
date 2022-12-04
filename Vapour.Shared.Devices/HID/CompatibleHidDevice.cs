@@ -136,7 +136,8 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     {
     }
 
-    protected virtual void OnConfigurationChanged(ControllerConfiguration oldProfile, ControllerConfiguration newProfile)
+    protected virtual void OnConfigurationChanged(ControllerConfiguration oldProfile,
+        ControllerConfiguration newProfile)
     {
     }
 

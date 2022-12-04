@@ -3,16 +3,18 @@
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Profiles;
+using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Shared.Devices.Services;
+
 public class ControllerConfigurationService : IControllerConfigurationService
 {
     private readonly IGlobalStateService _globalStateService;
     private readonly IProfilesService _profilesService;
+    private Dictionary<string, ControllerConfiguration> _activeConfigurations;
     private Dictionary<string, ControllerConfiguration> _controllerConfigurations;
     private Dictionary<string, ControllerGameConfiguration> _controllerGameConfigurations;
-    private Dictionary<string, ControllerConfiguration> _activeConfigurations;
 
     public ControllerConfigurationService(
         IGlobalStateService globalStateService,
@@ -23,7 +25,7 @@ public class ControllerConfigurationService : IControllerConfigurationService
         _profilesService.OnProfileDeleted += _profilesService_OnProfileDeleted;
         _profilesService.OnProfileUpdated += _profilesService_OnProfileUpdated;
     }
-    
+
     public event EventHandler<ControllerConfigurationChangedEventArgs> OnActiveConfigurationChanged;
 
     public void Initialize()
@@ -45,7 +47,6 @@ public class ControllerConfigurationService : IControllerConfigurationService
             }
 
             _activeConfigurations.Remove(controllerKey);
-
         }
 
         if (_controllerConfigurations.ContainsKey(controllerKey) &&
@@ -101,19 +102,20 @@ public class ControllerConfigurationService : IControllerConfigurationService
             SaveControllerConfigurations();
         }
 
-        OnActiveConfigurationChanged?.Invoke(this, new ControllerConfigurationChangedEventArgs
-        {
-            ControllerKey = controllerKey,
-            ControllerConfiguration = controllerConfiguration
-        });
-}
+        OnActiveConfigurationChanged?.Invoke(this,
+            new ControllerConfigurationChangedEventArgs
+            {
+                ControllerKey = controllerKey, ControllerConfiguration = controllerConfiguration
+            });
+    }
 
     private void LoadControllerConfigurations()
     {
         if (File.Exists(_globalStateService.LocalControllerConfigurationsLocation))
         {
-            var data = File.ReadAllText(_globalStateService.LocalControllerConfigurationsLocation);
-            var controllerConfigurations = JsonSerializer.Deserialize<Dictionary<string, ControllerConfiguration>>(data)
+            string data = File.ReadAllText(_globalStateService.LocalControllerConfigurationsLocation);
+            Dictionary<string, ControllerConfiguration> controllerConfigurations = JsonSerializer
+                .Deserialize<Dictionary<string, ControllerConfiguration>>(data)
                 .Where(i =>
                 {
                     if (_profilesService.AvailableProfiles.ContainsKey(i.Value.ProfileId))
@@ -151,13 +153,15 @@ public class ControllerConfigurationService : IControllerConfigurationService
     {
         if (File.Exists(_globalStateService.LocalControllerGameConfigurationsLocation))
         {
-            var data = File.ReadAllText(_globalStateService.LocalControllerConfigurationsLocation);
-            var controllerGameConfigurations = JsonSerializer.Deserialize<Dictionary<string, ControllerGameConfiguration>>(data)
+            string data = File.ReadAllText(_globalStateService.LocalControllerConfigurationsLocation);
+            Dictionary<string, ControllerGameConfiguration> controllerGameConfigurations = JsonSerializer
+                .Deserialize<Dictionary<string, ControllerGameConfiguration>>(data)
                 .Where(i =>
                 {
                     if (_profilesService.AvailableProfiles.ContainsKey(i.Value.ControllerConfiguration.ProfileId))
                     {
-                        i.Value.ControllerConfiguration.Profile = _profilesService.AvailableProfiles[i.Value.ControllerConfiguration.ProfileId];
+                        i.Value.ControllerConfiguration.Profile =
+                            _profilesService.AvailableProfiles[i.Value.ControllerConfiguration.ProfileId];
                         return true;
                     }
 
@@ -188,7 +192,7 @@ public class ControllerConfigurationService : IControllerConfigurationService
 
     private ControllerConfiguration GetDefaultControllerConfiguration()
     {
-        var defaultProfile = _profilesService.AvailableProfiles[Constants.DefaultProfileId].DeepClone();
+        IProfile defaultProfile = _profilesService.AvailableProfiles[Constants.DefaultProfileId].DeepClone();
         return new ControllerConfiguration
         {
             ProfileId = defaultProfile.Id,
@@ -201,23 +205,25 @@ public class ControllerConfigurationService : IControllerConfigurationService
 
     private void _profilesService_OnProfileDeleted(object sender, Guid e)
     {
-        foreach (var controllerConfiguration in _activeConfigurations.Where(i => i.Value.ProfileId == e).ToList())
+        foreach (KeyValuePair<string, ControllerConfiguration> controllerConfiguration in _activeConfigurations
+                     .Where(i => i.Value.ProfileId == e).ToList())
         {
-            var defaultControllerConfiguration = GetDefaultControllerConfiguration();
-            var existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
+            ControllerConfiguration defaultControllerConfiguration = GetDefaultControllerConfiguration();
+            ControllerConfiguration existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
             existingConfiguration.Profile = defaultControllerConfiguration.Profile;
             existingConfiguration.ProfileId = defaultControllerConfiguration.ProfileId;
-            OnActiveConfigurationChanged?.Invoke(this, new ControllerConfigurationChangedEventArgs
-            {
-                ControllerKey = controllerConfiguration.Key,
-                ControllerConfiguration = existingConfiguration
-            });
+            OnActiveConfigurationChanged?.Invoke(this,
+                new ControllerConfigurationChangedEventArgs
+                {
+                    ControllerKey = controllerConfiguration.Key, ControllerConfiguration = existingConfiguration
+                });
         }
 
-        foreach (var controllerConfiguration in _controllerConfigurations.Where(i => i.Value.ProfileId == e).ToList())
+        foreach (KeyValuePair<string, ControllerConfiguration> controllerConfiguration in _controllerConfigurations
+                     .Where(i => i.Value.ProfileId == e).ToList())
         {
-            var defaultControllerConfiguration = GetDefaultControllerConfiguration();
-            var existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
+            ControllerConfiguration defaultControllerConfiguration = GetDefaultControllerConfiguration();
+            ControllerConfiguration existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
             existingConfiguration.Profile = defaultControllerConfiguration.Profile;
             existingConfiguration.ProfileId = defaultControllerConfiguration.ProfileId;
         }
@@ -227,14 +233,16 @@ public class ControllerConfigurationService : IControllerConfigurationService
 
     private void _profilesService_OnProfileUpdated(object sender, Guid e)
     {
-        foreach (var controllerConfiguration in _activeConfigurations.Where(i => i.Value.ProfileId == e))
+        foreach (KeyValuePair<string, ControllerConfiguration> controllerConfiguration in _activeConfigurations.Where(
+                     i => i.Value.ProfileId == e))
         {
             _activeConfigurations[controllerConfiguration.Key].Profile = _profilesService.AvailableProfiles[e];
-            OnActiveConfigurationChanged?.Invoke(this, new ControllerConfigurationChangedEventArgs
-            {
-                ControllerKey = controllerConfiguration.Key,
-                ControllerConfiguration = controllerConfiguration.Value
-            });
+            OnActiveConfigurationChanged?.Invoke(this,
+                new ControllerConfigurationChangedEventArgs
+                {
+                    ControllerKey = controllerConfiguration.Key,
+                    ControllerConfiguration = controllerConfiguration.Value
+                });
         }
     }
 }

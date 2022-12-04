@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 using Vapour.Shared.Common.Services;
 
 namespace Vapour.Shared.Devices.Services;
+
 public class DeviceSettingsService : IDeviceSettingsService
 {
-    private readonly IGlobalStateService _globalStateService;
     private const string DeviceSettingsFileName = "DeviceSettings.json";
+    private readonly IGlobalStateService _globalStateService;
 
     public DeviceSettingsService(IGlobalStateService globalStateService)
     {
@@ -21,7 +18,7 @@ public class DeviceSettingsService : IDeviceSettingsService
 
     public void LoadSettings()
     {
-        var deviceSettingsPath = GetDeviceSettingsFilePath();
+        string deviceSettingsPath = GetDeviceSettingsFilePath();
         if (!File.Exists(deviceSettingsPath))
         {
             Settings = new DeviceSettings();
@@ -29,22 +26,22 @@ public class DeviceSettingsService : IDeviceSettingsService
         }
         else
         {
-            using var file = File.OpenRead(deviceSettingsPath);
+            using FileStream file = File.OpenRead(deviceSettingsPath);
             Settings = JsonSerializer.Deserialize<DeviceSettings>(file);
         }
     }
 
     public void SaveSettings()
     {
-        var deviceSettingsPath = GetDeviceSettingsFilePath();
-        var settings = JsonSerializer.Serialize(Settings);
+        string deviceSettingsPath = GetDeviceSettingsFilePath();
+        string settings = JsonSerializer.Serialize(Settings);
 
         if (File.Exists(deviceSettingsPath))
         {
             File.Delete(deviceSettingsPath);
         }
 
-        var file = File.Create(deviceSettingsPath);
+        FileStream file = File.Create(deviceSettingsPath);
         file.Dispose();
         File.WriteAllText(deviceSettingsPath, settings);
     }

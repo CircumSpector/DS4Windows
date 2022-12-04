@@ -7,7 +7,7 @@ using Vapour.Shared.Devices.Output;
 namespace Vapour.Shared.Devices.Services;
 
 /// <summary>
-///     Processes input reports for <see cref="ICompatibleHidDevice"/>s.
+///     Processes input reports for <see cref="ICompatibleHidDevice" />s.
 /// </summary>
 public sealed class ControllerInputReportProcessorService : IControllerInputReportProcessorService
 {

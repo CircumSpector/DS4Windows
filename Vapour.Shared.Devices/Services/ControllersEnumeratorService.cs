@@ -4,11 +4,8 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Telemetry;
-using Vapour.Shared.Common.Types;
-using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Output;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -17,6 +14,7 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
+    private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
@@ -27,10 +25,9 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
 
     private readonly ObservableCollection<ICompatibleHidDevice> _supportedDevices;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
-    private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-        IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService, 
+        IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService,
         IServiceProvider serviceProvider,
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IControllerInputReportProcessorService controllerInputReportProcessorService,
@@ -51,16 +48,6 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         _supportedDevices = new ObservableCollection<ICompatibleHidDevice>();
 
         SupportedDevices = new ReadOnlyObservableCollection<ICompatibleHidDevice>(_supportedDevices);
-    }
-
-    private void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(HidDeviceOverWinUsb obj)
-    {
-        EnumeratorServiceOnHidDeviceRemoved(obj);
-    }
-
-    private void WinUsbDeviceEnumeratorServiceOnDeviceArrived(HidDeviceOverWinUsb obj)
-    {
-        EnumeratorServiceOnHidDeviceArrived(obj);
     }
 
     /// <inheritdoc />
@@ -149,6 +136,16 @@ public sealed class ControllersEnumeratorService : IControllersEnumeratorService
         }
 
         _supportedDevices.Clear();
+    }
+
+    private void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(HidDeviceOverWinUsb obj)
+    {
+        EnumeratorServiceOnHidDeviceRemoved(obj);
+    }
+
+    private void WinUsbDeviceEnumeratorServiceOnDeviceArrived(HidDeviceOverWinUsb obj)
+    {
+        EnumeratorServiceOnHidDeviceArrived(obj);
     }
 
     private void EnumeratorServiceOnHidDeviceArrived(HidDevice hidDevice)
