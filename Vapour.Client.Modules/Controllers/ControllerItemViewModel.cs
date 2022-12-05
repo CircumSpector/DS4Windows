@@ -4,8 +4,6 @@ using System.Windows.Media.Imaging;
 
 using AutoMapper;
 
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
@@ -74,7 +72,6 @@ public sealed class ControllerItemViewModel :
     public bool ConfigurationSetFromUser { get; set; } = true;
 
     private string _serial;
-
     public string Serial
     {
         get => _serial;
@@ -82,7 +79,6 @@ public sealed class ControllerItemViewModel :
     }
 
     private BitmapImage _deviceImage;
-
     public BitmapImage DeviceImage
     {
         get => _deviceImage;
@@ -90,7 +86,6 @@ public sealed class ControllerItemViewModel :
     }
 
     private string _displayText;
-
     public string DisplayText
     {
         get => _displayText;
@@ -98,7 +93,6 @@ public sealed class ControllerItemViewModel :
     }
 
     private BitmapImage _connectionTypeImage;
-
     public BitmapImage ConnectionTypeImage
     {
         get => _connectionTypeImage;
@@ -106,20 +100,12 @@ public sealed class ControllerItemViewModel :
     }
 
     private decimal _batteryPercentage;
-
     public decimal BatteryPercentage
     {
         get => _batteryPercentage;
         private set => SetProperty(ref _batteryPercentage, value);
     }
 
-    private string _profileName;
-    public string ProfileName
-    {
-        get => _profileName;
-        set => SetProperty(ref _profileName, value);
-    }
-    
     public Guid SelectedProfileId
     {
         get => CurrentConfiguration.ProfileId;
@@ -134,7 +120,6 @@ public sealed class ControllerItemViewModel :
     }
 
     private SolidColorBrush _currentColor;
-
     public SolidColorBrush CurrentColor
     {
         get => _currentColor;
@@ -142,7 +127,6 @@ public sealed class ControllerItemViewModel :
     }
 
     private bool _isFiltered;
-
     public bool IsFiltered
     {
         get => _isFiltered;
@@ -151,23 +135,6 @@ public sealed class ControllerItemViewModel :
 
     public string InstanceId { get; set; }
     public string ParentInstance { get; set; }
-
-    public string OutputIconKind
-    {
-        get
-        {
-            if (CurrentConfiguration.OutputDeviceType == OutputDeviceType.Xbox360Controller)
-            {
-                return "MicrosoftXbox";
-            }
-            else if (CurrentConfiguration.OutputDeviceType == OutputDeviceType.DualShock4Controller)
-            {
-                return "SonyPlaystation";
-            }
-
-            return "ControllerOff";
-        }
-    }
 
     public bool IsPassthru
     {
@@ -179,14 +146,6 @@ public sealed class ControllerItemViewModel :
                 CurrentConfiguration.IsPassthru = value;
                 OnPropertyChanged();
             }
-        }
-    }
-
-    public string IsPassthruIconKind
-    {
-        get
-        {
-            return IsPassthru ? "CheckCircle" : "CloseCircle";
         }
     }
 
