@@ -28,6 +28,4 @@ public sealed class ControllerConnectedMessage
     public ControllerConfiguration CurrentConfiguration { get; set; }
 
     public bool IsFiltered { get; set; }
-
-    public string ProfileName { get; set; }
 }

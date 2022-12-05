@@ -3,15 +3,21 @@ using System.Collections.Specialized;
 
 using JetBrains.Annotations;
 
+using MaterialDesignThemes.Wpf;
+
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
 
 using PropertyChanged;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles;
+using Vapour.Client.Modules.Profiles.Edit;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
 using Vapour.Shared.Configuration.Profiles.Schema;
+
+using Constants = Vapour.Client.Modules.Main.Constants;
 
 namespace Vapour.Client.Modules.Controllers;
 
@@ -21,21 +27,27 @@ public sealed class ControllersViewModel :
     IControllersViewModel
 {
     private readonly IControllerServiceClient _controllerService;
+    private readonly IViewModelFactory _viewModelFactory;
     private readonly IProfileServiceClient _profilesService;
     private readonly IServiceProvider _serviceProvider;
 
     public ControllersViewModel(
         IProfileServiceClient profilesService,
         IServiceProvider serviceProvider,
-        IControllerServiceClient controllerService)
+        IControllerServiceClient controllerService,
+        IViewModelFactory viewModelFactory)
     {
         _serviceProvider = serviceProvider;
         _controllerService = controllerService;
+        _viewModelFactory = viewModelFactory;
         _profilesService = profilesService;
+
+        ConfigureCommand = new RelayCommand<IControllerItemViewModel>(OnConfigure);
 
         CreateSelectableProfileItems();
     }
 
+    public RelayCommand<IControllerItemViewModel> ConfigureCommand { get; }
     public ObservableCollection<IControllerItemViewModel> ControllerItems { get; } = new();
     public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new();
 
@@ -125,6 +137,26 @@ public sealed class ControllersViewModel :
             existing.Dispose();
             SelectableProfileItems.Remove(existing);
         }
+    }
+
+    private async void OnConfigure(IControllerItemViewModel controllerItem)
+    {
+        IControllerConfigureViewModel controllerConfigureViewModel = await _viewModelFactory.Create<IControllerConfigureViewModel, IControllerConfigureView>();
+        controllerConfigureViewModel.SetControllerToConfigure(controllerItem);
+        await DialogHost.Show(controllerConfigureViewModel.MainView, Constants.DialogHostName, (o, e) =>
+        {
+            if (e.Parameter != null)
+            {
+                SaveConfiguration((IControllerConfigureViewModel)e.Parameter);
+            }
+
+            controllerConfigureViewModel.Dispose();
+        });
+    }
+
+    private void SaveConfiguration(IControllerConfigureViewModel controllerConfigureViewModel)
+    {
+        //_controllerService.SaveDefaultControllerConfiguration(controllerConfigureViewModel.ControllerItem.Serial, CurrentConfiguration);
     }
 
     [SuppressPropertyChangedWarnings]

@@ -12,15 +12,12 @@ namespace Vapour.Server.Host.Controller;
 public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 {
     private readonly IHubContext<ControllerMessageHub, IControllerMessageClient> _hubContext;
-    private readonly IProfilesService _profilesService;
 
     public ControllerMessageForwarder(ControllerManagerHost controllerManagerHost,
         IControllerConfigurationService controllerConfigurationService,
-        IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext,
-        IProfilesService profilesService)
+        IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext)
     {
         _hubContext = hubContext;
-        _profilesService = profilesService;
 
         controllerManagerHost.ControllerReady += async device =>
         {
@@ -64,9 +61,7 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             SerialNumberString = hidDevice.SerialString,
             Connection = hidDevice.Connection.GetValueOrDefault(),
             CurrentConfiguration = hidDevice.CurrentConfiguration,
-            IsFiltered = hidDevice.IsFiltered,
-            ProfileName = _profilesService.AvailableProfiles.Values.Single(i => i.Id == hidDevice.CurrentConfiguration.ProfileId).DisplayName
-        };
+            IsFiltered = hidDevice.IsFiltered};
 
         return message;
     }
