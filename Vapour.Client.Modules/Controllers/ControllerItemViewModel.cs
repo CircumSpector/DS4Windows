@@ -119,6 +119,14 @@ public sealed class ControllerItemViewModel :
         }
     }
 
+    public bool IsProfileSetEnabled
+    {
+        get
+        {
+            return !IsPassthru;
+        }
+    }
+
     private SolidColorBrush _currentColor;
     public SolidColorBrush CurrentColor
     {
@@ -145,6 +153,7 @@ public sealed class ControllerItemViewModel :
             {
                 CurrentConfiguration.IsPassthru = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsProfileSetEnabled));
             }
         }
     }

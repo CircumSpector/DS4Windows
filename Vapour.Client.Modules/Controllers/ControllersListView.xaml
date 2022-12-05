@@ -136,6 +136,7 @@
                                           SelectedValue="{Binding SelectedProfileId}"
                                           SelectedValuePath="Id"
                                           DisplayMemberPath="Name"
+                                          IsEnabled="{Binding IsProfileSetEnabled}"
                                           Grid.Row="3"
                                           Grid.Column="1"
                                           HorizontalAlignment="Right"
