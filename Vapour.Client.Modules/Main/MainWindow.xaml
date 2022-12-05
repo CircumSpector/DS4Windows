@@ -7,7 +7,7 @@
                     xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
                     xmlns:localInt="clr-namespace:Vapour.Client.Modules.Main;assembly=Vapour.Client.Modules.Interfaces"
                     mc:Ignorable="d"
-                    Title="DS4Windows" WindowStartupLocation="CenterScreen"
+                    Title="Vapour" WindowStartupLocation="CenterScreen"
                     Background="{DynamicResource MaterialDesignBackground}" Foreground="{DynamicResource MaterialDesignBody}"
                     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
                     TitleBarIcon="Images/Vapour.ico"

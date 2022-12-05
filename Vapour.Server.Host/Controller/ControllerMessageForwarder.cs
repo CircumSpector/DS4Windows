@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
 using Vapour.Server.Controller;
+using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HostedServices;
 using Vapour.Shared.Devices.Services;
@@ -11,12 +12,15 @@ namespace Vapour.Server.Host.Controller;
 public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 {
     private readonly IHubContext<ControllerMessageHub, IControllerMessageClient> _hubContext;
+    private readonly IProfilesService _profilesService;
 
     public ControllerMessageForwarder(ControllerManagerHost controllerManagerHost,
         IControllerConfigurationService controllerConfigurationService,
-        IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext)
+        IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext,
+        IProfilesService profilesService)
     {
         _hubContext = hubContext;
+        _profilesService = profilesService;
 
         controllerManagerHost.ControllerReady += async device =>
         {
@@ -60,7 +64,8 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             SerialNumberString = hidDevice.SerialString,
             Connection = hidDevice.Connection.GetValueOrDefault(),
             CurrentConfiguration = hidDevice.CurrentConfiguration,
-            IsFiltered = hidDevice.IsFiltered
+            IsFiltered = hidDevice.IsFiltered,
+            ProfileName = _profilesService.AvailableProfiles.Values.Single(i => i.Id == hidDevice.CurrentConfiguration.ProfileId).DisplayName
         };
 
         return message;
