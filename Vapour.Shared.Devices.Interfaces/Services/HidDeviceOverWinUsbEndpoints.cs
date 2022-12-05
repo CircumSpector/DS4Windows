@@ -1,5 +1,8 @@
 ﻿namespace Vapour.Shared.Devices.Services;
 
+/// <summary>
+///     Represents meta-data for WinUSB endpoints (pipes) and behaviour.
+/// </summary>
 public sealed class HidDeviceOverWinUsbEndpoints
 {
     /// <summary>

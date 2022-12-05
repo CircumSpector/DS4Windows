@@ -14,16 +14,16 @@ public interface IControllerManagerService
     ReadOnlyObservableCollection<CompatibleHidDeviceSlot> ActiveControllers { get; }
 
     /// <summary>
-    ///     Call when a new <see cref="CompatibleHidDevice" /> has arrived and is ready to occupy a free slot.
+    ///     Call when a new <see cref="ICompatibleHidDevice" /> has arrived and is ready to occupy a free slot.
     /// </summary>
-    /// <param name="device">The <see cref="CompatibleHidDevice" /> that arrived.</param>
+    /// <param name="device">The <see cref="ICompatibleHidDevice" /> that arrived.</param>
     /// <returns>Zero-based slot index on success, -1 if no free slot available.</returns>
     int AssignFreeSlotWith(ICompatibleHidDevice device);
 
     /// <summary>
-    ///     Call when a <see cref="CompatibleHidDevice" /> had departed and its slot can be marked available.
+    ///     Call when a <see cref="ICompatibleHidDevice" /> had departed and its slot can be marked available.
     /// </summary>
-    /// <param name="device">The <see cref="CompatibleHidDevice" /> that departed.</param>
+    /// <param name="device">The <see cref="ICompatibleHidDevice" /> that departed.</param>
     /// <returns>The zero-based slot index it has previously occupied.</returns>
     int FreeSlotContaining(ICompatibleHidDevice device);
 

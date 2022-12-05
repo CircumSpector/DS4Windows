@@ -3,8 +3,9 @@
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services;
+
 /// <summary>
-///     Describes a controller slot and the <see cref="CompatibleHidDevice" /> associated with it.
+///     Describes a controller slot and the <see cref="ICompatibleHidDevice" /> associated with it.
 /// </summary>
 public sealed class CompatibleHidDeviceSlot
 {
@@ -24,7 +25,7 @@ public sealed class CompatibleHidDeviceSlot
     public bool IsOccupied { get; internal set; }
 
     /// <summary>
-    ///     The <see cref="CompatibleHidDevice" /> occupying this slot.
+    ///     The <see cref="ICompatibleHidDevice" /> occupying this slot.
     /// </summary>
     [CanBeNull]
     public ICompatibleHidDevice Device { get; internal set; }

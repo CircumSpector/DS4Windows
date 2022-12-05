@@ -4,6 +4,10 @@ using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.HID;
 
+/// <summary>
+///     Represents a device that can emit supported input reports and supports features like reading unique addresses
+///     (serial numbers) etc.
+/// </summary>
 public interface ICompatibleHidDevice : IDisposable
 {
     /// <summary>
@@ -32,27 +36,41 @@ public interface ICompatibleHidDevice : IDisposable
     PhysicalAddress Serial { get; }
 
     /// <summary>
-    /// Whether or not the device is a filtered device
+    ///     Whether or not the device is a filtered device
     /// </summary>
     bool IsFiltered { get; set; }
+
+    /// <summary>
+    ///     The parsed input report.
+    /// </summary>
+    CompatibleHidDeviceInputReport InputReport { get; }
+
+    ControllerConfiguration CurrentConfiguration { get; }
+
+    /// <summary>
+    ///     The <see cref="Serial" /> as string.
+    /// </summary>
+    string SerialString { get; }
 
     /// <summary>
     ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
     event Action<ICompatibleHidDevice> Disconnected;
-    void FireDisconnected();
-
-    void ProcessInputReport(ReadOnlySpan<byte> input);
-    CompatibleHidDeviceInputReport InputReport { get; }
-    ControllerConfiguration CurrentConfiguration { get; }
 
     /// <summary>
-    ///     The <see cref="Serial"/> as string.
+    ///     Performs tasks to tear down this device.
     /// </summary>
-    string SerialString { get; }
+    void FireDisconnected();
+
+    /// <summary>
+    ///     Transforms the input report byte array into a managed object.
+    /// </summary>
+    /// <param name="input"></param>
+    void ProcessInputReport(ReadOnlySpan<byte> input);
 
     void SetConfiguration(ControllerConfiguration profile);
 
     void OnAfterStartListening();
+
     event EventHandler ConfigurationChanged;
 }

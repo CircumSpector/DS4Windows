@@ -9,7 +9,7 @@ using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.Output;
 
-public class OutputProcessor : IOutputProcessor
+internal sealed class OutputProcessor : IOutputProcessor
 {
     private readonly IControllerInputReportProcessor _inputReportProcessor;
     private IOutDevice _controllerDevice;

@@ -3,7 +3,7 @@ using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
 
-public abstract class OutDevice : IOutDevice
+internal abstract class OutDevice : IOutDevice
 {
     protected bool IsConnected;
 

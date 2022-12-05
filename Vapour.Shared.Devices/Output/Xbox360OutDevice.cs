@@ -7,7 +7,7 @@ using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
 
-public class Xbox360OutDevice : OutDevice
+internal class Xbox360OutDevice : OutDevice
 {
     //private const int inputResolution = 127 - (-128);
     //private const float reciprocalInputResolution = 1 / (float)inputResolution;

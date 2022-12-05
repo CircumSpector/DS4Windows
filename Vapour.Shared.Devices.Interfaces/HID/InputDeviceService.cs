@@ -6,9 +6,13 @@
 public enum InputDeviceService
 {
     /// <summary>
-    ///     The default service for HIDCLASS.SYS devices
+    ///     The default service for HIDCLASS.SYS devices over USB.
     /// </summary>
     HidUsb,
+    /// <summary>
+    ///     The default service for HIDCLASS.SYS devices over Bluetooth.
+    /// </summary>
+    HidBth,
     /// <summary>
     ///     WinUSB service.
     /// </summary>

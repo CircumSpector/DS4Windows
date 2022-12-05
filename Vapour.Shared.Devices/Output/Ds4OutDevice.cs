@@ -7,7 +7,7 @@ using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Output;
 
-public class DS4OutDevice : OutDevice
+internal class DS4OutDevice : OutDevice
 {
     public IDualShock4Controller cont;
 
