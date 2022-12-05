@@ -6,15 +6,6 @@ using Vapour.Shared.Devices.Types;
 
 namespace Vapour.Shared.Devices.Services;
 
-public interface IInputSourceService
-{
-    ReadOnlyObservableCollection<IInputSource> InputSources { get; }
-
-    void ControllerArrived(int slot, ICompatibleHidDevice device);
-
-    void ControllerDeparted(int slot, ICompatibleHidDevice device);
-}
-
 internal sealed class InputSourceService : IInputSourceService
 {
     private readonly ObservableCollection<IInputSource> _inputSources;
@@ -30,17 +21,24 @@ internal sealed class InputSourceService : IInputSourceService
 
     public void ControllerArrived(int slot, ICompatibleHidDevice device)
     {
+        // attempt to merge a JoyCons pair
         if (device is JoyConCompatibleHidDevice)
         {
-            var composite = _inputSources
+            CompositeInputSource composite = _inputSources
                 .OfType<ICompositeInputSource>()
                 .Cast<CompositeInputSource>()
                 .FirstOrDefault(source => source.SecondarySourceDevice is null);
 
             if (composite is not null)
+            {
+                // primary device already exists, add this as secondary
                 composite.SecondarySourceDevice = device;
+            }
             else
+            {
+                // add new primary device
                 _inputSources.Add(new CompositeInputSource(device));
+            }
 
             return;
         }
@@ -52,7 +50,7 @@ internal sealed class InputSourceService : IInputSourceService
     {
         if (device is JoyConCompatibleHidDevice)
         {
-            var primary = _inputSources
+            CompositeInputSource primary = _inputSources
                 .OfType<ICompositeInputSource>()
                 .Cast<CompositeInputSource>()
                 .FirstOrDefault(source => Equals(source.SecondarySourceDevice, device));
@@ -64,7 +62,7 @@ internal sealed class InputSourceService : IInputSourceService
                 return;
             }
 
-            var secondary = _inputSources
+            CompositeInputSource secondary = _inputSources
                 .OfType<ICompositeInputSource>()
                 .Cast<CompositeInputSource>()
                 .FirstOrDefault(source => Equals(source.PrimarySourceDevice, device));
