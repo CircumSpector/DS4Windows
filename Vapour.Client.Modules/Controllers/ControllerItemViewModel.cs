@@ -123,7 +123,7 @@ public sealed class ControllerItemViewModel :
     {
         get
         {
-            return !IsPassthru;
+            return !IsPassthru && OutputDeviceType != OutputDeviceType.None;
         }
     }
 
@@ -167,6 +167,7 @@ public sealed class ControllerItemViewModel :
             {
                 CurrentConfiguration.OutputDeviceType = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsProfileSetEnabled));
             }
         }
     }
@@ -181,6 +182,7 @@ public sealed class ControllerItemViewModel :
             OnPropertyChanged(nameof(SelectedProfileId));
             OnPropertyChanged(nameof(IsPassthru));
             OnPropertyChanged(nameof(OutputDeviceType));
+            OnPropertyChanged(nameof(IsProfileSetEnabled));
         }
     }
 
