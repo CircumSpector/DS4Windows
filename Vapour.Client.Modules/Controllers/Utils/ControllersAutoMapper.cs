@@ -25,6 +25,7 @@ public class ControllersAutoMapper : Profile
             .ForMember(dest => dest.ParentInstance, cfg => cfg.MapFrom(src => src.ParentInstance))
             .ForMember(dest => dest.CurrentConfiguration, cfg => cfg.MapFrom(src => src.CurrentConfiguration))
             .ForMember(dest => dest.IsFiltered, cfg => cfg.MapFrom(src => src.IsFiltered))
+            .ForMember(dest => dest.ProfileName, cfg => cfg.MapFrom(src => src.ProfileName))
             .ForMember(dest => dest.DeviceImage, cfg => cfg.MapFrom((src, dest) =>
             {
                 BitmapImage deviceImage = null;

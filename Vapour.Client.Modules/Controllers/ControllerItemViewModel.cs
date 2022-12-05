@@ -4,6 +4,8 @@ using System.Windows.Media.Imaging;
 
 using AutoMapper;
 
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
@@ -35,7 +37,7 @@ public sealed class ControllerItemViewModel :
         new(new Uri($"{ImageLocationRoot}/switchpro.jpg", UriKind.Absolute));
 
     public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
-    public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB_white.png", UriKind.Absolute));
+    public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB.png", UriKind.Absolute));
     private readonly IMapper _mapper;
     private readonly IControllerServiceClient _controllerServiceClient;
 
@@ -110,6 +112,13 @@ public sealed class ControllerItemViewModel :
         get => _batteryPercentage;
         private set => SetProperty(ref _batteryPercentage, value);
     }
+
+    private string _profileName;
+    public string ProfileName
+    {
+        get => _profileName;
+        set => SetProperty(ref _profileName, value);
+    }
     
     public Guid SelectedProfileId
     {
@@ -143,6 +152,23 @@ public sealed class ControllerItemViewModel :
     public string InstanceId { get; set; }
     public string ParentInstance { get; set; }
 
+    public string OutputIconKind
+    {
+        get
+        {
+            if (CurrentConfiguration.OutputDeviceType == OutputDeviceType.Xbox360Controller)
+            {
+                return "MicrosoftXbox";
+            }
+            else if (CurrentConfiguration.OutputDeviceType == OutputDeviceType.DualShock4Controller)
+            {
+                return "SonyPlaystation";
+            }
+
+            return "ControllerOff";
+        }
+    }
+
     public bool IsPassthru
     {
         get => CurrentConfiguration.IsPassthru;
@@ -153,6 +179,14 @@ public sealed class ControllerItemViewModel :
                 CurrentConfiguration.IsPassthru = value;
                 OnPropertyChanged();
             }
+        }
+    }
+
+    public string IsPassthruIconKind
+    {
+        get
+        {
+            return IsPassthru ? "CheckCircle" : "CloseCircle";
         }
     }
 
