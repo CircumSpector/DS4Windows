@@ -10,7 +10,7 @@ namespace Vapour.Shared.Devices.Services;
 /// <summary>
 ///     Handles currently active devices and occupied slots and takes care that profiles are loaded when required.
 /// </summary>
-public sealed class ControllerManagerService : IControllerManagerService
+internal sealed class ControllerManagerService : IControllerManagerService
 {
     private readonly ObservableCollection<CompatibleHidDeviceSlot> _activeControllers;
 

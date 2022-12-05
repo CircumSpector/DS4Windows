@@ -4,35 +4,14 @@ using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Shared.Devices.Types;
 
 /// <summary>
-///     Represents a logical input source baked by a hardware <see cref="ICompatibleHidDevice" />.
+///     Represents a logical input source baked by a hardware <see cref="CompatibleHidDevice" />.
 /// </summary>
-public interface IInputSource
-{
-    /// <summary>
-    ///     The primary source <see cref="ICompatibleHidDevice"/>.
-    /// </summary>
-    ICompatibleHidDevice PrimarySourceDevice { get; }
-}
-
-/// <summary>
-///     Represents a logical input source baked by a two hardware <see cref="ICompatibleHidDevice" />s.
-/// </summary>
-public interface ICompositeInputSource : IInputSource
-{
-    /// <summary>
-    ///     The secondary source <see cref="CompatibleHidDevice"/>.
-    /// </summary>
-    ICompatibleHidDevice SecondarySourceDevice { get; }
-}
-
-/// <summary>
-///     Represents a logical input source baked by a hardware <see cref="ICompatibleHidDevice" />.
-/// </summary>
-public class InputSource : IInputSource
+internal class InputSource : IInputSource
 {
     internal InputSource(ICompatibleHidDevice primarySource)
     {
@@ -44,10 +23,10 @@ public class InputSource : IInputSource
 }
 
 /// <summary>
-///     Represents a logical input source baked by two hardware <see cref="ICompatibleHidDevice" />s.
+///     Represents a logical input source baked by two hardware <see cref="CompatibleHidDevice" />s.
 /// </summary>
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
+internal class CompositeInputSource : InputSource, ICompositeInputSource, INotifyPropertyChanged
 {
     internal CompositeInputSource(ICompatibleHidDevice primarySource)
         : base(primarySource)

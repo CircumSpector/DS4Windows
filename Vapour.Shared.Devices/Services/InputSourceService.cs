@@ -15,7 +15,7 @@ public interface IInputSourceService
     void ControllerDeparted(int slot, ICompatibleHidDevice device);
 }
 
-public sealed class InputSourceService : IInputSourceService
+internal sealed class InputSourceService : IInputSourceService
 {
     private readonly ObservableCollection<IInputSource> _inputSources;
 

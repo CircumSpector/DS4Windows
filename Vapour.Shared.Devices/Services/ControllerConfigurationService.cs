@@ -8,7 +8,7 @@ using Vapour.Shared.Configuration.Profiles.Services;
 
 namespace Vapour.Shared.Devices.Services;
 
-public class ControllerConfigurationService : IControllerConfigurationService
+internal class ControllerConfigurationService : IControllerConfigurationService
 {
     private readonly IGlobalStateService _globalStateService;
     private readonly IProfilesService _profilesService;

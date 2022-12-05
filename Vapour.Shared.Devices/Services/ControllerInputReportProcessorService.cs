@@ -9,7 +9,7 @@ namespace Vapour.Shared.Devices.Services;
 /// <summary>
 ///     Processes input reports for <see cref="ICompatibleHidDevice" />s.
 /// </summary>
-public sealed class ControllerInputReportProcessorService : IControllerInputReportProcessorService
+internal sealed class ControllerInputReportProcessorService : IControllerInputReportProcessorService
 {
     private readonly IControllerConfigurationService _controllerConfigurationService;
     private readonly Dictionary<string, IControllerInputReportProcessor> _controllerInputReportProcessors;

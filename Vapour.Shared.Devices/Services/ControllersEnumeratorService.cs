@@ -12,7 +12,7 @@ namespace Vapour.Shared.Devices.Services;
 /// <summary>
 ///     Enumerates and watches hot-plugging of supported input devices (controllers).
 /// </summary>
-public sealed class ControllersEnumeratorService : IControllersEnumeratorService
+internal sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
     private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);

@@ -4,7 +4,7 @@ using Vapour.Shared.Common.Services;
 
 namespace Vapour.Shared.Devices.Services;
 
-public class DeviceSettingsService : IDeviceSettingsService
+internal class DeviceSettingsService : IDeviceSettingsService
 {
     private const string DeviceSettingsFileName = "DeviceSettings.json";
     private readonly IGlobalStateService _globalStateService;

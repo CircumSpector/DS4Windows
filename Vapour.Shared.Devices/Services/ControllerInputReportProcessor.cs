@@ -20,7 +20,7 @@ namespace Vapour.Shared.Devices.Services;
 /// <summary>
 ///     Handles reading input reports from a compatible input device and dispatches them.
 /// </summary>
-public sealed class ControllerInputReportProcessor : IControllerInputReportProcessor
+internal sealed class ControllerInputReportProcessor : IControllerInputReportProcessor
 {
     private static readonly Meter Meter = new(TracingSources.AssemblyName);
 
