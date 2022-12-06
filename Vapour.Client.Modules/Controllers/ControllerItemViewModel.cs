@@ -172,6 +172,14 @@ public sealed class ControllerItemViewModel :
         }
     }
 
+    public string OutputGroupName
+    {
+        get
+        {
+            return $"{Serial}_OutputGroup";
+        }
+    }
+
     private ControllerConfiguration _currentConfiguration;
     public ControllerConfiguration CurrentConfiguration
     {

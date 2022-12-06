@@ -12,7 +12,6 @@ using PropertyChanged;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles;
-using Vapour.Client.Modules.Profiles.Edit;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
 using Vapour.Shared.Configuration.Profiles.Schema;
