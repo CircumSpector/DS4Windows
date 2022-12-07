@@ -77,6 +77,8 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         {
             ICompatibleHidDevice existingDevice = _controllerInputReportProcessors[e.ControllerKey].HidDevice;
             StopProcessing(existingDevice);
+            //without this going from one output device type to another does not always work
+            Thread.Sleep(500);
             StartProcessing(existingDevice);
         }
     }
