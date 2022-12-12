@@ -24,4 +24,6 @@ public interface IControllerInputReportProcessor
     ///     Stops the input report reader.
     /// </summary>
     void StopInputReportReader();
+
+    void SetDevice(ICompatibleHidDevice hidDevice);
 }

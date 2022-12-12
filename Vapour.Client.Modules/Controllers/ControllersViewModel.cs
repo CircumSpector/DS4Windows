@@ -142,20 +142,10 @@ public sealed class ControllersViewModel :
     {
         IControllerConfigureViewModel controllerConfigureViewModel = await _viewModelFactory.Create<IControllerConfigureViewModel, IControllerConfigureView>();
         controllerConfigureViewModel.SetControllerToConfigure(controllerItem);
-        await DialogHost.Show(controllerConfigureViewModel.MainView, Constants.DialogHostName, (o, e) =>
+        await DialogHost.Show(controllerConfigureViewModel.MainView, Constants.DialogHostName, new DialogClosingEventHandler((o, e) =>
         {
-            if (e.Parameter != null)
-            {
-                SaveConfiguration((IControllerConfigureViewModel)e.Parameter);
-            }
-
             controllerConfigureViewModel.Dispose();
-        });
-    }
-
-    private void SaveConfiguration(IControllerConfigureViewModel controllerConfigureViewModel)
-    {
-        //_controllerService.SaveDefaultControllerConfiguration(controllerConfigureViewModel.ControllerItem.Serial, CurrentConfiguration);
+        }));
     }
 
     [SuppressPropertyChangedWarnings]

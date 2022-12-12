@@ -43,7 +43,11 @@ public static class KnownDevices
         // Sony DualShock 4 Rev2
         new(SonyVid, 0x09CC, "DS4 v.2",
             InputDeviceType.DualShock4,
-            CompatibleHidDeviceFeatureSet.MonitorAudio | CompatibleHidDeviceFeatureSet.VendorDefinedDevice
+            CompatibleHidDeviceFeatureSet.MonitorAudio | CompatibleHidDeviceFeatureSet.VendorDefinedDevice,
+            winUsbEndpoints: new HidDeviceOverWinUsbEndpoints
+            {
+                InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
+            }
         ),
         new(SonyVid, 0x0CE6, "DualSense",
             InputDeviceType.DualSense,

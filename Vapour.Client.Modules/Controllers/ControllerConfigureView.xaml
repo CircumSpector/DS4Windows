@@ -4,10 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Vapour.Client.Modules.Controllers"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DataContext ="{d:DesignInstance {x:Type local:ControllerConfigureViewModel}, IsDesignTimeCreatable=False}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             MinHeight="500"
+             MinWidth="800"
+             MaxHeight="800">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Button HorizontalAlignment="Left"
+                Grid.Row="0"
+                Content="+UWP" 
+                Command="{Binding AddUwpCommand}"/>
+
+        <Button Content="Ok" Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                HorizontalAlignment="Right"
+                Grid.Row="2"
+                Margin="0,0,15,15"/>
     </Grid>
 </UserControl>

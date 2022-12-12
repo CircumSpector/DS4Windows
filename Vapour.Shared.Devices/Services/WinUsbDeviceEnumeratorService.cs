@@ -34,9 +34,9 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         _logger = logger;
 
         _deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived,
-            FilterDriver.FilteredDeviceInterfaceId);
+            DeviceConstants.FilteredGuid);
         _deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved,
-            FilterDriver.FilteredDeviceInterfaceId);
+            DeviceConstants.FilteredGuid);
 
         _connectedDevices = new ObservableCollection<HidDeviceOverWinUsb>();
 
@@ -62,7 +62,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
 
         _connectedDevices.Clear();
 
-        while (Devcon.FindByInterfaceGuid(FilterDriver.FilteredDeviceInterfaceId, out string path,
+        while (Devcon.FindByInterfaceGuid(DeviceConstants.FilteredGuid, out string path,
                    out string instanceId,
                    deviceIndex++))
         {
@@ -201,6 +201,8 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         {
             return;
         }
+
+        _connectedDevices.Add(entry);
 
         DeviceArrived?.Invoke(entry);
     }
