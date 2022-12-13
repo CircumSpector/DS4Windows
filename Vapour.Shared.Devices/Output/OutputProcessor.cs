@@ -14,19 +14,18 @@ internal sealed class OutputProcessor : IOutputProcessor
     private readonly IControllerInputReportProcessor _inputReportProcessor;
     private IOutDevice _controllerDevice;
 
-    public OutputProcessor(ICompatibleHidDevice hidDevice, IControllerInputReportProcessor inputReportProcessor,
+    public OutputProcessor(IControllerInputReportProcessor inputReportProcessor,
         IServiceProvider serviceProvider)
     {
         _inputReportProcessor = inputReportProcessor;
 
         Services = serviceProvider;
         Logger = Services.GetRequiredService<ILogger<OutputProcessor>>();
-        HidDevice = hidDevice;
     }
 
     private IServiceProvider Services { get; }
     private ILogger<OutputProcessor> Logger { get; }
-    public ICompatibleHidDevice HidDevice { get; }
+    public ICompatibleHidDevice HidDevice { get; private set; }
 
     public void StartOutputProcessing()
     {
@@ -46,6 +45,11 @@ internal sealed class OutputProcessor : IOutputProcessor
             _controllerDevice.Disconnect();
             _controllerDevice = null;
         }
+    }
+
+    public void SetDevice(ICompatibleHidDevice device)
+    {
+        HidDevice = device;
     }
 
     private void _inputReportProcessor_InputReportAvailable(ICompatibleHidDevice arg1,

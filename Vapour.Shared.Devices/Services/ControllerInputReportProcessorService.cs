@@ -12,6 +12,7 @@ namespace Vapour.Shared.Devices.Services;
 internal sealed class ControllerInputReportProcessorService : IControllerInputReportProcessorService
 {
     private readonly IControllerConfigurationService _controllerConfigurationService;
+    private readonly IControllerFilterService _controllerFilterService;
     private readonly Dictionary<string, IControllerInputReportProcessor> _controllerInputReportProcessors;
     private readonly Dictionary<string, IOutputProcessor> _outputProcessors;
     private readonly IServiceProvider _serviceProvider;
@@ -19,10 +20,12 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
     public ControllerInputReportProcessorService(
         ILogger<ControllerInputReportProcessorService> logger,
         IServiceProvider serviceProvider,
-        IControllerConfigurationService controllerConfigurationService)
+        IControllerConfigurationService controllerConfigurationService,
+        IControllerFilterService controllerFilterService)
     {
         _serviceProvider = serviceProvider;
         _controllerConfigurationService = controllerConfigurationService;
+        _controllerFilterService = controllerFilterService;
         _controllerInputReportProcessors = new Dictionary<string, IControllerInputReportProcessor>();
         _outputProcessors = new Dictionary<string, IOutputProcessor>();
 
@@ -40,7 +43,7 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         if (!_controllerInputReportProcessors.ContainsKey(controllerKey))
         {
             inputReportProcessor = new ControllerInputReportProcessor(_serviceProvider);
-            outputProcessor = new OutputProcessor(device, inputReportProcessor, _serviceProvider);
+            outputProcessor = new OutputProcessor(inputReportProcessor, _serviceProvider);
             _controllerInputReportProcessors.Add(controllerKey, inputReportProcessor);
             _outputProcessors.Add(controllerKey, outputProcessor);
         }
@@ -51,6 +54,7 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         }
 
         inputReportProcessor.SetDevice(device);
+        outputProcessor.SetDevice(device);
 
         if (device.CurrentConfiguration.OutputDeviceType != OutputDeviceType.None)
         {
@@ -78,6 +82,27 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         if (_controllerInputReportProcessors.ContainsKey(e.ControllerKey))
         {
             ICompatibleHidDevice existingDevice = _controllerInputReportProcessors[e.ControllerKey].HidDevice;
+
+            if (_controllerFilterService.GetFilterDriverEnabled())
+            {
+                //config changed to no device type from a filtered controller, unfilter and cycle port
+                if (existingDevice.IsFiltered &&
+                    e.ControllerConfiguration.OutputDeviceType == OutputDeviceType.None)
+                {
+                    _controllerFilterService.UnfilterController(existingDevice.SourceDevice.InstanceId);
+                    return;
+                }
+                
+                //config change type away from none on a filterable controller
+                if (!existingDevice.IsFiltered &&
+                         e.ControllerConfiguration.OutputDeviceType != OutputDeviceType.None)
+                {
+                    _controllerFilterService.FilterController(existingDevice.SourceDevice.InstanceId);
+                    return;
+                }
+            }
+
+            //otherwise just restart that faster way
             StopProcessing(existingDevice);
             //without this going from one output device type to another does not always work
             Thread.Sleep(500);

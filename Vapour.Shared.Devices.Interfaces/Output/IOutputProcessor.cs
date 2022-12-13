@@ -7,4 +7,5 @@ public interface IOutputProcessor
     ICompatibleHidDevice HidDevice { get; }
     void StartOutputProcessing();
     void StopOutputProcessing();
+    void SetDevice(ICompatibleHidDevice device);
 }

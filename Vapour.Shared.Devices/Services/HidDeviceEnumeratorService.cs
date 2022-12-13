@@ -149,21 +149,6 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
 
         GetHidAttributes(path, out HIDD_ATTRIBUTES attributes);
 
-        if (_controllerFilterService.GetFilterDriverEnabled())
-        {
-            var supportsWinUsbRewrite =
-                KnownDevices.IsWinUsbRewriteSupported(attributes.VendorID, attributes.ProductID);
-            if (supportsWinUsbRewrite != null)
-            {
-                _controllerFilterService.FilterController(device.InstanceId);
-
-                //Give it time to cycle the port
-                Thread.Sleep(250);
-
-                return null;
-            }
-        }
-
         GetHidCapabilities(path, out HIDP_CAPS caps);
 
         return new HidDevice

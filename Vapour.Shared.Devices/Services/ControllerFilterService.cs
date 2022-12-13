@@ -8,6 +8,7 @@ using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services;
@@ -26,15 +27,18 @@ public class ControllerFilterService : IControllerFilterService
     private readonly ILogger<ControllerFilterService> _logger;
     private readonly IControllerManagerService _controllerManagerService;
     private readonly IDeviceSettingsService _deviceSettingsService;
+    private readonly IControllerConfigurationService _controllerConfigurationService;
     private bool _isInitializing = true;
 
     public ControllerFilterService(ILogger<ControllerFilterService> logger,
         IControllerManagerService controllerManagerService,
-        IDeviceSettingsService deviceSettingsService)
+        IDeviceSettingsService deviceSettingsService,
+        IControllerConfigurationService controllerConfigurationService)
     {
         _logger = logger;
         _controllerManagerService = controllerManagerService;
         _deviceSettingsService = deviceSettingsService;
+        _controllerConfigurationService = controllerConfigurationService;
     }
 
     public void Initialize()
@@ -81,22 +85,26 @@ public class ControllerFilterService : IControllerFilterService
 
         if (!_isInitializing)
         {
-            foreach (IHidDevice sourceDevice in _controllerManagerService.ActiveControllers
+            foreach (var device in _controllerManagerService.ActiveControllers
                          .Where(c => c.Device != null)
-                         .Select(activeController => activeController.Device.SourceDevice)
+                         .Select(activeController => activeController.Device)
                          .ToList())
             {
                 if (!isEnabled)
                 {
-                    UnfilterController(sourceDevice.InstanceId);
+                    UnfilterController(device.SourceDevice.InstanceId);
                 }
-                else if (KnownDevices.IsWinUsbRewriteSupported(sourceDevice.VendorId, sourceDevice.ProductId) != null)
+                else if (KnownDevices.IsWinUsbRewriteSupported(device.SourceDevice.VendorId, device.SourceDevice.ProductId) != null)
                 {
-                    FilterController(sourceDevice.InstanceId);
+                    var config = _controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString);
+                    if (config.OutputDeviceType != OutputDeviceType.None)
+                    {
+                        FilterController(device.SourceDevice.InstanceId);
+                    }
                 }
                 else
                 {
-                    UsbPnPDevice usbDevice = PnPDevice.GetDeviceByInstanceId(sourceDevice.InstanceId)
+                    UsbPnPDevice usbDevice = PnPDevice.GetDeviceByInstanceId(device.SourceDevice.InstanceId)
                         .ToUsbPnPDevice();
                     usbDevice.CyclePort();
                 }
