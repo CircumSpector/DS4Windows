@@ -81,8 +81,10 @@ public class ControllerFilterService : IControllerFilterService
 
         if (!_isInitializing)
         {
-            foreach (IHidDevice sourceDevice in _controllerManagerService.ActiveControllers.Where(c => c.Device != null)
-                         .ToList().Select(activeController => activeController.Device.SourceDevice))
+            foreach (IHidDevice sourceDevice in _controllerManagerService.ActiveControllers
+                         .Where(c => c.Device != null)
+                         .Select(activeController => activeController.Device.SourceDevice)
+                         .ToList())
             {
                 if (!isEnabled)
                 {
@@ -135,6 +137,18 @@ public class ControllerFilterService : IControllerFilterService
         }
 
         usbDevice.CyclePort();
+    }
+
+    public void UnfilterAllControllers()
+    {
+        foreach (IHidDevice sourceDevice in _controllerManagerService.ActiveControllers
+                     .Where(c => c.Device != null)
+                     .Select(activeController => activeController.Device.SourceDevice)
+                     .ToList())
+        {
+            UnfilterController(sourceDevice.InstanceId);
+            Thread.Sleep(250);
+        }
     }
 
     private static string? GetLocalDriverVersion()

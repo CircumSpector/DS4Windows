@@ -133,6 +133,7 @@ public sealed class ControllerManagerHost
         if (IsEnabled)
         {
             _deviceNotificationListener.StopListen();
+            _controllerFilter.UnfilterAllControllers();
             _hidDeviceEnumeratorService.ClearDevices();
             _winUsbDeviceEnumeratorService.ClearDevices();
             _profileService.Shutdown();

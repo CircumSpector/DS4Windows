@@ -36,4 +36,6 @@ public interface IControllerFilterService
     ///     Perform one-time checks and tasks on service start.
     /// </summary>
     void Initialize();
+
+    void UnfilterAllControllers();
 }
