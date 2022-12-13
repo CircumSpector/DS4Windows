@@ -18,6 +18,7 @@ namespace Vapour.Shared.Devices.HostedServices;
 public sealed class ControllerManagerHost
 {
     private readonly IControllerConfigurationService _controllerConfigurationService;
+    private readonly IGameProcessWatcherService _gameProcessWatcherService;
     private readonly IControllerFilterService _controllerFilter;
     private readonly IDeviceNotificationListener _deviceNotificationListener;
     private readonly IDeviceSettingsService _deviceSettingsService;
@@ -48,7 +49,8 @@ public sealed class ControllerManagerHost
         IDeviceSettingsService deviceSettingsService,
         IControllerFilterService controllerFilter,
         IGlobalStateService globalStateService,
-        IControllerConfigurationService controllerConfigurationService)
+        IControllerConfigurationService controllerConfigurationService,
+        IGameProcessWatcherService gameProcessWatcherService)
     {
         _enumerator = enumerator;
         _logger = logger;
@@ -62,6 +64,7 @@ public sealed class ControllerManagerHost
         _controllerFilter = controllerFilter;
         _globalStateService = globalStateService;
         _controllerConfigurationService = controllerConfigurationService;
+        _gameProcessWatcherService = gameProcessWatcherService;
 
         enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
         enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
@@ -93,6 +96,8 @@ public sealed class ControllerManagerHost
         RunningChanged?.Invoke(this, IsRunning);
         _controllerHostToken = new CancellationTokenSource();
 
+        //_gameProcessWatcherService.StartWatching();
+
         _globalStateService.EnsureRoamingDataPath();
 
         _deviceSettingsService.LoadSettings();
@@ -108,7 +113,7 @@ public sealed class ControllerManagerHost
         {
             PInvoke.HidD_GetHidGuid(out Guid hidGuid);
             _deviceNotificationListener.StartListen(hidGuid);
-            _deviceNotificationListener.StartListen(FilterDriver.FilteredDeviceInterfaceId);
+            _deviceNotificationListener.StartListen(DeviceConstants.FilteredGuid);
 
             _logger.LogInformation("Starting device enumeration");
 
@@ -128,6 +133,7 @@ public sealed class ControllerManagerHost
         if (IsEnabled)
         {
             _deviceNotificationListener.StopListen();
+            _controllerFilter.UnfilterAllControllers();
             _hidDeviceEnumeratorService.ClearDevices();
             _winUsbDeviceEnumeratorService.ClearDevices();
             _profileService.Shutdown();

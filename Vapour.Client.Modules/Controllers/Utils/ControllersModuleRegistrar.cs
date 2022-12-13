@@ -13,6 +13,8 @@ public class ControllersModuleRegistrar : IServiceRegistrar
         services.AddSingletons<ControllersViewModel>(typeof(IControllersViewModel), typeof(INavigationTabViewModel));
         services.AddSingleton<IControllersView, ControllersView>();
         services.AddTransient<IControllerItemViewModel, ControllerItemViewModel>();
+        services.AddTransient<IControllerConfigureViewModel, ControllerConfigureViewModel>();
+        services.AddTransient<IControllerConfigureView, ControllerConfigureView>();
 
         services.AddAutoMapper(cfg => cfg.AddProfile<ControllersAutoMapper>());
     }

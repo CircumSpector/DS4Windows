@@ -35,12 +35,9 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
     /// <summary>
     ///     Managed input report array.
     /// </summary>
-    private readonly byte[] _inputReportArray;
+    private byte[] _inputReportArray;
 
-    private readonly Channel<byte[]> _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
-    {
-        SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
-    });
+    private Channel<byte[]> _inputReportChannel;
 
     private IProfile _currentProfile;
 
@@ -48,24 +45,27 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
     private Thread _inputReportReader;
     private CancellationTokenSource _inputReportToken;
 
-    public ControllerInputReportProcessor(ICompatibleHidDevice hidDevice, IServiceProvider serviceProvider)
+    public ControllerInputReportProcessor(IServiceProvider serviceProvider)
     {
         Services = serviceProvider;
         Logger = Services.GetRequiredService<ILogger<ControllerInputReportProcessor>>();
-        HidDevice = hidDevice;
-
-        ushort inputReportSize = ((HidDevice)HidDevice.SourceDevice).Capabilities.InputReportByteLength;
-
-        _inputReportArray = new byte[inputReportSize];
     }
 
     private IServiceProvider Services { get; }
     private ILogger<ControllerInputReportProcessor> Logger { get; }
-    public ICompatibleHidDevice HidDevice { get; }
+    public ICompatibleHidDevice HidDevice { get; private set; }
     public bool IsInputReportAvailableInvoked { get; set; } = true;
     public bool IsProcessing { get; private set; }
     public event Action<ICompatibleHidDevice, CompatibleHidDeviceInputReport> InputReportAvailable;
 
+    public void SetDevice(ICompatibleHidDevice hidDevice)
+    {
+        HidDevice = hidDevice;
+        ushort inputReportSize = ((HidDevice)HidDevice.SourceDevice).Capabilities.InputReportByteLength;
+
+        _inputReportArray = new byte[inputReportSize];
+    }
+    
     /// <inheritdoc />
     public void StartInputReportReader()
     {
@@ -73,6 +73,13 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
         {
             return;
         }
+
+        _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
+        {
+            SingleReader = true,
+            SingleWriter = true,
+            AllowSynchronousContinuations = true
+        });
 
         if (_inputReportToken == null || _inputReportToken.Token.IsCancellationRequested)
         {
@@ -106,6 +113,8 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
 
         _inputReportReader.Join();
         _inputReportProcessor.Join();
+
+        _inputReportChannel.Writer.Complete();
 
         _inputReportToken.Dispose();
         _inputReportToken = null;
@@ -230,10 +239,10 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
             }
 
             // expected error when the device got surprise-removed (unplugged)
-            if (win32Exception.NativeErrorCode != (int)WIN32_ERROR.ERROR_NO_SUCH_DEVICE)
-            {
-                throw;
-            }
+            //if (win32Exception.NativeErrorCode != (int)WIN32_ERROR.ERROR_NO_SUCH_DEVICE)
+            //{
+            //    throw;
+            //}
 
             _inputReportToken.Cancel();
 

@@ -39,7 +39,7 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         string controllerKey = device.SerialString;
         if (!_controllerInputReportProcessors.ContainsKey(controllerKey))
         {
-            inputReportProcessor = new ControllerInputReportProcessor(device, _serviceProvider);
+            inputReportProcessor = new ControllerInputReportProcessor(_serviceProvider);
             outputProcessor = new OutputProcessor(device, inputReportProcessor, _serviceProvider);
             _controllerInputReportProcessors.Add(controllerKey, inputReportProcessor);
             _outputProcessors.Add(controllerKey, outputProcessor);
@@ -49,6 +49,8 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
             inputReportProcessor = _controllerInputReportProcessors[controllerKey];
             outputProcessor = _outputProcessors[controllerKey];
         }
+
+        inputReportProcessor.SetDevice(device);
 
         if (device.CurrentConfiguration.OutputDeviceType != OutputDeviceType.None)
         {
