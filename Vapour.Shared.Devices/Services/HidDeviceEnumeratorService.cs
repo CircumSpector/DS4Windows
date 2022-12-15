@@ -32,15 +32,12 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
     private readonly Guid _hidClassInterfaceGuid;
 
     private readonly ILogger<HidDeviceEnumeratorService> _logger;
-    private readonly IControllerFilterService _controllerFilterService;
 
     public HidDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
-        ILogger<HidDeviceEnumeratorService> logger,
-        IControllerFilterService controllerFilterService)
+        ILogger<HidDeviceEnumeratorService> logger)
     {
         _deviceNotificationListener = deviceNotificationListener;
         _logger = logger;
-        _controllerFilterService = controllerFilterService;
 
         PInvoke.HidD_GetHidGuid(out Guid interfaceGuid);
 

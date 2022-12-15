@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.Services;
+﻿using Vapour.Shared.Devices.HID;
+
+namespace Vapour.Shared.Devices.Services;
 
 public interface IControllerFilterService
 {
@@ -38,4 +40,5 @@ public interface IControllerFilterService
     void Initialize();
 
     void UnfilterAllControllers();
+    bool FilterUnfilterIfNeeded(ICompatibleHidDevice device);
 }

@@ -19,7 +19,7 @@ internal sealed class InputSourceService : IInputSourceService
 
     public ReadOnlyObservableCollection<IInputSource> InputSources { get; }
 
-    public void ControllerArrived(int slot, ICompatibleHidDevice device)
+    public void ControllerArrived(ICompatibleHidDevice device)
     {
         // attempt to merge a JoyCons pair
         if (device is JoyConCompatibleHidDevice)
@@ -46,7 +46,7 @@ internal sealed class InputSourceService : IInputSourceService
         _inputSources.Add(new InputSource(device));
     }
 
-    public void ControllerDeparted(int slot, ICompatibleHidDevice device)
+    public void ControllerDeparted(ICompatibleHidDevice device)
     {
         if (device is JoyConCompatibleHidDevice)
         {

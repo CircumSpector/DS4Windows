@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 
 using Microsoft.Extensions.Logging;
 
-using Nefarius.Drivers.Identinator;
 using Nefarius.Drivers.WinUSB;
 using Nefarius.Utilities.DeviceManagement.PnP;
 

@@ -83,23 +83,9 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         {
             ICompatibleHidDevice existingDevice = _controllerInputReportProcessors[e.ControllerKey].HidDevice;
 
-            if (_controllerFilterService.GetFilterDriverEnabled())
+            if (_controllerFilterService.FilterUnfilterIfNeeded(existingDevice))
             {
-                //config changed to no device type from a filtered controller, unfilter and cycle port
-                if (existingDevice.IsFiltered &&
-                    e.ControllerConfiguration.OutputDeviceType == OutputDeviceType.None)
-                {
-                    _controllerFilterService.UnfilterController(existingDevice.SourceDevice.InstanceId);
-                    return;
-                }
-                
-                //config change type away from none on a filterable controller
-                if (!existingDevice.IsFiltered &&
-                         e.ControllerConfiguration.OutputDeviceType != OutputDeviceType.None)
-                {
-                    _controllerFilterService.FilterController(existingDevice.SourceDevice.InstanceId);
-                    return;
-                }
+                return;
             }
 
             //otherwise just restart that faster way

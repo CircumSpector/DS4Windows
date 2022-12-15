@@ -7,7 +7,7 @@ public interface IInputSourceService
 {
     ReadOnlyObservableCollection<IInputSource> InputSources { get; }
 
-    void ControllerArrived(int slot, ICompatibleHidDevice device);
+    void ControllerArrived(ICompatibleHidDevice device);
 
-    void ControllerDeparted(int slot, ICompatibleHidDevice device);
+    void ControllerDeparted(ICompatibleHidDevice device);
 }

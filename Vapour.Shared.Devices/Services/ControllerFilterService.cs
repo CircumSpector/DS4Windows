@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Logging;
 
-using Nefarius.Drivers.Identinator;
+using Nefarius.Drivers.Nssidswap;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -25,18 +25,18 @@ public class ControllerFilterService : IControllerFilterService
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<ControllerFilterService> _logger;
-    private readonly IControllerManagerService _controllerManagerService;
+    private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private readonly IDeviceSettingsService _deviceSettingsService;
     private readonly IControllerConfigurationService _controllerConfigurationService;
     private bool _isInitializing = true;
 
     public ControllerFilterService(ILogger<ControllerFilterService> logger,
-        IControllerManagerService controllerManagerService,
+        ICurrentControllerDataSource currentControllerDataSource,
         IDeviceSettingsService deviceSettingsService,
         IControllerConfigurationService controllerConfigurationService)
     {
         _logger = logger;
-        _controllerManagerService = controllerManagerService;
+        _currentControllerDataSource = currentControllerDataSource;
         _deviceSettingsService = deviceSettingsService;
         _controllerConfigurationService = controllerConfigurationService;
     }
@@ -85,22 +85,17 @@ public class ControllerFilterService : IControllerFilterService
 
         if (!_isInitializing)
         {
-            foreach (var device in _controllerManagerService.ActiveControllers
-                         .Where(c => c.Device != null)
-                         .Select(activeController => activeController.Device)
+            foreach (var device in _currentControllerDataSource.CurrentControllers
+                         .Select(activeController => activeController)
                          .ToList())
             {
                 if (!isEnabled)
                 {
                     UnfilterController(device.SourceDevice.InstanceId);
                 }
-                else if (KnownDevices.IsWinUsbRewriteSupported(device.SourceDevice.VendorId, device.SourceDevice.ProductId) != null)
+                else if (FilterUnfilterIfNeeded(device))
                 {
-                    var config = _controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString);
-                    if (config.OutputDeviceType != OutputDeviceType.None)
-                    {
-                        FilterController(device.SourceDevice.InstanceId);
-                    }
+                    //dont do anything
                 }
                 else
                 {
@@ -108,8 +103,6 @@ public class ControllerFilterService : IControllerFilterService
                         .ToUsbPnPDevice();
                     usbDevice.CyclePort();
                 }
-
-                Thread.Sleep(250);
             }
         }
     }
@@ -149,14 +142,45 @@ public class ControllerFilterService : IControllerFilterService
 
     public void UnfilterAllControllers()
     {
-        foreach (IHidDevice sourceDevice in _controllerManagerService.ActiveControllers
-                     .Where(c => c.Device != null)
-                     .Select(activeController => activeController.Device.SourceDevice)
+        foreach (IHidDevice sourceDevice in _currentControllerDataSource.CurrentControllers
+                     .Select(activeController => activeController.SourceDevice)
                      .ToList())
         {
             UnfilterController(sourceDevice.InstanceId);
             Thread.Sleep(250);
         }
+    }
+
+    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device)
+    {
+        if (GetFilterDriverEnabled())
+        {
+            var config = _controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString);
+            if (!device.IsFiltered)
+            {
+                var supportsWinUsbRewrite =
+                    KnownDevices.IsWinUsbRewriteSupported(device.SourceDevice.VendorId, device.SourceDevice.ProductId);
+                if (supportsWinUsbRewrite != null && config.OutputDeviceType != OutputDeviceType.None)
+                {
+                    FilterController(device.SourceDevice.InstanceId);
+
+                    //Give it time to cycle the port
+                    Thread.Sleep(250);
+
+                    return true;
+                }
+            }
+            else if (device.IsFiltered && config.OutputDeviceType == OutputDeviceType.None)
+            {
+                UnfilterController(device.SourceDevice.InstanceId);
+                //Give it time to cycle the port
+                Thread.Sleep(250);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static string? GetLocalDriverVersion()

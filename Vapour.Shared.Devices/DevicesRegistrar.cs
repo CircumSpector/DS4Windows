@@ -18,13 +18,11 @@ namespace Vapour.Shared.Devices;
 public class DevicesRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
-    {
-        services.AddSingleton<IControllerManagerService, ControllerManagerService>();
-        //
+    { //
         // HidHide API wrapper
         //
         services.AddSingleton<IHidHideControlService, HidHideControlService>();
-
+        services.AddSingleton<ICurrentControllerDataSource, CurrentControllerDataSource>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDevice>, HidDeviceEnumeratorService>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDeviceOverWinUsb>, WinUsbDeviceEnumeratorService>();
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
