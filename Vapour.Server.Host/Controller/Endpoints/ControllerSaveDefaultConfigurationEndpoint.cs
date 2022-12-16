@@ -1,7 +1,7 @@
 using FastEndpoints;
 
 using Vapour.Server.Controller;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Server.Host.Controller.Endpoints;
 

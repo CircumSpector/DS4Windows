@@ -6,7 +6,6 @@ using Vapour.Server.Controller;
 using Vapour.Server.Host.Controller;
 using Vapour.Server.Host.Profile;
 using Vapour.Server.Profile;
-using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host;
 

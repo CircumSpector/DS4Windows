@@ -1,6 +1,6 @@
 ﻿using Vapour.Server.Controller;
 using Vapour.Shared.Devices.HostedServices;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 namespace Vapour.Server.Host.Controller;
 

@@ -4,7 +4,7 @@ using System.Web;
 
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Core;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.ServiceClients;
 

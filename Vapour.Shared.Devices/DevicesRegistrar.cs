@@ -9,6 +9,9 @@ using Vapour.Client.Core.DependencyInjection;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HostedServices;
 using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.ControllerEnumerators;
+using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices;
 

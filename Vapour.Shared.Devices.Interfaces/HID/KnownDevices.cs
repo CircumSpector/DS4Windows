@@ -1,4 +1,4 @@
-﻿using Vapour.Shared.Devices.Services;
+﻿using Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 namespace Vapour.Shared.Devices.HID;
 

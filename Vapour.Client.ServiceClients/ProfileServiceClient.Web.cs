@@ -1,6 +1,5 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
-using System.Web;
 
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Configuration.Profiles.Schema;
