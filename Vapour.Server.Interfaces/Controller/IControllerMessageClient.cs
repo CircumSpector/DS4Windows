@@ -1,6 +1,4 @@
-﻿using Vapour.Shared.Devices.Services;
-
-namespace Vapour.Server.Controller;
+﻿namespace Vapour.Server.Controller;
 
 /// <summary>
 ///     Describes controller events exchangeable between client and server.

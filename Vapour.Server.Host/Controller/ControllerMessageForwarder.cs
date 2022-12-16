@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
 using Vapour.Server.Controller;
-using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.HostedServices;
 using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Server.Host.Controller;
 
@@ -13,18 +12,18 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
 {
     private readonly IHubContext<ControllerMessageHub, IControllerMessageClient> _hubContext;
 
-    public ControllerMessageForwarder(ControllerManagerHost controllerManagerHost,
+    public ControllerMessageForwarder(ICurrentControllerDataSource currentControllerDataSource,
         IControllerConfigurationService controllerConfigurationService,
         IHubContext<ControllerMessageHub, IControllerMessageClient> hubContext)
     {
         _hubContext = hubContext;
 
-        controllerManagerHost.ControllerReady += async device =>
+        currentControllerDataSource.ControllerAdded += async (o, device) =>
         {
             await _hubContext.Clients.All.ControllerConnected(MapControllerConnected(device));
         };
 
-        controllerManagerHost.ControllerRemoved += async device =>
+        currentControllerDataSource.ControllerRemoved += async (o, device) =>
         {
             await _hubContext.Clients.All.ControllerDisconnected(new ControllerDisconnectedMessage
             {

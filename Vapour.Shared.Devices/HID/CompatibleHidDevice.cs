@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;
 

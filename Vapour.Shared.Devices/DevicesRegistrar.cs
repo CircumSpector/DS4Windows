@@ -9,6 +9,9 @@ using Vapour.Client.Core.DependencyInjection;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HostedServices;
 using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.ControllerEnumerators;
+using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices;
 
@@ -18,13 +21,11 @@ namespace Vapour.Shared.Devices;
 public class DevicesRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
-    {
-        services.AddSingleton<IControllerManagerService, ControllerManagerService>();
-        //
+    { //
         // HidHide API wrapper
         //
         services.AddSingleton<IHidHideControlService, HidHideControlService>();
-
+        services.AddSingleton<ICurrentControllerDataSource, CurrentControllerDataSource>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDevice>, HidDeviceEnumeratorService>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDeviceOverWinUsb>, WinUsbDeviceEnumeratorService>();
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();

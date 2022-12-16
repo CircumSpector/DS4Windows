@@ -1,14 +1,10 @@
-﻿using Windows.Win32;
-
-using Microsoft.Extensions.Logging;
-
-using Nefarius.Drivers.Identinator;
-using Nefarius.Utilities.DeviceManagement.PnP;
+﻿using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Configuration.Profiles.Services;
-using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 namespace Vapour.Shared.Devices.HostedServices;
 
@@ -18,72 +14,40 @@ namespace Vapour.Shared.Devices.HostedServices;
 public sealed class ControllerManagerHost
 {
     private readonly IControllerConfigurationService _controllerConfigurationService;
+    private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private readonly IGameProcessWatcherService _gameProcessWatcherService;
     private readonly IControllerFilterService _controllerFilter;
-    private readonly IDeviceNotificationListener _deviceNotificationListener;
     private readonly IDeviceSettingsService _deviceSettingsService;
-    private readonly IControllersEnumeratorService _enumerator;
+    private readonly IControllersEnumeratorService _controllersEnumeratorService;
     private readonly IGlobalStateService _globalStateService;
-
-    private readonly IHidDeviceEnumeratorService<HidDevice> _hidDeviceEnumeratorService;
-
-    private readonly IInputSourceService _inputSourceService;
 
     private readonly ILogger<ControllerManagerHost> _logger;
 
-    private readonly IControllerManagerService _manager;
-
     private readonly IProfilesService _profileService;
-    private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
-    private CancellationTokenSource _controllerHostToken;
 
     public ControllerManagerHost(
-        IControllersEnumeratorService enumerator,
+        IControllersEnumeratorService controllersEnumeratorService,
         ILogger<ControllerManagerHost> logger,
         IProfilesService profileService,
-        IControllerManagerService manager,
-        IInputSourceService inputSourceService,
-        IDeviceNotificationListener deviceNotificationListener,
-        IHidDeviceEnumeratorService<HidDevice> hidDeviceEnumeratorService,
-        IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IDeviceSettingsService deviceSettingsService,
         IControllerFilterService controllerFilter,
         IGlobalStateService globalStateService,
         IControllerConfigurationService controllerConfigurationService,
+        ICurrentControllerDataSource currentControllerDataSource,
         IGameProcessWatcherService gameProcessWatcherService)
     {
-        _enumerator = enumerator;
+        _controllersEnumeratorService = controllersEnumeratorService;
         _logger = logger;
         _profileService = profileService;
-        _manager = manager;
-        _inputSourceService = inputSourceService;
-        _deviceNotificationListener = deviceNotificationListener;
-        _hidDeviceEnumeratorService = hidDeviceEnumeratorService;
-        _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
         _deviceSettingsService = deviceSettingsService;
         _controllerFilter = controllerFilter;
         _globalStateService = globalStateService;
         _controllerConfigurationService = controllerConfigurationService;
+        _currentControllerDataSource = currentControllerDataSource;
         _gameProcessWatcherService = gameProcessWatcherService;
-
-        enumerator.ControllerReady += EnumeratorServiceOnControllerReady;
-        enumerator.ControllerRemoved += EnumeratorOnControllerRemoved;
     }
-
-    // TODO: temporary because the client still needs to run part of the host for now
-    public bool IsEnabled { get; set; }
-
+    
     public bool IsRunning { get; private set; }
-
-    /// <summary>
-    ///     Fired every time a supported device is found and ready.
-    /// </summary>
-    public event Action<ICompatibleHidDevice> ControllerReady;
-
-    /// <summary>
-    ///     Fired every time a supported device has departed.
-    /// </summary>
-    public event Action<ICompatibleHidDevice> ControllerRemoved;
 
     public event EventHandler<bool> RunningChanged;
 
@@ -94,35 +58,16 @@ public sealed class ControllerManagerHost
     {
         IsRunning = true;
         RunningChanged?.Invoke(this, IsRunning);
-        _controllerHostToken = new CancellationTokenSource();
 
         //_gameProcessWatcherService.StartWatching();
-
         _globalStateService.EnsureRoamingDataPath();
-
         _deviceSettingsService.LoadSettings();
         _controllerFilter.Initialize();
-
-        //
-        // Make sure we're ready to rock
-        // 
         _profileService.Initialize();
         _controllerConfigurationService.Initialize();
 
-        if (IsEnabled)
-        {
-            PInvoke.HidD_GetHidGuid(out Guid hidGuid);
-            _deviceNotificationListener.StartListen(hidGuid);
-            _deviceNotificationListener.StartListen(DeviceConstants.FilteredGuid);
-
-            _logger.LogInformation("Starting device enumeration");
-
-            //
-            // Run full enumeration only once at startup, during runtime arrival events are used
-            // 
-            _enumerator.EnumerateDevices();
-            await Task.CompletedTask;
-        }
+        _controllersEnumeratorService.Start();
+        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -130,51 +75,14 @@ public sealed class ControllerManagerHost
     /// </summary>
     public async Task StopAsync()
     {
-        if (IsEnabled)
-        {
-            _deviceNotificationListener.StopListen();
-            _controllerFilter.UnfilterAllControllers();
-            _hidDeviceEnumeratorService.ClearDevices();
-            _winUsbDeviceEnumeratorService.ClearDevices();
-            _profileService.Shutdown();
-            _controllerHostToken.Cancel();
-        }
+        _controllersEnumeratorService.Stop();
+        _controllerFilter.UnfilterAllControllers();
+        _currentControllerDataSource.Clear();
+        _profileService.Shutdown();
 
         IsRunning = false;
         RunningChanged?.Invoke(this, IsRunning);
 
         await Task.CompletedTask;
-    }
-
-    /// <summary>
-    ///     Gets invoked when a new compatible device is detected.
-    /// </summary>
-    private void EnumeratorServiceOnControllerReady(ICompatibleHidDevice device)
-    {
-        int slotIndex = _manager.AssignFreeSlotWith(device);
-
-        if (slotIndex == -1)
-        {
-            _logger.LogError("No free slot available");
-            return;
-        }
-
-        //_profileService.ControllerArrived(slotIndex, device.Serial);
-        _inputSourceService.ControllerArrived(slotIndex, device);
-
-        ControllerReady?.Invoke(device);
-    }
-
-    /// <summary>
-    ///     Gets invoked when a compatible device has departed.
-    /// </summary>
-    private void EnumeratorOnControllerRemoved(ICompatibleHidDevice device)
-    {
-        int slot = _manager.FreeSlotContaining(device);
-
-        _inputSourceService.ControllerDeparted(slot, device);
-        //_profileService.ControllerDeparted(slot, device.Serial);
-
-        ControllerRemoved?.Invoke(device);
     }
 }

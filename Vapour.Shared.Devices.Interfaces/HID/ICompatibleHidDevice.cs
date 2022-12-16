@@ -1,6 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;
 

@@ -7,13 +7,13 @@ namespace Vapour.Server.Host.Controller.Endpoints;
 
 public sealed class ControllerListEndpoint : EndpointWithoutRequest<List<ControllerConnectedMessage>>
 {
-    private readonly IControllerManagerService _controllerManagerService;
+    private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private readonly IControllerMessageForwarder _controllerMessageForwarder;
 
-    public ControllerListEndpoint(IControllerManagerService controllerManagerService,
+    public ControllerListEndpoint(ICurrentControllerDataSource currentControllerDataSource,
         IControllerMessageForwarder controllerMessageForwarder)
     {
-        _controllerManagerService = controllerManagerService;
+        _currentControllerDataSource = currentControllerDataSource;
         _controllerMessageForwarder = controllerMessageForwarder;
     }
 
@@ -30,9 +30,8 @@ public sealed class ControllerListEndpoint : EndpointWithoutRequest<List<Control
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        await SendOkAsync(_controllerManagerService.ActiveControllers
-            .Where(c => c.Device != null)
-            .Select(c => _controllerMessageForwarder.MapControllerConnected(c.Device))
+        await SendOkAsync(_currentControllerDataSource.CurrentControllers
+            .Select(c => _controllerMessageForwarder.MapControllerConnected(c))
             .ToList(), ct);
     }
 }

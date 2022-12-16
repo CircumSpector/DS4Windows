@@ -3,7 +3,7 @@ using System.Windows.Media.Imaging;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Server.Controller;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.Controllers;
 

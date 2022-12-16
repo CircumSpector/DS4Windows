@@ -8,7 +8,7 @@ using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.Controllers;
 

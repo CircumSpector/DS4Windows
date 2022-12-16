@@ -1,5 +1,5 @@
 ﻿using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Server.Controller;
 

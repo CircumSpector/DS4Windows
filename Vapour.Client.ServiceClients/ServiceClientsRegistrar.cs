@@ -5,9 +5,6 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using Polly;
-using Polly.Contrib.WaitAndRetry;
-
 using Vapour.Client.Core.DependencyInjection;
 using Vapour.Shared.Common.Core;
 
