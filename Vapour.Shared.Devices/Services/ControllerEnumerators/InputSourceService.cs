@@ -8,18 +8,23 @@ namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 internal sealed class InputSourceService : IInputSourceService
 {
+    private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private readonly ObservableCollection<IInputSource> _inputSources;
 
-    public InputSourceService()
+    public InputSourceService(ICurrentControllerDataSource currentControllerDataSource)
     {
+        _currentControllerDataSource = currentControllerDataSource;
         _inputSources = new ObservableCollection<IInputSource>();
 
         InputSources = new ReadOnlyObservableCollection<IInputSource>(_inputSources);
+
+        _currentControllerDataSource.ControllerAdded += ControllerArrived;
+        _currentControllerDataSource.ControllerRemoved += ControllerDeparted;
     }
 
     public ReadOnlyObservableCollection<IInputSource> InputSources { get; }
 
-    public void ControllerArrived(ICompatibleHidDevice device)
+    private void ControllerArrived(object sender, ICompatibleHidDevice device)
     {
         // attempt to merge a JoyCons pair
         if (device is JoyConCompatibleHidDevice)
@@ -46,7 +51,7 @@ internal sealed class InputSourceService : IInputSourceService
         _inputSources.Add(new InputSource(device));
     }
 
-    public void ControllerDeparted(ICompatibleHidDevice device)
+    private void ControllerDeparted(object sender, ICompatibleHidDevice device)
     {
         if (device is JoyConCompatibleHidDevice)
         {

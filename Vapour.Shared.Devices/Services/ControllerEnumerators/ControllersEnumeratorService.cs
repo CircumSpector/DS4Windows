@@ -1,7 +1,12 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Threading.Channels;
+
+using Windows.Win32;
 
 using Microsoft.Extensions.Logging;
+
+using Nefarius.Drivers.Nssidswap;
+using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
@@ -18,7 +23,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
     private readonly IControllerFilterService _controllerFilterService;
     private readonly IControllerConfigurationService _controllerConfigurationService;
-    private readonly IInputSourceService _inputSourceService;
+    private readonly IDeviceNotificationListener _deviceNotificationListener;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
@@ -30,7 +35,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
 
-    private BlockingCollection<ControllerProcessItem> _processItems = new BlockingCollection<ControllerProcessItem>();
+    private Channel<ControllerProcessItem> _processItems;
     private Thread _enumerationProcessThread;
     private CancellationTokenSource _enumerationCancellationTokenSource;
 
@@ -42,7 +47,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         IControllerInputReportProcessorService controllerInputReportProcessorService,
         IControllerFilterService controllerFilterService,
         IControllerConfigurationService controllerConfigurationService,
-        IInputSourceService inputSourceService)
+        IDeviceNotificationListener deviceNotificationListener)
     {
         _logger = logger;
         _currentControllerDataSource = currentControllerDataSource;
@@ -52,7 +57,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         _controllerInputReportProcessorService = controllerInputReportProcessorService;
         _controllerFilterService = controllerFilterService;
         _controllerConfigurationService = controllerConfigurationService;
-        _inputSourceService = inputSourceService;
+        _deviceNotificationListener = deviceNotificationListener;
         _hidEnumeratorService.DeviceArrived += HidDeviceEnumeratorServiceOnDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += HidDeviceEnumeratorServiceOnDeviceRemoved;
 
@@ -64,85 +69,41 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     public event Action DeviceListReady;
     
     /// <inheritdoc />
-    public void EnumerateDevices()
+    public void Start()
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(ControllersEnumeratorService)}:{nameof(EnumerateDevices)}");
+            $"{nameof(ControllersEnumeratorService)}:{nameof(Start)}");
+
+        _processItems = Channel.CreateUnbounded<ControllerProcessItem>(new UnboundedChannelOptions
+        {
+            SingleReader = true,
+            SingleWriter = true,
+            AllowSynchronousContinuations = true
+        });
 
         _hidEnumeratorService.EnumerateDevices();
         _winUsbDeviceEnumeratorService.EnumerateDevices();
 
-        IEnumerable<HidDevice> hidDevices = _hidEnumeratorService.ConnectedDevices
-            .ToList()
-            .Concat(_winUsbDeviceEnumeratorService.ConnectedDevices);
-
-        //
-        // Filter for supported devices
-        // 
-        IEnumerable<HidDevice> filtered = from hidDevice in hidDevices
-            let known =
-                KnownDevices.List.FirstOrDefault(d =>
-                    d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID)
-            where known is not null
-            where (hidDevice.Capabilities.Usage is HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick ||
-                   known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice)) &&
-                  !hidDevice.IsVirtual
-            select hidDevice;
-
-        _currentControllerDataSource.Clear();
-
-        //
-        // Cast to enriched class
-        // 
-        foreach (HidDevice hidDevice in filtered.ToList())
-        {
-            _logger.LogInformation("Adding supported input device {Device}",
-                hidDevice);
-
-            CreateControllerAndNotifyReady(hidDevice);
-        }
-
         StartEnumerationThread();
 
-        //
-        // Notify list is built
-        // 
+        PInvoke.HidD_GetHidGuid(out Guid hidGuid);
+        _deviceNotificationListener.StartListen(hidGuid);
+        _deviceNotificationListener.StartListen(FilterDriver.RewrittenDeviceInterfaceId);
+
         DeviceListReady?.Invoke();
     }
+
+    public void Stop()
+    {
+        _deviceNotificationListener.StopListen();
+        foreach (ICompatibleHidDevice compatibleHidDevice in _currentControllerDataSource.CurrentControllers)
+        {
+            _controllerInputReportProcessorService.StopProcessing(compatibleHidDevice);
+        }
+
+        StopEnumerationThread();
+    }
     
-    private void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(HidDeviceOverWinUsb obj)
-    {
-        if (!obj.IsVirtual)
-        {
-            _processItems.Add(new ControllerProcessItem { Device = obj, isAdd = false });
-        }
-    }
-
-    private void WinUsbDeviceEnumeratorServiceOnDeviceArrived(HidDeviceOverWinUsb obj)
-    {
-        if (!obj.IsVirtual)
-        {
-            _processItems.Add(new ControllerProcessItem { Device = obj, isAdd = true });
-        }
-
-    }
-
-    private void HidDeviceEnumeratorServiceOnDeviceRemoved(HidDevice obj)
-    {
-        if (!obj.IsVirtual)
-        {
-            _processItems.Add(new ControllerProcessItem { Device = obj, isAdd = false });
-        }
-    }
-
-    private void HidDeviceEnumeratorServiceOnDeviceArrived(HidDevice obj)
-    {
-        if (!obj.IsVirtual)
-        {
-            _processItems.Add(new ControllerProcessItem { Device = obj, isAdd = true });
-        }
-    }
-
     private void EnumeratorServiceOnHidDeviceArrived(HidDevice hidDevice)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -170,23 +131,15 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         CreateControllerAndNotifyReady(hidDevice);
     }
 
-    private void EnumeratorServiceOnHidDeviceRemoved(HidDevice hidDevice)
+    private void EnumeratorServiceOnHidDeviceRemoved(string instanceId)
     {
-        _logger.LogInformation("Compatible device {Device} got removed", hidDevice);
+        _logger.LogInformation("Compatible device {Device} got removed", instanceId);
 
-        if (hidDevice.IsVirtual)
-        {
-            return;
-        }
-
-        ICompatibleHidDevice device = _currentControllerDataSource.CurrentControllers.FirstOrDefault(d =>
-            d.SourceDevice.InstanceId.Equals(hidDevice.InstanceId, StringComparison.OrdinalIgnoreCase));
+        ICompatibleHidDevice device = _currentControllerDataSource.GetDeviceByInstanceId(instanceId);
 
         if (device != null)
         {
             _controllerInputReportProcessorService.StopProcessing(device);
-            _inputSourceService.ControllerDeparted(device);
-            
             _currentControllerDataSource.RemoveController(device.SourceDevice.InstanceId);
         }
     }
@@ -200,7 +153,6 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
         if (!_controllerFilterService.FilterUnfilterIfNeeded(device))
         {
-            _inputSourceService.ControllerArrived(device);
             _controllerInputReportProcessorService.StartProcessing(device);
             _currentControllerDataSource.AddController(device);
             
@@ -209,7 +161,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         }
     }
 
-    public ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
+    private ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
     {
         CompatibleHidDevice device = CompatibleHidDevice.CreateFrom(
             deviceIdentification.DeviceType,
@@ -228,6 +180,26 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
     #region enumeration threading
 
+    private async void WinUsbDeviceEnumeratorServiceOnDeviceRemoved(string instanceId)
+    {
+        await _processItems.Writer.WriteAsync(new ControllerProcessItem { InstanceId = instanceId, IsAdd = false });
+    }
+
+    private async void WinUsbDeviceEnumeratorServiceOnDeviceArrived(HidDeviceOverWinUsb obj)
+    {
+        await _processItems.Writer.WriteAsync(new ControllerProcessItem { Device = obj, IsAdd = true });
+    }
+
+    private async void HidDeviceEnumeratorServiceOnDeviceRemoved(string instanceId)
+    {
+        await _processItems.Writer.WriteAsync(new ControllerProcessItem { InstanceId = instanceId, IsAdd = false });
+    }
+
+    private async void HidDeviceEnumeratorServiceOnDeviceArrived(HidDevice obj)
+    {
+        await _processItems.Writer.WriteAsync(new ControllerProcessItem { Device = obj, IsAdd = true });
+    }
+
     private void StartEnumerationThread()
     {
         if (_enumerationCancellationTokenSource == null || _enumerationCancellationTokenSource.Token.IsCancellationRequested)
@@ -243,22 +215,30 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         _enumerationProcessThread.Start();
     }
 
-    private void ReadEnumerations()
+    private async void ReadEnumerations()
     {
         while (!_enumerationCancellationTokenSource.IsCancellationRequested)
         {
-            var item = _processItems.Take();
-            if (item != null)
+            try
             {
-                if (item.isAdd)
+                var item = await _processItems.Reader.ReadAsync(_enumerationCancellationTokenSource.Token);
+                if (item != null)
                 {
-                    EnumeratorServiceOnHidDeviceArrived(item.Device);
-                }
-                else
-                {
-                    EnumeratorServiceOnHidDeviceRemoved(item.Device);
+                    if (item.IsAdd)
+                    {
+                        EnumeratorServiceOnHidDeviceArrived(item.Device);
+                    }
+                    else
+                    {
+                        EnumeratorServiceOnHidDeviceRemoved(item.InstanceId);
+                    }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Controller Enumeration thread canceled");
+            }
+            
         }
     }
 
@@ -266,16 +246,16 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     {
         _enumerationCancellationTokenSource.Cancel();
         _enumerationProcessThread.Join();
-        _processItems.CompleteAdding();
-        _processItems = new BlockingCollection<ControllerProcessItem>();
+        _processItems.Writer.Complete();
         _enumerationCancellationTokenSource.Dispose();
         _enumerationCancellationTokenSource = null;
     }
 
     private class ControllerProcessItem
     {
-        public HidDevice Device { get; set; }
-        public bool isAdd { get; set; }
+        public HidDevice Device { get; init; }
+        public bool IsAdd { get; init; }
+        public string InstanceId { get; init; }
     }
 
     #endregion

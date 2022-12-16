@@ -137,7 +137,7 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
         {
             while (!_inputReportToken.IsCancellationRequested)
             {
-                byte[] buffer = await _inputReportChannel.Reader.ReadAsync();
+                byte[] buffer = await _inputReportChannel.Reader.ReadAsync(_inputReportToken.Token);
 
                 //
                 // Implementation depends on derived object
@@ -151,6 +151,10 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
                     InputReportAvailable?.Invoke(HidDevice, HidDevice.InputReport);
                 }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Input report processing thread stopped");
         }
         // TODO: possibly handle this somewhere else
         catch (VigemBusNotFoundException)

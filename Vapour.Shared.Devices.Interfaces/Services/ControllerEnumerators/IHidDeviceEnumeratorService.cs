@@ -1,19 +1,12 @@
-﻿using System.Collections.ObjectModel;
-
-using Vapour.Shared.Devices.HID;
+﻿using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 /// <summary>
 ///     Single point of truth of states for all connected and handled HID devices.
 /// </summary>
-public interface IHidDeviceEnumeratorService<TDevice> where TDevice : IHidDevice
+public interface IHidDeviceEnumeratorService<out TDevice> where TDevice : IHidDevice
 {
-    /// <summary>
-    ///     List of currently available (connected) HID devices.
-    /// </summary>
-    ReadOnlyObservableCollection<TDevice> ConnectedDevices { get; }
-
     /// <summary>
     ///     Gets fired when a new HID device has been detected.
     /// </summary>
@@ -22,15 +15,10 @@ public interface IHidDeviceEnumeratorService<TDevice> where TDevice : IHidDevice
     /// <summary>
     ///     Gets fired when an existing HID device has been removed.
     /// </summary>
-    event Action<TDevice> DeviceRemoved;
+    event Action<string> DeviceRemoved;
 
     /// <summary>
-    ///     Refreshes <see cref="ConnectedDevices" />. This clears out the list and repopulates is.
+    ///     This goes through the system and adds supported hid devices
     /// </summary>
     void EnumerateDevices();
-
-    /// <summary>
-    ///     Drops all devices from <see cref="ConnectedDevices" />.
-    /// </summary>
-    void ClearDevices();
 }

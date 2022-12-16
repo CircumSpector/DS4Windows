@@ -13,5 +13,7 @@ public interface IControllersEnumeratorService
     /// <summary>
     ///     Enumerate system for compatible devices. This rebuilds <see cref="SupportedDevices" />.
     /// </summary>
-    void EnumerateDevices();
+    void Start();
+
+    void Stop();
 }

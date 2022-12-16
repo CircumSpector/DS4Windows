@@ -1,10 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
-
-using JetBrains.Annotations;
+﻿using System.Diagnostics;
 
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Drivers.Nssidswap;
 using Nefarius.Drivers.WinUSB;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
@@ -18,7 +16,6 @@ namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 /// </summary>
 internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
 {
-    private readonly ObservableCollection<HidDeviceOverWinUsb> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
@@ -33,24 +30,17 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         _logger = logger;
 
         _deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived,
-            DeviceConstants.FilteredGuid);
+            FilterDriver.RewrittenDeviceInterfaceId);
         _deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved,
-            DeviceConstants.FilteredGuid);
-
-        _connectedDevices = new ObservableCollection<HidDeviceOverWinUsb>();
-
-        ConnectedDevices = new ReadOnlyObservableCollection<HidDeviceOverWinUsb>(_connectedDevices);
+            FilterDriver.RewrittenDeviceInterfaceId);
     }
 
     /// <inheritdoc />
     public event Action<HidDeviceOverWinUsb> DeviceArrived;
 
     /// <inheritdoc />
-    public event Action<HidDeviceOverWinUsb> DeviceRemoved;
-
-    /// <inheritdoc />
-    public ReadOnlyObservableCollection<HidDeviceOverWinUsb> ConnectedDevices { get; }
-
+    public event Action<string> DeviceRemoved;
+    
     /// <inheritdoc />
     public void EnumerateDevices()
     {
@@ -58,59 +48,38 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
             $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
 
         int deviceIndex = 0;
-
-        _connectedDevices.Clear();
-
-        while (Devcon.FindByInterfaceGuid(DeviceConstants.FilteredGuid, out string path,
-                   out string instanceId,
-                   deviceIndex++))
+        
+        while (Devcon.FindByInterfaceGuid(FilterDriver.RewrittenDeviceInterfaceId, out string path, out string _, deviceIndex++))
         {
-            string service = PnPDevice.GetDeviceByInterfaceId(path)
-                .GetProperty<string>(DevicePropertyKey.Device_Service);
-
-            // skip those with unexpected service
-            if (service is null || !service.ToUpper().Equals("WINUSB"))
+            try
             {
-                continue;
+                CreateNewHidDeviceOverWinUsb(path);
             }
-
-            // skip already discovered ones
-            if (_connectedDevices.Any(d =>
-                    String.Equals(d.InstanceId, instanceId, StringComparison.CurrentCultureIgnoreCase)))
+            catch (Exception ex)
             {
-                _logger.LogWarning("Skipping duplicate for WinUSB {InstanceId}", instanceId);
-                continue;
+                _logger.LogWarning(ex, $"Failed to create Filtered USB device for {path}");
             }
-
-            HidDeviceOverWinUsb entry = CreateNewHidDeviceOverWinUsb(path);
-
-            if (entry is null)
-            {
-                continue;
-            }
-
-            _logger.LogInformation("Discovered WinUSB device {Device}", entry);
-
-            _connectedDevices.Add(entry);
         }
     }
 
-    /// <inheritdoc />
-    public void ClearDevices()
+    private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
     {
-        foreach (HidDeviceOverWinUsb connectedDevice in ConnectedDevices.ToList())
-        {
-            RemoveDevice(connectedDevice.Path);
-        }
+        using Activity activity = _coreActivity.StartActivity(
+            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
+
+        string symLink = args.SymLink;
+        activity?.SetTag("Path", symLink);
+
+        _logger.LogInformation("Filtered Device ({Path}) arrived", symLink);
+        CreateNewHidDeviceOverWinUsb(symLink);
     }
 
-    /// <summary>
-    ///     Create new <see cref="HidDeviceOverWinUsb" /> and initialize basic properties.
-    /// </summary>
-    /// <param name="path">The symbolic link path of the device instance.</param>
-    /// <returns>The new <see cref="HidDeviceOverWinUsb" />.</returns>
-    [CanBeNull]
-    private HidDeviceOverWinUsb CreateNewHidDeviceOverWinUsb(string path)
+    private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
+    {
+        RemoveDevice(args.SymLink);
+    }
+
+    private void CreateNewHidDeviceOverWinUsb(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
             $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(CreateNewHidDeviceOverWinUsb)}");
@@ -127,7 +96,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
             // Filter out devices we don't know about
             if (supportedDevice == null)
             {
-                return null;
+                return;
             }
 
             PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
@@ -150,65 +119,24 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
 
             winUsbDevice.Dispose();
 
-            return new HidDeviceOverWinUsb(path, identification)
+            var hidDevice = new HidDeviceOverWinUsb(path, identification)
             {
                 InstanceId = device.InstanceId.ToUpper(),
                 Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
                 DisplayName = friendlyName,
                 ParentInstance = parentId
             };
+
+            DeviceArrived?.Invoke(hidDevice);
         }
         catch (USBException ex)
         {
             _logger.LogWarning(ex, "Couldn't access WinUSB device ({Path})", path);
-            return null;
         }
-    }
-
-    private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
-    {
-        using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
-
-        string symLink = args.SymLink;
-        activity?.SetTag("Path", symLink);
-
-        PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink);
-
-        string service = device.GetProperty<string>(DevicePropertyKey.Device_Service);
-
-        // skip those with unexpected service
-        if (service is null || !service.ToUpper().Equals("WINUSB"))
+        catch (Exception ex)
         {
-            return;
+            _logger.LogWarning(ex, $"Failed to create Filtered USB device for {path}");
         }
-
-        // skip already discovered ones
-        if (_connectedDevices.Any(d =>
-                String.Equals(d.InstanceId, device.InstanceId, StringComparison.CurrentCultureIgnoreCase)))
-        {
-            _logger.LogWarning("Skipping duplicate for WinUSB {InstanceId}", device.InstanceId);
-            return;
-        }
-
-        _logger.LogInformation("WinUSB Device {Instance} ({Path}) arrived",
-            device.InstanceId, symLink);
-
-        HidDeviceOverWinUsb entry = CreateNewHidDeviceOverWinUsb(symLink);
-
-        if (entry is null)
-        {
-            return;
-        }
-
-        _connectedDevices.Add(entry);
-
-        DeviceArrived?.Invoke(entry);
-    }
-
-    private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
-    {
-        RemoveDevice(args.SymLink);
     }
 
     private void RemoveDevice(string symLink)
@@ -223,16 +151,9 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         _logger.LogInformation("WinUSB Device {Instance} ({Path}) removed",
             device.InstanceId, symLink);
 
-        HidDeviceOverWinUsb entry =
-            _connectedDevices.FirstOrDefault(entry =>
-                String.Equals(entry.InstanceId, device.InstanceId, StringComparison.CurrentCultureIgnoreCase));
-
-        if (entry is null)
+        if (!device.IsVirtual())
         {
-            return;
+            DeviceRemoved?.Invoke(device.InstanceId);
         }
-
-        DeviceRemoved?.Invoke(entry);
-        _connectedDevices.Remove(entry);
     }
 }

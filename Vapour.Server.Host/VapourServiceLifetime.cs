@@ -39,7 +39,6 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         windowsServiceOptionsAccessor
     )
     {
-        controllerHost.IsEnabled = true;
         CanHandleSessionChangeEvent = true;
         CanShutdown = true;
         CanStop = true;

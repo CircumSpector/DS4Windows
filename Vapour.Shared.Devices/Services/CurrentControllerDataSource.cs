@@ -22,8 +22,8 @@ public class CurrentControllerDataSource : ICurrentControllerDataSource
         if (existing != null)
         {
             CurrentControllers.Remove(existing);
-            existing.Dispose();
             ControllerRemoved?.Invoke(this, existing);
+            existing.Dispose();
         }
     }
 

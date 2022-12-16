@@ -1,13 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using Windows.Win32;
 using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
 using Windows.Win32.Storage.FileSystem;
-
-using JetBrains.Annotations;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
@@ -24,7 +21,6 @@ namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 /// </summary>
 internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDevice>
 {
-    private readonly ObservableCollection<HidDevice> _connectedDevices;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
@@ -47,10 +43,6 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
             _hidClassInterfaceGuid);
         _deviceNotificationListener.RegisterDeviceRemoved(DeviceNotificationListenerOnDeviceRemoved,
             _hidClassInterfaceGuid);
-
-        _connectedDevices = new ObservableCollection<HidDevice>();
-
-        ConnectedDevices = new ReadOnlyObservableCollection<HidDevice>(_connectedDevices);
     }
 
     /// <summary>
@@ -61,11 +53,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
     /// <inheritdoc />
     public event Action<HidDevice> DeviceArrived;
 
-    /// <inheritdoc />
-    public event Action<HidDevice> DeviceRemoved;
-
-    /// <inheritdoc />
-    public ReadOnlyObservableCollection<HidDevice> ConnectedDevices { get; }
+    public event Action<string> DeviceRemoved;
 
     /// <inheritdoc />
     public void EnumerateDevices()
@@ -74,23 +62,12 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
 
         int deviceIndex = 0;
-
-        _connectedDevices.Clear();
-
+        
         while (Devcon.FindByInterfaceGuid(_hidClassInterfaceGuid, out string path, out _, deviceIndex++))
         {
             try
             {
-                HidDevice entry = CreateNewHidDevice(path);
-
-                if (entry is null)
-                {
-                    continue;
-                }
-
-                _logger.LogInformation("Discovered HID device {Device}", entry);
-
-                _connectedDevices.Add(entry);
+                CreateNewHidDevice(path);
             }
             catch (Exception ex)
             {
@@ -99,22 +76,32 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         }
     }
 
-    /// <inheritdoc />
-    public void ClearDevices()
+    private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
     {
-        foreach (HidDevice connectedDevice in ConnectedDevices.ToList())
+        using Activity activity = _coreActivity.StartActivity(
+            $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
+
+        string symLink = args.SymLink;
+        activity?.SetTag("Path", symLink);
+
+        try
         {
-            RemoveDevice(connectedDevice.Path);
+            _logger.LogInformation("HID Device ({Path}) arrived", symLink);
+
+            CreateNewHidDevice(symLink);
+        }
+        catch (ArgumentException ae)
+        {
+            _logger.LogWarning(ae, "Failed to add new device");
         }
     }
 
-    /// <summary>
-    ///     Create new <see cref="HidDevice" /> and initialize basic properties.
-    /// </summary>
-    /// <param name="path">The symbolic link path of the device instance.</param>
-    /// <returns>The new <see cref="HidDevice" />.</returns>
-    [CanBeNull]
-    private HidDevice CreateNewHidDevice(string path)
+    private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
+    {
+        RemoveDevice(args.SymLink);
+    }
+    
+    private void CreateNewHidDevice(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(CreateNewHidDevice)}");
@@ -125,10 +112,23 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         {
             _logger.LogWarning(
                 "Device {Path} couldn't be opened, it's probably in use exclusively by some other process", path);
-            return null;
+            return;
         }
 
         PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
+
+        if (device.IsVirtual())
+        {
+            _logger.LogInformation($"Device {path} is virtual do not continue to process");
+            return;
+        }
+
+        if (!IsHidDevice(device))
+        {
+            _logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
+                device.InstanceId, path);
+            return;
+        }
 
         //
         // Try to get friendly display name (not always there)
@@ -148,7 +148,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
 
         GetHidCapabilities(path, out HIDP_CAPS caps);
 
-        return new HidDevice
+        var hidDevice = new HidDevice
         {
             Path = path,
             InstanceId = device.InstanceId.ToUpper(),
@@ -162,8 +162,26 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
             ProductString = GetHidProductString(path),
             SerialNumberString = GetHidSerialNumberString(path)
         };
+
+        DeviceArrived?.Invoke(hidDevice);
     }
 
+    private void RemoveDevice(string symLink)
+    {
+        using Activity activity = _coreActivity.StartActivity(
+            $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceRemoved)}");
+
+        activity?.SetTag("Path", symLink);
+
+        PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom); 
+        _logger.LogInformation($"HID Device ({device.InstanceId} ({symLink}) removed");
+        
+        if (!device.IsVirtual())
+        {
+            DeviceRemoved?.Invoke(device.InstanceId);
+        }
+    }
+    
     /// <summary>
     ///     Attempts to open device.
     /// </summary>
@@ -334,93 +352,6 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
 
         activity?.SetTag("InputReportByteLength", caps.InputReportByteLength);
         activity?.SetTag("OutputReportByteLength", caps.OutputReportByteLength);
-    }
-
-    private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
-    {
-        using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceArrived)}");
-
-        string symLink = args.SymLink;
-        activity?.SetTag("Path", symLink);
-
-        try
-        {
-            PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink);
-
-            _logger.LogInformation("HID Device {Instance} ({Path}) arrived",
-                device.InstanceId, symLink);
-
-            //
-            // This should never happen as we're only listening to HID Class Devices
-            // changes anyway but some extra safety and logging can't hurt :)
-            // 
-            if (!IsHidDevice(device))
-            {
-                _logger.LogInformation("Device {Instance} ({Path}) is not a HID device, ignoring",
-                    device.InstanceId, symLink);
-                return;
-            }
-
-            HidDevice entry = CreateNewHidDevice(symLink);
-
-            if (entry is null)
-            {
-                return;
-            }
-
-            if (device.IsVirtual())
-            {
-                _logger.LogInformation("HID Device {Instance} ({Path}) is emulated, setting flag",
-                    device.InstanceId, symLink);
-            }
-
-            if (!_connectedDevices.Contains(entry))
-            {
-                _connectedDevices.Add(entry);
-            }
-
-            DeviceArrived?.Invoke(entry);
-        }
-        catch (ArgumentException ae)
-        {
-            _logger.LogWarning(ae, "Failed to add new device");
-        }
-    }
-
-    private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
-    {
-        RemoveDevice(args.SymLink);
-    }
-
-    private void RemoveDevice(string symLink)
-    {
-        using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(HidDeviceEnumeratorService)}:{nameof(DeviceNotificationListenerOnDeviceRemoved)}");
-
-        activity?.SetTag("Path", symLink);
-
-        PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom);
-
-        _logger.LogInformation("HID Device {Instance} ({Path}) removed",
-            device.InstanceId, symLink);
-
-        GetHidAttributes(symLink, out HIDD_ATTRIBUTES attributes);
-
-        HidDevice entry = new()
-        {
-            Path = symLink,
-            IsVirtual = device.IsVirtual(),
-            InstanceId = device.InstanceId.ToUpper(),
-            Attributes = attributes
-        };
-
-        if (_connectedDevices.Contains(entry))
-        {
-            _connectedDevices.Remove(entry);
-        }
-
-        DeviceRemoved?.Invoke(entry);
     }
 
     /// <summary>

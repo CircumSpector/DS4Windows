@@ -27,18 +27,15 @@ public class ControllerFilterService : IControllerFilterService
     private readonly ILogger<ControllerFilterService> _logger;
     private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private readonly IDeviceSettingsService _deviceSettingsService;
-    private readonly IControllerConfigurationService _controllerConfigurationService;
     private bool _isInitializing = true;
 
     public ControllerFilterService(ILogger<ControllerFilterService> logger,
         ICurrentControllerDataSource currentControllerDataSource,
-        IDeviceSettingsService deviceSettingsService,
-        IControllerConfigurationService controllerConfigurationService)
+        IDeviceSettingsService deviceSettingsService)
     {
         _logger = logger;
         _currentControllerDataSource = currentControllerDataSource;
         _deviceSettingsService = deviceSettingsService;
-        _controllerConfigurationService = controllerConfigurationService;
     }
 
     public void Initialize()
@@ -102,6 +99,7 @@ public class ControllerFilterService : IControllerFilterService
                     UsbPnPDevice usbDevice = PnPDevice.GetDeviceByInstanceId(device.SourceDevice.InstanceId)
                         .ToUsbPnPDevice();
                     usbDevice.CyclePort();
+                    CyclePort(usbDevice);
                 }
             }
         }
@@ -121,7 +119,7 @@ public class ControllerFilterService : IControllerFilterService
             @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D", @"USB\Class_FF"
         };
 
-        usbDevice.CyclePort();
+        CyclePort(usbDevice);
     }
 
     /// <inheritdoc />
@@ -137,7 +135,7 @@ public class ControllerFilterService : IControllerFilterService
             entry.IsReplacingEnabled = false;
         }
 
-        usbDevice.CyclePort();
+        CyclePort(usbDevice);
     }
 
     public void UnfilterAllControllers()
@@ -147,7 +145,6 @@ public class ControllerFilterService : IControllerFilterService
                      .ToList())
         {
             UnfilterController(sourceDevice.InstanceId);
-            Thread.Sleep(250);
         }
     }
 
@@ -163,24 +160,25 @@ public class ControllerFilterService : IControllerFilterService
                 if (supportsWinUsbRewrite != null && config.OutputDeviceType != OutputDeviceType.None)
                 {
                     FilterController(device.SourceDevice.InstanceId);
-
-                    //Give it time to cycle the port
-                    Thread.Sleep(250);
-
                     return true;
                 }
             }
             else if (device.IsFiltered && config.OutputDeviceType == OutputDeviceType.None)
             {
                 UnfilterController(device.SourceDevice.InstanceId);
-                //Give it time to cycle the port
-                Thread.Sleep(250);
-
                 return true;
             }
         }
 
         return false;
+    }
+
+    private void CyclePort(UsbPnPDevice usbDevice)
+    {
+        usbDevice.CyclePort();
+
+        //give it time to cycle
+        Thread.Sleep(250);
     }
 
     private static string? GetLocalDriverVersion()
