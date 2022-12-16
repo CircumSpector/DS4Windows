@@ -155,7 +155,7 @@ public class ControllerFilterService : IControllerFilterService
     {
         if (GetFilterDriverEnabled())
         {
-            var config = _controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString);
+            var config = device.CurrentConfiguration;
             if (!device.IsFiltered)
             {
                 var supportsWinUsbRewrite =

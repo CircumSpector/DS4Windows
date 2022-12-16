@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Configuration.Profiles.Schema;
@@ -17,4 +18,7 @@ public class ControllerConfiguration
 
     [JsonIgnore]
     public IProfile Profile { get; set; }
+
+    public bool IsGameConfiguration { get; set; }
+    public string GameId { get; set; }
 }

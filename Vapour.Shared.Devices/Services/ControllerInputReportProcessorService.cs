@@ -28,14 +28,11 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         _controllerFilterService = controllerFilterService;
         _controllerInputReportProcessors = new Dictionary<string, IControllerInputReportProcessor>();
         _outputProcessors = new Dictionary<string, IOutputProcessor>();
-
-        _controllerConfigurationService.OnActiveConfigurationChanged +=
-            OnActiveConfigurationChanged;
     }
 
     public void StartProcessing(ICompatibleHidDevice device)
     {
-        device.SetConfiguration(_controllerConfigurationService.GetActiveControllerConfiguration(device.SerialString));
+        device.ConfigurationChanged += Device_ConfigurationChanged;
 
         IControllerInputReportProcessor inputReportProcessor;
         IOutputProcessor outputProcessor;
@@ -66,6 +63,7 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
 
     public void StopProcessing(ICompatibleHidDevice hidDevice)
     {
+        hidDevice.ConfigurationChanged -= Device_ConfigurationChanged;
         string controllerKey = hidDevice.SerialString;
         if (_controllerInputReportProcessors.ContainsKey(controllerKey))
         {
@@ -76,12 +74,12 @@ internal sealed class ControllerInputReportProcessorService : IControllerInputRe
         }
     }
 
-    private void OnActiveConfigurationChanged(object sender,
-        ControllerConfigurationChangedEventArgs e)
+    private void Device_ConfigurationChanged(object sender, EventArgs e)
     {
-        if (_controllerInputReportProcessors.ContainsKey(e.ControllerKey))
+        var controller = (ICompatibleHidDevice)sender;
+        if (_controllerInputReportProcessors.ContainsKey(controller.SerialString))
         {
-            ICompatibleHidDevice existingDevice = _controllerInputReportProcessors[e.ControllerKey].HidDevice;
+            ICompatibleHidDevice existingDevice = _controllerInputReportProcessors[controller.SerialString].HidDevice;
 
             if (_controllerFilterService.FilterUnfilterIfNeeded(existingDevice))
             {

@@ -27,6 +27,16 @@ public class CurrentControllerDataSource : ICurrentControllerDataSource
         }
     }
 
+    public ICompatibleHidDevice GetDeviceByInstanceId(string instanceId)
+    {
+        return CurrentControllers.SingleOrDefault(c => c.SourceDevice.InstanceId == instanceId);
+    }
+
+    public ICompatibleHidDevice GetDeviceByControllerKey(string controllerKey)
+    {
+        return CurrentControllers.SingleOrDefault(c => c.SerialString == controllerKey);
+    }
+    
     public void Clear()
     {
         foreach (var controller in CurrentControllers.ToList())

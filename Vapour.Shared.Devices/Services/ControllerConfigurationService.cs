@@ -5,6 +5,7 @@ using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Profiles;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -12,16 +13,18 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 {
     private readonly IGlobalStateService _globalStateService;
     private readonly IProfilesService _profilesService;
-    private Dictionary<string, ControllerConfiguration> _activeConfigurations;
+    private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private Dictionary<string, ControllerConfiguration> _controllerConfigurations;
     private Dictionary<string, ControllerGameConfiguration> _controllerGameConfigurations;
 
     public ControllerConfigurationService(
         IGlobalStateService globalStateService,
-        IProfilesService profilesService)
+        IProfilesService profilesService,
+        ICurrentControllerDataSource currentControllerDataSource)
     {
         _globalStateService = globalStateService;
         _profilesService = profilesService;
+        _currentControllerDataSource = currentControllerDataSource;
         _profilesService.OnProfileDeleted += _profilesService_OnProfileDeleted;
         _profilesService.OnProfileUpdated += _profilesService_OnProfileUpdated;
     }
@@ -30,83 +33,81 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
     public void Initialize()
     {
-        _activeConfigurations = new Dictionary<string, ControllerConfiguration>();
         LoadControllerConfigurations();
         LoadControllerGameConfigurations();
     }
 
-    public ControllerConfiguration GetActiveControllerConfiguration(string controllerKey)
+    public void LoadControllerConfiguration(ICompatibleHidDevice device)
     {
-        ControllerConfiguration activeConfiguration;
-        if (_activeConfigurations.ContainsKey(controllerKey))
+        if (_controllerConfigurations.ContainsKey(device.SerialString))
         {
-            activeConfiguration = _activeConfigurations[controllerKey];
-            if (_profilesService.AvailableProfiles.ContainsKey(activeConfiguration.ProfileId))
-            {
-                return activeConfiguration;
-            }
-
-            _activeConfigurations.Remove(controllerKey);
-        }
-
-        if (_controllerConfigurations.ContainsKey(controllerKey) &&
-            _profilesService.AvailableProfiles.ContainsKey(_controllerConfigurations[controllerKey].ProfileId))
-        {
-            activeConfiguration = _controllerConfigurations[controllerKey];
-            activeConfiguration.Profile = _profilesService.AvailableProfiles[activeConfiguration.ProfileId].DeepClone();
-            _activeConfigurations.Add(controllerKey, activeConfiguration.DeepClone());
+            SetControllerConfiguration(device, _controllerConfigurations[device.SerialString]);
         }
         else
         {
-            activeConfiguration = GetDefaultControllerConfiguration();
-            _controllerConfigurations.Add(controllerKey, activeConfiguration);
-            SaveControllerConfigurations();
-            _activeConfigurations.Add(controllerKey, activeConfiguration.DeepClone());
+            SetControllerConfiguration(device);
         }
-
-        return activeConfiguration;
     }
 
     public void SetControllerConfiguration(string controllerKey,
-        ControllerConfiguration controllerConfiguration,
-        bool isDefaultControllerConfiguration = false)
+        ControllerConfiguration controllerConfiguration = null,
+        bool shouldSave = false)
     {
-        if (!_profilesService.AvailableProfiles.ContainsKey(controllerConfiguration.ProfileId))
+        SetControllerConfiguration(_currentControllerDataSource.GetDeviceByControllerKey(controllerKey), controllerConfiguration, shouldSave);
+    }
+
+    public void SetControllerConfiguration(ICompatibleHidDevice controller,
+        ControllerConfiguration controllerConfiguration = null,
+        bool shouldSave = false)
+    {
+        var controllerKey = controller.SerialString;
+        ControllerConfiguration newConfig;
+        if (controllerConfiguration == null)
         {
-            throw new ArgumentException("The profile Id passed in does not exist");
+            newConfig = GetDefaultControllerConfiguration();
+            shouldSave = true;
         }
-
-        controllerConfiguration.Profile =
-            _profilesService.AvailableProfiles[controllerConfiguration.ProfileId].DeepClone();
-
-        if (_activeConfigurations.ContainsKey(controllerKey))
+        else if (_profilesService.AvailableProfiles.All(p => p.Key != controllerConfiguration.ProfileId))
         {
-            _activeConfigurations[controllerKey] = controllerConfiguration;
+            newConfig = GetDefaultControllerConfiguration();
+            shouldSave = true;
         }
         else
         {
-            _activeConfigurations.Add(controllerKey, controllerConfiguration);
+            newConfig = controllerConfiguration;
         }
 
-        if (isDefaultControllerConfiguration)
-        {
-            if (_controllerConfigurations.ContainsKey(controllerKey))
-            {
-                _controllerConfigurations[controllerKey] = controllerConfiguration;
-            }
-            else
-            {
-                _controllerConfigurations.Add(controllerKey, controllerConfiguration);
-            }
+        newConfig.Profile = _profilesService.AvailableProfiles[newConfig.ProfileId].DeepClone();
+        
+        controller.SetConfiguration(controllerConfiguration);
 
-            SaveControllerConfigurations();
-        }
+       if (shouldSave)
+       {
+           if (!newConfig.IsGameConfiguration)
+           {
+               if (_controllerConfigurations.ContainsKey(controllerKey))
+               {
+                   _controllerConfigurations[controllerKey] = controllerConfiguration;
+               }
+               else
+               {
+                   _controllerConfigurations.Add(controllerKey, controllerConfiguration);
+               }
 
-        OnActiveConfigurationChanged?.Invoke(this,
-            new ControllerConfigurationChangedEventArgs
-            {
-                ControllerKey = controllerKey, ControllerConfiguration = controllerConfiguration
-            });
+               SaveControllerConfigurations();
+            }
+           else
+           {
+               //write game config save logic
+           }
+       }
+
+       OnActiveConfigurationChanged?.Invoke(this,
+           new ControllerConfigurationChangedEventArgs
+           {
+               ControllerKey = controllerKey,
+               ControllerConfiguration = newConfig
+           });
     }
 
     private void LoadControllerConfigurations()
@@ -205,44 +206,24 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
     private void _profilesService_OnProfileDeleted(object sender, Guid e)
     {
-        foreach (KeyValuePair<string, ControllerConfiguration> controllerConfiguration in _activeConfigurations
-                     .Where(i => i.Value.ProfileId == e).ToList())
+        foreach (var ccItem in _controllerConfigurations.Where(c => c.Value.ProfileId == e))
         {
-            ControllerConfiguration defaultControllerConfiguration = GetDefaultControllerConfiguration();
-            ControllerConfiguration existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
-            existingConfiguration.Profile = defaultControllerConfiguration.Profile;
-            existingConfiguration.ProfileId = defaultControllerConfiguration.ProfileId;
-            OnActiveConfigurationChanged?.Invoke(this,
-                new ControllerConfigurationChangedEventArgs
-                {
-                    ControllerKey = controllerConfiguration.Key, ControllerConfiguration = existingConfiguration
-                });
+            var controllerConfiguration = GetDefaultControllerConfiguration();
+            SetControllerConfiguration(ccItem.Key, controllerConfiguration, true);
         }
-
-        foreach (KeyValuePair<string, ControllerConfiguration> controllerConfiguration in _controllerConfigurations
-                     .Where(i => i.Value.ProfileId == e).ToList())
-        {
-            ControllerConfiguration defaultControllerConfiguration = GetDefaultControllerConfiguration();
-            ControllerConfiguration existingConfiguration = _activeConfigurations[controllerConfiguration.Key];
-            existingConfiguration.Profile = defaultControllerConfiguration.Profile;
-            existingConfiguration.ProfileId = defaultControllerConfiguration.ProfileId;
-        }
-
-        SaveControllerConfigurations();
+        
+        //reset game configurations
     }
 
     private void _profilesService_OnProfileUpdated(object sender, Guid e)
     {
-        foreach (KeyValuePair<string, ControllerConfiguration> controllerConfiguration in _activeConfigurations.Where(
-                     i => i.Value.ProfileId == e))
+        foreach (var ccItem in _controllerConfigurations.Where(c => c.Value.ProfileId == e))
         {
-            _activeConfigurations[controllerConfiguration.Key].Profile = _profilesService.AvailableProfiles[e];
-            OnActiveConfigurationChanged?.Invoke(this,
-                new ControllerConfigurationChangedEventArgs
-                {
-                    ControllerKey = controllerConfiguration.Key,
-                    ControllerConfiguration = controllerConfiguration.Value
-                });
+            var controllerConfiguration = ccItem.Value.DeepClone();
+            controllerConfiguration.ProfileId = e;
+            SetControllerConfiguration(ccItem.Key, controllerConfiguration, true);
         }
+
+        //set game configurations
     }
 }

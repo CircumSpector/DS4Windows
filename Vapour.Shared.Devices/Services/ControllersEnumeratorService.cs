@@ -15,6 +15,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 {
     private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
     private readonly IControllerFilterService _controllerFilterService;
+    private readonly IControllerConfigurationService _controllerConfigurationService;
     private readonly IInputSourceService _inputSourceService;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
@@ -38,6 +39,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IControllerInputReportProcessorService controllerInputReportProcessorService,
         IControllerFilterService controllerFilterService,
+        IControllerConfigurationService controllerConfigurationService,
         IInputSourceService inputSourceService)
     {
         _logger = logger;
@@ -47,6 +49,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
         _controllerInputReportProcessorService = controllerInputReportProcessorService;
         _controllerFilterService = controllerFilterService;
+        _controllerConfigurationService = controllerConfigurationService;
         _inputSourceService = inputSourceService;
         _hidEnumeratorService.DeviceArrived += HidDeviceEnumeratorServiceOnDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += HidDeviceEnumeratorServiceOnDeviceRemoved;
@@ -191,17 +194,14 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         CompatibleDeviceIdentification deviceIdentification = KnownDevices.List
             .First(c => c.Vid == hidDevice.Attributes.VendorID && c.Pid == hidDevice.Attributes.ProductID);
         ICompatibleHidDevice device = CreateDevice(hidDevice, deviceIdentification);
+        _controllerConfigurationService.LoadControllerConfiguration(device);
 
         if (!_controllerFilterService.FilterUnfilterIfNeeded(device))
         {
-            _controllerInputReportProcessorService.StartProcessing(device);
-
             _inputSourceService.ControllerArrived(device);
-            //
-            // Notify compatible device found and ready
-            // 
+            _controllerInputReportProcessorService.StartProcessing(device);
             _currentControllerDataSource.AddController(device);
-
+            
             _logger.LogInformation("Added identified input device {Device}",
                 device.ToString());
         }

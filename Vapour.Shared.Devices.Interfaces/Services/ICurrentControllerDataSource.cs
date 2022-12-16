@@ -9,5 +9,7 @@ public interface ICurrentControllerDataSource
     event EventHandler<ICompatibleHidDevice> ControllerRemoved;
     void AddController(ICompatibleHidDevice controller);
     void RemoveController(string instanceId);
+    ICompatibleHidDevice GetDeviceByInstanceId(string instanceId);
+    ICompatibleHidDevice GetDeviceByControllerKey(string controllerKey);
     void Clear();
 }
