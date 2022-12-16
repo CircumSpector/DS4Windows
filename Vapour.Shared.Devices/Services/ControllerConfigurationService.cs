@@ -206,24 +206,25 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
     private void _profilesService_OnProfileDeleted(object sender, Guid e)
     {
-        foreach (var ccItem in _controllerConfigurations.Where(c => c.Value.ProfileId == e))
-        {
-            var controllerConfiguration = GetDefaultControllerConfiguration();
-            SetControllerConfiguration(ccItem.Key, controllerConfiguration, true);
-        }
-        
+        UpdateAllProfiles(e, Constants.DefaultProfileId);
+
         //reset game configurations
     }
 
     private void _profilesService_OnProfileUpdated(object sender, Guid e)
     {
-        foreach (var ccItem in _controllerConfigurations.Where(c => c.Value.ProfileId == e))
-        {
-            var controllerConfiguration = ccItem.Value.DeepClone();
-            controllerConfiguration.ProfileId = e;
-            SetControllerConfiguration(ccItem.Key, controllerConfiguration, true);
-        }
+        UpdateAllProfiles(e, e);
 
         //set game configurations
+    }
+
+    private void UpdateAllProfiles(Guid oldProfileId, Guid newProfileId)
+    {
+        foreach (var ccItem in _controllerConfigurations.Where(c => c.Value.ProfileId == oldProfileId))
+        {
+            var controllerConfiguration = ccItem.Value.DeepClone();
+            controllerConfiguration.ProfileId = newProfileId;
+            SetControllerConfiguration(ccItem.Key, controllerConfiguration, true);
+        }
     }
 }
