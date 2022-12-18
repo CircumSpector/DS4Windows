@@ -18,7 +18,8 @@ public class ControllerFilterDriverStatusEndpoint : EndpointWithoutRequest<Contr
     {
         Get("/controller/filterdriver/status");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Queries the controller filter driver status";
             s.Description = "Returns whether or not the filter driver is installed and if it is globally enabled";
             s.Responses[200] = "Status response was delivered";
@@ -27,10 +28,11 @@ public class ControllerFilterDriverStatusEndpoint : EndpointWithoutRequest<Contr
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        await SendOkAsync(new ControllerFilterDriverStatusResponse
+        await SendOkAsync(
+            new ControllerFilterDriverStatusResponse
             {
-                IsDriverInstalled = _controllerFilterService.GetFilterDriverInstalled(),
-                IsFilteringEnabled = _controllerFilterService.GetFilterDriverEnabled()
+                IsDriverInstalled = _controllerFilterService.IsFilterDriverInstalled,
+                IsFilteringEnabled = _controllerFilterService.IsFilterDriverEnabled
             },
             ct);
     }

@@ -20,13 +20,13 @@ public interface IControllerFilterService
     ///     Gets whether or not the filter driver is installed
     /// </summary>
     /// <returns>A bool representing whether or not the filter driver is installed</returns>
-    bool GetFilterDriverInstalled();
+    bool IsFilterDriverInstalled { get; }
 
     /// <summary>
     ///     Gets whether or not the filter driver is enabled
     /// </summary>
     /// <returns>A bool representing whether or not the filter driver is enabled</returns>
-    bool GetFilterDriverEnabled();
+    bool IsFilterDriverEnabled { get; }
 
     /// <summary>
     ///     Sets whether or not to enable the filter driver
