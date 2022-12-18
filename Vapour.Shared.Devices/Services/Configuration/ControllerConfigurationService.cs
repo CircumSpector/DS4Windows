@@ -7,6 +7,8 @@ using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
 
+using Windows.Management.Deployment;
+
 namespace Vapour.Shared.Devices.Services.Configuration;
 
 internal class ControllerConfigurationService : IControllerConfigurationService
@@ -15,7 +17,7 @@ internal class ControllerConfigurationService : IControllerConfigurationService
     private readonly IProfilesService _profilesService;
     private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private Dictionary<string, ControllerConfiguration> _controllerConfigurations;
-    private Dictionary<string, ControllerGameConfiguration> _controllerGameConfigurations;
+    private Dictionary<string, List<ControllerConfiguration>> _controllerGameConfigurations;
 
     public ControllerConfigurationService(
         IGlobalStateService globalStateService,
@@ -110,6 +112,126 @@ internal class ControllerConfigurationService : IControllerConfigurationService
            });
     }
 
+    #region Game Configuration Publics
+
+    public List<ControllerConfiguration> GetControllerConfigurations(string controllerKey)
+    {
+        var controllerConfigurations = GetGameControllerConfigurations(controllerKey);
+
+        if (_controllerConfigurations.ContainsKey(controllerKey))
+        {
+            controllerConfigurations.Add(_controllerConfigurations[controllerKey]);
+        }
+
+        return controllerConfigurations;
+    }
+
+    public List<ControllerConfiguration> GetGameControllerConfigurations(string controllerKey)
+    {
+        var controllerConfigurations = new List<ControllerConfiguration>();
+        if (_controllerGameConfigurations.ContainsKey(controllerKey))
+        {
+            var gameConfigurations = _controllerGameConfigurations[controllerKey];
+            controllerConfigurations.AddRange(gameConfigurations);
+        }
+
+        return controllerConfigurations;
+    }
+
+    public void AddOrUpdateControllerGameConfiguration(string controllerKey,
+        GameInfo gameInfo,
+        ControllerConfiguration controllerConfiguration)
+    {
+        if (controllerConfiguration == null)
+        {
+            controllerConfiguration = GetDefaultControllerConfiguration();
+            controllerConfiguration.GameInfo = gameInfo;
+        }
+
+        List<ControllerConfiguration> gameConfigurations;
+        if (!_controllerGameConfigurations.ContainsKey(controllerKey))
+        {
+            gameConfigurations = new List<ControllerConfiguration>();
+            _controllerGameConfigurations.Add(controllerKey, gameConfigurations);
+        }
+        else
+        {
+            gameConfigurations = _controllerGameConfigurations[controllerKey];
+        }
+
+        var existing = gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == controllerConfiguration.GameInfo.GameId);
+        if (existing != null)
+        {
+            gameConfigurations.Remove(existing);
+        }
+
+        gameConfigurations.Add(controllerConfiguration);
+
+        SaveControllerGameConfigurations();
+
+        var controller = _currentControllerDataSource.GetDeviceByControllerKey(controllerKey);
+        if (controller.CurrentConfiguration.GameInfo?.GameId == controllerConfiguration.GameInfo.GameId)
+        {
+            SetGameConfiguration(controllerKey, controllerConfiguration.GameInfo.GameId);
+        }
+    }
+
+    public void DeleteGameConfiguration(string controllerKey, string gameId)
+    {
+        if (_controllerGameConfigurations.ContainsKey(controllerKey))
+        {
+            var gameConfigurations = _controllerGameConfigurations[controllerKey];
+            var gameToDelete = gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == gameId);
+            if (gameToDelete != null)
+            {
+                gameConfigurations.Remove(gameToDelete);
+                SaveControllerGameConfigurations();
+            }
+        }
+    }
+
+    public void SetGameConfiguration(string controllerKey, string gameId)
+    {
+        if (_controllerGameConfigurations.ContainsKey(controllerKey))
+        {
+            var gameConfigurations = _controllerGameConfigurations[controllerKey];
+            var controller = _currentControllerDataSource.GetDeviceByControllerKey(controllerKey);
+            SetControllerConfiguration(controller, gameConfigurations.Single(g => g.GameInfo.GameId == gameId).DeepClone());
+        }
+    }
+
+    public void RestoreMainConfiguration(string controllerKey)
+    {
+        if (_controllerConfigurations.ContainsKey(controllerKey))
+        {
+            SetControllerConfiguration(controllerKey, _controllerConfigurations[controllerKey]);
+        }
+    }
+
+    public List<GameInfo> GetGameSelectionList(string controllerKey, GameSource gameSource)
+    {
+        var games = new List<GameInfo>();
+
+        if (gameSource == GameSource.UWP)
+        {
+            PackageManager packageManager = new ();
+
+            var packages = packageManager.FindPackagesForUser(string.Empty).ToList();
+            foreach (var package in packages.Where(p => !_controllerGameConfigurations.Any(g => g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.FullName))).OrderBy(n => n.DisplayName))
+            {
+                var gameInfo = new GameInfo
+                {
+                    GameSource = gameSource, GameId = package.Id.FullName, GameName = package.DisplayName
+                };
+                games.Add(gameInfo);
+            }
+        }
+
+        return games;
+    }
+
+    #endregion
+
     private void LoadControllerConfigurations()
     {
         if (File.Exists(_globalStateService.LocalControllerConfigurationsLocation))
@@ -154,27 +276,34 @@ internal class ControllerConfigurationService : IControllerConfigurationService
     {
         if (File.Exists(_globalStateService.LocalControllerGameConfigurationsLocation))
         {
-            string data = File.ReadAllText(_globalStateService.LocalControllerConfigurationsLocation);
-            Dictionary<string, ControllerGameConfiguration> controllerGameConfigurations = JsonSerializer
-                .Deserialize<Dictionary<string, ControllerGameConfiguration>>(data)
+            string data = File.ReadAllText(_globalStateService.LocalControllerGameConfigurationsLocation);
+            Dictionary<string, List<ControllerConfiguration>> controllerGameConfigurations = JsonSerializer
+                .Deserialize<Dictionary<string, List<ControllerConfiguration>>>(data)
                 .Where(i =>
                 {
-                    if (_profilesService.AvailableProfiles.ContainsKey(i.Value.ControllerConfiguration.ProfileId))
+                    var validConfiguration = false;
+                    foreach (var controllerConfiguration in i.Value)
                     {
-                        i.Value.ControllerConfiguration.Profile =
-                            _profilesService.AvailableProfiles[i.Value.ControllerConfiguration.ProfileId];
-                        return true;
+                        if (_profilesService.AvailableProfiles.ContainsKey(controllerConfiguration.ProfileId))
+                        {
+                            controllerConfiguration.Profile =
+                                _profilesService.AvailableProfiles[controllerConfiguration.ProfileId];
+                            validConfiguration = true;
+                        }
                     }
 
-                    return false;
+                    return validConfiguration;
                 })
-                .ToDictionary(i => i.Key, i => i.Value);
+                .Select(i =>
+                    new Tuple<string, List<ControllerConfiguration>>(i.Key,
+                        i.Value.Where(p => p.Profile != null).ToList()))
+                .ToDictionary(i => i.Item1, i => i.Item2);
 
             _controllerGameConfigurations = controllerGameConfigurations;
         }
         else
         {
-            _controllerGameConfigurations = new Dictionary<string, ControllerGameConfiguration>();
+            _controllerGameConfigurations = new Dictionary<string, List<ControllerConfiguration>>();
         }
     }
 

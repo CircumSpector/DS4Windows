@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
-using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 
 namespace Vapour.Client.Modules.Settings;
 

@@ -1,4 +1,4 @@
-﻿namespace Vapour.Server.Controller;
+﻿namespace Vapour.Server.Controller.Configuration;
 
 public class ControllerFilterDriverStatusResponse
 {

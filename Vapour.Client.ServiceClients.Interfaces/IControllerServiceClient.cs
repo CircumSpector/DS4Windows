@@ -1,4 +1,5 @@
 ﻿using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.ServiceClients;
@@ -26,4 +27,9 @@ public interface IControllerServiceClient
 
     Task SaveDefaultControllerConfiguration(string controllerKey,
         ControllerConfiguration controllerConfiguration);
+
+    Task<List<GameInfo>> GetGameSelectionList(string controllerKey, GameSource gameSource);
+    Task SaveGameConfiguration(string controllerKey, GameInfo gameInfo, ControllerConfiguration controllerConfiguration);
+    Task<List<ControllerConfiguration>> GetGameControllerConfigurations(string controllerKey);
+    Task DeleteGameConfiguration(string controllerKey, string gameId);
 }

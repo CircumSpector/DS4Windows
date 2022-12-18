@@ -1,7 +1,13 @@
 ﻿namespace Vapour.Shared.Devices.Services.Configuration;
-
 public class GameInfo
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
+    public string GameId { get; set; }
+    public string GameName { get; set; }
+    public GameSource GameSource { get; set; }
+}
+
+public enum GameSource
+{
+    Steam,
+    UWP
 }

@@ -1,9 +1,11 @@
-﻿using Vapour.Client.Core.ViewModel;
+﻿using Vapour.Client.Core.View;
+using Vapour.Client.Core.ViewModel;
 
 namespace Vapour.Client.Modules.Controllers;
 
 public interface IControllerConfigureViewModel : IViewModel<IControllerConfigureViewModel>
 {
-    void SetControllerToConfigure(IControllerItemViewModel controllerItemViewModel);
+    Task SetControllerToConfigure(IControllerItemViewModel controllerItemViewModel);
     IControllerItemViewModel ControllerItem { get; }
+    IView GameListView { get; }
 }

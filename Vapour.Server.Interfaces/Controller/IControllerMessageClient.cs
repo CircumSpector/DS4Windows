@@ -1,4 +1,6 @@
-﻿namespace Vapour.Server.Controller;
+﻿using Vapour.Server.Controller.Configuration;
+
+namespace Vapour.Server.Controller;
 
 /// <summary>
 ///     Describes controller events exchangeable between client and server.

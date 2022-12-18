@@ -15,6 +15,9 @@ public class ControllersModuleRegistrar : IServiceRegistrar
         services.AddTransient<IControllerItemViewModel, ControllerItemViewModel>();
         services.AddTransient<IControllerConfigureViewModel, ControllerConfigureViewModel>();
         services.AddTransient<IControllerConfigureView, ControllerConfigureView>();
+        services.AddTransient<IAddGameListViewModel, AddGameListViewModel>();
+        services.AddTransient<IAddGameListView, AddGameListView>();
+        services.AddTransient<IGameConfigurationItemViewModel, GameConfigurationItemViewModel>();
 
         services.AddAutoMapper(cfg => cfg.AddProfile<ControllersAutoMapper>());
     }

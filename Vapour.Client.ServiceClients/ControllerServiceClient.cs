@@ -4,6 +4,7 @@ using System.Windows;
 using Microsoft.AspNetCore.SignalR.Client;
 
 using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 using Vapour.Shared.Common.Core;
 
 namespace Vapour.Client.ServiceClients;

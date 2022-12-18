@@ -1,9 +1,9 @@
 ﻿using FastEndpoints;
 
-using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 using Vapour.Shared.Devices.Services.Configuration;
 
-namespace Vapour.Server.Host.Controller.Endpoints;
+namespace Vapour.Server.Host.Controller.Endpoints.Configuration;
 
 public class ControllerFilterDriverStatusEndpoint : EndpointWithoutRequest<ControllerFilterDriverStatusResponse>
 {

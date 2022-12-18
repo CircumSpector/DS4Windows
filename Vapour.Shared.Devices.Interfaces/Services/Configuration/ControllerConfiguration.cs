@@ -18,6 +18,7 @@ public class ControllerConfiguration
     [JsonIgnore]
     public IProfile Profile { get; set; }
 
-    public bool IsGameConfiguration { get; set; }
-    public string GameId { get; set; }
+    public bool IsGameConfiguration => GameInfo != null;
+    public GameInfo GameInfo { get; set; }
+    
 }

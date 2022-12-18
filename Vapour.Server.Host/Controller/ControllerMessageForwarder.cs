@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
 using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services;
 using Vapour.Shared.Devices.Services.Configuration;

@@ -5,36 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Vapour.Client.Modules.Controllers"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:converters="clr-namespace:Vapour.Client.Modules.Controllers.Converters"
              xmlns:consts="clr-namespace:Vapour.Shared.Common.Types;assembly=Vapour.Shared.Common.Interfaces"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext ="{d:DesignInstance {x:Type local:ControllersViewModel}, IsDesignTimeCreatable=False}">
-    <UserControl.Resources>
-        <converters:ComparisonConverter x:Key="comparisonConverter"/>
-        <Style x:Key="Icon" TargetType="RadioButton">
-            <Style.Triggers>
-                <Trigger Property="IsChecked" Value="False">
-                    <Setter Property="Opacity" Value="0.5"/>
-                </Trigger>
-            </Style.Triggers>
 
-            <Setter Property="BorderThickness" Value="2"/>
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border BorderThickness="{TemplateBinding BorderThickness}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                Background="Transparent"
-                                CornerRadius="20">
-                            <md:PackIcon Kind="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <ItemsControl ItemsSource="{Binding ControllerItems}"
                       x:Name="ControllersList">
@@ -63,8 +38,9 @@
                                 Height="140"
                                 Source="{Binding DeviceImage}"/>
                             <Separator Grid.Row="1"/>
-                            <Grid Grid.Row="2">
+                            <Grid Grid.Row="2" IsEnabled="{Binding IsGameConfiguration}">
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -112,17 +88,17 @@
                                             Grid.Column="1"
                                             HorizontalAlignment="Right"
                                             Margin="0,10,8,0">
-                                    <RadioButton Style="{StaticResource Icon}"
+                                    <RadioButton Style="{StaticResource IconRadioButton}"
                                                  Content="MicrosoftXbox"
                                                  GroupName="{Binding OutputGroupName}"
                                                  Margin="0,0,4,0"
                                                  IsChecked="{Binding OutputDeviceType, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static consts:OutputDeviceType.Xbox360Controller}}"/>
-                                    <RadioButton Style="{StaticResource Icon}"
+                                    <RadioButton Style="{StaticResource IconRadioButton}"
                                                  Content="SonyPlaystation"
                                                  GroupName="{Binding OutputGroupName}"
                                                  Margin="0,0,4,0"
                                                  IsChecked="{Binding OutputDeviceType, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static consts:OutputDeviceType.DualShock4Controller}}"/>
-                                    <RadioButton Style="{StaticResource Icon}"
+                                    <RadioButton Style="{StaticResource IconRadioButton}"
                                                  Content="ControllerOff"
                                                  GroupName="{Binding OutputGroupName}"
                                                  IsChecked="{Binding OutputDeviceType, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static consts:OutputDeviceType.None}}"/>
@@ -146,8 +122,21 @@
                                            Grid.Row="3"
                                            Grid.Column="1"
                                            HorizontalAlignment="Right"
-                                           Margin="0,10,8,0"
+                                           Margin="8,10,0,0"
                                            Visibility="{Binding IsProfileSetEnabled, Converter={StaticResource falseIsVis}}"/>
+
+                                <TextBlock Text="{Binding GameInfo.GameName}"
+                                           Grid.Row="4"
+                                           Grid.Column="0"
+                                           Margin="8,10,0,0"
+                                           Visibility="{Binding IsGameConfiguration, Converter={StaticResource trueIsVis}}"/>
+
+                                <md:PackIcon Kind="{Binding GameSource}"
+                                             Grid.Row="4"
+                                             Grid.Column="1"
+                                             HorizontalAlignment="Right"
+                                             Margin="8,10,0,0"
+                                             Visibility="{Binding IsGameConfiguration, Converter={StaticResource trueIsVis}}"/>
 
                             </Grid>
                             <Button Grid.Row="3"
