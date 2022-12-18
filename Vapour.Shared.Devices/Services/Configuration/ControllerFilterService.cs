@@ -131,6 +131,7 @@ public class ControllerFilterService : IControllerFilterService
         CyclePort(usbDevice);
     }
 
+    /// <inheritdoc />
     public void UnfilterAllControllers()
     {
         foreach (IHidDevice sourceDevice in _currentControllerDataSource.CurrentControllers
@@ -141,6 +142,7 @@ public class ControllerFilterService : IControllerFilterService
         }
     }
 
+    /// <inheritdoc />
     public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device)
     {
         if (IsFilterDriverEnabled)

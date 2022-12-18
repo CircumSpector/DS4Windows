@@ -39,6 +39,15 @@ public interface IControllerFilterService
     /// </summary>
     void Initialize();
 
+    /// <summary>
+    ///     Revers all controllers to their original state.
+    /// </summary>
     void UnfilterAllControllers();
+
+    /// <summary>
+    ///     Check if <see cref="ICompatibleHidDevice"/> needs unfiltering and performs it, if necessary.
+    /// </summary>
+    /// <param name="device">The device to unfilter.</param>
+    /// <returns>True on success, false otherwise.</returns>
     bool FilterUnfilterIfNeeded(ICompatibleHidDevice device);
 }
