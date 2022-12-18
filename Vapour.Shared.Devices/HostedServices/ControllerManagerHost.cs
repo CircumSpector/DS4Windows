@@ -59,13 +59,12 @@ public sealed class ControllerManagerHost
         IsRunning = true;
         RunningChanged?.Invoke(this, IsRunning);
 
-        //_gameProcessWatcherService.StartWatching();
         _globalStateService.EnsureRoamingDataPath();
         _deviceSettingsService.LoadSettings();
         _controllerFilter.Initialize();
         _profileService.Initialize();
         _controllerConfigurationService.Initialize();
-
+        _gameProcessWatcherService.StartWatching();
         _controllersEnumeratorService.Start();
         await Task.CompletedTask;
     }
@@ -75,6 +74,7 @@ public sealed class ControllerManagerHost
     /// </summary>
     public async Task StopAsync()
     {
+        _gameProcessWatcherService.StopWatching();
         _controllersEnumeratorService.Stop();
         _controllerFilter.UnfilterAllControllers();
         _currentControllerDataSource.Clear();
