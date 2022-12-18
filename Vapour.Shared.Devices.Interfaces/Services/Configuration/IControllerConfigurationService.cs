@@ -14,4 +14,15 @@ public interface IControllerConfigurationService
 
     event EventHandler<ControllerConfigurationChangedEventArgs> OnActiveConfigurationChanged;
     void LoadControllerConfiguration(ICompatibleHidDevice device);
+    List<ControllerConfiguration> GetControllerConfigurations(string controllerKey);
+    void SetGameConfiguration(string controllerKey, string gameId);
+
+    void AddOrUpdateControllerGameConfiguration(string controllerKey,
+        GameInfo gameInfo,
+        ControllerConfiguration controllerConfiguration);
+
+    void RestoreMainConfiguration(string controllerKey);
+    List<GameInfo> GetGameSelectionList(string controllerKey, GameSource gameSource);
+    List<ControllerConfiguration> GetGameControllerConfigurations(string controllerKey);
+    void DeleteGameConfiguration(string controllerKey, string gameId);
 }

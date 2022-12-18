@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Web;
 
 using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 using Vapour.Shared.Common.Core;
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -123,6 +124,67 @@ public sealed partial class ControllerServiceClient
         if (!result.IsSuccessStatusCode)
         {
             throw new Exception($"Could not save default controller config {result.ReasonPhrase}");
+        }
+    }
+
+    public async Task<List<GameInfo>> GetGameSelectionList(string controllerKey, GameSource gameSource)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.PostAsync(
+            new Uri($"{Constants.HttpUrl}/api/game/list", UriKind.Absolute),
+            JsonContent.Create(new GameListRequest { ControllerKey = controllerKey, GameSource = gameSource }));
+
+        if (result.IsSuccessStatusCode)
+        {
+            var gameList = await result.Content.ReadFromJsonAsync<List<GameInfo>>();
+            return gameList;
+        }
+
+        throw new Exception($"Could not get game list {result.ReasonPhrase}");
+    }
+
+    public async Task SaveGameConfiguration(string controllerKey, GameInfo gameInfo,
+        ControllerConfiguration controllerConfiguration)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.PostAsync(
+            new Uri($"{Constants.HttpUrl}/api/controller/game/save", UriKind.Absolute),
+            JsonContent.Create(new SaveControllerGameConfigurationRequest { ControllerKey = controllerKey, ControllerConfiguration = controllerConfiguration, GameInfo = gameInfo}));
+
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not save game configuration {result.ReasonPhrase}");
+        }
+    }
+
+    public async Task<List<ControllerConfiguration>> GetGameControllerConfigurations(string controllerKey)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.GetAsync(
+            new Uri($"{Constants.HttpUrl}/api/controller/configuration/games/{controllerKey}", UriKind.Absolute));
+
+        if (result.IsSuccessStatusCode)
+        {
+            var gameConfigurationList = await result.Content.ReadFromJsonAsync<List<ControllerConfiguration>>();
+            return gameConfigurationList;
+        }
+
+        throw new Exception($"Could not get game configuration list {result.ReasonPhrase}");
+    }
+
+    public async Task DeleteGameConfiguration(string controllerKey, string gameId)
+    {
+        using HttpClient client = _clientFactory.CreateClient();
+
+        HttpResponseMessage result = await client.DeleteAsync(
+            new Uri($"{Constants.HttpUrl}/api/controller/configuration/games/delete/{controllerKey}/{gameId}", UriKind.Absolute));
+
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Could not delete game configuration {result.ReasonPhrase}");
         }
     }
 }

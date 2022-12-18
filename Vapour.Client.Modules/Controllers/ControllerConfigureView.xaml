@@ -5,13 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Vapour.Client.Modules.Controllers"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:consts="clr-namespace:Vapour.Shared.Common.Types;assembly=Vapour.Shared.Common.Interfaces"
+             xmlns:controllers="clr-namespace:Vapour.Client.Modules.Controllers;assembly=Vapour.Client.Modules.Interfaces"
              d:DataContext ="{d:DesignInstance {x:Type local:ControllerConfigureViewModel}, IsDesignTimeCreatable=False}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             MinHeight="500"
-             MinWidth="800"
-             MaxHeight="800">
-    <Grid>
+             Height="500"
+             Width="800">
+    <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -20,11 +22,130 @@
         <Button HorizontalAlignment="Left"
                 Grid.Row="0"
                 Content="+UWP" 
-                Command="{Binding AddUwpCommand}"/>
+                Command="{Binding AddUwpCommand}"
+                Margin="15,15"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Grid.Row="1"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      VerticalContentAlignment="Stretch"
+                      Margin="10">
+            <Grid HorizontalAlignment="Stretch"
+                  IsSharedSizeScope="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                        <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                        <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                        <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Name"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Source"
+                               Grid.Row="0"
+                               Grid.Column="1"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Output"
+                               Grid.Row="0"
+                               Grid.Column="2"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="PassThru"
+                               Grid.Row="0"
+                               Grid.Column="3"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+
+                <ItemsControl ItemsSource="{Binding GameConfigurations}"
+                              x:Name="GameConfigList"
+                              HorizontalAlignment="Stretch"
+                              Grid.Row="1">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type controllers:IGameConfigurationItemViewModel}">
+                            <Grid Margin="0,10,0,0" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                                    <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                                    <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                                    <ColumnDefinition SharedSizeGroup="GC" Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding GameName}"
+                                       Grid.Column="0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+
+                                <md:PackIcon Kind="{Binding GameSource}"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Grid.Column="1"/>
+
+                                <StackPanel Orientation="Horizontal"
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center">
+                                    <RadioButton Style="{StaticResource IconRadioButton}"
+                                             Content="MicrosoftXbox"
+                                             GroupName="{Binding OutputGroupName}"
+                                             Margin="0,0,4,0"
+                                             IsChecked="{Binding OutputDeviceType, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static consts:OutputDeviceType.Xbox360Controller}}"/>
+                                    <RadioButton Style="{StaticResource IconRadioButton}"
+                                             Content="SonyPlaystation"
+                                             GroupName="{Binding OutputGroupName}"
+                                             Margin="0,0,4,0"
+                                             IsChecked="{Binding OutputDeviceType, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static consts:OutputDeviceType.DualShock4Controller}}"/>
+                                    <RadioButton Style="{StaticResource IconRadioButton}"
+                                             Content="ControllerOff"
+                                             GroupName="{Binding OutputGroupName}"
+                                             IsChecked="{Binding OutputDeviceType, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static consts:OutputDeviceType.None}}"/>
+                                </StackPanel>
+
+                                <CheckBox IsChecked="{Binding IsPassThru}"
+                                      Grid.Column="3"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+
+                                <Button HorizontalAlignment="Right"
+                                        Grid.Column="4"
+                                        Command="{Binding ElementName=GameConfigList, Path=DataContext.DeleteGameConfigurationCommand}"
+                                        CommandParameter="{Binding}">
+                                    <md:PackIcon Kind="Delete" Width="15" Height="15" />
+                                </Button>
+
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+            
+        </ScrollViewer>
 
         <Button Content="Ok" Command="{x:Static md:DialogHost.CloseDialogCommand}"
                 HorizontalAlignment="Right"
                 Grid.Row="2"
                 Margin="0,0,15,15"/>
+
+        <Grid Grid.Row="0"
+              Grid.RowSpan="3"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Visibility="{Binding IsGameListPresent, Converter={StaticResource trueIsVis}}">
+            <ContentControl Content="{Binding GameListView}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"/>
+        </Grid>
     </Grid>
 </UserControl>

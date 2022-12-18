@@ -14,6 +14,7 @@ using Vapour.Client.Core.ViewModel;
 using Vapour.Client.Modules.Profiles;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 using Vapour.Shared.Configuration.Profiles.Schema;
 
 using Constants = Vapour.Client.Modules.Main.Constants;
@@ -141,7 +142,7 @@ public sealed class ControllersViewModel :
     private async void OnConfigure(IControllerItemViewModel controllerItem)
     {
         IControllerConfigureViewModel controllerConfigureViewModel = await _viewModelFactory.Create<IControllerConfigureViewModel, IControllerConfigureView>();
-        controllerConfigureViewModel.SetControllerToConfigure(controllerItem);
+        await controllerConfigureViewModel.SetControllerToConfigure(controllerItem);
         await DialogHost.Show(controllerConfigureViewModel.MainView, Constants.DialogHostName, new DialogClosingEventHandler((o, e) =>
         {
             controllerConfigureViewModel.Dispose();

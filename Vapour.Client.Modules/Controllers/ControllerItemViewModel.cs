@@ -180,6 +180,30 @@ public sealed class ControllerItemViewModel :
         }
     }
 
+    public bool IsGameConfiguration
+    {
+        get
+        {
+            return CurrentConfiguration.IsGameConfiguration;
+        }
+    }
+
+    public GameInfo GameInfo
+    {
+        get
+        {
+            return CurrentConfiguration.GameInfo;
+        }
+    }
+
+    public string GameSource
+    {
+        get
+        {
+            return CurrentConfiguration.IsGameConfiguration ? CurrentConfiguration.GameInfo.GameSource == Shared.Devices.Services.Configuration.GameSource.Steam ? "steam" : "microsoft-xbox" : string.Empty;
+        }
+    }
+
     private ControllerConfiguration _currentConfiguration;
     public ControllerConfiguration CurrentConfiguration
     {
@@ -191,6 +215,9 @@ public sealed class ControllerItemViewModel :
             OnPropertyChanged(nameof(IsPassthru));
             OnPropertyChanged(nameof(OutputDeviceType));
             OnPropertyChanged(nameof(IsProfileSetEnabled));
+            OnPropertyChanged(nameof(IsGameConfiguration));
+            OnPropertyChanged(nameof(GameInfo));
+            OnPropertyChanged(nameof(GameSource));
         }
     }
 

@@ -2,23 +2,22 @@
 
 using Vapour.Shared.Devices.Services.Configuration;
 
-namespace Vapour.Server.Host.Controller.Endpoints;
+namespace Vapour.Server.Host.Controller.Endpoints.Configuration;
 
-public sealed class FilterControllerEndpoint : EndpointWithoutRequest
+public class ControllerFilterSetDriverEnabledEndpoint : EndpointWithoutRequest
 {
     private readonly IControllerFilterService _controllerFilterService;
 
-    public FilterControllerEndpoint(IControllerFilterService controllerFilterService)
+    public ControllerFilterSetDriverEnabledEndpoint(IControllerFilterService controllerFilterService)
     {
         _controllerFilterService = controllerFilterService;
     }
 
     public override void Configure()
     {
-        Post("/controller/filter/{instanceId}");
+        Post("/controller/filterdriver/setenable/{isEnabled}");
         AllowAnonymous();
-        Summary(s =>
-        {
+        Summary(s => {
             s.Summary = "Filters the controller";
             s.Description = "Filters the controller";
             s.Responses[200] = "Controller filtered properly";
@@ -27,9 +26,8 @@ public sealed class FilterControllerEndpoint : EndpointWithoutRequest
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        string instanceId = Route<string>("instanceId");
-        _controllerFilterService.FilterController(instanceId);
-
+        var isEnabled = Route<bool>("isEnabled");
+        _controllerFilterService.SetFilterDriverEnabled(isEnabled);
         await SendOkAsync(ct);
     }
 }

@@ -2,7 +2,7 @@
 
 using Vapour.Shared.Devices.Services.Configuration;
 
-namespace Vapour.Server.Host.Controller.Endpoints;
+namespace Vapour.Server.Host.Controller.Endpoints.Configuration;
 
 public sealed class UnfilterControllerEndpoint : EndpointWithoutRequest
 {
