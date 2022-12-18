@@ -96,7 +96,6 @@ This application benefits from these awesome projects (appearance in no special 
 - [JetBrains.Annotations](https://www.jetbrains.com/help/resharper/Code_Analysis__Code_Annotations.html)
 - [Material Design In XAML Toolkit](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
 - [Material Design Extensions](https://spiegelp.github.io/MaterialDesignExtensions/)
-
 - [C#/Win32 P/Invoke Source Generator](https://github.com/Microsoft/CsWin32)
 - [Nefarius.Drivers.HidHide](https://github.com/nefarius/Nefarius.Drivers.HidHide)
 - [Nefarius' Identinator](https://vigem.org/projects/Identinator/)
