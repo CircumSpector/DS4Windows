@@ -83,6 +83,32 @@ This example shows that we're reading and processing 507 input reports per secon
 
 [<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/jetbrains/jetbrains-original.svg" title="JetBrains ReSharper" alt="JetBrains" width="120" height="120"/>](https://www.jetbrains.com/resharper/) [<img src="assets/AiLogoColorRightText.png" title="Advanced Installer" alt="Advanced Instzaller" height="120"/>](https://www.advancedinstaller.com/)
 
+## Sources & 3rd party credits
+
+This application benefits from these awesome projects (appearance in no special order):
+
+- [AutoMapper](https://automapper.org/)
+- [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
+- [FastDeepCloner](https://github.com/AlenToma/FastDeepCloner)
+- [FastEndpoints](https://fast-endpoints.com/)
+- [Fody](https://github.com/Fody/Fody)
+- [Hardcodet NotifyIcon for WPF](https://github.com/hardcodet/wpf-notifyicon)
+- [JetBrains.Annotations](https://www.jetbrains.com/help/resharper/Code_Analysis__Code_Annotations.html)
+- [Material Design In XAML Toolkit](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
+- [Material Design Extensions](https://spiegelp.github.io/MaterialDesignExtensions/)
+- [C#/Win32 P/Invoke Source Generator](https://github.com/Microsoft/CsWin32)
+- [Nefarius.Drivers.HidHide](https://github.com/nefarius/Nefarius.Drivers.HidHide)
+- [Nefarius' Identinator](https://vigem.org/projects/Identinator/)
+- [Nefarius.Utilities.DeviceManagement](https://github.com/nefarius/Nefarius.Utilities.DeviceManagement)
+- [ViGEm Client .NET SDK](https://github.com/ViGEm/ViGEm.NET)
+- [NSwag: The Swagger/OpenAPI toolchain for .NET, ASP.NET Core and TypeScript](https://github.com/RicoSuter/NSwag)
+- [OpenTelemetry](https://opentelemetry.io/)
+- [Polly](https://github.com/App-vNext/Polly/)
+- [Polly.Contrib.WaitAndRetry](https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry)
+- [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
+- [Serilog.AspNetCore](https://github.com/serilog/serilog-aspnetcore)
+- [Swashbuckle.AspNetCore](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
+
 <!--
 
 ## 3rd party credits
