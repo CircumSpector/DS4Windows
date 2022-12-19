@@ -29,7 +29,7 @@ public class CurrentControllerDataSource : ICurrentControllerDataSource
 
     public ICompatibleHidDevice GetDeviceByInstanceId(string instanceId)
     {
-        return CurrentControllers.SingleOrDefault(c => c.SourceDevice.InstanceId == instanceId);
+        return CurrentControllers.SingleOrDefault(c => c.SourceDevice.InstanceId.ToLower() == instanceId.ToLower());
     }
 
     public ICompatibleHidDevice GetDeviceByControllerKey(string controllerKey)
