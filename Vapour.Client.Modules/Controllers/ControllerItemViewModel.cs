@@ -60,7 +60,14 @@ public sealed class ControllerItemViewModel :
         {
             if (ConfigurationSetFromUser)
             {
-                _controllerServiceClient.SaveDefaultControllerConfiguration(Serial, CurrentConfiguration);
+                if (!CurrentConfiguration.IsGameConfiguration)
+                {
+                    _controllerServiceClient.SaveDefaultControllerConfiguration(Serial, CurrentConfiguration);
+                }
+                else
+                {
+                    _controllerServiceClient.SaveGameConfiguration(Serial, CurrentConfiguration.GameInfo, CurrentConfiguration);
+                }
             }
         }
 
