@@ -32,6 +32,8 @@ internal class ControllerConfigurationService : IControllerConfigurationService
     }
 
     public event EventHandler<ControllerConfigurationChangedEventArgs> OnActiveConfigurationChanged;
+    //really dont like doing this
+    public Func<string> GetCurrentGameRunning { get; set; }
 
     public void Initialize()
     {
@@ -41,6 +43,22 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
     public void LoadControllerConfiguration(ICompatibleHidDevice device)
     {
+        if (GetCurrentGameRunning != null)
+        {
+            var currentGameRunning = GetCurrentGameRunning();
+            if (!string.IsNullOrWhiteSpace(currentGameRunning))
+            {
+                var gameConfigurations = GetGameControllerConfigurations(device.SerialString);
+                var gameConfiguration =
+                    gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == currentGameRunning);
+                if (gameConfiguration != null)
+                {
+                    SetControllerConfiguration(device, gameConfiguration);
+                    return;
+                }
+            }
+            
+        }
         if (_controllerConfigurations.ContainsKey(device.SerialString))
         {
             SetControllerConfiguration(device, _controllerConfigurations[device.SerialString]);
@@ -76,12 +94,12 @@ internal class ControllerConfigurationService : IControllerConfigurationService
         }
         else
         {
-            newConfig = controllerConfiguration;
+            newConfig = controllerConfiguration.DeepClone();
         }
 
         newConfig.Profile = _profilesService.AvailableProfiles[newConfig.ProfileId].DeepClone();
         
-        controller.SetConfiguration(controllerConfiguration);
+        controller.SetConfiguration(newConfig);
 
        if (shouldSave)
        {
@@ -89,19 +107,15 @@ internal class ControllerConfigurationService : IControllerConfigurationService
            {
                if (_controllerConfigurations.ContainsKey(controllerKey))
                {
-                   _controllerConfigurations[controllerKey] = controllerConfiguration;
+                   _controllerConfigurations[controllerKey] = newConfig;
                }
                else
                {
-                   _controllerConfigurations.Add(controllerKey, controllerConfiguration);
+                   _controllerConfigurations.Add(controllerKey, newConfig);
                }
 
                SaveControllerConfigurations();
             }
-           else
-           {
-               //write game config save logic
-           }
        }
 
        OnActiveConfigurationChanged?.Invoke(this,

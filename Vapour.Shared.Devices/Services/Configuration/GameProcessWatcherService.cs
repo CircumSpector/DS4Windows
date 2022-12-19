@@ -11,18 +11,23 @@ public class GameProcessWatcherService : IGameProcessWatcherService
     private readonly ILogger<GameProcessWatcherService> _logger;
     private readonly IControllerConfigurationService _controllerConfigurationService;
     private readonly ICurrentControllerDataSource _currentControllerDataSource;
+    private readonly IControllerFilterService _controllerFilterService;
 
-    private readonly List<ProcessorWatchItem> _processorWatchItems = new List<ProcessorWatchItem>();
+    private ProcessorWatchItem _currentWatch;
 
     public GameProcessWatcherService(ILogger<GameProcessWatcherService> logger,
         IControllerConfigurationService controllerConfigurationService,
-        ICurrentControllerDataSource currentControllerDataSource)
+        ICurrentControllerDataSource currentControllerDataSource,
+        IControllerFilterService controllerFilterService)
     {
         _logger = logger;
         _controllerConfigurationService = controllerConfigurationService;
         _currentControllerDataSource = currentControllerDataSource;
-    }
+        _controllerFilterService = controllerFilterService;
 
+        _controllerConfigurationService.GetCurrentGameRunning = () => _currentWatch?.GameId;
+    }
+    
     public void StartWatching()
     {
         SystemProcessMonitor.OnProcessStarted += OnProcessStarted;
@@ -43,67 +48,51 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         if (!string.IsNullOrWhiteSpace(e.CommandLine))
         {
             var imagePath = Path.GetDirectoryName(e.Image);
-            ProcessorWatchItem watchItem = null;
-
-            foreach (var controller in _currentControllerDataSource.CurrentControllers)
+            var currentControllers = _currentControllerDataSource.CurrentControllers.ToList();
+            if (_currentWatch == null && e.CommandLine.StartsWith("\""))
             {
-                var gameConfigurations =
-                    _controllerConfigurationService.GetGameControllerConfigurations(controller.SerialString);
-
-                var gameConfiguration =
-                    gameConfigurations.SingleOrDefault(c => e.CommandLine.Contains(c.GameInfo.GameId));
-
-                if (gameConfiguration == null)
+                foreach (var controller in currentControllers)
                 {
-                    watchItem = _processorWatchItems.SingleOrDefault(i => i.ImagePath == imagePath);
-                    if (watchItem != null)
-                    {
-                        _logger.LogInformation("Start - Found existing watch item");
-                        _logger.LogInformation($"Start - Command line: {e.CommandLine}");
-                        _logger.LogInformation(JsonSerializer.Serialize(watchItem));
-                        break;
-                    }
-                }
-                else
-                {
-                    watchItem =
-                        _processorWatchItems.SingleOrDefault(i => i.GameId == gameConfiguration.GameInfo.GameId);
+                    var gameConfigurations =
+                        _controllerConfigurationService.GetGameControllerConfigurations(controller.SerialString);
 
-                    if (watchItem == null)
+                    var gameConfiguration =
+                        gameConfigurations.SingleOrDefault(c => e.CommandLine.Contains(c.GameInfo.GameId));
+
+                    if (gameConfiguration != null)
                     {
-                        watchItem = new ProcessorWatchItem
+                        _currentWatch = new ProcessorWatchItem
                         {
-                            GameId = gameConfiguration.GameInfo.GameId, ImagePath = imagePath
+                            GameId = gameConfiguration.GameInfo.GameId,
+                            ImagePath = imagePath
                         };
-                        _processorWatchItems.Add(watchItem);
 
                         _logger.LogInformation("Start - Creating new watch item");
                         _logger.LogInformation($"Start - Command line: {e.CommandLine}");
-                        _logger.LogInformation(JsonSerializer.Serialize(watchItem));
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Start - Found existing watch item");
-                        _logger.LogInformation($"Start - Command line: {e.CommandLine}");
-                    }
+                        _logger.LogInformation(JsonSerializer.Serialize(_currentWatch));
 
-                    break;
+                        break;
+                    }
                 }
             }
 
-            if (watchItem != null)
+            if (_currentWatch != null && _currentWatch.ImagePath == imagePath)
             {
-                watchItem.Count++;
-                _logger.LogInformation($"Start - Watch count {watchItem.Count}");
-                if (watchItem.Count == 1)
+                _logger.LogInformation("Start - Found existing watch item");
+                _logger.LogInformation($"Start - Command line: {e.CommandLine}");
+                _logger.LogInformation(JsonSerializer.Serialize(_currentWatch));
+
+                _currentWatch.Count++;
+                _logger.LogInformation($"Start - Watch count {_currentWatch.Count}");
+                if (_currentWatch.Count == 1)
                 {
-                    foreach (var controller in _currentControllerDataSource.CurrentControllers)
+                    foreach (var controller in currentControllers)
                     {
                         var gameConfigurations =
                             _controllerConfigurationService.GetGameControllerConfigurations(controller.SerialString);
 
                         var gameConfiguration =
-                            gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == watchItem.GameId);
+                            gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == _currentWatch.GameId);
                         if (gameConfiguration != null)
                         {
                             _controllerConfigurationService.SetControllerConfiguration(controller.SerialString,
@@ -120,21 +109,20 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         if (!string.IsNullOrWhiteSpace(e.CommandLine))
         {
             var imageDirectory = Path.GetDirectoryName(e.Image);
-            var watchItem = _processorWatchItems.SingleOrDefault(i => i.ImagePath == imageDirectory);
-
-            if (watchItem != null)
+            
+            if (_currentWatch != null && _currentWatch.ImagePath == imageDirectory)
             {
                 _logger.LogInformation("Stop - watch item found");
-                _logger.LogInformation(JsonSerializer.Serialize(watchItem));
+                _logger.LogInformation(JsonSerializer.Serialize(_currentWatch));
                 _logger.LogInformation($"Stop - Command line: {e.CommandLine}");
 
-                watchItem.Count--;
-                _logger.LogInformation($"Stop - watch count {watchItem.Count}");
-                if (watchItem.Count <= 0)
+                _currentWatch.Count--;
+                _logger.LogInformation($"Stop - watch count {_currentWatch.Count}");
+                if (_currentWatch.Count <= 0)
                 {
-                    foreach (var controller in _currentControllerDataSource.CurrentControllers)
+                    _currentWatch = null;
+                    foreach (var controller in _currentControllerDataSource.CurrentControllers.ToList())
                     {
-                        _processorWatchItems.Remove(watchItem);
                         _controllerConfigurationService.RestoreMainConfiguration(controller.SerialString);
                     }
                 }

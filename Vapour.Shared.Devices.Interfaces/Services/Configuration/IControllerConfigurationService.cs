@@ -25,4 +25,5 @@ public interface IControllerConfigurationService
     List<GameInfo> GetGameSelectionList(string controllerKey, GameSource gameSource);
     List<ControllerConfiguration> GetGameControllerConfigurations(string controllerKey);
     void DeleteGameConfiguration(string controllerKey, string gameId);
+    Func<string> GetCurrentGameRunning { get; set; }
 }

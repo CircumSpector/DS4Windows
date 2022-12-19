@@ -38,7 +38,7 @@
                                 Height="140"
                                 Source="{Binding DeviceImage}"/>
                             <Separator Grid.Row="1"/>
-                            <Grid Grid.Row="2" IsEnabled="{Binding IsGameConfiguration}">
+                            <Grid Grid.Row="2" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
