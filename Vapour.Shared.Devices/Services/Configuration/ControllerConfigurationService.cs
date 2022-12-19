@@ -232,18 +232,19 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
         if (gameSource == GameSource.UWP)
         {
-            GetUwpGames(controllerKey, games);
+            games = GetUwpGames(controllerKey);
         }
         else if (gameSource == GameSource.Steam)
         {
-            GetSteamGames(controllerKey, games);
+            games = GetSteamGames(controllerKey);
         }
 
-        return games;
+        return games.OrderBy(g => g.GameName).ToList();
     }
 
-    private void GetUwpGames(string controllerKey, List<GameInfo> games)
+    private List<GameInfo> GetUwpGames(string controllerKey)
     {
+        var games = new List<GameInfo>();
         PackageManager packageManager = new();
 
         var packages = packageManager.FindPackagesForUserWithPackageTypes(string.Empty, PackageTypes.Main).ToList();
@@ -258,10 +259,13 @@ internal class ControllerConfigurationService : IControllerConfigurationService
             };
             games.Add(gameInfo);
         }
+
+        return games;
     }
 
-    private void GetSteamGames(string controllerKey, List<GameInfo> games)
+    private List<GameInfo> GetSteamGames(string controllerKey)
     {
+        var games = new List<GameInfo>();
         object installPath = null;
         var steamLocationSubKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Valve\\Steam");
         if (steamLocationSubKey != null)
@@ -302,6 +306,8 @@ internal class ControllerConfigurationService : IControllerConfigurationService
                 }
             }
         }
+
+        return games;
     }
 
     #endregion
