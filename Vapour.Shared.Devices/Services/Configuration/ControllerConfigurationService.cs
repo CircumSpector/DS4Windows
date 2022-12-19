@@ -9,6 +9,10 @@ using Vapour.Shared.Devices.HID;
 
 using Windows.Management.Deployment;
 
+using Gameloop.Vdf;
+
+using Microsoft.Win32;
+
 namespace Vapour.Shared.Devices.Services.Configuration;
 
 internal class ControllerConfigurationService : IControllerConfigurationService
@@ -228,21 +232,76 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
         if (gameSource == GameSource.UWP)
         {
-            
-            PackageManager packageManager = new ();
-
-            var packages = packageManager.FindPackagesForUserWithPackageTypes(string.Empty, PackageTypes.Main).ToList();
-            foreach (var package in packages.Where(p => !_controllerGameConfigurations.Any(g => g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name))).OrderBy(n => n.DisplayName))
-            {
-                var gameInfo = new GameInfo
-                {
-                    GameSource = gameSource, GameId = package.Id.Name, GameName = package.DisplayName
-                };
-                games.Add(gameInfo);
-            }
+            GetUwpGames(controllerKey, games);
+        }
+        else if (gameSource == GameSource.Steam)
+        {
+            GetSteamGames(controllerKey, games);
         }
 
         return games;
+    }
+
+    private void GetUwpGames(string controllerKey, List<GameInfo> games)
+    {
+        PackageManager packageManager = new();
+
+        var packages = packageManager.FindPackagesForUserWithPackageTypes(string.Empty, PackageTypes.Main).ToList();
+        foreach (var package in packages
+                     .Where(p => !_controllerGameConfigurations.Any(g =>
+                         g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name)))
+                     .OrderBy(n => n.DisplayName))
+        {
+            var gameInfo = new GameInfo
+            {
+                GameSource = GameSource.UWP, GameId = package.Id.Name, GameName = package.DisplayName
+            };
+            games.Add(gameInfo);
+        }
+    }
+
+    private void GetSteamGames(string controllerKey, List<GameInfo> games)
+    {
+        object installPath = null;
+        var steamLocationSubKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Valve\\Steam");
+        if (steamLocationSubKey != null)
+        {
+            installPath = steamLocationSubKey.GetValue("InstallPath");
+        }
+
+        if (installPath != null)
+        {
+            var libraryFilePath = $"{installPath}\\steamapps\\libraryfolders.vdf";
+            dynamic library = VdfConvert.Deserialize(File.ReadAllText(libraryFilePath));
+
+            foreach (var location in library.Value)
+            {
+                var path = location.Value.path;
+                var apps = location.Value.apps;
+
+                foreach (var app in apps)
+                {
+                    string appKey = app.Key;
+
+                    var appFile = new AcfReader($"{path}\\steamapps\\appmanifest_{appKey}.acf").ACFFileToStruct();
+                    var installName = appFile.SubACF["AppState"].SubItems["installdir"];
+                    var installDir = $"{path}\\steamapps\\common\\{installName}";
+
+                    var isGameConfigured = _controllerGameConfigurations.Any(g =>
+                        g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == installDir));
+
+                    if (!isGameConfigured)
+                    {
+                        var gameInfo = new GameInfo
+                        {
+                            GameId = installDir, GameName = installName, GameSource = GameSource.Steam
+                        };
+
+                        games.Add(gameInfo);
+                    }
+                }
+            }
+        }
     }
 
     #endregion

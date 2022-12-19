@@ -19,11 +19,16 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Button HorizontalAlignment="Left"
-                Grid.Row="0"
-                Content="+UWP" 
-                Command="{Binding AddUwpCommand}"
-                Margin="15,15"/>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Grid.Row="0"
+                    Margin="15,15">
+            <Button Content="+UWP" 
+                    Command="{Binding AddUwpCommand}" />
+            <Button Content="+Steam" 
+                    Command="{Binding AddSteamCommand}" />
+        </StackPanel>
+        
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"

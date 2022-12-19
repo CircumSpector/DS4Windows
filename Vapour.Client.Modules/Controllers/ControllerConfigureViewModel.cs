@@ -19,10 +19,14 @@ public class ControllerConfigureViewModel : ViewModel<ControllerConfigureViewMod
         _viewModelFactory = viewModelFactory;
         _controllerServiceClient = controllerServiceClient;
         AddUwpCommand = new RelayCommand(OnAddUwp);
+        AddSteamCommand = new RelayCommand(OnAddSteam);
         DeleteGameConfigurationCommand = new RelayCommand<IGameConfigurationItemViewModel>(OnDeleteGameConfiguration);
     }
 
+    
+
     public RelayCommand AddUwpCommand { get; }
+    public RelayCommand AddSteamCommand { get; }
     public RelayCommand<IGameConfigurationItemViewModel> DeleteGameConfigurationCommand { get; }
 
     public IControllerItemViewModel ControllerItem { get; private set; }
@@ -68,8 +72,19 @@ public class ControllerConfigureViewModel : ViewModel<ControllerConfigureViewMod
 
     private async void OnAddUwp()
     {
-        IAddGameListViewModel addGameListViewModel = await _viewModelFactory.Create<IAddGameListViewModel, IAddGameListView>();
-        await addGameListViewModel.Initialize(ControllerItem.Serial, GameSource.UWP, async () =>
+        await OpenAddGame(GameSource.UWP);
+    }
+
+    private async void OnAddSteam()
+    {
+        await OpenAddGame(GameSource.Steam);
+    }
+
+    private async Task OpenAddGame(GameSource source)
+    {
+        IAddGameListViewModel addGameListViewModel =
+            await _viewModelFactory.Create<IAddGameListViewModel, IAddGameListView>();
+        await addGameListViewModel.Initialize(ControllerItem.Serial, source, async () =>
         {
             GameListView = null;
             addGameListViewModel.Dispose();

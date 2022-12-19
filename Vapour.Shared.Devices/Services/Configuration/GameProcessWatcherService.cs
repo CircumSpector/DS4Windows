@@ -11,7 +11,6 @@ public class GameProcessWatcherService : IGameProcessWatcherService
     private readonly ILogger<GameProcessWatcherService> _logger;
     private readonly IControllerConfigurationService _controllerConfigurationService;
     private readonly ICurrentControllerDataSource _currentControllerDataSource;
-    private readonly IControllerFilterService _controllerFilterService;
 
     private ProcessorWatchItem _currentWatch;
 
@@ -23,7 +22,6 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         _logger = logger;
         _controllerConfigurationService = controllerConfigurationService;
         _currentControllerDataSource = currentControllerDataSource;
-        _controllerFilterService = controllerFilterService;
 
         _controllerConfigurationService.GetCurrentGameRunning = () => _currentWatch?.GameId;
     }
@@ -49,7 +47,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         {
             var imagePath = Path.GetDirectoryName(e.Image);
             var currentControllers = _currentControllerDataSource.CurrentControllers.ToList();
-            if (_currentWatch == null && e.CommandLine.StartsWith("\""))
+            if (_currentWatch == null)
             {
                 foreach (var controller in currentControllers)
                 {
@@ -57,12 +55,29 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                         _controllerConfigurationService.GetGameControllerConfigurations(controller.SerialString);
 
                     var gameConfiguration =
-                        gameConfigurations.SingleOrDefault(c => e.CommandLine.Contains(c.GameInfo.GameId));
+                        gameConfigurations.SingleOrDefault(c =>
+                        {
+                            if (c.GameInfo.GameSource == GameSource.UWP && 
+                                e.CommandLine.StartsWith("\"") && 
+                                e.CommandLine.Contains(c.GameInfo.GameId))
+                            {
+                                return true;
+                            }
+
+                            if (c.GameInfo.GameSource == GameSource.Steam &&
+                                imagePath.ToLower() == c.GameInfo.GameId.ToLower())
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        });
 
                     if (gameConfiguration != null)
                     {
                         _currentWatch = new ProcessorWatchItem
                         {
+                            GameSource = gameConfiguration.GameInfo.GameSource,
                             GameId = gameConfiguration.GameInfo.GameId,
                             ImagePath = imagePath
                         };
@@ -132,6 +147,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
 
     private class ProcessorWatchItem
     {
+        public GameSource GameSource { get; set; }
         public string GameId { get; set; }
         public string ImagePath { get; set; }
         public int Count { get; set; }
