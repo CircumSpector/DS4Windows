@@ -214,14 +214,15 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
         if (gameSource == GameSource.UWP)
         {
+            
             PackageManager packageManager = new ();
 
-            var packages = packageManager.FindPackagesForUser(string.Empty).ToList();
-            foreach (var package in packages.Where(p => !_controllerGameConfigurations.Any(g => g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.FullName))).OrderBy(n => n.DisplayName))
+            var packages = packageManager.FindPackagesForUserWithPackageTypes(string.Empty, PackageTypes.Main).ToList();
+            foreach (var package in packages.Where(p => !_controllerGameConfigurations.Any(g => g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name))).OrderBy(n => n.DisplayName))
             {
                 var gameInfo = new GameInfo
                 {
-                    GameSource = gameSource, GameId = package.Id.FullName, GameName = package.DisplayName
+                    GameSource = gameSource, GameId = package.Id.Name, GameName = package.DisplayName
                 };
                 games.Add(gameInfo);
             }

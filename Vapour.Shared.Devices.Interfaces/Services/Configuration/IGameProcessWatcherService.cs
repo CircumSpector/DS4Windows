@@ -3,4 +3,5 @@
 public interface IGameProcessWatcherService
 {
     void StartWatching();
+    void StopWatching();
 }
