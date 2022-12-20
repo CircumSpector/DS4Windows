@@ -16,8 +16,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
 
     public GameProcessWatcherService(ILogger<GameProcessWatcherService> logger,
         IControllerConfigurationService controllerConfigurationService,
-        ICurrentControllerDataSource currentControllerDataSource,
-        IControllerFilterService controllerFilterService)
+        ICurrentControllerDataSource currentControllerDataSource)
     {
         _logger = logger;
         _controllerConfigurationService = controllerConfigurationService;
@@ -64,7 +63,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                                 return true;
                             }
 
-                            if ((c.GameInfo.GameSource == GameSource.Steam || c.GameInfo.GameSource == GameSource.Blizzard) &&
+                            if ((c.GameInfo.GameSource == GameSource.Steam || c.GameInfo.GameSource == GameSource.Blizzard || c.GameInfo.GameSource == GameSource.Epic) &&
                                 imagePath.ToLower().StartsWith(c.GameInfo.GameId.ToLower()))
                             {
                                 return true;
