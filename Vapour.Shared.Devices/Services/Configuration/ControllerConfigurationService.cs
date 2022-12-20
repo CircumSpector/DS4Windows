@@ -243,6 +243,10 @@ internal class ControllerConfigurationService : IControllerConfigurationService
         {
             games = GetBlizzardGames(controllerKey);
         }
+        else if (gameSource == GameSource.Epic)
+        {
+            games = GetEpicGames(controllerKey);
+        }
 
         return games.OrderBy(g => g.GameName).ToList();
     }
@@ -329,10 +333,49 @@ internal class ControllerConfigurationService : IControllerConfigurationService
                 var publisher = subkey.GetValue("Publisher");
                 if (publisher != null && publisher.ToString().ToLower() == "blizzard entertainment")
                 {
+                    var installDir = subkey.GetValue("InstallLocation").ToString();
+                    if (!_controllerGameConfigurations.Any(g =>
+                            g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == installDir)))
+                    {
+                        var gameInfo = new GameInfo
+                        {
+                            GameId = installDir,
+                            GameName = subkey.GetValue("DisplayName").ToString(),
+                            GameSource = GameSource.Blizzard
+                        };
+
+                        games.Add(gameInfo);
+                    }
+                }
+            }
+        }
+
+        return games;
+    }
+
+    private List<GameInfo> GetEpicGames(string controllerKey)
+    {
+        var games = new List<GameInfo>();
+        object installPath = null;
+        var epicLocationSubKey =
+            Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Epic Games\\EpicGamesLauncher");
+        if (epicLocationSubKey != null)
+        {
+            installPath = epicLocationSubKey.GetValue("AppDataPath");
+        }
+
+        if (installPath != null)
+        {
+            foreach (var filePath in Directory.GetFiles($"{installPath}\\Manifests", "*.item"))
+            {
+                var data = JsonSerializer.Deserialize<EpicGameManifest>(File.ReadAllText(filePath));
+                if (!_controllerGameConfigurations.Any(g =>
+                        g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == data.InstallLocation)))
+                {
                     var gameInfo = new GameInfo
                     {
-                        GameId = subkey.GetValue("InstallLocation").ToString(),
-                        GameName = subkey.GetValue("DisplayName").ToString(),
+                        GameId = data.InstallLocation,
+                        GameName = data.DisplayName,
                         GameSource = GameSource.Blizzard
                     };
 
@@ -340,7 +383,6 @@ internal class ControllerConfigurationService : IControllerConfigurationService
                 }
             }
         }
-
         return games;
     }
 
@@ -469,5 +511,11 @@ internal class ControllerConfigurationService : IControllerConfigurationService
             controllerConfiguration.ProfileId = newProfileId;
             SetControllerConfiguration(ccItem.Key, controllerConfiguration, true);
         }
+    }
+
+    private class EpicGameManifest
+    {
+        public string InstallLocation { get; set; }
+        public string DisplayName { get; set; }
     }
 }

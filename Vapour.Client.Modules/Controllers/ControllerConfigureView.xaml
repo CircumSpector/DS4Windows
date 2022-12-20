@@ -33,6 +33,9 @@
             <Button Content="+Blizzard" 
                     Command="{Binding AddGameCommand}"
                     CommandParameter="{x:Static configuration:GameSource.Blizzard}"/>
+            <Button Content="+Epic" 
+                    Command="{Binding AddGameCommand}"
+                    CommandParameter="{x:Static configuration:GameSource.Epic}"/>
         </StackPanel>
         
 

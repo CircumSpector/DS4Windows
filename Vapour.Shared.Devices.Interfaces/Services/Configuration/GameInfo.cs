@@ -10,5 +10,6 @@ public enum GameSource
 {
     Steam,
     UWP,
-    Blizzard
+    Blizzard,
+    Epic
 }
