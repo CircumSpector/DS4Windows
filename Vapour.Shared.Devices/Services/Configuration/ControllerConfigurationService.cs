@@ -12,7 +12,6 @@ using Windows.Management.Deployment;
 using Gameloop.Vdf;
 
 using Microsoft.Win32;
-using System.Windows.Input;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -21,17 +20,20 @@ internal class ControllerConfigurationService : IControllerConfigurationService
     private readonly IGlobalStateService _globalStateService;
     private readonly IProfilesService _profilesService;
     private readonly ICurrentControllerDataSource _currentControllerDataSource;
+    private readonly IGameListProviderService _gameListProviderService;
     private Dictionary<string, ControllerConfiguration> _controllerConfigurations;
     private Dictionary<string, List<ControllerConfiguration>> _controllerGameConfigurations;
 
     public ControllerConfigurationService(
         IGlobalStateService globalStateService,
         IProfilesService profilesService,
-        ICurrentControllerDataSource currentControllerDataSource)
+        ICurrentControllerDataSource currentControllerDataSource,
+        IGameListProviderService gameListProviderService)
     {
         _globalStateService = globalStateService;
         _profilesService = profilesService;
         _currentControllerDataSource = currentControllerDataSource;
+        _gameListProviderService = gameListProviderService;
         _profilesService.OnProfileDeleted += _profilesService_OnProfileDeleted;
         _profilesService.OnProfileUpdated += _profilesService_OnProfileUpdated;
     }
@@ -229,162 +231,9 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
     public List<GameInfo> GetGameSelectionList(string controllerKey, GameSource gameSource)
     {
-        var games = new List<GameInfo>();
-
-        if (gameSource == GameSource.UWP)
-        {
-            games = GetUwpGames(controllerKey);
-        }
-        else if (gameSource == GameSource.Steam)
-        {
-            games = GetSteamGames(controllerKey);
-        }
-        else if (gameSource == GameSource.Blizzard)
-        {
-            games = GetBlizzardGames(controllerKey);
-        }
-        else if (gameSource == GameSource.Epic)
-        {
-            games = GetEpicGames(controllerKey);
-        }
-
-        return games.OrderBy(g => g.GameName).ToList();
+        return _gameListProviderService.GetGameSelectionList(controllerKey, gameSource, _controllerGameConfigurations);
     }
 
-    private List<GameInfo> GetUwpGames(string controllerKey)
-    {
-        var games = new List<GameInfo>();
-        PackageManager packageManager = new();
-
-        var packages = packageManager.FindPackagesForUserWithPackageTypes(string.Empty, PackageTypes.Main).ToList();
-        foreach (var package in packages
-                     .Where(p => !_controllerGameConfigurations.Any(g =>
-                         g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name)))
-                     .OrderBy(n => n.DisplayName))
-        {
-            var gameInfo = new GameInfo
-            {
-                GameSource = GameSource.UWP, GameId = package.Id.Name, GameName = package.DisplayName
-            };
-            games.Add(gameInfo);
-        }
-
-        return games;
-    }
-
-    private List<GameInfo> GetSteamGames(string controllerKey)
-    {
-        var games = new List<GameInfo>();
-        object installPath = null;
-        var steamLocationSubKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Valve\\Steam");
-        if (steamLocationSubKey != null)
-        {
-            installPath = steamLocationSubKey.GetValue("InstallPath");
-        }
-
-        if (installPath != null)
-        {
-            var libraryFilePath = $"{installPath}\\steamapps\\libraryfolders.vdf";
-            dynamic library = VdfConvert.Deserialize(File.ReadAllText(libraryFilePath));
-
-            foreach (var location in library.Value)
-            {
-                var path = location.Value.path;
-                var apps = location.Value.apps;
-
-                foreach (var app in apps)
-                {
-                    string appKey = app.Key;
-
-                    var appFile = new AcfReader($"{path}\\steamapps\\appmanifest_{appKey}.acf").ACFFileToStruct();
-                    var installName = appFile.SubACF["AppState"].SubItems["installdir"];
-                    var installDir = $"{path}\\steamapps\\common\\{installName}";
-
-                    var isGameConfigured = _controllerGameConfigurations.Any(g =>
-                        g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == installDir));
-
-                    if (!isGameConfigured)
-                    {
-                        var gameInfo = new GameInfo
-                        {
-                            GameId = installDir, GameName = installName, GameSource = GameSource.Steam
-                        };
-
-                        games.Add(gameInfo);
-                    }
-                }
-            }
-        }
-
-        return games;
-    }
-
-    private List<GameInfo> GetBlizzardGames(string controllerKey)
-    {
-        var games = new List<GameInfo>();
-        var uninstall =
-            Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
-
-
-        foreach (string subkeyName in uninstall.GetSubKeyNames())
-        {
-            using (RegistryKey subkey = uninstall.OpenSubKey(subkeyName))
-            {
-                var publisher = subkey.GetValue("Publisher");
-                if (publisher != null && publisher.ToString().ToLower() == "blizzard entertainment")
-                {
-                    var installDir = subkey.GetValue("InstallLocation").ToString();
-                    if (!_controllerGameConfigurations.Any(g =>
-                            g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == installDir)))
-                    {
-                        var gameInfo = new GameInfo
-                        {
-                            GameId = installDir,
-                            GameName = subkey.GetValue("DisplayName").ToString(),
-                            GameSource = GameSource.Blizzard
-                        };
-
-                        games.Add(gameInfo);
-                    }
-                }
-            }
-        }
-
-        return games;
-    }
-
-    private List<GameInfo> GetEpicGames(string controllerKey)
-    {
-        var games = new List<GameInfo>();
-        object installPath = null;
-        var epicLocationSubKey =
-            Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Epic Games\\EpicGamesLauncher");
-        if (epicLocationSubKey != null)
-        {
-            installPath = epicLocationSubKey.GetValue("AppDataPath");
-        }
-
-        if (installPath != null)
-        {
-            foreach (var filePath in Directory.GetFiles($"{installPath}\\Manifests", "*.item"))
-            {
-                var data = JsonSerializer.Deserialize<EpicGameManifest>(File.ReadAllText(filePath));
-                if (!_controllerGameConfigurations.Any(g =>
-                        g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == data.InstallLocation)))
-                {
-                    var gameInfo = new GameInfo
-                    {
-                        GameId = data.InstallLocation,
-                        GameName = data.DisplayName,
-                        GameSource = GameSource.Blizzard
-                    };
-
-                    games.Add(gameInfo);
-                }
-            }
-        }
-        return games;
-    }
 
     #endregion
 
@@ -511,11 +360,5 @@ internal class ControllerConfigurationService : IControllerConfigurationService
             controllerConfiguration.ProfileId = newProfileId;
             SetControllerConfiguration(ccItem.Key, controllerConfiguration, true);
         }
-    }
-
-    private class EpicGameManifest
-    {
-        public string InstallLocation { get; set; }
-        public string DisplayName { get; set; }
     }
 }

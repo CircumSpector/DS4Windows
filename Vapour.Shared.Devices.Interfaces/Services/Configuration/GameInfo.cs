@@ -11,5 +11,6 @@ public enum GameSource
     Steam,
     UWP,
     Blizzard,
-    Epic
+    Epic,
+    EA
 }
