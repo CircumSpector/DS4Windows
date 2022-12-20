@@ -101,7 +101,7 @@ This application benefits from these awesome projects (appearance in no special 
 - [Nefarius' Identinator](https://vigem.org/projects/Identinator/)
 - [Nefarius.Utilities.DeviceManagement](https://github.com/nefarius/Nefarius.Utilities.DeviceManagement)
 - [ViGEm Client .NET SDK](https://github.com/ViGEm/ViGEm.NET)
-- [NSwag: The Swagger/OpenAPI toolchain for .NET, ASP.NET Core and TypeScript](https://github.com/RicoSuter/NSwag)
+- [NSwag](https://github.com/RicoSuter/NSwag)
 - [OpenTelemetry](https://opentelemetry.io/)
 - [Polly](https://github.com/App-vNext/Polly/)
 - [Polly.Contrib.WaitAndRetry](https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry)
