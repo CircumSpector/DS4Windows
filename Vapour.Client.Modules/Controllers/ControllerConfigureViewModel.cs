@@ -1,6 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows.Controls;
 
 using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Win32;
 
 using Vapour.Client.Core.View;
 using Vapour.Client.Core.ViewModel;
@@ -68,15 +71,40 @@ public class ControllerConfigureViewModel : ViewModel<ControllerConfigureViewMod
 
     private async void OpenAddGame(GameSource source)
     {
-        IAddGameListViewModel addGameListViewModel =
-            await _viewModelFactory.Create<IAddGameListViewModel, IAddGameListView>();
-        await addGameListViewModel.Initialize(ControllerItem.Serial, source, async () =>
+        if (source != GameSource.Folder)
         {
-            GameListView = null;
-            addGameListViewModel.Dispose();
-            await PopulateGameConfigurations();
-        });
-        GameListView = (IView)addGameListViewModel.MainView;
+            IAddGameListViewModel addGameListViewModel =
+                await _viewModelFactory.Create<IAddGameListViewModel, IAddGameListView>();
+            await addGameListViewModel.Initialize(ControllerItem.Serial, source, async () =>
+            {
+                GameListView = null;
+                addGameListViewModel.Dispose();
+                await PopulateGameConfigurations();
+            });
+            GameListView = (IView)addGameListViewModel.MainView;
+        }
+        else
+        {
+            var dialog = new SaveFileDialog();
+            dialog.Title = "Select a Game Folder";
+            dialog.Filter = "Directory|*.this.directory";
+            dialog.FileName = "select";
+            if (dialog.ShowDialog() == true)
+            {
+                string path = dialog.FileName;
+                // Remove fake filename from resulting path
+                path = path.Replace("\\select.this.directory", "");
+                path = path.Replace(".this.directory", "");
+                // If user has changed the filename, create the new directory
+                if (Directory.Exists(path))
+                {
+                    var gameName = new DirectoryInfo(path).Name;
+                    var gameInfo = new GameInfo { GameId = path, GameName = gameName, GameSource = GameSource.Folder };
+                    await _controllerServiceClient.SaveGameConfiguration(ControllerItem.Serial, gameInfo, null);
+                    await PopulateGameConfigurations();
+                }
+            }
+        }
     }
 
     private async Task PopulateGameConfigurations()

@@ -39,6 +39,9 @@
             <Button Content="+EA" 
                     Command="{Binding AddGameCommand}"
                     CommandParameter="{x:Static configuration:GameSource.EA}"/>
+            <Button Content="+FOLDER" 
+                    Command="{Binding AddGameCommand}"
+                    CommandParameter="{x:Static configuration:GameSource.Folder}"/>
         </StackPanel>
         
 
