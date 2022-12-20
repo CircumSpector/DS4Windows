@@ -9,5 +9,6 @@ public class GameInfo
 public enum GameSource
 {
     Steam,
-    UWP
+    UWP,
+    Blizzard
 }
