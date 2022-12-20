@@ -7,6 +7,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:consts="clr-namespace:Vapour.Shared.Common.Types;assembly=Vapour.Shared.Common.Interfaces"
              xmlns:controllers="clr-namespace:Vapour.Client.Modules.Controllers;assembly=Vapour.Client.Modules.Interfaces"
+             xmlns:configuration="clr-namespace:Vapour.Shared.Devices.Services.Configuration;assembly=Vapour.Shared.Devices.Interfaces"
              d:DataContext ="{d:DesignInstance {x:Type local:ControllerConfigureViewModel}, IsDesignTimeCreatable=False}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
@@ -24,9 +25,14 @@
                     Grid.Row="0"
                     Margin="15,15">
             <Button Content="+UWP" 
-                    Command="{Binding AddUwpCommand}" />
+                    Command="{Binding AddGameCommand}"
+                    CommandParameter="{x:Static configuration:GameSource.UWP}"/>
             <Button Content="+Steam" 
-                    Command="{Binding AddSteamCommand}" />
+                    Command="{Binding AddGameCommand}"
+                    CommandParameter="{x:Static configuration:GameSource.Steam}"/>
+            <Button Content="+Blizzard" 
+                    Command="{Binding AddGameCommand}"
+                    CommandParameter="{x:Static configuration:GameSource.Blizzard}"/>
         </StackPanel>
         
 

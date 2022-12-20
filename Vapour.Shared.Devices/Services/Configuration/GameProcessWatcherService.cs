@@ -64,8 +64,8 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                                 return true;
                             }
 
-                            if (c.GameInfo.GameSource == GameSource.Steam &&
-                                imagePath.ToLower() == c.GameInfo.GameId.ToLower())
+                            if ((c.GameInfo.GameSource == GameSource.Steam || c.GameInfo.GameSource == GameSource.Blizzard) &&
+                                imagePath.ToLower().StartsWith(c.GameInfo.GameId.ToLower()))
                             {
                                 return true;
                             }

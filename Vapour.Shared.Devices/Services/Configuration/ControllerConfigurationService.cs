@@ -12,6 +12,7 @@ using Windows.Management.Deployment;
 using Gameloop.Vdf;
 
 using Microsoft.Win32;
+using System.Windows.Input;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -238,6 +239,10 @@ internal class ControllerConfigurationService : IControllerConfigurationService
         {
             games = GetSteamGames(controllerKey);
         }
+        else if (gameSource == GameSource.Blizzard)
+        {
+            games = GetBlizzardGames(controllerKey);
+        }
 
         return games.OrderBy(g => g.GameName).ToList();
     }
@@ -303,6 +308,35 @@ internal class ControllerConfigurationService : IControllerConfigurationService
 
                         games.Add(gameInfo);
                     }
+                }
+            }
+        }
+
+        return games;
+    }
+
+    private List<GameInfo> GetBlizzardGames(string controllerKey)
+    {
+        var games = new List<GameInfo>();
+        var uninstall =
+            Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
+
+
+        foreach (string subkeyName in uninstall.GetSubKeyNames())
+        {
+            using (RegistryKey subkey = uninstall.OpenSubKey(subkeyName))
+            {
+                var publisher = subkey.GetValue("Publisher");
+                if (publisher != null && publisher.ToString().ToLower() == "blizzard entertainment")
+                {
+                    var gameInfo = new GameInfo
+                    {
+                        GameId = subkey.GetValue("InstallLocation").ToString(),
+                        GameName = subkey.GetValue("DisplayName").ToString(),
+                        GameSource = GameSource.Blizzard
+                    };
+
+                    games.Add(gameInfo);
                 }
             }
         }
