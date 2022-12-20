@@ -109,3 +109,4 @@ This application benefits from these awesome projects (appearance in no special 
 - [Serilog.AspNetCore](https://github.com/serilog/serilog-aspnetcore)
 - [Swashbuckle.AspNetCore](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 - [Warden.NET](https://github.com/RainwayApp/warden)
+- [Vdf.NET](https://github.com/shravan2x/Gameloop.Vdf)
