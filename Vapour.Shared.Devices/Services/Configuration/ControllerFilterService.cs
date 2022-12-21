@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security;
 
 using Microsoft.Extensions.Logging;
 
@@ -168,12 +169,29 @@ public class ControllerFilterService : IControllerFilterService
         return false;
     }
 
+    /// <summary>
+    ///     Power-cycles the port the given device is attached to.
+    /// </summary>
+    /// <param name="usbDevice">The USB device to restart.</param>
     private void CyclePort(UsbPnPDevice usbDevice)
     {
+        ManualResetEvent wait = new(false);
+        DeviceNotificationListener listener = new();
+
+        listener.RegisterDeviceArrived(args =>
+        {
+            wait.Set();
+        });
+        listener.StartListen(FilterDriver.RewrittenDeviceInterfaceId);
+        listener.StartListen(DeviceInterfaceIds.HidDevice);
+
         usbDevice.CyclePort();
 
-        //give it time to cycle
-        Thread.Sleep(250);
+        wait.WaitOne(TimeSpan.FromSeconds(1));
+
+        listener.StopListen();
+        listener.Dispose();
+        wait.Dispose();
     }
 
     private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
