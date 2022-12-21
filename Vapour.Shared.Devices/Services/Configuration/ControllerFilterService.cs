@@ -173,6 +173,7 @@ public class ControllerFilterService : IControllerFilterService
     ///     Power-cycles the port the given device is attached to.
     /// </summary>
     /// <param name="usbDevice">The USB device to restart.</param>
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
     private void CyclePort(UsbPnPDevice usbDevice)
     {
         ManualResetEvent wait = new(false);
