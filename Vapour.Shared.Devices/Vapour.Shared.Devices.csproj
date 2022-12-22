@@ -15,9 +15,9 @@
 		<PackageReference Include="Gameloop.Vdf" Version="0.6.2" />
 		<PackageReference Include="Gameloop.Vdf.JsonConverter" Version="0.2.1" />
 		<PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.54" />
-		<PackageReference Include="Nefarius.Drivers.Nssidswap" Version="2.0.4" />
+		<PackageReference Include="Nefarius.Drivers.Nssidswap" Version="2.2.1" />
 		<PackageReference Include="Nefarius.Drivers.WinUSB" Version="4.1.71" />
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.3.196" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.4.206" />
 		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.138-beta">
 		  <PrivateAssets>all</PrivateAssets>
     </PackageReference>
