@@ -4,8 +4,10 @@ using System.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
 using Vapour.Client.Core.ViewModel;
+using Vapour.Client.Modules.Controllers;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 
 namespace Vapour.Client.TrayApplication;
 
@@ -17,21 +19,20 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 {
     private readonly IControllerServiceClient _controllerServiceClient;
     private readonly IProfileServiceClient _profileServiceClient;
+    private readonly IViewModelFactory _viewModelFactory;
 
     private string _hostButtonText;
 
     private bool _isHostRunning;
 
-    public TrayViewModel(IControllerServiceClient controllerServiceClient, IProfileServiceClient profileServiceClient)
+    public TrayViewModel(IControllerServiceClient controllerServiceClient, IProfileServiceClient profileServiceClient, IViewModelFactory viewModelFactory)
     {
         _controllerServiceClient = controllerServiceClient;
         _profileServiceClient = profileServiceClient;
+        _viewModelFactory = viewModelFactory;
         ShowClientCommand = new RelayCommand(OnShowClient);
         ChangeHostStateCommand = new RelayCommand(ChangeHostState);
     }
-
-    public ObservableCollection<ControllerConnectedMessage> ConnectedControllers { get; set; } = new();
-
     public bool IsHostRunning
     {
         get => _isHostRunning;
@@ -48,40 +49,19 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 
     public IRelayCommand ChangeHostStateCommand { get; }
 
+    public IControllersViewModel ControllersViewModel { get; private set; }
+
     public override async Task Initialize()
     {
-        await _controllerServiceClient.WaitForService();
-        List<ControllerConnectedMessage> controllerList = await _controllerServiceClient.GetControllerList();
-        foreach (ControllerConnectedMessage connectedController in controllerList)
-        {
-            ConnectedControllers.Add(connectedController);
-        }
-
+        _controllerServiceClient.OnIsHostRunningChanged += OnHostRunningChanged;
+        ControllersViewModel = await _viewModelFactory.Create<IControllersViewModel, IControllerListView>();
+        
         IsHostRunning = await _controllerServiceClient.IsHostRunning();
-        _controllerServiceClient.StartListening(OnControllerConnected, OnControllerDisconnected, null);
     }
 
     private void OnHostRunningChanged(IsHostRunningChangedMessage obj)
     {
         IsHostRunning = obj.IsRunning;
-    }
-
-    private void OnControllerDisconnected(ControllerDisconnectedMessage obj)
-    {
-        ControllerConnectedMessage existingController =
-            ConnectedControllers.SingleOrDefault(c => c.InstanceId == obj.ControllerDisconnectedId);
-        if (existingController != null)
-        {
-            ConnectedControllers.Remove(existingController);
-        }
-    }
-
-    private void OnControllerConnected(ControllerConnectedMessage obj)
-    {
-        if (ConnectedControllers.All(c => c.InstanceId != obj.InstanceId))
-        {
-            ConnectedControllers.Add(obj);
-        }
     }
 
     private void OnShowClient()
