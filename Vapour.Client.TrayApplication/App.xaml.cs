@@ -7,6 +7,9 @@ using Microsoft.Extensions.Hosting;
 
 using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
+using Vapour.Client.Modules.Controllers.Utils;
+using Vapour.Client.Modules.Profiles.Utils;
+using Vapour.Client.Modules.Settings;
 using Vapour.Client.ServiceClients;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
@@ -18,8 +21,7 @@ namespace Vapour.Client.TrayApplication;
 /// </summary>
 public partial class App : Application
 {
-    private TaskbarIcon notifyIcon;
-    private readonly IHost host;
+    private TaskbarIcon _notifyIcon;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -32,7 +34,10 @@ public partial class App : Application
                 typeof(ServiceClientsRegistrar),
                 typeof(TrayApplicationRegistrar),
                 typeof(OpenTelemetryRegistrar),
-                typeof(CommonRegistrar)
+                typeof(CommonRegistrar),
+                typeof(ControllersModuleRegistrar),
+                typeof(ProfilesModuleRegistrar),
+                typeof(SettingsModuleRegistrar)
             },
             SetupTray);
     }
@@ -44,16 +49,15 @@ public partial class App : Application
         var client = scope.ServiceProvider.GetService<IProfileServiceClient>();
         await client.Initialize();
 
-        notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+        _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
         var factory = scope.ServiceProvider.GetService<IViewModelFactory>();
         var trayViewModel = await factory.CreateViewModel<ITrayViewModel>();
-        notifyIcon.DataContext = trayViewModel;
+        _notifyIcon.DataContext = trayViewModel;
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        host.StopAsync();
-        notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
+        _notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
         base.OnExit(e);
     }
 }

@@ -3,6 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:tb="http://www.hardcodet.net/taskbar"
              xmlns:trayApplication="clr-namespace:Vapour.Client.TrayApplication"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:Vapour.Client.TrayApplication.Converters.Converters"
+             xmlns:System="clr-namespace:System;assembly=System.Runtime"
+             xmlns:common="clr-namespace:Vapour.Shared.Common.Types;assembly=Vapour.Shared.Common.Interfaces"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         
@@ -13,6 +17,39 @@
                     <trayApplication:TrayPopup/>
                 </tb:TaskbarIcon.TrayPopup>
             </tb:TaskbarIcon>
+
+            <ObjectDataProvider x:Key="enmOutputDeviceTypes" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="common:OutputDeviceType"></x:Type>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
+            <materialDesign:BooleanToVisibilityConverter x:Key="trueIsVis" TrueValue="Visible" FalseValue="Collapsed"/>
+            <materialDesign:BooleanToVisibilityConverter x:Key="falseIsVis" TrueValue="Collapsed" FalseValue="Visible"/>
+
+            <converters:ComparisonConverter x:Key="comparisonConverter"/>
+            <Style x:Key="IconRadioButton" TargetType="RadioButton">
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="False">
+                        <Setter Property="Opacity" Value="0.5"/>
+                    </Trigger>
+                </Style.Triggers>
+
+                <Setter Property="BorderThickness" Value="2"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="Transparent"
+                                    CornerRadius="20">
+                                <materialDesign:PackIcon Kind="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
 
     </Application.Resources>

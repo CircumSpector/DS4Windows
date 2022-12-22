@@ -4,8 +4,10 @@ using System.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
 using Vapour.Client.Core.ViewModel;
+using Vapour.Client.Modules.Controllers;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
+using Vapour.Server.Controller.Configuration;
 
 namespace Vapour.Client.TrayApplication;
 
@@ -17,15 +19,17 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 {
     private readonly IControllerServiceClient _controllerServiceClient;
     private readonly IProfileServiceClient _profileServiceClient;
+    private readonly IViewModelFactory _viewModelFactory;
 
     private string _hostButtonText;
 
     private bool _isHostRunning;
 
-    public TrayViewModel(IControllerServiceClient controllerServiceClient, IProfileServiceClient profileServiceClient)
+    public TrayViewModel(IControllerServiceClient controllerServiceClient, IProfileServiceClient profileServiceClient, IViewModelFactory viewModelFactory)
     {
         _controllerServiceClient = controllerServiceClient;
         _profileServiceClient = profileServiceClient;
+        _viewModelFactory = viewModelFactory;
         ShowClientCommand = new RelayCommand(OnShowClient);
         ChangeHostStateCommand = new RelayCommand(ChangeHostState);
     }
@@ -48,6 +52,8 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 
     public IRelayCommand ChangeHostStateCommand { get; }
 
+    public IControllersViewModel ControllersViewModel { get; private set; }
+
     public override async Task Initialize()
     {
         await _controllerServiceClient.WaitForService();
@@ -57,8 +63,19 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
             ConnectedControllers.Add(connectedController);
         }
 
+        ControllersViewModel = await _viewModelFactory.Create<IControllersViewModel, IControllerListView>();
+        
         IsHostRunning = await _controllerServiceClient.IsHostRunning();
-        _controllerServiceClient.StartListening(OnControllerConnected, OnControllerDisconnected, null);
+        _controllerServiceClient.StartListening(
+            OnControllerConnected, 
+            OnControllerDisconnected, 
+            OnControllerConfigurationChanged,
+            OnHostRunningChanged);
+    }
+
+    private void OnControllerConfigurationChanged(ControllerConfigurationChangedMessage obj)
+    {
+        
     }
 
     private void OnHostRunningChanged(IsHostRunningChangedMessage obj)
