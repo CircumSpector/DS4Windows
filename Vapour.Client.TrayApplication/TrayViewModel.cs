@@ -33,9 +33,6 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         ShowClientCommand = new RelayCommand(OnShowClient);
         ChangeHostStateCommand = new RelayCommand(ChangeHostState);
     }
-
-    public ObservableCollection<ControllerConnectedMessage> ConnectedControllers { get; set; } = new();
-
     public bool IsHostRunning
     {
         get => _isHostRunning;
@@ -56,49 +53,15 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 
     public override async Task Initialize()
     {
-        await _controllerServiceClient.WaitForService();
-        List<ControllerConnectedMessage> controllerList = await _controllerServiceClient.GetControllerList();
-        foreach (ControllerConnectedMessage connectedController in controllerList)
-        {
-            ConnectedControllers.Add(connectedController);
-        }
-
+        _controllerServiceClient.OnIsHostRunningChanged += OnHostRunningChanged;
         ControllersViewModel = await _viewModelFactory.Create<IControllersViewModel, IControllerListView>();
         
         IsHostRunning = await _controllerServiceClient.IsHostRunning();
-        _controllerServiceClient.StartListening(
-            OnControllerConnected, 
-            OnControllerDisconnected, 
-            OnControllerConfigurationChanged,
-            OnHostRunningChanged);
-    }
-
-    private void OnControllerConfigurationChanged(ControllerConfigurationChangedMessage obj)
-    {
-        
     }
 
     private void OnHostRunningChanged(IsHostRunningChangedMessage obj)
     {
         IsHostRunning = obj.IsRunning;
-    }
-
-    private void OnControllerDisconnected(ControllerDisconnectedMessage obj)
-    {
-        ControllerConnectedMessage existingController =
-            ConnectedControllers.SingleOrDefault(c => c.InstanceId == obj.ControllerDisconnectedId);
-        if (existingController != null)
-        {
-            ConnectedControllers.Remove(existingController);
-        }
-    }
-
-    private void OnControllerConnected(ControllerConnectedMessage obj)
-    {
-        if (ConnectedControllers.All(c => c.InstanceId != obj.InstanceId))
-        {
-            ConnectedControllers.Add(obj);
-        }
     }
 
     private void OnShowClient()

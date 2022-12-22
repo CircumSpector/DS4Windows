@@ -55,7 +55,10 @@ public sealed class ControllersViewModel :
     {
         await CreateControllerItems();
 
-        _controllerService.StartListening(CreateControllerItem, RemoveControllerItem, OnControllerConfigurationChanged);
+        _controllerService.OnControllerConnected += CreateControllerItem;
+        _controllerService.OnControllerDisconnected += RemoveControllerItem;
+        _controllerService.OnControllerConfigurationChanged += OnControllerConfigurationChanged; 
+        _controllerService.StartListening();
         //_profilesService.StartListening();
     }
 

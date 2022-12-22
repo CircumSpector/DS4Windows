@@ -8,13 +8,7 @@ public interface IControllerServiceClient
 {
     Task<List<ControllerConnectedMessage>> GetControllerList();
 
-    void StartListening(
-        Action<ControllerConnectedMessage> connectedHandler,
-        Action<ControllerDisconnectedMessage> disconnectedHandler,
-        Action<ControllerConfigurationChangedMessage> controllerConfigurationChangedHandler,
-        Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null,
-        CancellationToken ct = default
-    );
+    void StartListening(CancellationToken ct = default);
 
     Task WaitForService(CancellationToken ct = default);
     Task<bool> IsHostRunning();
@@ -32,4 +26,8 @@ public interface IControllerServiceClient
     Task SaveGameConfiguration(string controllerKey, GameInfo gameInfo, ControllerConfiguration controllerConfiguration);
     Task<List<ControllerConfiguration>> GetGameControllerConfigurations(string controllerKey);
     Task DeleteGameConfiguration(string controllerKey, string gameId);
+    event Action<ControllerConnectedMessage> OnControllerConnected;
+    event Action<ControllerDisconnectedMessage> OnControllerDisconnected;
+    event Action<ControllerConfigurationChangedMessage> OnControllerConfigurationChanged;
+    event Action<IsHostRunningChangedMessage> OnIsHostRunningChanged;
 }
