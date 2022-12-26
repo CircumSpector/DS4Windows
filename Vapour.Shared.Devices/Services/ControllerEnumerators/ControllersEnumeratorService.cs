@@ -20,24 +20,24 @@ namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 /// </summary>
 internal sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
-    private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
-    private readonly IControllerFilterService _controllerFilterService;
     private readonly IControllerConfigurationService _controllerConfigurationService;
-    private readonly IDeviceNotificationListener _deviceNotificationListener;
+    private readonly IControllerFilterService _controllerFilterService;
+    private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
+    private readonly ICurrentControllerDataSource _currentControllerDataSource;
+    private readonly IDeviceNotificationListener _deviceNotificationListener;
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
 
     private readonly ILogger<ControllersEnumeratorService> _logger;
-    private readonly ICurrentControllerDataSource _currentControllerDataSource;
 
     private readonly IServiceProvider _serviceProvider;
-    
+
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
+    private CancellationTokenSource _enumerationCancellationTokenSource;
+    private Thread _enumerationProcessThread;
 
     private Channel<ControllerProcessItem> _processItems;
-    private Thread _enumerationProcessThread;
-    private CancellationTokenSource _enumerationCancellationTokenSource;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
         ICurrentControllerDataSource currentControllerDataSource,
@@ -67,7 +67,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
     /// <inheritdoc />
     public event Action DeviceListReady;
-    
+
     /// <inheritdoc />
     public void Start()
     {
@@ -76,9 +76,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
         _processItems = Channel.CreateUnbounded<ControllerProcessItem>(new UnboundedChannelOptions
         {
-            SingleReader = true,
-            SingleWriter = true,
-            AllowSynchronousContinuations = true
+            SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
         });
 
         _hidEnumeratorService.EnumerateDevices();
@@ -96,6 +94,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     public void Stop()
     {
         _deviceNotificationListener.StopListen();
+
         foreach (ICompatibleHidDevice compatibleHidDevice in _currentControllerDataSource.CurrentControllers)
         {
             _controllerInputReportProcessorService.StopProcessing(compatibleHidDevice);
@@ -103,7 +102,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
         StopEnumerationThread();
     }
-    
+
     private void EnumeratorServiceOnHidDeviceArrived(HidDevice hidDevice)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -157,7 +156,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         {
             _controllerInputReportProcessorService.StartProcessing(device);
             _currentControllerDataSource.AddController(device);
-            
+
             _logger.LogInformation("Added identified input device {Device}",
                 device.ToString());
         }
@@ -205,15 +204,15 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
     private void StartEnumerationThread()
     {
-        if (_enumerationCancellationTokenSource == null || _enumerationCancellationTokenSource.Token.IsCancellationRequested)
+        if (_enumerationCancellationTokenSource == null ||
+            _enumerationCancellationTokenSource.Token.IsCancellationRequested)
         {
             _enumerationCancellationTokenSource = new CancellationTokenSource();
         }
 
         _enumerationProcessThread = new Thread(ReadEnumerations)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _enumerationProcessThread.Start();
     }
@@ -224,33 +223,41 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         {
             try
             {
-                var item = await _processItems.Reader.ReadAsync(_enumerationCancellationTokenSource.Token);
-                if (item != null)
+                ControllerProcessItem item =
+                    await _processItems.Reader.ReadAsync(_enumerationCancellationTokenSource.Token);
+
+                if (item == null)
                 {
-                    if (item.IsAdd)
-                    {
-                        EnumeratorServiceOnHidDeviceArrived(item.Device);
-                    }
-                    else
-                    {
-                        EnumeratorServiceOnHidDeviceRemoved(item.InstanceId);
-                    }
+                    continue;
+                }
+
+                if (item.IsAdd)
+                {
+                    EnumeratorServiceOnHidDeviceArrived(item.Device);
+                }
+                else
+                {
+                    EnumeratorServiceOnHidDeviceRemoved(item.InstanceId);
                 }
             }
             catch (OperationCanceledException)
             {
                 _logger.LogInformation("Controller Enumeration thread canceled");
             }
-            
         }
     }
 
     private void StopEnumerationThread()
     {
-        _enumerationCancellationTokenSource.Cancel();
+        _enumerationCancellationTokenSource?.Cancel();
         _enumerationProcessThread.Join();
-        _processItems.Writer.Complete();
-        _enumerationCancellationTokenSource.Dispose();
+
+        if (_enumerationCancellationTokenSource is not null)
+        {
+            _processItems.Writer.Complete();
+        }
+
+        _enumerationCancellationTokenSource?.Dispose();
         _enumerationCancellationTokenSource = null;
     }
 

@@ -115,7 +115,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         _logger.LogInformation(JsonSerializer.Serialize(_currentWatch));
 
         _currentWatch.Count++;
-        _logger.LogInformation($"Start - Watch count {_currentWatch.Count}");
+        _logger.LogInformation("Start - Watch count {Count}", _currentWatch.Count);
 
         if (_currentWatch.Count != 1)
         {
@@ -151,7 +151,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         _logger.LogInformation("Stop - Command line: {CommandLine}", e.CommandLine);
 
         _currentWatch.Count--;
-        _logger.LogInformation($"Stop - watch count {_currentWatch.Count}");
+        _logger.LogInformation("Stop - watch count {Count}", _currentWatch.Count);
 
         if (_currentWatch.Count > 0)
         {
