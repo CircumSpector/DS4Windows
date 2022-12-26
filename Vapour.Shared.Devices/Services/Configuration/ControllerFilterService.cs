@@ -122,6 +122,7 @@ public class ControllerFilterService : IControllerFilterService
         catch (UsbPnPDeviceConversionException)
         {
             // TODO: handle Bluetooth
+            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
             return;
         }
         catch (UsbPnPDeviceRestartException ex)
@@ -139,7 +140,6 @@ public class ControllerFilterService : IControllerFilterService
         try
         {
             UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-            //TODO: fill in the unfilter
 
             using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
             if (entry is not null)
@@ -152,6 +152,7 @@ public class ControllerFilterService : IControllerFilterService
         catch (UsbPnPDeviceConversionException)
         {
             // TODO: handle Bluetooth
+            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
             return;
         }
         catch (UsbPnPDeviceRestartException ex)
