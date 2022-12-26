@@ -4,6 +4,7 @@ using System.Security;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.Nssidswap;
+using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
@@ -103,33 +104,61 @@ public class ControllerFilterService : IControllerFilterService
     public void FilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
-        UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-        //TODO: filter the controller and cycle the port
 
-        using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
-        entry.IsReplacingEnabled = true;
-        entry.CompatibleIds = new[]
+        try
         {
-            @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D", @"USB\Class_FF"
-        };
+            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
 
-        CyclePort(usbDevice);
+            using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
+            entry.IsReplacingEnabled = true;
+            entry.CompatibleIds = new[]
+            {
+                @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D",
+                @"USB\Class_FF"
+            };
+
+            CyclePort(usbDevice);
+        }
+        catch (UsbPnPDeviceConversionException)
+        {
+            // TODO: handle Bluetooth
+            return;
+        }
+        catch (UsbPnPDeviceRestartException ex)
+        {
+            _logger.LogError(ex, "Device restart failed");
+            throw;
+        }
     }
 
     /// <inheritdoc />
     public void UnfilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
-        UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-        //TODO: fill in the unfilter
 
-        using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
-        if (entry is not null)
+        try
         {
-            entry.IsReplacingEnabled = false;
-        }
+            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
+            //TODO: fill in the unfilter
 
-        CyclePort(usbDevice);
+            using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
+            if (entry is not null)
+            {
+                entry.IsReplacingEnabled = false;
+            }
+
+            CyclePort(usbDevice);
+        }
+        catch (UsbPnPDeviceConversionException)
+        {
+            // TODO: handle Bluetooth
+            return;
+        }
+        catch (UsbPnPDeviceRestartException ex)
+        {
+            _logger.LogError(ex, "Device restart failed");
+            throw;
+        }
     }
 
     /// <inheritdoc />
