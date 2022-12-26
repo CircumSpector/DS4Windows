@@ -176,6 +176,12 @@ public class ControllerFilterService : IControllerFilterService
     /// <inheritdoc />
     public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device)
     {
+        // TODO: implement properly once wireless filtering is implemented 
+        if (device.Connection == ConnectionType.Bluetooth)
+        {
+            return false;
+        }
+
         if (IsFilterDriverEnabled)
         {
             ControllerConfiguration config = device.CurrentConfiguration;

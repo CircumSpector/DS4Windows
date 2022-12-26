@@ -148,7 +148,9 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     {
         CompatibleDeviceIdentification deviceIdentification = KnownDevices.List
             .First(c => c.Vid == hidDevice.Attributes.VendorID && c.Pid == hidDevice.Attributes.ProductID);
+
         ICompatibleHidDevice device = CreateDevice(hidDevice, deviceIdentification);
+
         _controllerConfigurationService.LoadControllerConfiguration(device);
 
         if (!_controllerFilterService.FilterUnfilterIfNeeded(device))
@@ -170,6 +172,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
             _serviceProvider
         );
 
+        // TODO: take Bluetooth into account
         if (hidDevice is HidDeviceOverWinUsb)
         {
             device.IsFiltered = true;
