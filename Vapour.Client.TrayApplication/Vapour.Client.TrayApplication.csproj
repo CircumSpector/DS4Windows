@@ -25,6 +25,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Vapour.Client.Core.Interfaces\Vapour.Client.Core.Interfaces.csproj" />
 		<ProjectReference Include="..\Vapour.Client.Core\Vapour.Client.Core.csproj" />
+		<ProjectReference Include="..\Vapour.Client.Modules.Interfaces\Vapour.Client.Modules.Interfaces.csproj" />
+		<ProjectReference Include="..\Vapour.Client.Modules\Vapour.Client.Modules.csproj" />
 		<ProjectReference Include="..\Vapour.Client.ServiceClients.Interfaces\Vapour.Client.ServiceClients.Interfaces.csproj" />
 		<ProjectReference Include="..\Vapour.Client.ServiceClients\Vapour.Client.ServiceClients.csproj" />
 		<ProjectReference Include="..\Vapour.Shared.Common\Vapour.Shared.Common.csproj" />

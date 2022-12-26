@@ -11,11 +11,7 @@ namespace Vapour.Client.ServiceClients;
 
 public sealed partial class ControllerServiceClient : IControllerServiceClient
 {
-    private readonly IHttpClientFactory _clientFactory;
-    private Action<ControllerConnectedMessage> _connectedAction;
-    private Action<ControllerDisconnectedMessage> _disconnectedAction;
-    private Action<IsHostRunningChangedMessage> _hostRunningHandler;
-    private Action<ControllerConfigurationChangedMessage> _controllerConfigurationChangedAction;
+    private readonly IHttpClientFactory _clientFactory; 
     private HubConnection _hubConnection;
 
     public ControllerServiceClient(IHttpClientFactory clientFactory)
@@ -51,19 +47,13 @@ public sealed partial class ControllerServiceClient : IControllerServiceClient
         }
     }
 
-    public async void StartListening(
-        Action<ControllerConnectedMessage> connectedHandler,
-        Action<ControllerDisconnectedMessage> disconnectedHandler,
-        Action<ControllerConfigurationChangedMessage> controllerConfigurationChangedHandler,
-        Action<IsHostRunningChangedMessage> hostRunningChangedHandler = null,
-        CancellationToken ct = default
-    )
-    {
-        _connectedAction = connectedHandler;
-        _disconnectedAction = disconnectedHandler;
-        _controllerConfigurationChangedAction = controllerConfigurationChangedHandler;
-        _hostRunningHandler = hostRunningChangedHandler;
+    public event Action<ControllerConnectedMessage> OnControllerConnected;
+    public event Action<ControllerDisconnectedMessage> OnControllerDisconnected;
+    public event Action<ControllerConfigurationChangedMessage> OnControllerConfigurationChanged;
+    public event Action<IsHostRunningChangedMessage> OnIsHostRunningChanged;
 
+    public async void StartListening(CancellationToken ct = default)
+    {
         _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{Constants.WebsocketUrl}/ControllerMessages")
             .WithAutomaticReconnect()
@@ -73,7 +63,7 @@ public sealed partial class ControllerServiceClient : IControllerServiceClient
         {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                _connectedAction?.Invoke(message);
+                OnControllerConnected?.Invoke(message);
             });
         });
 
@@ -81,7 +71,7 @@ public sealed partial class ControllerServiceClient : IControllerServiceClient
         {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                _disconnectedAction?.Invoke(message);
+                OnControllerDisconnected?.Invoke(message);
             });
         });
 
@@ -89,7 +79,7 @@ public sealed partial class ControllerServiceClient : IControllerServiceClient
         {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                _hostRunningHandler?.Invoke(message);
+                OnIsHostRunningChanged?.Invoke(message);
             });
         });
 
@@ -97,7 +87,7 @@ public sealed partial class ControllerServiceClient : IControllerServiceClient
         {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                _controllerConfigurationChangedAction?.Invoke(message);
+                OnControllerConfigurationChanged?.Invoke(message);
             });
         });
 
