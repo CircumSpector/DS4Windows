@@ -1,6 +1,9 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.WindowsServices;
 
 using Serilog;

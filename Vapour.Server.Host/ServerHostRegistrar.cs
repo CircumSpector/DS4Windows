@@ -1,6 +1,9 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 using Vapour.Client.Core.DependencyInjection;
 using Vapour.Server.Controller;
 using Vapour.Server.Host.Controller;
