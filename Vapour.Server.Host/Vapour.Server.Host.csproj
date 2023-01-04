@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -40,5 +40,14 @@
     <ProjectReference Include="..\Vapour.Shared.Configuration.Profiles\Vapour.Shared.Configuration.Profiles.csproj" />
     <ProjectReference Include="..\Vapour.Shared.Devices.Interfaces\Vapour.Shared.Devices.Interfaces.csproj" />
     <ProjectReference Include="..\Vapour.Shared.Devices\Vapour.Shared.Devices.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
