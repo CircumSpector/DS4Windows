@@ -203,6 +203,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         return handle.IsInvalid switch
         {
             true when Marshal.GetLastWin32Error() == (int)WIN32_ERROR.ERROR_ACCESS_DENIED => false,
+            true when Marshal.GetLastWin32Error() == (int)WIN32_ERROR.ERROR_SHARING_VIOLATION => false,
             true => throw new Exception($"Couldn't open device handle, error {Marshal.GetLastWin32Error()}"),
             _ => true
         };
