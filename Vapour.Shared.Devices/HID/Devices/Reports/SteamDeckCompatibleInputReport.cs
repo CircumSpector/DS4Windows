@@ -1,8 +1,4 @@
-﻿using System.Buffers.Binary;
-using System.Runtime.InteropServices;
-using System.Text;
-
-using Microsoft.VisualBasic.CompilerServices;
+﻿using System.Runtime.InteropServices;
 
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.SteamDeck;
