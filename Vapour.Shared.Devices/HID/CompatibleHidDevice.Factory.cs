@@ -21,6 +21,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
             InputDeviceType.DualSense => new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services),
             InputDeviceType.SwitchPro => new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services),
             InputDeviceType.JoyConL or InputDeviceType.JoyConR => new JoyConCompatibleHidDevice(deviceType, source, featureSet, services),
+            InputDeviceType.SteamDeck => new SteamDeckCompatibleHidDevice(deviceType, source, featureSet, services),
 
             _ => throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null)
         };

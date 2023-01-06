@@ -4,6 +4,7 @@ using Nefarius.ViGEm.Client.Targets.DualShock4;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.HID.InputTypes;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
@@ -125,11 +126,12 @@ internal class DS4OutDevice : OutDevice
         cont.SetSliderValue(DualShock4Slider.LeftTrigger, state.LeftTrigger);
         cont.SetSliderValue(DualShock4Slider.RightTrigger, state.RightTrigger);
 
-        cont.SetAxisValue(DualShock4Axis.LeftThumbX, state.LeftThumbX);
-        cont.SetAxisValue(DualShock4Axis.LeftThumbY, state.LeftThumbY);
-        cont.SetAxisValue(DualShock4Axis.RightThumbX, state.RightThumbX);
-        cont.SetAxisValue(DualShock4Axis.RightThumbY, state.RightThumbY);
+        cont.SetAxisValue(DualShock4Axis.LeftThumbX, (byte)state.LeftThumbX);
+        cont.SetAxisValue(DualShock4Axis.LeftThumbY, (byte)state.LeftThumbY);
+        cont.SetAxisValue(DualShock4Axis.RightThumbX, (byte)state.RightThumbX);
+        cont.SetAxisValue(DualShock4Axis.RightThumbY, (byte)state.RightThumbY);
 
         cont.SubmitReport();
     }
+    
 }
