@@ -15,15 +15,19 @@ public class SteamDeckCompatibleInputReport : CompatibleHidDeviceInputReport
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        SteamDeckInput report = MemoryMarshal.AsRef<SteamDeckInput>(input);
+        var buttons0 = (SteamDeckButtons0)MemoryMarshal.Read<ushort>(input.Slice(9, 2));
 
-        Triangle = report.buttons0.HasFlag(SteamDeckButtons0.BTN_Y);
-        Circle = report.buttons0.HasFlag(SteamDeckButtons0.BTN_B);
-        Cross = report.buttons0.HasFlag(SteamDeckButtons0.BTN_A);
-        Square = report.buttons0.HasFlag(SteamDeckButtons0.BTN_X);
+        Triangle = buttons0.HasFlag(SteamDeckButtons0.Y);
+        Circle = buttons0.HasFlag(SteamDeckButtons0.B);
+        Cross = buttons0.HasFlag(SteamDeckButtons0.A);
+        Square = buttons0.HasFlag(SteamDeckButtons0.X);
 
-        LeftShoulder = report.buttons0.HasFlag(SteamDeckButtons0.BTN_L1);
-        RightShoulder = report.buttons0.HasFlag(SteamDeckButtons0.BTN_R1);
+        LeftShoulder = buttons0.HasFlag(SteamDeckButtons0.L1);
+        RightShoulder = buttons0.HasFlag(SteamDeckButtons0.R1);
+
+        Options = buttons0.HasFlag(SteamDeckButtons0.Options);
+        Share = buttons0.HasFlag(SteamDeckButtons0.Menu);
+        PS = buttons0.HasFlag(SteamDeckButtons0.Steam);
 
         LeftTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(45, 2)) / (double)Int16.MaxValue * byte.MaxValue);
         RightTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(47, 2)) / (double)Int16.MaxValue * byte.MaxValue);
@@ -32,9 +36,5 @@ public class SteamDeckCompatibleInputReport : CompatibleHidDeviceInputReport
         LeftThumbY = MemoryMarshal.Read<short>(input.Slice(51, 2));
         RightThumbX = MemoryMarshal.Read<short>(input.Slice(53, 2));
         RightThumbY = MemoryMarshal.Read<short>(input.Slice(55, 2));
-
-        Options = report.buttons0.HasFlag(SteamDeckButtons0.BTN_OPTIONS);
-        Share = report.buttons0.HasFlag(SteamDeckButtons0.BTN_MENU);
-        PS = report.buttons0.HasFlag(SteamDeckButtons0.BTN_STEAM);
     }
 }

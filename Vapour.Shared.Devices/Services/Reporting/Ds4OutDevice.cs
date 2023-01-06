@@ -4,7 +4,6 @@ using Nefarius.ViGEm.Client.Targets.DualShock4;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.HID.InputTypes;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
