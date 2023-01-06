@@ -20,3 +20,9 @@ public enum SteamDeckButtons0 : UInt16
     L2 = 0b0000000000000010,
     R2 = 0b0000000000000001,
 }
+
+internal enum SteamDeckButtonsStick : byte
+{
+    LeftStick = 0b01000000,
+    RightStick = 0b00000100
+}

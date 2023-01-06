@@ -30,6 +30,9 @@ public class SteamDeckCompatibleInputReport : CompatibleHidDeviceInputReport
         LeftTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(45, 2)) / (double)Int16.MaxValue * byte.MaxValue);
         RightTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(47, 2)) / (double)Int16.MaxValue * byte.MaxValue);
 
+        LeftThumb = input[11] == (byte)SteamDeckButtonsStick.LeftStick;
+        RightThumb = input[12] == (byte)SteamDeckButtonsStick.RightStick;
+
         LeftThumbX = MemoryMarshal.Read<short>(input.Slice(49, 2));
         LeftThumbY = MemoryMarshal.Read<short>(input.Slice(51, 2));
         RightThumbX = MemoryMarshal.Read<short>(input.Slice(53, 2));
