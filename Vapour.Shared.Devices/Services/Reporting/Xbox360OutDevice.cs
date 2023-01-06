@@ -37,10 +37,7 @@ internal class Xbox360OutDevice : OutDevice
         cont.SetButtonState(Xbox360Button.LeftThumb, state.LeftThumb);
         cont.SetButtonState(Xbox360Button.RightThumb, state.RightThumb);
         cont.SetButtonState(Xbox360Button.Start, state.Options);
-        cont.SetButtonState(Xbox360Button.Up, state.DPad == DPadDirection.North);
-        cont.SetButtonState(Xbox360Button.Right, state.DPad == DPadDirection.East);
-        cont.SetButtonState(Xbox360Button.Down, state.DPad == DPadDirection.South);
-        cont.SetButtonState(Xbox360Button.Left, state.DPad == DPadDirection.West);
+        SetDpad(state);
         cont.SetButtonState(Xbox360Button.LeftShoulder, state.LeftShoulder);
         cont.SetButtonState(Xbox360Button.RightShoulder, state.RightShoulder);
         cont.SetButtonState(Xbox360Button.Y, state.Triangle);
@@ -112,5 +109,11 @@ internal class Xbox360OutDevice : OutDevice
         }
     }
 
-    
+    private void SetDpad(CompatibleHidDeviceInputReport state)
+    {
+        cont.SetButtonState(Xbox360Button.Up, state.DPad is DPadDirection.North or DPadDirection.NorthEast or DPadDirection.NorthWest);
+        cont.SetButtonState(Xbox360Button.Right, state.DPad is DPadDirection.East or DPadDirection.NorthEast or DPadDirection.SouthEast);
+        cont.SetButtonState(Xbox360Button.Down, state.DPad is DPadDirection.South or DPadDirection.SouthEast or DPadDirection.SouthWest);
+        cont.SetButtonState(Xbox360Button.Left, state.DPad is DPadDirection.West or DPadDirection.SouthWest or DPadDirection.NorthWest);
+    }
 }

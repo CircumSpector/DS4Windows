@@ -114,6 +114,10 @@ internal class DS4OutDevice : OutDevice
         {
             cont.SetDPadDirection(DualShock4DPadDirection.South);
         }
+        else
+        {
+            cont.SetDPadDirection(DualShock4DPadDirection.None);
+        }
 
         cont.SetButtonState(DualShock4Button.ShoulderLeft, state.LeftShoulder);
         cont.SetButtonState(DualShock4Button.ShoulderRight, state.RightShoulder);

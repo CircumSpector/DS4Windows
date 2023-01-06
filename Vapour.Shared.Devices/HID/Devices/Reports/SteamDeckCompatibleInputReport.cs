@@ -25,26 +25,7 @@ public class SteamDeckCompatibleInputReport : CompatibleHidDeviceInputReport
         Share = buttons0.HasFlag(SteamDeckButtons0.Menu);
         PS = buttons0.HasFlag(SteamDeckButtons0.Steam);
 
-        if (buttons0.HasFlag(SteamDeckButtons0.DpadDown))
-        {
-            DPad = DPadDirection.South;
-        }
-        else if (buttons0.HasFlag(SteamDeckButtons0.DpadLeft))
-        {
-            DPad = DPadDirection.West;
-        }
-        else if (buttons0.HasFlag(SteamDeckButtons0.DpadRight))
-        {
-            DPad = DPadDirection.East;
-        }
-        else if (buttons0.HasFlag(SteamDeckButtons0.DpadUp))
-        {
-            DPad = DPadDirection.North;
-        }
-        else
-        {
-            DPad = DPadDirection.Default;
-        }
+        SetDPad(buttons0);
 
         LeftTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(45, 2)) / (double)Int16.MaxValue * byte.MaxValue);
         RightTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(47, 2)) / (double)Int16.MaxValue * byte.MaxValue);
@@ -53,5 +34,54 @@ public class SteamDeckCompatibleInputReport : CompatibleHidDeviceInputReport
         LeftThumbY = MemoryMarshal.Read<short>(input.Slice(51, 2));
         RightThumbX = MemoryMarshal.Read<short>(input.Slice(53, 2));
         RightThumbY = MemoryMarshal.Read<short>(input.Slice(55, 2));
+    }
+
+    private void SetDPad(SteamDeckButtons0 buttons0)
+    {
+        if (buttons0.HasFlag(SteamDeckButtons0.DpadDown))
+        {
+            if (buttons0.HasFlag(SteamDeckButtons0.DpadLeft))
+            {
+                DPad = DPadDirection.SouthWest;
+            }
+            else if (buttons0.HasFlag(SteamDeckButtons0.DpadRight))
+            {
+                DPad = DPadDirection.SouthEast;
+            }
+            else
+            {
+                DPad = DPadDirection.South;
+            }
+        }
+        else if (buttons0.HasFlag(SteamDeckButtons0.DpadLeft))
+        {
+            if (buttons0.HasFlag(SteamDeckButtons0.DpadUp))
+            {
+                DPad = DPadDirection.NorthWest;
+            }
+            else
+            {
+                DPad = DPadDirection.West;
+            }
+        }
+        else if (buttons0.HasFlag(SteamDeckButtons0.DpadUp))
+        {
+            if (buttons0.HasFlag(SteamDeckButtons0.DpadRight))
+            {
+                DPad = DPadDirection.NorthEast;
+            }
+            else
+            {
+                DPad = DPadDirection.North;
+            }
+        }
+        else if (buttons0.HasFlag(SteamDeckButtons0.DpadRight))
+        {
+            DPad = DPadDirection.East;
+        }
+        else
+        {
+            DPad = DPadDirection.Default;
+        }
     }
 }
