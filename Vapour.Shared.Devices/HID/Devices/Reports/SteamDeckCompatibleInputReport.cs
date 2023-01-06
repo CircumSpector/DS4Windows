@@ -29,6 +29,27 @@ public class SteamDeckCompatibleInputReport : CompatibleHidDeviceInputReport
         Share = buttons0.HasFlag(SteamDeckButtons0.Menu);
         PS = buttons0.HasFlag(SteamDeckButtons0.Steam);
 
+        if (buttons0.HasFlag(SteamDeckButtons0.DpadDown))
+        {
+            DPad = DPadDirection.South;
+        }
+        else if (buttons0.HasFlag(SteamDeckButtons0.DpadLeft))
+        {
+            DPad = DPadDirection.West;
+        }
+        else if (buttons0.HasFlag(SteamDeckButtons0.DpadRight))
+        {
+            DPad = DPadDirection.East;
+        }
+        else if (buttons0.HasFlag(SteamDeckButtons0.DpadUp))
+        {
+            DPad = DPadDirection.North;
+        }
+        else
+        {
+            DPad = DPadDirection.Default;
+        }
+
         LeftTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(45, 2)) / (double)Int16.MaxValue * byte.MaxValue);
         RightTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(47, 2)) / (double)Int16.MaxValue * byte.MaxValue);
 
