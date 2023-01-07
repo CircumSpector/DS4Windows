@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID.Devices.Reports;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
+
+namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 public struct TrackPadTouch
 {
@@ -11,6 +13,8 @@ public struct TrackPadTouch
 
 public class DualShock4CompatibleInputReport : CompatibleHidDeviceInputReport
 {
+    public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
+
     public TrackPadTouch TrackPadTouch1 { get; protected set; }
 
     public TrackPadTouch TrackPadTouch2 { get; protected set; }

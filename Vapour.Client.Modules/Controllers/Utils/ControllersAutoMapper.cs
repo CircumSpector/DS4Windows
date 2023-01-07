@@ -45,6 +45,9 @@ public class ControllersAutoMapper : Profile
                     case InputDeviceType.SwitchPro:
                         deviceImage = ControllerItemViewModel.SwitchProImageLocation;
                         break;
+                    case InputDeviceType.SteamDeck:
+                        deviceImage = ControllerItemViewModel.SteamDeckImageLocation;
+                        break;
                 }
 
                 return deviceImage;

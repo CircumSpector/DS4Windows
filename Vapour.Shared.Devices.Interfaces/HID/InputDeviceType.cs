@@ -28,5 +28,10 @@ public enum InputDeviceType : uint
     /// <summary>
     ///     DualSense Controller
     /// </summary>
-    DualSense
+    DualSense,
+
+    /// <summary>
+    ///     Steam Deck Controller
+    /// </summary>
+    SteamDeck
 }

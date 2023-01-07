@@ -22,10 +22,17 @@
 		<None Remove="Controllers\Images\dualshockv2.jpg" />
 		<None Remove="Controllers\Images\joyconleft.jpg" />
 		<None Remove="Controllers\Images\joyconright.jpg" />
+		<None Remove="Controllers\Images\steam-deck.jpg" />
 		<None Remove="Controllers\Images\switchpro.jpg" />
 		<None Remove="Controllers\Images\USB.png" />
 		<None Remove="Controllers\Images\USB_white.png" />
 		<None Remove="Main\Images\Vapour.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Controllers\Images\steam-deck.jpg">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
 	<ItemGroup>

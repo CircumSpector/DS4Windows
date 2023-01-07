@@ -1,7 +1,11 @@
-﻿namespace Vapour.Shared.Devices.HID.Devices.Reports;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
+
+namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 public sealed class DualSenseCompatibleInputReport : DualShock4CompatibleInputReport
 {
+    public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
+
     public override void Parse(ReadOnlySpan<byte> input)
     {
         // Eliminate bounds checks

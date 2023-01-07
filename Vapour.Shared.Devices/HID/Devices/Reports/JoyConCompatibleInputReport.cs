@@ -1,10 +1,14 @@
-﻿namespace Vapour.Shared.Devices.HID.Devices.Reports;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
+
+namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 /// <summary>
 ///     TODO: unfinished! Currently just copied over from DualShock
 /// </summary>
 public sealed class JoyConCompatibleInputReport : CompatibleHidDeviceInputReport
 {
+    public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
+
     public TrackPadTouch TrackPadTouch1 { get; set; }
 
     public TrackPadTouch TrackPadTouch2 { get; set; }

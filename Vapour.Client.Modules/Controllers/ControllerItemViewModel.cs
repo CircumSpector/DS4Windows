@@ -33,6 +33,8 @@ public sealed class ControllerItemViewModel :
 
     public static BitmapImage SwitchProImageLocation =
         new(new Uri($"{ImageLocationRoot}/switchpro.jpg", UriKind.Absolute));
+    public static BitmapImage SteamDeckImageLocation =
+        new(new Uri($"{ImageLocationRoot}/steam-deck.jpg", UriKind.Absolute));
 
     public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
     public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB.png", UriKind.Absolute));

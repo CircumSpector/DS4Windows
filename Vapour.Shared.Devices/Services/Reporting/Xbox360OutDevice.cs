@@ -11,9 +11,7 @@ internal class Xbox360OutDevice : OutDevice
 {
     //private const int inputResolution = 127 - (-128);
     //private const float reciprocalInputResolution = 1 / (float)inputResolution;
-    private const float RecipInputPosResolution = 1 / 127f;
-    private const float RecipInputNegResolution = 1 / 128f;
-    private const int OutputResolution = 32767 - -32768;
+    
 
     public IXbox360Controller cont;
 
@@ -39,10 +37,7 @@ internal class Xbox360OutDevice : OutDevice
         cont.SetButtonState(Xbox360Button.LeftThumb, state.LeftThumb);
         cont.SetButtonState(Xbox360Button.RightThumb, state.RightThumb);
         cont.SetButtonState(Xbox360Button.Start, state.Options);
-        cont.SetButtonState(Xbox360Button.Up, state.DPad == DPadDirection.North);
-        cont.SetButtonState(Xbox360Button.Right, state.DPad == DPadDirection.East);
-        cont.SetButtonState(Xbox360Button.Down, state.DPad == DPadDirection.South);
-        cont.SetButtonState(Xbox360Button.Left, state.DPad == DPadDirection.West);
+        SetDpad(state);
         cont.SetButtonState(Xbox360Button.LeftShoulder, state.LeftShoulder);
         cont.SetButtonState(Xbox360Button.RightShoulder, state.RightShoulder);
         cont.SetButtonState(Xbox360Button.Y, state.Triangle);
@@ -53,10 +48,10 @@ internal class Xbox360OutDevice : OutDevice
         cont.SetSliderValue(Xbox360Slider.LeftTrigger, state.LeftTrigger);
         cont.SetSliderValue(Xbox360Slider.RightTrigger, state.RightTrigger);
 
-        cont.SetAxisValue(Xbox360Axis.LeftThumbX, AxisScale(state.LeftThumbX, false));
-        cont.SetAxisValue(Xbox360Axis.LeftThumbY, AxisScale(state.LeftThumbY, true));
-        cont.SetAxisValue(Xbox360Axis.RightThumbX, AxisScale(state.RightThumbX, false));
-        cont.SetAxisValue(Xbox360Axis.RightThumbY, AxisScale(state.RightThumbY, true));
+        cont.SetAxisValue(Xbox360Axis.LeftThumbX, state.LeftThumbX);
+        cont.SetAxisValue(Xbox360Axis.LeftThumbY, state.LeftThumbY);
+        cont.SetAxisValue(Xbox360Axis.RightThumbX, state.RightThumbX);
+        cont.SetAxisValue(Xbox360Axis.RightThumbY, state.RightThumbY);
 
         cont.SubmitReport();
     }
@@ -114,23 +109,11 @@ internal class Xbox360OutDevice : OutDevice
         }
     }
 
-    public short AxisScale(int Value, bool Flip)
+    private void SetDpad(CompatibleHidDeviceInputReport state)
     {
-        unchecked
-        {
-            Value -= 0x80;
-            float recipRun = Value >= 0 ? RecipInputPosResolution : RecipInputNegResolution;
-
-            float temp = Value * recipRun;
-            //if (Flip) temp = (temp - 0.5f) * -1.0f + 0.5f;
-            if (Flip)
-            {
-                temp = -temp;
-            }
-
-            temp = (temp + 1.0f) * 0.5f;
-
-            return (short)((temp * OutputResolution) + -32768);
-        }
+        cont.SetButtonState(Xbox360Button.Up, state.DPad is DPadDirection.North or DPadDirection.NorthEast or DPadDirection.NorthWest);
+        cont.SetButtonState(Xbox360Button.Right, state.DPad is DPadDirection.East or DPadDirection.NorthEast or DPadDirection.SouthEast);
+        cont.SetButtonState(Xbox360Button.Down, state.DPad is DPadDirection.South or DPadDirection.SouthEast or DPadDirection.SouthWest);
+        cont.SetButtonState(Xbox360Button.Left, state.DPad is DPadDirection.West or DPadDirection.SouthWest or DPadDirection.NorthWest);
     }
 }

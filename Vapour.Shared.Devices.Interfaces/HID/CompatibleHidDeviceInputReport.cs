@@ -1,4 +1,7 @@
-﻿namespace Vapour.Shared.Devices.HID;
+﻿using Vapour.Shared.Common.Types;
+using Vapour.Shared.Devices.HID.InputTypes;
+
+namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
 ///     Possible D-Pad directions.
@@ -21,6 +24,8 @@ public enum DPadDirection
 /// </summary>
 public abstract class CompatibleHidDeviceInputReport
 {
+    public abstract InputAxisType AxisScaleInputType { get; }
+
     /// <summary>
     ///     Gets the report ID.
     /// </summary>
@@ -34,7 +39,7 @@ public abstract class CompatibleHidDeviceInputReport
     /// <summary>
     ///     Gets the D-Pad state.
     /// </summary>
-    public DPadDirection DPad { get; protected set; }
+    public DPadDirection DPad { get; protected set; } = DPadDirection.Default;
 
     public ushort Timestamp { get; protected set; }
 
@@ -118,22 +123,22 @@ public abstract class CompatibleHidDeviceInputReport
     /// <summary>
     ///     Gets the Left Thumb X axis value.
     /// </summary>
-    public byte LeftThumbX { get; protected set; } = 128;
+    public short LeftThumbX { get; set; } = 128;
 
     /// <summary>
     ///     Gets the Left Thumb Y axis value.
     /// </summary>
-    public byte LeftThumbY { get; protected set; } = 128;
+    public short LeftThumbY { get; set; } = 128;
 
     /// <summary>
     ///     Gets the Right Thumb X axis value.
     /// </summary>
-    public byte RightThumbX { get; protected set; } = 128;
+    public short RightThumbX { get; set; } = 128;
 
     /// <summary>
     ///     Gets the Right Thumb Y axis value.
     /// </summary>
-    public byte RightThumbY { get; protected set; } = 128;
+    public short RightThumbY { get; set; } = 128;
 
     /// <summary>
     ///     Parse a raw byte buffer into <see cref="CompatibleHidDeviceInputReport" />.
