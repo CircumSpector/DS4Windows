@@ -48,6 +48,9 @@ public class ControllersAutoMapper : Profile
                     case InputDeviceType.SteamDeck:
                         deviceImage = ControllerItemViewModel.SteamDeckImageLocation;
                         break;
+                    case InputDeviceType.XboxOneS:
+                        deviceImage = ControllerItemViewModel.XboxImageLocation;
+                        break;
                 }
 
                 return deviceImage;

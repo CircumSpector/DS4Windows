@@ -33,5 +33,10 @@ public enum InputDeviceType : uint
     /// <summary>
     ///     Steam Deck Controller
     /// </summary>
-    SteamDeck
+    SteamDeck,
+
+    /// <summary>
+    ///     XboxOneS Controller
+    /// </summary>
+    XboxOneS
 }
