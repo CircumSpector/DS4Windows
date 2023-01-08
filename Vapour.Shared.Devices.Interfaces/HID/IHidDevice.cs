@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID;
+﻿using System.Runtime.InteropServices;
+
+namespace Vapour.Shared.Devices.HID;
 
 public interface IHidDevice : IDisposable
 {
@@ -71,6 +73,14 @@ public interface IHidDevice : IDisposable
     ///     The serial number, if any.
     /// </summary>
     string SerialNumberString { get; }
+
+    /// <summary>
+    ///     Native handle to device.
+    /// </summary>
+    SafeHandle Handle { get; set; }
+
+    ushort InputReportByteLength { get; set; }
+    bool IsXboxOneController { get; set; }
 
     /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.

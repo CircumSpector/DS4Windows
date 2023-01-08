@@ -39,7 +39,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <summary>
     ///     Native handle to device.
     /// </summary>
-    private SafeHandle Handle { get; set; }
+    public SafeHandle Handle { get; set; }
 
     /// <summary>
     ///     HID Device Attributes.
@@ -100,6 +100,10 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;
 
+    public ushort InputReportByteLength { get; set; }
+
+    public bool IsXboxOneController { get; set; } = false;
+
     /// <inheritdoc />
     public virtual void OpenDevice()
     {
@@ -156,16 +160,28 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         overlapped.EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle();
 
         uint bytesRead = 0;
-
         fixed (byte* bufferPtr = buffer)
         {
-            BOOL ret = PInvoke.ReadFile(
-                Handle,
-                bufferPtr,
-                (uint)buffer.Length,
-                &bytesRead,
-                &overlapped
-            );
+            BOOL ret;
+
+            if (IsXboxOneController)
+            {
+                fixed (byte* bytesIn = new byte[] { 0x01, 0x01, 0x00 })
+                {
+                    ret = PInvoke.DeviceIoControl(Handle, 0x8000e00c, bytesIn, 3, bufferPtr, (uint)buffer.Length,
+                        null, &overlapped);
+                }
+            }
+            else
+            {
+                ret = PInvoke.ReadFile(
+                    Handle,
+                    bufferPtr,
+                    (uint)buffer.Length,
+                    &bytesRead,
+                    &overlapped
+                );
+            }
 
             if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
             {
@@ -176,9 +192,9 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
             {
                 throw new HidDeviceException("GetOverlappedResult on input report failed.");
             }
-
-            return (int)bytesRead;
         }
+
+        return (int)bytesRead;
     }
 
     /// <inheritdoc />

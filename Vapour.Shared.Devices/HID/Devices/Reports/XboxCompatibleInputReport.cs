@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-
+﻿using System.Runtime.InteropServices;
 using Vapour.Shared.Devices.HID.InputTypes;
-using Vapour.Shared.Devices.HID.InputTypes.SteamDeck;
 using Vapour.Shared.Devices.HID.InputTypes.Xbox;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
@@ -17,32 +9,32 @@ public class XboxCompatibleInputReport : CompatibleHidDeviceInputReport
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        var buttons = (XboxButtons)MemoryMarshal.Read<ushort>(input.Slice(2, 2));
+        var buttons = (XboxButtons)MemoryMarshal.Read<ushort>(input.Slice(11, 2));
 
         Triangle = buttons.HasFlag(XboxButtons.Y);
         Circle = buttons.HasFlag(XboxButtons.B);
         Cross = buttons.HasFlag(XboxButtons.A);
         Square = buttons.HasFlag(XboxButtons.X);
 
-        LeftShoulder = buttons.HasFlag(XboxButtons.L1);
-        RightShoulder = buttons.HasFlag(XboxButtons.R1);
+        //LeftShoulder = buttons.HasFlag(XboxButtons.L1);
+        //RightShoulder = buttons.HasFlag(XboxButtons.R1);
 
-        Options = buttons.HasFlag(XboxButtons.Start);
-        Share = buttons.HasFlag(XboxButtons.Back);
-        PS = buttons.HasFlag(XboxButtons.Xbox);
+        //Options = buttons.HasFlag(XboxButtons.Start);
+        //Share = buttons.HasFlag(XboxButtons.Back);
+        //PS = buttons.HasFlag(XboxButtons.Xbox);
 
-        SetDPad(buttons);
+        //SetDPad(buttons);
 
-        LeftThumb = buttons.HasFlag(XboxButtons.L3);
-        RightThumb = buttons.HasFlag(XboxButtons.R3);
+        //LeftThumb = buttons.HasFlag(XboxButtons.L3);
+        //RightThumb = buttons.HasFlag(XboxButtons.R3);
 
-        LeftTrigger = input[4];
-        RightTrigger = input[5];
+        //LeftTrigger = input[4];
+        //RightTrigger = input[5];
 
-        LeftThumbX = MemoryMarshal.Read<short>(input.Slice(6, 2));
-        LeftThumbY = MemoryMarshal.Read<short>(input.Slice(8, 2));
-        RightThumbX = MemoryMarshal.Read<short>(input.Slice(10, 2));
-        RightThumbY = MemoryMarshal.Read<short>(input.Slice(12, 2));
+        //LeftThumbX = MemoryMarshal.Read<short>(input.Slice(6, 2));
+        //LeftThumbY = MemoryMarshal.Read<short>(input.Slice(8, 2));
+        //RightThumbX = MemoryMarshal.Read<short>(input.Slice(10, 2));
+        //RightThumbY = MemoryMarshal.Read<short>(input.Slice(12, 2));
     }
 
     private void SetDPad(XboxButtons buttons0)

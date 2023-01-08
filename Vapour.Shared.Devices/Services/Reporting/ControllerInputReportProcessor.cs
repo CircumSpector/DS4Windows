@@ -61,7 +61,7 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
     public void SetDevice(ICompatibleHidDevice hidDevice)
     {
         HidDevice = hidDevice;
-        ushort inputReportSize = ((HidDevice)HidDevice.SourceDevice).Capabilities.InputReportByteLength;
+        ushort inputReportSize = HidDevice.SourceDevice.InputReportByteLength;
 
         _inputReportArray = new byte[inputReportSize];
     }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Devices.HID.Devices.Reports;
 
@@ -16,6 +10,10 @@ public class XboxCompatibleHidDevice : CompatibleHidDevice
     public XboxCompatibleHidDevice(InputDeviceType deviceType, IHidDevice source, CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source, featureSet, serviceProvider)
     {
         Serial = ReadSerial(SerialFeatureId);
+
+        //The input report byte length returned by standard hid caps is incorrect
+        SourceDevice.InputReportByteLength = 29;
+        SourceDevice.IsXboxOneController = true;
 
         if (Serial is null)
         {

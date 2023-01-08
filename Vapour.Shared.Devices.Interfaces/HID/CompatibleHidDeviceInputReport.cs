@@ -1,5 +1,4 @@
-﻿using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.HID.InputTypes;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
 
 namespace Vapour.Shared.Devices.HID;
 

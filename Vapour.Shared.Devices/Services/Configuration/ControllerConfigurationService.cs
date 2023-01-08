@@ -7,12 +7,6 @@ using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.HID;
 
-using Windows.Management.Deployment;
-
-using Gameloop.Vdf;
-
-using Microsoft.Win32;
-
 namespace Vapour.Shared.Devices.Services.Configuration;
 
 internal class ControllerConfigurationService : IControllerConfigurationService
