@@ -28,13 +28,13 @@ public class XboxCompatibleInputReport : CompatibleHidDeviceInputReport
         LeftThumb = buttons.HasFlag(XboxButtons.L3);
         RightThumb = buttons.HasFlag(XboxButtons.R3);
 
-        //LeftTrigger = input[4];
-        //RightTrigger = input[5];
+        LeftTrigger = input[13];
+        RightTrigger = input[14];
 
-        //LeftThumbX = MemoryMarshal.Read<short>(input.Slice(6, 2));
-        //LeftThumbY = MemoryMarshal.Read<short>(input.Slice(8, 2));
-        //RightThumbX = MemoryMarshal.Read<short>(input.Slice(10, 2));
-        //RightThumbY = MemoryMarshal.Read<short>(input.Slice(12, 2));
+        LeftThumbX = MemoryMarshal.Read<short>(input.Slice(15, 2));
+        LeftThumbY = MemoryMarshal.Read<short>(input.Slice(17, 2));
+        RightThumbX = MemoryMarshal.Read<short>(input.Slice(19, 2));
+        RightThumbY = MemoryMarshal.Read<short>(input.Slice(21, 2));
     }
 
     private void SetDPad(XboxButtons buttons0)
