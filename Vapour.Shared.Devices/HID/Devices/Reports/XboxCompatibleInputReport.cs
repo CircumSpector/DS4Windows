@@ -16,17 +16,17 @@ public class XboxCompatibleInputReport : CompatibleHidDeviceInputReport
         Cross = buttons.HasFlag(XboxButtons.A);
         Square = buttons.HasFlag(XboxButtons.X);
 
-        //LeftShoulder = buttons.HasFlag(XboxButtons.L1);
-        //RightShoulder = buttons.HasFlag(XboxButtons.R1);
+        LeftShoulder = buttons.HasFlag(XboxButtons.L1);
+        RightShoulder = buttons.HasFlag(XboxButtons.R1);
 
-        //Options = buttons.HasFlag(XboxButtons.Start);
-        //Share = buttons.HasFlag(XboxButtons.Back);
-        //PS = buttons.HasFlag(XboxButtons.Xbox);
+        Options = buttons.HasFlag(XboxButtons.Start);
+        Share = buttons.HasFlag(XboxButtons.Back);
+        PS = buttons.HasFlag(XboxButtons.Xbox);
 
-        //SetDPad(buttons);
+        SetDPad(buttons);
 
-        //LeftThumb = buttons.HasFlag(XboxButtons.L3);
-        //RightThumb = buttons.HasFlag(XboxButtons.R3);
+        LeftThumb = buttons.HasFlag(XboxButtons.L3);
+        RightThumb = buttons.HasFlag(XboxButtons.R3);
 
         //LeftTrigger = input[4];
         //RightTrigger = input[5];
