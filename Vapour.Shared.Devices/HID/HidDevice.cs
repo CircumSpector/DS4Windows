@@ -72,10 +72,10 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     public ushort? Version => Attributes.VersionNumber;
 
     /// <inheritdoc />
-    public string Path { get; set; }
+    public string Path { get; init; }
 
     /// <inheritdoc />
-    public InputDeviceService Service { get; init; } = InputDeviceService.HidUsb;
+    public InputDeviceService Service { get; protected init; } = InputDeviceService.HidUsb;
 
     /// <inheritdoc />
     public string Description { get; init; }
