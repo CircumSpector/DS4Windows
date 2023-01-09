@@ -16,13 +16,13 @@
 		<PackageReference Include="Gameloop.Vdf.JsonConverter" Version="0.2.1" />
 		<PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.54" />
 		<PackageReference Include="Nefarius.Drivers.Nssidswap" Version="2.2.1" />
-		<PackageReference Include="Nefarius.Drivers.WinUSB" Version="4.1.71" />
+		<PackageReference Include="Nefarius.Drivers.WinUSB" Version="4.2.75" />
 		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.5.209" />
 		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.138-beta">
 		  <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
-		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
+		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.2">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" PrivateAssets="all" />
