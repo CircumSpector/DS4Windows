@@ -9,7 +9,8 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x15;
 
-    public SteamDeckCompatibleHidDevice(ILogger<SteamDeckCompatibleHidDevice> logger) : base(logger)
+    public SteamDeckCompatibleHidDevice(ILogger<SteamDeckCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
+        : base(logger, deviceInfos)
     {
     }
 
@@ -26,10 +27,7 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
     }
 
     public override CompatibleHidDeviceInputReport InputReport { get; } = new SteamDeckCompatibleInputReport();
-    public override List<IDeviceInfo> KnownDevices { get; } = new()
-    {
-        new SteamDeckDeviceInfo()
-    };
+    protected override InputDeviceType InputDeviceType => InputDeviceType.SteamDeck;
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {

@@ -146,7 +146,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         }
     }
 
-    private void CreateControllerAndNotifyReady(HidDevice hidDevice, IDeviceInfo deviceInfo)
+    private void CreateControllerAndNotifyReady(HidDevice hidDevice, DeviceInfo deviceInfo)
     {
         ICompatibleHidDevice device = CreateDevice(hidDevice, deviceInfo);
 
@@ -162,7 +162,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         }
     }
 
-    private ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, IDeviceInfo deviceInfo)
+    private ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
         var device = _deviceFactory.CreateDevice(deviceInfo, hidDevice);
 

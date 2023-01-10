@@ -13,7 +13,8 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private int _reportStartOffset;
 
-    public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger) : base(logger)
+    public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) 
+        : base(logger, deviceInfos)
     {
     }
 
@@ -44,11 +45,9 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         //dont do the ds4 base one here
     }
 
+    protected override InputDeviceType InputDeviceType => InputDeviceType.DualSense;
+
     public override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
-    public override List<IDeviceInfo> KnownDevices { get; } = new()
-    {
-        new DualSenseDeviceInfo()
-    };
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {

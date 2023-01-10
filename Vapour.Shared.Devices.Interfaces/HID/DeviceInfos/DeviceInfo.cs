@@ -1,7 +1,7 @@
 ﻿using Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 namespace Vapour.Shared.Devices.HID.DeviceInfos;
-public abstract class DeviceInfo : IDeviceInfo
+public abstract class DeviceInfo
 {
     public abstract int Vid { get; }
     public abstract int Pid { get; }

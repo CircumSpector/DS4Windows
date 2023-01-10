@@ -20,17 +20,7 @@ public interface ICompatibleHidDevice : IDisposable
     ///     Gets the <see cref="ConnectionType" />.
     /// </summary>
     ConnectionType? Connection { get; }
-
-    /// <summary>
-    ///     Gets the <see cref="InputDeviceType" />.
-    /// </summary>
-    InputDeviceType DeviceType { get; }
-
-    /// <summary>
-    ///     The <see cref="CompatibleHidDeviceFeatureSet" /> flags this device has been created with.
-    /// </summary>
-    CompatibleHidDeviceFeatureSet FeatureSet { get; }
-
+    
     /// <summary>
     ///     The serial number (MAC address) of this <see cref="ICompatibleHidDevice" />.
     /// </summary>
@@ -48,19 +38,21 @@ public interface ICompatibleHidDevice : IDisposable
 
     ControllerConfiguration CurrentConfiguration { get; }
 
-    List<IDeviceInfo> KnownDevices { get; }
+    List<DeviceInfo> KnownDevices { get; }
 
     /// <summary>
     ///     The <see cref="Serial" /> as string.
     /// </summary>
     string SerialString { get; }
+    
+    DeviceInfo CurrentDeviceInfo { get; }
 
     /// <summary>
     ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
     event Action<ICompatibleHidDevice> Disconnected;
 
-    void Initialize(IHidDevice hidDevice, IDeviceInfo deviceInfo);
+    void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo);
 
     /// <summary>
     ///     Performs tasks to tear down this device.

@@ -54,10 +54,10 @@ public class DevicesRegistrar : IServiceRegistrar
     private static void AddDevices(IServiceCollection services)
     {
         var deviceInfos = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
-            .Where(p => typeof(IDeviceInfo).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract);
+            .Where(p => typeof(DeviceInfo).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract);
         foreach (Type deviceInfo in deviceInfos)
         {
-            services.AddSingleton(typeof(IDeviceInfo), deviceInfo);
+            services.AddSingleton(typeof(DeviceInfo), deviceInfo);
         }
 
         var compatibleDevices = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
@@ -68,7 +68,7 @@ public class DevicesRegistrar : IServiceRegistrar
             services.AddTransient(compatibleDevice);
         }
 
-        services.AddSingleton(s => s.GetServices<IDeviceInfo>().ToList());
+        services.AddSingleton(s => s.GetServices<DeviceInfo>().ToList());
         services.AddSingleton(s => s.GetServices<ICompatibleHidDevice>().ToList());
     }
 }

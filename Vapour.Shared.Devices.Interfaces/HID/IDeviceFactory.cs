@@ -4,6 +4,6 @@ namespace Vapour.Shared.Devices.HID;
 
 public interface IDeviceFactory
 {
-    IDeviceInfo IsKnownDevice(int vid, int pid);
-    ICompatibleHidDevice CreateDevice(IDeviceInfo deviceInfo, IHidDevice hidDevice);
+    DeviceInfo IsKnownDevice(int vid, int pid);
+    ICompatibleHidDevice CreateDevice(DeviceInfo deviceInfo, IHidDevice hidDevice);
 }

@@ -16,14 +16,9 @@ public enum InputDeviceType : uint
     SwitchPro,
 
     /// <summary>
-    ///     Left JoyCons Controller
+    ///     JoyCons Controller
     /// </summary>
-    JoyConL,
-
-    /// <summary>
-    ///     Right JoyCons Controller
-    /// </summary>
-    JoyConR,
+    JoyCon,
 
     /// <summary>
     ///     DualSense Controller

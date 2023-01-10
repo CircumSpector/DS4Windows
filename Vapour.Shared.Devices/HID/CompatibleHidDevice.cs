@@ -18,6 +18,7 @@ namespace Vapour.Shared.Devices.HID;
 /// </summary>
 public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 {
+    private readonly List<DeviceInfo> _deviceInfos;
     private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
 
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
@@ -35,9 +36,11 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     private bool _disposed;
 
-    protected CompatibleHidDevice(ILogger<CompatibleHidDevice> logger)
+    protected CompatibleHidDevice(ILogger<CompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
     {
+        _deviceInfos = deviceInfos;
         Logger = logger;
+        KnownDevices = deviceInfos.Where(i => i.DeviceType == InputDeviceType).ToList();
     }
     
     /// <summary>
@@ -49,14 +52,12 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     ///     The parsed input report. Depends on device type.
     /// </summary>
     public abstract CompatibleHidDeviceInputReport InputReport { get; }
-    public abstract List<IDeviceInfo> KnownDevices { get; }
+    public List<DeviceInfo> KnownDevices { get; }
+    protected abstract InputDeviceType InputDeviceType { get; }
 
     /// <inheritdoc />
     public IHidDevice SourceDevice { get; private set; }
-
-    /// <inheritdoc />
-    public InputDeviceType DeviceType { get; private set; }
-
+    
     /// <inheritdoc />
     public ConnectionType? Connection => _connection ??= GetConnectionType();
 
@@ -65,31 +66,28 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     /// <inheritdoc />
     public string SerialString => Serial?.ToString();
-
-    /// <inheritdoc />
-    public CompatibleHidDeviceFeatureSet FeatureSet { get; private set; }
-
+    
     /// <inheritdoc />
     public bool IsFiltered { get; set; }
 
     public event EventHandler ConfigurationChanged;
     public ControllerConfiguration CurrentConfiguration { get; private set; }
+    public DeviceInfo CurrentDeviceInfo { get; private set; }
 
-    public void Initialize(IHidDevice hidDevice, IDeviceInfo deviceInfo)
+    public void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
         SourceDevice = hidDevice;
-        DeviceType = deviceInfo.DeviceType;
-        FeatureSet = deviceInfo.FeatureSet;
+        CurrentDeviceInfo = deviceInfo;
         
         if (Connection == ConnectionType.Unknown)
         {
             throw new ArgumentException("Couldn't determine connection type.");
         }
 
-        if (FeatureSet != CompatibleHidDeviceFeatureSet.Default)
+        if (CurrentDeviceInfo.FeatureSet != CompatibleHidDeviceFeatureSet.Default)
         {
             Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
-                this, FeatureSet);
+                this, CurrentDeviceInfo.FeatureSet);
         }
 
         //

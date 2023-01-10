@@ -9,7 +9,8 @@ namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 {
-    public JoyConCompatibleHidDevice(ILogger<JoyConCompatibleHidDevice> logger) : base(logger)
+    public JoyConCompatibleHidDevice(ILogger<JoyConCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
+        : base(logger, deviceInfos)
     {
     }
 
@@ -25,9 +26,5 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override CompatibleHidDeviceInputReport InputReport { get; } = new JoyConCompatibleInputReport();
 
-    public override List<IDeviceInfo> KnownDevices { get; } = new()
-    {
-        new JoyConLeftDeviceInfo(),
-        new JoyConRightDeviceInfo()
-    };
+    protected override InputDeviceType InputDeviceType => InputDeviceType.JoyCon;
 }

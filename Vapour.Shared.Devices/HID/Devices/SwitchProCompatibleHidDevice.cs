@@ -6,7 +6,8 @@ namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
 {
-    public SwitchProCompatibleHidDevice(ILogger<SwitchProCompatibleHidDevice> logger) : base(logger)
+    public SwitchProCompatibleHidDevice(ILogger<SwitchProCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
+        : base(logger, deviceInfos)
     {
     }
 
@@ -20,8 +21,5 @@ public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
     }
 
     public override CompatibleHidDeviceInputReport InputReport { get; }
-    public override List<IDeviceInfo> KnownDevices { get; } = new()
-    {
-        new SwitchProDeviceInfo()
-    };
+    protected override InputDeviceType InputDeviceType => InputDeviceType.SwitchPro;
 }
