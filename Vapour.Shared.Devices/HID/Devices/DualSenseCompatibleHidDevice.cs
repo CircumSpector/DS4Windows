@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 
 namespace Vapour.Shared.Devices.HID.Devices;
@@ -10,11 +11,13 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
     private const int UsbInputReportSize = 64;
     private const int BthInputReportSize = 547;
 
-    private readonly int _reportStartOffset;
+    private int _reportStartOffset;
 
-    public DualSenseCompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
-        featureSet, serviceProvider)
+    public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger) : base(logger)
+    {
+    }
+
+    protected override void OnInitialize()
     {
         Serial = ReadSerial(SerialFeatureId);
 
@@ -42,6 +45,10 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
     }
 
     public override CompatibleHidDeviceInputReport InputReport { get; } = new DualSenseCompatibleInputReport();
+    public override List<IDeviceInfo> KnownDevices { get; } = new()
+    {
+        new DualSenseDeviceInfo()
+    };
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {

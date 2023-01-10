@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 
 namespace Vapour.Shared.Devices.HID.Devices;
@@ -12,11 +13,13 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     private const byte SerialFeatureId = 18;
 
-    private readonly int _reportStartOffset;
+    private int _reportStartOffset;
 
-    public DualShock4CompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
-        featureSet, serviceProvider)
+    public DualShock4CompatibleHidDevice(ILogger<DualShock4CompatibleHidDevice> logger) : base(logger)
+    {
+    }
+
+    protected override void OnInitialize()
     {
         Serial = ReadSerial(SerialFeatureId);
 
@@ -41,6 +44,14 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
     }
 
     public override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
+
+    public override List<IDeviceInfo> KnownDevices { get; } = new()
+    {
+        new DualShock4UsbWirelessAdapterDeviceInfo(),
+        new DualShock4V1DeviceInfo(),
+        new DualShock4V2DeviceInfo(),
+        new DualShockStrikePackDeviceInfo()
+    };
 
     public override void OnAfterStartListening()
     {

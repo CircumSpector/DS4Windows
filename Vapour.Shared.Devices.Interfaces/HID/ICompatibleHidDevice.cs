@@ -1,5 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;
@@ -47,6 +48,8 @@ public interface ICompatibleHidDevice : IDisposable
 
     ControllerConfiguration CurrentConfiguration { get; }
 
+    List<IDeviceInfo> KnownDevices { get; }
+
     /// <summary>
     ///     The <see cref="Serial" /> as string.
     /// </summary>
@@ -56,6 +59,8 @@ public interface ICompatibleHidDevice : IDisposable
     ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
     event Action<ICompatibleHidDevice> Disconnected;
+
+    void Initialize(IHidDevice hidDevice, IDeviceInfo deviceInfo);
 
     /// <summary>
     ///     Performs tasks to tear down this device.

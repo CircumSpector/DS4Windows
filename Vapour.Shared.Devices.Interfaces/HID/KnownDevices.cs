@@ -19,7 +19,7 @@ public static class KnownDevices
     /// <summary>
     ///     Gets a list of all supported input devices' meta-data.
     /// </summary>
-    public static readonly IEnumerable<CompatibleDeviceIdentification> List = new List<CompatibleDeviceIdentification>
+    private static readonly IEnumerable<CompatibleDeviceIdentification> List = new List<CompatibleDeviceIdentification>
     {
         // Sony Wireless Adapter "DUALSHOCK®4 USB Wireless Adaptor"
         new(SonyVid, 0x0BA0, "Sony WA",

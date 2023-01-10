@@ -3,12 +3,12 @@ using System.Net.NetworkInformation;
 
 using JetBrains.Annotations;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;
@@ -35,20 +35,52 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     private bool _disposed;
 
-    protected CompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider)
+    protected CompatibleHidDevice(ILogger<CompatibleHidDevice> logger)
     {
-        SourceDevice = source;
+        Logger = logger;
+    }
+    
+    /// <summary>
+    ///     Logger instance.
+    /// </summary>
+    protected ILogger<CompatibleHidDevice> Logger { get; }
 
-        Services = serviceProvider;
-        DeviceType = deviceType;
-        FeatureSet = featureSet;
+    /// <summary>
+    ///     The parsed input report. Depends on device type.
+    /// </summary>
+    public abstract CompatibleHidDeviceInputReport InputReport { get; }
+    public abstract List<IDeviceInfo> KnownDevices { get; }
 
-        //
-        // Grab new logger
-        // 
-        Logger = Services.GetRequiredService<ILogger<CompatibleHidDevice>>();
+    /// <inheritdoc />
+    public IHidDevice SourceDevice { get; private set; }
 
+    /// <inheritdoc />
+    public InputDeviceType DeviceType { get; private set; }
+
+    /// <inheritdoc />
+    public ConnectionType? Connection => _connection ??= GetConnectionType();
+
+    /// <inheritdoc />
+    public PhysicalAddress Serial { get; protected set; }
+
+    /// <inheritdoc />
+    public string SerialString => Serial?.ToString();
+
+    /// <inheritdoc />
+    public CompatibleHidDeviceFeatureSet FeatureSet { get; private set; }
+
+    /// <inheritdoc />
+    public bool IsFiltered { get; set; }
+
+    public event EventHandler ConfigurationChanged;
+    public ControllerConfiguration CurrentConfiguration { get; private set; }
+
+    public void Initialize(IHidDevice hidDevice, IDeviceInfo deviceInfo)
+    {
+        SourceDevice = hidDevice;
+        DeviceType = deviceInfo.DeviceType;
+        FeatureSet = deviceInfo.FeatureSet;
+        
         if (Connection == ConnectionType.Unknown)
         {
             throw new ArgumentException("Couldn't determine connection type.");
@@ -64,46 +96,11 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
         // Open handle
         // 
         SourceDevice.OpenDevice();
+
+        OnInitialize();
     }
 
-    /// <summary>
-    ///     Service provider for injected services.
-    /// </summary>
-    protected IServiceProvider Services { get; }
-
-    /// <summary>
-    ///     Logger instance.
-    /// </summary>
-    protected ILogger<CompatibleHidDevice> Logger { get; }
-
-    /// <summary>
-    ///     The parsed input report. Depends on device type.
-    /// </summary>
-    public abstract CompatibleHidDeviceInputReport InputReport { get; }
-
-    /// <inheritdoc />
-    public IHidDevice SourceDevice { get; }
-
-    /// <inheritdoc />
-    public InputDeviceType DeviceType { get; set; }
-
-    /// <inheritdoc />
-    public ConnectionType? Connection => _connection ??= GetConnectionType();
-
-    /// <inheritdoc />
-    public PhysicalAddress Serial { get; protected set; }
-
-    /// <inheritdoc />
-    public string SerialString => Serial?.ToString();
-
-    /// <inheritdoc />
-    public CompatibleHidDeviceFeatureSet FeatureSet { get; }
-
-    /// <inheritdoc />
-    public bool IsFiltered { get; set; }
-
-    public event EventHandler ConfigurationChanged;
-    public ControllerConfiguration CurrentConfiguration { get; private set; }
+    protected abstract void OnInitialize();
 
     public void SetConfiguration(ControllerConfiguration configuration)
     {

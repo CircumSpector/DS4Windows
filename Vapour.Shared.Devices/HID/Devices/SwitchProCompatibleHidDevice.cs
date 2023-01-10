@@ -1,10 +1,16 @@
-﻿namespace Vapour.Shared.Devices.HID.Devices;
+﻿using Microsoft.Extensions.Logging;
+
+using Vapour.Shared.Devices.HID.DeviceInfos;
+
+namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
 {
-    public SwitchProCompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
-        featureSet, serviceProvider)
+    public SwitchProCompatibleHidDevice(ILogger<SwitchProCompatibleHidDevice> logger) : base(logger)
+    {
+    }
+
+    protected override void OnInitialize()
     {
     }
 
@@ -14,4 +20,8 @@ public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
     }
 
     public override CompatibleHidDeviceInputReport InputReport { get; }
+    public override List<IDeviceInfo> KnownDevices { get; } = new()
+    {
+        new SwitchProDeviceInfo()
+    };
 }
