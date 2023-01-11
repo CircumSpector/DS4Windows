@@ -19,7 +19,7 @@ public static class KnownDevices
     /// <summary>
     ///     Gets a list of all supported input devices' meta-data.
     /// </summary>
-    public static readonly IEnumerable<CompatibleDeviceIdentification> List = new List<CompatibleDeviceIdentification>
+    private static readonly IEnumerable<CompatibleDeviceIdentification> List = new List<CompatibleDeviceIdentification>
     {
         // Sony Wireless Adapter "DUALSHOCK®4 USB Wireless Adaptor"
         new(SonyVid, 0x0BA0, "Sony WA",
@@ -120,8 +120,8 @@ public static class KnownDevices
             CompatibleHidDeviceFeatureSet
                 .NoBatteryReading), // SnakeByte Gamepad for PS4 (wired only. No gyro. No light bar). If it doesn't work then try the latest gamepad firmware from https://mysnakebyte.com/
         new(NintendoVendorId, SwitchProProductId, "Switch Pro", InputDeviceType.SwitchPro),
-        new(NintendoVendorId, JoyconLProductId, "JoyCon (L)", InputDeviceType.JoyConL),
-        new(NintendoVendorId, JoyconRProductId, "JoyCon (R)", InputDeviceType.JoyConR),
+        new(NintendoVendorId, JoyconLProductId, "JoyCon (L)", InputDeviceType.JoyCon),
+        new(NintendoVendorId, JoyconRProductId, "JoyCon (R)", InputDeviceType.JoyCon),
         new(0x7545, 0x1122, "Gioteck VX4"), // Gioteck VX4 (no real lightbar, only some RGB LEDs)
         new(0x7331, 0x0001, "DualShock 3 (DS4 Emulation)", InputDeviceType.DualShock4,
             CompatibleHidDeviceFeatureSet.NoGyroCalib |

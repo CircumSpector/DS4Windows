@@ -28,26 +28,12 @@ public class ControllersAutoMapper : Profile
             .ForMember(dest => dest.DeviceImage, cfg => cfg.MapFrom((src, dest) =>
             {
                 BitmapImage deviceImage = null;
-                switch (src.DeviceType)
+
+                var key = ControllerItemViewModel.ImageLocations.Keys.SingleOrDefault(k =>
+                    k.Vid == src.Vid && k.Pid == src.Pid);
+                if (key != null)
                 {
-                    case InputDeviceType.DualSense:
-                        deviceImage = ControllerItemViewModel.DualSenseImageLocation;
-                        break;
-                    case InputDeviceType.DualShock4:
-                        deviceImage = ControllerItemViewModel.DualShockV2ImageLocation;
-                        break;
-                    case InputDeviceType.JoyConL:
-                        deviceImage = ControllerItemViewModel.JoyconLeftImageLocation;
-                        break;
-                    case InputDeviceType.JoyConR:
-                        deviceImage = ControllerItemViewModel.JoyconRightImageLocation;
-                        break;
-                    case InputDeviceType.SwitchPro:
-                        deviceImage = ControllerItemViewModel.SwitchProImageLocation;
-                        break;
-                    case InputDeviceType.SteamDeck:
-                        deviceImage = ControllerItemViewModel.SteamDeckImageLocation;
-                        break;
+                    deviceImage = ControllerItemViewModel.ImageLocations[key];
                 }
 
                 return deviceImage;

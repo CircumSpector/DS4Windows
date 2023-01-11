@@ -51,7 +51,7 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
         ControllerConnectedMessage message = new()
         {
             Description = hidDevice.SourceDevice.Description,
-            DeviceType = hidDevice.DeviceType,
+            DeviceType = hidDevice.CurrentDeviceInfo.DeviceType,
             DisplayName = hidDevice.SourceDevice.DisplayName,
             InstanceId = hidDevice.SourceDevice.InstanceId,
             ManufacturerString = hidDevice.SourceDevice.ManufacturerString,
@@ -61,7 +61,10 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
             SerialNumberString = hidDevice.SerialString,
             Connection = hidDevice.Connection.GetValueOrDefault(),
             CurrentConfiguration = hidDevice.CurrentConfiguration,
-            IsFiltered = hidDevice.IsFiltered};
+            IsFiltered = hidDevice.IsFiltered,
+            Vid = hidDevice.CurrentDeviceInfo.Vid,
+            Pid = hidDevice.CurrentDeviceInfo.Pid
+        };
 
         return message;
     }

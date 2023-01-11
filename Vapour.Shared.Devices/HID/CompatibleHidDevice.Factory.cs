@@ -1,29 +1,49 @@
-﻿using Vapour.Shared.Devices.HID.Devices;
+﻿using Vapour.Shared.Devices.HID.DeviceInfos;
 
 namespace Vapour.Shared.Devices.HID;
 
-public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
+public class DeviceFactory : IDeviceFactory
 {
-    /// <summary>
-    ///     Craft a new specific input device depending on supplied <see cref="InputDeviceType" />.
-    /// </summary>
-    /// <param name="deviceType">The <see cref="InputDeviceType" /> to base the new device on.</param>
-    /// <param name="source">The source <see cref="HidDevice" /> to copy from.</param>
-    /// <param name="featureSet">The <see cref="CompatibleHidDeviceFeatureSet" /> flags to use to create this device.</param>
-    /// <param name="services">The <see cref="IServiceProvider" />.</param>
-    /// <returns>The new <see cref="CompatibleHidDevice" /> instance.</returns>
-    public static CompatibleHidDevice CreateFrom(InputDeviceType deviceType, IHidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider services)
-    {
-        return deviceType switch
-        {
-            InputDeviceType.DualShock4 => new DualShock4CompatibleHidDevice(deviceType, source, featureSet, services),
-            InputDeviceType.DualSense => new DualSenseCompatibleHidDevice(deviceType, source, featureSet, services),
-            InputDeviceType.SwitchPro => new SwitchProCompatibleHidDevice(deviceType, source, featureSet, services),
-            InputDeviceType.JoyConL or InputDeviceType.JoyConR => new JoyConCompatibleHidDevice(deviceType, source, featureSet, services),
-            InputDeviceType.SteamDeck => new SteamDeckCompatibleHidDevice(deviceType, source, featureSet, services),
+    private readonly List<DeviceInfo> _deviceInfos;
+    private readonly List<ICompatibleHidDevice> _dummyDevices;
+    private readonly IServiceProvider _serviceProvider;
 
-            _ => throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null)
-        };
+    public DeviceFactory(
+        List<DeviceInfo> deviceInfos, 
+        List<ICompatibleHidDevice> dummyDevices,
+        IServiceProvider serviceProvider)
+    {
+        _deviceInfos = deviceInfos;
+        _dummyDevices = dummyDevices;
+        _serviceProvider = serviceProvider;
+    }
+
+    public DeviceInfo IsKnownDevice(int vid, int pid)
+    {
+        return _deviceInfos.SingleOrDefault(i => i.Vid == vid && i.Pid == pid);
+    }
+
+    public ICompatibleHidDevice CreateDevice(DeviceInfo deviceInfo, IHidDevice hidDevice)
+    {
+        var dummyDevice = _dummyDevices.SingleOrDefault(d =>
+            d.KnownDevices.Any(i => i.Vid == deviceInfo.Vid && i.Pid == deviceInfo.Pid));
+
+        ICompatibleHidDevice device = null;
+        if (dummyDevice != null)
+        {
+            var type = dummyDevice.GetType();
+            device = (ICompatibleHidDevice)_serviceProvider.GetService(type);
+            if (device != null)
+            {
+                device.Initialize(hidDevice, deviceInfo);
+            }
+        }
+
+        return device;
+    }
+
+    public static string DeviceInfoKey(int vid, int pid)
+    {
+        return $"{vid}::{pid}";
     }
 }

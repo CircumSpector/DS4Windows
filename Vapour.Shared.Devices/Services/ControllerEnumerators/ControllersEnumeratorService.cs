@@ -10,6 +10,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.Reporting;
 
@@ -26,6 +27,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
     private readonly ICurrentControllerDataSource _currentControllerDataSource;
     private readonly IDeviceNotificationListener _deviceNotificationListener;
+    private readonly IDeviceFactory _deviceFactory;
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
 
@@ -47,7 +49,8 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         IControllerInputReportProcessorService controllerInputReportProcessorService,
         IControllerFilterService controllerFilterService,
         IControllerConfigurationService controllerConfigurationService,
-        IDeviceNotificationListener deviceNotificationListener)
+        IDeviceNotificationListener deviceNotificationListener,
+        IDeviceFactory deviceFactory)
     {
         _logger = logger;
         _currentControllerDataSource = currentControllerDataSource;
@@ -58,6 +61,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         _controllerFilterService = controllerFilterService;
         _controllerConfigurationService = controllerConfigurationService;
         _deviceNotificationListener = deviceNotificationListener;
+        _deviceFactory = deviceFactory;
         _hidEnumeratorService.DeviceArrived += HidDeviceEnumeratorServiceOnDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += HidDeviceEnumeratorServiceOnDeviceRemoved;
 
@@ -110,16 +114,15 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
         activity?.SetTag("Path", hidDevice.Path);
 
-        CompatibleDeviceIdentification known = KnownDevices.List.FirstOrDefault(d =>
-            d.Vid == hidDevice.Attributes.VendorID && d.Pid == hidDevice.Attributes.ProductID);
+        var deviceInfo = _deviceFactory.IsKnownDevice(hidDevice.VendorId, hidDevice.ProductId);
 
-        if (known is null)
+        if (deviceInfo is null)
         {
             return;
         }
 
         if ((hidDevice.Capabilities.Usage is not (HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick) &&
-             !known.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice))
+             !deviceInfo.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice))
             || hidDevice.IsVirtual)
         {
             return;
@@ -127,7 +130,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
         _logger.LogInformation("Compatible device {Device} got attached", hidDevice);
 
-        CreateControllerAndNotifyReady(hidDevice);
+        CreateControllerAndNotifyReady(hidDevice, deviceInfo);
     }
 
     private void EnumeratorServiceOnHidDeviceRemoved(string instanceId)
@@ -143,12 +146,9 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         }
     }
 
-    private void CreateControllerAndNotifyReady(HidDevice hidDevice)
+    private void CreateControllerAndNotifyReady(HidDevice hidDevice, DeviceInfo deviceInfo)
     {
-        CompatibleDeviceIdentification deviceIdentification = KnownDevices.List
-            .First(c => c.Vid == hidDevice.Attributes.VendorID && c.Pid == hidDevice.Attributes.ProductID);
-
-        ICompatibleHidDevice device = CreateDevice(hidDevice, deviceIdentification);
+        ICompatibleHidDevice device = CreateDevice(hidDevice, deviceInfo);
 
         _controllerConfigurationService.LoadControllerConfiguration(device);
 
@@ -162,14 +162,9 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         }
     }
 
-    private ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, CompatibleDeviceIdentification deviceIdentification)
+    private ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
-        CompatibleHidDevice device = CompatibleHidDevice.CreateFrom(
-            deviceIdentification.DeviceType,
-            hidDevice,
-            deviceIdentification.FeatureSet,
-            _serviceProvider
-        );
+        var device = _deviceFactory.CreateDevice(deviceInfo, hidDevice);
 
         // TODO: take Bluetooth into account
         if (hidDevice is HidDeviceOverWinUsb)
