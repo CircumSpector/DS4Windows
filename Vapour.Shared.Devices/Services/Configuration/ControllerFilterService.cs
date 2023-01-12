@@ -187,9 +187,7 @@ public class ControllerFilterService : IControllerFilterService
             ControllerConfiguration config = device.CurrentConfiguration;
             if (!device.IsFiltered)
             {
-                CompatibleDeviceIdentification supportsWinUsbRewrite =
-                    KnownDevices.IsWinUsbRewriteSupported(device.SourceDevice.VendorId, device.SourceDevice.ProductId);
-                if (supportsWinUsbRewrite != null && config.OutputDeviceType != OutputDeviceType.None)
+                if (device.CurrentDeviceInfo.WinUsbEndpoints != null && config.OutputDeviceType != OutputDeviceType.None)
                 {
                     FilterController(device.SourceDevice.InstanceId);
                     return true;
