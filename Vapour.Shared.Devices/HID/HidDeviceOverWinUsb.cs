@@ -60,6 +60,8 @@ public class HidDeviceOverWinUsb : HidDevice
             Usage = HidUsageGamepad, InputReportByteLength = (ushort)InterruptInPipe.MaximumPacketSize
         };
 
+        InputReportByteLength = Capabilities.InputReportByteLength;
+
         Service = InputDeviceService.WinUsb;
     }
 
