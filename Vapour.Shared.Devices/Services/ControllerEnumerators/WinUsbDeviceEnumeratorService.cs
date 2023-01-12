@@ -22,12 +22,15 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
     private readonly IDeviceNotificationListener _deviceNotificationListener;
 
     private readonly ILogger<WinUsbDeviceEnumeratorService> _logger;
+    private readonly IDeviceFactory _deviceFactory;
 
     public WinUsbDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
-        ILogger<WinUsbDeviceEnumeratorService> logger)
+        ILogger<WinUsbDeviceEnumeratorService> logger,
+        IDeviceFactory deviceFactory)
     {
         _deviceNotificationListener = deviceNotificationListener;
         _logger = logger;
+        _deviceFactory = deviceFactory;
 
         _deviceNotificationListener.RegisterDeviceArrived(DeviceNotificationListenerOnDeviceArrived,
             FilterDriver.RewrittenDeviceInterfaceId);
@@ -89,9 +92,9 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         try
         {
             using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
-
-            CompatibleDeviceIdentification supportedDevice =
-                KnownDevices.IsWinUsbRewriteSupported(winUsbDevice.Descriptor.VID, winUsbDevice.Descriptor.PID);
+            var supportedDevice =
+                _deviceFactory.IsKnownDevice(winUsbDevice.Descriptor.VID, winUsbDevice.Descriptor.PID);
+            
 
             // Filter out devices we don't know about
             if (supportedDevice == null)
