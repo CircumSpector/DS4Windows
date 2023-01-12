@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-using Microsoft.Toolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;

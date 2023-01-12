@@ -5,7 +5,7 @@ public class DualShockStrikePackDeviceInfo : DeviceInfo
 {
     public override int Vid => 0x054C;
     public override int Pid => 0x05C5;
-    public override string Name => "DS4 Strike Pack Eliminator";
+    public override string Name => "DualShock 4 Strike Pack Eliminator";
     public override InputDeviceType DeviceType => InputDeviceType.DualShock4;
 
     public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints =>

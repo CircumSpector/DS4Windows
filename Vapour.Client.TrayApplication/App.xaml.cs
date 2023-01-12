@@ -3,7 +3,6 @@
 using Hardcodet.Wpf.TaskbarNotification;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
