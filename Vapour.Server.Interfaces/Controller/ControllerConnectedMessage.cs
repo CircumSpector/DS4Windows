@@ -28,4 +28,8 @@ public sealed class ControllerConnectedMessage
     public ControllerConfiguration CurrentConfiguration { get; set; }
 
     public bool IsFiltered { get; set; }
+    
+    public int Vid { get; init; }
+    
+    public int Pid { get; init; }
 }

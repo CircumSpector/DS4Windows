@@ -19,24 +19,19 @@ public sealed class ControllerItemViewModel :
     private const string ImageLocationRoot =
         "pack://application:,,,/Vapour.Client.Modules;component/Controllers/Images";
 
-    public static BitmapImage DualSenseImageLocation =
-        new(new Uri($"{ImageLocationRoot}/dualsense.jpg", UriKind.Absolute));
-
-    public static BitmapImage DualShockV2ImageLocation =
-        new(new Uri($"{ImageLocationRoot}/dualshockv2.jpg", UriKind.Absolute));
-
-    public static BitmapImage JoyconLeftImageLocation =
-        new(new Uri($"{ImageLocationRoot}/joyconleft.jpg", UriKind.Absolute));
-
-    public static BitmapImage JoyconRightImageLocation =
-        new(new Uri($"{ImageLocationRoot}/joyconright.jpg", UriKind.Absolute));
-
-    public static BitmapImage SwitchProImageLocation =
-        new(new Uri($"{ImageLocationRoot}/switchpro.jpg", UriKind.Absolute));
-    public static BitmapImage SteamDeckImageLocation =
-        new(new Uri($"{ImageLocationRoot}/steam-deck.jpg", UriKind.Absolute));
-    public static BitmapImage XboxImageLocation =
-        new(new Uri($"{ImageLocationRoot}/xbox.png", UriKind.Absolute));
+    public static BitmapImage GetDeviceImage(string name)
+    {
+        try
+        {
+            var uri = new Uri($"{ImageLocationRoot}/{name.ToLower()}.jpg", UriKind.Absolute);
+            var image = new BitmapImage(uri);
+            return image;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
     public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB.png", UriKind.Absolute));
@@ -79,7 +74,7 @@ public sealed class ControllerItemViewModel :
     }
 
     #region Props
-
+    
     public bool ConfigurationSetFromUser { get; set; } = true;
 
     private string _serial;

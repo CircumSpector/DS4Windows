@@ -3,12 +3,12 @@ using System.Net.NetworkInformation;
 
 using JetBrains.Annotations;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;
@@ -18,6 +18,7 @@ namespace Vapour.Shared.Devices.HID;
 /// </summary>
 public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 {
+    private readonly List<DeviceInfo> _deviceInfos;
     private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
 
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
@@ -35,42 +36,13 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     private bool _disposed;
 
-    protected CompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider)
+    protected CompatibleHidDevice(ILogger<CompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
     {
-        SourceDevice = source;
-
-        Services = serviceProvider;
-        DeviceType = deviceType;
-        FeatureSet = featureSet;
-
-        //
-        // Grab new logger
-        // 
-        Logger = Services.GetRequiredService<ILogger<CompatibleHidDevice>>();
-
-        if (Connection == ConnectionType.Unknown)
-        {
-            throw new ArgumentException("Couldn't determine connection type.");
-        }
-
-        if (FeatureSet != CompatibleHidDeviceFeatureSet.Default)
-        {
-            Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
-                this, FeatureSet);
-        }
-
-        //
-        // Open handle
-        // 
-        SourceDevice.OpenDevice();
+        _deviceInfos = deviceInfos;
+        Logger = logger;
+        KnownDevices = deviceInfos.Where(i => i.DeviceType == InputDeviceType).ToList();
     }
-
-    /// <summary>
-    ///     Service provider for injected services.
-    /// </summary>
-    protected IServiceProvider Services { get; }
-
+    
     /// <summary>
     ///     Logger instance.
     /// </summary>
@@ -80,13 +52,12 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     ///     The parsed input report. Depends on device type.
     /// </summary>
     public abstract CompatibleHidDeviceInputReport InputReport { get; }
+    public List<DeviceInfo> KnownDevices { get; }
+    protected abstract InputDeviceType InputDeviceType { get; }
 
     /// <inheritdoc />
-    public IHidDevice SourceDevice { get; }
-
-    /// <inheritdoc />
-    public InputDeviceType DeviceType { get; set; }
-
+    public IHidDevice SourceDevice { get; private set; }
+    
     /// <inheritdoc />
     public ConnectionType? Connection => _connection ??= GetConnectionType();
 
@@ -95,15 +66,39 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     /// <inheritdoc />
     public string SerialString => Serial?.ToString();
-
-    /// <inheritdoc />
-    public CompatibleHidDeviceFeatureSet FeatureSet { get; }
-
+    
     /// <inheritdoc />
     public bool IsFiltered { get; set; }
 
     public event EventHandler ConfigurationChanged;
     public ControllerConfiguration CurrentConfiguration { get; private set; }
+    public DeviceInfo CurrentDeviceInfo { get; private set; }
+
+    public void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo)
+    {
+        SourceDevice = hidDevice;
+        CurrentDeviceInfo = deviceInfo;
+        
+        if (Connection == ConnectionType.Unknown)
+        {
+            throw new ArgumentException("Couldn't determine connection type.");
+        }
+
+        if (CurrentDeviceInfo.FeatureSet != CompatibleHidDeviceFeatureSet.Default)
+        {
+            Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
+                this, CurrentDeviceInfo.FeatureSet);
+        }
+
+        //
+        // Open handle
+        // 
+        SourceDevice.OpenDevice();
+
+        OnInitialize();
+    }
+
+    protected abstract void OnInitialize();
 
     public void SetConfiguration(ControllerConfiguration configuration)
     {

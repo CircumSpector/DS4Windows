@@ -18,12 +18,12 @@
 		<None Remove="Controllers\Images\BT.png" />
 		<None Remove="Controllers\Images\BT_white.png" />
 		<None Remove="Controllers\Images\dualsense.jpg" />
-		<None Remove="Controllers\Images\dualshock.jpg" />
-		<None Remove="Controllers\Images\dualshockv2.jpg" />
-		<None Remove="Controllers\Images\joyconleft.jpg" />
-		<None Remove="Controllers\Images\joyconright.jpg" />
-		<None Remove="Controllers\Images\steam-deck.jpg" />
-		<None Remove="Controllers\Images\switchpro.jpg" />
+		<None Remove="Controllers\Images\DualShock 4 v1.jpg" />
+		<None Remove="Controllers\Images\DualShock 4 v2.jpg" />
+		<None Remove="Controllers\Images\JoyCon (L).jpg" />
+		<None Remove="Controllers\Images\JoyCon (R).jpg" />
+		<None Remove="Controllers\Images\Steam Deck.jpg" />
+		<None Remove="Controllers\Images\Switch Pro.jpg" />
 		<None Remove="Controllers\Images\USB.png" />
 		<None Remove="Controllers\Images\USB_white.png" />
 		<None Remove="Controllers\Images\Xbox.png" />
@@ -31,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Controllers\Images\steam-deck.jpg">
+	  <Resource Include="Controllers\Images\Steam Deck.jpg">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Resource>
 	</ItemGroup>
@@ -39,21 +39,21 @@
 	<ItemGroup>
 		<Resource Include="Controllers\Images\BT.png" />
 		<Resource Include="Controllers\Images\BT_white.png" />
-		<Resource Include="Controllers\Images\dualsense.jpg">
+		<Resource Include="Controllers\Images\DualSense.jpg">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Controllers\Images\dualshock.jpg">
+		<Resource Include="Controllers\Images\DualShock 4 v1.jpg">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
-		<Resource Include="Controllers\Images\dualshockv2.jpg">
+		<Resource Include="Controllers\Images\DualShock 4 v2.jpg">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
-		<Resource Include="Controllers\Images\joyconleft.jpg" />
-		<Resource Include="Controllers\Images\joyconright.jpg" />
-		<Resource Include="Controllers\Images\switchpro.jpg" />
+		<Resource Include="Controllers\Images\JoyCon %28L%29.jpg" />
+		<Resource Include="Controllers\Images\JoyCon %28R%29.jpg" />
+		<Resource Include="Controllers\Images\Switch Pro.jpg" />
 		<Resource Include="Controllers\Images\USB.png" />
 		<Resource Include="Controllers\Images\USB_white.png" />
 		<Resource Include="Controllers\Images\Xbox.png">
@@ -73,22 +73,21 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
-		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" PrivateAssets="All" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
 		<PackageReference Include="FastDeepCloner" Version="1.3.6" />
 		<PackageReference Include="Fody" Version="6.6.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MaterialDesignColors" Version="2.0.9" />
+		<PackageReference Include="MaterialDesignColors" Version="2.1.0" />
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.7.0" />
 		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
-		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.18.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

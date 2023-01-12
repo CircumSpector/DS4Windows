@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 
 namespace Vapour.Shared.Devices.HID.Devices;
@@ -8,9 +9,12 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x15;
 
-    public SteamDeckCompatibleHidDevice(InputDeviceType deviceType, IHidDevice source,
-        CompatibleHidDeviceFeatureSet featureSet, IServiceProvider serviceProvider) : base(deviceType, source,
-        featureSet, serviceProvider)
+    public SteamDeckCompatibleHidDevice(ILogger<SteamDeckCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
+        : base(logger, deviceInfos)
+    {
+    }
+
+    protected override void OnInitialize()
     {
         Serial = ReadSerial(SerialFeatureId);
 
@@ -23,6 +27,7 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
     }
 
     public override CompatibleHidDeviceInputReport InputReport { get; } = new SteamDeckCompatibleInputReport();
+    protected override InputDeviceType InputDeviceType => InputDeviceType.SteamDeck;
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {

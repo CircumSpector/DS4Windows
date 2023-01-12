@@ -119,7 +119,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
 
         if (device.IsVirtual())
         {
-            _logger.LogInformation($"Device {path} is virtual do not continue to process");
+            _logger.LogInformation("Device {Path} is virtual, exclude from processing", path);
             return;
         }
 
@@ -175,7 +175,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         activity?.SetTag("Path", symLink);
 
         PnPDevice device = PnPDevice.GetDeviceByInterfaceId(symLink, DeviceLocationFlags.Phantom); 
-        _logger.LogInformation($"HID Device ({device.InstanceId} ({symLink}) removed");
+        _logger.LogInformation("HID Device ({InstanceId} ({SymLink}) removed", device.InstanceId, symLink);
         
         if (!device.IsVirtual())
         {

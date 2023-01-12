@@ -1,12 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
+using CommunityToolkit.Mvvm.Input;
+
 using JetBrains.Annotations;
 
 using MaterialDesignThemes.Wpf;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Input;
 
 using PropertyChanged;
 

@@ -13,7 +13,7 @@ public class ControllersAutoMapper : Profile
     {
         CreateMap<ControllerConnectedMessage, ControllerItemViewModel>()
             .ForMember(dest => dest.DisplayText,
-                cfg => cfg.MapFrom(src => $"{src.DeviceType} ({src.SerialNumberString})"))
+                cfg => cfg.MapFrom(src => $"{src.DisplayName} ({src.SerialNumberString})"))
             .ForMember(dest => dest.Serial,
                 cfg => cfg.MapFrom(src => src.SerialNumberString))
             .ForMember(dest => dest.ConnectionTypeImage,
@@ -25,35 +25,7 @@ public class ControllersAutoMapper : Profile
             .ForMember(dest => dest.ParentInstance, cfg => cfg.MapFrom(src => src.ParentInstance))
             .ForMember(dest => dest.CurrentConfiguration, cfg => cfg.MapFrom(src => src.CurrentConfiguration))
             .ForMember(dest => dest.IsFiltered, cfg => cfg.MapFrom(src => src.IsFiltered))
-            .ForMember(dest => dest.DeviceImage, cfg => cfg.MapFrom((src, dest) =>
-            {
-                BitmapImage deviceImage = null;
-                switch (src.DeviceType)
-                {
-                    case InputDeviceType.DualSense:
-                        deviceImage = ControllerItemViewModel.DualSenseImageLocation;
-                        break;
-                    case InputDeviceType.DualShock4:
-                        deviceImage = ControllerItemViewModel.DualShockV2ImageLocation;
-                        break;
-                    case InputDeviceType.JoyConL:
-                        deviceImage = ControllerItemViewModel.JoyconLeftImageLocation;
-                        break;
-                    case InputDeviceType.JoyConR:
-                        deviceImage = ControllerItemViewModel.JoyconRightImageLocation;
-                        break;
-                    case InputDeviceType.SwitchPro:
-                        deviceImage = ControllerItemViewModel.SwitchProImageLocation;
-                        break;
-                    case InputDeviceType.SteamDeck:
-                        deviceImage = ControllerItemViewModel.SteamDeckImageLocation;
-                        break;
-                    case InputDeviceType.XboxOneS:
-                        deviceImage = ControllerItemViewModel.XboxImageLocation;
-                        break;
-                }
-
-                return deviceImage;
-            }));
+            .ForMember(dest => dest.DeviceImage,
+                cfg => cfg.MapFrom(src => ControllerItemViewModel.GetDeviceImage(src.DisplayName)));
     }
 }

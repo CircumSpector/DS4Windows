@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-using Microsoft.Toolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
