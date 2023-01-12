@@ -29,7 +29,16 @@ public sealed class ControllerItemViewModel :
         }
         catch
         {
-            return null;
+            try
+            {
+                var uri = new Uri($"{ImageLocationRoot}/{name.ToLower()}.png", UriKind.Absolute);
+                var image = new BitmapImage(uri);
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 

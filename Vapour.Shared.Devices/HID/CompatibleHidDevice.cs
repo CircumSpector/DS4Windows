@@ -100,6 +100,11 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     protected abstract void OnInitialize();
 
+    public virtual int ReadInputReport(Span<byte> buffer)
+    {
+        return SourceDevice.ReadInputReport(buffer);
+    }
+
     public void SetConfiguration(ControllerConfiguration configuration)
     {
         ControllerConfiguration oldConfiguration = CurrentConfiguration;

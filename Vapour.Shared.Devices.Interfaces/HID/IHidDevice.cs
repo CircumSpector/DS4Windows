@@ -80,7 +80,6 @@ public interface IHidDevice : IDisposable
     SafeHandle Handle { get; set; }
 
     ushort InputReportByteLength { get; set; }
-    bool IsXboxOneController { get; set; }
 
     /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.
@@ -91,13 +90,6 @@ public interface IHidDevice : IDisposable
     ///     Closes the handle opened in <see cref="OpenDevice" />.
     /// </summary>
     void CloseDevice();
-
-    /// <summary>
-    ///     Reads data from the device to specified byte buffer.
-    /// </summary>
-    /// <param name="buffer">The buffer to read into.</param>
-    /// <returns>The number of bytes read.</returns>
-    int ReadInputReport(Span<byte> buffer);
 
     /// <summary>
     ///     Reads a feature report identified by report ID in the first byte of the provided buffer.
@@ -127,4 +119,9 @@ public interface IHidDevice : IDisposable
     /// <param name="timeout">A timeout in milliseconds.</param>
     /// <returns>True on success, false otherwise.</returns>
     bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout);
+
+    NativeOverlapped GetOverlappedForReadReport();
+
+    /// <inheritdoc />
+    unsafe int ReadInputReport(Span<byte> buffer);
 }

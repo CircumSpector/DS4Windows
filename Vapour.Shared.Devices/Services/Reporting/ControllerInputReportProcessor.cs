@@ -182,7 +182,7 @@ internal sealed class ControllerInputReportProcessor : IControllerInputReportPro
         {
             while (!_inputReportToken.IsCancellationRequested)
             {
-                HidDevice.SourceDevice.ReadInputReport(_inputReportArray);
+                HidDevice.ReadInputReport(_inputReportArray);
 
                 ReportsReadCounter.Add(1);
 

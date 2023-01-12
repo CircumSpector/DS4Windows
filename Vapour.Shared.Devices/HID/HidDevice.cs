@@ -102,8 +102,6 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
 
     public ushort InputReportByteLength { get; set; }
 
-    public bool IsXboxOneController { get; set; } = false;
-
     /// <inheritdoc />
     public virtual void OpenDevice()
     {
@@ -151,37 +149,18 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public virtual unsafe int ReadInputReport(Span<byte> buffer)
     {
-        if (Handle.IsInvalid || Handle.IsClosed)
-        {
-            throw new HidDeviceException("Device handle not open or invalid.");
-        }
-
-        NativeOverlapped overlapped;
-        overlapped.EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle();
+        var overlapped = GetOverlappedForReadReport();
 
         uint bytesRead = 0;
         fixed (byte* bufferPtr = buffer)
         {
-            BOOL ret;
-
-            if (IsXboxOneController)
-            {
-                fixed (byte* bytesIn = new byte[] { 0x01, 0x01, 0x00 })
-                {
-                    ret = PInvoke.DeviceIoControl(Handle, 0x8000e00c, bytesIn, 3, bufferPtr, (uint)buffer.Length,
-                        null, &overlapped);
-                }
-            }
-            else
-            {
-                ret = PInvoke.ReadFile(
-                    Handle,
-                    bufferPtr,
-                    (uint)buffer.Length,
-                    &bytesRead,
-                    &overlapped
-                );
-            }
+            BOOL ret = PInvoke.ReadFile(
+                Handle,
+                bufferPtr,
+                (uint)buffer.Length,
+                &bytesRead,
+                &overlapped
+            );
 
             if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
             {
@@ -195,6 +174,22 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
 
         return (int)bytesRead;
+    }
+
+    public NativeOverlapped GetOverlappedForReadReport()
+    {
+        if (Handle.IsInvalid || Handle.IsClosed)
+        {
+            throw new HidDeviceException("Device handle not open or invalid.");
+        }
+
+        NativeOverlapped overlapped = new NativeOverlapped
+        {
+            EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle()
+
+        };
+
+        return overlapped;
     }
 
     /// <inheritdoc />
