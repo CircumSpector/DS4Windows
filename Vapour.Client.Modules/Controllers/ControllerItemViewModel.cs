@@ -8,7 +8,6 @@ using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
 using Vapour.Server.Controller;
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.Controllers;
@@ -20,19 +19,19 @@ public sealed class ControllerItemViewModel :
     private const string ImageLocationRoot =
         "pack://application:,,,/Vapour.Client.Modules;component/Controllers/Images";
 
-    public static Dictionary<DeviceInfo, BitmapImage> ImageLocations = new()
+    public static BitmapImage GetDeviceImage(string name)
     {
-        { new DualSenseDeviceInfo(), new(new Uri($"{ImageLocationRoot}/dualsense.jpg", UriKind.Absolute)) },
-        { new DualShockStrikePackDeviceInfo(), new(new Uri($"{ImageLocationRoot}/dualshockv2.jpg", UriKind.Absolute)) }, //need actual image
-        { new DualShock4UsbWirelessAdapterDeviceInfo(), new(new Uri($"{ImageLocationRoot}/dualshockv2.jpg", UriKind.Absolute)) }, //need actual image here
-        { new DualShock4V1DeviceInfo(), new(new Uri($"{ImageLocationRoot}/dualshockv2.jpg", UriKind.Absolute)) },
-        { new DualShock4V2DeviceInfo(), new(new Uri($"{ImageLocationRoot}/dualshockv2.jpg", UriKind.Absolute)) },
-        { new JoyConRightDeviceInfo(), new(new Uri($"{ImageLocationRoot}/joyconright.jpg", UriKind.Absolute)) },
-        { new JoyConLeftDeviceInfo(), new(new Uri($"{ImageLocationRoot}/joyconleft.jpg", UriKind.Absolute)) },
-        { new SwitchProDeviceInfo(), new(new Uri($"{ImageLocationRoot}/switchpro.jpg", UriKind.Absolute)) },
-        { new SteamDeckDeviceInfo(), new(new Uri($"{ImageLocationRoot}/steam-deck.jpg", UriKind.Absolute)) }
-
-    };
+        try
+        {
+            var uri = new Uri($"{ImageLocationRoot}/{name.ToLower()}.jpg", UriKind.Absolute);
+            var image = new BitmapImage(uri);
+            return image;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
     public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB.png", UriKind.Absolute));

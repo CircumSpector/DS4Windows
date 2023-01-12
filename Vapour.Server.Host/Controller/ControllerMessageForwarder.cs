@@ -52,7 +52,7 @@ public sealed class ControllerMessageForwarder : IControllerMessageForwarder
         {
             Description = hidDevice.SourceDevice.Description,
             DeviceType = hidDevice.CurrentDeviceInfo.DeviceType,
-            DisplayName = hidDevice.SourceDevice.DisplayName,
+            DisplayName = hidDevice.CurrentDeviceInfo.Name,
             InstanceId = hidDevice.SourceDevice.InstanceId,
             ManufacturerString = hidDevice.SourceDevice.ManufacturerString,
             ParentInstance = hidDevice.SourceDevice.ParentInstance,

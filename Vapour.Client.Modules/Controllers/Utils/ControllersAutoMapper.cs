@@ -13,7 +13,7 @@ public class ControllersAutoMapper : Profile
     {
         CreateMap<ControllerConnectedMessage, ControllerItemViewModel>()
             .ForMember(dest => dest.DisplayText,
-                cfg => cfg.MapFrom(src => $"{src.DeviceType} ({src.SerialNumberString})"))
+                cfg => cfg.MapFrom(src => $"{src.DisplayName} ({src.SerialNumberString})"))
             .ForMember(dest => dest.Serial,
                 cfg => cfg.MapFrom(src => src.SerialNumberString))
             .ForMember(dest => dest.ConnectionTypeImage,
@@ -25,18 +25,7 @@ public class ControllersAutoMapper : Profile
             .ForMember(dest => dest.ParentInstance, cfg => cfg.MapFrom(src => src.ParentInstance))
             .ForMember(dest => dest.CurrentConfiguration, cfg => cfg.MapFrom(src => src.CurrentConfiguration))
             .ForMember(dest => dest.IsFiltered, cfg => cfg.MapFrom(src => src.IsFiltered))
-            .ForMember(dest => dest.DeviceImage, cfg => cfg.MapFrom((src, dest) =>
-            {
-                BitmapImage deviceImage = null;
-
-                var key = ControllerItemViewModel.ImageLocations.Keys.SingleOrDefault(k =>
-                    k.Vid == src.Vid && k.Pid == src.Pid);
-                if (key != null)
-                {
-                    deviceImage = ControllerItemViewModel.ImageLocations[key];
-                }
-
-                return deviceImage;
-            }));
+            .ForMember(dest => dest.DeviceImage,
+                cfg => cfg.MapFrom(src => ControllerItemViewModel.GetDeviceImage(src.DisplayName)));
     }
 }
