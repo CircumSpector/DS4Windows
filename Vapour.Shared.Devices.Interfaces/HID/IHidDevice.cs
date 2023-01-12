@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID;
+﻿using System.Runtime.InteropServices;
+
+namespace Vapour.Shared.Devices.HID;
 
 public interface IHidDevice : IDisposable
 {
@@ -73,6 +75,13 @@ public interface IHidDevice : IDisposable
     string SerialNumberString { get; }
 
     /// <summary>
+    ///     Native handle to device.
+    /// </summary>
+    SafeHandle Handle { get; set; }
+
+    ushort InputReportByteLength { get; set; }
+
+    /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.
     /// </summary>
     void OpenDevice();
@@ -81,13 +90,6 @@ public interface IHidDevice : IDisposable
     ///     Closes the handle opened in <see cref="OpenDevice" />.
     /// </summary>
     void CloseDevice();
-
-    /// <summary>
-    ///     Reads data from the device to specified byte buffer.
-    /// </summary>
-    /// <param name="buffer">The buffer to read into.</param>
-    /// <returns>The number of bytes read.</returns>
-    int ReadInputReport(Span<byte> buffer);
 
     /// <summary>
     ///     Reads a feature report identified by report ID in the first byte of the provided buffer.
@@ -117,4 +119,9 @@ public interface IHidDevice : IDisposable
     /// <param name="timeout">A timeout in milliseconds.</param>
     /// <returns>True on success, false otherwise.</returns>
     bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout);
+
+    NativeOverlapped GetOverlappedForReadReport();
+
+    /// <inheritdoc />
+    unsafe int ReadInputReport(Span<byte> buffer);
 }

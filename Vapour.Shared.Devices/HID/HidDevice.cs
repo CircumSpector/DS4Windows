@@ -39,7 +39,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <summary>
     ///     Native handle to device.
     /// </summary>
-    private SafeHandle Handle { get; set; }
+    public SafeHandle Handle { get; set; }
 
     /// <summary>
     ///     HID Device Attributes.
@@ -100,6 +100,8 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;
 
+    public ushort InputReportByteLength { get; set; }
+
     /// <inheritdoc />
     public virtual void OpenDevice()
     {
@@ -147,16 +149,9 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public virtual unsafe int ReadInputReport(Span<byte> buffer)
     {
-        if (Handle.IsInvalid || Handle.IsClosed)
-        {
-            throw new HidDeviceException("Device handle not open or invalid.");
-        }
-
-        NativeOverlapped overlapped;
-        overlapped.EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle();
+        var overlapped = GetOverlappedForReadReport();
 
         uint bytesRead = 0;
-
         fixed (byte* bufferPtr = buffer)
         {
             BOOL ret = PInvoke.ReadFile(
@@ -176,9 +171,25 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
             {
                 throw new HidDeviceException("GetOverlappedResult on input report failed.");
             }
-
-            return (int)bytesRead;
         }
+
+        return (int)bytesRead;
+    }
+
+    public NativeOverlapped GetOverlappedForReadReport()
+    {
+        if (Handle.IsInvalid || Handle.IsClosed)
+        {
+            throw new HidDeviceException("Device handle not open or invalid.");
+        }
+
+        NativeOverlapped overlapped = new NativeOverlapped
+        {
+            EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle()
+
+        };
+
+        return overlapped;
     }
 
     /// <inheritdoc />

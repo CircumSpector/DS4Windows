@@ -26,6 +26,7 @@
 		<None Remove="Controllers\Images\Switch Pro.jpg" />
 		<None Remove="Controllers\Images\USB.png" />
 		<None Remove="Controllers\Images\USB_white.png" />
+		<None Remove="Controllers\Images\Xbox One S.png" />
 		<None Remove="Main\Images\Vapour.ico" />
 	</ItemGroup>
 
@@ -55,6 +56,9 @@
 		<Resource Include="Controllers\Images\Switch Pro.jpg" />
 		<Resource Include="Controllers\Images\USB.png" />
 		<Resource Include="Controllers\Images\USB_white.png" />
+		<Resource Include="Controllers\Images\Xbox One S.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Main\Images\Vapour.ico" />
 	</ItemGroup>
 

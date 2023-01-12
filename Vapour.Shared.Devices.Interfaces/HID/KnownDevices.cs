@@ -59,6 +59,9 @@ public static class KnownDevices
         new(0x28DE, 0x1205, "Steam Deck Controller",
             InputDeviceType.SteamDeck,
             CompatibleHidDeviceFeatureSet.VendorDefinedDevice),
+        new(0x045E, 0x02FF, "Xbox One S",
+            InputDeviceType.XboxOneS),
+
         new(RazerVid, 0x1000, "Razer Raiju PS4"),
         new(NaconVid, 0x0D01, "Nacon Revol Pro v.1",
             InputDeviceType.DualShock4,
