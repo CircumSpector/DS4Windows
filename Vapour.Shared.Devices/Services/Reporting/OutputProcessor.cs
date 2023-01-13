@@ -102,10 +102,10 @@ internal sealed class OutputProcessor : IOutputProcessor
         if (report.AxisScaleInputType == InputAxisType.Xbox &&
             HidDevice.CurrentConfiguration.OutputDeviceType != OutputDeviceType.Xbox360Controller)
         {
-            report.LeftThumbX = ScaleDown(report.LeftThumbX);
-            report.LeftThumbY = ScaleDown(report.LeftThumbY);
-            report.RightThumbX = ScaleDown(report.RightThumbX);
-            report.RightThumbY = ScaleDown(report.RightThumbY);
+            report.LeftThumbX = ScaleDown(report.LeftThumbX, false);
+            report.LeftThumbY = ScaleDown(report.LeftThumbY, true);
+            report.RightThumbX = ScaleDown(report.RightThumbX, false);
+            report.RightThumbY = ScaleDown(report.RightThumbY, true);
         }
         else if (report.AxisScaleInputType == InputAxisType.DualShock4 &&
                  HidDevice.CurrentConfiguration.OutputDeviceType != OutputDeviceType.DualShock4Controller)
@@ -117,10 +117,17 @@ internal sealed class OutputProcessor : IOutputProcessor
         }
     }
 
-    private byte ScaleDown(short value)
+    private byte ScaleDown(short value, bool flip)
     {
-        //TODO: need to perform the scale down
-        return (byte)value;
+        unchecked
+        {
+            var newValue = (byte)((value + 0x8000) / 257);
+            if (flip)
+            {
+                newValue = (byte)(byte.MaxValue - newValue);
+            }
+            return newValue;
+        }
     }
 
     private short ScaleUp(int Value, bool Flip)
