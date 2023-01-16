@@ -4,23 +4,23 @@ using JetBrains.Annotations;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
-using Vapour.Server.Controller.Configuration;
+using Vapour.Server.System;
 
 namespace Vapour.Client.Modules.Settings;
 
 [UsedImplicitly]
 public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewModel, ISettingsView>, ISettingsViewModel
 {
-    private readonly IControllerServiceClient _controllerServiceClient;
+    private readonly ISystemServiceClient _systemServiceClient;
 
     private bool _isFilterDriverEnabled;
 
     private bool _isFilterDriverInstalled;
     private bool _isInitializing = true;
 
-    public SettingsViewModel(IControllerServiceClient controllerServiceClient)
+    public SettingsViewModel(ISystemServiceClient systemServiceClient)
     {
-        _controllerServiceClient = controllerServiceClient;
+        _systemServiceClient = systemServiceClient;
     }
 
     public bool IsFilterDriverEnabled
@@ -37,8 +37,8 @@ public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewMode
 
     public override async Task Initialize()
     {
-        ControllerFilterDriverStatusResponse
-            filterDriverStatus = await _controllerServiceClient.GetFilterDriverStatus();
+        SystemFilterDriverStatusResponse
+            filterDriverStatus = await _systemServiceClient.GetFilterDriverStatus();
         IsFilterDriverInstalled = filterDriverStatus.IsDriverInstalled;
         IsFilterDriverEnabled = filterDriverStatus.IsFilteringEnabled;
         _isInitializing = false;
@@ -54,7 +54,7 @@ public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewMode
 
         if (e.PropertyName == nameof(IsFilterDriverEnabled) && !_isInitializing)
         {
-            _controllerServiceClient.ControllerFilterSetDriverEnabled(IsFilterDriverEnabled);
+            _systemServiceClient.SystemFilterSetDriverEnabled(IsFilterDriverEnabled);
         }
     }
 }

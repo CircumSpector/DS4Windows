@@ -56,10 +56,10 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
     public event Action<string> DeviceRemoved;
 
     /// <inheritdoc />
-    public void EnumerateDevices()
+    public void Start()
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(HidDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
+            $"{nameof(HidDeviceEnumeratorService)}:{nameof(Start)}");
 
         int deviceIndex = 0;
         
@@ -74,6 +74,13 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
                 _logger.LogWarning(ex, $"Failed to create HID device for {path}");
             }
         }
+
+        _deviceNotificationListener.StartListen(_hidClassInterfaceGuid);
+    }
+
+    public void Stop()
+    {
+        _deviceNotificationListener.StopListen(_hidClassInterfaceGuid);
     }
 
     private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)

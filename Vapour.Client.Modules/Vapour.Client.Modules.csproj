@@ -15,48 +15,36 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="Controllers\Images\BT.png" />
-		<None Remove="Controllers\Images\BT_white.png" />
-		<None Remove="Controllers\Images\dualsense.jpg" />
-		<None Remove="Controllers\Images\DualShock 4 v1.jpg" />
-		<None Remove="Controllers\Images\DualShock 4 v2.jpg" />
-		<None Remove="Controllers\Images\JoyCon (L).jpg" />
-		<None Remove="Controllers\Images\JoyCon (R).jpg" />
-		<None Remove="Controllers\Images\Steam Deck.jpg" />
-		<None Remove="Controllers\Images\Switch Pro.jpg" />
-		<None Remove="Controllers\Images\USB.png" />
-		<None Remove="Controllers\Images\USB_white.png" />
-		<None Remove="Controllers\Images\Xbox One S.png" />
 		<None Remove="Main\Images\Vapour.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Controllers\Images\Steam Deck.jpg">
+	  <Resource Include="InputSource\Images\Steam Deck.jpg">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Resource>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Controllers\Images\BT.png" />
-		<Resource Include="Controllers\Images\BT_white.png" />
-		<Resource Include="Controllers\Images\DualSense.jpg">
+		<Resource Include="InputSource\Images\BT.png" />
+		<Resource Include="InputSource\Images\BT_white.png" />
+		<Resource Include="InputSource\Images\DualSense.jpg">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Controllers\Images\DualShock 4 v1.jpg">
+		<Resource Include="InputSource\Images\DualShock 4 v1.jpg">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
-		<Resource Include="Controllers\Images\DualShock 4 v2.jpg">
+		<Resource Include="InputSource\Images\DualShock 4 v2.jpg">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
-		<Resource Include="Controllers\Images\JoyCon %28L%29.jpg" />
-		<Resource Include="Controllers\Images\JoyCon %28R%29.jpg" />
-		<Resource Include="Controllers\Images\Switch Pro.jpg" />
-		<Resource Include="Controllers\Images\USB.png" />
-		<Resource Include="Controllers\Images\USB_white.png" />
-		<Resource Include="Controllers\Images\Xbox One S.png">
+		<Resource Include="InputSource\Images\JoyCon %28L%29.jpg" />
+		<Resource Include="InputSource\Images\JoyCon %28R%29.jpg" />
+		<Resource Include="InputSource\Images\Switch Pro.jpg" />
+		<Resource Include="InputSource\Images\USB.png" />
+		<Resource Include="InputSource\Images\USB_white.png" />
+		<Resource Include="InputSource\Images\Xbox One S.png">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Main\Images\Vapour.ico" />
@@ -96,7 +84,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="Controllers\ControllersListView.xaml.cs">
+		<Compile Update="InputSource\InputSourceListView.xaml.cs">
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Profiles\ProfilesView.xaml.cs">
@@ -114,7 +102,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Page Update="Controllers\ControllersListView.xaml">
+		<Page Update="InputSource\InputSourceListView.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 			<SubType>Designer</SubType>
 		</Page>

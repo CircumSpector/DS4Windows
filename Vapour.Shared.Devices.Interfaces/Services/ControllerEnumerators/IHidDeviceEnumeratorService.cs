@@ -20,5 +20,7 @@ public interface IHidDeviceEnumeratorService<out TDevice> where TDevice : IHidDe
     /// <summary>
     ///     This goes through the system and adds supported hid devices
     /// </summary>
-    void EnumerateDevices();
+    void Start();
+
+    void Stop();
 }

@@ -5,7 +5,7 @@ namespace Vapour.Shared.Devices.Services.Reporting;
 
 public interface IOutDevice
 {
-    void ConvertAndSendReport(CompatibleHidDeviceInputReport state, int device = 0);
+    void ConvertAndSendReport(InputSourceReport state, int device = 0);
     void Connect();
     void Disconnect();
     void ResetState(bool submit = true);

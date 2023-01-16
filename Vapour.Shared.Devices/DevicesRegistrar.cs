@@ -26,18 +26,18 @@ public class DevicesRegistrar : IServiceRegistrar
         // HidHide API wrapper
         //
         services.AddSingleton<IHidHideControlService, HidHideControlService>();
-        services.AddSingleton<ICurrentControllerDataSource, CurrentControllerDataSource>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDevice>, HidDeviceEnumeratorService>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDeviceOverWinUsb>, WinUsbDeviceEnumeratorService>();
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
         services.AddSingleton<IDeviceSettingsService, DeviceSettingsService>();
-        services.AddSingleton<IControllerInputReportProcessorService, ControllerInputReportProcessorService>();
-        services.AddSingleton<IControllerConfigurationService, ControllerConfigurationService>();
-        services.AddSingleton<IControllerFilterService, ControllerFilterService>();
+        services.AddSingleton<IInputReportProcessorService, InputReportProcessorService>();
+        services.AddSingleton<IInputSourceConfigurationService, InputSourceConfigurationService>();
+        services.AddSingleton<IFilterService, FilterService>();
         services.AddSingleton<IGameProcessWatcherService, GameProcessWatcherService>();
         services.AddSingleton<IGameListProviderService, GameListProviderService>();
         services.AddSingleton<IDeviceFactory, DeviceFactory>();
+        services.AddSingleton<IInputSourceDataSource, InputSourceDataSource>();
 
         AddDevices(services);
 
@@ -48,7 +48,7 @@ public class DevicesRegistrar : IServiceRegistrar
 
         services.AddSingleton<IDeviceNotificationListener, DeviceNotificationListener>();
 
-        services.AddSingleton<ControllerManagerHost>();
+        services.AddSingleton<SystemManagerHost>();
     }
 
     private static void AddDevices(IServiceCollection services)

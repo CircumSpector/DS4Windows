@@ -32,6 +32,7 @@ public sealed class ServiceClientsRegistrar : IServiceRegistrar
             //    pb.WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5)));
 
         services.AddSingleton<IProfileServiceClient, ProfileServiceClient>();
-        services.AddSingleton<IControllerServiceClient, ControllerServiceClient>();
+        services.AddSingleton<IInputSourceServiceClient, InputSourceServiceClient>();
+        services.AddSingleton<ISystemServiceClient, SystemServiceClient>();
     }
 }

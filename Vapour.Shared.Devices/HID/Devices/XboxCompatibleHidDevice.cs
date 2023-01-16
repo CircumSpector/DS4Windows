@@ -17,7 +17,7 @@ public class XboxCompatibleHidDevice : CompatibleHidDevice
     {
     }
 
-    public override CompatibleHidDeviceInputReport InputReport { get; } = new XboxCompatibleInputReport();
+    public override InputSourceReport InputSourceReport { get; } = new XboxCompatibleInputReport();
     protected override InputDeviceType InputDeviceType => InputDeviceType.XboxOneS;
 
     protected override void OnInitialize()
@@ -65,6 +65,6 @@ public class XboxCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        InputReport.Parse(input);
+        InputSourceReport.Parse(input);
     }
 }

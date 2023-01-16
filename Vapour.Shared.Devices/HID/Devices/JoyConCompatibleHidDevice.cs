@@ -21,10 +21,9 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        throw new NotImplementedException();
     }
 
-    public override CompatibleHidDeviceInputReport InputReport { get; } = new JoyConCompatibleInputReport();
+    public override InputSourceReport InputSourceReport { get; } = new JoyConCompatibleInputReport();
 
     protected override InputDeviceType InputDeviceType => InputDeviceType.JoyCon;
 }

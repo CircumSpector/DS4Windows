@@ -45,10 +45,10 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
     public event Action<string> DeviceRemoved;
     
     /// <inheritdoc />
-    public void EnumerateDevices()
+    public void Start()
     {
         using Activity activity = _coreActivity.StartActivity(
-            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(EnumerateDevices)}");
+            $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(Start)}");
 
         int deviceIndex = 0;
         
@@ -63,6 +63,13 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
                 _logger.LogWarning(ex, $"Failed to create Filtered USB device for {path}");
             }
         }
+
+        _deviceNotificationListener.StartListen(FilterDriver.RewrittenDeviceInterfaceId);
+    }
+
+    public void Stop()
+    {
+        _deviceNotificationListener.StopListen(FilterDriver.RewrittenDeviceInterfaceId);
     }
 
     private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)

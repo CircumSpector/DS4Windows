@@ -1,14 +1,14 @@
 ﻿namespace Vapour.Shared.Configuration.Profiles.Schema;
 public class ProfileChangedEventArgs : EventArgs
 {
-    public ProfileChangedEventArgs(string controllerKey, IProfile oldProfile, IProfile newProfile)
+    public ProfileChangedEventArgs(string inputSourceKey, IProfile oldProfile, IProfile newProfile)
     {
-        ControllerKey = controllerKey;
+        InputSourceKey = inputSourceKey;
         OldProfile = oldProfile;
         NewProfile = newProfile;    
     }
 
-    public string ControllerKey { get; }
+    public string InputSourceKey { get; }
     public IProfile OldProfile { get; }
     public IProfile NewProfile { get; }
 }

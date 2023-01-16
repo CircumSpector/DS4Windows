@@ -3,7 +3,7 @@ using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.Xbox;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
-public class XboxCompatibleInputReport : CompatibleHidDeviceInputReport
+public class XboxCompatibleInputReport : InputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 

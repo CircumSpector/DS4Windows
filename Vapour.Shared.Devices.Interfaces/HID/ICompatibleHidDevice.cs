@@ -34,9 +34,9 @@ public interface ICompatibleHidDevice : IDisposable
     /// <summary>
     ///     The parsed input report.
     /// </summary>
-    CompatibleHidDeviceInputReport InputReport { get; }
+    InputSourceReport InputSourceReport { get; }
 
-    ControllerConfiguration CurrentConfiguration { get; }
+    InputSourceConfiguration CurrentConfiguration { get; }
 
     List<DeviceInfo> KnownDevices { get; }
 
@@ -44,6 +44,8 @@ public interface ICompatibleHidDevice : IDisposable
     ///     The <see cref="Serial" /> as string.
     /// </summary>
     string SerialString { get; }
+
+    string DeviceKey { get; }
     
     DeviceInfo CurrentDeviceInfo { get; }
 
@@ -65,10 +67,9 @@ public interface ICompatibleHidDevice : IDisposable
     /// <param name="input"></param>
     void ProcessInputReport(ReadOnlySpan<byte> input);
 
-    void SetConfiguration(ControllerConfiguration profile);
+    void SetConfiguration(InputSourceConfiguration profile);
 
     void OnAfterStartListening();
-
-    event EventHandler ConfigurationChanged;
+    
     unsafe int ReadInputReport(Span<byte> buffer);
 }

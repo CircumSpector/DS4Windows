@@ -7,7 +7,7 @@ internal abstract class OutDevice : IOutDevice
 {
     protected bool IsConnected;
 
-    public abstract void ConvertAndSendReport(CompatibleHidDeviceInputReport state, int device = 0);
+    public abstract void ConvertAndSendReport(InputSourceReport state, int device = 0);
 
     public abstract void Connect();
 

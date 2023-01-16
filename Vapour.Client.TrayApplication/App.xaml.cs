@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
-using Vapour.Client.Modules.Controllers.Utils;
+using Vapour.Client.Modules.InputSource.Utils;
 using Vapour.Client.Modules.Profiles.Utils;
 using Vapour.Client.Modules.Settings;
 using Vapour.Client.ServiceClients;
@@ -34,7 +34,7 @@ public partial class App : Application
                 typeof(TrayApplicationRegistrar),
                 typeof(OpenTelemetryRegistrar),
                 typeof(CommonRegistrar),
-                typeof(ControllersModuleRegistrar),
+                typeof(InputSourceModuleRegistrar),
                 typeof(ProfilesModuleRegistrar),
                 typeof(SettingsModuleRegistrar)
             },
@@ -43,8 +43,9 @@ public partial class App : Application
 
     private async Task SetupTray(IServiceScope scope)
     {
-        var controllerService = scope.ServiceProvider.GetService<IControllerServiceClient>();
-        await controllerService.WaitForService();
+        var systemServiceClient = scope.ServiceProvider.GetService<ISystemServiceClient>();
+        await systemServiceClient.WaitForService();
+        systemServiceClient.StartListening();
         var client = scope.ServiceProvider.GetService<IProfileServiceClient>();
         await client.Initialize();
 

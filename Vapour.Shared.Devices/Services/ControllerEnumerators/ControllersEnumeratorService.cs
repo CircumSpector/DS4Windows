@@ -1,18 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Threading.Channels;
 
-using Windows.Win32;
-
 using Microsoft.Extensions.Logging;
-
-using Nefarius.Drivers.Nssidswap;
-using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
-using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 
@@ -21,20 +15,15 @@ namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 /// </summary>
 internal sealed class ControllersEnumeratorService : IControllersEnumeratorService
 {
-    private readonly IControllerConfigurationService _controllerConfigurationService;
-    private readonly IControllerFilterService _controllerFilterService;
-    private readonly IControllerInputReportProcessorService _controllerInputReportProcessorService;
+    private readonly IFilterService _filterService;
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
-    private readonly ICurrentControllerDataSource _currentControllerDataSource;
-    private readonly IDeviceNotificationListener _deviceNotificationListener;
     private readonly IDeviceFactory _deviceFactory;
+    private readonly IInputSourceService _inputSourceService;
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
 
     private readonly ILogger<ControllersEnumeratorService> _logger;
-
-    private readonly IServiceProvider _serviceProvider;
-
+    
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
     private CancellationTokenSource _enumerationCancellationTokenSource;
     private Thread _enumerationProcessThread;
@@ -42,26 +31,18 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     private Channel<ControllerProcessItem> _processItems;
 
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
-        ICurrentControllerDataSource currentControllerDataSource,
         IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService,
-        IServiceProvider serviceProvider,
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
-        IControllerInputReportProcessorService controllerInputReportProcessorService,
-        IControllerFilterService controllerFilterService,
-        IControllerConfigurationService controllerConfigurationService,
-        IDeviceNotificationListener deviceNotificationListener,
-        IDeviceFactory deviceFactory)
+        IFilterService filterService,
+        IDeviceFactory deviceFactory,
+        IInputSourceService inputSourceService)
     {
         _logger = logger;
-        _currentControllerDataSource = currentControllerDataSource;
         _hidEnumeratorService = hidEnumeratorService;
-        _serviceProvider = serviceProvider;
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
-        _controllerInputReportProcessorService = controllerInputReportProcessorService;
-        _controllerFilterService = controllerFilterService;
-        _controllerConfigurationService = controllerConfigurationService;
-        _deviceNotificationListener = deviceNotificationListener;
+        _filterService = filterService;
         _deviceFactory = deviceFactory;
+        _inputSourceService = inputSourceService;
         _hidEnumeratorService.DeviceArrived += HidDeviceEnumeratorServiceOnDeviceArrived;
         _hidEnumeratorService.DeviceRemoved += HidDeviceEnumeratorServiceOnDeviceRemoved;
 
@@ -83,28 +64,20 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
             SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
         });
 
-        _hidEnumeratorService.EnumerateDevices();
-        _winUsbDeviceEnumeratorService.EnumerateDevices();
+        _hidEnumeratorService.Start();
+        _winUsbDeviceEnumeratorService.Start();
 
         StartEnumerationThread();
-
-        PInvoke.HidD_GetHidGuid(out Guid hidGuid);
-        _deviceNotificationListener.StartListen(hidGuid);
-        _deviceNotificationListener.StartListen(FilterDriver.RewrittenDeviceInterfaceId);
 
         DeviceListReady?.Invoke();
     }
 
     public void Stop()
     {
-        _deviceNotificationListener.StopListen();
-
-        foreach (ICompatibleHidDevice compatibleHidDevice in _currentControllerDataSource.CurrentControllers)
-        {
-            _controllerInputReportProcessorService.StopProcessing(compatibleHidDevice);
-        }
-
         StopEnumerationThread();
+
+        _hidEnumeratorService.Stop();
+        _winUsbDeviceEnumeratorService.Stop();
     }
 
     private void EnumeratorServiceOnHidDeviceArrived(HidDevice hidDevice)
@@ -136,30 +109,17 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
     private void EnumeratorServiceOnHidDeviceRemoved(string instanceId)
     {
         _logger.LogInformation("Compatible device {Device} got removed", instanceId);
-
-        ICompatibleHidDevice device = _currentControllerDataSource.GetDeviceByInstanceId(instanceId);
-
-        if (device != null)
-        {
-            _controllerInputReportProcessorService.StopProcessing(device);
-            _currentControllerDataSource.RemoveController(device.SourceDevice.InstanceId);
-        }
+        _inputSourceService.RemoveController(instanceId);
     }
 
     private void CreateControllerAndNotifyReady(HidDevice hidDevice, DeviceInfo deviceInfo)
     {
         ICompatibleHidDevice device = CreateDevice(hidDevice, deviceInfo);
 
-        _controllerConfigurationService.LoadControllerConfiguration(device);
+        _inputSourceService.AddController(device);
 
-        if (!_controllerFilterService.FilterUnfilterIfNeeded(device))
-        {
-            _controllerInputReportProcessorService.StartProcessing(device);
-            _currentControllerDataSource.AddController(device);
-
-            _logger.LogInformation("Added identified input device {Device}",
-                device.ToString());
-        }
+        _logger.LogInformation("Added identified input device {Device}",
+            device.ToString());
     }
 
     private ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, DeviceInfo deviceInfo)

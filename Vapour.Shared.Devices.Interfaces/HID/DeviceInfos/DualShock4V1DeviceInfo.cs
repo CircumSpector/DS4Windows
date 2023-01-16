@@ -8,6 +8,6 @@ public class DualShock4V1DeviceInfo : DeviceInfo
     public override string Name => "DualShock 4 v1";
     public override InputDeviceType DeviceType => InputDeviceType.DualShock4;
 
-    public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints =>
+    public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
         new() { InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03 };
 }

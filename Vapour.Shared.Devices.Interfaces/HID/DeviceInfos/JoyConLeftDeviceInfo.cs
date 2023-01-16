@@ -5,4 +5,5 @@ public class JoyConLeftDeviceInfo : DeviceInfo
     public override int Pid => 0x2006;
     public override string Name => "JoyCon (L)";
     public override InputDeviceType DeviceType => InputDeviceType.JoyCon;
+    public override bool IsLeftDevice => true;
 }

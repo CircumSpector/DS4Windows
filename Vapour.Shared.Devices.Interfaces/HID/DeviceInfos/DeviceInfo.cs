@@ -7,7 +7,9 @@ public abstract class DeviceInfo
     public abstract int Pid { get; }
     public abstract string Name { get; }
     public abstract InputDeviceType DeviceType { get; }
-    public virtual CompatibleHidDeviceFeatureSet FeatureSet { get; } = CompatibleHidDeviceFeatureSet.Default;
+    public virtual CompatibleHidDeviceFeatureSet FeatureSet => CompatibleHidDeviceFeatureSet.Default;
     public virtual HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } = null;
-    public virtual bool IsDongle { get; } = false;
+    public virtual bool IsDongle => false;
+    public virtual bool IsLeftDevice => false;
+    public virtual bool IsRightDevice => false;
 }

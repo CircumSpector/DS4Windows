@@ -3,9 +3,9 @@
 using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core.ViewModel;
-using Vapour.Client.Modules.Controllers;
+using Vapour.Client.Modules.InputSource;
 using Vapour.Client.ServiceClients;
-using Vapour.Server.Controller;
+using Vapour.Server.System;
 
 namespace Vapour.Client.TrayApplication;
 
@@ -15,19 +15,20 @@ public interface ITrayViewModel : IViewModel<ITrayViewModel>
 
 public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 {
-    private readonly IControllerServiceClient _controllerServiceClient;
     private readonly IProfileServiceClient _profileServiceClient;
     private readonly IViewModelFactory _viewModelFactory;
+    private readonly ISystemServiceClient _systemServiceClient;
 
     private string _hostButtonText;
 
     private bool _isHostRunning;
 
-    public TrayViewModel(IControllerServiceClient controllerServiceClient, IProfileServiceClient profileServiceClient, IViewModelFactory viewModelFactory)
+    public TrayViewModel(IProfileServiceClient profileServiceClient, IViewModelFactory viewModelFactory,
+        ISystemServiceClient systemServiceClient)
     {
-        _controllerServiceClient = controllerServiceClient;
         _profileServiceClient = profileServiceClient;
         _viewModelFactory = viewModelFactory;
+        _systemServiceClient = systemServiceClient;
         ShowClientCommand = new RelayCommand(OnShowClient);
         ChangeHostStateCommand = new RelayCommand(ChangeHostState);
     }
@@ -47,14 +48,14 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 
     public IRelayCommand ChangeHostStateCommand { get; }
 
-    public IControllersViewModel ControllersViewModel { get; private set; }
+    public IInputSourceListViewModel InputSourceListViewModel { get; private set; }
 
     public override async Task Initialize()
     {
-        _controllerServiceClient.OnIsHostRunningChanged += OnHostRunningChanged;
-        ControllersViewModel = await _viewModelFactory.Create<IControllersViewModel, IControllerListView>();
+        _systemServiceClient.OnIsHostRunningChanged += OnHostRunningChanged;
+        InputSourceListViewModel = await _viewModelFactory.Create<IInputSourceListViewModel, IInputSourceListView>();
         
-        IsHostRunning = await _controllerServiceClient.IsHostRunning();
+        IsHostRunning = await _systemServiceClient.IsHostRunning();
     }
 
     private void OnHostRunningChanged(IsHostRunningChangedMessage obj)
@@ -70,11 +71,11 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
     {
         if (IsHostRunning)
         {
-            await _controllerServiceClient.StopHost();
+            await _systemServiceClient.StopHost();
         }
         else
         {
-            await _controllerServiceClient.StartHost();
+            await _systemServiceClient.StartHost();
         }
     }
 

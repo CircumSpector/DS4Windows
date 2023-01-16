@@ -5,7 +5,7 @@ namespace Vapour.Shared.Devices.HID.Devices.Reports;
 /// <summary>
 ///     TODO: unfinished! Currently just copied over from DualShock
 /// </summary>
-public sealed class JoyConCompatibleInputReport : CompatibleHidDeviceInputReport
+public sealed class JoyConCompatibleInputReport : InputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
 

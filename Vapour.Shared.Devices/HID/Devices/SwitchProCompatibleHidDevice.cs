@@ -20,6 +20,6 @@ public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
         throw new NotImplementedException();
     }
 
-    public override CompatibleHidDeviceInputReport InputReport { get; }
+    public override InputSourceReport InputSourceReport { get; }
     protected override InputDeviceType InputDeviceType => InputDeviceType.SwitchPro;
 }

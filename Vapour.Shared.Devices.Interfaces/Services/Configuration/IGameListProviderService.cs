@@ -2,5 +2,5 @@
 
 public interface IGameListProviderService
 {
-    List<GameInfo> GetGameSelectionList(string controllerKey, GameSource gameSource, Dictionary<string, List<ControllerConfiguration>> controllerGameConfigurations);
+    List<GameInfo> GetGameSelectionList(string inputSourceKey, GameSource gameSource, Dictionary<string, List<InputSourceConfiguration>> inputSourceGameConfigurations);
 }

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Vapour.Client.Core;
 using Vapour.Client.Core.ViewModel;
-using Vapour.Client.Modules.Controllers.Utils;
+using Vapour.Client.Modules.InputSource.Utils;
 using Vapour.Client.Modules.Main;
 using Vapour.Client.Modules.Profiles.Utils;
 using Vapour.Client.Modules.Settings;
@@ -28,7 +28,7 @@ public partial class App : Application
             {
                 typeof(ViewModelRegistrar),
                 typeof(ProfilesModuleRegistrar),
-                typeof(ControllersModuleRegistrar),
+                typeof(InputSourceModuleRegistrar),
                 typeof(MainModuleRegistrar),
                 typeof(SettingsModuleRegistrar),
                 typeof(ServiceClientsRegistrar),
@@ -40,8 +40,9 @@ public partial class App : Application
 
     private async Task StartMainView(IServiceScope scope)
     {
-        var controllerService = scope.ServiceProvider.GetRequiredService<IControllerServiceClient>();
-        await controllerService.WaitForService();
+        var systemService = scope.ServiceProvider.GetRequiredService<ISystemServiceClient>();
+        await systemService.WaitForService();
+        systemService.StartListening();
         var client = scope.ServiceProvider.GetRequiredService<IProfileServiceClient>();
         await client.Initialize();
 

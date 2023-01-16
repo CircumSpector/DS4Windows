@@ -2,8 +2,6 @@
 
 using Microsoft.Extensions.Logging;
 
-using Vapour.Shared.Devices.HID;
-
 using Warden.Monitor;
 using Warden.Windows;
 
@@ -11,22 +9,22 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 
 public class GameProcessWatcherService : IGameProcessWatcherService
 {
-    private readonly IControllerConfigurationService _controllerConfigurationService;
-    private readonly ICurrentControllerDataSource _currentControllerDataSource;
+    private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
+    private readonly IInputSourceDataSource _inputSourceDataSource;
     private readonly ILogger<GameProcessWatcherService> _logger;
     private ProcessorWatchItem _currentWatch;
 
     private bool _watching;
 
     public GameProcessWatcherService(ILogger<GameProcessWatcherService> logger,
-        IControllerConfigurationService controllerConfigurationService,
-        ICurrentControllerDataSource currentControllerDataSource)
+        IInputSourceConfigurationService inputSourceConfigurationService,
+        IInputSourceDataSource inputSourceDataSource)
     {
         _logger = logger;
-        _controllerConfigurationService = controllerConfigurationService;
-        _currentControllerDataSource = currentControllerDataSource;
+        _inputSourceConfigurationService = inputSourceConfigurationService;
+        _inputSourceDataSource = inputSourceDataSource;
 
-        _controllerConfigurationService.GetCurrentGameRunning = () => _currentWatch?.GameId;
+        _inputSourceConfigurationService.GetCurrentGameRunning = () => _currentWatch?.GameId;
     }
 
     public void StartWatching()
@@ -62,16 +60,16 @@ public class GameProcessWatcherService : IGameProcessWatcherService
     private void OnProcessStarted(object sender, ProcessInfo e)
     {
         string imagePath = Path.GetDirectoryName(e.Image);
-        List<ICompatibleHidDevice> currentControllers = _currentControllerDataSource.CurrentControllers.ToList();
+        List<IInputSource> inputSources = _inputSourceDataSource.InputSources.ToList();
 
         if (_currentWatch == null)
         {
-            foreach (ICompatibleHidDevice controller in currentControllers)
+            foreach (var inputSource in inputSources)
             {
-                List<ControllerConfiguration> gameConfigurations =
-                    _controllerConfigurationService.GetGameControllerConfigurations(controller.SerialString);
+                List<InputSourceConfiguration> gameConfigurations =
+                    _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSource.InputSourceKey);
 
-                ControllerConfiguration gameConfiguration =
+                InputSourceConfiguration gameConfiguration =
                     gameConfigurations.SingleOrDefault(c =>
                     {
                         if (c.GameInfo.GameSource == GameSource.UWP &&
@@ -122,16 +120,16 @@ public class GameProcessWatcherService : IGameProcessWatcherService
             return;
         }
 
-        foreach (ICompatibleHidDevice controller in currentControllers)
+        foreach (var inputSource in inputSources)
         {
-            List<ControllerConfiguration> gameConfigurations =
-                _controllerConfigurationService.GetGameControllerConfigurations(controller.SerialString);
+            List<InputSourceConfiguration> gameConfigurations =
+                _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSource.InputSourceKey);
 
-            ControllerConfiguration gameConfiguration =
+            InputSourceConfiguration gameConfiguration =
                 gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == _currentWatch.GameId);
             if (gameConfiguration != null)
             {
-                _controllerConfigurationService.SetControllerConfiguration(controller.SerialString,
+                _inputSourceConfigurationService.SetInputSourceConfiguration(inputSource.InputSourceKey,
                     gameConfiguration);
             }
         }
@@ -159,9 +157,9 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         }
 
         _currentWatch = null;
-        foreach (ICompatibleHidDevice controller in _currentControllerDataSource.CurrentControllers.ToList())
+        foreach (var inputSource in _inputSourceDataSource.InputSources.ToList())
         {
-            _controllerConfigurationService.RestoreMainConfiguration(controller.SerialString);
+            _inputSourceConfigurationService.RestoreMainConfiguration(inputSource.InputSourceKey);
         }
     }
 

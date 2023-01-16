@@ -13,7 +13,7 @@
     
         
     <StackPanel>
-        <ContentControl Content="{Binding ControllersViewModel.MainView}"></ContentControl>
+        <ContentControl Content="{Binding InputSourceListViewModel.MainView}"></ContentControl>
         <MenuItem Header="{Binding HostButtonText}" Command="{Binding ChangeHostStateCommand}"/>
         <MenuItem Header="Open" Command="{Binding ShowClientCommand}"/>
     </StackPanel>

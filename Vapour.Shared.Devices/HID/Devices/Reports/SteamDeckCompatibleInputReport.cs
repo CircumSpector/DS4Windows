@@ -5,7 +5,7 @@ using Vapour.Shared.Devices.HID.InputTypes.SteamDeck;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public class SteamDeckCompatibleInputReport : CompatibleHidDeviceInputReport
+public class SteamDeckCompatibleInputReport : InputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 

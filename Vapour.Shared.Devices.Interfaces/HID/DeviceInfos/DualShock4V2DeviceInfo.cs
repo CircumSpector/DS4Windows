@@ -8,9 +8,9 @@ public class DualShock4V2DeviceInfo : DeviceInfo
     public override string Name => "DualShock 4 v2";
     public override InputDeviceType DeviceType => InputDeviceType.DualShock4;
 
-    public override CompatibleHidDeviceFeatureSet FeatureSet => CompatibleHidDeviceFeatureSet.MonitorAudio |
-                                                                CompatibleHidDeviceFeatureSet.VendorDefinedDevice;
+    public override CompatibleHidDeviceFeatureSet FeatureSet { get; } = CompatibleHidDeviceFeatureSet.MonitorAudio |
+                                                                        CompatibleHidDeviceFeatureSet.VendorDefinedDevice;
 
-    public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints =>
+    public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
         new() { InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03 };
 }

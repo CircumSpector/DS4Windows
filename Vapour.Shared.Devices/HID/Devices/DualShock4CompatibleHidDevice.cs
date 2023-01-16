@@ -44,7 +44,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
     }
 
-    public override CompatibleHidDeviceInputReport InputReport { get; } = new DualShock4CompatibleInputReport();
+    public override InputSourceReport InputSourceReport { get; } = new DualShock4CompatibleInputReport();
 
     protected override InputDeviceType InputDeviceType => InputDeviceType.DualShock4;
 
@@ -92,6 +92,6 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
             }
         }
 
-        InputReport.Parse(input.Slice(_reportStartOffset));
+        InputSourceReport.Parse(input.Slice(_reportStartOffset));
     }
 }

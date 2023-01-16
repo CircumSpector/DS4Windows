@@ -20,7 +20,7 @@ namespace Vapour.Server.Host;
 public sealed class VapourServiceLifetime : WindowsServiceLifetime
 {
     private const string SystemSessionUsername = "SYSTEM";
-    private readonly ControllerManagerHost _controllerHost;
+    private readonly SystemManagerHost _systemHost;
     private readonly IGlobalStateService _globalStateService;
     private readonly ILogger<VapourServiceLifetime> _logger;
 
@@ -30,7 +30,7 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         ILoggerFactory loggerFactory,
         IOptions<HostOptions> optionsAccessor,
         IOptions<WindowsServiceLifetimeOptions> windowsServiceOptionsAccessor,
-        ControllerManagerHost controllerHost,
+        SystemManagerHost systemHost,
         IGlobalStateService globalStateService,
         ILogger<VapourServiceLifetime> logger
     ) : base(
@@ -44,7 +44,7 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         CanHandleSessionChangeEvent = true;
         CanShutdown = true;
         CanStop = true;
-        _controllerHost = controllerHost;
+        _systemHost = systemHost;
         _globalStateService = globalStateService;
         _logger = logger;
     }
@@ -59,13 +59,13 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
             _logger.LogDebug("On start user session {UserName} found", userName);
             if (userName != SystemSessionUsername)
             {
-                _logger.LogDebug("User session is not SYSTEM. Starting controller host");
+                _logger.LogDebug("User session is not SYSTEM. Starting system host");
                 StartHost(userName);
             }
         }
         else
         {
-            _logger.LogDebug("No user session found on start, do not start controller host");
+            _logger.LogDebug("No user session found on start, do not start system host");
         }
     }
 
@@ -95,20 +95,20 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
 
     private async void StartHost(string currentUserName)
     {
-        if (!_controllerHost.IsRunning)
+        if (!_systemHost.IsRunning)
         {
             _globalStateService.CurrentUserName = currentUserName;
-            _logger.LogDebug("Starting controller host");
-            await _controllerHost.StartAsync();
+            _logger.LogDebug("Starting system host");
+            await _systemHost.StartAsync();
         }
     }
 
     private async Task StopHost()
     {
-        if (_controllerHost.IsRunning)
+        if (_systemHost.IsRunning)
         {
-            _logger.LogDebug("Stopping controller host");
-            await _controllerHost.StopAsync();
+            _logger.LogDebug("Stopping system host");
+            await _systemHost.StopAsync();
         }
     }
 
