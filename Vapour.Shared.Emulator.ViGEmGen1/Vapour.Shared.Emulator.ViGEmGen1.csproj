@@ -17,7 +17,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.5.209" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.6.213" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.232" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.2">
