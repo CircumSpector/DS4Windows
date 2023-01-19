@@ -12,14 +12,14 @@ namespace Vapour.Shared.Devices.Services.Reporting;
 
 internal sealed class OutputProcessor : IOutputProcessor
 {
-    private readonly IControllerInputReportProcessor _inputReportProcessor;
+    private readonly IInputReportProcessor _inputReportProcessor;
     private IOutDevice _controllerDevice;
 
     private const float RecipInputPosResolution = 1 / 127f;
     private const float RecipInputNegResolution = 1 / 128f;
     private const int OutputResolution = 32767 - -32768;
 
-    public OutputProcessor(IControllerInputReportProcessor inputReportProcessor,
+    public OutputProcessor(IInputReportProcessor inputReportProcessor,
         IServiceProvider serviceProvider)
     {
         _inputReportProcessor = inputReportProcessor;
@@ -30,11 +30,11 @@ internal sealed class OutputProcessor : IOutputProcessor
 
     private IServiceProvider Services { get; }
     private ILogger<OutputProcessor> Logger { get; }
-    public ICompatibleHidDevice HidDevice { get; private set; }
+    public IInputSource InputSource { get; private set; }
 
     public void StartOutputProcessing()
     {
-        if (HidDevice.CurrentConfiguration.OutputDeviceType != OutputDeviceType.None)
+        if (InputSource.Configuration.OutputDeviceType != OutputDeviceType.None)
         {
             _inputReportProcessor.InputReportAvailable += _inputReportProcessor_InputReportAvailable;
             _controllerDevice = CreateControllerOutDevice();
@@ -52,25 +52,25 @@ internal sealed class OutputProcessor : IOutputProcessor
         }
     }
 
-    public void SetDevice(ICompatibleHidDevice device)
+    public void SetDevice(IInputSource inputSource)
     {
-        HidDevice = device;
+        InputSource = inputSource;
     }
 
-    private void _inputReportProcessor_InputReportAvailable(ICompatibleHidDevice arg1,
-        CompatibleHidDeviceInputReport report)
+    private void _inputReportProcessor_InputReportAvailable(IInputSource arg1,
+        InputSourceReport report)
     {
-        if (HidDevice.CurrentConfiguration.OutputDeviceType != OutputDeviceType.None && _controllerDevice != null)
+        if (InputSource.Configuration.OutputDeviceType != OutputDeviceType.None && _controllerDevice != null)
         {
-            report = UpdateBasedOnConfiguration(HidDevice.CurrentConfiguration, report);
+            report = UpdateBasedOnConfiguration(InputSource.Configuration, report);
             _controllerDevice.ConvertAndSendReport(report);
         }
     }
 
-    private CompatibleHidDeviceInputReport UpdateBasedOnConfiguration(ControllerConfiguration configuration,
-        CompatibleHidDeviceInputReport report)
+    private InputSourceReport UpdateBasedOnConfiguration(InputSourceConfiguration configuration,
+        InputSourceReport report)
     {
-        CheckAndScaleIfNeeded(report);
+        CheckAndScaleIfNeeded(report);      
         if (configuration.IsPassthru)
         {
             return report;
@@ -85,7 +85,7 @@ internal sealed class OutputProcessor : IOutputProcessor
     {
         IOutDevice outDevice;
         ViGEmClient client = Services.GetService<ViGEmClient>();
-        if (HidDevice.CurrentConfiguration.OutputDeviceType == OutputDeviceType.Xbox360Controller)
+        if (InputSource.Configuration.OutputDeviceType == OutputDeviceType.Xbox360Controller)
         {
             outDevice = new Xbox360OutDevice(client);
         }
@@ -97,10 +97,10 @@ internal sealed class OutputProcessor : IOutputProcessor
         return outDevice;
     }
 
-    private void CheckAndScaleIfNeeded(CompatibleHidDeviceInputReport report)
+    private void CheckAndScaleIfNeeded(InputSourceReport report)
     {
         if (report.AxisScaleInputType == InputAxisType.Xbox &&
-            HidDevice.CurrentConfiguration.OutputDeviceType != OutputDeviceType.Xbox360Controller)
+            InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller)
         {
             report.LeftThumbX = ScaleDown(report.LeftThumbX, false);
             report.LeftThumbY = ScaleDown(report.LeftThumbY, true);
@@ -108,7 +108,7 @@ internal sealed class OutputProcessor : IOutputProcessor
             report.RightThumbY = ScaleDown(report.RightThumbY, true);
         }
         else if (report.AxisScaleInputType == InputAxisType.DualShock4 &&
-                 HidDevice.CurrentConfiguration.OutputDeviceType != OutputDeviceType.DualShock4Controller)
+                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller)
         {
             report.LeftThumbX = ScaleUp(report.LeftThumbX, false);
             report.LeftThumbY = ScaleUp(report.LeftThumbY, true);

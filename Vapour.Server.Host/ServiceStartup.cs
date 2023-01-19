@@ -9,8 +9,9 @@ using Microsoft.Extensions.Hosting.WindowsServices;
 using Serilog;
 
 using Vapour.Client.Core;
-using Vapour.Server.Host.Controller;
+using Vapour.Server.Host.InputSource;
 using Vapour.Server.Host.Profile;
+using Vapour.Server.Host.System;
 using Vapour.Shared.Common;
 using Vapour.Shared.Common.Tracing;
 using Vapour.Shared.Configuration.Profiles;
@@ -47,26 +48,27 @@ public static class ServiceStartup
 
         WebApplication app = builder.Build();
 
-        app.MapHub<ControllerMessageHub>("/ControllerMessages");
+        app.MapHub<InputSourceMessageHub>("/InputSourceMessages");
         app.MapHub<ProfileMessageHub>("/ProfileMessages");
+        app.MapHub<SystemMessageHub>("/SystemMessages");
         app.UseFastEndpoints(config => config.Endpoints.RoutePrefix = "api");
         app.UseSwaggerGen();
 
-        ControllerService.RegisterRoutes(app);
+        SystemService.RegisterRoutes(app);
 
         // running under debugger or in a console session
         if (app.Environment.IsDevelopment() || Environment.UserInteractive)
         {
-            ControllerManagerHost controllerHost = app.Services.GetRequiredService<ControllerManagerHost>();
+            SystemManagerHost systemHost = app.Services.GetRequiredService<SystemManagerHost>();
 
             app.Lifetime.ApplicationStopping.Register(async () =>
             {
                 Log.Information("Shutting down server host");
 
-                await controllerHost.StopAsync();
+                await systemHost.StopAsync();
             }, true);
             
-            await controllerHost.StartAsync();
+            await systemHost.StartAsync();
         }
 
         Log.Information("Starting server host");

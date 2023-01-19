@@ -5,7 +5,7 @@
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:common="clr-namespace:Vapour.Shared.Common.Types;assembly=Vapour.Shared.Common.Interfaces"
              xmlns:profileConverters="clr-namespace:Vapour.Client.Modules.Profiles.Converters;assembly=Vapour.Client.Modules"
-             xmlns:converters="clr-namespace:Vapour.Client.Modules.Controllers.Converters;assembly=Vapour.Client.Modules"
+             xmlns:converters="clr-namespace:Vapour.Client.Modules.InputSource.Converters;assembly=Vapour.Client.Modules"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
         <ResourceDictionary>

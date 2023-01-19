@@ -26,7 +26,7 @@ internal class Xbox360OutDevice : OutDevice
         cont.AutoSubmitReport = false;
     }
 
-    public override void ConvertAndSendReport(CompatibleHidDeviceInputReport state, int device = 0)
+    public override void ConvertAndSendReport(InputSourceReport state, int device = 0)
     {
         if (!IsConnected)
         {
@@ -109,7 +109,7 @@ internal class Xbox360OutDevice : OutDevice
         }
     }
 
-    private void SetDpad(CompatibleHidDeviceInputReport state)
+    private void SetDpad(InputSourceReport state)
     {
         cont.SetButtonState(Xbox360Button.Up, state.DPad is DPadDirection.North or DPadDirection.NorthEast or DPadDirection.NorthWest);
         cont.SetButtonState(Xbox360Button.Right, state.DPad is DPadDirection.East or DPadDirection.NorthEast or DPadDirection.SouthEast);

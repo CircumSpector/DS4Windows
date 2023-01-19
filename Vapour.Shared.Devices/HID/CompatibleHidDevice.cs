@@ -51,7 +51,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <summary>
     ///     The parsed input report. Depends on device type.
     /// </summary>
-    public abstract CompatibleHidDeviceInputReport InputReport { get; }
+    public abstract InputSourceReport InputSourceReport { get; }
     public List<DeviceInfo> KnownDevices { get; }
     protected abstract InputDeviceType InputDeviceType { get; }
 
@@ -66,12 +66,19 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     /// <inheritdoc />
     public string SerialString => Serial?.ToString();
+
+    public string DeviceKey
+    {
+        get
+        {
+            return SerialString;
+        }
+    }
     
     /// <inheritdoc />
     public bool IsFiltered { get; set; }
-
-    public event EventHandler ConfigurationChanged;
-    public ControllerConfiguration CurrentConfiguration { get; private set; }
+    
+    public InputSourceConfiguration CurrentConfiguration { get; private set; }
     public DeviceInfo CurrentDeviceInfo { get; private set; }
 
     public void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo)
@@ -105,12 +112,11 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
         return SourceDevice.ReadInputReport(buffer);
     }
 
-    public void SetConfiguration(ControllerConfiguration configuration)
+    public void SetConfiguration(InputSourceConfiguration configuration)
     {
-        ControllerConfiguration oldConfiguration = CurrentConfiguration;
+        InputSourceConfiguration oldConfiguration = CurrentConfiguration;
         CurrentConfiguration = configuration;
         OnConfigurationChanged(oldConfiguration, configuration);
-        ConfigurationChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <inheritdoc />
@@ -136,8 +142,8 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     {
     }
 
-    protected virtual void OnConfigurationChanged(ControllerConfiguration oldProfile,
-        ControllerConfiguration newProfile)
+    protected virtual void OnConfigurationChanged(InputSourceConfiguration oldProfile,
+        InputSourceConfiguration newProfile)
     {
     }
 

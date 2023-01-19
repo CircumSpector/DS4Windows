@@ -11,7 +11,7 @@ public struct TrackPadTouch
     public byte RawTrackingNum;
 }
 
-public class DualShock4CompatibleInputReport : CompatibleHidDeviceInputReport
+public class DualShock4CompatibleInputReport : InputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
 

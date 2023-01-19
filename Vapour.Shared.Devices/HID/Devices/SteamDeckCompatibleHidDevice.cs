@@ -26,14 +26,14 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
     }
 
-    public override CompatibleHidDeviceInputReport InputReport { get; } = new SteamDeckCompatibleInputReport();
+    public override InputSourceReport InputSourceReport { get; } = new SteamDeckCompatibleInputReport();
     protected override InputDeviceType InputDeviceType => InputDeviceType.SteamDeck;
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         if (input[1] == 1)
         {
-            InputReport.Parse(input);
+            InputSourceReport.Parse(input);
         }
     }
 }

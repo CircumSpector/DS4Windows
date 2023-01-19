@@ -10,6 +10,6 @@ public class DualShock4UsbWirelessAdapterDeviceInfo : DeviceInfo
     public override bool IsDongle => true;
     public override CompatibleHidDeviceFeatureSet FeatureSet => CompatibleHidDeviceFeatureSet.MonitorAudio;
 
-    public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints =>
+    public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
         new () { InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03 };
 }

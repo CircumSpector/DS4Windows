@@ -5,10 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Vapour.Client.Core.DependencyInjection;
-using Vapour.Server.Controller;
-using Vapour.Server.Host.Controller;
+using Vapour.Server.Host.InputSource;
 using Vapour.Server.Host.Profile;
+using Vapour.Server.Host.System;
+using Vapour.Server.InputSource;
 using Vapour.Server.Profile;
+using Vapour.Server.System;
 
 namespace Vapour.Server.Host;
 
@@ -37,8 +39,9 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
         services.AddSignalR();
         services.AddFastEndpoints();
         services.AddSwaggerDoc();
-        services.AddSingleton<ControllerService>();
-        services.AddSingleton<IControllerMessageForwarder, ControllerMessageForwarder>();
+        services.AddSingleton<SystemService>();
+        services.AddSingleton<IInputSourceMessageForwarder, InputSourceMessageForwarder>();
+        services.AddSingleton<ISystemMessageForwarder, SystemMessageForwarder>();
         services.AddSingleton<IProfileMessageForwarder, ProfileMessageForwarder>();
     }
 }

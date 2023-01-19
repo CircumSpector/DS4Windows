@@ -7,45 +7,45 @@ using Windows.Management.Deployment;
 namespace Vapour.Shared.Devices.Services.Configuration;
 public class GameListProviderService : IGameListProviderService
 {
-    public List<GameInfo> GetGameSelectionList(string controllerKey, GameSource gameSource, Dictionary<string, List<ControllerConfiguration>> controllerGameConfigurations)
+    public List<GameInfo> GetGameSelectionList(string inputSourceKey, GameSource gameSource, Dictionary<string, List<InputSourceConfiguration>> inputSourceGameConfigurations)
     {
         var games = new List<GameInfo>();
 
         if (gameSource == GameSource.UWP)
         {
-            games = GetUwpGames(controllerKey, controllerGameConfigurations);
+            games = GetUwpGames(inputSourceKey, inputSourceGameConfigurations);
         }
         else if (gameSource == GameSource.Steam)
         {
-            games = GetSteamGames(controllerKey, controllerGameConfigurations);
+            games = GetSteamGames(inputSourceKey, inputSourceGameConfigurations);
         }
         else if (gameSource == GameSource.Blizzard)
         {
-            games = GetGamesFromUninstallByPublisher("blizzard entertainment", GameSource.Blizzard, controllerKey,
-                controllerGameConfigurations);
+            games = GetGamesFromUninstallByPublisher("blizzard entertainment", GameSource.Blizzard, inputSourceKey,
+                inputSourceGameConfigurations);
         }
         else if (gameSource == GameSource.Epic)
         {
-            games = GetEpicGames(controllerKey, controllerGameConfigurations);
+            games = GetEpicGames(inputSourceKey, inputSourceGameConfigurations);
         }
         else if (gameSource == GameSource.EA)
         {
-            games = GetGamesFromUninstallByPublisher("electronic arts", GameSource.EA, controllerKey,
-                controllerGameConfigurations);
+            games = GetGamesFromUninstallByPublisher("electronic arts", GameSource.EA, inputSourceKey,
+                inputSourceGameConfigurations);
         }
 
         return games.OrderBy(g => g.GameName).ToList();
     }
 
-    private List<GameInfo> GetUwpGames(string controllerKey, Dictionary<string, List<ControllerConfiguration>> controllerGameConfigurations)
+    private List<GameInfo> GetUwpGames(string inputSourceKey, Dictionary<string, List<InputSourceConfiguration>> inputSourceGameConfigurations)
     {
         var games = new List<GameInfo>();
         PackageManager packageManager = new();
 
         var packages = packageManager.FindPackagesForUserWithPackageTypes(string.Empty, PackageTypes.Main).ToList();
         foreach (var package in packages
-                     .Where(p => !controllerGameConfigurations.Any(g =>
-                         g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name)))
+                     .Where(p => !inputSourceGameConfigurations.Any(g =>
+                         g.Key == inputSourceKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name)))
                      .OrderBy(n => n.DisplayName))
         {
             var gameInfo = new GameInfo
@@ -60,7 +60,7 @@ public class GameListProviderService : IGameListProviderService
         return games;
     }
 
-    private List<GameInfo> GetSteamGames(string controllerKey, Dictionary<string, List<ControllerConfiguration>> controllerGameConfigurations)
+    private List<GameInfo> GetSteamGames(string inputSourceKey, Dictionary<string, List<InputSourceConfiguration>> inputSourceGameConfigurations)
     {
         var games = new List<GameInfo>();
         object installPath = null;
@@ -88,8 +88,8 @@ public class GameListProviderService : IGameListProviderService
                     var installName = appFile.SubACF["AppState"].SubItems["installdir"];
                     var installDir = $"{path}\\steamapps\\common\\{installName}";
 
-                    var isGameConfigured = controllerGameConfigurations.Any(g =>
-                        g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == installDir));
+                    var isGameConfigured = inputSourceGameConfigurations.Any(g =>
+                        g.Key == inputSourceKey && g.Value.Any(c => c.GameInfo.GameId == installDir));
 
                     if (!isGameConfigured)
                     {
@@ -109,7 +109,7 @@ public class GameListProviderService : IGameListProviderService
         return games;
     }
 
-    private List<GameInfo> GetEpicGames(string controllerKey, Dictionary<string, List<ControllerConfiguration>> controllerGameConfigurations)
+    private List<GameInfo> GetEpicGames(string inputSourceKey, Dictionary<string, List<InputSourceConfiguration>> inputSourceGameConfigurations)
     {
         var games = new List<GameInfo>();
         object installPath = null;
@@ -125,8 +125,8 @@ public class GameListProviderService : IGameListProviderService
             foreach (var filePath in Directory.GetFiles($"{installPath}\\Manifests", "*.item"))
             {
                 var data = JsonSerializer.Deserialize<EpicGameManifest>(File.ReadAllText(filePath));
-                if (!controllerGameConfigurations.Any(g =>
-                        g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == data.InstallLocation)))
+                if (!inputSourceGameConfigurations.Any(g =>
+                        g.Key == inputSourceKey && g.Value.Any(c => c.GameInfo.GameId == data.InstallLocation)))
                 {
                     var gameInfo = new GameInfo
                     {
@@ -142,7 +142,7 @@ public class GameListProviderService : IGameListProviderService
         return games;
     }
 
-    private List<GameInfo> GetGamesFromUninstallByPublisher(string publisherName, GameSource gameSource, string controllerKey, Dictionary<string,List<ControllerConfiguration>> controllerGameConfigurations)
+    private List<GameInfo> GetGamesFromUninstallByPublisher(string publisherName, GameSource gameSource, string inputSourceKey, Dictionary<string,List<InputSourceConfiguration>> inputSourceGameConfigurations)
     {
         var games = new List<GameInfo>();
         var uninstall =
@@ -159,8 +159,8 @@ public class GameListProviderService : IGameListProviderService
                     var installDir = subkey.GetValue("InstallLocation");
                     if (installDir != null)
                     {
-                        if (!controllerGameConfigurations.Any(g =>
-                                g.Key == controllerKey && g.Value.Any(c => c.GameInfo.GameId == installDir.ToString())))
+                        if (!inputSourceGameConfigurations.Any(g =>
+                                g.Key == inputSourceKey && g.Value.Any(c => c.GameInfo.GameId == installDir.ToString())))
                         {
                             var gameInfo = new GameInfo
                             {

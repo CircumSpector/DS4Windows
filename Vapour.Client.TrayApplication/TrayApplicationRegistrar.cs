@@ -10,6 +10,6 @@ public class TrayApplicationRegistrar : IServiceRegistrar
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
         services.AddSingleton<ITrayViewModel, TrayViewModel>();
-        services.AddSingleton<IControllerListView, ControllerListView>();
+        services.AddSingleton<IInputSourceListView, InputSourceListView>();
     }
 }

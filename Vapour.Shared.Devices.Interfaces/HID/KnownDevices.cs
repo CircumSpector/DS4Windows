@@ -1,6 +1,4 @@
-﻿using Vapour.Shared.Devices.Services.ControllerEnumerators;
-
-namespace Vapour.Shared.Devices.HID;
+﻿namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
 ///     Utility class holding meta-data about compatible device detection and configuration.
