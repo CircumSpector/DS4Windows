@@ -212,6 +212,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         {
             true when Marshal.GetLastWin32Error() == (int)WIN32_ERROR.ERROR_ACCESS_DENIED => false,
             true when Marshal.GetLastWin32Error() == (int)WIN32_ERROR.ERROR_SHARING_VIOLATION => false,
+            true when Marshal.GetLastWin32Error() == (int)WIN32_ERROR.ERROR_FILE_NOT_FOUND => false,
             true => throw new Exception($"Couldn't open device handle, error {Marshal.GetLastWin32Error()}"),
             _ => true
         };
