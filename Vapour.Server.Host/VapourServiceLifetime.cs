@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Win32.SafeHandles;
 
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Devices.HostedServices;
@@ -20,9 +21,9 @@ namespace Vapour.Server.Host;
 public sealed class VapourServiceLifetime : WindowsServiceLifetime
 {
     private const string SystemSessionUsername = "SYSTEM";
-    private readonly SystemManagerHost _systemHost;
     private readonly IGlobalStateService _globalStateService;
     private readonly ILogger<VapourServiceLifetime> _logger;
+    private readonly SystemManagerHost _systemHost;
 
     public VapourServiceLifetime(
         IHostEnvironment environment,
@@ -115,8 +116,16 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
     private static unsafe string GetUsername(int sessionId)
     {
         string username = SystemSessionUsername;
-        if (PInvoke.WTSQuerySessionInformation(null, (uint)sessionId, WTS_INFO_CLASS.WTSUserName, out PWSTR buffer,
-                out uint strLen) && strLen > 1)
+
+        if (PInvoke.WTSQuerySessionInformation(
+                new SafeFileHandle(), // null is not allowed, despite MS Docs :(
+                (uint)sessionId,
+                WTS_INFO_CLASS.WTSUserName,
+                out PWSTR buffer,
+                out uint strLen
+            )
+            && strLen > 1
+           )
         {
             username = new string(buffer.Value);
             PInvoke.WTSFreeMemory(buffer);
