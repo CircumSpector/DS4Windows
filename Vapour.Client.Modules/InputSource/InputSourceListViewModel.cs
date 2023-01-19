@@ -58,7 +58,7 @@ public sealed class InputSourceListViewModel :
     {
         await CreateInputSourceItems();
 
-        _inputSourceService.InInputSourceCreated += CreateInputSourceItem;
+        _inputSourceService.InInputSourceCreated += CreateInputSourceItemHandler;
         _inputSourceService.OnInputSourceRemoved += RemoveInputSourceItem;
         _inputSourceService.OnInputSourceConfigurationChanged += OnInputSourceConfigurationChanged;
         _inputSourceService.StartListening();
@@ -67,28 +67,33 @@ public sealed class InputSourceListViewModel :
 
     private async Task CreateInputSourceItems()
     {
-        List<InputSourceCreatedMessage> list = await _inputSourceService.GetInputSourceList();
+        List<InputSourceMessage> list = await _inputSourceService.GetInputSourceList();
 
-        foreach (InputSourceCreatedMessage inputSource in list)
+        foreach (InputSourceMessage inputSource in list)
         {
-            CreateInputSourceItem(inputSource);
+            await CreateInputSourceItem(inputSource);
         }
     }
 
-    private void CreateInputSourceItem(InputSourceCreatedMessage device)
+    private async void CreateInputSourceItemHandler(InputSourceMessage inputSource)
     {
-        if (InputSourceItems.All(i => i.InputSourceKey != device.InputSourceKey))
+        await CreateInputSourceItem(inputSource);
+    }
+
+    private async Task CreateInputSourceItem(InputSourceMessage inputSource)
+    {
+        if (InputSourceItems.All(i => i.InputSourceKey != inputSource.InputSourceKey))
         {
             IInputSourceItemViewModel inputSourceItem = _serviceProvider.GetService<IInputSourceItemViewModel>();
-            inputSourceItem.SetDevice(device);
+            await inputSourceItem.SetInputSource(inputSource);
             InputSourceItems.Add(inputSourceItem);
         }
     }
 
-    private void RemoveInputSourceItem(InputSourceRemovedMessage device)
+    private void RemoveInputSourceItem(InputSourceRemovedMessage inputSource)
     {
         IInputSourceItemViewModel existing =
-            InputSourceItems.SingleOrDefault(i => i.InputSourceKey == device.InputSourceKey);
+            InputSourceItems.SingleOrDefault(i => i.InputSourceKey == inputSource.InputSourceKey);
         if (existing != null)
         {
             InputSourceItems.Remove(existing);

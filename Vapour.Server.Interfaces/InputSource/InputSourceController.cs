@@ -1,9 +1,7 @@
 ﻿using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Server.InputSource;
-
-public sealed class InputSourceCreatedMessage
+public class InputSourceController
 {
     public string Description { get; set; }
 
@@ -25,13 +23,9 @@ public sealed class InputSourceCreatedMessage
 
     public InputDeviceType DeviceType { get; init; }
 
-    public InputSourceConfiguration CurrentConfiguration { get; set; }
-
     public bool IsFiltered { get; set; }
-    
-    public int Vid { get; init; }
-    
-    public int Pid { get; init; }
 
-    public string InputSourceKey { get; set; }
+    public int Vid { get; init; }
+
+    public int Pid { get; init; }
 }

@@ -18,6 +18,7 @@ public class InputSourceModuleRegistrar : IServiceRegistrar
         services.AddTransient<IAddGameListViewModel, AddGameListViewModel>();
         services.AddTransient<IAddGameListView, AddGameListView>();
         services.AddTransient<IGameConfigurationItemViewModel, GameConfigurationItemViewModel>();
+        services.AddTransient<IInputSourceControllerItemViewModel, InputSourceControllerItemViewModel>();
 
         services.AddAutoMapper(cfg => cfg.AddProfile<InputSourceAutoMapper>());
     }

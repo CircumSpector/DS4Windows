@@ -5,7 +5,7 @@ using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host.InputSource.Endpoints;
 
-public sealed class InputSourceListEndpoint : EndpointWithoutRequest<List<InputSourceCreatedMessage>>
+public sealed class InputSourceListEndpoint : EndpointWithoutRequest<List<InputSourceMessage>>
 {
     private readonly IInputSourceDataSource _inputSourceDataSource;
     private readonly IInputSourceMessageForwarder _inputSourceMessageForwarder;

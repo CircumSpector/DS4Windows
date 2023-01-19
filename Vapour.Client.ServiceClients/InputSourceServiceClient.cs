@@ -19,7 +19,7 @@ public sealed partial class InputSourceServiceClient : IInputSourceServiceClient
         _clientFactory = clientFactory;
     }
     
-    public event Action<InputSourceCreatedMessage> InInputSourceCreated;
+    public event Action<InputSourceMessage> InInputSourceCreated;
     public event Action<InputSourceRemovedMessage> OnInputSourceRemoved;
     public event Action<InputSourceConfigurationChangedMessage> OnInputSourceConfigurationChanged;
 
@@ -30,7 +30,7 @@ public sealed partial class InputSourceServiceClient : IInputSourceServiceClient
             .WithAutomaticReconnect()
             .Build();
 
-        _hubConnection.On<InputSourceCreatedMessage>("InputSourceCreated", async message =>
+        _hubConnection.On<InputSourceMessage>("InputSourceCreated", async message =>
         {
             await Application.Current.Dispatcher.BeginInvoke(() =>
             {

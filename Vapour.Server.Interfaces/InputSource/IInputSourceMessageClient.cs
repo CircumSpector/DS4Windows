@@ -7,7 +7,7 @@ namespace Vapour.Server.InputSource;
 /// </summary>
 public interface IInputSourceMessageClient
 {
-    Task InputSourceCreated(InputSourceCreatedMessage message);
+    Task InputSourceCreated(InputSourceMessage message);
 
     Task InputSourceRemoved(InputSourceRemovedMessage message);
     

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Media.Imaging;
 
 using AutoMapper;
 
@@ -15,48 +14,34 @@ public sealed partial class InputSourceItemViewModel :
     ViewModel<IInputSourceItemViewModel>,
     IInputSourceItemViewModel
 {
-    private const string ImageLocationRoot =
-        "pack://application:,,,/Vapour.Client.Modules;component/InputSource/Images";
-
-    public static BitmapImage BluetoothImageLocation = new(new Uri($"{ImageLocationRoot}/BT.png", UriKind.Absolute));
-    public static BitmapImage UsbImageLocation = new(new Uri($"{ImageLocationRoot}/USB.png", UriKind.Absolute));
     private readonly IInputSourceServiceClient _inputSourceServiceClient;
+    private readonly IViewModelFactory _viewModelFactory;
     private readonly IMapper _mapper;
 
-    public InputSourceItemViewModel(IMapper mapper, IInputSourceServiceClient inputSourceServiceClient)
+    public InputSourceItemViewModel(IMapper mapper, IInputSourceServiceClient inputSourceServiceClient, IViewModelFactory viewModelFactory)
     {
         _mapper = mapper;
         _inputSourceServiceClient = inputSourceServiceClient;
+        _viewModelFactory = viewModelFactory;
     }
 
-    public void SetDevice(InputSourceCreatedMessage device)
+    public async Task SetInputSource(InputSourceMessage inputSource)
     {
         ConfigurationSetFromUser = false;
-        _mapper.Map(device, this);
-        ConfigurationSetFromUser = true;
-    }
+        _mapper.Map(inputSource, this);
 
-    public static BitmapImage GetDeviceImage(string name)
-    {
-        try
+        var controller1 = await _viewModelFactory.CreateViewModel<IInputSourceControllerItemViewModel>();
+        _mapper.Map(inputSource.Controller1, controller1);
+        Controller1 = controller1;
+
+        if (inputSource.Controller2 != null)
         {
-            Uri uri = new($"{ImageLocationRoot}/{name.ToLower()}.jpg", UriKind.Absolute);
-            BitmapImage image = new(uri);
-            return image;
+            var controller2 = await _viewModelFactory.CreateViewModel<IInputSourceControllerItemViewModel>();
+            _mapper.Map(inputSource.Controller2, controller2);
+            Controller2 = controller2;
         }
-        catch
-        {
-            try
-            {
-                Uri uri = new($"{ImageLocationRoot}/{name.ToLower()}.png", UriKind.Absolute);
-                BitmapImage image = new(uri);
-                return image;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+
+        ConfigurationSetFromUser = true;
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -77,6 +62,10 @@ public sealed partial class InputSourceItemViewModel :
                         CurrentConfiguration);
                 }
             }
+        }
+        else if (e.PropertyName == nameof(Controller2))
+        {
+            OnPropertyChanged(nameof(HasSecondController));
         }
 
         base.OnPropertyChanged(e);
