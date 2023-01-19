@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Text.Json;
 
 using CommunityToolkit.Mvvm.Input;
 
-using JetBrains.Annotations;
+
 
 using MaterialDesignThemes.Wpf;
 
@@ -20,7 +21,9 @@ using Constants = Vapour.Client.Modules.Main.Constants;
 
 namespace Vapour.Client.Modules.Profiles;
 
-[UsedImplicitly]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class ProfilesViewModel :
     NavigationTabViewModel<IProfilesViewModel, IProfilesView>,
     IProfilesViewModel

@@ -5,7 +5,7 @@ using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
 using Windows.Win32.Storage.FileSystem;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Win32.SafeHandles;
 
@@ -81,7 +81,6 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     public string Description { get; init; }
 
     /// <inheritdoc />
-    [CanBeNull]
     public string DisplayName { get; init; }
 
     /// <inheritdoc />
@@ -94,7 +93,6 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     public string ProductString { get; init; }
 
     /// <inheritdoc />
-    [CanBeNull]
     public string SerialNumberString { get; init; }
 
     /// <inheritdoc />

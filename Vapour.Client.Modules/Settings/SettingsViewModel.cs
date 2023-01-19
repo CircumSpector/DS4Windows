@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
-
-using JetBrains.Annotations;
+using System.Diagnostics.CodeAnalysis;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Client.ServiceClients;
@@ -8,7 +7,9 @@ using Vapour.Server.System;
 
 namespace Vapour.Client.Modules.Settings;
 
-[UsedImplicitly]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewModel, ISettingsView>, ISettingsViewModel
 {
     private readonly ISystemServiceClient _systemServiceClient;

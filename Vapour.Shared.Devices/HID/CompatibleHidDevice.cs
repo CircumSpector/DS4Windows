@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.NetworkInformation;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Logging;
 
@@ -233,7 +233,6 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// </remarks>
     /// <param name="featureId">The report ID of the GET_REPORT request.</param>
     /// <returns>The MAC address of the device.</returns>
-    [CanBeNull]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
         switch (SourceDevice.Service)

@@ -1,10 +1,15 @@
-﻿using JetBrains.Annotations;
+﻿
+
+using System.Diagnostics.CodeAnalysis;
 
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types;
 
 [AddINotifyPropertyChangedInterface]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class FlickStickSettings
 {
     public delegate void FlickStickSettingsEventHandler(FlickStickSettings sender,
@@ -29,7 +34,6 @@ public class FlickStickSettings
 
     public double Beta { get; set; } = DefaultBeta;
 
-    [UsedImplicitly]
     private void OnMinCutoffChanged()
     {
         MinCutoffChanged?.Invoke(this, EventArgs.Empty);
@@ -37,7 +41,6 @@ public class FlickStickSettings
 
     public event FlickStickSettingsEventHandler MinCutoffChanged;
 
-    [UsedImplicitly]
     private void OnBetaChanged()
     {
         BetaChanged?.Invoke(this, EventArgs.Empty);

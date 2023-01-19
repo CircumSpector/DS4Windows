@@ -1,10 +1,15 @@
-﻿using JetBrains.Annotations;
+﻿
+
+using System.Diagnostics.CodeAnalysis;
 
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types;
 
 [AddINotifyPropertyChangedInterface]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class GyroMouseInfo
 {
     public delegate void GyroMouseInfoEventHandler(GyroMouseInfo sender, EventArgs args);
@@ -33,7 +38,6 @@ public class GyroMouseInfo
 
     public double MinThreshold { get; set; } = DefaultMinThreshold;
 
-    [UsedImplicitly]
     private void OnMinCutoffChanged()
     {
         MinCutoffChanged?.Invoke(this, EventArgs.Empty);
@@ -41,7 +45,6 @@ public class GyroMouseInfo
 
     public event GyroMouseInfoEventHandler MinCutoffChanged;
 
-    [UsedImplicitly]
     private void OnBetaChanged()
     {
         BetaChanged?.Invoke(this, EventArgs.Empty);

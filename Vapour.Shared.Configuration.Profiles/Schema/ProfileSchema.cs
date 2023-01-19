@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.NetworkInformation;
 using System.Text.Json.Serialization;
 
-using JetBrains.Annotations;
+
 
 using Vapour.Shared.Common.Legacy;
 using Vapour.Shared.Common.Types;
@@ -13,12 +14,15 @@ namespace Vapour.Shared.Configuration.Profiles.Schema;
 /// <summary>
 ///     Controller profile definition.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class VapourProfile : 
     IEquatable<VapourProfile>,
     INotifyPropertyChanged, 
     IProfile
 {
-    public delegate void ProfilePropertyChangedEventHandler([CanBeNull] object sender,
+    public delegate void ProfilePropertyChangedEventHandler(object sender,
         ProfilePropertyChangedEventArgs e);
 
     /// <summary>
@@ -83,7 +87,6 @@ public class VapourProfile :
     /// <summary>
     ///     Dynamically built display name (for use in UI).
     /// </summary>
-    [UsedImplicitly]
     [JsonIgnore]
     public string ExtendedDisplayName =>
         IsImmutable
@@ -306,7 +309,7 @@ public class VapourProfile :
         return Id.Equals(other.Id);
     }
 
-    [CanBeNull] public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     ///     Returns a file name from a friendly profile display name.
@@ -356,9 +359,8 @@ public class VapourProfile :
         return new VapourProfile(index);
     }
 
-    [CanBeNull] public event IProfile.ProfilePropertyChangedEventHandler ProfilePropertyChanged;
+    public event IProfile.ProfilePropertyChangedEventHandler ProfilePropertyChanged;
 
-    [UsedImplicitly]
     public void OnPropertyChanged(string propertyName, object before, object after)
     {
         ProfilePropertyChanged?.Invoke(this, new ProfilePropertyChangedEventArgs(propertyName, before, after));
@@ -370,7 +372,7 @@ public class VapourProfile :
     /// </summary>
     /// <param name="handler">The <see cref="ProfilePropertyChangedEventHandler"/>.</param>
     /// <returns>This instance of <see cref="VapourProfile"/>.</returns>
-    public IProfile WithChangeNotification([CanBeNull] IProfile.ProfilePropertyChangedEventHandler handler)
+    public IProfile WithChangeNotification(IProfile.ProfilePropertyChangedEventHandler handler)
     {
         ProfilePropertyChanged += (sender, args) => { handler?.Invoke(sender, args); };
 

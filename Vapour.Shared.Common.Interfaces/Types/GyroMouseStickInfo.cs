@@ -1,10 +1,15 @@
-﻿using JetBrains.Annotations;
+﻿
+
+using System.Diagnostics.CodeAnalysis;
 
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types;
 
 [AddINotifyPropertyChangedInterface]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class GyroMouseStickInfo
 {
     public delegate void GyroMouseStickInfoEventHandler(GyroMouseStickInfo sender,
@@ -69,7 +74,6 @@ public class GyroMouseStickInfo
 
     public OutputStickAxes OutputStickDir { get; set; } = DefaultOutputStickAxes;
 
-    [UsedImplicitly]
     private void OnMinCutoffChanged()
     {
         MinCutoffChanged?.Invoke(this, EventArgs.Empty);

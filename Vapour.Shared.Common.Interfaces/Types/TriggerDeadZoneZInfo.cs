@@ -1,10 +1,15 @@
-﻿using JetBrains.Annotations;
+﻿
+
+using System.Diagnostics.CodeAnalysis;
 
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types;
 
 [AddINotifyPropertyChangedInterface]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class TriggerDeadZoneZInfo
 {
     // Trigger deadzone is expressed in axis units (bad old convention)
@@ -16,7 +21,6 @@ public class TriggerDeadZoneZInfo
 
     public double MaxOutput { get; set; } = 100.0;
 
-    [UsedImplicitly]
     private void OnDeadZoneChanged()
     {
         DeadZoneChanged?.Invoke(this, EventArgs.Empty);
@@ -24,7 +28,6 @@ public class TriggerDeadZoneZInfo
 
     public event EventHandler DeadZoneChanged;
 
-    [UsedImplicitly]
     private void OnMaxZoneChanged()
     {
         MaxZoneChanged?.Invoke(this, EventArgs.Empty);
@@ -32,7 +35,6 @@ public class TriggerDeadZoneZInfo
 
     public event EventHandler MaxZoneChanged;
 
-    [UsedImplicitly]
     private void OnMaxOutputChanged()
     {
         MaxOutputChanged?.Invoke(this, EventArgs.Empty);

@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿
+
+using System.Diagnostics.CodeAnalysis;
 
 using PropertyChanged;
 
@@ -21,6 +23,9 @@ public enum TwoStageTriggerMode : uint
 }
 
 [AddINotifyPropertyChangedInterface]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class TriggerOutputSettings
 {
     private const TwoStageTriggerMode DEFAULT_TRIG_MODE = TwoStageTriggerMode.Disabled;
@@ -35,7 +40,6 @@ public class TriggerOutputSettings
 
     public TriggerEffects TriggerEffect { get; set; } = DEFAULT_TRIGGER_EFFECT;
 
-    [UsedImplicitly]
     private void OnTwoStageModeChanged()
     {
         TwoStageModeChanged?.Invoke(this, EventArgs.Empty);
@@ -43,7 +47,6 @@ public class TriggerOutputSettings
 
     public event EventHandler TwoStageModeChanged;
 
-    [UsedImplicitly]
     private void OnTriggerEffectChanged()
     {
         TriggerEffectChanged?.Invoke(this, EventArgs.Empty);

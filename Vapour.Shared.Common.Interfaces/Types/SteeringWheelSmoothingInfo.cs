@@ -1,10 +1,15 @@
-﻿using JetBrains.Annotations;
+﻿
+
+using System.Diagnostics.CodeAnalysis;
 
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types;
 
 [AddINotifyPropertyChangedInterface]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class SteeringWheelSmoothingInfo
 {
     public delegate void SmoothingInfoEventHandler(SteeringWheelSmoothingInfo sender, EventArgs args);
@@ -15,7 +20,6 @@ public class SteeringWheelSmoothingInfo
 
     public bool Enabled { get; set; }
 
-    [UsedImplicitly]
     private void OnMinCutoffChanged()
     {
         MinCutoffChanged?.Invoke(this, EventArgs.Empty);
@@ -23,7 +27,6 @@ public class SteeringWheelSmoothingInfo
 
     public event SmoothingInfoEventHandler MinCutoffChanged;
 
-    [UsedImplicitly]
     private void OnBetaChanged()
     {
         BetaChanged?.Invoke(this, EventArgs.Empty);

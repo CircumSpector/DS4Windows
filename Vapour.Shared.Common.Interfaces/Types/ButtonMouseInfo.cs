@@ -1,10 +1,15 @@
-﻿using JetBrains.Annotations;
+﻿
+
+using System.Diagnostics.CodeAnalysis;
 
 using PropertyChanged;
 
 namespace Vapour.Shared.Common.Types;
 
 [AddINotifyPropertyChangedInterface]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ButtonMouseInfo
 {
     //public const double MOUSESTICKANTIOFFSET = 0.0128;
@@ -30,7 +35,6 @@ public class ButtonMouseInfo
 
     public double ButtonVerticalScale { get; set; } = DefaultButtonVerticalScale;
 
-    [UsedImplicitly]
     private void OnButtonSensitivityChanged()
     {
         ButtonMouseInfoChanged?.Invoke(this, EventArgs.Empty);
