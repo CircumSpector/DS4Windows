@@ -85,28 +85,49 @@ This example shows that we're reading and processing 507 input reports per secon
 
 ## Sources & 3rd party credits
 
-This application benefits from these awesome projects (appearance in no special order):
+This application benefits from these awesome projects ❤ (appearance in no special order):
 
-- [AutoMapper](https://automapper.org/)
-- [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
-- [FastDeepCloner](https://github.com/AlenToma/FastDeepCloner)
+### IPC (HTTP, WebSockets)
+
 - [FastEndpoints](https://fast-endpoints.com/)
-- [Fody](https://github.com/Fody/Fody)
+- [Polly](https://github.com/App-vNext/Polly/)
+- [Polly.Contrib.WaitAndRetry](https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry)
+- [Swashbuckle.AspNetCore](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
+- [NSwag](https://github.com/RicoSuter/NSwag)
+- [Serilog.AspNetCore](https://github.com/serilog/serilog-aspnetcore)
+
+### UI/UX
+
 - [Hardcodet NotifyIcon for WPF](https://github.com/hardcodet/wpf-notifyicon)
-- [JetBrains.Annotations](https://www.jetbrains.com/help/resharper/Code_Analysis__Code_Annotations.html)
 - [Material Design In XAML Toolkit](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
 - [Material Design Extensions](https://spiegelp.github.io/MaterialDesignExtensions/)
+
+### Data transformation, Source generatores
+
+- [AutoMapper](https://automapper.org/)
+- [FastDeepCloner](https://github.com/AlenToma/FastDeepCloner)
 - [C#/Win32 P/Invoke Source Generator](https://github.com/Microsoft/CsWin32)
+- [Fody](https://github.com/Fody/Fody)
+- [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
+
+### Device handling, driver interaction
+
 - [Nefarius.Drivers.HidHide](https://github.com/nefarius/Nefarius.Drivers.HidHide)
 - [Nefarius' Identinator](https://vigem.org/projects/Identinator/)
 - [Nefarius.Utilities.DeviceManagement](https://github.com/nefarius/Nefarius.Utilities.DeviceManagement)
 - [ViGEm Client .NET SDK](https://github.com/ViGEm/ViGEm.NET)
-- [NSwag](https://github.com/RicoSuter/NSwag)
+
+### Logging, diagnostics
+
+- [Serilog](https://serilog.net/)
 - [OpenTelemetry](https://opentelemetry.io/)
-- [Polly](https://github.com/App-vNext/Polly/)
-- [Polly.Contrib.WaitAndRetry](https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry)
-- [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
-- [Serilog.AspNetCore](https://github.com/serilog/serilog-aspnetcore)
-- [Swashbuckle.AspNetCore](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
+
+### Processes, games
+
 - [Warden.NET](https://github.com/RainwayApp/warden)
 - [Vdf.NET](https://github.com/shravan2x/Gameloop.Vdf)
+
+### Misc
+
+- [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
+- [JetBrains.Annotations](https://www.jetbrains.com/help/resharper/Code_Analysis__Code_Annotations.html)
