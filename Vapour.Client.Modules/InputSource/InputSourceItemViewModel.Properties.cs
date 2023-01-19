@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using Vapour.Shared.Common.Types;
@@ -6,6 +7,7 @@ using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.InputSource;
 
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class InputSourceItemViewModel
 {
     private decimal _batteryPercentage;
