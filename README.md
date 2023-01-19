@@ -109,6 +109,7 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 - [C#/Win32 P/Invoke Source Generator](https://github.com/Microsoft/CsWin32)
 - [Fody](https://github.com/Fody/Fody)
 - [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
+- [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
 
 ### Device handling, driver interaction
 
@@ -126,7 +127,3 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 
 - [Warden.NET](https://github.com/RainwayApp/warden)
 - [Vdf.NET](https://github.com/shravan2x/Gameloop.Vdf)
-
-### Misc
-
-- [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
