@@ -6,12 +6,14 @@ using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.InputSource;
-public class GameConfigurationItemViewModel : ViewModel<IGameConfigurationItemViewModel>, IGameConfigurationItemViewModel
+
+public sealed class GameConfigurationItemViewModel : ViewModel<IGameConfigurationItemViewModel>,
+    IGameConfigurationItemViewModel
 {
     private readonly IInputSourceServiceClient _inputSourceServiceClient;
     private InputSourceConfiguration _gameConfiguration;
     private string _inputSourceKey;
-    private bool _isConfigurationSet = false;
+    private bool _isConfigurationSet;
 
     public GameConfigurationItemViewModel(IInputSourceServiceClient inputSourceServiceClient)
     {
@@ -53,13 +55,7 @@ public class GameConfigurationItemViewModel : ViewModel<IGameConfigurationItemVi
         }
     }
 
-    public string OutputGroupName
-    {
-        get
-        {
-            return $"{GameId}_OutputGroup";
-        }
-    }
+    public string OutputGroupName => $"{GameId}_OutputGroup";
 
     public void SetGameConfiguration(string inputSourceKey, InputSourceConfiguration configuration)
     {
@@ -77,9 +73,10 @@ public class GameConfigurationItemViewModel : ViewModel<IGameConfigurationItemVi
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         if (_isConfigurationSet && (e.PropertyName == nameof(IsPassThru) ||
-            e.PropertyName == nameof(OutputDeviceType)))
+                                    e.PropertyName == nameof(OutputDeviceType)))
         {
-            _inputSourceServiceClient.SaveGameConfiguration(_inputSourceKey, _gameConfiguration.GameInfo, _gameConfiguration);
+            _inputSourceServiceClient.SaveGameConfiguration(_inputSourceKey, _gameConfiguration.GameInfo,
+                _gameConfiguration);
         }
 
         base.OnPropertyChanged(e);

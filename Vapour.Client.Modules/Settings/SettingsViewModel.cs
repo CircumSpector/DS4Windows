@@ -10,6 +10,7 @@ namespace Vapour.Client.Modules.Settings;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewModel, ISettingsView>, ISettingsViewModel
 {
     private readonly ISystemServiceClient _systemServiceClient;

@@ -7,12 +7,15 @@ using Vapour.Client.ServiceClients;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.InputSource;
-public class AddGameListViewModel : ViewModel<IAddGameListViewModel>, IAddGameListViewModel
+
+public sealed class AddGameListViewModel : ViewModel<IAddGameListViewModel>, IAddGameListViewModel
 {
     private readonly IInputSourceServiceClient _inputSourceServiceClient;
-    private Func<Task> _onCompletedAction;
     private string _inputSourceKey;
-    
+    private Func<Task> _onCompletedAction;
+
+    private GameInfo _selectedGame;
+
     public AddGameListViewModel(IInputSourceServiceClient inputSourceServiceClient)
     {
         _inputSourceServiceClient = inputSourceServiceClient;
@@ -24,19 +27,18 @@ public class AddGameListViewModel : ViewModel<IAddGameListViewModel>, IAddGameLi
     public ObservableCollection<GameInfo> Games { get; private set; }
     public RelayCommand AddGameCommand { get; }
     public RelayCommand CancelCommand { get; }
-    
-    private GameInfo _selectedGame;
+
     public GameInfo SelectedGame
     {
         get => _selectedGame;
         set => SetProperty(ref _selectedGame, value);
-    } 
-    
+    }
+
     public async Task Initialize(string inputSourceKey, GameSource gameSource, Func<Task> onCompleted)
     {
         _onCompletedAction = onCompleted;
         _inputSourceKey = inputSourceKey;
-        var gameList = await _inputSourceServiceClient.GetGameSelectionList(inputSourceKey, gameSource);
+        List<GameInfo> gameList = await _inputSourceServiceClient.GetGameSelectionList(inputSourceKey, gameSource);
         Games = new ObservableCollection<GameInfo>(gameList);
     }
 

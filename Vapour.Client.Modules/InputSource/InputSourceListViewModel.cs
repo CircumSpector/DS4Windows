@@ -4,8 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 
 using CommunityToolkit.Mvvm.Input;
 
-
-
 using MaterialDesignThemes.Wpf;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -26,14 +24,15 @@ namespace Vapour.Client.Modules.InputSource;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class InputSourceListViewModel :
     NavigationTabViewModel<IInputSourceListViewModel, IInputSourceListView>,
     IInputSourceListViewModel
 {
     private readonly IInputSourceServiceClient _inputSourceService;
-    private readonly IViewModelFactory _viewModelFactory;
     private readonly IProfileServiceClient _profilesService;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IViewModelFactory _viewModelFactory;
 
     public InputSourceListViewModel(
         IProfileServiceClient profilesService,
@@ -61,7 +60,7 @@ public sealed class InputSourceListViewModel :
 
         _inputSourceService.InInputSourceCreated += CreateInputSourceItem;
         _inputSourceService.OnInputSourceRemoved += RemoveInputSourceItem;
-        _inputSourceService.OnInputSourceConfigurationChanged += OnInputSourceConfigurationChanged; 
+        _inputSourceService.OnInputSourceConfigurationChanged += OnInputSourceConfigurationChanged;
         _inputSourceService.StartListening();
         //_profilesService.StartListening();
     }
@@ -148,18 +147,22 @@ public sealed class InputSourceListViewModel :
 
     private async void OnConfigure(IInputSourceItemViewModel inputSourceItem)
     {
-        IInputSourceConfigureViewModel inputSourceConfigureViewModel = await _viewModelFactory.Create<IInputSourceConfigureViewModel, IInputSourceConfigureView>();
+        IInputSourceConfigureViewModel inputSourceConfigureViewModel =
+            await _viewModelFactory.Create<IInputSourceConfigureViewModel, IInputSourceConfigureView>();
         await inputSourceConfigureViewModel.SetInputSourceToConfigure(inputSourceItem);
-        await DialogHost.Show(inputSourceConfigureViewModel.MainView, Constants.DialogHostName, new DialogClosingEventHandler((o, e) =>
-        {
-            inputSourceConfigureViewModel.Dispose();
-        }));
+        await DialogHost.Show(inputSourceConfigureViewModel.MainView, Constants.DialogHostName,
+            new DialogClosingEventHandler((o, e) =>
+            {
+                inputSourceConfigureViewModel.Dispose();
+            }));
     }
 
     [SuppressPropertyChangedWarnings]
-    private void OnInputSourceConfigurationChanged(InputSourceConfigurationChangedMessage inputSourceConfigurationChangedMessage)
+    private void OnInputSourceConfigurationChanged(
+        InputSourceConfigurationChangedMessage inputSourceConfigurationChangedMessage)
     {
-        var inputSource = InputSourceItems.SingleOrDefault(i => i.InputSourceKey == inputSourceConfigurationChangedMessage.InputSourceKey);
+        IInputSourceItemViewModel inputSource = InputSourceItems.SingleOrDefault(i =>
+            i.InputSourceKey == inputSourceConfigurationChangedMessage.InputSourceKey);
         if (inputSource != null)
         {
             inputSource.ConfigurationSetFromUser = false;

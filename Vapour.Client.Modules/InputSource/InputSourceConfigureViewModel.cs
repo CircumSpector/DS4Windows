@@ -11,10 +11,16 @@ using Vapour.Client.ServiceClients;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.InputSource;
-public class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewModel>, IInputSourceConfigureViewModel
+
+public sealed class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewModel>,
+    IInputSourceConfigureViewModel
 {
-    private readonly IViewModelFactory _viewModelFactory;
     private readonly IInputSourceServiceClient _inputSourceServiceClient;
+    private readonly IViewModelFactory _viewModelFactory;
+
+    private ObservableCollection<IGameConfigurationItemViewModel> _gameConfigurations;
+
+    private IView _gameListView;
 
     public InputSourceConfigureViewModel(IViewModelFactory viewModelFactory,
         IInputSourceServiceClient inputSourceServiceClient)
@@ -24,20 +30,20 @@ public class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewM
         AddGameCommand = new RelayCommand<GameSource>(OpenAddGame);
         DeleteGameConfigurationCommand = new RelayCommand<IGameConfigurationItemViewModel>(OnDeleteGameConfiguration);
     }
-    
+
     public RelayCommand<GameSource> AddGameCommand { get; }
     public RelayCommand<IGameConfigurationItemViewModel> DeleteGameConfigurationCommand { get; }
 
-    public IInputSourceItemViewModel InputSourceItem { get; private set; }
-
-    private ObservableCollection<IGameConfigurationItemViewModel> _gameConfigurations;
     public ObservableCollection<IGameConfigurationItemViewModel> GameConfigurations
     {
         get => _gameConfigurations;
-        set => SetProperty(ref _gameConfigurations, value);
+        private set => SetProperty(ref _gameConfigurations, value);
     }
 
-    private IView _gameListView;
+    public bool IsGameListPresent => GameListView != null;
+
+    public IInputSourceItemViewModel InputSourceItem { get; private set; }
+
     public IView GameListView
     {
         get => _gameListView;
@@ -48,22 +54,16 @@ public class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewM
         }
     }
 
-    public bool IsGameListPresent
-    {
-        get
-        {
-            return GameListView != null;
-        }
-    }
-
     public async Task SetInputSourceToConfigure(IInputSourceItemViewModel inputSourceItemViewModel)
     {
         InputSourceItem = inputSourceItemViewModel;
-        var configurations = await _inputSourceServiceClient.GetGameInputSourceConfigurations(inputSourceItemViewModel.InputSourceKey);
+        List<InputSourceConfiguration> configurations =
+            await _inputSourceServiceClient.GetGameInputSourceConfigurations(inputSourceItemViewModel.InputSourceKey);
         GameConfigurations = new ObservableCollection<IGameConfigurationItemViewModel>();
-        foreach (var inputSourceConfiguration in configurations.OrderBy(c => c.GameInfo.GameName))
+        foreach (InputSourceConfiguration inputSourceConfiguration in configurations.OrderBy(c => c.GameInfo.GameName))
         {
-            var viewModel = await _viewModelFactory.CreateViewModel<IGameConfigurationItemViewModel>();
+            IGameConfigurationItemViewModel viewModel =
+                await _viewModelFactory.CreateViewModel<IGameConfigurationItemViewModel>();
             viewModel.SetGameConfiguration(InputSourceItem.InputSourceKey, inputSourceConfiguration);
             GameConfigurations.Add(viewModel);
         }
@@ -85,10 +85,11 @@ public class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewM
         }
         else
         {
-            var dialog = new SaveFileDialog();
-            dialog.Title = "Select a Game Folder";
-            dialog.Filter = "Directory|*.this.directory";
-            dialog.FileName = "select";
+            SaveFileDialog dialog = new()
+            {
+                Title = "Select a Game Folder", Filter = "Directory|*.this.directory", FileName = "select"
+            };
+
             if (dialog.ShowDialog() == true)
             {
                 string path = dialog.FileName;
@@ -98,9 +99,10 @@ public class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewM
                 // If user has changed the filename, create the new directory
                 if (Directory.Exists(path))
                 {
-                    var gameName = new DirectoryInfo(path).Name;
-                    var gameInfo = new GameInfo { GameId = path, GameName = gameName, GameSource = GameSource.Folder };
-                    await _inputSourceServiceClient.SaveGameConfiguration(InputSourceItem.InputSourceKey, gameInfo, null);
+                    string gameName = new DirectoryInfo(path).Name;
+                    GameInfo gameInfo = new() { GameId = path, GameName = gameName, GameSource = GameSource.Folder };
+                    await _inputSourceServiceClient.SaveGameConfiguration(InputSourceItem.InputSourceKey, gameInfo,
+                        null);
                     await PopulateGameConfigurations();
                 }
             }
@@ -111,11 +113,13 @@ public class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewM
     {
         ResetGameConfigurations();
 
-        var configurations = await _inputSourceServiceClient.GetGameInputSourceConfigurations(InputSourceItem.InputSourceKey);
+        List<InputSourceConfiguration> configurations =
+            await _inputSourceServiceClient.GetGameInputSourceConfigurations(InputSourceItem.InputSourceKey);
         GameConfigurations = new ObservableCollection<IGameConfigurationItemViewModel>();
-        foreach (var inputSourceConfiguration in configurations.OrderBy(c => c.GameInfo.GameName))
+        foreach (InputSourceConfiguration inputSourceConfiguration in configurations.OrderBy(c => c.GameInfo.GameName))
         {
-            var viewModel = await _viewModelFactory.CreateViewModel<IGameConfigurationItemViewModel>();
+            IGameConfigurationItemViewModel viewModel =
+                await _viewModelFactory.CreateViewModel<IGameConfigurationItemViewModel>();
             viewModel.SetGameConfiguration(InputSourceItem.InputSourceKey, inputSourceConfiguration);
             GameConfigurations.Add(viewModel);
         }
@@ -132,7 +136,7 @@ public class InputSourceConfigureViewModel : ViewModel<InputSourceConfigureViewM
     {
         if (GameConfigurations != null)
         {
-            foreach (var viewModel in GameConfigurations)
+            foreach (IGameConfigurationItemViewModel viewModel in GameConfigurations)
             {
                 viewModel.Dispose();
             }
