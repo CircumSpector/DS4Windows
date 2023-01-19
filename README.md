@@ -130,4 +130,3 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 ### Misc
 
 - [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
-- [JetBrains.Annotations](https://www.jetbrains.com/help/resharper/Code_Analysis__Code_Annotations.html)
