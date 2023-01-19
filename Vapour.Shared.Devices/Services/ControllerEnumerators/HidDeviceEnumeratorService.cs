@@ -18,7 +18,7 @@ using Vapour.Shared.Devices.HID;
 namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 /// <summary>
-///     Potential exception thrown by <see cref="HidDeviceEnumeratorService"/>.
+///     Potential exception thrown by <see cref="HidDeviceEnumeratorService" />.
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class HidDeviceEnumeratorException : Exception
@@ -27,6 +27,9 @@ public sealed class HidDeviceEnumeratorException : Exception
     {
     }
 
+    /// <summary>
+    ///     Native Win32 API error code.
+    /// </summary>
     public int NativeError { get; } = Marshal.GetLastWin32Error();
 }
 
@@ -94,11 +97,15 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         _deviceNotificationListener.StartListen(_hidClassInterfaceGuid);
     }
 
+    /// <inheritdoc />
     public void Stop()
     {
         _deviceNotificationListener.StopListen(_hidClassInterfaceGuid);
     }
 
+    /// <summary>
+    ///     Gets invoked on new device arrival.
+    /// </summary>
     private void DeviceNotificationListenerOnDeviceArrived(DeviceEventArgs args)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -119,11 +126,17 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         }
     }
 
+    /// <summary>
+    ///     Gets invoked on device surprise removal.
+    /// </summary>
     private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
     {
         RemoveDevice(args.SymLink);
     }
 
+    /// <summary>
+    ///     Builds new <see cref="HidDevice" /> and initializes basic properties.
+    /// </summary>
     private void CreateNewHidDevice(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -171,7 +184,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
 
         GetHidCapabilities(path, out HIDP_CAPS caps);
 
-        HidDevice hidDevice = new HidDevice
+        HidDevice hidDevice = new()
         {
             Path = path,
             InstanceId = device.InstanceId.ToUpper(),
@@ -190,6 +203,9 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         DeviceArrived?.Invoke(hidDevice);
     }
 
+    /// <summary>
+    ///     Handles device removal from the system.
+    /// </summary>
     private void RemoveDevice(string symLink)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -210,7 +226,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
     ///     Attempts to open device.
     /// </summary>
     /// <param name="path">The symbolic link path of the device instance.</param>
-    /// <returns>True if successful, false if opened exclusively already.</returns>
+    /// <returns>True if successful, false if opened exclusively already or nonexistent.</returns>
     /// <exception cref="Exception">Throws exception on any other unexpected error case.</exception>
     private static bool TestDeviceAccess(string path)
     {
@@ -234,6 +250,9 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         };
     }
 
+    /// <summary>
+    ///     Fetches manufacturer string from device' descriptors.
+    /// </summary>
     private unsafe string GetHidManufacturerString(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -262,6 +281,9 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         return manufacturerString;
     }
 
+    /// <summary>
+    ///     Fetches product string from device' descriptors.
+    /// </summary>
     private unsafe string GetHidProductString(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -290,6 +312,9 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         return productName;
     }
 
+    /// <summary>
+    ///     Fetches serial number string from device' descriptors.
+    /// </summary>
     private unsafe string GetHidSerialNumberString(string path)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -318,6 +343,9 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         return serialNumberString;
     }
 
+    /// <summary>
+    ///     Fetches <see cref="HIDD_ATTRIBUTES" /> from device.
+    /// </summary>
     private bool GetHidAttributes(string path, out HIDD_ATTRIBUTES attributes)
     {
         using Activity activity = _coreActivity.StartActivity(
@@ -347,6 +375,9 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         return true;
     }
 
+    /// <summary>
+    ///     Fetches <see cref="HIDP_CAPS" /> from device.
+    /// </summary>
     private void GetHidCapabilities(string path, out HIDP_CAPS caps)
     {
         using Activity activity = _coreActivity.StartActivity(
