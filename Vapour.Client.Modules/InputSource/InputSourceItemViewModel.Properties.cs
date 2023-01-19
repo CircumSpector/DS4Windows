@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.Services.Configuration;
@@ -10,23 +9,14 @@ namespace Vapour.Client.Modules.InputSource;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class InputSourceItemViewModel
 {
-    private decimal _batteryPercentage;
-
-    private BitmapImage _connectionTypeImage;
+    private IInputSourceControllerItemViewModel _controller1;
+    private IInputSourceControllerItemViewModel _controller2;
 
     private SolidColorBrush _currentColor;
 
     private InputSourceConfiguration _currentConfiguration;
 
-    private BitmapImage _deviceImage;
-
-    private string _displayText;
-    
     private string _inputSourceKey;
-
-    private bool _isFiltered;
-    
-    private string _serial;
 
     public bool IsProfileSetEnabled => !IsPassthru && OutputDeviceType != OutputDeviceType.None;
 
@@ -75,39 +65,9 @@ public sealed partial class InputSourceItemViewModel
     public string InputSourceKey
     {
         get => _inputSourceKey;
-        private set => SetProperty(ref _inputSourceKey, value);
+        set => SetProperty(ref _inputSourceKey, value);
     }
-
-    public string Serial
-    {
-        get => _serial;
-        private set => SetProperty(ref _serial, value);
-    }
-
-    public BitmapImage DeviceImage
-    {
-        get => _deviceImage;
-        private set => SetProperty(ref _deviceImage, value);
-    }
-
-    public string DisplayText
-    {
-        get => _displayText;
-        private set => SetProperty(ref _displayText, value);
-    }
-
-    public BitmapImage ConnectionTypeImage
-    {
-        get => _connectionTypeImage;
-        private set => SetProperty(ref _connectionTypeImage, value);
-    }
-
-    public decimal BatteryPercentage
-    {
-        get => _batteryPercentage;
-        private set => SetProperty(ref _batteryPercentage, value);
-    }
-
+    
     public Guid SelectedProfileId
     {
         get => CurrentConfiguration.ProfileId;
@@ -127,15 +87,6 @@ public sealed partial class InputSourceItemViewModel
         set => SetProperty(ref _currentColor, value);
     }
 
-    public bool IsFiltered
-    {
-        get => _isFiltered;
-        set => SetProperty(ref _isFiltered, value);
-    }
-
-    public string InstanceId { get; set; }
-    public string ParentInstance { get; set; }
-
     public InputSourceConfiguration CurrentConfiguration
     {
         get => _currentConfiguration;
@@ -149,6 +100,26 @@ public sealed partial class InputSourceItemViewModel
             OnPropertyChanged(nameof(IsGameConfiguration));
             OnPropertyChanged(nameof(GameInfo));
             OnPropertyChanged(nameof(GameSource));
+        }
+    }
+
+    public IInputSourceControllerItemViewModel Controller1
+    {
+        get => _controller1;
+        set => SetProperty(ref _controller1, value);
+    }
+
+    public IInputSourceControllerItemViewModel Controller2
+    {
+        get => _controller2;
+        set => SetProperty(ref _controller2, value);
+    }
+
+    public bool HasSecondController
+    {
+        get
+        {
+            return Controller2 != null;
         }
     }
 }

@@ -10,13 +10,13 @@ namespace Vapour.Client.ServiceClients;
 
 public sealed partial class InputSourceServiceClient
 {
-    public async Task<List<InputSourceCreatedMessage>> GetInputSourceList()
+    public async Task<List<InputSourceMessage>> GetInputSourceList()
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
         HttpResponseMessage result = await client.GetAsync("/api/inputsource/list");
         if (result.IsSuccessStatusCode)
         {
-            return await result.Content.ReadFromJsonAsync<List<InputSourceCreatedMessage>>();
+            return await result.Content.ReadFromJsonAsync<List<InputSourceMessage>>();
         }
 
         throw new Exception($"Could not get the input source list {result.ReasonPhrase}");

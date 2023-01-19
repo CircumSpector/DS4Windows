@@ -7,5 +7,5 @@ namespace Vapour.Server.InputSource;
 /// </summary>
 public interface IInputSourceMessageForwarder
 {
-    InputSourceCreatedMessage MapInputSourceCreated(IInputSource inputSource);
+    InputSourceMessage MapInputSourceCreated(IInputSource inputSource);
 }

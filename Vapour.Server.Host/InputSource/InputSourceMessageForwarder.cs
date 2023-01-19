@@ -40,28 +40,50 @@ public sealed class InputSourceMessageForwarder : IInputSourceMessageForwarder
         };
     }
 
-    public InputSourceCreatedMessage MapInputSourceCreated(IInputSource inputSource)
+    public InputSourceMessage MapInputSourceCreated(IInputSource inputSource)
     {
-        var hidDevice = inputSource.Controller1;
-        InputSourceCreatedMessage message = new()
+        InputSourceMessage message = new()
         {
-            Description = hidDevice.SourceDevice.Description,
-            DeviceType = hidDevice.CurrentDeviceInfo.DeviceType,
-            DisplayName = hidDevice.CurrentDeviceInfo.Name,
-            InstanceId = hidDevice.SourceDevice.InstanceId,
-            ManufacturerString = hidDevice.SourceDevice.ManufacturerString,
-            ParentInstance = hidDevice.SourceDevice.ParentInstance,
-            Path = hidDevice.SourceDevice.Path,
-            ProductString = hidDevice.SourceDevice.ProductString,
-            SerialNumberString = hidDevice.SerialString,
-            Connection = hidDevice.Connection.GetValueOrDefault(),
-            CurrentConfiguration = hidDevice.CurrentConfiguration,
-            IsFiltered = hidDevice.IsFiltered,
-            Vid = hidDevice.CurrentDeviceInfo.Vid,
-            Pid = hidDevice.CurrentDeviceInfo.Pid,
-            InputSourceKey = inputSource.InputSourceKey
+            CurrentConfiguration = inputSource.Configuration,
+            InputSourceKey = inputSource.InputSourceKey,
+            Controller1 = new()
+            {
+                Description = inputSource.Controller1.SourceDevice.Description,
+                DeviceType = inputSource.Controller1.CurrentDeviceInfo.DeviceType,
+                DisplayName = inputSource.Controller1.CurrentDeviceInfo.Name,
+                InstanceId = inputSource.Controller1.SourceDevice.InstanceId,
+                ManufacturerString = inputSource.Controller1.SourceDevice.ManufacturerString,
+                ParentInstance = inputSource.Controller1.SourceDevice.ParentInstance,
+                Path = inputSource.Controller1.SourceDevice.Path,
+                ProductString = inputSource.Controller1.SourceDevice.ProductString,
+                SerialNumberString = inputSource.Controller1.SerialString,
+                Connection = inputSource.Controller1.Connection.GetValueOrDefault(),
+                IsFiltered = inputSource.Controller1.IsFiltered,
+                Vid = inputSource.Controller1.CurrentDeviceInfo.Vid,
+                Pid = inputSource.Controller1.CurrentDeviceInfo.Pid,
+            }
         };
-
+        
+        if (inputSource.Controller2 != null)
+        {
+            message.Controller2 = new()
+            {
+                Description = inputSource.Controller2.SourceDevice.Description,
+                DeviceType = inputSource.Controller2.CurrentDeviceInfo.DeviceType,
+                DisplayName = inputSource.Controller2.CurrentDeviceInfo.Name,
+                InstanceId = inputSource.Controller2.SourceDevice.InstanceId,
+                ManufacturerString = inputSource.Controller2.SourceDevice.ManufacturerString,
+                ParentInstance = inputSource.Controller2.SourceDevice.ParentInstance,
+                Path = inputSource.Controller2.SourceDevice.Path,
+                ProductString = inputSource.Controller2.SourceDevice.ProductString,
+                SerialNumberString = inputSource.Controller2.SerialString,
+                Connection = inputSource.Controller2.Connection.GetValueOrDefault(),
+                IsFiltered = inputSource.Controller2.IsFiltered,
+                Vid = inputSource.Controller2.CurrentDeviceInfo.Vid,
+                Pid = inputSource.Controller2.CurrentDeviceInfo.Pid,
+            };
+        }
+        
         return message;
     }
 }
