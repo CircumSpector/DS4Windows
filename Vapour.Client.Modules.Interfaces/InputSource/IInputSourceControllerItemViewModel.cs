@@ -14,4 +14,5 @@ public interface IInputSourceControllerItemViewModel : IViewModel<IInputSourceCo
     bool IsFiltered { get; set; }
     string InstanceId { get; set; }
     string ParentInstance { get; set; }
+    string DeviceKey { get; set; }
 }

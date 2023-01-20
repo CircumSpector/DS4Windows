@@ -26,8 +26,7 @@ public class InputSourceAutoMapper : Profile
                 cfg => cfg.MapFrom(src => InputSourceControllerItemViewModel.GetDeviceImage(src.DisplayName)));
 
         CreateMap<InputSourceMessage, InputSourceItemViewModel>()
-            .ForMember(dest => dest.Controller1, cfg => cfg.Ignore())
-            .ForMember(dest => dest.Controller2, cfg => cfg.Ignore())
+            .ForMember(dest => dest.Controllers, cfg => cfg.Ignore())
             .ForMember(dest => dest.InputSourceKey, cfg => cfg.MapFrom(src => src.InputSourceKey))
             .ForMember(dest => dest.CurrentConfiguration, cfg => cfg.MapFrom(src => src.CurrentConfiguration));
     }

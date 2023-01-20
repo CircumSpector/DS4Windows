@@ -16,6 +16,8 @@ public class InputSourceControllerItemViewModel : ViewModel<IInputSourceControll
     private bool _isFiltered;
 
     private string _serial;
+
+    private string _deviceKey;
     private const string ImageLocationRoot =
         "pack://application:,,,/Vapour.Client.Modules;component/InputSource/Images";
 
@@ -79,6 +81,12 @@ public class InputSourceControllerItemViewModel : ViewModel<IInputSourceControll
     {
         get => _isFiltered;
         set => SetProperty(ref _isFiltered, value);
+    }
+
+    public string DeviceKey
+    {
+        get => _deviceKey;
+        set => SetProperty(ref _deviceKey, value);
     }
 
     public string InstanceId { get; set; }

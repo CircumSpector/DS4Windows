@@ -5,5 +5,5 @@ public interface IOutputProcessor
     IInputSource InputSource { get; }
     void StartOutputProcessing();
     void StopOutputProcessing();
-    void SetDevice(IInputSource inputSource);
+    void SetInputSource(IInputSource inputSource);
 }

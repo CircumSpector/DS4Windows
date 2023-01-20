@@ -25,15 +25,13 @@ internal sealed class InputReportProcessorService : IInputReportProcessorService
 
     public void StartProcessing(IInputSource inputSource)
     {
-        inputSource.ConfigurationChanged += InputSource_ConfigurationChanged;
-
         if (inputSource.Configuration.OutputDeviceType != OutputDeviceType.None && _processingItems.All(i => i.InputSource.InputSourceKey != inputSource.InputSourceKey))
         {
             var inputReportProcessor = new InputReportProcessor(_serviceProvider);
             var outputProcessor = new OutputProcessor(inputReportProcessor, _serviceProvider);
 
             inputReportProcessor.SetDevice(inputSource);
-            outputProcessor.SetDevice(inputSource);
+            outputProcessor.SetInputSource(inputSource);
 
             _processingItems.Add(new ReportProcessingItem
             {
@@ -50,8 +48,6 @@ internal sealed class InputReportProcessorService : IInputReportProcessorService
 
     public void StopProcessing(IInputSource inputSource)
     {
-        inputSource.ConfigurationChanged -= InputSource_ConfigurationChanged;
-
         var existing = _processingItems.SingleOrDefault(c => c.InputSource.InputSourceKey == inputSource.InputSourceKey);
 
         if (existing != null)
@@ -59,28 +55,6 @@ internal sealed class InputReportProcessorService : IInputReportProcessorService
             existing.InputReportProcessor.StopInputReportReader();
             existing.OutputProcessor.StopOutputProcessing();
             _processingItems.Remove(existing);
-        }
-    }
-
-    private void InputSource_ConfigurationChanged(object sender, InputSourceConfiguration e)
-    {
-        var inputSource = (InputSource)sender;
-        if (_filterService.FilterUnfilterIfNeeded(inputSource.Controller1))
-        {
-            //stopping and starting will happen as a result of filter action needed
-            return;
-        }
-
-        var existing = _processingItems.SingleOrDefault(c => c.InputSource.InputSourceKey == inputSource.InputSourceKey);
-        if (existing != null)
-        {
-            StopProcessing(existing.InputSource);
-            Thread.Sleep(500);
-            StartProcessing(existing.InputSource);
-        }
-        else
-        {
-            StartProcessing(inputSource);
         }
     }
 

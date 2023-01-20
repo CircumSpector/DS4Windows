@@ -1,4 +1,5 @@
-﻿using Vapour.Shared.Devices.HID;
+﻿using Vapour.Shared.Common.Types;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -48,6 +49,7 @@ public interface IFilterService
     ///     Check if <see cref="ICompatibleHidDevice"/> needs unfiltering and performs it, if necessary.
     /// </summary>
     /// <param name="device">The device to unfilter.</param>
+    /// <param name="outputDeviceType">The output device type of the configuration</param>
     /// <returns>True on success, false otherwise.</returns>
-    bool FilterUnfilterIfNeeded(ICompatibleHidDevice device);
+    bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType);
 }

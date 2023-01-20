@@ -52,7 +52,7 @@ internal sealed class OutputProcessor : IOutputProcessor
         }
     }
 
-    public void SetDevice(IInputSource inputSource)
+    public void SetInputSource(IInputSource inputSource)
     {
         InputSource = inputSource;
     }

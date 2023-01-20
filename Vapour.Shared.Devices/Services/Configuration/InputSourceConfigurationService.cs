@@ -17,6 +17,8 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
     private Dictionary<string, InputSourceConfiguration> _inputSourceConfigurations;
     private Dictionary<string, List<InputSourceConfiguration>> _inputSourceGameConfigurations;
 
+    public const string MultiControllerKeySeparator = "::::";
+
     public InputSourceConfigurationService(
         IGlobalStateService globalStateService,
         IProfilesService profilesService,
@@ -85,11 +87,21 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
         if (inputSourceConfiguration == null)
         {
             newConfig = GetDefaultInputSourceConfiguration();
+            newConfig.Controllers.Add(new InputSourceConfigurationController()
+            {
+                DeviceKey = inputSource.GetControllers()[0].DeviceKey,
+                Index = 0
+            });
             shouldSave = true;
         }
         else if (_profilesService.AvailableProfiles.All(p => p.Key != inputSourceConfiguration.ProfileId))
         {
             newConfig = GetDefaultInputSourceConfiguration();
+            newConfig.Controllers.Add(new InputSourceConfigurationController()
+            {
+                DeviceKey = inputSource.GetControllers()[0].DeviceKey,
+                Index = 0
+            });
             shouldSave = true;
         }
         else
@@ -124,6 +136,17 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
                InputSourceKey = inputSourceKey,
                InputSourceConfiguration = newConfig
            });
+    }
+    
+    public InputSourceConfiguration GetMultiControllerConfiguration(string deviceKey)
+    {
+        var existingKey = _inputSourceConfigurations.Keys.SingleOrDefault(c => c.Contains(MultiControllerKeySeparator) && c.Contains(deviceKey));
+        if (existingKey != null)
+        {
+            return _inputSourceConfigurations[existingKey];
+        }
+
+        return null;
     }
 
     #region Game Configuration Publics
@@ -226,7 +249,6 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
     {
         return _gameListProviderService.GetGameSelectionList(inputSourceKey, gameSource, _inputSourceGameConfigurations);
     }
-
 
     #endregion
 

@@ -80,6 +80,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     
     public InputSourceConfiguration CurrentConfiguration { get; private set; }
     public DeviceInfo CurrentDeviceInfo { get; private set; }
+    public int Index { get; set; }
 
     public void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {

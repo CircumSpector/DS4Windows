@@ -30,15 +30,11 @@ public sealed partial class InputSourceItemViewModel :
         ConfigurationSetFromUser = false;
         _mapper.Map(inputSource, this);
 
-        var controller1 = await _viewModelFactory.CreateViewModel<IInputSourceControllerItemViewModel>();
-        _mapper.Map(inputSource.Controller1, controller1);
-        Controller1 = controller1;
-
-        if (inputSource.Controller2 != null)
+        foreach (var controller in inputSource.Controllers)
         {
-            var controller2 = await _viewModelFactory.CreateViewModel<IInputSourceControllerItemViewModel>();
-            _mapper.Map(inputSource.Controller2, controller2);
-            Controller2 = controller2;
+            var controllerViewModel = await _viewModelFactory.CreateViewModel<IInputSourceControllerItemViewModel>();
+            _mapper.Map(controller, controllerViewModel);
+            Controllers.Add(controllerViewModel);
         }
 
         ConfigurationSetFromUser = true;
@@ -62,10 +58,6 @@ public sealed partial class InputSourceItemViewModel :
                         CurrentConfiguration);
                 }
             }
-        }
-        else if (e.PropertyName == nameof(Controller2))
-        {
-            OnPropertyChanged(nameof(HasSecondController));
         }
 
         base.OnPropertyChanged(e);

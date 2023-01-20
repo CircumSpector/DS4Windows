@@ -78,14 +78,14 @@ public class FilterService : IFilterService
         if (!_isInitializing)
         {
             foreach (ICompatibleHidDevice device in _inputSourceDataSource.InputSources
-                         .Select(inputSource => inputSource.Controller1)
+                         .SelectMany(inputSource => inputSource.GetControllers())
                          .ToList())
             {
                 if (!isEnabled)
                 {
                     UnfilterController(device.SourceDevice.InstanceId);
                 }
-                else if (FilterUnfilterIfNeeded(device))
+                else if (FilterUnfilterIfNeeded(device, device.CurrentConfiguration.OutputDeviceType))
                 {
                     //dont do anything
                 }
@@ -166,15 +166,14 @@ public class FilterService : IFilterService
     public void UnfilterAllControllers()
     {
         foreach (IHidDevice sourceDevice in _inputSourceDataSource.InputSources
-                     .Select(inputSource => inputSource.Controller1.SourceDevice)
-                     .ToList())
+                     .SelectMany(inputSource => inputSource.GetControllers().Select(c => c.SourceDevice)).ToList())
         {
             UnfilterController(sourceDevice.InstanceId);
         }
     }
 
     /// <inheritdoc />
-    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device)
+    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType)
     {
         // TODO: implement properly once wireless filtering is implemented 
         if (device.Connection == ConnectionType.Bluetooth)
@@ -184,16 +183,15 @@ public class FilterService : IFilterService
 
         if (IsFilterDriverEnabled)
         {
-            InputSourceConfiguration config = device.CurrentConfiguration;
             if (!device.IsFiltered)
             {
-                if (device.CurrentDeviceInfo.WinUsbEndpoints != null && config.OutputDeviceType != OutputDeviceType.None)
+                if (device.CurrentDeviceInfo.WinUsbEndpoints != null && outputDeviceType != OutputDeviceType.None)
                 {
                     FilterController(device.SourceDevice.InstanceId);
                     return true;
                 }
             }
-            else if (device.IsFiltered && config.OutputDeviceType == OutputDeviceType.None)
+            else if (device.IsFiltered && outputDeviceType == OutputDeviceType.None)
             {
                 UnfilterController(device.SourceDevice.InstanceId);
                 return true;

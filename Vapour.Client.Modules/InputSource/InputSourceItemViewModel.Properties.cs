@@ -9,8 +9,7 @@ namespace Vapour.Client.Modules.InputSource;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class InputSourceItemViewModel
 {
-    private IInputSourceControllerItemViewModel _controller1;
-    private IInputSourceControllerItemViewModel _controller2;
+    private List<IInputSourceControllerItemViewModel> _controllers = new();
 
     private SolidColorBrush _currentColor;
 
@@ -103,23 +102,9 @@ public sealed partial class InputSourceItemViewModel
         }
     }
 
-    public IInputSourceControllerItemViewModel Controller1
+    public List<IInputSourceControllerItemViewModel> Controllers
     {
-        get => _controller1;
-        set => SetProperty(ref _controller1, value);
-    }
-
-    public IInputSourceControllerItemViewModel Controller2
-    {
-        get => _controller2;
-        set => SetProperty(ref _controller2, value);
-    }
-
-    public bool HasSecondController
-    {
-        get
-        {
-            return Controller2 != null;
-        }
+        get => _controllers;
+        set => SetProperty(ref _controllers, value);
     }
 }

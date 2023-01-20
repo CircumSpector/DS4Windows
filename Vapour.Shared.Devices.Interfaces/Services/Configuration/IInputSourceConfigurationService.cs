@@ -24,4 +24,5 @@ public interface IInputSourceConfigurationService
     List<InputSourceConfiguration> GetGameInputSourceConfigurations(string inputSourceKey);
     void DeleteGameConfiguration(string inputSourceKey, string gameId);
     Func<string> GetCurrentGameRunning { get; set; }
+    InputSourceConfiguration GetMultiControllerConfiguration(string deviceKey);
 }
