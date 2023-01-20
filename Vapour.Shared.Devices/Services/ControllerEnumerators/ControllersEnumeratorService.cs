@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
-using System.Threading.Channels;
 
 using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.DeviceInfos;
-using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 
