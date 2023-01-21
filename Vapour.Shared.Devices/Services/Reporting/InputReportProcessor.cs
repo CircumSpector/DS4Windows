@@ -48,7 +48,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
     public IInputSource InputSource { get; private set; }
     public bool IsInputReportAvailableInvoked { get; set; } = true;
     public bool IsProcessing { get; private set; }
-    public event Action<IInputSource, InputSourceReport> InputReportAvailable;
+    public event Action<IInputSource, InputSourceFinalReport> InputReportAvailable;
 
     public void SetDevice(IInputSource inputSource)
     {

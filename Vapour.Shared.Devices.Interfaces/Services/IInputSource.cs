@@ -13,7 +13,7 @@ public interface IInputSource
     InputSourceConfiguration Configuration { get; }
     string InputSourceKey { get; }
     event EventHandler<InputSourceConfiguration> ConfigurationChanged;
-    InputSourceReport ProcessInputReport(ReadOnlySpan<byte> buffers);
+    InputSourceFinalReport ProcessInputReport(ReadOnlySpan<byte> buffers);
     byte[] ReadInputReport();
     void OnAfterStartListening();
     void SetConfiguration(InputSourceConfiguration configuration);

@@ -2,7 +2,16 @@
 public class InputSourceConfigurationController
 {
     public string DeviceKey { get; set; }
-    public bool IsLeft { get; set; }
-    public bool IsRight { get; set; }
+
+    public MultiControllerConfigurationType MultiControllerConfigurationType { get; set; } =
+        MultiControllerConfigurationType.None;
     public int Index { get; set; }
+}
+
+public enum MultiControllerConfigurationType
+{
+    Left,
+    Right,
+    None,
+    Custom
 }

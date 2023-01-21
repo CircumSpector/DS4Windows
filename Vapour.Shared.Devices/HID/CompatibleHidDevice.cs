@@ -81,6 +81,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     public InputSourceConfiguration CurrentConfiguration { get; private set; }
     public DeviceInfo CurrentDeviceInfo { get; private set; }
     public int Index { get; set; }
+    public MultiControllerConfigurationType MultiControllerConfigurationType { get; set; }
 
     public void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
@@ -117,6 +118,8 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     {
         InputSourceConfiguration oldConfiguration = CurrentConfiguration;
         CurrentConfiguration = configuration;
+        MultiControllerConfigurationType = configuration.Controllers.Single(c => c.DeviceKey == DeviceKey)
+            .MultiControllerConfigurationType;
         OnConfigurationChanged(oldConfiguration, configuration);
     }
 
