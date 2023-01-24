@@ -48,6 +48,8 @@ public interface ICompatibleHidDevice : IDisposable
     string DeviceKey { get; }
     
     DeviceInfo CurrentDeviceInfo { get; }
+    int Index { get; set; }
+    MultiControllerConfigurationType MultiControllerConfigurationType { get; set; }
 
     /// <summary>
     ///     Fired when this device has been disconnected/unplugged.

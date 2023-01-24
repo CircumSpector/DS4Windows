@@ -33,6 +33,8 @@ public sealed class InputSourceListViewModel :
     private readonly IProfileServiceClient _profilesService;
     private readonly IServiceProvider _serviceProvider;
     private readonly IViewModelFactory _viewModelFactory;
+    private string _pair1DeviceKey;
+    private string _pair2DeviceKey;
 
     public InputSourceListViewModel(
         IProfileServiceClient profilesService,
@@ -46,11 +48,13 @@ public sealed class InputSourceListViewModel :
         _profilesService = profilesService;
 
         ConfigureCommand = new RelayCommand<IInputSourceItemViewModel>(OnConfigure);
+        PairCommand = new RelayCommand<IInputSourceItemViewModel>(OnPair);
 
         CreateSelectableProfileItems();
     }
 
     public RelayCommand<IInputSourceItemViewModel> ConfigureCommand { get; }
+    public RelayCommand<IInputSourceItemViewModel> PairCommand { get; }
     public ObservableCollection<IInputSourceItemViewModel> InputSourceItems { get; } = new();
     public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new();
 
@@ -160,6 +164,19 @@ public sealed class InputSourceListViewModel :
             {
                 inputSourceConfigureViewModel.Dispose();
             }));
+    }
+
+    private async void OnPair(IInputSourceItemViewModel inputSourceItem)
+    {
+        //if (string.IsNullOrEmpty(_pair1DeviceKey))
+        //{
+        //    _pair1DeviceKey = inputSourceItem.Controller1.DeviceKey;
+        //}
+        //else
+        //{
+        //    await _inputSourceService.SaveDefaultInputSourceConfiguration(
+        //        InputSourceUtil.CreateInputSourceKey(_pair1DeviceKey, _pair2DeviceKey), null);
+        //}
     }
 
     [SuppressPropertyChangedWarnings]

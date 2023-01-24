@@ -8,13 +8,16 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 public interface IInputSource
 {
-    ICompatibleHidDevice Controller1 { get; set; }
-    ICompatibleHidDevice Controller2 { get; set; }
+    //ICompatibleHidDevice Controller1 { get; set; }
+    //ICompatibleHidDevice Controller2 { get; set; }
     InputSourceConfiguration Configuration { get; }
     string InputSourceKey { get; }
     event EventHandler<InputSourceConfiguration> ConfigurationChanged;
-    InputSourceReport ProcessInputReport(ReadOnlySpan<byte> input);
+    InputSourceFinalReport ProcessInputReport(ReadOnlySpan<byte> buffers);
     byte[] ReadInputReport();
     void OnAfterStartListening();
     void SetConfiguration(InputSourceConfiguration configuration);
+    List<ICompatibleHidDevice> GetControllers();
+    void AddController(ICompatibleHidDevice controller);
+    void RemoveController(string instanceId);
 }

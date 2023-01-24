@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -52,13 +51,13 @@ internal sealed class OutputProcessor : IOutputProcessor
         }
     }
 
-    public void SetDevice(IInputSource inputSource)
+    public void SetInputSource(IInputSource inputSource)
     {
         InputSource = inputSource;
     }
 
     private void _inputReportProcessor_InputReportAvailable(IInputSource arg1,
-        InputSourceReport report)
+        InputSourceFinalReport report)
     {
         if (InputSource.Configuration.OutputDeviceType != OutputDeviceType.None && _controllerDevice != null)
         {
@@ -67,8 +66,8 @@ internal sealed class OutputProcessor : IOutputProcessor
         }
     }
 
-    private InputSourceReport UpdateBasedOnConfiguration(InputSourceConfiguration configuration,
-        InputSourceReport report)
+    private InputSourceFinalReport UpdateBasedOnConfiguration(InputSourceConfiguration configuration,
+        InputSourceFinalReport report)
     {
         CheckAndScaleIfNeeded(report);      
         if (configuration.IsPassthru)
@@ -97,21 +96,30 @@ internal sealed class OutputProcessor : IOutputProcessor
         return outDevice;
     }
 
-    private void CheckAndScaleIfNeeded(InputSourceReport report)
+    private void CheckAndScaleIfNeeded(InputSourceFinalReport report)
     {
-        if (report.AxisScaleInputType == InputAxisType.Xbox &&
+        if (report.LThumbAxisScaleInputType == InputAxisType.Xbox &&
             InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller)
         {
             report.LeftThumbX = ScaleDown(report.LeftThumbX, false);
             report.LeftThumbY = ScaleDown(report.LeftThumbY, true);
-            report.RightThumbX = ScaleDown(report.RightThumbX, false);
-            report.RightThumbY = ScaleDown(report.RightThumbY, true);
         }
-        else if (report.AxisScaleInputType == InputAxisType.DualShock4 &&
+        else if (report.LThumbAxisScaleInputType == InputAxisType.DualShock4 &&
                  InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller)
         {
             report.LeftThumbX = ScaleUp(report.LeftThumbX, false);
             report.LeftThumbY = ScaleUp(report.LeftThumbY, true);
+        }
+
+        if (report.RThumbAxisScaleInputType == InputAxisType.Xbox &&
+            InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller)
+        {
+            report.RightThumbX = ScaleDown(report.RightThumbX, false);
+            report.RightThumbY = ScaleDown(report.RightThumbY, true);
+        }
+        else if (report.RThumbAxisScaleInputType == InputAxisType.DualShock4 &&
+                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller)
+        {
             report.RightThumbX = ScaleUp(report.RightThumbX, false);
             report.RightThumbY = ScaleUp(report.RightThumbY, true);
         }

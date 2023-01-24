@@ -70,7 +70,7 @@ internal class DS4OutDevice : OutDevice
         }
     }
 
-    public override void ConvertAndSendReport(InputSourceReport state, int device = 0)
+    public override void ConvertAndSendReport(InputSourceFinalReport state, int device = 0)
     {
         if (!IsConnected)
         {

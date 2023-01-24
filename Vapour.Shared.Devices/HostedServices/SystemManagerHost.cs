@@ -65,7 +65,7 @@ public sealed class SystemManagerHost
         _profileService.Initialize();
         _inputSourceConfigurationService.Initialize();
         _gameProcessWatcherService.StartWatching();
-        _controllersEnumeratorService.Start();
+        await _controllersEnumeratorService.Start();
         await Task.CompletedTask;
     }
 
@@ -78,7 +78,7 @@ public sealed class SystemManagerHost
         _inputSourceService.Stop();
         _controllersEnumeratorService.Stop();
         _filter.UnfilterAllControllers();
-        _inputSourceService.Clear();
+        await _inputSourceService.Clear();
         _profileService.Shutdown();
 
         IsRunning = false;

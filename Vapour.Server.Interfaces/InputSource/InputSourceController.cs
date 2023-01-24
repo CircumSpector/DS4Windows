@@ -23,6 +23,8 @@ public class InputSourceController
 
     public InputDeviceType DeviceType { get; init; }
 
+    public string DeviceKey { get; init; }
+
     public bool IsFiltered { get; set; }
 
     public int Vid { get; init; }

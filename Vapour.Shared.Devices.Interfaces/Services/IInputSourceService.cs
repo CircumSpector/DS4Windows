@@ -5,7 +5,9 @@ namespace Vapour.Shared.Devices.Services;
 public interface IInputSourceService
 {
     void Stop();
-    void AddController(ICompatibleHidDevice device);
-    void RemoveController(string deviceKey);
-    void Clear();
+    Task AddController(ICompatibleHidDevice device);
+    Task RemoveController(string instanceId);
+    Task Clear();
+    Task FixupInputSources();
+    bool ShouldAutoFixup { get; set; }
 }

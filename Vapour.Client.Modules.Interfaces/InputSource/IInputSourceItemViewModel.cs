@@ -14,8 +14,7 @@ public interface IInputSourceItemViewModel : IViewModel<IInputSourceItemViewMode
     InputSourceConfiguration CurrentConfiguration { get; set; }
     bool ConfigurationSetFromUser { get; set; }
     string InputSourceKey { get; set; }
-    IInputSourceControllerItemViewModel Controller1 { get; set; }
-    IInputSourceControllerItemViewModel Controller2 { get; set; }
+    List<IInputSourceControllerItemViewModel> Controllers { get; set; }
 
     Task SetInputSource(InputSourceMessage inputSource);
 }
