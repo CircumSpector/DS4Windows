@@ -28,7 +28,29 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
         var leftButtons = (JoyConButtonsLeft)buttonData[5];
         var rightButtons = (JoyConButtonsRight)buttonData[3];
 
-        if (MultiControllerConfigurationType == MultiControllerConfigurationType.None)
+        if (MultiControllerConfigurationType != MultiControllerConfigurationType.None)
+        {
+            if (IsLeft)
+            {
+                SetDPad(leftButtons);
+                Share = sharedButtons.HasFlag(JoyConButtonsShared.Minus);
+                LeftThumb = sharedButtons.HasFlag(JoyConButtonsShared.LStick);
+                LeftShoulder = leftButtons.HasFlag(JoyConButtonsLeft.L1);
+                LeftTrigger = leftButtons.HasFlag(JoyConButtonsLeft.L2) ? byte.MaxValue : byte.MinValue;
+            }
+            else
+            {
+                PS = sharedButtons.HasFlag(JoyConButtonsShared.Home);
+                Options = sharedButtons.HasFlag(JoyConButtonsShared.Plus);
+                Cross = rightButtons.HasFlag(JoyConButtonsRight.A);
+                Circle = rightButtons.HasFlag(JoyConButtonsRight.B);
+                Square = rightButtons.HasFlag(JoyConButtonsRight.X);
+                Triangle = rightButtons.HasFlag(JoyConButtonsRight.Y);
+                RightShoulder = rightButtons.HasFlag(JoyConButtonsRight.R1);
+                RightTrigger = rightButtons.HasFlag(JoyConButtonsRight.R2) ? byte.MaxValue : byte.MinValue;
+            }
+        }
+        else
         {
             if (IsLeft)
             {
@@ -56,25 +78,6 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
                 Square = rightButtons.HasFlag(JoyConButtonsRight.Y);
                 Triangle = rightButtons.HasFlag(JoyConButtonsRight.B);
             }
-        }
-        else if (MultiControllerConfigurationType == MultiControllerConfigurationType.Left)
-        {
-            SetDPad(leftButtons);
-            Share = sharedButtons.HasFlag(JoyConButtonsShared.Minus);
-            LeftThumb = sharedButtons.HasFlag(JoyConButtonsShared.LStick);
-            LeftShoulder = leftButtons.HasFlag(JoyConButtonsLeft.L1);
-            LeftTrigger = leftButtons.HasFlag(JoyConButtonsLeft.L2) ? byte.MaxValue : byte.MinValue;
-        }
-        else if (MultiControllerConfigurationType == MultiControllerConfigurationType.Right)
-        {
-            PS = sharedButtons.HasFlag(JoyConButtonsShared.Home);
-            Options = sharedButtons.HasFlag(JoyConButtonsShared.Plus);
-            Cross = rightButtons.HasFlag(JoyConButtonsRight.A);
-            Circle = rightButtons.HasFlag(JoyConButtonsRight.B);
-            Square = rightButtons.HasFlag(JoyConButtonsRight.X);
-            Triangle = rightButtons.HasFlag(JoyConButtonsRight.Y);
-            RightShoulder = rightButtons.HasFlag(JoyConButtonsRight.R1);
-            RightTrigger = rightButtons.HasFlag(JoyConButtonsRight.R2) ? byte.MaxValue : byte.MinValue;
         }
     }
 
