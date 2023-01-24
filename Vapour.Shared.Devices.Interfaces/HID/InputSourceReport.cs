@@ -1,4 +1,5 @@
 ﻿using Vapour.Shared.Devices.HID.InputTypes;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -144,6 +145,12 @@ public abstract class InputSourceReport
     /// </summary>
     /// <param name="input">The raw input report buffer.</param>
     public abstract void Parse(ReadOnlySpan<byte> input);
+
+    public MultiControllerConfigurationType MultiControllerConfigurationType
+    {
+        get;
+        set;
+    } = MultiControllerConfigurationType.None;
 
     /// <summary>
     ///     Gets idle state.

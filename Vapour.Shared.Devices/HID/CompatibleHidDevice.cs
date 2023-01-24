@@ -120,6 +120,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
         CurrentConfiguration = configuration;
         MultiControllerConfigurationType = configuration.Controllers.Single(c => c.DeviceKey == DeviceKey)
             .MultiControllerConfigurationType;
+        InputSourceReport.MultiControllerConfigurationType = MultiControllerConfigurationType;
         OnConfigurationChanged(oldConfiguration, configuration);
     }
 
