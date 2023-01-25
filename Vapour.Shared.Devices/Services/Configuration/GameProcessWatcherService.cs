@@ -73,8 +73,9 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                     gameConfigurations.SingleOrDefault(c =>
                     {
                         if (c.GameInfo.GameSource == GameSource.UWP &&
-                            e.CommandLine.StartsWith("\"") &&
-                            e.CommandLine.Contains(c.GameInfo.GameId))
+                            ((e.CommandLine.StartsWith("\"") &&
+                            e.CommandLine.Contains(c.GameInfo.GameId)) ||
+                            imagePath.Contains($"WindowsApps\\{c.GameInfo.GameId}") ))
                         {
                             return true;
                         }

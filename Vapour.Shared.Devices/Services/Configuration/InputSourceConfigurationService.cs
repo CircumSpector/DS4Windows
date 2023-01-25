@@ -86,22 +86,12 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
         InputSourceConfiguration newConfig;
         if (inputSourceConfiguration == null)
         {
-            newConfig = GetDefaultInputSourceConfiguration();
-            newConfig.Controllers.Add(new InputSourceConfigurationController()
-            {
-                DeviceKey = inputSource.GetControllers()[0].DeviceKey,
-                Index = 0
-            });
+            newConfig = GetDefaultInputSourceConfiguration(inputSource);
             shouldSave = true;
         }
         else if (_profilesService.AvailableProfiles.All(p => p.Key != inputSourceConfiguration.ProfileId))
         {
-            newConfig = GetDefaultInputSourceConfiguration();
-            newConfig.Controllers.Add(new InputSourceConfigurationController()
-            {
-                DeviceKey = inputSource.GetControllers()[0].DeviceKey,
-                Index = 0
-            });
+            newConfig = GetDefaultInputSourceConfiguration(inputSource);
             shouldSave = true;
         }
         else
@@ -179,9 +169,10 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
         GameInfo gameInfo,
         InputSourceConfiguration inputSourceConfiguration)
     {
+        var inputSource = _inputSourceDataSource.GetByInputSourceKey(inputSourceKey);
         if (inputSourceConfiguration == null)
         {
-            inputSourceConfiguration = GetDefaultInputSourceConfiguration();
+            inputSourceConfiguration = GetDefaultInputSourceConfiguration(inputSource);
             inputSourceConfiguration.GameInfo = gameInfo;
         }
 
@@ -205,8 +196,7 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
         gameConfigurations.Add(inputSourceConfiguration);
 
         SaveInputSourceGameConfigurations();
-
-        var inputSource = _inputSourceDataSource.GetByInputSourceKey(inputSourceKey);
+        
         if (inputSource.Configuration.GameInfo?.GameId == inputSourceConfiguration.GameInfo.GameId)
         {
             SetGameConfiguration(inputSourceKey, inputSourceConfiguration.GameInfo.GameId);
@@ -340,10 +330,10 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
         File.WriteAllText(_globalStateService.LocalInputSourceGameConfigurationsLocation, data);
     }
 
-    private InputSourceConfiguration GetDefaultInputSourceConfiguration()
+    private InputSourceConfiguration GetDefaultInputSourceConfiguration(IInputSource inputSource)
     {
         IProfile defaultProfile = _profilesService.AvailableProfiles[Constants.DefaultProfileId].DeepClone();
-        return new InputSourceConfiguration
+        var defaultConfiguration = new InputSourceConfiguration
         {
             ProfileId = defaultProfile.Id,
             Profile = defaultProfile,
@@ -351,6 +341,27 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
             Lightbar = defaultProfile.LightbarSettingInfo.Ds4WinSettings.Led.ToColorA.ToHexString(),
             OutputDeviceType = defaultProfile.OutputDeviceType
         };
+        
+        var controllers = inputSource.GetControllers();
+        for (var i = 0; i < controllers.Count; i++)
+        {
+            var controllerConfiguration = new InputSourceConfigurationController
+            {
+                DeviceKey = controllers[i].DeviceKey, Index = i
+            };
+
+            controllerConfiguration.MultiControllerConfigurationType = i switch
+            {
+                0 when controllers.Count == 1 => MultiControllerConfigurationType.None,
+                0 when controllers.Count > 1 => MultiControllerConfigurationType.Left,
+                1 => MultiControllerConfigurationType.Right,
+                _ => MultiControllerConfigurationType.Custom
+            };
+
+            defaultConfiguration.Controllers.Add(controllerConfiguration);
+        }
+
+        return defaultConfiguration;
     }
 
     private void _profilesService_OnProfileDeleted(object sender, Guid e)
