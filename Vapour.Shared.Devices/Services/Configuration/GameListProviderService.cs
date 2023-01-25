@@ -4,9 +4,18 @@ using Gameloop.Vdf;
 using Microsoft.Win32;
 using Windows.Management.Deployment;
 
+using Vapour.Shared.Common.Services;
+
 namespace Vapour.Shared.Devices.Services.Configuration;
 public class GameListProviderService : IGameListProviderService
 {
+    private readonly IGlobalStateService _globalStateService;
+
+    public GameListProviderService(IGlobalStateService globalStateService)
+    {
+        _globalStateService = globalStateService;
+    }
+
     public List<GameInfo> GetGameSelectionList(string inputSourceKey, GameSource gameSource, Dictionary<string, List<InputSourceConfiguration>> inputSourceGameConfigurations)
     {
         var games = new List<GameInfo>();
@@ -42,22 +51,28 @@ public class GameListProviderService : IGameListProviderService
         var games = new List<GameInfo>();
         PackageManager packageManager = new();
 
-        var packages = packageManager.FindPackagesForUserWithPackageTypes(string.Empty, PackageTypes.Main).ToList();
+        var packages = packageManager.FindPackagesForUserWithPackageTypes(_globalStateService.CurrentUserSid, PackageTypes.Main).ToList();
         foreach (var package in packages
                      .Where(p => !inputSourceGameConfigurations.Any(g =>
-                         g.Key == inputSourceKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name)))
-                     .OrderBy(n => n.DisplayName))
+                         g.Key == inputSourceKey && g.Value.Any(c => c.GameInfo.GameId == p.Id.Name))))
         {
-            var gameInfo = new GameInfo
+            try
             {
-                GameSource = GameSource.UWP,
-                GameId = package.Id.Name,
-                GameName = package.DisplayName
-            };
-            games.Add(gameInfo);
+                var gameInfo = new GameInfo
+                {
+                    GameSource = GameSource.UWP,
+                    GameId = package.Id.Name,
+                    GameName = package.DisplayName
+                };
+                games.Add(gameInfo);
+            }
+            catch
+            {
+                //there are packages returned in the last that for some reason cant be found when accessing properties on them
+            }
         }
 
-        return games;
+        return games.OrderBy(g => g.GameName).ToList();
     }
 
     private List<GameInfo> GetSteamGames(string inputSourceKey, Dictionary<string, List<InputSourceConfiguration>> inputSourceGameConfigurations)

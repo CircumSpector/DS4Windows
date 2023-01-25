@@ -20,6 +20,7 @@ public sealed class GlobalStateService : IGlobalStateService
     }
 
     public string CurrentUserName { get; set; }
+    public string CurrentUserSid { get; set; } = string.Empty;
 
     public string RoamingAppDataPath => !string.IsNullOrEmpty(CurrentUserName)
         ? $"c:\\Users\\{CurrentUserName}\\AppData\\Roaming\\{Constants.ApplicationName}"

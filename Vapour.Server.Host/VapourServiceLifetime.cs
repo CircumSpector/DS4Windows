@@ -1,7 +1,11 @@
-﻿using System.ServiceProcess;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.ServiceProcess;
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
+using Windows.Win32.Security;
 using Windows.Win32.System.RemoteDesktop;
 
 using Microsoft.Extensions.Hosting;
@@ -60,8 +64,11 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
             _logger.LogDebug("On start user session {UserName} found", userName);
             if (userName != SystemSessionUsername)
             {
+                string sid = GetSid(currentSession);
+                _logger.LogDebug($"user session sid is {sid}");
+                
                 _logger.LogDebug("User session is not SYSTEM. Starting system host");
-                StartHost(userName);
+                StartHost(userName, sid);
             }
         }
         else
@@ -86,7 +93,9 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         {
             string userName = GetUsername(changeDescription.SessionId);
             _logger.LogDebug("Found current user {UserName}", userName);
-            StartHost(userName);
+            string sid = GetSid((uint)changeDescription.SessionId);
+            _logger.LogDebug($"user session sid is {sid}");
+            StartHost(userName, sid);
         }
         else if (changeDescription.Reason is SessionChangeReason.SessionLogoff or SessionChangeReason.SessionLock)
         {
@@ -94,11 +103,12 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         }
     }
 
-    private async void StartHost(string currentUserName)
+    private async void StartHost(string currentUserName, string currentUserSid)
     {
         if (!_systemHost.IsRunning)
         {
             _globalStateService.CurrentUserName = currentUserName;
+            _globalStateService.CurrentUserSid = currentUserSid;
             _logger.LogDebug("Starting system host");
             await _systemHost.StartAsync();
         }
@@ -109,6 +119,7 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         if (_systemHost.IsRunning)
         {
             _logger.LogDebug("Stopping system host");
+            _globalStateService.CurrentUserSid = string.Empty;
             await _systemHost.StopAsync();
         }
     }
@@ -133,5 +144,37 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         }
 
         return username;
+    }
+
+    private static unsafe string GetSid(uint sessionId)
+    {
+        string result = string.Empty;
+        HANDLE userTokenHandle = new();
+
+        if (PInvoke.WTSQueryUserToken(sessionId, &userTokenHandle))
+        {
+            uint retLen = 0;
+
+            PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, null,
+                0, &retLen);
+
+            byte* buffer = stackalloc byte[(int)retLen];
+
+            if (PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, buffer, retLen,
+                    &retLen))
+            {
+                TOKEN_USER* tokenUser = (TOKEN_USER*)buffer;
+
+                if (PInvoke.ConvertSidToStringSid(tokenUser->User.Sid, out PWSTR stringSid))
+                {
+                    result = new string(stringSid.Value);
+                    PInvoke.WTSFreeMemory(stringSid);
+                }
+            }
+
+            PInvoke.CloseHandle(userTokenHandle);
+        }
+
+        return result;
     }
 }
