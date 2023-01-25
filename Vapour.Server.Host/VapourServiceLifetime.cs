@@ -164,9 +164,12 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
                     result = new string(stringSid.Value);
                     PInvoke.WTSFreeMemory(stringSid);
                 }
-            }
 
+                PInvoke.WTSFreeMemory(&tu);
+            }
+            
             PInvoke.CloseHandle(userTokenHandle);
+            
         }
 
         return result;
