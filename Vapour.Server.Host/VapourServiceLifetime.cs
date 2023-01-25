@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 
@@ -147,31 +148,25 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
     public static unsafe string GetSid(uint sessionId)
     {
         HANDLE userTokenHandle = new();
+
         if (PInvoke.WTSQueryUserToken(sessionId, ref userTokenHandle))
         {
-            var userPtrLength = Marshal.SizeOf<TOKEN_USER>();
-            IntPtr userPtr = Marshal.AllocHGlobal(userPtrLength);
+            TOKEN_USER tu;
+            uint retLen = 0;
 
-            IntPtr outLengthPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
-
-            if (PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, userPtr.ToPointer(), (uint)userPtrLength,
-                (uint*)outLengthPtr.ToPointer()))
+            if (PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, &tu,
+                    (uint)Unsafe.SizeOf<TOKEN_USER>(), &retLen))
             {
-                var data = Marshal.PtrToStructure<TOKEN_USER>(userPtr);
-                
-                if (PInvoke.ConvertSidToStringSid(data.User.Sid, out PWSTR stringSid))
+                if (PInvoke.ConvertSidToStringSid(tu.User.Sid, out PWSTR stringSid))
                 {
                     return new string(stringSid.Value);
                 }
             }
 
-            Marshal.FreeHGlobal(userPtr);
-            Marshal.FreeHGlobal(outLengthPtr);
+            PInvoke.CloseHandle(userTokenHandle);
         }
 
-        var error = Marshal.GetLastWin32Error();
-
-        PInvoke.CloseHandle(userTokenHandle);
+        int error = Marshal.GetLastWin32Error();
 
         return string.Empty;
     }
