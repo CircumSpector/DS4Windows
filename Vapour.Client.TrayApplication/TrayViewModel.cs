@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 
 using CommunityToolkit.Mvvm.Input;
 
@@ -65,6 +66,7 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 
     private void OnShowClient()
     {
+        Process.Start($"{AppContext.BaseDirectory}\\Vapour.exe");
     }
 
     private async void ChangeHostState()
