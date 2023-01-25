@@ -2,3 +2,7 @@
 WTSQuerySessionInformation
 WTSFreeMemory
 WTS_INFO_CLASS
+WTSQueryUserToken
+GetTokenInformation
+TOKEN_USER
+ConvertSidToStringSid

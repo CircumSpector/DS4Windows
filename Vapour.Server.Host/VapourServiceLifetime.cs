@@ -1,7 +1,10 @@
-﻿using System.ServiceProcess;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.ServiceProcess;
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
+using Windows.Win32.Security;
 using Windows.Win32.System.RemoteDesktop;
 
 using Microsoft.Extensions.Hosting;
@@ -56,6 +59,12 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         uint currentSession = PInvoke.WTSGetActiveConsoleSessionId();
         if (currentSession != 0)
         {
+            Debugger.Launch();
+            Debugger.Break();
+
+            string sid = GetSid(currentSession);
+            _logger.LogInformation($"user sid is {sid}");
+
             string userName = GetUsername((int)currentSession);
             _logger.LogDebug("On start user session {UserName} found", userName);
             if (userName != SystemSessionUsername)
@@ -133,5 +142,37 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         }
 
         return username;
+    }
+
+    public static unsafe string GetSid(uint sessionId)
+    {
+        HANDLE userTokenHandle = new();
+        if (PInvoke.WTSQueryUserToken(sessionId, ref userTokenHandle))
+        {
+            var userPtrLength = Marshal.SizeOf<TOKEN_USER>();
+            IntPtr userPtr = Marshal.AllocHGlobal(userPtrLength);
+
+            IntPtr outLengthPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
+
+            if (PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, userPtr.ToPointer(), (uint)userPtrLength,
+                (uint*)outLengthPtr.ToPointer()))
+            {
+                var data = Marshal.PtrToStructure<TOKEN_USER>(userPtr);
+                
+                if (PInvoke.ConvertSidToStringSid(data.User.Sid, out PWSTR stringSid))
+                {
+                    return new string(stringSid.Value);
+                }
+            }
+
+            Marshal.FreeHGlobal(userPtr);
+            Marshal.FreeHGlobal(outLengthPtr);
+        }
+
+        var error = Marshal.GetLastWin32Error();
+
+        PInvoke.CloseHandle(userTokenHandle);
+
+        return string.Empty;
     }
 }
