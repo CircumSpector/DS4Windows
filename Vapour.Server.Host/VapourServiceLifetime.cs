@@ -144,32 +144,32 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
 
     public static unsafe string GetSid(uint sessionId)
     {
-        var result = string.Empty;
+        string result = string.Empty;
         Debugger.Launch();
         HANDLE userTokenHandle = new();
 
         if (PInvoke.WTSQueryUserToken(sessionId, &userTokenHandle))
         {
-            TOKEN_USER tu;
             uint retLen = 0;
 
             PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, null,
                 0, &retLen);
 
-            if (PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, &tu,
-                    retLen, &retLen))
+            byte* buffer = stackalloc byte[(int)retLen];
+
+            if (PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, buffer, retLen,
+                    &retLen))
             {
-                if (PInvoke.ConvertSidToStringSid(tu.User.Sid, out PWSTR stringSid))
+                TOKEN_USER* tokenUser = (TOKEN_USER*)buffer;
+
+                if (PInvoke.ConvertSidToStringSid(tokenUser->User.Sid, out PWSTR stringSid))
                 {
                     result = new string(stringSid.Value);
                     PInvoke.WTSFreeMemory(stringSid);
                 }
-
-                PInvoke.WTSFreeMemory(&tu);
             }
-            
+
             PInvoke.CloseHandle(userTokenHandle);
-            
         }
 
         return result;
