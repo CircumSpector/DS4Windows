@@ -60,9 +60,6 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         uint currentSession = PInvoke.WTSGetActiveConsoleSessionId();
         if (currentSession != 0)
         {
-            Debugger.Launch();
-            Debugger.Break();
-
             string sid = GetSid(currentSession);
             _logger.LogInformation($"user sid is {sid}");
 
@@ -147,27 +144,31 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
 
     public static unsafe string GetSid(uint sessionId)
     {
+        var result = string.Empty;
+        Debugger.Launch();
         HANDLE userTokenHandle = new();
 
-        if (PInvoke.WTSQueryUserToken(sessionId, ref userTokenHandle))
+        if (PInvoke.WTSQueryUserToken(sessionId, &userTokenHandle))
         {
             TOKEN_USER tu;
             uint retLen = 0;
 
+            PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, null,
+                0, &retLen);
+
             if (PInvoke.GetTokenInformation(userTokenHandle, TOKEN_INFORMATION_CLASS.TokenUser, &tu,
-                    (uint)Unsafe.SizeOf<TOKEN_USER>(), &retLen))
+                    retLen, &retLen))
             {
                 if (PInvoke.ConvertSidToStringSid(tu.User.Sid, out PWSTR stringSid))
                 {
-                    return new string(stringSid.Value);
+                    result = new string(stringSid.Value);
+                    PInvoke.WTSFreeMemory(stringSid);
                 }
             }
 
             PInvoke.CloseHandle(userTokenHandle);
         }
 
-        int error = Marshal.GetLastWin32Error();
-
-        return string.Empty;
+        return result;
     }
 }
