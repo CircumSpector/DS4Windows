@@ -14,6 +14,7 @@ public interface IGlobalStateService
     string LocalDefaultProfileLocation { get; }
     string LocalInputSourceConfigurationsLocation { get; }
     string LocalInputSourceGameConfigurationsLocation { get; }
+    string CurrentUserSid { get; set; }
 
     void EnsureRoamingDataPath();
 }

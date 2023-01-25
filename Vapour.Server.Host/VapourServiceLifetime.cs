@@ -60,15 +60,15 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         uint currentSession = PInvoke.WTSGetActiveConsoleSessionId();
         if (currentSession != 0)
         {
-            string sid = GetSid(currentSession);
-            _logger.LogInformation($"user sid is {sid}");
-
             string userName = GetUsername((int)currentSession);
             _logger.LogDebug("On start user session {UserName} found", userName);
             if (userName != SystemSessionUsername)
             {
+                string sid = GetSid(currentSession);
+                _logger.LogDebug($"user session sid is {sid}");
+                
                 _logger.LogDebug("User session is not SYSTEM. Starting system host");
-                StartHost(userName);
+                StartHost(userName, sid);
             }
         }
         else
@@ -93,7 +93,9 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         {
             string userName = GetUsername(changeDescription.SessionId);
             _logger.LogDebug("Found current user {UserName}", userName);
-            StartHost(userName);
+            string sid = GetSid((uint)changeDescription.SessionId);
+            _logger.LogDebug($"user session sid is {sid}");
+            StartHost(userName, sid);
         }
         else if (changeDescription.Reason is SessionChangeReason.SessionLogoff or SessionChangeReason.SessionLock)
         {
@@ -101,11 +103,12 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         }
     }
 
-    private async void StartHost(string currentUserName)
+    private async void StartHost(string currentUserName, string currentUserSid)
     {
         if (!_systemHost.IsRunning)
         {
             _globalStateService.CurrentUserName = currentUserName;
+            _globalStateService.CurrentUserSid = currentUserSid;
             _logger.LogDebug("Starting system host");
             await _systemHost.StartAsync();
         }
@@ -116,6 +119,7 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         if (_systemHost.IsRunning)
         {
             _logger.LogDebug("Stopping system host");
+            _globalStateService.CurrentUserSid = string.Empty;
             await _systemHost.StopAsync();
         }
     }
@@ -142,10 +146,9 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         return username;
     }
 
-    public static unsafe string GetSid(uint sessionId)
+    private static unsafe string GetSid(uint sessionId)
     {
         string result = string.Empty;
-        Debugger.Launch();
         HANDLE userTokenHandle = new();
 
         if (PInvoke.WTSQueryUserToken(sessionId, &userTokenHandle))
