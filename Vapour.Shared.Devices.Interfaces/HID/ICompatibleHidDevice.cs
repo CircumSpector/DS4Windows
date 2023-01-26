@@ -43,7 +43,7 @@ public interface ICompatibleHidDevice : IDisposable
 
     InputSourceConfiguration CurrentConfiguration { get; }
 
-    List<DeviceInfo> KnownDevices { get; }
+    IReadOnlyList<DeviceInfo> KnownDevices { get; }
 
     /// <summary>
     ///     The <see cref="Serial" /> as string.

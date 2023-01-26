@@ -62,7 +62,7 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     /// </summary>
     public abstract InputSourceReport InputSourceReport { get; }
 
-    public List<DeviceInfo> KnownDevices { get; }
+    public IReadOnlyList<DeviceInfo> KnownDevices { get; }
 
     /// <inheritdoc />
     public IHidDevice SourceDevice { get; private set; }

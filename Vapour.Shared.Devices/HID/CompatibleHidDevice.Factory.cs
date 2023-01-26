@@ -29,14 +29,12 @@ public class DeviceFactory : IDeviceFactory
             d.KnownDevices.Any(i => i.Vid == deviceInfo.Vid && i.Pid == deviceInfo.Pid));
 
         ICompatibleHidDevice device = null;
+
         if (dummyDevice != null)
         {
             var type = dummyDevice.GetType();
             device = (ICompatibleHidDevice)_serviceProvider.GetService(type);
-            if (device != null)
-            {
-                device.Initialize(hidDevice, deviceInfo);
-            }
+            device?.Initialize(hidDevice, deviceInfo);
         }
 
         return device;
