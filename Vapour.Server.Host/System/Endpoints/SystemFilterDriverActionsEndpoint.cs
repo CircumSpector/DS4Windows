@@ -1,4 +1,6 @@
-﻿using FastEndpoints;
+﻿using Windows.Web.Http;
+
+using FastEndpoints;
 
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -48,8 +50,17 @@ public class SystemFilterDriverActionsEndpoint : EndpointWithoutRequest
                 await SendOkAsync(ct);
                 return;
             case SystemFilterDriverAction.Install:
-                Version installedVersion = await _filterService.InstallFilterDriver();
-                await SendOkAsync(new { InstalledVersion = installedVersion }, ct);
+                if (!_filterService.IsFilterDriverInstalled)
+                {
+                    Version installedVersion = await _filterService.InstallFilterDriver();
+                    await SendOkAsync(new { InstalledVersion = installedVersion }, ct);
+                }
+                else
+                {
+                    await SendAsync("Latest filter driver already installed, nothing to do.",
+                        (int)HttpStatusCode.Conflict, ct);
+                }
+
                 return;
             case SystemFilterDriverAction.Uninstall:
                 await _filterService.UninstallFilterDriver();
