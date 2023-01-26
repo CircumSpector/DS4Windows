@@ -16,11 +16,12 @@
     <PackageReference Include="FastEndpoints.Swagger" Version="5.6.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.Win32Metadata" Version="41.0.25-preview" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.3.2" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.9" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.138-beta">
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.188-beta">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

@@ -129,8 +129,7 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
         string username = SystemSessionUsername;
 
         if (PInvoke.WTSQuerySessionInformation(
-                // TODO see https://github.com/microsoft/CsWin32/issues/851
-                /* null */ new SafeFileHandle(),
+                HANDLE.Null, 
                 (uint)sessionId,
                 WTS_INFO_CLASS.WTSUserName,
                 out PWSTR buffer,
