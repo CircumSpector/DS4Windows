@@ -80,6 +80,7 @@ public interface IHidDevice : IDisposable
     SafeHandle Handle { get; set; }
 
     ushort InputReportByteLength { get; set; }
+    ushort OutputReportByteLength { get; set; }
 
     /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.

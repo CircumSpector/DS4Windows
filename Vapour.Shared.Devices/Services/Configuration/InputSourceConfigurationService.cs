@@ -254,6 +254,12 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
                     if (_profilesService.AvailableProfiles.ContainsKey(i.Value.ProfileId))
                     {
                         i.Value.Profile = _profilesService.AvailableProfiles[i.Value.ProfileId];
+
+                        if (!string.IsNullOrWhiteSpace(i.Value.CustomLightbar))
+                        {
+                            i.Value.LoadedLightbar = i.Value.CustomLightbar;
+                        }
+
                         return true;
                     }
 
@@ -338,7 +344,8 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
             ProfileId = defaultProfile.Id,
             Profile = defaultProfile,
             IsRumbleEnabled = true,
-            Lightbar = defaultProfile.LightbarSettingInfo.Ds4WinSettings.Led.ToColorA.ToHexString(),
+            CustomLightbar = null,
+            LoadedLightbar = null,
             OutputDeviceType = defaultProfile.OutputDeviceType
         };
         

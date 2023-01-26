@@ -1,4 +1,5 @@
 ﻿using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.Reporting;
 
@@ -25,6 +26,7 @@ internal sealed class InputSourceService : IInputSourceService
     }
 
     public bool ShouldAutoFixup { get; set; } = true;
+    public bool ShouldAutoCombineJoyCons { get; set; } = true;
 
     public void Stop()
     {
@@ -51,7 +53,7 @@ internal sealed class InputSourceService : IInputSourceService
             ClearExistingSources();
 
             var controllersProcessed = new List<string>();
-
+            
             foreach (var controller in _controllers.ToList())
             {
                 if (controllersProcessed.All(id => id != controller.DeviceKey))
@@ -79,19 +81,78 @@ internal sealed class InputSourceService : IInputSourceService
                 }
             }
 
+            if (ShouldAutoCombineJoyCons)
+            {
+                await AutoCombineJoyCons();
+            }
+
+            for (var i = 0; i < _inputSourceDataSource.InputSources.Count; i++)
+            {
+                var inputSource = _inputSourceDataSource.InputSources[i];
+                inputSource.SetPlayerNumberAndColor(i + 1);
+
+                _inputReportProcessorService.StartProcessing(inputSource);
+                _inputSourceDataSource.FireCreated(inputSource);
+            }
+
             ShouldAutoFixup = currentAutoFixup;
         });
+    }
+
+    private async Task AutoCombineJoyCons()
+    {
+        var leftJoyCons = GetJoyCons(typeof(JoyConLeftDeviceInfo));
+        var rightJoyCons = GetJoyCons(typeof(JoyConRightDeviceInfo));
+
+        while (leftJoyCons.Count > 0 && rightJoyCons.Count > 0)
+        {
+            var firstLeftJoyCon = leftJoyCons.First();
+            var firstRightJoyCon = rightJoyCons.First();
+
+            var leftDevice =
+                _controllers.Single(c => c.DeviceKey == firstLeftJoyCon.Configuration.Controllers[0].DeviceKey);
+            var rightDevice =
+                _controllers.Single(c => c.DeviceKey == firstRightJoyCon.Configuration.Controllers[0].DeviceKey);
+
+            ClearSource(firstLeftJoyCon);
+            ClearSource(firstRightJoyCon);
+
+            List<ICompatibleHidDevice> list = new()
+            {
+                leftDevice,
+                rightDevice
+            };
+            await CreateInputSource(list, new List<string>());
+
+            leftJoyCons.Remove(firstRightJoyCon);
+            rightJoyCons.Remove(firstRightJoyCon);
+        }
+    }
+
+    private List<IInputSource> GetJoyCons(Type deviceInfoType)
+    {
+        return (from inputSource in _inputSourceDataSource.InputSources
+            where inputSource.Configuration.Controllers.Count == 1
+            let controller =
+                _controllers.SingleOrDefault(c => c.DeviceKey == inputSource.Configuration.Controllers[0].DeviceKey)
+            where controller != null && controller.CurrentDeviceInfo.GetType() == deviceInfoType
+            select inputSource).ToList();
     }
 
     private void ClearExistingSources()
     {
         foreach (var inputSource in _inputSourceDataSource.InputSources.ToList())
         {
-            _inputReportProcessorService.StopProcessing(inputSource);
-            inputSource.ConfigurationChanged -= InputSource_ConfigurationChanged;
-            _inputSourceDataSource.InputSources.Remove(inputSource);
+            ClearSource(inputSource);
             _inputSourceDataSource.FireRemoved(inputSource);
         }
+    }
+
+    private void ClearSource(IInputSource inputSource)
+    {
+        _inputReportProcessorService.StopProcessing(inputSource);
+        inputSource.ConfigurationChanged -= InputSource_ConfigurationChanged;
+        _inputSourceDataSource.InputSources.Remove(inputSource);
     }
 
     private async Task CreateInputSource(List<ICompatibleHidDevice> controllers, List<string> controllersProcessed, InputSourceConfiguration configuration = null)
@@ -136,8 +197,6 @@ internal sealed class InputSourceService : IInputSourceService
         _inputSourceConfigurationService.LoadInputSourceConfiguration(inputSource);
         inputSource.ConfigurationChanged += InputSource_ConfigurationChanged;
         _inputSourceDataSource.InputSources.Add(inputSource);
-        _inputReportProcessorService.StartProcessing(inputSource);
-        _inputSourceDataSource.FireCreated(inputSource);
     }
 
     private InputSourceConfiguration HackGetConfiguration(List<ICompatibleHidDevice> controllers)

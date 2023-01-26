@@ -74,4 +74,5 @@ public interface ICompatibleHidDevice : IDisposable
     void OnAfterStartListening();
     
     unsafe int ReadInputReport(Span<byte> buffer);
+    void RefreshConfiguration();
 }

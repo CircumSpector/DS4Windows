@@ -194,6 +194,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
             Attributes = attributes,
             Capabilities = caps,
             InputReportByteLength = caps.InputReportByteLength,
+            OutputReportByteLength = caps.OutputReportByteLength,
             IsVirtual = device.IsVirtual(),
             ManufacturerString = GetHidManufacturerString(path),
             ProductString = GetHidProductString(path),
