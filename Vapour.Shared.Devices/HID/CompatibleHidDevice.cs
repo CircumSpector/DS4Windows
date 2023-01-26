@@ -16,9 +16,8 @@ namespace Vapour.Shared.Devices.HID;
 /// <summary>
 ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
 /// </summary>
-public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
+public abstract class CompatibleHidDevice : ICompatibleHidDevice
 {
-    private readonly List<DeviceInfo> _deviceInfos;
     private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";
 
     protected static readonly Guid UsbDeviceClassGuid = Guid.Parse("{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
@@ -28,8 +27,9 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     private static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
+    private readonly List<DeviceInfo> _deviceInfos;
 
-    private Channel<byte[]> _outputReportChannel;
+    private readonly Channel<byte[]> _outputReportChannel;
 
     /// <summary>
     ///     The connection type (wire, wireless).
@@ -42,31 +42,31 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     {
         _outputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
         {
-            SingleReader = true,
-            SingleWriter = true,
-            AllowSynchronousContinuations = true
+            SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
         });
 
         _deviceInfos = deviceInfos;
         Logger = logger;
         KnownDevices = deviceInfos.Where(i => i.DeviceType == InputDeviceType).ToList();
     }
-    
+
     /// <summary>
     ///     Logger instance.
     /// </summary>
     protected ILogger<CompatibleHidDevice> Logger { get; }
 
+    protected abstract InputDeviceType InputDeviceType { get; }
+
     /// <summary>
     ///     The parsed input report. Depends on device type.
     /// </summary>
     public abstract InputSourceReport InputSourceReport { get; }
+
     public List<DeviceInfo> KnownDevices { get; }
-    protected abstract InputDeviceType InputDeviceType { get; }
 
     /// <inheritdoc />
     public IHidDevice SourceDevice { get; private set; }
-    
+
     /// <inheritdoc />
     public ConnectionType? Connection => _connection ??= GetConnectionType();
 
@@ -76,27 +76,24 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     /// <inheritdoc />
     public string SerialString => Serial?.ToString();
 
-    public string DeviceKey
-    {
-        get
-        {
-            return SerialString;
-        }
-    }
-    
+    public string DeviceKey => SerialString;
+
     /// <inheritdoc />
     public bool IsFiltered { get; set; }
-    
+
     public InputSourceConfiguration CurrentConfiguration { get; private set; }
+
     public DeviceInfo CurrentDeviceInfo { get; private set; }
+
     public int Index { get; set; }
+
     public MultiControllerConfigurationType MultiControllerConfigurationType { get; set; }
 
     public void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
         SourceDevice = hidDevice;
         CurrentDeviceInfo = deviceInfo;
-        
+
         if (Connection == ConnectionType.Unknown)
         {
             throw new ArgumentException("Couldn't determine connection type.");
@@ -115,8 +112,6 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
         OnInitialize();
     }
-
-    protected abstract void OnInitialize();
 
     public async Task<byte[]> ReadOutputReport(CancellationToken cancellationToken)
     {
@@ -167,8 +162,9 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     public virtual void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-
     }
+
+    protected abstract void OnInitialize();
 
     protected virtual void OnConfigurationChanged(InputSourceConfiguration configuration)
     {
