@@ -10,11 +10,13 @@ using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
-public class XboxCompatibleHidDevice : CompatibleHidDevice
+
+public sealed class XboxCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x03;
 
-    public XboxCompatibleHidDevice(ILogger<XboxCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) : base(logger, deviceInfos)
+    public XboxCompatibleHidDevice(ILogger<XboxCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) : base(logger,
+        deviceInfos)
     {
     }
 
@@ -43,7 +45,7 @@ public class XboxCompatibleHidDevice : CompatibleHidDevice
 
     public override unsafe int ReadInputReport(Span<byte> buffer)
     {
-        var overlapped = SourceDevice.GetOverlappedForReadReport();
+        NativeOverlapped overlapped = SourceDevice.GetOverlappedForReadReport();
 
         uint bytesRead = 0;
         fixed (byte* bufferPtr = buffer)
@@ -51,7 +53,8 @@ public class XboxCompatibleHidDevice : CompatibleHidDevice
             BOOL ret;
             fixed (byte* bytesIn = new byte[] { 0x01, 0x01, 0x00 })
             {
-                ret = PInvoke.DeviceIoControl(SourceDevice.Handle, 0x8000e00c, bytesIn, 3, bufferPtr, (uint)buffer.Length,
+                ret = PInvoke.DeviceIoControl(SourceDevice.Handle, 0x8000e00c, bytesIn, 3, bufferPtr,
+                    (uint)buffer.Length,
                     null, &overlapped);
             }
 

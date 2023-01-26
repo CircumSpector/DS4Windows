@@ -96,8 +96,10 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public bool IsOpen => Handle is not null && !Handle.IsClosed && !Handle.IsInvalid;
 
+    /// <inheritdoc />
     public ushort InputReportByteLength { get; set; }
 
+    /// <inheritdoc />
     public ushort OutputReportByteLength { get; set; }
 
     /// <inheritdoc />

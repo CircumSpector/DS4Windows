@@ -79,7 +79,14 @@ public interface IHidDevice : IDisposable
     /// </summary>
     SafeHandle Handle { get; set; }
 
+    /// <summary>
+    ///     The input report length in bytes.
+    /// </summary>
     ushort InputReportByteLength { get; set; }
+
+    /// <summary>
+    ///     The output report length in bytes.
+    /// </summary>
     ushort OutputReportByteLength { get; set; }
 
     /// <summary>
@@ -123,6 +130,5 @@ public interface IHidDevice : IDisposable
 
     NativeOverlapped GetOverlappedForReadReport();
 
-    /// <inheritdoc />
-    unsafe int ReadInputReport(Span<byte> buffer);
+    int ReadInputReport(Span<byte> buffer);
 }
