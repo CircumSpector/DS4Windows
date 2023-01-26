@@ -2,6 +2,7 @@
 
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
@@ -49,6 +50,11 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         GetCalibrationData();
 
         SubCommand(JoyConCodes.SubCommand_InputMode, JoyConCodes.InputMode_Standard);
+    }
+
+    public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    {
+        //TODO: process report coming from the virtual device
     }
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)

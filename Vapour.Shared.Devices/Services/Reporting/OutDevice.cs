@@ -16,7 +16,10 @@ internal abstract class OutDevice : IOutDevice
 
     public abstract OutputDeviceType GetDeviceType();
 
-    public abstract void RemoveFeedbacks();
+    public event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
 
-    public abstract void RemoveFeedback(int inIdx);
+    protected void FireOutputDeviceReportReceived(OutputDeviceReport report)
+    {
+        OnOutputDeviceReportReceived?.Invoke(report);
+    }
 }

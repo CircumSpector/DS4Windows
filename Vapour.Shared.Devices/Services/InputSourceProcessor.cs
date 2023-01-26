@@ -17,7 +17,11 @@ public class InputSourceProcessor : IInputSourceProcessor
         _inputReportProcessor = inputReportProcessor;
         _outputDeviceProcessor = outputDeviceProcessor;
         _serviceProvider = serviceProvider;
+
+        _outputDeviceProcessor.OnOutputDeviceReportReceived += _outputDeviceProcessor_OnOutputDeviceReportReceived;
     }
+
+    public event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
 
     public void Start(IInputSource inputSource)
     {
@@ -48,5 +52,10 @@ public class InputSourceProcessor : IInputSourceProcessor
     public void Dispose()
     {
         Stop();
+    }
+
+    private void _outputDeviceProcessor_OnOutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    {
+        OnOutputDeviceReportReceived?.Invoke(outputDeviceReport);
     }
 }

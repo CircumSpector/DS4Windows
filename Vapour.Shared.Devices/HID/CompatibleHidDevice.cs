@@ -9,6 +9,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -162,6 +163,11 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     public virtual void OnAfterStartListening()
     {
+    }
+
+    public virtual void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    {
+
     }
 
     protected virtual void OnConfigurationChanged(InputSourceConfiguration configuration)

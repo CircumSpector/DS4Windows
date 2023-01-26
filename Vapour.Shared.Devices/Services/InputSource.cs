@@ -33,16 +33,18 @@ internal class InputSource : IInputSource
         if (_inputSourceProcessor == null)
         {
             _inputSourceProcessor = _serviceProvider.GetService<IInputSourceProcessor>();
+            _inputSourceProcessor.OnOutputDeviceReportReceived += _inputSourceProcessor_OnOutputDeviceReportReceived;
             // ReSharper disable once PossibleNullReferenceException
             _inputSourceProcessor.Start(this);
             OnAfterStartListening();
         }
     }
-
+    
     public void Stop()
     {
         if (_inputSourceProcessor != null)
         {
+            _inputSourceProcessor.OnOutputDeviceReportReceived -= _inputSourceProcessor_OnOutputDeviceReportReceived;
             _inputSourceProcessor.Dispose();
             _inputSourceProcessor = null;
         }
@@ -218,6 +220,14 @@ internal class InputSource : IInputSource
         }
 
         _finalReport = finalReport;
+    }
+
+    private void _inputSourceProcessor_OnOutputDeviceReportReceived(Reporting.OutputDeviceReport outputDeviceReport)
+    {
+        foreach (var controller in _controllers)
+        {
+            controller.Key.OutputDeviceReportReceived(outputDeviceReport);
+        }
     }
 
     public static class DefaultPlayerNumberColors

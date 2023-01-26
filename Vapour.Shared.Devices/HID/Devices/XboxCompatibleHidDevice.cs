@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 public class XboxCompatibleHidDevice : CompatibleHidDevice
@@ -33,6 +34,11 @@ public class XboxCompatibleHidDevice : CompatibleHidDevice
         }
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
+    }
+
+    public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    {
+        //TODO: process report coming from the virtual device
     }
 
     public override unsafe int ReadInputReport(Span<byte> buffer)
