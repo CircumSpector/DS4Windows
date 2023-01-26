@@ -91,9 +91,10 @@ public class FilterService : IFilterService
                 }
                 else
                 {
-                    UsbPnPDevice usbDevice = PnPDevice.GetDeviceByInstanceId(device.SourceDevice.InstanceId)
+                    UsbPnPDevice usbDevice = PnPDevice
+                        .GetDeviceByInstanceId(device.SourceDevice.InstanceId)
                         .ToUsbPnPDevice();
-                    usbDevice.CyclePort();
+
                     CyclePort(usbDevice);
                 }
             }
