@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.ViGEm.Client;
@@ -11,12 +13,11 @@ namespace Vapour.Shared.Devices.Services.Reporting;
 
 internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
 {
-    private IInputReportProcessor _inputReportProcessor;
-    private IOutDevice _controllerDevice;
-
     private const float RecipInputPosResolution = 1 / 127f;
     private const float RecipInputNegResolution = 1 / 128f;
     private const int OutputResolution = 32767 - -32768;
+    private IOutDevice _controllerDevice;
+    private IInputReportProcessor _inputReportProcessor;
 
     public OutputDeviceProcessor(IServiceProvider serviceProvider)
     {
@@ -31,24 +32,28 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
 
     public void StartOutputProcessing(IInputReportProcessor inputReportProcessor)
     {
-        if (InputSource.Configuration.OutputDeviceType != OutputDeviceType.None)
+        if (InputSource.Configuration.OutputDeviceType == OutputDeviceType.None)
         {
-            _inputReportProcessor = inputReportProcessor;
-            _inputReportProcessor.InputReportAvailable += _inputReportProcessor_InputReportAvailable;
-            _controllerDevice = CreateControllerOutDevice();
-            _controllerDevice.Connect();
+            return;
         }
+
+        _inputReportProcessor = inputReportProcessor;
+        _inputReportProcessor.InputReportAvailable += InputReportAvailable;
+        _controllerDevice = CreateControllerOutDevice();
+        _controllerDevice.Connect();
     }
 
     public void StopOutputProcessing()
     {
-        if (_controllerDevice != null)
+        if (_controllerDevice == null)
         {
-            _controllerDevice.OnOutputDeviceReportReceived -= OutDevice_OnOutputDeviceReportReceived;
-            _inputReportProcessor.InputReportAvailable -= _inputReportProcessor_InputReportAvailable;
-            _controllerDevice.Disconnect();
-            _controllerDevice = null;
+            return;
         }
+
+        _controllerDevice.OnOutputDeviceReportReceived -= OutDevice_OnOutputDeviceReportReceived;
+        _inputReportProcessor.InputReportAvailable -= InputReportAvailable;
+        _controllerDevice.Disconnect();
+        _controllerDevice = null;
     }
 
     public void SetInputSource(IInputSource inputSource)
@@ -56,20 +61,22 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
         InputSource = inputSource;
     }
 
-    private void _inputReportProcessor_InputReportAvailable(IInputSource arg1,
+    private void InputReportAvailable(IInputSource arg1,
         InputSourceFinalReport report)
     {
-        if (InputSource.Configuration.OutputDeviceType != OutputDeviceType.None && _controllerDevice != null)
+        if (InputSource.Configuration.OutputDeviceType == OutputDeviceType.None || _controllerDevice == null)
         {
-            report = UpdateBasedOnConfiguration(InputSource.Configuration, report);
-            _controllerDevice.ConvertAndSendReport(report);
+            return;
         }
+
+        report = UpdateBasedOnConfiguration(InputSource.Configuration, report);
+        _controllerDevice.ConvertAndSendReport(report);
     }
 
     private InputSourceFinalReport UpdateBasedOnConfiguration(InputSourceConfiguration configuration,
         InputSourceFinalReport report)
     {
-        CheckAndScaleIfNeeded(report);      
+        CheckAndScaleIfNeeded(report);
         if (configuration.IsPassthru)
         {
             return report;
@@ -83,7 +90,7 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
     private IOutDevice CreateControllerOutDevice()
     {
         IOutDevice outDevice;
-        ViGEmClient client = Services.GetService<ViGEmClient>();
+        ViGEmClient client = Services.GetRequiredService<ViGEmClient>();
         if (InputSource.Configuration.OutputDeviceType == OutputDeviceType.Xbox360Controller)
         {
             outDevice = new Xbox360OutDevice(client);
@@ -103,58 +110,62 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
         OnOutputDeviceReportReceived?.Invoke(outputReport);
     }
 
+    [SuppressMessage("ReSharper", "SwitchStatementHandlesSomeKnownEnumValuesWithDefault")]
     private void CheckAndScaleIfNeeded(InputSourceFinalReport report)
     {
-        if (report.LThumbAxisScaleInputType == InputAxisType.Xbox &&
-            InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller)
+        switch (report.LThumbAxisScaleInputType)
         {
-            report.LeftThumbX = ScaleDown(report.LeftThumbX, false);
-            report.LeftThumbY = ScaleDown(report.LeftThumbY, true);
-        }
-        else if (report.LThumbAxisScaleInputType == InputAxisType.DualShock4 &&
-                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller)
-        {
-            report.LeftThumbX = ScaleUp(report.LeftThumbX, false);
-            report.LeftThumbY = ScaleUp(report.LeftThumbY, true);
+            case InputAxisType.Xbox when
+                InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller:
+                report.LeftThumbX = ScaleDown(report.LeftThumbX, false);
+                report.LeftThumbY = ScaleDown(report.LeftThumbY, true);
+                break;
+            case InputAxisType.DualShock4 when
+                InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller:
+                report.LeftThumbX = ScaleUp(report.LeftThumbX, false);
+                report.LeftThumbY = ScaleUp(report.LeftThumbY, true);
+                break;
         }
 
-        if (report.RThumbAxisScaleInputType == InputAxisType.Xbox &&
-            InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller)
+        switch (report.RThumbAxisScaleInputType)
         {
-            report.RightThumbX = ScaleDown(report.RightThumbX, false);
-            report.RightThumbY = ScaleDown(report.RightThumbY, true);
-        }
-        else if (report.RThumbAxisScaleInputType == InputAxisType.DualShock4 &&
-                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller)
-        {
-            report.RightThumbX = ScaleUp(report.RightThumbX, false);
-            report.RightThumbY = ScaleUp(report.RightThumbY, true);
+            case InputAxisType.Xbox when
+                InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller:
+                report.RightThumbX = ScaleDown(report.RightThumbX, false);
+                report.RightThumbY = ScaleDown(report.RightThumbY, true);
+                break;
+            case InputAxisType.DualShock4 when
+                InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller:
+                report.RightThumbX = ScaleUp(report.RightThumbX, false);
+                report.RightThumbY = ScaleUp(report.RightThumbY, true);
+                break;
         }
     }
 
-    private byte ScaleDown(short value, bool flip)
+    private static byte ScaleDown(short value, bool flip)
     {
         unchecked
         {
-            var newValue = (byte)((value + 0x8000) / 257);
+            byte newValue = (byte)((value + 0x8000) / 257);
             if (flip)
             {
                 newValue = (byte)(byte.MaxValue - newValue);
             }
+
             return newValue;
         }
     }
 
-    private short ScaleUp(int Value, bool Flip)
+    private static short ScaleUp(int value, bool flip)
     {
         unchecked
         {
-            Value -= 0x80;
-            float recipRun = Value >= 0 ? RecipInputPosResolution : RecipInputNegResolution;
+            value -= 0x80;
+            float recipRun = value >= 0 ? RecipInputPosResolution : RecipInputNegResolution;
 
-            float temp = Value * recipRun;
+            float temp = value * recipRun;
             //if (Flip) temp = (temp - 0.5f) * -1.0f + 0.5f;
-            if (Flip)
+            if (flip)
             {
                 temp = -temp;
             }

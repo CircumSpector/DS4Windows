@@ -5,8 +5,6 @@ using Windows.Win32.Devices.HumanInterfaceDevice;
 using Windows.Win32.Foundation;
 using Windows.Win32.Storage.FileSystem;
 
-
-
 using Microsoft.Win32.SafeHandles;
 
 namespace Vapour.Shared.Devices.HID;
@@ -37,11 +35,6 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     private bool _disposed;
 
     /// <summary>
-    ///     Native handle to device.
-    /// </summary>
-    public SafeHandle Handle { get; set; }
-
-    /// <summary>
     ///     HID Device Attributes.
     /// </summary>
     public HIDD_ATTRIBUTES Attributes { get; init; }
@@ -53,8 +46,13 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
 
     public bool Equals(HidDevice other)
     {
-        return ReferenceEquals(this, other) || InstanceId.Equals(other.InstanceId, StringComparison.OrdinalIgnoreCase);
+        return ReferenceEquals(this, other) || InstanceId.Equals(other!.InstanceId, StringComparison.OrdinalIgnoreCase);
     }
+
+    /// <summary>
+    ///     Native handle to device.
+    /// </summary>
+    public SafeHandle Handle { get; set; }
 
     /// <inheritdoc />
     public bool IsVirtual { get; set; }
@@ -149,7 +147,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public virtual unsafe int ReadInputReport(Span<byte> buffer)
     {
-        var overlapped = GetOverlappedForReadReport();
+        NativeOverlapped overlapped = GetOverlappedForReadReport();
 
         uint bytesRead = 0;
         fixed (byte* bufferPtr = buffer)
@@ -183,11 +181,7 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
             throw new HidDeviceException("Device handle not open or invalid.");
         }
 
-        NativeOverlapped overlapped = new NativeOverlapped
-        {
-            EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle()
-
-        };
+        NativeOverlapped overlapped = new() { EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle() };
 
         return overlapped;
     }

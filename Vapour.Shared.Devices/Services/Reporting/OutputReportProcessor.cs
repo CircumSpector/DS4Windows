@@ -7,23 +7,26 @@ using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
-public class OutputReportProcessor : IOutputReportProcessor
+
+public sealed class OutputReportProcessor : IOutputReportProcessor
 {
-    private readonly ILogger<IOutputReportProcessor> _logger;
     private static readonly Meter Meter = new(TracingSources.AssemblyName);
-    private Thread _outputReportProcessorThread;
-    private CancellationTokenSource _outputReportCancellationToken;
-    private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
+
     private static readonly Counter<int> OutputReportsSentCounter =
         Meter.CreateCounter<int>("output-reports-sent", description: "The number of output reports sent.");
 
+    private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
+    private readonly ILogger<IOutputReportProcessor> _logger;
+
     private ICompatibleHidDevice _device;
+    private CancellationTokenSource _outputReportCancellationToken;
+    private Thread _outputReportProcessorThread;
 
     public OutputReportProcessor(ILogger<IOutputReportProcessor> logger)
     {
         _logger = logger;
     }
-    
+
     public bool IsProcessing { get; set; }
 
     public void SetDevice(ICompatibleHidDevice device)
@@ -45,8 +48,7 @@ public class OutputReportProcessor : IOutputReportProcessor
 
         _outputReportProcessorThread = new Thread(SendOutputReportLoop)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _outputReportProcessorThread.Start();
 
@@ -80,7 +82,7 @@ public class OutputReportProcessor : IOutputReportProcessor
         {
             while (!_outputReportCancellationToken.IsCancellationRequested)
             {
-                var buffer = await _device.ReadOutputReport(_outputReportCancellationToken.Token);
+                byte[] buffer = await _device.ReadOutputReport(_outputReportCancellationToken.Token);
                 _device.SourceDevice.WriteOutputReportViaInterrupt(buffer, 500);
                 OutputReportsSentCounter.Add(1);
             }

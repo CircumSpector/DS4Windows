@@ -9,12 +9,12 @@ using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
-internal class Xbox360OutDevice : OutDevice
+internal sealed class Xbox360OutDevice : OutDevice
 {
-    private Thread _outDeviceThread;
-    private CancellationTokenSource _outDeviceCancellationToken;
     private readonly IXbox360Controller _controller;
+    private CancellationTokenSource _outDeviceCancellationToken;
     private Channel<byte[]> _outDeviceReportChannel;
+    private Thread _outDeviceThread;
 
     public Xbox360OutDevice(ViGEmClient client)
     {
@@ -61,9 +61,7 @@ internal class Xbox360OutDevice : OutDevice
 
         _outDeviceReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
         {
-            SingleReader = true,
-            SingleWriter = true,
-            AllowSynchronousContinuations = true
+            SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
         });
 
         if (_outDeviceCancellationToken == null || _outDeviceCancellationToken.Token.IsCancellationRequested)
@@ -73,12 +71,11 @@ internal class Xbox360OutDevice : OutDevice
 
         _outDeviceThread = new Thread(ReceiveOutputDeviceReport)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _outDeviceThread.Start();
 
-        _controller.FeedbackReceived += _controller_FeedbackReceived;
+        _controller.FeedbackReceived += ControllerFeedbackReceived;
         _controller.Connect();
         IsConnected = true;
     }
@@ -90,7 +87,7 @@ internal class Xbox360OutDevice : OutDevice
             return;
         }
 
-        _controller.FeedbackReceived -= _controller_FeedbackReceived;
+        _controller.FeedbackReceived -= ControllerFeedbackReceived;
         _controller.Disconnect();
 
         _outDeviceCancellationToken.Cancel();
@@ -118,10 +115,14 @@ internal class Xbox360OutDevice : OutDevice
 
     private void SetDpad(InputSourceFinalReport state)
     {
-        _controller.SetButtonState(Xbox360Button.Up, state.DPad is DPadDirection.North or DPadDirection.NorthEast or DPadDirection.NorthWest);
-        _controller.SetButtonState(Xbox360Button.Right, state.DPad is DPadDirection.East or DPadDirection.NorthEast or DPadDirection.SouthEast);
-        _controller.SetButtonState(Xbox360Button.Down, state.DPad is DPadDirection.South or DPadDirection.SouthEast or DPadDirection.SouthWest);
-        _controller.SetButtonState(Xbox360Button.Left, state.DPad is DPadDirection.West or DPadDirection.SouthWest or DPadDirection.NorthWest);
+        _controller.SetButtonState(Xbox360Button.Up,
+            state.DPad is DPadDirection.North or DPadDirection.NorthEast or DPadDirection.NorthWest);
+        _controller.SetButtonState(Xbox360Button.Right,
+            state.DPad is DPadDirection.East or DPadDirection.NorthEast or DPadDirection.SouthEast);
+        _controller.SetButtonState(Xbox360Button.Down,
+            state.DPad is DPadDirection.South or DPadDirection.SouthEast or DPadDirection.SouthWest);
+        _controller.SetButtonState(Xbox360Button.Left,
+            state.DPad is DPadDirection.West or DPadDirection.SouthWest or DPadDirection.NorthWest);
     }
 
     private async void ReceiveOutputDeviceReport()
@@ -139,12 +140,11 @@ internal class Xbox360OutDevice : OutDevice
         }
         catch
         {
-
         }
     }
 
-    private void _controller_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
+    private async void ControllerFeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
     {
-        _outDeviceReportChannel.Writer.WriteAsync(new[] { e.LargeMotor, e.SmallMotor, e.LedNumber });
+        await _outDeviceReportChannel.Writer.WriteAsync(new[] { e.LargeMotor, e.SmallMotor, e.LedNumber });
     }
 }

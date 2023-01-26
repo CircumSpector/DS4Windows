@@ -1,4 +1,6 @@
-﻿using Nefarius.ViGEm.Client;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 
@@ -7,11 +9,12 @@ using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
-internal class DS4OutDevice : OutDevice
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+internal sealed class DS4OutDevice : OutDevice
 {
-    private Thread _outDeviceThread;
-    private CancellationTokenSource _outDeviceCancellationToken;
     private readonly IDualShock4Controller _controller;
+    private CancellationTokenSource _outDeviceCancellationToken;
+    private Thread _outDeviceThread;
 
     public DS4OutDevice(ViGEmClient client)
     {
@@ -33,8 +36,7 @@ internal class DS4OutDevice : OutDevice
 
         _outDeviceThread = new Thread(ReceiveOutputDeviceReport)
         {
-            Priority = ThreadPriority.AboveNormal,
-            IsBackground = true
+            Priority = ThreadPriority.AboveNormal, IsBackground = true
         };
         _outDeviceThread.Start();
 
@@ -50,7 +52,7 @@ internal class DS4OutDevice : OutDevice
         }
 
         _controller.Disconnect();
-        
+
         _outDeviceCancellationToken.Cancel();
         _outDeviceThread.Join();
         _outDeviceCancellationToken.Dispose();
@@ -73,6 +75,7 @@ internal class DS4OutDevice : OutDevice
         }
     }
 
+    [SuppressMessage("ReSharper", "SwitchStatementHandlesSomeKnownEnumValuesWithDefault")]
     public override void ConvertAndSendReport(InputSourceFinalReport state, int device = 0)
     {
         if (!IsConnected)
@@ -85,41 +88,35 @@ internal class DS4OutDevice : OutDevice
         _controller.SetButtonState(DualShock4Button.ThumbRight, state.RightThumb);
         _controller.SetButtonState(DualShock4Button.Options, state.Options);
 
-        if (state.DPad == DPadDirection.NorthEast)
+        switch (state.DPad)
         {
-            _controller.SetDPadDirection(DualShock4DPadDirection.Northeast);
-        }
-        else if (state.DPad == DPadDirection.NorthWest)
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.Northwest);
-        }
-        else if (state.DPad == DPadDirection.North)
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.North);
-        }
-        else if (state.DPad == DPadDirection.West)
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.West);
-        }
-        else if (state.DPad == DPadDirection.East)
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.East);
-        }
-        else if (state.DPad == DPadDirection.SouthEast)
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.Southeast);
-        }
-        else if (state.DPad == DPadDirection.SouthWest)
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.Southwest);
-        }
-        else if (state.DPad == DPadDirection.South)
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.South);
-        }
-        else
-        {
-            _controller.SetDPadDirection(DualShock4DPadDirection.None);
+            case DPadDirection.NorthEast:
+                _controller.SetDPadDirection(DualShock4DPadDirection.Northeast);
+                break;
+            case DPadDirection.NorthWest:
+                _controller.SetDPadDirection(DualShock4DPadDirection.Northwest);
+                break;
+            case DPadDirection.North:
+                _controller.SetDPadDirection(DualShock4DPadDirection.North);
+                break;
+            case DPadDirection.West:
+                _controller.SetDPadDirection(DualShock4DPadDirection.West);
+                break;
+            case DPadDirection.East:
+                _controller.SetDPadDirection(DualShock4DPadDirection.East);
+                break;
+            case DPadDirection.SouthEast:
+                _controller.SetDPadDirection(DualShock4DPadDirection.Southeast);
+                break;
+            case DPadDirection.SouthWest:
+                _controller.SetDPadDirection(DualShock4DPadDirection.Southwest);
+                break;
+            case DPadDirection.South:
+                _controller.SetDPadDirection(DualShock4DPadDirection.South);
+                break;
+            default:
+                _controller.SetDPadDirection(DualShock4DPadDirection.None);
+                break;
         }
 
         _controller.SetButtonState(DualShock4Button.ShoulderLeft, state.LeftShoulder);
@@ -146,8 +143,8 @@ internal class DS4OutDevice : OutDevice
         {
             while (!_outDeviceCancellationToken.IsCancellationRequested)
             {
-                var buffer = _controller.AwaitRawOutputReport();
-                
+                IEnumerable<byte> buffer = _controller.AwaitRawOutputReport();
+
                 FireOutputDeviceReportReceived(new OutputDeviceReport
                 {
                     OutputDeviceType = OutputDeviceType.DualShock4Controller, Packet = buffer.ToArray()
