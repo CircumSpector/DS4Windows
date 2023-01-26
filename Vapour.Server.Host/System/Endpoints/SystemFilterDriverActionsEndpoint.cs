@@ -7,7 +7,7 @@ namespace Vapour.Server.Host.System.Endpoints;
 /// <summary>
 ///     Filter driver actions accepted by this API.
 /// </summary>
-public enum SystemFilterAction
+public enum SystemFilterDriverAction
 {
     Enable,
     Disable,
@@ -35,23 +35,23 @@ public class SystemFilterDriverActionsEndpoint : EndpointWithoutRequest
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        SystemFilterAction action = Route<SystemFilterAction>("Action");
+        SystemFilterDriverAction driverAction = Route<SystemFilterDriverAction>("Action");
 
-        switch (action)
+        switch (driverAction)
         {
-            case SystemFilterAction.Enable:
+            case SystemFilterDriverAction.Enable:
                 _filterService.SetFilterDriverEnabled(true);
                 await SendOkAsync(ct);
                 return;
-            case SystemFilterAction.Disable:
+            case SystemFilterDriverAction.Disable:
                 _filterService.SetFilterDriverEnabled(false);
                 await SendOkAsync(ct);
                 return;
-            case SystemFilterAction.Install:
+            case SystemFilterDriverAction.Install:
                 Version installedVersion = await _filterService.InstallFilterDriver();
                 await SendOkAsync(new { InstalledVersion = installedVersion }, ct);
                 return;
-            case SystemFilterAction.Uninstall:
+            case SystemFilterDriverAction.Uninstall:
                 await _filterService.UninstallFilterDriver();
                 await SendOkAsync(ct);
                 return;
