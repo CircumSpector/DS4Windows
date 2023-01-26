@@ -18,7 +18,8 @@ public class GetGameListEndpoint : Endpoint<GameListRequest, List<GameInfo>>
     {
         Post("/game/list");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Gets a list of selectable games by input source key and game source";
             s.Description = "Gets a list of selectable games by input source key and game source";
             s.Responses[200] = "The list was retrieved successfully";
@@ -27,7 +28,8 @@ public class GetGameListEndpoint : Endpoint<GameListRequest, List<GameInfo>>
 
     public override async Task HandleAsync(GameListRequest req, CancellationToken ct)
     {
-        var gameList = _inputSourceConfigurationService.GetGameSelectionList(req.InputSourceKey, req.GameSource);
+        List<GameInfo> gameList =
+            _inputSourceConfigurationService.GetGameSelectionList(req.InputSourceKey, req.GameSource);
         await SendOkAsync(gameList, ct);
     }
 }

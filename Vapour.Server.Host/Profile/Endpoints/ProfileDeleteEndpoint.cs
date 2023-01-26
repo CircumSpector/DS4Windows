@@ -16,8 +16,7 @@ public sealed class ProfileDeleteEndpoint : Endpoint<ProfileDeleteRequest>
 
     public override void Configure()
     {
-        Verbs(Http.DELETE);
-        Routes("/profile/delete/{ProfileId}");
+        Delete("/profile/delete/{ProfileId}");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Deletes a given profile by provided ID";

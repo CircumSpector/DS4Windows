@@ -17,7 +17,8 @@ public class DeleteGameInputSourceConfigurationEndpoint : EndpointWithoutRequest
     {
         Delete("/inputsource/configuration/games/delete/{inputSourceKey}/{gameId}");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Deletes a game configuration by input source key and gameId";
             s.Description = "Deletes a game configuration by input source and gameId";
             s.Responses[200] = "The game configuration was deleted successfully";
@@ -26,8 +27,8 @@ public class DeleteGameInputSourceConfigurationEndpoint : EndpointWithoutRequest
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var inputSourceKey = Route<string>("inputSourceKey");
-        var gameId = Route<string>("gameId");
+        string inputSourceKey = Route<string>("inputSourceKey");
+        string gameId = Route<string>("gameId");
         _inputSourceConfigurationService.DeleteGameConfiguration(inputSourceKey, gameId);
         await SendOkAsync(ct);
     }

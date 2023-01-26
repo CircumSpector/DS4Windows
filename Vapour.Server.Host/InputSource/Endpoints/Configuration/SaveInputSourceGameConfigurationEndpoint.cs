@@ -18,7 +18,8 @@ public class SaveInputSourceGameConfigurationEndpoint : Endpoint<SaveInputSource
     {
         Post("/inputsource/game/save");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Saves a game configuration for an input source";
             s.Description = "Saves a game configuration for an input source";
             s.Responses[200] = "The configuration was saved successfully";
@@ -27,7 +28,8 @@ public class SaveInputSourceGameConfigurationEndpoint : Endpoint<SaveInputSource
 
     public override async Task HandleAsync(SaveInputSourceGameConfigurationRequest req, CancellationToken ct)
     {
-        _inputSourceConfigurationService.AddOrUpdateInputSourceGameConfiguration(req.InputSourceKey, req.GameInfo, req.InputSourceConfiguration);
+        _inputSourceConfigurationService.AddOrUpdateInputSourceGameConfiguration(req.InputSourceKey, req.GameInfo,
+            req.InputSourceConfiguration);
         await SendOkAsync(ct);
     }
 }
