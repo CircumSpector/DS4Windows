@@ -14,7 +14,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.232" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.138-beta">
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.188-beta">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 	</ItemGroup>
