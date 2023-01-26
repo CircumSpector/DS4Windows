@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net.NetworkInformation;
 
-
-
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -116,12 +114,16 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     public void SetConfiguration(InputSourceConfiguration configuration)
     {
-        InputSourceConfiguration oldConfiguration = CurrentConfiguration;
         CurrentConfiguration = configuration;
-        MultiControllerConfigurationType = configuration.Controllers.Single(c => c.DeviceKey == DeviceKey)
+        RefreshConfiguration();
+    }
+
+    public void RefreshConfiguration()
+    {
+        MultiControllerConfigurationType = CurrentConfiguration.Controllers.Single(c => c.DeviceKey == DeviceKey)
             .MultiControllerConfigurationType;
         InputSourceReport.MultiControllerConfigurationType = MultiControllerConfigurationType;
-        OnConfigurationChanged(oldConfiguration, configuration);
+        OnConfigurationChanged(CurrentConfiguration);
     }
 
     /// <inheritdoc />
@@ -147,8 +149,7 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
     {
     }
 
-    protected virtual void OnConfigurationChanged(InputSourceConfiguration oldProfile,
-        InputSourceConfiguration newProfile)
+    protected virtual void OnConfigurationChanged(InputSourceConfiguration configuration)
     {
     }
 

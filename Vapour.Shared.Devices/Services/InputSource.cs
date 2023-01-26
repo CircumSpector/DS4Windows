@@ -1,4 +1,6 @@
-﻿using Vapour.Shared.Devices.HID;
+﻿using System.Windows.Media;
+
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.Services;
@@ -122,6 +124,26 @@ internal class InputSource : IInputSource
         }
     }
 
+    public void SetPlayerNumberAndColor(int playerNumber)
+    {
+        Configuration.PlayerNumber = playerNumber;
+        if (String.IsNullOrWhiteSpace(Configuration.CustomLightbar))
+        {
+            Configuration.LoadedLightbar = Configuration.PlayerNumber switch
+            {
+                1 => DefaultPlayerNumberColors.Player1,
+                2 => DefaultPlayerNumberColors.Player2,
+                3 => DefaultPlayerNumberColors.Player3,
+                _ => DefaultPlayerNumberColors.Player4
+            };
+        }
+
+        foreach (var controller in _controllers)
+        {
+            controller.Key.RefreshConfiguration();
+        }
+    }
+
     private void ReorderControllers()
     {
         if (Configuration != null)
@@ -167,5 +189,13 @@ internal class InputSource : IInputSource
         }
 
         _finalReport = finalReport;
+    }
+
+    public static class DefaultPlayerNumberColors
+    {
+        public static string Player1 = Colors.Blue.ToString();
+        public static string Player2 = Colors.Red.ToString();
+        public static string Player3 = Colors.Green.ToString();
+        public static string Player4 = Colors.Purple.ToString();
     }
 }

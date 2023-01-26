@@ -12,7 +12,8 @@ public class InputSourceConfiguration
     public Guid ProfileId { get; set; }
 
     public OutputDeviceType OutputDeviceType { get; set; }
-    public string Lightbar { get; set; }
+    public string CustomLightbar { get; set; }
+    public string LoadedLightbar { get; set; }
     public bool IsRumbleEnabled { get; set; }
     public bool IsPassthru { get; set; }
 
@@ -21,4 +22,7 @@ public class InputSourceConfiguration
 
     public bool IsGameConfiguration => GameInfo != null;
     public GameInfo GameInfo { get; set; }
+
+    [JsonIgnore]
+    public int PlayerNumber { get; set; }
 }

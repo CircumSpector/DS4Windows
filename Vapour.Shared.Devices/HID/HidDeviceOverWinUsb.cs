@@ -57,10 +57,11 @@ public class HidDeviceOverWinUsb : HidDevice
 
         Capabilities = new HIDP_CAPS
         {
-            Usage = HidUsageGamepad, InputReportByteLength = (ushort)InterruptInPipe.MaximumPacketSize
+            Usage = HidUsageGamepad, InputReportByteLength = (ushort)InterruptInPipe.MaximumPacketSize, OutputReportByteLength = (ushort)InterruptOutPipe.MaximumPacketSize
         };
 
         InputReportByteLength = Capabilities.InputReportByteLength;
+        OutputReportByteLength = Capabilities.OutputReportByteLength;
 
         Service = InputDeviceService.WinUsb;
     }

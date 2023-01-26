@@ -86,8 +86,11 @@ internal sealed class InputSourceService : IInputSourceService
                 await AutoCombineJoyCons();
             }
 
-            foreach (var inputSource in _inputSourceDataSource.InputSources)
+            for (var i = 0; i < _inputSourceDataSource.InputSources.Count; i++)
             {
+                var inputSource = _inputSourceDataSource.InputSources[i];
+                inputSource.SetPlayerNumberAndColor(i + 1);
+
                 _inputReportProcessorService.StartProcessing(inputSource);
                 _inputSourceDataSource.FireCreated(inputSource);
             }
@@ -123,7 +126,6 @@ internal sealed class InputSourceService : IInputSourceService
 
             leftJoyCons.Remove(firstRightJoyCon);
             rightJoyCons.Remove(firstRightJoyCon);
-
         }
     }
 
