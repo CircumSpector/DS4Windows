@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.NetworkInformation;
 
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
@@ -10,6 +11,9 @@ namespace Vapour.Shared.Devices.HID;
 ///     Represents a device that can emit supported input reports and supports features like reading unique addresses
 ///     (serial numbers) etc.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface ICompatibleHidDevice : IDisposable
 {
     /// <summary>
@@ -49,14 +53,19 @@ public interface ICompatibleHidDevice : IDisposable
     string DeviceKey { get; }
     
     DeviceInfo CurrentDeviceInfo { get; }
+
     int Index { get; set; }
-    MultiControllerConfigurationType MultiControllerConfigurationType { get; set; }
+
+    MultiControllerConfigurationType MultiControllerConfigurationType { get; }
 
     /// <summary>
     ///     Fired when this device has been disconnected/unplugged.
     /// </summary>
     event Action<ICompatibleHidDevice> Disconnected;
 
+    /// <summary>
+    ///     Performs post-device-creation initialization tasks.
+    /// </summary>
     void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo);
 
     /// <summary>
@@ -74,8 +83,11 @@ public interface ICompatibleHidDevice : IDisposable
 
     void OnAfterStartListening();
     
-    unsafe int ReadInputReport(Span<byte> buffer);
+    int ReadInputReport(Span<byte> buffer);
+
     void RefreshConfiguration();
+
     Task<byte[]> ReadOutputReport(CancellationToken cancellationToken);
+
     void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport);
 }
