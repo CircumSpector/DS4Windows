@@ -17,7 +17,8 @@ public class InputSourceGameConfigurationsEndpoint : EndpointWithoutRequest<List
     {
         Get("/inputsource/configuration/games/{inputSourceKey}");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Gets a list of game configurations by input source key";
             s.Description = "Gets a list of game configurations by input source key";
             s.Responses[200] = "The list was retrieved successfully";
@@ -26,8 +27,9 @@ public class InputSourceGameConfigurationsEndpoint : EndpointWithoutRequest<List
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var inputSourceKey = Route<string>("inputSourceKey");
-        var gameList = _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSourceKey);
+        string inputSourceKey = Route<string>("inputSourceKey");
+        List<InputSourceConfiguration> gameList =
+            _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSourceKey);
         await SendOkAsync(gameList, ct);
     }
 }

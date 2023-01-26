@@ -21,8 +21,6 @@ public sealed class ProfilesService : IProfilesService
 
     private readonly ILogger<ProfilesService> _logger;
 
-    private Dictionary<Guid, IProfile> _availableProfiles;
-
     public ProfilesService(
         ILogger<ProfilesService> logger,
         IGlobalStateService global
@@ -35,15 +33,16 @@ public sealed class ProfilesService : IProfilesService
         _global = global;
     }
 
-    public Dictionary<Guid, IProfile> AvailableProfiles { get { return _availableProfiles; } }
+    public Dictionary<Guid, IProfile> AvailableProfiles { get; private set; }
+
     public event EventHandler<Guid> OnProfileDeleted;
     public event EventHandler<Guid> OnProfileUpdated;
 
     public void DeleteProfile(Guid profileId)
     {
-        if (_availableProfiles.ContainsKey(profileId))
+        if (AvailableProfiles.ContainsKey(profileId))
         {
-            DeleteProfile(_availableProfiles[profileId]);
+            DeleteProfile(AvailableProfiles[profileId]);
         }
     }
 
@@ -66,9 +65,9 @@ public sealed class ProfilesService : IProfilesService
         // 
         File.Delete(profilePath);
 
-        _availableProfiles.Remove(profile.Id);
+        AvailableProfiles.Remove(profile.Id);
 
-       OnProfileDeleted?.Invoke(this, profile.Id);
+        OnProfileDeleted?.Invoke(this, profile.Id);
     }
 
     /// <summary>
@@ -95,7 +94,7 @@ public sealed class ProfilesService : IProfilesService
             throw new Exception("Something bad here");
         }
 
-        _availableProfiles.Clear();
+        AvailableProfiles.Clear();
 
         foreach (string file in profiles)
         {
@@ -111,14 +110,14 @@ public sealed class ProfilesService : IProfilesService
                 continue;
             }
 
-            if (_availableProfiles.ContainsKey(profile.Id))
+            if (AvailableProfiles.ContainsKey(profile.Id))
             {
                 _logger.LogWarning("Profile \"{Name}\" with ID {Id} already loaded, skipping",
                     profile.DisplayName, profile.Id);
                 continue;
             }
 
-            _availableProfiles.Add(profile.Id, profile);
+            AvailableProfiles.Add(profile.Id, profile);
         }
     }
 
@@ -134,7 +133,7 @@ public sealed class ProfilesService : IProfilesService
         // 
         Directory.CreateDirectory(directory);
 
-        foreach (IProfile profile in _availableProfiles.Values)
+        foreach (IProfile profile in AvailableProfiles.Values)
         {
             PersistProfile(profile, directory);
         }
@@ -145,7 +144,7 @@ public sealed class ProfilesService : IProfilesService
     /// </summary>
     public void Initialize()
     {
-        _availableProfiles = new Dictionary<Guid, IProfile>();
+        AvailableProfiles = new Dictionary<Guid, IProfile>();
 
         //
         // Get all the necessary info restored from disk
@@ -158,7 +157,7 @@ public sealed class ProfilesService : IProfilesService
     /// </summary>
     public void Shutdown()
     {
-        _availableProfiles.Clear();
+        AvailableProfiles.Clear();
     }
 
     /// <summary>
@@ -170,13 +169,13 @@ public sealed class ProfilesService : IProfilesService
     {
         profile ??= VapourProfile.CreateNewProfile();
 
-        if (!_availableProfiles.ContainsKey(profile.Id))
+        if (!AvailableProfiles.ContainsKey(profile.Id))
         {
-            _availableProfiles.Add(profile.Id, profile);
+            AvailableProfiles.Add(profile.Id, profile);
         }
         else
         {
-            _availableProfiles[profile.Id] = profile;
+            AvailableProfiles[profile.Id] = profile;
             OnProfileUpdated?.Invoke(this, profile.Id);
         }
 
@@ -208,7 +207,7 @@ public sealed class ProfilesService : IProfilesService
             File.Delete(profilePath);
         }
 
-        FileStream file = File.Create(profilePath);
+        FileStream file = File.Create(profilePath!);
         file.Dispose();
         File.WriteAllText(profilePath, profileData);
     }

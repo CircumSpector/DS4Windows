@@ -21,7 +21,8 @@ public sealed class InputSourceListEndpoint : EndpointWithoutRequest<List<InputS
     {
         Get("/inputsource/list");
         AllowAnonymous();
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Gets a list of input source details";
             s.Description = "Returns a list of all currently connected supported input sources, if any";
             s.Responses[200] = "Input source list was delivered";

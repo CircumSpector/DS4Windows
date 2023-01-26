@@ -64,7 +64,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
 
         if (_currentWatch == null)
         {
-            foreach (var inputSource in inputSources)
+            foreach (IInputSource inputSource in inputSources)
             {
                 List<InputSourceConfiguration> gameConfigurations =
                     _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSource.InputSourceKey);
@@ -74,8 +74,8 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                     {
                         if (c.GameInfo.GameSource == GameSource.UWP &&
                             ((e.CommandLine.StartsWith("\"") &&
-                            e.CommandLine.Contains(c.GameInfo.GameId)) ||
-                            imagePath.Contains($"WindowsApps\\{c.GameInfo.GameId}") ))
+                              e.CommandLine.Contains(c.GameInfo.GameId)) ||
+                             imagePath.Contains($"WindowsApps\\{c.GameInfo.GameId}")))
                         {
                             return true;
                         }
@@ -121,7 +121,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
             return;
         }
 
-        foreach (var inputSource in inputSources)
+        foreach (IInputSource inputSource in inputSources)
         {
             List<InputSourceConfiguration> gameConfigurations =
                 _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSource.InputSourceKey);
@@ -158,7 +158,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         }
 
         _currentWatch = null;
-        foreach (var inputSource in _inputSourceDataSource.InputSources.ToList())
+        foreach (IInputSource inputSource in _inputSourceDataSource.InputSources.ToList())
         {
             _inputSourceConfigurationService.RestoreMainConfiguration(inputSource.InputSourceKey);
         }

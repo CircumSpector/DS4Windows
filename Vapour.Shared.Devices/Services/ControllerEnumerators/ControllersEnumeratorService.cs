@@ -15,12 +15,12 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 {
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
     private readonly IDeviceFactory _deviceFactory;
-    private readonly IInputSourceService _inputSourceService;
 
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
+    private readonly IInputSourceService _inputSourceService;
     private readonly ILogger<ControllersEnumeratorService> _logger;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
-   
+
     public ControllersEnumeratorService(ILogger<ControllersEnumeratorService> logger,
         IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService,
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
@@ -53,9 +53,9 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
         _winUsbDeviceEnumeratorService.Start();
 
         await _inputSourceService.FixupInputSources();
-        
+
         DeviceListReady?.Invoke();
-        
+
         _inputSourceService.ShouldAutoFixup = true;
     }
 
@@ -72,7 +72,7 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
         activity?.SetTag("Path", hidDevice.Path);
 
-        var deviceInfo = _deviceFactory.IsKnownDevice(hidDevice.VendorId, hidDevice.ProductId);
+        DeviceInfo deviceInfo = _deviceFactory.IsKnownDevice(hidDevice.VendorId, hidDevice.ProductId);
 
         if (deviceInfo is null)
         {
@@ -103,13 +103,12 @@ internal sealed class ControllersEnumeratorService : IControllersEnumeratorServi
 
         await _inputSourceService.AddController(device);
 
-        _logger.LogInformation("Added identified input device {Device}",
-            device.ToString());
+        _logger.LogInformation("Added identified input device {Device}", device);
     }
 
     private ICompatibleHidDevice CreateDevice(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
-        var device = _deviceFactory.CreateDevice(deviceInfo, hidDevice);
+        ICompatibleHidDevice device = _deviceFactory.CreateDevice(deviceInfo, hidDevice);
 
         // TODO: take Bluetooth into account
         if (hidDevice is HidDeviceOverWinUsb)

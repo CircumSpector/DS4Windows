@@ -16,8 +16,7 @@ public sealed class ProfileNewEndpoint : EndpointWithoutRequest<IProfile>
 
     public override void Configure()
     {
-        Verbs(Http.POST);
-        Routes("/profile/new");
+        Post("/profile/new");
         AllowAnonymous();
         Summary(s => {
             s.Summary = "Creates a new profile";

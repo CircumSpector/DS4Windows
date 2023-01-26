@@ -15,8 +15,8 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 
 public class FilterService : IFilterService
 {
-    private readonly IInputSourceDataSource _inputSourceDataSource;
     private readonly IDeviceSettingsService _deviceSettingsService;
+    private readonly IInputSourceDataSource _inputSourceDataSource;
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<FilterService> _logger;
@@ -91,9 +91,10 @@ public class FilterService : IFilterService
                 }
                 else
                 {
-                    UsbPnPDevice usbDevice = PnPDevice.GetDeviceByInstanceId(device.SourceDevice.InstanceId)
+                    UsbPnPDevice usbDevice = PnPDevice
+                        .GetDeviceByInstanceId(device.SourceDevice.InstanceId)
                         .ToUsbPnPDevice();
-                    usbDevice.CyclePort();
+
                     CyclePort(usbDevice);
                 }
             }
@@ -123,7 +124,6 @@ public class FilterService : IFilterService
         {
             // TODO: handle Bluetooth
             _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
-            return;
         }
         catch (UsbPnPDeviceRestartException ex)
         {
@@ -153,7 +153,6 @@ public class FilterService : IFilterService
         {
             // TODO: handle Bluetooth
             _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
-            return;
         }
         catch (UsbPnPDeviceRestartException ex)
         {
@@ -199,6 +198,20 @@ public class FilterService : IFilterService
         }
 
         return false;
+    }
+
+    /// <inheritdoc />
+    public async Task<Version> InstallFilterDriver()
+    {
+        await FilterDriverInstaller.InstallFilterDriverAsync();
+
+        return FilterDriverInstaller.EmbeddedDriverVersion;
+    }
+
+    /// <inheritdoc />
+    public Task UninstallFilterDriver()
+    {
+        return FilterDriverInstaller.UninstallFilterDriverAsync();
     }
 
     /// <summary>
