@@ -200,6 +200,20 @@ public class FilterService : IFilterService
         return false;
     }
 
+    /// <inheritdoc />
+    public async Task<Version> InstallFilterDriver()
+    {
+        await FilterDriverInstaller.InstallFilterDriverAsync();
+
+        return FilterDriverInstaller.EmbeddedDriverVersion;
+    }
+
+    /// <inheritdoc />
+    public Task UninstallFilterDriver()
+    {
+        return FilterDriverInstaller.UninstallFilterDriverAsync();
+    }
+
     /// <summary>
     ///     Power-cycles the port the given device is attached to.
     /// </summary>

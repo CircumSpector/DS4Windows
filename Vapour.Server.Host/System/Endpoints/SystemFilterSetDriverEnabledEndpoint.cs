@@ -4,6 +4,7 @@ using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Server.Host.System.Endpoints;
 
+[Obsolete]
 public class SystemFilterSetDriverEnabledEndpoint : EndpointWithoutRequest
 {
     private readonly IFilterService _filterService;

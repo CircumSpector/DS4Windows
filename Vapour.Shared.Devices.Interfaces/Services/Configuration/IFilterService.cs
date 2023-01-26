@@ -52,4 +52,14 @@ public interface IFilterService
     /// <param name="outputDeviceType">The output device type of the configuration</param>
     /// <returns>True on success, false otherwise.</returns>
     bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType);
+
+    /// <summary>
+    ///     Installs the class filter driver.
+    /// </summary>
+    Task<Version> InstallFilterDriver();
+    
+    /// <summary>
+    ///     Uninstalls the class filter driver.
+    /// </summary>
+    Task UninstallFilterDriver();
 }
