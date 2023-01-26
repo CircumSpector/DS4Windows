@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.NetworkInformation;
 using System.Threading.Channels;
 
@@ -147,6 +148,8 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
+
         Dispose(true);
     }
 
@@ -170,9 +173,9 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     {
     }
 
-    protected void SendOutputReport(byte[] outputReport)
+    protected async void SendOutputReport(byte[] outputReport)
     {
-        _outputReportChannel.Writer.WriteAsync(outputReport);
+        await _outputReportChannel.Writer.WriteAsync(outputReport);
     }
 
     /// <summary>
@@ -261,6 +264,7 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     /// </remarks>
     /// <param name="featureId">The report ID of the GET_REPORT request.</param>
     /// <returns>The MAC address of the device.</returns>
+    [SuppressMessage("ReSharper", "SwitchStatementHandlesSomeKnownEnumValuesWithDefault")]
     protected PhysicalAddress ReadSerial(byte featureId)
     {
         switch (SourceDevice.Service)
@@ -348,15 +352,17 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
 
     private void Dispose(bool disposing)
     {
-        if (!_disposed)
+        if (_disposed)
         {
-            if (disposing)
-            {
-                _coreActivity.Dispose();
-            }
-
-            _disposed = true;
+            return;
         }
+
+        if (disposing)
+        {
+            _coreActivity.Dispose();
+        }
+
+        _disposed = true;
     }
 
     public override string ToString()
