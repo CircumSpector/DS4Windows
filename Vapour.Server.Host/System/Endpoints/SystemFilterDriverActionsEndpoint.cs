@@ -11,9 +11,21 @@ namespace Vapour.Server.Host.System.Endpoints;
 /// </summary>
 public enum SystemFilterDriverAction
 {
+    /// <summary>
+    ///     Globally enable filtering feature.
+    /// </summary>
     Enable,
+    /// <summary>
+    ///     Globally disable filtering feature.
+    /// </summary>
     Disable,
+    /// <summary>
+    ///     Invoke filter driver installation.
+    /// </summary>
     Install,
+    /// <summary>
+    ///     Invoke filter driver removal.
+    /// </summary>
     Uninstall
 }
 
