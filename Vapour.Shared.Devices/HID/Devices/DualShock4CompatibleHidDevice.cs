@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
-using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
@@ -53,11 +52,11 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     protected override InputDeviceType InputDeviceType => InputDeviceType.DualShock4;
 
-    protected override void OnConfigurationChanged(InputSourceConfiguration configuration)
+    public override void OnAfterStartListening()
     {
-        SourceDevice.WriteOutputReportViaInterrupt(BuildOutputReport(), 1000);
+        SendOutputReport(BuildOutputReport());
     }
-
+    
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         // invalid input report ID
@@ -97,7 +96,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         else if (Connection == ConnectionType.Bluetooth)
         {
             outputReportPacket[0] = 0x15;
-            outputReportPacket[1] = 0xC0 | 16;
+            outputReportPacket[1] = 0xC0 | 4;
             outputReportPacket[2] = 0xA0;
             Array.Copy(reportData, 0, outputReportPacket, 3, reportData.Length);
             uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, outputReportPacket.Length - 4);

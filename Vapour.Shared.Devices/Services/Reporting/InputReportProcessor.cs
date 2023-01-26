@@ -50,7 +50,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
     public bool IsProcessing { get; private set; }
     public event Action<IInputSource, InputSourceFinalReport> InputReportAvailable;
 
-    public void SetDevice(IInputSource inputSource)
+    public void SetInputSource(IInputSource inputSource)
     {
         InputSource = inputSource;
     }

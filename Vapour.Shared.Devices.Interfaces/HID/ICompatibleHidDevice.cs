@@ -75,4 +75,5 @@ public interface ICompatibleHidDevice : IDisposable
     
     unsafe int ReadInputReport(Span<byte> buffer);
     void RefreshConfiguration();
+    Task<byte[]> ReadOutputReport(CancellationToken cancellationToken);
 }

@@ -1,28 +1,29 @@
-﻿using Vapour.Shared.Devices.HID;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
-using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.Services;
 
 internal sealed class InputSourceService : IInputSourceService
 {
-    private readonly IInputReportProcessorService _inputReportProcessorService;
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private readonly IInputSourceDataSource _inputSourceDataSource;
     private readonly IFilterService _filterService;
+    private readonly IServiceProvider _services;
 
     private readonly List<ICompatibleHidDevice> _controllers = new();
 
-    public InputSourceService(IInputReportProcessorService inputReportProcessorService,
-        IInputSourceConfigurationService inputSourceConfigurationService,
+    public InputSourceService(IInputSourceConfigurationService inputSourceConfigurationService,
         IInputSourceDataSource inputSourceDataSource,
-        IFilterService filterService)
+        IFilterService filterService,
+        IServiceProvider services)
     {
-        _inputReportProcessorService = inputReportProcessorService;
         _inputSourceConfigurationService = inputSourceConfigurationService;
         _inputSourceDataSource = inputSourceDataSource;
         _filterService = filterService;
+        _services = services;
     }
 
     public bool ShouldAutoFixup { get; set; } = true;
@@ -32,7 +33,7 @@ internal sealed class InputSourceService : IInputSourceService
     {
         foreach (var inputSource in _inputSourceDataSource.InputSources)
         {
-            _inputReportProcessorService.StopProcessing(inputSource);
+            inputSource.Stop();
         }
     }
 
@@ -91,7 +92,7 @@ internal sealed class InputSourceService : IInputSourceService
                 var inputSource = _inputSourceDataSource.InputSources[i];
                 inputSource.SetPlayerNumberAndColor(i + 1);
 
-                _inputReportProcessorService.StartProcessing(inputSource);
+                inputSource.Start();
                 _inputSourceDataSource.FireCreated(inputSource);
             }
 
@@ -150,7 +151,7 @@ internal sealed class InputSourceService : IInputSourceService
 
     private void ClearSource(IInputSource inputSource)
     {
-        _inputReportProcessorService.StopProcessing(inputSource);
+        inputSource.Stop();
         inputSource.ConfigurationChanged -= InputSource_ConfigurationChanged;
         _inputSourceDataSource.InputSources.Remove(inputSource);
     }
@@ -162,7 +163,7 @@ internal sealed class InputSourceService : IInputSourceService
             configuration = HackGetConfiguration(controllers);
         }
 
-        var inputSource = new InputSource();
+        var inputSource = _services.GetService<IInputSource>();
         var finalControllers = new List<ICompatibleHidDevice>();
         foreach (var cont in controllers)
         {
@@ -201,7 +202,7 @@ internal sealed class InputSourceService : IInputSourceService
 
     private InputSourceConfiguration HackGetConfiguration(List<ICompatibleHidDevice> controllers)
     {
-        var inputSource = new InputSource();
+        var inputSource = _services.GetService<IInputSource>();
         foreach (var controller in controllers)
         {
             inputSource.AddController(controller);

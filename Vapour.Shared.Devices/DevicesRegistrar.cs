@@ -31,13 +31,17 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
         services.AddSingleton<IDeviceSettingsService, DeviceSettingsService>();
-        services.AddSingleton<IInputReportProcessorService, InputReportProcessorService>();
         services.AddSingleton<IInputSourceConfigurationService, InputSourceConfigurationService>();
         services.AddSingleton<IFilterService, FilterService>();
         services.AddSingleton<IGameProcessWatcherService, GameProcessWatcherService>();
         services.AddSingleton<IGameListProviderService, GameListProviderService>();
         services.AddSingleton<IDeviceFactory, DeviceFactory>();
         services.AddSingleton<IInputSourceDataSource, InputSourceDataSource>();
+        services.AddTransient<IInputSource, InputSource>();
+        services.AddTransient<IInputSourceProcessor, InputSourceProcessor>();
+        services.AddTransient<IInputReportProcessor, InputReportProcessor>();
+        services.AddTransient<IOutputDeviceProcessor, OutputDeviceProcessor>();
+        services.AddTransient<IOutputReportProcessor, OutputReportProcessor>();
 
         AddDevices(services);
 

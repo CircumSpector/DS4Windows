@@ -1,5 +1,7 @@
 ﻿using System.Windows.Media;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -10,6 +12,8 @@ namespace Vapour.Shared.Devices.Services;
 /// </summary>
 internal class InputSource : IInputSource
 {
+    private readonly IServiceProvider _serviceProvider;
+    private IInputSourceProcessor _inputSourceProcessor;
     private Dictionary<ICompatibleHidDevice, byte[]> _controllers = new();
     private byte[] _allReportBytes;
 
@@ -17,7 +21,32 @@ internal class InputSource : IInputSource
     public InputSourceConfiguration Configuration { get; private set; }
     private InputSourceFinalReport _finalReport = new ();
 
+    public InputSource(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public string InputSourceKey { get; private set; }
+
+    public void Start()
+    {
+        if (_inputSourceProcessor == null)
+        {
+            _inputSourceProcessor = _serviceProvider.GetService<IInputSourceProcessor>();
+            // ReSharper disable once PossibleNullReferenceException
+            _inputSourceProcessor.Start(this);
+            OnAfterStartListening();
+        }
+    }
+
+    public void Stop()
+    {
+        if (_inputSourceProcessor != null)
+        {
+            _inputSourceProcessor.Dispose();
+            _inputSourceProcessor = null;
+        }
+    }
 
     public void SetConfiguration(InputSourceConfiguration configuration)
     {
