@@ -146,16 +146,12 @@ internal class DS4OutDevice : OutDevice
         {
             while (!_outDeviceCancellationToken.IsCancellationRequested)
             {
-                bool timedOut;
-                var buffer = _controller.AwaitRawOutputReport(100, out timedOut);
-
-                if (!timedOut)
+                var buffer = _controller.AwaitRawOutputReport();
+                
+                FireOutputDeviceReportReceived(new OutputDeviceReport
                 {
-                    FireOutputDeviceReportReceived(new OutputDeviceReport
-                    {
-                        OutputDeviceType = OutputDeviceType.DualShock4Controller, Packet = buffer.ToArray()
-                    });
-                }
+                    OutputDeviceType = OutputDeviceType.DualShock4Controller, Packet = buffer.ToArray()
+                });
             }
         }
         catch (OperationCanceledException)
