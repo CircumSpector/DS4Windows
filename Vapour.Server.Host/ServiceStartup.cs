@@ -1,6 +1,4 @@
-﻿using Windows.Win32;
-
-using FastEndpoints;
+﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 
 using Microsoft.AspNetCore.Builder;

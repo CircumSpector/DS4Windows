@@ -9,32 +9,30 @@ using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
-internal sealed class OutputProcessor : IOutputProcessor
+internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
 {
-    private readonly IInputReportProcessor _inputReportProcessor;
+    private IInputReportProcessor _inputReportProcessor;
     private IOutDevice _controllerDevice;
 
     private const float RecipInputPosResolution = 1 / 127f;
     private const float RecipInputNegResolution = 1 / 128f;
     private const int OutputResolution = 32767 - -32768;
 
-    public OutputProcessor(IInputReportProcessor inputReportProcessor,
-        IServiceProvider serviceProvider)
+    public OutputDeviceProcessor(IServiceProvider serviceProvider)
     {
-        _inputReportProcessor = inputReportProcessor;
-
         Services = serviceProvider;
-        Logger = Services.GetRequiredService<ILogger<OutputProcessor>>();
+        Logger = Services.GetRequiredService<ILogger<OutputDeviceProcessor>>();
     }
 
     private IServiceProvider Services { get; }
-    private ILogger<OutputProcessor> Logger { get; }
+    private ILogger<OutputDeviceProcessor> Logger { get; }
     public IInputSource InputSource { get; private set; }
 
-    public void StartOutputProcessing()
+    public void StartOutputProcessing(IInputReportProcessor inputReportProcessor)
     {
         if (InputSource.Configuration.OutputDeviceType != OutputDeviceType.None)
         {
+            _inputReportProcessor = inputReportProcessor;
             _inputReportProcessor.InputReportAvailable += _inputReportProcessor_InputReportAvailable;
             _controllerDevice = CreateControllerOutDevice();
             _controllerDevice.Connect();

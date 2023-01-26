@@ -23,5 +23,5 @@ public interface IInputReportProcessor
     /// </summary>
     void StopInputReportReader();
 
-    void SetDevice(IInputSource hidDevice);
+    void SetInputSource(IInputSource inputSource);
 }

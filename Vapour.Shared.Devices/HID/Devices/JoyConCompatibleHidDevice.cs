@@ -15,6 +15,10 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     private const int SpiDataOffset = 20;
 
+    private ManualResetEventSlim _sendSubCommandWait = new ManualResetEventSlim(false);
+    private byte _lastSubCommandCodeSent;
+    private byte[] _subCommandResult;
+
     private readonly JoyConCompatibleInputReport _report = new();
 
     public JoyConCompatibleHidDevice(ILogger<JoyConCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
@@ -34,6 +38,10 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     {
         _report.IsLeft = IsLeft;
         Serial = ReadSerial(JoyConCodes.FeatureId_Serial);
+    }
+
+    public override void OnAfterStartListening()
+    {
         SubCommand(JoyConCodes.SubCommand_InputMode, JoyConCodes.InputMode_SimpleHid);
         SubCommand(JoyConCodes.SubCommand_EnableIMU, JoyConCodes.EnableIMU_On);
         SubCommand(JoyConCodes.SubCommand_SetPlayerLED, JoyConCodes.SetPlayerLED1);
@@ -46,6 +54,12 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         InputSourceReport.Parse(input);
+
+        if (_lastSubCommandCodeSent != 0 && input[0] == 0x21 && input[14] == _lastSubCommandCodeSent)
+        {
+            _subCommandResult = input.ToArray();
+            _sendSubCommandWait.Set();
+        }
     }
 
     public override InputSourceReport InputSourceReport => _report;
@@ -96,20 +110,20 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         _commandCount = (byte)(++_commandCount & 0x0F);
         commandData[10] = subCommand;
 
-        var writeResult = SourceDevice.WriteOutputReportViaInterrupt(commandData, 1000);
+        Logger.LogInformation("JoyCon Serial {0} sending subCommand {1}", SerialString, subCommand);
+        _lastSubCommandCodeSent = subCommand;
+        SendOutputReport(commandData);
 
-        var resultData = new byte[362];
-        if (writeResult)
-        {
-            int bytesRead;
-            int retryCount = 0;
-            do
-            {
-                bytesRead = SourceDevice.ReadInputReport(resultData);
-                retryCount++;
-            } while (bytesRead > 0 && resultData[0] != 0x21 && resultData[14] != subCommand && retryCount < 100);
-        }
+        var received = _sendSubCommandWait.Wait(2000);
+        Logger.LogInformation("JoyCon serial {0} {1} subCommand {2}", SerialString, received ? "received" : "did not receive",
+            subCommand);
 
+        var resultData = _subCommandResult;
+
+        _subCommandResult = null;
+        _lastSubCommandCodeSent = 0;
+        _sendSubCommandWait.Reset();
+        
         return resultData;
     }
 

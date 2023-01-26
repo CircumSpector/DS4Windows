@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Threading.Channels;
 
 using Microsoft.Extensions.Logging;
 
@@ -27,6 +28,8 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
 
+    private Channel<byte[]> _outputReportChannel;
+
     /// <summary>
     ///     The connection type (wire, wireless).
     /// </summary>
@@ -36,6 +39,13 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     protected CompatibleHidDevice(ILogger<CompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
     {
+        _outputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
+        {
+            SingleReader = true,
+            SingleWriter = true,
+            AllowSynchronousContinuations = true
+        });
+
         _deviceInfos = deviceInfos;
         Logger = logger;
         KnownDevices = deviceInfos.Where(i => i.DeviceType == InputDeviceType).ToList();
@@ -107,6 +117,11 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     protected abstract void OnInitialize();
 
+    public async Task<byte[]> ReadOutputReport(CancellationToken cancellationToken)
+    {
+        return await _outputReportChannel.Reader.ReadAsync(cancellationToken);
+    }
+
     public virtual int ReadInputReport(Span<byte> buffer)
     {
         return SourceDevice.ReadInputReport(buffer);
@@ -151,6 +166,11 @@ public abstract partial class CompatibleHidDevice : ICompatibleHidDevice
 
     protected virtual void OnConfigurationChanged(InputSourceConfiguration configuration)
     {
+    }
+
+    protected void SendOutputReport(byte[] outputReport)
+    {
+        _outputReportChannel.Writer.WriteAsync(outputReport);
     }
 
     /// <summary>

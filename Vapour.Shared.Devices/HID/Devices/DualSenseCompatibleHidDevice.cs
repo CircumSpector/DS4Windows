@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
-using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
@@ -46,14 +45,9 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void OnAfterStartListening()
     {
-        //dont do the ds4 base one here
+        SendOutputReport(BuildOutputReport());
     }
-
-    protected override void OnConfigurationChanged(InputSourceConfiguration configuration)
-    {
-        SourceDevice.WriteOutputReportViaInterrupt(BuildOutputReport(), 1000);
-    }
-
+    
     protected override InputDeviceType InputDeviceType => InputDeviceType.DualSense;
 
     public override InputSourceReport InputSourceReport { get; } = new DualSenseCompatibleInputReport();

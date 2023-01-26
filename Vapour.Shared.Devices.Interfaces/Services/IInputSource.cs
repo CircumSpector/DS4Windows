@@ -21,4 +21,6 @@ public interface IInputSource
     void AddController(ICompatibleHidDevice controller);
     void RemoveController(string instanceId);
     void SetPlayerNumberAndColor(int playerNumber);
+    void Start();
+    void Stop();
 }

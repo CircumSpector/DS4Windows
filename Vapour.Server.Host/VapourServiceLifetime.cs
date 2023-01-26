@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.ServiceProcess;
+﻿using System.ServiceProcess;
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
