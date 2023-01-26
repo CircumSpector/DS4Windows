@@ -15,6 +15,8 @@ public sealed class XboxCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x03;
 
+    private readonly AutoResetEvent _readEvent = new(false);
+
     public XboxCompatibleHidDevice(ILogger<XboxCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) : base(logger,
         deviceInfos)
     {
@@ -46,7 +48,7 @@ public sealed class XboxCompatibleHidDevice : CompatibleHidDevice
 
     public override unsafe int ReadInputReport(Span<byte> buffer)
     {
-        NativeOverlapped overlapped = SourceDevice.GetOverlappedForReadReport();
+        NativeOverlapped overlapped = new() { EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle() };
 
         uint bytesRead = 0;
         fixed (byte* bufferPtr = buffer)

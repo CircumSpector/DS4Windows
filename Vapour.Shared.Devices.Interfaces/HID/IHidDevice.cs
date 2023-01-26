@@ -1,7 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace Vapour.Shared.Devices.HID;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public interface IHidDevice : IDisposable
 {
     /// <summary>
@@ -127,8 +129,11 @@ public interface IHidDevice : IDisposable
     /// <param name="timeout">A timeout in milliseconds.</param>
     /// <returns>True on success, false otherwise.</returns>
     bool WriteOutputReportViaInterrupt(ReadOnlySpan<byte> buffer, int timeout);
-
-    NativeOverlapped GetOverlappedForReadReport();
-
+    
+    /// <summary>
+    ///     Reads the default input report of the top level collection of this device.
+    /// </summary>
+    /// <param name="buffer">A buffer provided by the caller that will get filled in.</param>
+    /// <returns>The amount of bytes read.</returns>
     int ReadInputReport(Span<byte> buffer);
 }

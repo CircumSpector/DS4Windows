@@ -149,7 +149,12 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public virtual unsafe int ReadInputReport(Span<byte> buffer)
     {
-        NativeOverlapped overlapped = GetOverlappedForReadReport();
+        if (Handle.IsInvalid || Handle.IsClosed)
+        {
+            throw new HidDeviceException("Device handle not open or invalid.");
+        }
+
+        NativeOverlapped overlapped = new() { EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle() };
 
         uint bytesRead = 0;
         fixed (byte* bufferPtr = buffer)
@@ -174,18 +179,6 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
         }
 
         return (int)bytesRead;
-    }
-
-    public NativeOverlapped GetOverlappedForReadReport()
-    {
-        if (Handle.IsInvalid || Handle.IsClosed)
-        {
-            throw new HidDeviceException("Device handle not open or invalid.");
-        }
-
-        NativeOverlapped overlapped = new() { EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle() };
-
-        return overlapped;
     }
 
     /// <inheritdoc />
