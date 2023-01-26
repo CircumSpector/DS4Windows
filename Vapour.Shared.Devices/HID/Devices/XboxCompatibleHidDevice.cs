@@ -54,7 +54,7 @@ public sealed class XboxCompatibleHidDevice : CompatibleHidDevice
         fixed (byte* bufferPtr = buffer)
         {
             BOOL ret;
-            fixed (byte* bytesIn = new byte[] { 0x01, 0x01, 0x00 })
+            fixed (byte* bytesIn = stackalloc byte[] { 0x01, 0x01, 0x00 })
             {
                 ret = PInvoke.DeviceIoControl(SourceDevice.Handle, 0x8000e00c, bytesIn, 3, bufferPtr,
                     (uint)buffer.Length,
