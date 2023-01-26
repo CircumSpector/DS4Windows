@@ -18,11 +18,11 @@ public enum SystemFilterAction
 /// <summary>
 ///     Endpoint exposing certain actions of the filter driver service.
 /// </summary>
-public class SystemFilterActionsEndpoint : EndpointWithoutRequest
+public class SystemFilterDriverActionsEndpoint : EndpointWithoutRequest
 {
     private readonly IFilterService _filterService;
 
-    public SystemFilterActionsEndpoint(IFilterService filterService)
+    public SystemFilterDriverActionsEndpoint(IFilterService filterService)
     {
         _filterService = filterService;
     }
