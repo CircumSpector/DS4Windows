@@ -6,4 +6,5 @@ public interface IOutputDeviceProcessor
     void StartOutputProcessing(IInputReportProcessor inputReportProcessor);
     void StopOutputProcessing();
     void SetInputSource(IInputSource inputSource);
+    event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
 }

@@ -27,6 +27,7 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
     private IServiceProvider Services { get; }
     private ILogger<OutputDeviceProcessor> Logger { get; }
     public IInputSource InputSource { get; private set; }
+    public event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
 
     public void StartOutputProcessing(IInputReportProcessor inputReportProcessor)
     {
@@ -43,6 +44,7 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
     {
         if (_controllerDevice != null)
         {
+            _controllerDevice.OnOutputDeviceReportReceived -= OutDevice_OnOutputDeviceReportReceived;
             _inputReportProcessor.InputReportAvailable -= _inputReportProcessor_InputReportAvailable;
             _controllerDevice.Disconnect();
             _controllerDevice = null;
@@ -91,7 +93,14 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
             outDevice = new DS4OutDevice(client);
         }
 
+        outDevice.OnOutputDeviceReportReceived += OutDevice_OnOutputDeviceReportReceived;
+
         return outDevice;
+    }
+
+    private void OutDevice_OnOutputDeviceReportReceived(OutputDeviceReport outputReport)
+    {
+        OnOutputDeviceReportReceived?.Invoke(outputReport);
     }
 
     private void CheckAndScaleIfNeeded(InputSourceFinalReport report)

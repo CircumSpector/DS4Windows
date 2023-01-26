@@ -9,6 +9,5 @@ public interface IOutDevice
     void Disconnect();
     void ResetState(bool submit = true);
     OutputDeviceType GetDeviceType();
-    void RemoveFeedbacks();
-    void RemoveFeedback(int inIdx);
+    event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
 }

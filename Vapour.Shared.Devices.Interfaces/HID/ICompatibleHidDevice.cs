@@ -2,6 +2,7 @@
 
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID;
 
@@ -76,4 +77,5 @@ public interface ICompatibleHidDevice : IDisposable
     unsafe int ReadInputReport(Span<byte> buffer);
     void RefreshConfiguration();
     Task<byte[]> ReadOutputReport(CancellationToken cancellationToken);
+    void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport);
 }

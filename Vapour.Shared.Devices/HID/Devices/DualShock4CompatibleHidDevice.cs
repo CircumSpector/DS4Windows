@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
@@ -56,7 +57,12 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
     {
         SendOutputReport(BuildOutputReport());
     }
-    
+
+    public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    {
+        //TODO: process report coming from the virtual device
+    }
+
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
         // invalid input report ID
