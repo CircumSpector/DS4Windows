@@ -63,6 +63,26 @@ If you **want to see this project succeed** give it a GitHub star to show intere
   `dotnet publish /p:PublishProfile=Properties\PublishProfiles\release-win-x64.pubxml`  
   ⚠️ this will fail when triggered via Visual Studio due to a pending issue ⚠️
 
+## Architecture
+
+The project components heavily depend on the use of [Inversion of Control (IoC a.k.a. Dependency Injection)](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) and code fitting a certain category is grouped by using separate class library projects. [Reflection](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/reflection) is used to auto-discover certain types and assets to load automatically on app start (like icons and images for supported controllers), areas depending on performance utilize [Source Generators](https://learn.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview).
+
+### Projects
+
+#### Vapour.Server.Host
+
+The heavy lifting (device detection, device hiding, spawning emulated devices, remapping, managing profiles, storing configuration, ...) is done by a Windows Service which is designed to run in the background and get started on boot. Tasks which require administrative permissions are all handled by the service, which eliminates the need of having to start the UI process(s) with elevated privileges. Running as a service allows to easily support multiple local user accounts who may or might not want to share profiles and other configuration. It also makes the remapping engine available immediately without having to wait for the frontend to auto-start.
+
+Configuration changes use a request-response-pattern via HTTP REST interfaces using ASP.NET Core, events are exchanged via SignalR using WebSockets. By using standards it's ensured that potential 3rd party implementations can build upon the interfaces the service exposes. The client UI uses and conforms to said interfaces.
+
+#### Vapour.Client
+
+GUI frontend of the solution. Used to display status about connected devices, the active configuration and more.
+
+#### Vapour.Client.TrayApplication
+
+Slim tray notification area application for accessing common actions and an overview of basic stats.
+
 ## Diagnostics
 
 ### Performance counters
