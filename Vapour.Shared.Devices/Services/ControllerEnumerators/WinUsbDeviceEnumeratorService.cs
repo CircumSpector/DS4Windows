@@ -8,6 +8,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.HID.DeviceInfos;
 
 namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 
@@ -17,12 +18,12 @@ namespace Vapour.Shared.Devices.Services.ControllerEnumerators;
 internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDeviceOverWinUsb>
 {
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
+    private readonly IDeviceFactory _deviceFactory;
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly IDeviceNotificationListener _deviceNotificationListener;
 
     private readonly ILogger<WinUsbDeviceEnumeratorService> _logger;
-    private readonly IDeviceFactory _deviceFactory;
 
     public WinUsbDeviceEnumeratorService(IDeviceNotificationListener deviceNotificationListener,
         ILogger<WinUsbDeviceEnumeratorService> logger,
@@ -43,7 +44,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
 
     /// <inheritdoc />
     public event Action<string> DeviceRemoved;
-    
+
     /// <inheritdoc />
     public void Start()
     {
@@ -51,8 +52,9 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
             $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(Start)}");
 
         int deviceIndex = 0;
-        
-        while (Devcon.FindByInterfaceGuid(FilterDriver.RewrittenDeviceInterfaceId, out string path, out string _, deviceIndex++))
+
+        while (Devcon.FindByInterfaceGuid(FilterDriver.RewrittenDeviceInterfaceId, out string path, out string _,
+                   deviceIndex++))
         {
             try
             {
@@ -60,7 +62,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, $"Failed to create Filtered USB device for {path}");
+                _logger.LogWarning(ex, "Failed to create Filtered USB device for {Path}", path);
             }
         }
 
@@ -99,9 +101,9 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         try
         {
             using USBDevice winUsbDevice = USBDevice.GetSingleDeviceByPath(path);
-            var supportedDevice =
+            DeviceInfo supportedDevice =
                 _deviceFactory.IsKnownDevice(winUsbDevice.Descriptor.VID, winUsbDevice.Descriptor.PID);
-            
+
 
             // Filter out devices we don't know about
             if (supportedDevice == null)
@@ -129,7 +131,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
 
             winUsbDevice.Dispose();
 
-            var hidDevice = new HidDeviceOverWinUsb(path, identification)
+            HidDeviceOverWinUsb hidDevice = new HidDeviceOverWinUsb(path, identification)
             {
                 InstanceId = device.InstanceId.ToUpper(),
                 Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
@@ -145,7 +147,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, $"Failed to create Filtered USB device for {path}");
+            _logger.LogWarning(ex, "Failed to create Filtered USB device for {Path}", path);
         }
     }
 

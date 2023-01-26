@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.ServiceProcess;
+﻿using System.ServiceProcess;
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
@@ -12,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Win32.SafeHandles;
 
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Devices.HostedServices;
@@ -65,7 +61,7 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
             if (userName != SystemSessionUsername)
             {
                 string sid = GetSid(currentSession);
-                _logger.LogDebug($"user session sid is {sid}");
+                _logger.LogDebug("User session sid is {Sid}", sid);
                 
                 _logger.LogDebug("User session is not SYSTEM. Starting system host");
                 StartHost(userName, sid);
@@ -94,7 +90,7 @@ public sealed class VapourServiceLifetime : WindowsServiceLifetime
             string userName = GetUsername(changeDescription.SessionId);
             _logger.LogDebug("Found current user {UserName}", userName);
             string sid = GetSid((uint)changeDescription.SessionId);
-            _logger.LogDebug($"user session sid is {sid}");
+            _logger.LogDebug("User session sid is {Sid}", sid);
             StartHost(userName, sid);
         }
         else if (changeDescription.Reason is SessionChangeReason.SessionLogoff or SessionChangeReason.SessionLock)

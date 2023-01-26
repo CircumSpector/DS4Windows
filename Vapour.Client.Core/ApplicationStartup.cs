@@ -20,18 +20,21 @@ public static class ApplicationStartup
         CreateInitialSetup();
         SetupHost(registrarTypes, existingHostBuilder);
 
-        if (existingHostBuilder == null) await StartApplication(onAfterStart);
+        if (existingHostBuilder == null)
+        {
+            await StartApplication(onAfterStart);
+        }
     }
 
     private static void CreateInitialSetup()
     {
-        var config = SetupConfiguration();
+        IConfigurationRoot config = SetupConfiguration();
         SetupLogging(config);
     }
 
     private static IConfigurationRoot SetupConfiguration()
     {
-        var configuration = new ConfigurationBuilder()
+        IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile($"{Process.GetCurrentProcess().ProcessName}.appsettings.json")
             .AddJsonFile(
@@ -51,14 +54,17 @@ public static class ApplicationStartup
 
     private static void SetupHost(Type[] registrarTypes, IHostBuilder existingHostBuilder = null)
     {
-        var newHostBuilder = existingHostBuilder ?? Host.CreateDefaultBuilder();
+        IHostBuilder newHostBuilder = existingHostBuilder ?? Host.CreateDefaultBuilder();
         newHostBuilder.ConfigureServices((context, services) =>
             {
                 ConfigureServices(newHostBuilder, context, services, registrarTypes);
             })
             .UseSerilog();
 
-        if (existingHostBuilder == null) _host = newHostBuilder.Build();
+        if (existingHostBuilder == null)
+        {
+            _host = newHostBuilder.Build();
+        }
     }
 
     private static void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services,
@@ -71,9 +77,12 @@ public static class ApplicationStartup
     private static async Task StartApplication(Func<IServiceScope, Task> onAfterStart = null)
     {
         await _host.StartAsync();
-        using var scope = _host.Services.CreateScope();
+        using IServiceScope scope = _host.Services.CreateScope();
 
-        if (onAfterStart != null) await onAfterStart(scope);
+        if (onAfterStart != null)
+        {
+            await onAfterStart(scope);
+        }
     }
 
     public static async Task Shutdown()

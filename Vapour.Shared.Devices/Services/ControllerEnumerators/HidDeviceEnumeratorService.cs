@@ -90,7 +90,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, $"Failed to create HID device for {path}");
+                _logger.LogWarning(ex, "Failed to create HID device for {Path}", path);
             }
         }
 
