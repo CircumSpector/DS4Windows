@@ -1,9 +1,12 @@
 ﻿using System.Net.NetworkInformation;
+using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
@@ -40,6 +43,8 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         // 
         else
         {
+            //reported output report length when bt is incorrect
+            SourceDevice.OutputReportByteLength = 334;
             _reportStartOffset = 0; // TODO: this works, investigate why :D
         }
     }
@@ -48,24 +53,9 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     protected override InputDeviceType InputDeviceType => InputDeviceType.DualShock4;
 
-    public override void OnAfterStartListening()
+    protected override void OnConfigurationChanged(InputSourceConfiguration configuration)
     {
-        /*
-         * TODO
-         * migrate and implement properly, this is a workaround to get devices to work
-         * that power off themselves or stop sending reports if they don't receive at
-         * least one of these output report packets.
-         */
-        if (SourceDevice.Service == InputDeviceService.WinUsb)
-        {
-            byte[] initialOutBuffer =
-            {
-                0x05, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-            };
-
-            SourceDevice.WriteOutputReportViaInterrupt(initialOutBuffer, 500);
-        }
+        SourceDevice.WriteOutputReportViaInterrupt(BuildOutputReport(), 1000);
     }
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
@@ -93,5 +83,48 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
 
         InputSourceReport.Parse(input.Slice(_reportStartOffset));
+    }
+
+    private byte[] BuildOutputReport()
+    {
+        var outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
+        var reportData = BuildOutputReportData();
+        if (Connection == ConnectionType.Usb)
+        {
+            outputReportPacket[0] = 0x05;
+            Array.Copy(reportData, 0, outputReportPacket, 1, reportData.Length);
+        }
+        else if (Connection == ConnectionType.Bluetooth)
+        {
+            outputReportPacket[0] = 0x15;
+            outputReportPacket[1] = 0xC0 | 16;
+            outputReportPacket[2] = 0xA0;
+            Array.Copy(reportData, 0, outputReportPacket, 3, reportData.Length);
+            uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, outputReportPacket.Length - 4);
+            var checksumBytes = BitConverter.GetBytes(crc);
+            Array.Copy(checksumBytes, 0, outputReportPacket, outputReportPacket.Length - 4, 4);
+        }
+
+        return outputReportPacket;
+    }
+
+    private byte[] BuildOutputReportData()
+    {
+        var reportData = new byte[10];
+
+        reportData[0] = 0xF7;
+        reportData[1] = 0x04;
+
+        if (CurrentConfiguration.LoadedLightbar != null)
+        {
+            var rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
+            reportData[5] = rgb.R;
+            reportData[6] = rgb.G;
+            reportData[7] = rgb.B;
+        }
+
+        reportData[8] = 0xFF;
+        reportData[9] = 0x00;
+        return reportData;
     }
 }
