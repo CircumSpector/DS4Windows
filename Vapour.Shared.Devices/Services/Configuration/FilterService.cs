@@ -142,10 +142,13 @@ public class FilterService : IFilterService
             UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
 
             using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
-            if (entry is not null)
+
+            if (entry is null)
             {
-                entry.IsReplacingEnabled = false;
+                return;
             }
+
+            entry.IsReplacingEnabled = false;
 
             CyclePort(usbDevice);
         }
