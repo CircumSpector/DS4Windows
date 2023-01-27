@@ -58,9 +58,10 @@ internal class InputSource : IInputSource
     public void SetConfiguration(InputSourceConfiguration configuration)
     {
         Configuration = configuration;
-        foreach (KeyValuePair<ICompatibleHidDevice, byte[]> controller in _controllers)
+
+        foreach ((ICompatibleHidDevice device, _) in _controllers)
         {
-            controller.Key.SetConfiguration(Configuration);
+            device.SetConfiguration(Configuration);
         }
 
         ReorderControllers();
