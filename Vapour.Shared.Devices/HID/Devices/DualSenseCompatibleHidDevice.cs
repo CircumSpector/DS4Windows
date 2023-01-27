@@ -51,7 +51,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        //TODO: process report coming from the virtual device
+        SendOutputReport(BuildOutputReport(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor));
     }
 
     protected override Type InputDeviceType => typeof(DualSenseDeviceInfo);
@@ -63,10 +63,10 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         InputSourceReport.Parse(input.Slice(_reportStartOffset));
     }
 
-    private byte[] BuildOutputReport()
+    private byte[] BuildOutputReport(byte strongMotor = 0, byte weakMotor = 0)
     {
         var outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
-        var reportData = BuildOutputReportData();
+        var reportData = BuildOutputReportData(strongMotor, weakMotor);
         if (Connection == ConnectionType.Usb)
         {
             outputReportPacket[0] = 0x02;
@@ -85,14 +85,16 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         return outputReportPacket;
     }
 
-    private byte[] BuildOutputReportData()
+    private byte[] BuildOutputReportData(byte strongMotor = 0, byte weakMotor = 0)
     {
         var reportData = new byte[47];
 
-        reportData[0x00] = 0xFF;
-        reportData[0x01] = 0xF7;
+        reportData[0] = 0xFF;
+        reportData[1] = 0xF7;
+        reportData[2] = weakMotor;
+        reportData[3] = strongMotor;
         
-        reportData[0x2A] = 0x02; //player led brightness
+        reportData[42] = 0x02; //player led brightness
 
         var playerLed = CurrentConfiguration.PlayerNumber switch
         {
@@ -103,14 +105,14 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             _ => (byte)PlayerLedLights.None
         };
 
-        reportData[0x2B] = (byte)(0x20 | playerLed); //player led number
+        reportData[43] = (byte)(0x20 | playerLed); //player led number
         
         if (CurrentConfiguration.LoadedLightbar != null)
         {
             var rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
-            reportData[0x2C] = rgb.R;
-            reportData[0x2D] = rgb.G;
-            reportData[0x2E] = rgb.B;
+            reportData[44] = rgb.R;
+            reportData[45] = rgb.G;
+            reportData[46] = rgb.B;
         }
 
         return reportData;

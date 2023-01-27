@@ -21,8 +21,6 @@ public class InputSourceController
 
     public ConnectionType Connection { get; init; }
 
-    public Type DeviceType { get; init; }
-
     public string DeviceKey { get; init; }
 
     public bool IsFiltered { get; set; }

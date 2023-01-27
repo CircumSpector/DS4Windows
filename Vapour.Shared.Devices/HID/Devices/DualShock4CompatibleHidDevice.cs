@@ -46,7 +46,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         {
             //reported output report length when bt is incorrect
             SourceDevice.OutputReportByteLength = 334;
-            _reportStartOffset = 0; // TODO: this works, investigate why :D
+            _reportStartOffset = 2;
         }
     }
 
@@ -61,7 +61,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        //TODO: process report coming from the virtual device
+        SendOutputReport(BuildOutputReport(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor));
     }
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
@@ -91,10 +91,10 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         InputSourceReport.Parse(input.Slice(_reportStartOffset));
     }
 
-    private byte[] BuildOutputReport()
+    private byte[] BuildOutputReport(byte strongMotor = 0, byte weakMotor = 0)
     {
         var outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
-        var reportData = BuildOutputReportData();
+        var reportData = BuildOutputReportData(strongMotor, weakMotor);
         if (Connection == ConnectionType.Usb)
         {
             outputReportPacket[0] = 0x05;
@@ -114,12 +114,14 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         return outputReportPacket;
     }
 
-    private byte[] BuildOutputReportData()
+    private byte[] BuildOutputReportData(byte strongMotor, byte weakMotor)
     {
         var reportData = new byte[10];
 
         reportData[0] = 0xF7;
         reportData[1] = 0x04;
+        reportData[2] = weakMotor;
+        reportData[3] = strongMotor;
 
         if (CurrentConfiguration.LoadedLightbar != null)
         {
