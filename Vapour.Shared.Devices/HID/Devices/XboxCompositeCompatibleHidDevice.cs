@@ -27,7 +27,7 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 
     public override InputSourceReport InputSourceReport { get; } = new XboxCompatibleInputReport();
 
-    protected override InputDeviceType InputDeviceType => InputDeviceType.XboxOneS;
+    protected override Type InputDeviceType => typeof(XboxCompositeDeviceInfo);
 
     protected override void OnInitialize()
     {

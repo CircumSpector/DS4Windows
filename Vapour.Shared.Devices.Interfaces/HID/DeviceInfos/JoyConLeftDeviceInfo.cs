@@ -12,7 +12,5 @@ public sealed class JoyConLeftDeviceInfo : JoyConDeviceInfo
 
     public override string Name => "JoyCon (L)";
 
-    public override InputDeviceType DeviceType => InputDeviceType.JoyCon;
-
     public override bool IsLeftDevice => true;
 }

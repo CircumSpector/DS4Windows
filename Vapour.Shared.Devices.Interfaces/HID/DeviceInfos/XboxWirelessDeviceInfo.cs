@@ -11,8 +11,6 @@ public sealed class XboxWirelessDeviceInfo : XboxCompositeDeviceInfo
 
     public override string Name => "Xbox Wireless Controller";
 
-    public override InputDeviceType DeviceType => InputDeviceType.XboxWireless;
-
     //public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
     //    new() { InterruptInEndpointAddress = 0x83, InterruptOutEndpointAddress = 0x03 };
 }

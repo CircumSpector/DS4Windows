@@ -8,7 +8,5 @@ public sealed class JoyConRightDeviceInfo : JoyConDeviceInfo
 
     public override string Name => "JoyCon (R)";
 
-    public override InputDeviceType DeviceType => InputDeviceType.JoyCon;
-
     public override bool IsRightDevice => true;
 }

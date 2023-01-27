@@ -70,7 +70,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override InputSourceReport InputSourceReport => _report;
 
-    protected override InputDeviceType InputDeviceType => InputDeviceType.JoyCon;
+    protected override Type InputDeviceType => typeof(JoyConDeviceInfo);
 
     private void GetCalibrationData()
     {

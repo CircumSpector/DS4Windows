@@ -21,5 +21,6 @@ public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
     }
 
     public override InputSourceReport InputSourceReport { get; }
-    protected override InputDeviceType InputDeviceType => InputDeviceType.SwitchPro;
+
+    protected override Type InputDeviceType => typeof(SwitchProDeviceInfo);
 }

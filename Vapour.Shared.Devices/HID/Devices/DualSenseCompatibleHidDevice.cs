@@ -54,7 +54,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         //TODO: process report coming from the virtual device
     }
 
-    protected override InputDeviceType InputDeviceType => InputDeviceType.DualSense;
+    protected override Type InputDeviceType => typeof(DualSenseDeviceInfo);
 
     public override InputSourceReport InputSourceReport { get; } = new DualSenseCompatibleInputReport();
 

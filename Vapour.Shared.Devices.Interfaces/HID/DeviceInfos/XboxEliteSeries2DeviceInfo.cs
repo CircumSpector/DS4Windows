@@ -11,8 +11,6 @@ public sealed class XboxEliteSeries2DeviceInfo : XboxCompositeDeviceInfo
 
     public override string Name => "Xbox Elite Series 2";
 
-    public override InputDeviceType DeviceType => InputDeviceType.XboxEliteSeries2;
-
     //public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
     //    new() { InterruptInEndpointAddress = 0x83, InterruptOutEndpointAddress = 0x03 };
 }

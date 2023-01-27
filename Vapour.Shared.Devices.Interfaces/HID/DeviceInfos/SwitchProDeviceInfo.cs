@@ -8,7 +8,5 @@ public sealed class SwitchProDeviceInfo : DeviceInfo
 
     public override string Name => "Switch Pro";
 
-    public override InputDeviceType DeviceType => InputDeviceType.SwitchPro;
-
     public override CompatibleHidDeviceFeatureSet FeatureSet => CompatibleHidDeviceFeatureSet.VendorDefinedDevice;
 }

@@ -10,8 +10,6 @@ public sealed class DualShock4V2DeviceInfo : DualShock4DeviceInfo
 
     public override string Name => "DualShock 4 v2";
 
-    public override InputDeviceType DeviceType => InputDeviceType.DualShock4;
-
     public override CompatibleHidDeviceFeatureSet FeatureSet { get; } = CompatibleHidDeviceFeatureSet.MonitorAudio |
                                                                         CompatibleHidDeviceFeatureSet
                                                                             .VendorDefinedDevice;

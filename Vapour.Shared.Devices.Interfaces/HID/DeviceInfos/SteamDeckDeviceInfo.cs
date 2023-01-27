@@ -8,7 +8,5 @@ public sealed class SteamDeckDeviceInfo : DeviceInfo
 
     public override string Name => "Steam Deck";
 
-    public override InputDeviceType DeviceType => InputDeviceType.SteamDeck;
-
     public override CompatibleHidDeviceFeatureSet FeatureSet => CompatibleHidDeviceFeatureSet.VendorDefinedDevice;
 }

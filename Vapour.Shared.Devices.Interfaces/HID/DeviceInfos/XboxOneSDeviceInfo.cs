@@ -15,8 +15,6 @@ public sealed class XboxOneSDeviceInfo : XboxCompositeDeviceInfo
 
     public override string Name => "Xbox One S";
 
-    public override InputDeviceType DeviceType => InputDeviceType.XboxOneS;
-
     //public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
     //    new() { InterruptInEndpointAddress = 0x83, InterruptOutEndpointAddress = 0x03 };
 }
