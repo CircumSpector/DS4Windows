@@ -182,16 +182,13 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
 
     private void SaveInputSourceConfigurations()
     {
-        string data = JsonSerializer.Serialize(_inputSourceConfigurations);
+        string data = JsonSerializer.Serialize(_inputSourceConfigurations,
+            new JsonSerializerOptions { WriteIndented = true });
 
-        if (File.Exists(_globalStateService.LocalInputSourceConfigurationsLocation))
-        {
-            File.Delete(_globalStateService.LocalInputSourceConfigurationsLocation);
-        }
+        using FileStream fs = File.Create(_globalStateService.LocalInputSourceConfigurationsLocation);
+        using StreamWriter sw = new(fs);
 
-        FileStream file = File.Create(_globalStateService.LocalInputSourceConfigurationsLocation);
-        file.Dispose();
-        File.WriteAllText(_globalStateService.LocalInputSourceConfigurationsLocation, data);
+        sw.Write(data);
     }
 
     private void LoadInputSourceGameConfigurations()
