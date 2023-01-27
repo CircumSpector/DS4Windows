@@ -15,10 +15,12 @@ internal sealed class InputSourceService : IInputSourceService
 
     private readonly List<ICompatibleHidDevice> _controllers = new();
 
-    public InputSourceService(IInputSourceConfigurationService inputSourceConfigurationService,
+    public InputSourceService(
+        IInputSourceConfigurationService inputSourceConfigurationService,
         IInputSourceDataSource inputSourceDataSource,
         IFilterService filterService,
-        IServiceProvider services)
+        IServiceProvider services
+        )
     {
         _inputSourceConfigurationService = inputSourceConfigurationService;
         _inputSourceDataSource = inputSourceDataSource;
@@ -27,6 +29,7 @@ internal sealed class InputSourceService : IInputSourceService
     }
 
     public bool ShouldAutoFixup { get; set; } = true;
+
     public bool ShouldAutoCombineJoyCons { get; set; } = true;
 
     public void Stop()
@@ -123,6 +126,7 @@ internal sealed class InputSourceService : IInputSourceService
                 leftDevice,
                 rightDevice
             };
+
             await CreateInputSource(list, new List<string>());
 
             leftJoyCons.Remove(firstRightJoyCon);
@@ -158,13 +162,11 @@ internal sealed class InputSourceService : IInputSourceService
 
     private async Task CreateInputSource(List<ICompatibleHidDevice> controllers, List<string> controllersProcessed, InputSourceConfiguration configuration = null)
     {
-        if (configuration == null)
-        {
-            configuration = HackGetConfiguration(controllers);
-        }
+        configuration ??= HackGetConfiguration(controllers);
 
         var inputSource = _services.GetService<IInputSource>();
         var finalControllers = new List<ICompatibleHidDevice>();
+
         foreach (var cont in controllers)
         {
             cont.Index = configuration.Controllers.Single(c => c.DeviceKey == cont.DeviceKey).Index;
@@ -230,6 +232,7 @@ internal sealed class InputSourceService : IInputSourceService
     public async Task RemoveController(string instanceId)
     {
         var existingController = _controllers.SingleOrDefault(c => c.SourceDevice.InstanceId.ToLower() == instanceId.ToLower());
+
         if (existingController != null)
         {
             _controllers.Remove(existingController);
