@@ -9,7 +9,7 @@ public class DeviceFactory : IDeviceFactory
     private readonly IServiceProvider _serviceProvider;
 
     public DeviceFactory(
-        List<DeviceInfo> deviceInfos, 
+        List<DeviceInfo> deviceInfos,
         List<ICompatibleHidDevice> dummyDevices,
         IServiceProvider serviceProvider)
     {
@@ -20,19 +20,19 @@ public class DeviceFactory : IDeviceFactory
 
     public DeviceInfo IsKnownDevice(int vid, int pid)
     {
-        return _deviceInfos.SingleOrDefault(i => i.Vid == vid && i.Pid == pid);
+        return _deviceInfos.SingleOrDefault(i => i.VendorId == vid && i.ProductId == pid);
     }
 
     public ICompatibleHidDevice CreateDevice(DeviceInfo deviceInfo, IHidDevice hidDevice)
     {
-        var dummyDevice = _dummyDevices.SingleOrDefault(d =>
-            d.KnownDevices.Any(i => i.Vid == deviceInfo.Vid && i.Pid == deviceInfo.Pid));
+        ICompatibleHidDevice dummyDevice = _dummyDevices.SingleOrDefault(d =>
+            d.KnownDevices.Any(i => i.VendorId == deviceInfo.VendorId && i.ProductId == deviceInfo.ProductId));
 
         ICompatibleHidDevice device = null;
 
         if (dummyDevice != null)
         {
-            var type = dummyDevice.GetType();
+            Type type = dummyDevice.GetType();
             device = (ICompatibleHidDevice)_serviceProvider.GetService(type);
             device?.Initialize(hidDevice, deviceInfo);
         }

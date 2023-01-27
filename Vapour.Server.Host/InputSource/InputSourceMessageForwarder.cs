@@ -55,8 +55,8 @@ public sealed class InputSourceMessageForwarder : IInputSourceMessageForwarder
             SerialNumberString = c.SerialString,
             Connection = c.Connection.GetValueOrDefault(),
             IsFiltered = c.IsFiltered,
-            Vid = c.CurrentDeviceInfo.Vid,
-            Pid = c.CurrentDeviceInfo.Pid,
+            Vid = c.CurrentDeviceInfo.VendorId,
+            Pid = c.CurrentDeviceInfo.ProductId,
             DeviceKey = c.DeviceKey
         }).ToList();
 

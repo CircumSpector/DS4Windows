@@ -56,6 +56,9 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     /// </summary>
     protected ILogger<CompatibleHidDevice> Logger { get; }
 
+    /// <summary>
+    ///     Describes a particular compatible input device variant.
+    /// </summary>
     protected abstract InputDeviceType InputDeviceType { get; }
 
     /// <summary>
