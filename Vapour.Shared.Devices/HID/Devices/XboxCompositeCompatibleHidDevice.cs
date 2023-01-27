@@ -2,12 +2,14 @@
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
+using Windows.Win32.Storage.FileSystem;
 
 using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.Services.Reporting;
+using Vapour.Shared.Devices.Util;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
@@ -18,9 +20,13 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x03;
 
+    private static readonly uint IoctlXusbGetState = IoControlCodes.CTL_CODE(0x8000, 0x803, PInvoke.METHOD_BUFFERED,
+        FILE_ACCESS_FLAGS.FILE_READ_DATA | FILE_ACCESS_FLAGS.FILE_WRITE_DATA);
+
     private readonly AutoResetEvent _readEvent = new(false);
 
-    public XboxCompositeCompatibleHidDevice(ILogger<XboxCompositeCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) : base(logger,
+    public XboxCompositeCompatibleHidDevice(ILogger<XboxCompositeCompatibleHidDevice> logger,
+        List<DeviceInfo> deviceInfos) : base(logger,
         deviceInfos)
     {
     }
@@ -59,9 +65,15 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
             BOOL ret;
             fixed (byte* bytesIn = stackalloc byte[] { 0x01, 0x01, 0x00 })
             {
-                ret = PInvoke.DeviceIoControl(SourceDevice.Handle, 0x8000e00c, bytesIn, 3, bufferPtr,
+                ret = PInvoke.DeviceIoControl(
+                    SourceDevice.Handle,
+                    IoctlXusbGetState,
+                    bytesIn,
+                    3,
+                    bufferPtr,
                     (uint)buffer.Length,
-                    null, &overlapped);
+                    null, &overlapped
+                );
             }
 
             if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
