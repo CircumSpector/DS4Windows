@@ -32,6 +32,8 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 
     private readonly AutoResetEvent _readEvent = new(false);
 
+    private readonly AutoResetEvent _writeEvent = new(false);
+
     public XboxCompositeCompatibleHidDevice(ILogger<XboxCompositeCompatibleHidDevice> logger,
         List<DeviceInfo> deviceInfos) : base(logger,
         deviceInfos)
@@ -57,9 +59,38 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
     }
 
-    public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    public override unsafe void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        //TODO: process report coming from the virtual device
+        NativeOverlapped overlapped = new() { EventHandle = _writeEvent.SafeWaitHandle.DangerousGetHandle() };
+
+        BOOL ret;
+
+        fixed (byte* bytesIn = stackalloc byte[]
+               {
+                   0x00 /* TODO: pass correct player index! */, 0x00 /* TODO: handle LED state changes! */,
+                   outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor, 2
+               })
+        {
+            ret = PInvoke.DeviceIoControl(
+                SourceDevice.Handle,
+                IoctlXusbSetState,
+                bytesIn,
+                5,
+                null,
+                0,
+                null, &overlapped
+            );
+        }
+
+        if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
+        {
+            throw new HidDeviceException("Unexpected return result on DeviceIoControl.");
+        }
+
+        if (!PInvoke.GetOverlappedResult(SourceDevice.Handle, overlapped, out uint _, true))
+        {
+            throw new HidDeviceException("GetOverlappedResult on input report failed.");
+        }
     }
 
     public override unsafe int ReadInputReport(Span<byte> buffer)
@@ -67,9 +98,11 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
         NativeOverlapped overlapped = new() { EventHandle = _readEvent.SafeWaitHandle.DangerousGetHandle() };
 
         uint bytesRead = 0;
+
         fixed (byte* bufferPtr = buffer)
         {
             BOOL ret;
+
             fixed (byte* bytesIn = stackalloc byte[] { 0x01, 0x01, 0x00 })
             {
                 ret = PInvoke.DeviceIoControl(
@@ -85,7 +118,7 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 
             if (!ret && Marshal.GetLastWin32Error() != (uint)WIN32_ERROR.ERROR_IO_PENDING)
             {
-                throw new HidDeviceException("Unexpected return result on ReadFile.");
+                throw new HidDeviceException("Unexpected return result on DeviceIoControl.");
             }
 
             if (!PInvoke.GetOverlappedResult(SourceDevice.Handle, overlapped, out bytesRead, true))
