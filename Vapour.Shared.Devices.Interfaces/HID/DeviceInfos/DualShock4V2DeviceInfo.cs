@@ -2,7 +2,7 @@
 
 namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
-public sealed class DualShock4V2DeviceInfo : DeviceInfo
+public sealed class DualShock4V2DeviceInfo : DualShock4DeviceInfo
 {
     public override int VendorId => 0x054C;
 

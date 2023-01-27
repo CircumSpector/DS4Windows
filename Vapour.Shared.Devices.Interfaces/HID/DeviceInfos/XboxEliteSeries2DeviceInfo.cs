@@ -3,7 +3,7 @@
 /// <summary>
 ///     Xbox Elite Series 2 Controller (model 1797)
 /// </summary>
-public sealed class XboxEliteSeries2DeviceInfo : DeviceInfo
+public sealed class XboxEliteSeries2DeviceInfo : XboxCompositeDeviceInfo
 {
     public override int VendorId => 0x045E;
 

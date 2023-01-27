@@ -1,6 +1,6 @@
 ﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
-public sealed class JoyConRightDeviceInfo : DeviceInfo
+public sealed class JoyConRightDeviceInfo : JoyConDeviceInfo
 {
     public override int VendorId => 0x57e;
 

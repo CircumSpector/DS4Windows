@@ -1,9 +1,13 @@
 ﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
+public abstract class XboxCompositeDeviceInfo : DeviceInfo
+{
+}
+
 /// <summary>
 ///     Xbox One S Controller [Bluetooth]
 /// </summary>
-public sealed class XboxOneSDeviceInfo : DeviceInfo
+public sealed class XboxOneSDeviceInfo : XboxCompositeDeviceInfo
 {
     public override int VendorId => 0x045E;
 

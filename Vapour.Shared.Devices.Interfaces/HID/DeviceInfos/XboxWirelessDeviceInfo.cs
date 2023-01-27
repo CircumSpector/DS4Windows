@@ -3,7 +3,7 @@
 /// <summary>
 ///     Xbox Wireless Controller (model 1914)
 /// </summary>
-public sealed class XboxWirelessDeviceInfo : DeviceInfo
+public sealed class XboxWirelessDeviceInfo : XboxCompositeDeviceInfo
 {
     public override int VendorId => 0x045E;
 
