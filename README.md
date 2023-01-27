@@ -122,7 +122,7 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 - [Material Design In XAML Toolkit](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
 - [Material Design Extensions](https://spiegelp.github.io/MaterialDesignExtensions/)
 
-### Data transformation, Source generatores
+### Data transformation, source generators
 
 - [AutoMapper](https://automapper.org/)
 - [FastDeepCloner](https://github.com/AlenToma/FastDeepCloner)
@@ -147,3 +147,11 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 
 - [Warden.NET](https://github.com/RainwayApp/warden)
 - [Vdf.NET](https://github.com/shravan2x/Gameloop.Vdf)
+
+### Research, references
+
+- [DS4Windows (Ryochan7 Edition)](https://github.com/Ryochan7/DS4Windows)
+- [Game Controller Collective Wiki - Sony DualShock 4](https://controllers.fandom.com/wiki/Sony_DualShock_4)
+- [Game Controller Collective Wiki - Sony DualSense](https://controllers.fandom.com/wiki/Sony_DualSense)
+- [DSAdvance](https://github.com/r57zone/DSAdvance)
+- [JoyShockLibrary](https://github.com/JibbSmart/JoyShockLibrary)
