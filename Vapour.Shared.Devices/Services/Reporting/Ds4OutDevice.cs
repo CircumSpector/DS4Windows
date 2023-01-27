@@ -52,6 +52,7 @@ internal sealed class DS4OutDevice : OutDevice
         }
 
         _controller.Disconnect();
+        _controller.Dispose();
 
         _outDeviceCancellationToken.Cancel();
         _outDeviceThread.Join();
@@ -143,12 +144,18 @@ internal sealed class DS4OutDevice : OutDevice
         {
             while (!_outDeviceCancellationToken.IsCancellationRequested)
             {
-                var buffer = _controller.AwaitRawOutputReport().ToArray();
+                IEnumerable<byte> buffer = _controller.AwaitRawOutputReport(250, out bool timedOut);
+
+                if (timedOut)
+                {
+                    continue;
+                }
+
+                byte[] content = buffer.ToArray();
 
                 FireOutputDeviceReportReceived(new OutputDeviceReport
                 {
-                    StrongMotor = buffer[5],
-                    WeakMotor = buffer[4]
+                    StrongMotor = content[5], WeakMotor = content[4]
                 });
             }
         }
