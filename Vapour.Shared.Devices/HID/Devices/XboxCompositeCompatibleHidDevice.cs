@@ -11,13 +11,13 @@ using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
-public sealed class XboxCompatibleHidDevice : CompatibleHidDevice
+public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x03;
 
     private readonly AutoResetEvent _readEvent = new(false);
 
-    public XboxCompatibleHidDevice(ILogger<XboxCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) : base(logger,
+    public XboxCompositeCompatibleHidDevice(ILogger<XboxCompositeCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) : base(logger,
         deviceInfos)
     {
     }
