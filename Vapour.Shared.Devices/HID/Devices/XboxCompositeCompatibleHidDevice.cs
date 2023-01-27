@@ -11,6 +11,9 @@ using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
+/// <summary>
+///     XboxComposite device class compatible input device.
+/// </summary>
 public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x03;

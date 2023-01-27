@@ -33,5 +33,10 @@ public enum InputDeviceType : uint
     /// <summary>
     ///     XboxOneS Controller
     /// </summary>
-    XboxOneS
+    XboxOneS,
+
+    /// <summary>
+    ///     Xbox Wireless Controller (model 1914)
+    /// </summary>
+    XboxWireless
 }

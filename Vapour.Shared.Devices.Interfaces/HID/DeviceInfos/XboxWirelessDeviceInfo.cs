@@ -1,17 +1,17 @@
 ﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
 /// <summary>
-///     Xbox One S Controller [Bluetooth]
+///     Xbox Wireless Controller (model 1914)
 /// </summary>
-public sealed class XboxOneSDeviceInfo : DeviceInfo
+public sealed class XboxWirelessDeviceInfo : DeviceInfo
 {
     public override int VendorId => 0x045E;
 
-    public override int ProductId => 0x02FF;
+    public override int ProductId => 0x0B12;
 
-    public override string Name => "Xbox One S";
+    public override string Name => "Xbox Wireless Controller";
 
-    public override InputDeviceType DeviceType => InputDeviceType.XboxOneS;
+    public override InputDeviceType DeviceType => InputDeviceType.XboxWireless;
 
     //public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
     //    new() { InterruptInEndpointAddress = 0x83, InterruptOutEndpointAddress = 0x03 };

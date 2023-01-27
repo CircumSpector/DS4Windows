@@ -1,0 +1,3 @@
+﻿# About `DeviceInfo` classes
+
+To be filled...
