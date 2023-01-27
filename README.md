@@ -155,3 +155,4 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 - [Game Controller Collective Wiki - Sony DualSense](https://controllers.fandom.com/wiki/Sony_DualSense)
 - [DSAdvance](https://github.com/r57zone/DSAdvance)
 - [JoyShockLibrary](https://github.com/JibbSmart/JoyShockLibrary)
+- [XInputHooker](https://github.com/nefarius/XInputHooker)
