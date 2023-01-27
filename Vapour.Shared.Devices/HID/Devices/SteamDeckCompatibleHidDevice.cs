@@ -27,7 +27,8 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
     }
 
     public override InputSourceReport InputSourceReport { get; } = new SteamDeckCompatibleInputReport();
-    protected override InputDeviceType InputDeviceType => InputDeviceType.SteamDeck;
+    
+    protected override Type InputDeviceType => typeof(SteamDeckDeviceInfo);
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {

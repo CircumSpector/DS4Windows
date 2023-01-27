@@ -51,7 +51,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     public override InputSourceReport InputSourceReport { get; } = new DualShock4CompatibleInputReport();
 
-    protected override InputDeviceType InputDeviceType => InputDeviceType.DualShock4;
+    protected override Type InputDeviceType => typeof(DualShock4DeviceInfo);
 
     public override void OnAfterStartListening()
     {

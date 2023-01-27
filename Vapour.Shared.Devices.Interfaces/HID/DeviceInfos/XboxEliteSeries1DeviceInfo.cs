@@ -1,19 +1,16 @@
 ﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
-public abstract class XboxCompositeDeviceInfo : DeviceInfo
-{
-}
-
 /// <summary>
-///     Xbox One S Controller [Bluetooth]
+///     Xbox One Elite Controller
 /// </summary>
-public sealed class XboxOneSDeviceInfo : XboxCompositeDeviceInfo
+/// <remarks>TODO: causes crash, investigate!</remarks>
+public sealed class XboxEliteSeries1DeviceInfo : XboxCompositeDeviceInfo
 {
     public override int VendorId => 0x045E;
 
-    public override int ProductId => 0x02FF;
+    public override int ProductId => 0x02E3;
 
-    public override string Name => "Xbox One S";
+    public override string Name => "Xbox Elite Series 1";
 
     //public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
     //    new() { InterruptInEndpointAddress = 0x83, InterruptOutEndpointAddress = 0x03 };

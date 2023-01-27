@@ -28,7 +28,6 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     private static readonly Guid BluetoothDeviceClassGuid = Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}");
 
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
-    private readonly List<DeviceInfo> _deviceInfos;
 
     private readonly Channel<byte[]> _outputReportChannel;
 
@@ -46,9 +45,9 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
             SingleReader = true, SingleWriter = true, AllowSynchronousContinuations = true
         });
 
-        _deviceInfos = deviceInfos;
         Logger = logger;
-        KnownDevices = deviceInfos.Where(i => i.DeviceType == InputDeviceType).ToList();
+
+        KnownDevices = deviceInfos.Where(i => InputDeviceType.IsInstanceOfType(i)).ToList();
     }
 
     /// <summary>
@@ -59,7 +58,7 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     /// <summary>
     ///     Describes a particular compatible input device variant.
     /// </summary>
-    protected abstract InputDeviceType InputDeviceType { get; }
+    protected abstract Type InputDeviceType { get; }
 
     /// <summary>
     ///     The parsed input report. Depends on device type.

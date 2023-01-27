@@ -10,8 +10,6 @@ public sealed class DualSenseDeviceInfo : DeviceInfo
     
     public override string Name => "DualSense";
     
-    public override InputDeviceType DeviceType => InputDeviceType.DualSense;
-
     public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } = new()
     {
         InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03

@@ -202,11 +202,13 @@ internal sealed class InputSourceService : IInputSourceService
 
     private InputSourceConfiguration HackGetConfiguration(List<ICompatibleHidDevice> controllers)
     {
-        var inputSource = _services.GetService<IInputSource>();
+        var inputSource = _services.GetRequiredService<IInputSource>();
+
         foreach (var controller in controllers)
         {
             inputSource.AddController(controller);
         }
+
         _inputSourceConfigurationService.LoadInputSourceConfiguration(inputSource);
 
         return inputSource.Configuration;

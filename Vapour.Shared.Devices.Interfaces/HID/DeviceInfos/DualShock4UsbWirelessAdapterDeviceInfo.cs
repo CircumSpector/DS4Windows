@@ -10,8 +10,6 @@ public sealed class DualShock4UsbWirelessAdapterDeviceInfo : DeviceInfo
 
     public override string Name => "Sony Wireless Adapter";
 
-    public override InputDeviceType DeviceType => InputDeviceType.DualShock4;
-
     public override bool IsDongle => true;
 
     public override CompatibleHidDeviceFeatureSet FeatureSet => CompatibleHidDeviceFeatureSet.MonitorAudio;

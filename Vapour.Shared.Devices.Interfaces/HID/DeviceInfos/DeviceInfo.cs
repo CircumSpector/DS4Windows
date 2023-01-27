@@ -1,10 +1,13 @@
-﻿using Vapour.Shared.Devices.Services.ControllerEnumerators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
 /// <summary>
 ///     Describes identification characteristics of an input device.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public abstract class DeviceInfo
 {
     /// <summary>
@@ -23,11 +26,6 @@ public abstract class DeviceInfo
     public abstract string Name { get; }
 
     /// <summary>
-    ///     The input device type this device is compatible with.
-    /// </summary>
-    public abstract InputDeviceType DeviceType { get; }
-
-    /// <summary>
     ///     The available features of the device.
     /// </summary>
     public virtual CompatibleHidDeviceFeatureSet FeatureSet => CompatibleHidDeviceFeatureSet.Default;
@@ -37,9 +35,18 @@ public abstract class DeviceInfo
     /// </summary>
     public virtual HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } = null;
 
+    /// <summary>
+    ///     Gets whether this is a wireless device but connected via USB dongle.
+    /// </summary>
     public virtual bool IsDongle => false;
 
+    /// <summary>
+    ///     If true, identifies the left piece of hardware in case of a split handheld device.
+    /// </summary>
     public virtual bool IsLeftDevice => false;
 
+    /// <summary>
+    ///     If true, identifies the right piece of hardware in case of a split handheld device.
+    /// </summary>
     public virtual bool IsRightDevice => false;
 }
