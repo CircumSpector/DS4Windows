@@ -39,7 +39,7 @@ public interface ICompatibleHidDevice : IDisposable
     /// <summary>
     ///     The parsed input report.
     /// </summary>
-    InputSourceReport InputSourceReport { get; }
+    IInputSourceReport InputSourceReport { get; }
 
     InputSourceConfiguration CurrentConfiguration { get; }
 

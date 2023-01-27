@@ -64,7 +64,7 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     /// <summary>
     ///     The parsed input report. Depends on device type.
     /// </summary>
-    public abstract InputSourceReport InputSourceReport { get; }
+    public abstract IInputSourceReport InputSourceReport { get; }
 
     public IReadOnlyList<DeviceInfo> KnownDevices { get; }
 

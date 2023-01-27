@@ -182,7 +182,7 @@ internal class InputSource : IInputSource
 
         foreach ((ICompatibleHidDevice device, _) in _controllers)
         {
-            device.RefreshConfiguration();
+            device.OnAfterStartListening();
         }
     }
 

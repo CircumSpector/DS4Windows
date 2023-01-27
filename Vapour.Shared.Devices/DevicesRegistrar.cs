@@ -42,6 +42,7 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddTransient<IInputReportProcessor, InputReportProcessor>();
         services.AddTransient<IOutputDeviceProcessor, OutputDeviceProcessor>();
         services.AddTransient<IOutputReportProcessor, OutputReportProcessor>();
+        services.AddTransient<ICustomActionProcessor, CustomActionProcessor>();
 
         AddDevices(services);
 
