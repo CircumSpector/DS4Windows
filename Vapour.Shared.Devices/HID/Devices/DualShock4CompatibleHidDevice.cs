@@ -46,7 +46,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         {
             //reported output report length when bt is incorrect
             SourceDevice.OutputReportByteLength = 334;
-            _reportStartOffset = 0; // TODO: this works, investigate why :D
+            _reportStartOffset = 2;
         }
     }
 
