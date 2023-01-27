@@ -47,4 +47,5 @@
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=WINUSB/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Xbox/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=XGIP/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Xinput/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Xusb/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

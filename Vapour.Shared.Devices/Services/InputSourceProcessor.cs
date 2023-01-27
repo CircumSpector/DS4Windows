@@ -1,24 +1,28 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.Services;
-public class InputSourceProcessor : IInputSourceProcessor
+
+public sealed class InputSourceProcessor : IInputSourceProcessor
 {
     private readonly IInputReportProcessor _inputReportProcessor;
     private readonly IOutputDeviceProcessor _outputDeviceProcessor;
     private readonly List<IOutputReportProcessor> _outputReportProcessors = new();
     private readonly IServiceProvider _serviceProvider;
 
-    public InputSourceProcessor(IInputReportProcessor inputReportProcessor,
+    public InputSourceProcessor(
+        IInputReportProcessor inputReportProcessor,
         IOutputDeviceProcessor outputDeviceProcessor,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider
+        )
     {
         _inputReportProcessor = inputReportProcessor;
         _outputDeviceProcessor = outputDeviceProcessor;
         _serviceProvider = serviceProvider;
 
-        _outputDeviceProcessor.OnOutputDeviceReportReceived += _outputDeviceProcessor_OnOutputDeviceReportReceived;
+        _outputDeviceProcessor.OnOutputDeviceReportReceived += OutputDeviceProcessorOnOutputDeviceReportReceived;
     }
 
     public event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
@@ -27,14 +31,17 @@ public class InputSourceProcessor : IInputSourceProcessor
     {
         _inputReportProcessor.SetInputSource(inputSource);
         _outputDeviceProcessor.SetInputSource(inputSource);
-        foreach (var device in inputSource.GetControllers())
+
+        foreach (ICompatibleHidDevice device in inputSource.GetControllers())
         {
-            var outputReportProcessor = _serviceProvider.GetService<IOutputReportProcessor>();
-            // ReSharper disable once PossibleNullReferenceException
+            IOutputReportProcessor outputReportProcessor =
+                _serviceProvider.GetRequiredService<IOutputReportProcessor>();
+
             outputReportProcessor.SetDevice(device);
             _outputReportProcessors.Add(outputReportProcessor);
             outputReportProcessor.Start();
         }
+
         _outputDeviceProcessor.StartOutputProcessing(_inputReportProcessor);
         _inputReportProcessor.StartInputReportReader();
     }
@@ -43,7 +50,8 @@ public class InputSourceProcessor : IInputSourceProcessor
     {
         _inputReportProcessor.StopInputReportReader();
         _outputDeviceProcessor.StopOutputProcessing();
-        foreach (var outputReportProcessor in _outputReportProcessors)
+
+        foreach (IOutputReportProcessor outputReportProcessor in _outputReportProcessors)
         {
             outputReportProcessor.Stop();
         }
@@ -54,7 +62,7 @@ public class InputSourceProcessor : IInputSourceProcessor
         Stop();
     }
 
-    private void _outputDeviceProcessor_OnOutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    private void OutputDeviceProcessorOnOutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
         OnOutputDeviceReportReceived?.Invoke(outputDeviceReport);
     }

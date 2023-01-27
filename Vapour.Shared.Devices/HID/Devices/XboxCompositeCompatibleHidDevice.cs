@@ -21,8 +21,14 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 {
     private const byte SerialFeatureId = 0x03;
 
-    private static readonly uint IoctlXusbGetState = IoControlCodes.CTL_CODE(0x8000, 0x803, PInvoke.METHOD_BUFFERED,
+    private const uint IoctlXinputBase = 0x8000;
+
+    private static readonly uint IoctlXusbGetState = IoControlCodes.CTL_CODE(IoctlXinputBase, 0x803,
+        PInvoke.METHOD_BUFFERED,
         FILE_ACCESS_FLAGS.FILE_READ_DATA | FILE_ACCESS_FLAGS.FILE_WRITE_DATA);
+
+    private static readonly uint IoctlXusbSetState = IoControlCodes.CTL_CODE(IoctlXinputBase, 0x804,
+        PInvoke.METHOD_BUFFERED, FILE_ACCESS_FLAGS.FILE_WRITE_DATA);
 
     private readonly AutoResetEvent _readEvent = new(false);
 

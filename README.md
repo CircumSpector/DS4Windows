@@ -157,3 +157,4 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 - [JoyShockLibrary](https://github.com/JibbSmart/JoyShockLibrary)
 - [XInputHooker](https://github.com/nefarius/XInputHooker)
 - [OpenXinput](https://github.com/Nemirtingas/OpenXinput)
+- [SharpXusb](https://github.com/TheNathannator/SharpXusb)
