@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
+﻿using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
+
+namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
 /// <summary>
 ///     Xbox Elite Series 2 Controller (model 1797)

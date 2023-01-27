@@ -1,8 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
+﻿using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 
-public abstract class XboxCompositeDeviceInfo : DeviceInfo
-{
-}
+namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
 /// <summary>
 ///     Xbox One S Controller [Bluetooth]

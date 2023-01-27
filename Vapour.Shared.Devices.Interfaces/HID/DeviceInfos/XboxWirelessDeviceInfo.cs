@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
+﻿using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
+
+namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
 /// <summary>
 ///     Xbox Wireless Controller (model 1914)
