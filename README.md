@@ -156,3 +156,4 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 - [DSAdvance](https://github.com/r57zone/DSAdvance)
 - [JoyShockLibrary](https://github.com/JibbSmart/JoyShockLibrary)
 - [XInputHooker](https://github.com/nefarius/XInputHooker)
+- [OpenXinput](https://github.com/Nemirtingas/OpenXinput)
