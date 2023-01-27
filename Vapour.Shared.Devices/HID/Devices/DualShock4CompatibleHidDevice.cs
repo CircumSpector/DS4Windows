@@ -56,12 +56,14 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     public override void OnAfterStartListening()
     {
-        SendOutputReport(BuildOutputReport());
+        var reportData = BuildConfigurationReportData();
+        SendOutputReport(BuildOutputReport(reportData));
     }
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        SendOutputReport(BuildOutputReport(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor));
+        var reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        SendOutputReport(BuildOutputReport(reportData));
     }
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
@@ -91,10 +93,9 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         InputSourceReport.Parse(input.Slice(_reportStartOffset));
     }
 
-    private byte[] BuildOutputReport(byte strongMotor = 0, byte weakMotor = 0)
+    private byte[] BuildOutputReport(byte[] reportData)
     {
         var outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
-        var reportData = BuildOutputReportData(strongMotor, weakMotor);
         if (Connection == ConnectionType.Usb)
         {
             outputReportPacket[0] = 0x05;
@@ -114,14 +115,12 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         return outputReportPacket;
     }
 
-    private byte[] BuildOutputReportData(byte strongMotor, byte weakMotor)
+    private byte[] BuildConfigurationReportData()
     {
         var reportData = new byte[10];
 
         reportData[0] = 0xF7;
         reportData[1] = 0x04;
-        reportData[2] = weakMotor;
-        reportData[3] = strongMotor;
 
         if (CurrentConfiguration.LoadedLightbar != null)
         {
@@ -133,6 +132,16 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
         reportData[8] = 0xFF;
         reportData[9] = 0x00;
+        return reportData;
+    }
+
+    private byte[] BuildRumbeReportData(byte strongMotor, byte weakMotor)
+    {
+        var reportData = new byte[47];
+        reportData[0] = 0x01;
+        reportData[2] = weakMotor;
+        reportData[3] = strongMotor;
+
         return reportData;
     }
 }

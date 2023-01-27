@@ -46,12 +46,14 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void OnAfterStartListening()
     {
-        SendOutputReport(BuildOutputReport());
+        var reportData = BuildConfigurationReportData();
+        SendOutputReport(BuildOutputReport(reportData));
     }
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        SendOutputReport(BuildOutputReport(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor));
+        var reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        SendOutputReport(BuildOutputReport(reportData));
     }
 
     protected override Type InputDeviceType => typeof(DualSenseDeviceInfo);
@@ -63,10 +65,9 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         InputSourceReport.Parse(input.Slice(_reportStartOffset));
     }
 
-    private byte[] BuildOutputReport(byte strongMotor = 0, byte weakMotor = 0)
+    private byte[] BuildOutputReport(byte[] reportData)
     {
         var outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
-        var reportData = BuildOutputReportData(strongMotor, weakMotor);
         if (Connection == ConnectionType.Usb)
         {
             outputReportPacket[0] = 0x02;
@@ -85,15 +86,13 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         return outputReportPacket;
     }
 
-    private byte[] BuildOutputReportData(byte strongMotor = 0, byte weakMotor = 0)
+    private byte[] BuildConfigurationReportData()
     {
         var reportData = new byte[47];
 
         reportData[0] = 0xFF;
         reportData[1] = 0xF7;
-        reportData[2] = weakMotor;
-        reportData[3] = strongMotor;
-        
+
         reportData[42] = 0x02; //player led brightness
 
         var playerLed = CurrentConfiguration.PlayerNumber switch
@@ -114,6 +113,16 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             reportData[45] = rgb.G;
             reportData[46] = rgb.B;
         }
+
+        return reportData;
+    }
+
+    private byte[] BuildRumbeReportData(byte strongMotor, byte weakMotor)
+    {
+        var reportData = new byte[47];
+        reportData[0] = 0x03;
+        reportData[2] = weakMotor;
+        reportData[3] = strongMotor;
 
         return reportData;
     }
