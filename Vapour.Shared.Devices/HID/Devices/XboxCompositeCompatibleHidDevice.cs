@@ -7,6 +7,7 @@ using Windows.Win32.Storage.FileSystem;
 using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Devices.HID.DeviceInfos;
+using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.Services.Reporting;
 using Vapour.Shared.Devices.Util;
