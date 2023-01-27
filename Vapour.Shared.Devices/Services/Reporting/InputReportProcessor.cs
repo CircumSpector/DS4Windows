@@ -21,6 +21,7 @@ namespace Vapour.Shared.Devices.Services.Reporting;
 /// </summary>
 internal sealed class InputReportProcessor : IInputReportProcessor
 {
+    private readonly ICustomActionProcessor _customActionProcessor;
     private static readonly Meter Meter = new(TracingSources.AssemblyName);
 
     private static readonly Counter<int> ReportsReadCounter =
@@ -32,18 +33,20 @@ internal sealed class InputReportProcessor : IInputReportProcessor
     private readonly ActivitySource _coreActivity = new(TracingSources.AssemblyName);
     
     private Channel<byte[]> _inputReportChannel;
+    private Channel<InputSourceFinalReport> _customActionChannel;
     
     private Thread _inputReportProcessor;
     private Thread _inputReportReader;
+    private Thread _customActionThread;
+
     private CancellationTokenSource _inputReportToken;
 
-    public InputReportProcessor(IServiceProvider serviceProvider)
+    public InputReportProcessor(ILogger<InputReportProcessor> logger, ICustomActionProcessor customActionProcessor)
     {
-        Services = serviceProvider;
-        Logger = Services.GetRequiredService<ILogger<InputReportProcessor>>();
+        _customActionProcessor = customActionProcessor;
+        Logger = logger;
     }
-
-    private IServiceProvider Services { get; }
+    
     private ILogger<InputReportProcessor> Logger { get; }
     public IInputSource InputSource { get; private set; }
     public bool IsInputReportAvailableInvoked { get; set; } = true;
@@ -70,6 +73,13 @@ internal sealed class InputReportProcessor : IInputReportProcessor
             AllowSynchronousContinuations = true
         });
 
+        _customActionChannel = Channel.CreateUnbounded<InputSourceFinalReport>(new UnboundedChannelOptions
+        {
+            SingleReader = true,
+            SingleWriter = true,
+            AllowSynchronousContinuations = true
+        });
+
         if (_inputReportToken == null || _inputReportToken.Token.IsCancellationRequested)
         {
             _inputReportToken = new CancellationTokenSource();
@@ -87,6 +97,13 @@ internal sealed class InputReportProcessor : IInputReportProcessor
         };
         _inputReportProcessor.Start();
 
+        _customActionThread = new Thread(ProcessCustomActionLoop)
+        {
+            Priority = ThreadPriority.AboveNormal,
+            IsBackground = true
+        };
+        _customActionThread.Start();
+
         IsProcessing = true;
     }
 
@@ -102,8 +119,10 @@ internal sealed class InputReportProcessor : IInputReportProcessor
 
         _inputReportReader.Join();
         _inputReportProcessor.Join();
+        _customActionThread.Join();
 
         _inputReportChannel.Writer.Complete();
+        _customActionChannel.Writer.Complete();
 
         _inputReportToken.Dispose();
         _inputReportToken = null;
@@ -139,6 +158,8 @@ internal sealed class InputReportProcessor : IInputReportProcessor
                 {
                     InputReportAvailable?.Invoke(InputSource, report);
                 }
+
+                _customActionChannel.Writer.WriteAsync(report);
             }
         }
         catch (OperationCanceledException)
@@ -237,6 +258,37 @@ internal sealed class InputReportProcessor : IInputReportProcessor
         catch (Exception ex)
         {
             Logger.LogError(ex, "Fatal failure in input report reading");
+        }
+    }
+
+    private async void ProcessCustomActionLoop()
+    {
+        Logger.LogDebug("Started custom action report processing thread");
+
+        using Activity activity = _coreActivity.StartActivity(
+            $"{nameof(CompatibleHidDevice)}:{nameof(ProcessInputReportLoop)}",
+            ActivityKind.Consumer, string.Empty);
+
+        try
+        {
+            while (!_inputReportToken.IsCancellationRequested)
+            {
+                var inputSourceReport = await _customActionChannel.Reader.ReadAsync(_inputReportToken.Token);
+                _customActionProcessor.ProcessReport(InputSource, inputSourceReport);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Input report processing thread stopped");
+        }
+        // TODO: possibly handle this somewhere else
+        catch (VigemBusNotFoundException)
+        {
+            StopInputReportReader();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Fatal failure in input report processing");
         }
     }
 }
