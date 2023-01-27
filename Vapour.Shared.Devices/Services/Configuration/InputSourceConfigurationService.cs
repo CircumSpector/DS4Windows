@@ -5,19 +5,19 @@ using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Profiles;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
-internal class InputSourceConfigurationService : IInputSourceConfigurationService
+internal sealed class InputSourceConfigurationService : IInputSourceConfigurationService
 {
-    private readonly IGlobalStateService _globalStateService;
-    private readonly IProfilesService _profilesService;
-    private readonly IInputSourceDataSource _inputSourceDataSource;
+    public const string MultiControllerKeySeparator = "::::";
     private readonly IGameListProviderService _gameListProviderService;
+    private readonly IGlobalStateService _globalStateService;
+    private readonly IInputSourceDataSource _inputSourceDataSource;
+    private readonly IProfilesService _profilesService;
     private Dictionary<string, InputSourceConfiguration> _inputSourceConfigurations;
     private Dictionary<string, List<InputSourceConfiguration>> _inputSourceGameConfigurations;
-
-    public const string MultiControllerKeySeparator = "::::";
 
     public InputSourceConfigurationService(
         IGlobalStateService globalStateService,
@@ -34,6 +34,7 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
     }
 
     public event EventHandler<InputSourceConfigurationChangedEventArgs> OnActiveConfigurationChanged;
+
     //really dont like doing this
     public Func<string> GetCurrentGameRunning { get; set; }
 
@@ -47,23 +48,27 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
     {
         if (GetCurrentGameRunning != null)
         {
-            var currentGameRunning = GetCurrentGameRunning();
+            string currentGameRunning = GetCurrentGameRunning();
+
             if (!string.IsNullOrWhiteSpace(currentGameRunning))
             {
-                var gameConfigurations = GetGameInputSourceConfigurations(inputSource.InputSourceKey);
-                var gameConfiguration =
+                List<InputSourceConfiguration> gameConfigurations =
+                    GetGameInputSourceConfigurations(inputSource.InputSourceKey);
+                InputSourceConfiguration gameConfiguration =
                     gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == currentGameRunning);
+
                 if (gameConfiguration != null)
                 {
                     SetInputSourceConfiguration(inputSource, gameConfiguration);
                     return;
                 }
             }
-            
         }
-        if (_inputSourceConfigurations.ContainsKey(inputSource.InputSourceKey))
+
+        if (_inputSourceConfigurations.TryGetValue(inputSource.InputSourceKey,
+                out InputSourceConfiguration configuration))
         {
-            SetInputSourceConfiguration(inputSource, _inputSourceConfigurations[inputSource.InputSourceKey]);
+            SetInputSourceConfiguration(inputSource, configuration);
         }
         else
         {
@@ -75,15 +80,29 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
         InputSourceConfiguration inputSourceConfiguration = null,
         bool shouldSave = false)
     {
-        SetInputSourceConfiguration(_inputSourceDataSource.GetByInputSourceKey(inputSourceKey), inputSourceConfiguration, shouldSave);
+        SetInputSourceConfiguration(_inputSourceDataSource.GetByInputSourceKey(inputSourceKey),
+            inputSourceConfiguration, shouldSave);
     }
 
-    public void SetInputSourceConfiguration(IInputSource inputSource,
-        InputSourceConfiguration inputSourceConfiguration = null,
-        bool shouldSave = false)
+    public InputSourceConfiguration GetMultiControllerConfiguration(string deviceKey)
     {
-        var inputSourceKey = inputSource.InputSourceKey;
+        string existingKey =
+            _inputSourceConfigurations.Keys.SingleOrDefault(c =>
+                c.Contains(MultiControllerKeySeparator) && c.Contains(deviceKey));
+
+        return existingKey != null ? _inputSourceConfigurations[existingKey] : null;
+    }
+
+    private void SetInputSourceConfiguration(
+        IInputSource inputSource,
+        InputSourceConfiguration inputSourceConfiguration = null,
+        bool shouldSave = false
+    )
+    {
+        string inputSourceKey = inputSource.InputSourceKey;
+
         InputSourceConfiguration newConfig;
+
         if (inputSourceConfiguration == null)
         {
             newConfig = GetDefaultInputSourceConfiguration(inputSource);
@@ -121,149 +140,35 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
         inputSource.SetConfiguration(newConfig);
 
         OnActiveConfigurationChanged?.Invoke(this,
-           new InputSourceConfigurationChangedEventArgs
-           {
-               InputSourceKey = inputSourceKey,
-               InputSourceConfiguration = newConfig
-           });
-    }
-    
-    public InputSourceConfiguration GetMultiControllerConfiguration(string deviceKey)
-    {
-        var existingKey = _inputSourceConfigurations.Keys.SingleOrDefault(c => c.Contains(MultiControllerKeySeparator) && c.Contains(deviceKey));
-        if (existingKey != null)
-        {
-            return _inputSourceConfigurations[existingKey];
-        }
-
-        return null;
-    }
-
-    #region Game Configuration Publics
-
-    public List<InputSourceConfiguration> GetInputSourceConfigurations(string inputSourceKey)
-    {
-        var inputSourceConfigurations = GetGameInputSourceConfigurations(inputSourceKey);
-
-        if (_inputSourceConfigurations.ContainsKey(inputSourceKey))
-        {
-            inputSourceConfigurations.Add(_inputSourceConfigurations[inputSourceKey]);
-        }
-
-        return inputSourceConfigurations;
-    }
-
-    public List<InputSourceConfiguration> GetGameInputSourceConfigurations(string inputSourceKey)
-    {
-        var inputSourceConfigurations = new List<InputSourceConfiguration>();
-        if (_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
-        {
-            var gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
-            inputSourceConfigurations.AddRange(gameConfigurations);
-        }
-
-        return inputSourceConfigurations;
-    }
-
-    public void AddOrUpdateInputSourceGameConfiguration(string inputSourceKey,
-        GameInfo gameInfo,
-        InputSourceConfiguration inputSourceConfiguration)
-    {
-        var inputSource = _inputSourceDataSource.GetByInputSourceKey(inputSourceKey);
-        if (inputSourceConfiguration == null)
-        {
-            inputSourceConfiguration = GetDefaultInputSourceConfiguration(inputSource);
-            inputSourceConfiguration.GameInfo = gameInfo;
-        }
-
-        List<InputSourceConfiguration> gameConfigurations;
-        if (!_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
-        {
-            gameConfigurations = new List<InputSourceConfiguration>();
-            _inputSourceGameConfigurations.Add(inputSourceKey, gameConfigurations);
-        }
-        else
-        {
-            gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
-        }
-
-        var existing = gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == inputSourceConfiguration.GameInfo.GameId);
-        if (existing != null)
-        {
-            gameConfigurations.Remove(existing);
-        }
-
-        gameConfigurations.Add(inputSourceConfiguration);
-
-        SaveInputSourceGameConfigurations();
-        
-        if (inputSource.Configuration.GameInfo?.GameId == inputSourceConfiguration.GameInfo.GameId)
-        {
-            SetGameConfiguration(inputSourceKey, inputSourceConfiguration.GameInfo.GameId);
-        }
-    }
-
-    public void DeleteGameConfiguration(string inputSourceKey, string gameId)
-    {
-        if (_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
-        {
-            var gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
-            var gameToDelete = gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == gameId);
-            if (gameToDelete != null)
+            new InputSourceConfigurationChangedEventArgs
             {
-                gameConfigurations.Remove(gameToDelete);
-                SaveInputSourceGameConfigurations();
-            }
-        }
+                InputSourceKey = inputSourceKey, InputSourceConfiguration = newConfig
+            });
     }
-
-    public void SetGameConfiguration(string inputSourceKey, string gameId)
-    {
-        if (_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
-        {
-            var gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
-            var inputSource = _inputSourceDataSource.GetByInputSourceKey(inputSourceKey);
-            SetInputSourceConfiguration(inputSource, gameConfigurations.Single(g => g.GameInfo.GameId == gameId).DeepClone());
-        }
-    }
-
-    public void RestoreMainConfiguration(string inputSourceKey)
-    {
-        if (_inputSourceConfigurations.ContainsKey(inputSourceKey))
-        {
-            SetInputSourceConfiguration(inputSourceKey, _inputSourceConfigurations[inputSourceKey]);
-        }
-    }
-
-    public List<GameInfo> GetGameSelectionList(string inputSourceKey, GameSource gameSource)
-    {
-        return _gameListProviderService.GetGameSelectionList(inputSourceKey, gameSource, _inputSourceGameConfigurations);
-    }
-
-    #endregion
 
     private void LoadInputSourceConfigurations()
     {
         if (File.Exists(_globalStateService.LocalInputSourceConfigurationsLocation))
         {
             string data = File.ReadAllText(_globalStateService.LocalInputSourceConfigurationsLocation);
+
             Dictionary<string, InputSourceConfiguration> inputSourceConfigurations = JsonSerializer
                 .Deserialize<Dictionary<string, InputSourceConfiguration>>(data)
                 .Where(i =>
                 {
-                    if (_profilesService.AvailableProfiles.ContainsKey(i.Value.ProfileId))
+                    if (!_profilesService.AvailableProfiles.ContainsKey(i.Value.ProfileId))
                     {
-                        i.Value.Profile = _profilesService.AvailableProfiles[i.Value.ProfileId];
-
-                        if (!string.IsNullOrWhiteSpace(i.Value.CustomLightbar))
-                        {
-                            i.Value.LoadedLightbar = i.Value.CustomLightbar;
-                        }
-
-                        return true;
+                        return false;
                     }
 
-                    return false;
+                    i.Value.Profile = _profilesService.AvailableProfiles[i.Value.ProfileId];
+
+                    if (!string.IsNullOrWhiteSpace(i.Value.CustomLightbar))
+                    {
+                        i.Value.LoadedLightbar = i.Value.CustomLightbar;
+                    }
+
+                    return true;
                 })
                 .ToDictionary(i => i.Key, i => i.Value);
 
@@ -277,15 +182,13 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
 
     private void SaveInputSourceConfigurations()
     {
-        string data = JsonSerializer.Serialize(_inputSourceConfigurations);
-        if (File.Exists(_globalStateService.LocalInputSourceConfigurationsLocation))
-        {
-            File.Delete(_globalStateService.LocalInputSourceConfigurationsLocation);
-        }
+        string data = JsonSerializer.Serialize(_inputSourceConfigurations,
+            new JsonSerializerOptions { WriteIndented = true });
 
-        FileStream file = File.Create(_globalStateService.LocalInputSourceConfigurationsLocation);
-        file.Dispose();
-        File.WriteAllText(_globalStateService.LocalInputSourceConfigurationsLocation, data);
+        using FileStream fs = File.Create(_globalStateService.LocalInputSourceConfigurationsLocation);
+        using StreamWriter sw = new(fs);
+
+        sw.Write(data);
     }
 
     private void LoadInputSourceGameConfigurations()
@@ -297,8 +200,8 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
                 .Deserialize<Dictionary<string, List<InputSourceConfiguration>>>(data)
                 .Where(i =>
                 {
-                    var validConfiguration = false;
-                    foreach (var inputSourceConfiguration in i.Value)
+                    bool validConfiguration = false;
+                    foreach (InputSourceConfiguration inputSourceConfiguration in i.Value)
                     {
                         if (_profilesService.AvailableProfiles.ContainsKey(inputSourceConfiguration.ProfileId))
                         {
@@ -339,7 +242,7 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
     private InputSourceConfiguration GetDefaultInputSourceConfiguration(IInputSource inputSource)
     {
         IProfile defaultProfile = _profilesService.AvailableProfiles[Constants.DefaultProfileId].DeepClone();
-        var defaultConfiguration = new InputSourceConfiguration
+        InputSourceConfiguration defaultConfiguration = new()
         {
             ProfileId = defaultProfile.Id,
             Profile = defaultProfile,
@@ -348,11 +251,11 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
             LoadedLightbar = null,
             OutputDeviceType = defaultProfile.OutputDeviceType
         };
-        
-        var controllers = inputSource.GetControllers();
-        for (var i = 0; i < controllers.Count; i++)
+
+        List<ICompatibleHidDevice> controllers = inputSource.GetControllers();
+        for (int i = 0; i < controllers.Count; i++)
         {
-            var controllerConfiguration = new InputSourceConfigurationController
+            InputSourceConfigurationController controllerConfiguration = new()
             {
                 DeviceKey = controllers[i].DeviceKey, Index = i
             };
@@ -387,11 +290,119 @@ internal class InputSourceConfigurationService : IInputSourceConfigurationServic
 
     private void UpdateAllProfiles(Guid oldProfileId, Guid newProfileId)
     {
-        foreach (var isItem in _inputSourceConfigurations.Where(c => c.Value.ProfileId == oldProfileId))
+        foreach (KeyValuePair<string, InputSourceConfiguration> isItem in _inputSourceConfigurations.Where(c =>
+                     c.Value.ProfileId == oldProfileId))
         {
-            var inputSourceConfiguration = isItem.Value.DeepClone();
+            InputSourceConfiguration inputSourceConfiguration = isItem.Value.DeepClone();
             inputSourceConfiguration.ProfileId = newProfileId;
             SetInputSourceConfiguration(isItem.Key, inputSourceConfiguration, true);
         }
     }
+
+    #region Game Configuration Publics
+
+    public List<InputSourceConfiguration> GetInputSourceConfigurations(string inputSourceKey)
+    {
+        List<InputSourceConfiguration> inputSourceConfigurations = GetGameInputSourceConfigurations(inputSourceKey);
+
+        if (_inputSourceConfigurations.ContainsKey(inputSourceKey))
+        {
+            inputSourceConfigurations.Add(_inputSourceConfigurations[inputSourceKey]);
+        }
+
+        return inputSourceConfigurations;
+    }
+
+    public List<InputSourceConfiguration> GetGameInputSourceConfigurations(string inputSourceKey)
+    {
+        List<InputSourceConfiguration> inputSourceConfigurations = new();
+        if (_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
+        {
+            List<InputSourceConfiguration> gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
+            inputSourceConfigurations.AddRange(gameConfigurations);
+        }
+
+        return inputSourceConfigurations;
+    }
+
+    public void AddOrUpdateInputSourceGameConfiguration(string inputSourceKey,
+        GameInfo gameInfo,
+        InputSourceConfiguration inputSourceConfiguration)
+    {
+        IInputSource inputSource = _inputSourceDataSource.GetByInputSourceKey(inputSourceKey);
+        if (inputSourceConfiguration == null)
+        {
+            inputSourceConfiguration = GetDefaultInputSourceConfiguration(inputSource);
+            inputSourceConfiguration.GameInfo = gameInfo;
+        }
+
+        List<InputSourceConfiguration> gameConfigurations;
+        if (!_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
+        {
+            gameConfigurations = new List<InputSourceConfiguration>();
+            _inputSourceGameConfigurations.Add(inputSourceKey, gameConfigurations);
+        }
+        else
+        {
+            gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
+        }
+
+        InputSourceConfiguration existing =
+            gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == inputSourceConfiguration.GameInfo.GameId);
+        if (existing != null)
+        {
+            gameConfigurations.Remove(existing);
+        }
+
+        gameConfigurations.Add(inputSourceConfiguration);
+
+        SaveInputSourceGameConfigurations();
+
+        if (inputSource.Configuration.GameInfo?.GameId == inputSourceConfiguration.GameInfo.GameId)
+        {
+            SetGameConfiguration(inputSourceKey, inputSourceConfiguration.GameInfo.GameId);
+        }
+    }
+
+    public void DeleteGameConfiguration(string inputSourceKey, string gameId)
+    {
+        if (_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
+        {
+            List<InputSourceConfiguration> gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
+            InputSourceConfiguration gameToDelete =
+                gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == gameId);
+            if (gameToDelete != null)
+            {
+                gameConfigurations.Remove(gameToDelete);
+                SaveInputSourceGameConfigurations();
+            }
+        }
+    }
+
+    public void SetGameConfiguration(string inputSourceKey, string gameId)
+    {
+        if (_inputSourceGameConfigurations.ContainsKey(inputSourceKey))
+        {
+            List<InputSourceConfiguration> gameConfigurations = _inputSourceGameConfigurations[inputSourceKey];
+            IInputSource inputSource = _inputSourceDataSource.GetByInputSourceKey(inputSourceKey);
+            SetInputSourceConfiguration(inputSource,
+                gameConfigurations.Single(g => g.GameInfo.GameId == gameId).DeepClone());
+        }
+    }
+
+    public void RestoreMainConfiguration(string inputSourceKey)
+    {
+        if (_inputSourceConfigurations.ContainsKey(inputSourceKey))
+        {
+            SetInputSourceConfiguration(inputSourceKey, _inputSourceConfigurations[inputSourceKey]);
+        }
+    }
+
+    public List<GameInfo> GetGameSelectionList(string inputSourceKey, GameSource gameSource)
+    {
+        return _gameListProviderService.GetGameSelectionList(inputSourceKey, gameSource,
+            _inputSourceGameConfigurations);
+    }
+
+    #endregion
 }

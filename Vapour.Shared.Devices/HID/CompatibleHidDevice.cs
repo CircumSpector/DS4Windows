@@ -17,6 +17,7 @@ namespace Vapour.Shared.Devices.HID;
 /// <summary>
 ///     Represents a <see cref="HidDevice" /> which is a compatible input device.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public abstract class CompatibleHidDevice : ICompatibleHidDevice
 {
     private const string SonyWirelessAdapterFriendlyName = "DUALSHOCK®4 USB Wireless Adaptor";

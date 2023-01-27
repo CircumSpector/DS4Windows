@@ -1,8 +1,9 @@
-﻿using Vapour.Shared.Devices.Services.ControllerEnumerators;
+﻿using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
+using Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
-public sealed class DualShock4UsbWirelessAdapterDeviceInfo : DeviceInfo
+public sealed class DualShock4UsbWirelessAdapterDeviceInfo : DualShock4DeviceInfo
 {
     public override int VendorId => 0x054C;
 
