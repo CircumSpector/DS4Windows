@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Devices.HID.DeviceInfos;
+using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.Services.Reporting;
 
@@ -10,30 +13,28 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 {
     private const int SubCommandHeaderLength = 8;
     private const int SubCommandLength = 64;
-    private static readonly byte[] _subCommandHeader =
-        { 0x0, 0x1, 0x40, 0x40, 0x0, 0x1, 0x40, 0x40 };
-    private byte _commandCount;
 
     private const int SpiDataOffset = 20;
 
-    private ManualResetEventSlim _sendSubCommandWait = new ManualResetEventSlim(false);
-    private byte _lastSubCommandCodeSent;
-    private byte[] _subCommandResult;
+    private static readonly byte[] _subCommandHeader = { 0x0, 0x1, 0x40, 0x40, 0x0, 0x1, 0x40, 0x40 };
 
     private readonly JoyConCompatibleInputReport _report = new();
+
+    private readonly ManualResetEventSlim _sendSubCommandWait = new(false);
+    private byte _commandCount;
+    private byte _lastSubCommandCodeSent;
+    private byte[] _subCommandResult;
 
     public JoyConCompatibleHidDevice(ILogger<JoyConCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
     {
     }
 
-    public bool IsLeft
-    {
-        get
-        {
-            return CurrentDeviceInfo != null && CurrentDeviceInfo.GetType() == typeof(JoyConLeftDeviceInfo);
-        }
-    }
+    public bool IsLeft => CurrentDeviceInfo is JoyConLeftDeviceInfo;
+
+    public override InputSourceReport InputSourceReport => _report;
+
+    protected override Type InputDeviceType => typeof(JoyConDeviceInfo);
 
     protected override void OnInitialize()
     {
@@ -68,15 +69,12 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         }
     }
 
-    public override InputSourceReport InputSourceReport => _report;
-
-    protected override Type InputDeviceType => typeof(JoyConDeviceInfo);
-
     private void GetCalibrationData()
     {
-        var userCalibrationFound = false;
-        var resultData = SubCommand(JoyConCodes.SubCommand_SpiFlashRead, IsLeft ? JoyConCodes.GetLeftStickUserCalibration : JoyConCodes.GetRightStickUserCalibration);
-        var spiData = resultData.Slice(SpiDataOffset, 9);
+        bool userCalibrationFound = false;
+        ReadOnlySpan<byte> resultData = SubCommand(JoyConCodes.SubCommand_SpiFlashRead,
+            IsLeft ? JoyConCodes.GetLeftStickUserCalibration : JoyConCodes.GetRightStickUserCalibration);
+        ReadOnlySpan<byte> spiData = resultData.Slice(SpiDataOffset, 9);
 
         for (int i = 0; i < 9; ++i)
         {
@@ -89,20 +87,25 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
         if (!userCalibrationFound)
         {
-            resultData = SubCommand(JoyConCodes.SubCommand_SpiFlashRead, IsLeft ? JoyConCodes.GetLeftStickFactoryCalibration : JoyConCodes.GetRightStickFactoryCalibration);
+            resultData = SubCommand(JoyConCodes.SubCommand_SpiFlashRead,
+                IsLeft ? JoyConCodes.GetLeftStickFactoryCalibration : JoyConCodes.GetRightStickFactoryCalibration);
             spiData = resultData.Slice(SpiDataOffset, 9);
         }
-        
-        _report.StickCalibration[IsLeft ? 0 : 2] = (ushort)((spiData[1] << 8) & 0xF00 | spiData[0]); // X Axis Max above center
-        _report.StickCalibration[IsLeft ? 1 : 3] = (ushort)((spiData[2] << 4) | (spiData[1] >> 4));  // Y Axis Max above center
-        _report.StickCalibration[IsLeft ? 2 : 4] = (ushort)((spiData[4] << 8) & 0xF00 | spiData[3]); // X Axis Center
-        _report.StickCalibration[IsLeft ? 3 : 5] = (ushort)((spiData[5] << 4) | (spiData[4] >> 4));  // Y Axis Center
-        _report.StickCalibration[IsLeft ? 4 : 0] = (ushort)((spiData[7] << 8) & 0xF00 | spiData[6]); // X Axis Min below center
-        _report.StickCalibration[IsLeft ? 5 : 1] = (ushort)((spiData[8] << 4) | (spiData[7] >> 4));  // Y Axis Min below center
+
+        _report.StickCalibration[IsLeft ? 0 : 2] =
+            (ushort)(((spiData[1] << 8) & 0xF00) | spiData[0]); // X Axis Max above center
+        _report.StickCalibration[IsLeft ? 1 : 3] =
+            (ushort)((spiData[2] << 4) | (spiData[1] >> 4)); // Y Axis Max above center
+        _report.StickCalibration[IsLeft ? 2 : 4] = (ushort)(((spiData[4] << 8) & 0xF00) | spiData[3]); // X Axis Center
+        _report.StickCalibration[IsLeft ? 3 : 5] = (ushort)((spiData[5] << 4) | (spiData[4] >> 4)); // Y Axis Center
+        _report.StickCalibration[IsLeft ? 4 : 0] =
+            (ushort)(((spiData[7] << 8) & 0xF00) | spiData[6]); // X Axis Min below center
+        _report.StickCalibration[IsLeft ? 5 : 1] =
+            (ushort)((spiData[8] << 4) | (spiData[7] >> 4)); // Y Axis Min below center
 
         resultData = SubCommand(JoyConCodes.SubCommand_SpiFlashRead, JoyConCodes.GetStickParameters);
         spiData = resultData.Slice(SpiDataOffset, 16);
-        _report.DeadZone = (ushort)((spiData[4] << 8) & 0xF00 | spiData[3]);
+        _report.DeadZone = (ushort)(((spiData[4] << 8) & 0xF00) | spiData[3]);
     }
 
     private ReadOnlySpan<byte> SubCommand(byte subCommand, byte[] data)
@@ -120,19 +123,22 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         _lastSubCommandCodeSent = subCommand;
         SendOutputReport(commandData);
 
-        var received = _sendSubCommandWait.Wait(2000);
-        Logger.LogInformation("JoyCon serial {0} {1} subCommand {2}", SerialString, received ? "received" : "did not receive",
+        bool received = _sendSubCommandWait.Wait(2000);
+        Logger.LogInformation("JoyCon serial {0} {1} subCommand {2}", SerialString,
+            received ? "received" : "did not receive",
             subCommand);
 
-        var resultData = _subCommandResult;
+        byte[] resultData = _subCommandResult;
 
         _subCommandResult = null;
         _lastSubCommandCodeSent = 0;
         _sendSubCommandWait.Reset();
-        
+
         return resultData;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static class JoyConCodes
     {
         public const byte SubCommand_InputMode = 0x03;
@@ -140,10 +146,10 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         public const byte SubCommand_SetPlayerLED = 0x30;
         public const byte SubCommand_SpiFlashRead = 0x10;
 
+        public const byte FeatureId_Serial = 18;
+
         public static readonly byte[] InputMode_Standard = { 0x30 };
         public static readonly byte[] InputMode_SimpleHid = { 0x3F };
-
-        public const byte FeatureId_Serial = 18;
 
         public static readonly byte[] EnableIMU_On = { 0x01 };
 

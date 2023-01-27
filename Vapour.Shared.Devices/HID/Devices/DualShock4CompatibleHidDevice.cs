@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
+using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.Services.Reporting;
 

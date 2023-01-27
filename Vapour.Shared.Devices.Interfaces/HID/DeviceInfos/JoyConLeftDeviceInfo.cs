@@ -1,8 +1,6 @@
-﻿namespace Vapour.Shared.Devices.HID.DeviceInfos;
+﻿using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 
-public abstract class JoyConDeviceInfo : DeviceInfo
-{
-}
+namespace Vapour.Shared.Devices.HID.DeviceInfos;
 
 public sealed class JoyConLeftDeviceInfo : JoyConDeviceInfo
 {
