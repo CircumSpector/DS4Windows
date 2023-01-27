@@ -45,7 +45,6 @@ public sealed class InputSourceMessageForwarder : IInputSourceMessageForwarder
         var controllers = inputSource.GetControllers().Select(c => new InputSourceController
         {
             Description = c.SourceDevice.Description,
-            DeviceType = c.CurrentDeviceInfo.GetType(),
             DisplayName = c.CurrentDeviceInfo.Name,
             InstanceId = c.SourceDevice.InstanceId,
             ManufacturerString = c.SourceDevice.ManufacturerString,

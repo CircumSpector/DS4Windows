@@ -143,11 +143,12 @@ internal sealed class DS4OutDevice : OutDevice
         {
             while (!_outDeviceCancellationToken.IsCancellationRequested)
             {
-                IEnumerable<byte> buffer = _controller.AwaitRawOutputReport();
+                var buffer = _controller.AwaitRawOutputReport().ToArray();
 
                 FireOutputDeviceReportReceived(new OutputDeviceReport
                 {
-                    OutputDeviceType = OutputDeviceType.DualShock4Controller, Packet = buffer.ToArray()
+                    StrongMotor = buffer[5],
+                    WeakMotor = buffer[4]
                 });
             }
         }

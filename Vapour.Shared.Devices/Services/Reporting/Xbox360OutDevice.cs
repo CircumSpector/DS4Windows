@@ -134,7 +134,8 @@ internal sealed class Xbox360OutDevice : OutDevice
                 byte[] buffer = await _outDeviceReportChannel.Reader.ReadAsync(_outDeviceCancellationToken.Token);
                 FireOutputDeviceReportReceived(new OutputDeviceReport
                 {
-                    OutputDeviceType = OutputDeviceType.Xbox360Controller, Packet = buffer
+                    StrongMotor = buffer[0],
+                    WeakMotor = buffer[1]
                 });
             }
         }
