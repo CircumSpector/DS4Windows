@@ -1,5 +1,4 @@
-﻿using System;
-using Vapour.Shared.Devices.HID;
+﻿using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 public class CustomActionProcessor : ICustomActionProcessor

@@ -2,7 +2,7 @@
 
 public class CustomActionReport
 {
-    public long[] Values { get; } = new long[16];
+    public long[] Values { get; } = new long[17];
 
     public byte CrossStart => 0;
     public byte SquareStart => 1;
