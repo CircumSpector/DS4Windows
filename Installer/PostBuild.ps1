@@ -18,10 +18,14 @@ if (Test-Path -Path $artifacts)
 	Remove-Item -Path $artifacts -Recurse
 }
 
-& "$adi" /register $(gc $serial)
-& "$adi" /edit $installerProject /SetVersion $env:APPVEYOR_BUILD_VERSION
-& "$adi" /build $installerProject 
+if ($env:APPVEYOR_REPO_TAG == "true")
+{
+	& "$adi" /register $(gc $serial)
+	& "$adi" /edit $installerProject /SetVersion $env:APPVEYOR_BUILD_VERSION
+	& "$adi" /build $installerProject 
+
+	Move-Item -Path $installerOutputExe -Destination $installerOutputArtifact
+}
 
 New-Item $artifacts -itemtype directory
 Compress-Archive -Path $publishFolder -DestinationPath $publishOutputArtifact
-Move-Item -Path $installerOutputExe -Destination $installerOutputArtifact
