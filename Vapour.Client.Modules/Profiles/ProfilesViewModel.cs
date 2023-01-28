@@ -6,8 +6,6 @@ using System.Text.Json;
 
 using CommunityToolkit.Mvvm.Input;
 
-
-
 using MaterialDesignThemes.Wpf;
 
 using Microsoft.Win32;
@@ -24,6 +22,8 @@ namespace Vapour.Client.Modules.Profiles;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public sealed class ProfilesViewModel :
     NavigationTabViewModel<IProfilesViewModel, IProfilesView>,
     IProfilesViewModel
