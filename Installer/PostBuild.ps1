@@ -18,7 +18,7 @@ if (Test-Path -Path $artifacts)
 	Remove-Item -Path $artifacts -Recurse
 }
 
-if ($env:APPVEYOR_REPO_TAG == "true")
+if ($env:APPVEYOR_REPO_TAG -eq "true")
 {
 	& "$adi" /register $(gc $serial)
 	& "$adi" /edit $installerProject /SetVersion $env:APPVEYOR_BUILD_VERSION
