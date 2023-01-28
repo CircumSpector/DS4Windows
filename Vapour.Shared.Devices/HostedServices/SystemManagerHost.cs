@@ -77,7 +77,7 @@ public sealed class SystemManagerHost
         _gameProcessWatcherService.StopWatching();
         _inputSourceService.Stop();
         _controllersEnumeratorService.Stop();
-        await _filter.UnfilterAllControllers();
+        await _filter.UnfilterAllControllers(false);
         await _inputSourceService.Clear();
         _profileService.Shutdown();
 
