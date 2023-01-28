@@ -83,6 +83,14 @@ GUI frontend of the solution. Used to display status about connected devices, th
 
 Slim tray notification area application for accessing common actions and an overview of basic stats.
 
+#### Vapour.Client.*
+
+Class libraries holding logic and components primarily required by the client (UI) applications.
+
+#### Vapour.Shared.*
+
+Class libraries holding logic and components required by both server and client applications.
+
 ## Diagnostics
 
 ### Performance counters
