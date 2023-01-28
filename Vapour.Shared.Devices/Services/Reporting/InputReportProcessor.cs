@@ -274,7 +274,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
             while (!_inputReportToken.IsCancellationRequested)
             {
                 var inputSourceReport = await _customActionChannel.Reader.ReadAsync(_inputReportToken.Token);
-                _customActionProcessor.ProcessReport(InputSource, inputSourceReport);
+                await _customActionProcessor.ProcessReport(InputSource, inputSourceReport);
             }
         }
         catch (OperationCanceledException)

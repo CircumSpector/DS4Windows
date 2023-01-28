@@ -18,6 +18,7 @@ internal class InputSource : IInputSource
     private Dictionary<ICompatibleHidDevice, byte[]> _controllers = new();
     private InputSourceFinalReport _finalReport = new();
     private IInputSourceProcessor _inputSourceProcessor;
+    private IInputSourceService _inputSourceService;
 
     public InputSource(IServiceProvider serviceProvider)
     {
@@ -29,12 +30,14 @@ internal class InputSource : IInputSource
 
     public string InputSourceKey { get; private set; }
 
-    public void Start()
+    public void Start(IInputSourceService inputSourceService)
     {
         if (_inputSourceProcessor != null)
         {
             return;
         }
+
+        _inputSourceService = inputSourceService;
 
         _inputSourceProcessor = _serviceProvider.GetService<IInputSourceProcessor>();
         _inputSourceProcessor.OnOutputDeviceReportReceived += OnOutputDeviceReportReceived;
@@ -184,6 +187,20 @@ internal class InputSource : IInputSource
         {
             device.OnAfterStartListening();
         }
+    }
+
+    public async Task DisconnectControllers()
+    {
+        var existingAutoFixup = _inputSourceService.ShouldAutoFixup;
+        _inputSourceService.ShouldAutoFixup = false;
+
+        foreach (var device in GetControllers())
+        {
+            await device.DisconnectBTController();
+        }
+
+        await _inputSourceService.FixupInputSources();
+        _inputSourceService.ShouldAutoFixup = existingAutoFixup;
     }
 
     private void ReorderControllers()

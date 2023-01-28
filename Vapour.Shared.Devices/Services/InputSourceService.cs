@@ -57,34 +57,9 @@ internal sealed class InputSourceService : IInputSourceService
             ShouldAutoFixup = false;
             ClearExistingSources();
 
-            var controllersProcessed = new List<string>();
-            
-            foreach (var controller in _controllers.ToList())
-            {
-                if (controllersProcessed.All(id => id != controller.DeviceKey))
-                {
-                    var controllersToProcess = new List<ICompatibleHidDevice> { controller };
-                    var configuration =
-                        _inputSourceConfigurationService.GetMultiControllerConfiguration(controller.DeviceKey);
+            await BuildInitialInputSourceList();
 
-                    if (configuration != null)
-                    {
-                        var otherControllers = _controllers.Where(c =>
-                            configuration.Controllers.Any(k => k.DeviceKey == c.DeviceKey) && c.DeviceKey != controller.DeviceKey).ToList();
-
-                        if (otherControllers.Count + 1 == configuration.Controllers.Count)
-                        {
-                            controllersToProcess.AddRange(otherControllers);
-                        }
-                        else
-                        {
-                            configuration = null;
-                        }
-                    }
-
-                    await CreateInputSource(controllersToProcess, controllersProcessed, configuration);
-                }
-            }
+            //await CheckForBtFiltering();
 
             if (ShouldAutoCombineJoyCons)
             {
@@ -96,12 +71,72 @@ internal sealed class InputSourceService : IInputSourceService
                 var inputSource = _inputSourceDataSource.InputSources[i];
                 inputSource.SetPlayerNumberAndColor(i + 1);
 
-                inputSource.Start();
+                inputSource.Start(this);
                 _inputSourceDataSource.FireCreated(inputSource);
             }
 
             ShouldAutoFixup = currentAutoFixup;
         });
+    }
+
+    private async Task BuildInitialInputSourceList()
+    {
+        var controllersProcessed = new List<string>();
+
+        foreach (var controller in _controllers.ToList())
+        {
+            if (controllersProcessed.All(id => id != controller.DeviceKey))
+            {
+                var controllersToProcess = new List<ICompatibleHidDevice> { controller };
+                var configuration =
+                    _inputSourceConfigurationService.GetMultiControllerConfiguration(controller.DeviceKey);
+
+                if (configuration != null)
+                {
+                    var otherControllers = _controllers.Where(c =>
+                        configuration.Controllers.Any(k => k.DeviceKey == c.DeviceKey) &&
+                        c.DeviceKey != controller.DeviceKey).ToList();
+
+                    if (otherControllers.Count + 1 == configuration.Controllers.Count)
+                    {
+                        controllersToProcess.AddRange(otherControllers);
+                    }
+                    else
+                    {
+                        configuration = null;
+                    }
+                }
+
+                await CreateInputSource(controllersToProcess, controllersProcessed, configuration);
+            }
+        }
+    }
+
+    private async Task CheckForBtFiltering()
+    {
+        var btControllersSupportsFilter = _inputSourceDataSource.InputSources.SelectMany(i => i.GetControllers())
+            .Where(c => c.Connection == ConnectionType.Bluetooth && c.CurrentDeviceInfo.IsBtFilterable).ToList();
+
+        var neededFilterList = btControllersSupportsFilter.Where(c => _filterService.FilterUnfilterIfNeeded(c, c.CurrentConfiguration.OutputDeviceType, false)).Select(c => new { c.DeviceKey, CurrentFilterState = c.IsFiltered }).ToList();
+
+        if (neededFilterList.Count > 0)
+        {
+            ClearExistingSources();
+            //restart BtHost
+
+            //this can be cleaner
+            while (true)
+            {
+                if (neededFilterList.All(f =>
+                        _controllers.SingleOrDefault(c =>
+                            c.DeviceKey == f.DeviceKey && c.IsFiltered == !f.CurrentFilterState) != null))
+                {
+                    break;
+                }
+            }
+
+            await BuildInitialInputSourceList();
+        }
     }
 
     private async Task AutoCombineJoyCons()

@@ -90,4 +90,5 @@ public interface ICompatibleHidDevice : IDisposable
     Task<byte[]> ReadOutputReport(CancellationToken cancellationToken);
 
     void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport);
+    Task DisconnectBTController();
 }

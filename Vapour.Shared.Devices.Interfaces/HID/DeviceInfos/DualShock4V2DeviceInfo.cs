@@ -17,4 +17,6 @@ public sealed class DualShock4V2DeviceInfo : DualShock4DeviceInfo
 
     public override HidDeviceOverWinUsbEndpoints WinUsbEndpoints { get; } =
         new() { InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03 };
+
+    public override bool IsBtFilterable => true;
 }

@@ -170,6 +170,14 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     {
     }
 
+    public async Task DisconnectBTController()
+    {
+        if (Connection == ConnectionType.Bluetooth)
+        {
+            
+        }
+    }
+
     protected abstract void OnInitialize();
 
     protected virtual void OnConfigurationChanged(InputSourceConfiguration configuration)
