@@ -2,21 +2,26 @@
 using System.Windows;
 
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 
 using Vapour.Server.System;
 using Vapour.Shared.Common.Core;
 
 namespace Vapour.Client.ServiceClients;
+
 public sealed partial class SystemServiceClient : ISystemServiceClient
 {
     private readonly IHttpClientFactory _clientFactory;
+    private readonly ILogger<SystemServiceClient> _logger;
     private HubConnection _hubConnection;
 
-    public SystemServiceClient(IHttpClientFactory clientFactory)
+    public SystemServiceClient(IHttpClientFactory clientFactory, ILogger<SystemServiceClient> logger)
     {
         _clientFactory = clientFactory;
+        _logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task WaitForService(CancellationToken ct = default)
     {
         using HttpClient client = _clientFactory.CreateClient();
@@ -26,6 +31,7 @@ public sealed partial class SystemServiceClient : ISystemServiceClient
             try
             {
                 HttpResponseMessage result = await client.GetAsync($"{Constants.HttpUrl}/api/system/ping", ct);
+
                 if (result.IsSuccessStatusCode)
                 {
                     break;
@@ -45,8 +51,10 @@ public sealed partial class SystemServiceClient : ISystemServiceClient
         }
     }
 
+    /// <inheritdoc />
     public event Action<IsHostRunningChangedMessage> OnIsHostRunningChanged;
 
+    /// <inheritdoc />
     public async void StartListening(CancellationToken ct = default)
     {
         _hubConnection = new HubConnectionBuilder()

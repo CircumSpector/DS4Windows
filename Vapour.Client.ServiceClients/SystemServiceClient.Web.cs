@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+
+using Microsoft.Extensions.Logging;
 
 using Vapour.Server.System;
 using Vapour.Shared.Common.Core;
@@ -18,9 +21,7 @@ public sealed class SystemServiceClientException : Exception
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed partial class SystemServiceClient
 {
-    /// <summary>
-    ///     Queries the host status.
-    /// </summary>
+    /// <inheritdoc />
     public async Task<bool> IsHostRunning()
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
@@ -37,9 +38,7 @@ public sealed partial class SystemServiceClient
         return response?.IsRunning ?? false;
     }
 
-    /// <summary>
-    ///     Starts the host.
-    /// </summary>
+    /// <inheritdoc />
     public async Task StartHost()
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
@@ -52,9 +51,7 @@ public sealed partial class SystemServiceClient
         }
     }
 
-    /// <summary>
-    ///     Stops the host.
-    /// </summary>
+    /// <inheritdoc />
     public async Task StopHost()
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
@@ -67,9 +64,7 @@ public sealed partial class SystemServiceClient
         }
     }
 
-    /// <summary>
-    ///     Queries rewrite filter driver status.
-    /// </summary>
+    /// <inheritdoc />
     public async Task<SystemFilterDriverStatusResponse> GetFilterDriverStatus()
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
@@ -87,9 +82,7 @@ public sealed partial class SystemServiceClient
         return response;
     }
 
-    /// <summary>
-    ///     Enables or disables rewrite filter driver globally.
-    /// </summary>
+    /// <inheritdoc />
     public async Task SystemFilterSetDriverEnabled(bool isEnabled)
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
@@ -105,9 +98,7 @@ public sealed partial class SystemServiceClient
         }
     }
 
-    /// <summary>
-    ///     Invokes rewrite filter driver installation.
-    /// </summary>
+    /// <inheritdoc />
     public async Task SystemFilterInstallDriver()
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
@@ -115,15 +106,17 @@ public sealed partial class SystemServiceClient
         HttpResponseMessage result =
             await client.PostAsync("/api/system/filterdriver/action/install", null);
 
-        if (!result.IsSuccessStatusCode)
+        if (result.StatusCode == HttpStatusCode.Conflict)
+        {
+            _logger.LogWarning("Driver installation failed: {Reason}", await result.Content.ReadAsStringAsync());
+        }
+        else if (!result.IsSuccessStatusCode)
         {
             throw new SystemServiceClientException($"Filter driver installation failed: {result.ReasonPhrase}");
         }
     }
 
-    /// <summary>
-    ///     Invokes rewrite filter driver removal.
-    /// </summary>
+    /// <inheritdoc />
     public async Task SystemFilterUninstallDriver()
     {
         using HttpClient client = _clientFactory.CreateClient(Constants.ServerHostHttpClientName);
@@ -131,7 +124,11 @@ public sealed partial class SystemServiceClient
         HttpResponseMessage result =
             await client.PostAsync("/api/system/filterdriver/action/uninstall", null);
 
-        if (!result.IsSuccessStatusCode)
+        if (result.StatusCode == HttpStatusCode.NotAcceptable)
+        {
+            _logger.LogWarning("Driver removal failed: {Reason}", await result.Content.ReadAsStringAsync());
+        }
+        else if (!result.IsSuccessStatusCode)
         {
             throw new SystemServiceClientException($"Filter driver removal failed: {result.ReasonPhrase}");
         }
