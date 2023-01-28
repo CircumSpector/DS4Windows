@@ -29,6 +29,7 @@ internal sealed class InputSourceService : IInputSourceService
     }
 
     public bool ShouldAutoFixup { get; set; } = true;
+    public bool ShouldFixupOnConfigChange { get; set; } = true;
 
     public bool ShouldAutoCombineJoyCons { get; set; } = true;
 
@@ -247,8 +248,11 @@ internal sealed class InputSourceService : IInputSourceService
 
     private async void InputSource_ConfigurationChanged(object sender, InputSourceConfiguration e)
     {
-        ShouldAutoFixup = false;
-        await FixupInputSources();
-        ShouldAutoFixup = true;
+        if (ShouldFixupOnConfigChange)
+        {
+            ShouldAutoFixup = false;
+            await FixupInputSources();
+            ShouldAutoFixup = true;
+        }
     }
 }
