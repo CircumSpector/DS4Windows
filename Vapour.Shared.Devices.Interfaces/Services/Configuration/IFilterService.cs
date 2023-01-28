@@ -6,18 +6,6 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 public interface IFilterService
 {
     /// <summary>
-    ///     Filters the passed controller
-    /// </summary>
-    /// <param name="instanceId">The instanceId of the controller to filter</param>
-    void FilterController(string instanceId);
-
-    /// <summary>
-    ///     Unfilters the passed controller
-    /// </summary>
-    /// <param name="instanceId">The instanceId of the controller to unfilter</param>
-    void UnfilterController(string instanceId);
-
-    /// <summary>
     ///     Gets whether or not the filter driver is installed
     /// </summary>
     /// <returns>A bool representing whether or not the filter driver is installed</returns>
@@ -51,7 +39,7 @@ public interface IFilterService
     /// <param name="device">The device to unfilter.</param>
     /// <param name="outputDeviceType">The output device type of the configuration</param>
     /// <returns>True on success, false otherwise.</returns>
-    bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType);
+    bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType, bool autoRestartBtHost = true);
 
     /// <summary>
     ///     Installs the class filter driver.

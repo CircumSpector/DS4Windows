@@ -2,5 +2,5 @@
 
 public interface ICustomActionProcessor
 {
-    void ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport);
+    Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport);
 }

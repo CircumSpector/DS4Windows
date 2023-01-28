@@ -49,4 +49,6 @@ public abstract class DeviceInfo
     ///     If true, identifies the right piece of hardware in case of a split handheld device.
     /// </summary>
     public virtual bool IsRightDevice => false;
+
+    public virtual bool IsBtFilterable => false;
 }

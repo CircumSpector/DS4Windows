@@ -118,69 +118,6 @@ public class FilterService : IFilterService
     }
 
     /// <inheritdoc />
-    public void FilterController(string instanceId)
-    {
-        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
-
-        try
-        {
-            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-
-            using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
-            entry.IsReplacingEnabled = true;
-            entry.CompatibleIds = new[]
-            {
-                @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D",
-                @"USB\Class_FF"
-            };
-
-            CyclePort(usbDevice);
-        }
-        catch (UsbPnPDeviceConversionException)
-        {
-            // TODO: handle Bluetooth
-            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
-        }
-        catch (UsbPnPDeviceRestartException ex)
-        {
-            _logger.LogError(ex, "Device restart failed");
-            throw;
-        }
-    }
-
-    /// <inheritdoc />
-    public void UnfilterController(string instanceId)
-    {
-        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
-
-        try
-        {
-            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-
-            using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
-
-            if (entry is null)
-            {
-                return;
-            }
-
-            entry.IsReplacingEnabled = false;
-
-            CyclePort(usbDevice);
-        }
-        catch (UsbPnPDeviceConversionException)
-        {
-            // TODO: handle Bluetooth
-            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
-        }
-        catch (UsbPnPDeviceRestartException ex)
-        {
-            _logger.LogError(ex, "Device restart failed");
-            throw;
-        }
-    }
-
-    /// <inheritdoc />
     public async Task UnfilterAllControllers(bool shouldFixupAfter = true)
     {
         DisableAutoFixup();
@@ -190,7 +127,14 @@ public class FilterService : IFilterService
 
             foreach (var device in inputSource.GetControllers())
             {
-                UnfilterController(device.SourceDevice.InstanceId);
+                if (device.Connection == ConnectionType.Bluetooth)
+                {
+                    UnfilterBtController(device, false);
+                }
+                else
+                {
+                    UnfilterController(device.SourceDevice.InstanceId);
+                }
             }
         }
 
@@ -201,14 +145,30 @@ public class FilterService : IFilterService
     }
 
     /// <inheritdoc />
-    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType)
-    {
-        // TODO: implement properly once wireless filtering is implemented 
+    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType, bool shouldRestartBtHost = true)
+    { 
         if (device.Connection == ConnectionType.Bluetooth)
         {
-            return false;
-        }
+            if (!device.CurrentDeviceInfo.IsBtFilterable)
+            {
+                return false;
+            }
 
+            var neededFilterAction = false;
+            if (device.IsFiltered && outputDeviceType == OutputDeviceType.None)
+            {
+                FilterBtController(device, shouldRestartBtHost);
+                neededFilterAction = true;
+            }
+            else if (!device.IsFiltered && outputDeviceType != OutputDeviceType.None)
+            {
+                UnfilterBtController(device, shouldRestartBtHost);
+                neededFilterAction = true;
+            }
+
+            return neededFilterAction;
+        }
+        
         if (IsFilterDriverEnabled)
         {
             if (!device.IsFiltered)
@@ -243,6 +203,87 @@ public class FilterService : IFilterService
         await SetFilterDriverEnabled(false, false);
         await FilterDriverInstaller.UninstallFilterDriverAsync();
         await EnableAndRunAutoFixup();
+    }
+
+    /// <inheritdoc />
+    private void FilterController(string instanceId)
+    {
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
+
+        try
+        {
+            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
+
+            using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
+            entry.IsReplacingEnabled = true;
+            entry.CompatibleIds = new[]
+            {
+                @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D",
+                @"USB\Class_FF"
+            };
+
+            CyclePort(usbDevice);
+        }
+        catch (UsbPnPDeviceConversionException)
+        {
+            // TODO: handle Bluetooth
+            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
+        }
+        catch (UsbPnPDeviceRestartException ex)
+        {
+            _logger.LogError(ex, "Device restart failed");
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    private void UnfilterController(string instanceId)
+    {
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
+
+        try
+        {
+            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
+
+            using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
+
+            if (entry is null)
+            {
+                return;
+            }
+
+            entry.IsReplacingEnabled = false;
+
+            CyclePort(usbDevice);
+        }
+        catch (UsbPnPDeviceConversionException)
+        {
+            // TODO: handle Bluetooth
+            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
+        }
+        catch (UsbPnPDeviceRestartException ex)
+        {
+            _logger.LogError(ex, "Device restart failed");
+            throw;
+        }
+    }
+
+    private void FilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
+    {
+        //do sdp stuff
+        if (shouldRestartBtHost)
+        {
+            //restart bt host
+        }
+    }
+
+    private void UnfilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
+    {
+        //do sdp stuff
+        if (shouldRestartBtHost)
+        {
+            //restart bt host
+        }
     }
 
     /// <summary>

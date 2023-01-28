@@ -6,7 +6,7 @@ public class CustomActionProcessor : ICustomActionProcessor
 {
     public CustomActionReport CustomActionReport { get; } = new();
 
-    public void ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
+    public async Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
     {
         var currentTicks = DateTime.Now.Ticks;
         CalculateBoolValue(currentTicks, inputReport.Cross, CustomActionReport.CrossStart);
@@ -25,8 +25,10 @@ public class CustomActionProcessor : ICustomActionProcessor
         CalculateBoolValue(currentTicks, inputReport.RightShoulder, CustomActionReport.R1Start);
         CalculateByteValue(currentTicks, inputReport.RightTrigger, CustomActionReport.R2Start);
         CalculateBoolValue(currentTicks, inputReport.RightThumb, CustomActionReport.R3Start);
+        CalculateBoolValue(currentTicks, inputReport.PS, CustomActionReport.PSStart);
 
         CheckSetPlayerNumber(inputSource, inputReport, currentTicks);
+        await CheckPerformDisconnect(inputSource, currentTicks);
     }
 
     private void CalculateBoolValue(long ticks, bool value, byte buttonIndex)
@@ -77,6 +79,15 @@ public class CustomActionProcessor : ICustomActionProcessor
                     inputSource.SetPlayerNumberAndColor(4);
                     break;
             }
+        }
+    }
+
+    private async Task CheckPerformDisconnect(IInputSource inputSource, long currentTicks)
+    {
+        var psStart = CustomActionReport.GetValue(CustomActionReport.PSStart);
+        if (currentTicks - psStart > 4000)
+        {
+            await inputSource.DisconnectControllers();
         }
     }
 }
