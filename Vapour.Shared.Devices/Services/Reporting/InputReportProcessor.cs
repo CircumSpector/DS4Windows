@@ -143,7 +143,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
 
         try
         {
-            while (!_inputReportToken.IsCancellationRequested)
+            while (_inputReportToken is { IsCancellationRequested: false } d)
             {
                 byte[] buffer = await _inputReportChannel.Reader.ReadAsync(_inputReportToken.Token);
 
@@ -190,7 +190,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
 
         try
         {
-            while (!_inputReportToken.IsCancellationRequested)
+            while (_inputReportToken is { IsCancellationRequested: false })
             {
                 var reportData = InputSource.ReadInputReport();
 
@@ -271,7 +271,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
 
         try
         {
-            while (!_inputReportToken.IsCancellationRequested)
+            while (_inputReportToken is { IsCancellationRequested: false })
             {
                 var inputSourceReport = await _customActionChannel.Reader.ReadAsync(_inputReportToken.Token);
                 await _customActionProcessor.ProcessReport(InputSource, inputSourceReport);

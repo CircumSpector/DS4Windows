@@ -191,16 +191,21 @@ internal class InputSource : IInputSource
 
     public async Task DisconnectControllers()
     {
-        var existingAutoFixup = _inputSourceService.ShouldAutoFixup;
-        _inputSourceService.ShouldAutoFixup = false;
-
-        foreach (var device in GetControllers())
+        var controllers = GetControllers().Where(c => c.Connection == ConnectionType.Bluetooth).ToList();
+        if (controllers.Any())
         {
-            await device.DisconnectBTController();
-        }
+            Stop();
+            var existingAutoFixup = _inputSourceService.ShouldAutoFixup;
+            _inputSourceService.ShouldAutoFixup = false;
 
-        await _inputSourceService.FixupInputSources();
-        _inputSourceService.ShouldAutoFixup = existingAutoFixup;
+            foreach (var device in controllers)
+            {
+                await device.DisconnectBTController();
+            }
+
+            await _inputSourceService.FixupInputSources();
+            _inputSourceService.ShouldAutoFixup = existingAutoFixup;
+        }
     }
 
     private void ReorderControllers()
