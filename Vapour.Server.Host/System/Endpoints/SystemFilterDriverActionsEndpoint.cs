@@ -15,14 +15,17 @@ public enum SystemFilterDriverAction
     ///     Globally enable filtering feature.
     /// </summary>
     Enable,
+
     /// <summary>
     ///     Globally disable filtering feature.
     /// </summary>
     Disable,
+
     /// <summary>
     ///     Invoke filter driver installation.
     /// </summary>
     Install,
+
     /// <summary>
     ///     Invoke filter driver removal.
     /// </summary>
@@ -75,8 +78,17 @@ public class SystemFilterDriverActionsEndpoint : EndpointWithoutRequest
 
                 return;
             case SystemFilterDriverAction.Uninstall:
-                await _filterService.UninstallFilterDriver();
-                await SendOkAsync(ct);
+                if (!_filterService.IsFilterDriverInstalled)
+                {
+                    await SendAsync("Filter driver not installed, nothing to do.",
+                        (int)HttpStatusCode.NotAcceptable, ct);
+                }
+                else
+                {
+                    await _filterService.UninstallFilterDriver();
+                    await SendOkAsync(ct);
+                }
+
                 return;
             default:
                 await SendNotFoundAsync(ct);
