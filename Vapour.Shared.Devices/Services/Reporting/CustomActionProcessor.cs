@@ -84,7 +84,7 @@ public class CustomActionProcessor : ICustomActionProcessor
     private async Task CheckPerformDisconnect(IInputSource inputSource, long currentTicks)
     {
         var psStart = CustomActionReport.GetValue(CustomActionReport.PSStart);
-        if (currentTicks - psStart > 4000)
+        if (psStart > 0 && currentTicks - psStart > 40000000)
         {
             await inputSource.DisconnectControllers();
         }
