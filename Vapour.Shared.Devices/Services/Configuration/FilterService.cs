@@ -127,7 +127,7 @@ public class FilterService : IFilterService
 
             foreach (var device in inputSource.GetControllers())
             {
-                if (device.Connection == ConnectionType.Bluetooth)
+                if (device.Connection == ConnectionType.Bluetooth && device.CurrentDeviceInfo.IsBtFilterable)
                 {
                     UnfilterBtController(device, false);
                 }
