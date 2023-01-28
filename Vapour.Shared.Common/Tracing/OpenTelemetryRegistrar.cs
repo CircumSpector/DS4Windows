@@ -14,17 +14,12 @@ namespace Vapour.Shared.Common.Tracing;
 /// <summary>
 ///     Registers services required for telemetry and performance metrics.
 /// </summary>
-public class OpenTelemetryRegistrar : IServiceRegistrar
+public partial class OpenTelemetryRegistrar : IServiceRegistrar
 {
     /// <summary>
     ///     Only scan assemblies starting with this name.
     /// </summary>
     private const string AssemblyPrefix = "Vapour";
-
-    /// <summary>
-    ///     Regex to remove meta details from full assembly names.
-    /// </summary>
-    private static readonly Regex Cleanup = new(", (Version|Culture|PublicKeyToken)=[0-9.\\w]+", RegexOptions.Compiled);
 
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
@@ -36,7 +31,7 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
                 string name = assembly.GetName().Name;
                 return name != null && name.StartsWith(AssemblyPrefix);
             })
-            .Select(assembly => Cleanup.Replace(assembly.GetName().Name!, string.Empty))
+            .Select(assembly => CleanupRegex().Replace(assembly.GetName().Name!, string.Empty))
             .ToArray();
 
         if (bool.TryParse(context.Configuration.GetSection("OpenTelemetry:IsTracingEnabled").Value,
@@ -60,4 +55,10 @@ public class OpenTelemetryRegistrar : IServiceRegistrar
             services.AddOpenTelemetryMetrics(tm => tm.AddMeter(assemblyNames));
         }
     }
+
+    /// <summary>
+    ///     Regex to remove meta details from full assembly names.
+    /// </summary>
+    [GeneratedRegex(", (Version|Culture|PublicKeyToken)=[0-9.\\w]+")]
+    private static partial Regex CleanupRegex();
 }
