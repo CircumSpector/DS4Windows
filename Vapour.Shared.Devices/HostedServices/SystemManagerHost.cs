@@ -61,7 +61,7 @@ public sealed class SystemManagerHost
 
         _globalStateService.EnsureRoamingDataPath();
         _deviceSettingsService.LoadSettings();
-        _filter.Initialize();
+        await _filter.Initialize();
         _profileService.Initialize();
         _inputSourceConfigurationService.Initialize();
         _gameProcessWatcherService.StartWatching();
@@ -77,7 +77,7 @@ public sealed class SystemManagerHost
         _gameProcessWatcherService.StopWatching();
         _inputSourceService.Stop();
         _controllersEnumeratorService.Stop();
-        _filter.UnfilterAllControllers();
+        await _filter.UnfilterAllControllers();
         await _inputSourceService.Clear();
         _profileService.Shutdown();
 

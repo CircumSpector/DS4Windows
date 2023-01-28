@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Security;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.Nssidswap;
@@ -16,7 +17,10 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 public class FilterService : IFilterService
 {
     private readonly IDeviceSettingsService _deviceSettingsService;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IInputSourceDataSource _inputSourceDataSource;
+
+    private IInputSourceService _inputSourceService;
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<FilterService> _logger;
@@ -26,14 +30,16 @@ public class FilterService : IFilterService
 
     public FilterService(ILogger<FilterService> logger,
         IInputSourceDataSource inputSourceDataSource,
-        IDeviceSettingsService deviceSettingsService)
+        IDeviceSettingsService deviceSettingsService,
+        IServiceProvider serviceProvider)
     {
         _logger = logger;
         _inputSourceDataSource = inputSourceDataSource;
         _deviceSettingsService = deviceSettingsService;
+        _serviceProvider = serviceProvider;
     }
 
-    public void Initialize()
+    public async Task Initialize()
     {
         try
         {
@@ -46,11 +52,11 @@ public class FilterService : IFilterService
             _filterDriver = new FilterDriver();
             if (FilterDriver.IsDriverInstalled)
             {
-                SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled ?? true);
+                await SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled ?? true);
             }
             else
             {
-                SetFilterDriverEnabled(false);
+                await SetFilterDriverEnabled(false);
             }
 
             _isInitializing = false;
@@ -69,7 +75,7 @@ public class FilterService : IFilterService
     public bool IsFilterDriverEnabled => _filterDriver.IsEnabled;
 
     /// <inheritdoc />
-    public void SetFilterDriverEnabled(bool isEnabled)
+    public async Task SetFilterDriverEnabled(bool isEnabled, bool shouldFixupAfter = true)
     {
         _filterDriver.IsEnabled = isEnabled;
         _deviceSettingsService.Settings.IsFilteringEnabled = isEnabled;
@@ -77,26 +83,36 @@ public class FilterService : IFilterService
 
         if (!_isInitializing)
         {
-            foreach (ICompatibleHidDevice device in _inputSourceDataSource.InputSources
-                         .SelectMany(inputSource => inputSource.GetControllers())
-                         .ToList())
+            DisableAutoFixup();
+            foreach (var inputSource in _inputSourceDataSource.InputSources)
             {
-                if (!isEnabled)
-                {
-                    UnfilterController(device.SourceDevice.InstanceId);
-                }
-                else if (FilterUnfilterIfNeeded(device, device.CurrentConfiguration.OutputDeviceType))
-                {
-                    //dont do anything
-                }
-                else
-                {
-                    UsbPnPDevice usbDevice = PnPDevice
-                        .GetDeviceByInstanceId(device.SourceDevice.InstanceId)
-                        .ToUsbPnPDevice();
+                inputSource.Stop();
 
-                    CyclePort(usbDevice);
+                foreach (var device in inputSource.GetControllers())
+                {
+                    if (!isEnabled)
+                    {
+                        UnfilterController(device.SourceDevice.InstanceId);
+                    }
+                    else if (FilterUnfilterIfNeeded(device, device.CurrentConfiguration.OutputDeviceType))
+                    {
+                        //dont do anything
+                    }
+                    else
+                    {
+                        UsbPnPDevice usbDevice = PnPDevice
+                            .GetDeviceByInstanceId(device.SourceDevice.InstanceId)
+                            .ToUsbPnPDevice();
+
+                        CyclePort(usbDevice);
+                    }
                 }
+            }
+
+            if (shouldFixupAfter)
+            {
+                await Task.Delay(500);
+                await EnableAndRunAutoFixup();
             }
         }
     }
@@ -165,12 +181,22 @@ public class FilterService : IFilterService
     }
 
     /// <inheritdoc />
-    public void UnfilterAllControllers()
+    public async Task UnfilterAllControllers(bool shouldFixupAfter = true)
     {
-        foreach (IHidDevice sourceDevice in _inputSourceDataSource.InputSources
-                     .SelectMany(inputSource => inputSource.GetControllers().Select(c => c.SourceDevice)).ToList())
+        DisableAutoFixup();
+        foreach (var inputSource in _inputSourceDataSource.InputSources)
         {
-            UnfilterController(sourceDevice.InstanceId);
+            inputSource.Stop();
+
+            foreach (var device in inputSource.GetControllers())
+            {
+                UnfilterController(device.SourceDevice.InstanceId);
+            }
+        }
+
+        if (shouldFixupAfter)
+        {
+            await EnableAndRunAutoFixup();
         }
     }
 
@@ -207,14 +233,16 @@ public class FilterService : IFilterService
     public async Task<Version> InstallFilterDriver()
     {
         await FilterDriverInstaller.InstallFilterDriverAsync();
-
+        await SetFilterDriverEnabled(true);
         return FilterDriverInstaller.EmbeddedDriverVersion;
     }
 
     /// <inheritdoc />
-    public Task UninstallFilterDriver()
+    public async Task UninstallFilterDriver()
     {
-        return FilterDriverInstaller.UninstallFilterDriverAsync();
+        await SetFilterDriverEnabled(false, false);
+        await FilterDriverInstaller.UninstallFilterDriverAsync();
+        await EnableAndRunAutoFixup();
     }
 
     /// <summary>
@@ -255,5 +283,28 @@ public class FilterService : IFilterService
         }
 
         return new Tuple<PnPDevice, string>(device, hardwareIds[0]);
+    }
+
+    private bool _existingAutoFixup;
+
+    private void DisableAutoFixup()
+    {
+        EnsureInputSourceService();
+        _existingAutoFixup = _inputSourceService.ShouldAutoFixup;
+        _inputSourceService.ShouldAutoFixup = false;
+    }
+
+    private async Task EnableAndRunAutoFixup()
+    {
+        await _inputSourceService.FixupInputSources();
+        _inputSourceService.ShouldAutoFixup = _existingAutoFixup;
+    }
+
+    private void EnsureInputSourceService()
+    {
+        if (_inputSourceService == null)
+        {
+            _inputSourceService = _serviceProvider.GetService<IInputSourceService>();
+        }
     }
 }

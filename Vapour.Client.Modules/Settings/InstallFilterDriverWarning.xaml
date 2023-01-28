@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Vapour.Client.Modules.Settings.InstallFilterDriverWarning"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Vapour.Client.Modules.Settings"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Height="300">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="This will install a usb filter driver that will allow Vapour to seamlessly hide and unhide supported controllers.  A reboot may be required."/>
+
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1"
+                    HorizontalAlignment="Right">
+            <Button Margin="0,8,8,0"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    Content="ACCEPT"
+                    IsDefault="True"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                <Button.CommandParameter>
+                    <system:Boolean>True</system:Boolean>
+                </Button.CommandParameter>
+            </Button>
+
+            <Button Margin="0,8,8,0"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    Content="CANCEL"
+                    IsCancel="True"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                <Button.CommandParameter>
+                    <system:Boolean>False</system:Boolean>
+                </Button.CommandParameter>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Vapour.Client.Modules.Settings"
+      d:DataContext ="{d:DesignInstance {x:Type local:SettingsViewModel}, IsDesignTimeCreatable=False}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
 
@@ -19,20 +20,24 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
+            <Button Content="{Binding InstallDriverContent}"
+                    Command="{Binding InstallFilterDriverCommand}"/>
+
             <TextBlock Text="Filter Driver Enabled"
-                       Grid.Row="0"
+                       Grid.Row="1"
                        Grid.Column="0"
                        Grid.ColumnSpan="2"/>
 
             <ToggleButton IsChecked="{Binding IsFilterDriverEnabled}"
-                          Grid.Row="1"
+                          Grid.Row="2"
                           Grid.Column="0"
                           IsEnabled="{Binding IsFilterDriverInstalled}"/>
 
             <TextBlock Text="Filter driver is not installed"
-                       Grid.Row="1"
+                       Grid.Row="2"
                        Grid.Column="1"
                        Visibility="{Binding IsFilterDriverInstalled, Converter={StaticResource falseIsVis}}"/>
         </Grid>
