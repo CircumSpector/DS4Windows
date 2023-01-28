@@ -59,7 +59,7 @@ internal sealed class InputSourceService : IInputSourceService
 
             await BuildInitialInputSourceList();
 
-            //await CheckForBtFiltering();
+            await CheckForBtFiltering();
 
             if (ShouldAutoCombineJoyCons)
             {
@@ -114,10 +114,7 @@ internal sealed class InputSourceService : IInputSourceService
 
     private async Task CheckForBtFiltering()
     {
-        var btControllersSupportsFilter = _inputSourceDataSource.InputSources.SelectMany(i => i.GetControllers())
-            .Where(c => c.Connection == ConnectionType.Bluetooth && c.CurrentDeviceInfo.IsBtFilterable).ToList();
-
-        var neededFilterList = btControllersSupportsFilter.Where(c => _filterService.FilterUnfilterIfNeeded(c, c.CurrentConfiguration.OutputDeviceType, false)).Select(c => new { c.DeviceKey, CurrentFilterState = c.IsFiltered }).ToList();
+        var neededFilterList = _controllers.Where(c => _filterService.FilterUnfilterIfNeeded(c, c.CurrentConfiguration.OutputDeviceType, false)).Select(c => new { c.DeviceKey, CurrentFilterState = c.IsFiltered }).ToList();
 
         if (neededFilterList.Count > 0)
         {

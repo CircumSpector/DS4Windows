@@ -138,28 +138,31 @@ public class FilterService : IFilterService
     }
 
     /// <inheritdoc />
-    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType, bool autoRestartBtHost = true)
+    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType, bool shouldRestartBtHost = true)
     { 
         if (device.Connection == ConnectionType.Bluetooth)
         {
+            if (!device.CurrentDeviceInfo.IsBtFilterable)
+            {
+                return false;
+            }
+
             var neededFilterAction = false;
             if (device.IsFiltered && outputDeviceType == OutputDeviceType.None)
             {
-                FilterBtController(device);
+                FilterBtController(device, shouldRestartBtHost);
                 neededFilterAction = true;
             }
             else if (!device.IsFiltered && outputDeviceType != OutputDeviceType.None)
             {
-                UnfilterBtController(device);
+                UnfilterBtController(device, shouldRestartBtHost);
                 neededFilterAction = true;
             }
 
-            if (neededFilterAction && autoRestartBtHost)
-            {
-                //restart the bt host
-            }
+            return neededFilterAction;
         }
-        else if (IsFilterDriverEnabled)
+        
+        if (IsFilterDriverEnabled)
         {
             if (!device.IsFiltered)
             {
@@ -258,14 +261,22 @@ public class FilterService : IFilterService
         }
     }
 
-    private void FilterBtController(ICompatibleHidDevice device)
+    private void FilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
     {
-
+        //do sdp stuff
+        if (shouldRestartBtHost)
+        {
+            //restart bt host
+        }
     }
 
-    private void UnfilterBtController(ICompatibleHidDevice device)
+    private void UnfilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
     {
-
+        //do sdp stuff
+        if (shouldRestartBtHost)
+        {
+            //restart bt host
+        }
     }
 
     /// <summary>
