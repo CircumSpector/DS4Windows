@@ -6,7 +6,6 @@ public interface INavigationTabViewModel<TViewModel, TView> : INavigationTabView
     where TViewModel : INavigationTabViewModel<TViewModel, TView>
     where TView : IView<TView>
 {
-
 }
 
 public interface INavigationTabViewModel : IViewModel

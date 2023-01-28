@@ -13,6 +13,7 @@ public abstract class ViewModel<TViewModel> : ObservableObject, IViewModel<TView
     }
 
     public List<IView> Views { get; } = new();
+
     public object? MainView => Views.FirstOrDefault();
 
     public void AddView(IView view)

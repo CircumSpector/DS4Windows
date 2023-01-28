@@ -11,5 +11,6 @@ public interface IViewModelFactory
         where TView : IView;
 
     TView CreateView<TView>() where TView : IView;
+
     Task<TViewModel> CreateViewModel<TViewModel>() where TViewModel : IViewModel;
 }

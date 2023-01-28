@@ -8,6 +8,7 @@ public abstract class NavigationTabViewModel<TViewModel, TView> : ViewModel<TVie
     where TView : IView<TView>
 {
     public abstract int TabIndex { get; }
+
     public abstract string? Header { get; }
 
     public Type GetViewType()

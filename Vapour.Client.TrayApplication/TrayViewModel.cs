@@ -17,8 +17,8 @@ public interface ITrayViewModel : IViewModel<ITrayViewModel>
 public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 {
     private readonly IProfileServiceClient _profileServiceClient;
-    private readonly IViewModelFactory _viewModelFactory;
     private readonly ISystemServiceClient _systemServiceClient;
+    private readonly IViewModelFactory _viewModelFactory;
 
     private string _hostButtonText;
 
@@ -33,6 +33,7 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         ShowClientCommand = new RelayCommand(OnShowClient);
         ChangeHostStateCommand = new RelayCommand(ChangeHostState);
     }
+
     public bool IsHostRunning
     {
         get => _isHostRunning;
@@ -55,7 +56,7 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
     {
         _systemServiceClient.OnIsHostRunningChanged += OnHostRunningChanged;
         InputSourceListViewModel = await _viewModelFactory.Create<IInputSourceListViewModel, IInputSourceListView>();
-        
+
         IsHostRunning = await _systemServiceClient.IsHostRunning();
     }
 

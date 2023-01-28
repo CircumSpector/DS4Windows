@@ -8,10 +8,15 @@ namespace Vapour.Client.Modules.Profiles;
 public interface IProfileListItemViewModel : IViewModel<IProfileListItemViewModel>
 {
     Guid Id { get; }
+    
     string Name { get; }
+    
     string OutputControllerType { get; }
+    
     SolidColorBrush LightbarColor { get; }
+    
     string TouchpadMode { get; }
+    
     string GyroMode { get; }
 
     void SetProfile(IProfile profile);
