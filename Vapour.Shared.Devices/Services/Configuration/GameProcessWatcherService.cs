@@ -11,6 +11,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
 {
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private readonly IInputSourceDataSource _inputSourceDataSource;
+    private readonly IInputSourceService _inputSourceService;
     private readonly ILogger<GameProcessWatcherService> _logger;
     private ProcessorWatchItem _currentWatch;
 
@@ -18,11 +19,13 @@ public class GameProcessWatcherService : IGameProcessWatcherService
 
     public GameProcessWatcherService(ILogger<GameProcessWatcherService> logger,
         IInputSourceConfigurationService inputSourceConfigurationService,
-        IInputSourceDataSource inputSourceDataSource)
+        IInputSourceDataSource inputSourceDataSource,
+        IInputSourceService inputSourceService)
     {
         _logger = logger;
         _inputSourceConfigurationService = inputSourceConfigurationService;
         _inputSourceDataSource = inputSourceDataSource;
+        _inputSourceService = inputSourceService;
 
         _inputSourceConfigurationService.GetCurrentGameRunning = () => _currentWatch?.GameId;
     }
@@ -57,7 +60,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         _watching = false;
     }
 
-    private void OnProcessStarted(object sender, ProcessInfo e)
+    private async void OnProcessStarted(object sender, ProcessInfo e)
     {
         string imagePath = Path.GetDirectoryName(e.Image);
         List<IInputSource> inputSources = _inputSourceDataSource.InputSources.ToList();
@@ -121,8 +124,11 @@ public class GameProcessWatcherService : IGameProcessWatcherService
             return;
         }
 
+        var existingFixup = _inputSourceService.ShouldFixupOnConfigChange;
+        _inputSourceService.ShouldFixupOnConfigChange = false;
         foreach (IInputSource inputSource in inputSources)
         {
+            inputSource.Stop();
             List<InputSourceConfiguration> gameConfigurations =
                 _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSource.InputSourceKey);
 
@@ -134,9 +140,12 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                     gameConfiguration);
             }
         }
+        
+        await _inputSourceService.FixupInputSources();
+        _inputSourceService.ShouldFixupOnConfigChange = existingFixup;
     }
 
-    private void OnProcessStopped(object sender, ProcessInfo e)
+    private async void OnProcessStopped(object sender, ProcessInfo e)
     {
         string imageDirectory = Path.GetDirectoryName(e.Image);
 
@@ -158,10 +167,15 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         }
 
         _currentWatch = null;
+        var existingFixup = _inputSourceService.ShouldFixupOnConfigChange;
+        _inputSourceService.ShouldFixupOnConfigChange = false;
         foreach (IInputSource inputSource in _inputSourceDataSource.InputSources.ToList())
         {
             _inputSourceConfigurationService.RestoreMainConfiguration(inputSource.InputSourceKey);
         }
+
+        await _inputSourceService.FixupInputSources();
+        _inputSourceService.ShouldFixupOnConfigChange = existingFixup;
     }
 
     private class ProcessorWatchItem

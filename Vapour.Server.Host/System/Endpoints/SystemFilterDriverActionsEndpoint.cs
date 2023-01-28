@@ -57,11 +57,11 @@ public class SystemFilterDriverActionsEndpoint : EndpointWithoutRequest
         switch (driverAction)
         {
             case SystemFilterDriverAction.Enable:
-                _filterService.SetFilterDriverEnabled(true);
+                await _filterService.SetFilterDriverEnabled(true);
                 await SendOkAsync(ct);
                 return;
             case SystemFilterDriverAction.Disable:
-                _filterService.SetFilterDriverEnabled(false);
+                await _filterService.SetFilterDriverEnabled(false);
                 await SendOkAsync(ct);
                 return;
             case SystemFilterDriverAction.Install:

@@ -33,17 +33,17 @@ public interface IFilterService
     ///     Sets whether or not to enable the filter driver
     /// </summary>
     /// <param name="isEnabled">A bool representing whether or not to enable the filter driver</param>
-    void SetFilterDriverEnabled(bool isEnabled);
+    Task SetFilterDriverEnabled(bool isEnabled, bool shouldFixupAfter = true);
 
     /// <summary>
     ///     Perform one-time checks and tasks on service start.
     /// </summary>
-    void Initialize();
+    Task Initialize();
 
     /// <summary>
     ///     Revers all controllers to their original state.
     /// </summary>
-    void UnfilterAllControllers();
+    Task UnfilterAllControllers(bool shouldFixupAfter = true);
 
     /// <summary>
     ///     Check if <see cref="ICompatibleHidDevice"/> needs unfiltering and performs it, if necessary.
