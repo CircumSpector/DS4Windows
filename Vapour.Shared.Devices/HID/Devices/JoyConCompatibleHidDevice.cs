@@ -14,6 +14,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 {
     private const int SubCommandHeaderLength = 8;
     private const int SubCommandLength = 64;
+    private const int RumbleCommandLength = 49;
 
     private const int SpiDataOffset = 20;
 
@@ -26,9 +27,20 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     private byte _lastSubCommandCodeSent;
     private byte[] _subCommandResult;
 
-    public JoyConCompatibleHidDevice(ILogger<JoyConCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
+    private readonly byte[] _rumbleCommandData = new byte[RumbleCommandLength];
+
+    private const byte LowFreq = 40;
+    private const byte HighFreq = 120;
+    private readonly float _clampedLowFreq;
+    private readonly float _clampedHighFreq;
+
+    public JoyConCompatibleHidDevice(
+        ILogger<JoyConCompatibleHidDevice> logger, 
+        List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
     {
+        _clampedLowFreq = Clamp(LowFreq, 40.875885f, 626.286133f);
+        _clampedHighFreq = Clamp(HighFreq, 81.75177f, 1252.572266f);
     }
 
     public bool IsLeft => CurrentDeviceInfo is JoyConLeftDeviceInfo;
@@ -45,10 +57,9 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override void OnAfterStartListening()
     {
+        SubCommand(JoyConCodes.SubCommand_EnableRumble, JoyConCodes.Rumble_On);
         SubCommand(JoyConCodes.SubCommand_EnableIMU, JoyConCodes.EnableIMU_On);
-
         GetCalibrationData();
-
         SubCommand(JoyConCodes.SubCommand_InputMode, JoyConCodes.InputMode_Standard);
     }
 
@@ -68,7 +79,10 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        //TODO: process report coming from the virtual device
+        if (outputDeviceReport.StrongMotor > 0 || outputDeviceReport.WeakMotor > 0)
+        {
+            SendRumbleCommand(Math.Max(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor / (float)255));
+        }
     }
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
@@ -150,6 +164,71 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         return resultData;
     }
 
+    private void SendRumbleCommand(float amp)
+    {
+        _rumbleCommandData[0] = 0x10;
+        _rumbleCommandData[1] = _commandCount;
+        _commandCount = (byte)(++_commandCount & 0x0F);
+
+        if (amp == 0.0f)
+        {
+            _rumbleCommandData[0] = 0x0;
+            _rumbleCommandData[1] = 0x1;
+            _rumbleCommandData[2] = 0x40;
+            _rumbleCommandData[3] = 0x40;
+        }
+        else
+        {
+            var clampedAmp = Clamp(amp, 0.0f, 1.0f);
+
+            var hf = (ushort)((Math.Round(32f * Math.Log(_clampedHighFreq * 0.1f, 2)) - 0x60) * 4);
+            var lf = (byte)(Math.Round(32f * Math.Log(_clampedLowFreq * 0.1f, 2)) - 0x40);
+            var highFrequencyAmp = EncodeAmp(clampedAmp);
+
+            var lowFrequencyAmp = (ushort)(Math.Round((double)highFrequencyAmp) * .5);
+            byte parity = (byte)(lowFrequencyAmp % 2);
+            if (parity > 0)
+            {
+                --lowFrequencyAmp;
+            }
+
+            lowFrequencyAmp = (ushort)(lowFrequencyAmp >> 1);
+            lowFrequencyAmp += 0x40;
+            if (parity > 0) lowFrequencyAmp |= 0x8000;
+
+            highFrequencyAmp = (byte)(highFrequencyAmp - (highFrequencyAmp % 2));
+            _rumbleCommandData[IsLeft ? 2 : 6] = (byte)(hf & 0xff);
+            _rumbleCommandData[IsLeft ? 3 : 7] = (byte)(((hf >> 8) & 0xff) + highFrequencyAmp);
+            _rumbleCommandData[IsLeft ? 4 : 8] = (byte)(((lowFrequencyAmp >> 8) & 0xff) + lf);
+            _rumbleCommandData[IsLeft ? 5 : 9] = (byte)(lowFrequencyAmp & 0xff);
+        }
+
+        SendOutputReport(_rumbleCommandData);
+    }
+
+    private float Clamp(float x, float min, float max)
+    {
+        if (x < min) return min;
+        if (x > max) return max;
+        return x;
+    }
+
+    private byte EncodeAmp(float amp)
+    {
+        byte encodedAmp;
+
+        if (amp == 0)
+            encodedAmp = 0;
+        else if (amp < 0.117)
+            encodedAmp = (byte)(((Math.Log(amp * 1000, 2) * 32) - 0x60) / (5 - Math.Pow(amp, 2)) - 1);
+        else if (amp < 0.23)
+            encodedAmp = (byte)(((Math.Log(amp * 1000, 2) * 32) - 0x60) - 0x5c);
+        else
+            encodedAmp = (byte)((((Math.Log(amp * 1000, 2) * 32) - 0x60) * 2) - 0xf6);
+
+        return encodedAmp;
+    }
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static class JoyConCodes
@@ -158,6 +237,9 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         public const byte SubCommand_EnableIMU = 0x40;
         public const byte SubCommand_SetPlayerLED = 0x30;
         public const byte SubCommand_SpiFlashRead = 0x10;
+        public const byte SubCommand_EnableRumble = 0x48;
+
+        public const byte RumbleCommand = 0x10;
 
         public const byte FeatureId_Serial = 18;
 
@@ -165,6 +247,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         public static readonly byte[] InputMode_SimpleHid = { 0x3F };
 
         public static readonly byte[] EnableIMU_On = { 0x01 };
+        public static readonly byte[] Rumble_On = { 0x01 };
 
         public static readonly byte[] SetPlayerLED1 = { 0x01 | 0x01 };
         public static readonly byte[] SetPlayerLED2 = { 0x01 | 0x02 };
