@@ -2,6 +2,7 @@
 
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Reporting;
+using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -21,11 +22,10 @@ public sealed class InputSourceProcessor : IInputSourceProcessor
         _inputReportProcessor = inputReportProcessor;
         _outputDeviceProcessor = outputDeviceProcessor;
         _serviceProvider = serviceProvider;
-
-        _outputDeviceProcessor.OnOutputDeviceReportReceived += OutputDeviceProcessorOnOutputDeviceReportReceived;
     }
 
     public event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
+    public event Action<ICustomAction> OnCustomActionDetected;
 
     public void Start(IInputSource inputSource)
     {
@@ -42,12 +42,17 @@ public sealed class InputSourceProcessor : IInputSourceProcessor
             outputReportProcessor.Start();
         }
 
+        _outputDeviceProcessor.OnOutputDeviceReportReceived += OutputDeviceProcessorOnOutputDeviceReportReceived;
         _outputDeviceProcessor.StartOutputProcessing(_inputReportProcessor);
+        _inputReportProcessor.OnCustomActionDetected += OnCustomAction;
         _inputReportProcessor.StartInputReportReader();
     }
 
     public void Stop()
     {
+        _outputDeviceProcessor.OnOutputDeviceReportReceived -= OutputDeviceProcessorOnOutputDeviceReportReceived;
+        _inputReportProcessor.OnCustomActionDetected -= OnCustomAction;
+
         _inputReportProcessor.StopInputReportReader();
         _outputDeviceProcessor.StopOutputProcessing();
 
@@ -65,5 +70,10 @@ public sealed class InputSourceProcessor : IInputSourceProcessor
     private void OutputDeviceProcessorOnOutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
         OnOutputDeviceReportReceived?.Invoke(outputDeviceReport);
+    }
+
+    private void OnCustomAction(ICustomAction customAction)
+    {
+        OnCustomActionDetected?.Invoke(customAction);
     }
 }

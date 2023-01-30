@@ -12,6 +12,7 @@ using Nefarius.ViGEm.Client.Exceptions;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
@@ -51,6 +52,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
     public bool IsInputReportAvailableInvoked { get; set; } = true;
     public bool IsProcessing { get; private set; }
     public event Action<IInputSource, InputSourceFinalReport> InputReportAvailable;
+    public event Action<ICustomAction> OnCustomActionDetected;
 
     public void SetInputSource(IInputSource inputSource)
     {
@@ -64,6 +66,8 @@ internal sealed class InputReportProcessor : IInputReportProcessor
         {
             return;
         }
+
+        _customActionProcessor.OnCustomActionDetected += OnCustomAction;
 
         _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
         {
@@ -114,6 +118,8 @@ internal sealed class InputReportProcessor : IInputReportProcessor
             return;
         }
 
+        _customActionProcessor.OnCustomActionDetected -= OnCustomActionDetected;
+
         _inputReportToken.Cancel();
 
         _inputReportReader.Join();
@@ -150,7 +156,6 @@ internal sealed class InputReportProcessor : IInputReportProcessor
                 // Implementation depends on derived object
                 // 
                 var report = InputSource.ProcessInputReport(buffer);
-
                 ReportsProcessedCounter.Add(1);
 
                 if (IsInputReportAvailableInvoked)
@@ -289,5 +294,10 @@ internal sealed class InputReportProcessor : IInputReportProcessor
         {
             Logger.LogError(ex, "Fatal failure in input report processing");
         }
+    }
+
+    private void OnCustomAction(ICustomAction customAction)
+    {
+        OnCustomActionDetected?.Invoke(customAction);
     }
 }

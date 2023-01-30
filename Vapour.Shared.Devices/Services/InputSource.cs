@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.Reporting;
+using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -33,6 +34,8 @@ internal class InputSource : IInputSource
     public string InputSourceKey { get; private set; }
     public List<ICompatibleHidDevice> Controllers { get; private set; } = new();
 
+    public event Action<ICustomAction> OnCustomActionDetected;
+
     public void Start()
     {
         if (_inputSourceProcessor != null)
@@ -47,6 +50,7 @@ internal class InputSource : IInputSource
 
         _inputSourceProcessor = _serviceProvider.GetService<IInputSourceProcessor>();
         _inputSourceProcessor.OnOutputDeviceReportReceived += OnOutputDeviceReportReceived;
+        _inputSourceProcessor.OnCustomActionDetected += OnCustomAction;
         _inputSourceProcessor.Start(this);
         OnAfterStartListening();
     }
@@ -58,6 +62,7 @@ internal class InputSource : IInputSource
             return;
         }
 
+        _inputSourceProcessor.OnCustomActionDetected -= OnCustomAction;
         _inputSourceProcessor.OnOutputDeviceReportReceived -= OnOutputDeviceReportReceived;
         _inputSourceProcessor.Dispose();
         _inputSourceProcessor = null;
@@ -122,7 +127,6 @@ internal class InputSource : IInputSource
                 _finalReport.LeftTrigger = controller.Key.InputSourceReport.LeftTrigger;
                 _finalReport.LeftThumb = controller.Key.InputSourceReport.LeftThumb;
                 _finalReport.Share = controller.Key.InputSourceReport.Share;
-                _finalReport.PS = controller.Key.InputSourceReport.PS;
             }
 
             if (controller.Key.MultiControllerConfigurationType == MultiControllerConfigurationType.None ||
@@ -138,6 +142,7 @@ internal class InputSource : IInputSource
                 _finalReport.Triangle = controller.Key.InputSourceReport.Triangle;
                 _finalReport.Circle = controller.Key.InputSourceReport.Circle;
                 _finalReport.Options = controller.Key.InputSourceReport.Options;
+                _finalReport.PS = controller.Key.InputSourceReport.PS;
             }
         }
 
@@ -292,6 +297,11 @@ internal class InputSource : IInputSource
         {
             device.OutputDeviceReportReceived(outputDeviceReport);
         }
+    }
+
+    private void OnCustomAction(ICustomAction obj)
+    {
+        OnCustomActionDetected?.Invoke(obj);
     }
 
     public static class DefaultPlayerNumberColors

@@ -3,6 +3,7 @@ using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.ControllerEnumerators;
+using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -51,7 +52,6 @@ internal sealed class InputSourceService : IInputSourceService
 
     public bool ShouldAutoRebuild { get; set; } = true;
     public bool IsStopping { get; set; }
-    public bool ShouldFixupOnConfigChange { get; set; } = true;
 
     public async Task Start()
     {
@@ -107,6 +107,7 @@ internal sealed class InputSourceService : IInputSourceService
         foreach (var inputSource in _inputSourceDataSource.InputSources.ToList())
         {
             inputSource.Stop();
+            inputSource.OnCustomActionDetected -= OnCustomAction;
             _inputSourceDataSource.InputSources.Remove(inputSource);
             _inputSourceDataSource.FireRemoved(inputSource);
         }
@@ -257,12 +258,13 @@ internal sealed class InputSourceService : IInputSourceService
         for (var i = 0; i < _inputSourceDataSource.InputSources.Count; i++)
         {
             var inputSource = _inputSourceDataSource.InputSources[i];
+            inputSource.OnCustomActionDetected += OnCustomAction;
             inputSource.Start();
             inputSource.SetPlayerNumberAndColor(i + 1);
             _inputSourceDataSource.FireCreated(inputSource);
         }
     }
-    
+
     private async void SetupDevice(IHidDevice hidDevice)
     {
         if (!IsStopping)
@@ -420,5 +422,25 @@ internal sealed class InputSourceService : IInputSourceService
         ShouldAutoRebuild = false;
         await RebuildInputSourceList();
         ShouldAutoRebuild = true;
+    }
+
+    private async void OnCustomAction(ICustomAction customAction)
+    {
+        switch (customAction)
+        {
+            case SetPlayerLedAndColorAction playerLedAction:
+                playerLedAction.InputSource.SetPlayerNumberAndColor(playerLedAction.PlayerNumber);
+                break;
+            case GracefulShutdownAction gracefulShutdownAction:
+                ShouldAutoRebuild = false;
+                await gracefulShutdownAction.InputSource.DisconnectControllers();
+                foreach (var device in gracefulShutdownAction.InputSource.Controllers)
+                {
+                    _controllers.Remove(device);
+                }
+                await RebuildInputSourceList();
+                ShouldAutoRebuild = true;
+                break;
+        }
     }
 }

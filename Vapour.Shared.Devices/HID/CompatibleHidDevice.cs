@@ -182,6 +182,9 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     {
         if (Connection == ConnectionType.Bluetooth)
         {
+            Logger.LogInformation("Perform graceful shutdown of controller with serial {0}", SerialString);
+
+            Close();
             using var radio = new HostRadio();
             radio.DisconnectRemoteDevice(Serial);
         }

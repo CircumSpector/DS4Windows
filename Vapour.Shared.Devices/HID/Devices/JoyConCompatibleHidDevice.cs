@@ -45,9 +45,18 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override void OnAfterStartListening()
     {
+        var playerCode = CurrentConfiguration.PlayerNumber switch
+        {
+            1 => JoyConCodes.SetPlayerLED1,
+            2 => JoyConCodes.SetPlayerLED2,
+            3 => JoyConCodes.SetPlayerLED3,
+            4 => JoyConCodes.SetPlayerLED4,
+            _ => JoyConCodes.SetPlayerLED1
+        };
+
         SubCommand(JoyConCodes.SubCommand_InputMode, JoyConCodes.InputMode_SimpleHid);
         SubCommand(JoyConCodes.SubCommand_EnableIMU, JoyConCodes.EnableIMU_On);
-        SubCommand(JoyConCodes.SubCommand_SetPlayerLED, JoyConCodes.SetPlayerLED1);
+        SubCommand(JoyConCodes.SubCommand_SetPlayerLED, playerCode);
 
         GetCalibrationData();
 
