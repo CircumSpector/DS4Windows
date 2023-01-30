@@ -10,7 +10,7 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 
 public partial class FilterService
 {
-    private void FilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
+    private void FilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost = false)
     {
         BthPortDevice bthDevice = BthPort.Devices.FirstOrDefault(d => d.RemoteAddress.Equals(device.Serial));
 
@@ -41,7 +41,7 @@ public partial class FilterService
         }
     }
 
-    private void UnfilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
+    private void UnfilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost = false)
     {
         BthPortDevice bthDevice = BthPort.Devices.FirstOrDefault(d => d.RemoteAddress.Equals(device.Serial));
 
