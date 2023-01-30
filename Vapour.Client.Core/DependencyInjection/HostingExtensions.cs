@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Vapour.Client.Core.DependencyInjection;
 
 /// <summary>
 ///     Extends the host builder components.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class HostingExtensions
 {
     /// <summary>
@@ -18,8 +21,10 @@ public static class HostingExtensions
         services.AddSingleton<TImplementation>();
 
         // each each definition passed
-        foreach (var def in definitions)
+        foreach (Type def in definitions)
+        {
             services.AddSingleton(def, s => s.GetService<TImplementation>());
+        }
     }
 
     /// <summary>
@@ -32,8 +37,10 @@ public static class HostingExtensions
         services.AddSingleton(implementation);
 
         // each each definition passed
-        foreach (var def in definitions)
+        foreach (Type def in definitions)
+        {
             services.AddSingleton(def, s => s.GetService(implementation.GetType()));
+        }
     }
 
     /// <summary>
@@ -47,7 +54,9 @@ public static class HostingExtensions
         services.AddTransient<TImplementation>();
 
         // each each definition passed
-        foreach (var def in definitions)
+        foreach (Type def in definitions)
+        {
             services.AddTransient(def, s => s.GetService<TImplementation>());
+        }
     }
 }

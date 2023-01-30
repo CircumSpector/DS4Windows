@@ -1,16 +1,26 @@
-﻿using Vapour.Shared.Devices.HID.InputTypes;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Vapour.Shared.Devices.HID.InputTypes;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct TrackPadTouch
 {
     public bool IsActive;
+    
     public byte Id;
+    
     public short X;
+    
     public short Y;
+    
     public byte RawTrackingNum;
 }
 
+[SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class DualShock4CompatibleInputReport : InputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;

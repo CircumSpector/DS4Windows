@@ -14,6 +14,10 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
     {
     }
 
+    public override InputSourceReport InputSourceReport { get; } = new SteamDeckCompatibleInputReport();
+
+    protected override Type InputDeviceType => typeof(SteamDeckDeviceInfo);
+
     protected override void OnInitialize()
     {
         Serial = ReadSerial(SerialFeatureId);
@@ -25,10 +29,6 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
     }
-
-    public override InputSourceReport InputSourceReport { get; } = new SteamDeckCompatibleInputReport();
-    
-    protected override Type InputDeviceType => typeof(SteamDeckDeviceInfo);
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {

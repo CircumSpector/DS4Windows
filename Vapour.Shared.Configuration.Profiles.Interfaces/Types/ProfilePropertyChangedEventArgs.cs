@@ -1,8 +1,12 @@
-﻿namespace Vapour.Shared.Configuration.Profiles.Types;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Vapour.Shared.Configuration.Profiles.Types;
 
 /// <summary>
 ///     Describes the state of a changed property.
 /// </summary>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class ProfilePropertyChangedEventArgs : EventArgs
 {
     public ProfilePropertyChangedEventArgs(string propertyName, object before, object after)

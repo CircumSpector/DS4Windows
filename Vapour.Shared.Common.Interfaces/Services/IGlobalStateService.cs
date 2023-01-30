@@ -9,11 +9,17 @@ public interface IGlobalStateService
     ///     Absolute path to roaming application directory in current user profile.
     /// </summary>
     string RoamingAppDataPath { get; }
+    
     string CurrentUserName { get; set; }
+    
     string LocalProfilesDirectory { get; }
+    
     string LocalDefaultProfileLocation { get; }
+    
     string LocalInputSourceConfigurationsLocation { get; }
+    
     string LocalInputSourceGameConfigurationsLocation { get; }
+    
     string CurrentUserSid { get; set; }
 
     void EnsureRoamingDataPath();

@@ -5,13 +5,13 @@ using Vapour.Shared.Devices.HID.InputTypes.SteamDeck;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public class SteamDeckCompatibleInputReport : InputSourceReport
+public sealed class SteamDeckCompatibleInputReport : InputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        var buttons0 = (SteamDeckButtons0)MemoryMarshal.Read<ushort>(input.Slice(9, 2));
+        SteamDeckButtons0 buttons0 = (SteamDeckButtons0)MemoryMarshal.Read<ushort>(input.Slice(9, 2));
 
         Triangle = buttons0.HasFlag(SteamDeckButtons0.Y);
         Circle = buttons0.HasFlag(SteamDeckButtons0.B);

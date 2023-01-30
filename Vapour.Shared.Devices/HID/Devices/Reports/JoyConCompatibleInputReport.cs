@@ -6,11 +6,11 @@ namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 public sealed class JoyConCompatibleInputReport : InputSourceReport
 {
-    private readonly float[] _tempStickData = new float[2];
     private readonly short[] _finalStickData = new short[2];
+    private readonly float[] _tempStickData = new float[2];
 
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
-    
+
     public ushort[] StickCalibration { get; } = new ushort[6];
     public ushort DeadZone { get; set; }
     public bool IsLeft { get; set; }
@@ -24,9 +24,9 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
 
     private void SetButtons(ReadOnlySpan<byte> buttonData)
     {
-        var sharedButtons = (JoyConButtonsShared)buttonData[4];
-        var leftButtons = (JoyConButtonsLeft)buttonData[5];
-        var rightButtons = (JoyConButtonsRight)buttonData[3];
+        JoyConButtonsShared sharedButtons = (JoyConButtonsShared)buttonData[4];
+        JoyConButtonsLeft leftButtons = (JoyConButtonsLeft)buttonData[5];
+        JoyConButtonsRight rightButtons = (JoyConButtonsRight)buttonData[3];
 
         if (MultiControllerConfigurationType != MultiControllerConfigurationType.None)
         {
@@ -112,7 +112,7 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
         ushort tempY = (ushort)((stickData[1] >> 4) | (stickData[2] << 4));
 
         CenterSticks(tempX, tempY);
-        
+
         _finalStickData[0] = CastStickValue(_tempStickData[0]);
         _finalStickData[1] = CastStickValue(_tempStickData[1]);
     }
@@ -122,15 +122,17 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
         _tempStickData[0] = 0;
         _tempStickData[1] = 0;
         float dx = x - StickCalibration[2], dy = y - StickCalibration[3];
-        if (Math.Abs(dx * dx + dy * dy) < DeadZone * DeadZone)
+        if (Math.Abs((dx * dx) + (dy * dy)) < DeadZone * DeadZone)
+        {
             return;
+        }
 
         _tempStickData[0] = dx / (dx > 0 ? StickCalibration[0] : StickCalibration[4]);
         _tempStickData[1] = dy / (dy > 0 ? StickCalibration[1] : StickCalibration[5]);
 
         if (MultiControllerConfigurationType == MultiControllerConfigurationType.None)
         {
-            var firstValue = _tempStickData[0];
+            float firstValue = _tempStickData[0];
             _tempStickData[0] = _tempStickData[1] * (IsLeft ? -1f : 1f);
             _tempStickData[1] = firstValue * (IsLeft ? 1f : -1f);
         }
@@ -138,7 +140,8 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
 
     private static short CastStickValue(float value)
     {
-        return (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, value * (value > 0 ? short.MaxValue : -short.MinValue)));
+        return (short)Math.Max(short.MinValue,
+            Math.Min(short.MaxValue, value * (value > 0 ? short.MaxValue : -short.MinValue)));
     }
 
     private void SetDPad(JoyConButtonsLeft buttons0)

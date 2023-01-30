@@ -1,7 +1,10 @@
-﻿using FastDeepCloner;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using FastDeepCloner;
 
 namespace Vapour.Shared.Common.Util;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class CloningExtensions
 {
     /// <summary>

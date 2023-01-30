@@ -99,8 +99,8 @@ public class GameListProviderService : IGameListProviderService
                 {
                     string appKey = app.Key;
 
-                    var appFile = new AcfReader($"{path}\\steamapps\\appmanifest_{appKey}.acf").ACFFileToStruct();
-                    var installName = appFile.SubACF["AppState"].SubItems["installdir"];
+                    var appFile = new AcfReader($"{path}\\steamapps\\appmanifest_{appKey}.acf").AcfFileToStruct();
+                    var installName = appFile.SubAcf["AppState"].SubItems["installdir"];
                     var installDir = $"{path}\\steamapps\\common\\{installName}";
 
                     var isGameConfigured = inputSourceGameConfigurations.Any(g =>

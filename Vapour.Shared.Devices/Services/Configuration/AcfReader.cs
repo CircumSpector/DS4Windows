@@ -1,135 +1,156 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
+
+/// <summary>
+///     Steam app manifest reader.
+/// </summary>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class AcfReader
 {
-    public string FileLocation { get; private set; }
-
-    public AcfReader(string FileLocation)
+    public AcfReader(string fileLocation)
     {
-        if (File.Exists(FileLocation))
-            this.FileLocation = FileLocation;
+        if (File.Exists(fileLocation))
+        {
+            FileLocation = fileLocation;
+        }
         else
-            throw new FileNotFoundException("Error", FileLocation);
+        {
+            throw new FileNotFoundException("Error", fileLocation);
+        }
     }
+
+    public string FileLocation { get; }
 
     public bool CheckIntegrity()
     {
-        string Content = File.ReadAllText(FileLocation);
-        int quote = Content.Count(x => x == '"');
-        int braceleft = Content.Count(x => x == '{');
-        int braceright = Content.Count(x => x == '}');
+        string content = File.ReadAllText(FileLocation);
+        int quote = content.Count(x => x == '"');
+        int braceleft = content.Count(x => x == '{');
+        int braceright = content.Count(x => x == '}');
 
-        return ((braceleft == braceright) && (quote % 2 == 0));
+        return braceleft == braceright && quote % 2 == 0;
     }
 
-    public ACF_Struct ACFFileToStruct()
+    public AcfStruct AcfFileToStruct()
     {
-        return ACFFileToStruct(File.ReadAllText(FileLocation));
+        return AcfFileToStruct(File.ReadAllText(FileLocation));
     }
 
-    private ACF_Struct ACFFileToStruct(string RegionToReadIn)
+    private static AcfStruct AcfFileToStruct(string regionToReadIn)
     {
-        ACF_Struct ACF = new ACF_Struct();
-        int LengthOfRegion = RegionToReadIn.Length;
-        int CurrentPos = 0;
-        while (LengthOfRegion > CurrentPos)
+        AcfStruct acf = new();
+        int lengthOfRegion = regionToReadIn.Length;
+        int currentPos = 0;
+        while (lengthOfRegion > currentPos)
         {
-            int FirstItemStart = RegionToReadIn.IndexOf('"', CurrentPos);
-            if (FirstItemStart == -1)
-                break;
-            int FirstItemEnd = RegionToReadIn.IndexOf('"', FirstItemStart + 1);
-            CurrentPos = FirstItemEnd + 1;
-            string FirstItem = RegionToReadIn.Substring(FirstItemStart + 1, FirstItemEnd - FirstItemStart - 1);
-
-            int SecondItemStartQuote = RegionToReadIn.IndexOf('"', CurrentPos);
-            int SecondItemStartBraceleft = RegionToReadIn.IndexOf('{', CurrentPos);
-            if (SecondItemStartBraceleft == -1 || SecondItemStartQuote < SecondItemStartBraceleft)
+            int firstItemStart = regionToReadIn.IndexOf('"', currentPos);
+            if (firstItemStart == -1)
             {
-                int SecondItemEndQuote = RegionToReadIn.IndexOf('"', SecondItemStartQuote + 1);
-                string SecondItem = RegionToReadIn.Substring(SecondItemStartQuote + 1, SecondItemEndQuote - SecondItemStartQuote - 1);
-                CurrentPos = SecondItemEndQuote + 1;
-                ACF.SubItems.Add(FirstItem, SecondItem);
+                break;
+            }
+
+            int firstItemEnd = regionToReadIn.IndexOf('"', firstItemStart + 1);
+            currentPos = firstItemEnd + 1;
+            string firstItem = regionToReadIn.Substring(firstItemStart + 1, firstItemEnd - firstItemStart - 1);
+
+            int secondItemStartQuote = regionToReadIn.IndexOf('"', currentPos);
+            int secondItemStartBraceleft = regionToReadIn.IndexOf('{', currentPos);
+            if (secondItemStartBraceleft == -1 || secondItemStartQuote < secondItemStartBraceleft)
+            {
+                int secondItemEndQuote = regionToReadIn.IndexOf('"', secondItemStartQuote + 1);
+                string secondItem = regionToReadIn.Substring(secondItemStartQuote + 1,
+                    secondItemEndQuote - secondItemStartQuote - 1);
+                currentPos = secondItemEndQuote + 1;
+                acf.SubItems.Add(firstItem, secondItem);
             }
             else
             {
-                int SecondItemEndBraceright = RegionToReadIn.NextEndOf('{', '}', SecondItemStartBraceleft + 1);
-                ACF_Struct ACFS = ACFFileToStruct(RegionToReadIn.Substring(SecondItemStartBraceleft + 1, SecondItemEndBraceright - SecondItemStartBraceleft - 1));
-                CurrentPos = SecondItemEndBraceright + 1;
-                ACF.SubACF.Add(FirstItem, ACFS);
+                int secondItemEndBraceright = regionToReadIn.NextEndOf('{', '}', secondItemStartBraceleft + 1);
+                AcfStruct acfs = AcfFileToStruct(regionToReadIn.Substring(secondItemStartBraceleft + 1,
+                    secondItemEndBraceright - secondItemStartBraceleft - 1));
+                currentPos = secondItemEndBraceright + 1;
+                acf.SubAcf.Add(firstItem, acfs);
             }
         }
 
-        return ACF;
+        return acf;
     }
-
 }
 
-public class ACF_Struct
+/// <summary>
+///     Steam app manifest entry.
+/// </summary>
+public class AcfStruct
 {
-    public Dictionary<string, ACF_Struct> SubACF { get; private set; }
-    public Dictionary<string, string> SubItems { get; private set; }
-
-    public ACF_Struct()
+    public AcfStruct()
     {
-        SubACF = new Dictionary<string, ACF_Struct>();
+        SubAcf = new Dictionary<string, AcfStruct>();
         SubItems = new Dictionary<string, string>();
     }
 
-    public void WriteToFile(string File)
-    {
-
-    }
+    public Dictionary<string, AcfStruct> SubAcf { get; }
+    public Dictionary<string, string> SubItems { get; }
 
     public override string ToString()
     {
         return ToString(0);
     }
 
-    private string ToString(int Depth)
+    private string ToString(int depth)
     {
-        StringBuilder SB = new StringBuilder();
+        StringBuilder sb = new();
         foreach (KeyValuePair<string, string> item in SubItems)
         {
-            SB.Append('\t', Depth);
-            SB.AppendFormat("\"{0}\"\t\t\"{1}\"\r\n", item.Key, item.Value);
+            sb.Append('\t', depth);
+            sb.Append($"\"{item.Key}\"\t\t\"{item.Value}\"\r\n");
         }
-        foreach (KeyValuePair<string, ACF_Struct> item in SubACF)
+
+        foreach (KeyValuePair<string, AcfStruct> item in SubAcf)
         {
-            SB.Append('\t', Depth);
-            SB.AppendFormat("\"{0}\"\n", item.Key);
-            SB.Append('\t', Depth);
-            SB.AppendLine("{");
-            SB.Append(item.Value.ToString(Depth + 1));
-            SB.Append('\t', Depth);
-            SB.AppendLine("}");
+            sb.Append('\t', depth);
+            sb.Append($"\"{item.Key}\"\n");
+            sb.Append('\t', depth);
+            sb.AppendLine("{");
+            sb.Append(item.Value.ToString(depth + 1));
+            sb.Append('\t', depth);
+            sb.AppendLine("}");
         }
-        return SB.ToString();
+
+        return sb.ToString();
     }
 }
 
-static class Extension
+internal static class Extension
 {
-    public static int NextEndOf(this string str, char Open, char Close, int startIndex)
+    public static int NextEndOf(this string str, char open, char close, int startIndex)
     {
-        if (Open == Close)
+        if (open == close)
+        {
             throw new Exception("\"Open\" and \"Close\" char are equivalent!");
+        }
 
-        int OpenItem = 0;
-        int CloseItem = 0;
+        int openItem = 0;
+        int closeItem = 0;
         for (int i = startIndex; i < str.Length; i++)
         {
-            if (str[i] == Open)
+            if (str[i] == open)
             {
-                OpenItem++;
+                openItem++;
             }
-            if (str[i] == Close)
+
+            if (str[i] == close)
             {
-                CloseItem++;
-                if (CloseItem > OpenItem)
+                closeItem++;
+                if (closeItem > openItem)
+                {
                     return i;
+                }
             }
         }
+
         throw new Exception("Not enough closing characters!");
     }
 }

@@ -1,5 +1,6 @@
 version: 4.0.{build}
-image: Visual Studio 2022
+build_cloud: WIN-LKR467JS4GL
+image: Windows
 configuration:
 - Release
 platform:

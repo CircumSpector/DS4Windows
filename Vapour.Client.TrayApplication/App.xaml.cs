@@ -16,7 +16,7 @@ using Vapour.Shared.Common.Tracing;
 namespace Vapour.Client.TrayApplication;
 
 /// <summary>
-/// Interaction logic for App.xaml
+///     Interaction logic for App.xaml
 /// </summary>
 public partial class App : Application
 {
@@ -29,30 +29,25 @@ public partial class App : Application
         await ApplicationStartup.Start(
             new[]
             {
-                typeof(ViewModelRegistrar),
-                typeof(ServiceClientsRegistrar),
-                typeof(TrayApplicationRegistrar),
-                typeof(OpenTelemetryRegistrar),
-                typeof(CommonRegistrar),
-                typeof(InputSourceModuleRegistrar),
-                typeof(ProfilesModuleRegistrar),
-                typeof(SettingsModuleRegistrar)
+                typeof(ViewModelRegistrar), typeof(ServiceClientsRegistrar), typeof(TrayApplicationRegistrar),
+                typeof(OpenTelemetryRegistrar), typeof(CommonRegistrar), typeof(InputSourceModuleRegistrar),
+                typeof(ProfilesModuleRegistrar), typeof(SettingsModuleRegistrar)
             },
             SetupTray);
     }
 
     private async Task SetupTray(IServiceScope scope)
     {
-        var systemServiceClient = scope.ServiceProvider.GetService<ISystemServiceClient>();
+        ISystemServiceClient systemServiceClient = scope.ServiceProvider.GetService<ISystemServiceClient>();
         await systemServiceClient.WaitForService();
         systemServiceClient.StartListening();
-        var client = scope.ServiceProvider.GetService<IProfileServiceClient>();
+        IProfileServiceClient client = scope.ServiceProvider.GetService<IProfileServiceClient>();
         await client.Initialize();
 
         _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
-        var factory = scope.ServiceProvider.GetService<IViewModelFactory>();
-        var trayViewModel = await factory.CreateViewModel<ITrayViewModel>();
-        _notifyIcon.DataContext = trayViewModel;
+        IViewModelFactory factory = scope.ServiceProvider.GetService<IViewModelFactory>();
+        ITrayViewModel trayViewModel = await factory.CreateViewModel<ITrayViewModel>();
+        _notifyIcon!.DataContext = trayViewModel;
     }
 
     protected override void OnExit(ExitEventArgs e)

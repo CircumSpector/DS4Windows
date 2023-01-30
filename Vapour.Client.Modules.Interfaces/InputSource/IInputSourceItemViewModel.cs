@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Server.InputSource;
 using Vapour.Shared.Devices.Services.Configuration;
@@ -10,10 +11,13 @@ public interface IInputSourceItemViewModel : IViewModel<IInputSourceItemViewMode
     Guid SelectedProfileId { get; set; }
 
     SolidColorBrush CurrentColor { get; set; }
-   
+
     InputSourceConfiguration CurrentConfiguration { get; set; }
+
     bool ConfigurationSetFromUser { get; set; }
+
     string InputSourceKey { get; set; }
+
     List<IInputSourceControllerItemViewModel> Controllers { get; set; }
 
     Task SetInputSource(InputSourceMessage inputSource);

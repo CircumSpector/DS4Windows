@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 
 using Microsoft.Extensions.Logging;
 
@@ -78,13 +79,13 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                         if (c.GameInfo.GameSource == GameSource.UWP &&
                             ((e.CommandLine.StartsWith("\"") &&
                               e.CommandLine.Contains(c.GameInfo.GameId)) ||
-                             imagePath.Contains($"WindowsApps\\{c.GameInfo.GameId}")))
+                             imagePath!.Contains($"WindowsApps\\{c.GameInfo.GameId}")))
                         {
                             return true;
                         }
 
                         return c.GameInfo.GameSource != GameSource.UWP &&
-                               imagePath.ToLower().StartsWith(c.GameInfo.GameId.ToLower());
+                               imagePath!.ToLower().StartsWith(c.GameInfo.GameId.ToLower());
                     });
 
                 if (gameConfiguration == null)

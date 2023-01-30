@@ -27,9 +27,9 @@ public sealed class ServiceClientsRegistrar : IServiceRegistrar
                 FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion)
             );
         });
-            // retry policy in case of request failure
-            //.AddTransientHttpErrorPolicy(pb =>
-            //    pb.WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5)));
+        // retry policy in case of request failure
+        //.AddTransientHttpErrorPolicy(pb =>
+        //    pb.WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5)));
 
         services.AddSingleton<IProfileServiceClient, ProfileServiceClient>();
         services.AddSingleton<IInputSourceServiceClient, InputSourceServiceClient>();

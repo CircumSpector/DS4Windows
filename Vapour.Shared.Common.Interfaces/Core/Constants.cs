@@ -1,10 +1,12 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace Vapour.Shared.Common.Core;
 
 /// <summary>
 ///     Constant value definitions used throughout the solution.
 /// </summary>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Constants
 {
     public const string ApplicationName = "Vapour";
@@ -36,9 +38,7 @@ public static class Constants
     public static Guid BluetoothHidGuild = new("{00001124-0000-1000-8000-00805F9B34FB}");
 
     public static CultureInfo StorageCulture = new("en-US");
-
-    public const string ChangelogUri = "https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/Changelog.min.json";
-
+    
     public const string SteamTroubleshootingUri = "https://docs.ds4windows.app/troubleshooting/steam-related/";
 
     public const string TracingGuideUri = "https://docs.ds4windows.app/troubleshooting/tracing-guide/";
@@ -51,18 +51,11 @@ public static class Constants
 
     public const string HidHideGuideUri = "https://docs.ds4windows.app/troubleshooting/hidhide-troubleshoot/";
 
-    /// <summary>
-    ///     Solution-wide maximum concurrent controller limit.
-    /// </summary>
-    public const int MaxControllers = 8;
-
-    /// <summary>
-    ///     The maximum number of queued input reports before getting discarded.
-    /// </summary>
-    public const int MaxQueuedInputReports = 5;
-
     public const string HttpPort = "50317";
+    
     public const string HttpUrl = $"http://localhost:{HttpPort}";
+    
     public const string WebsocketUrl = $"ws://localhost:{HttpPort}";
+    
     public const string ServerHostHttpClientName = "ServerHost";
 }

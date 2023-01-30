@@ -8,5 +8,6 @@ namespace Vapour.Client.Modules.InputSource;
 public interface IInputSourceListViewModel : INavigationTabViewModel<IInputSourceListViewModel, IInputSourceListView>
 {
     ObservableCollection<IInputSourceItemViewModel> InputSourceItems { get; }
+
     ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; }
 }

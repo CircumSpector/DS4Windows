@@ -21,6 +21,7 @@ public class FilterService : IFilterService
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<FilterService> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
     private readonly FilterDriver _filterDriver;
 
@@ -78,7 +79,10 @@ public class FilterService : IFilterService
         SetFilterDriverEnabled(false);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Filters a particular USB device instance.
+    /// </summary>
+    /// <param name="instanceId">The instance ID of the device to filter.</param>
     public void FilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
@@ -109,7 +113,10 @@ public class FilterService : IFilterService
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Reverts filtering a particular USB device instance.
+    /// </summary>
+    /// <param name="instanceId">The instance ID of the device to revert.</param>
     public void UnfilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
@@ -188,7 +195,9 @@ public class FilterService : IFilterService
     private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
     {
         PnPDevice device = PnPDevice.GetDeviceByInstanceId(instanceId);
+
         string[] hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
+
         if (hardwareIds[0].StartsWith("HID"))
         {
             string parentInputDeviceId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);

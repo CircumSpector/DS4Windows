@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
@@ -17,48 +18,54 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private int _reportStartOffset;
 
-    public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos) 
+    public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
     {
     }
+
+    protected override Type InputDeviceType => typeof(DualSenseDeviceInfo);
+
+    public override InputSourceReport InputSourceReport { get; } = new DualSenseCompatibleInputReport();
 
     protected override void OnInitialize()
     {
         Serial = ReadSerial(SerialFeatureId);
 
         if (Serial is null)
+        {
             throw new ArgumentException("Could not retrieve a valid serial number.");
+        }
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
+        {
             _reportStartOffset = 0;
+        }
         //InputReportArray = new byte[UsbInputReportSize];
         //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
         //
         // TODO: finish me
         // 
         else
+        {
             _reportStartOffset = 1;
+        }
         //InputReportArray = new byte[BthInputReportSize];
         //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
     }
 
     public override void OnAfterStartListening()
     {
-        var reportData = BuildConfigurationReportData();
+        byte[] reportData = BuildConfigurationReportData();
         SendOutputReport(BuildOutputReport(reportData));
     }
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        var reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        byte[] reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
         SendOutputReport(BuildOutputReport(reportData));
     }
-
-    protected override Type InputDeviceType => typeof(DualSenseDeviceInfo);
-
-    public override InputSourceReport InputSourceReport { get; } = new DualSenseCompatibleInputReport();
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
@@ -67,7 +74,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private byte[] BuildOutputReport(byte[] reportData)
     {
-        var outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
+        byte[] outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
         if (Connection == ConnectionType.Usb)
         {
             outputReportPacket[0] = 0x02;
@@ -79,7 +86,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             outputReportPacket[1] = 0x02;
             Array.Copy(reportData, 0, outputReportPacket, 2, 47);
             uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, 74);
-            var checksumBytes = BitConverter.GetBytes(crc);
+            byte[] checksumBytes = BitConverter.GetBytes(crc);
             Array.Copy(checksumBytes, 0, outputReportPacket, 74, 4);
         }
 
@@ -88,14 +95,14 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private byte[] BuildConfigurationReportData()
     {
-        var reportData = new byte[47];
+        byte[] reportData = new byte[47];
 
         reportData[0] = 0xFF;
         reportData[1] = 0xF7;
 
         reportData[42] = 0x02; //player led brightness
 
-        var playerLed = CurrentConfiguration.PlayerNumber switch
+        byte playerLed = CurrentConfiguration.PlayerNumber switch
         {
             1 => (byte)PlayerLedLights.Player1,
             2 => (byte)PlayerLedLights.Player2,
@@ -105,10 +112,10 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         };
 
         reportData[43] = (byte)(0x20 | playerLed); //player led number
-        
+
         if (CurrentConfiguration.LoadedLightbar != null)
         {
-            var rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
+            Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
             reportData[44] = rgb.R;
             reportData[45] = rgb.G;
             reportData[46] = rgb.B;
@@ -119,14 +126,15 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private byte[] BuildRumbeReportData(byte strongMotor, byte weakMotor)
     {
-        var reportData = new byte[47];
+        byte[] reportData = new byte[47];
         reportData[0] = 0x03;
         reportData[2] = weakMotor;
         reportData[3] = strongMotor;
 
         return reportData;
     }
-    
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private enum PlayerLedLights : byte
     {
         None = 0x00,

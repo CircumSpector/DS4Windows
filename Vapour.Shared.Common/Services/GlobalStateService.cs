@@ -12,7 +12,7 @@ namespace Vapour.Shared.Common.Services;
 public sealed class GlobalStateService : IGlobalStateService
 {
     private readonly ActivitySource _activitySource = new(TracingSources.AssemblyName);
-    
+
     public GlobalStateService()
     {
         using Activity activity = _activitySource.StartActivity(
@@ -20,6 +20,7 @@ public sealed class GlobalStateService : IGlobalStateService
     }
 
     public string CurrentUserName { get; set; }
+
     public string CurrentUserSid { get; set; } = string.Empty;
 
     public string RoamingAppDataPath => !string.IsNullOrEmpty(CurrentUserName)
@@ -29,8 +30,12 @@ public sealed class GlobalStateService : IGlobalStateService
     public string LocalProfilesDirectory => Path.Combine(RoamingAppDataPath, Constants.ProfilesSubDirectory);
 
     public string LocalDefaultProfileLocation => Path.Combine(LocalProfilesDirectory, "Default.json");
-    public string LocalInputSourceConfigurationsLocation => Path.Combine(RoamingAppDataPath, "InputSourceConfigurations.json");
-    public string LocalInputSourceGameConfigurationsLocation => Path.Combine(RoamingAppDataPath, "InputSourceGameConfigurations.json");
+
+    public string LocalInputSourceConfigurationsLocation =>
+        Path.Combine(RoamingAppDataPath, "InputSourceConfigurations.json");
+
+    public string LocalInputSourceGameConfigurationsLocation =>
+        Path.Combine(RoamingAppDataPath, "InputSourceGameConfigurations.json");
 
     public void EnsureRoamingDataPath()
     {
