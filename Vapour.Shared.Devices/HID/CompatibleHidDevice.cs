@@ -5,6 +5,7 @@ using System.Threading.Channels;
 
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Telemetry;
@@ -181,7 +182,8 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     {
         if (Connection == ConnectionType.Bluetooth)
         {
-            
+            using var radio = new HostRadio();
+            radio.DisconnectRemoteDevice(Serial);
         }
 
         await Task.Delay(0);

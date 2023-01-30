@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-using Vapour.Shared.Common.Types;
+﻿using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
@@ -129,6 +127,9 @@ internal sealed class InputSourceService : IInputSourceService
 
             //restart bt host
         }
+
+        //need some time after stopping input sources before starting more up
+        Thread.Sleep(250);
     }
     
     private async Task RebuildInputSourceList()
@@ -260,6 +261,9 @@ internal sealed class InputSourceService : IInputSourceService
 
             inputSource.Start();
             _inputSourceDataSource.FireCreated(inputSource);
+            
+            //need some time in between each input source start
+            Thread.Sleep(500);
         }
     }
     
@@ -313,7 +317,7 @@ internal sealed class InputSourceService : IInputSourceService
         {
             _usbFilterWait.Set();
         }
-        else if (device.Connection == ConnectionType.Bluetooth)
+        else if (device.Connection == ConnectionType.Bluetooth && _blueToothWaitList != null)
         {
             var existingWait = _blueToothWaitList.SingleOrDefault(c =>
                 c.DeviceKey == device.DeviceKey && c.InitialFilterState == !device.IsFiltered);
@@ -377,13 +381,13 @@ internal sealed class InputSourceService : IInputSourceService
     {
         if (!IsStopping && !_isPerformingFilterAction && ShouldAutoRebuild)
         {
-            var existingController =
-                _controllers.SingleOrDefault(c => c.SourceDevice.InstanceId.ToLower() == instanceId.ToLower());
-
-            if (existingController != null)
+            var existingInputSource = _inputSourceDataSource.GetByDeviceInstanceId(instanceId);
+            if (existingInputSource != null)
             {
-                _controllers.Remove(existingController);
-                existingController.Dispose();
+                existingInputSource.Stop();
+                var device = existingInputSource.GetControllerByInstanceId(instanceId);
+                device.SourceDevice.CloseDevice();
+                _controllers.Remove(device);
                 await RebuildInputSourceList();
             }
         }

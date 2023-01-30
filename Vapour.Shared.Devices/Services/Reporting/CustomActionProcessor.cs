@@ -27,7 +27,7 @@ public class CustomActionProcessor : ICustomActionProcessor
         CalculateBoolValue(currentTicks, inputReport.PS, CustomActionReport.PSStart);
 
         CheckSetPlayerNumber(inputSource, inputReport, currentTicks);
-        await CheckPerformDisconnect(inputSource, currentTicks);
+        CheckPerformDisconnect(inputSource, currentTicks);
     }
 
     private void CalculateBoolValue(long ticks, bool value, byte buttonIndex)
@@ -81,12 +81,12 @@ public class CustomActionProcessor : ICustomActionProcessor
         }
     }
 
-    private async Task CheckPerformDisconnect(IInputSource inputSource, long currentTicks)
+    private void CheckPerformDisconnect(IInputSource inputSource, long currentTicks)
     {
         var psStart = CustomActionReport.GetValue(CustomActionReport.PSStart);
         if (psStart > 0 && currentTicks - psStart > 40000000)
         {
-            await inputSource.DisconnectControllers();
+            Task.Run(inputSource.DisconnectControllers);
         }
     }
 }
