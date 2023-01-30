@@ -93,4 +93,5 @@ public interface ICompatibleHidDevice : IDisposable
     Task DisconnectBTController();
     void Setup(IHidDevice hidDevice, DeviceInfo deviceInfo);
     void Close();
+    void SetPlayerLedAndColor();
 }

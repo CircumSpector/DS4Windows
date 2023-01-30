@@ -61,7 +61,13 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        byte[] reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        byte[] reportData = BuildRumbleReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        SendOutputReport(BuildOutputReport(reportData));
+    }
+
+    public override void SetPlayerLedAndColor()
+    {
+        byte[] reportData = BuildLedData();
         SendOutputReport(BuildOutputReport(reportData));
     }
 
@@ -121,6 +127,25 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         reportData[0] = 0xF7;
         reportData[1] = 0x04;
 
+        reportData[8] = 0xFF;
+        reportData[9] = 0x00;
+        return reportData;
+    }
+
+    private byte[] BuildRumbleReportData(byte strongMotor, byte weakMotor)
+    {
+        byte[] reportData = new byte[47];
+        reportData[0] = 0x01;
+        reportData[2] = weakMotor;
+        reportData[3] = strongMotor;
+
+        return reportData;
+    }
+
+    private byte[] BuildLedData()
+    {
+        byte[] reportData = new byte[47];
+        reportData[0] = 0x02;
         if (CurrentConfiguration.LoadedLightbar != null)
         {
             Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
@@ -128,18 +153,6 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
             reportData[6] = rgb.G;
             reportData[7] = rgb.B;
         }
-
-        reportData[8] = 0xFF;
-        reportData[9] = 0x00;
-        return reportData;
-    }
-
-    private byte[] BuildRumbeReportData(byte strongMotor, byte weakMotor)
-    {
-        byte[] reportData = new byte[47];
-        reportData[0] = 0x01;
-        reportData[2] = weakMotor;
-        reportData[3] = strongMotor;
 
         return reportData;
     }

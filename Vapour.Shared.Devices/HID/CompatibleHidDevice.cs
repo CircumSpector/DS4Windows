@@ -178,6 +178,11 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
     {
     }
 
+    public virtual void SetPlayerLedAndColor()
+    {
+
+    }
+
     public async Task DisconnectBTController()
     {
         if (Connection == ConnectionType.Bluetooth)

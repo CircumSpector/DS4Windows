@@ -216,7 +216,7 @@ internal class InputSource : IInputSource
 
         foreach (var device in Controllers)
         {
-            device.OnAfterStartListening();
+            device.SetPlayerLedAndColor();
         }
     }
 
