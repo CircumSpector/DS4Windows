@@ -8,4 +8,6 @@ public interface IInputSourceDataSource
     IInputSource GetByInputSourceKey(string inputSourceKey);
     void FireCreated(IInputSource inputSource);
     void FireRemoved(IInputSource inputSource);
+    IInputSource GetByDeviceInstanceId(string instanceId);
+    IInputSource GetByDeviceParentInstanceId(string instanceId);
 }

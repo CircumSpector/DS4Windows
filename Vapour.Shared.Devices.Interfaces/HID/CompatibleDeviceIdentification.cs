@@ -1,6 +1,4 @@
-﻿using Vapour.Shared.Devices.Services.ControllerEnumerators;
-
-namespace Vapour.Shared.Devices.HID;
+﻿namespace Vapour.Shared.Devices.HID;
 
 /// <summary>
 ///     Possible feature bit-flags.

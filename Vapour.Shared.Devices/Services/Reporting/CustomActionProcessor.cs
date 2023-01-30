@@ -1,9 +1,13 @@
 ﻿using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 public class CustomActionProcessor : ICustomActionProcessor
 {
     public CustomActionReport CustomActionReport { get; } = new();
+    public event Action<ICustomAction> OnCustomActionDetected;
+    private bool _wasLedExecuted;
+    private bool _wasGracefulShutdownExecuted;
 
     public async Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
     {
@@ -27,7 +31,7 @@ public class CustomActionProcessor : ICustomActionProcessor
         CalculateBoolValue(currentTicks, inputReport.PS, CustomActionReport.PSStart);
 
         CheckSetPlayerNumber(inputSource, inputReport, currentTicks);
-        await CheckPerformDisconnect(inputSource, currentTicks);
+        CheckPerformDisconnect(inputSource, currentTicks);
     }
 
     private void CalculateBoolValue(long ticks, bool value, byte buttonIndex)
@@ -58,35 +62,59 @@ public class CustomActionProcessor : ICustomActionProcessor
     {
         var r1Start = CustomActionReport.GetValue(CustomActionReport.R1Start);
         var r2Start = CustomActionReport.GetValue(CustomActionReport.R2Start);
+
+        if (r1Start == 0 || r2Start == 0 || inputReport.DPad == DPadDirection.Default)
+        {
+            _wasLedExecuted = false;
+        }
+
         if (r1Start > 0 && r2Start > 0)
         {
-            switch (inputReport.DPad)
+            byte playerNumber = inputReport.DPad switch
             {
-                case DPadDirection.North when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000:
-                    inputSource.SetPlayerNumberAndColor(1);
-                    break;
-                case DPadDirection.East when currentTicks - r2Start > 1000 &&
-                                             currentTicks - r1Start > 1000:
-                    inputSource.SetPlayerNumberAndColor(2);
-                    break;
-                case DPadDirection.South when currentTicks - r2Start > 1000 &&
-                                              currentTicks - r1Start > 1000:
-                    inputSource.SetPlayerNumberAndColor(3);
-                    break;
-                case DPadDirection.West when currentTicks - r2Start > 1000 &&
-                                             currentTicks - r1Start > 1000:
-                    inputSource.SetPlayerNumberAndColor(4);
-                    break;
+                DPadDirection.North when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 1,
+                DPadDirection.East when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 2,
+                DPadDirection.South when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 3,
+                DPadDirection.West when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 4,
+                _ => 0
+            };
+
+            if (playerNumber > 0)
+            {
+                if (!_wasLedExecuted)
+                {
+                    _wasLedExecuted = true;
+                    Task.Run(() =>
+                    {
+                        //i dont know why but without this delay paired
+                        //joycons crash when setting player led
+                        Thread.Sleep(250);
+                        OnCustomActionDetected?.Invoke(new SetPlayerLedAndColorAction
+                        {
+                            InputSource = inputSource, PlayerNumber = playerNumber
+                        });
+                    });
+                }
             }
         }
     }
 
-    private async Task CheckPerformDisconnect(IInputSource inputSource, long currentTicks)
+    private void CheckPerformDisconnect(IInputSource inputSource, long currentTicks)
     {
         var psStart = CustomActionReport.GetValue(CustomActionReport.PSStart);
-        if (psStart > 0 && currentTicks - psStart > 40000000)
+
+        if (psStart == 0)
         {
-            await inputSource.DisconnectControllers();
+            _wasGracefulShutdownExecuted = false;
+        }
+        else if (psStart > 0 && currentTicks - psStart > 40000000)
+        {
+            if (!_wasGracefulShutdownExecuted)
+            {
+                _wasGracefulShutdownExecuted = true;
+                Task.Run(() =>
+                    OnCustomActionDetected?.Invoke(new GracefulShutdownAction { InputSource = inputSource }));
+            }
         }
     }
 }

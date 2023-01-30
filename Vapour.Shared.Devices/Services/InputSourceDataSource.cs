@@ -12,6 +12,16 @@ public class InputSourceDataSource : IInputSourceDataSource
         return InputSources.SingleOrDefault(i => i.InputSourceKey == inputSourceKey);
     }
 
+    public IInputSource GetByDeviceInstanceId(string instanceId)
+    {
+        return InputSources.SingleOrDefault(i => i.GetControllerByInstanceId(instanceId) != null);
+    }
+
+    public IInputSource GetByDeviceParentInstanceId(string instanceId)
+    {
+        return InputSources.SingleOrDefault(i => i.GetControllerByParentInstanceId(instanceId) != null);
+    }
+
     public void FireCreated(IInputSource inputSource)
     {
         InputSourceCreated?.Invoke(inputSource);

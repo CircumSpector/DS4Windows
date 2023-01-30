@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.Services.Reporting;
+﻿using Vapour.Shared.Devices.Services.Reporting.CustomActions;
+
+namespace Vapour.Shared.Devices.Services.Reporting;
 
 /// <summary>
 ///     Handles reading input reports from a compatible input device and dispatches them.
@@ -24,4 +26,5 @@ public interface IInputReportProcessor
     void StopInputReportReader();
 
     void SetInputSource(IInputSource inputSource);
+    event Action<ICustomAction> OnCustomActionDetected;
 }

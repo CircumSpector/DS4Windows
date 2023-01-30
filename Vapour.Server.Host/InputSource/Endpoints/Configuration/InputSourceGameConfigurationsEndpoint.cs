@@ -29,7 +29,7 @@ public class InputSourceGameConfigurationsEndpoint : EndpointWithoutRequest<List
     {
         string inputSourceKey = Route<string>("inputSourceKey");
         List<InputSourceConfiguration> gameList =
-            _inputSourceConfigurationService.GetGameInputSourceConfigurations(inputSourceKey);
+            _inputSourceConfigurationService.GetInputSourceConfigurations(inputSourceKey).Where(c => c.IsGameConfiguration).ToList();
         await SendOkAsync(gameList, ct);
     }
 }

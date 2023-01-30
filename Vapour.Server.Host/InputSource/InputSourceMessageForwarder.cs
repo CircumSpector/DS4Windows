@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
 using Vapour.Server.InputSource;
-using Vapour.Server.InputSource.Configuration;
 using Vapour.Shared.Devices.Services;
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -31,18 +30,18 @@ public sealed class InputSourceMessageForwarder : IInputSourceMessageForwarder
             });
         };
 
-        inputSourceConfigurationService.OnActiveConfigurationChanged += async (o, e) =>
-        {
-            await _hubContext.Clients.All.InputSourceConfigurationChanged(new InputSourceConfigurationChangedMessage
-            {
-                InputSourceKey = e.InputSourceKey, InputSourceConfiguration = e.InputSourceConfiguration
-            });
-        };
+        //inputSourceConfigurationService.OnActiveConfigurationChanged += async (o, e) =>
+        //{
+        //    await _hubContext.Clients.All.InputSourceConfigurationChanged(new InputSourceConfigurationChangedMessage
+        //    {
+        //        InputSourceKey = e.InputSourceKey, InputSourceConfiguration = e.InputSourceConfiguration
+        //    });
+        //};
     }
 
     public InputSourceMessage MapInputSourceCreated(IInputSource inputSource)
     {
-        var controllers = inputSource.GetControllers().Select(c => new InputSourceController
+        var controllers = inputSource.Controllers.Select(c => new InputSourceController
         {
             Description = c.SourceDevice.Description,
             DisplayName = c.CurrentDeviceInfo.Name,

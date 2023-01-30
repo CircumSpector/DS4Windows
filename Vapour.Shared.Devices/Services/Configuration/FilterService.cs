@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Security;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.Nssidswap;
@@ -9,7 +7,6 @@ using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
-using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
@@ -17,59 +14,31 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 public class FilterService : IFilterService
 {
     private readonly IDeviceSettingsService _deviceSettingsService;
-    private readonly IInputSourceDataSource _inputSourceDataSource;
-
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<FilterService> _logger;
-    private readonly IServiceProvider _serviceProvider;
 
-    private bool _existingAutoFixup;
-
-    private FilterDriver _filterDriver;
-
-    private IInputSourceService _inputSourceService;
-    private bool _isInitializing = true;
+    private readonly FilterDriver _filterDriver;
 
     public FilterService(ILogger<FilterService> logger,
-        IInputSourceDataSource inputSourceDataSource,
-        IDeviceSettingsService deviceSettingsService,
-        IServiceProvider serviceProvider)
+        IDeviceSettingsService deviceSettingsService)
     {
         _logger = logger;
-        _inputSourceDataSource = inputSourceDataSource;
         _deviceSettingsService = deviceSettingsService;
-        _serviceProvider = serviceProvider;
-    }
 
-    public async Task Initialize()
-    {
-        try
+        _deviceSettingsService.LoadSettings();
+
+        _filterDriver = new FilterDriver();
+        if (FilterDriver.IsDriverInstalled)
         {
-            if (!FilterDriver.IsDriverInstalled)
-            {
-                _logger.LogWarning(
-                    "The filter driver appears to be missing on this machine, rewrite feature will not be available!");
-            }
-
-            _filterDriver = new FilterDriver();
-
-            if (FilterDriver.IsDriverInstalled)
-            {
-                await SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled ?? true);
-            }
-            else
-            {
-                await SetFilterDriverEnabled(false);
-            }
-
-            _isInitializing = false;
+            SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled ?? true);
         }
-        catch (SecurityException ex)
+        else
         {
-            _logger.LogError(ex, "To use the rewrite feature, the service must be run as Administrator!");
-            throw;
+            SetFilterDriverEnabled(false);
         }
     }
+
+    public event Action<bool> FilterDriverEnabledChanged;
 
     /// <inheritdoc />
     public bool IsFilterDriverInstalled => FilterDriver.IsDriverInstalled;
@@ -78,143 +47,35 @@ public class FilterService : IFilterService
     public bool IsFilterDriverEnabled => _filterDriver.IsEnabled;
 
     /// <inheritdoc />
-    public async Task SetFilterDriverEnabled(bool isEnabled, bool shouldFixupAfter = true)
+    public void SetFilterDriverEnabled(bool isEnabled)
     {
         _filterDriver.IsEnabled = isEnabled;
         _deviceSettingsService.Settings.IsFilteringEnabled = isEnabled;
         _deviceSettingsService.SaveSettings();
 
-        if (!_isInitializing)
-        {
-            DisableAutoFixup();
-            foreach (IInputSource inputSource in _inputSourceDataSource.InputSources)
-            {
-                inputSource.Stop();
-
-                foreach (ICompatibleHidDevice device in inputSource.GetControllers())
-                {
-                    if (!isEnabled)
-                    {
-                        UnfilterController(device.SourceDevice.InstanceId);
-                    }
-                    else if (FilterUnfilterIfNeeded(device, device.CurrentConfiguration.OutputDeviceType))
-                    {
-                        //dont do anything
-                    }
-                    else
-                    {
-                        UsbPnPDevice usbDevice = PnPDevice
-                            .GetDeviceByInstanceId(device.SourceDevice.InstanceId)
-                            .ToUsbPnPDevice();
-
-                        CyclePort(usbDevice);
-                    }
-                }
-            }
-
-            if (shouldFixupAfter)
-            {
-                await Task.Delay(500);
-                await EnableAndRunAutoFixup();
-            }
-        }
-    }
-
-    /// <inheritdoc />
-    public async Task UnfilterAllControllers(bool shouldFixupAfter = true)
-    {
-        DisableAutoFixup();
-        foreach (IInputSource inputSource in _inputSourceDataSource.InputSources)
-        {
-            inputSource.Stop();
-
-            foreach (ICompatibleHidDevice device in inputSource.GetControllers())
-            {
-                if (device.Connection == ConnectionType.Bluetooth && device.CurrentDeviceInfo.IsBtFilterable)
-                {
-                    UnfilterBtController(device, false);
-                }
-                else
-                {
-                    UnfilterController(device.SourceDevice.InstanceId);
-                }
-            }
-        }
-
-        if (shouldFixupAfter)
-        {
-            await EnableAndRunAutoFixup();
-        }
-    }
-
-    /// <inheritdoc />
-    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType,
-        bool shouldRestartBtHost = true)
-    {
-        if (device.Connection == ConnectionType.Bluetooth)
-        {
-            if (!device.CurrentDeviceInfo.IsBtFilterable)
-            {
-                return false;
-            }
-
-            bool neededFilterAction = false;
-
-            if (device.IsFiltered && outputDeviceType == OutputDeviceType.None)
-            {
-                FilterBtController(device, shouldRestartBtHost);
-                neededFilterAction = true;
-            }
-            else if (!device.IsFiltered && outputDeviceType != OutputDeviceType.None)
-            {
-                UnfilterBtController(device, shouldRestartBtHost);
-                neededFilterAction = true;
-            }
-
-            return neededFilterAction;
-        }
-
-        if (IsFilterDriverEnabled)
-        {
-            if (!device.IsFiltered)
-            {
-                if (device.CurrentDeviceInfo.WinUsbEndpoints != null && outputDeviceType != OutputDeviceType.None)
-                {
-                    FilterController(device.SourceDevice.InstanceId);
-                    return true;
-                }
-            }
-            else if (device.IsFiltered && outputDeviceType == OutputDeviceType.None)
-            {
-                UnfilterController(device.SourceDevice.InstanceId);
-                return true;
-            }
-        }
-
-        return false;
+        FilterDriverEnabledChanged?.Invoke(isEnabled);
     }
 
     /// <inheritdoc />
     public async Task<Version> InstallFilterDriver()
     {
         await FilterDriverInstaller.InstallFilterDriverAsync();
-        await SetFilterDriverEnabled(true);
+        SetFilterDriverEnabled(true);
         return FilterDriverInstaller.EmbeddedDriverVersion;
     }
 
     /// <inheritdoc />
     public async Task UninstallFilterDriver()
     {
-        await SetFilterDriverEnabled(false, false);
         await FilterDriverInstaller.UninstallFilterDriverAsync();
-        await EnableAndRunAutoFixup();
+        SetFilterDriverEnabled(false);
     }
 
     /// <summary>
     ///     Filters a particular USB device instance.
     /// </summary>
     /// <param name="instanceId">The instance ID of the device to filter.</param>
-    private void FilterController(string instanceId)
+    public void FilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
 
@@ -248,7 +109,7 @@ public class FilterService : IFilterService
     ///     Reverts filtering a particular USB device instance.
     /// </summary>
     /// <param name="instanceId">The instance ID of the device to revert.</param>
-    private void UnfilterController(string instanceId)
+    public void UnfilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
 
@@ -337,23 +198,5 @@ public class FilterService : IFilterService
         }
 
         return new Tuple<PnPDevice, string>(device, hardwareIds[0]);
-    }
-
-    private void DisableAutoFixup()
-    {
-        EnsureInputSourceService();
-        _existingAutoFixup = _inputSourceService.ShouldAutoFixup;
-        _inputSourceService.ShouldAutoFixup = false;
-    }
-
-    private async Task EnableAndRunAutoFixup()
-    {
-        await _inputSourceService.FixupInputSources();
-        _inputSourceService.ShouldAutoFixup = _existingAutoFixup;
-    }
-
-    private void EnsureInputSourceService()
-    {
-        _inputSourceService ??= _serviceProvider.GetService<IInputSourceService>();
     }
 }

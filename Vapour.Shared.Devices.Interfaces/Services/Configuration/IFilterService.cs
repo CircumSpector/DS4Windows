@@ -1,7 +1,4 @@
-﻿using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.HID;
-
-namespace Vapour.Shared.Devices.Services.Configuration;
+﻿namespace Vapour.Shared.Devices.Services.Configuration;
 
 public interface IFilterService
 {
@@ -21,25 +18,7 @@ public interface IFilterService
     ///     Sets whether or not to enable the filter driver
     /// </summary>
     /// <param name="isEnabled">A bool representing whether or not to enable the filter driver</param>
-    Task SetFilterDriverEnabled(bool isEnabled, bool shouldFixupAfter = true);
-
-    /// <summary>
-    ///     Perform one-time checks and tasks on service start.
-    /// </summary>
-    Task Initialize();
-
-    /// <summary>
-    ///     Revers all controllers to their original state.
-    /// </summary>
-    Task UnfilterAllControllers(bool shouldFixupAfter = true);
-
-    /// <summary>
-    ///     Check if <see cref="ICompatibleHidDevice"/> needs unfiltering and performs it, if necessary.
-    /// </summary>
-    /// <param name="device">The device to unfilter.</param>
-    /// <param name="outputDeviceType">The output device type of the configuration</param>
-    /// <returns>True on success, false otherwise.</returns>
-    bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType, bool autoRestartBtHost = true);
+    void SetFilterDriverEnabled(bool isEnabled);
 
     /// <summary>
     ///     Installs the class filter driver.
@@ -50,4 +29,12 @@ public interface IFilterService
     ///     Uninstalls the class filter driver.
     /// </summary>
     Task UninstallFilterDriver();
+
+    /// <inheritdoc />
+    void FilterController(string instanceId);
+
+    /// <inheritdoc />
+    void UnfilterController(string instanceId);
+
+    event Action<bool> FilterDriverEnabledChanged;
 }

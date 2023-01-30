@@ -63,7 +63,13 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        byte[] reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        byte[] reportData = BuildRumbleReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        SendOutputReport(BuildOutputReport(reportData));
+    }
+
+    public override void SetPlayerLedAndColor()
+    {
+        byte[] reportData = BuildLedData();
         SendOutputReport(BuildOutputReport(reportData));
     }
 
@@ -100,6 +106,23 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         reportData[0] = 0xFF;
         reportData[1] = 0xF7;
 
+        return reportData;
+    }
+
+    private byte[] BuildRumbleReportData(byte strongMotor, byte weakMotor)
+    {
+        byte[] reportData = new byte[47];
+        reportData[0] = 0x03;
+        reportData[2] = weakMotor;
+        reportData[3] = strongMotor;
+
+        return reportData;
+    }
+
+    private byte[] BuildLedData()
+    {
+        byte[] reportData = new byte[47];
+        reportData[1] = 0x16;
         reportData[42] = 0x02; //player led brightness
 
         byte playerLed = CurrentConfiguration.PlayerNumber switch
@@ -120,16 +143,6 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             reportData[45] = rgb.G;
             reportData[46] = rgb.B;
         }
-
-        return reportData;
-    }
-
-    private byte[] BuildRumbeReportData(byte strongMotor, byte weakMotor)
-    {
-        byte[] reportData = new byte[47];
-        reportData[0] = 0x03;
-        reportData[2] = weakMotor;
-        reportData[3] = strongMotor;
 
         return reportData;
     }
