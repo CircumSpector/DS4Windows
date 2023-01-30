@@ -257,13 +257,9 @@ internal sealed class InputSourceService : IInputSourceService
         for (var i = 0; i < _inputSourceDataSource.InputSources.Count; i++)
         {
             var inputSource = _inputSourceDataSource.InputSources[i];
-            inputSource.SetPlayerNumberAndColor(i + 1);
-
             inputSource.Start();
+            inputSource.SetPlayerNumberAndColor(i + 1);
             _inputSourceDataSource.FireCreated(inputSource);
-            
-            //need some time in between each input source start
-            Thread.Sleep(500);
         }
     }
     
