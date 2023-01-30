@@ -11,6 +11,10 @@ public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
     {
     }
 
+    public override InputSourceReport InputSourceReport { get; }
+
+    protected override Type InputDeviceType => typeof(SwitchProDeviceInfo);
+
     protected override void OnInitialize()
     {
     }
@@ -19,8 +23,4 @@ public sealed class SwitchProCompatibleHidDevice : CompatibleHidDevice
     {
         throw new NotImplementedException();
     }
-
-    public override InputSourceReport InputSourceReport { get; }
-
-    protected override Type InputDeviceType => typeof(SwitchProDeviceInfo);
 }

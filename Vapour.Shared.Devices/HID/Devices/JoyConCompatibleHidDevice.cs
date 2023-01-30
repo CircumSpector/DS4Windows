@@ -9,6 +9,7 @@ using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 {
     private const int SubCommandHeaderLength = 8;
@@ -16,7 +17,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     private const int SpiDataOffset = 20;
 
-    private static readonly byte[] _subCommandHeader = { 0x0, 0x1, 0x40, 0x40, 0x0, 0x1, 0x40, 0x40 };
+    private static readonly byte[] SubCommandHeader = { 0x0, 0x1, 0x40, 0x40, 0x0, 0x1, 0x40, 0x40 };
 
     private readonly JoyConCompatibleInputReport _report = new();
 
@@ -111,7 +112,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     private ReadOnlySpan<byte> SubCommand(byte subCommand, byte[] data)
     {
         byte[] commandData = new byte[SubCommandLength];
-        Array.Copy(_subCommandHeader, 0, commandData, 2, SubCommandHeaderLength);
+        Array.Copy(SubCommandHeader, 0, commandData, 2, SubCommandHeaderLength);
         Array.Copy(data, 0, commandData, 11, data.Length);
 
         commandData[0] = 0x01;
@@ -119,12 +120,12 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         _commandCount = (byte)(++_commandCount & 0x0F);
         commandData[10] = subCommand;
 
-        Logger.LogInformation("JoyCon Serial {0} sending subCommand {1}", SerialString, subCommand);
+        Logger.LogInformation("JoyCon Serial {Serial} sending subCommand {SubCommand}", SerialString, subCommand);
         _lastSubCommandCodeSent = subCommand;
         SendOutputReport(commandData);
 
         bool received = _sendSubCommandWait.Wait(2000);
-        Logger.LogInformation("JoyCon serial {0} {1} subCommand {2}", SerialString,
+        Logger.LogInformation("JoyCon serial {Serial} {Received} subCommand {SubCommand}", SerialString,
             received ? "received" : "did not receive",
             subCommand);
 

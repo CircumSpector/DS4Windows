@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 
 using Microsoft.Extensions.Logging;
 
@@ -78,13 +79,13 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                         if (c.GameInfo.GameSource == GameSource.UWP &&
                             ((e.CommandLine.StartsWith("\"") &&
                               e.CommandLine.Contains(c.GameInfo.GameId)) ||
-                             imagePath.Contains($"WindowsApps\\{c.GameInfo.GameId}")))
+                             imagePath!.Contains($"WindowsApps\\{c.GameInfo.GameId}")))
                         {
                             return true;
                         }
 
                         return c.GameInfo.GameSource != GameSource.UWP &&
-                               imagePath.ToLower().StartsWith(c.GameInfo.GameId.ToLower());
+                               imagePath!.ToLower().StartsWith(c.GameInfo.GameId.ToLower());
                     });
 
                 if (gameConfiguration == null)
@@ -124,7 +125,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
             return;
         }
 
-        var existingFixup = _inputSourceService.ShouldFixupOnConfigChange;
+        bool existingFixup = _inputSourceService.ShouldFixupOnConfigChange;
         _inputSourceService.ShouldFixupOnConfigChange = false;
         foreach (IInputSource inputSource in inputSources)
         {
@@ -140,7 +141,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
                     gameConfiguration);
             }
         }
-        
+
         await _inputSourceService.FixupInputSources();
         _inputSourceService.ShouldFixupOnConfigChange = existingFixup;
     }
@@ -167,7 +168,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         }
 
         _currentWatch = null;
-        var existingFixup = _inputSourceService.ShouldFixupOnConfigChange;
+        bool existingFixup = _inputSourceService.ShouldFixupOnConfigChange;
         _inputSourceService.ShouldFixupOnConfigChange = false;
         foreach (IInputSource inputSource in _inputSourceDataSource.InputSources.ToList())
         {
@@ -178,6 +179,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         _inputSourceService.ShouldFixupOnConfigChange = existingFixup;
     }
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     private class ProcessorWatchItem
     {
         public GameSource GameSource { get; set; }

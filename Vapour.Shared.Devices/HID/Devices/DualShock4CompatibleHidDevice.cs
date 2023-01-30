@@ -13,9 +13,8 @@ namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 {
-    private static readonly PhysicalAddress BlankSerial = PhysicalAddress.Parse("00:00:00:00:00:00");
-
     private const byte SerialFeatureId = 18;
+    private static readonly PhysicalAddress BlankSerial = PhysicalAddress.Parse("00:00:00:00:00:00");
 
     private int _reportStartOffset;
 
@@ -23,6 +22,10 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         : base(logger, deviceInfos)
     {
     }
+
+    public override InputSourceReport InputSourceReport { get; } = new DualShock4CompatibleInputReport();
+
+    protected override Type InputDeviceType => typeof(DualShock4DeviceInfo);
 
     protected override void OnInitialize()
     {
@@ -50,19 +53,15 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
     }
 
-    public override InputSourceReport InputSourceReport { get; } = new DualShock4CompatibleInputReport();
-
-    protected override Type InputDeviceType => typeof(DualShock4DeviceInfo);
-
     public override void OnAfterStartListening()
     {
-        var reportData = BuildConfigurationReportData();
+        byte[] reportData = BuildConfigurationReportData();
         SendOutputReport(BuildOutputReport(reportData));
     }
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        var reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
+        byte[] reportData = BuildRumbeReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
         SendOutputReport(BuildOutputReport(reportData));
     }
 
@@ -82,7 +81,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
             {
                 return;
             }
-            
+
             // controller connected, refresh serial
             if (Equals(Serial, BlankSerial))
             {
@@ -95,7 +94,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     private byte[] BuildOutputReport(byte[] reportData)
     {
-        var outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
+        byte[] outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
         if (Connection == ConnectionType.Usb)
         {
             outputReportPacket[0] = 0x05;
@@ -108,7 +107,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
             outputReportPacket[2] = 0xA0;
             Array.Copy(reportData, 0, outputReportPacket, 3, reportData.Length);
             uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, outputReportPacket.Length - 4);
-            var checksumBytes = BitConverter.GetBytes(crc);
+            byte[] checksumBytes = BitConverter.GetBytes(crc);
             Array.Copy(checksumBytes, 0, outputReportPacket, outputReportPacket.Length - 4, 4);
         }
 
@@ -117,14 +116,14 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     private byte[] BuildConfigurationReportData()
     {
-        var reportData = new byte[10];
+        byte[] reportData = new byte[10];
 
         reportData[0] = 0xF7;
         reportData[1] = 0x04;
 
         if (CurrentConfiguration.LoadedLightbar != null)
         {
-            var rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
+            Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
             reportData[5] = rgb.R;
             reportData[6] = rgb.G;
             reportData[7] = rgb.B;
@@ -137,7 +136,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     private byte[] BuildRumbeReportData(byte strongMotor, byte weakMotor)
     {
-        var reportData = new byte[47];
+        byte[] reportData = new byte[47];
         reportData[0] = 0x01;
         reportData[2] = weakMotor;
         reportData[3] = strongMotor;

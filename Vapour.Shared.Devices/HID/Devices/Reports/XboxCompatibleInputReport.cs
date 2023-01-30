@@ -1,15 +1,17 @@
 ﻿using System.Runtime.InteropServices;
+
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.Xbox;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
+
 public class XboxCompatibleInputReport : InputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        var buttons = (XboxButtons)MemoryMarshal.Read<ushort>(input.Slice(11, 2));
+        XboxButtons buttons = (XboxButtons)MemoryMarshal.Read<ushort>(input.Slice(11, 2));
 
         Triangle = buttons.HasFlag(XboxButtons.Y);
         Circle = buttons.HasFlag(XboxButtons.B);

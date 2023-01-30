@@ -17,15 +17,17 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 public class FilterService : IFilterService
 {
     private readonly IDeviceSettingsService _deviceSettingsService;
-    private readonly IServiceProvider _serviceProvider;
     private readonly IInputSourceDataSource _inputSourceDataSource;
-
-    private IInputSourceService _inputSourceService;
 
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<FilterService> _logger;
+    private readonly IServiceProvider _serviceProvider;
+
+    private bool _existingAutoFixup;
 
     private FilterDriver _filterDriver;
+
+    private IInputSourceService _inputSourceService;
     private bool _isInitializing = true;
 
     public FilterService(ILogger<FilterService> logger,
@@ -50,6 +52,7 @@ public class FilterService : IFilterService
             }
 
             _filterDriver = new FilterDriver();
+
             if (FilterDriver.IsDriverInstalled)
             {
                 await SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled ?? true);
@@ -84,11 +87,11 @@ public class FilterService : IFilterService
         if (!_isInitializing)
         {
             DisableAutoFixup();
-            foreach (var inputSource in _inputSourceDataSource.InputSources)
+            foreach (IInputSource inputSource in _inputSourceDataSource.InputSources)
             {
                 inputSource.Stop();
 
-                foreach (var device in inputSource.GetControllers())
+                foreach (ICompatibleHidDevice device in inputSource.GetControllers())
                 {
                     if (!isEnabled)
                     {
@@ -121,11 +124,11 @@ public class FilterService : IFilterService
     public async Task UnfilterAllControllers(bool shouldFixupAfter = true)
     {
         DisableAutoFixup();
-        foreach (var inputSource in _inputSourceDataSource.InputSources)
+        foreach (IInputSource inputSource in _inputSourceDataSource.InputSources)
         {
             inputSource.Stop();
 
-            foreach (var device in inputSource.GetControllers())
+            foreach (ICompatibleHidDevice device in inputSource.GetControllers())
             {
                 if (device.Connection == ConnectionType.Bluetooth && device.CurrentDeviceInfo.IsBtFilterable)
                 {
@@ -145,8 +148,9 @@ public class FilterService : IFilterService
     }
 
     /// <inheritdoc />
-    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType, bool shouldRestartBtHost = true)
-    { 
+    public bool FilterUnfilterIfNeeded(ICompatibleHidDevice device, OutputDeviceType outputDeviceType,
+        bool shouldRestartBtHost = true)
+    {
         if (device.Connection == ConnectionType.Bluetooth)
         {
             if (!device.CurrentDeviceInfo.IsBtFilterable)
@@ -154,7 +158,8 @@ public class FilterService : IFilterService
                 return false;
             }
 
-            var neededFilterAction = false;
+            bool neededFilterAction = false;
+
             if (device.IsFiltered && outputDeviceType == OutputDeviceType.None)
             {
                 FilterBtController(device, shouldRestartBtHost);
@@ -168,7 +173,7 @@ public class FilterService : IFilterService
 
             return neededFilterAction;
         }
-        
+
         if (IsFilterDriverEnabled)
         {
             if (!device.IsFiltered)
@@ -205,7 +210,10 @@ public class FilterService : IFilterService
         await EnableAndRunAutoFixup();
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Filters a particular USB device instance.
+    /// </summary>
+    /// <param name="instanceId">The instance ID of the device to filter.</param>
     private void FilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
@@ -236,7 +244,10 @@ public class FilterService : IFilterService
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Reverts filtering a particular USB device instance.
+    /// </summary>
+    /// <param name="instanceId">The instance ID of the device to revert.</param>
     private void UnfilterController(string instanceId)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
@@ -315,7 +326,9 @@ public class FilterService : IFilterService
     private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
     {
         PnPDevice device = PnPDevice.GetDeviceByInstanceId(instanceId);
+
         string[] hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
+
         if (hardwareIds[0].StartsWith("HID"))
         {
             string parentInputDeviceId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
@@ -325,8 +338,6 @@ public class FilterService : IFilterService
 
         return new Tuple<PnPDevice, string>(device, hardwareIds[0]);
     }
-
-    private bool _existingAutoFixup;
 
     private void DisableAutoFixup()
     {
@@ -343,9 +354,6 @@ public class FilterService : IFilterService
 
     private void EnsureInputSourceService()
     {
-        if (_inputSourceService == null)
-        {
-            _inputSourceService = _serviceProvider.GetService<IInputSourceService>();
-        }
+        _inputSourceService ??= _serviceProvider.GetService<IInputSourceService>();
     }
 }
