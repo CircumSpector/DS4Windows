@@ -7,17 +7,21 @@ using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
-using Vapour.Shared.Devices.HID;
-
 namespace Vapour.Shared.Devices.Services.Configuration;
 
-public class FilterService : IFilterService
+public sealed class FilterServiceException : Exception
+{
+    internal FilterServiceException(string message) : base(message) { }
+}
+
+public partial class FilterService : IFilterService
 {
     private readonly IDeviceSettingsService _deviceSettingsService;
-    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly ILogger<FilterService> _logger;
 
     private readonly FilterDriver _filterDriver;
+
+    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+    private readonly ILogger<FilterService> _logger;
 
     public FilterService(ILogger<FilterService> logger,
         IDeviceSettingsService deviceSettingsService)
@@ -140,24 +144,6 @@ public class FilterService : IFilterService
         }
     }
 
-    private void FilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
-    {
-        //do sdp stuff
-        if (shouldRestartBtHost)
-        {
-            //restart bt host
-        }
-    }
-
-    private void UnfilterBtController(ICompatibleHidDevice device, bool shouldRestartBtHost)
-    {
-        //do sdp stuff
-        if (shouldRestartBtHost)
-        {
-            //restart bt host
-        }
-    }
-
     /// <summary>
     ///     Power-cycles the port the given device is attached to.
     /// </summary>
@@ -190,13 +176,13 @@ public class FilterService : IFilterService
 
         string[] hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
 
-        if (hardwareIds[0].StartsWith("HID"))
+        if (hardwareIds.First().StartsWith("HID"))
         {
             string parentInputDeviceId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
             device = PnPDevice.GetDeviceByInstanceId(parentInputDeviceId);
             hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
         }
 
-        return new Tuple<PnPDevice, string>(device, hardwareIds[0]);
+        return new Tuple<PnPDevice, string>(device, hardwareIds.First());
     }
 }
