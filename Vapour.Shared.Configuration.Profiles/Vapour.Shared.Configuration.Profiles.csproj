@@ -4,6 +4,12 @@
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
+	
+	<ItemGroup>
+	  <Compile Remove="Types\**" />
+	  <EmbeddedResource Remove="Types\**" />
+	  <None Remove="Types\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FastDeepCloner" Version="1.3.6" />
@@ -29,10 +35,6 @@
 		<ProjectReference Include="..\Vapour.Shared.Common.Utils\Vapour.Shared.Common.Util.csproj" />
 		<ProjectReference Include="..\Vapour.Shared.Configuration.Profiles.Interfaces\Vapour.Shared.Configuration.Profiles.Interfaces.csproj" />
 		<ProjectReference Include="..\Vapour.Shared.Devices.Interfaces\Vapour.Shared.Devices.Interfaces.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Types\" />
 	</ItemGroup>
 
 </Project>
