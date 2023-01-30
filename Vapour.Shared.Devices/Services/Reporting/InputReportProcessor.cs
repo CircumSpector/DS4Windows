@@ -5,7 +5,6 @@ using System.Threading.Channels;
 
 using Windows.Win32.Foundation;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.WinUSB;

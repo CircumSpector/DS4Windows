@@ -1,7 +1,4 @@
-﻿using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.HID;
-
-namespace Vapour.Shared.Devices.Services.Configuration;
+﻿namespace Vapour.Shared.Devices.Services.Configuration;
 
 public interface IFilterService
 {

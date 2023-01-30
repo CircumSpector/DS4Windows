@@ -9,4 +9,5 @@ public interface IInputSourceDataSource
     void FireCreated(IInputSource inputSource);
     void FireRemoved(IInputSource inputSource);
     IInputSource GetByDeviceInstanceId(string instanceId);
+    IInputSource GetByDeviceParentInstanceId(string instanceId);
 }

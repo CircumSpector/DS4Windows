@@ -22,5 +22,6 @@ public interface IInputSource
     void Stop();
     Task DisconnectControllers();
     ICompatibleHidDevice GetControllerByInstanceId(string instanceId);
+    ICompatibleHidDevice GetControllerByParentInstanceId(string instanceId);
     void LoadInputSourceConfiguration();
 }

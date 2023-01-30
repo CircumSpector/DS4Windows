@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
 using Vapour.Server.InputSource;
-using Vapour.Server.InputSource.Configuration;
 using Vapour.Shared.Devices.Services;
 using Vapour.Shared.Devices.Services.Configuration;
 

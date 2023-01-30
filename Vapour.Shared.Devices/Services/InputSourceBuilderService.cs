@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Vapour.Shared.Devices.HID.DeviceInfos;
+﻿using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -112,8 +106,7 @@ public class InputSourceBuilderService : IInputSourceBuilderService
                 where controller != null && controller.CurrentDeviceInfo.GetType() == deviceInfoType
                 select inputSource).ToList();
     }
-
-
+    
     private void CreateInputSource(List<ICompatibleHidDevice> controllersToProcess, List<string> controllersProcessed, List<ICompatibleHidDevice> controllers, List<IInputSource> resultList, InputSourceConfiguration configuration = null)
     {
         configuration ??= HackGetConfiguration(controllersToProcess);

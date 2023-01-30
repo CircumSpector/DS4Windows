@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Security;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.Nssidswap;
@@ -9,7 +7,6 @@ using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
-using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
@@ -17,21 +14,16 @@ namespace Vapour.Shared.Devices.Services.Configuration;
 public class FilterService : IFilterService
 {
     private readonly IDeviceSettingsService _deviceSettingsService;
-    private readonly IServiceProvider _serviceProvider;
-
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<FilterService> _logger;
-    private readonly IServiceProvider _serviceProvider;
 
     private readonly FilterDriver _filterDriver;
 
     public FilterService(ILogger<FilterService> logger,
-        IDeviceSettingsService deviceSettingsService,
-        IServiceProvider serviceProvider)
+        IDeviceSettingsService deviceSettingsService)
     {
         _logger = logger;
         _deviceSettingsService = deviceSettingsService;
-        _serviceProvider = serviceProvider;
 
         _deviceSettingsService.LoadSettings();
 

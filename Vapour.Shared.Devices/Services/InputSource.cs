@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.Reporting;
@@ -43,7 +42,7 @@ internal class InputSource : IInputSource
 
         foreach (var device in Controllers)
         {
-            device.Initialize();
+            device.SourceDevice.OpenDevice();
         }
 
         _inputSourceProcessor = _serviceProvider.GetService<IInputSourceProcessor>();
@@ -62,11 +61,6 @@ internal class InputSource : IInputSource
         _inputSourceProcessor.OnOutputDeviceReportReceived -= OnOutputDeviceReportReceived;
         _inputSourceProcessor.Dispose();
         _inputSourceProcessor = null;
-
-        foreach (var device in Controllers)
-        {
-            device.Close();
-        }
     }
 
     public void LoadInputSourceConfiguration()
@@ -80,8 +74,9 @@ internal class InputSource : IInputSource
             string currentGameRunning = _inputSourceConfigurationService.GetCurrentGameRunning();
 
             if (!string.IsNullOrWhiteSpace(currentGameRunning))
-            {InputSourceConfiguration gameConfiguration =
-                    configurations.SingleOrDefault(c => c.GameInfo.GameId == currentGameRunning);
+            {
+                InputSourceConfiguration gameConfiguration =
+                    configurations.SingleOrDefault(c => c.IsGameConfiguration && c.GameInfo.GameId == currentGameRunning);
 
                 if (gameConfiguration != null)
                 {
@@ -237,6 +232,11 @@ internal class InputSource : IInputSource
     public ICompatibleHidDevice GetControllerByInstanceId(string instanceId)
     {
         return Controllers.SingleOrDefault(c => c.SourceDevice.InstanceId.ToLower() == instanceId.ToLower());
+    }
+
+    public ICompatibleHidDevice GetControllerByParentInstanceId(string instanceId)
+    {
+        return Controllers.SingleOrDefault(c => c.SourceDevice.ParentInstance.ToLower() == instanceId.ToLower());
     }
 
     private void ReorderControllers()

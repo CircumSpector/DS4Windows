@@ -4,7 +4,6 @@ using Vapour.Shared.Common.Services;
 using Vapour.Shared.Configuration.Profiles.Services;
 using Vapour.Shared.Devices.Services;
 using Vapour.Shared.Devices.Services.Configuration;
-using Vapour.Shared.Devices.Services.ControllerEnumerators;
 
 namespace Vapour.Shared.Devices.HostedServices;
 

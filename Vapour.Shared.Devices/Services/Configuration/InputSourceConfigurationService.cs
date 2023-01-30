@@ -92,17 +92,20 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
             inputSourceConfiguration = GetDefaultInputSourceConfiguration(inputSourceKey, true);
             inputSourceConfiguration.GameInfo = gameInfo;
         }
-
-        var gameConfigurations = GetGameInputSourceConfigurations(inputSourceKey);
-
-        InputSourceConfiguration existing =
-            gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == inputSourceConfiguration.GameInfo.GameId);
-        if (existing != null)
+        else
         {
-            gameConfigurations.Remove(existing);
-        }
+            var gameConfigurations = !_inputSourceGameConfigurations.ContainsKey(inputSourceKey) ? new List<InputSourceConfiguration>() : _inputSourceGameConfigurations[inputSourceKey];
+            
+            var existing =
+                gameConfigurations.SingleOrDefault(c => c.GameInfo.GameId == inputSourceConfiguration.GameInfo.GameId);
+            if (existing != null)
+            {
+                gameConfigurations.Remove(existing);
+            }
 
-        gameConfigurations.Add(inputSourceConfiguration);
+            inputSourceConfiguration.GameInfo = gameInfo;
+            gameConfigurations.Add(inputSourceConfiguration);
+        }
 
         SaveInputSourceGameConfigurations();
     }
@@ -210,7 +213,8 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
 
     private void SaveInputSourceGameConfigurations()
     {
-        string data = JsonSerializer.Serialize(_inputSourceGameConfigurations);
+        string data = JsonSerializer.Serialize(_inputSourceGameConfigurations,
+            new JsonSerializerOptions { WriteIndented = true });
         if (File.Exists(_globalStateService.LocalInputSourceGameConfigurationsLocation))
         {
             File.Delete(_globalStateService.LocalInputSourceGameConfigurationsLocation);
@@ -289,6 +293,7 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
                      c.Value.ProfileId == oldProfileId).Select(c => c.Value))
         {
             isItem.ProfileId = newProfileId;
+            isItem.Profile = _profilesService.AvailableProfiles[newProfileId];
         }
 
         SaveInputSourceConfigurations();
@@ -297,6 +302,7 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
                      c.ProfileId == oldProfileId))
         {
             isItem.ProfileId = newProfileId;
+            isItem.Profile = _profilesService.AvailableProfiles[newProfileId];
         }
 
         SaveInputSourceGameConfigurations();

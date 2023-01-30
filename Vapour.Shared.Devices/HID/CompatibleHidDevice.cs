@@ -121,7 +121,7 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
 
     public void Close()
     {
-        SourceDevice.CloseDevice();
+        SourceDevice?.CloseDevice();
     }
 
     public async Task<byte[]> ReadOutputReport(CancellationToken cancellationToken)
