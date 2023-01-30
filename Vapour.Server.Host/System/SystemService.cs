@@ -3,24 +3,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Vapour.Server.System;
 using Vapour.Shared.Devices.HostedServices;
-using Vapour.Shared.Devices.Services.ControllerEnumerators;
+using Vapour.Shared.Devices.Services;
 
 namespace Vapour.Server.Host.System;
 public class SystemService
 {
     private readonly SystemManagerHost _systemManagerHost;
+    private readonly IInputSourceService _inputSourceService;
     private readonly ISystemMessageForwarder _systemMessageForwarder;
-    private readonly IControllersEnumeratorService _controllersEnumeratorService;
 
     public SystemService(
         ISystemMessageForwarder systemMessageForwarder,
-        IControllersEnumeratorService controllersEnumeratorService,
-        SystemManagerHost systemManagerHost)
+        SystemManagerHost systemManagerHost,
+        IInputSourceService inputSourceService)
     {
         _systemMessageForwarder = systemMessageForwarder;
-        _controllersEnumeratorService = controllersEnumeratorService;
         _systemManagerHost = systemManagerHost;
-        _controllersEnumeratorService.DeviceListReady += ControllersEnumeratorService_DeviceListReady;
+        _inputSourceService = inputSourceService;
+        inputSourceService.InputSourceListReady += InputSourceService_InputSourceListReady;
         _systemManagerHost.RunningChanged += SystemManagerHostRunningChanged;
     }
 
@@ -38,7 +38,7 @@ public class SystemService
         await _systemMessageForwarder.SendIsHostRunning(e);
     }
 
-    private void ControllersEnumeratorService_DeviceListReady()
+    private void InputSourceService_InputSourceListReady()
     {
         IsReady = true;
     }

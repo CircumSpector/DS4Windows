@@ -66,7 +66,7 @@ public interface ICompatibleHidDevice : IDisposable
     /// <summary>
     ///     Performs post-device-creation initialization tasks.
     /// </summary>
-    void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo);
+    void Initialize();
 
     /// <summary>
     ///     Performs tasks to tear down this device.
@@ -91,4 +91,6 @@ public interface ICompatibleHidDevice : IDisposable
 
     void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport);
     Task DisconnectBTController();
+    void Setup(IHidDevice hidDevice, DeviceInfo deviceInfo);
+    void Close();
 }

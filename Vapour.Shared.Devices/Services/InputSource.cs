@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.Reporting;
@@ -14,34 +15,39 @@ namespace Vapour.Shared.Devices.Services;
 internal class InputSource : IInputSource
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private byte[] _allReportBytes;
-    private Dictionary<ICompatibleHidDevice, byte[]> _controllers = new();
+    private readonly Dictionary<ICompatibleHidDevice, byte[]> _controllerInputReportData = new();
     private InputSourceFinalReport _finalReport = new();
     private IInputSourceProcessor _inputSourceProcessor;
-    private IInputSourceService _inputSourceService;
 
-    public InputSource(IServiceProvider serviceProvider)
+    public InputSource(IServiceProvider serviceProvider,
+        IInputSourceConfigurationService inputSourceConfigurationService)
     {
         _serviceProvider = serviceProvider;
+        _inputSourceConfigurationService = inputSourceConfigurationService;
     }
 
     public event EventHandler<InputSourceConfiguration> ConfigurationChanged;
     public InputSourceConfiguration Configuration { get; private set; }
 
     public string InputSourceKey { get; private set; }
+    public List<ICompatibleHidDevice> Controllers { get; private set; } = new();
 
-    public void Start(IInputSourceService inputSourceService)
+    public void Start()
     {
         if (_inputSourceProcessor != null)
         {
             return;
         }
 
-        _inputSourceService = inputSourceService;
+        foreach (var device in Controllers)
+        {
+            device.Initialize();
+        }
 
         _inputSourceProcessor = _serviceProvider.GetService<IInputSourceProcessor>();
         _inputSourceProcessor.OnOutputDeviceReportReceived += OnOutputDeviceReportReceived;
-        // ReSharper disable once PossibleNullReferenceException
         _inputSourceProcessor.Start(this);
         OnAfterStartListening();
     }
@@ -56,27 +62,56 @@ internal class InputSource : IInputSource
         _inputSourceProcessor.OnOutputDeviceReportReceived -= OnOutputDeviceReportReceived;
         _inputSourceProcessor.Dispose();
         _inputSourceProcessor = null;
+
+        foreach (var device in Controllers)
+        {
+            device.Close();
+        }
     }
 
-    public void SetConfiguration(InputSourceConfiguration configuration)
+    public void LoadInputSourceConfiguration()
+    {
+        SetInputSourceKey();
+
+        var configurations = _inputSourceConfigurationService.GetInputSourceConfigurations(InputSourceKey);
+
+        if (_inputSourceConfigurationService.GetCurrentGameRunning != null)
+        {
+            string currentGameRunning = _inputSourceConfigurationService.GetCurrentGameRunning();
+
+            if (!string.IsNullOrWhiteSpace(currentGameRunning))
+            {InputSourceConfiguration gameConfiguration =
+                    configurations.SingleOrDefault(c => c.GameInfo.GameId == currentGameRunning);
+
+                if (gameConfiguration != null)
+                {
+                    SetConfiguration(gameConfiguration);
+                    return;
+                }
+            }
+        }
+
+        SetConfiguration(configurations.Single(c => !c.IsGameConfiguration));
+    }
+
+    private void SetConfiguration(InputSourceConfiguration configuration)
     {
         Configuration = configuration;
 
-        foreach ((ICompatibleHidDevice device, _) in _controllers)
+        foreach (var device in Controllers)
         {
             device.SetConfiguration(Configuration);
         }
 
         ReorderControllers();
         SetFinalReport();
-        SetInputSourceKey();
         ConfigurationChanged?.Invoke(this, configuration);
     }
 
     public InputSourceFinalReport ProcessInputReport(ReadOnlySpan<byte> buffers)
     {
         int previousLength = 0;
-        foreach (KeyValuePair<ICompatibleHidDevice, byte[]> controller in _controllers)
+        foreach (KeyValuePair<ICompatibleHidDevice, byte[]> controller in _controllerInputReportData)
         {
             ReadOnlySpan<byte> bytes = buffers.Slice(previousLength, controller.Value.Length);
             controller.Key.ProcessInputReport(bytes);
@@ -117,7 +152,7 @@ internal class InputSource : IInputSource
     public byte[] ReadInputReport()
     {
         int previousLength = 0;
-        foreach ((ICompatibleHidDevice device, byte[] reportBuffer) in _controllers)
+        foreach ((ICompatibleHidDevice device, byte[] reportBuffer) in _controllerInputReportData)
         {
             device.ReadInputReport(reportBuffer);
 
@@ -130,23 +165,19 @@ internal class InputSource : IInputSource
 
     public void OnAfterStartListening()
     {
-        foreach ((ICompatibleHidDevice device, _) in _controllers)
+        foreach (var device in Controllers)
         {
             device.OnAfterStartListening();
         }
     }
 
-    public List<ICompatibleHidDevice> GetControllers()
-    {
-        return _controllers.Keys.ToList();
-    }
-
     public void AddController(ICompatibleHidDevice controller)
     {
-        if (_controllers.Keys.All(c => c.DeviceKey != controller.DeviceKey))
+        if (Controllers.All(c => c.DeviceKey != controller.DeviceKey))
         {
             byte[] reportBuffer = new byte[controller.SourceDevice.InputReportByteLength];
-            _controllers.Add(controller, reportBuffer);
+            Controllers.Add(controller);
+            _controllerInputReportData.Add(controller, reportBuffer);
             ReorderControllers();
             SetAllReportBytes();
             SetInputSourceKey();
@@ -155,15 +186,15 @@ internal class InputSource : IInputSource
 
     public void RemoveController(string instanceId)
     {
-        ICompatibleHidDevice existing =
-            _controllers.Keys.SingleOrDefault(c => c.SourceDevice.InstanceId.ToLower() == instanceId.ToLower());
+        var existing =
+            Controllers.SingleOrDefault(c => c.SourceDevice.InstanceId.ToLower() == instanceId.ToLower());
 
         if (existing == null)
         {
             return;
         }
 
-        _controllers.Remove(existing);
+        Controllers.Remove(existing);
         ReorderControllers();
         SetAllReportBytes();
         SetInputSourceKey();
@@ -183,7 +214,7 @@ internal class InputSource : IInputSource
             };
         }
 
-        foreach ((ICompatibleHidDevice device, _) in _controllers)
+        foreach (var device in Controllers)
         {
             device.OnAfterStartListening();
         }
@@ -191,28 +222,28 @@ internal class InputSource : IInputSource
 
     public async Task DisconnectControllers()
     {
-        var controllers = GetControllers().Where(c => c.Connection == ConnectionType.Bluetooth).ToList();
+        var controllers = Controllers.Where(c => c.Connection == ConnectionType.Bluetooth).ToList();
         if (controllers.Any())
         {
             Stop();
-            var existingAutoFixup = _inputSourceService.ShouldAutoFixup;
-            _inputSourceService.ShouldAutoFixup = false;
 
             foreach (var device in controllers)
             {
                 await device.DisconnectBTController();
             }
-
-            await _inputSourceService.FixupInputSources();
-            _inputSourceService.ShouldAutoFixup = existingAutoFixup;
         }
+    }
+
+    public ICompatibleHidDevice GetControllerByInstanceId(string instanceId)
+    {
+        return Controllers.SingleOrDefault(c => c.SourceDevice.InstanceId.ToLower() == instanceId.ToLower());
     }
 
     private void ReorderControllers()
     {
         if (Configuration != null)
         {
-            foreach ((ICompatibleHidDevice device, _) in _controllers)
+            foreach (var device in Controllers)
             {
                 int? configurationIndex = Configuration.Controllers
                     .SingleOrDefault(c => c.DeviceKey == device.DeviceKey)?.Index;
@@ -220,33 +251,33 @@ internal class InputSource : IInputSource
             }
         }
 
-        _controllers = _controllers.OrderBy(c => c.Key.Index).ToDictionary(i => i.Key, v => v.Value);
+        Controllers = Controllers.OrderBy(c => c.Index).ToList();
     }
 
     private void SetInputSourceKey()
     {
-        InputSourceKey = string.Join("::::", _controllers.Keys.OrderBy(c => c.Index).Select(c => c.DeviceKey));
+        InputSourceKey = string.Join(InputSourceConfigurationService.MultiControllerKeySeparator, Controllers.OrderBy(c => c.Index).Select(c => c.DeviceKey));
     }
 
     private void SetAllReportBytes()
     {
-        _allReportBytes = new byte[_controllers.Values.Select(b => b.Length).Sum()];
+        _allReportBytes = new byte[_controllerInputReportData.Values.Select(b => b.Length).Sum()];
     }
 
     private void SetFinalReport()
     {
         InputSourceFinalReport finalReport = new();
-        if (_controllers.Keys.Count == 1)
+        if (Controllers.Count == 1)
         {
-            ICompatibleHidDevice controller = _controllers.Keys.Single();
+            ICompatibleHidDevice controller = Controllers.Single();
             finalReport.LThumbAxisScaleInputType = controller.InputSourceReport.AxisScaleInputType;
             finalReport.RThumbAxisScaleInputType = controller.InputSourceReport.AxisScaleInputType;
         }
         else
         {
-            ICompatibleHidDevice leftController = _controllers.Keys.Single(c =>
+            ICompatibleHidDevice leftController = Controllers.Single(c =>
                 c.MultiControllerConfigurationType == MultiControllerConfigurationType.Left);
-            ICompatibleHidDevice rightController = _controllers.Keys.Single(c =>
+            ICompatibleHidDevice rightController = Controllers.Single(c =>
                 c.MultiControllerConfigurationType == MultiControllerConfigurationType.Right);
             finalReport.LThumbAxisScaleInputType = leftController.InputSourceReport.AxisScaleInputType;
             finalReport.RThumbAxisScaleInputType = rightController.InputSourceReport.AxisScaleInputType;
@@ -257,7 +288,7 @@ internal class InputSource : IInputSource
 
     private void OnOutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        foreach ((ICompatibleHidDevice device, _) in _controllers)
+        foreach (var device in Controllers)
         {
             device.OutputDeviceReportReceived(outputDeviceReport);
         }

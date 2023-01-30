@@ -28,8 +28,8 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddSingleton<IHidHideControlService, HidHideControlService>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDevice>, HidDeviceEnumeratorService>();
         services.AddSingleton<IHidDeviceEnumeratorService<HidDeviceOverWinUsb>, WinUsbDeviceEnumeratorService>();
-        services.AddSingleton<IControllersEnumeratorService, ControllersEnumeratorService>();
         services.AddSingleton<IInputSourceService, InputSourceService>();
+        services.AddSingleton<IInputSourceBuilderService, InputSourceBuilderService>();
         services.AddSingleton<IDeviceSettingsService, DeviceSettingsService>();
         services.AddSingleton<IInputSourceConfigurationService, InputSourceConfigurationService>();
         services.AddSingleton<IFilterService, FilterService>();

@@ -40,7 +40,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
     }
 
     /// <inheritdoc />
-    public event Action<HidDeviceOverWinUsb> DeviceArrived;
+    public event Action<IHidDevice> DeviceArrived;
 
     /// <inheritdoc />
     public event Action<string> DeviceRemoved;
@@ -58,7 +58,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         {
             try
             {
-                CreateNewHidDeviceOverWinUsb(path);
+                CreateNewHidDeviceOverWinUsb(path, false);
             }
             catch (Exception ex)
             {
@@ -83,7 +83,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         activity?.SetTag("Path", symLink);
 
         _logger.LogInformation("Filtered Device ({Path}) arrived", symLink);
-        CreateNewHidDeviceOverWinUsb(symLink);
+        CreateNewHidDeviceOverWinUsb(symLink, true);
     }
 
     private void DeviceNotificationListenerOnDeviceRemoved(DeviceEventArgs args)
@@ -91,7 +91,7 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
         RemoveDevice(args.SymLink);
     }
 
-    private void CreateNewHidDeviceOverWinUsb(string path)
+    private void CreateNewHidDeviceOverWinUsb(string path, bool isFromBroadcast)
     {
         using Activity activity = _coreActivity.StartActivity(
             $"{nameof(WinUsbDeviceEnumeratorService)}:{nameof(CreateNewHidDeviceOverWinUsb)}");
@@ -136,7 +136,8 @@ internal class WinUsbDeviceEnumeratorService : IHidDeviceEnumeratorService<HidDe
                 InstanceId = device.InstanceId.ToUpper(),
                 Description = device.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
                 DisplayName = friendlyName,
-                ParentInstance = parentId
+                ParentInstance = parentId,
+                IsFromBroadcast = isFromBroadcast
             };
 
             DeviceArrived?.Invoke(hidDevice);

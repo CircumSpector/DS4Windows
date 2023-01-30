@@ -69,7 +69,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
     public static Guid HidDeviceClassGuid => Guid.Parse("{745a17a0-74d3-11d0-b6fe-00a0c90f57da}");
 
     /// <inheritdoc />
-    public event Action<HidDevice> DeviceArrived;
+    public event Action<IHidDevice> DeviceArrived;
 
     /// <inheritdoc />
     public event Action<string> DeviceRemoved;
@@ -86,7 +86,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         {
             try
             {
-                CreateNewHidDevice(path);
+                CreateNewHidDevice(path, false);
             }
             catch (Exception ex)
             {
@@ -118,7 +118,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
         {
             _logger.LogInformation("HID Device ({Path}) arrived", symLink);
 
-            CreateNewHidDevice(symLink);
+            CreateNewHidDevice(symLink, true);
         }
         catch (ArgumentException ae)
         {
@@ -137,7 +137,7 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
     /// <summary>
     ///     Builds new <see cref="HidDevice" /> and initializes basic properties.
     /// </summary>
-    private void CreateNewHidDevice(string path)
+    private void CreateNewHidDevice(string path, bool isFromBroadcast)
     {
         using Activity activity = _coreActivity.StartActivity(
             $"{nameof(HidDeviceEnumeratorService)}:{nameof(CreateNewHidDevice)}");
@@ -198,7 +198,8 @@ internal sealed class HidDeviceEnumeratorService : IHidDeviceEnumeratorService<H
             IsVirtual = device.IsVirtual(),
             ManufacturerString = GetHidManufacturerString(path),
             ProductString = GetHidProductString(path),
-            SerialNumberString = GetHidSerialNumberString(path)
+            SerialNumberString = GetHidSerialNumberString(path),
+            IsFromBroadcast = isFromBroadcast
         };
 
         DeviceArrived?.Invoke(hidDevice);

@@ -27,8 +27,7 @@ public sealed class InputSourceSaveDefaultConfigurationEndpoint : Endpoint<Input
 
     public override async Task HandleAsync(InputSourceSetConfigRequest req, CancellationToken ct)
     {
-        _inputSourceConfigurationService.SetInputSourceConfiguration(req.InputSourceKey, req.InputSourceConfiguration,
-            true);
+        _inputSourceConfigurationService.UpdateInputSourceConfiguration(req.InputSourceKey, req.InputSourceConfiguration);
 
         await SendOkAsync(req, ct);
     }

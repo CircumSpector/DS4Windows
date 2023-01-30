@@ -34,14 +34,8 @@ public class DeviceFactory : IDeviceFactory
         {
             Type type = dummyDevice.GetType();
             device = (ICompatibleHidDevice)_serviceProvider.GetService(type);
-            device?.Initialize(hidDevice, deviceInfo);
         }
 
         return device;
-    }
-
-    public static string DeviceInfoKey(int vid, int pid)
-    {
-        return $"{vid}::{pid}";
     }
 }

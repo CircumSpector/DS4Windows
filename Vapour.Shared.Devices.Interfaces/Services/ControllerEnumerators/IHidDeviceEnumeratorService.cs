@@ -10,7 +10,7 @@ public interface IHidDeviceEnumeratorService<out TDevice> where TDevice : IHidDe
     /// <summary>
     ///     Gets fired when a new HID device has been detected.
     /// </summary>
-    event Action<TDevice> DeviceArrived;
+    event Action<IHidDevice> DeviceArrived;
 
     /// <summary>
     ///     Gets fired when an existing HID device has been removed.

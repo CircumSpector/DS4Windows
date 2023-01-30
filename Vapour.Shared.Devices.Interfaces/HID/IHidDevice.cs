@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+using Windows.Win32.Devices.HumanInterfaceDevice;
+
 namespace Vapour.Shared.Devices.HID;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
@@ -90,6 +92,13 @@ public interface IHidDevice : IDisposable
     ///     The output report length in bytes.
     /// </summary>
     ushort OutputReportByteLength { get; set; }
+
+    bool IsFromBroadcast { get; set; }
+
+    /// <summary>
+    ///     HID Device Capabilities.
+    /// </summary>
+    HIDP_CAPS Capabilities { get; init; }
 
     /// <summary>
     ///     Access device and keep handle open until <see cref="CloseDevice" /> is called or object gets disposed.

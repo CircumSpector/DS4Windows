@@ -93,11 +93,13 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
 
     public MultiControllerConfigurationType MultiControllerConfigurationType { get; set; }
 
-    public void Initialize(IHidDevice hidDevice, DeviceInfo deviceInfo)
+    public void Setup(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
         SourceDevice = hidDevice;
         CurrentDeviceInfo = deviceInfo;
 
+        //reset connection known info
+        _connection = null;
         if (Connection == ConnectionType.Unknown)
         {
             throw new ArgumentException("Couldn't determine connection type.");
@@ -108,13 +110,18 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
             Logger.LogInformation("Controller {Device} is using custom feature set {Feature}",
                 this, CurrentDeviceInfo.FeatureSet);
         }
+    }
 
-        //
-        // Open handle
-        // 
+    public void Initialize()
+    {
         SourceDevice.OpenDevice();
 
         OnInitialize();
+    }
+
+    public void Close()
+    {
+        SourceDevice.CloseDevice();
     }
 
     public async Task<byte[]> ReadOutputReport(CancellationToken cancellationToken)
@@ -176,6 +183,8 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
         {
             
         }
+
+        await Task.Delay(0);
     }
 
     protected abstract void OnInitialize();
@@ -370,6 +379,7 @@ public abstract class CompatibleHidDevice : ICompatibleHidDevice
 
         if (disposing)
         {
+            Close();
             _coreActivity.Dispose();
         }
 

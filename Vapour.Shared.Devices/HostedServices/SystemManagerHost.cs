@@ -16,9 +16,7 @@ public sealed class SystemManagerHost
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private readonly IGameProcessWatcherService _gameProcessWatcherService;
     private readonly IInputSourceService _inputSourceService;
-    private readonly IFilterService _filter;
     private readonly IDeviceSettingsService _deviceSettingsService;
-    private readonly IControllersEnumeratorService _controllersEnumeratorService;
     private readonly IGlobalStateService _globalStateService;
 
     private readonly ILogger<SystemManagerHost> _logger;
@@ -26,21 +24,17 @@ public sealed class SystemManagerHost
     private readonly IProfilesService _profileService;
 
     public SystemManagerHost(
-        IControllersEnumeratorService controllersEnumeratorService,
         ILogger<SystemManagerHost> logger,
         IProfilesService profileService,
         IDeviceSettingsService deviceSettingsService,
-        IFilterService filter,
         IGlobalStateService globalStateService,
         IInputSourceConfigurationService inputSourceConfigurationService,
         IGameProcessWatcherService gameProcessWatcherService,
         IInputSourceService inputSourceService)
     {
-        _controllersEnumeratorService = controllersEnumeratorService;
         _logger = logger;
         _profileService = profileService;
         _deviceSettingsService = deviceSettingsService;
-        _filter = filter;
         _globalStateService = globalStateService;
         _inputSourceConfigurationService = inputSourceConfigurationService;
         _gameProcessWatcherService = gameProcessWatcherService;
@@ -61,11 +55,10 @@ public sealed class SystemManagerHost
 
         _globalStateService.EnsureRoamingDataPath();
         _deviceSettingsService.LoadSettings();
-        await _filter.Initialize();
         _profileService.Initialize();
         _inputSourceConfigurationService.Initialize();
         _gameProcessWatcherService.StartWatching();
-        await _controllersEnumeratorService.Start();
+        await _inputSourceService.Start();
         await Task.CompletedTask;
     }
 
@@ -76,9 +69,6 @@ public sealed class SystemManagerHost
     {
         _gameProcessWatcherService.StopWatching();
         _inputSourceService.Stop();
-        _controllersEnumeratorService.Stop();
-        await _filter.UnfilterAllControllers(false);
-        await _inputSourceService.Clear();
         _profileService.Shutdown();
 
         IsRunning = false;

@@ -32,7 +32,7 @@ public sealed class InputSourceProcessor : IInputSourceProcessor
         _inputReportProcessor.SetInputSource(inputSource);
         _outputDeviceProcessor.SetInputSource(inputSource);
 
-        foreach (ICompatibleHidDevice device in inputSource.GetControllers())
+        foreach (ICompatibleHidDevice device in inputSource.Controllers)
         {
             IOutputReportProcessor outputReportProcessor =
                 _serviceProvider.GetRequiredService<IOutputReportProcessor>();

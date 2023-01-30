@@ -102,6 +102,8 @@ public class HidDevice : IEquatable<HidDevice>, IHidDevice
     /// <inheritdoc />
     public ushort OutputReportByteLength { get; set; }
 
+    public bool IsFromBroadcast { get; set; }
+
     /// <inheritdoc />
     public virtual void OpenDevice()
     {
