@@ -34,5 +34,8 @@ public interface IFilterService
 
     void UnfilterController(string instanceId);
 
+    /// <summary>
+    ///     Gets invoked when the filter enabled state has changed.
+    /// </summary>
     event Action<bool> FilterDriverEnabledChanged;
 }

@@ -9,6 +9,9 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
+/// <summary>
+///     A potential <see cref="FilterService"/> error.
+/// </summary>
 public sealed class FilterServiceException : Exception
 {
     internal FilterServiceException(string message) : base(message) { }
@@ -32,6 +35,7 @@ public partial class FilterService : IFilterService
         _deviceSettingsService.LoadSettings();
 
         _filterDriver = new FilterDriver();
+
         if (FilterDriver.IsDriverInstalled)
         {
             SetFilterDriverEnabled(_deviceSettingsService.Settings.IsFilteringEnabled ?? true);
@@ -42,6 +46,7 @@ public partial class FilterService : IFilterService
         }
     }
 
+    /// <inheritdoc />
     public event Action<bool> FilterDriverEnabledChanged;
 
     /// <inheritdoc />
@@ -147,7 +152,7 @@ public partial class FilterService : IFilterService
     /// </summary>
     /// <param name="usbDevice">The USB device to restart.</param>
     [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
-    private void CyclePort(UsbPnPDevice usbDevice)
+    private static void CyclePort(UsbPnPDevice usbDevice)
     {
         ManualResetEvent wait = new(false);
         DeviceNotificationListener listener = new();
@@ -168,6 +173,10 @@ public partial class FilterService : IFilterService
         wait.Dispose();
     }
 
+    /// <summary>
+    ///     Finds the correct parent USB instance for a HID device.
+    /// </summary>
+    /// <param name="instanceId">The HID (or, if rewritten already, USB) instance ID.</param>
     private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
     {
         PnPDevice device = PnPDevice.GetDeviceByInstanceId(instanceId);
