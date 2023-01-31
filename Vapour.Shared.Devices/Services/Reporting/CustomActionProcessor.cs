@@ -1,13 +1,26 @@
-﻿using Vapour.Shared.Devices.HID;
+﻿using MessagePipe;
+
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 public class CustomActionProcessor : ICustomActionProcessor
 {
+    private readonly IAsyncPublisher<GracefulShutdownAction> _gracefulShutdownPublisher;
+    private readonly IAsyncPublisher<SetPlayerLedAndColorAction> _setPlayerLedAndColorPublisher;
     public CustomActionReport CustomActionReport { get; } = new();
     public event Action<ICustomAction> OnCustomActionDetected;
     private bool _wasLedExecuted;
     private bool _wasGracefulShutdownExecuted;
+
+    public CustomActionProcessor(
+        IAsyncPublisher<GracefulShutdownAction> gracefulShutdownPublisher,
+        IAsyncPublisher<SetPlayerLedAndColorAction> setPlayerLedAndColorPublisher)
+    {
+        _gracefulShutdownPublisher = gracefulShutdownPublisher;
+        _setPlayerLedAndColorPublisher = setPlayerLedAndColorPublisher;
+    }
+
 
     public async Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
     {
@@ -84,16 +97,30 @@ public class CustomActionProcessor : ICustomActionProcessor
                 if (!_wasLedExecuted)
                 {
                     _wasLedExecuted = true;
-                    Task.Run(() =>
+
+                    _setPlayerLedAndColorPublisher.Publish(new SetPlayerLedAndColorAction
                     {
-                        //i dont know why but without this delay paired
-                        //joycons crash when setting player led
-                        Thread.Sleep(250);
-                        OnCustomActionDetected?.Invoke(new SetPlayerLedAndColorAction
-                        {
-                            InputSource = inputSource, PlayerNumber = playerNumber
-                        });
+                        InputSource = inputSource,
+                        PlayerNumber = playerNumber
                     });
+
+                    //Task.Run(() =>
+                    //{
+                    //    //i dont know why but without this delay paired
+                    //    //joycons crash when setting player led
+                    //    Thread.Sleep(250);
+
+                    //    _setPlayerLedAndColorPublisher.Publish(new SetPlayerLedAndColorAction
+                    //    {
+                    //        InputSource = inputSource,
+                    //        PlayerNumber = playerNumber
+                    //    });
+
+                    //    OnCustomActionDetected?.Invoke(new SetPlayerLedAndColorAction
+                    //    {
+                    //        InputSource = inputSource, PlayerNumber = playerNumber
+                    //    });
+                    //});
                 }
             }
         }
@@ -112,8 +139,13 @@ public class CustomActionProcessor : ICustomActionProcessor
             if (!_wasGracefulShutdownExecuted)
             {
                 _wasGracefulShutdownExecuted = true;
+
                 Task.Run(() =>
-                    OnCustomActionDetected?.Invoke(new GracefulShutdownAction { InputSource = inputSource }));
+                {
+                    _gracefulShutdownPublisher.Publish(new GracefulShutdownAction { InputSource = inputSource });
+
+                    //OnCustomActionDetected?.Invoke(new GracefulShutdownAction { InputSource = inputSource });
+                });
             }
         }
     }

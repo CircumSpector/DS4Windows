@@ -1,6 +1,10 @@
 ﻿using System.Text.Json;
 
+using MessagePipe;
+
 using Microsoft.Extensions.Logging;
+
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 using Warden.Monitor;
 using Warden.Windows;
@@ -11,6 +15,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
 {
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private readonly IInputSourceDataSource _inputSourceDataSource;
+    private readonly IAsyncPublisher<GameWatchMessage> _gameWatchPublisher;
     private readonly ILogger<GameProcessWatcherService> _logger;
     private ProcessorWatchItem _currentWatch;
 
@@ -18,11 +23,13 @@ public class GameProcessWatcherService : IGameProcessWatcherService
 
     public GameProcessWatcherService(ILogger<GameProcessWatcherService> logger,
         IInputSourceConfigurationService inputSourceConfigurationService,
-        IInputSourceDataSource inputSourceDataSource)
+        IInputSourceDataSource inputSourceDataSource,
+        IAsyncPublisher<GameWatchMessage> gameWatchPublisher)
     {
         _logger = logger;
         _inputSourceConfigurationService = inputSourceConfigurationService;
         _inputSourceDataSource = inputSourceDataSource;
+        _gameWatchPublisher = gameWatchPublisher;
 
         _inputSourceConfigurationService.GetCurrentGameRunning = () => _currentWatch?.GameId;
     }
@@ -51,7 +58,7 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         {
             return;
         }
-
+        
         SystemProcessMonitor.Stop();
 
         SystemProcessMonitor.OnProcessStarted -= OnProcessStarted;
@@ -124,6 +131,12 @@ public class GameProcessWatcherService : IGameProcessWatcherService
             return;
         }
 
+        _gameWatchPublisher.Publish(new GameWatchMessage
+        {
+            IsStarted = true,
+            WatchItem = _currentWatch
+        });
+
         GameWatchStarted?.Invoke(_currentWatch);
     }
 
@@ -149,7 +162,12 @@ public class GameProcessWatcherService : IGameProcessWatcherService
         }
 
         _currentWatch = null;
-        
+
+        _gameWatchPublisher.Publish(new GameWatchMessage
+        {
+            IsStarted = false
+        });
+
         GameWatchStopped?.Invoke(_currentWatch);
     }
 }

@@ -1,7 +1,10 @@
-﻿using Vapour.Shared.Common.Types;
+﻿using MessagePipe;
+
+using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 using Vapour.Shared.Devices.Services.ControllerEnumerators;
 using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
@@ -13,7 +16,6 @@ internal sealed class InputSourceService : IInputSourceService
     private readonly List<ICompatibleHidDevice> _controllers = new();
     private readonly IDeviceFactory _deviceFactory;
     private readonly IFilterService _filterService;
-    private readonly IGameProcessWatcherService _gameProcessWatcherService;
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
     private readonly IInputSourceBuilderService _inputSourceBuilderService;
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
@@ -27,6 +29,11 @@ internal sealed class InputSourceService : IInputSourceService
     private string _usbWaitDeviceKey;
     private bool _usbWaitInitialFilterState;
 
+    private readonly IAsyncSubscriber<GameWatchMessage> _gameWatchSubscriber;
+    private readonly IAsyncSubscriber<SetPlayerLedAndColorAction> _setPlayerLedAndColorSubscriber;
+    private readonly IAsyncSubscriber<GracefulShutdownAction> _gracefulShutdownSubscriber;
+    private readonly List<IDisposable> _subscriptions = new();
+
     public InputSourceService(
         IInputSourceBuilderService inputSourceBuilderService,
         IInputSourceDataSource inputSourceDataSource,
@@ -35,7 +42,9 @@ internal sealed class InputSourceService : IInputSourceService
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IDeviceFactory deviceFactory,
         IInputSourceConfigurationService inputSourceConfigurationService,
-        IGameProcessWatcherService gameProcessWatcherService)
+        IAsyncSubscriber<GameWatchMessage> gameWatchSubscriber,
+        IAsyncSubscriber<SetPlayerLedAndColorAction> setPlayerLedAndColorSubscriber,
+        IAsyncSubscriber<GracefulShutdownAction> gracefulShutdownSubscriber)
     {
         _inputSourceBuilderService = inputSourceBuilderService;
         _inputSourceDataSource = inputSourceDataSource;
@@ -44,7 +53,9 @@ internal sealed class InputSourceService : IInputSourceService
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
         _deviceFactory = deviceFactory;
         _inputSourceConfigurationService = inputSourceConfigurationService;
-        _gameProcessWatcherService = gameProcessWatcherService;
+        _gameWatchSubscriber = gameWatchSubscriber;
+        _setPlayerLedAndColorSubscriber = setPlayerLedAndColorSubscriber;
+        _gracefulShutdownSubscriber = gracefulShutdownSubscriber;
     }
 
     public bool ShouldAutoRebuild { get; set; } = true;
@@ -55,6 +66,10 @@ internal sealed class InputSourceService : IInputSourceService
 
     public async Task Start()
     {
+        _subscriptions.Add(_gameWatchSubscriber.Subscribe(OnGameWatchMessage));
+        _subscriptions.Add(_setPlayerLedAndColorSubscriber.Subscribe(OnSetPlayerLedNumberAndColor));
+        _subscriptions.Add(_gracefulShutdownSubscriber.Subscribe(OnGracefulShutdown));
+
         _hidEnumeratorService.DeviceArrived += SetupDevice;
         _hidEnumeratorService.DeviceRemoved += RemoveDevice;
 
@@ -73,9 +88,6 @@ internal sealed class InputSourceService : IInputSourceService
         _inputSourceConfigurationService.OnDefaultConfigurationUpdated += DefaultConfigurationUpdated;
         _inputSourceConfigurationService.OnRefreshConfigurations += RefreshConfigurations;
 
-        _gameProcessWatcherService.GameWatchStarted += GameWatchStarted;
-        _gameProcessWatcherService.GameWatchStopped += GameWatchStopped;
-
         _filterService.FilterDriverEnabledChanged += FilterDriverEnabledChanged;
 
         InputSourceListReady?.Invoke();
@@ -83,13 +95,16 @@ internal sealed class InputSourceService : IInputSourceService
 
     public void Stop()
     {
+        foreach (var subscription in _subscriptions)
+        {
+            subscription.Dispose();
+        }
+        _subscriptions.Clear();
+
         _filterService.FilterDriverEnabledChanged -= FilterDriverEnabledChanged;
 
         _inputSourceConfigurationService.OnDefaultConfigurationUpdated -= DefaultConfigurationUpdated;
         _inputSourceConfigurationService.OnRefreshConfigurations -= RefreshConfigurations;
-
-        _gameProcessWatcherService.GameWatchStarted -= GameWatchStarted;
-        _gameProcessWatcherService.GameWatchStopped -= GameWatchStopped;
 
         _hidEnumeratorService.DeviceArrived -= SetupDevice;
         _hidEnumeratorService.DeviceRemoved -= RemoveDevice;
@@ -107,7 +122,7 @@ internal sealed class InputSourceService : IInputSourceService
         foreach (IInputSource inputSource in _inputSourceDataSource.InputSources.ToList())
         {
             inputSource.Stop();
-            inputSource.OnCustomActionDetected -= OnCustomAction;
+            //inputSource.OnCustomActionDetected -= OnCustomAction;
             _inputSourceDataSource.InputSources.Remove(inputSource);
             _inputSourceDataSource.FireRemoved(inputSource);
         }
@@ -271,7 +286,7 @@ internal sealed class InputSourceService : IInputSourceService
         for (int i = 0; i < _inputSourceDataSource.InputSources.Count; i++)
         {
             IInputSource inputSource = _inputSourceDataSource.InputSources[i];
-            inputSource.OnCustomActionDetected += OnCustomAction;
+            //inputSource.OnCustomActionDetected += OnCustomAction;
             inputSource.Start();
             inputSource.SetPlayerNumberAndColor(i + 1);
             _inputSourceDataSource.FireCreated(inputSource);
@@ -415,12 +430,7 @@ internal sealed class InputSourceService : IInputSourceService
         await QuickRebuild();
     }
 
-    private async void GameWatchStopped(ProcessorWatchItem obj)
-    {
-        await QuickRebuild();
-    }
-
-    private async void GameWatchStarted(ProcessorWatchItem obj)
+    private async ValueTask OnGameWatchMessage(GameWatchMessage message, CancellationToken cs)
     {
         await QuickRebuild();
     }
@@ -433,6 +443,24 @@ internal sealed class InputSourceService : IInputSourceService
     private async Task QuickRebuild()
     {
         ShouldAutoRebuild = false;
+        await RebuildInputSourceList();
+        ShouldAutoRebuild = true;
+    }
+
+    private async ValueTask OnSetPlayerLedNumberAndColor(SetPlayerLedAndColorAction message, CancellationToken cs)
+    {
+        message.InputSource.SetPlayerNumberAndColor(message.PlayerNumber);
+    }
+
+    private async ValueTask OnGracefulShutdown(GracefulShutdownAction message, CancellationToken cs)
+    {
+        ShouldAutoRebuild = false;
+        await message.InputSource.DisconnectControllers();
+        foreach (ICompatibleHidDevice device in message.InputSource.Controllers)
+        {
+            _controllers.Remove(device);
+        }
+
         await RebuildInputSourceList();
         ShouldAutoRebuild = true;
     }

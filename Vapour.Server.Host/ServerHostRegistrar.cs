@@ -1,6 +1,8 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 
+using MessagePipe;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -21,6 +23,7 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
 {
     public void ConfigureServices(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
     {
+        services.AddMessagePipe();
         SetupWindowsService(builder, context, services);
         SetupWebServices(services);
     }
