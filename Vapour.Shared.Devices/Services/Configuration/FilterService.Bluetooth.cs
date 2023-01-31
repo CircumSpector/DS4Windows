@@ -39,6 +39,8 @@ public partial class FilterService
             return;
         }
 
+        _logger.LogInformation("Performing filter of bluetooth device {Address}", bthDevice.RemoteAddress.ToFriendlyName());
+
         if (!SdpPatcher.AlterHidDeviceToVenderDefined(bthDevice.CachedServices, out byte[] patched))
         {
             throw new FilterServiceException(
@@ -62,6 +64,8 @@ public partial class FilterService
             _logger.LogWarning("Device {Address} is not patched, nothing to do", bthDevice.RemoteAddress.ToFriendlyName());
             return;
         }
+
+        _logger.LogInformation("Performing unfilter of bluetooth device {Address}", bthDevice.RemoteAddress.ToFriendlyName());
 
         bthDevice.CachedServices = bthDevice.OriginalCachedServices;
         bthDevice.DeleteOriginalCachedServices();
