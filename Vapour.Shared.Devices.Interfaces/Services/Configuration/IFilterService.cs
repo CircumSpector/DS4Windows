@@ -30,10 +30,8 @@ public interface IFilterService
     /// </summary>
     Task UninstallFilterDriver();
 
-    /// <inheritdoc />
     void FilterController(string instanceId);
 
-    /// <inheritdoc />
     void UnfilterController(string instanceId);
 
     event Action<bool> FilterDriverEnabledChanged;

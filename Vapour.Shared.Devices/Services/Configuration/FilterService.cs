@@ -99,8 +99,7 @@ public partial class FilterService : IFilterService
         }
         catch (UsbPnPDeviceConversionException)
         {
-            // TODO: handle Bluetooth
-            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
+            FilterBtController(instanceId);
         }
         catch (UsbPnPDeviceRestartException ex)
         {
@@ -134,8 +133,7 @@ public partial class FilterService : IFilterService
         }
         catch (UsbPnPDeviceConversionException)
         {
-            // TODO: handle Bluetooth
-            _logger.LogWarning("{InstanceId} is not a USB device", instanceId);
+            UnfilterBtController(instanceId);
         }
         catch (UsbPnPDeviceRestartException ex)
         {
