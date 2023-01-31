@@ -50,5 +50,8 @@ public abstract class DeviceInfo
     /// </summary>
     public virtual bool IsRightDevice => false;
 
+    /// <summary>
+    ///     Gets whether this device can be filtered when connected via Bluetooth.
+    /// </summary>
     public virtual bool IsBtFilterable => false;
 }

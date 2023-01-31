@@ -211,11 +211,15 @@ internal sealed class InputSourceService : IInputSourceService
                      blueToothDevicesToFilerAction)
             {
                 _blueToothWaitList.Add((device.DeviceKey, device.IsFiltered));
+
                 if (device.IsFiltered)
                 {
-                    // TODO: update sdp record to not filtered
+                    _filterService.UnfilterController(device.InstanceId);
                 }
-                // TODO: update sdp record to filtered
+                else
+                {
+                    _filterService.FilterController(device.InstanceId);
+                }
             }
 
             // TODO: await restart bt host
