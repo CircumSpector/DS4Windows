@@ -25,6 +25,7 @@ public partial class FilterService
     public bool IsBtFiltered(string instanceId)
     {
         var bthDevice = GetBthDevice(instanceId);
+        _logger.LogInformation("Check for bth device with {Address} patched is {isPatched}", bthDevice.RemoteAddress.ToFriendlyName(), bthDevice.IsCachedServicesPatched);
         return bthDevice.IsCachedServicesPatched;
     }
 
@@ -48,8 +49,7 @@ public partial class FilterService
 
         if (shouldRestartBtHost)
         {
-            using HostRadio radio = new();
-            radio.RestartRadio();
+            RestartBtHost();
         }
     }
 
@@ -68,8 +68,7 @@ public partial class FilterService
 
         if (shouldRestartBtHost)
         {
-            using HostRadio radio = new();
-            radio.RestartRadio();
+            RestartBtHost();
         }
     }
 
