@@ -32,9 +32,10 @@ public partial class FilterService
 
         PnPDevice parentDevice = PnPDevice.GetDeviceByInstanceId(parentId);
 
-        PhysicalAddress remoteAddress =
-            PhysicalAddress.Parse(parentDevice.GetProperty<string>(BluetoothDeviceAddressProperty));
+        string remoteAddressString = parentDevice.GetProperty<string>(BluetoothDeviceAddressProperty);
 
+        PhysicalAddress remoteAddress = PhysicalAddress.Parse(remoteAddressString);
+        
         BthPortDevice bthDevice = BthPort.Devices.FirstOrDefault(d => d.RemoteAddress.Equals(remoteAddress));
 
         if (bthDevice is null)
@@ -45,7 +46,7 @@ public partial class FilterService
 
         if (bthDevice.IsCachedServicesPatched)
         {
-            _logger.LogWarning("Device {Address} is already patched, nothing to do", remoteAddress);
+            _logger.LogWarning("Device {Address} is already patched, nothing to do", remoteAddress.ToFriendlyName());
             return;
         }
 
@@ -57,6 +58,19 @@ public partial class FilterService
 
         // overwrite patched record
         bthDevice.CachedServices = patched;
+
+        /* TODO: doesn't appear to work :(
+        if (Devcon.FindInDeviceClassByHardwareId(
+                Guid.Parse("{e0cbf06c-cd8b-4647-bb8a-263b43f0f974}"),
+                @$"BTHENUM\Dev_{remoteAddressString}", 
+                out IEnumerable<string> genInstances)
+           )
+        {
+            PnPDevice genericBthDevice = PnPDevice.GetDeviceByInstanceId(genInstances.First());
+
+            genericBthDevice.Restart();
+        }
+        */
 
         if (shouldRestartBtHost)
         {

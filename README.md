@@ -145,6 +145,7 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 - [Nefarius' Identinator](https://vigem.org/projects/Identinator/)
 - [Nefarius.Utilities.DeviceManagement](https://github.com/nefarius/Nefarius.Utilities.DeviceManagement)
 - [ViGEm Client .NET SDK](https://github.com/ViGEm/ViGEm.NET)
+- [Nefarius.Utilities.Bluetooth](https://github.com/nefarius/Nefarius.Utilities.Bluetooth)
 
 ### Logging, diagnostics
 
