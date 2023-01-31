@@ -7,6 +7,8 @@ using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
+using Vapour.Shared.Devices.HID;
+
 namespace Vapour.Shared.Devices.Services.Configuration;
 
 public sealed class FilterServiceException : Exception
@@ -78,94 +80,37 @@ public partial class FilterService : IFilterService
     /// <summary>
     ///     Filters a particular USB device instance.
     /// </summary>
-    /// <param name="instanceId">The instance ID of the device to filter.</param>
-    public void FilterController(string instanceId)
+    /// <param name="deviceToFilter"></param>
+    public void FilterController(ICompatibleHidDevice deviceToFilter)
     {
-        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToFilter.SourceDevice.InstanceId);
 
-        try
+        if (deviceToFilter.Connection == ConnectionType.Bluetooth)
         {
-            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-
-            using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
-            entry.IsReplacingEnabled = true;
-            entry.CompatibleIds = new[]
-            {
-                @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D",
-                @"USB\Class_FF"
-            };
-
-            CyclePort(usbDevice);
+            FilterBtController(deviceToFilter.SourceDevice.InstanceId);
         }
-        catch (UsbPnPDeviceConversionException)
+        else
         {
-            FilterBtController(instanceId);
-        }
-        catch (UsbPnPDeviceRestartException ex)
-        {
-            _logger.LogError(ex, "Device restart failed");
-            throw;
+            FilterUsbDevice(device, hardwareId);
         }
     }
-
+    
     /// <summary>
     ///     Reverts filtering a particular USB device instance.
     /// </summary>
-    /// <param name="instanceId">The instance ID of the device to revert.</param>
-    public void UnfilterController(string instanceId)
+    /// <param name="deviceToUnfilter"></param>
+    public void UnfilterController(ICompatibleHidDevice deviceToUnfilter)
     {
-        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToUnfilter.SourceDevice.InstanceId);
 
-        try
+        if (deviceToUnfilter.Connection == ConnectionType.Bluetooth)
         {
-            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-
-            using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
-
-            if (entry is null)
-            {
-                return;
-            }
-
-            entry.IsReplacingEnabled = false;
-
-            CyclePort(usbDevice);
+            UnfilterBtController(deviceToUnfilter.SourceDevice.InstanceId);
         }
-        catch (UsbPnPDeviceConversionException)
+        else
         {
-            UnfilterBtController(instanceId);
+            UnfilterUsbDevice(device, hardwareId);
         }
-        catch (UsbPnPDeviceRestartException ex)
-        {
-            _logger.LogError(ex, "Device restart failed");
-            throw;
-        }
-    }
-
-    /// <summary>
-    ///     Power-cycles the port the given device is attached to.
-    /// </summary>
-    /// <param name="usbDevice">The USB device to restart.</param>
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
-    private void CyclePort(UsbPnPDevice usbDevice)
-    {
-        ManualResetEvent wait = new(false);
-        DeviceNotificationListener listener = new();
-
-        listener.RegisterDeviceArrived(args =>
-        {
-            wait.Set();
-        });
-        listener.StartListen(FilterDriver.RewrittenDeviceInterfaceId);
-        listener.StartListen(DeviceInterfaceIds.HidDevice);
-
-        usbDevice.CyclePort();
-
-        wait.WaitOne(TimeSpan.FromSeconds(1));
-
-        listener.StopListen();
-        listener.Dispose();
-        wait.Dispose();
     }
 
     private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
