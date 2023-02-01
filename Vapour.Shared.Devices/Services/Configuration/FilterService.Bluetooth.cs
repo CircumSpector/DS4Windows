@@ -1,5 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 
+using Windows.Win32.Devices.DeviceAndDriverInstallation;
 using Windows.Win32.Foundation;
 
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID;
+using Nefarius.Utilities.DeviceManagement.Exceptions;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -102,10 +104,30 @@ public partial class FilterService
             }
         }
 
-        _logger.LogInformation("Attempting to disable parent device for bth filtering");
-        parentDevice.Disable();
-        _logger.LogInformation("Attempting to enable parent device for bth filtering");
-        parentDevice.Enable();
+        int maxRetries = 5;
+
+        while (!ct.IsCancellationRequested && maxRetries-- > 0)
+        {
+            // enforces reloading patched records from registry
+            try
+            {
+                parentDevice.Disable();
+                Thread.Sleep(1000);
+                parentDevice.Enable();
+
+                break;
+            }
+            catch (ConfigManagerException cme)
+            {
+                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
+                {
+                    // unexpected error
+                    throw;
+                }
+
+                Thread.Sleep(1000);
+            }
+        }
     }
 
     private static BthPortDevice GetBthDevice(string instanceId)
