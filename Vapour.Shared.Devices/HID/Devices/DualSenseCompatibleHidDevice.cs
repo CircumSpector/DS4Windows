@@ -1,35 +1,39 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.HID.InputTypes.DualSense;
 using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 {
-    private const byte SerialFeatureId = 9;
-    private const int UsbInputReportSize = 64;
-    private const int BthInputReportSize = 547;
-
-    private int _reportStartOffset;
+    private byte _inputReportId;
+    private readonly DualSenseCompatibleInputReport _inputReport;
+    private byte _commandCount;
 
     public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
     {
+        _inputReport = new DualSenseCompatibleInputReport();
     }
 
     protected override Type InputDeviceType => typeof(DualSenseDeviceInfo);
 
-    public override InputSourceReport InputSourceReport { get; } = new DualSenseCompatibleInputReport();
+    public override InputSourceReport InputSourceReport {
+        get
+        {
+            return _inputReport;
+        }
+    }
 
     protected override void OnInitialize()
     {
-        Serial = ReadSerial(SerialFeatureId);
+        Serial = ReadSerial(DualSense.Feature.SerialId);
 
         if (Serial is null)
         {
@@ -40,19 +44,14 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
         if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
         {
-            _reportStartOffset = 0;
+            _inputReportId = DualSense.In.UsbReportId;
+            _inputReport.ReportDataStartIndex = DualSense.In.UsbReportDataOffset;
         }
-        //InputReportArray = new byte[UsbInputReportSize];
-        //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
-        //
-        // TODO: finish me
-        // 
         else
         {
-            _reportStartOffset = 1;
+            _inputReportId = DualSense.In.BtReportId;
+            _inputReport.ReportDataStartIndex = DualSense.In.BtReportDataOffset;
         }
-        //InputReportArray = new byte[BthInputReportSize];
-        //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
     }
 
     public override void OnAfterStartListening()
@@ -75,7 +74,10 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        InputSourceReport.Parse(input.Slice(_reportStartOffset));
+        if (input[DualSense.In.ReportIdIndex] == _inputReportId)
+        {
+            InputSourceReport.Parse(input);
+        }
     }
 
     private byte[] BuildOutputReport(byte[] reportData)
@@ -83,17 +85,20 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         byte[] outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
         if (Connection == ConnectionType.Usb)
         {
-            outputReportPacket[0] = 0x02;
-            Array.Copy(reportData, 0, outputReportPacket, 1, 47);
+            outputReportPacket[DualSense.Out.ReportIdIndex] = DualSense.Out.UsbReportId;
+            Array.Copy(reportData, 0, outputReportPacket, DualSense.Out.UsbReportDataOffset, DualSense.Out.ReportDataLength);
         }
         else if (Connection == ConnectionType.Bluetooth)
         {
-            outputReportPacket[0] = 0x31;
-            outputReportPacket[1] = 0x02;
-            Array.Copy(reportData, 0, outputReportPacket, 2, 47);
-            uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, 74);
+            outputReportPacket[DualSense.Out.ReportIdIndex] = DualSense.Out.BtReportId;
+            outputReportPacket[DualSense.Out.BtExtraConfigIndex] = (byte)(_commandCount | DualSense.Out.BtExtraConfig.EnableHid);
+            _commandCount = (byte)(++_commandCount & DualSense.Out.BtCommandCountMax);
+
+            Array.Copy(reportData, 0, outputReportPacket, DualSense.Out.BtReportDataOffset, DualSense.Out.ReportDataLength);
+            uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, DualSense.Out.BtCrcCalculateLength);
             byte[] checksumBytes = BitConverter.GetBytes(crc);
-            Array.Copy(checksumBytes, 0, outputReportPacket, 74, 4);
+            Array.Copy(checksumBytes, 0, outputReportPacket, DualSense.Out.BtCrcCalculateLength,
+                DualSense.Out.BtCrcDataLength);
         }
 
         return outputReportPacket;
@@ -101,65 +106,51 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private byte[] BuildConfigurationReportData()
     {
-        byte[] reportData = new byte[47];
+        byte[] reportData = new byte[DualSense.Out.ReportDataLength];
 
-        reportData[0] = 0xFF;
-        reportData[1] = 0xF7;
+        reportData[DualSense.Out.Config1Index] = DualSense.Out.Config1.All;
+        reportData[DualSense.Out.Config2Index] = DualSense.Out.Config2.All;
 
         return reportData;
     }
 
     private byte[] BuildRumbleReportData(byte strongMotor, byte weakMotor)
     {
-        byte[] reportData = new byte[47];
-        reportData[0] = 0x03;
-        reportData[2] = weakMotor;
-        reportData[3] = strongMotor;
+        byte[] reportData = new byte[DualSense.Out.ReportDataLength];
+        reportData[DualSense.Out.Config1Index] = DualSense.Out.Config1.EnableRumbleEmulation |
+                                                 DualSense.Out.Config1.UseRumbleNotHaptics;
+        reportData[DualSense.Out.RumbleRightIndex] = weakMotor;
+        reportData[DualSense.Out.RumbleLeftIndex] = strongMotor;
 
         return reportData;
     }
 
     private byte[] BuildLedData()
     {
-        byte[] reportData = new byte[47];
-        reportData[1] = 0x16;
-        reportData[42] = 0x02; //player led brightness
+        byte[] reportData = new byte[DualSense.Out.ReportDataLength];
+        reportData[DualSense.Out.Config2Index] = DualSense.Out.Config2.AllowLedColor |
+                                                 DualSense.Out.Config2.AllowPlayerIndicators;
+        reportData[DualSense.Out.PlayerLedBrightnessIndex] = DualSense.Out.PlayeLedBrightness.Medium; //player led brightness
 
         byte playerLed = CurrentConfiguration.PlayerNumber switch
         {
-            1 => (byte)PlayerLedLights.Player1,
-            2 => (byte)PlayerLedLights.Player2,
-            3 => (byte)PlayerLedLights.Player3,
-            4 => (byte)PlayerLedLights.Player4,
-            _ => (byte)PlayerLedLights.None
+            1 => DualSense.Out.PlayerLedLights.Player1,
+            2 => DualSense.Out.PlayerLedLights.Player2,
+            3 => DualSense.Out.PlayerLedLights.Player3,
+            4 => DualSense.Out.PlayerLedLights.Player4,
+            _ => DualSense.Out.PlayerLedLights.None
         };
 
-        reportData[43] = (byte)(0x20 | playerLed); //player led number
+        reportData[DualSense.Out.PlayerLedIndex] = (byte)(DualSense.Out.PlayerLedLights.PlayerLightsFade | playerLed); //player led number
 
         if (CurrentConfiguration.LoadedLightbar != null)
         {
             Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
-            reportData[44] = rgb.R;
-            reportData[45] = rgb.G;
-            reportData[46] = rgb.B;
+            reportData[DualSense.Out.LedRIndex] = rgb.R;
+            reportData[DualSense.Out.LedGIndex] = rgb.G;
+            reportData[DualSense.Out.LedBIndex] = rgb.B;
         }
 
         return reportData;
-    }
-
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private enum PlayerLedLights : byte
-    {
-        None = 0x00,
-        Left = 0x01,
-        MiddleLeft = 0x02,
-        Middle = 0x04,
-        MiddleRight = 0x08,
-        Right = 0x10,
-        Player1 = Middle,
-        Player2 = MiddleLeft | MiddleRight,
-        Player3 = Left | Middle | Right,
-        Player4 = Left | MiddleLeft | MiddleRight | Right,
-        All = Left | MiddleLeft | Middle | MiddleRight | Right
     }
 }
