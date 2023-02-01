@@ -11,6 +11,7 @@ internal sealed class InputSourceService : IInputSourceService
 {
     private readonly List<ICompatibleHidDevice> _controllers = new();
     private readonly IDeviceFactory _deviceFactory;
+    private readonly ManualResetEventSlim _devicesFilterWait = new(false);
     private readonly IFilterService _filterService;
     private readonly IGameProcessWatcherService _gameProcessWatcherService;
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
@@ -18,11 +19,10 @@ internal sealed class InputSourceService : IInputSourceService
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private readonly IInputSourceDataSource _inputSourceDataSource;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
-  
-    private bool _isPerformingFilterAction;
 
     private List<ICompatibleHidDevice> _devicesToFilter;
-    private ManualResetEventSlim _devicesFilterWait = new(false);
+
+    private bool _isPerformingFilterAction;
 
     public InputSourceService(
         IInputSourceBuilderService inputSourceBuilderService,
@@ -111,7 +111,7 @@ internal sealed class InputSourceService : IInputSourceService
 
         if (IsStopping)
         {
-            var hasBtDevices = _controllers.Any(c => c.Connection == ConnectionType.Bluetooth);
+            bool hasBtDevices = _controllers.Any(c => c.Connection == ConnectionType.Bluetooth);
             foreach (ICompatibleHidDevice device in _controllers.ToList())
             {
                 _filterService.UnfilterController(device);
@@ -137,21 +137,23 @@ internal sealed class InputSourceService : IInputSourceService
         {
             List<IInputSource> inputSourceList = _inputSourceBuilderService.BuildInputSourceList(_controllers);
             _inputSourceDataSource.InputSources.AddRange(inputSourceList);
-            await CheckPerformFilterActions(inputSourceList);
+            await CheckPerformFilterActions(inputSourceList, ct);
             StartInputSources();
             ShouldAutoRebuild = existingShouldRebuild;
         }, ct);
     }
-    
-    private Task CheckPerformFilterActions(List<IInputSource> inputSourceList)
+
+    private async Task CheckPerformFilterActions(IReadOnlyCollection<IInputSource> inputSourceList,
+        CancellationToken ct = default)
     {
         _devicesToFilter = new List<ICompatibleHidDevice>();
 
         _devicesToFilter.AddRange(GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Usb)
             .Where(c => c.CurrentDeviceInfo.WinUsbEndpoints != null).ToList());
 
-        var blueToothDevices = GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Bluetooth)
-            .Where(c => c.CurrentDeviceInfo.IsBtFilterable).ToList();
+        List<ICompatibleHidDevice> blueToothDevices =
+            GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Bluetooth)
+                .Where(c => c.CurrentDeviceInfo.IsBtFilterable).ToList();
 
         _devicesToFilter.AddRange(blueToothDevices);
 
@@ -159,15 +161,15 @@ internal sealed class InputSourceService : IInputSourceService
         {
             _isPerformingFilterAction = true;
 
-            foreach (var device in _devicesToFilter)
+            foreach (ICompatibleHidDevice device in _devicesToFilter)
             {
                 if (device.IsFiltered)
                 {
-                    _filterService.UnfilterController(device);
+                    await _filterService.UnfilterController(device, ct);
                 }
                 else
                 {
-                    _filterService.FilterController(device);
+                    await _filterService.FilterController(device, ct);
                 }
             }
 
@@ -176,19 +178,18 @@ internal sealed class InputSourceService : IInputSourceService
                 _filterService.RestartBtHost();
             }
 
-            _devicesFilterWait.Wait();
+            _devicesFilterWait.Wait(ct);
             _devicesToFilter = null;
             _devicesFilterWait.Reset();
 
             _isPerformingFilterAction = false;
         }
-
-        return Task.CompletedTask;
     }
 
-    private IEnumerable<ICompatibleHidDevice> GetNeededFilterListByConnectionType(IEnumerable<IInputSource> inputSourceList, ConnectionType connectionType)
+    private IEnumerable<ICompatibleHidDevice> GetNeededFilterListByConnectionType(
+        IEnumerable<IInputSource> inputSourceList, ConnectionType connectionType)
     {
-        var finalList = new List<ICompatibleHidDevice>();
+        List<ICompatibleHidDevice> finalList = new();
         foreach (ICompatibleHidDevice controller in inputSourceList
                      .SelectMany(i => i.Controllers.Where(c => c.Connection == connectionType))
                      .ToList())
@@ -225,54 +226,56 @@ internal sealed class InputSourceService : IInputSourceService
 
     private async void SetupDevice(IHidDevice hidDevice)
     {
-        if (!IsStopping)
+        if (IsStopping)
         {
-            DeviceInfo deviceInfo = _deviceFactory.IsKnownDevice(hidDevice.VendorId, hidDevice.ProductId);
+            return;
+        }
 
-            if (deviceInfo is null)
-            {
-                return;
-            }
+        DeviceInfo deviceInfo = _deviceFactory.IsKnownDevice(hidDevice.VendorId, hidDevice.ProductId);
 
-            if ((hidDevice.Capabilities.Usage is not (HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick) &&
-                 !deviceInfo.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice))
-                || hidDevice.IsVirtual)
-            {
-                return;
-            }
+        if (deviceInfo is null)
+        {
+            return;
+        }
 
-            var device = GetDevice(hidDevice, deviceInfo);
-            device.Device.Setup(hidDevice, deviceInfo);
-            device.Device.Initialize();
+        if ((hidDevice.Capabilities.Usage is not (HidDevice.HidUsageGamepad or HidDevice.HidUsageJoystick) &&
+             !deviceInfo.FeatureSet.HasFlag(CompatibleHidDeviceFeatureSet.VendorDefinedDevice))
+            || hidDevice.IsVirtual)
+        {
+            return;
+        }
 
-            if (device.Device.Connection == ConnectionType.Bluetooth)
-            {
-                device.Device.IsFiltered = _filterService.IsBtFiltered(device.Device.SourceDevice.InstanceId);
-            }
-            else if (hidDevice is HidDeviceOverWinUsb)
-            {
-                device.Device.IsFiltered = true;
-            }
-            else
-            {
-                device.Device.IsFiltered = false;
-            }
+        (ICompatibleHidDevice device, bool? isFiltered) = GetDevice(hidDevice, deviceInfo);
+        device.Setup(hidDevice, deviceInfo);
+        device.Initialize();
 
-            if (device.ExistingFilterState.HasValue)
-            {
-                CheckIfWaitingAfterFilterAction(device.Device, device.ExistingFilterState.Value);
-            }
+        if (device.Connection == ConnectionType.Bluetooth)
+        {
+            device.IsFiltered = _filterService.IsBtFiltered(device.SourceDevice.InstanceId);
+        }
+        else if (hidDevice is HidDeviceOverWinUsb)
+        {
+            device.IsFiltered = true;
+        }
+        else
+        {
+            device.IsFiltered = false;
+        }
 
-            if (ShouldAutoRebuild)
-            {
-                await RebuildInputSourceList();
-            }
+        if (isFiltered.HasValue)
+        {
+            CheckIfWaitingAfterFilterAction(device, isFiltered.Value);
+        }
+
+        if (ShouldAutoRebuild)
+        {
+            await RebuildInputSourceList();
         }
     }
 
     private void CheckIfWaitingAfterFilterAction(ICompatibleHidDevice device, bool previousFilterState)
     {
-        var existingWait = _devicesToFilter.SingleOrDefault(c =>
+        ICompatibleHidDevice existingWait = _devicesToFilter.SingleOrDefault(c =>
             c.DeviceKey == device.DeviceKey && device.IsFiltered == !previousFilterState);
         if (existingWait != default)
         {
@@ -284,7 +287,8 @@ internal sealed class InputSourceService : IInputSourceService
         }
     }
 
-    private (ICompatibleHidDevice Device, bool? ExistingFilterState) GetDevice(IHidDevice hidDevice, DeviceInfo deviceInfo)
+    private (ICompatibleHidDevice Device, bool? ExistingFilterState) GetDevice(IHidDevice hidDevice,
+        DeviceInfo deviceInfo)
     {
         ICompatibleHidDevice device = null;
         bool? existingFilterState = null;

@@ -1,9 +1,13 @@
 ﻿using System.Net.NetworkInformation;
 
+using Windows.Win32.Devices.DeviceAndDriverInstallation;
+using Windows.Win32.Foundation;
+
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.Bluetooth.SDP;
+using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Util;
@@ -27,22 +31,28 @@ public partial class FilterService
 
     public bool IsBtFiltered(string instanceId)
     {
-        var bthDevice = GetBthDevice(instanceId);
-        _logger.LogInformation("Check for bth device with {Address} patched is {isPatched}", bthDevice.RemoteAddress.ToFriendlyName(), bthDevice.IsCachedServicesPatched);
+        BthPortDevice bthDevice = GetBthDevice(instanceId);
+
+        _logger.LogInformation("Check for bth device with {Address} patched is {isPatched}",
+            bthDevice.RemoteAddress.ToFriendlyName(), bthDevice.IsCachedServicesPatched);
+
         return bthDevice.IsCachedServicesPatched;
     }
 
-    private void FilterBtController(string instanceId, bool shouldRestartBtHost = false)
+    private async Task FilterBtController(string instanceId, bool shouldRestartBtHost = false,
+        CancellationToken ct = default)
     {
-        var bthDevice = GetBthDevice(instanceId);
+        BthPortDevice bthDevice = GetBthDevice(instanceId, out PnPDevice parentDevice);
 
         if (bthDevice.IsCachedServicesPatched)
         {
-            _logger.LogWarning("Device {Address} is already patched, nothing to do", bthDevice.RemoteAddress.ToFriendlyName());
+            _logger.LogWarning("Device {Address} is already patched, nothing to do",
+                bthDevice.RemoteAddress.ToFriendlyName());
             return;
         }
 
-        _logger.LogInformation("Performing filter of bluetooth device {Address}", bthDevice.RemoteAddress.ToFriendlyName());
+        _logger.LogInformation("Performing filter of bluetooth device {Address}",
+            bthDevice.RemoteAddress.ToFriendlyName());
 
         if (!SdpPatcher.AlterHidDeviceToVenderDefined(bthDevice.CachedServices, out byte[] patched))
         {
@@ -53,7 +63,42 @@ public partial class FilterService
         // overwrite patched record
         bthDevice.CachedServices = patched;
 
-        
+        try
+        {
+            // disconnect device
+            using HostRadio radio = new();
+            radio.DisconnectRemoteDevice(bthDevice.RemoteAddress);
+        }
+        catch (HostRadioException hre)
+        {
+            if (hre.NativeErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)
+            {
+                throw;
+            }
+        }
+
+        int maxRetries = 5;
+
+        while (!ct.IsCancellationRequested && maxRetries-- > 0)
+        {
+            // enforces reloading patched records from registry
+            try
+            {
+                parentDevice.Disable();
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+                parentDevice.Enable();
+            }
+            catch (ConfigManagerException cme)
+            {
+                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
+                {
+                    // unexpected error
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+            }
+        }
     }
 
     /// <summary>
@@ -64,23 +109,65 @@ public partial class FilterService
     /// <param name="ct">Optional cancellation token.</param>
     private async Task UnfilterBtController(string instanceId, CancellationToken ct = default)
     {
-        var bthDevice = GetBthDevice(instanceId);
+        BthPortDevice bthDevice = GetBthDevice(instanceId, out PnPDevice parentDevice);
 
         if (!bthDevice.IsCachedServicesPatched)
         {
-            _logger.LogWarning("Device {Address} is not patched, nothing to do", bthDevice.RemoteAddress.ToFriendlyName());
+            _logger.LogWarning("Device {Address} is not patched, nothing to do",
+                bthDevice.RemoteAddress.ToFriendlyName());
             return;
         }
 
-        _logger.LogInformation("Performing unfilter of bluetooth device {Address}", bthDevice.RemoteAddress.ToFriendlyName());
+        _logger.LogInformation("Performing unfilter of bluetooth device {Address}",
+            bthDevice.RemoteAddress.ToFriendlyName());
 
         bthDevice.CachedServices = bthDevice.OriginalCachedServices;
         bthDevice.DeleteOriginalCachedServices();
 
-        
+        try
+        {
+            // disconnect device
+            using HostRadio radio = new();
+            radio.DisconnectRemoteDevice(bthDevice.RemoteAddress);
+        }
+        catch (HostRadioException hre)
+        {
+            if (hre.NativeErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)
+            {
+                throw;
+            }
+        }
+
+        int maxRetries = 5;
+
+        while (!ct.IsCancellationRequested && maxRetries-- > 0)
+        {
+            // enforces reloading patched records from registry
+            try
+            {
+                parentDevice.Disable();
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+                parentDevice.Enable();
+            }
+            catch (ConfigManagerException cme)
+            {
+                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
+                {
+                    // unexpected error
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+            }
+        }
     }
 
     private static BthPortDevice GetBthDevice(string instanceId)
+    {
+        return GetBthDevice(instanceId, out _);
+    }
+
+    private static BthPortDevice GetBthDevice(string instanceId, out PnPDevice parent)
     {
         PnPDevice hidDevice = PnPDevice.GetDeviceByInstanceId(instanceId);
 
@@ -88,7 +175,8 @@ public partial class FilterService
 
         PnPDevice parentDevice = PnPDevice.GetDeviceByInstanceId(parentId);
 
-        PhysicalAddress remoteAddress = PhysicalAddress.Parse(parentDevice.GetProperty<string>(BluetoothDeviceAddressProperty));
+        PhysicalAddress remoteAddress =
+            PhysicalAddress.Parse(parentDevice.GetProperty<string>(BluetoothDeviceAddressProperty));
 
         BthPortDevice bthDevice = BthPort.Devices.FirstOrDefault(d => d.RemoteAddress.Equals(remoteAddress));
 
@@ -97,6 +185,8 @@ public partial class FilterService
             throw new FilterServiceException(
                 $"Wireless device with address {remoteAddress.ToFriendlyName()} not found.");
         }
+
+        parent = parentDevice;
 
         return bthDevice;
     }

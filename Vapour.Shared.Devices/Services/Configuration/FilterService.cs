@@ -8,7 +8,7 @@ using Vapour.Shared.Devices.HID;
 namespace Vapour.Shared.Devices.Services.Configuration;
 
 /// <summary>
-///     A potential <see cref="FilterService"/> error.
+///     A potential <see cref="FilterService" /> error.
 /// </summary>
 public sealed class FilterServiceException : Exception
 {
@@ -78,35 +78,29 @@ public partial class FilterService : IFilterService
         SetFilterDriverEnabled(false);
     }
 
-    /// <summary>
-    ///     Filters a particular USB device instance.
-    /// </summary>
-    /// <param name="deviceToFilter"></param>
-    public void FilterController(ICompatibleHidDevice deviceToFilter)
+    /// <inheritdoc />
+    public async Task FilterController(ICompatibleHidDevice deviceToFilter, CancellationToken ct = default)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToFilter.SourceDevice.InstanceId);
 
         if (deviceToFilter.Connection == ConnectionType.Bluetooth)
         {
-            FilterBtController(deviceToFilter.SourceDevice.InstanceId);
+            await FilterBtController(deviceToFilter.SourceDevice.InstanceId, ct: ct);
         }
         else
         {
             FilterUsbDevice(device, hardwareId);
         }
     }
-    
-    /// <summary>
-    ///     Reverts filtering a particular USB device instance.
-    /// </summary>
-    /// <param name="deviceToUnfilter"></param>
-    public void UnfilterController(ICompatibleHidDevice deviceToUnfilter)
+
+    /// <inheritdoc />
+    public async Task UnfilterController(ICompatibleHidDevice deviceToUnfilter, CancellationToken ct = default)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToUnfilter.SourceDevice.InstanceId);
 
         if (deviceToUnfilter.Connection == ConnectionType.Bluetooth)
         {
-            UnfilterBtController(deviceToUnfilter.SourceDevice.InstanceId);
+            await UnfilterBtController(deviceToUnfilter.SourceDevice.InstanceId, ct);
         }
         else
         {
