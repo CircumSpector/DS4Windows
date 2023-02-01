@@ -26,7 +26,7 @@ public interface IFilterService
     ///     Installs the class filter driver.
     /// </summary>
     Task<Version> InstallFilterDriver();
-    
+
     /// <summary>
     ///     Uninstalls the class filter driver.
     /// </summary>
@@ -36,6 +36,9 @@ public interface IFilterService
 
     void UnfilterController(ICompatibleHidDevice deviceToUnfilter);
 
+    /// <summary>
+    ///     Gets invoked when the filter enabled state has changed.
+    /// </summary>
     event Action<bool> FilterDriverEnabledChanged;
     void RestartBtHost();
     bool IsBtFiltered(string instanceId);

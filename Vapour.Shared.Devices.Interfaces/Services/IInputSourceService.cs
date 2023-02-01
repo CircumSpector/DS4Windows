@@ -3,6 +3,6 @@
 public interface IInputSourceService
 {
     void Stop();
-    Task Start();
+    Task Start(CancellationToken ct = default);
     event Action InputSourceListReady;
 }

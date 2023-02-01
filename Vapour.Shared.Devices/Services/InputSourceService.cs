@@ -50,7 +50,7 @@ internal sealed class InputSourceService : IInputSourceService
 
     public event Action InputSourceListReady;
 
-    public async Task Start()
+    public async Task Start(CancellationToken ct = default)
     {
         _hidEnumeratorService.DeviceArrived += SetupDevice;
         _hidEnumeratorService.DeviceRemoved += RemoveDevice;
@@ -63,7 +63,7 @@ internal sealed class InputSourceService : IInputSourceService
         _hidEnumeratorService.Start();
         _winUsbDeviceEnumeratorService.Start();
 
-        await RebuildInputSourceList();
+        await RebuildInputSourceList(ct);
 
         ShouldAutoRebuild = true;
 
@@ -127,7 +127,7 @@ internal sealed class InputSourceService : IInputSourceService
         Thread.Sleep(250);
     }
 
-    private async Task RebuildInputSourceList()
+    private async Task RebuildInputSourceList(CancellationToken ct = default)
     {
         bool existingShouldRebuild = ShouldAutoRebuild;
         ShouldAutoRebuild = false;
@@ -140,7 +140,7 @@ internal sealed class InputSourceService : IInputSourceService
             await CheckPerformFilterActions(inputSourceList);
             StartInputSources();
             ShouldAutoRebuild = existingShouldRebuild;
-        });
+        }, ct);
     }
     
     private Task CheckPerformFilterActions(List<IInputSource> inputSourceList)
@@ -374,10 +374,10 @@ internal sealed class InputSourceService : IInputSourceService
         await QuickRebuild();
     }
 
-    private async Task QuickRebuild()
+    private async Task QuickRebuild(CancellationToken ct = default)
     {
         ShouldAutoRebuild = false;
-        await RebuildInputSourceList();
+        await RebuildInputSourceList(ct);
         ShouldAutoRebuild = true;
     }
 
